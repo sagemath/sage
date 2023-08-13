@@ -163,11 +163,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.groups
+                sage: # needs sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
-                sage: S = GroupAlgebra(G, QQ)                                           # needs sage.modules
-                sage: L = LieAlgebra(associative=S)                                     # needs sage.modules
-                sage: [L._basis_key_inverse[k] for k in L._basis_ordering]              # needs sage.modules
+                sage: S = GroupAlgebra(G, QQ)
+                sage: L = LieAlgebra(associative=S)
+                sage: [L._basis_key_inverse[k] for k in L._basis_ordering]
                 [0, 1, 2, 3, 4, 5]
             """
             return {k: i for i,k in enumerate(self._basis_ordering)}
@@ -360,11 +360,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.groups
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
-                sage: S = GroupAlgebra(G, QQ)                                           # needs sage.modules
-                sage: L = LieAlgebra(associative=S)                                     # needs sage.combinat sage.modules
-                sage: L.structure_coefficients()                                        # needs sage.combinat sage.modules
+                sage: S = GroupAlgebra(G, QQ)
+                sage: L = LieAlgebra(associative=S)
+                sage: L.structure_coefficients()
                 Finite family {((2,3), (1,2)): (1,2,3) - (1,3,2),
                                ((2,3), (1,3)): -(1,2,3) + (1,3,2),
                                ((1,2,3), (2,3)): -(1,2) + (1,3),
@@ -417,7 +417,6 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: H = lie_algebras.Heisenberg(QQ, 2)
                 sage: H.centralizer_basis(H)
                 [z]
-
 
                 sage: # needs sage.combinat sage.modules
                 sage: D = DescentAlgebra(QQ, 4).D()

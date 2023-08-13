@@ -337,7 +337,7 @@ cdef class WeakValueDictionary(dict):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.rings.finite_rings
             sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: import sage.misc.weak_dict
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -584,7 +584,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.pop(matrix([]))                                                     # needs sage.all
+            sage: D.pop(matrix([]))                                                     # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable

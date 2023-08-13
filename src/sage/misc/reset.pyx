@@ -26,7 +26,7 @@ def reset(vars=None, attached=False):
     INPUT:
 
     - ``vars`` -- a list, or space or comma separated string (default:
-      None), variables to restore
+      ``None``), variables to restore
 
     - ``attached`` -- boolean (default: ``False``), if ``vars`` is not None,
       whether to detach all attached files
@@ -57,8 +57,9 @@ def reset(vars=None, attached=False):
 
     Confirm that assumptions don't survive a reset (:trac:`10855`)::
 
-        sage: assume(x > 3)                                                             # needs sage.symbolic
-        sage: assumptions()                                                             # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: assume(x > 3)
+        sage: assumptions()
         [x > 3]
         sage: bool(x > 3)                                                               # needs sage.symbolic
         True

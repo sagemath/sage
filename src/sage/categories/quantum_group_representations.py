@@ -96,34 +96,35 @@ class QuantumGroupRepresentations(Category_module):
 
                     EXAMPLES::
 
-                        sage: from sage.algebras.quantum_groups.representations import (            # needs sage.combinat sage.modules
+                        sage: # needs sage.combinat sage.modules
+                        sage: from sage.algebras.quantum_groups.representations import (
                         ....:     MinusculeRepresentation, AdjointRepresentation)
                         sage: R = ZZ['q'].fraction_field()
-                        sage: CM = crystals.Tableaux(['D',4], shape=[1])                # needs sage.combinat sage.modules
-                        sage: VM = MinusculeRepresentation(R, CM)                       # needs sage.combinat sage.modules
-                        sage: CA = crystals.Tableaux(['D',4], shape=[1,1])              # needs sage.combinat sage.modules
-                        sage: VA = AdjointRepresentation(R, CA)                         # needs sage.combinat sage.modules
-                        sage: v = tensor([VM.an_element(), VA.an_element()]); v         # needs sage.combinat sage.modules
+                        sage: CM = crystals.Tableaux(['D',4], shape=[1])
+                        sage: VM = MinusculeRepresentation(R, CM)
+                        sage: CA = crystals.Tableaux(['D',4], shape=[1,1])
+                        sage: VA = AdjointRepresentation(R, CA)
+                        sage: v = tensor([VM.an_element(), VA.an_element()]); v
                         4*B[[[1]]] # B[[[1], [2]]] + 4*B[[[1]]] # B[[[1], [3]]]
                          + 6*B[[[1]]] # B[[[2], [3]]] + 4*B[[[2]]] # B[[[1], [2]]]
                          + 4*B[[[2]]] # B[[[1], [3]]] + 6*B[[[2]]] # B[[[2], [3]]]
                          + 6*B[[[3]]] # B[[[1], [2]]] + 6*B[[[3]]] # B[[[1], [3]]]
                          + 9*B[[[3]]] # B[[[2], [3]]]
-                        sage: v.e(1)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.e(1)  # indirect doctest
                         4*B[[[1]]] # B[[[1], [2]]]
                          + ((4*q+6)/q)*B[[[1]]] # B[[[1], [3]]]
                          + 6*B[[[1]]] # B[[[2], [3]]]
                          + 6*q*B[[[2]]] # B[[[1], [3]]]
                          + 9*B[[[3]]] # B[[[1], [3]]]
-                        sage: v.e(2)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.e(2)  # indirect doctest
                         4*B[[[1]]] # B[[[1], [2]]]
                          + ((6*q+4)/q)*B[[[2]]] # B[[[1], [2]]]
                          + 6*B[[[2]]] # B[[[1], [3]]]
                          + 9*B[[[2]]] # B[[[2], [3]]]
                          + 6*q*B[[[3]]] # B[[[1], [2]]]
-                        sage: v.e(3)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.e(3)  # indirect doctest
                         0
-                        sage: v.e(4)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.e(4)  # indirect doctest
                         0
                     """
                     K_elt = [self._sets[k].K_on_basis(i, elt, -1) for k,elt in enumerate(b)]
@@ -146,38 +147,39 @@ class QuantumGroupRepresentations(Category_module):
 
                     EXAMPLES::
 
-                        sage: from sage.algebras.quantum_groups.representations import (            # needs sage.combinat sage.modules
+                        sage: # needs sage.combinat sage.modules
+                        sage: from sage.algebras.quantum_groups.representations import (
                         ....:     MinusculeRepresentation, AdjointRepresentation)
                         sage: R = ZZ['q'].fraction_field()
-                        sage: KM = crystals.KirillovReshetikhin(['B',3,1], 3,1)         # needs sage.combinat sage.modules
-                        sage: VM = MinusculeRepresentation(R, KM)                       # needs sage.combinat sage.modules
-                        sage: KA = crystals.KirillovReshetikhin(['B',3,1], 2,1)         # needs sage.combinat sage.modules
-                        sage: VA = AdjointRepresentation(R, KA)                         # needs sage.combinat sage.modules
-                        sage: v = tensor([VM.an_element(), VA.an_element()]); v         # needs sage.combinat sage.modules
+                        sage: KM = crystals.KirillovReshetikhin(['B',3,1], 3,1)
+                        sage: VM = MinusculeRepresentation(R, KM)
+                        sage: KA = crystals.KirillovReshetikhin(['B',3,1], 2,1)
+                        sage: VA = AdjointRepresentation(R, KA)
+                        sage: v = tensor([VM.an_element(), VA.an_element()]); v
                         4*B[[+++, []]] # B[[]] + 4*B[[+++, []]] # B[[[1], [2]]]
                          + 6*B[[+++, []]] # B[[[1], [3]]] + 4*B[[++-, []]] # B[[]]
                          + 4*B[[++-, []]] # B[[[1], [2]]]
                          + 6*B[[++-, []]] # B[[[1], [3]]] + 6*B[[+-+, []]] # B[[]]
                          + 6*B[[+-+, []]] # B[[[1], [2]]]
                          + 9*B[[+-+, []]] # B[[[1], [3]]]
-                        sage: v.f(0)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.f(0)  # indirect doctest
                         ((4*q^4+4)/q^2)*B[[+++, []]] # B[[[1], [2]]]
                          + ((4*q^4+4)/q^2)*B[[++-, []]] # B[[[1], [2]]]
                          + ((6*q^4+6)/q^2)*B[[+-+, []]] # B[[[1], [2]]]
-                        sage: v.f(1)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.f(1)  # indirect doctest
                         6*B[[+++, []]] # B[[[2], [3]]]
                          + 6*B[[++-, []]] # B[[[2], [3]]]
                          + 9*B[[+-+, []]] # B[[[2], [3]]]
                          + 6*B[[-++, []]] # B[[]]
                          + 6*B[[-++, []]] # B[[[1], [2]]]
                          + 9*q^2*B[[-++, []]] # B[[[1], [3]]]
-                        sage: v.f(2)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.f(2)  # indirect doctest
                         4*B[[+++, []]] # B[[[1], [3]]]
                          + 4*B[[++-, []]] # B[[[1], [3]]]
                          + 4*B[[+-+, []]] # B[[]]
                          + 4*q^2*B[[+-+, []]] # B[[[1], [2]]]
                          + ((6*q^2+6)/q^2)*B[[+-+, []]] # B[[[1], [3]]]
-                        sage: v.f(3)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.f(3)  # indirect doctest
                         6*B[[+++, []]] # B[[[1], [0]]]
                          + 4*B[[++-, []]] # B[[]]
                          + 4*B[[++-, []]] # B[[[1], [2]]]
@@ -209,22 +211,23 @@ class QuantumGroupRepresentations(Category_module):
 
                     EXAMPLES::
 
-                        sage: from sage.algebras.quantum_groups.representations import (            # needs sage.combinat sage.modules
+                        sage: # needs sage.combinat sage.modules
+                        sage: from sage.algebras.quantum_groups.representations import (
                         ....:     MinusculeRepresentation, AdjointRepresentation)
                         sage: R = ZZ['q'].fraction_field()
-                        sage: CM = crystals.Tableaux(['A',2], shape=[1])                # needs sage.combinat sage.modules
-                        sage: VM = MinusculeRepresentation(R, CM)                       # needs sage.combinat sage.modules
-                        sage: CA = crystals.Tableaux(['A',2], shape=[2,1])              # needs sage.combinat sage.modules
-                        sage: VA = AdjointRepresentation(R, CA)                         # needs sage.combinat sage.modules
-                        sage: v = tensor([sum(VM.basis()), VA.module_generator()]); v   # needs sage.combinat sage.modules
+                        sage: CM = crystals.Tableaux(['A',2], shape=[1])
+                        sage: VM = MinusculeRepresentation(R, CM)
+                        sage: CA = crystals.Tableaux(['A',2], shape=[2,1])
+                        sage: VA = AdjointRepresentation(R, CA)
+                        sage: v = tensor([sum(VM.basis()), VA.module_generator()]); v
                         B[[[1]]] # B[[[1, 1], [2]]]
                          + B[[[2]]] # B[[[1, 1], [2]]]
                          + B[[[3]]] # B[[[1, 1], [2]]]
-                        sage: v.K(1)  # indirect doctest                                # needs sage.combinat sage.modules
+                        sage: v.K(1)  # indirect doctest
                         q^2*B[[[1]]] # B[[[1, 1], [2]]]
                          + B[[[2]]] # B[[[1, 1], [2]]]
                          + q*B[[[3]]] # B[[[1, 1], [2]]]
-                        sage: v.K(2, -1)  # indirect doctest                            # needs sage.combinat sage.modules
+                        sage: v.K(2, -1)  # indirect doctest
                         1/q*B[[[1]]] # B[[[1, 1], [2]]]
                          + 1/q^2*B[[[2]]] # B[[[1, 1], [2]]]
                          + B[[[3]]] # B[[[1, 1], [2]]]
@@ -241,24 +244,25 @@ class QuantumGroupRepresentations(Category_module):
 
                 EXAMPLES::
 
-                    sage: from sage.algebras.quantum_groups.representations import (    # needs sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: from sage.algebras.quantum_groups.representations import (
                     ....:     MinusculeRepresentation, AdjointRepresentation)
                     sage: R = ZZ['q'].fraction_field()
-                    sage: CM = crystals.Tableaux(['D',4], shape=[1])                    # needs sage.combinat sage.modules
-                    sage: CA = crystals.Tableaux(['D',4], shape=[1,1])                  # needs sage.combinat sage.modules
-                    sage: V = MinusculeRepresentation(R, CM)                            # needs sage.combinat sage.modules
-                    sage: V.tensor(V, V)                                                # needs sage.combinat sage.modules
+                    sage: CM = crystals.Tableaux(['D',4], shape=[1])
+                    sage: CA = crystals.Tableaux(['D',4], shape=[1,1])
+                    sage: V = MinusculeRepresentation(R, CM)
+                    sage: V.tensor(V, V)
                     V((1, 0, 0, 0)) # V((1, 0, 0, 0)) # V((1, 0, 0, 0))
-                    sage: A = MinusculeRepresentation(R, CA)                            # needs sage.combinat sage.modules
-                    sage: V.tensor(A)                                                   # needs sage.combinat sage.modules
+                    sage: A = MinusculeRepresentation(R, CA)
+                    sage: V.tensor(A)
                     V((1, 0, 0, 0)) # V((1, 1, 0, 0))
-                    sage: B = crystals.Tableaux(['A',2], shape=[1])                     # needs sage.combinat sage.modules
-                    sage: W = MinusculeRepresentation(R, B)                             # needs sage.combinat sage.modules
-                    sage: tensor([W,V])                                                 # needs sage.combinat sage.modules
+                    sage: B = crystals.Tableaux(['A',2], shape=[1])
+                    sage: W = MinusculeRepresentation(R, B)
+                    sage: tensor([W,V])
                     Traceback (most recent call last):
                     ...
                     ValueError: all factors must be of the same Cartan type
-                    sage: tensor([V,A,W])                                               # needs sage.combinat sage.modules
+                    sage: tensor([V,A,W])
                     Traceback (most recent call last):
                     ...
                     ValueError: all factors must be of the same Cartan type

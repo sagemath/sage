@@ -95,15 +95,16 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             Ensure that :trac:`28328` is fixed and that non-associative
             algebras are supported::
 
-                sage: class Foo(CombinatorialFreeModule):                               # needs sage.modules
+                sage: # needs sage.modules
+                sage: class Foo(CombinatorialFreeModule):
                 ....:     def one(self):
                 ....:         return self.monomial(0)
                 sage: from sage.categories.magmatic_algebras import MagmaticAlgebras
                 sage: C = MagmaticAlgebras(QQ).WithBasis().Unital()
-                sage: F = Foo(QQ, (1,), category=C)                                     # needs sage.modules
-                sage: F(0)                                                              # needs sage.modules
+                sage: F = Foo(QQ, (1,), category=C)
+                sage: F(0)
                 0
-                sage: F(3)                                                              # needs sage.modules
+                sage: F(3)
                 3*B[0]
 
                 sage: class Bar(Parent):

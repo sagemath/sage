@@ -76,14 +76,14 @@ def WithRealizations(self):
     realizes `A` with its elements represented by expanding them on
     the basis `B`::
 
-        sage: A.F()                                                                     # needs sage.modules
+        sage: # needs sage.modules
+        sage: A.F()
         The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
-        sage: A.Out()                                                                   # needs sage.modules
+        sage: A.Out()
         The subset algebra of {1, 2, 3} over Rational Field in the Out basis
-        sage: A.In()                                                                    # needs sage.modules
+        sage: A.In()
         The subset algebra of {1, 2, 3} over Rational Field in the In basis
-
-        sage: A.an_element()                                                            # needs sage.modules
+        sage: A.an_element()
         F[{}] + 2*F[{1}] + 3*F[{2}] + F[{1, 2}]
 
     If `B` and `B'` are two bases, then the change of basis from `B`

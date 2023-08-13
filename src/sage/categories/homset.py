@@ -598,7 +598,6 @@ class Homset(Set_generic):
 
     Conversely, homsets of non-unique parents are non-unique::
 
-        sage: # needs sage.schemes
         sage: P11 = ProductProjectiveSpaces(QQ, [1, 1])
         sage: H = End(P11)
         sage: loads(dumps(P11)) is ProductProjectiveSpaces(QQ, [1, 1])
@@ -620,7 +619,7 @@ class Homset(Set_generic):
             sage: class MyHomset(Homset):
             ....:     def _an_element_(self):
             ....:         return sage.categories.morphism.SetMorphism(self, f)
-            sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
+            sage: import __main__; __main__.MyHomset = MyHomset  # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids(), base = ZZ)
             sage: H
             Set of Morphisms from X to Y in Category of monoids
@@ -757,10 +756,10 @@ class Homset(Set_generic):
             sage: hash(Hom(QQ, ZZ)) == hash((QQ, ZZ, QQ))
             True
 
-            sage: E = EllipticCurve('37a')                                              # needs sage.symbolic
-            sage: H = E(0).parent(); H                                                  # needs sage.symbolic
+            sage: E = EllipticCurve('37a')                                              # needs sage.schemes
+            sage: H = E(0).parent(); H                                                  # needs sage.schemes
             Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))                 # needs sage.symbolic
+            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))                 # needs sage.schemes
             True
         """
         return hash((self._domain, self._codomain, self.base()))

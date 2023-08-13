@@ -33,7 +33,7 @@ class ElementWithLabel():
         sage: print(P.plot(element_labels=labs))                                        # needs sage.plot
         Graphics object consisting of 6 graphics primitives
 
-        sage: # needs sage.combinat sage.modules
+        sage: # needs sage.combinat sage.graphs sage.modules
         sage: from sage.misc.element_with_label import ElementWithLabel
         sage: W = WeylGroup("A1")
         sage: P = W.bruhat_poset(facade=True)                                           # needs sage.graphs

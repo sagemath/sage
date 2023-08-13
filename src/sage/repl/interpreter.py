@@ -554,7 +554,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Since :trac:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
-            sage: # needs sage.libs.gap
+            sage: # needs sage.libs.gap sage.symbolic
             sage: shell = interface_shell_embed(gap)
             sage: shell.user_ns = locals()
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
@@ -596,7 +596,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
             sage: shell = interface_shell_embed(maxima)
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
-            ....:                                 prefilter_manager=shell.prefilter_manager)
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)   # note: output contains triple quotation marks
             'sage.repl.interpreter.logstr(r"""4""")'
             sage: ift.shell.ex('a = 4')
@@ -604,9 +604,9 @@ class InterfaceShellTransformer(PrefilterTransformer):
             'sage.repl.interpreter.logstr(r"""8""")'
             sage: ift.temporary_objects
             set()
-            sage: shell = interface_shell_embed(gap)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
-            ....:                                 prefilter_manager=shell.prefilter_manager)
+            sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)
             'sage.repl.interpreter.logstr(r"""4""")'
 
@@ -618,13 +618,14 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap sage.symbolic
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap sage.symbolic
             ....:     prefilter_manager=shell.prefilter_manager)
-            sage: ift.transform(r'Print("  -\n\\\\-  ");', False)                       # needs sage.libs.gap
+            sage: ift.transform(r'Print("  -\n\\\\-  ");', False)                       # needs sage.symbolic
             'sage.repl.interpreter.logstr(r"""  -\n\\\\-""")'
 
-            sage: shell = interface_shell_embed(macaulay2)                              # optional - macaulay2
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # optional - macaulay2
+            sage: # optional - macaulay2
+            sage: shell = interface_shell_embed(macaulay2)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
             ....:     prefilter_manager=shell.prefilter_manager)
-            sage: ift.transform('net(ZZ^2)', False)                                     # optional - macaulay2
+            sage: ift.transform('net(ZZ^2)', False)
             'sage.repl.interpreter.logstr(r"""  2\nZZ""")'
         '''
         line = self.preparse_imports_from_sage(line)

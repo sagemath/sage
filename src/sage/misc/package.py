@@ -297,7 +297,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
         sage: # optional - sage_spkg
         sage: from sage.misc.package import list_packages
         sage: L = list_packages('standard')
-        sage: sorted(L.keys())
+        sage: sorted(L.keys())  # random
         ['alabaster',
          'arb',
          'babel',
@@ -431,7 +431,7 @@ def installed_packages(exclude_pip=True):
         sage: from sage.misc.package import installed_packages
         sage: sorted(installed_packages().keys())
         [...'conway_polynomials', ...]
-        sage: installed_packages()['conway_polynomials']
+        sage: installed_packages()['conway_polynomials']  # random
         '0.5'
 
     .. SEEALSO::
@@ -543,7 +543,7 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)
         sage: 'gap' in std
         True
-        sage: std['zlib']
+        sage: std['zlib']  # random
         ('1.2.11.p0', '1.2.11.p0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}

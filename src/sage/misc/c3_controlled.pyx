@@ -1100,7 +1100,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         """
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.graphs
+            sage: # needs sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
             sage: x = HierarchyElement(10, P)

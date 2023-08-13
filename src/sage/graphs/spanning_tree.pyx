@@ -36,10 +36,8 @@ Methods
 
 from memory_allocator cimport MemoryAllocator
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
-from sage.misc.decorators import rename_keyword
 
 
-@rename_keyword(deprecation=32805, wfunction='weight_function')
 def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=False):
     r"""
     Minimum spanning tree using Kruskal's algorithm.
@@ -243,19 +241,11 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
         Traceback (most recent call last):
         ...
         ValueError: the input graph must be undirected
-
-    Rename warning for parameter ``wfunction`` (:trac:`32805`)::
-
-        sage: kruskal(Graph(1), wfunction=lambda e: 2)
-        doctest:...: DeprecationWarning: use the option 'weight_function' instead of 'wfunction'
-        See https://github.com/sagemath/sage/issues/32805 for details.
-        []
     """
     return list(kruskal_iterator(G, by_weight=by_weight, weight_function=weight_function,
                                  check_weight=check_weight, check=check))
 
 
-@rename_keyword(deprecation=32805, wfunction='weight_function')
 def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False, bint check=False):
     """
     Return an iterator implementation of Kruskal algorithm.
@@ -323,13 +313,6 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
         Traceback (most recent call last):
         ...
         ValueError: the input graph must be undirected
-
-    Rename warning for parameter ``wfunction`` (:trac:`32805`)::
-
-        sage: list(kruskal_iterator(Graph(1), wfunction=lambda e: 2))
-        doctest:...: DeprecationWarning: use the option 'weight_function' instead of 'wfunction'
-        See https://github.com/sagemath/sage/issues/32805 for details.
-        []
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -357,7 +340,6 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
                                            check_weight=False)
 
 
-@rename_keyword(deprecation=32805, weighted='by_weight')
 def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
                                 weight_function=None, check_weight=False):
     """
@@ -400,18 +382,6 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
         sage: union_set = DisjointSet(G)
         sage: next(kruskal_iterator_from_edges(G.edges(sort=False), union_set, by_weight=G.weighted()))
         (1, 6, 10)
-
-    TESTS:
-
-    Rename warning for parameter ``weighted`` (:trac:`32805`)::
-
-        sage: from sage.graphs.spanning_tree import kruskal_iterator_from_edges
-        sage: G = Graph([(0, 1)])
-        sage: union_set = DisjointSet(G)
-        sage: next(kruskal_iterator_from_edges(G.edges(sort=True), union_set, weighted=False))
-        doctest:...: DeprecationWarning: use the option 'by_weight' instead of 'weighted'
-        See https://github.com/sagemath/sage/issues/32805 for details.
-        (0, 1, None)
     """
     # We sort edges, as specified.
     if weight_function is not None:
@@ -698,7 +668,6 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
             stack.append((begin, i - 1))
 
 
-@rename_keyword(deprecation=32805, wfunction='weight_function')
 def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=False):
     r"""
     Minimum spanning tree using Boruvka's algorithm.
@@ -807,13 +776,6 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         Traceback (most recent call last):
         ...
         ValueError: the input graph must be undirected
-
-    Rename warning for parameter ``wfunction`` (:trac:`32805`)::
-
-        sage: boruvka(Graph(1), wfunction=lambda e: 2)
-        doctest:...: DeprecationWarning: use the option 'weight_function' instead of 'wfunction'
-        See https://github.com/sagemath/sage/issues/32805 for details.
-        []
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):

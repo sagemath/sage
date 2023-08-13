@@ -139,17 +139,18 @@ class Fields(CategoryWithAxiom):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2 + 2)                                               # needs sage.libs.pari
-            sage: Q.category()                                                          # needs sage.libs.pari
+            sage: Q = P.quotient(x^2 + 2)
+            sage: Q.category()
             Category of commutative no zero divisors quotients of algebras
              over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
-            sage: F._contains_helper(Q)                                                 # needs sage.libs.pari
+            sage: F._contains_helper(Q)
             False
-            sage: Q in F  # This changes the category!                                  # needs sage.libs.pari
+            sage: Q in F  # This changes the category!
             True
-            sage: F._contains_helper(Q)                                                 # needs sage.libs.pari
+            sage: F._contains_helper(Q)
             True
 
         """
@@ -167,7 +168,7 @@ class Fields(CategoryWithAxiom):
             sage: Fields().super_categories()
             [Category of euclidean domains, Category of division rings]
 
-            sage: K(IntegerRing()) # indirect doctest
+            sage: K(IntegerRing())  # indirect doctest
             Rational Field
             sage: K(PolynomialRing(GF(3), 'x')) # indirect doctest
             Fraction Field of Univariate Polynomial Ring in x over

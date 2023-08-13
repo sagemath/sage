@@ -574,7 +574,7 @@ class HasseDiagram(DiGraph):
             sage: H.is_isomorphic( H.dual() )                                           # needs sage.combinat
             False
         """
-        H = self.reverse()
+        H = self.reverse(immutable=False)
         H.relabel(perm=list(range(H.num_verts() - 1, -1, -1)), inplace=True)
         return HasseDiagram(H)
 
@@ -1068,28 +1068,27 @@ class HasseDiagram(DiGraph):
 
         TESTS::
 
-            sage: H.moebius_function_matrix().is_immutable()                            # needs sage.libs.flint sage.modules
+            sage: # needs sage.modules sage.libs.flint
+            sage: H.moebius_function_matrix().is_immutable()
             True
-            sage: hasattr(H,'_moebius_function_matrix')                                 # needs sage.libs.flint sage.modules
+            sage: hasattr(H,'_moebius_function_matrix')
             True
-
-            sage: H.moebius_function == H._moebius_function_from_matrix                 # needs sage.libs.flint sage.modules
+            sage: H.moebius_function == H._moebius_function_from_matrix
             True
-
             sage: H = posets.TamariLattice(3)._hasse_diagram
-            sage: M = H.moebius_function_matrix('matrix'); M                            # needs sage.modules
+            sage: M = H.moebius_function_matrix('matrix'); M
             [ 1 -1 -1  0  1]
             [ 0  1  0  0 -1]
             [ 0  0  1 -1  0]
             [ 0  0  0  1 -1]
             [ 0  0  0  0  1]
-            sage: _ = H.__dict__.pop('_moebius_function_matrix')                        # needs sage.modules
-            sage: H.moebius_function_matrix('cython') == M                              # needs sage.libs.flint sage.modules
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('cython') == M
             True
-            sage: _ = H.__dict__.pop('_moebius_function_matrix')                        # needs sage.libs.flint sage.modules
-            sage: H.moebius_function_matrix('recursive') == M                           # needs sage.modules
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
+            sage: H.moebius_function_matrix('recursive') == M
             True
-            sage: _ = H.__dict__.pop('_moebius_function_matrix')                        # needs sage.modules
+            sage: _ = H.__dict__.pop('_moebius_function_matrix')
             sage: H.moebius_function_matrix('banana')
             Traceback (most recent call last):
             ...
@@ -1160,27 +1159,27 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # needs sage.libs.flint sage.modules
             sage: P = posets.PentagonPoset()._hasse_diagram
-            sage: M = P.coxeter_transformation(); M                                     # needs sage.libs.flint
+            sage: M = P.coxeter_transformation(); M
             [ 0  0  0  0 -1]
             [ 0  0  0  1 -1]
             [ 0  1  0  0 -1]
             [-1  1  1  0 -1]
             [-1  1  0  1 -1]
-            sage: P.__dict__['coxeter_transformation'].clear_cache()                    # needs sage.libs.flint
-            sage: P.coxeter_transformation(algorithm="matrix") == M                     # needs sage.libs.flint
+            sage: P.__dict__['coxeter_transformation'].clear_cache()
+            sage: P.coxeter_transformation(algorithm="matrix") == M
             True
 
         TESTS::
 
-            sage: # needs sage.modules
+            sage: # needs sage.libs.flint sage.modules
             sage: P = posets.PentagonPoset()._hasse_diagram
-            sage: M = P.coxeter_transformation()                                        # needs sage.libs.flint
-            sage: M**8 == 1                                                             # needs sage.libs.flint
+            sage: M = P.coxeter_transformation()
+            sage: M**8 == 1
             True
-            sage: P.__dict__['coxeter_transformation'].clear_cache()                    # needs sage.libs.flint
-            sage: P.coxeter_transformation(algorithm="banana")                          # needs sage.libs.flint
+            sage: P.__dict__['coxeter_transformation'].clear_cache()
+            sage: P.coxeter_transformation(algorithm="banana")
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm
@@ -2231,18 +2230,15 @@ class HasseDiagram(DiGraph):
             <generator object ...antichains_iterator at ...>
             sage: list(H.antichains_iterator())
             [[], [4], [3], [2], [1], [1, 3], [1, 2], [0]]
-
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[4],2:[3],3:[4]})
-            sage: list(H.antichains_iterator())                                         # needs sage.modules
+            sage: list(H.antichains_iterator())
             [[], [4], [3], [2], [1], [1, 3], [1, 2], [0]]
-
             sage: H = HasseDiagram({0:[],1:[],2:[]})
-            sage: list(H.antichains_iterator())                                         # needs sage.modules
+            sage: list(H.antichains_iterator())
             [[], [2], [1], [1, 2], [0], [0, 2], [0, 1], [0, 1, 2]]
-
             sage: H = HasseDiagram({0:[1],1:[2],2:[3],3:[4]})
-            sage: list(H.antichains_iterator())                                         # needs sage.modules
+            sage: list(H.antichains_iterator())
             [[], [4], [3], [2], [1], [0]]
 
         TESTS::
@@ -2351,12 +2347,12 @@ class HasseDiagram(DiGraph):
 
         TESTS::
 
-            sage: TestSuite(A).run()                                                    # needs sage.modules
-
-            sage: A = Poset()._hasse_diagram.antichains()                               # needs sage.modules
-            sage: list(A)                                                               # needs sage.modules
+            sage: # needs sage.modules
+            sage: TestSuite(A).run()
+            sage: A = Poset()._hasse_diagram.antichains()
+            sage: list(A)
             [[]]
-            sage: TestSuite(A).run()                                                    # needs sage.modules
+            sage: TestSuite(A).run()
         """
         from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
         return PairwiseCompatibleSubsets(self.vertices(sort=True),
@@ -2405,7 +2401,8 @@ class HasseDiagram(DiGraph):
 
         One can exclude some vertices::
 
-            sage: list(H.chains(exclude=[4, 3]))                                        # needs sage.modules
+            sage: # needs sage.modules
+            sage: list(H.chains(exclude=[4, 3]))
             [[], [0], [0, 1], [0, 2], [1], [2]]
 
         The ``element_class`` keyword determines how the chains are
@@ -2433,7 +2430,6 @@ class HasseDiagram(DiGraph):
         This means that this interval is a total order.
 
         EXAMPLES::
-
             sage: # needs sage.modules
             sage: P = posets.PentagonPoset()
             sage: H = P._hasse_diagram

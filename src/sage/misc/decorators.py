@@ -199,6 +199,7 @@ class infix_operator():
 
     An infix element-wise addition operator::
 
+        sage: # needs sage.modules
         sage: @infix_operator('add')
         ....: def eadd(a, b):
         ....:   return a.parent([i + j for i, j in zip(a, b)])

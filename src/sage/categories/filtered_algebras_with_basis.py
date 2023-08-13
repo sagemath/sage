@@ -352,8 +352,8 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             is already graded, so its associated graded algebra is
             implemented as itself::
 
-                sage: # needs sage.modules
-                sage: grh = h.graded_algebra(); grh is h                                # needs sage.all
+                sage: # needs sage.all sage.modules
+                sage: grh = h.graded_algebra(); grh is h
                 True
                 sage: grf = A.induced_graded_map(h, f); grf                             # needs sage.all
                 Generic morphism:

@@ -107,19 +107,19 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     compute a 200-bit approximation to `sqrt(2)` which is wrong in the
     33'rd bit::
 
-        sage: # needs sage.rings.real_mpfr
+        sage: # needs sage.libs.pari sage.rings.real_mpfr
         sage: z = sqrt(RealField(200)(2)) + (1/2)^33
-        sage: p = algdep(z, 4); p                                                       # needs sage.libs.pari
+        sage: p = algdep(z, 4); p
         227004321085*x^4 - 216947902586*x^3 - 99411220986*x^2 + 82234881648*x - 211871195088
-        sage: factor(p)                                                                 # needs sage.libs.pari
+        sage: factor(p)
         227004321085*x^4 - 216947902586*x^3 - 99411220986*x^2 + 82234881648*x - 211871195088
-        sage: algdep(z, 4, known_bits=32)                                               # needs sage.libs.pari
+        sage: algdep(z, 4, known_bits=32)
         x^2 - 2
-        sage: algdep(z, 4, known_digits=10)                                             # needs sage.libs.pari
+        sage: algdep(z, 4, known_digits=10)
         x^2 - 2
-        sage: algdep(z, 4, use_bits=25)                                                 # needs sage.libs.pari
+        sage: algdep(z, 4, use_bits=25)
         x^2 - 2
-        sage: algdep(z, 4, use_digits=8)                                                # needs sage.libs.pari
+        sage: algdep(z, 4, use_digits=8)
         x^2 - 2
 
     Using the ``height_bound`` and ``proof`` parameters, we can see that
@@ -131,18 +131,18 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     For stronger results, we need more precision::
 
-        sage: algdep(pi.n(), 5, height_bound=100, proof=True) is None                   # needs sage.libs.pari sage.symbolic
+        sage: # needs sage.libs.pari sage.symbolic
+        sage: algdep(pi.n(), 5, height_bound=100, proof=True) is None
         Traceback (most recent call last):
         ...
         ValueError: insufficient precision for non-existence proof
-        sage: algdep(pi.n(200), 5, height_bound=100, proof=True) is None                # needs sage.libs.pari sage.symbolic
+        sage: algdep(pi.n(200), 5, height_bound=100, proof=True) is None
         True
-
-        sage: algdep(pi.n(), 10, height_bound=10, proof=True) is None                   # needs sage.libs.pari sage.symbolic
+        sage: algdep(pi.n(), 10, height_bound=10, proof=True) is None
         Traceback (most recent call last):
         ...
         ValueError: insufficient precision for non-existence proof
-        sage: algdep(pi.n(200), 10, height_bound=10, proof=True) is None                # needs sage.libs.pari sage.symbolic
+        sage: algdep(pi.n(200), 10, height_bound=10, proof=True) is None
         True
 
     We can also use ``proof=True`` to get positive results::
@@ -594,19 +594,20 @@ def is_pseudoprime(n):
 
     EXAMPLES::
 
-        sage: is_pseudoprime(389)                                                       # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: is_pseudoprime(389)
         True
-        sage: is_pseudoprime(2000)                                                      # needs sage.libs.pari
+        sage: is_pseudoprime(2000)
         False
-        sage: is_pseudoprime(2)                                                         # needs sage.libs.pari
+        sage: is_pseudoprime(2)
         True
-        sage: is_pseudoprime(-1)                                                        # needs sage.libs.pari
+        sage: is_pseudoprime(-1)
         False
         sage: factor(-6)
         -1 * 2 * 3
-        sage: is_pseudoprime(1)                                                         # needs sage.libs.pari
+        sage: is_pseudoprime(1)
         False
-        sage: is_pseudoprime(-2)                                                        # needs sage.libs.pari
+        sage: is_pseudoprime(-2)
         False
     """
     return ZZ(n).is_pseudoprime()
@@ -1443,7 +1444,7 @@ def random_prime(n, proof=None, lbound=2):
         <class 'sage.rings.integer.Integer'>
         sage: type(random_prime(100))
         <class 'sage.rings.integer.Integer'>
-        sage: random_prime(1, lbound=-2)   #caused Sage hang #10112
+        sage: random_prime(1, lbound=-2)   # caused Sage hang #10112
         Traceback (most recent call last):
         ...
         ValueError: n must be greater than or equal to 2
@@ -1635,19 +1636,22 @@ class Sigma:
 
         sage: sigma(100,4)
         106811523
-        sage: sigma(factorial(100), 3).mod(144169)                                      # needs sage.libs.pari
+
+        sage: # needs sage.libs.pari
+        sage: sigma(factorial(100), 3).mod(144169)
         3672
-        sage: sigma(factorial(150), 12).mod(691)                                        # needs sage.libs.pari
+        sage: sigma(factorial(150), 12).mod(691)
         176
-        sage: RR(sigma(factorial(133),20))                                              # needs sage.libs.pari sage.rings.real_mpfr
+        sage: RR(sigma(factorial(133),20))                                              # needs sage.rings.real_mpfr
         2.80414775675747e4523
-        sage: sigma(factorial(100),0)                                                   # needs sage.libs.pari
+        sage: sigma(factorial(100),0)
         39001250856960000
-        sage: sigma(factorial(41),1)                                                    # needs sage.libs.pari
+        sage: sigma(factorial(41),1)
         229199532273029988767733858700732906511758707916800
         sage: from numpy import int8                                                    # needs numpy
-        sage: sigma(int8(100), int8(4))                                                 # needs numpy sage.libs.pari
+        sage: sigma(int8(100), int8(4))                                                 # needs numpy
         106811523
+
         sage: from gmpy2 import mpz
         sage: sigma(mpz(100), mpz(4))
         106811523
@@ -1797,13 +1801,13 @@ def gcd(a, b=None, **kwargs):
     The following shows that indeed coercion takes place before computing
     the gcd. This behaviour was introduced in :trac:`10771`::
 
-        sage: R.<x>=QQ[]
-        sage: S.<x>=ZZ[]
+        sage: R.<x> = QQ[]
+        sage: S.<x> = ZZ[]
         sage: p = S.random_element(degree=(0,10))
         sage: q = R.random_element(degree=(0,10))
-        sage: parent(gcd(1/p,q))
+        sage: parent(gcd(1/p, q))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
-        sage: parent(gcd([1/p,q]))
+        sage: parent(gcd([1/p, q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
     Make sure we try QQ and not merely ZZ (:trac:`13014`)::
@@ -5068,17 +5072,19 @@ def falling_factorial(x, a):
 
         sage: falling_factorial(10, 3)
         720
-        sage: falling_factorial(10, RR('3.0'))                                          # needs sage.symbolic
-        720.000000000000
-        sage: falling_factorial(10, RR('3.3'))                                          # needs sage.symbolic
-        1310.11633396601
         sage: falling_factorial(10, 10)
         3628800
         sage: factorial(10)
         3628800
-        sage: a = falling_factorial(1 + I, I); a                                        # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: falling_factorial(10, RR('3.0'))
+        720.000000000000
+        sage: falling_factorial(10, RR('3.3'))
+        1310.11633396601
+        sage: a = falling_factorial(1 + I, I); a
         gamma(I + 2)
-        sage: CC(a)                                                                     # needs sage.symbolic
+        sage: CC(a)
         0.652965496420167 + 0.343065839816545*I
         sage: falling_factorial(1 + I, 4)                                               # needs sage.symbolic
         4*I + 2
@@ -5087,7 +5093,7 @@ def falling_factorial(x, a):
 
         sage: M = MatrixSpace(ZZ, 4, 4)                                                 # needs sage.modules
         sage: A = M([1,0,1,0, 1,0,1,0, 1,0,10,10, 1,0,1,1])                             # needs sage.modules
-        sage: falling_factorial(A, 2) # A(A - I)                                        # needs sage.modules
+        sage: falling_factorial(A, 2)  # A(A - I)                                       # needs sage.modules
         [  1   0  10  10]
         [  1   0  10  10]
         [ 20   0 101 100]
@@ -5171,18 +5177,16 @@ def rising_factorial(x, a):
         sage: rising_factorial(10,3)
         1320
 
-        sage: rising_factorial(10, RR('3.0'))                                           # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: rising_factorial(10, RR('3.0'))
         1320.00000000000
-
-        sage: rising_factorial(10, RR('3.3'))                                           # needs sage.symbolic
+        sage: rising_factorial(10, RR('3.3'))
         2826.38895824964
-
-        sage: a = rising_factorial(1+I, I); a                                           # needs sage.symbolic
+        sage: a = rising_factorial(1+I, I); a
         gamma(2*I + 1)/gamma(I + 1)
         sage: CC(a)                                                                     # needs sage.symbolic
         0.266816390637832 + 0.122783354006372*I
-
-        sage: a = rising_factorial(I, 4); a                                             # needs sage.symbolic
+        sage: a = rising_factorial(I, 4); a
         -10
 
         sage: x = polygen(ZZ)
@@ -5474,7 +5478,8 @@ def three_squares(n):
         sage: three_squares(7^100)
         (0, 0, 1798465042647412146620280340569649349251249)
         sage: three_squares(11^111 - 1)                                                 # needs sage.libs.pari
-        (616274160655975340150706442680, 901582938385735143295060746161, 6270382387635744140394001363065311967964099981788593947233)
+        (616274160655975340150706442680, 901582938385735143295060746161,
+         6270382387635744140394001363065311967964099981788593947233)
         sage: three_squares(7 * 2^41)                                                   # needs sage.libs.pari
         (1048576, 2097152, 3145728)
         sage: three_squares(7 * 2^42)
@@ -5618,8 +5623,9 @@ def four_squares(n):
         sage: four_squares(1101011011004)
         (90, 102, 1220, 1049290)
         sage: four_squares(10^100 - 1)                                                  # needs sage.libs.pari
-        (155024616290, 2612183768627, 14142135623730950488016887, 99999999999999999999999999999999999999999999999999)
-        sage: for i in range(2^129, 2^129+10000):       # long time                     # needs sage.libs.pari
+        (155024616290, 2612183768627, 14142135623730950488016887,
+         99999999999999999999999999999999999999999999999999)
+        sage: for i in range(2^129, 2^129 + 10000):     # long time                     # needs sage.libs.pari
         ....:     S = four_squares(i)
         ....:     assert sum(x^2 for x in S) == i
 
@@ -5695,7 +5701,11 @@ def sum_of_k_squares(k, n):
         sage: sum_of_k_squares(5, 9634)
         (0, 1, 2, 5, 98)
         sage: sum_of_k_squares(6, 11^1111 - 1)                                          # needs sage.libs.pari
-        (19215400822645944253860920437586326284, 37204645194585992174252915693267578306, 3473654819477394665857484221256136567800161086815834297092488779216863122, 5860191799617673633547572610351797996721850737768032876360978911074629287841061578270832330322236796556721252602860754789786937515870682024273948, 20457423294558182494001919812379023992538802203730791019728543439765347851316366537094696896669915675685581905102118246887673397020172285247862426612188418787649371716686651256443143210952163970564228423098202682066311189439731080552623884051737264415984619097656479060977602722566383385989, 311628095411678159849237738619458396497534696043580912225334269371611836910345930320700816649653412141574887113710604828156159177769285115652741014638785285820578943010943846225597311231847997461959204894255074229895666356909071243390280307709880906261008237873840245959883405303580405277298513108957483306488193844321589356441983980532251051786704380984788999660195252373574924026139168936921591652831237741973242604363696352878914129671292072201700073286987126265965322808664802662993006926302359371379531571194266134916767573373504566621665949840469229781956838744551367172353)
+        (19215400822645944253860920437586326284, 37204645194585992174252915693267578306,
+         3473654819477394665857484221256136567800161086815834297092488779216863122,
+         5860191799617673633547572610351797996721850737768032876360978911074629287841061578270832330322236796556721252602860754789786937515870682024273948,
+         20457423294558182494001919812379023992538802203730791019728543439765347851316366537094696896669915675685581905102118246887673397020172285247862426612188418787649371716686651256443143210952163970564228423098202682066311189439731080552623884051737264415984619097656479060977602722566383385989,
+         311628095411678159849237738619458396497534696043580912225334269371611836910345930320700816649653412141574887113710604828156159177769285115652741014638785285820578943010943846225597311231847997461959204894255074229895666356909071243390280307709880906261008237873840245959883405303580405277298513108957483306488193844321589356441983980532251051786704380984788999660195252373574924026139168936921591652831237741973242604363696352878914129671292072201700073286987126265965322808664802662993006926302359371379531571194266134916767573373504566621665949840469229781956838744551367172353)
         sage: sum_of_k_squares(7, 0)
         (0, 0, 0, 0, 0, 0, 0)
         sage: sum_of_k_squares(30,999999)
@@ -5954,6 +5964,7 @@ def sort_complex_numbers_for_display(nums):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.complex_double
         sage: import sage.arith.misc
         sage: sort_c = sort_complex_numbers_for_display
         sage: nums = [CDF(i) for i in range(3)]                                         # needs sage.rings.complex_double
@@ -5973,7 +5984,6 @@ def sort_complex_numbers_for_display(nums):
         sage: assert first_non_real >= 3                                                # needs sage.rings.complex_double
         sage: for i in range(first_non_real - 1):                                       # needs sage.rings.complex_double
         ....:     assert nums[i].real() <= nums[i + 1].real()
-
         sage: def truncate(n):
         ....:     if n.real() < 1e-10:
         ....:         return 0

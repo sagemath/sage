@@ -591,7 +591,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if self is other:
             return True
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return ((self.base_ring(), self.variable_name(), self.category()) ==
                 (other.base_ring(), other.variable_name(), other.category()))

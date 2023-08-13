@@ -923,9 +923,6 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         # this algorithm was written by Francis Clarke see issue #9407
 
-        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-        from sage.rings.integer_ring import IntegerRing
-        ZZ = IntegerRing()
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix
 

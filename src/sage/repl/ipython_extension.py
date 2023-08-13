@@ -384,6 +384,7 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('''

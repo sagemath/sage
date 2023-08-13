@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat, sage.groups
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
 """

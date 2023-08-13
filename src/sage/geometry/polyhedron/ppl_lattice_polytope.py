@@ -1047,7 +1047,6 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         EXAMPLES::
 
-
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: Z3square = LatticePolytope_PPL((0,0), (1,2), (2,1), (3,3))
             sage: Z3square.lattice_automorphism_group()                                 # needs sage.graphs sage.groups

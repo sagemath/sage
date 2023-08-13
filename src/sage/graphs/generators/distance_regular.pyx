@@ -1755,8 +1755,8 @@ def _line_graph_generalised_polygon(H):
     EXAMPLES::
 
         sage: # needs sage.libs.gap
-        sage: from sage.graphs.generators.distance_regular import \
-        ....: _line_graph_generalised_polygon
+        sage: from sage.graphs.generators.distance_regular import (
+        ....:     _line_graph_generalised_polygon)
         sage: G = graphs.GeneralisedHexagonGraph(1, 8)
         sage: H = _line_graph_generalised_polygon(G)
         sage: H.is_distance_regular(True)

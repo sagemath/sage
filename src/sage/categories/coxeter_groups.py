@@ -1726,10 +1726,11 @@ class CoxeterGroups(Category_singleton):
                 sage: sorted(w.reduced_words())                                         # needs sage.combinat sage.groups
                 [[2, 3, 4, 2], [3, 2, 4, 2], [3, 4, 2, 4]]
 
-                sage: W = ReflectionGroup(['A',3],                    # optional - gap3
+                sage: # optional - gap3, needs sage.combinat sage.groups
+                sage: W = ReflectionGroup(['A',3],
                 ....:                     index_set=["AA","BB","5"])
                 sage: w = W.long_element()
-                sage: w.reduced_words()                               # optional - gap3
+                sage: w.reduced_words()
                 [['BB', '5', 'AA', 'BB', '5', 'AA'],
                  ['5', 'BB', '5', 'AA', 'BB', '5'],
                  ['BB', 'AA', 'BB', '5', 'BB', 'AA'],
@@ -1812,19 +1813,19 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: # needs sage.combinat sage.groups
+                sage: # needs sage.combinat sage.graphs sage.groups
                 sage: W = WeylGroup(['A', 3], prefix='s')
                 sage: w0 = W.long_element()
-                sage: G = w0.reduced_word_graph()                                       # needs sage.graphs
-                sage: G.num_verts()                                                     # needs sage.graphs
+                sage: G = w0.reduced_word_graph()
+                sage: G.num_verts()
                 16
-                sage: len(w0.reduced_words())                                           # needs sage.graphs
+                sage: len(w0.reduced_words())
                 16
-                sage: G.num_edges()                                                     # needs sage.graphs
+                sage: G.num_edges()
                 18
-                sage: len([e for e in G.edges(sort=False) if e[2] == 2])                # needs sage.graphs
+                sage: len([e for e in G.edges(sort=False) if e[2] == 2])
                 10
-                sage: len([e for e in G.edges(sort=False) if e[2] == 3])                # needs sage.graphs
+                sage: len([e for e in G.edges(sort=False) if e[2] == 3])
                 8
 
             TESTS::
@@ -1834,12 +1835,12 @@ class CoxeterGroups(Category_singleton):
                 sage: pp.reduced_word_graph()                                           # needs sage.combinat sage.graphs sage.groups
                 Graph on 3 vertices
 
-                sage: # needs sage.combinat sage.groups
+                sage: # needs sage.combinat sage.graphs sage.groups
                 sage: w1 = W.one()
-                sage: G = w1.reduced_word_graph()                                       # needs sage.graphs
-                sage: G.num_verts()                                                     # needs sage.graphs
+                sage: G = w1.reduced_word_graph()
+                sage: G.num_verts()
                 1
-                sage: G.num_edges()                                                     # needs sage.graphs
+                sage: G.num_edges()
                 0
 
             .. SEEALSO::
@@ -2525,14 +2526,14 @@ class CoxeterGroups(Category_singleton):
                 ....:     for v in P4:
                 ....:         assert u.bruhat_lequal(v) == P4toW(u).bruhat_le(P4toW(v))
 
-                sage: # needs sage.combinat sage.groups
+                sage: # needs sage.combinat sage.graphs sage.groups
                 sage: W = WeylGroup(["B", 3])
-                sage: P = W.bruhat_poset()  # This is built from bruhat_lower_covers    # needs sage.graphs
-                sage: Q = Poset((W, attrcall("bruhat_le")))     # long time (10s), needs sage.graphs
-                sage: all(u.bruhat_le(v) == P.is_lequal(u,v)    # long time (7s)        # needs sage.graphs
+                sage: P = W.bruhat_poset()  # This is built from bruhat_lower_covers
+                sage: Q = Poset((W, attrcall("bruhat_le")))     # long time (10s)
+                sage: all(u.bruhat_le(v) == P.is_lequal(u,v)    # long time (7s)
                 ....:     for u in W for v in W)
                 True
-                sage: all(P.is_lequal(u,v) == Q.is_lequal(u,v)  # long time (9s)        # needs sage.graphs
+                sage: all(P.is_lequal(u,v) == Q.is_lequal(u,v)  # long time (9s)
                 ....:     for u in W for v in W)
                 True
             """
@@ -2902,7 +2903,8 @@ class CoxeterGroups(Category_singleton):
                 sage: w.deodhar_factor_element(W.from_reduced_word([2]),[1])
                 Traceback (most recent call last):
                 ...
-                ValueError: [2, 1] is not of minimum length in its coset for the parabolic subgroup with index set [1]
+                ValueError: [2, 1] is not of minimum length in its coset
+                for the parabolic subgroup with index set [1]
 
             REFERENCES:
 
@@ -3148,32 +3150,32 @@ class CoxeterGroups(Category_singleton):
             the background if available to speed up the computation,
             even in the different implementations implementations::
 
-                sage: # optional - coxeter3
-                sage: W = WeylGroup('A3', prefix='s')                                   # needs sage.modules
-                sage: s1,s2,s3 = W.simple_reflections()                                 # needs sage.combinat sage.groups
-                sage: s1.kazhdan_lusztig_cell()                                         # needs sage.combinat sage.groups
+                sage: # optional - coxeter3, needs sage.combinat sage.groups sage.modules
+                sage: W = WeylGroup('A3', prefix='s')
+                sage: s1,s2,s3 = W.simple_reflections()
+                sage: s1.kazhdan_lusztig_cell()
                 {s3*s2*s1, s2*s1, s1}
-                sage: W = CoxeterGroup('A3', implementation='coxeter3')                 # needs sage.modules
-                sage: s1,s2,s3 = W.simple_reflections()                                 # needs sage.combinat sage.groups
-                sage: s1.kazhdan_lusztig_cell()                                         # needs sage.combinat sage.groups
+                sage: W = CoxeterGroup('A3', implementation='coxeter3')
+                sage: s1,s2,s3 = W.simple_reflections()
+                sage: s1.kazhdan_lusztig_cell()
                 {[1], [2, 1], [3, 2, 1]}
 
            Next, we compute a right cell and a two-sided cell in `A_3`::
 
-                sage: # optional - coxeter3
-                sage: W = CoxeterGroup('A3', implementation='coxeter3')                 # needs sage.modules
-                sage: s1,s2,s3 = W.simple_reflections()                                 # needs sage.combinat sage.groups
-                sage: w = s1 * s3                                                       # needs sage.combinat sage.groups
-                sage: w.kazhdan_lusztig_cell(side='right')                              # needs sage.combinat sage.groups
+                sage: # optional - coxeter3, needs sage.combinat sage.groups sage.modules
+                sage: W = CoxeterGroup('A3', implementation='coxeter3')
+                sage: s1,s2,s3 = W.simple_reflections()
+                sage: w = s1 * s3
+                sage: w.kazhdan_lusztig_cell(side='right')
                 {[1, 3], [1, 3, 2]}
-                sage: w.kazhdan_lusztig_cell(side='two-sided')                          # needs sage.combinat sage.groups
+                sage: w.kazhdan_lusztig_cell(side='two-sided')
                 {[1, 3], [1, 3, 2], [2, 1, 3], [2, 1, 3, 2]}
 
             Some slightly longer computations in `B_4`::
 
-                sage: # optional - coxeter3
-                sage: W = CoxeterGroup('B4', implementation='coxeter3')                 # needs sage.modules
-                sage: s1,s2,s3,s4 = W.simple_reflections()                              # needs sage.combinat sage.groups
+                sage: # optional - coxeter3, needs sage.combinat sage.groups sage.modules
+                sage: W = CoxeterGroup('B4', implementation='coxeter3')
+                sage: s1,s2,s3,s4 = W.simple_reflections()
                 sage: s1.kazhdan_lusztig_cell(side='right')     # long time (4 seconds)
                 {[1],
                  [1, 2],

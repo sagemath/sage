@@ -1184,7 +1184,7 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             True
 
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
@@ -1317,7 +1317,7 @@ class FractionFieldEmbeddingSection(Section):
             True
 
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 

@@ -2286,7 +2286,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
             True
 
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp(self.parent(), other.parent(), op)
 

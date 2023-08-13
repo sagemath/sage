@@ -367,9 +367,8 @@ class Groups(CategoryWithAxiom):
             Elements will be coerced into the group as part of setting
             up the table.  ::
 
-                sage: # needs sage.groups
-                sage: G = SL(2,ZZ)
-                sage: G
+                sage: # needs sage.modules
+                sage: G = SL(2,ZZ); G
                 Special Linear Group of degree 2 over Integer Ring
                 sage: identity = matrix(ZZ, [[1,0], [0,1]])
                 sage: G.cayley_table(elements=[identity, -identity])
@@ -389,11 +388,11 @@ class Groups(CategoryWithAxiom):
             confirms that they form a closed subset in the group.
             ::
 
-                sage: from sage.matrix.operation_table import OperationTable            # needs sage.modules
-                sage: G = DiCyclicGroup(3)                                              # needs sage.groups
+                sage: # needs sage.groups sage.modules
+                sage: from sage.matrix.operation_table import OperationTable
+                sage: G = DiCyclicGroup(3)
                 sage: commutator = lambda x, y: x*y*x^-1*y^-1
-                sage: T = OperationTable(G, commutator)                                 # needs sage.groups sage.modules
-                sage: T                                                                 # needs sage.groups
+                sage: T = OperationTable(G, commutator); T
                 .  a b c d e f g h i j k l
                  +------------------------
                 a| a a a a a a a a a a a a
@@ -408,8 +407,6 @@ class Groups(CategoryWithAxiom):
                 j| a b c a b c a c b a c b
                 k| a b c a b c b a c b a c
                 l| a b c a b c c b a c b a
-
-                sage: # needs sage.groups
                 sage: trans = T.translation()
                 sage: comm = [trans['a'], trans['b'], trans['c']]
                 sage: comm
@@ -470,7 +467,7 @@ class Groups(CategoryWithAxiom):
                 sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                   # needs sage.modules
                 ....:                  matrix(GF(5), 2, [1,1, 0,1])])
                 sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                              # needs sage.modules
-                sage: h.conjugacy_class()                                               # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: h.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 2]
                                    [4 1]
                 in Matrix group over Finite Field of size 5 with 2 generators (
@@ -479,8 +476,8 @@ class Groups(CategoryWithAxiom):
                 )
 
                 sage: G = SL(2, GF(2))                                                  # needs sage.modules
-                sage: g = G.gens()[0]                                                   # needs sage.groups sage.modules sage.rings.finite_rings
-                sage: g.conjugacy_class()                                               # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: g = G.gens()[0]                                                   # needs sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 

@@ -469,24 +469,25 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             invertible elements on its diagonal. This is used to compute
             preimages and to invert the morphism::
 
+                sage: # needs sage.modules
                 sage: I = list(range(1, 200))
-                sage: X = CombinatorialFreeModule(QQ, I); X.rename("X"); x = X.basis()  # needs sage.modules
-                sage: Y = CombinatorialFreeModule(QQ, I); Y.rename("Y"); y = Y.basis()  # needs sage.modules
-                sage: f = Y.sum_of_monomials * divisors                                 # needs sage.modules
-                sage: phi = X.module_morphism(f, triangular="upper", codomain=Y)        # needs sage.modules
-                sage: phi(x[2])                                                         # needs sage.modules
+                sage: X = CombinatorialFreeModule(QQ, I); X.rename("X"); x = X.basis()
+                sage: Y = CombinatorialFreeModule(QQ, I); Y.rename("Y"); y = Y.basis()
+                sage: f = Y.sum_of_monomials * divisors
+                sage: phi = X.module_morphism(f, triangular="upper", codomain=Y)
+                sage: phi(x[2])
                 B[1] + B[2]
-                sage: phi(x[6])                                                         # needs sage.modules
+                sage: phi(x[6])
                 B[1] + B[2] + B[3] + B[6]
-                sage: phi(x[30])                                                        # needs sage.modules
+                sage: phi(x[30])
                 B[1] + B[2] + B[3] + B[5] + B[6] + B[10] + B[15] + B[30]
-                sage: phi.preimage(y[2])                                                # needs sage.modules
+                sage: phi.preimage(y[2])
                 -B[1] + B[2]
-                sage: phi.preimage(y[6])                                                # needs sage.modules
+                sage: phi.preimage(y[6])
                 B[1] - B[2] - B[3] + B[6]
-                sage: phi.preimage(y[30])                                               # needs sage.modules
+                sage: phi.preimage(y[30])
                 -B[1] + B[2] + B[3] + B[5] - B[6] - B[10] - B[15] + B[30]
-                sage: (phi^-1)(y[30])                                                   # needs sage.modules
+                sage: (phi^-1)(y[30])
                 -B[1] + B[2] + B[3] + B[5] - B[6] - B[10] - B[15] + B[30]
 
             Since :trac:`8678`, one can also define a triangular
@@ -868,12 +869,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             We can also automatically construct a basis such that
             the lift morphism is (lower) unitriangular::
 
+                sage: # needs sage.modules
                 sage: R.<a,b> = QQ[]
-                sage: C = CombinatorialFreeModule(R, range(3), prefix='x')              # needs sage.modules
-                sage: x = C.basis()                                                     # needs sage.modules
-                sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]                # needs sage.modules
-                sage: Y = C.submodule(gens, unitriangular=True)                         # needs sage.modules
-                sage: Y.lift.matrix()                                                   # needs sage.modules
+                sage: C = CombinatorialFreeModule(R, range(3), prefix='x')
+                sage: x = C.basis()
+                sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]
+                sage: Y = C.submodule(gens, unitriangular=True)
+                sage: Y.lift.matrix()
                 [ 1  0]
                 [ 0  1]
                 [-1 -1]
@@ -950,11 +952,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Y.retract(x[0] + 2*x[1])
                 3*y[2]
 
+                sage: # needs sage.modules
                 sage: R.<a,b> = QQ[]
-                sage: C = CombinatorialFreeModule(R, range(3), prefix='x')              # needs sage.modules
-                sage: x = C.basis()                                                     # needs sage.modules
-                sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]                # needs sage.modules
-                sage: Y = C.quotient_module(gens)                                       # needs sage.modules
+                sage: C = CombinatorialFreeModule(R, range(3), prefix='x')
+                sage: x = C.basis()
+                sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]
+                sage: Y = C.quotient_module(gens)
 
             .. SEEALSO::
 
@@ -995,10 +998,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S = SymmetricGroupAlgebra(QQ, 4)
                 sage: S.cardinality()
                 +Infinity
-                sage: S = SymmetricGroupAlgebra(GF(2), 4)       # not tested            # needs sage.rings.finite_rings
-                sage: S.cardinality()           # not tested                            # needs sage.rings.finite_rings
+                sage: S = SymmetricGroupAlgebra(GF(2), 4)       # not tested
+                sage: S.cardinality()                           # not tested
                 16777216
-                sage: S.cardinality().factor()  # not tested                            # needs sage.rings.finite_rings
+                sage: S.cardinality().factor()                  # not tested
                 2^24
 
                 sage: # needs sage.modules
@@ -2219,8 +2222,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: phi = H(on_basis=on_basis)  # indirect doctest                # needs sage.modules
                     sage: phi                                                           # needs sage.modules
                     Generic morphism:
-                    From: X
-                    To:   Y
+                      From: X
+                      To:   Y
                     sage: phi(x[1] + x[3])                                              # needs sage.modules
                     B[1] + 2*B[2] + B[3] + 2*B[4]
 
@@ -2278,16 +2281,14 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename("Y")
                 sage: H = Hom(X, Y)
                 sage: x = X.basis()
-
-                sage: f = H(lambda x: Y.zero()).on_basis()                              # needs sage.modules
-                sage: f(2)                                                              # needs sage.modules
+                sage: f = H(lambda x: Y.zero()).on_basis()
+                sage: f(2)
                 0
-
                 sage: f = lambda i: Y.monomial(i) + 2*Y.monomial(i+1)
-                sage: g = H(on_basis=f).on_basis()                                      # needs sage.modules
-                sage: g(2)                                                              # needs sage.modules
+                sage: g = H(on_basis=f).on_basis()
+                sage: g(2)
                 B[2] + 2*B[3]
-                sage: g == f                                                            # needs sage.modules
+                sage: g == f
                 True
             """
             return self._on_basis

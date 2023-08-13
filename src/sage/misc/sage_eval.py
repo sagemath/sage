@@ -131,6 +131,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     ::
 
+        sage: # needs sage.libs.gap
         sage: R.<x> = PolynomialRing(RationalField())
         sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')                           # needs sage.libs.gap
         'Rationals[x]'
@@ -223,6 +224,7 @@ def sageobj(x, vars=None):
 
         sage: type(sageobj(gp('34/56')))                                                # needs sage.libs.pari
         <class 'sage.rings.rational.Rational'>
+
         sage: n = 5/2
         sage: sageobj(n) is n
         True
@@ -233,15 +235,18 @@ def sageobj(x, vars=None):
 
     This illustrates interfaces::
 
-        sage: f = gp('2/3')                                                             # needs sage.libs.pari
-        sage: type(f)                                                                   # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: f = gp('2/3')
+        sage: type(f)
         <class 'sage.interfaces.gp.GpElement'>
         sage: f._sage_()                                                                # needs sage.libs.pari
         2/3
         sage: type(f._sage_())                                                          # needs sage.libs.pari
         <class 'sage.rings.rational.Rational'>
-        sage: a = gap(939393/2433)                                                                  # needs sage.libs.gap
-        sage: a._sage_()                                                                            # needs sage.libs.gap
+
+        sage: # needs sage.libs.gap
+        sage: a = gap(939393/2433)
+        sage: a._sage_()
         313131/811
         sage: type(a._sage_())                                                                      # needs sage.libs.gap
         <class 'sage.rings.rational.Rational'>

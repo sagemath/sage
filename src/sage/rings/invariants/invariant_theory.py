@@ -636,7 +636,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic == quartic
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp(self.coeffs(), other.coeffs(), op)
 
@@ -3160,7 +3160,7 @@ class SeveralAlgebraicForms(FormsBase):
             sage: two_inv == two_inv
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp(self._forms, other._forms, op)
 

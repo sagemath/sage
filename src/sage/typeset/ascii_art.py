@@ -15,17 +15,19 @@ AUTHOR:
 
 EXAMPLES::
 
-    sage: n = var('n')                                                                  # needs sage.symbolic
-    sage: integrate(n^2/x, x)                                                           # needs sage.symbolic
+    sage: # needs sage.symbolic
+    sage: n = var('n')
+    sage: integrate(n^2/x, x)
     n^2*log(x)
-    sage: ascii_art(integrate(n^2/x, x))                                                # needs sage.symbolic
+    sage: ascii_art(integrate(n^2/x, x))
      2
     n *log(x)
-    sage: ascii_art(integrate(n^2/(pi*x), x))                                           # needs sage.symbolic
+    sage: ascii_art(integrate(n^2/(pi*x), x))
      2
     n *log(x)
     ---------
         pi
+
     sage: ascii_art(list(Partitions(6)))                                                # needs sage.combinat sage.libs.flint
     [                                                       * ]
     [                                                   **  * ]

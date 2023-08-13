@@ -139,7 +139,7 @@ def characteristic_polynomial(x, var='x'):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+        sage: # needs sage.libs.pari sage.modules
         sage: M = MatrixSpace(QQ, 3, 3)
         sage: A = M([1,2,3,4,5,6,7,8,9])
         sage: charpoly(A)                                                               # needs sage.libs.pari
@@ -728,11 +728,11 @@ def integral(x, *args, **kwds):
         sage: sage.calculus.calculus.maxima('domain: real')
         real
         sage: f = exp(-x) * sinh(sqrt(x))
-        sage: t = integrate(f, x, 0, Infinity); t       # long time
+        sage: t = integrate(f, x, 0, Infinity); t           # long time
         1/4*sqrt(pi)*(erf(1) - 1)*e^(1/4)
          - 1/4*(sqrt(pi)*(erf(1) - 1) - sqrt(pi) + 2*e^(-1) - 2)*e^(1/4)
          + 1/4*sqrt(pi)*e^(1/4) - 1/2*e^(1/4) + 1/2*e^(-3/4)
-        sage: t.canonicalize_radical()          # long time
+        sage: t.canonicalize_radical()                      # long time
         1/2*sqrt(pi)*e^(1/4)
         sage: sage.calculus.calculus.maxima('domain: complex')
         complex
@@ -770,10 +770,11 @@ def integral(x, *args, **kwds):
         sage: integrate(sin(x)*tan(x)/(1-cos(x)), x, a, b, algorithm='sympy')
         -integrate(sin(x)*tan(x)/(cos(x) - 1), x, a, b)
 
-        sage: import sympy                                                              # needs sympy
-        sage: x, y, z = sympy.symbols('x y z')                                          # needs sympy
-        sage: f = sympy.Function('f')                                                   # needs sympy
-        sage: SR(sympy.Integral(f(x,y,z), x, y, z))                                     # needs sympy sage.symbolic
+        sage: # needs sympy
+        sage: import sympy
+        sage: x, y, z = sympy.symbols('x y z')
+        sage: f = sympy.Function('f')
+        sage: SR(sympy.Integral(f(x,y,z), x, y, z))                                     # needs sage.symbolic
         integrate(integrate(integrate(f(x, y, z), x), y), z)
 
     Ensure that the following integral containing a signum term from
@@ -1225,15 +1226,15 @@ def minimal_polynomial(x, var='x'):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+        sage: # needs sage.libs.pari sage.modules
         sage: a = matrix(ZZ, 2, [1..4])
         sage: minpoly(a)                                                                # needs sage.libs.pari
         x^2 - 5*x - 2
-        sage: minpoly(a, 't')                                                           # needs sage.libs.pari
+        sage: minpoly(a, 't')
         t^2 - 5*t - 2
         sage: minimal_polynomial(a)                                                     # needs sage.libs.pari
         x^2 - 5*x - 2
-        sage: minimal_polynomial(a, 'theta')                                            # needs sage.libs.pari
+        sage: minimal_polynomial(a, 'theta')
         theta^2 - 5*theta - 2
     """
     try:
@@ -1248,7 +1249,7 @@ minpoly = minimal_polynomial
 def multiplicative_order(x):
     r"""
     Return the multiplicative order of ``x``, if ``x`` is a unit, or
-    raise ``ArithmeticError`` otherwise.
+    raise :class:`ArithmeticError` otherwise.
 
     EXAMPLES::
 
@@ -1725,9 +1726,10 @@ def round(x, ndigits=0):
 
     EXAMPLES::
 
-        sage: round(sqrt(2), 2)                                                         # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: round(sqrt(2), 2)
         1.41
-        sage: q = round(sqrt(2), 5); q                                                  # needs sage.symbolic
+        sage: q = round(sqrt(2), 5); q
         1.41421
         sage: type(q)                                                                   # needs sage.symbolic
         <class 'sage.rings.real_double...RealDoubleElement...'>
@@ -1737,6 +1739,7 @@ def round(x, ndigits=0):
         <class 'sage.rings.integer.Integer'>
         sage: round(pi)                                                                 # needs sage.symbolic
         3
+
         sage: b = 5.4999999999999999
         sage: round(b)
         5
@@ -1881,9 +1884,8 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
 
     -  ``x`` -- a number
 
-    -  ``prec`` -- ``None`` (default) or a positive integer
-       (bits of precision) If not ``None``, then compute the square root
-       numerically to prec bits of precision.
+    -  ``prec`` -- a positive integer (default: ``None``); when specified,
+       compute the square root with ``prec`` bits of precision
 
     -  ``extend`` -- bool (default: ``True``); this is a placeholder, and is
        always ignored since in the symbolic ring everything
@@ -1954,17 +1956,19 @@ def sqrt(x, *args, **kwds):
 
     EXAMPLES::
 
-        sage: sqrt(-1)                                                                  # needs sage.symbolic
-        I
-        sage: sqrt(2)                                                                   # needs sage.symbolic
-        sqrt(2)
-        sage: sqrt(2)^2                                                                 # needs sage.symbolic
-        2
         sage: sqrt(4)
         2
         sage: sqrt(4, all=True)
         [2, -2]
-        sage: sqrt(x^2)                                                                 # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: sqrt(-1)
+        I
+        sage: sqrt(2)
+        sqrt(2)
+        sage: sqrt(2)^2
+        2
+        sage: sqrt(x^2)
         sqrt(x^2)
 
     For a non-symbolic square root, there are a few options.

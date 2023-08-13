@@ -337,7 +337,7 @@ class RelativeInterior(ConvexSet_relatively_open):
             sage: ri_segment == empty
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return self._polyhedron == other._polyhedron
 

@@ -222,8 +222,9 @@ def find_objects_from_name(name, module_name=None):
         sage: dt.find_objects_from_name('FareySymbol')                                  # needs sage.modular
         [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
-        sage: import sympy                                                              # needs sympy
-        sage: dt.find_objects_from_name('RR')                                           # needs sympy
+        sage: # needs sympy
+        sage: import sympy
+        sage: dt.find_objects_from_name('RR')
         [Real Field with 53 bits of precision, RR]
         sage: dt.find_objects_from_name('RR', 'sage')                                   # needs sympy
         [Real Field with 53 bits of precision]

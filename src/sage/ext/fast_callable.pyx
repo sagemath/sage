@@ -525,7 +525,7 @@ def _builder_and_stream(vars, domain):
     interpreter::
 
         sage: domain = RDF
-        sage: from sage.structure.element import Element as domain                      # needs sage.modules
+        sage: from sage.structure.element import Element as domain
         sage: _builder_and_stream(["x", "y"], domain)
         (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
@@ -1894,18 +1894,20 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         25
         sage: fc.op_list()
         [('load_arg', 0), ('load_arg', 1), ('py_call', <function my_norm at 0x...>, 2), 'return']
-        sage: fc = fast_callable(expr)                                                  # needs sage.symbolic
-        sage: fc(3.0r)                                                                  # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: fc = fast_callable(expr)
+        sage: fc(3.0r)
         4.0*pi + 12.0
-        sage: fc = fast_callable(x+3, domain=ZZ)                                        # needs sage.symbolic
-        sage: fc(4)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(x+3, domain=ZZ)
+        sage: fc(4)
         7
-        sage: fc = fast_callable(x/3, domain=ZZ)                                        # needs sage.symbolic
-        sage: fc(4)                                                                     # needs sage.symbolic
+        sage: fc = fast_callable(x/3, domain=ZZ)
+        sage: fc(4)
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
-        sage: fc(6)                                                                     # needs sage.symbolic
+        sage: fc(6)
         2
         sage: fc = fast_callable(etb.call(sin, x), domain=ZZ)
         sage: fc(0)

@@ -1173,21 +1173,21 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     ::
 
         sage: print(search_src(r'^ *sage[:] .*search_src\(', interact=False))  # long time
-        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) # random # long time
-        misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
+        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines())...
+        misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines())...
         misc/sagedoc.py:... len(search_src("matrix", path_re="calc"...
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))
-        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False)) # random # long time
-        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
-        misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
-        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
-        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix',
-        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 40
+        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))...
+        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False))...
+        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False))...
+        misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0...
+        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0...
+        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix',...
+        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 40...
         misc/sagedoc.py:... len(search_src('log', 'derivative'...
-        misc/sagedoc.py:... print(search_src(r'^ *sage[:] .*search_src\(', interact=False)) # long time
-        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) > 9000 # long time
-        misc/sagedoc.py:... print(search_src('matrix', 'column', 'row', 'sub', 'start', 'index', interact=False)) # random # long time
-        misc/sagedoc.py:... sage: results = search_src('format_search_as_html', # long time
+        misc/sagedoc.py:... print(search_src(r'^ *sage[:] .*search_src\(', interact=False))...
+        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) > 9000...
+        misc/sagedoc.py:... print(search_src('matrix', 'column', 'row', 'sub',...
+        misc/sagedoc.py:... sage: results = search_src('format_search_as_html',...
 
     TESTS:
 
@@ -1240,13 +1240,14 @@ def search_doc(string, extra1='', extra2='', extra3='', extra4='',
     counting the length of ``search_doc('tree',
     interact=False).splitlines()`` gives the number of matches. ::
 
-        sage: N = len(search_doc('tree', interact=False).splitlines())  # long time, needs sagemath_doc_html
-        sage: L = search_doc('tree', whole_word=True, interact=False).splitlines()  # long time, needs sagemath_doc_html
-        sage: len(L) < N                        # long time                             # needs sagemath_doc_html
+        sage: # long time, needs sagemath_doc_html
+        sage: N = len(search_doc('tree', interact=False).splitlines())
+        sage: L = search_doc('tree', whole_word=True, interact=False).splitlines()
+        sage: len(L) < N
         True
         sage: import re
         sage: tree_re = re.compile(r'(^|\W)tree(\W|$)', re.I)
-        sage: all(tree_re.search(l) for l in L)         # long time                     # needs sagemath_doc_html
+        sage: all(tree_re.search(l) for l in L)
         True
     """
     return _search_src_or_doc('doc', string, extra1=extra1, extra2=extra2,
