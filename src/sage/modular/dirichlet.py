@@ -62,20 +62,19 @@ import sage.modules.free_module_element as free_module_element
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import bernoulli, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
-from sage.arith.misc import binomial, factorial
+from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
-from sage.libs.pari import pari
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import round
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field import CyclotomicField, NumberField, NumberField_generic
+from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.ring import is_Ring
@@ -85,6 +84,9 @@ from sage.structure.gens_py import multiplicative_iterator
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
+
+lazy_import('sage.libs.pari', 'pari')
+lazy_import('sage.rings.number_field.number_field', ['CyclotomicField', 'NumberField', 'NumberField_generic'])
 
 
 def trivial_character(N, base_ring=QQ):
@@ -913,9 +915,6 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         # this algorithm was written by Francis Clarke see issue #9407
 
-        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-        from sage.rings.integer_ring import IntegerRing
-        ZZ = IntegerRing()
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix
 

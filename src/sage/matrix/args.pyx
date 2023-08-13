@@ -21,6 +21,7 @@ from cysignals.signals cimport sig_check
 MatrixSpace = None
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.integer cimport Integer
 from sage.structure.coerce cimport (coercion_model,
         is_numpy_type, py_scalar_parent)
 from sage.structure.element cimport Element, RingElement, Vector
@@ -847,6 +848,24 @@ cdef class MatrixArgs:
             Traceback (most recent call last):
             ...
             ValueError: sequence too short (expected length 6, got 1)
+
+        Check github issue #36065:
+
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
+            ....:     def __bool__(self):
+            ....:         raise ValueError
+            sage: matrix(1, 1, MyAlgebraicNumber(0))
+            [0]
+            sage: matrix(1, 1, MyAlgebraicNumber(3))
+            [3]
+            sage: matrix(1, 2, MyAlgebraicNumber(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar matrix must be square if the value cannot be determined to be zero
+            sage: matrix(1, 2, MyAlgebraicNumber(3))
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar matrix must be square if the value cannot be determined to be zero
         """
         self.finalize()
         return self
@@ -924,11 +943,18 @@ cdef class MatrixArgs:
                 raise AssertionError(f"nrows={self.nrows}  ncols={self.ncols}  base={self.base}  type={self.typ}")
 
         # Non-zero scalar matrices must be square
+        # also ensure type is MA_ENTRIES_ZERO for scalar zero matrices
         if self.typ == MA_ENTRIES_SCALAR:
-            if self.nrows != self.ncols:
-                if self.entries:
-                    raise TypeError("nonzero scalar matrix must be square")
-                self.typ = MA_ENTRIES_ZERO
+            try:
+                if not self.entries:
+                    self.typ = MA_ENTRIES_ZERO
+            except Exception:
+                # "not self.entries" has failed, self.entries cannot be determined to be zero
+                if self.nrows != self.ncols:
+                    raise TypeError("scalar matrix must be square if the value cannot be determined to be zero")
+            if self.typ == MA_ENTRIES_SCALAR and self.nrows != self.ncols:
+                # self.typ is still SCALAR -> "not self.entries" has successfully evaluated, to False
+                raise TypeError("nonzero scalar matrix must be square")
 
         if self.sparse == -1:
             self.sparse = (self.typ & MA_FLAG_SPARSE) != 0
@@ -1219,12 +1245,14 @@ cdef class MatrixArgs:
         # hurt to do these first.
         if self.entries is None:
             return MA_ENTRIES_ZERO
+        if isinstance(self.entries, (int, float, complex, Integer)):
+            if self.entries:
+                return MA_ENTRIES_SCALAR
+            return MA_ENTRIES_ZERO
         if isinstance(self.entries, (list, tuple)):
             return self.sequence_type()
         if isinstance(self.entries, dict):
             return MA_ENTRIES_MAPPING
-        if isinstance(self.entries, (int, float, complex)):
-            return MA_ENTRIES_SCALAR
 
         # Note: some objects are callable, iterable and act like a
         # scalar, e.g. polynomials. So the order of these checks

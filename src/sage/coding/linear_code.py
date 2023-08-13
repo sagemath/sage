@@ -410,7 +410,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             1
             sage: C.is_self_orthogonal()
             False
-            sage: print(C.divisor()) #long time
+            sage: print(C.divisor())  #long time
             1
         """
         from sage.coding.information_set_decoder import LinearCodeInformationSetDecoder
@@ -910,12 +910,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 5)
-            sage: C.covering_radius()  # optional - gap_packages (Guava package)
-            ...
-            1
+            sage: C.covering_radius()                           # optional - gap_package_guava
+            ...1
 
             sage: C = codes.random_linear_code(GF(263), 5, 1)
-            sage: C.covering_radius()  # optional - gap_packages (Guava package)
+            sage: C.covering_radius()                           # optional - gap_package_guava
             Traceback (most recent call last):
             ...
             NotImplementedError: the GAP algorithm that Sage is using
@@ -1374,9 +1373,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C.minimum_distance(algorithm="gap")                                   # optional - sage.libs.gap
             3
             sage: libgap.SetAllInfoLevels(0)         # to suppress extra info messages  # optional - sage.libs.gap
-            sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
-            ...
-            3
+            sage: C.minimum_distance(algorithm="guava")         # optional - gap_package_guava
+            ...3
 
         TESTS::
 
@@ -1612,13 +1610,13 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [5, 3] Hamming Code over GF(4)
             sage: G = C.permutation_automorphism_group(algorithm="partition"); G        # optional - sage.groups
             Permutation Group with generators [(1,3)(4,5), (1,4)(3,5)]
-            sage: GG = C.permutation_automorphism_group(algorithm="codecan") # long time, optional - sage.groups
-            sage: GG == G                                                    # long time, optional - sage.groups
+            sage: GG = C.permutation_automorphism_group(algorithm="codecan")    # long time, optional - sage.groups
+            sage: GG == G                                                       # long time, optional - sage.groups
             True
-            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_packages (Guava package) sage.groups
+            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_package_guava sage.groups
             Permutation Group with generators [(1,3)(4,5), (1,4)(3,5)]
             sage: C = codes.GolayCode(GF(3), True)
-            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_packages (Guava package) sage.groups
+            sage: C.permutation_automorphism_group(algorithm="gap")  # optional - gap_package_guava sage.groups
             Permutation Group with generators
              [(5,7)(6,11)(8,9)(10,12), (4,6,11)(5,8,12)(7,10,9), (3,4)(6,8)(9,11)(10,12),
               (2,3)(6,11)(8,12)(9,10), (1,2)(5,10)(7,12)(8,9)]
@@ -1839,23 +1837,25 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [1, 0, 0, 30, 15, 18]
             sage: C = codes.HammingCode(GF(2), 3); C
             [7, 4] Hamming Code over GF(2)
-            sage: C.weight_distribution(algorithm="leon")   # optional - gap_packages (Guava package)
+            sage: C.weight_distribution(algorithm="leon")   # optional - gap_package_guava
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C.weight_distribution(algorithm="gap")                                # optional - sage.libs.gap
             [1, 0, 0, 7, 7, 0, 0, 1]
             sage: C.weight_distribution(algorithm="binary")
             [1, 0, 0, 7, 7, 0, 0, 1]
+
+            sage: # optional - gap_package_guava
             sage: C = codes.HammingCode(GF(3), 3); C
             [13, 10] Hamming Code over GF(3)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")
             True
             sage: C = codes.HammingCode(GF(5), 2); C
             [6, 4] Hamming Code over GF(5)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")  # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")
             True
             sage: C = codes.HammingCode(GF(7), 2); C
             [8, 6] Hamming Code over GF(7)
-            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")   # optional - gap_packages (Guava package)
+            sage: C.weight_distribution() == C.weight_distribution(algorithm="leon")
             True
 
         """
@@ -2001,14 +2001,17 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.zeta_polynomial()
             2/5*T^2 + 2/5*T + 1/5
-            sage: C = codes.databases.best_linear_code_in_guava(6,3,GF(2))  # optional - gap_packages (Guava package)
-            sage: C.minimum_distance()              # optional - gap_packages (Guava package)
+
+            sage: C = codes.databases.best_linear_code_in_guava(6, 3, GF(2))    # optional - gap_package_guava
+            sage: C.minimum_distance()                                          # optional - gap_package_guava
             3
-            sage: C.zeta_polynomial()               # optional - gap_packages (Guava package)
+            sage: C.zeta_polynomial()                                           # optional - gap_package_guava
             2/5*T^2 + 2/5*T + 1/5
+
             sage: C = codes.HammingCode(GF(2), 4)
             sage: C.zeta_polynomial()
             16/429*T^6 + 16/143*T^5 + 80/429*T^4 + 32/143*T^3 + 30/143*T^2 + 2/13*T + 1/13
+
             sage: F.<z> = GF(4,"z")
             sage: MS = MatrixSpace(F, 3, 6)
             sage: G = MS([[1,0,0,1,z,z],[0,1,0,z,1,z],[0,0,1,z,z,1]])
@@ -2601,7 +2604,7 @@ class LinearCodeSyndromeDecoder(Decoder):
     We build a first syndrome decoder, and pick a ``maximum_error_weight``
     smaller than both the covering radius and half the minimum distance::
 
-        sage: D = C.decoder("Syndrome", maximum_error_weight = 1)
+        sage: D = C.decoder("Syndrome", maximum_error_weight=1)
         sage: D.decoder_type()
         {'always-succeed', 'bounded_distance', 'hard-decision'}
         sage: D.decoding_radius()
@@ -2614,7 +2617,7 @@ class LinearCodeSyndromeDecoder(Decoder):
     ``maximum_error_weight`` is chosen to be bigger than half the minimum distance,
     but lower than the covering radius::
 
-        sage: D = C.decoder("Syndrome", maximum_error_weight = 3)
+        sage: D = C.decoder("Syndrome", maximum_error_weight=3)
         sage: D.decoder_type()
         {'bounded_distance', 'hard-decision', 'might-error'}
         sage: D.decoding_radius()
@@ -2628,10 +2631,10 @@ class LinearCodeSyndromeDecoder(Decoder):
     And now, we build a third syndrome decoder, whose ``maximum_error_weight``
     is bigger than both the covering radius and half the minimum distance::
 
-        sage: D = C.decoder("Syndrome", maximum_error_weight = 5) # long time
-        sage: D.decoder_type() # long time
+        sage: D = C.decoder("Syndrome", maximum_error_weight=5)     # long time
+        sage: D.decoder_type()                                      # long time
         {'complete', 'hard-decision', 'might-error'}
-        sage: D.decoding_radius() # long time
+        sage: D.decoding_radius()                                   # long time
         4
 
     In that case, the decoder might still return an unexpected codeword, but
