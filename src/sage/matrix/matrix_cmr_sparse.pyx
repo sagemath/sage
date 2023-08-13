@@ -3,6 +3,18 @@ r"""
 Sparse Matrices with CMR
 """
 
+# ****************************************************************************
+#       Copyright (C) 2023 Matthias Koeppe
+#                     2023 Luze Xu
+#                     2023 Javier Santillan
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from libc.stdint cimport SIZE_MAX
 
 from cysignals.signals cimport sig_on, sig_off
@@ -21,6 +33,14 @@ from .seymour_decomposition cimport create_DecompositionNode
 cdef class Matrix_cmr_sparse(Matrix_sparse):
     r"""
     Base class for sparse matrices implemented in CMR
+
+    EXAMPLES::
+
+        sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+        ....:                           [[1, 2, 3], [4, 0, 6]])
+        sage: isinstance(M, Matrix_cmr_sparse)
+        True
     """
     pass
 
@@ -330,6 +350,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``summands`` -- integer matrices or data from which integer matrices can be
           constructed
 
+        The terminology "1-sum" is used in the context of Seymour's decomposition
+        of totally unimodular matrices and regular matroids, see [Sch1986]_.
+
+        .. SEEALSO:: :meth:`two_sum`, :meth:`three_sum`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -567,6 +592,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         Return whether ``self`` is a unimodular matrix.
 
+        A nonsingular square matrix `A` is called unimodular if it is integral
+        and has determinant `\pm1`, i.e., an element of
+        `\mathop{\operatorname{GL}}_n(\ZZ)` [Sch1986]_, Ch. 4.3.
+
+        A rectangular matrix `A` of full row rank is called unimodular if it
+        is integral and every basis `B` of `A` has determinant `\pm1`.
+        [Sch1986]_, Ch. 19.1.
+
+        More generally, a matrix `A` of rank `r` is called unimodular if it is
+        integral and for every submatrix `B` formed by `r` linearly independent columns,
+        the greatest common divisor of the determinants of all `r`-by-`r`
+        submatrices of `B` is `1`. [Sch1986]_, Ch. 21.4.
+
+        .. SEEALSO:: :meth:`is_k_modular`, :meth:`is_strongly_unimodular`, :meth:`is_totally_unimodular`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -598,6 +638,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         Return whether ``self`` is a strongly unimodular matrix.
 
         A matrix is strongly unimodular if ``self`` and ``self.transpose()`` are both unimodular.
+
+        .. SEEALSO: meth:`is_unimodular`, :meth:`is_strongly_k_modular`
 
         EXAMPLES::
 
@@ -632,14 +674,18 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         Return the integer `k` such that ``self`` is `k`-modular.
 
-        A matrix `M` of rank `r` is `k`-modular if the following two conditions are satisfied:
-        - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        A matrix `M` of rank `r` is `k`-modular if the following two conditions
+        are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of the
+          determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
 
         OUTPUT:
 
         - ``k``: ``self`` is  `k`-modular
         - ``None``: ``self`` is not `k`-modular for any `k`
+
+        .. SEEALSO:: :meth:`is_k_modular`, :meth:`strong_modulus`
 
         EXAMPLES::
 
@@ -675,14 +721,18 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         Return the integer `k` such that ``self`` is strongly `k`-modular.
 
-        A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
-        - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        A matrix `M` of rank-`r` is `k`-modular if the following two conditions
+        are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of the
+          determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
 
         OUTPUT:
 
         - ``k``: ``self`` is  `k`-modular
         - ``None``: ``self`` is not `k`-modular for any `k`
+
+        .. SEEALSO:: :meth:`is_strongly_k_modular`, :meth:`modulus`
 
         EXAMPLES::
 
@@ -718,11 +768,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         Return whether ``self`` is `k`-modular.
 
-        A matrix `M` of rank-`r` is `k`-modular if the following two conditions are satisfied:
-        - for some column basis `B` of `M`, the greatest common divisor of the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        A matrix `M` of rank-`r` is `k`-modular if the following two conditions
+        are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of the
+          determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
-        If the matrix has full row rank, it is `k`-modular if all the full rank minor of the matrix has determinant `0,\pm k`.
-        The matrix is also called strictly `k`-modular.
+
+        If the matrix has full row rank, it is `k`-modular if every full rank minor
+        of the matrix has determinant `0,\pm k`.
+
+        .. NOTE::
+
+            In parts of the literature, a matrix with the above properties
+            is called *strictly* `k`-modular.
+
+        .. SEEALSO:: :meth:`is_unimodular`, :meth:`is_strongly_k_modular`, :meth:`_modulus`
 
         EXAMPLES::
 
@@ -754,6 +814,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         Return whether ``self`` is strongly `k`-modular.
 
         A matrix is strongly `k`-modular if ``self`` and ``self.transpose()`` are both `k`-modular.
+
+        .. SEEALSO:: :meth:`is_k_modular`, :meth:`is_strongly_unimodular`, :meth:`strong_modulus`
 
         EXAMPLES::
 
@@ -1105,9 +1167,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         Return whether ``self`` is a totally unimodular matrix.
 
+        A matrix is totally unimodular if every subdeterminant is `0`, `1`, or `-1`.
+
         REFERENCES:
 
-        - [Sch1986]_
+        - [Sch1986]_, Chapter 19
 
         EXAMPLES::
 
