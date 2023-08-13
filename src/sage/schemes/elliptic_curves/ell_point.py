@@ -1232,9 +1232,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: G.set_order(2)
             sage: 2*G
             (0 : 1 : 0)
-            sage: G = E(0, 6)                                                           # optional - sage.rings.finite_rings
-            sage: G.set_order(multiple=12)                                              # optional - sage.rings.finite_rings
-            sage: G._order                                                              # optional - sage.rings.finite_rings
+            sage: G = E(0, 6)
+            sage: G.set_order(multiple=12)
+            sage: G._order
             3
 
         We now give a more interesting case, the NIST-P521 curve. Its
