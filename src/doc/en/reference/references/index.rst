@@ -2908,7 +2908,7 @@ REFERENCES:
                 :arxiv:`1509.08355v3`.
 
 .. [Gro1987] \M. Gromov. *Hyperbolic groups*. Essays in Group Theory, 8:75--263,
-             1.    :doi:`10.1007/978-1-4613-9586-7_3`.
+             1987. :doi:`10.1007/978-1-4613-9586-7_3`.
 
 .. [GrS1967] Grunbaum and Sreedharan, "An enumeration of simplicial
              4-polytopes with 8 vertices", J. Comb. Th. 2,
@@ -3897,7 +3897,7 @@ REFERENCES:
 
 .. [KRG1996] \S. Klavzar, A. Rajapakse, and I. Gutman. *The Szeged and the
              Wiener index of graphs*. Applied Mathematics Letters, 9(5):45--49,
-             1.    :doi:`10.1016/0893-9659(96)00071-7`.
+             1996. :doi:`10.1016/0893-9659(96)00071-7`.
 
 .. [KS] Sheldon Katz and Stein Arild Stromme, "Schubert",
         A Maple package for intersection theory and enumerative geometry.
@@ -5075,7 +5075,7 @@ REFERENCES:
 
 .. [Pop1972] \V. M. Popov. "Invariant description of linear, time-invariant
              controllable systems". SIAM Journal on Control, 10(2):252-264,
-             1.    :doi:`10.1137/0310020`
+             1972. :doi:`10.1137/0310020`
 
 .. [Pos1988] \H. Postl. 'Fast evaluation of Dickson Polynomials' Contrib. to
              General Algebra, Vol. 6 (1988) pp. 223-225
