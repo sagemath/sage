@@ -26,7 +26,7 @@ def reset(vars=None, attached=False):
     INPUT:
 
     - ``vars`` -- a list, or space or comma separated string (default:
-      None), variables to restore
+      ``None``), variables to restore
 
     - ``attached`` -- boolean (default: ``False``), if ``vars`` is not None,
       whether to detach all attached files
