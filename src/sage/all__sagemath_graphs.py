@@ -1,14 +1,14 @@
-try:  # extra
-    from sage.all__sagemath_polyhedra import *
-except ImportError:
-    pass
+from .all__sagemath_categories import *
 
 try:  # extra
     from sage.all__sagemath_modules import *
 except ImportError:
     pass
 
-from .all__sagemath_categories import *
+try:  # extra
+    from sage.all__sagemath_polyhedra import *
+except ImportError:
+    pass
 
 from sage.graphs.all     import *
 
