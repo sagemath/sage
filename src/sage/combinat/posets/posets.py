@@ -877,7 +877,7 @@ class FinitePoset(UniqueRepresentation, Parent):
     Conversion to some other software is possible::
 
         sage: P = posets.TamariLattice(3)
-        sage: libgap(P)  # optional - gap_packages
+        sage: libgap(P)                                         # optional - gap_package_qpa
         <A poset on 5 points>
 
         sage: P = Poset({1:[2],2:[]})
@@ -8828,11 +8828,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.TamariLattice(3)
-            sage: libgap(P)  # optional - gap_packages
+            sage: libgap(P)                                     # optional - gap_package_qpa
             <A poset on 5 points>
-            sage: A = libgap(GF(2)).PosetAlgebra(P); A  # optional - gap_packages
+            sage: A = libgap(GF(2)).PosetAlgebra(P); A          # optional - gap_package_qpa
             <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generator)>>
-            sage: A.Dimension()  # optional - gap_packages
+            sage: A.Dimension()                                 # optional - gap_package_qpa
             13
         """
         from sage.libs.gap.libgap import libgap

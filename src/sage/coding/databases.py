@@ -35,11 +35,11 @@ def best_linear_code_in_guava(n, k, F):
 
     EXAMPLES::
 
-        sage: codes.databases.best_linear_code_in_guava(10,5,GF(2))    # long time; optional - gap_packages (Guava package)
+        sage: codes.databases.best_linear_code_in_guava(10,5,GF(2))    # long time; optional - gap_package_guava
         [10, 5] linear code over GF(2)
-        sage: libgap.LoadPackage('guava')                              # long time; optional - gap_packages (Guava package)
+        sage: libgap.LoadPackage('guava')                              # long time; optional - gap_package_guava
         ...
-        sage: libgap.BestKnownLinearCode(10,5,libgap.GF(2))            # long time; optional - gap_packages (Guava package)
+        sage: libgap.BestKnownLinearCode(10,5,libgap.GF(2))            # long time; optional - gap_package_guava
         a linear [10,5,4]2..4 shortened code
 
     This means that the best possible binary linear code of length 10 and
@@ -86,8 +86,8 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
 
     EXAMPLES::
 
-        sage: gap_rec = codes.databases.bounds_on_minimum_distance_in_guava(10,5,GF(2))  # optional - gap_packages (Guava package)
-        sage: gap_rec.Display()                                                          # optional - gap_packages (Guava package)
+        sage: gap_rec = codes.databases.bounds_on_minimum_distance_in_guava(10,5,GF(2))  # optional - gap_package_guava
+        sage: gap_rec.Display()                                                          # optional - gap_package_guava
         rec(
           construction := [ <Operation "ShortenedCode">,
             [ [ <Operation "UUVCode">,

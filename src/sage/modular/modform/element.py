@@ -35,10 +35,10 @@ AUTHORS:
 from sage.arith.functions import lcm
 from sage.arith.misc import divisors, moebius, sigma, factor, crt
 from sage.arith.srange import xsrange
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.matrix.constructor import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
@@ -51,12 +51,14 @@ from sage.rings.fast_arith import prime_range
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.morphism import RingHomomorphism
-from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import coercion_model, ModuleElement, Element
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
+
+lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
+lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
 
 import sage.modular.hecke.element as element
 from . import defaults

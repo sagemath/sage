@@ -739,7 +739,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # Take the given base color and create a list of evenly spaced
     # colors between the given base color and white. The number of
     # colors in the list depends on the variable color_num.
-    if type(base_color) == Color:
+    if isinstance(base_color, Color):
         # Convert Color to RGB list
         base_color = [int(k*255) for k in base_color]
     color_list = []
@@ -973,7 +973,7 @@ cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
     # Take the given base color and create a list of evenly spaced
     # colors between the given base color and white. The number of
     # colors in the list depends on the variable color_num.
-    if type(base_color) == Color:
+    if isinstance(base_color, Color):
         # Convert Color to RGB list
         base_color = [int(k*255) for k in base_color]
     color_list = []
