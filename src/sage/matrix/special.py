@@ -403,7 +403,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     One can prescribe a specific matrix implementation::
 
         sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
-        sage: type(random_matrix(K, 2, 5))                                              # needs sage.rings.finite_rings sage.libs.m4ri
+        sage: type(random_matrix(K, 2, 5))                                              # needs sage.libs.m4ri sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
