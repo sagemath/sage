@@ -1,4 +1,4 @@
-from .multi_polynomial_libsingular import MPolynomialRing_libsingular
+from .multi_polynomial_libsingular import MPolynomialRing_libsingular, MPolynomial_libsingular
 from .polynomial_ring_constructor import PolynomialRing
 from .multi_polynomial_subring_element import MPolynomial_subring_element
 
@@ -6,19 +6,19 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
 
     def __init__(self, parent_ring, gens):
         # assert parent ring is immutable ?
+        self.generators=[self._element_constructor_(gen) for gen in gens]
         self.parent_ring=parent_ring
         self._hom=PolynomialRing(parent_ring.base_ring(), len(gens), "a").hom(gens)
         self._ideal=self._hom.kernel()         
-        self._zero_element = self._element_constructor(0)         
-        self._one_element = self._element_constructor(1)
+        self._zero_element = self._element_constructor_(0)         
+        self._one_element = self._element_constructor_(1)
         self._homdomain = self._hom.domain()   
-        self.generators=[self._element_constructor(gen) for gen in gens]
 
 
     #########################
     ##!!!!!! DISCUSS !!!!!!##
     #########################
-    def _element_constructor(self, element):
+    def _element_constructor_(self, element):
         assert element in self
         return MPolynomial_subring_element(self, element)
 
@@ -68,10 +68,10 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
             return False
     
     def random_element(self):
-        return self._element_constructor(self._hom(self._homdomain.random_element()))
+        return self._element_constructor_(self._hom(self._homdomain.random_element()))
     
     def _an_element_(self):
-        return self._element_constructor(self._hom(self._homdomain._an_element_()))
+        return self._element_constructor_(self._hom(self._homdomain._an_element_()))
 
 
 
