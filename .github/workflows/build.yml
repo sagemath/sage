@@ -88,6 +88,7 @@ jobs:
       - name: Incremental build
         id: incremental
         run: |
+          echo ::add-matcher::.github/workflows/doctest-problem-matcher.json
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           ./bootstrap && make build
         working-directory: ./worktree-image
