@@ -9353,6 +9353,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: d = z^4 + (2*t + 4)*z^3 + (-t + 5)*z^2 + (t^2 + 2)*z + t^2 + 2*t + 1
             sage: prec = 9
             sage: x = n.subs(z=w)/d.subs(z=w) + O(w^prec)
+
+            sage: # needs sage.libs.flint (otherwise timeout)
             sage: nc, dc = Pz(x.list()).rational_reconstruction(z^prec)
             sage: (nc, dc) == (n, d)
             True

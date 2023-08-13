@@ -364,7 +364,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         -12
         ----
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.rings.number_field sage.rings.finite_rings sage.rings.padics
         sage: sage.rings.tests.test_random_elements(trials=10)
         survived 0 tests...
         sage: sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
@@ -385,8 +385,9 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 @random_testing
 def test_random_arith(level=MAX_LEVEL, trials=1):
     """
-    Create random elements of random rings and does some arithmetic
-    with them, until a crash occurs, in which case an exception is
+    Create random elements of random rings and do some arithmetic with them.
+
+    Repeats until a crash occurs, in which case an exception is
     raised.  Defaults to running a single trial, but more can be
     specified.  To run tests in an infinite loop, you could use::
 
@@ -394,17 +395,18 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - level -- (default: MAX_LEVEL); controls the types of rings to use
-    - trials -- A positive integer (default 1); the number of trials
+    - ``level`` -- (default: ``MAX_LEVEL``); controls the types of rings to use
+    - ``trials`` -- A positive integer (default: 1); the number of trials
       to run.
-    - seed -- the random seed to use; if not specified, uses a truly
+    - ``seed`` -- the random seed to use; if not specified, uses a truly
       random seed.
-    - print_seed -- If True (default False), prints the random seed chosen.
+    - ``print_seed`` -- If ``True`` (default: ``False``), prints the random seed chosen.
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field sage.rings.finite_rings sage.rings.padics
         sage: import sage.rings.tests
-        sage: sage.rings.tests.test_random_arith(trials=2, seed=0)                      # needs sage.rings.number_field
+        sage: sage.rings.tests.test_random_arith(trials=2, seed=0)
         survived 0 tests
         Rational Field
         -1/2 -1/95
@@ -413,10 +415,9 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
         Number Field in a with defining polynomial x^2 - 15083 with a = 122.81286577553673?
         a -2*a - 1
         2*a - 30164
-
-        sage: sage.rings.tests.test_random_arith(trials=10)                             # needs sage.rings.finite_rings
+        sage: sage.rings.tests.test_random_arith(trials=10)
         survived 0 tests...
-        sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?), needs sage.rings.finite_rings
+        sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
         survived 0 tests...
     """
     i = 0

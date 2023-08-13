@@ -356,6 +356,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     A = random_matrix(*args, **kwds)
         ....:     density_sum += float(A.density())
 
+        sage: # needs sage.libs.flint (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=-10, y=10, density=0.75)
@@ -402,7 +403,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     One can prescribe a specific matrix implementation::
 
         sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
-        sage: type(random_matrix(K, 2, 5))                                              # needs sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5))                                              # needs sage.rings.finite_rings sage.libs.m4ri
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
@@ -1288,14 +1289,18 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Rational Field
 
+        sage: # needs sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=I)
         sage: E.parent()
-        Full MatrixSpace of 4 by 4 dense matrices over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+        Full MatrixSpace of 4 by 4 dense matrices over
+         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
+        sage: # needs sage.rings.complex_double
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
 
+        sage: # needs sage.rings.number_field
         sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
@@ -3109,7 +3114,8 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
 
     Eigenvalues must all be integers. ::
 
-        sage: random_matrix(QQ,3,algorithm='diagonalizable', eigenvalues=[2+I,2-I,2],dimensions=[1,1,1])
+        sage: random_matrix(QQ, 3, algorithm='diagonalizable',                          # needs sage.symbolic
+        ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
         Traceback (most recent call last):
         ...
         TypeError: eigenvalues must be integers.

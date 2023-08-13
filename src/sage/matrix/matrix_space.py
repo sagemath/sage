@@ -683,6 +683,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             200 x 1 dense matrix over Rational Field (use the '.str()' method to see the entries)
             sage: A = MatrixSpace(RDF,1000,1000).random_element()
             sage: B = MatrixSpace(RDF,1000,1000).random_element()
+
+            sage: # needs numpy (otherwise timeout)
             sage: C = A * B
 
         We check that :trac:`18186` is fixed::

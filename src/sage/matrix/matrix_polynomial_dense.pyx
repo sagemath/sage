@@ -3313,7 +3313,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         We consider the following example from [Arne Storjohann, Notes on
         computing minimal approximant bases, 2006]::
 
-            sage: # needs sage.rings.finite_rings
             sage: order = 8; shifts = [1,1,0,0,0]
             sage: pmat = Matrix(pR, 5, 1, [
             ....:     pR([35,  0, 41, 87,  3, 42, 22, 90]),
@@ -3351,7 +3350,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Exceptions are raised if input dimensions are not sound::
 
-            sage: appbas.is_minimal_approximant_basis(pmat, [8,8], shifts)              # needs sage.rings.finite_rings
+            sage: appbas.is_minimal_approximant_basis(pmat, [8,8], shifts)
             Traceback (most recent call last):
             ...
             ValueError: order length should be the column dimension
@@ -3364,7 +3363,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ValueError: shifts length should be the column dimension
                         of the input matrix
 
-            sage: Matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, 8)               # needs sage.rings.finite_rings
+            sage: Matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, 8)
             Traceback (most recent call last):
             ...
             ValueError: column dimension should be the row dimension of the
