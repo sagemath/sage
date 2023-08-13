@@ -240,8 +240,8 @@ class table(SageObject):
 
     TESTS::
 
-        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +                                             # needs sage.symbolic
-        ....:                  [(x,n(sin(x), digits=2)) for x in [0..3]],
+        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +                                 # needs sage.symbolic
+        ....:                  [(x, n(sin(x), digits=2)) for x in [0..3]],
         ....:                 header_row=True, frame=True)).run()
 
     .. automethod:: _rich_repr_
