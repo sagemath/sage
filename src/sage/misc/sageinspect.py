@@ -105,10 +105,11 @@ generic argspec::
 By :trac:`9976` and :trac:`14017`, introspection also works for interactively
 defined Cython code, and with rather tricky argument lines::
 
-    sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')                # needs sage.misc.cython
-    sage: print(sage_getsource(foo))                                                    # needs sage.misc.cython
+    sage: # needs sage.misc.cython
+    sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')
+    sage: print(sage_getsource(foo))
     def foo(unsigned int x=1, a=')"', b={not (2+1==3):'bar'}, *args, **kwds): return
-    sage: sage_getargspec(foo)                                                          # needs sage.misc.cython
+    sage: sage_getargspec(foo)
     FullArgSpec(args=['x', 'a', 'b'], varargs='args', varkw='kwds', defaults=(1, ')"', {False: 'bar'}), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
 """
@@ -1473,27 +1474,20 @@ def sage_getargspec(obj):
 
     INPUT:
 
-    ``obj``, any callable object
+    - ``obj`` -- any callable object
 
     OUTPUT:
 
-    An ``ArgSpec`` is returned. This is a named tuple
-    ``(args, varargs, keywords, defaults)``.
-
-    - ``args`` is a list of the argument names (it may contain nested lists).
-
-    - ``varargs`` and ``keywords`` are the names of the ``*`` and ``**``
-      arguments or ``None``.
-
-    - ``defaults`` is an `n`-tuple of the default values of the last `n` arguments.
+    A named tuple :class:`FullArgSpec` is returned, as specified by the
+    Python library function :func:`inspect.getfullargspec`.
 
     NOTE:
 
-    If the object has a method ``_sage_argspec_`` then the output of
+    If the object has a method ``_sage_argspec_``, then the output of
     that method is transformed into a named tuple and then returned.
 
-    If a class instance has a method ``_sage_src_`` then its output
-    is  studied to determine the argspec. This is because currently
+    If a class instance has a method ``_sage_src_``, then its output
+    is studied to determine the argspec. This is because currently
     the :class:`~sage.misc.cachefunc.CachedMethod` decorator has
     no ``_sage_argspec_`` method.
 
@@ -1503,23 +1497,28 @@ def sage_getargspec(obj):
         sage: def f(x, y, z=1, t=2, *args, **keywords):
         ....:     pass
         sage: sage_getargspec(f)
-        FullArgSpec(args=['x', 'y', 'z', 't'], varargs='args', varkw='keywords', defaults=(1, 2), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['x', 'y', 'z', 't'], varargs='args', varkw='keywords',
+                    defaults=(1, 2), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     We now run sage_getargspec on some functions from the Sage library::
 
         sage: sage_getargspec(identity_matrix)                                          # needs sage.modules
-        FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None, defaults=(0, False),
-                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None,
+                    defaults=(0, False), kwonlyargs=[], kwonlydefaults=None,
+                    annotations={})
         sage: sage_getargspec(factor)
-        FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'], varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'],
+                    varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    In the case of a class or a class instance, the ``ArgSpec`` of the
+    In the case of a class or a class instance, the :class:`FullArgSpec` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
 
         sage: P.<x,y> = QQ[]
         sage: sage_getargspec(P)                                                        # needs sage.libs.singular
-        FullArgSpec(args=['base_ring', 'n', 'names', 'order'], varargs=None, varkw=None,
-                    defaults=('degrevlex',), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['base_ring', 'n', 'names', 'order'],
+                    varargs=None, varkw=None, defaults=('degrevlex',),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(P.__class__)                                              # needs sage.libs.singular
         FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds', defaults=(0,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -1545,13 +1544,13 @@ def sage_getargspec(obj):
         FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    If a ``functools.partial`` instance is involved, we see no other meaningful solution
+    If a :func:`functools.partial` instance is involved, we see no other meaningful solution
     than to return the argspec of the underlying function::
 
-        sage: def f(a,b,c,d=1):
-        ....:     return a+b+c+d
+        sage: def f(a, b, c, d=1):
+        ....:     return a + b + c + d
         sage: import functools
-        sage: f1 = functools.partial(f, 1,c=2)
+        sage: f1 = functools.partial(f, 1, c=2)
         sage: sage_getargspec(f1)
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(1,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -1565,7 +1564,7 @@ def sage_getargspec(obj):
     an instance of that class does not coincide with the argspec
     of its call method. That behaviour is intended, since a
     decorated method appears to have the generic signature
-    ``*args,**kwds``, but in fact it is only supposed to be called
+    ``*args, **kwds``, but in fact it is only supposed to be called
     with the arguments requested by the underlying undecorated
     method. We saw an easy example above, namely ``I.groebner_basis``.
     Here is a more difficult one::
@@ -1605,13 +1604,14 @@ def sage_getargspec(obj):
     The following produced a syntax error before the patch at :trac:`11913`,
     see also :trac:`26906`::
 
-        sage: sage.misc.sageinspect.sage_getargspec(r.lm)                               # optional - rpy2
+        sage: sage.misc.sageinspect.sage_getargspec(r.lm)       # optional - rpy2
         FullArgSpec(args=['self'], varargs='args', varkw='kwds', defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     The following was fixed in :trac:`16309`::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython(                                                                   # needs sage.misc.cython
+        ....: '''
         ....: class Foo:
         ....:     @staticmethod
         ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
