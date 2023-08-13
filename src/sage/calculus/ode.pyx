@@ -64,20 +64,20 @@ cdef int c_jac(double t,double *y,double *dfdy,double *dfdt,void *params):
     cdef int param_n
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper > params
-    y_n=wrapper.y_n
-    y_list=[]
-    for i from 0<=i<y_n:
+    y_n = wrapper.y_n
+    y_list = []
+    for i in range(y_n):
         y_list.append(y[i])
     try:
         if len(wrapper.the_parameters)==0:
             jac_list=wrapper.the_jacobian(t,y_list)
         else:
             jac_list=wrapper.the_jacobian(t,y_list,wrapper.the_parameters)
-        for i from 0<=i<y_n:
-            for j from 0<=j<y_n:
+        for i in range(y_n):
+            for j in range(y_n):
                 dfdy[i*y_n+j]=jac_list[i][j]
 
-        for i from 0 <=i<y_n:
+        for i in range(y_n):
             dfdt[i]=jac_list[y_n][i]
 
         return GSL_SUCCESS
@@ -91,17 +91,17 @@ cdef int c_f(double t,double* y, double* dydt,void *params):
 
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
-    y_n= wrapper.y_n
-    y_list=[]
-    for i from 0<=i<y_n:
+    y_n = wrapper.y_n
+    y_list = []
+    for i in range(y_n):
         y_list.append(y[i])
     try:
         if len(wrapper.the_parameters)!=0:
             dydt_list=wrapper.the_function(t,y_list,wrapper.the_parameters)
         else:
             dydt_list=wrapper.the_function(t,y_list)
-        for i from 0<=i<y_n:
-            dydt[i]=dydt_list[i]
+        for i in range(y_n):
+            dydt[i] = dydt_list[i]
         return GSL_SUCCESS
     except Exception:
         return -1
@@ -453,15 +453,15 @@ class ode_solver():
         cdef double * scale_abs_array
         scale_abs_array=NULL
 
-        y= <double*> sig_malloc(sizeof(double)*(dim))
-        if y==NULL:
+        y = <double*> sig_malloc(sizeof(double)*(dim))
+        if y == NULL:
             raise MemoryError("error allocating memory")
-        result=[]
-        v=[0]*dim
+        result = []
+        v = [0]*dim
         cdef gsl_odeiv_step_type * T
 
-        for i from 0 <=i< dim: #copy initial conditions into C array
-            y[i]=self.y_0[i]
+        for i in range(dim):  # copy initial conditions into C array
+            y[i] = self.y_0[i]
 
         if self.algorithm == "rkf45":
             T=gsl_odeiv_step_rkf45
@@ -502,9 +502,9 @@ class ode_solver():
             if not self.scale_abs:
                 c = gsl_odeiv_control_standard_new(self.error_abs,self.error_rel,self.a,self.a_dydt)
             elif hasattr(self.scale_abs,'__len__'):
-                if len(self.scale_abs)==dim:
+                if len(self.scale_abs) == dim:
                     scale_abs_array =<double *> sig_malloc(dim*sizeof(double))
-                    for i from 0 <=i<dim:
+                    for i in range(dim):
                         scale_abs_array[i]=self.scale_abs[i]
                     c = gsl_odeiv_control_scaled_new(self.error_abs,self.error_rel,self.a,self.a_dydt,scale_abs_array,dim)
 
@@ -551,11 +551,11 @@ class ode_solver():
                 sig_free(y)
                 sig_free(scale_abs_array)
                 raise TypeError("numpoints must be integer")
-            result.append( (self.t_span[0],self.y_0))
+            result.append((self.t_span[0], self.y_0))
             delta = (self.t_span[1]-self.t_span[0])/(1.0*num_points)
-            t =self.t_span[0]
-            t_end=self.t_span[0]+delta
-            for i from 0<i<=n:
+            t = self.t_span[0]
+            t_end = self.t_span[0]+delta
+            for i in range(1, n + 1):
                 while (t < t_end):
                     try:
                         sig_on()
@@ -571,7 +571,7 @@ class ode_solver():
                         sig_free(scale_abs_array)
                         raise ValueError("error solving")
 
-                for j  from 0<=j<dim:
+                for j in range(dim):
                     v[j]=<double> y[j]
                 result.append( (t,copy.copy(v)) )
                 t = t_end
@@ -579,9 +579,9 @@ class ode_solver():
 
         else:
             n = len(self.t_span)
-            result.append((self.t_span[0],self.y_0))
-            t=self.t_span[0]
-            for i from 0<i<n:
+            result.append((self.t_span[0], self.y_0))
+            t = self.t_span[0]
+            for i in range(1, n):
                 t_end=self.t_span[i]
                 while (t < t_end):
                     try:

@@ -10,15 +10,15 @@ AUTHORS:
 - L.F. Tabera Alonso (2013-3): Documentation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 
@@ -257,7 +257,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         I = I.n()
         s = 1/(3*pi)   # so arg gets scaled between -1/3 and 1/3.
 
-        for i from xmin <= i < xmax:
+        for i in range(xmin, xmax):
             z = self.data[2*i] + I*self.data[2*i+1]
             mag = z.abs()
             arg = z.arg()*s
