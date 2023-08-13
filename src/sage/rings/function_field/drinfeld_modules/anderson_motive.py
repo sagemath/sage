@@ -1,6 +1,8 @@
 r"""
-This module provides facilities for manipulation Anderson motives
-and computing the associated L-functions.
+Anderson motives over `\mathbb F_q[t,\theta]`
+
+This module provides facilities for manipulating Anderson motives
+over `\mathbb F_q[t,\theta]` and computing the associated L-functions.
 
     sage: from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive
 
