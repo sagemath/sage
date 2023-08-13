@@ -1068,7 +1068,7 @@ class HasseDiagram(DiGraph):
 
         TESTS::
 
-            sage: # needs sage.modules sage.libs.flint
+            sage: # needs sage.libs.flint sage.modules
             sage: H.moebius_function_matrix().is_immutable()
             True
             sage: hasattr(H,'_moebius_function_matrix')

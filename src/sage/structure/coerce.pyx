@@ -428,11 +428,11 @@ cpdef bint is_numpy_type(t):
         sage: import numpy
         sage: is_numpy_type(numpy.int16)
         True
-        sage: is_numpy_type(numpy.floating)                                             # needs numpy
+        sage: is_numpy_type(numpy.floating)
         True
-        sage: is_numpy_type(numpy.ndarray)                                              # needs numpy
+        sage: is_numpy_type(numpy.ndarray)
         True
-        sage: is_numpy_type(numpy.matrix)                                               # needs numpy
+        sage: is_numpy_type(numpy.matrix)
         True
 
         sage: is_numpy_type(int)

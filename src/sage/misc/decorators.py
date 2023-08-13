@@ -203,11 +203,11 @@ class infix_operator():
         sage: @infix_operator('add')
         ....: def eadd(a, b):
         ....:   return a.parent([i + j for i, j in zip(a, b)])
-        sage: u = vector([1, 2, 3])                                                     # needs sage.modules
-        sage: v = vector([5, 4, 3])                                                     # needs sage.modules
-        sage: u +eadd+ v                                                                # needs sage.modules
+        sage: u = vector([1, 2, 3])
+        sage: v = vector([5, 4, 3])
+        sage: u +eadd+ v
         (6, 6, 6)
-        sage: 2*u +eadd+ v                                                              # needs sage.modules
+        sage: 2*u +eadd+ v
         (7, 8, 9)
 
     A hack to simulate a postfix operator::

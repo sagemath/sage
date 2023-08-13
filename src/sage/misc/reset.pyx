@@ -61,12 +61,12 @@ def reset(vars=None, attached=False):
         sage: assume(x > 3)
         sage: assumptions()
         [x > 3]
-        sage: bool(x > 3)                                                               # needs sage.symbolic
+        sage: bool(x > 3)
         True
         sage: reset()
-        sage: assumptions()                                                             # needs sage.symbolic
+        sage: assumptions()
         []
-        sage: bool(x > 3)                                                               # needs sage.symbolic
+        sage: bool(x > 3)
         False
 
     """

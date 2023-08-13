@@ -3273,19 +3273,19 @@ cdef class CommutativeRingElement(RingElement):
 
             sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
-            sage: (x^2).sqrt()                                                          # needs sage.libs.pari
+            sage: (x^2).sqrt()
             x
             sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
             [x - 2, -x + 2]
             sage: sqrtx = x.sqrt(name="y"); sqrtx
             y
-            sage: sqrtx^2                                                               # needs sage.libs.pari
+            sage: sqrtx^2
             x
             sage: x.sqrt(all=true, name="y")
             [y, -y]
             sage: x.sqrt(extend=False, all=True)
             []
-            sage: x.sqrt()                                                              # needs sage.libs.pari
+            sage: x.sqrt()
             Traceback (most recent call last):
             ...
             TypeError: Polynomial is not a square. You must specify the name
@@ -3302,12 +3302,12 @@ cdef class CommutativeRingElement(RingElement):
             x + 3
             sage: f = (x + 3)^2; f.sqrt(all=True)
             [x + 3, -x - 3]
-            sage: f = (x^2 - x + 3)^2; f.sqrt()                                         # needs sage.libs.pari
+            sage: f = (x^2 - x + 3)^2; f.sqrt()
             x^2 - x + 3
-            sage: f = (x^2 - x + 3)^6; f.sqrt()                                         # needs sage.libs.pari
+            sage: f = (x^2 - x + 3)^6; f.sqrt()
             x^6 - 3*x^5 + 12*x^4 - 19*x^3 + 36*x^2 - 27*x + 27
             sage: g = (R.random_element(15))^2
-            sage: g.sqrt()^2 == g                                                       # needs sage.libs.pari
+            sage: g.sqrt()^2 == g
             True
 
             sage: # needs sage.libs.pari

@@ -964,15 +964,15 @@ cdef class CachedFunction():
 
             sage: # needs sage.combinat sage.libs.flint
             sage: g = CachedFunction(number_of_partitions)
-            sage: a = g(5)                                                              # needs sage.libs.flint
-            sage: g.cache                                                               # needs sage.libs.flint
+            sage: a = g(5)
+            sage: g.cache
             {((5, 'default'), ()): 7}
-            sage: a = g(10^5)   # indirect doctest                                      # needs sage.libs.flint
-            sage: a == number_of_partitions(10^5)                                       # needs sage.libs.flint
+            sage: a = g(10^5)   # indirect doctest
+            sage: a == number_of_partitions(10^5)
             True
-            sage: a is g(10^5)                                                          # needs sage.libs.flint
+            sage: a is g(10^5)
             True
-            sage: a is number_of_partitions(10^5)                                       # needs sage.libs.flint
+            sage: a is number_of_partitions(10^5)
             True
 
         Check that :trac:`16316` has been fixed, i.e., caching works for

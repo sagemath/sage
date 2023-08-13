@@ -142,9 +142,9 @@ def characteristic_polynomial(x, var='x'):
         sage: # needs sage.libs.pari sage.modules
         sage: M = MatrixSpace(QQ, 3, 3)
         sage: A = M([1,2,3,4,5,6,7,8,9])
-        sage: charpoly(A)                                                               # needs sage.libs.pari
+        sage: charpoly(A)
         x^3 - 15*x^2 - 18*x
-        sage: charpoly(A, 't')                                                          # needs sage.libs.pari
+        sage: charpoly(A, 't')
         t^3 - 15*t^2 - 18*t
 
         sage: k.<alpha> = GF(7^10); k                                                   # needs sage.rings.finite_rings
@@ -1228,11 +1228,11 @@ def minimal_polynomial(x, var='x'):
 
         sage: # needs sage.libs.pari sage.modules
         sage: a = matrix(ZZ, 2, [1..4])
-        sage: minpoly(a)                                                                # needs sage.libs.pari
+        sage: minpoly(a)
         x^2 - 5*x - 2
         sage: minpoly(a, 't')
         t^2 - 5*t - 2
-        sage: minimal_polynomial(a)                                                     # needs sage.libs.pari
+        sage: minimal_polynomial(a)
         x^2 - 5*x - 2
         sage: minimal_polynomial(a, 'theta')
         theta^2 - 5*theta - 2
@@ -1731,13 +1731,13 @@ def round(x, ndigits=0):
         1.41
         sage: q = round(sqrt(2), 5); q
         1.41421
-        sage: type(q)                                                                   # needs sage.symbolic
+        sage: type(q)
         <class 'sage.rings.real_double...RealDoubleElement...'>
-        sage: q = round(sqrt(2)); q                                                     # needs sage.symbolic
+        sage: q = round(sqrt(2)); q
         1
-        sage: type(q)                                                                   # needs sage.symbolic
+        sage: type(q)
         <class 'sage.rings.integer.Integer'>
-        sage: round(pi)                                                                 # needs sage.symbolic
+        sage: round(pi)
         3
 
         sage: b = 5.4999999999999999

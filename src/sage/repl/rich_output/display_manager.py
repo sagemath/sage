@@ -716,9 +716,9 @@ class DisplayManager(SageObject):
             ....:                             dm.types.OutputImagePng)
             sage: out
             OutputImagePng container
-            sage: out.png.get().startswith(b'\x89PNG')                                  # needs sage.plot sage.symbolic
+            sage: out.png.get().startswith(b'\x89PNG')
             True
-            sage: out.png.filename()   # random                                         # needs sage.plot sage.symbolic
+            sage: out.png.filename()   # random
             '/home/user/.sage/temp/localhost.localdomain/23903/tmp_pu5woK.png'
         """
         import os

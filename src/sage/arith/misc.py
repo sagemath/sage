@@ -5086,9 +5086,9 @@ def falling_factorial(x, a):
         gamma(I + 2)
         sage: CC(a)
         0.652965496420167 + 0.343065839816545*I
-        sage: falling_factorial(1 + I, 4)                                               # needs sage.symbolic
+        sage: falling_factorial(1 + I, 4)
         4*I + 2
-        sage: falling_factorial(I, 4)                                                   # needs sage.symbolic
+        sage: falling_factorial(I, 4)
         -10
 
         sage: M = MatrixSpace(ZZ, 4, 4)                                                 # needs sage.modules
@@ -5184,7 +5184,7 @@ def rising_factorial(x, a):
         2826.38895824964
         sage: a = rising_factorial(1+I, I); a
         gamma(2*I + 1)/gamma(I + 1)
-        sage: CC(a)                                                                     # needs sage.symbolic
+        sage: CC(a)
         0.266816390637832 + 0.122783354006372*I
         sage: a = rising_factorial(I, 4); a
         -10
@@ -5967,29 +5967,29 @@ def sort_complex_numbers_for_display(nums):
         sage: # needs sage.rings.complex_double
         sage: import sage.arith.misc
         sage: sort_c = sort_complex_numbers_for_display
-        sage: nums = [CDF(i) for i in range(3)]                                         # needs sage.rings.complex_double
-        sage: for i in range(3):                                                        # needs sage.rings.complex_double
+        sage: nums = [CDF(i) for i in range(3)]
+        sage: for i in range(3):
         ....:     nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
         ....:                     RDF.random_element()))
         ....:     nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
         ....:                     RDF.random_element()))
-        sage: shuffle(nums)                                                             # needs sage.rings.complex_double
-        sage: nums = sort_c(nums)                                                       # needs sage.rings.complex_double
-        sage: for i in range(len(nums)):                                                # needs sage.rings.complex_double
+        sage: shuffle(nums)
+        sage: nums = sort_c(nums)
+        sage: for i in range(len(nums)):
         ....:     if nums[i].imag():
         ....:         first_non_real = i
         ....:         break
         ....: else:
         ....:     first_non_real = len(nums)
-        sage: assert first_non_real >= 3                                                # needs sage.rings.complex_double
-        sage: for i in range(first_non_real - 1):                                       # needs sage.rings.complex_double
+        sage: assert first_non_real >= 3
+        sage: for i in range(first_non_real - 1):
         ....:     assert nums[i].real() <= nums[i + 1].real()
         sage: def truncate(n):
         ....:     if n.real() < 1e-10:
         ....:         return 0
         ....:     else:
         ....:         return n.real().n(digits=9)
-        sage: for i in range(first_non_real, len(nums)-1):                              # needs sage.rings.complex_double
+        sage: for i in range(first_non_real, len(nums)-1):
         ....:     assert truncate(nums[i]) <= truncate(nums[i + 1])
         ....:     if truncate(nums[i]) == truncate(nums[i + 1]):
         ....:         assert nums[i].imag() <= nums[i+1].imag()

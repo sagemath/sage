@@ -1223,12 +1223,12 @@ class Latex(LatexCall):
             17
             \end{array}\right)
             sage: latex.matrix_delimiters("[", "]")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left[\begin{array}{r}
             17
             \end{array}\right]
             sage: latex.matrix_delimiters(left="\\{")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left\{\begin{array}{r}
             17
             \end{array}\right]
@@ -1283,10 +1283,10 @@ class Latex(LatexCall):
             sage: latex(a)
             \left(1,\,2,\,3\right)
             sage: latex.vector_delimiters("[", "]")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left[1,\,2,\,3\right]
             sage: latex.vector_delimiters(right="\\}")
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left[1,\,2,\,3\right\}
             sage: latex.vector_delimiters()
             ['[', '\\}']
@@ -1331,12 +1331,12 @@ class Latex(LatexCall):
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('c')
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left(\begin{array}{c}
             42
             \end{array}\right)
             sage: latex.matrix_column_alignment('l')
-            sage: latex(a)                                                              # needs sage.modules
+            sage: latex(a)
             \left(\begin{array}{l}
             42
             \end{array}\right)

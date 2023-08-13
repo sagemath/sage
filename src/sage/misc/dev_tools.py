@@ -226,9 +226,9 @@ def find_objects_from_name(name, module_name=None):
         sage: import sympy
         sage: dt.find_objects_from_name('RR')
         [Real Field with 53 bits of precision, RR]
-        sage: dt.find_objects_from_name('RR', 'sage')                                   # needs sympy
+        sage: dt.find_objects_from_name('RR', 'sage')
         [Real Field with 53 bits of precision]
-        sage: dt.find_objects_from_name('RR', 'sympy')                                  # needs sympy
+        sage: dt.find_objects_from_name('RR', 'sympy')
         [RR]
 
     Examples that do not belong to the global namespace but in a loaded module::

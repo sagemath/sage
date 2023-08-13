@@ -33,7 +33,7 @@ result no matter how a generator is identified::
     sage: v = V[0]
     sage: v['x'], v['y']
     (-2.464101615137755?, -0.535898384862246?)
-    sage: list(v)[0].parent()                                                           # needs sage.rings.number_field
+    sage: list(v)[0].parent()
     Multivariate Polynomial Ring in x, y over Algebraic Real Field
 """
 # ****************************************************************************

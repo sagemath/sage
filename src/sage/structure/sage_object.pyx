@@ -231,21 +231,21 @@ cdef class SageObject:
             sage: # needs sage.combinat
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # needs sage.combinat
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('tab')
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # needs sage.combinat
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('tab')
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')                                       # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options._reset()')
             sage: shell.quit()
 
         TESTS::
@@ -294,21 +294,21 @@ cdef class SageObject:
             sage: # needs sage.combinat
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')                               # needs sage.combinat
+            sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
             [[1, 2], [3]]
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('tab')
             1  2
             3
-            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')        # needs sage.combinat
-            sage: shell.run_cell('tab')                                                             # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options(ascii_art="table", convention="French")')
+            sage: shell.run_cell('tab')
             +---+
             | 3 |
             +---+---+
             | 1 | 2 |
             +---+---+
             sage: shell.run_cell('%display plain')
-            sage: shell.run_cell('Tableaux.options._reset()')                                       # needs sage.combinat
+            sage: shell.run_cell('Tableaux.options._reset()')
             sage: shell.quit()
 
         TESTS::
