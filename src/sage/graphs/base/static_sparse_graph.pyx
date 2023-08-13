@@ -1032,15 +1032,16 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
+        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)
         sage: G.add_edge(1,0)
         sage: e_min, e_max = spectral_radius(G, 0.00001)
-        sage: p = G.adjacency_matrix(sparse=True).charpoly()                            # needs sage.modules
-        sage: p                                                                         # needs sage.modules
+        sage: p = G.adjacency_matrix(sparse=True).charpoly()
+        sage: p
         x^201 - x^199 - 1
-        sage: r = p.roots(AA, multiplicities=False)[0]                                  # needs sage.modules
+        sage: r = p.roots(AA, multiplicities=False)[0]
         sage: e_min < r < e_max
         True
 

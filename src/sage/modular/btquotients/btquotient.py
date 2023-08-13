@@ -41,11 +41,7 @@ AUTHORS:
 from copy import copy
 from collections import deque
 
-from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
-from sage.graphs.graph import Graph
-from sage.interfaces.magma import magma
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -62,13 +58,18 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.padics.factory import Qp, Zp
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 lazy_import("sage.plot.colors", "rainbow")
+
+lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.plot.colors', 'rainbow')
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
 
 
 class DoubleCosetReduction(SageObject):
