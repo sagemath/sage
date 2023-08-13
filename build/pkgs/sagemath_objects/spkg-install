@@ -21,7 +21,7 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 DIST_DIR="$(mktemp -d)"
 python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
 
-wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
+wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
 ls -l "$wheel"
 
 export TOX_PARALLEL_NO_SPINNER=1
