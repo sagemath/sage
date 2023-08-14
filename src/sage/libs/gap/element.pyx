@@ -625,7 +625,7 @@ cdef class GapElement(RingElement):
 
         return (_from_sage, (elem,))
 
-    cdef bint _check_contains(self, Element other)
+    cdef bint _check_contains(self, Element other) except -2:
         cdef GapElement c_other
         if isinstance(other, GapElement):
             c_other = <GapElement>other
