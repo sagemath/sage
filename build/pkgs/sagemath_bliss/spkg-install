@@ -25,7 +25,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
 else
     if [ "$SAGE_WHEELS" = yes ]; then
         # Modularized install via wheels
-        wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . && echo $wheel)
+        wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . >&2 && echo $wheel)
     else
         # Legacy direct installation
         wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
