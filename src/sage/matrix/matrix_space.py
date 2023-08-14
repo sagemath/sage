@@ -1804,12 +1804,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
-        
-        if self._copy_zero:
-            A = self.zero_matrix().__copy__()
-        else:
-            A = self.matrix()
-
+        A = self.zero_matrix().__copy__()
         for i in range(self.__nrows):
             A[i, i] = 1
         A.set_immutable()
@@ -1868,12 +1863,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             raise TypeError("diagonal matrix must be square")
         if self.__nrows < len(entries):
             raise ValueError('number of diagonal matrix entries (%s) exceeds the matrix size (%s)' % (len(entries), self.__nrows))
-        
-        if self._copy_zero:
-            A = self.zero_matrix().__copy__()
-        else:
-            A = self.matrix()
-
+        A = self.zero_matrix().__copy__()
         for i in range(len(entries)):
             A[i, i] = entries[i]
         return A

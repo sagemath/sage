@@ -539,32 +539,11 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                 if coerce:
                     v[se.j] = mpz_fdiv_ui((<Integer>x).value, p)
                 else:
-                    v[j] = <celement>x
                     v[se.j] = mpz_get_ui((<Integer>x).value)
             elif coerce:
                 v[se.j] = R(x)
             else:
                 v[se.j] = <celement>x
-
-	
-        #for i in range(ma.nrows):
-        #    v = self._matrix[i]
-        #    for j in range(ma.ncols):
-        #        x = next(it)
-        #        if type(x) is int:
-        #            tmp = (<long>x) % p
-        #            v[j] = tmp + (tmp<0)*p
-        #        elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
-        #            v[j] = <celement>(<IntegerMod_int>x).ivalue
-        #        elif type(x) is Integer:
-        #            if coerce:
-        #                v[j] = mpz_fdiv_ui((<Integer>x).value, p)
-        #            else:
-        #                v[j] = mpz_get_ui((<Integer>x).value)
-        #        elif coerce:
-        #            v[j] = R(x)
-        #        else:
-        #            v[j] = <celement>x
 
     cdef long _hash_(self) except -1:
         """
@@ -870,7 +849,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             False
         """
         cdef Matrix_modn_dense_template A
-        A = self.__class__.__new__(self.__class__, self._parent, 0, 0, 0, zeroed_alloc=False)
+        A = self.__class__.__new__(self.__class__,self._parent,None,None,None,zeroed_alloc=False)
         memcpy(A._entries, self._entries, sizeof(celement)*self._nrows*self._ncols)
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
