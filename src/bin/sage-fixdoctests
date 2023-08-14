@@ -331,10 +331,8 @@ if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
 else:
     input_filenames = args.filename
 
-# Test the doctester, putting the output of the test into sage's temporary directory
-if args.no_test:
-    doc_out = ''
-else:
+
+def doctest_blocks():
     executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
     environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
     long_args = f'--long ' if args.long else ''
@@ -342,12 +340,13 @@ else:
     lib_args = f'--if-installed ' if args.venv else ''
     doc_file = tmp_filename()
     if args.venv or environment_args:
-       input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-       cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
-       print(f'Running "{cmdline}"')
-       if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
-           print(f'Doctester exited with error status {status}')
-           sys.exit(status)
+        # Test the doctester, putting the output of the test into sage's temporary directory
+        input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
+        print(f'Running "{cmdline}"')
+        if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
+            print(f'Doctester exited with error status {status}')
+            sys.exit(status)
     # Run the doctester, putting the output of the test into sage's temporary directory
     input_args = " ".join(shlex.quote(f) for f in input_filenames)
     cmdline = f'{shlex.quote(executable)} -t -p {environment_args}{long_args}{probe_args}{lib_args}{input_args}'
@@ -361,8 +360,13 @@ else:
     for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
         print('sage-runtests: ' + m.group(0))
 
-sep = "**********************************************************************\n"
-doctests = doc_out.split(sep)
+    sep = "**********************************************************************\n"
+    return doc_out.split(sep)
+
+if args.no_test:
+    doctests = []
+else:
+    doctests = doctest_blocks()
 
 seen = set()
 
