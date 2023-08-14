@@ -34,7 +34,7 @@ and adding elements of the scene one by one, which gives a huge amount of
 flexibility. For example, here we directly use Tachyon to draw 3
 spheres on the coordinate axes::
 
-    sage: t = Tachyon(xres=500,yres=500, camera_position=(2,0,0))
+    sage: t = Tachyon(xres=500, yres=500, camera_position=(2,0,0))
     sage: t.light((4,3,2), 0.2, (1,1,1))
     sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
     sage: t.texture('t3', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -46,11 +46,12 @@ spheres on the coordinate axes::
 
 For scenes with many reflections it is helpful to increase the raydepth option, and turn on antialiasing.  The following scene is an extreme case with many reflections between four cotangent spheres::
 
-    sage: t = Tachyon(camera_position=(0,-4,1), xres = 800, yres = 600, raydepth = 12, aspectratio=.75, antialiasing = 4)
+    sage: t = Tachyon(camera_position=(0,-4,1), xres=800, yres=600, raydepth=12,
+    ....:             aspectratio=.75, antialiasing=4)
     sage: t.light((0.02,0.012,0.001), 0.01, (1,0,0))
     sage: t.light((0,0,10), 0.01, (0,0,1))
-    sage: t.texture('s', color = (.8,1,1), opacity = .9, specular = .95, diffuse = .3, ambient = 0.05)
-    sage: t.texture('p', color = (0,0,1), opacity = 1, specular = .2)
+    sage: t.texture('s', color=(.8,1,1), opacity=.9, specular=.95, diffuse=.3, ambient=0.05)
+    sage: t.texture('p', color=(0,0,1), opacity=1, specular=.2)
     sage: t.sphere((-1,-.57735,-0.7071),1,'s')
     sage: t.sphere((1,-.57735,-0.7071),1,'s')
     sage: t.sphere((0,1.15465,-0.7071),1,'s')
@@ -92,7 +93,7 @@ angle, right angle)::
 Finally there is the ``projection='perspective_dof'`` option. ::
 
     sage: T = Tachyon(xres=800, antialiasing=4, raydepth=10,
-    ....: projection='perspective_dof', focallength='1.0', aperture='.0025')
+    ....:             projection='perspective_dof', focallength='1.0', aperture='.0025')
     sage: T.light((0,5,7), 1.0, (1,1,1))
     sage: T.texture('t1', opacity=1, specular=.3)
     sage: T.texture('t2', opacity=1, specular=.3, color=(0,0,1))
@@ -113,7 +114,8 @@ Image files in the ``ppm`` format can be used to tile planes or cover
 cylinders or spheres. In this example an image is created and then
 used to tile the plane::
 
-    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3),
+    ....:             projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
     sage: T.texture('t1',color=(0,0,1))
     sage: for ed in cedges:
     ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
@@ -121,15 +123,20 @@ used to tile the plane::
     sage: fname_png = tmp_filename(ext='.png')
     sage: fname_ppm = tmp_filename(ext='.ppm')
     sage: T.save(fname_png)
-    sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)  # optional -- ImageMagick
+    sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)    # optional -- ImageMagick
 
-    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))  # optional -- ImageMagick
-    sage: T.texture('t1', color=(1,0,0), specular=.9)  # optional -- ImageMagick
-    sage: T.texture('p1', color=(1,1,1), opacity=.1, imagefile=fname_ppm, texfunc=9)  # optional -- ImageMagick
-    sage: T.sphere((0,0,0), .5, 't1')  # optional -- ImageMagick
-    sage: T.plane((0,0,-1), (0,0,1), 'p1')  # optional -- ImageMagick
-    sage: T.light((-4,-4,4), .1, (1,1,1))  # optional -- ImageMagick
-    sage: T.show()  # optional -- ImageMagick
+    sage: # optional - imagemagick
+    sage: T = Tachyon(xres=800, yres=600,
+    ....:             camera_position=(-2.0,-.1,.3),
+    ....:             projection='fisheye',
+    ....:             frustum=(-1.0, 1.0, -1.0, 1.0))
+    sage: T.texture('t1', color=(1,0,0), specular=.9)
+    sage: T.texture('p1', color=(1,1,1), opacity=.1,
+    ....:           imagefile=fname_ppm, texfunc=9)
+    sage: T.sphere((0,0,0), .5, 't1')
+    sage: T.plane((0,0,-1), (0,0,1), 'p1')
+    sage: T.light((-4,-4,4), .1, (1,1,1))
+    sage: T.show()
 
 AUTHOR:
 
@@ -172,24 +179,24 @@ class Tachyon(WithEqualityById, SageObject):
 
     INPUT:
 
-    - ``xres`` - (default 350)
-    - ``yres`` - (default 350)
-    - ``zoom`` - (default 1.0)
-    - ``antialiasing`` - (default ``False``)
-    - ``aspectratio``  - (default 1.0)
-    - ``raydepth`` - (default 8)
-    - ``camera_position`` - (default (-3, 0, 0))
-    - ``updir`` - (default (0, 0, 1))
-    - ``look_at`` - (default (0,0,0))
-    - ``viewdir`` - (default ``None``), otherwise list of three numbers
-    - ``projection`` - ``'PERSPECTIVE'`` (default), ``'perspective_dof'``
+    - ``xres`` -- (default 350)
+    - ``yres`` -- (default 350)
+    - ``zoom`` -- (default 1.0)
+    - ``antialiasing`` -- (default ``False``)
+    - ``aspectratio``  -- (default 1.0)
+    - ``raydepth`` -- (default 8)
+    - ``camera_position`` -- (default (-3, 0, 0))
+    - ``updir`` -- (default (0, 0, 1))
+    - ``look_at`` -- (default (0,0,0))
+    - ``viewdir`` -- (default ``None``), otherwise list of three numbers
+    - ``projection`` -- ``'PERSPECTIVE'`` (default), ``'perspective_dof'``
       or ``'fisheye'``.
-    - ``frustum`` - (default ''), otherwise list of four numbers. Only
-      used with projection='fisheye'.
-    - ``focallength`` - (default ''), otherwise a number. Only used
-      with projection='perspective_dof'.
-    - ``aperture`` - (default ''), otherwise a number.  Only used
-      with projection='perspective_dof'.
+    - ``frustum`` -- (default ``''``), otherwise list of four numbers. Only
+      used with ``projection='fisheye'``.
+    - ``focallength`` -- (default ''), otherwise a number. Only used
+      with ``projection='perspective_dof'``.
+    - ``aperture`` -- (default ''), otherwise a number.  Only used
+      with ``projection='perspective_dof'``.
 
     OUTPUT: A Tachyon 3d scene.
 
@@ -205,7 +212,7 @@ class Tachyon(WithEqualityById, SageObject):
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
-        sage: t.texture('t2', ambient=0.2,diffuse=0.7, specular=0.5, opacity=0.7, color=(0,0,1.0))
+        sage: t.texture('t2', ambient=0.2, diffuse=0.7, specular=0.5, opacity=0.7, color=(0,0,1.0))
         sage: k=0
         sage: for i in srange(-1,1,0.05):
         ....:    k += 1
@@ -252,25 +259,28 @@ class Tachyon(WithEqualityById, SageObject):
     Points on an elliptic curve, their height indicated by their height
     above the axis::
 
+        sage: # needs sage.schemes
         sage: t = Tachyon(camera_position=(5,2,2), look_at=(0,1,0))
         sage: t.light((10,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
         sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,0,1))
-        sage: E = EllipticCurve('37a')
-        sage: P = E([0,0])
-        sage: Q = P
+        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
+        sage: P = E([0,0])                                                              # needs sage.schemes
+        sage: Q = P                                                                     # needs sage.schemes
         sage: n = 100
-        sage: for i in range(n):   # increase 20 for a better plot
+        sage: for i in range(n):   # increase 20 for a better plot                      # needs sage.schemes
         ....:    Q = Q + P
         ....:    t.sphere((Q[1], Q[0], ZZ(i)/n), 0.1, 't%s'%(i%3))
-        sage: t.show()
+        sage: t.show()                                                                  # needs sage.schemes
 
     A beautiful picture of rational points on a rank 1 elliptic curve.
 
     ::
 
-        sage: t = Tachyon(xres=1000, yres=800, camera_position=(2,7,4), look_at=(2,0,0), raydepth=4)
+        sage: # needs sage.schemes
+        sage: t = Tachyon(xres=1000, yres=800, camera_position=(2,7,4),
+        ....:             look_at=(2,0,0), raydepth=4)
         sage: t.light((10,3,2), 1, (1,1,1))
         sage: t.light((10,-3,2), 1, (1,1,1))
         sage: t.texture('black', color=(0,0,0))
@@ -279,26 +289,27 @@ class Tachyon(WithEqualityById, SageObject):
         sage: t.plane((0,0,0),(0,0,1),'grey')
         sage: t.cylinder((0,0,0),(1,0,0),.01,'black')
         sage: t.cylinder((0,0,0),(0,1,0),.01,'black')
-        sage: E = EllipticCurve('37a')
-        sage: P = E([0,0])
-        sage: Q = P
+        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
+        sage: P = E([0,0])                                                              # needs sage.schemes
+        sage: Q = P                                                                     # needs sage.schemes
         sage: n = 100
-        sage: for i in range(n):
+        sage: for i in range(n):                                                        # needs sage.schemes
         ....:    Q = Q + P
         ....:    c = i/n + .1
         ....:    t.texture('r%s'%i,color=(float(i/n),0,0))
         ....:    t.sphere((Q[0], -Q[1], .01), .04, 'r%s'%i)
-        sage: t.show()    # long time, e.g., 10-20 seconds
+        sage: t.show()                          # long time                             # needs sage.schemes
 
     A beautiful spiral.
 
     ::
 
-        sage: t = Tachyon(xres=800,yres=800, camera_position=(2,5,2), look_at=(2.5,0,0))
+        sage: t = Tachyon(xres=800, yres=800, camera_position=(2,5,2), look_at=(2.5,0,0))
         sage: t.light((0,0,100), 1, (1,1,1))
-        sage: t.texture('r', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
+        sage: t.texture('r', ambient=0.1, diffuse=0.9, specular=0.5,
+        ....:           opacity=1.0, color=(1,0,0))
         sage: for i in srange(0,50,0.1):
-        ....:    t.sphere((i/10,sin(i),cos(i)), 0.05, 'r')
+        ....:    t.sphere((i/10.0,sin(i),cos(i)), 0.05, 'r')
         sage: t.texture('white', color=(1,1,1), opacity=1, specular=1, diffuse=1)
         sage: t.plane((0,0,-100), (0,0,-100), 'white')
         sage: t.show()
@@ -314,15 +325,15 @@ class Tachyon(WithEqualityById, SageObject):
 
     Use of a fisheye lens perspective. ::
 
-        sage: T = Tachyon(xres=800, yres=600, camera_position=(-1.5,-1.5,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+        sage: T = Tachyon(xres=800, yres=600, camera_position=(-1.5,-1.5,.3),
+        ....:             projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
         sage: T.texture('t1', color=(0,0,1))
         sage: cedges = [[[1, 1, 1], [-1, 1, 1]], [[1, 1, 1], [1, -1, 1]],
-        ....: [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]], [[-1, 1, 1],
-        ....: [-1, 1, -1]], [[1, -1, 1], [-1, -1, 1]], [[1, -1, 1],
-        ....: [1, -1, -1]],
-        ....: [[-1, -1, 1], [-1, -1, -1]], [[1, 1, -1], [-1, 1, -1]],
-        ....: [[1, 1, -1], [1, -1, -1]], [[-1, 1, -1], [-1, -1, -1]],
-        ....: [[1, -1, -1], [-1, -1, -1]]]
+        ....:           [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]],
+        ....:           [[-1, 1, 1], [-1, 1, -1]], [[1, -1, 1], [-1, -1, 1]],
+        ....:           [[1, -1, 1], [1, -1, -1]], [[-1, -1, 1], [-1, -1, -1]],
+        ....:           [[1, 1, -1], [-1, 1, -1]], [[1, 1, -1], [1, -1, -1]],
+        ....:           [[-1, 1, -1], [-1, -1, -1]], [[1, -1, -1], [-1, -1, -1]]]
         sage: for ed in cedges:
         ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
         sage: T.light((-4,-4,4), .1, (1,1,1))
@@ -331,7 +342,8 @@ class Tachyon(WithEqualityById, SageObject):
     Use of the ``projection='perspective_dof'`` option.  This may not be
     implemented correctly. ::
 
-        sage: T = Tachyon(xres=800,antialiasing=4, raydepth=10, projection='perspective_dof', focallength='1.0', aperture='.0025')
+        sage: T = Tachyon(xres=800, antialiasing=4, raydepth=10,
+        ....:             projection='perspective_dof', focallength='1.0', aperture='.0025')
         sage: T.light((0,5,7), 1.0, (1,1,1))
         sage: T.texture('t1', opacity=1, specular=.3)
         sage: T.texture('t2', opacity=1, specular=.3, color=(0,0,1))
@@ -544,14 +556,17 @@ class Tachyon(WithEqualityById, SageObject):
 
         ::
 
-            sage: h = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: h = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
+            ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
-            sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
-            sage: h.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
+            ....:           opacity=1.0, color=(1.0,0,0))
+            sage: h.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
+            ....:        num_colors=60)  # increase min_depth for better picture
             sage: from sage.misc.verbose import set_verbose, get_verbose
             sage: set_verbose(0)
-            sage: h.show()
+            sage: h.show()                                                              # needs sage.symbolic
 
         This second example, using a "medium" global verbosity
         setting of 1, displays some extra technical information then
@@ -559,13 +574,16 @@ class Tachyon(WithEqualityById, SageObject):
 
         ::
 
-            sage: s = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: s = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
+            ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
-            sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
-            sage: s.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
+            ....:           opacity=1.0, color=(1.0,0,0))
+            sage: s.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
+            ....:        num_colors=60)  # increase min_depth for better picture
             sage: set_verbose(1)
-            sage: s.show()
+            sage: s.show()                                                              # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -579,14 +597,17 @@ class Tachyon(WithEqualityById, SageObject):
         ::
 
             sage: set_verbose(0)
-            sage: d = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: d = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
+            ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
-            sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
-            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
+            ....:           opacity=1.0, color=(1.0,0,0))
+            sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,              # needs sage.symbolic
+            ....:        num_colors=60)  # increase min_depth for better picture
             sage: get_verbose()
             0
-            sage: d.show(verbose=2)
+            sage: d.show(verbose=2)                                                     # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -604,7 +625,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: t = Tachyon(xres = 300, yres = 700)
+            sage: t = Tachyon(xres=300, yres=700)
             sage: t._res()
             '\nresolution 300 700\n'
         """
@@ -617,7 +638,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: t = Tachyon(raydepth = 16, zoom = 2, antialiasing = True)
+            sage: t = Tachyon(raydepth=16, zoom=2, antialiasing=True)
             sage: t._camera().split()[3:10]
             ['zoom', '2.0', 'aspectratio', '1.0', 'antialiasing', '1', 'raydepth']
         """
@@ -764,7 +785,8 @@ class Tachyon(WithEqualityById, SageObject):
 
             sage: t = Tachyon(camera_position=(2,5,4), look_at=(2,0,0), raydepth=6)
             sage: t.light((10,3,4), 1, (1,1,1))
-            sage: t.texture('mirror', ambient=0.05, diffuse=0.05, specular=.9, opacity=0.9, color=(.8,.8,.8))
+            sage: t.texture('mirror', ambient=0.05, diffuse=0.05, specular=.9,
+            ....:           opacity=0.9, color=(.8,.8,.8))
             sage: t.texture('grey', color=(.8,.8,.8), texfunc=3)
             sage: t.plane((0,0,0),(0,0,1),'grey')
             sage: t.sphere((4,-1,1), 1, 'mirror')
@@ -987,12 +1009,15 @@ class Tachyon(WithEqualityById, SageObject):
 
         Flat Triangles::
 
-            sage: t = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
+            ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
-            sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
-            sage: t.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
-            sage: t.show(verbose=1)
+            sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
+            ....:           opacity=1.0, color=(1.0,0,0))
+            sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
+            ....:        num_colors=60)  # increase min_depth for better picture
+            sage: t.show(verbose=1)                                                     # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -1000,13 +1025,16 @@ class Tachyon(WithEqualityById, SageObject):
         Plotting with Smooth Triangles (requires explicit gradient
         function)::
 
-            sage: t = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
+            ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
-            sage: def g(x,y): return ( float(y*cos(x*y)), float(x*cos(x*y)), 1 )
-            sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
-            sage: t.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, grad_f = g)  # increase min_depth for better picture
-            sage: t.show(verbose=1)
+            sage: def g(x,y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
+            sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
+            ....:           opacity=1.0, color=(1.0,0,0))
+            sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
+            ....:        grad_f=g)  # increase min_depth for better picture
+            sage: t.show(verbose=1)                                                     # needs sage.symbolic
             tachyon ...
             Scene contains 2713 objects.
             ...
@@ -1646,7 +1674,6 @@ class ParametricPlot():
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import ParametricPlot
-            sage: t = var('t')
             sage: f = lambda t: (t,t^2,t^3)
             sage: q = ParametricPlot(f,0,1,'s')
             sage: q.str()[9:69]
@@ -1662,7 +1689,6 @@ class ParametricPlot():
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import ParametricPlot
-            sage: t = var('t')
             sage: f = lambda t: (t,t^2,t^3)
             sage: q = ParametricPlot(f,0,1,'s')
             sage: q._e_rel
@@ -1690,7 +1716,6 @@ class ParametricPlot():
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import ParametricPlot
-            sage: t = var('t')
             sage: f = lambda t: (t,t^2,t^3)
             sage: q = ParametricPlot(f,0,1,'s')
             sage: q._plot_step(8,0,1,[0,0,0],[1,1,1])
@@ -1724,7 +1749,6 @@ class ParametricPlot():
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import ParametricPlot
-            sage: t = var('t')
             sage: f = lambda t: (t,t^2,t^3)
             sage: q = ParametricPlot(f,0,1,'s')
             sage: q.tol([0,0,0],[1,0,0])

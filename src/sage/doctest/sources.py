@@ -159,7 +159,7 @@ class DocTestSource():
             sage: FDS == FDS2
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return self.__dict__ == other.__dict__
 

@@ -101,7 +101,6 @@ from .infinity import infinity, is_Infinite
 from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-import sage.rings.polynomial.polynomial_element
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
@@ -112,9 +111,6 @@ from sage.categories.fields import Fields
 _Fields = Fields()
 
 from sage.misc.derivative import multi_derivative
-
-Polynomial = sage.rings.polynomial.polynomial_element.Polynomial_generic_dense
-
 from sage.structure.element cimport AlgebraElement, RingElement
 from sage.structure.richcmp cimport richcmp
 
