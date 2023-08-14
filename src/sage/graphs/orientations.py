@@ -25,17 +25,31 @@ Authors
 Methods
 -------
 """
+# ****************************************************************************
+#       Copyright (C)      2017 Kolja Knauer <kolja.knauer@gmail.com>
+#                          2017 Petru Valicov <petru.valicov@lirmm.fr>
+#                     2017-2023 David Coudert <david.coudert@inria.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from copy import copy
 from sage.graphs.digraph import DiGraph
 
 
 def strong_orientations_iterator(G):
     r"""
-    Returns an iterator over all strong orientations of a graph `G`.
+    Return an iterator over all strong orientations of a graph `G`.
 
-    A strong orientation of a graph is an orientation of its edges such that
-    the obtained digraph is strongly connected (i.e. there exist a directed path
-    between each pair of vertices).
+    A strong orientation of a graph is an orientation of its edges such that the
+    obtained digraph is strongly connected (i.e. there exist a directed path
+    between each pair of vertices). According to Robbins' theorem (see the
+    :wikipedia:`Robbins_theorem`), the graphs that have strong orientations are
+    exactly the 2-edge-connected graphs (i.e., the bridgeless graphs).
 
     ALGORITHM:
 
@@ -84,7 +98,7 @@ def strong_orientations_iterator(G):
 
     A tree cannot be strongly oriented::
 
-        sage: g = graphs.RandomTree(100)
+        sage: g = graphs.RandomTree(10)
         sage: len(list(g.strong_orientations_iterator()))
         0
 
@@ -115,44 +129,37 @@ def strong_orientations_iterator(G):
         sage: g = graphs.PetersenGraph()
         sage: nr1 = len(list(g.strong_orientations_iterator()))
         sage: nr2 = g.tutte_polynomial()(0,2)
-        sage: nr1 == nr2/2 # The Tutte polynomial counts also the symmetrical orientations
+        sage: nr1 == nr2/2  # The Tutte polynomial counts also the symmetrical orientations
         True
-
     """
     # if the graph has a bridge or is disconnected,
     # then it cannot be strongly oriented
-    if G.order() < 3 or not G.is_biconnected():
+    if G.order() < 3 or not G.is_connected() or any(G.bridges(labels=False)):
         return
 
-    V = G.vertices(sort=False)
-    Dg = DiGraph([V, G.edges(sort=False)], pos=G.get_pos())
+    V = list(G)
 
     # compute an arbitrary spanning tree of the undirected graph
-    te = G.min_spanning_tree()
-    treeEdges = [(u, v) for u, v, _ in te]
-    tree_edges_set = set(treeEdges)
-    A = [edge for edge in G.edge_iterator(labels=False) if edge not in tree_edges_set]
+    T = G.subgraph(vertices=G, edges=G.min_spanning_tree(), inplace=False)
+    treeEdges = list(T.edges(labels=False, sort=False))
+    A = [edge for edge in G.edge_iterator(labels=False) if not T.has_edge(edge)]
+
+    # Initialize a digraph with the edges of the spanning tree doubly oriented
+    Dg = T.to_directed(sparse=True)
+    Dg.add_edges(A)
 
     # initialization of the first binary word 00...0
     # corresponding to the current orientation of the non-tree edges
     existingAedges = [0] * len(A)
 
-    # Make the edges of the spanning tree doubly oriented
-    for e in treeEdges:
-        if Dg.has_edge(e):
-            Dg.add_edge(e[1], e[0])
-        else:
-            Dg.add_edge(e)
-
     # Generate all orientations for non-tree edges (using Gray code)
     # Each of these orientations can be extended to a strong orientation
     # of G by orienting properly the tree-edges
     previousWord = 0
-    i = 0
 
     # the orientation of one edge is fixed so we consider one edge less
     nr = 2**(len(A) - 1)
-    while i < nr:
+    for i in range(nr):
         word = (i >> 1) ^ i
         bitChanged = word ^ previousWord
 
@@ -169,9 +176,7 @@ def strong_orientations_iterator(G):
             Dg.reverse_edge(A[bit][1], A[bit][0])
             existingAedges[bit] = 0
         # launch the algorithm for enumeration of the solutions
-        for sol in _strong_orientations_of_a_mixed_graph(Dg, V, treeEdges):
-            yield sol
-        i = i + 1
+        yield from _strong_orientations_of_a_mixed_graph(Dg, V, treeEdges)
 
 
 def _strong_orientations_of_a_mixed_graph(Dg, V, E):
@@ -201,9 +206,9 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
 
         sage: from sage.graphs.orientations import _strong_orientations_of_a_mixed_graph
         sage: g = graphs.CycleGraph(5)
-        sage: Dg = DiGraph(g) # all edges of g will be doubly oriented
+        sage: Dg = DiGraph(g)  # all edges of g will be doubly oriented
         sage: it = _strong_orientations_of_a_mixed_graph(Dg, list(g), list(g.edges(labels=False, sort=False)))
-        sage: len(list(it)) # there are two orientations of this multigraph
+        sage: len(list(it))  # there are two orientations of this multigraph
         2
     """
     length = len(E)
@@ -213,7 +218,9 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
         u, v = E[i]
         Dg.delete_edge(u, v)
         if not (v in Dg.depth_first_search(u)):
-            del E[i]
+            # del E[i] in constant time
+            E[i] = E[-1]
+            E.pop()
             length -= 1
             Dg.add_edge(u, v)
             Dg.delete_edge(v, u)
@@ -222,7 +229,9 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
             Dg.add_edge(u, v)
             Dg.delete_edge(v, u)
             if not (u in Dg.depth_first_search(v)):
-                del E[i]
+                # del E[i] in constant time
+                E[i] = E[-1]
+                E.pop()
                 length -= 1
                 boundEdges.append((u, v))
                 Dg.delete_edge(u, v)

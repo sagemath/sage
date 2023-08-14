@@ -132,7 +132,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: Q = P*(8/9)
             sage: Q.integral_points_count()
             1
-            sage: Q.integral_points_count(explicit_enumeration_threshold=0)  # optional - latte_int
+            sage: Q.integral_points_count(explicit_enumeration_threshold=0)
             1
 
         Unbounded polyhedra (with or without lattice points) are not supported::
@@ -150,12 +150,12 @@ class Polyhedron_QQ(Polyhedron_base):
 
         "Fibonacci" knapsacks (preprocessing helps a lot)::
 
-            sage: def fibonacci_knapsack(d, b, backend=None):                                                   # optional - sage.combinat
+            sage: def fibonacci_knapsack(d, b, backend=None):
             ....:     lp = MixedIntegerLinearProgram(base_ring=QQ)
             ....:     x = lp.new_variable(nonnegative=True)
             ....:     lp.add_constraint(lp.sum(fibonacci(i+3)*x[i] for i in range(d)) <= b)
             ....:     return lp.polyhedron(backend=backend)
-            sage: fibonacci_knapsack(20, 12).integral_points_count() # does not finish with preprocess=False    # optional - sage.combinat
+            sage: fibonacci_knapsack(20, 12).integral_points_count() # does not finish with preprocess=False            # needs sage.combinat
             33
 
         TESTS:
@@ -163,10 +163,10 @@ class Polyhedron_QQ(Polyhedron_base):
         We check that :trac:`21491` is fixed::
 
             sage: P = Polyhedron(ieqs=[], eqns=[[-10,0,1],[-10,1,0]])
-            sage: P.integral_points_count() # optional - latte_int
+            sage: P.integral_points_count()
             1
             sage: P = Polyhedron(ieqs=[], eqns=[[-11,0,2],[-10,1,0]])
-            sage: P.integral_points_count() # optional - latte_int
+            sage: P.integral_points_count()
             0
         """
         if self.is_empty():
@@ -296,23 +296,24 @@ class Polyhedron_QQ(Polyhedron_base):
             7/2*t^3 + 2*t^2 - 1/2*t + 1
             sage: poly(1)                                               # optional - latte_int
             6
-            sage: len(simplex.integral_points())                        # optional - latte_int
+            sage: len(simplex.integral_points())
             6
             sage: poly(2)                                               # optional - latte_int
             36
-            sage: len((2*simplex).integral_points())                    # optional - latte_int
+            sage: len((2*simplex).integral_points())
             36
 
         Now we find the same Ehrhart polynomial, this time using
         ``engine='normaliz'``. To use the Normaliz engine, the ``simplex`` must
         be defined with ``backend='normaliz'``::
 
-            sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),      # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),
             ....:                                (-3,2,1), (1,-1,-2)],
             ....:                      backend='normaliz')
-            sage: simplex = simplex.change_ring(QQ)                     # optional - pynormaliz
-            sage: poly = simplex.ehrhart_polynomial(engine='normaliz')  # optional - pynormaliz
-            sage: poly                                                  # optional - pynormaliz
+            sage: simplex = simplex.change_ring(QQ)
+            sage: poly = simplex.ehrhart_polynomial(engine='normaliz')
+            sage: poly
             7/2*t^3 + 2*t^2 - 1/2*t + 1
 
         If the ``engine='normaliz'``, the backend should be ``'normaliz'``, otherwise
@@ -321,7 +322,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),
             ....:                                (-3,2,1), (1,-1,-2)])
             sage: simplex = simplex.change_ring(QQ)
-            sage: simplex.ehrhart_polynomial(engine='normaliz')         # optional - pynormaliz
+            sage: simplex.ehrhart_polynomial(engine='normaliz')
             Traceback (most recent call last):
             ...
             TypeError: The backend of the polyhedron should be 'normaliz'
@@ -348,11 +349,12 @@ class Polyhedron_QQ(Polyhedron_base):
 
         The cache of the Ehrhart polynomial is being pickled::
 
-            sage: P = polytopes.cube().change_ring(QQ)                  # optional - latte_int
-            sage: P.ehrhart_polynomial()                                # optional - latte_int
+            sage: # optional - latte_int
+            sage: P = polytopes.cube().change_ring(QQ)
+            sage: P.ehrhart_polynomial()
             8*t^3 + 12*t^2 + 6*t + 1
-            sage: Q = loads(dumps(P))                                   # optional - latte_int
-            sage: Q.ehrhart_polynomial.is_in_cache()                    # optional - latte_int
+            sage: Q = loads(dumps(P))
+            sage: Q.ehrhart_polynomial.is_in_cache()
             True
         """
         # check if ``self`` is compact and has vertices in ZZ
@@ -525,32 +527,35 @@ class Polyhedron_QQ(Polyhedron_base):
         If the polytope happens to be a lattice polytope, the Ehrhart
         polynomial is returned::
 
-            sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),      # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: simplex = Polyhedron(vertices=[(0,0,0), (3,3,3),
             ....:                                (-3,2,1), (1,-1,-2)],
             ....:                      backend='normaliz')
-            sage: simplex = simplex.change_ring(QQ)                     # optional - pynormaliz
-            sage: poly = simplex.ehrhart_quasipolynomial(               # optional - pynormaliz
+            sage: simplex = simplex.change_ring(QQ)
+            sage: poly = simplex.ehrhart_quasipolynomial(
             ....:     engine='normaliz'); poly
             7/2*t^3 + 2*t^2 - 1/2*t + 1
-            sage: simplex.ehrhart_polynomial()                          # optional - pynormaliz latte_int
+            sage: simplex.ehrhart_polynomial()                          # optional - latte_int
             7/2*t^3 + 2*t^2 - 1/2*t + 1
 
         TESTS:
 
         The cache of the Ehrhart quasipolynomial is being pickled::
 
-            sage: P = polytopes.cuboctahedron(backend='normaliz')/2           # optional - pynormaliz
-            sage: P.ehrhart_quasipolynomial()                                 # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: P = polytopes.cuboctahedron(backend='normaliz')/2
+            sage: P.ehrhart_quasipolynomial()
             (5/6*t^3 + 2*t^2 + 5/3*t + 1, 5/6*t^3 + 1/2*t^2 + 1/6*t - 1/2)
-            sage: Q = loads(dumps(P))                                         # optional - pynormaliz
-            sage: Q.ehrhart_quasipolynomial.is_in_cache()                     # optional - pynormaliz
+            sage: Q = loads(dumps(P))
+            sage: Q.ehrhart_quasipolynomial.is_in_cache()
             True
 
-            sage: P = polytopes.cuboctahedron().change_ring(QQ)               # optional - latte_int
-            sage: P.ehrhart_quasipolynomial(engine='latte')                   # optional - latte_int
+            sage: # optional - latte_int
+            sage: P = polytopes.cuboctahedron().change_ring(QQ)
+            sage: P.ehrhart_quasipolynomial(engine='latte')
             20/3*t^3 + 8*t^2 + 10/3*t + 1
-            sage: Q = loads(dumps(P))                                         # optional - latte_int
-            sage: Q.ehrhart_quasipolynomial.is_in_cache(engine='latte')       # optional - latte_int
+            sage: Q = loads(dumps(P))
+            sage: Q.ehrhart_quasipolynomial.is_in_cache(engine='latte')
             True
         """
         if self.is_empty():
@@ -626,7 +631,7 @@ class Polyhedron_QQ(Polyhedron_base):
         TESTS::
 
             sage: line_seg = Polyhedron(vertices=[[0],[1/2]])
-            sage: line_seg._ehrhart_quasipolynomial_normaliz()          # optional - pynormaliz
+            sage: line_seg._ehrhart_quasipolynomial_normaliz()
             Traceback (most recent call last):
             ...
             TypeError: The backend of the polyhedron should be 'normaliz'
@@ -709,25 +714,26 @@ class Polyhedron_QQ(Polyhedron_base):
             7/2*t^3 + 2*t^2 - 1/2*t + 1
             sage: p(1)                                                  # optional - latte_int
             6
-            sage: len(P.integral_points())                              # optional - latte_int
+            sage: len(P.integral_points())
             6
             sage: p(2)                                                  # optional - latte_int
             36
-            sage: len((2*P).integral_points())                          # optional - latte_int
+            sage: len((2*P).integral_points())
             36
 
         The unit hypercubes::
 
+            sage: # optional - latte_int
             sage: from itertools import product
             sage: def hypercube(d):
             ....:     return Polyhedron(vertices=list(product([0,1], repeat=d)))
-            sage: hypercube(3)._ehrhart_polynomial_latte()              # optional - latte_int
+            sage: hypercube(3)._ehrhart_polynomial_latte()
             t^3 + 3*t^2 + 3*t + 1
-            sage: hypercube(4)._ehrhart_polynomial_latte()              # optional - latte_int
+            sage: hypercube(4)._ehrhart_polynomial_latte()
             t^4 + 4*t^3 + 6*t^2 + 4*t + 1
-            sage: hypercube(5)._ehrhart_polynomial_latte()              # optional - latte_int
+            sage: hypercube(5)._ehrhart_polynomial_latte()
             t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
-            sage: hypercube(6)._ehrhart_polynomial_latte()              # optional - latte_int
+            sage: hypercube(6)._ehrhart_polynomial_latte()
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
 
         TESTS:
@@ -863,19 +869,20 @@ class Polyhedron_QQ(Polyhedron_base):
 
         The next example shows that :meth:`fixed_subpolytope` works for rational polytopes::
 
-           sage: P = Polyhedron(vertices=[[0], [1/2]],                  # optional - pynormaliz
+           sage: # optional - pynormaliz
+           sage: P = Polyhedron(vertices=[[0], [1/2]],
            ....:                backend='normaliz')
-           sage: P.vertices()                                           # optional - pynormaliz
+           sage: P.vertices()
            (A vertex at (0), A vertex at (1/2))
-           sage: G = P.restricted_automorphism_group(                   # optional - pynormaliz
+           sage: G = P.restricted_automorphism_group(
            ....:         output='permutation'); G
            Permutation Group with generators [(0,1)]
-           sage: len(G)                                                 # optional - pynormaliz
+           sage: len(G)
            2
-           sage: fixed_set = P.fixed_subpolytope(G.gens()[0])           # optional - pynormaliz
-           sage: fixed_set                                              # optional - pynormaliz
+           sage: fixed_set = P.fixed_subpolytope(G.gens()[0])
+           sage: fixed_set
            A 0-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex
-           sage: fixed_set.vertices_list()                              # optional - pynormaliz
+           sage: fixed_set.vertices_list()
            [[1/4]]
         """
         if self.is_empty():
@@ -939,23 +946,24 @@ class Polyhedron_QQ(Polyhedron_base):
 
         Here is an example for the square::
 
-            sage: p = polytopes.hypercube(2, backend='normaliz'); p     # optional - pynormaliz
+            sage: # optional - pynormaliz, needs sage.groups
+            sage: p = polytopes.hypercube(2, backend='normaliz'); p
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
-            sage: aut_p = p.restricted_automorphism_group(              # optional - pynormaliz sage.groups
+            sage: aut_p = p.restricted_automorphism_group(
             ....:             output='permutation')
-            sage: aut_p.order()                                         # optional - pynormaliz sage.groups
+            sage: aut_p.order()
             8
-            sage: conj_list = aut_p.conjugacy_classes_representatives() # optional - pynormaliz sage.groups
-            sage: fixedpolytopes_dict = p.fixed_subpolytopes(conj_list) # optional - pynormaliz sage.groups
-            sage: fixedpolytopes_dict[aut_p([(0,3),(1,2)])]             # optional - pynormaliz sage.groups
+            sage: conj_list = aut_p.conjugacy_classes_representatives()
+            sage: fixedpolytopes_dict = p.fixed_subpolytopes(conj_list)
+            sage: fixedpolytopes_dict[aut_p([(0,3),(1,2)])]
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
 
         TESTS::
 
             sage: P = Polyhedron(vertices=[[1, 1]], rays=[[1, 1]])
-            sage: aut_P = P.restricted_automorphism_group(output='permutation')         # optional - sage.groups
-            sage: conj_list = aut_P.conjugacy_classes_representatives()                 # optional - sage.groups
-            sage: P.fixed_subpolytopes(conj_list)                                       # optional - sage.groups
+            sage: aut_P = P.restricted_automorphism_group(output='permutation')         # needs sage.groups
+            sage: conj_list = aut_P.conjugacy_classes_representatives()                 # needs sage.groups
+            sage: P.fixed_subpolytopes(conj_list)                                       # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: unbounded polyhedra are not supported
@@ -1021,15 +1029,16 @@ class Polyhedron_QQ(Polyhedron_base):
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
-            sage: S = polytopes.simplex(3, backend='normaliz'); S       # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: S = polytopes.simplex(3, backend='normaliz'); S
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 4 vertices
-            sage: G = S.restricted_automorphism_group(                  # optional - pynormaliz
+            sage: G = S.restricted_automorphism_group(
             ....:         output='permutation')
-            sage: G.is_isomorphic(SymmetricGroup(4))                    # optional - pynormaliz
+            sage: G.is_isomorphic(SymmetricGroup(4))
             True
-            sage: Hstar = S._Hstar_function_normaliz(G); Hstar          # optional - pynormaliz
+            sage: Hstar = S._Hstar_function_normaliz(G); Hstar
             chi_4
-            sage: G.character_table()                                   # optional - pynormaliz
+            sage: G.character_table()
             [ 1 -1  1  1 -1]
             [ 3 -1  0 -1  1]
             [ 2  0 -1  2  0]
@@ -1041,26 +1050,27 @@ class Polyhedron_QQ(Polyhedron_base):
         `\pm(0,0,1),\pm(1,0,1), \pm(0,1,1), \pm(1,1,1)` and let
         G = `\Zmod{2}` act on P as follows::
 
-            sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1],  # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1],
             ....:                          [-1,0,-1], [0,1,1],
             ....:                          [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
-            sage: K = P.restricted_automorphism_group(                  # optional - pynormaliz
+            sage: K = P.restricted_automorphism_group(
             ....:         output='permutation')
-            sage: G = K.subgroup(gens=[K([(0,2),(1,3),(4,6),(5,7)])])   # optional - pynormaliz
-            sage: conj_reps = G.conjugacy_classes_representatives()     # optional - pynormaliz
-            sage: Dict = P.permutations_to_matrices(conj_reps,          # optional - pynormaliz
+            sage: G = K.subgroup(gens=[K([(0,2),(1,3),(4,6),(5,7)])])
+            sage: conj_reps = G.conjugacy_classes_representatives()
+            sage: Dict = P.permutations_to_matrices(conj_reps,
             ....:                                   acting_group=G)
-            sage: list(Dict.keys())[0]                                  # optional - pynormaliz
+            sage: list(Dict.keys())[0]
             (0,2)(1,3)(4,6)(5,7)
-            sage: list(Dict.values())[0]                                # optional - pynormaliz
+            sage: list(Dict.values())[0]
             [-1  0  1  0]
             [ 0  1  0  0]
             [ 0  0  1  0]
             [ 0  0  0  1]
-            sage: len(G)                                                # optional - pynormaliz
+            sage: len(G)
             2
-            sage: G.character_table()                                   # optional - pynormaliz
+            sage: G.character_table()
             [ 1  1]
             [ 1 -1]
 
@@ -1170,35 +1180,37 @@ class Polyhedron_QQ(Polyhedron_base):
         The `H^*` series of the two-dimensional permutahedron under the action
         of the symmetric group is effective::
 
-            sage: p3 = polytopes.permutahedron(3, backend='normaliz')   # optional - pynormaliz
-            sage: G = p3.restricted_automorphism_group(                 # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: p3 = polytopes.permutahedron(3, backend='normaliz')
+            sage: G = p3.restricted_automorphism_group(
             ....:         output='permutation')
-            sage: reflection12 = G([(0,2),(1,4),(3,5)])                 # optional - pynormaliz
-            sage: reflection23 = G([(0,1),(2,3),(4,5)])                 # optional - pynormaliz
-            sage: S3 = G.subgroup(gens=[reflection12, reflection23])    # optional - pynormaliz
-            sage: S3.is_isomorphic(SymmetricGroup(3))                   # optional - pynormaliz
+            sage: reflection12 = G([(0,2),(1,4),(3,5)])
+            sage: reflection23 = G([(0,1),(2,3),(4,5)])
+            sage: S3 = G.subgroup(gens=[reflection12, reflection23])
+            sage: S3.is_isomorphic(SymmetricGroup(3))
             True
-            sage: Hstar = p3.Hstar_function(S3)                         # optional - pynormaliz
-            sage: Hlin  = p3.Hstar_function(S3,                         # optional - pynormaliz
+            sage: Hstar = p3.Hstar_function(S3)
+            sage: Hlin  = p3.Hstar_function(S3,
             ....:                           output='Hstar_as_lin_comb')
-            sage: p3.is_effective(Hstar, Hlin)                          # optional - pynormaliz
+            sage: p3.is_effective(Hstar, Hlin)
             True
 
         If the `H^*`-series is not polynomial, then it is not effective::
 
-            sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1],  # optional - pynormaliz
+            sage: # optional - pynormaliz
+            sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1],
             ....:                          [-1,0,-1], [0,1,1],
             ....:                          [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
-            sage: G = P.restricted_automorphism_group(                  # optional - pynormaliz
+            sage: G = P.restricted_automorphism_group(
             ....:         output='permutation')
-            sage: H = G.subgroup(gens=[G([(0,2),(1,3),(4,6),(5,7)])])   # optional - pynormaliz
-            sage: Hstar = P.Hstar_function(H); Hstar                    # optional - pynormaliz
+            sage: H = G.subgroup(gens=[G([(0,2),(1,3),(4,6),(5,7)])])
+            sage: Hstar = P.Hstar_function(H); Hstar
             (chi_0*t^4 + (3*chi_0 + 3*chi_1)*t^3
               + (8*chi_0 + 2*chi_1)*t^2 + (3*chi_0 + 3*chi_1)*t + chi_0)/(t + 1)
-            sage: Hstar_lin = P.Hstar_function(H,                       # optional - pynormaliz
+            sage: Hstar_lin = P.Hstar_function(H,
             ....:                              output='Hstar_as_lin_comb')
-            sage: P.is_effective(Hstar, Hstar_lin)                      # optional - pynormaliz
+            sage: P.is_effective(Hstar, Hstar_lin)
             False
         """
         if self.is_empty():

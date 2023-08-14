@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.padics
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic Generic
 
@@ -36,7 +36,6 @@ from .local_generic import LocalGeneric
 from sage.rings.ring import PrincipalIdealDomain
 from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
-from sage.rings.padics.padic_printing import pAdicPrinter
 from sage.rings.padics.precision_error import PrecisionError
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal
@@ -59,6 +58,8 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = Zp(17)  # indirect doctest
         """
+        from sage.rings.padics.padic_printing import pAdicPrinter
+
         if category is None:
             if self.is_field():
                 category = Fields()
@@ -1741,7 +1742,7 @@ class ResidueReductionMap(Morphism):
             sage: f == g
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
@@ -1874,7 +1875,7 @@ class ResidueLiftingMap(Morphism):
             sage: f == g
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
@@ -1896,6 +1897,8 @@ def local_print_mode(obj, print_options, pos=None, ram_name=None):
 
         For more documentation see :class:`sage.structure.parent_gens.localvars`.
     """
+    from sage.rings.padics.padic_printing import pAdicPrinter
+
     if isinstance(print_options, str):
         print_options = {'mode': print_options}
     elif not isinstance(print_options, dict):

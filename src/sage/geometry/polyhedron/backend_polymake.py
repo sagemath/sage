@@ -77,13 +77,14 @@ class Polyhedron_polymake(Polyhedron_base):
 
     It can also be obtained differently::
 
-        sage: P=Polyhedron(ieqs=[[-2, 1, 1], [-3, -1, -1], [-4, 1, -2]],   # optional - jupymake
+        sage: # optional - jupymake
+        sage: P=Polyhedron(ieqs=[[-2, 1, 1], [-3, -1, -1], [-4, 1, -2]],
         ....:              backend='polymake')
-        sage: P                                                            # optional - jupymake
+        sage: P
         The empty polyhedron in QQ^2
-        sage: P.Vrepresentation()                                          # optional - jupymake
+        sage: P.Vrepresentation()
         ()
-        sage: P.Hrepresentation()                                          # optional - jupymake
+        sage: P.Hrepresentation()
         (An equation -1 == 0,)
 
     The full polyhedron::
@@ -96,8 +97,8 @@ class Polyhedron_polymake(Polyhedron_base):
 
     Quadratic fields work::
 
-        sage: V = polytopes.dodecahedron().vertices_list()                                        # optional - sage.rings.number_field
-        sage: Polyhedron(vertices=V, backend='polymake')                   # optional - jupymake  # optional - sage.rings.number_field
+        sage: V = polytopes.dodecahedron().vertices_list()                              # needs sage.rings.number_field
+        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake, needs sage.rings.number_field
         A 3-dimensional polyhedron
          in (Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?)^3
@@ -211,11 +212,12 @@ class Polyhedron_polymake(Polyhedron_base):
 
         TESTS:
 
-            sage: p = Polyhedron(backend='polymake')                 # optional - jupymake
-            sage: TestSuite(p).run()                                 # optional - jupymake
-            sage: p = Polyhedron(vertices=[(1, 1)], rays=[(0, 1)],   # optional - jupymake
+            sage: # optional - jupymake
+            sage: p = Polyhedron(backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(vertices=[(1, 1)], rays=[(0, 1)],
             ....:                backend='polymake')
-            sage: TestSuite(p).run()                                 # optional - jupymake
+            sage: TestSuite(p).run()
 
         We skip the Lawrence test because it involves numerically unstable
         floating point arithmetic::
@@ -226,14 +228,15 @@ class Polyhedron_polymake(Polyhedron_base):
 
         ::
 
-            sage: p = Polyhedron(rays=[[1,1]], backend='polymake')                     # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
-            sage: p = Polyhedron(rays=[[1]], backend='polymake')                       # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
-            sage: p = Polyhedron(rays=[[1,1,1]], lines=[[1,0,0]], backend='polymake')  # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
-            sage: p = Polyhedron(vertices=[[]], backend='polymake')                    # optional - jupymake
-            sage: TestSuite(p).run()                                                   # optional - jupymake
+            sage: # optional - jupymake
+            sage: p = Polyhedron(rays=[[1,1]], backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(rays=[[1]], backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(rays=[[1,1,1]], lines=[[1,0,0]], backend='polymake')
+            sage: TestSuite(p).run()
+            sage: p = Polyhedron(vertices=[[]], backend='polymake')
+            sage: TestSuite(p).run()
         """
         if polymake_polytope is not None:
             if Hrep is not None or Vrep is not None:
@@ -250,7 +253,7 @@ class Polyhedron_polymake(Polyhedron_base):
         TESTS::
 
             sage: p = Polyhedron(backend='polymake')                       # optional - jupymake
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake   # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             sage: Polyhedron_polymake._init_from_Hrepresentation(p, [], [])  # indirect doctest  # optional - jupymake
         """
         self._polymake_polytope = polymake_polytope
@@ -281,7 +284,7 @@ class Polyhedron_polymake(Polyhedron_base):
         EXAMPLES::
 
             sage: p = Polyhedron(backend='polymake')                       # optional - jupymake
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake   # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             sage: Polyhedron_polymake._init_from_Vrepresentation(p, [], [], [])   # optional - jupymake
         """
         from sage.interfaces.polymake import polymake
@@ -348,7 +351,7 @@ class Polyhedron_polymake(Polyhedron_base):
         EXAMPLES::
 
             sage: p = Polyhedron(backend='polymake')                       # optional - jupymake
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake   # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             sage: Polyhedron_polymake._init_from_Hrepresentation(p, [], [])   # optional - jupymake
         """
         from sage.interfaces.polymake import polymake
@@ -644,31 +647,35 @@ class Polyhedron_polymake(Polyhedron_base):
 
         Test that the obtained cone is valid::
 
-            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake  # optional - jupymake
-            sage: P = polytopes.permutahedron(4, backend='polymake')                         # optional - jupymake
-            sage: P1 = loads(dumps(P))                                                       # optional - jupymake
-            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)   # optional - jupymake
-            sage: P._test_polymake_pickling(other=P2)                                        # optional - jupymake
+            sage: # optional - jupymake
+            sage: from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
+            sage: P = polytopes.permutahedron(4, backend='polymake')
+            sage: P1 = loads(dumps(P))
+            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)
+            sage: P._test_polymake_pickling(other=P2)
 
-            sage: P = Polyhedron(lines=[[1,0], [0,1]], backend='polymake')                  # optional - jupymake
-            sage: P1 = loads(dumps(P))                                                      # optional - jupymake
-            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)  # optional - jupymake
-            sage: P._test_polymake_pickling(other=P2)                                       # optional - jupymake
+            sage: # optional - jupymake
+            sage: P = Polyhedron(lines=[[1,0], [0,1]], backend='polymake')
+            sage: P1 = loads(dumps(P))
+            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)
+            sage: P._test_polymake_pickling(other=P2)
 
             sage: P = Polyhedron(backend='polymake')                                        # optional - jupymake
             sage: P1 = loads(dumps(P))                                                      # optional - jupymake
             sage: P._test_polymake_pickling(other=P1)                                       # optional - jupymake
 
-            sage: P = polytopes.permutahedron(4, backend='polymake') * Polyhedron(lines=[[1]], backend='polymake')  # optional - jupymake
-            sage: P1 = loads(dumps(P))                                                                              # optional - jupymake
-            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)                          # optional - jupymake
-            sage: P._test_polymake_pickling(other=P2)                                                               # optional - jupymake
+            sage: # optional - jupymake
+            sage: P = polytopes.permutahedron(4, backend='polymake') * Polyhedron(lines=[[1]], backend='polymake')
+            sage: P1 = loads(dumps(P))
+            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)
+            sage: P._test_polymake_pickling(other=P2)
 
-            sage: print("Possible output"); P = polytopes.dodecahedron(backend='polymake')  # optional - jupymake  # optional - sage.rings.number_field
+            sage: # optional - jupymake, needs sage.rings.number_field
+            sage: print("Possible output"); P = polytopes.dodecahedron(backend='polymake')
             Possible output...
-            sage: P1 = loads(dumps(P))                                                      # optional - jupymake  # optional - sage.rings.number_field
-            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)  # optional - jupymake  # optional - sage.rings.number_field
-            sage: P._test_polymake_pickling(other=P2)                                       # optional - jupymake  # optional - sage.rings.number_field
+            sage: P1 = loads(dumps(P))
+            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)
+            sage: P._test_polymake_pickling(other=P2)
         """
         if "_pickle_vertices" in state[1]:
             vertices = state[1].pop("_pickle_vertices")
