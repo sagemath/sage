@@ -16,20 +16,22 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.free_module_element import vector
-from sage.rings.imaginary_unit import I
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.power_series_ring import is_PowerSeriesRing
-from sage.rings.qqbar import AlgebraicField
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
 from .abstract_ring import FormsRing_abstract
+
+lazy_import('sage.rings.imaginary_unit', 'I')
+lazy_import('sage.rings.qqbar', 'QQbar')
 
 
 class FormsSpace_abstract(FormsRing_abstract):
@@ -756,7 +758,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         if (gamma.is_translation()):
             return ZZ(1)
         elif (gamma.is_reflection()):
-            return self._ep * (t/AlgebraicField()(I))**self._weight
+            return self._ep * (t/QQbar(I))**self._weight
         else:
             L = [v for v in gamma.word_S_T()[0]]
             aut_f = ZZ(1)

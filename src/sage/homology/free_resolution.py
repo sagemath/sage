@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.singular
+# sage.doctest: needs sage.libs.singular
 r"""
 Free resolutions
 
@@ -131,8 +131,8 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             sage: Q = R.quo(I)
             sage: Q.is_integral_domain()
             False
-            sage: xb, yb = Q.gens()
-            sage: FreeResolution(Q.ideal([xb]))  # has torsion
+            sage: xb, yb = Q.gens()                                                     # needs sage.rings.function_field
+            sage: FreeResolution(Q.ideal([xb]))  # has torsion                          # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError: the ring must be a polynomial ring using Singular
