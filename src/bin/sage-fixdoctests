@@ -322,6 +322,15 @@ def output_filename(filename):
         return filename + ".fixed"
     return filename
 
+
+if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
+    print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+          "this is deprecated. To pass two input filenames, use the option --overwrite.")
+
+    input_filenames = [args.filename[0]]
+else:
+    input_filenames = args.filename
+
 # Test the doctester, putting the output of the test into sage's temporary directory
 if args.no_test:
     doc_out = ''
@@ -340,13 +349,6 @@ else:
            print(f'Doctester exited with error status {status}')
            sys.exit(status)
     # Run the doctester, putting the output of the test into sage's temporary directory
-    if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
-        print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
-              "this is deprecated. To pass two input filenames, use the option --overwrite.")
-
-        input_filenames = [args.filename[0]]
-    else:
-        input_filenames = args.filename
     input_args = " ".join(shlex.quote(f) for f in input_filenames)
     cmdline = f'{shlex.quote(executable)} -t -p {environment_args}{long_args}{probe_args}{lib_args}{input_args}'
     print(f'Running "{cmdline}"')
