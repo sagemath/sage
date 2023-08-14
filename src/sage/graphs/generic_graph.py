@@ -5399,7 +5399,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: k43 = graphs.CompleteBipartiteGraph(4, 3)
             sage: result = k43.is_planar(kuratowski=True); result
-            (False, Graph on 6 vertices)
+            (False,
+             Kuratowski subgraph of (Complete bipartite graph of order 4+3): Graph on 6 vertices)
             sage: result[1].is_isomorphic(graphs.CompleteBipartiteGraph(3, 3))
             True
 
@@ -5421,6 +5422,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.is_planar(kuratowski=True)
             (True, None)
             sage: G.is_planar(set_pos=True)
+            True
             sage: sorted(G.get_pos().items())
             [(0, [0, 0]), (1, [0, 1])]
 
@@ -5431,6 +5433,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.is_planar()
             True
             sage: D.is_planar(set_pos=True)
+            True
             sage: sorted(D.get_pos().items())
             [(0, [0, 1]), (1, [1, 1]), (2, [1, 0])]
             sage: D.is_planar(on_embedding={})
@@ -5447,12 +5450,14 @@ class GenericGraph(GenericGraph_pyx):
             (True, None)
             sage: D.allow_multiple_edges(True)
             sage: D.add_edges(D.edges(sort=False))
+            sage: D.allow_loops(True)
             sage: D.add_edges((u, u) for u in D)
             sage: D.is_planar()
             True
             sage: D.is_planar(kuratowski=True)
             (True, None)
             sage: D.is_planar(set_pos=True)
+            True
             sage: D.is_planar(set_embedding=True)
             Traceback (most recent call last):
             ...
@@ -5633,7 +5638,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g439.is_circular_planar(boundary=[1, 2, 3, 4])
             False
             sage: g439.is_circular_planar(kuratowski=True, boundary=[1, 2, 3, 4])
-            (False, Graph on 8 vertices)
+            (False, Kuratowski subgraph of (): Graph on 8 vertices)
             sage: g439.is_circular_planar(kuratowski=True, boundary=[1, 2, 3])
             (True, None)
             sage: g439.get_embedding()
