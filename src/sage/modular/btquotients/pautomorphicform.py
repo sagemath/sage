@@ -46,6 +46,7 @@ import sage.modular.hecke.hecke_operator
 
 from sage.matrix.constructor import Matrix, zero_matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 from sage.modular.btquotients.btquotient import DoubleCosetReduction
 from sage.modular.hecke.all import AmbientHeckeModule, HeckeModuleElement
@@ -56,13 +57,15 @@ from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.rings.padics.factory', 'Qp')
+
 
 # Need this to be pickleable
 

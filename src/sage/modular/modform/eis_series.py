@@ -14,16 +14,17 @@ Eisenstein series
 
 from sage.arith.functions import lcm
 from sage.arith.misc import bernoulli, divisors, is_squarefree
+from sage.misc.lazy_import import lazy_import
 from sage.misc.timing import cputime
 from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.modular.dirichlet import DirichletGroup
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 
-from .eis_series_cython import eisenstein_series_poly, Ek_ZZ
+lazy_import('sage.modular.modform.eis_series_cython', ['eisenstein_series_poly', 'Ek_ZZ'])
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 
 def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):

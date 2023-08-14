@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Finite field morphisms
 
