@@ -3394,9 +3394,9 @@ def LocalMcLaughlinGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.LocalMcLaughlinGraph(); g  # long time # optional - gap_packages
+        sage: g = graphs.LocalMcLaughlinGraph(); g      # long time, optional - gap_package_design
         Local McLaughlin Graph: Graph on 162 vertices
-        sage: g.is_strongly_regular(parameters=True)  # long time # optional - gap_packages
+        sage: g.is_strongly_regular(parameters=True)    # long time, optional - gap_package_design
         (162, 56, 10, 24)
     """
     g = McLaughlinGraph()
@@ -3677,10 +3677,10 @@ def McLaughlinGraph():
 
     EXAMPLES::
 
-        sage: g = graphs.McLaughlinGraph()  # optional gap_packages
-        sage: g.is_strongly_regular(parameters=True)  # optional gap_packages
+        sage: g = graphs.McLaughlinGraph()              # optional - gap_package_design
+        sage: g.is_strongly_regular(parameters=True)    # optional - gap_package_design
         (275, 112, 30, 56)
-        sage: set(g.spectrum()) == {112, 2, -28}  # optional gap_packages
+        sage: set(g.spectrum()) == {112, 2, -28}        # optional - gap_package_design
         True
     """
     from sage.combinat.designs.block_design import WittDesign
@@ -5129,8 +5129,8 @@ def U42Graph216():
 
     EXAMPLES::
 
-        sage: G=graphs.U42Graph216()  # optional - gap_packages (grape)
-        sage: G.is_strongly_regular(parameters=True)  # optional - gap_packages (grape)
+        sage: G=graphs.U42Graph216()                    # optional - gap_package_grape
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape
         (216, 40, 4, 8)
     """
     from sage.libs.gap.libgap import libgap
@@ -5176,8 +5176,8 @@ def U42Graph540():
 
     EXAMPLES::
 
-        sage: G=graphs.U42Graph540()  # optional - gap_packages (grape)
-        sage: G.is_strongly_regular(parameters=True)  # optional - gap_packages (grape)
+        sage: G = graphs.U42Graph540()                  # optional - gap_package_grape
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape
         (540, 187, 58, 68)
     """
     from sage.libs.gap.libgap import libgap

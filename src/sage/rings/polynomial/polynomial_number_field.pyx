@@ -30,34 +30,36 @@ operations with them::
 
 Polynomials are aware of embeddings of the underlying field::
 
+    sage: # needs sage.rings.padics
     sage: x = polygen(ZZ, 'x')
-    sage: Q7 = Qp(7)                                                                    # optional - sage.rings.padics
-    sage: r1 = Q7(3 + 7 + 2*7^2 + 6*7^3 + 7^4 + 2*7^5 + 7^6 + 2*7^7 + 4*7^8             # optional - sage.rings.padics
+    sage: Q7 = Qp(7)
+    sage: r1 = Q7(3 + 7 + 2*7^2 + 6*7^3 + 7^4 + 2*7^5 + 7^6 + 2*7^7 + 4*7^8
     ....:          + 6*7^9 + 6*7^10 + 2*7^11 + 7^12 + 7^13 + 2*7^15 + 7^16 + 7^17
     ....:          + 4*7^18 + 6*7^19)
-    sage: N.<b> = NumberField(x^2 - 2, embedding=r1)                                    # optional - sage.rings.padics
-    sage: K.<t> = N[]                                                                   # optional - sage.rings.padics
-    sage: f = t^3 - 2*t + 1                                                             # optional - sage.rings.padics
-    sage: f(r1)                                                                         # optional - sage.rings.padics
+    sage: N.<b> = NumberField(x^2 - 2, embedding=r1)
+    sage: K.<t> = N[]
+    sage: f = t^3 - 2*t + 1
+    sage: f(r1)
     1 + O(7^20)
 
 We can also construct polynomials over relative number fields::
 
-    sage: N.<i, s2> = QQ[I, sqrt(2)]                                                    # optional - sage.symbolic
-    sage: K.<x> = N[]                                                                   # optional - sage.symbolic
-    sage: f = x - s2                                                                    # optional - sage.symbolic
-    sage: g = x^3 - 2*i*x^2 + s2*x                                                      # optional - sage.symbolic
-    sage: f * (x + s2)                                                                  # optional - sage.symbolic
+    sage: # needs sage.symbolic
+    sage: N.<i, s2> = QQ[I, sqrt(2)]
+    sage: K.<x> = N[]
+    sage: f = x - s2
+    sage: g = x^3 - 2*i*x^2 + s2*x
+    sage: f * (x + s2)
     x^2 - 2
-    sage: f + g                                                                         # optional - sage.symbolic
+    sage: f + g
     x^3 - 2*I*x^2 + (sqrt2 + 1)*x - sqrt2
-    sage: g // f                                                                        # optional - sage.symbolic
+    sage: g // f
     x^2 + (-2*I + sqrt2)*x - 2*sqrt2*I + sqrt2 + 2
-    sage: g % f                                                                         # optional - sage.symbolic
+    sage: g % f
     -4*I + 2*sqrt2 + 2
-    sage: factor(i*x^4 - 2*i*x^2 + 9*i)                                                 # optional - sage.symbolic
+    sage: factor(i*x^4 - 2*i*x^2 + 9*i)
     (I) * (x - I + sqrt2) * (x + I - sqrt2) * (x - I - sqrt2) * (x + I + sqrt2)
-    sage: gcd(f, x - i)                                                                 # optional - sage.symbolic
+    sage: gcd(f, x - i)
     1
 """
 
@@ -222,18 +224,18 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
         - ``parent`` -- polynomial ring in which to construct the
           element.
 
-        - ``x`` -- (default: None) an object representing the
+        - ``x`` -- (default: ``None``) an object representing the
           polynomial, e.g. a list of coefficients. See
           :meth:`sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_dense_field.__init__`
           for more details.
 
-        - ``check`` -- boolean (default: True) if True, make sure that
+        - ``check`` -- boolean (default: ``True``) if ``True``, make sure that
           the coefficients of the polynomial are in the base ring.
 
-        - ``is_gen`` -- boolean (default: False) if True, ``x`` is the
+        - ``is_gen`` -- boolean (default: ``False``) if ``True``, ``x`` is the
           distinguished generator of the polynomial ring.
 
-        - ``construct`` -- (default: False) boolean, unused.
+        - ``construct`` -- (default: ``False``) boolean, unused.
 
         EXAMPLES::
 
@@ -260,19 +262,20 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         OUTPUT:
 
-        - The monic gcd of ``self`` and ``other``.
+        The monic gcd of ``self`` and ``other``.
 
         See :meth:`Polynomial_absolute_number_field_dense.gcd` for
         more details.
 
         EXAMPLES::
 
-            sage: N = QQ[sqrt(2), sqrt(3)]                                              # optional - sage.symbolic
-            sage: s2, s3 = N.gens()                                                     # optional - sage.symbolic
-            sage: x = polygen(N)                                                        # optional - sage.symbolic
-            sage: f = x^4 - 5*x^2 + 6                                                   # optional - sage.symbolic
-            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3                  # optional - sage.symbolic
-            sage: gcd(f, g)                                                             # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: N = QQ[sqrt(2), sqrt(3)]
+            sage: s2, s3 = N.gens()
+            sage: x = polygen(N)
+            sage: f = x^4 - 5*x^2 + 6
+            sage: g = x^3 + (-2*s2 + s3)*x^2 + (-2*s3*s2 + 2)*x + 2*s3
+            sage: gcd(f, g)
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
             sage: f.gcd(g)
             x^2 + (-sqrt2 + sqrt3)*x - sqrt3*sqrt2
@@ -305,6 +308,7 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         Test for hardcoded variables::
 
+            sage: # needs sage.symbolic
             sage: R = N['sqrt2sqrt3']
             sage: x = R.gen()
             sage: f = x^2 - 2

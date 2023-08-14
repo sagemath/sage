@@ -154,7 +154,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
             True
 
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
 
         from sage.structure.richcmp import richcmp
