@@ -111,7 +111,15 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p = get_solver(solver="CVXPY")
         """
         super().__init__(maximization, base_ring)
-
+        self.init_cvxpy_problem(maximization, cvxpy_solver, cvxpy_solver_args)
+    
+    def _init_base_ring(self, base_ring=None):
+        if base_ring != RDF and base_ring is not None:
+            raise ValueError('base_ring must be RDF')
+        
+        self._base_ring = RDF
+    
+    def init_cvxpy_problem(self, maximization, cvxpy_solver=None, cvxpy_solver_args=None):
         if cvxpy_solver_args is None:
             cvxpy_solver_args = {}
 
@@ -128,19 +136,12 @@ cdef class CVXPYBackend(MatrixBackend):
 
         self.variables = []
         self.constraint_names = []
-        self.obj_constant_term = 0.0
 
         if maximization:
             objective = cvxpy.Maximize(0)
         else:
             objective = cvxpy.Minimize(0)
         self.problem = cvxpy.Problem(objective, ())
-    
-    def _init_base_ring(self, base_ring=None):
-        if base_ring != RDF and base_ring is not None:
-            raise ValueError('base_ring must be RDF')
-        
-        self._base_ring = RDF
 
     cpdef __copy__(self):
         """
@@ -462,7 +463,7 @@ cdef class CVXPYBackend(MatrixBackend):
             2.0
         """
         if coeff is not None:
-            return super(CVXPYBackend, self).objective_coefficient(variable, coeff)
+            super(CVXPYBackend, self).objective_coefficient(variable, coeff)
             expr = self.problem.objective.args[0] + coeff * self.variables[variable]
             objective = type(self.problem.objective)(expr)
             constraints = list(self.problem.constraints)
