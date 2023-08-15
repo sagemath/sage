@@ -745,12 +745,12 @@ def geometric_basis(G, E, p):
         sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
         sage: V = VoronoiDiagram(points)
         sage: G = Graph()
-        sage: for reg  in V.regions().values():
+        sage: for reg in V.regions().values():
         ....:     G = G.union(reg.vertex_graph())
         sage: E = Graph()
-        sage: for reg  in V.regions().values():
+        sage: for reg in V.regions().values():
         ....:     if reg.rays() or reg.lines():
-        ....:         E  = E.union(reg.vertex_graph())
+        ....:         E = E.union(reg.vertex_graph())
         sage: p = E.vertices(sort=True)[0]
         sage: geometric_basis(G, E, p)
         [[A vertex at (-2, -2),
@@ -807,8 +807,8 @@ def geometric_basis(G, E, p):
 
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
 
-        if EC[i] in I:
-            q = EC[i]
+        if ECi in I:
+            q = ECi
             connecting_path = EC[:i]
             break
         if EC[-i] in I:
@@ -816,7 +816,10 @@ def geometric_basis(G, E, p):
             connecting_path = list(reversed(EC[-i:]))
             break
     I_cc_q = set(I.connected_component_containing_vertex(q, sort=False))
-    distancequotients = [(E.distance(q, v)**2 / I.distance(q, v), v) for v in E
+    # Precompute distances from q in E and I
+    E_dist_q = E.shortest_path_lengths(q)
+    I_dist_q = I.shortest_path_lengths(q)
+    distancequotients = [(E_dist_q[v]**2 / I_dist_q[v], v) for v in E
                          if v in I_cc_q and not v == q]
     r = max(distancequotients)[1]
     cutpath = I.shortest_path(q, r)
@@ -831,8 +834,7 @@ def geometric_basis(G, E, p):
     G1, G2 = Gcut.connected_components_subgraphs()
 
     for v in cutpath:
-        neighs = G.neighbors(v)
-        for n in neighs:
+        for n in G.neighbor_iterator(v):
             if n in G1 or n in cutpath:
                 G1.add_edge(v, n, None)
             if n in G2 or n in cutpath:
@@ -850,7 +852,7 @@ def geometric_basis(G, E, p):
         E2.add_edge(cutpath[i], cutpath[i + 1], None)
 
     for v in [q, r]:
-        for n in E.neighbors(v):
+        for n in E.neighbor_iterator(v):
             if n in E1:
                 E1.add_edge(v, n, None)
             if n in E2:
