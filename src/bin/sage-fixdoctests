@@ -45,13 +45,16 @@ from sage.doctest.parsing import parse_file_optional_tags, parse_optional_tags, 
 from sage.env import SAGE_ROOT
 from sage.features import PythonModule
 from sage.features.all import all_features, module_feature, name_feature
+from sage.misc.cachefunc import cached_function
 from sage.misc.temporary_file import tmp_filename
 
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long', dest='long', action="store_true", default=False,
                     help="include tests tagged '# long time'")
-parser.add_argument("--distribution", type=str, default='',
+parser.add_argument("--distribution", type=str, nargs='*',
                     help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment")
+parser.add_argument("--fixed-point", default=False, action="store_true",
+                    help="whether to repeat until stable")
 parser.add_argument("--venv", type=str, default='',
                     help="directory name of a venv where 'sage -t' is to be run")
 parser.add_argument("--environment", type=str, default='',
@@ -79,19 +82,21 @@ parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated
 
 args = parser.parse_args()
 
-
 runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
 
-def default_venv_environment_from_distribution():
-    if args.distribution:
-        # shortcuts / variants
-        args.distribution = args.distribution.replace('_', '-')
-        if not (args.distribution.startswith('sagemath-')
-                or args.distribution.startswith('sage-')):
-            args.distribution = f'sagemath-{args.distribution}'
-        # extras
-        m = re.fullmatch(r'([^[]*)(\[([^]]*)\])?', args.distribution)
-        plain_distribution, extras = m.group(1), m.group(3)
+def plain_distribution_and_extras(distribution):
+    # shortcuts / variants
+    distribution = distribution.replace('_', '-')
+    if not (distribution.startswith('sagemath-')
+            or distribution.startswith('sage-')):
+        distribution = f'sagemath-{distribution}'
+    # extras
+    m = re.fullmatch(r'([^[]*)(\[([^]]*)\])?', distribution)
+    return m.group(1), m.group(3)
+
+def default_venv_environment_from_distribution(distribution):
+    if distribution:
+        plain_distribution, extras = plain_distribution_and_extras(distribution)
         tox_env_name = 'sagepython-sagewheels-nopypi-norequirements'
         if extras:
             tox_env_name += '-' + extras.replace(',', '-')
@@ -105,45 +110,62 @@ def default_venv_environment_from_distribution():
 if args.verbose:
     args.no_diff = True
 
-default_venv, default_environment = default_venv_environment_from_distribution()
+if args.distribution == ['all']:
+    args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
+                         'sagemath-categories',
+                         #'sagemath-modules',
+                         #'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
+                         #'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
+                         #'sagemath-polyhedra',
+                         None]  # monolithic distribution
 
-if not args.venv:
-    args.venv = default_venv
-if not args.environment:
-    args.environment = default_environment
-
-if args.distribution or args.venv != default_venv or args.environment != default_environment:
+if len(args.distribution) > 1:
+    if args.venv or args.environment:
+        print('at most one --distribution argument can be combined with --venv and --environment')
+        sys.exit(1)
     args.keep_both = args.full_tracebacks = True
-
-venv_explainers = []
-
-if args.venv:
-    if m := re.search(f'pkgs/(sage[^/]*)/[.]tox/((sagepython|sagewheels|nopypi|norequirements)-*)*([^/]*)$',
-                      args.venv):
-        args.distribution, extras = m.group(1), m.group(4)
-        if extras:
-            args.distribution += '[' + extras.replace('-', ',') + ']'
-        default_venv_given_distribution, default_environment_given_distribution = default_venv_environment_from_distribution()
-
-        if (Path(args.venv).resolve() == Path(default_venv_given_distribution).resolve()
-                or args.environment == default_environment_given_distribution):
-            venv_explainers.append(f'--distribution {shlex.quote(args.distribution)}')
-            default_venv, default_environment = default_venv_given_distribution, default_environment_given_distribution
-
-if Path(args.venv).resolve() != Path(default_venv).resolve():
-    venv_explainers.append(f'--venv {shlex.quote(args.venv)}')
-if args.environment != default_environment:
-    venv_explainers.append(f'--environment {args.environment}')
-
-if venv_explainers:
-    venv_explainer = ' (with ' + ' '.join(venv_explainers) + ')'
+    default_venv, default_environment = default_venv_environment_from_distribution(None)
 else:
-    venv_explainer = ''
+    default_venv, default_environment = default_venv_environment_from_distribution(args.distribution)
+    if not args.venv:
+        args.venv = default_venv
+    if not args.environment:
+        args.environment = default_environment
+    if args.distribution or args.venv != default_venv or args.environment != default_environment:
+        args.keep_both = args.full_tracebacks = True
+
+
+@cached_function
+def venv_explainer(distribution):
+    venv_explainers = []
+    default_venv, default_environment = default_venv_environment_from_distribution(distribution)
+    if args.venv:
+        if m := re.search(f'pkgs/(sage[^/]*)/[.]tox/((sagepython|sagewheels|nopypi|norequirements)-*)*([^/]*)$',
+                          args.venv):
+            distribution, extras = m.group(1), m.group(4)
+            if extras:
+                distribution += '[' + extras.replace('-', ',') + ']'
+            default_venv_given_distribution, default_environment_given_distribution = default_venv_environment_from_distribution(distribution)
+
+            if (Path(args.venv).resolve() == Path(default_venv_given_distribution).resolve()
+                    or args.environment == default_environment_given_distribution):
+                venv_explainers.append(f'--distribution {shlex.quote(distribution)}')
+                default_venv, default_environment = default_venv_given_distribution, default_environment_given_distribution
+
+    if Path(args.venv).resolve() != Path(default_venv).resolve():
+        venv_explainers.append(f'--venv {shlex.quote(args.venv)}')
+    if args.environment != default_environment:
+        venv_explainers.append(f'--environment {args.environment}')
+
+    if venv_explainers:
+        return ' (with ' + ' '.join(venv_explainers) + ')'
+    return ''
+
 
 sep = "**********************************************************************\n"
 
 
-def process_block(block, src_in_lines, file_optional_tags):
+def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
     if args.verbose:
         print(sep + block.rstrip())
 
@@ -380,7 +402,16 @@ else:
     input_filenames = args.filename
 
 
-def doctest_blocks():
+tested_doctesters = set()
+venv_files = {}          # distribution -> files that are not yet known to be fixed points in venv; we add and remove items
+venv_ignored_files = {}  # distribution -> files that should be ignored; we only add items
+
+
+class BadDistribution(Exception):
+    pass
+
+
+def doctest_blocks(args, input_filenames, distribution=None):
     executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
     environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
     long_args = f'--long ' if args.long else ''
@@ -391,10 +422,11 @@ def doctest_blocks():
         # Test the doctester, putting the output of the test into sage's temporary directory
         input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
         cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
-        print(f'Running "{cmdline}"')
-        if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
-            print(f'Doctester exited with error status {status}')
-            sys.exit(status)
+        if cmdline not in tested_doctesters:
+            print(f'Running "{cmdline}"')
+            if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
+                raise BadDistribution('Doctester exited with error status {status}')
+            tested_doctesters.add(cmdline)
     # Run the doctester, putting the output of the test into sage's temporary directory
     input_args = " ".join(shlex.quote(f) for f in input_filenames)
     cmdline = f'{shlex.quote(executable)} -t -p {environment_args}{long_args}{probe_args}{lib_args}{input_args}'
@@ -404,19 +436,14 @@ def doctest_blocks():
     with open(doc_file, 'r') as doc:
         doc_out = doc.read()
 
-    # echo control messages
-    for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
+    # Remove skipped files, echo control messages
+    for m in re.finditer(r"^Skipping '(.*?)'.*$", doc_out, re.MULTILINE):
         print('sage-runtests: ' + m.group(0))
+        venv_files[distribution].discard(m.group(1))
+        venv_ignored_files[distribution].add(m.group(1))
 
-    sep = "**********************************************************************\n"
     return doc_out.split(sep)
 
-if args.no_test:
-    doctests = []
-else:
-    doctests = doctest_blocks()
-
-seen = set()
 
 def block_filename(block):
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
@@ -431,7 +458,12 @@ def expanded_filename_args():
     for source in DC.sources:
         yield source.path
 
-def process_grouped_blocks(grouped_iterator):
+
+def process_grouped_blocks(grouped_iterator, distribution=None):
+
+    seen = set()
+
+    explainer = venv_explainer(distribution)
 
     for input, blocks in grouped_iterator:
 
@@ -448,7 +480,7 @@ def process_grouped_blocks(grouped_iterator):
         file_optional_tags = set(parse_file_optional_tags(enumerate(src_in_lines)))
 
         for block in blocks:
-            process_block(block, src_in_lines, file_optional_tags)
+            process_block(block, src_in_lines, file_optional_tags, venv_explainer=explainer)
 
         # Now source line numbers do not matter any more, and lines can be real lines again
         src_in_lines = list(itertools.chain.from_iterable(
@@ -496,9 +528,54 @@ def process_grouped_blocks(grouped_iterator):
                     print(f"sage-fixdoctests: The input file '{output}' has been overwritten.")
                     if not args.no_diff and not relative.startswith('..'):
                         subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
+            for other_distribution, file_set in venv_files.items():
+                if input not in venv_ignored_files[other_distribution]:
+                    file_set.add(input)
         else:
             print(f"sage-fixdoctests: No fixes made in '{input}'")
+            venv_files[distribution].discard(input)
 
-process_grouped_blocks(
-    itertools.chain(itertools.groupby(doctests, block_filename),
-                    ((filename, []) for filename in expanded_filename_args())))
+
+if __name__ == "__main__":
+    try:
+        if len(args.distribution) < 2:
+            if args.no_test:
+                doctests = []
+            else:
+                doctests = doctest_blocks(args, filenames)
+            if args.distribution:
+                distribution = args.distribution[0]
+            else:
+                distribution = None
+            process_grouped_blocks(
+                itertools.chain(itertools.groupby(doctests, block_filename),
+                                ((filename, []) for filename in expanded_filename_args())),
+                distribution=distribution())
+        else:
+            for distribution in args.distribution:
+                venv_files[distribution] = set(expanded_filename_args())
+                venv_ignored_files[distribution] = set()
+            while any(venv_files.values()):
+                for distribution, file_set in venv_files.items():
+                    if not file_set:
+                        continue
+                    print(f"sage-fixdoctests: Fixing with --distribution={shlex.quote(distribution)}")
+                    default_venv, default_environment = default_venv_environment_from_distribution(distribution)
+                    args.venv = default_venv
+                    args.environment = default_environment
+                    try:
+                        doctests = doctest_blocks(args, sorted(file_set), distribution=distribution)
+                        process_grouped_blocks(itertools.groupby(doctests, block_filename),
+                                               distribution=distribution)
+                        process_grouped_blocks([(filename, []) for filename in file_set],
+                                               distribution=distribution)
+                    except BadDistribution as e:
+                        print(f"sage-fixdoctests: {e}, ignoring")
+                if not args.fixed_point:
+                    break
+            if args.fixed_point:
+                print(f"sage-fixdoctests: Fixed point reached")
+
+    except Exception as e:
+        print(f"sage-fixdoctests: {e}")
+        sys.exit(1)
