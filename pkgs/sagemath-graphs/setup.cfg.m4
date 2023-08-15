@@ -24,12 +24,13 @@ gap         = SPKG_INSTALL_REQUIRES_sagemath_gap
 igraph      = SPKG_INSTALL_REQUIRES_python_igraph
 mcqd        = SPKG_INSTALL_REQUIRES_sagemath_mcqd
 networkx    = SPKG_INSTALL_REQUIRES_networkx
+pari        = SPKG_INSTALL_REQUIRES_sagemath_pari
 tdlib       = SPKG_INSTALL_REQUIRES_sagemath_tdlib
 
 # features
 combinat    = SPKG_INSTALL_REQUIRES_sagemath_combinat
-databases   = # FIXME
 editor      = SPKG_INSTALL_REQUIRES_phitigra
+homology    = SPKG_INSTALL_REQUIRES_sagemath_modules[]
 mip         = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
 modules     = SPKG_INSTALL_REQUIRES_sagemath_modules
 plot        = SPKG_INSTALL_REQUIRES_sagemath_plot
