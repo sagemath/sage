@@ -1216,6 +1216,9 @@ class SageDocTestParser(doctest.DocTestParser):
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
                                 continue
+                            if any(tag in ['got', 'expected', 'nameerror'] for tag in extra):
+                                # never probe special tags added by sage-fixdoctests
+                                continue
                             if all(tag in persistent_optional_tags for tag in extra):
                                 # don't probe if test is only conditional
                                 # on file-level or block-level tags
