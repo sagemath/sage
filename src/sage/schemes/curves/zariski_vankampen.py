@@ -966,7 +966,11 @@ def geometric_basis(G, E, EC0, p, dual_graph):
                 q = EC[-i]
                 connecting_path = list(reversed(EC[-i:]))
                 break
-    distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in EI]
+    # Precompute distances from q in E and I
+    E_dist_q = E.shortest_path_lengths(q)
+    I_dist_q = Internal.shortest_path_lengths(q)
+    distancequotients = [(E_dist_q[v]**2 / I_dist_q[v], v) for v in EI]
+    # distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in EI]
     r = max(distancequotients)[1]
     cutpath = Internal.shortest_path(q, r)
     for i, v in enumerate(cutpath):
@@ -990,7 +994,7 @@ def geometric_basis(G, E, EC0, p, dual_graph):
         if r == EC[qi + 1]:
             E1, E2 = E2, E1
     for v in [q, r]:
-        for n in E.neighbors(v):
+        for n in E.neighbor_iterator(v):
             if n in E1 and n not in (q, r):
                 E1.add_edge(v, n, None)
             if n in E2 and n not in (q, r):
