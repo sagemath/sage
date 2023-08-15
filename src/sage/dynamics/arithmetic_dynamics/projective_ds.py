@@ -4280,7 +4280,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
     def preperiodic_points(self, m, n, **kwds):
         r"""
-        Computes the preperiodic points of period ``m, n`` of this dynamical system
+        Compute the preperiodic points of period ``m, n`` of this dynamical system
         defined over the ring ``R`` or the base ring of the map.
 
         This is done by finding the rational points on the variety
@@ -4292,16 +4292,16 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer, the period
+        - ``m`` - a non-negative integer, the preperiod
 
-        - ``m`` - a non negative integer, the preperiod
+        - ``n`` - a positive integer, the period
 
         kwds:
 
         - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
-          find only the preperiodic points of minimal period ``m``,``n`` and
-          ``False`` specifies to find all preperiodic points of period
-          ``m``, ``n``
+          find only the preperiodic points of minimal period ``m``, ``n``,
+          and ``False`` specifies to find all preperiodic points of period
+          ``m``, ``n``.
 
         - ``formal`` -- (default: ``False``) boolean; ``True`` specifies to
           find the formal periodic points only. The formal periodic points
@@ -4311,12 +4311,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           commutative ring over which to find the preperiodic points
 
         - ``return_scheme`` -- (default: ``False``) boolean; return a
-          subscheme of the ambient space that defines the ``m``,``n`` th
+          subscheme of the ambient space that defines the ``m``,``n``-th
           preperiodic points
 
         OUTPUT:
 
-        A list of preperiodic points of this map or the subscheme defining
+        A list of preperiodic points of this map, or the subscheme defining
         the preperiodic points.
 
         EXAMPLES::
@@ -4474,7 +4474,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
             sage: f = DynamicalSystem_projective([4*x^2 - 7*y^2, 4*y^2])
             sage: f.preperiodic_points(1, 2)
-            0
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: ring must a number field or finite field
 
         ::
 
@@ -4506,13 +4508,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             ValueError: dynamical system is not a morphism,
             cannot calculate minimal or formal preperiodic points
         """
-        n = ZZ(n)
         m = ZZ(m)
+        n = ZZ(n)
 
+        if m < 0:
+            raise ValueError("a non-negative preperiod must be specified")
         if n <= 0:
             raise ValueError("a positive integer period must be specified")
-        if m < 0:
-            raise ValueError("a non negative preperiod must be specified")
 
         R = kwds.pop('R', None)
 
@@ -4531,18 +4533,19 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         dom = f_sub.domain()
         PS = f_sub.codomain().ambient_space()
 
-        if dom != PS:
+        if dom is not PS:
             f = DynamicalSystem(f_sub.defining_polynomials())
         else:
             f = f_sub
 
-        N = PS.dimension_relative() + 1
         formal = kwds.pop('formal', False)
         minimal = kwds.pop('minimal', True)
         return_scheme = kwds.pop('return_scheme', False)
 
-        if formal and (N == 2) and (dom == PS):
-            X = PS.subscheme([f.dynatomic_polynomial([m,n])])
+        N = PS.dimension_relative() + 1
+
+        if formal and (N == 2) and (dom is PS):
+            X = PS.subscheme([f.dynatomic_polynomial([m, n])])
         else:
             F_1 = f.nth_iterate_map(n + m)
             F_2 = f.nth_iterate_map(m)
@@ -4611,6 +4614,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         psi = UnflatteningMorphism(flatCR, CR)
                         In = flatCR.ideal([phi(i) for i in X.defining_polynomials()])
                         X = PS.subscheme([psi(i) for i in In.saturation(Ik)[0].gens()])
+
                     else:
                         Ik = CR.ideal(1)
 
@@ -4623,14 +4627,15 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         In = X.defining_ideal()
                         X = PS.subscheme(In.saturation(Ik)[0])
 
-        if dom != PS:
+        if dom is not PS:
             X = PS.subscheme(list(X.defining_polynomials()) + list(dom.defining_polynomials()))
 
         # This includes the indeterminacy locus points!
         if return_scheme:
             return X
 
-        if X.dimension() <= 0:
+        # Ensure calling `X.dimension()` works
+        if X.change_ring(FractionField(R)).dimension() <= 0:
             if (R in NumberFields()) or (R is QQbar) or (R in FiniteFields()):
                 points = [dom(Q) for Q in X.rational_points()]
                 good_points = []
