@@ -347,8 +347,8 @@ class MomentAngleComplex(SageObject, UniqueRepresentation):
 
         a dictonary, whose values are lists, representing spheres
         and disks described in the construction of the moment-angle
-        complex. ``The 2-simplex`` represents a disk, and
-        ``Minimal triangulation of the 1-sphere`` represents a `1-sphere`.
+        complex. ``The 2-simplex`` represents a 2-disk, and
+        ``Minimal triangulation of the 1-sphere`` represents a 1-sphere.
 
         EXAMPLES::
 
