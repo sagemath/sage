@@ -113,10 +113,10 @@ if args.verbose:
 if args.distribution == ['all']:
     args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
                          'sagemath-categories',
-                         #'sagemath-modules',
-                         #'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
-                         #'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
-                         #'sagemath-polyhedra',
+                         'sagemath-modules',
+                         'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
+                         'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
+                         'sagemath-polyhedra',
                          None]  # monolithic distribution
 
 if len(args.distribution) > 1:
