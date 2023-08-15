@@ -415,7 +415,17 @@ class sage__libs__gap(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.gap',
                              [PythonModule('sage.libs.gap.libgap'),
-                              PythonModule('sage.interfaces.gap')])
+                              PythonModule('sage.interfaces.gap'),
+                              PythonModule('sage.groups.matrix_gps.finitely_generated_gap'),
+                              PythonModule('sage.groups.matrix_gps.group_element_gap'),
+                              PythonModule('sage.groups.matrix_gps.heisenberg'),
+                              PythonModule('sage.groups.matrix_gps.isometries'),
+                              PythonModule('sage.groups.matrix_gps.linear_gap'),
+                              PythonModule('sage.groups.matrix_gps.matrix_group_gap'),
+                              PythonModule('sage.groups.matrix_gps.named_group_gap'),
+                              PythonModule('sage.groups.matrix_gps.orthogonal_gap'),
+                              PythonModule('sage.groups.matrix_gps.symplectic_gap'),
+                              PythonModule('sage.groups.matrix_gps.unitary_gap')])
 
 
 class sage__libs__linbox(JoinFeature):
