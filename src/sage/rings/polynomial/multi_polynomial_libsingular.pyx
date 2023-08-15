@@ -5766,7 +5766,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         - ``J`` -- list of elements of the parent polynomial ring
 
-        - ``algorithm`` -- can be ``None`` (the default), "algebra_containment",
+        - ``algorithm`` -- can be "algebra_containment" (the default),
           "inSubring", or "groebner".
 
           - "algebra_containment" (default): use Singular's
