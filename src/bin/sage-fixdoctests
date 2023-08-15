@@ -270,14 +270,18 @@ def process_block(block, src_in_lines, file_optional_tags):
                     print("sage-fixdoctests: This is a NameError from top level")  # so we keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
                     name = m.group(1)
-                    if name == 'x':  # Don't mark it '# needs sage.symbolic'; that's almost always wrong
+                    if name == 'I':
+                        add_tags = ['sage.symbolic']  # This is how we mark it currently (2023-08)
+                    elif len(name) < 2:
+                        # Don't mark use of 'x' '# needs sage.symbolic'; that's almost always wrong
+                        # Likewise for variables like 'R', 'r'
                         return
-                    if feature := name_feature(name):
+                    elif feature := name_feature(name):
                         add_tags = [feature.name]
                     else:
                         if args.only_tags:
                             return
-                        add_tags = [f"NameError: '{name}'{venv_explainer}"]
+                        add_tags = [f"NameError ('{name}', {venv_explainer.lstrip().lstrip('(')}"]
                 else:
                     if args.only_tags:
                         return
