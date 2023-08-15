@@ -184,16 +184,19 @@ from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2 as shuffle
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modular.multiple_zeta_F_algebra import F_algebra
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.positive_integers import PositiveIntegers
+
+lazy_import('sage.libs.pari.all', 'pari')
+
 
 # multiplicative generators for weight <= 17
 # using the following convention
