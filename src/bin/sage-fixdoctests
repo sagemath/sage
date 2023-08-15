@@ -70,6 +70,10 @@ parser.add_argument("--overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; overwrite the source files")
 parser.add_argument("--no-overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; output goes to files named INPUT.fixed")
+parser.add_argument("--verbose", default=False, action="store_true",
+                    help="show details of all changes; implies --no-diff")
+parser.add_argument("--no-diff", default=False, action="store_true",
+                    help="don't show the 'git diff' of the modified files")
 parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
                     type=str)
 
@@ -97,6 +101,9 @@ def default_venv_environment_from_distribution():
         default_venv = ''
         default_environment = runtest_default_environment
     return default_venv, default_environment
+
+if args.verbose:
+    args.no_diff = True
 
 default_venv, default_environment = default_venv_environment_from_distribution()
 
@@ -133,21 +140,55 @@ if venv_explainers:
 else:
     venv_explainer = ''
 
+sep = "**********************************************************************\n"
+
 
 def process_block(block, src_in_lines, file_optional_tags):
+    if args.verbose:
+        print(sep + block.rstrip())
+
     # Extract the line, what was expected, and was got.
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
         return
+
+    def print_line(num):
+        if args.verbose and (src := src_in_lines[num]):
+            if src:
+                for line in src.split('\n'):
+                    line = line.strip()
+                    if line.startswith("sage: ") or line.startswith("....: "):
+                        line = line[6:]
+                    print(f"    {line}")  # indent to match the displayed "Example" in the sage-runtest message
+
+    def update_line(num, new, message=None):
+        src_in_lines[num] = new
+        if args.verbose and message:
+            print(f"sage-fixdoctests: {message}")
+            print_line(num)
+
+    def append_to_line(num, new, message=None):
+        update_line(num, src_in_lines[num] + new, message=message)
+
+    def prepend_to_line(num, new, message=None):
+        update_line(num, new + src_in_lines[num], message=message)
+
+    def update_line_optional_tags(num, *args, message=None, **kwds):
+        update_line(num,
+                    update_optional_tags(src_in_lines[num], *args, **kwds),
+                    message=message)
+
     filename = m.group(1)
     first_line_num = line_num = int(m.group(2))  # 1-based line number of the first line of the example
 
     if m := re.search(r"using.*block-scoped tag.*'(sage: .*)'.*to avoid repeating the tag", block):
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
-        src_in_lines[line_num - 2] += '\n' + ' ' * indent + m.group(1)
+        append_to_line(line_num - 2, '\n' + ' ' * indent + m.group(1),
+                       message="Adding this block-scoped tag")
+        print_line(first_line_num - 1)
 
     if m := re.search(r"updating.*block-scoped tag.*'sage: (.*)'.*to avoid repeating the tag", block):
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                tags=parse_optional_tags('# ' + m.group(1)))
+        update_line_optional_tags(first_line_num - 1, tags=parse_optional_tags('# ' + m.group(1)),
+                                  message="Adding this tag to the existing block-scoped tag")
 
     if m := re.search(r"referenced here was set only in doctest marked '# (optional|needs)[-: ]*([^;']*)", block):
         optional = m.group(2).split()
@@ -155,13 +196,13 @@ def process_block(block, src_in_lines, file_optional_tags):
             # This happens due to a virtual doctest in src/sage/repl/user_globals.py
             return
         optional = set(optional) - set(file_optional_tags)
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                add_tags=optional)
+        update_line_optional_tags(first_line_num - 1, add_tags=optional,
+                                  message=f"Adding the tag(s) {optional}")
 
     if m := re.search(r"tag '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
         optional = m.group(2).split()
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                remove_tags=optional)
+        update_line_optional_tags(first_line_num - 1, remove_tags=optional,
+                                  message=f"Removing the tag(s) {optional}")
 
     if m2 := re.search('(Expected:|Expected nothing|Exception raised:)\n', block):
         m1 = re.search('Failed example:\n', block)
@@ -198,8 +239,8 @@ def process_block(block, src_in_lines, file_optional_tags):
         asked_why = re.search('#.*(why|explain)', src_in_lines[first_line_num - 1])
         optional = module_feature(module)
         if optional and optional.name not in file_optional_tags:
-            src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                    add_tags=[optional.name])
+            update_line_optional_tags(first_line_num - 1, add_tags=[optional.name],
+                                      message=f"Module '{module}' is provided by feature '{optional.name}'; adding this tag")
             if not asked_why:
                 # When no explanation has been demanded,
                 # we just mark the doctest with the feature
@@ -225,7 +266,8 @@ def process_block(block, src_in_lines, file_optional_tags):
             if (last_frame >= 0
                     and (index_NameError := got.rfind("NameError:")) >= 0
                     and got[last_frame:].startswith('File "<doctest')):
-                # NameError from top level, so keep it brief
+                if args.verbose:
+                    print("sage-fixdoctests: This is a NameError from top level")  # so we keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
                     name = m.group(1)
                     if name == 'x':  # Don't mark it '# needs sage.symbolic'; that's almost always wrong
@@ -240,8 +282,8 @@ def process_block(block, src_in_lines, file_optional_tags):
                     if args.only_tags:
                         return
                     add_tags = [f"NameError{venv_explainer}"]
-                src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                        add_tags=add_tags)
+                update_line_optional_tags(first_line_num - 1, add_tags=add_tags,
+                                          message=f"Adding tag {add_tags}")
                 return
             got = got.splitlines()
         else:
@@ -255,6 +297,8 @@ def process_block(block, src_in_lines, file_optional_tags):
         got = got.splitlines()      # got can't be the empty string
 
     if args.only_tags:
+        if args.verbose:
+            print("sage-fixdoctests: No action because of --only-tags")
         return
 
     expected = expected.splitlines()
@@ -263,11 +307,11 @@ def process_block(block, src_in_lines, file_optional_tags):
         test_lines = ([update_optional_tags(src_in_lines[first_line_num - 1],
                                             add_tags=[f'GOT{venv_explainer}'])]
                       + src_in_lines[first_line_num : line_num])
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                add_tags=['EXPECTED'])
+        update_line_optional_tags(first_line_num - 1, add_tags=['EXPECTED'])
         indent = (len(src_in_lines[line_num - 1]) - len(src_in_lines[line_num - 1].lstrip()))
         line_num += len(expected)  # skip to the last line of the expected output
-        src_in_lines[line_num - 1] += '\n'.join([''] + test_lines)  # 2nd copy of the test
+        append_to_line(line_num - 1,
+                       '\n'.join([''] + test_lines))  # 2nd copy of the test
         # now line_num is the last line of the 2nd copy of the test
         expected = []
 
@@ -275,7 +319,8 @@ def process_block(block, src_in_lines, file_optional_tags):
     # and match indentation with line number line_num-1
     if not expected:
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
-        src_in_lines[line_num - 1] += '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got)
+        append_to_line(line_num - 1,
+                       '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got))
         return
 
     # Guess how much extra indenting ``got`` needs to match with the indentation
@@ -300,14 +345,13 @@ def process_block(block, src_in_lines, file_optional_tags):
     # If we got something when we expected nothing then we delete the line from the
     # output, otherwise, add all of what we `got` onto the end of src_in_lines[line_num]
     if got == ['']:
-        src_in_lines[line_num] = None
+        update_line(line_num, None)
     else:
-        src_in_lines[line_num] = '\n'.join((' ' * indent + got[i])
-                                           for i in range(len(got)))
+        update_line(line_num, '\n'.join((' ' * indent + got[i]) for i in range(len(got))))
 
     # Mark any remaining `expected` lines as ``None`` so as to preserve the line numbering
     for i in range(1, len(expected)):
-        src_in_lines[line_num + i] = None
+        update_line(line_num + i, None)
 
 
 # set input and output files
@@ -432,7 +476,7 @@ def process_grouped_blocks(grouped_iterator):
 
         if src_in_lines != shallow_copy_of_src_in_lines:
             if (output := output_filename(input)) is None:
-                print(f"Not saving modifications made in '{input}'")
+                print(f"sage-fixdoctests: Not saving modifications made in '{input}'")
             else:
                 with open(output, 'w') as test_output:
                     for line in src_in_lines:
@@ -441,15 +485,15 @@ def process_grouped_blocks(grouped_iterator):
                         test_output.write(line)
                         test_output.write('\n')
                 # Show summary of changes
-                if input != output :
-                    print("The fixed doctests have been saved as '{0}'.".format(output))
+                if input != output:
+                    print("sage-fixdoctests: The fixed doctests have been saved as '{0}'.".format(output))
                 else:
                     relative = os.path.relpath(output, SAGE_ROOT)
-                    print(f"The input file '{output}' has been overwritten.")
-                    if not relative.startswith('..'):
+                    print(f"sage-fixdoctests: The input file '{output}' has been overwritten.")
+                    if not args.no_diff and not relative.startswith('..'):
                         subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
         else:
-            print(f"No fixes made in '{input}'")
+            print(f"sage-fixdoctests: No fixes made in '{input}'")
 
 process_grouped_blocks(
     itertools.chain(itertools.groupby(doctests, block_filename),
