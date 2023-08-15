@@ -5766,19 +5766,19 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         - ``J`` -- list of elements of the parent polynomial ring
 
-        - ``algorithm`` -- can be "algebra_containment" (the default),
-          "inSubring", or "groebner".
+        - ``algorithm`` -- can be ``"algebra_containment"`` (the default),
+          ``"inSubring"``, or ``"groebner"``.
 
-          - "algebra_containment" (default): use Singular's
+          - ``"algebra_containment"``: use Singular's
             ``algebra_containment`` function,
             https://www.singular.uni-kl.de/Manual/4-2-1/sing_1247.htm#SEC1328. The
             Singular documentation suggests that this is frequently
             faster than the next option.
 
-          - "inSubring": use Singular's ``inSubring`` function,
+          - ``"inSubring"``: use Singular's ``inSubring`` function,
             https://www.singular.uni-kl.de/Manual/4-2-0/sing_1240.htm#SEC1321.
 
-          - "groebner": use the algorithm described in Singular's
+          - ``"groebner"``: use the algorithm described in Singular's
             documentation, but within Sage: if the subalgebra
             generators are `y_1`, ..., `y_m`, then create a new
             polynomial algebra with the old generators along with new
