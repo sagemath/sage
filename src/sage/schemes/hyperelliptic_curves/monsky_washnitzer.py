@@ -2794,7 +2794,6 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
 SpecialHyperellipticQuotientRing_class = SpecialHyperellipticQuotientRing
 
 
-
 class MonskyWashnitzerDifferential(ModuleElement):
     r"""
     An element of the Monsky-Washnitzer ring of differentials, of

@@ -1117,7 +1117,7 @@ cdef class TreelengthConnected:
 
                 # Removing v may have disconnected cc. We iterate on its
                 # connected components
-                for _cci in g.subgraph(ccv).connected_components():
+                for _cci in g.subgraph(ccv).connected_components(sort=False):
                     cci = frozenset(_cci)
 
                     # The recursive subcalls. We remove on-the-fly the vertices

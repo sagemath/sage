@@ -8,9 +8,11 @@ from sage.arith.misc import euler_phi
 from sage.categories.objects import Objects
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.structure.sequence import Sequence
+
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 from . import eis_series
 from . import element
@@ -29,7 +31,8 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
             sage: E = ModularForms(23,4).eisenstein_subspace() # indirect doctest
             sage: E
-            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7 for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field
+            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7
+             for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field
             sage: E == loads(dumps(E))
             True
         """
@@ -101,10 +104,13 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
             sage: eps = DirichletGroup(13).0
             sage: E = EisensteinForms(eps^2, 2)
             sage: E.modular_symbols()
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols subspace of dimension 2 of Modular Symbols space of
+             dimension 4 and level 13, weight 2, character [zeta6], sign 0,
+             over Cyclotomic Field of order 6 and degree 2
 
             sage: E = EisensteinForms(eps, 1); E
-            Eisenstein subspace of dimension 1 of Modular Forms space of character [zeta12] and weight 1 over Cyclotomic Field of order 12 and degree 4
+            Eisenstein subspace of dimension 1 of Modular Forms space of character
+             [zeta12] and weight 1 over Cyclotomic Field of order 12 and degree 4
             sage: E.modular_symbols()
             Traceback (most recent call last):
             ...
@@ -127,11 +133,13 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         EXAMPLES::
 
             sage: ModularForms(24,2).eisenstein_submodule().parameters()
-            [(Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, 2),
-            ...
-            Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, 24)]
+            [(Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1,
+              Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, 2),
+              ...
+              Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, 24)]
             sage: EisensteinForms(12,6).parameters()[-1]
-            (Dirichlet character modulo 12 of conductor 1 mapping 7 |--> 1, 5 |--> 1, Dirichlet character modulo 12 of conductor 1 mapping 7 |--> 1, 5 |--> 1, 12)
+            (Dirichlet character modulo 12 of conductor 1 mapping 7 |--> 1, 5 |--> 1,
+             Dirichlet character modulo 12 of conductor 1 mapping 7 |--> 1, 5 |--> 1, 12)
 
             sage: pars = ModularForms(DirichletGroup(24).0,3).eisenstein_submodule().parameters()
             sage: [(x[0].values_on_gens(),x[1].values_on_gens(),x[2]) for x in pars]
@@ -144,7 +152,14 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             ((-1, 1, 1), (1, 1, 1), 3),
             ((-1, 1, 1), (1, 1, 1), 6)]
             sage: EisensteinForms(DirichletGroup(24).0,1).parameters()
-            [(Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 1), (Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 2), (Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 3), (Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1, Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 6)]
+            [(Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1,
+              Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 1),
+             (Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1,
+              Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 2),
+             (Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1,
+              Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 3),
+             (Dirichlet character modulo 24 of conductor 1 mapping 7 |--> 1, 13 |--> 1, 17 |--> 1,
+              Dirichlet character modulo 24 of conductor 4 mapping 7 |--> -1, 13 |--> 1, 17 |--> 1, 6)]
         """
         char = self._parameters_character()
         if char is None:
@@ -159,7 +174,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         EXAMPLES::
 
             sage: e = EisensteinForms(Gamma0(225), 2).new_submodule(); e
-            Modular Forms subspace of dimension 3 of Modular Forms space of dimension 42 for Congruence Subgroup Gamma0(225) of weight 2 over Rational Field
+            Modular Forms subspace of dimension 3 of Modular Forms space of dimension 42
+             for Congruence Subgroup Gamma0(225) of weight 2 over Rational Field
             sage: e.basis()
             [
             q + O(q^6),
@@ -190,7 +206,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         EXAMPLES::
 
             sage: E = EisensteinForms(12,2) ; E
-            Eisenstein subspace of dimension 5 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(12) of weight 2 over Rational Field
+            Eisenstein subspace of dimension 5 of Modular Forms space of dimension 5
+             for Congruence Subgroup Gamma0(12) of weight 2 over Rational Field
             sage: E.basis()
             [
             1 + O(q^6),
@@ -200,7 +217,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             q^4 + O(q^6)
             ]
             sage: E.change_ring(GF(5))
-            Eisenstein subspace of dimension 5 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(12) of weight 2 over Finite Field of size 5
+            Eisenstein subspace of dimension 5 of Modular Forms space of dimension 5
+             for Congruence Subgroup Gamma0(12) of weight 2 over Finite Field of size 5
             sage: E.change_ring(GF(5)).basis()
             [
             1 + O(q^6),
@@ -233,7 +251,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             ]
             sage: EisensteinForms(1,24).eisenstein_series()
             [
-            236364091/131040 + q + 8388609*q^2 + 94143178828*q^3 + 70368752566273*q^4 + 11920928955078126*q^5 + O(q^6)
+            236364091/131040 + q + 8388609*q^2 + 94143178828*q^3
+                + 70368752566273*q^4 + 11920928955078126*q^5 + O(q^6)
             ]
             sage: EisensteinForms(5,4).eisenstein_series()
             [
@@ -259,7 +278,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             sage: eps = DirichletGroup(13).0^2
             sage: ModularForms(eps,2).eisenstein_series()
             [
-            -7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
+            -7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3
+                + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
             q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6)
             ]
 
@@ -271,7 +291,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             sage: M = ModularForms(DirichletGroup(13).0, 1)
             sage: M.eisenstein_series()
             [
-            -1/13*zeta12^3 + 6/13*zeta12^2 + 4/13*zeta12 + 2/13 + q + (zeta12 + 1)*q^2 + zeta12^2*q^3 + (zeta12^2 + zeta12 + 1)*q^4 + (-zeta12^3 + 1)*q^5 + O(q^6)
+            -1/13*zeta12^3 + 6/13*zeta12^2 + 4/13*zeta12 + 2/13 + q + (zeta12 + 1)*q^2
+                + zeta12^2*q^3 + (zeta12^2 + zeta12 + 1)*q^4 + (-zeta12^3 + 1)*q^5 + O(q^6)
             ]
 
             sage: M = ModularForms(GammaH(15, [4]), 4)
@@ -322,9 +343,9 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             O(q^6)]
             sage: EisensteinForms(22,4)._compute_q_expansion_basis(15)
             [1 + O(q^15),
-            q + 28*q^3 - 8*q^4 + 126*q^5 + 344*q^7 - 72*q^8 + 757*q^9 - 224*q^12 + 2198*q^13 + O(q^15),
-            q^2 + 9*q^4 + 28*q^6 + 73*q^8 + 126*q^10 + 252*q^12 + 344*q^14 + O(q^15),
-            q^11 + O(q^15)]
+             q + 28*q^3 - 8*q^4 + 126*q^5 + 344*q^7 - 72*q^8 + 757*q^9 - 224*q^12 + 2198*q^13 + O(q^15),
+             q^2 + 9*q^4 + 28*q^6 + 73*q^8 + 126*q^10 + 252*q^12 + 344*q^14 + O(q^15),
+             q^11 + O(q^15)]
         """
         if prec is None:
             prec = self.prec()
@@ -543,7 +564,8 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
 
         sage: M.eisenstein_series()
         [
-        -1/3*zeta6 - 1/3 + q + (2*zeta6 - 1)*q^2 + q^3 + (-2*zeta6 - 1)*q^4 + (-5*zeta6 + 1)*q^5 + O(q^6),
+        -1/3*zeta6 - 1/3 + q + (2*zeta6 - 1)*q^2 + q^3
+             + (-2*zeta6 - 1)*q^4 + (-5*zeta6 + 1)*q^5 + O(q^6),
         -1/3*zeta6 - 1/3 + q^3 + O(q^6),
         q + (-2*zeta6 + 1)*q^2 + (-2*zeta6 - 1)*q^4 + (5*zeta6 - 1)*q^5 + O(q^6),
         q + (zeta6 + 1)*q^2 + 3*q^3 + (zeta6 + 2)*q^4 + (-zeta6 + 5)*q^5 + O(q^6),
@@ -590,8 +612,8 @@ def cyclotomic_restriction(L,K):
 
     EXAMPLES::
 
-        sage: L = CyclotomicField(12) ; N = CyclotomicField(33) ; M = CyclotomicField(132)
-        sage: z, n = sage.modular.modform.eisenstein_submodule.cyclotomic_restriction(L,N)
+        sage: L = CyclotomicField(12); N = CyclotomicField(33); M = CyclotomicField(132)
+        sage: z, n = sage.modular.modform.eisenstein_submodule.cyclotomic_restriction(L, N)
         sage: n
         2
 
@@ -600,11 +622,11 @@ def cyclotomic_restriction(L,K):
         sage: z(L.0)(M.0)
         zeta132^11
 
-        sage: z(L.0^3-L.0+1)
+        sage: z(L.0^3 - L.0 + 1)
         (zeta33^19 + zeta33^8)*x + 1
-        sage: z(L.0^3-L.0+1)(M.0)
+        sage: z(L.0^3 - L.0 + 1)(M.0)
         zeta132^33 - zeta132^11 + 1
-        sage: z(L.0^3-L.0+1)(M.0) - M(L.0^3-L.0+1)
+        sage: z(L.0^3 - L.0 + 1)(M.0) - M(L.0^3 - L.0 + 1)
         0
     """
     if not L.has_coerce_map_from(K):
@@ -687,7 +709,7 @@ def cyclotomic_restriction_tower(L,K):
 
         EXAMPLES::
 
-            sage: L = CyclotomicField(121) ; K = CyclotomicField(11)
+            sage: L = CyclotomicField(121); K = CyclotomicField(11)
             sage: z = sage.modular.modform.eisenstein_submodule.cyclotomic_restriction_tower(L,K)
             sage: z(L.0)
             x

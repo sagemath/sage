@@ -119,9 +119,10 @@ cdef class Matrix(Matrix0):
             sage: g.IsMatrix()
             true
 
-            sage: L.<tau> = NumberField(x^3-2)
-            sage: A = MatrixSpace(L,2,2)([0,1+tau,2*tau,3])
-            sage: g = gap(A); g
+            sage: x = polygen(ZZ, 'x')
+            sage: L.<tau> = NumberField(x^3 - 2)                                        # optional - sage.rings.number_field
+            sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])                        # optional - sage.rings.number_field
+            sage: g = gap(A); g                                                         # optional - sage.rings.number_field
             [ [ !0, tau+1 ], [ 2*tau, !3 ] ]
             sage: matrix(L, g) == A
             True
@@ -248,7 +249,7 @@ cdef class Matrix(Matrix0):
             sage: a = maxima(m); a
             matrix([0,1,2],[3,4,5],[6,7,8])
             sage: a.charpoly('x').expand()
-            (-x^3)+12*x^2+18*x
+            ...-x^3...+12*x^2+18*x
             sage: m.charpoly()
             x^3 - 12*x^2 - 18*x
         """

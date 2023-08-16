@@ -926,7 +926,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
         variable = nth_derivative.parent().gens()[0]
         a = x.center()[0]
         Taylor_expansion = []
-        from sage.functions.other import factorial
+        from sage.arith.misc import factorial
         for i in range(f.degree() + 1):
             Taylor_expansion.append(nth_derivative(a) * 1/factorial(i))
             nth_derivative = nth_derivative.derivative(variable)

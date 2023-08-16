@@ -79,9 +79,7 @@ from .basis_exchange_matroid cimport BasisExchangeMatroid
 from .set_system cimport SetSystem
 from cpython.object cimport Py_EQ, Py_NE
 
-from sage.arith.misc import binomial
-
-from itertools import permutations, combinations
+from itertools import combinations
 
 # class of general matroids, represented by their list of bases
 
@@ -180,7 +178,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             bitset_init(self._bb, bc)
             bitset_set_first_n(self._bb, bc)
             NB = M.nonbases()
-            for i in xrange(len(NB)):
+            for i in range(len(NB)):
                 bitset_discard(self._bb, set_to_index(NB._subsets[i]))
 
             bitset_init(self._b, (<BasisExchangeMatroid>M)._bitset_size)
@@ -366,7 +364,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         cdef BasisMatroid D
         D = BasisMatroid(groundset=self._E, rank=self.full_corank())
         N = binom[self._groundset_size][self._matroid_rank]
-        for i in xrange(N):
+        for i in range(N):
             if not bitset_in(self._bb, i):
                 bitset_discard(D._bb, N - i - 1)
         D.reset_current_basis()
@@ -684,11 +682,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if self._bases_invariant_var is not None:
             return self._bases_invariant_var
         cdef long i, j
-        cdef bitset_t bb_comp
         cdef list bc
         cdef dict bi
-        bc = [0 for i in xrange(len(self))]
-        for i in xrange(binom[self._groundset_size][self._matroid_rank]):
+        bc = [0 for i in range(len(self))]
+        for i in range(binom[self._groundset_size][self._matroid_rank]):
             if not bitset_in(self._bb, i):
                 index_to_set(self._b, i, self._matroid_rank, self._groundset_size)
                 j = bitset_first(self._b)
@@ -696,7 +693,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                     bc[j] += 1
                     j = bitset_next(self._b, j + 1)
         bi = {}
-        for e in xrange(len(self)):
+        for e in range(len(self)):
             if bc[e] in bi:
                 bi[bc[e]].append(e)
             else:
@@ -905,7 +902,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         bitset_complement(bb_comp, self._bb)
 
         bitset_init(b2, max(len(self), 1))
-        morph = [(<BasisMatroid>other)._idx[morphism[self._E[i]]] for i in xrange(len(self))]
+        morph = [(<BasisMatroid>other)._idx[morphism[self._E[i]]] for i in range(len(self))]
         i = bitset_first(bb_comp)
         while i != -1:
             index_to_set(self._b, i, self._matroid_rank, self._groundset_size)
@@ -978,9 +975,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = BasisMatroid(matroids.Wheel(3))
-            sage: N = BasisMatroid(matroids.CompleteGraphic(4))
-            sage: morphism = M._isomorphism(N)
-            sage: M._is_isomorphism(N, morphism)
+            sage: N = BasisMatroid(matroids.CompleteGraphic(4))                         # needs sage.graphs
+            sage: morphism = M._isomorphism(N)                                          # needs sage.graphs
+            sage: M._is_isomorphism(N, morphism)                                        # needs sage.graphs
             True
             sage: M = BasisMatroid(matroids.named_matroids.NonFano())
             sage: N = BasisMatroid(matroids.named_matroids.Fano())
@@ -996,7 +993,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if self.full_rank() != other.full_rank():
             return None
         if self.full_rank() == 0:
-            return {self.groundset_list()[i]: other.groundset_list()[i] for i in xrange(len(self))}
+            return {self.groundset_list()[i]: other.groundset_list()[i] for i in range(len(self))}
         if self.bases_count() != other.bases_count():
             return None
 
@@ -1006,7 +1003,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         PO = other._bases_partition()
         if len(PS) == len(self) and len(PO) == len(other):
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PS[i])] = min(PO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
@@ -1019,7 +1016,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         PO = other._bases_partition2()
         if len(PS) == len(self) and len(PO) == len(other):
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PS[i])] = min(PO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
@@ -1030,7 +1027,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             PHS = self._bases_partition3()
             PHO = other._bases_partition3()
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PHS[i])] = min(PHO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
@@ -1088,7 +1085,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         PO = other._bases_partition()
         if len(PS) == len(self) and len(PO) == len(other):
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PS[i])] = min(PO[i])
             return self._is_relaxation(other, morphism)
 
@@ -1098,7 +1095,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         PO = other._bases_partition2()
         if len(PS) == len(self) and len(PO) == len(other):
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PS[i])] = min(PO[i])
             return self._is_relaxation(other, morphism)
 
@@ -1106,7 +1103,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             PHS = self._bases_partition3()
             PHO = other._bases_partition3()
             morphism = {}
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 morphism[min(PHS[i])] = min(PHO[i])
             if self._is_relaxation(other, morphism):
                 return True
@@ -1183,7 +1180,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         N.rename(getattr(self, '__custom_name'))
         return N
 
-    def __deepcopy__(self, memo={}):
+    def __deepcopy__(self, memo=None):
         """
         Create a deep copy.
 
@@ -1201,6 +1198,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M.groundset() is N.groundset()
             False
         """
+        if memo is None:
+            memo = {}
         N = BasisMatroid(M=self)
         N.rename(getattr(self, '__custom_name'))
         return N
@@ -1247,7 +1246,7 @@ cdef  binom_init(long N, long K):
     if binom[0][0] != 1:
         binom[0][0] = 1
         binom[0][1] = 0
-        for n in xrange(1, 2955):
+        for n in range(1, 2955):
             bin = 1
             k = 0
             while bin < 2 ** 32 and k <= 32 and k <= n:

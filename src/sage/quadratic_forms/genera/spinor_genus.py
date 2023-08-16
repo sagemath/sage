@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.groups
 r"""
 Spinor genus computations.
 
@@ -201,7 +202,7 @@ class SpinorOperators(AbelianGroupGap):
 
         OUTPUT:
 
-        If a prime `p` is given the method returns
+        If a prime `p` is given, the method returns
         `\Delta_p(r)`
         otherwise returns `\Delta(r)`
         where both are as defined by Conway-Sloane in

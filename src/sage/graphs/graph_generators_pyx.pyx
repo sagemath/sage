@@ -55,8 +55,8 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
 
     TESTS::
 
-        sage: from numpy import mean                                                    # optional - numpy
-        sage: abs(mean([RandomGNP(200, .2).density() for i in range(30)]) - .2) < .001  # optional - numpy
+        sage: from numpy import mean                                                    # needs numpy
+        sage: abs(mean([RandomGNP(200, .2).density() for i in range(30)]) - .2) < .001  # needs numpy
         True
         sage: RandomGNP(150, .2, loops=True)
         Traceback (most recent call last):

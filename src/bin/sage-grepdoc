@@ -2,4 +2,4 @@
 
 cd "$SAGE_DOC"
 
-find html -print | GREP_OPTIONS= egrep '.html$' | xargs grep "$@"
+find html -name '*.html' | xargs grep "$@"

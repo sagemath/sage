@@ -492,7 +492,7 @@ class EllipticCurveSaturator(SageObject):
         # and there is no simple test.)
 
         avoid = [self._N, self._D] + [P[0].denominator_ideal().norm() for P in Plist]
-        cm_test = E.has_rational_cm() and kro(E.cm_discriminant(), p)==-1
+        cm_test = E.has_rational_cm() and kro(E.cm_discriminant(), p) == -1
         for q in Primes():
             if any(q.divides(m) for m in avoid):
                 continue
@@ -543,7 +543,7 @@ class EllipticCurveSaturator(SageObject):
                             # point which is certainly a p-multiple
                             # modulo 15 primes Q, and we test if it
                             # actually is a p-multiple:
-                            if len(Rlist)==1:
+                            if len(Rlist) == 1:
                                 R = Rlist[0]
                                 pts = R.division_points(p)
                                 if pts:
@@ -650,7 +650,7 @@ def p_projections(Eq, Plist, p, debug=False):
     m = n.prime_to_m_part(p)      # prime-to-p part of order
     if debug:
         print("m={}, n={}".format(m,n))
-    if m==n: # p-primary part trivial, nothing to do
+    if m == n: # p-primary part trivial, nothing to do
         return []
     G = Eq.abelian_group()
     if debug:

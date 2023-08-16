@@ -711,7 +711,7 @@ http://fricas.sourceforge.net.
         We test that strings are returned properly::
 
             sage: r = fricas.get_string('concat([concat(string(i)," ") for i in 0..299])')   # optional - fricas
-            sage: r == " ".join([str(i) for i in range(300)]) + ' '                          # optional - fricas
+            sage: r == " ".join(str(i) for i in range(300)) + ' '                          # optional - fricas
             True
 
             sage: fricas.get_string('concat([string(1) for i in 1..5])') == "1"*5            # optional - fricas

@@ -974,7 +974,7 @@ class Func_chebyshev_U(ChebyshevFunction):
             sage: chebyshev_U(x, x)._sympy_()
             chebyshevu(x, x)
             sage: maxima(chebyshev_U(2,x, hold=True))
-            3*((-(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
+            3*(...-...(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
             sage: maxima(chebyshev_U(n,x, hold=True))
             chebyshev_u(_SAGE_VAR_n,_SAGE_VAR_x)
         """
@@ -1223,8 +1223,9 @@ class Func_chebyshev_U(ChebyshevFunction):
         if diff_param == 0:
             raise NotImplementedError("derivative w.r.t. to the index is not supported yet")
         elif diff_param == 1:
-            return ((n+1)*chebyshev_T(n+1, x) - x*chebyshev_U(n,x)) / (x*x-1)
+            return ((n+1)*chebyshev_T(n+1, x) - x*chebyshev_U(n, x)) / (x*x-1)
         raise ValueError("illegal differentiation parameter {}".format(diff_param))
+
 
 chebyshev_U = Func_chebyshev_U()
 
@@ -1517,7 +1518,7 @@ class Func_legendre_Q(BuiltinFunction):
 
         return sum(b * arg**a for a, b in enumerate(help3))
 
-    def _derivative_(self, n, x, *args,**kwds):
+    def _derivative_(self, n, x, *args, **kwds):
         """
         Return the derivative of legendre_Q.
 
@@ -1872,7 +1873,9 @@ class Func_assoc_legendre_P(BuiltinFunction):
             # https://dlmf.nist.gov/14.10#E4
             return ((m-n-1)*gen_legendre_P(n+1, m, x) + (n+1)*x*gen_legendre_P(n, m, x))/(1 - x**2)
 
+
 gen_legendre_P = Func_assoc_legendre_P()
+
 
 class Func_assoc_legendre_Q(BuiltinFunction):
     def __init__(self):
@@ -1885,8 +1888,9 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             1/4*sqrt(2)*(36*pi - 36*I*log(2) + 25*I)
         """
         BuiltinFunction.__init__(self, "gen_legendre_Q", nargs=3, latex_name=r"Q",
-                conversions={'maxima':'assoc_legendre_q', 'mathematica':'LegendreQ',
-                    'maple':'LegendreQ'})
+                                 conversions={'maxima': 'assoc_legendre_q',
+                                              'mathematica': 'LegendreQ',
+                                              'maple': 'LegendreQ'})
 
     def _eval_(self, n, m, x, *args, **kwds):
         r"""
@@ -1901,8 +1905,8 @@ class Func_assoc_legendre_Q(BuiltinFunction):
         if ret is not None:
             return ret
         if (n in ZZ and m in ZZ
-            and n >= 0 and m >= 0
-            and (x in ZZ or not SR(x).is_numeric())):
+                and n >= 0 and m >= 0
+                and (x in ZZ or not SR(x).is_numeric())):
             return self.eval_recursive(n, m, x)
 
     def _eval_special_values_(self, n, m, x):
@@ -1973,9 +1977,9 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             else:
                 return (-1)**m*(m-1).factorial()*((x+1)**m - (x-1)**m)/(2*denom)
         else:
-            return ((n-m+1)*x*gen_legendre_Q(n,m-1,x)-(n+m-1)*gen_legendre_Q(n-1,m-1,x))/sqrt(1-x**2)
+            return ((n-m+1)*x*gen_legendre_Q(n, m-1, x)-(n+m-1)*gen_legendre_Q(n-1, m-1, x))/sqrt(1-x**2)
 
-    def _derivative_(self, n, m, x, *args,**kwds):
+    def _derivative_(self, n, m, x, *args, **kwds):
         """
         Return the derivative of ``gen_legendre_Q(n,m,x)``.
 
@@ -2187,7 +2191,7 @@ class Func_jacobi_P(OrthogonalFunction):
         if n not in ZZ:
             return
         from .gamma import gamma
-        s = sum(binomial(n,m) * gamma(a+b+n+m+1) / gamma(a+m+1) * ((x-1)/2)**m for m in range(n+1))
+        s = sum(binomial(n, m) * gamma(a+b+n+m+1) / gamma(a+m+1) * ((x-1)/2)**m for m in range(n+1))
         r = gamma(a+n+1) / factorial(n) / gamma(n+a+b+1) * s
         return r.to_gamma().gamma_normalize().normalize()
 
@@ -2210,6 +2214,7 @@ class Func_jacobi_P(OrthogonalFunction):
         BF = CBF(prec+5)
         ret = BF(x).jacobi_P(BF(n), BF(a), BF(b))
         return SR(ret)._eval_self(the_parent)
+
 
 jacobi_P = Func_jacobi_P()
 
@@ -2335,8 +2340,11 @@ class Func_ultraspherical(GinacFunction):
             gegenbauer(x, x, x)
         """
         GinacFunction.__init__(self, "gegenbauer", nargs=3, latex_name=r"C",
-                conversions={'maxima':'ultraspherical', 'mathematica':'GegenbauerC',
-                    'maple':'GegenbauerC', 'sympy':'gegenbauer'})
+                               conversions={'maxima': 'ultraspherical',
+                                            'mathematica': 'GegenbauerC',
+                                            'maple': 'GegenbauerC',
+                                            'sympy': 'gegenbauer'})
+
 
 ultraspherical = Func_ultraspherical()
 gegenbauer = Func_ultraspherical()
@@ -2460,14 +2468,14 @@ class Func_laguerre(OrthogonalFunction):
             the_parent = parent(x)
         import mpmath
         from sage.libs.mpmath.all import call as mpcall
-        if n<0:
+        if n < 0:
             # work around mpmath issue 307
             from sage.functions.log import exp
             return exp(x) * mpcall(mpmath.laguerre, -n-1, 0, -x, parent=the_parent)
         else:
             return mpcall(mpmath.laguerre, n, 0, x, parent=the_parent)
 
-    def _derivative_(self, n, x, *args,**kwds):
+    def _derivative_(self, n, x, *args, **kwds):
         """
         Return the derivative of `laguerre(n,x)`.
 
@@ -2488,11 +2496,12 @@ class Func_laguerre(OrthogonalFunction):
         if diff_param == 0:
             raise NotImplementedError("Derivative w.r.t. to the index is not supported.")
         if diff_param == 1:
-            return -gen_laguerre(n-1,1,x)
-        else:
-            raise ValueError("illegal differentiation parameter {}".format(diff_param))
+            return -gen_laguerre(n-1, 1, x)
+        raise ValueError(f"illegal differentiation parameter {diff_param}")
+
 
 laguerre = Func_laguerre()
+
 
 class Func_gen_laguerre(OrthogonalFunction):
     """
@@ -2517,8 +2526,10 @@ class Func_gen_laguerre(OrthogonalFunction):
             gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
         """
         OrthogonalFunction.__init__(self, "gen_laguerre", nargs=3, latex_name=r"L",
-                conversions={'maxima':'gen_laguerre', 'mathematica':'LaguerreL',
-                    'maple':'LaguerreL', 'sympy':'assoc_laguerre'})
+                                    conversions={'maxima': 'gen_laguerre',
+                                                 'mathematica': 'LaguerreL',
+                                                 'maple': 'LaguerreL',
+                                                 'sympy': 'assoc_laguerre'})
 
     def _eval_(self, n, a, x, *args, **kwds):
         r"""
@@ -2630,6 +2641,7 @@ class Func_gen_laguerre(OrthogonalFunction):
             return -gen_laguerre(n - 1, a + 1, x)
         else:
             raise ValueError("illegal differentiation parameter {}".format(diff_param))
+
 
 gen_laguerre = Func_gen_laguerre()
 
@@ -2772,6 +2784,7 @@ class Func_krawtchouk(OrthogonalFunction):
         tm1 = (x - p*(n-(j-1)) - (j-1)*q) * krawtchouk.eval_recursive(j-1, x, n, p)
         return (tm1 - tm2) / j
 
+
 krawtchouk = Func_krawtchouk()
 
 
@@ -2894,6 +2907,7 @@ class Func_meixner(OrthogonalFunction):
         tm1 = (b+n-1) * ((c-1) * x + n-1 + (n-1+b) * c) * meixner.eval_recursive(n-1, x, b, c)
         return (tm1 - tm2) / (c * (n - 1 + b))
 
+
 meixner = Func_meixner()
 
 
@@ -2959,7 +2973,7 @@ class Func_hahn(OrthogonalFunction):
             1
         """
         P = rising_factorial
-        return sum(P(-k,i) * P(k+a+b+1,i) * P(-x,i) / (P(a+1,i) * P(-n,i) * factorial(i))
+        return sum(P(-k, i) * P(k+a+b+1, i) * P(-x, i) / (P(a+1, i) * P(-n, i) * factorial(i))
                    for i in range(k+1))
 
     def _eval_(self, k, x, a, b, n, *args, **kwds):
@@ -2988,7 +3002,7 @@ class Func_hahn(OrthogonalFunction):
             return None
         if k not in ZZ or k < 0:
             from sage.functions.hypergeometric import hypergeometric
-            return hypergeometric([-k, k+a+b+1, -x], [a+1,-n], 1)
+            return hypergeometric([-k, k+a+b+1, -x], [a+1, -n], 1)
         try:
             return self.eval_formula(k, x, a, b, n)
         except (TypeError, ValueError):

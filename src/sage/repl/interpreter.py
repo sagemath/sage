@@ -455,6 +455,42 @@ SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\
 # Interface shell #
 ###################
 
+class logstr(str):
+    """
+    For use by :meth`~InterfaceShellTransformer.transform`.
+    This provides a ``_latex_`` method which is just the string
+    wrapped in a ``\\verb`` environment.
+    """
+    def __repr__(self):
+        """
+        EXAMPLES::
+            sage: from sage.repl.interpreter import logstr
+            sage: logstr("ABC")
+            ABC
+        """
+        return self
+
+    def _latex_(self):
+        r"""
+        EXAMPLES::
+            sage: from sage.repl.interpreter import logstr
+            sage: logstr("A")
+            A
+            sage: latex(logstr("A"))
+            \verb#A#
+            sage: latex(logstr("A#B"))
+            \verb@A#B@
+        """
+        # return "\\begin{verbatim}%s\\end{verbatim}"%self
+        if '#' not in self:
+            delim = '#'
+        elif '@' not in self:
+            delim = '@'
+        elif '~' not in self:
+            delim = '~'
+        return r"""\verb%s%s%s""" % (delim, self.replace('\n\n', '\n').replace('\n', '; '), delim)
+
+
 class InterfaceShellTransformer(PrefilterTransformer):
     priority = 50
 
@@ -555,16 +591,16 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: shell = interface_shell_embed(maxima)
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)   # note: output contains triple quotation marks
-            'sage.misc.all.logstr(r"""4""")'
+            'sage.repl.interpreter.logstr(r"""4""")'
             sage: ift.shell.ex('a = 4')
             sage: ift.transform(r'sage(a)+4', False)
-            'sage.misc.all.logstr(r"""8""")'
+            'sage.repl.interpreter.logstr(r"""8""")'
             sage: ift.temporary_objects
             set()
             sage: shell = interface_shell_embed(gap)
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)
-            'sage.misc.all.logstr(r"""4""")'
+            'sage.repl.interpreter.logstr(r"""4""")'
 
         TESTS:
 
@@ -574,12 +610,12 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: shell = interface_shell_embed(gap)
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
             sage: ift.transform(r'Print("  -\n\\\\-  ");', False)
-            'sage.misc.all.logstr(r"""  -\n\\\\-""")'
+            'sage.repl.interpreter.logstr(r"""  -\n\\\\-""")'
 
             sage: shell = interface_shell_embed(macaulay2)  # optional - macaulay2
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager) # optional - macaulay2
             sage: ift.transform('net(ZZ^2)', False)  # optional - macaulay2
-            'sage.misc.all.logstr(r"""  2\nZZ""")'
+            'sage.repl.interpreter.logstr(r"""  2\nZZ""")'
         '''
         line = self.preparse_imports_from_sage(line)
 
@@ -591,7 +627,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             self.temporary_objects = set()
         # We do not strip whitespace from t here as the individual interface is
         # responsible for that
-        return 'sage.misc.all.logstr(r"""%s""")' % t
+        return 'sage.repl.interpreter.logstr(r"""%s""")' % t
 
 
 def interface_shell_embed(interface):

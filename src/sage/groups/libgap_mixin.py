@@ -348,7 +348,7 @@ class GroupMixinLibGAP():
     @cached_method
     def center(self):
         """
-        Return the center of this linear group as a subgroup.
+        Return the center of this group as a subgroup.
 
         OUTPUT:
 
@@ -356,25 +356,25 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = SU(3,GF(2))
+            sage: G = SU(3, GF(2))
             sage: G.center()
             Subgroup with 1 generators (
             [a 0 0]
             [0 a 0]
             [0 0 a]
             ) of Special Unitary Group of degree 3 over Finite Field in a of size 2^2
-            sage: GL(2,GF(3)).center()
+            sage: GL(2, GF(3)).center()
             Subgroup with 1 generators (
             [2 0]
             [0 2]
             ) of General Linear Group of degree 2 over Finite Field of size 3
-            sage: GL(3,GF(3)).center()
+            sage: GL(3, GF(3)).center()
             Subgroup with 1 generators (
             [2 0 0]
             [0 2 0]
             [0 0 2]
             ) of General Linear Group of degree 3 over Finite Field of size 3
-            sage: GU(3,GF(2)).center()
+            sage: GU(3, GF(2)).center()
             Subgroup with 1 generators (
             [a + 1     0     0]
             [    0 a + 1     0]
@@ -393,12 +393,216 @@ class GroupMixinLibGAP():
             [0 3 0]  [0 1 0]
             [0 0 1], [0 1 1]
             )
+
+            sage: GL = groups.matrix.GL(3, ZZ)
+            sage: GL.center()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
         """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
         G = self.gap()
         center = list(G.Center().GeneratorsOfGroup())
-        if len(center) == 0:
+        if not center:
             center = [G.One()]
         return self.subgroup(center)
+
+    def centralizer(self, g):
+        r"""
+        Return the centralizer of ``g`` in ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: g = G([[1,1], [1,0]])
+            sage: C = G.centralizer(g); C
+            Subgroup with 3 generators (
+            [1 1]  [2 0]  [2 1]
+            [1 0], [0 2], [1 1]
+            ) of General Linear Group of degree 2 over Finite Field of size 3
+            sage: C.order()
+            8
+
+            sage: S = G.subgroup([G([[2,0],[0,2]]), G([[0,1],[2,0]])]); S
+            Subgroup with 2 generators (
+            [2 0]  [0 1]
+            [0 2], [2 0]
+            ) of General Linear Group of degree 2 over Finite Field of size 3
+            sage: G.centralizer(S)
+            Subgroup with 3 generators (
+            [2 0]  [0 1]  [2 2]
+            [0 2], [2 0], [1 2]
+            ) of General Linear Group of degree 2 over Finite Field of size 3
+            sage: G = GL(3,2)
+            sage: all(G.order() == G.centralizer(x).order() * G.conjugacy_class(x).cardinality()
+            ....:     for x in G)
+            True
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.centralizer(H.an_element())
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        G = self.gap()
+        centralizer_gens = list(G.Centralizer(g).GeneratorsOfGroup())
+        if not centralizer_gens:
+            centralizer_gens = [G.One()]
+        return self.subgroup(centralizer_gens)
+
+    def subgroups(self):
+        r"""
+        Return a list of all the subgroups of ``self``.
+
+        OUTPUT:
+
+        Each possible subgroup of ``self`` is contained once in the returned
+        list. The list is in order, according to the size of the subgroups,
+        from the trivial subgroup with one element on through up to the whole
+        group. Conjugacy classes of subgroups are contiguous in the list.
+
+        .. WARNING::
+
+            For even relatively small groups this method can take a very long
+            time to execute, or create vast amounts of output. Likely both.
+            Its purpose is instructional, as it can be useful for studying
+            small groups.
+
+            For faster results, which still exhibit the structure of
+            the possible subgroups, use :meth:`conjugacy_classes_subgroups`.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: G.subgroups()
+            [Subgroup with 0 generators () of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [0 1]
+             [1 0]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [1 0]
+             [1 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [1 1]
+             [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [0 1]
+             [1 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 2 generators (
+             [0 1]  [1 1]
+             [1 1], [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2]
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.subgroups()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        ccs = self.gap().ConjugacyClassesSubgroups()
+        return [self.subgroup(h.GeneratorsOfGroup())
+                for cc in ccs for h in cc.Elements()]
+
+    def conjugacy_classes_subgroups(self):
+        r"""
+        Return a complete list of representatives of conjugacy classes of
+        subgroups in ``self``.
+
+        The ordering is that given by GAP.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2,2)
+            sage: G.conjugacy_classes_subgroups()
+            [Subgroup with 0 generators () of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [1 1]
+             [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [0 1]
+             [1 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 2 generators (
+             [0 1]  [1 1]
+             [1 1], [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2]
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.conjugacy_classes_subgroups()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        return [self.subgroup(sub.Representative().GeneratorsOfGroup())
+                for sub in self.gap().ConjugacyClassesSubgroups()]
+
+    def group_id(self):
+        r"""
+        Return the ID code of ``self``, which is a list of two integers.
+
+        It is a unique identified assigned by GAP for groups in the
+        ``SmallGroup`` library.
+
+        EXAMPLES::
+
+            sage: PGL(2,3).group_id()
+            [24, 12]
+            sage: SymmetricGroup(4).group_id()
+            [24, 12]
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: G.group_id()
+            [6, 1]
+            sage: G = groups.matrix.GL(2, 3)
+            sage: G.id()
+            [48, 29]
+
+            sage: G = groups.matrix.GL(2, ZZ)
+            sage: G.group_id()
+            Traceback (most recent call last):
+            ...
+            GAPError: Error, the group identification for groups of size infinity is not available
+        """
+        from sage.rings.integer import Integer
+        return [Integer(n) for n in self.gap().IdGroup()]
+
+    id = group_id
+
+    def exponent(self):
+        r"""
+        Computes the exponent of the group.
+
+        The exponent `e` of a group `G` is the LCM of the orders of its
+        elements, that is, `e` is the smallest integer such that `g^e = 1`
+        for all `g \in G`.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: G.exponent()
+            24
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.exponent()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        from sage.rings.integer import Integer
+        return Integer(self._libgap_().Exponent())
 
     def intersection(self, other):
         """
@@ -545,7 +749,7 @@ class GroupMixinLibGAP():
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: MatrixGroup(SymmetricGroup(5)).character_table()
+            sage: MatrixGroup(SymmetricGroup(5)).character_table()  # long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
             [ 5  1 -1  0 -1 -1  1]
@@ -622,8 +826,7 @@ class GroupMixinLibGAP():
             60
         """
         if self.list.cache is not None:
-            for g in self.list():
-                yield g
+            yield from self.list()
             return
         iterator = self.gap().Iterator()
         while not iterator.IsDoneIterator().sage():

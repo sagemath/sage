@@ -3,17 +3,15 @@
 from cysignals.signals cimport sig_on, sig_off
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
-from libcpp.map cimport map
 
-from ..eclib cimport vec, svec, mat, smat
+from ..eclib cimport svec, mat, smat
 from .mat cimport MatrixFactory
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
 from sage.rings.integer_ring import ZZ
-from sage.rings.integer cimport Integer
 
 cdef MatrixFactory MF = MatrixFactory()
+
 
 cdef class ModularSymbols:
     """

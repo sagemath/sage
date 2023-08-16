@@ -715,7 +715,6 @@ class Scheme(Parent):
         """
         raise NotImplementedError
 
-
     def zeta_series(self, n, t):
         """
         Return the zeta series.

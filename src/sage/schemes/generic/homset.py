@@ -668,6 +668,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         EXAMPLES::
 
             sage: P2 = ProjectiveSpace(QQ, 2)
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                # optional - sage.rings.number_field
             sage: K_points = P2(K);  K_points                                           # optional - sage.rings.number_field
             Set of rational points of Projective Space of dimension 2

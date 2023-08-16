@@ -18,7 +18,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import _stable_uniq
+from sage.combinat.subset import uniq
 from sage.structure.element import Expression
 from .set import Set, Set_base, Set_boolean_operators, Set_add_sub_operators
 
@@ -173,7 +173,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             else:
                 other_predicates.append(predicate)
 
-        predicates = list(_stable_uniq(callable_symbolic_predicates + other_predicates))
+        predicates = list(uniq(callable_symbolic_predicates + other_predicates))
 
         if not other_predicates and not callable_symbolic_predicates:
             if names is None and category is None:
@@ -204,7 +204,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         if isinstance(universe, Parent):
             facade = universe
         super().__init__(facade=facade, category=category,
-                         names=names, normalize=False) # names already normalized by classcall
+                         names=names, normalize=False)  # names already normalized by classcall
 
     def _first_ngens(self, n):
         r"""

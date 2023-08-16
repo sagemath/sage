@@ -856,9 +856,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
             y = %k1*%e^x+%k2*%e^-x+3*x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
-            y = (%c-3*((-x)-1)*%e^-x)*%e^x
+            y = (%c-3*(...-x...-1)*%e^-x)*%e^x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
-            y = -%e^-1*(5*%e^x-3*%e*x-3*%e)
+            y = -...%e^-1*(5*%e^x-3*%e*x-3*%e)...
         """
         if not isinstance(vars, str):
             str_vars = '%s, %s'%(vars[1], vars[0])
@@ -1572,8 +1572,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         ::
 
-            sage: f = maxima('exp(x^2)').integral('x',0,1); f
-            -(sqrt(%pi)*%i*erf(%i))/2
+            sage: f = maxima('exp(x^2)').integral('x',0,1)
+            sage: f.sage()
+            -1/2*I*sqrt(pi)*erf(I)
             sage: f.numer()
             1.46265174590718...
         """

@@ -52,14 +52,10 @@ EXAMPLES::
     sage: c.is_sparse()
     True
 """
-
-cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.structure.element
-from sage.structure.element cimport ModuleElement
 from .args cimport MatrixArgs_init
 
-import sage.misc.misc as misc
 
 cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     r"""

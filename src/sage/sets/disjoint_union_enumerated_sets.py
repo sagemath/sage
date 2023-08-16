@@ -7,12 +7,12 @@ AUTHORS:
 - Florent Hivert (2010-03): classcall related stuff.
 - Florent Hivert (2010-12): fixed facade element construction.
 """
-#****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -24,6 +24,7 @@ from sage.rings.infinity import Infinity
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
     """
@@ -258,8 +259,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         # facade  = options.pop('facade', True);
         # keepkey = options.pop('keepkey', False);
-        assert(isinstance(facade, bool))
-        assert(isinstance(keepkey, bool))
+        assert isinstance(facade, bool)
+        assert isinstance(keepkey, bool)
         return super().__classcall__(
             cls, Family(fam),
             facade=facade, keepkey=keepkey, category=category)
@@ -311,7 +312,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U
             Disjoint union of Finite family {1: {1, 2, 3}, 2: {4, 5, 6}}
         """
-        return "Disjoint union of %s"%self._family
+        return "Disjoint union of %s" % self._family
 
     def _is_a(self, x):
         """
@@ -336,7 +337,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         else:
             from warnings import warn
             if self._family.cardinality() == Infinity:
-                warn("%s is an infinite union\nThe default implementation of __contains__ can loop forever. Please overload it."%(self))
+                warn("%s is an infinite union\nThe default implementation of __contains__ can loop forever. Please overload it." % (self))
             return any(x in a for a in self._family)
 
     def __contains__(self, x):
@@ -404,7 +405,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 if self._facade:
                     yield el
                 else:
-                    yield self.element_class(self, el) # Bypass correctness tests
+                    yield self.element_class(self, el)  # Bypass correctness tests
 
     def an_element(self):
         """
@@ -515,7 +516,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         if self._is_a(el):
             return self.element_class(self, el)
         else:
-            raise ValueError("value %s does not belong to %s"%(el, self))
+            raise ValueError("value %s does not belong to %s" % (el, self))
 
     def _element_constructor_facade(self, el):
         """
@@ -568,11 +569,11 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             try:
                 return (el[0], P(el[1]))
             except Exception:
-                raise ValueError("cannot coerce `%s` in the parent `%s`"%(el[1], P))
+                raise ValueError("cannot coerce `%s` in the parent `%s`" % (el[1], P))
 
         # Check first to see if the parent of el is in the family
         if (isinstance(el, Element) and self._facade_for is not True
-            and el.parent() in self._facade_for):
+                and el.parent() in self._facade_for):
             return el
 
         for P in self._family:
@@ -580,7 +581,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 return P(el)
             except Exception:
                 pass
-        raise ValueError("cannot coerce `%s` in any parent in `%s`"%(el, self._family))
+        raise ValueError("cannot coerce `%s` in any parent in `%s`" % (el, self._family))
 
     @lazy_attribute
     def Element(self):

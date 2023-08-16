@@ -827,8 +827,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         current_level = self._seeds
         known = set(current_level)
         if max_depth >= 0:
-            for x in current_level:
-                yield x
+            yield from current_level
         depth = 0
         while current_level and depth < max_depth:
             next_level = []
@@ -1078,8 +1077,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         B = self._seeds
         set_B = set(B)
         if max_depth >= 0:
-            for x in B:
-                yield x
+            yield from B
         depth = 0
         while B and depth < max_depth:
             C = list()
@@ -1329,8 +1327,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
             max_depth = self._max_depth
         current_level = self._seeds
         if max_depth >= 0:
-            for x in current_level:
-                yield x
+            yield from current_level
         depth = 0
         while current_level and depth < max_depth:
             next_level = list()
@@ -1936,12 +1933,10 @@ class RecursivelyEnumeratedSet_forest(Parent):
             []
         """
         if depth == 0:
-            for node in self.roots():
-                yield node
+            yield from self.roots()
         else:
             for father in self._elements_of_depth_iterator_rec(depth - 1):
-                for node in self.children(father):
-                    yield node
+                yield from self.children(father)
 
     def elements_of_depth_iterator(self, depth=0):
         r"""
