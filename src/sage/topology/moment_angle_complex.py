@@ -16,6 +16,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.homology.homology_group import HomologyGroup
@@ -814,6 +815,20 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         ]
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
+
+    def cohomology_ring(self):
+        from sage.categories.cartesian_product import cartesian_product
+
+        vertices = self._simplicial_complex.vertices()
+        n = len(vertices)
+        L = []
+
+        for i in range(n+1):
+            for x in combinations(vertices, i):
+                subcomplex = self._simplicial_complex.generated_subcomplex(x, is_mutable=False)
+                L.append(subcomplex.cohomology_ring())
+
+        return cartesian_product(L)
 
 # just create a method instead of a classs
 class CohomologyRing(CombinatorialFreeModule):
