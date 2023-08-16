@@ -255,7 +255,7 @@ class LieConformalAlgebras(Category_over_base_ring):
             ``self.some_elements()``::
 
                 sage: V = lie_conformal_algebras.Affine(QQ, 'B2')                                   # needs sage.combinat sage.modules
-                sage: V._test_jacobi()          # long time (6 seconds)                 # needs sage.combinat sage.modules
+                sage: V._test_jacobi()          # long time (6 seconds)                             # needs sage.combinat sage.modules
 
             It works for super Lie conformal algebras too::
 
