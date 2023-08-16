@@ -262,7 +262,7 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
         optional = module_feature(module)
         if optional and optional.name not in file_optional_tags:
             update_line_optional_tags(first_line_num - 1, add_tags=[optional.name],
-                                      message=f"Module '{module}' is provided by feature '{optional.name}'; adding this tag")
+                                      message=f"Module '{module}' may be provided by feature '{optional.name}'; adding this tag")
             if not asked_why:
                 # When no explanation has been demanded,
                 # we just mark the doctest with the feature
@@ -410,6 +410,7 @@ else:
 tested_doctesters = set()
 venv_files = {}          # distribution -> files that are not yet known to be fixed points in venv; we add and remove items
 venv_ignored_files = {}  # distribution -> files that should be ignored; we only add items
+unprocessed_files = set()
 
 
 class BadDistribution(Exception):
@@ -454,6 +455,7 @@ def block_filename(block):
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
         return None
     return m.group(1)
+
 
 def expanded_filename_args():
     DD = DocTestDefaults(optional='all', warn_long=10000)
@@ -540,6 +542,8 @@ def process_grouped_blocks(grouped_iterator, distribution=None):
             print(f"sage-fixdoctests: No fixes made in '{input}'")
             venv_files[distribution].discard(input)
 
+        unprocessed_files.discard(input)
+
 
 if __name__ == "__main__":
     try:
@@ -557,30 +561,43 @@ if __name__ == "__main__":
                                 ((filename, []) for filename in expanded_filename_args())),
                 distribution=distribution())
         else:
+            unprocessed_files = set(expanded_filename_args())
             for distribution in args.distribution:
                 venv_files[distribution] = set(expanded_filename_args())
                 venv_ignored_files[distribution] = set()
-            while any(venv_files.values()):
-                for distribution, file_set in venv_files.items():
-                    if not file_set:
-                        continue
+            while True:
+                # Run a distribution with largest number of files remaining to be checked
+                # because of the startup overhead of sage-runtests
+                distribution, file_set = max(venv_files.items(), key=lambda df: len(df[1]))
+                if not file_set:
+                    break
+                while file_set:
+                    print("#" * 78)
                     print(f"sage-fixdoctests: Fixing with --distribution={shlex.quote(distribution)}")
                     default_venv, default_environment = default_venv_environment_from_distribution(distribution)
                     args.venv = default_venv
                     args.environment = default_environment
                     try:
                         doctests = doctest_blocks(args, sorted(file_set), distribution=distribution)
-                        process_grouped_blocks(itertools.groupby(doctests, block_filename),
-                                               distribution=distribution)
-                        process_grouped_blocks([(filename, []) for filename in file_set],
+                        process_grouped_blocks(itertools.groupby(doctests, block_filename),  # modifies file_set
                                                distribution=distribution)
                     except BadDistribution as e:
                         print(f"sage-fixdoctests: {e}, ignoring")
+                    if not args.fixed_point:
+                        break
                 if not args.fixed_point:
                     break
+                if args.probe:
+                    print(f"sage-fixdoctests: Turning off --probe for the following iterations")
+                    args.probe = ''
+            # Each file must be processed by process_grouped_blocks at least once to clean up tags,
+            # even if sage-runtest does not have any complaints.
+            process_grouped_blocks([(filename, [])
+                                    for filename in unprocessed_files])
+
             if args.fixed_point:
                 print(f"sage-fixdoctests: Fixed point reached")
 
-    except Exception as e:
-        print(f"sage-fixdoctests: {e}")
-        sys.exit(1)
+    except Exception:
+        print(f"sage-fixdoctests: Internal error")
+        raise
