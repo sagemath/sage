@@ -3006,6 +3006,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 faces.append(f)
         return SimplicialComplex(faces, is_mutable=is_mutable)
 
+    def core(self, is_mutable=True):
+        core_set = [v for v in self.vertices() if self.star(Simplex([v])) != self]
+        return self.generated_subcomplex(core_set, is_mutable=is_mutable)
+
     def is_cohen_macaulay(self, base_ring=QQ, ncpus=0):
         r"""
         Return ``True`` if ``self`` is Cohen-Macaulay.
