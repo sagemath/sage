@@ -3793,10 +3793,6 @@ class FiniteWord_class(Word_class):
         Algorithm is described in [Rom2023]_.
 
         Time complexity is linear from length of ``self``.
-
-        EXAMPLES:
-
-        TODO ? Let's add based on some non-trivial stuff
         """
         # TODO - Add more private methods (without tests!) and use them here
         wordWithSpecialLetter, updatedMorphism, specialLetter = self._insert_not_used_letter_between_consecutive_letters(f=f)
