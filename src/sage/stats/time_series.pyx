@@ -1,5 +1,5 @@
 # sage.doctest: optional - numpy
-"""
+r"""
 Time Series
 
 This is a module for working with discrete floating point time series.
@@ -67,7 +67,7 @@ digits = 4
 
 cdef class TimeSeries:
     def __cinit__(self):
-        """
+        r"""
         Create new empty uninitialized time series.
 
         EXAMPLES:
@@ -80,7 +80,7 @@ cdef class TimeSeries:
         self._values = NULL
 
     def __init__(self, values, bint initialize=True):
-        """
+        r"""
         Initialize new time series.
 
         INPUT:
@@ -172,7 +172,7 @@ cdef class TimeSeries:
                 self._values[i] = 0
 
     def __reduce__(self):
-        """
+        r"""
         Used in pickling time series.
 
         EXAMPLES::
@@ -194,7 +194,7 @@ cdef class TimeSeries:
         return unpickle_time_series_v1, (buf, self._length)
 
     def __richcmp__(TimeSeries self, other, int op):
-        """
+        r"""
         Compare ``self`` and ``other``.  This has the same semantics
         as list comparison.
 
@@ -225,7 +225,7 @@ cdef class TimeSeries:
         return rich_to_bool(op, 0)
 
     def __dealloc__(self):
-        """
+        r"""
         Free up memory used by a time series.
 
         EXAMPLES:
@@ -238,7 +238,7 @@ cdef class TimeSeries:
         sig_free(self._values)
 
     def vector(self):
-        """
+        r"""
         Return real double vector whose entries are the values of this
         time series.  This is useful since vectors have standard
         algebraic structure and play well with matrices.
@@ -259,7 +259,7 @@ cdef class TimeSeries:
         return x
 
     def __repr__(self):
-        """
+        r"""
         Return string representation of ``self``.
 
         EXAMPLES::
@@ -283,7 +283,7 @@ cdef class TimeSeries:
         return self._repr()
 
     def _repr(self, prec=None):
-        """
+        r"""
         Print representation of a time series.
 
         INPUT:
@@ -317,7 +317,7 @@ cdef class TimeSeries:
             return '[' + ', '.join(format%x for x in self) + ']'
 
     def __len__(self):
-        """
+        r"""
         Return the number of entries in this time series.
 
         OUTPUT:
@@ -335,8 +335,8 @@ cdef class TimeSeries:
         return self._length
 
     def __getitem__(self, i):
-        """
-        Return i-th entry or slice of ``self``.
+        r"""
+        Return `i`-th entry or slice of ``self``.
 
         EXAMPLES::
 
@@ -421,14 +421,14 @@ cdef class TimeSeries:
             return self._values[j]
 
     def __setitem__(self, Py_ssize_t i, double x):
-        """
-        Set the i-th entry of ``self`` to ``x``.
+        r"""
+        Set the `i`-th entry of ``self`` to ``x``.
 
         INPUT:
 
-        - i -- a nonnegative integer.
+        - ``i`` -- a nonnegative integer.
 
-        - x -- a float.
+        - ``x`` -- a float.
 
         EXAMPLES::
 
@@ -456,7 +456,7 @@ cdef class TimeSeries:
         self._values[i] = x
 
     def __copy__(self):
-        """
+        r"""
         Return a copy of ``self``.
 
         EXAMPLES::
@@ -475,7 +475,7 @@ cdef class TimeSeries:
         return t
 
     def __add__(left, right):
-        """
+        r"""
         Concatenate the time series ``self`` and ``right``.
 
         .. NOTE::
@@ -523,7 +523,7 @@ cdef class TimeSeries:
         return t
 
     def __mul__(left, right):
-        """
+        r"""
         Multiply a time series by an integer n, which (like for lists)
         results in the time series concatenated with itself n times.
 
@@ -625,7 +625,7 @@ cdef class TimeSeries:
         return autoregressive_fit(acvs)
 
     def autoregressive_forecast(self, filter):
-        """
+        r"""
         Given the autoregression coefficients as outputted by the
         :meth:`autoregressive_fit` command, compute the forecast for the next
         term in the series.
@@ -659,7 +659,7 @@ cdef class TimeSeries:
         return f
 
     def reversed(self):
-        """
+        r"""
         Return new time series obtain from this time series by
         reversing the order of the entries in this time series.
 
@@ -681,7 +681,7 @@ cdef class TimeSeries:
         return t
 
     def extend(self, right):
-        """
+        r"""
         Extend this time series by appending elements from the iterable
         ``right``.
 
@@ -712,7 +712,7 @@ cdef class TimeSeries:
         self._length = self._length + T._length
 
     def list(self):
-        """
+        r"""
         Return list of elements of ``self``.
 
         EXAMPLES::
@@ -725,7 +725,7 @@ cdef class TimeSeries:
         return [self._values[i] for i in range(self._length)]
 
     def log(self):
-        """
+        r"""
         Return new time series got by taking the logarithms of all the
         terms in the time series.
 
@@ -757,7 +757,7 @@ cdef class TimeSeries:
         return t
 
     def exp(self):
-        """
+        r"""
         Return new time series got by applying the exponential map to
         all the terms in the time series.
 
@@ -781,7 +781,7 @@ cdef class TimeSeries:
         return t
 
     def abs(self):
-        """
+        r"""
         Return new time series got by replacing all entries
         of ``self`` by their absolute value.
 
@@ -893,7 +893,7 @@ cdef class TimeSeries:
         return t
 
     cpdef rescale(self, double s):
-        """
+        r"""
         Change ``self`` by multiplying every value in the series by ``s``.
 
         INPUT:
@@ -912,7 +912,7 @@ cdef class TimeSeries:
             self._values[i] = self._values[i] * s
 
     def scale(self, double s):
-        """
+        r"""
         Return new time series obtained by multiplying every value in the
         series by ``s``.
 
@@ -937,7 +937,7 @@ cdef class TimeSeries:
         return t
 
     def add_scalar(self, double s):
-        """
+        r"""
         Return new time series obtained by adding a scalar to every
         value in the series.
 
@@ -966,7 +966,7 @@ cdef class TimeSeries:
         return t
 
     def add_entries(self, t):
-        """
+        r"""
         Add corresponding entries of ``self`` and ``t`` together,
         extending either ``self`` or ``t`` by 0's if they do
         not have the same length.
@@ -1023,7 +1023,7 @@ cdef class TimeSeries:
         return v
 
     def show(self, *args, **kwds):
-        """
+        r"""
         Return a plot of this time series.
 
         This is an alias of :meth:`plot`.
@@ -1093,7 +1093,7 @@ cdef class TimeSeries:
         return L
 
     def simple_moving_average(self, Py_ssize_t k):
-        """
+        r"""
         Return the moving average time series over the last `k` time units.
 
         Assumes the input time series was constant with its starting value
@@ -1144,7 +1144,7 @@ cdef class TimeSeries:
         return t
 
     def exponential_moving_average(self, double alpha):
-        """
+        r"""
         Return the exponential moving average time series.
 
         Assumes the input time series was constant with its starting
@@ -1197,7 +1197,7 @@ cdef class TimeSeries:
         return t
 
     def sums(self, double s=0):
-        """
+        r"""
         Return the new time series got by taking the running partial
         sums of the terms of this time series.
 
@@ -1224,7 +1224,7 @@ cdef class TimeSeries:
         return t
 
     cpdef double sum(self):
-        """
+        r"""
         Return the sum of all the entries of ``self``.
 
         If ``self`` has length 0, returns 0.
@@ -1247,7 +1247,7 @@ cdef class TimeSeries:
         return s
 
     def prod(self):
-        """
+        r"""
         Return the product of all the entries of ``self``.
 
         If ``self`` has length 0, returns 1.
@@ -1271,7 +1271,7 @@ cdef class TimeSeries:
 
 
     def mean(self):
-        """
+        r"""
         Return the mean (average) of the elements of ``self``.
 
         OUTPUT:
@@ -1288,7 +1288,7 @@ cdef class TimeSeries:
         return self.sum() / self._length
 
     def pow(self, double k):
-        """
+        r"""
         Return a new time series with all elements of ``self`` raised to the
         `k`-th power.
 
@@ -1314,7 +1314,7 @@ cdef class TimeSeries:
         return t
 
     def moment(self, int k):
-        """
+        r"""
         Return the `k`-th moment of ``self``, which is just the
         mean of the `k`-th powers of the elements of ``self``.
 
@@ -1346,7 +1346,7 @@ cdef class TimeSeries:
         return s / self._length
 
     def central_moment(self, int k):
-        """
+        r"""
         Return the `k`-th central moment of ``self``, which is just the mean
         of the `k`-th powers of the differences ``self[i] - mu``, where ``mu`` is
         the mean of ``self``.
@@ -1481,7 +1481,7 @@ cdef class TimeSeries:
         return s / self._length
 
     def correlation(self, TimeSeries other):
-        """
+        r"""
         Return the correlation of ``self`` and ``other``, which is the
         covariance of ``self`` and ``other`` divided by the product of their
         standard deviation.
@@ -1546,7 +1546,7 @@ cdef class TimeSeries:
         return self.autocovariance(k) / self.variance(bias=True)
 
     def variance(self, bias=False):
-        """
+        r"""
         Return the variance of the elements of ``self``, which is the mean
         of the squares of the differences from the mean.
 
@@ -1591,7 +1591,7 @@ cdef class TimeSeries:
             return s / (self._length - 1)
 
     def standard_deviation(self, bias=False):
-        """
+        r"""
         Return the standard deviation of the entries of ``self``.
 
         INPUT:
@@ -1681,7 +1681,7 @@ cdef class TimeSeries:
         return (Z.max() - Z.min()) / sigma
 
     def hurst_exponent(self):
-        """
+        r"""
         Return an estimate of the Hurst exponent of this time series.
 
         We use the algorithm from pages 61 -- 63 of [Peteres, Fractal
@@ -1762,7 +1762,7 @@ cdef class TimeSeries:
         return coeffs[0]
 
     def min(self, bint index=False):
-        """
+        r"""
         Return the smallest value in this time series. If this series
         has length 0 we raise a ``ValueError``.
 
@@ -1800,7 +1800,7 @@ cdef class TimeSeries:
             return s
 
     def max(self, bint index=False):
-        """
+        r"""
         Return the largest value in this time series. If this series
         has length 0 we raise a :class:`ValueError`.
 
@@ -1837,7 +1837,7 @@ cdef class TimeSeries:
             return s
 
     def clip_remove(self, min=None, max=None):
-        """
+        r"""
         Return new time series obtained from ``self`` by removing all
         values that are less than or equal to a certain minimum value
         or greater than or equal to a certain maximum.
@@ -1915,7 +1915,7 @@ cdef class TimeSeries:
         return t
 
     def histogram(self, Py_ssize_t bins=50, bint normalize=False):
-        """
+        r"""
         Return the frequency histogram of the values in
         this time series divided up into the given
         number of bins.
@@ -1984,7 +1984,7 @@ cdef class TimeSeries:
         return counts, v
 
     def plot_histogram(self, bins=50, normalize=True, **kwds):
-        """
+        r"""
         Return histogram plot of this time series with given number of bins.
 
         INPUT:
@@ -2020,7 +2020,7 @@ cdef class TimeSeries:
         return s
 
     def plot_candlestick(self, int bins=30):
-        """
+        r"""
         Return a candlestick plot of this time series with the given number
         of bins.
 
@@ -2080,7 +2080,7 @@ cdef class TimeSeries:
         return p
 
     def numpy(self, copy=True):
-        """
+        r"""
         Return a NumPy version of this time series.
 
         .. NOTE::
@@ -2240,7 +2240,7 @@ cdef class TimeSeries:
         return self
 
     def _randomize_uniform(self, double left, double right):
-        """
+        r"""
         Generates a uniform random distribution of doubles between ``left`` and
         ``right`` and stores values in place.
 
@@ -2277,7 +2277,7 @@ cdef class TimeSeries:
             self._values[k] = rstate.c_rand_double() * d + left
 
     def _randomize_normal(self, double m, double s):
-        """
+        r"""
         Generates a normal random distribution of doubles with mean ``m`` and
         standard deviation ``s`` and stores values in place. Uses the
         Box-Muller algorithm.
@@ -2334,7 +2334,7 @@ cdef class TimeSeries:
                 self._values[k] = m + y2*s
 
     def _randomize_semicircle(self, double center):
-        """
+        r"""
         Generates a semicircle random distribution of doubles about center
         and stores values in place. Uses the acceptance-rejection method.
 
@@ -2552,7 +2552,7 @@ cdef class TimeSeries:
 
 
 cdef new_time_series(Py_ssize_t length):
-    """
+    r"""
     Return a new uninitialized time series of the given length.
     The entries of the time series are garbage.
 
@@ -2582,7 +2582,7 @@ cdef new_time_series(Py_ssize_t length):
 
 @cython.binding(True)
 def unpickle_time_series_v1(bytes v, Py_ssize_t n):
-    """
+    r"""
     Version 1 unpickle method.
 
     INPUT:
