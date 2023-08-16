@@ -1,13 +1,14 @@
 prune sage
 
-global-include all__sagemath_coxeter3.py
-
 include VERSION.txt
 
 graft sage/libs/coxeter3
 
 global-exclude *.c
 global-exclude *.cpp
+
+global-exclude all__sagemath_*.*
+global-include all__sagemath_coxeter3.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

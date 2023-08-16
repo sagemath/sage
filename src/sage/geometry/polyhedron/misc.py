@@ -30,7 +30,7 @@ def _to_space_separated_string(l, base_ring=None):
         sage: import sage.geometry.polyhedron.misc as P
         sage: P._to_space_separated_string([2,3])
         '2 3'
-        sage: P._to_space_separated_string([2, 1/5], RDF)                               # optional - sage.rings.real_double
+        sage: P._to_space_separated_string([2, 1/5], RDF)                               # needs sage.rings.real_double
         '2.0 0.2'
     """
     if base_ring:
