@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Tests for chain complexes, simplicial complexes, etc.
 

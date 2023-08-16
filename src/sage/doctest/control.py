@@ -281,6 +281,10 @@ def skipfile(filename, tested_optional_tags=False, *,
         if log:
             log(f"Skipping '{filename}' because it does not have one of the recognized file name extensions")
         return True
+    if if_installed and ext not in ('.py', '.pyx'):
+        if log:
+            log(f"Skipping '{filename}' because it is not the source file of a Python module")
+        return True
     if "jupyter_execute" in filename:
         if log:
             log(f"Skipping '{filename}' because it is created by the jupyter-sphinx extension for internal use and should not be tested")

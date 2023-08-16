@@ -33,8 +33,8 @@ EXAMPLES::
     True
     sage: c < b
     False
-    sage: A = AffineSubspace([8,38,21,250], VectorSpace(GF(19),4))                  # optional - sage.libs.pari
-    sage: A                                                                         # optional - sage.libs.pari
+    sage: A = AffineSubspace([8,38,21,250], VectorSpace(GF(19),4))
+    sage: A
     Affine space p + W where:
        p = (8, 0, 2, 3)
        W = Vector space of dimension 4 over Finite Field of size 19
@@ -384,9 +384,9 @@ class AffineSubspace(SageObject):
             []
             sage: A.intersection(C).intersection(B)
 
-            sage: D = AffineSubspace([1,2,3], VectorSpace(GF(5),3))                 # optional - sage.libs.pari
-            sage: E = AffineSubspace([3,4,5], VectorSpace(GF(5),3))                 # optional - sage.libs.pari
-            sage: D.intersection(E)                                                 # optional - sage.libs.pari
+            sage: D = AffineSubspace([1,2,3], VectorSpace(GF(5),3))
+            sage: E = AffineSubspace([3,4,5], VectorSpace(GF(5),3))
+            sage: D.intersection(E)
             Affine space p + W where:
               p = (3, 4, 0)
               W = Vector space of dimension 3 over Finite Field of size 5
