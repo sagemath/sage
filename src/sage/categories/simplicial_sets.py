@@ -291,7 +291,7 @@ class SimplicialSets(Category_singleton):
 
                     sage: S1 = simplicial_sets.Sphere(1)                                # needs sage.graphs
                     sage: eight = S1.wedge(S1)                                          # needs sage.graphs
-                    sage: eight.fundamental_group() # free group on 2 generators        # needs sage.graphs sage.groups
+                    sage: eight.fundamental_group()  # free group on 2 generators       # needs sage.graphs sage.groups
                     Finitely presented group < e0, e1 |  >
 
                 The fundamental group of a disjoint union of course depends on

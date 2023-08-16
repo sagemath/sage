@@ -40,7 +40,7 @@ class FreeAlgebra(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: AlgebrasWithBasis(QQ).example() # indirect doctest                    # needs sage.modules
+            sage: AlgebrasWithBasis(QQ).example()  # indirect doctest                   # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
         """
         return "An example of an algebra with basis: the free algebra on the generators %s over %s"%(self._alphabet, self.base_ring())

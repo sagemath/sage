@@ -342,7 +342,7 @@ class LieAlgebras(Category_over_base_ring):
             ::
 
                 sage: L = LieAlgebra(QQ, 3, 'x', abelian=True)                          # needs sage.combinat sage.modules
-                sage: L.universal_enveloping_algebra() # indirect doctest               # needs sage.combinat sage.modules
+                sage: L.universal_enveloping_algebra()  # indirect doctest              # needs sage.combinat sage.modules
                 Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
             """
 

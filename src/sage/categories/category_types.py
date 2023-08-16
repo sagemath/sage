@@ -132,7 +132,7 @@ class Elements(Category):
 
             sage: V = VectorSpace(QQ, 3)                                                # needs sage.modules
             sage: x = V.0                                                               # needs sage.modules
-            sage: latex(x.category()) # indirect doctest                                # needs sage.modules
+            sage: latex(x.category())  # indirect doctest                               # needs sage.modules
             \mathbf{Elt}_{\Bold{Q}^{3}}
         """
         return "\\mathbf{Elt}_{%s}"%latex(self.__object)
