@@ -80,8 +80,6 @@ parser.add_argument("--no-diff", default=False, action="store_true",
 parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
                     type=str)
 
-args = parser.parse_args()
-
 runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
 
 def plain_distribution_and_extras(distribution):
@@ -106,33 +104,6 @@ def default_venv_environment_from_distribution(distribution):
         default_venv = ''
         default_environment = runtest_default_environment
     return default_venv, default_environment
-
-if args.verbose:
-    args.no_diff = True
-
-if args.distribution == ['all']:
-    args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
-                         'sagemath-categories',
-                         'sagemath-modules',
-                         'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
-                         'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
-                         'sagemath-polyhedra',
-                         None]  # monolithic distribution
-
-if len(args.distribution) > 1:
-    if args.venv or args.environment:
-        print('at most one --distribution argument can be combined with --venv and --environment')
-        sys.exit(1)
-    args.keep_both = args.full_tracebacks = True
-    default_venv, default_environment = default_venv_environment_from_distribution(None)
-else:
-    default_venv, default_environment = default_venv_environment_from_distribution(args.distribution)
-    if not args.venv:
-        args.venv = default_venv
-    if not args.environment:
-        args.environment = default_environment
-    if args.distribution or args.venv != default_venv or args.environment != default_environment:
-        args.keep_both = args.full_tracebacks = True
 
 
 @cached_function
@@ -398,15 +369,6 @@ def output_filename(filename):
     return filename
 
 
-if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
-    print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
-          "this is deprecated. To pass two input filenames, use the option --overwrite.")
-
-    input_filenames = [args.filename[0]]
-else:
-    input_filenames = args.filename
-
-
 tested_doctesters = set()
 venv_files = {}          # distribution -> files that are not yet known to be fixed points in venv; we add and remove items
 venv_ignored_files = {}  # distribution -> files that should be ignored; we only add items
@@ -563,6 +525,45 @@ def fix_with_distribution(file_set, distribution=None, verbose=False):
 
 
 if __name__ == "__main__":
+
+    args = parser.parse_args()
+
+    if args.verbose:
+        args.no_diff = True
+
+    if args.distribution == ['all']:
+        args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
+                             'sagemath-categories',
+                             'sagemath-modules',
+                             'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
+                             'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
+                             'sagemath-polyhedra',
+                             None]  # monolithic distribution
+
+    if len(args.distribution) > 1:
+        if args.venv or args.environment:
+            print('at most one --distribution argument can be combined with --venv and --environment')
+            sys.exit(1)
+        args.keep_both = args.full_tracebacks = True
+        default_venv, default_environment = default_venv_environment_from_distribution(None)
+    else:
+        default_venv, default_environment = default_venv_environment_from_distribution(args.distribution)
+        if not args.venv:
+            args.venv = default_venv
+        if not args.environment:
+            args.environment = default_environment
+        if args.distribution or args.venv != default_venv or args.environment != default_environment:
+            args.keep_both = args.full_tracebacks = True
+
+    if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
+        print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+              "this is deprecated. To pass two input filenames, use the option --overwrite.")
+
+        input_filenames = [args.filename[0]]
+    else:
+        input_filenames = args.filename
+
+
     try:
         unprocessed_files = set(expanded_filename_args())
         for distribution in args.distribution:
