@@ -574,7 +574,8 @@ class sage__libs__singular(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.singular',
                              [PythonModule('sage.libs.singular.singular'),
-                              PythonModule('sage.interfaces.singular')])
+                              PythonModule('sage.interfaces.singular'),
+                              PythonModule('sage.rings.polynomial.plural')])
 
 
 class sage__modular(JoinFeature):
@@ -638,6 +639,8 @@ class sage__modules(JoinFeature):
                               PythonModule('sage.modules.free_module'),             # representative
                               PythonModule('sage.matrix'),                          # namespace package
                               PythonModule('sage.matrix.matrix2'),                  # representative
+                              PythonModule('sage.coding'),                          # namespace package
+                              PythonModule('sage.coding.kasami_codes'),             # representative
                               PythonModule('sage.combinat.free_module'),
                               PythonModule('sage.quadratic_forms'),                 # namespace package
                               PythonModule('sage.quadratic_forms.quadratic_form'),  # representative
@@ -696,7 +699,8 @@ class sage__plot(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.plot',
-                             [PythonModule('sage.plot.plot')],
+                             [PythonModule('sage.plot.plot'),
+                              PythonModule('matplotlib')],
                              spkg='sagemath_plot', type='standard')
 
 
