@@ -74,7 +74,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 sage: Sigma2 = groups.permutation.Cyclic(2)                             # needs sage.groups
                 sage: BSigma2 = Sigma2.nerve()                                          # needs sage.groups
-                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.groups sage.modules
                 Vector space of dimension 1 over Finite Field of size 2
 
             The `k`-simplices of the nerve are named after the chains
@@ -106,7 +106,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 sage: Sigma3 = groups.permutation.Symmetric(3)                          # needs sage.groups
                 sage: BSigma3 = Sigma3.nerve()                                          # needs sage.groups
-                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.groups sage.rings.finite_rings
+                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.groups
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 0 over Finite Field of size 3,
                  2: Vector space of dimension 0 over Finite Field of size 3,
