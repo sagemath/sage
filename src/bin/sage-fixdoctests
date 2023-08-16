@@ -289,23 +289,25 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
                     and (index_NameError := got.rfind("NameError:")) >= 0
                     and got[last_frame:].startswith('File "<doctest')):
                 if args.verbose:
-                    print("sage-fixdoctests: This is a NameError from top level")  # so we keep it brief
+                    print("sage-fixdoctests: This is a NameError from the top level of the doctest")  # so we keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
                     name = m.group(1)
                     if name == 'I':
                         add_tags = ['sage.symbolic']  # This is how we mark it currently (2023-08)
-                    elif len(name) < 2:
+                    elif len(name) >= 2 and (feature := name_feature(name)) and feature.name != 'sage.all':
                         # Don't mark use of 'x' '# needs sage.symbolic'; that's almost always wrong
                         # Likewise for variables like 'R', 'r'
+                        add_tags = [feature.name]                   # FIXME: This feature may actually already be present in line, block, or file. Move this lookup code into the doctester and issue more specific instructions
+                    elif args.only_tags:
+                        if args.verbose:
+                            print("sage-fixdoctests: No feature providing this global is known; no action because of --only-tags")
                         return
-                    elif feature := name_feature(name):
-                        add_tags = [feature.name]
                     else:
-                        if args.only_tags:
-                            return
                         add_tags = [f"NameError ('{name}', {venv_explainer.lstrip().lstrip('(')}"]
                 else:
                     if args.only_tags:
+                        if args.verbose:
+                            print("sage-fixdoctests: No feature providing this global is known; no action because of --only-tags")
                         return
                     add_tags = [f"NameError{venv_explainer}"]
                 update_line_optional_tags(first_line_num - 1, add_tags=add_tags,
@@ -333,11 +335,11 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
         test_lines = ([update_optional_tags(src_in_lines[first_line_num - 1],
                                             add_tags=[f'GOT{venv_explainer}'])]
                       + src_in_lines[first_line_num : line_num])
-        update_line_optional_tags(first_line_num - 1, add_tags=['EXPECTED'])
+        update_line_optional_tags(first_line_num - 1, add_tags=['EXPECTED'],
+                                  message="Marking the doctest with idempotent tag EXPECTED, creating another copy with idempotent tag GOT")
         indent = (len(src_in_lines[line_num - 1]) - len(src_in_lines[line_num - 1].lstrip()))
         line_num += len(expected)  # skip to the last line of the expected output
-        append_to_line(line_num - 1,
-                       '\n'.join([''] + test_lines))  # 2nd copy of the test
+        append_to_line(line_num - 1, '\n'.join([''] + test_lines))  # 2nd copy of the test
         # now line_num is the last line of the 2nd copy of the test
         expected = []
 
@@ -346,7 +348,8 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
     if not expected:
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
         append_to_line(line_num - 1,
-                       '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got))
+                       '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got),
+                       message="Adding the new output")
         return
 
     # Guess how much extra indenting ``got`` needs to match with the indentation
@@ -368,12 +371,14 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
                              '<' * 40, '\n'.join(got), '<' * 40))
         return
 
-    # If we got something when we expected nothing then we delete the line from the
+    # If we got nothing when we expected something then we delete the line from the
     # output, otherwise, add all of what we `got` onto the end of src_in_lines[line_num]
     if got == ['']:
-        update_line(line_num, None)
+        update_line(line_num, None,
+                    message="Expected something, got nothing; deleting the old output")
     else:
-        update_line(line_num, '\n'.join((' ' * indent + got[i]) for i in range(len(got))))
+        update_line(line_num, '\n'.join((' ' * indent + got[i]) for i in range(len(got))),
+                    message="Replacing the old expected output with the new output")
 
     # Mark any remaining `expected` lines as ``None`` so as to preserve the line numbering
     for i in range(1, len(expected)):
