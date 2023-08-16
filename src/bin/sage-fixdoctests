@@ -51,8 +51,8 @@ from sage.misc.temporary_file import tmp_filename
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long', dest='long', action="store_true", default=False,
                     help="include tests tagged '# long time'")
-parser.add_argument("--distribution", type=str, nargs='*', default=[],
-                    help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment")
+parser.add_argument("--distribution", type=str, default=[], action='append',
+                    help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment. This option can be repeated to test several distributions")
 parser.add_argument("--fixed-point", default=False, action="store_true",
                     help="whether to repeat until stable")
 parser.add_argument("--venv", type=str, default='',
@@ -77,7 +77,7 @@ parser.add_argument("--verbose", default=False, action="store_true",
                     help="show details of all changes; implies --no-diff")
 parser.add_argument("--no-diff", default=False, action="store_true",
                     help="don't show the 'git diff' of the modified files")
-parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
+parser.add_argument("filename", nargs='+', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
                     type=str)
 
 runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
