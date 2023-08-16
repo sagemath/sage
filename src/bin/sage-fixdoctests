@@ -545,58 +545,61 @@ def process_grouped_blocks(grouped_iterator, distribution=None):
         unprocessed_files.discard(input)
 
 
+def fix_with_distribution(file_set, distribution=None, verbose=False):
+    if verbose:
+        print("#" * 78)
+        print(f"sage-fixdoctests: Fixing with --distribution={shlex.quote(distribution)}")
+    default_venv, default_environment = default_venv_environment_from_distribution(distribution)
+    args.venv = default_venv
+    args.environment = default_environment
+    file_set_to_process = sorted(file_set)
+    file_set.clear()
+    try:
+        doctests = doctest_blocks(args, file_set_to_process, distribution=distribution)
+        process_grouped_blocks(itertools.groupby(doctests, block_filename),  # modifies file_set
+                               distribution=distribution)
+    except BadDistribution as e:
+        print(f"sage-fixdoctests: {e}, ignoring")
+
+
 if __name__ == "__main__":
     try:
-        if len(args.distribution) < 2:
-            if args.no_test:
-                doctests = []
-            else:
-                doctests = doctest_blocks(args, filenames)
+        unprocessed_files = set(expanded_filename_args())
+        for distribution in args.distribution:
+            venv_files[distribution] = set(unprocessed_files)
+            venv_ignored_files[distribution] = set()
+        if args.no_test:
+            pass
+        elif len(args.distribution) < 2:
+            doctests = doctest_blocks(args, filenames)
             if args.distribution:
-                distribution = args.distribution[0]
+                fix_with_distribution(unprocessed_files, args.distribution[0])
             else:
-                distribution = None
-            process_grouped_blocks(
-                itertools.chain(itertools.groupby(doctests, block_filename),
-                                ((filename, []) for filename in expanded_filename_args())),
-                distribution=distribution())
+                fix_with_distribution(unprocessed_files)
         else:
-            unprocessed_files = set(expanded_filename_args())
-            for distribution in args.distribution:
-                venv_files[distribution] = set(expanded_filename_args())
-                venv_ignored_files[distribution] = set()
-            while True:
-                # Run a distribution with largest number of files remaining to be checked
-                # because of the startup overhead of sage-runtests
-                distribution, file_set = max(venv_files.items(), key=lambda df: len(df[1]))
-                if not file_set:
-                    break
-                while file_set:
-                    print("#" * 78)
-                    print(f"sage-fixdoctests: Fixing with --distribution={shlex.quote(distribution)}")
-                    default_venv, default_environment = default_venv_environment_from_distribution(distribution)
-                    args.venv = default_venv
-                    args.environment = default_environment
-                    try:
-                        doctests = doctest_blocks(args, sorted(file_set), distribution=distribution)
-                        process_grouped_blocks(itertools.groupby(doctests, block_filename),  # modifies file_set
-                                               distribution=distribution)
-                    except BadDistribution as e:
-                        print(f"sage-fixdoctests: {e}, ignoring")
-                    if not args.fixed_point:
-                        break
-                if not args.fixed_point:
-                    break
+            for distribution, file_set in venv_files.items():
+                fix_with_distribution(file_set, distribution, verbose=True)
+            if args.fixed_point:
                 if args.probe:
                     print(f"sage-fixdoctests: Turning off --probe for the following iterations")
                     args.probe = ''
-            # Each file must be processed by process_grouped_blocks at least once to clean up tags,
-            # even if sage-runtest does not have any complaints.
-            process_grouped_blocks([(filename, [])
-                                    for filename in unprocessed_files])
+                while True:
+                    # Run a distribution with largest number of files remaining to be checked
+                    # because of the startup overhead of sage-runtests
+                    distribution, file_set = max(venv_files.items(), key=lambda df: len(df[1]))
+                    if not file_set:
+                        break
+                    while file_set:
+                        fix_with_distribution(file_set, distribution, verbose=True)
 
-            if args.fixed_point:
-                print(f"sage-fixdoctests: Fixed point reached")
+        # Each file must be processed by process_grouped_blocks at least once to clean up tags,
+        # even if sage-runtest does not have any complaints.
+        print(f"sage-fixdoctests: Processing unprocessed files")
+        process_grouped_blocks([(filename, [])
+                                for filename in unprocessed_files])
+
+        if args.fixed_point:
+            print(f"sage-fixdoctests: Fixed point reached")
 
     except Exception:
         print(f"sage-fixdoctests: Internal error")
