@@ -51,7 +51,7 @@ from sage.misc.temporary_file import tmp_filename
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long', dest='long', action="store_true", default=False,
                     help="include tests tagged '# long time'")
-parser.add_argument("--distribution", type=str, nargs='*',
+parser.add_argument("--distribution", type=str, nargs='*', default=[],
                     help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment")
 parser.add_argument("--fixed-point", default=False, action="store_true",
                     help="whether to repeat until stable")
@@ -107,26 +107,26 @@ def default_venv_environment_from_distribution(distribution):
 
 
 @cached_function
-def venv_explainer(distribution):
+def venv_explainer(distribution, venv=None, environment=None):
     venv_explainers = []
     default_venv, default_environment = default_venv_environment_from_distribution(distribution)
-    if args.venv:
+    if venv:
         if m := re.search(f'pkgs/(sage[^/]*)/[.]tox/((sagepython|sagewheels|nopypi|norequirements)-*)*([^/]*)$',
-                          args.venv):
+                          venv):
             distribution, extras = m.group(1), m.group(4)
             if extras:
                 distribution += '[' + extras.replace('-', ',') + ']'
             default_venv_given_distribution, default_environment_given_distribution = default_venv_environment_from_distribution(distribution)
 
-            if (Path(args.venv).resolve() == Path(default_venv_given_distribution).resolve()
-                    or args.environment == default_environment_given_distribution):
+            if (Path(venv).resolve() == Path(default_venv_given_distribution).resolve()
+                    or not environment or environment == default_environment_given_distribution):
                 venv_explainers.append(f'--distribution {shlex.quote(distribution)}')
                 default_venv, default_environment = default_venv_given_distribution, default_environment_given_distribution
 
-    if Path(args.venv).resolve() != Path(default_venv).resolve():
-        venv_explainers.append(f'--venv {shlex.quote(args.venv)}')
-    if args.environment != default_environment:
-        venv_explainers.append(f'--environment {args.environment}')
+    if venv and Path(venv).resolve() != Path(default_venv).resolve():
+        venv_explainers.append(f'--venv {shlex.quote(venv)}')
+    if environment and environment != default_environment:
+        venv_explainers.append(f'--environment {environment}')
 
     if venv_explainers:
         return ' (with ' + ' '.join(venv_explainers) + ')'
@@ -379,21 +379,21 @@ class BadDistribution(Exception):
     pass
 
 
-def doctest_blocks(args, input_filenames, distribution=None):
-    executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
-    environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
+def doctest_blocks(args, input_filenames, distribution=None, venv=None, environment=None):
+    executable = f'{os.path.relpath(venv)}/bin/sage' if venv else 'sage'
+    environment_args = f'--environment {environment} ' if environment and environment != runtest_default_environment else ''
     long_args = f'--long ' if args.long else ''
     probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
-    lib_args = f'--if-installed ' if args.venv else ''
+    lib_args = f'--if-installed ' if venv else ''
     doc_file = tmp_filename()
-    if args.venv or environment_args:
+    if venv or environment_args:
         # Test the doctester, putting the output of the test into sage's temporary directory
         input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
         cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
         if cmdline not in tested_doctesters:
             print(f'Running "{cmdline}"')
             if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
-                raise BadDistribution('Doctester exited with error status {status}')
+                raise BadDistribution(f"Doctester exited with error status {status}")
             tested_doctesters.add(cmdline)
     # Run the doctester, putting the output of the test into sage's temporary directory
     input_args = " ".join(shlex.quote(f) for f in input_filenames)
@@ -407,8 +407,9 @@ def doctest_blocks(args, input_filenames, distribution=None):
     # Remove skipped files, echo control messages
     for m in re.finditer(r"^Skipping '(.*?)'.*$", doc_out, re.MULTILINE):
         print('sage-runtests: ' + m.group(0))
-        venv_files[distribution].discard(m.group(1))
-        venv_ignored_files[distribution].add(m.group(1))
+        if distribution is not None:
+            venv_files[distribution].discard(m.group(1))
+            venv_ignored_files[distribution].add(m.group(1))
 
     return doc_out.split(sep)
 
@@ -428,11 +429,11 @@ def expanded_filename_args():
         yield source.path
 
 
-def process_grouped_blocks(grouped_iterator, distribution=None):
+def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, environment=None):
 
     seen = set()
 
-    explainer = venv_explainer(distribution)
+    explainer = venv_explainer(distribution, venv, environment)
 
     for input, blocks in grouped_iterator:
 
@@ -502,7 +503,8 @@ def process_grouped_blocks(grouped_iterator, distribution=None):
                     file_set.add(input)
         else:
             print(f"sage-fixdoctests: No fixes made in '{input}'")
-            venv_files[distribution].discard(input)
+            if distribution is not None:
+                venv_files[distribution].discard(input)
 
         unprocessed_files.discard(input)
 
@@ -512,16 +514,21 @@ def fix_with_distribution(file_set, distribution=None, verbose=False):
         print("#" * 78)
         print(f"sage-fixdoctests: Fixing with --distribution={shlex.quote(distribution)}")
     default_venv, default_environment = default_venv_environment_from_distribution(distribution)
-    args.venv = default_venv
-    args.environment = default_environment
+    venv = args.venv or default_venv
+    environment = args.environment or default_environment
     file_set_to_process = sorted(file_set)
     file_set.clear()
     try:
-        doctests = doctest_blocks(args, file_set_to_process, distribution=distribution)
+        doctests = doctest_blocks(args, file_set_to_process,
+                                  distribution=distribution, venv=venv, environment=environment)
         process_grouped_blocks(itertools.groupby(doctests, block_filename),  # modifies file_set
-                               distribution=distribution)
+                               distribution=distribution, venv=venv, environment=environment)
     except BadDistribution as e:
-        print(f"sage-fixdoctests: {e}, ignoring")
+        if args.ignore_bad_distributions:
+            print(f"sage-fixdoctests: {e}, ignoring")
+        else:
+            print(f"sage-fixdoctests: {e}")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -531,6 +538,8 @@ if __name__ == "__main__":
     if args.verbose:
         args.no_diff = True
 
+    args.ignore_bad_distributions = False  # This could also be a switch
+
     if args.distribution == ['all']:
         args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
                              'sagemath-categories',
@@ -538,51 +547,42 @@ if __name__ == "__main__":
                              'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
                              'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
                              'sagemath-polyhedra',
-                             None]  # monolithic distribution
+                             '']  # monolithic distribution
+        args.ignore_bad_distributions = True
+
+    if args.distribution or args.venv or args.environment:
+        args.keep_both = args.full_tracebacks = True
 
     if len(args.distribution) > 1:
         if args.venv or args.environment:
-            print('at most one --distribution argument can be combined with --venv and --environment')
+            print('sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment')
             sys.exit(1)
-        args.keep_both = args.full_tracebacks = True
-        default_venv, default_environment = default_venv_environment_from_distribution(None)
-    else:
-        default_venv, default_environment = default_venv_environment_from_distribution(args.distribution)
-        if not args.venv:
-            args.venv = default_venv
-        if not args.environment:
-            args.environment = default_environment
-        if args.distribution or args.venv != default_venv or args.environment != default_environment:
-            args.keep_both = args.full_tracebacks = True
+    elif not args.distribution:
+        args.distribution = ['']
 
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
               "this is deprecated. To pass two input filenames, use the option --overwrite.")
-
         input_filenames = [args.filename[0]]
     else:
         input_filenames = args.filename
 
-
     try:
         unprocessed_files = set(expanded_filename_args())
         for distribution in args.distribution:
-            venv_files[distribution] = set(unprocessed_files)
+            venv_files[distribution] = set(unprocessed_files)  # make copies
             venv_ignored_files[distribution] = set()
         if args.no_test:
             pass
-        elif len(args.distribution) < 2:
-            doctests = doctest_blocks(args, filenames)
-            if args.distribution:
-                fix_with_distribution(unprocessed_files, args.distribution[0])
-            else:
-                fix_with_distribution(unprocessed_files)
+        elif len(args.distribution) == 1 and not args.fixed_point:
+            fix_with_distribution(set(unprocessed_files), args.distribution[0])
         else:
             for distribution, file_set in venv_files.items():
                 fix_with_distribution(file_set, distribution, verbose=True)
             if args.fixed_point:
                 if args.probe:
                     print(f"sage-fixdoctests: Turning off --probe for the following iterations")
+                    # This forces convergence to a fixed point
                     args.probe = ''
                 while True:
                     # Run a distribution with largest number of files remaining to be checked
@@ -592,12 +592,15 @@ if __name__ == "__main__":
                         break
                     while file_set:
                         fix_with_distribution(file_set, distribution, verbose=True)
+                        # Immediately re-run with the same distribution to continue chains of
+                        # "NameError" / "variable was set only in doctest" fixes
 
         # Each file must be processed by process_grouped_blocks at least once to clean up tags,
         # even if sage-runtest does not have any complaints.
-        print(f"sage-fixdoctests: Processing unprocessed files")
-        process_grouped_blocks([(filename, [])
-                                for filename in unprocessed_files])
+        if unprocessed_files:
+            print(f"sage-fixdoctests: Processing unprocessed files")
+            process_grouped_blocks([(filename, [])
+                                    for filename in unprocessed_files])
 
         if args.fixed_point:
             print(f"sage-fixdoctests: Fixed point reached")
