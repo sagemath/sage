@@ -3185,7 +3185,7 @@ class FiniteWord_class(Word_class):
 
         ALGORITHM:
 
-        Algorithm is described in TODO TODO TODO.
+        Algorithm is described in [Rom2023]_.
 
         Time complexity of this algorithm is `O(|G| \cdot self.length())`
         plus time to generate `G` from `morphisms` and `antimorphisms`.
@@ -3782,17 +3782,17 @@ class FiniteWord_class(Word_class):
         - ``list`` -- list of lengths of the maximal palindromes (or ``f``-palindrome)
         for each symmetry axis (letter or space between two letters).
         - ``list`` -- list of nodes of palindromes tree as described 
-        in TODO TODO TODO, the first node is the root.
+        in [Rom2023]_, the first node is the root.
 
         ALGORITHM:
 
-        Algorithm is described in TODO TODO TODO.
+        Algorithm is described in [Rom2023]_.
 
         Time complexity is linear from length of ``self``.
 
         EXAMPLES:
 
-        TODO
+        TODO ?
         """
         wordWithSpecialLetter, updatedMorphism, specialLetter = self._insert_not_used_letter_between_consecutive_letters(f=f)
         # Manacher's algorithm part
