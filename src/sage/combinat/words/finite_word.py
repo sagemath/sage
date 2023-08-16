@@ -3215,6 +3215,7 @@ class FiniteWord_class(Word_class):
             sage: Word().g_defect()
             0
         """
+        # TODO - Add more private methods (without tests!) and use them here
         from sage.combinat.words.morphism import WordMorphism
         # Generate G
         specialLetters = self.not_used_letters(2)
@@ -3243,6 +3244,9 @@ class FiniteWord_class(Word_class):
         domain = set(self.letters())
         if len(domains) == 1:
             domain = set(domains.pop().alphabet())
+        
+        # TODO - refactor how unused letters are generated
+        
         if specialLetterOne in domain or specialLetterTwo in domain:
             raise ValueError("Collision between domain of (anti)morphisms and generated letters `%s` and `%s`", 
                              specialLetterOne, specialLetterTwo)
@@ -3781,7 +3785,7 @@ class FiniteWord_class(Word_class):
 
         - ``list`` -- list of lengths of the maximal palindromes (or ``f``-palindrome)
         for each symmetry axis (letter or space between two letters).
-        - ``list`` -- list of nodes of palindromes tree as described 
+        - ``list`` -- list of nodes of palindromes tree as described
         in [Rom2023]_, the first node is the root.
 
         ALGORITHM:
@@ -3792,8 +3796,9 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES:
 
-        TODO ?
+        TODO ? Let's add based on some non-trivial stuff
         """
+        # TODO - Add more private methods (without tests!) and use them here
         wordWithSpecialLetter, updatedMorphism, specialLetter = self._insert_not_used_letter_between_consecutive_letters(f=f)
         # Manacher's algorithm part
         maximalPalindromeRadiuses = [0] * wordWithSpecialLetter.length()
