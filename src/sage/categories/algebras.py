@@ -154,15 +154,15 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: C = AlgebrasWithBasis(QQ).example()                               # needs sage.combinat sage.modules
-                sage: x = C(2); x                                                       # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: C = AlgebrasWithBasis(QQ).example()
+                sage: x = C(2); x
                 2*B[word: ]
-                sage: y = C.algebra_generators().first(); y                             # needs sage.combinat sage.modules
+                sage: y = C.algebra_generators().first(); y
                 B[word: a]
-
-                sage: y._div_(x)                                                        # needs sage.combinat sage.modules
+                sage: y._div_(x)
                 1/2*B[word: a]
-                sage: x._div_(y)                                                        # needs sage.combinat sage.modules
+                sage: x._div_(y)
                 Traceback (most recent call last):
                 ...
                 ValueError: cannot invert self (= B[word: a])
