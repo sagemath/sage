@@ -1,5 +1,5 @@
 # sage.doctest: needs numpy sage.modules
-"""
+r"""
 Hidden Markov Models
 
 This is a complete pure-Cython optimized implementation of Hidden
@@ -48,11 +48,11 @@ cdef HMM_Util util = HMM_Util()
 ###########################################
 
 cdef class HiddenMarkovModel:
-    """
+    r"""
     Abstract base class for all Hidden Markov Models.
     """
     def initial_probabilities(self):
-        """
+        r"""
         Return the initial probabilities as a :class:`TimeSeries` of
         length `N`, where `N` is the number of states of the Markov model.
 
@@ -90,7 +90,7 @@ cdef class HiddenMarkovModel:
         return TimeSeries(self.pi)
 
     def transition_matrix(self):
-        """
+        r"""
         Return the state transition matrix.
 
         OUTPUT: a Sage matrix with real double precision (RDF) entries.
@@ -133,15 +133,15 @@ cdef class HiddenMarkovModel:
         return matrix(RDF, self.N, self.A.list())
 
     def graph(self, eps=1e-3):
-        """
+        r"""
         Create a weighted directed graph from the transition matrix,
         not including any edge with a probability less than ``eps``.
 
         INPUT:
 
-        - eps -- nonnegative real number
+        - ``eps`` -- nonnegative real number
 
-        OUTPUT: a digraph
+        OUTPUT: a :class:`DiGraph`
 
         EXAMPLES::
 
@@ -165,7 +165,7 @@ cdef class HiddenMarkovModel:
         return DiGraph(m, weighted=True)
 
     def sample(self, Py_ssize_t length, number=None, starting_state=None):
-        """
+        r"""
         Return number samples from this HMM of given length.
 
         INPUT:
@@ -225,7 +225,7 @@ cdef class HiddenMarkovModel:
     # HMM algorithms.
     #########################################################
     cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta):
-        """
+        r"""
         Used internally to compute the scaled quantity gamma_t(j)
         appearing in the Baum-Welch reestimation algorithm.
 
@@ -256,7 +256,7 @@ cdef class HiddenMarkovModel:
 
 
 cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
-    """
+    r"""
     A discrete Hidden Markov model implemented using double precision
     floating point arithmetic.
 
@@ -328,7 +328,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
     cdef object _emission_symbols, _emission_symbols_dict
 
     def __init__(self, A, B, pi, emission_symbols=None, bint normalize=True):
-        """
+        r"""
         Create a discrete emissions HMM with transition probability
         matrix A, emission probabilities given by B, initial state
         probabilities pi, and given emission symbols (which default
@@ -371,7 +371,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
                 util.normalize_probability_TimeSeries(self.B, i*self.n_out, (i+1)*self.n_out)
 
     def __reduce__(self):
-        """
+        r"""
         Used in pickling.
 
         EXAMPLES::
@@ -384,7 +384,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
                (self.A, self.B, self.pi, self.n_out, self._emission_symbols, self._emission_symbols_dict)
 
     def __richcmp__(self, other, op):
-        """
+        r"""
         EXAMPLES::
 
             sage: m = hmm.DiscreteHiddenMarkovModel([[0.4,0.6],[0.1,0.9]], [[0.0,1.0],[0.5,0.5]], [.5,.5])
@@ -404,7 +404,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
                                     other.__reduce__()[1], op)
 
     def emission_matrix(self):
-        """
+        r"""
         Return the matrix whose `i`-th row specifies the emission
         probability distribution for the `i`-th state.
 
@@ -456,12 +456,12 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return s
 
     def _emission_symbols_to_IntList(self, obs):
-        """
+        r"""
         Internal function used to convert a list of emission symbols to an :class:`IntList`.
 
         INPUT:
 
-        - obs -- a list of objects
+        - ``obs`` -- a list of objects
 
         OUTPUT: an IntList
 
@@ -475,12 +475,12 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return IntList([d[x] for x in obs])
 
     def _IntList_to_emission_symbols(self, obs):
-        """
+        r"""
         Internal function used to convert a list of emission symbols to an IntList.
 
         INPUT:
 
-        - obs -- a list of objects
+        - ``obs`` -- a list of objects
 
         OUTPUT: an IntList
 
@@ -494,7 +494,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return [d[x] for x in obs]
 
     def log_likelihood(self, obs, bint scale=True):
-        """
+        r"""
         Return the logarithm of the probability that this model produced the given
         observation sequence.  Thus the output is a non-positive number.
 
@@ -549,7 +549,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             return self._forward(obs)
 
     def _forward(self, IntList obs):
-        """
+        r"""
         Memory-efficient implementation of the forward algorithm, without scaling.
 
         INPUT:
@@ -558,7 +558,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         OUTPUT:
 
-        - ``float`` -- the log of the probability that the model produced this sequence
+        ``float`` -- the log of the probability that the model produced this sequence
 
         EXAMPLES::
 
@@ -604,7 +604,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return log(alpha.sum())
 
     def _forward_scale(self, IntList obs):
-        """
+        r"""
         Memory-efficient implementation of the forward algorithm, with scaling.
 
         INPUT:
@@ -613,7 +613,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         OUTPUT:
 
-        - ``float`` -- the log of the probability that the model produced this sequence
+        ``float`` -- the log of the probability that the model produced this sequence
 
         EXAMPLES::
 
@@ -693,7 +693,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return log_probability
 
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
-        """
+        r"""
         Return a sample of the given length from this HMM.
 
         INPUT:
@@ -703,7 +703,6 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
           a sequence using this model starting with the given state
           instead of the initial probabilities to determine the
           starting state.
-
 
         OUTPUT:
 
@@ -812,7 +811,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             return self._IntList_to_emission_symbols(obs), states
 
     cdef int _gen_symbol(self, int q, double r):
-        """
+        r"""
         Generate a symbol in state q using the randomly chosen
         floating point number r, which should be between 0 and 1.
 
@@ -823,7 +822,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         OUTPUT:
 
-            - a nonnegative int
+        a nonnegative int
 
         EXAMPLES::
 
@@ -848,7 +847,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return self.n_out - 1
 
     def viterbi(self, obs, log_scale=True):
-        """
+        r"""
         Determine "the" hidden sequence of states that is most likely
         to produce the given sequence seq of observations, along with
         the probability that this hidden sequence actually produced
@@ -899,7 +898,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             return self._viterbi(obs)
 
     cpdef _viterbi(self, IntList obs):
-        """
+        r"""
         Used internally to compute the viterbi path, without
         rescaling.  This can be useful for short sequences.
 
@@ -979,12 +978,12 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
 
     cpdef _viterbi_scale(self, IntList obs):
-        """
+        r"""
         Used internally to compute the viterbi path with rescaling.
 
         INPUT:
 
-        - obs -- IntList
+        - ``obs`` -- IntList
 
         OUTPUT:
 
@@ -1110,7 +1109,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return beta
 
     cdef _forward_scale_all(self, IntList obs):
-        """
+        r"""
         Return scaled values alpha_t(i), the sequence of scalings, and
         the log probability.
 
@@ -1171,7 +1170,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return alpha, scale, log_probability
 
     cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, IntList obs):
-        """
+        r"""
         Used internally to compute the scaled quantity xi_t(i,j)
         appearing in the Baum-Welch reestimation algorithm.
 
@@ -1204,7 +1203,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return xi
 
     def baum_welch(self, obs, int max_iter=100, double log_likelihood_cutoff=1e-4, bint fix_emissions=False):
-        """
+        r"""
         Given an observation sequence obs, improve this HMM using the
         Baum-Welch algorithm to increase the probability of observing obs.
 
@@ -1225,8 +1224,8 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         OUTPUT:
 
-        - changes the model in places, and returns the log
-          likelihood and number of iterations.
+        changes the model in place, and returns the log
+        likelihood and number of iterations.
 
         EXAMPLES::
 
@@ -1355,7 +1354,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
 # Keep this -- it's for backwards compatibility with the GHMM based implementation
 def unpickle_discrete_hmm_v0(A, B, pi, emission_symbols, name):
-    """
+    r"""
     TESTS::
 
         sage: m = hmm.DiscreteHiddenMarkovModel([[0.4,0.6],[0.1,0.9]], [[0.0,1.0],[0.5,0.5]], [1,0])
