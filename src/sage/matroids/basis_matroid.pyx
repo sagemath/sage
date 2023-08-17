@@ -557,7 +557,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         """
         M = BasisMatroid(M=self)
-        M.__relabel(l)
+        M._relabel(l)
         return M
 
     # enumeration

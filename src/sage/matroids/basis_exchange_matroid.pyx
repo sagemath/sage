@@ -191,7 +191,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_free(self._output)
         bitset_free(self._temp)
 
-    cdef __relabel(self, l):
+    cdef _relabel(self, l):
         """
         Relabel each element `e` as `l[e]`, where `l` is a given injective map.
 
