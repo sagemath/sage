@@ -130,7 +130,7 @@ class FMatrix(SageObject):
 
     See [TTWL2009]_ for an introduction to this topic,
     [EGNO2015]_ Section 4.9 for a precise mathematical
-    definition, and [Bond2007]_ Section 2.5 for a discussion
+    definition, and [Bond2007]_ Section 2.5 and [Ab2022]_ for discussions
     of how to compute the F-matrix. In addition to
     [Bond2007]_, worked out F-matrices may be found in
     [RoStWa2009]_ and [CHW2015]_.
@@ -1726,11 +1726,11 @@ class FMatrix(SageObject):
         if eqns is None:
             eqns = self.ideal_basis
         graph = self.equations_graph(eqns)
-        partition = {tuple(c): [] for c in graph.connected_components()}
+        partition = {tuple(c): [] for c in graph.connected_components(sort=True)}
         for eq_tup in eqns:
-            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0]))].append(eq_tup)
+            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), len(graph.connected_components())))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
             print(graph.connected_components_sizes())
         return partition
 
@@ -2199,7 +2199,7 @@ class FMatrix(SageObject):
             adding equation... fx18 - 1
             adding equation... fx21 - 1
         """
-        while not all(v for v in self._solved):
+        while not all(self._solved):
             # Get a variable that has not been fixed
             # In ascending index order, for consistent results
             for i, var in enumerate(self._poly_ring.gens()):
@@ -2217,7 +2217,7 @@ class FMatrix(SageObject):
         r"""
         Substitute known value from linear univariate polynomial and
         solve, following [Bond2007]_ p.37, for two-term linear equation
-        for one of the variables.
+        for one of the variables. See also [Ab2022]_.
 
         EXAMPLES::
 

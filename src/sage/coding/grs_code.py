@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Reed-Solomon codes and Generalized Reed-Solomon codes
 
@@ -7,9 +8,9 @@ finite field `F`, the corresponding Reed-Solomon code (RS code) of dimension
 
 .. MATH::
 
-    \{ f(\alpha_1), \ldots, f(\alpha_n)  \mid  f \in F[x], \deg f < k \}
+    \{ (f(\alpha_1), \ldots, f(\alpha_n))  \mid  f \in F[x], \deg f < k \}
 
-An RS code is often called "classical" if `alpha_i = \alpha^{i-1}` and `\alpha`
+An RS code is often called "classical" if `\alpha_i = \alpha^{i-1}` and `\alpha`
 is a primitive `n`'th root of unity.
 
 More generally, given also `n` "column multipliers" `\beta_1, \dots, \beta_n`,
@@ -18,7 +19,7 @@ the set:
 
 .. MATH::
 
-    \{ (\beta_1 f(\alpha_1), \ldots, \beta_n f(\alpha_n)
+    \{ (\beta_1 f(\alpha_1), \ldots, \beta_n f(\alpha_n))
     \mid f \in F[x], \deg f < k \}
 
 Here is a list of all content related to GRS codes:
@@ -63,9 +64,6 @@ from sage.modules.free_module import VectorSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_sum
 from sage.misc.misc_c import prod
-
-from sage.functions.other import binomial
-from sage.symbolic.ring import SR
 
 from .linear_code import AbstractLinearCode
 from .encoder import Encoder
@@ -516,7 +514,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: F = GF(11)
             sage: n, k = 10, 5
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
-            sage: C.weight_distribution()
+            sage: C.weight_distribution()                                               # optional - sage.symbolic
             [1, 0, 0, 0, 0, 0, 2100, 6000, 29250, 61500, 62200]
 
         TESTS:
@@ -525,13 +523,16 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
             sage: F = GF(7)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
             True
             sage: F = GF(8)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
             True
         """
+        from sage.symbolic.ring import SR
+        from sage.functions.other import binomial
+
         d = self.minimum_distance()
         n = self.length()
         q = self.base_ring().order()
@@ -576,7 +577,7 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
     r"""
     Construct a classical Reed-Solomon code.
 
-    A classical `[n,k]` Reed-Solomon code over `GF(q)` with `1 \le k \le n` and
+    A classical `[n,k]` Reed-Solomon code over `\GF{q}` with `1 \le k \le n` and
     `n | (q-1)` is a Reed-Solomon code whose evaluation points are the
     consecutive powers of a primitive `n`'th root of unity `\alpha`, i.e.
     `\alpha_i = \alpha^{i-1}`, where `\alpha_1, \ldots, \alpha_n` are the
@@ -664,13 +665,13 @@ class GRSEvaluationVectorEncoder(Encoder):
 
     .. MATH::
 
-        p = \Sigma_{i=1}^{m} m_i \times x^i.
+        p = \Sigma_{i=1}^{m} m_i  x^i.
 
     The encoding of `m` will be the following codeword:
 
     .. MATH::
 
-        (\beta_1 \times p(\alpha_1), \dots, \beta_n \times p(\alpha_n)).
+        (\beta_1  p(\alpha_1), \dots, \beta_n  p(\alpha_n)).
 
     INPUT:
 
@@ -767,7 +768,7 @@ class GRSEvaluationVectorEncoder(Encoder):
 
         .. MATH::
 
-            G = [g_{i,j}], g_{i,j} = \beta_j \times \alpha_{j}^{i}.
+            G = [g_{i,j}], g_{i,j} = \beta_j \alpha_{j}^{i}.
 
         This matrix is a Vandermonde matrix.
 
@@ -806,7 +807,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
     .. MATH::
 
-        (\beta_1 \times p(\alpha_1), \dots, \beta_n \times p(\alpha_n)).
+        (\beta_1 p(\alpha_1), \dots, \beta_n p(\alpha_n)).
 
     INPUT:
 
@@ -987,7 +988,8 @@ class GRSEvaluationPolynomialEncoder(Encoder):
             sage: E.encode(p)
             Traceback (most recent call last):
             ...
-            ValueError: The value to encode must be in Univariate Polynomial Ring in x over Finite Field of size 11
+            ValueError: The value to encode must be in
+            Univariate Polynomial Ring in x over Finite Field of size 11
 
         TESTS:
 
@@ -1277,7 +1279,8 @@ class GRSBerlekampWelchDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSBerlekampWelchDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -1338,7 +1341,8 @@ class GRSBerlekampWelchDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSBerlekampWelchDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
             True
@@ -1539,7 +1543,7 @@ class GRSGaoDecoder(Decoder):
         Performs an Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, s)` such that in the step
-        just before termination, `r = a\times s + b\times t`.
+        just before termination, `r = a s + b t`.
 
         INPUT:
 
@@ -1660,7 +1664,8 @@ class GRSGaoDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSGaoDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -1721,7 +1726,8 @@ class GRSGaoDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSGaoDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
             True
@@ -1893,11 +1899,11 @@ class GRSErrorErasureDecoder(Decoder):
 
         INPUT:
 
-        - word_and_erasure_vector -- a tuple whose:
+        - ``word_and_erasure_vector`` -- a tuple whose:
 
           * first element is an element of the ambient space of the code
           * second element is a vector over `\GF{2}` whose length is the
-            same as the code's
+            same as the code's, containing erasure positions
 
         .. NOTE::
 
@@ -1908,12 +1914,6 @@ class GRSErrorErasureDecoder(Decoder):
             ``r`` will be returned as is.
             In either case, if ``r`` is not a codeword,
             the output is unspecified.
-
-        INPUT:
-
-        - ``word_and_erasure_vector`` -- a pair of vectors, where
-          first element is a codeword of ``self`` and second element
-          is a vector of GF(2) containing erasure positions
 
         OUTPUT:
 
@@ -1927,7 +1927,8 @@ class GRSErrorErasureDecoder(Decoder):
             sage: D = codes.decoders.GRSErrorErasureDecoder(C)
             sage: c = C.random_element()
             sage: n_era = randint(0, C.minimum_distance() - 2)
-            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(), D.decoding_radius(n_era), n_era)
+            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(),
+            ....:                                     D.decoding_radius(n_era), n_era)
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -2133,7 +2134,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         Performs an Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, t)` such that in the step
-        just before termination, `r = a\times s + b\times t`.
+        just before termination, `r = a s + b t`.
 
         INPUT:
 
@@ -2272,7 +2273,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[1:n+1], k)
             sage: D = codes.decoders.GRSKeyEquationSyndromeDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
             True
@@ -2346,7 +2348,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[1:n+1], k)
             sage: D = codes.decoders.GRSKeyEquationSyndromeDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True

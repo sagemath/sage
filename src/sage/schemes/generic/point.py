@@ -100,6 +100,7 @@ class SchemeTopologicalPoint(SchemePoint):
         """
         SchemePoint.__init__(self, S, parent=S)
 
+
 class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
     def __init__(self, u, x):
         """
@@ -114,9 +115,9 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
         self.__x = x
 
     def _repr_(self):
-        return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s"%(\
-                   self.scheme(), self.embedding_of_affine_open().domain(),
-                                  self.point_on_affine())
+        return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s" % (
+            self.scheme(), self.embedding_of_affine_open().domain(),
+            self.point_on_affine())
 
     def point_on_affine(self):
         """
@@ -198,6 +199,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return "Point on %s defined by the %s"%(self.scheme(),
                                                 self.prime_ideal())
+
     def prime_ideal(self):
         """
         Return the prime ideal that defines this scheme point.

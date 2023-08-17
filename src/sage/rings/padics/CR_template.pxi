@@ -2,14 +2,14 @@
 Capped relative template for complete discrete valuation rings and their fraction fields
 
 In order to use this template you need to write a linkage file and gluing file.
-For an example see mpz_linkage.pxi (linkage file) and padic_capped_relative_element.pyx (gluing file).
+For an example see ``mpz_linkage.pxi`` (linkage file) and ``padic_capped_relative_element.pyx`` (gluing file).
 
-The linkage file implements a common API that is then used in the class CRElement defined here.
-See the documentation of mpz_linkage.pxi for the functions needed.
+The linkage file implements a common API that is then used in the class :class:`CRElement` defined here.
+See the documentation of ``mpz_linkage.pxi`` for the functions needed.
 
 The gluing file does the following:
 
-- ctypedef's celement to be the appropriate type (e.g. mpz_t)
+- ``ctypedef``'s ``celement`` to be the appropriate type (e.g. ``mpz_t``)
 - includes the linkage file
 - includes this template
 - defines a concrete class inheriting from ``CRElement``, and implements
@@ -423,7 +423,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     def __invert__(self):
         r"""
-        Returns the multiplicative inverse of this element.
+        Return the multiplicative inverse of this element.
 
         .. NOTE::
 
@@ -882,7 +882,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     def add_bigoh(self, absprec):
         """
-        Returns a new element with absolute precision decreased to
+        Return a new element with absolute precision decreased to
         ``absprec``.
 
         INPUT:
@@ -891,7 +891,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         OUTPUT:
 
-        an equal element with precision set to the minimum of ``self's``
+        an equal element with precision set to the minimum of ``self``'s
         precision and ``absprec``
 
         EXAMPLES::
@@ -959,7 +959,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef bint _is_exact_zero(self) except -1:
         """
-        Returns true if this element is exactly zero.
+        Return ``True`` if this element is exactly zero.
 
         EXAMPLES::
 
@@ -975,7 +975,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Returns True if this element is indistinguishable from zero
+        Return ``True`` if this element is indistinguishable from zero
         but has finite precision.
 
         EXAMPLES::
@@ -992,10 +992,10 @@ cdef class CRElement(pAdicTemplateElement):
 
     def is_zero(self, absprec = None):
         r"""
-        Determines whether this element is zero modulo
+        Determine whether this element is zero modulo
         `\pi^{\mbox{absprec}}`.
 
-        If ``absprec is None``, returns ``True`` if this element is
+        If ``absprec`` is ``None``, returns ``True`` if this element is
         indistinguishable from zero.
 
         INPUT:
@@ -1037,7 +1037,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     def __bool__(self):
         """
-        Returns True if self is distinguishable from zero.
+        Return ``True`` if ``self`` is distinguishable from zero.
 
         For most applications, explicitly specifying the power of p
         modulo which the element is supposed to be nonzero is
@@ -1053,10 +1053,10 @@ cdef class CRElement(pAdicTemplateElement):
 
     def is_equal_to(self, _right, absprec=None):
         r"""
-        Returns whether self is equal to right modulo
+        Return whether ``self`` is equal to ``right`` modulo
         `\pi^{\mbox{absprec}}`.
 
-        If ``absprec is None``, returns True if self and right are
+        If ``absprec`` is ``None``, returns ``True`` if ``self`` and ``right`` are
         equal to the minimum of their precisions.
 
         INPUT:
@@ -1390,10 +1390,10 @@ cdef class CRElement(pAdicTemplateElement):
 
     def precision_relative(self):
         """
-        Returns the relative precision of this element.
+        Return the relative precision of this element.
 
         This is the power of the maximal ideal modulo which the unit
-        part of self is defined.
+        part of ``self`` is defined.
 
         EXAMPLES::
 
@@ -1417,7 +1417,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef pAdicTemplateElement unit_part(self):
         r"""
-        Returns `u`, where this element is `\pi^v u`.
+        Return `u`, where this element is `\pi^v u`.
 
         EXAMPLES::
 
@@ -1461,7 +1461,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cdef long valuation_c(self):
         """
-        Returns the valuation of this element.
+        Return the valuation of this element.
 
         If self is an exact zero, returns ``maxordp``, which is defined as
         ``(1L << (sizeof(long) * 8 - 2))-1``.
@@ -1480,16 +1480,16 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef val_unit(self, p=None):
         """
-        Returns a pair ``(self.valuation(), self.unit_part())``.
+        Return a pair ``(self.valuation(), self.unit_part())``.
 
         INPUT:
 
-        - ``p`` -- a prime (default: ``None``). If specified, will make sure that p==self.parent().prime()
+        - ``p`` -- a prime (default: ``None``). If specified, will make sure that ``p == self.parent().prime()``
 
         .. NOTE::
 
             The optional argument ``p`` is used for consistency with the
-            valuation methods on integer and rational.
+            valuation methods on integers and rationals.
 
         EXAMPLES::
 
@@ -1707,7 +1707,7 @@ cdef class pAdicConvert_CR_ZZ(RingMap):
     returns the smallest non-negative integer approximation to its input
     which is accurate up to the precision.
 
-    Raises a ``ValueError``, if the input is not in the closure of the image of
+    Raises a :class:`ValueError`, if the input is not in the closure of the image of
     the integers.
 
     EXAMPLES::
@@ -2113,7 +2113,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
 
     def section(self):
         """
-        Returns the map back to the rationals that returns the smallest
+        Return the map back to the rationals that returns the smallest
         non-negative integer approximation to its input which is accurate up to
         the precision.
 
@@ -2130,8 +2130,8 @@ cdef class pAdicConvert_QQ_CR(Morphism):
         return self._section
 
 cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
-    """
-    The canonical inclusion of Zq into its fraction field.
+    r"""
+    The canonical inclusion of `\ZZ_q` into its fraction field.
 
     EXAMPLES::
 
@@ -2246,7 +2246,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
     def section(self):
         """
-        Returns a map back to the ring that converts elements of
+        Return a map back to the ring that converts elements of
         non-negative valuation.
 
         EXAMPLES::
@@ -2356,8 +2356,8 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
 
 cdef class pAdicConvert_CR_frac_field(Morphism):
-    """
-    The section of the inclusion from `\ZZ_q`` to its fraction field.
+    r"""
+    The section of the inclusion from `\ZZ_q` to its fraction field.
 
     EXAMPLES::
 

@@ -66,7 +66,7 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
             a, m = self.index()
             coef = self._monomial_coefficients[(a, m)]
             if (a, m + n) in p._indices:
-                return coef * prod(j for j in range(m + 1, m + n + 1))\
+                return coef * prod(range(m + 1, m + n + 1))\
                     * p.monomial((a, m + n))
             else:
                 return p.zero()

@@ -152,7 +152,7 @@ class SmoothTriangle(Triangle):
 
 
 class TriangleFactory:
-    def triangle(self, a, b, c, color = None):
+    def triangle(self, a, b, c, color=None):
         """
         Parameters:
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space
@@ -173,7 +173,7 @@ class TriangleFactory:
         else:
             return Triangle(a,b,c,color)
 
-    def smooth_triangle(self, a, b, c, da, db, dc, color = None):
+    def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         """
         Parameters:
 
@@ -238,8 +238,8 @@ class TrianglePlot:
         """
         return "".join(o.str() for o in self._objects)
 
-    def __init__(self, triangle_factory, f, min_x__max_x, min_y__max_y, g = None,
-                       min_depth=4, max_depth=8, num_colors = None, max_bend=.3):
+    def __init__(self, triangle_factory, f, min_x__max_x, min_y__max_y, g=None,
+                       min_depth=4, max_depth=8, num_colors=None, max_bend=.3):
         """
 
         TESTS::

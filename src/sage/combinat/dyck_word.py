@@ -957,7 +957,7 @@ class DyckWord(CombinatorialElement):
         EXAMPLES::
 
             sage: w = DyckWords(100).random_element()
-            sage: w.plot()
+            sage: w.plot()                                                              # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.plot import list_plot

@@ -503,7 +503,7 @@ class TranspositionCipher(SymmetricKeyCipher):
             raise ValueError("key (= %s) must have block length %s" % (key, n))
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
@@ -555,7 +555,7 @@ class VigenereCipher(SymmetricKeyCipher):
         """
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode = "ECB"):
+    def __call__(self, M, mode="ECB"):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)

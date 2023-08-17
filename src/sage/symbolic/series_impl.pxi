@@ -240,21 +240,21 @@ cdef class SymbolicSeries(Expression):
         """
         if x is None:
             x = self.default_variable()
-        l = [[self.coefficient(x, d), d] for d in xrange(self.degree(x))]
+        l = [[self.coefficient(x, d), d] for d in range(self.degree(x))]
         if sparse:
             return l
-        else:
-            from sage.rings.integer_ring import ZZ
-            if any(not c[1] in ZZ for c in l):
-                raise ValueError("cannot return dense coefficient list with noninteger exponents")
-            val = l[0][1]
-            if val < 0:
-                raise ValueError("cannot return dense coefficient list with negative valuation")
-            deg = l[-1][1]
-            ret = [ZZ(0)] * int(deg+1)
-            for c in l:
-                ret[c[1]] = c[0]
-            return ret
+
+        from sage.rings.integer_ring import ZZ
+        if any(not c[1] in ZZ for c in l):
+            raise ValueError("cannot return dense coefficient list with noninteger exponents")
+        val = l[0][1]
+        if val < 0:
+            raise ValueError("cannot return dense coefficient list with negative valuation")
+        deg = l[-1][1]
+        ret = [ZZ(0)] * int(deg+1)
+        for c in l:
+            ret[c[1]] = c[0]
+        return ret
 
     def power_series(self, base_ring):
         """

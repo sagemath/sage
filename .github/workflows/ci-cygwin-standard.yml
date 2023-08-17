@@ -39,7 +39,7 @@ jobs:
     with:
       stage: ii-b
       previous_stages: i-*
-      targets: singular maxima gap pari gfan palp flintqs arb ecm givaro
+      targets: singular maxima gap pari gfan palp arb ecm givaro
     needs: [cygwin-stage-i-a, cygwin-stage-i-b]
 
   cygwin-stage-ii-c:

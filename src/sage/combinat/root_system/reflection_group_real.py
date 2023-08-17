@@ -271,9 +271,9 @@ class RealReflectionGroup(ComplexReflectionGroup):
             cls = IrreducibleComplexReflectionGroup
         else:
             cls = ComplexReflectionGroup
-        cls.__init__(self, W_types, index_set = index_set,
-                                    hyperplane_index_set = hyperplane_index_set,
-                                    reflection_index_set = reflection_index_set)
+        cls.__init__(self, W_types, index_set=index_set,
+                                    hyperplane_index_set=hyperplane_index_set,
+                                    reflection_index_set=reflection_index_set)
 
     def _repr_(self):
         r"""

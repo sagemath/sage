@@ -159,9 +159,9 @@ Plotting patches made of unit segments instead of unit faces::
     sage: P = Patch([Face([0,0], 1), Face([0,0], 2)])
     sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
     sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
-    sage: E(P,5).plot()
+    sage: E(P,5).plot()                                                                 # optional - sage.plot
     Graphics object consisting of 21 graphics primitives
-    sage: F(P,3).plot()
+    sage: F(P,3).plot()                                                                 # optional - sage.plot
     Graphics object consisting of 34 graphics primitives
 
 Everything works in any dimension (except for the plotting features
@@ -490,12 +490,12 @@ class Face(SageObject):
             sage: face_contour[1] = map(vector, [(0,0,0),(0,1,0),(0,1,1),(0,0,1)])
             sage: face_contour[2] = map(vector, [(0,0,0),(0,0,1),(1,0,1),(1,0,0)])
             sage: face_contour[3] = map(vector, [(0,0,0),(1,0,0),(1,1,0),(0,1,0)])
-            sage: G = f._plot(projmat, face_contour, 0.75)
+            sage: G = f._plot(projmat, face_contour, 0.75)                              # optional - sage.plot
 
         ::
 
             sage: f = Face((0,0), 2)
-            sage: f._plot(None, None, 1)
+            sage: f._plot(None, None, 1)                                                # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         v = self.vector()
@@ -1102,7 +1102,7 @@ class Patch(SageObject):
 
             sage: from sage.combinat.e_one_star import E1Star, Face, Patch
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
-            sage: P.plot()
+            sage: P.plot()                                                              # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
 
         ::
@@ -1111,7 +1111,7 @@ class Patch(SageObject):
             sage: E = E1Star(sigma)
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: P = E(P, 5)
-            sage: P.plot()
+            sage: P.plot()                                                              # optional - sage.plot
             Graphics object consisting of 57 graphics primitives
 
         Plot with a different projection matrix::
@@ -1121,7 +1121,7 @@ class Patch(SageObject):
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: M = matrix(2, 3, [1,0,-1,0.3,1,-3])
             sage: P = E(P, 3)
-            sage: P.plot(projmat=M)
+            sage: P.plot(projmat=M)                                                     # optional - sage.plot
             Graphics object consisting of 17 graphics primitives
 
         Plot patches made of unit segments::
@@ -1129,9 +1129,9 @@ class Patch(SageObject):
             sage: P = Patch([Face([0,0], 1), Face([0,0], 2)])
             sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
             sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
-            sage: E(P,5).plot()
+            sage: E(P,5).plot()                                                         # optional - sage.plot
             Graphics object consisting of 21 graphics primitives
-            sage: F(P,3).plot()
+            sage: F(P,3).plot()                                                         # optional - sage.plot
             Graphics object consisting of 34 graphics primitives
         """
         if self.dimension() == 2:

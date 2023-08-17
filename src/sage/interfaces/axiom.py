@@ -684,14 +684,13 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             [2,3,4]
             sage: _.type()        #optional - axiom
             Tuple PositiveInteger
-
         """
         P = self._check_valid()
         args = list(args)
         for i, arg in enumerate(args):
             if not isinstance(arg, AxiomElement) or arg.parent() is not P:
                 args[i] = P(arg)
-        cmd = "(" + ",".join([x.name() for x in [self]+args]) + ")"
+        cmd = "(" + ",".join(x.name() for x in [self] + args) + ")"
         return P(cmd)
 
     def _latex_(self):

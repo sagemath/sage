@@ -34,5 +34,5 @@ cdef class SDPVariable(Element):
 cdef class SDPVariableParent(Parent):
     pass
 
-cdef SDPVariableParent sdp_variable_parent
 
+cdef SDPVariableParent sdp_variable_parent

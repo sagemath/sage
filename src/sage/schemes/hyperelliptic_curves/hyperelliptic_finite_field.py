@@ -655,7 +655,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         elif K.characteristic() == 2: # deg(P) = 2 and char(K) = 2
             # quadratic equation doesn't work in characteristic 2 so use brute
             # force
-            points += [self.point([K(1), y, K(0)], check=True) for y in K \
+            points += [self.point([K(1), y, K(0)], check=True) for y in K
                        if not P(K(1), y, K(0))]
         else: # deg(P) = 2 and char(K) not 2
             # P(1, y, 0) = y^2 + r*y + s
@@ -748,7 +748,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             # (0:1:0) is a point on the curve
             points = [self.point([K(0), K(1), K(0)], check=True)]
         else:
-            points=[]
+            points = []
         if P.degree() > 2:
             # P(1, y, 0) = r*y + s
             s = P(K(1), K(0), K(0))
@@ -759,7 +759,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         elif K.characteristic() == 2: # deg(P) = 2 and char(K) = 2
             # quadratic equation doesn't work in characteristic 2 so use brute
             # force
-            points += [self.point([K(1), y, K(0)], check=True) for y in K \
+            points += [self.point([K(1), y, K(0)], check=True) for y in K
                        if not P(K(1), y, K(0))]
         else: # deg(P) = 2 and char(K) not 2
             # P(1, y, 0) = y^2 + r*y + s

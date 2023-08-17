@@ -74,7 +74,7 @@ EXAMPLES: Decimal expansions of constants
 
 We can obtain floating point approximations to each of these
 constants by coercing into the real field with given precision. For
-example, to 200 decimal places we have the following::
+example, to 200 binary places we have the following::
 
     sage: R = RealField(200); R
     Real Field with 200 bits of precision
@@ -220,6 +220,8 @@ from functools import partial
 from sage.rings.infinity import (infinity, minus_infinity,
                                  unsigned_infinity)
 from sage.structure.richcmp import richcmp_method, op_EQ, op_GE, op_LE
+from sage.symbolic.expression import register_symbol, init_pynac_I
+from sage.symbolic.expression import E
 
 constants_table = {}
 constants_name_table = {}
@@ -227,17 +229,18 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-from sage.symbolic.expression import register_symbol, I
-register_symbol(infinity, {'maxima':'inf'}, 0)
-register_symbol(minus_infinity, {'maxima':'minf'}, 0)
-register_symbol(unsigned_infinity, {'maxima':'infinity'}, 0)
-register_symbol(I, {'mathematica':'I'}, 0)
-register_symbol(True, {'giac':'true',
-                       'mathematica':'True',
-                       'maxima':'true'}, 0)
-register_symbol(False, {'giac':'false',
-                        'mathematica':'False',
-                        'maxima':'false'}, 0)
+I = init_pynac_I()
+
+register_symbol(infinity, {'maxima': 'inf'}, 0)
+register_symbol(minus_infinity, {'maxima': 'minf'}, 0)
+register_symbol(unsigned_infinity, {'maxima': 'infinity'}, 0)
+register_symbol(I, {'mathematica': 'I'}, 0)
+register_symbol(True, {'giac': 'true',
+                       'mathematica': 'True',
+                       'maxima': 'true'}, 0)
+register_symbol(False, {'giac': 'false',
+                        'mathematica': 'False',
+                        'maxima': 'false'}, 0)
 
 
 def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
@@ -268,6 +271,7 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
         cls = globals()[class_name]
         return cls(name=name)
 
+
 @richcmp_method
 class Constant():
     def __init__(self, name, conversions=None, latex=None, mathml="",
@@ -287,8 +291,8 @@ class Constant():
         self._domain = domain
 
         for system, value in self._conversions.items():
-            setattr(self, "_%s_"%system, partial(self._generic_interface, value))
-            setattr(self, "_%s_init_"%system, partial(self._generic_interface_init, value))
+            setattr(self, "_%s_" % system, partial(self._generic_interface, value))
+            setattr(self, "_%s_init_" % system, partial(self._generic_interface_init, value))
 
         from .expression import PynacConstant
         self._pynac = PynacConstant(self._name, self._latex, self._domain)
@@ -507,7 +511,7 @@ class Constant():
             pass
 
         try:
-            return getattr(self, "_%s_"%(I.name()))(I)
+            return getattr(self, "_%s_" % (I.name()))(I)
         except AttributeError:
             pass
 
@@ -526,7 +530,7 @@ class Constant():
             sage: gap(p)
             p
         """
-        return gap('"%s"'%self)
+        return gap('"%s"' % self)
 
     def _singular_(self, singular):
         """
@@ -543,7 +547,7 @@ class Constant():
             sage: singular(p)
             p
         """
-        return singular('"%s"'%self)
+        return singular('"%s"' % self)
 
 
 class Pi(Constant):
@@ -595,7 +599,7 @@ class Pi(Constant):
 
     def _sympy_(self):
         """
-        Converts pi to sympy pi.
+        Convert pi to sympy pi.
 
         EXAMPLES::
 
@@ -605,6 +609,7 @@ class Pi(Constant):
         """
         import sympy
         return sympy.pi
+
 
 pi = Pi().expression()
 
@@ -684,11 +689,11 @@ TESTS::
 # The base of the natural logarithm, e, is not a constant in GiNaC/Sage. It is
 # represented by exp(1). A dummy class to make this work with arithmetic and
 # coercion is implemented in the module sage.symbolic.expression for speed.
-from sage.symbolic.expression import E
 e = E()
 
 # Allow for backtranslation to this symbol from Mathematica (#29833).
 register_symbol(e, {'mathematica': 'E'})
+
 
 class NotANumber(Constant):
     """
@@ -701,7 +706,7 @@ class NotANumber(Constant):
             sage: loads(dumps(NaN))
             NaN
         """
-        conversions=dict(matlab='NaN')
+        conversions = dict(matlab='NaN')
         Constant.__init__(self, name, conversions=conversions)
 
     def __float__(self):
@@ -713,7 +718,7 @@ class NotANumber(Constant):
         """
         return float('nan')
 
-    def _mpfr_(self,R):
+    def _mpfr_(self, R):
         """
         EXAMPLES::
 
@@ -722,7 +727,7 @@ class NotANumber(Constant):
             sage: type(_)
             <class 'sage.rings.real_mpfr.RealNumber'>
         """
-        return R('NaN') #??? nan in mpfr: void mpfr_set_nan (mpfr_t x)
+        return R('NaN')  # ??? nan in mpfr: void mpfr_set_nan (mpfr_t x)
 
     def _real_double_(self, R):
         """
@@ -748,7 +753,9 @@ class NotANumber(Constant):
         import sympy
         return sympy.nan
 
+
 NaN = NotANumber().expression()
+
 
 class GoldenRatio(Constant):
     """
@@ -803,7 +810,7 @@ class GoldenRatio(Constant):
             sage: golden_ratio.__float__()
             1.618033988749895
         """
-        return float(0.5)*(float(1.0)+math.sqrt(float(5.0)))
+        return 0.5 + math.sqrt(1.25)
 
     def _real_double_(self, R):
         """
@@ -814,7 +821,7 @@ class GoldenRatio(Constant):
         """
         return R('1.61803398874989484820458')
 
-    def _mpfr_(self,R):
+    def _mpfr_(self, R):
         """
         EXAMPLES::
 
@@ -823,7 +830,7 @@ class GoldenRatio(Constant):
             sage: RealField(100)(golden_ratio)
             1.6180339887498948482045868344
         """
-        return (R(1)+R(5).sqrt())/R(2)
+        return (R(1) + R(5).sqrt()) / R(2)
 
     def _algebraic_(self, field):
         """
@@ -850,7 +857,9 @@ class GoldenRatio(Constant):
         import sympy
         return sympy.GoldenRatio
 
+
 golden_ratio = GoldenRatio().expression()
+
 
 class Log2(Constant):
     """
@@ -915,7 +924,7 @@ class Log2(Constant):
         """
         return R.log2()
 
-    def _mpfr_(self,R):
+    def _mpfr_(self, R):
         """
         EXAMPLES::
 
@@ -926,7 +935,9 @@ class Log2(Constant):
         """
         return R.log2()
 
+
 log2 = Log2().expression()
+
 
 class EulerGamma(Constant):
     """
@@ -961,7 +972,7 @@ class EulerGamma(Constant):
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\gamma', domain='positive')
 
-    def _mpfr_(self,R):
+    def _mpfr_(self, R):
         """
         EXAMPLES::
 
@@ -1003,7 +1014,9 @@ class EulerGamma(Constant):
         import sympy
         return sympy.EulerGamma
 
+
 euler_gamma = EulerGamma().expression()
+
 
 class Catalan(Constant):
     """
@@ -1022,7 +1035,7 @@ class Catalan(Constant):
             sage: loads(dumps(catalan))
             catalan
         """
-        #kash: R is default prec
+        # kash: R is default prec
         conversions = dict(mathematica='Catalan', kash='Catalan(R)',
                            maple='Catalan', maxima='catalan',
                            pynac='Catalan')
@@ -1071,7 +1084,9 @@ class Catalan(Constant):
         import sympy
         return sympy.Catalan
 
+
 catalan = Catalan().expression()
+
 
 class Khinchin(Constant):
     """
@@ -1123,7 +1138,9 @@ class Khinchin(Constant):
         """
         return 2.6854520010653064453097148355
 
+
 khinchin = Khinchin().expression()
+
 
 class TwinPrime(Constant):
     r"""
@@ -1169,6 +1186,7 @@ class TwinPrime(Constant):
             0.6601618158468696
         """
         return 0.66016181584686957392781211001
+
 
 twinprime = TwinPrime().expression()
 
@@ -1218,6 +1236,7 @@ class Mertens(Constant):
             0.26149721284764277
         """
         return 0.26149721284764278375542683861
+
 
 mertens = Mertens().expression()
 

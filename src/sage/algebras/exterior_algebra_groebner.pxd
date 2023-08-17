@@ -1,7 +1,6 @@
 """
 Exterior algebras Gröbner bases
 """
-
 from sage.data_structures.bitset cimport FrozenBitset
 from sage.rings.integer cimport Integer
 from sage.algebras.clifford_algebra_element cimport CliffordAlgebraElement
@@ -53,4 +52,3 @@ cdef class GroebnerStrategyDegRevLex(GroebnerStrategy):
 
 cdef class GroebnerStrategyDegLex(GroebnerStrategy):
     pass
-

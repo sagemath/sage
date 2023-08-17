@@ -22,16 +22,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.arith.functions import lcm
-from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.interfaces.gap3 import gap3
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
-from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_c import reduced_word_c, reduce_in_coset
 from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix

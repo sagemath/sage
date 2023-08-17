@@ -68,16 +68,17 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         Traceback (most recent call last):
         ...
         NotImplementedError: Reduction of hyperelliptic curves not yet implemented.
-        See trac #14755 and #14756.
-        sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856],
-        ....:                                    reduced=False)
+        See issues #14755 and #14756.
+
+        sage: HyperellipticCurve_from_invariants([3840,414720,491028480,2437709561856], reduced=False)
         Hyperelliptic Curve over Rational Field defined by
-         y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
+        y^2 = -46656*x^6 + 46656*x^5 - 19440*x^4 + 4320*x^3 - 540*x^2 + 4410*x - 1
+
         sage: HyperellipticCurve_from_invariants([21, 225/64, 22941/512, 1])
         Traceback (most recent call last):
         ...
         NotImplementedError: Reduction of hyperelliptic curves not yet implemented.
-        See trac #14755 and #14756.
+        See issues #14755 and #14756.
 
     An example over a finite field::
 
@@ -169,20 +170,20 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         from sage.interfaces.magma import magma
         from sage.misc.sage_eval import sage_eval
         if MConic.has_rational_point(algorithm='magma'):
-            parametrization = [l.replace('$.1', 't').replace('$.2', 'u') \
+            parametrization = [l.replace('$.1', 't').replace('$.2', 'u')
                for l in str(magma(MConic).Parametrization()).splitlines()[4:7]]
-            [F1, F2, F3] = [sage_eval(p, locals={'t':t,'u':1,'a':k.gen()}) \
-               for p in parametrization]
+            [F1, F2, F3] = [sage_eval(p, locals={'t': t, 'u': 1, 'a': k.gen()})
+                            for p in parametrization]
         else:
-            raise ValueError("No such curve exists over %s as there are no " \
-                                 "rational points on %s" % (k, MConic))
+            raise ValueError(f"No such curve exists over {k} as there are no "
+                             f"rational points on {MConic}")
     else:
         if MConic.has_rational_point():
             parametrization = MConic.parametrization(morphism=False)[0]
             [F1, F2, F3] = [p(t, 1) for p in parametrization]
         else:
-            raise ValueError("No such curve exists over %s as there are no " \
-                                 "rational points on %s" % (k, MConic))
+            raise ValueError(f"No such curve exists over {k} as there are no "
+                             f"rational points on {MConic}")
 
     # setting the cijk from Mestre's algorithm
     c111 = 12*x*y - 2*y/3 - 4*z
@@ -204,14 +205,14 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         c233*F2*F3**2 + c333*F3**3
 
     try:
-        f = f*f.denominator()  # clear the denominator
+        f = f * f.denominator()  # clear the denominator
     except (AttributeError, TypeError):
         pass
 
     if reduced:
-        raise NotImplementedError("Reduction of hyperelliptic curves not " \
-                                   "yet implemented. " \
-                                   "See trac #14755 and #14756.")
+        raise NotImplementedError("Reduction of hyperelliptic curves not "
+                                  "yet implemented. "
+                                  "See issues #14755 and #14756.")
 
     return HyperellipticCurve(f)
 
@@ -247,6 +248,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     Note that the algorithm works over number fields as well::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k = NumberField(x^2 - 41, 'a')                                            # optional - sage.rings.number_field
         sage: a = k.an_element()                                                        # optional - sage.rings.number_field
         sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # optional - sage.rings.number_field

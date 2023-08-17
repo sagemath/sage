@@ -29,6 +29,9 @@ env:
   TARGETS: build doc-html
   TARGETS_OPTIONAL: ptest
 
+permissions:
+  packages: write
+
 jobs:
 
   standard-pre:

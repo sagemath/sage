@@ -256,7 +256,6 @@ class PadicValuationFactory(UniqueFactory):
         else:
             raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r"%(v, v.domain(), G.parent()))
 
-
         assert(v.domain() is G.parent())
 
         # To obtain uniqueness of p-adic valuations, we need a canonical
@@ -378,7 +377,6 @@ class PadicValuationFactory(UniqueFactory):
             raise NotImplementedError("cannot normalize %r" % (R,))
 
         return K, L, G
-
 
     def create_object(self, version, key, **extra_args):
         r"""
@@ -740,6 +738,7 @@ class pAdicValuation_base(DiscreteValuation):
         TESTS::
 
             sage: R.<a> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = QQ.extension(x^3 - 2)
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b^2 + 2*b + a)
@@ -1386,6 +1385,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
         Check that this also works for relative extensions::
 
             sage: v = QQ.valuation(2)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^2 + 2)
             sage: M.<b> = L.extension(x^2 + 1)
             sage: w = v.extension(L).extension(M)

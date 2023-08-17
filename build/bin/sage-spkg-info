@@ -9,7 +9,7 @@ PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
 for ext in rst txt; do
     SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
     if [ -f "$SPKG_FILE" ]; then
-        cat "$SPKG_FILE"
+        sed "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" "$SPKG_FILE"
         break
     fi
 done

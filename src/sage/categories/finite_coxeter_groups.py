@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
 """
@@ -8,6 +9,8 @@ Finite Coxeter Groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+
+import sage.rings.abc
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -745,13 +748,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 point = [ZZ.one()] * n
             v = sum(point[i-1] * weights[i] for i in weights.keys())
-            from sage.geometry.polyhedron.constructor import Polyhedron
-            from sage.rings.qqbar import AA, QQbar
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             vertices = [v*w for w in self]
-            if base_ring is None and v.base_ring() in [UniversalCyclotomicField(), QQbar]:
-                vertices = [v.change_ring(AA) for v in vertices]
-                base_ring = AA
+            if base_ring is None:
+                if isinstance(v.base_ring(), (sage.rings.abc.UniversalCyclotomicField,
+                                              sage.rings.abc.AlgebraicField_common)):
+                    from sage.rings.qqbar import AA
+                    vertices = [v.change_ring(AA) for v in vertices]
+                    base_ring = AA
+            from sage.geometry.polyhedron.constructor import Polyhedron
             return Polyhedron(vertices=vertices, base_ring=base_ring)
 
     class ElementMethods:

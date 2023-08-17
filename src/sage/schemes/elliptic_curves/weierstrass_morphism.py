@@ -258,12 +258,14 @@ def _isomorphisms(E, F):
 
         sage: p = random_prime(100)
         sage: F = GF(p).algebraic_closure()
-        sage: while True:
-        ....:     try:
-        ....:         E = EllipticCurve(list((F^5).random_element()))
-        ....:     except ArithmeticError:
-        ....:         continue
-        ....:     break
+        sage: j = F.random_element()
+        sage: while j in (0, 1728):     # skip the hard case
+        ....:     j = F.random_element()
+        sage: j = F(choice((0, 1728)))  # long time -- do the hard case
+        sage: E = EllipticCurve_from_j(j)
+        sage: u,r,s,t = (F^4).random_element()
+        sage: u = u or 1
+        sage: E = E.change_weierstrass_model(u,r,s,t)
         sage: Aut = E.automorphisms()
         sage: len(set(Aut)) == len(Aut)
         True

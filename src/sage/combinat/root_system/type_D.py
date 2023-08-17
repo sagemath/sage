@@ -341,7 +341,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         if n == 2:
             ret = "{}   {}\n".format(node(label(1)), node(label(2)))
             return ret + "{!s:4}{!s:4}".format(label(1), label(2))
-        ret =  (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
+        ret = (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
         ret += ((4*(n-3))*" " +"|\n")*2
         ret += "---".join(node(label(i)) for i in range(1, n)) +"\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))

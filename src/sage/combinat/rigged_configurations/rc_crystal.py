@@ -179,7 +179,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         else:
             category = (RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets())
         Parent.__init__(self, category=category)
-        n = self._cartan_type.rank() #== len(self._cartan_type.index_set())
+        n = self._cartan_type.rank()  # == len(self._cartan_type.index_set())
         self.module_generators = (self.element_class(self, partition_list=[[] for _ in repeat(None, n)]),)
 
     options = RiggedConfigurations.options
@@ -444,7 +444,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             sage: elt == RC.from_virtual(RC.to_virtual(elt))
             True
         """
-        gamma = list(self._folded_ct.scaling_factors()) #map(int, self._folded_ct.scaling_factors())
+        gamma = list(self._folded_ct.scaling_factors())  # map(int, self._folded_ct.scaling_factors())
         sigma = self._folded_ct._orbit
         n = self._cartan_type.rank()
         partitions = [None] * n

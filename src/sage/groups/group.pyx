@@ -17,12 +17,8 @@ Base class for groups
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import random
-
 from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
-from sage.rings.integer_ring import ZZ
-from sage.misc.lazy_attribute import lazy_attribute
 
 
 def is_Group(x):
@@ -143,7 +139,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()
+            sage: SL(2, 7).is_commutative()                                             # optional - sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -215,17 +211,15 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])
-            sage: G.an_element()
+            sage: G = AbelianGroup([2,3,4,5])                                           # optional - sage.groups
+            sage: G.an_element()                                                        # optional - sage.groups
             f0*f1*f2*f3
         """
-        from sage.misc.misc_c import prod
-        return prod(self.gens())
+        return self.prod(self.gens())
 
     def quotient(self, H, **kwds):
         """
-        Return the quotient of this group by the normal subgroup
-        `H`.
+        Return the quotient of this group by the normal subgroup `H`.
 
         EXAMPLES::
 

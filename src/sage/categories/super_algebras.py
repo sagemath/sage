@@ -76,22 +76,22 @@ class SuperAlgebras(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename("A")
-                sage: T = A.tensor(A,A); T
+                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename("A")                    # optional - sage.combinat sage.modules
+                sage: T = A.tensor(A,A); T                                              # optional - sage.combinat sage.modules
                 A # A # A
-                sage: T in Algebras(ZZ).Graded().SignedTensorProducts()
+                sage: T in Algebras(ZZ).Graded().SignedTensorProducts()                 # optional - sage.combinat sage.modules
                 True
-                sage: T in Algebras(ZZ).Graded().TensorProducts()
+                sage: T in Algebras(ZZ).Graded().TensorProducts()                       # optional - sage.combinat sage.modules
                 False
-                sage: A.rename(None)
+                sage: A.rename(None)                                                    # optional - sage.combinat sage.modules
 
             This also works when the other elements do not have
             a signed tensor product (:trac:`31266`)::
 
-                sage: a = SteenrodAlgebra(3).an_element()
-                sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])
-                sage: s = M.basis()['s']
-                sage: tensor([a, s])
+                sage: a = SteenrodAlgebra(3).an_element()                               # optional - sage.modules
+                sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])               # optional - sage.modules sage.rings.finite_rings
+                sage: s = M.basis()['s']                                                # optional - sage.modules sage.rings.finite_rings
+                sage: tensor([a, s])                                                    # optional - sage.modules sage.rings.finite_rings
                 2*Q_1 Q_3 P(2,1) # B['s']
             """
             constructor = kwargs.pop('constructor', tensor_signed)

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Subfield subcode
 
@@ -113,7 +114,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -127,7 +128,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -141,7 +142,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def dimension(self):
         r"""
-        Returns the dimension of ``self``.
+        Return the dimension of ``self``.
 
         EXAMPLES::
 
@@ -154,7 +155,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def dimension_upper_bound(self):
         r"""
-        Returns an upper bound for the dimension of ``self``.
+        Return an upper bound for the dimension of ``self``.
 
         EXAMPLES::
 
@@ -167,7 +168,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def dimension_lower_bound(self):
         r"""
-        Returns a lower bound for the dimension of ``self``.
+        Return a lower bound for the dimension of ``self``.
 
         EXAMPLES::
 
@@ -184,7 +185,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def original_code(self):
         r"""
-        Returns the original code of ``self``.
+        Return the original code of ``self``.
 
         EXAMPLES::
 
@@ -197,7 +198,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def embedding(self):
         r"""
-        Returns the field embedding between the base field of ``self`` and
+        Return the field embedding between the base field of ``self`` and
         the base field of its original code.
 
         EXAMPLES::
@@ -215,7 +216,7 @@ class SubfieldSubcode(AbstractLinearCode):
     @cached_method
     def parity_check_matrix(self):
         r"""
-        Returns a parity check matrix of ``self``.
+        Return a parity check matrix of ``self``.
 
         EXAMPLES::
 
@@ -282,10 +283,11 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:13], 5)
         sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
         sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
-        Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4) through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
+        Decoder of Subfield subcode of [13, 5, 9] Reed-Solomon Code over GF(16) down to GF(4)
+         through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder = None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs):
         r"""
         TESTS:
 
@@ -296,7 +298,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cbis = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:9], 5)
             sage: D = Cbis.decoder()
-            sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs, original_decoder = D)
+            sage: codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs, original_decoder=D)
             Traceback (most recent call last):
             ...
             ValueError: original_decoder must have the original code as associated code
@@ -318,7 +320,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -332,7 +334,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -346,7 +348,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     def original_decoder(self):
         r"""
-        Returns the decoder over the original code that will be used to decode words of
+        Return the decoder over the original code that will be used to decode words of
         :meth:`sage.coding.decoder.Decoder.code`.
 
         EXAMPLES::
@@ -368,7 +370,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:13], 5)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: D = codes.decoders.SubfieldSubcodeOriginalCodeDecoder(Cs)
-            sage: Chan = channels.StaticErrorRateChannel(Cs.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(Cs.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: c = Cs.random_element()
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
@@ -399,7 +402,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     def decoding_radius(self, **kwargs):
         r"""
-        Returns maximal number of errors ``self`` can decode.
+        Return the maximal number of errors ``self`` can decode.
 
         INPUT:
 

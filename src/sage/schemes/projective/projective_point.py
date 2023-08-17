@@ -878,7 +878,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         r"""
         Determine if the point is preperiodic with respect to the map ``f``.
 
-        This is only implemented for projective space (not subschemes).
+        This is implemented for both projective space and subschemes.
         There are two optional keyword arguments:
         ``error_bound`` sets the error_bound used in the canonical height computation
         and ``return_period`` a boolean which controls if the period is returned if the
@@ -926,7 +926,16 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(z)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((-1, 1, 0))
+            sage: p.is_preperiodic(f, return_period=True)
+            (0, 2)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: f = DynamicalSystem_projective([x^2 - 29/16*y^2, y^2], domain=P)
             sage: Q = P(1, 4)
             sage: Q.is_preperiodic(f, return_period=True)

@@ -89,8 +89,8 @@ fi
 OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
 cat > "$OUTPUT_INDEX" <<EOF
 
-External Packages
-=================
+Packages and Features
+=====================
 
 Standard Packages
 -----------------
@@ -100,7 +100,7 @@ Sage depends.  It installs them automatically if it does not find
 equivalent system packages.
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_' | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -112,7 +112,55 @@ For additional functionality, you can install some of the following
 optional packages.
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_' | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Features
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/features
+   sage/features/join_feature
+   sage/features/all
+   sage/features/sagemath
+   sage/features/pkg_systems
+   sage/features/bliss
+   sage/features/csdp
+   sage/features/databases
+   sage/features/dvipng
+   sage/features/ffmpeg
+   sage/features/four_ti_2
+   sage/features/gap
+   sage/features/graph_generators
+   sage/features/graphviz
+   sage/features/imagemagick
+   sage/features/interfaces
+   sage/features/internet
+   sage/features/kenzo
+   sage/features/latex
+   sage/features/latte
+   sage/features/lrs
+   sage/features/mcqd
+   sage/features/meataxe
+   sage/features/mip_backends
+   sage/features/normaliz
+   sage/features/pandoc
+   sage/features/pdf2svg
+   sage/features/polymake
+   sage/features/rubiks
+   sage/features/tdlib
+EOF
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Distribution Packages of the Sage Library
+-----------------------------------------
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -125,9 +173,10 @@ Some packages that provide additional functionality are marked as
 integration of these packages into the Sage distribution.
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
+
 cat >> "$OUTPUT_INDEX" <<EOF
 
 All External Packages
@@ -142,10 +191,13 @@ EOF
 
 OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
 cat >> "$OUTPUT_INDEX" <<EOF
+
 Details of external packages
 ============================
 
 Packages are in alphabetical order.
+
+.. default-role:: code
 
 .. toctree::
    :maxdepth: 1
@@ -160,3 +212,8 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst | sort); do
             (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) | sed -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" > "$OUTPUT_DIR"/$PKG_BASE.rst
             echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
 done
+cat >> "$OUTPUT_INDEX" <<EOF
+
+.. default-role::
+
+EOF

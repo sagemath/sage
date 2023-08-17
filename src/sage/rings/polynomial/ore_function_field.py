@@ -355,7 +355,6 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self.base_ring().characteristic()
 
-
     def twisting_morphism(self, n=1):
         r"""
         Return the twisting endomorphism defining this Ore function field iterated ``n`` times

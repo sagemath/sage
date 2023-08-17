@@ -7,14 +7,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -141,8 +141,8 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
 
     num = R(f.numerator())
     denom = R(f.denominator())
-    ep_num = set([ZZ(1) - 2*(( sum([g.exponents()[0][m] for m in [1,2]]) )%2) for g in   dhom(num).monomials()])
-    ep_denom = set([ZZ(1) - 2*(( sum([g.exponents()[0][m] for m in [1,2]]) )%2) for g in dhom(denom).monomials()])
+    ep_num = set([ZZ.one() - 2*((sum([g.exponents()[0][m] for m in [1, 2]])) % 2) for g in dhom(num).monomials()])
+    ep_denom = set([ZZ.one() - 2*((sum([g.exponents()[0][m] for m in [1, 2]])) % 2) for g in dhom(denom).monomials()])
 
     if (n == infinity):
         hom_num = R(   num.subs(x=x**4, y=y**2, z=z**2) )

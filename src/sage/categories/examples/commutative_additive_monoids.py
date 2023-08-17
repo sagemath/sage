@@ -124,7 +124,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
                 sage: [bool(m) for m in M.additive_semigroup_generators()]
                 [True, True, True, True]
             """
-            return any(x for x in self.value.values())
+            return any(self.value.values())
 
 
 Example = FreeCommutativeAdditiveMonoid

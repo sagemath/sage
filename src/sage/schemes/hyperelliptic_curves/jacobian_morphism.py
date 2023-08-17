@@ -511,7 +511,6 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         """
         return self.codomain()
 
-
     def __list__(self):
         r"""
         Return a list `(a(x), b(x))` of the polynomials giving the
@@ -668,8 +667,6 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             True
         """
         return self.__polys[0] != 1
-
-
 
     def __neg__(self):
         r"""

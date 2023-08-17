@@ -731,7 +731,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def __pari__(self, variable=None):
         """
-        Return ``self`` as a Pari object.
+        Return ``self`` as a PARI object.
         """
         if variable is None:
             variable = self.parent().variable_name()
@@ -749,7 +749,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - secure  -- a boolean (default: ``False``)
+        - ``secure``  -- a boolean (default: ``False``)
 
         If ``secure`` is ``True`` and the degree of this polynomial
         is not determined (because the leading coefficient is
@@ -817,15 +817,15 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        ``self`` -- a p-adic polynomial
+        - ``self`` -- a p-adic polynomial
 
-        n -- ``None`` or an integer (default ``None``).
+        - ``n`` -- ``None`` or an integer (default ``None``).
 
         OUTPUT:
 
-        If n == None, returns a list of absolute precisions of
+        If ``n`` is ``None``, returns a list of absolute precisions of
         coefficients.  Otherwise, returns the absolute precision of
-        the coefficient of x^n.
+        the coefficient of `x^n`.
 
         EXAMPLES::
 
@@ -846,15 +846,15 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        ``self`` -- a p-adic polynomial
+        - ``self`` -- a p-adic polynomial
 
-        n -- ``None`` or an integer (default ``None``).
+        - ``n`` -- ``None`` or an integer (default ``None``).
 
         OUTPUT:
 
-        If n == None, returns a list of relative precisions of
+        If ``n`` is ``None``, returns a list of relative precisions of
         coefficients.  Otherwise, returns the relative precision of
-        the coefficient of x^n.
+        the coefficient of `x^n`.
 
         EXAMPLES::
 
@@ -882,14 +882,14 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        ``self`` -- a p-adic polynomial
+        - ``self`` -- a p-adic polynomial
 
-        n -- ``None`` or an integer (default ``None``).
+        - ``n`` -- ``None`` or an integer (default ``None``).
 
         OUTPUT:
 
-        If n == None, returns a list of valuations of coefficients.  Otherwise,
-        returns the valuation of the coefficient of x^n.
+        If ``n`` is ``None``, returns a list of valuations of coefficients.  Otherwise,
+        returns the valuation of the coefficient of `x^n`.
 
         EXAMPLES::
 
@@ -916,15 +916,15 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        ``self`` -- a p-adic polynomial
+        - ``self`` -- a p-adic polynomial
 
-        val_of_var -- ``None`` or a rational (default ``None``).
+        - ``val_of_var`` -- ``None`` or a rational (default ``None``).
 
         OUTPUT:
 
-        If val_of_var == None, returns the largest power of the
+        If ``val_of_var`` is ``None``, returns the largest power of the
         variable dividing self.  Otherwise, returns the valuation of
-        ``self`` where the variable is assigned valuation val_of_var
+        ``self`` where the variable is assigned valuation ``val_of_var``
 
         EXAMPLES::
 
@@ -997,7 +997,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def rescale(self, a):
         r"""
-        Return f(a*X)
+        Return `f(a\cdot x)`.
 
         .. TODO::
 
@@ -1085,7 +1085,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def _quo_rem_list(self, right, secure):
         """
-        An implementation of quo_rem using lists of coefficients.
+        An implementation of :meth:`quo_rem` using lists of coefficients.
 
         Faster than :meth:`_quo_rem_naive`.
 
@@ -1138,7 +1138,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         OUTPUT:
 
-        - a Newton polygon
+        - a :class:`NewtonPolygon`
 
         EXAMPLES::
 

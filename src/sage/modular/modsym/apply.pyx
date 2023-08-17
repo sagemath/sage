@@ -43,7 +43,7 @@ cdef class Apply:
     cdef int apply_to_monomial_flint(self, fmpz_poly_t ans, int i, int j,
                                      int a, int b, int c, int d) except -1:
         if i < 0 or j - i < 0:
-            raise ValueError("i (=%s) and j-i (=%s) must both be nonnegative."%(i,j-i))
+            raise ValueError("i (=%s) and j-i (=%s) must both be nonnegative." % (i, j - i))
 
         # f = b+a*x, g = d+c*x
         fmpz_poly_set_coeff_si(self.f, 0, b)
@@ -60,6 +60,7 @@ cdef class Apply:
 
 
 cdef Apply A = Apply()
+
 
 def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     r"""
