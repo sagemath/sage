@@ -204,6 +204,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
+    if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
+        # Enforce two spaces before comment
+        first_line_sans_comments = first_line_sans_comments.rstrip() + "  "
 
     if return_string_sans_tags:
         # skip non-tag comments that precede the first tag comment
