@@ -139,7 +139,7 @@ cdef class BasisExchangeMatroid(Matroid):
         This initializer sets up a correspondence between elements of
         ``groundset`` and ``range(len(groundset))``. ``BasisExchangeMatroid``
         uses this correspondence for encoding of subsets of the groundset as
-        bitpacked sets of integers --- see ``__pack()`` and ``__unpack()``. In
+        bitpacked sets of integers --- see ``_pack()`` and ``__unpack()``. In
         general, methods of ``BasisExchangeMatroid`` having a name starting
         with two underscores deal with such encoded subsets.
 
@@ -180,7 +180,7 @@ cdef class BasisExchangeMatroid(Matroid):
             self._idx[self._E[i]] = i
 
         if basis is not None:
-            self.__pack(self._current_basis, frozenset(basis))
+            self._pack(self._current_basis, frozenset(basis))
 
     def __dealloc__(self):
         bitset_free(self._current_basis)
@@ -231,7 +231,7 @@ cdef class BasisExchangeMatroid(Matroid):
             self._heuristic_partition_var._relabel(l)
 
     # the engine
-    cdef __pack(self, bitset_t I, F):
+    cdef _pack(self, bitset_t I, F):
         """
         Encode a subset F of the groundset into a bitpacked set of integers
         """
@@ -454,7 +454,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         Set _current_basis to subset of the groundset ``F``.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         bitset_difference(self._inside, self._current_basis, self._input)
         bitset_difference(self._outside, self._input, self._current_basis)
         self.__move(self._inside, self._outside)
@@ -630,8 +630,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ['b', 'c', 'e', 'f']
 
         """
-        self.__pack(self._input, X)
-        self.__pack(self._input2, Y)
+        self._pack(self._input, X)
+        self._pack(self._input2, Y)
         self.__move_current_basis(self._input, self._input2)
 
     cpdef _max_independent(self, F):
@@ -661,7 +661,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.max_independent>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -692,7 +692,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.rank>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
         return bitset_len(self._output)
 
@@ -729,7 +729,7 @@ cdef class BasisExchangeMatroid(Matroid):
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.circuit>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__circuit(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -754,7 +754,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: sorted(M._fundamental_circuit('abcd', 'e'))
             ['a', 'b', 'c', 'e']
         """
-        self.__pack(self._input, B)
+        self._pack(self._input, B)
         bitset_clear(self._input2)
         self.__move_current_basis(self._input, self._input2)
         self.__fundamental_circuit(self._output, self._idx[e])
@@ -787,7 +787,7 @@ cdef class BasisExchangeMatroid(Matroid):
             :meth:`<sage.matroids.matroid.Matroid.closure>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__closure(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -818,7 +818,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.max_coindependent>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_coindependent(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -848,7 +848,7 @@ cdef class BasisExchangeMatroid(Matroid):
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.corank>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_coindependent(self._output, self._input)
         return bitset_len(self._output)
 
@@ -885,7 +885,7 @@ cdef class BasisExchangeMatroid(Matroid):
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.cocircuit>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__cocircuit(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -910,7 +910,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: sorted(M._fundamental_cocircuit('efgh', 'e'))
             ['b', 'c', 'd', 'e']
         """
-        self.__pack(self._input, B)
+        self._pack(self._input, B)
         bitset_clear(self._input2)
         self.__move_current_basis(self._input, self._input2)
         self.__fundamental_cocircuit(self._output, self._idx[e])
@@ -943,7 +943,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.coclosure>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self._coclosure_internal(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -973,8 +973,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ['e', 'f', 'g']
 
         """
-        self.__pack(self._input, X)
-        self.__pack(self._input2, Y)
+        self._pack(self._input, X)
+        self._pack(self._input2, Y)
         self.__augment(self._output, self._input, self._input2)
         return self.__unpack(self._output)
 
@@ -1006,7 +1006,7 @@ cdef class BasisExchangeMatroid(Matroid):
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.is_independent>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         return self.__is_independent(self._input)
 
     # connectivity
@@ -1142,8 +1142,8 @@ cdef class BasisExchangeMatroid(Matroid):
         cdef bitset_t SS, TT
         bitset_init(SS, self._groundset_size)
         bitset_init(TT, self._groundset_size)
-        self.__pack(SS,S)
-        self.__pack(TT,T)
+        self._pack(SS,S)
+        self._pack(TT,T)
         #F = set(self.groundset()) - (S | T)
         cdef bitset_t F, I
         bitset_init(F, self._groundset_size)

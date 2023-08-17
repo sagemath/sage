@@ -17,7 +17,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cdef __relabel(self, l)
 
-    cdef __pack(self, bitset_t, X)
+    cdef _pack(self, bitset_t, X)
     cdef __unpack(self, bitset_t)
     cdef bint _is_exchange_pair(self, long x, long y) except -1
     cdef int _exchange(self, long x, long y) except -1
