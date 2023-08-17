@@ -266,7 +266,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_discard(self._current_basis, x)
         bitset_add(self._current_basis, y)
 
-    cdef int __move(self, bitset_t X, bitset_t Y) except -1:
+    cdef int _move(self, bitset_t X, bitset_t Y) except -1:
         """
         Change current_basis to minimize intersection with ``X``, maximize intersection with ``Y``.
         """
@@ -319,7 +319,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, F)
         bitset_difference(self._outside, F, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_intersection(R, self._current_basis, F)
 
     cdef __circuit(self, bitset_t R, bitset_t F):
@@ -355,7 +355,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, F)
         bitset_difference(self._outside, F, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_set_first_n(R, self._groundset_size)
         cdef long x = bitset_first(self._inside)
         while x >= 0:
@@ -370,7 +370,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_difference(R, F, self._current_basis)
 
     cdef __cocircuit(self, bitset_t R, bitset_t F):
@@ -408,7 +408,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_set_first_n(R, self._groundset_size)
         cdef long y = bitset_first(self._outside)
         while y >= 0:
@@ -422,10 +422,10 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, X)
         bitset_difference(self._outside, X, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_difference(self._inside, self._inside, Y)
         bitset_difference(self._outside, Y, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_intersection(R, self._current_basis, Y)
 
     cdef bint __is_independent(self, bitset_t F) except -1:
@@ -434,7 +434,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, F)
         bitset_difference(self._outside, F, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         return bitset_isempty(self._outside)
 
     cdef __move_current_basis(self, bitset_t X, bitset_t Y):
@@ -443,11 +443,11 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, X)
         bitset_difference(self._outside, X, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_intersection(self._inside, self._current_basis, Y)
         bitset_complement(self._outside, self._current_basis)
         bitset_difference(self._outside, self._outside, Y)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
 
     # functions for derived classes and for parent class
     cdef bint _set_current_basis(self, F):
@@ -457,7 +457,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self._pack(self._input, F)
         bitset_difference(self._inside, self._current_basis, self._input)
         bitset_difference(self._outside, self._input, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         return bitset_isempty(self._outside) and bitset_isempty(self._inside)
 
     # groundset and full_rank
@@ -2397,7 +2397,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 # Set current basis to Y
                 bitset_difference(self._inside, self._current_basis, BB._subsets[pointerY])
                 bitset_difference(self._outside, BB._subsets[pointerY], self._current_basis)
-                self.__move(self._inside, self._outside)
+                self._move(self._inside, self._outside)
                 if not bitset_eq(self._current_basis, BB._subsets[pointerY]):
                     # We failed to set the current basis to Y through basis exchanges.
                     # Therefore, the exchange axioms are violated!
