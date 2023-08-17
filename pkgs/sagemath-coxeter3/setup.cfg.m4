@@ -18,3 +18,11 @@ packages =
 sage.libs.coxeter3 =
     coxeter.pxd
     decl.pxd
+
+[options.extras_require]
+test =
+    SPKG_INSTALL_REQUIRES_sagemath_repl
+    SPKG_INSTALL_REQUIRES_sagemath_combinat
+    SPKG_INSTALL_REQUIRES_sagemath_graphs
+    SPKG_INSTALL_REQUIRES_sagemath_groups
+    SPKG_INSTALL_REQUIRES_sagemath_modules
