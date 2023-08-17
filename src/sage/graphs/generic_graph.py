@@ -439,7 +439,6 @@ from .dot2tex_utils import assert_have_dot2tex
 from sage.misc.decorators import options
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import random
-from sage.misc.superseded import deprecation
 from sage.misc.lazy_import import lazy_import, LazyImport
 
 from sage.rings.integer_ring import ZZ
@@ -3515,7 +3514,7 @@ class GenericGraph(GenericGraph_pyx):
 
         self._backend.multiple_edges(new)
 
-    def multiple_edges(self, to_undirected=False, labels=True, sort=False):
+    def multiple_edges(self, to_undirected=False, labels=True, sort=False, key=None):
         """
         Return any multiple edges in the (di)graph.
 
@@ -3525,7 +3524,11 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``labels`` -- boolean (default: ``True``); whether to include labels
 
-        - ``sort`` - boolean (default: ``False``); whether to sort the result
+        - ``sort`` -- boolean (default: ``False``); whether to sort the result
+
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge as its one argument and returns a value that can be used for
+          comparisons in the sorting algorithm (we must have ``sort=True``)
 
         EXAMPLES::
 
@@ -3574,7 +3577,36 @@ class GenericGraph(GenericGraph_pyx):
             []
             sage: G.multiple_edges(to_undirected=True, sort=True)
             [(1, 2, 'h'), (2, 1, 'g')]
+
+        Using the ``key`` argument to order multiple edges of incomparable
+        types (see :trac:`35903`)::
+
+            sage: G = Graph([('A', 'B', 3), (1, 2, 1), ('A', 'B', 4), (1, 2, 2)], multiedges=True)
+            sage: G.multiple_edges(sort=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for <: 'Integer Ring' and '<class 'str'>'
+            sage: G.multiple_edges(labels=False, sort=True, key=str)
+            [('A', 'B'), ('A', 'B'), (1, 2), (1, 2)]
+            sage: G.multiple_edges(sort=True, key=str)
+            [('A', 'B', 3), ('A', 'B', 4), (1, 2, 1), (1, 2, 2)]
+            sage: G.multiple_edges(labels=True, sort=True, key=lambda e:e[2])
+            [(1, 2, 1), (1, 2, 2), ('A', 'B', 3), ('A', 'B', 4)]
+            sage: G.multiple_edges(labels=False, sort=True, key=lambda e:e[2])
+            Traceback (most recent call last):
+            ...
+            IndexError: tuple index out of range
+
+        TESTS::
+
+            sage: Graph().multiple_edges(sort=False, key=str)
+            Traceback (most recent call last):
+            ...
+            ValueError: sort keyword is False, yet a key function is given
         """
+        if (not sort) and key:
+            raise ValueError('sort keyword is False, yet a key function is given')
+
         multi_edges = []
         seen = set()
 
@@ -3647,7 +3679,7 @@ class GenericGraph(GenericGraph_pyx):
                                 multi_edges.extend((u, v) for _ in L)
 
         if sort:
-            multi_edges.sort()
+            return sorted(multi_edges, key=key)
         return multi_edges
 
     def name(self, new=None):
@@ -5092,7 +5124,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.cycle_basis()                                                       # needs networkx
             [[0, 2], [2, 1, 0]]
             sage: G.cycle_basis(output='edge')                                          # needs networkx
-            [[(0, 2, 'a'), (2, 0, 'b')], [(2, 1, 'd'), (1, 0, 'c'), (0, 2, 'a')]]
+            [[(0, 2, 'b'), (2, 0, 'a')], [(2, 1, 'd'), (1, 0, 'c'), (0, 2, 'a')]]
             sage: H = Graph([(1, 2), (2, 3), (2, 3), (3, 4), (1, 4),
             ....:            (1, 4), (4, 5), (5, 6), (4, 6), (6, 7)], multiedges=True)
             sage: H.cycle_basis()                                                       # needs networkx
@@ -5134,10 +5166,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.cycle_basis()                                                       # needs networkx
             [[2, 3], [4, 3, 2, 1], [4, 3, 2, 1]]
             sage: G.cycle_basis(output='edge')                                          # needs networkx
-            [[(2, 3, 'b'), (3, 2, 'c')],
+            [[(2, 3, 'c'), (3, 2, 'b')],
              [(4, 3, 'd'), (3, 2, 'b'), (2, 1, 'a'), (1, 4, 'f')],
              [(4, 3, 'e'), (3, 2, 'b'), (2, 1, 'a'), (1, 4, 'f')]]
-
         """
         if output not in ['vertex', 'edge']:
             raise ValueError('output must be either vertex or edge')
@@ -11332,19 +11363,15 @@ class GenericGraph(GenericGraph_pyx):
         for u in self._backend.iterator_nbrs(vertex):
             yield u
 
-    def vertices(self, sort=None, key=None, degree=None, vertex_property=None):
+    def vertices(self, sort=False, key=None, degree=None, vertex_property=None):
         r"""
         Return a list of the vertices.
 
         INPUT:
 
-        - ``sort`` -- boolean (default: ``None``); if ``True``, vertices are
-          sorted according to the default ordering
-
-          As of :trac:`22349`, this argument must be explicitly
-          specified (unless a ``key`` is given); otherwise a warning
-          is printed and ``sort=True`` is used. The default will
-          eventually be changed to ``False``.
+        - ``sort`` -- boolean (default: ``False``); whether to sort vertices
+          according the ordering specified with parameter ``key``. If ``False``
+          (default), vertices are not sorted.
 
         - ``key`` -- a function (default: ``None``); a function that takes a
           vertex as its one argument and returns a value that can be used for
@@ -11432,20 +11459,7 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: sort keyword is False, yet a key function is given
-
-        Deprecation warning for ``sort=None`` (:trac:`22349`)::
-
-            sage: G = graphs.HouseGraph()
-            sage: G.vertices()
-            doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://github.com/sagemath/sage/issues/22349 for details.
-            [0, 1, 2, 3, 4]
         """
-        if sort is None:
-            if key is None:
-                deprecation(22349, "parameter 'sort' will be set to False by default in the future")
-            sort = True
-
         if (not sort) and key:
             raise ValueError('sort keyword is False, yet a key function is given')
 
@@ -12371,7 +12385,7 @@ class GenericGraph(GenericGraph_pyx):
                     label = None
         return self._backend.has_edge(u, v, label)
 
-    def edges(self, vertices=None, labels=True, sort=None, key=None,
+    def edges(self, vertices=None, labels=True, sort=False, key=None,
               ignore_direction=False, sort_vertices=True):
         r"""
         Return a :class:`~EdgesView` of edges.
@@ -12395,13 +12409,10 @@ class GenericGraph(GenericGraph_pyx):
         - ``labels`` -- boolean (default: ``True``); if ``False``, each edge is
           simply a pair ``(u, v)`` of vertices
 
-        - ``sort`` -- boolean (default: ``None``); if ``True``, edges are sorted
-          according to the default ordering
-
-          As of :trac:`22349`, this argument must be explicitly
-          specified (unless a ``key`` is given); otherwise a warning
-          is printed and ``sort=True`` is used. The default will
-          eventually be changed to ``False``.
+        - ``sort`` -- boolean (default: ``False``); whether to sort edges
+          according the ordering specified with parameter ``key``. If ``False``
+          (default), edges are not sorted. This is the fastest and less memory
+          consuming method for iterating over edges.
 
         - ``key`` -- a function (default: ``None``); a function that takes an
           edge (a pair or a triple, according to the ``labels`` keyword) as its
@@ -12497,7 +12508,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:   G.set_edge_label(e[0], e[1], chr(ord('A') + e[0] + 5 * e[1]))
             sage: G.edges(sort=True)
             [(0, 1, 'F'), (0, 4, 'U'), (1, 2, 'L'), (2, 3, 'R'), (3, 4, 'X')]
-            sage: G.edges(key=lambda x: x[2])
+            sage: G.edges(sort=True, key=lambda x: x[2])
             [(0, 1, 'F'), (1, 2, 'L'), (2, 3, 'R'), (0, 4, 'U'), (3, 4, 'X')]
 
         We can restrict considered edges to those incident to a given set::
@@ -12548,27 +12559,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.edge_label(0, 1)[0] += 1
             sage: G.edges(sort=True)
             [(0, 1, [8]), (0, 2, [7])]
-
-        Deprecation warning for ``sort=None`` (:trac:`27408`)::
-
-            sage: G = graphs.HouseGraph()
-            sage: G.edges(sort=None)
-            doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-            See https://github.com/sagemath/sage/issues/27408 for details.
-            [(0, 1, None), (0, 2, None), (1, 3, None), (2, 3, None), (2, 4, None), (3, 4, None)]
         """
-        if sort is None:
-            if key is None:
-                deprecation(27408, "parameter 'sort' will be set to False by default in the future")
-            sort = True
-
         if vertices is not None and vertices in self:
             vertices = [vertices]
 
         return EdgesView(self, vertices=vertices, labels=labels, sort=sort, key=key,
                          ignore_direction=ignore_direction, sort_vertices=sort_vertices)
 
-    def edge_boundary(self, vertices1, vertices2=None, labels=True, sort=False):
+    def edge_boundary(self, vertices1, vertices2=None, labels=True, sort=False, key=None):
         r"""
         Return a list of edges ``(u,v,l)`` with ``u`` in ``vertices1``
         and ``v`` in ``vertices2``.
@@ -12585,6 +12583,10 @@ class GenericGraph(GenericGraph_pyx):
           a tuple `(u,v)` of vertices
 
         - ``sort`` -- boolean (default: ``False``); whether to sort the result
+
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge as its one argument and returns a value that can be used for
+          comparisons in the sorting algorithm (we must have ``sort=True``)
 
         EXAMPLES::
 
@@ -12610,6 +12612,23 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.edge_boundary([0], labels=False, sort=True)
             [(0, 1), (0, 2)]
 
+        Using the ``key`` argument to order multiple edges of incomparable
+        types (see :trac:`35903`)::
+
+            sage: G = Graph([(1, 'A', 4), (1, 2, 3)])
+            sage: G.edge_boundary([1], sort=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for <: 'Integer Ring' and '<class 'str'>'
+            sage: G.edge_boundary([1], sort=True, key=str)
+            [('A', 1, 4), (1, 2, 3)]
+            sage: G.edge_boundary([1], sort=True, key=lambda e:e[2])
+            [(1, 2, 3), ('A', 1, 4)]
+            sage: G.edge_boundary([1], labels=False, sort=True, key=lambda e:e[2])
+            Traceback (most recent call last):
+            ...
+            IndexError: tuple index out of range
+
         TESTS::
 
             sage: G = graphs.DiamondGraph()
@@ -12619,7 +12638,14 @@ class GenericGraph(GenericGraph_pyx):
             []
             sage: G.edge_boundary([2], [0])
             [(0, 2, None)]
+            sage: G.edge_boundary([2], [0], sort=False, key=str)
+            Traceback (most recent call last):
+            ...
+            ValueError: sort keyword is False, yet a key function is given
         """
+        if (not sort) and key:
+            raise ValueError('sort keyword is False, yet a key function is given')
+
         vertices1 = set(v for v in vertices1 if v in self)
         if self._directed:
             if vertices2 is not None:
@@ -12639,7 +12665,7 @@ class GenericGraph(GenericGraph_pyx):
                 output = [e for e in self.edges(vertices=vertices1, labels=labels, sort=False)
                           if e[1] not in vertices1 or e[0] not in vertices1]
         if sort:
-            output.sort()
+            return sorted(output, key=key)
         return output
 
     def edge_iterator(self, vertices=None, labels=True, ignore_direction=False, sort_vertices=True):

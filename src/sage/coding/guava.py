@@ -60,7 +60,7 @@ def QuasiQuadraticResidueCode(p):
 
     EXAMPLES::
 
-        sage: C = codes.QuasiQuadraticResidueCode(11); C   # optional - gap_packages (Guava package)
+        sage: C = codes.QuasiQuadraticResidueCode(11); C   # optional - gap_package_guava
         [22, 11] linear code over GF(2)
 
     These are self-orthogonal in general and self-dual when `p \equiv 3 \pmod 4`.
@@ -93,9 +93,9 @@ def RandomLinearCodeGuava(n, k, F):
 
     EXAMPLES::
 
-        sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_packages (Guava package)
+        sage: C = codes.RandomLinearCodeGuava(30,15,GF(2)); C      # optional - gap_package_guava
         [30, 15] linear code over GF(2)
-        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C   # optional - gap_packages (Guava package)
+        sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C   # optional - gap_package_guava
         [10, 5] linear code over GF(4)
 
     AUTHOR: David Joyner (11-2005)
