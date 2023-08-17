@@ -7,4 +7,3 @@ except ImportError:
     pass
 
 from sage.groups.all__sagemath_groups import *
-from sage.libs.gap.all import *
