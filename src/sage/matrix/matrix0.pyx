@@ -544,11 +544,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS::
 
-            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # needs sage.rings.number_fields
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # needs sage.rings.number_field
             ....:     def __bool__(self):
             ....:         raise ValueError
-            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # needs sage.rings.number_fields
-            sage: bool(mat)                                                             # needs sage.rings.number_fields
+            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # needs sage.rings.number_field
+            sage: bool(mat)                                                             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError
@@ -4906,7 +4906,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over finite fields::
 
             sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])
-            sage: A.multiplicative_order()                                              # needs sage.groups
+            sage: A.multiplicative_order()                                              # needs sage.libs.pari
             580
             sage: (A^580).is_one()
             True
@@ -4926,7 +4926,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over `\ZZ`::
 
             sage: m = matrix(ZZ, 2, 2, [-1,1,-1,0])
-            sage: m.multiplicative_order()                                              # needs sage.groups
+            sage: m.multiplicative_order()                                              # needs sage.libs.pari
             3
 
             sage: m = posets.ChainPoset(6).coxeter_transformation()                     # needs sage.combinat sage.graphs
@@ -4938,10 +4938,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             10
 
             sage: M = matrix(ZZ, 2, 2, [1, 1, 0, 1])
-            sage: M.multiplicative_order()                                              # needs sage.groups
+            sage: M.multiplicative_order()                                              # needs sage.libs.pari
             +Infinity
 
-            sage: for k in range(600):                                                  # needs sage.groups
+            sage: for k in range(600):                                                  # needs sage.groups sage.modular
             ....:     m = SL2Z.random_element()
             ....:     o = m.multiplicative_order()
             ....:     if o != Infinity and m**o != SL2Z.one():
@@ -4956,7 +4956,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:     else:
             ....:         return ZZ.random_element(-100,100)
             sage: rnd = matrix(ZZ, 8, 8, val)
-            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.groups
+            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.libs.pari
             24
 
         TESTS::
@@ -5834,9 +5834,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Tests for :trac:`28570`::
 
-            sage: P = posets.TamariLattice(7)                                           # needs sage.combinat sage.graphs
-            sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.combinat sage.graphs
-            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # needs sage.combinat sage.graphs
+            sage: P = posets.TamariLattice(7)                                           # needs sage.graphs
+            sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.graphs
+            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # needs sage.graphs
             429 x 429 sparse matrix over Integer Ring...
 
             sage: m = matrix(Zmod(2**2), 1, 1, [1], sparse=True)

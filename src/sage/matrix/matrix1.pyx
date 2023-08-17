@@ -103,7 +103,7 @@ cdef class Matrix(Matrix0):
             [ [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ] ]
             sage: g.CharacteristicPolynomial()
             x_1^3-12*x_1^2-18*x_1
-            sage: A.characteristic_polynomial()
+            sage: A.characteristic_polynomial()                                         # needs sage.libs.pari
             x^3 - 12*x^2 - 18*x
             sage: matrix(QQ, g) == A
             True
