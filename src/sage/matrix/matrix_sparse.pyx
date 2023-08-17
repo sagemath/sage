@@ -1180,7 +1180,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         Check that the bug in :trac:`13854` has been fixed::
 
-            sage: # needs sage.combinat
+            sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)
             sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
             sage: M = Matrix([[x]], sparse=True)
