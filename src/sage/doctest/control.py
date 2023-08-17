@@ -55,7 +55,6 @@ from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
 from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
 from sage.misc import randstate
-from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
 # Optional tags which are always automatically added
@@ -1368,8 +1367,6 @@ class DocTestController(SageObject):
             return
 
         # Setup signal handlers.
-        # Save crash logs in temporary directory.
-        os.putenv('CYSIGNALS_CRASH_LOGS', tmp_dir("crash_logs_"))
         init_cysignals()
 
         import signal
