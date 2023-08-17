@@ -871,6 +871,7 @@ cdef class MatrixArgs:
 
         Check github issue #36065:
 
+            sage: # needs sage.rings.number_field
             sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
             ....:     def __bool__(self):
             ....:         raise ValueError
