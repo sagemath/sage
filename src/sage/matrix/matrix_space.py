@@ -112,9 +112,9 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         sage: get_matrix_class(ZZ, 4, 5, True, None)
         <class 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
 
-        sage: get_matrix_class(ZZ, 3, 3, False, 'flint')
+        sage: get_matrix_class(ZZ, 3, 3, False, 'flint')                                # needs sage.libs.flint
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
-        sage: get_matrix_class(ZZ, 3, 3, False, 'gap')                                  # needs sage.modules
+        sage: get_matrix_class(ZZ, 3, 3, False, 'gap')                                  # needs sage.libs.gap
         <class 'sage.matrix.matrix_gap.Matrix_gap'>
         sage: get_matrix_class(ZZ, 3, 3, False, 'generic')
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
@@ -124,14 +124,13 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         sage: get_matrix_class(GF(2^17), 3, 3, False, None)                             # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
-        sage: # needs sage.rings.finite_rings
-        sage: get_matrix_class(GF(2), 2, 2, False, 'm4ri')
+        sage: get_matrix_class(GF(2), 2, 2, False, 'm4ri')                              # needs sage.libs.m4ri
         <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
-        sage: get_matrix_class(GF(4), 2, 2, False, 'm4ri')
+        sage: get_matrix_class(GF(4), 2, 2, False, 'm4ri')                              # needs sage.libs.m4ri sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-float')
+        sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-float')                      # needs sage.libs.linbox
         <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
-        sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-double')
+        sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-double')                     # needs sage.libs.linbox
         <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
 
         sage: get_matrix_class(RDF, 2, 2, False, 'numpy')                               # needs numpy
@@ -139,9 +138,9 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         sage: get_matrix_class(CDF, 2, 3, False, 'numpy')                               # needs numpy
         <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-        sage: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')      # optional - meataxe, needs sage.rings.finite_rings
+        sage: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')          # optional - meataxe, needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-        sage: get_matrix_class(IntegerModRing(3), 4, 4, False, 'meataxe')  # optional - meataxe
+        sage: get_matrix_class(IntegerModRing(3), 4, 4, False, 'meataxe')   # optional - meataxe
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
         sage: get_matrix_class(IntegerModRing(4), 4, 4, False, 'meataxe')
         Traceback (most recent call last):
@@ -159,12 +158,13 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         sage: get_matrix_class(GF(3), 2, 2, False, 'm4ri')
         Traceback (most recent call last):
         ...
-        ValueError: 'm4ri' matrices are only available for fields of characteristic 2 and order <= 65536
-        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')
+        ValueError: 'm4ri' matrices are only available
+        for fields of characteristic 2 and order <= 65536
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')                # needs sage.libs.linbox
         Traceback (most recent call last):
         ...
         ValueError: 'linbox-float' matrices can only deal with order < 256
-        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-double')
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-double')               # needs sage.libs.linbox
         Traceback (most recent call last):
         ...
         ValueError: 'linbox-double' matrices can only deal with order < 94906266
@@ -173,17 +173,17 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
         sage: type(matrix(SR, 2, 2, 0, sparse=True))                                    # needs sage.symbolic
         <class 'sage.matrix.matrix_symbolic_sparse.Matrix_symbolic_sparse'>
-        sage: type(matrix(GF(7), 2, range(4)))                                          # needs sage.rings.finite_rings
+        sage: type(matrix(GF(7), 2, range(4)))                                          # needs sage.libs.linbox
         <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
-        sage: type(matrix(GF(16007), 2, range(4)))                                      # needs sage.rings.finite_rings
+        sage: type(matrix(GF(16007), 2, range(4)))                                      # needs sage.libs.linbox
         <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
         sage: type(matrix(CBF, 2, range(4)))                                            # needs sage.libs.flint
         <class 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
-        sage: type(matrix(GF(2), 2, range(4)))                                          # needs sage.rings.finite_rings
+        sage: type(matrix(GF(2), 2, range(4)))                                          # needs sage.libs.m4ri
         <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
-        sage: type(matrix(GF(64, 'z'), 2, range(4)))                                    # needs sage.rings.finite_rings
+        sage: type(matrix(GF(64, 'z'), 2, range(4)))                                    # needs sage.libs.m4ri sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: type(matrix(GF(125, 'z'), 2, range(4)))   # optional - meataxe            # needs sage.rings.finite_rings
+        sage: type(matrix(GF(125, 'z'), 2, range(4)))                       # optional - meataxe, needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 
     """
@@ -496,29 +496,28 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that different implementations play together as expected::
 
-        sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')                           # needs sage.libs.flint
+        sage: # needs sage.libs.flint
+        sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
         sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
-
-        sage: type(M1(range(4)))                                                        # needs sage.libs.flint
+        sage: type(M1(range(4)))
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         sage: type(M2(range(4)))
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-
-        sage: M1(M2.an_element())                                                       # needs sage.libs.flint
+        sage: M1(M2.an_element())
         [ 0  1]
         [-1  2]
-        sage: M2(M1.an_element())                                                       # needs sage.libs.flint
+        sage: M2(M1.an_element())
         [ 0  1]
         [-1  2]
-
-        sage: all((A.get_action(B) is not None) == (A is B)                             # needs sage.libs.flint
+        sage: all((A.get_action(B) is not None) == (A is B)
         ....:     for A in [M1, M2] for B in [M1, M2])
         True
 
     Check that libgap matrices over finite fields are working properly::
 
-        sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')                          # needs sage.libs.gap sage.rings.finite_rings
-        sage: M2.one()                                                                  # needs sage.libs.gap sage.rings.finite_rings
+        sage: # needs sage.libs.gap
+        sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')
+        sage: M2.one()
         [1 0 0 0 0]
         [0 1 0 0 0]
         [0 0 1 0 0]
@@ -526,7 +525,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         [0 0 0 0 1]
         sage: m = M2.random_element()
         sage: M1 = MatrixSpace(GF(2), 5)
-        sage: M1(m * m) == M1(m) * M1(m)                                                # needs sage.libs.gap sage.rings.finite_rings
+        sage: M1(m * m) == M1(m) * M1(m)
         True
     """
 
@@ -648,7 +647,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Category of infinite enumerated finite dimensional algebras with basis over
              (euclidean domains and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(QQ,10).category()
-            Category of infinite finite dimensional algebras with basis over (number fields and quotient fields and metric spaces)
+            Category of infinite finite dimensional algebras with basis over
+             (number fields and quotient fields and metric spaces)
 
         TESTS:
 
@@ -769,7 +769,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
             sage: MatrixSpace(ZZ, 2, implementation='generic')._has_default_implementation()
             False
-            sage: MatrixSpace(ZZ, 2, implementation='flint')._has_default_implementation()
+            sage: MatrixSpace(ZZ, 2, implementation='flint')._has_default_implementation()          # needs sage.libs.flint
             True
         """
         default = get_matrix_class(self.base_ring(), self.nrows(), self.ncols(), self.is_sparse(), None)
@@ -1159,8 +1159,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Coercion map:
               From: General Linear Group of degree 2 over Finite Field of size 3
               To:   Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 3
-            sage: MS.coerce_map_from(GL(2, 2))                                          # needs sage.rings.finite_rings
-            sage: MS.coerce_map_from(Gamma1(5))                                         # needs sage.rings.finite_rings
+            sage: MS.coerce_map_from(GL(2, 2))
+            sage: MS.coerce_map_from(Gamma1(5))                                         # needs sage.modular
             Coercion map:
               From: Congruence Subgroup Gamma1(5)
               To:   Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 3

@@ -556,7 +556,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         True
         sage: all(x in ZZ for x in (A - (-1)*identity_matrix(5)).rref().list())
         True
-        sage: A.jordan_form()                                                           # needs sage.combinat
+        sage: A.jordan_form()                                                           # needs sage.combinat sage.libs.pari
         [ 2| 0| 0| 0| 0]
         [--+--+--+--+--]
         [ 0| 3| 0| 0| 0]

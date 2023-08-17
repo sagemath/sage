@@ -2010,7 +2010,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Demonstrating the ``ordered`` option::
 
-            sage: P.leading_positions()                                                 # needs sage.combinat
+            sage: P.leading_positions()
             [2, 1]
             sage: PP = M.weak_popov_form(ordered=True); PP
             [              2 4*x^2 + 2*x + 4               5]
@@ -2129,12 +2129,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A = matrix(PF,[[1,  a*x^17 + 1 ],
             ....:                [0,  a*x^11 + a^2*x^7 + 1 ]])
             sage: M = A.__copy__()
-            sage: U = M._weak_popov_form(transformation=True)                           # needs sage.combinat
-            sage: U * A == M                                                            # needs sage.combinat
+            sage: U = M._weak_popov_form(transformation=True)
+            sage: U * A == M
             True
-            sage: M.is_weak_popov()                                                     # needs sage.combinat
+            sage: M.is_weak_popov()
             True
-            sage: U.is_invertible()                                                     # needs sage.combinat
+            sage: U.is_invertible()
             True
 
             sage: PF.<x> = QQ[]
@@ -3316,7 +3316,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:     [  17,   86, x^2+77*x+16, 76*x+29,     90*x+78],
             ....:     [  44,   36, 3*x+42,      x^2+50*x+26, 85*x+44],
             ....:     [   2,   22, 54*x+94,     73*x+24,     x^2+2*x+25]])
-            sage: appbas.is_minimal_approximant_basis(
+            sage: appbas.is_minimal_approximant_basis(                                  # needs sage.libs.pari
             ....:     pmat, order, shifts, row_wise=True, normal_form=True)
             True
 
@@ -3326,7 +3326,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         contained in the set of approximants for ``pmat`` at order 8::
 
             sage: M = x^8 * Matrix.identity(pR, 5)
-            sage: M.is_minimal_approximant_basis(pmat, 8)
+            sage: M.is_minimal_approximant_basis(pmat, 8)                               # needs sage.libs.pari
             False
 
         Since ``pmat`` is a single column, with nonzero constant coefficient,
