@@ -19,6 +19,7 @@ prune sage/groups/matrix_gps
 prune sage/groups/perm_gps
 exclude sage/groups/*gap*.p*
 
+global-exclude all__sagemath_*.py
 global-include all__sagemath_groups.py
 
 global-exclude *.py[co]

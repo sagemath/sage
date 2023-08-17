@@ -96,6 +96,7 @@ from sage.groups.perm_gps.permgroup_element import SymmetricGroupElement
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method, weak_cached_function
 from sage.misc.functional import is_even
+from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -106,6 +107,8 @@ from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import CachedRepresentation
+
+lazy_import('sage.groups.cactus_group', 'CactusGroup')
 
 
 class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
@@ -349,7 +352,6 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: S2._coerce_map_from_(J3) is None
             True
         """
-        from sage.groups.cactus_group import CactusGroup
         if isinstance(G, CactusGroup) and G._n <= self._deg:
             return self._from_cactus_group_element
         return super()._coerce_map_from_(G)
