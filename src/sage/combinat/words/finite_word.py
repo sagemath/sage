@@ -3135,14 +3135,14 @@ class FiniteWord_class(Word_class):
                 f = WordMorphism(f)
             if not f.is_letter_permutation():
                 raise ValueError("f must be a letter permutation")
-            D = f.domain()
-            A = set(map(D, self.letters()))
-            while A:
-                x = A.pop()
-                if f(x) != x: # count only non f-palindromic letters
-                    if f(x) in A:
-                        A.remove(f(x))
-                    g_w += 1
+            # Compute g_w
+            alreadyFoundLetterPairs = set()
+            for letter in self.letters():
+                if not((letter, f(letter)[0]) in alreadyFoundLetterPairs):
+                    alreadyFoundLetterPairs.add((letter, f(letter)[0]))
+                    alreadyFoundLetterPairs.add((f(letter)[0], letter))
+                    if letter != f(letter)[0]:
+                        g_w += 1
         _, palindromesTree = self._get_palindromic_factors_data(f=f)
         distinctPalindromesCount = 0
         for palindromeNode in palindromesTree:
