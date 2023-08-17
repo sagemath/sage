@@ -257,7 +257,7 @@ class Manifolds(Category_over_base_ring):
             EXAMPLES::
 
                 sage: from sage.categories.manifolds import Manifolds
-                sage: Manifolds(RR).Smooth().super_categories() # indirect doctest      # needs sage.rings.real_mpfr
+                sage: Manifolds(RR).Smooth().super_categories()  # indirect doctest     # needs sage.rings.real_mpfr
                 [Category of differentiable manifolds
                  over Real Field with 53 bits of precision]
             """
@@ -278,7 +278,7 @@ class Manifolds(Category_over_base_ring):
             EXAMPLES::
 
                 sage: from sage.categories.manifolds import Manifolds
-                sage: Manifolds(RR).Analytic().super_categories() # indirect doctest    # needs sage.rings.real_mpfr
+                sage: Manifolds(RR).Analytic().super_categories()  # indirect doctest   # needs sage.rings.real_mpfr
                 [Category of smooth manifolds
                  over Real Field with 53 bits of precision]
             """
@@ -302,7 +302,7 @@ class Manifolds(Category_over_base_ring):
             EXAMPLES::
 
                 sage: from sage.categories.manifolds import Manifolds
-                sage: Manifolds(RR).AlmostComplex().super_categories() # indirect doctest           # needs sage.rings.real_mpfr
+                sage: Manifolds(RR).AlmostComplex().super_categories()  # indirect doctest          # needs sage.rings.real_mpfr
                 [Category of smooth manifolds
                  over Real Field with 53 bits of precision]
             """

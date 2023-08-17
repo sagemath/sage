@@ -132,7 +132,7 @@ class Elements(Category):
 
             sage: V = VectorSpace(QQ, 3)                                                # needs sage.modules
             sage: x = V.0                                                               # needs sage.modules
-            sage: latex(x.category()) # indirect doctest                                # needs sage.modules
+            sage: latex(x.category())  # indirect doctest                               # needs sage.modules
             \mathbf{Elt}_{\Bold{Q}^{3}}
         """
         return "\\mathbf{Elt}_{%s}"%latex(self.__object)
@@ -400,11 +400,13 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(QQ)._subcategory_hook_(VectorSpaces(QQ) & Rings())
             Unknown
-            sage: Sym = SymmetricFunctions(QQ)                                          # needs sage.combinat sage.modules
-            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases              # needs sage.combinat sage.modules
-            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))          # needs sage.combinat sage.modules
+
+            sage: # needs sage.combinat sage.modules
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases
+            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))
             Unknown
-            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))              # needs sage.combinat sage.modules
+            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))
             True
 
         Case 1: the two bases are categories; then the base of ``C``
@@ -429,9 +431,9 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(QQ)._subcategory_hook_(Algebras(QQ))
             True
-            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categories           # needs sage.rings.real_mpfr
+            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))         # base ring in different categories         # needs sage.rings.real_mpfr
             False
-            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category
+            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3)))   # base ring in the same category
             False
 
         Note; we need both previous tests since the distinction is
@@ -448,19 +450,20 @@ class Category_over_base_ring(Category_over_base):
         method is only valid for :class:`Category_over_base_ring`, not
         :class:`Category_over_base`::
 
+            sage: # needs sage.groups
             sage: from sage.categories.category_types import Category_over_base
             sage: D = Modules(Rings())
             sage: class Cs(Category_over_base):
             ....:    def super_categories(self):
             ....:        return [D]
-            sage: C = Cs(SymmetricGroup(3))                                             # needs sage.groups
-            sage: C.is_subcategory(D)                                                   # needs sage.groups
+            sage: C = Cs(SymmetricGroup(3))
+            sage: C.is_subcategory(D)
             True
-            sage: D._subcategory_hook_(C)                                               # needs sage.groups
+            sage: D._subcategory_hook_(C)
             Unknown
             sage: import __main__
             sage: __main__.Cs = Cs # Fake Cs being defined in a python module
-            sage: TestSuite(C).run()                                                    # needs sage.groups
+            sage: TestSuite(C).run()
         """
         if not issubclass(C.parent_class, self.parent_class):
             return False

@@ -170,7 +170,7 @@ class Fields(CategoryWithAxiom):
 
             sage: K(IntegerRing())  # indirect doctest
             Rational Field
-            sage: K(PolynomialRing(GF(3), 'x')) # indirect doctest
+            sage: K(PolynomialRing(GF(3), 'x'))  # indirect doctest
             Fraction Field of Univariate Polynomial Ring in x over
             Finite Field of size 3
             sage: K(RealField())                                                        # needs sage.rings.real_mpfr
@@ -805,7 +805,7 @@ class Fields(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: x = polygen(ZZ, 'x')
-                sage: NumberField(x^7+2, 'a')(2).inverse_of_unit()                      # needs sage.rings.number_field
+                sage: NumberField(x^7 + 2, 'a')(2).inverse_of_unit()                    # needs sage.rings.number_field
                 1/2
 
             Trying to invert the zero element typically raises a

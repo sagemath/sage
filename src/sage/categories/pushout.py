@@ -3490,7 +3490,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
             sage: k = GF(3^2, prefix='z'); a = k.gen()                                  # needs sage.rings.finite_rings
             sage: l = GF(3^3, prefix='z'); b = l.gen()                                  # needs sage.rings.finite_rings
-            sage: a + b # indirect doctest                                              # needs sage.rings.finite_rings
+            sage: a + b  # indirect doctest                                             # needs sage.rings.finite_rings
             z6^5 + 2*z6^4 + 2*z6^3 + z6^2 + 2*z6 + 1
 
         Note that embeddings are compatible in lattices of such finite fields::
@@ -3676,13 +3676,13 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.complex_double
+        sage: # needs sage.rings.complex_double sage.rings.number_field
         sage: F = CDF.construction()[0]
-        sage: F(QQ)                                                                     # needs sage.rings.number_field
+        sage: F(QQ)
         Algebraic Field
         sage: F(RR)                                                                     # needs sage.rings.real_mpfr
         Complex Field with 53 bits of precision
-        sage: F(F(QQ)) is F(QQ)                                                         # needs sage.rings.number_field
+        sage: F(F(QQ)) is F(QQ)
         True
 
     """

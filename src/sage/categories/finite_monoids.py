@@ -74,7 +74,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 sage: Sigma2 = groups.permutation.Cyclic(2)                             # needs sage.groups
                 sage: BSigma2 = Sigma2.nerve()                                          # needs sage.groups
-                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.groups sage.modules sage.rings.finite_rings
+                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.groups sage.modules
                 Vector space of dimension 1 over Finite Field of size 2
 
             The `k`-simplices of the nerve are named after the chains
@@ -106,7 +106,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 sage: Sigma3 = groups.permutation.Symmetric(3)                          # needs sage.groups
                 sage: BSigma3 = Sigma3.nerve()                                          # needs sage.groups
-                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.groups sage.rings.finite_rings
+                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.groups
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 0 over Finite Field of size 3,
                  2: Vector space of dimension 0 over Finite Field of size 3,
@@ -116,13 +116,13 @@ class FiniteMonoids(CategoryWithAxiom):
             `B\Sigma_2` for relatively large values of `n`, while for
             `B\Sigma_3`, the complexes get large pretty quickly::
 
-                sage: Sigma2.nerve().n_skeleton(14)                                     # needs sage.groups
+                sage: # needs sage.groups
+                sage: Sigma2.nerve().n_skeleton(14)
                 Simplicial set with 15 non-degenerate simplices
-
-                sage: BSigma3 = Sigma3.nerve()                                          # needs sage.groups
-                sage: BSigma3.n_skeleton(3)                                             # needs sage.groups
+                sage: BSigma3 = Sigma3.nerve()
+                sage: BSigma3.n_skeleton(3)
                 Simplicial set with 156 non-degenerate simplices
-                sage: BSigma3.n_skeleton(4)                                             # needs sage.groups
+                sage: BSigma3.n_skeleton(4)
                 Simplicial set with 781 non-degenerate simplices
 
             Finally, note that the classifying space of the order `p`
@@ -145,15 +145,13 @@ class FiniteMonoids(CategoryWithAxiom):
                 8
                 sage: len(BSigma3.n_cells(3))
                 125
-
-                sage: BC3.homology(range(4), base_ring=GF(3))                           # needs sage.groups sage.rings.finite_rings
+                sage: BC3.homology(range(4), base_ring=GF(3))
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 1 over Finite Field of size 3,
                  2: Vector space of dimension 1 over Finite Field of size 3,
                  3: Vector space of dimension 1 over Finite Field of size 3}
-
-                sage: BC5 = groups.permutation.Cyclic(5).nerve()                        # needs sage.groups
-                sage: BC5.homology(range(4), base_ring=GF(5))                           # needs sage.groups sage.rings.finite_rings
+                sage: BC5 = groups.permutation.Cyclic(5).nerve()
+                sage: BC5.homology(range(4), base_ring=GF(5))
                 {0: Vector space of dimension 0 over Finite Field of size 5,
                  1: Vector space of dimension 1 over Finite Field of size 5,
                  2: Vector space of dimension 1 over Finite Field of size 5,

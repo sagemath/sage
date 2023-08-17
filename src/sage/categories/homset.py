@@ -301,17 +301,15 @@ def Hom(X, Y, category=None, check=True):
     Checks that the domain and codomain are in the specified
     category. Case of a non parent::
 
-        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")                      # needs sage.graphs
-        sage: Hom(S, S, SimplicialComplexes())                                          # needs sage.graphs
+        sage: # needs sage.graphs
+        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")
+        sage: Hom(S, S, SimplicialComplexes())
         Set of Morphisms from S to S in Category of finite simplicial complexes
-
-        sage: Hom(Set(), S, Sets())                                                     # needs sage.graphs
+        sage: Hom(Set(), S, Sets())
         Set of Morphisms from {} to S in Category of sets
-
-        sage: Hom(S, Set(), Sets())                                                     # needs sage.graphs
+        sage: Hom(S, Set(), Sets())
         Set of Morphisms from S to {} in Category of sets
-
-        sage: H = Hom(S, S, ChainComplexes(QQ))                                         # needs sage.graphs
+        sage: H = Hom(S, S, ChainComplexes(QQ))
         Traceback (most recent call last):
         ...
         ValueError: S is not in Category of chain complexes over Rational Field
@@ -320,6 +318,7 @@ def Hom(X, Y, category=None, check=True):
     and not ``X.category().is_subcategory(category)`` as it used to be
     before :trac:`16275` (see :trac:`15801` for a real use case)::
 
+        sage: # needs sage.graphs
         sage: class PermissiveCategory(Category):
         ....:     def super_categories(self): return [Objects()]
         ....:     def __contains__(self, X): return True
@@ -328,7 +327,7 @@ def Hom(X, Y, category=None, check=True):
         False
         sage: S in C
         True
-        sage: Hom(S, S, C)                                                              # needs sage.graphs
+        sage: Hom(S, S, C)
         Set of Morphisms from S to S in Permissive category
 
     With ``check=False``, uninitialized parents, as can appear upon

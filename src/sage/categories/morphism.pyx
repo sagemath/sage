@@ -76,18 +76,18 @@ cdef class Morphism(Map):
 
         TESTS::
 
-            sage: K = CyclotomicField(12)                                               # needs sage.rings.number_field
-            sage: L = CyclotomicField(132)                                              # needs sage.rings.number_field
-            sage: phi = L._internal_coerce_map_from(K); phi                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = CyclotomicField(12)
+            sage: L = CyclotomicField(132)
+            sage: phi = L._internal_coerce_map_from(K); phi
             (map internal to coercion system -- copy before use)
             Generic morphism:
               From: Cyclotomic Field of order 12 and degree 4
               To:   Cyclotomic Field of order 132 and degree 40
-
-            sage: del K                                                                 # needs sage.rings.number_field
+            sage: del K
             sage: import gc
             sage: _ = gc.collect()
-            sage: phi                                                                   # needs sage.rings.number_field
+            sage: phi
             Defunct morphism
         """
         D = self.domain()
@@ -226,7 +226,7 @@ cdef class Morphism(Map):
             sage: f = R.hom([t])
             sage: f.is_identity()
             True
-            sage: g = R.hom([t+1])
+            sage: g = R.hom([t + 1])
             sage: g.is_identity()
             False
 
@@ -688,7 +688,7 @@ cdef class SetMorphism(Morphism):
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
             sage: g = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
-            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__) # todo: replace by the more correct Monoids
+            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__)  # todo: replace by the more correct Monoids
             sage: i = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__neg__)
             sage: f._eq_c_impl(g)
             True
@@ -714,7 +714,7 @@ cdef class SetMorphism(Morphism):
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
             sage: g = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
-            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__) # todo: replace by the more correct Monoids
+            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__)  # todo: replace by the more correct Monoids
             sage: i = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__neg__)
             sage: f == f, f != f, f < f, f > f, f <= f, f >= f
             (True, False, False, False, True, True)

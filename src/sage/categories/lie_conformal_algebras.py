@@ -254,21 +254,22 @@ class LieConformalAlgebras(Category_over_base_ring):
             By default, this method tests only the elements returned by
             ``self.some_elements()``::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'B2')                                   # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'B2')                       # needs sage.combinat sage.modules
                 sage: V._test_jacobi()          # long time (6 seconds)                 # needs sage.combinat sage.modules
 
             It works for super Lie conformal algebras too::
 
-                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                                   # needs sage.combinat sage.modules
-                sage: V._test_jacobi()                                                              # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                       # needs sage.combinat sage.modules
+                sage: V._test_jacobi()                                                  # needs sage.combinat sage.modules
 
             We can use specific elements by passing the ``elements``
             keyword argument::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))            # needs sage.combinat sage.modules
-                sage: V.inject_variables()                                                          # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1',                       # needs sage.combinat sage.modules
+                ....:                                   names=('e', 'h', 'f'))
+                sage: V.inject_variables()                                              # needs sage.combinat sage.modules
                 Defining e, h, f, K
-                sage: V._test_jacobi(elements=(e, 2*f+h, 3*h))                                      # needs sage.combinat sage.modules
+                sage: V._test_jacobi(elements=(e, 2*f+h, 3*h))                          # needs sage.combinat sage.modules
 
             TESTS::
 
