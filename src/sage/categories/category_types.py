@@ -401,11 +401,12 @@ class Category_over_base_ring(Category_over_base):
             sage: VectorSpaces(QQ)._subcategory_hook_(VectorSpaces(QQ) & Rings())
             Unknown
 
-            sage: Sym = SymmetricFunctions(QQ)                                          # needs sage.combinat sage.modules
-            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases              # needs sage.combinat sage.modules
-            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))          # needs sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases
+            sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))
             Unknown
-            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))              # needs sage.combinat sage.modules
+            sage: SymmetricFunctionsBases(Sym).is_subcategory(Modules(QQ))
             True
 
         Case 1: the two bases are categories; then the base of ``C``
