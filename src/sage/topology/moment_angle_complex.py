@@ -77,7 +77,7 @@ def union(c1, c2):
     return CubicalComplex(facets)
 
 
-class MomentAngleComplex(SageObject, UniqueRepresentation):
+class MomentAngleComplex(UniqueRepresentation, SageObject):
     r"""
     A moment-angle complex.
 
