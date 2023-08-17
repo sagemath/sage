@@ -334,9 +334,10 @@ class CoxeterGroups(Category_singleton):
                 sage: sorted(W.braid_orbit([2,1,1,2,1]))                                # needs sage.combinat sage.graphs
                 [[1, 2, 1, 1, 2], [2, 1, 1, 2, 1], [2, 1, 2, 1, 2], [2, 2, 1, 2, 2]]
 
-                sage: W = ReflectionGroup(['A',3], index_set=["AA","BB","5"])  # optional - gap3
+                sage: # optional - gap3
+                sage: W = ReflectionGroup(['A',3], index_set=["AA","BB","5"])
                 sage: w = W.long_element()
-                sage: W.braid_orbit(w.reduced_word())                          # optional - gap3
+                sage: W.braid_orbit(w.reduced_word())
                 [['BB', '5', 'AA', 'BB', '5', 'AA'],
                  ['5', 'BB', '5', 'AA', 'BB', '5'],
                  ['BB', 'AA', 'BB', '5', 'BB', 'AA'],
@@ -470,9 +471,9 @@ class CoxeterGroups(Category_singleton):
             Even when the result is finite, some features of
             :class:`FiniteEnumeratedSets` are not available::
 
-                sage: I.cardinality() # todo: not implemented
+                sage: I.cardinality()  # todo: not implemented
                 5
-                sage: list(I)         # todo: not implemented
+                sage: list(I)          # todo: not implemented
 
             unless this finiteness is explicitly specified::
 
