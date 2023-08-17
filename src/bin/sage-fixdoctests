@@ -545,6 +545,7 @@ if __name__ == "__main__":
                              'sagemath-categories',
                              'sagemath-modules',
                              'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
+                             'sagemath-groups',
                              'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
                              'sagemath-polyhedra',
                              '']  # monolithic distribution
