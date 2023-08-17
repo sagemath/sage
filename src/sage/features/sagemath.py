@@ -397,8 +397,8 @@ class sage__libs__linbox(JoinFeature):
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
     and other modules depending on Givaro, FFLAS-FFPACK, LinBox.
 
-    In addition to the modularization purposes that this tag serves, it also provides attribution
-    to the upstream project.
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
 
     TESTS::
 
@@ -424,8 +424,8 @@ class sage__libs__m4ri(JoinFeature):
     A :class:`sage.features.Feature` describing the presence of Cython modules
     depending on the M4RI and/or M4RIe libraries.
 
-    In addition to the modularization purposes that this tag serves, it also provides attribution
-    to the upstream project.
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
 
     TESTS::
 
@@ -451,8 +451,8 @@ class sage__libs__ntl(JoinFeature):
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
     and other modules depending on NTL.
 
-    In addition to the modularization purposes that this tag serves, it also provides attribution
-    to the upstream project.
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
 
     TESTS::
 
@@ -477,11 +477,12 @@ class sage__libs__pari(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
 
-    SageMath uses the :ref:`PARI <spkg_pari>` library (via :ref:`cypari2 <spkg_cypari>`) for numerous purposes.
-    Doctests that involves such features should be marked ``# needs sage.libs.pari``.
+    SageMath uses the :ref:`PARI <spkg_pari>` library (via :ref:`cypari2
+    <spkg_cypari>`) for numerous purposes.  Doctests that involves such features
+    should be marked ``# needs sage.libs.pari``.
 
-    In addition to the modularization purposes that this tag serves, it also provides attribution
-    to the upstream project.
+    In addition to the modularization purposes that this tag serves, it also
+    provides attribution to the upstream project.
 
     EXAMPLES::
 
