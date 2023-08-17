@@ -193,14 +193,15 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
-                sage: m[[1,3],[2]].coproduct_iterated(2)                                # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.graphs sage.modules
+                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
+                sage: m[[1,3],[2]].coproduct_iterated(2)
                 m{} # m{} # m{{1, 3}, {2}} + m{} # m{{1}} # m{{1, 2}}
                  + m{} # m{{1, 2}} # m{{1}} + m{} # m{{1, 3}, {2}} # m{}
                  + m{{1}} # m{} # m{{1, 2}} + m{{1}} # m{{1, 2}} # m{}
                  + m{{1, 2}} # m{} # m{{1}} + m{{1, 2}} # m{{1}} # m{}
                  + m{{1, 3}, {2}} # m{} # m{}
-                sage: m[[]].coproduct_iterated(3), m[[1,3],[2]].coproduct_iterated(0)   # needs sage.combinat sage.modules
+                sage: m[[]].coproduct_iterated(3), m[[1,3],[2]].coproduct_iterated(0)
                 (m{} # m{} # m{} # m{}, m{{1, 3}, {2}})
             """
             if n < 0:
