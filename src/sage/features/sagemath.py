@@ -383,7 +383,9 @@ class sage__libs__flint(JoinFeature):
                              [PythonModule('sage.libs.flint.flint'),
                               PythonModule('sage.libs.arb.arith'),
                               PythonModule('sage.graphs.chrompoly'),
-                              PythonModule('sage.graphs.matchpoly')],
+                              PythonModule('sage.graphs.matchpoly'),
+                              PythonModule('sage.matrix.matrix_integer_dense'),
+                              PythonModule('sage.matrix.matrix_rational_dense')],
                              spkg='sagemath_flint', type='standard')
 
 
@@ -425,7 +427,8 @@ class sage__libs__gap(JoinFeature):
                               PythonModule('sage.groups.matrix_gps.named_group_gap'),
                               PythonModule('sage.groups.matrix_gps.orthogonal_gap'),
                               PythonModule('sage.groups.matrix_gps.symplectic_gap'),
-                              PythonModule('sage.groups.matrix_gps.unitary_gap')])
+                              PythonModule('sage.groups.matrix_gps.unitary_gap'),
+                              PythonModule('sage.matrix.matrix_gap')])
 
 
 class sage__libs__linbox(JoinFeature):
@@ -451,7 +454,9 @@ class sage__libs__linbox(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.linbox',
-                             [PythonModule('sage.rings.finite_rings.element_givaro')],
+                             [PythonModule('sage.rings.finite_rings.element_givaro'),
+                              PythonModule('sage.matrix.matrix_modn_dense_float'),
+                              PythonModule('sage.matrix.matrix_modn_dense_double')],
                              spkg='sagemath_linbox', type='standard')
 
 
@@ -478,7 +483,8 @@ class sage__libs__m4ri(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.m4ri',
-                             [PythonModule('sage.matrix.matrix_gf2e_dense')],
+                             [PythonModule('sage.matrix.matrix_gf2e_dense'),
+                              PythonModule('sage.matrix.matrix_mod2_dense')],
                              spkg='sagemath_m4ri', type='standard')
 
 
@@ -597,7 +603,8 @@ class sage__libs__pari(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.pari',
-                             [PythonModule('sage.libs.pari.convert_gmp')],
+                             [PythonModule('sage.interfaces.gp'),
+                              PythonModule('sage.libs.pari.convert_gmp')],
                              spkg='sagemath_pari', type='standard')
 
 
