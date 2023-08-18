@@ -552,6 +552,7 @@ if __name__ == "__main__":
                              'sagemath-groups',
                              'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
                              'sagemath-polyhedra',
+                             'sagemath-schemes', 'sagemath-schemes[ntl]', 'sagemath-schemes[pari]',
                              '']  # monolithic distribution
         args.ignore_bad_distributions = True
 
