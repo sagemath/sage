@@ -1218,6 +1218,9 @@ class SageDocTestParser(doctest.DocTestParser):
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
                                 continue
+                            if any(tag in ['webbrowser'] for tag in extra):
+                                # never probe
+                                continue
                             if any(tag in ['got', 'expected', 'nameerror'] for tag in extra):
                                 # never probe special tags added by sage-fixdoctests
                                 continue
