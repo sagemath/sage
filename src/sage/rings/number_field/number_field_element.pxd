@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-flint
 cimport sage.structure.element
 from sage.libs.gmp.types cimport mpz_t
 from sage.rings.integer cimport Integer

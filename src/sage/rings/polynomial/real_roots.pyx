@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Isolate Real Roots of Real Polynomials
 

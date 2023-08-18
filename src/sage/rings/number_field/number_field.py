@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-flint
 # -*- coding: utf-8 -*-
 r"""
 Number Fields

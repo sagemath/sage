@@ -19,3 +19,8 @@ install_requires =
 
 packages =
     sage.libs.ntl
+
+[options.package_data]
+
+sage.libs.ntl =
+    *.h

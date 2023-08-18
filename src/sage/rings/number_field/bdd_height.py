@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-flint
 r"""
 Elements of bounded height in number fields
 

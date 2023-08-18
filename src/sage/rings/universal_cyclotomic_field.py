@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Universal cyclotomic field
 

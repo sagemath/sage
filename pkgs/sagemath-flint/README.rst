@@ -1,6 +1,6 @@
-==============================================================================
- Sage: Open Source Mathematics Software: Fast computations with FLINT and arb
-==============================================================================
+====================================================================================
+ Sage: Open Source Mathematics Software: Fast computations with MPFI, FLINT and arb
+====================================================================================
 
 About SageMath
 --------------
@@ -26,4 +26,6 @@ About this pip-installable source distribution
 ----------------------------------------------
 
 This pip-installable source distribution ``sagemath-flint`` provides
-Cython interfaces to the ``FLINT`` and ``arb`` libraries.
+Cython interfaces to the ``MPFI``, ``FLINT`` and ``arb`` libraries.
+
+It also ships the implementation of number fields.

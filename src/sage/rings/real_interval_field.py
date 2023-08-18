@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Field of Arbitrary Precision Real Number Intervals
 """

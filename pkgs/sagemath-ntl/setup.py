@@ -49,6 +49,8 @@ extra_files = find_extra_files(
 package_data = {"": [f
                      for pkg, files in extra_files.items()
                      for f in files ]}
+package_data.update({'sage.libs.ntl': ['*.h']})
+python_packages += list(package_data)
 
 log.warn('python_packages = {0}'.format(python_packages))
 log.warn('python_modules = {0}'.format(python_modules))

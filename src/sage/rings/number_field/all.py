@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-flint
 
 from .number_field import (NumberField, NumberFieldTower, CyclotomicField, QuadraticField,
                            is_fundamental_discriminant, is_real_place)

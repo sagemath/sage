@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-flint
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
 

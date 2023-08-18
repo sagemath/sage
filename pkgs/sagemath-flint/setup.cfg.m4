@@ -15,6 +15,7 @@ install_requires =
 packages =
     sage.libs.arb
     sage.libs.flint
+    sage.libs.mpfi
     sage.matrix
     sage.rings
     sage.rings.number_field
