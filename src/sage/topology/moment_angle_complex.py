@@ -22,6 +22,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.sets.family import Family
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cubical_complex import CubicalComplex, cubical_complexes
@@ -816,7 +817,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
-    def cohomology_ring(self):
+    def cohomology_ring(self, base_ring):
         from sage.categories.cartesian_product import cartesian_product
 
         vertices = self._simplicial_complex.vertices()
@@ -829,10 +830,11 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                 L.append(subcomplex.cohomology_ring())
 
         return cartesian_product(L)
+        #return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
-# just create a method instead of a classs
+# maybe just create a method instead of a classs?
 class CohomologyRing(CombinatorialFreeModule):
-    def __init__(self, base_ring, moment_angle_complex, category=None):
+    def __init__(self, base_ring, moment_angle_complex):
         self._complex = moment_angle_complex
 
         vertices = moment_angle_complex._simplicial_complex.vertices()
@@ -852,7 +854,7 @@ class CohomologyRing(CombinatorialFreeModule):
             indices.extend([(deg, k) for k in range(num_of_gens)])
             self._graded_indices[deg] = range(num_of_gens)
 
-        CombinatorialFreeModule.__init__(self, base_ring, indices, category=category)
+        CombinatorialFreeModule.__init__(self, base_ring, indices)
 
     def basis(self, d=None):
         if d is None:
@@ -872,3 +874,7 @@ class CohomologyRing(CombinatorialFreeModule):
         return 'h{}{{{},{}}}'.format(sym, i[0], i[1])
 
     _latex_term = _repr_term
+
+    class Element(CombinatorialFreeModule.Element):
+        def cup_product(self, other):
+            return super(self) * super(other)
