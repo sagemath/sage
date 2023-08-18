@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.libs.ntl.types cimport GF2E_c, GF2EContext_c
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 from sage.rings.finite_rings.element_base cimport FinitePolyExtElement, Cache_base

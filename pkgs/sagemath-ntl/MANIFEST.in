@@ -4,33 +4,28 @@ include VERSION.txt
 
 graft sage/libs/ntl
 
-graft sage/libs/mpfi                            # entangled with number_field_element
-
-graft sage/rings/number_field
-exclude sage/rings/number_field/number_field_element_quadratic.p*  # needs arb; will be shipped by sagemath-flint
-#exclude sage/rings/number_field/number_field_base.p*           # FIXME: will be shipped by sagemath-categories
-#exclude sage/rings/number_field/number_field_element_base.p*   # FIXME: will be shipped by sagemath-categories
-exclude sage/rings/number_field/totallyreal*.p*                 # cimports cypari2
-
-include sage/rings/qqbar.p*
-
 include sage/rings/bernoulli_mod_p.p*
 include sage/rings/finite_rings/*_ntl_*.p*
 include sage/rings/padics/padic_ext_element.p*
 include sage/rings/padics/pow_computer_ext.p*
 include sage/rings/polynomial/*_ntl.p*
 include sage/rings/polynomial/polynomial_zz_pex.p*
+include sage/rings/polynomial/polynomial_template.pxi
+include sage/rings/polynomial/polynomial_template_header.pxi
 
 # pxd dependencies - FIXME
 include sage/ext/mod_int.pxd
 include sage/ext/mod_int.h
 include sage/ext/cplusplus.pxd
+include sage/libs/mpfi/*.pxd
 include sage/libs/mpfr/*.pxd
 include sage/matrix/*.pxd
 include sage/matrix/*.pxi
 include sage/rings/*.pxd
 include sage/rings/finite_rings/*.pxd
 include sage/rings/finite_rings/integer_mod_limits.h
+include sage/rings/padics/*.pxd
+include sage/rings/padics/*.pxi                                       # FIXME
 include sage/rings/polynomial/*.pxd
 include sage/misc/binary_tree.pxd
 

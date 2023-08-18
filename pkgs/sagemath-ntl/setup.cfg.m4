@@ -19,4 +19,3 @@ install_requires =
 
 packages =
     sage.libs.ntl
-    sage.rings.number_field
