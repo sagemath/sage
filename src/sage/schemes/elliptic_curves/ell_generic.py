@@ -3589,7 +3589,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         PARI no longer requires that the `j`-invariant has negative `p`-adic valuation::
 
             sage: E = EllipticCurve(Qp,[1, 1])                                          # needs sage.libs.pari sage.rings.padics
-            sage: E.j_invariant() # the j-invariant is a p-adic integer                 # needs sage.libs.pari sage.rings.padics
+            sage: E.j_invariant()  # the j-invariant is a p-adic integer                # needs sage.libs.pari sage.rings.padics
             2 + 4*5^2 + O(5^3)
             sage: E.pari_curve()                                                        # needs sage.libs.pari sage.rings.padics
             [0, 0, 0, 1, 1, 0, 2, 4, -1, -48, -864, -496, 6912/31,

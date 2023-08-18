@@ -55,6 +55,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         sage: EllipticCurve(GF(101),[2,3])
         Elliptic Curve defined by y^2  = x^3 + 2*x + 3 over Finite Field of size 101
 
+        sage: # needs sage.rings.finite_rings
         sage: F = GF(101^2, 'a')
         sage: EllipticCurve([F(2),F(3)])
         Elliptic Curve defined by y^2  = x^3 + 2*x + 3 over Finite Field in a of size 101^2
@@ -135,6 +136,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(4,'a'),[0, 0, 1, 0, 1])
             sage: E.points()
             [(0 : 1 : 0), (0 : a : 1), (0 : a + 1 : 1), (1 : 0 : 1), (1 : 1 : 1), (a : 0 : 1), (a : 1 : 1), (a + 1 : 0 : 1), (a + 1 : 1 : 1)]
