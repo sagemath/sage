@@ -2,8 +2,6 @@ prune sage
 
 include VERSION.txt
 
-global-include    all__sagemath_ntl.py
-
 graft sage/libs/ntl
 
 graft sage/libs/mpfi                            # entangled with number_field_element
@@ -40,6 +38,9 @@ global-exclude *.c
 global-exclude *.cpp
 
 graft sage/schemes/hyperelliptic_curves/hypellfrob
+
+global-exclude all__sagemath_*.py
+global-include all__sagemath_ntl.py
 
 global-exclude __pycache__
 global-exclude *.py[co]
