@@ -157,14 +157,6 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
     number_rows = len(array)
     number_columns = len(array[0])
 
-    # Set wstrength to be the current t value to be checked
-    if strength is None:
-        wstrength = 1
-    else:
-        if strength > number_columns:
-            raise ValueError("Strength must be equal or less than number of columns")
-        wstrength = strength
-
     for row in array:
         if len(row) != number_columns:
             raise ValueError("Not all rows are the same length, row {} is not the same length as row 0".format(array.index(row)))
@@ -173,32 +165,41 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
                 if int(entry) != entry or entry < -1 or entry >= levels:
                     raise ValueError("Array should contain integer symbols from 0 to {}".format(levels-1))
 
-    finished = False
     result = True
-    # If no strength inputted, try increasing values for t until one
-    # does not work. If strength is inputted end after one check
-    while finished is False:
-        # Iterate over every possible selections of t columns, and
-        # ensure in those columns all unique t-tuples, are present
+
+    # If strength t is inputted, check that for every selection of t
+    # columns, each v^t t-tuple is found in some row.
+    if strength:
+        if strength > number_columns:
+            raise ValueError("Strength must be equal or less than number of columns")
+        wstrength = strength
         for comb in combinations(range(number_columns), wstrength):
-            existing_combinations = set(tuple([row[ti] for ti in comb]) for row in array)
-            if len(existing_combinations) != levels ** wstrength:
-                if strength is None:
+            existing_ttuples = set(tuple([row[ti] for ti in comb]) for row in array)
+            if len(existing_ttuples) != levels ** wstrength:
+                wstrength = 0
+                result = False
+                break
+
+    # If no strength t is inputted, starting at t=1 check all t until
+    # one of the v^t t-tuples does not appear.
+    else:
+        wstrength = 1
+        finished = False
+        do_iterate = True
+        while finished is False:
+            for comb in combinations(range(number_columns), wstrength):
+                tuple_dictionary = {item: 0 for item in product(symbol_list, repeat=wstrength)}
+                for row in array:
+                    tuple_dictionary[tuple([row[ti] for ti in comb])] += 1
+                if 0 in tuple_dictionary.values():
                     wstrength -= 1
                     finished = True
                     break
-                else:
-                    wstrength = 0
-                    result = False
+                elif do_iterate and any(value < levels for value in tuple_dictionary.values()):
+                    do_iterate = False
                     finished = True
-                    break
-
-        if finished is False:
-            if strength is None and wstrength < number_columns:
+            if finished is False and wstrength < number_columns and do_iterate:
                 wstrength += 1
-            else:
-                finished = True
-                break
 
     if verbose:
             print('A {} by {} Covering Array with strength {} with entries from a symbol set of size {}'.format(number_rows, number_columns, wstrength, levels))
