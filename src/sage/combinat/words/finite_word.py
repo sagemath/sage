@@ -541,71 +541,6 @@ class FiniteWord_class(Word_class):
             self._len = Integer(sum(1 for _ in self))
         return self._len
 
-    def not_used_letter(self):
-        r"""
-        Return a letter not contained in ``self``.
-
-        OUTPUT:
-
-        an integer -- lowest non-negative integer which is not contained 
-        in ``self`` as a letter
-
-        EXAMPLES::
-
-            sage: w = Word('abcd')
-            sage: w.not_used_letter()
-            0
-            sage: w = Word([1, 2, 3])
-            sage: w.not_used_letter()
-            0
-            sage: w = Word([3, 1, 'ab', 0, 'c', 2, 4])
-            sage: w.not_used_letter()
-            5
-        """
-        lettersSet = set(self.letters())
-        res = 0
-        while res in lettersSet:
-            res += 1
-        return res
-
-    def not_used_letters(self, n):
-        r"""
-        Return ``n`` letters not contained in ``self``.
-
-        INPUT:
-
-        - ``n`` -- non-negative integer, amount of letters
-        which will be returned
-
-        OUTPUT:
-
-        a list -- list of lowest non-negative integers 
-        which are not contained in ``self`` as letters
-
-        EXAMPLES::
-
-            sage: w = Word('abcd')
-            sage: w.not_used_letters(2)
-            [0, 1]
-            sage: w = Word([1, 2, 3])
-            sage: w.not_used_letters(3)
-            [0, 4, 5]
-            sage: w = Word([3, 1, 'ab', 0, 'c', 2, 4])
-            sage: w.not_used_letters(2)
-            [5, 6]
-        """
-        if n < 0:
-            raise ValueError("Parameter `n` must be a non-negative integer")
-        lettersSet = set(self.letters())
-        res = []
-        num = 0
-        while len(res) < n:
-            while num in lettersSet:
-                num += 1
-            res.append(num)
-            num += 1
-        return res
-
     def content(self, n=None):
         r"""
         Return content of ``self``.
@@ -3218,7 +3153,7 @@ class FiniteWord_class(Word_class):
         # TODO - Add more private methods (without tests!) and use them here
         from sage.combinat.words.morphism import WordMorphism
         # Generate G
-        specialLetters = self.not_used_letters(2)
+        specialLetters = self._not_used_letters(2)
         specialLetterOne, specialLetterTwo = specialLetters[0], specialLetters[1]
         specialMorphism = WordMorphism({specialLetterOne: specialLetterOne, specialLetterTwo: specialLetterTwo})
         specialAntimorphism = WordMorphism({specialLetterOne: specialLetterTwo, specialLetterTwo: specialLetterOne})
@@ -3303,7 +3238,7 @@ class FiniteWord_class(Word_class):
                 if letterContributes:
                     g_G += 1
         # Compute amount of distinct palindromic classes of equivalency
-        specialLetter = self.not_used_letter()
+        specialLetter = self._not_used_letter()
         palindromesTrees = []
         for antimorphism in antimorphismsG:
             _, palindromesTree = self._get_palindromic_factors_data(f=antimorphism)
@@ -3552,6 +3487,89 @@ class FiniteWord_class(Word_class):
         square = self * self
         return square.lps(f=f).length() >= self.length()
 
+    def _not_used_letter(self, morphism):
+        r"""
+        This is private method. It returns a letter not contained in ``self``,
+        domain of ``morphism`` and codomain of ``morphism``.
+
+        INPUT:
+
+        - ``morphism`` -- word morphism on the alphabet of ``self``.
+
+        OUTPUT:
+
+        an integer -- lowest non-negative integer which is not contained
+        as a letter in ``self``, domain of ``morphism``
+        and codomain of ``morphism``.
+
+        EXAMPLES::
+
+            sage: f = WordMorphism('a->ab,b->a')
+            sage: w = Word('abcd')
+            sage: w._not_used_letter(f)
+            0
+            sage: f = WordMorphism({0 -> 'ba', 'a' -> 2})
+            sage: w = Word([1, 2, 3])
+            sage: w._not_used_letter(f)
+            4
+            sage: f = WordMorphism({0 -> [2, 3, 5]})
+            sage: w = Word([3, 1, 'ab', 0, 'c', 2])
+            sage: w._not_used_letter(f)
+            4
+        """
+        lettersSet = set(morphism.domain().alphabet()).union(
+            set(morphism.codomain().alphabet())).union(set(self.letters()))
+        res = 0
+        while res in lettersSet:
+            res += 1
+        return res
+
+    def _not_used_letters(self, morphism, n):
+        r"""
+        This is private method. It return ``n`` letters not contained
+        in ``self``, domain of ``morphism`` and codomain of ``morphism``.
+
+        INPUT:
+
+        - ``n`` -- non-negative integer, amount of letters
+        which will be returned
+
+        - ``morphism`` -- word morphism on the alphabet of ``self``.
+
+        OUTPUT:
+
+        a list -- list of lowest non-negative integers
+        which are not contained as letters in ``self``,
+        domain of ``morphism`` and codomain of ``morphism``.
+
+        EXAMPLES::
+
+            sage: f = WordMorphism('a->ab,b->a')
+            sage: w = Word('abcd')
+            sage: w._not_used_letters(f, 3)
+            [0, 1, 2]
+            sage: f = WordMorphism({0 -> 'ba', 'a' -> 2})
+            sage: w = Word([1, 2, 3])
+            sage: w._not_used_letters(f, 2)
+            [4, 5]
+            sage: f = WordMorphism({0 -> [2, 5]})
+            sage: w = Word([3, 'ab', 0, 'c', 2])
+            sage: w._not_used_letters(f, 4)
+            [1, 4, 6, 7]
+        """
+        if n < 0:
+            raise ValueError("Parameter `n` must be a non-negative integer")
+        lettersSet = set(morphism.domain().alphabet()).union(
+            set(morphism.codomain().alphabet())).union(set(self.letters()))
+        res = []
+        num = 0
+        while len(res) < n:
+            while num in lettersSet:
+                num += 1
+            res.append(num)
+            num += 1
+        return res
+
     def _insert_not_used_letter_between_consecutive_letters(self, f=None):
         r"""
         This is private method. It returns copy of ``self`` with not used letter inserted 
@@ -3582,7 +3600,7 @@ class FiniteWord_class(Word_class):
             sage: letter
             0
         """
-        specialLetter = self.not_used_letter()
+        specialLetter = self._not_used_letter()
         updatedLetterList = []
         for letter in self:
             updatedLetterList.append(letter)
