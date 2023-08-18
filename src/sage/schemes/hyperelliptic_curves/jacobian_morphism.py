@@ -299,7 +299,7 @@ def cantor_composition(D1,D2,f,h,genus):
 
         sage: Q = J(H.lift_x(F(a+1))); Q                                                # needs sage.rings.finite_rings
         (x + 6*a + 6, y + 2*a)
-        sage: 7*8297*Q # indirect doctest                                               # needs sage.rings.finite_rings
+        sage: 7*8297*Q  # indirect doctest                                              # needs sage.rings.finite_rings
         (1)
 
         A test over a prime field:
@@ -385,7 +385,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1 # indirect doctest                            # needs sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1  # indirect doctest                           # needs sage.rings.finite_rings
             (x + 35, y + 26)
             sage: P1.parent()                                                           # needs sage.rings.finite_rings
             Set of rational points of Jacobian of Hyperelliptic Curve over
@@ -422,7 +422,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: Q = J(H.lift_x(F(1))); Q # indirect doctest                           # needs sage.rings.finite_rings
+            sage: Q = J(H.lift_x(F(1))); Q  # indirect doctest                          # needs sage.rings.finite_rings
             (x + 6, y + 2*a + 2)
         """
         a, b = self.__polys
@@ -446,11 +446,11 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: Q = J(0); Q # indirect doctest                                        # needs sage.rings.finite_rings
+            sage: Q = J(0); Q  # indirect doctest                                       # needs sage.rings.finite_rings
             (1)
-            sage: Q = J(H.lift_x(F(1))); Q # indirect doctest                           # needs sage.rings.finite_rings
+            sage: Q = J(H.lift_x(F(1))); Q  # indirect doctest                          # needs sage.rings.finite_rings
             (x + 6, y + 2*a + 2)
-            sage: Q + Q # indirect doctest                                              # needs sage.rings.finite_rings
+            sage: Q + Q  # indirect doctest                                             # needs sage.rings.finite_rings
             (x^2 + 5*x + 1, y + 3*a*x + 6*a + 2)
         """
         if self.is_zero():
@@ -473,9 +473,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: Q = J(0); print(latex(Q)) # indirect doctest                          # needs sage.rings.finite_rings
+            sage: Q = J(0); print(latex(Q))  # indirect doctest                         # needs sage.rings.finite_rings
             \left(1\right)
-            sage: Q = J(H.lift_x(F(1))); print(latex(Q)) # indirect doctest             # needs sage.rings.finite_rings
+            sage: Q = J(H.lift_x(F(1))); print(latex(Q))  # indirect doctest            # needs sage.rings.finite_rings
             \left(x + 6, y + 2 \alpha + 2\right)
 
         ::
@@ -670,9 +670,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
             sage: P1 = J(H.lift_x(2)); P1                                               # needs sage.rings.finite_rings
             (x + 35, y + 26)
-            sage: P1 == 0 # indirect doctest                                            # needs sage.rings.finite_rings
+            sage: P1 == 0  # indirect doctest                                           # needs sage.rings.finite_rings
             False
-            sage: P1 - P1 == 0 # indirect doctest                                       # needs sage.rings.finite_rings
+            sage: P1 - P1 == 0  # indirect doctest                                      # needs sage.rings.finite_rings
             True
         """
         return self.__polys[0] != 1
@@ -756,7 +756,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
             sage: P1 = J(H.lift_x(2)); P1                                               # needs sage.rings.finite_rings
             (x + 35, y + 26)
-            sage: P1 + P1 # indirect doctest                                            # needs sage.rings.finite_rings
+            sage: P1 + P1  # indirect doctest                                           # needs sage.rings.finite_rings
             (x^2 + 33*x + 4, y + 13*x)
         """
         X = self.parent()
@@ -787,7 +787,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
             sage: P1 = J(H.lift_x(2)); P1                                               # needs sage.rings.finite_rings
             (x + 35, y + 26)
-            sage: P1 - P1 # indirect doctest                                            # needs sage.rings.finite_rings
+            sage: P1 - P1  # indirect doctest                                           # needs sage.rings.finite_rings
             (1)
 
         ::
@@ -798,11 +798,11 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         Observe that the `x`-coordinates are the same but the
         `y`-coordinates differ::
 
-            sage: P1 - P2 # indirect doctest                                            # needs sage.rings.finite_rings
+            sage: P1 - P2  # indirect doctest                                           # needs sage.rings.finite_rings
             (x^2 + 31*x + 8, y + 7*x + 12)
-            sage: P1 + P2 # indirect doctest                                            # needs sage.rings.finite_rings
+            sage: P1 + P2  # indirect doctest                                           # needs sage.rings.finite_rings
             (x^2 + 31*x + 8, y + 4*x + 18)
-            sage: (P1 - P2) - (P1 + P2) + 2*P2 # indirect doctest                       # needs sage.rings.finite_rings
+            sage: (P1 - P2) - (P1 + P2) + 2*P2  # indirect doctest                      # needs sage.rings.finite_rings
             (1)
         """
         return self + (-other)

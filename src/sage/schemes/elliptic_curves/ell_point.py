@@ -3956,7 +3956,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: E.j_invariant()                                                       # needs sage.rings.finite_rings
             0
             sage: P = E.random_point()                                                  # needs sage.rings.finite_rings
-            sage: P.order() # random                                                    # needs sage.rings.finite_rings
+            sage: P.order()  # random                                                   # needs sage.rings.finite_rings
             16777251
 
         Similarly when `j(E)=1728`::
@@ -3967,7 +3967,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: E.j_invariant()                                                       # needs sage.rings.finite_rings
             1728
             sage: P = E.random_point()                                                  # needs sage.rings.finite_rings
-            sage: P.order() # random                                                    # needs sage.rings.finite_rings
+            sage: P.order()  # random                                                   # needs sage.rings.finite_rings
             46912611635760
 
         TESTS:

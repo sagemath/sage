@@ -1166,15 +1166,16 @@ class AffineSpace_field(AffineSpace_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: A3.<x,y,z> = AffineSpace(3, QQ)
             sage: p1 = A3(1, 2, 3)
             sage: p2 = A3(4, 5, 6)
-            sage: L = A3.line_through(p1, p2); L                                        # needs sage.schemes
+            sage: L = A3.line_through(p1, p2); L
             Affine Curve over Rational Field defined by -1/6*x + 1/6*y - 1/6,
               -1/6*x + 1/6*z - 1/3, -1/6*y + 1/6*z - 1/6, -1/6*x + 1/3*y - 1/6*z
-            sage: L(p1)                                                                 # needs sage.schemes
+            sage: L(p1)
             (1, 2, 3)
-            sage: L(p2)                                                                 # needs sage.schemes
+            sage: L(p2)
             (4, 5, 6)
             sage: A3.line_through(p1, p1)
             Traceback (most recent call last):

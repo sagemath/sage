@@ -2788,7 +2788,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
     generic code must be used::
 
         sage: E = EllipticCurve(GF(101), [-3440, 77658])                                # needs sage.rings.finite_rings
-        sage: E.isogenies_prime_degree(71) # fast                                       # needs sage.rings.finite_rings
+        sage: E.isogenies_prime_degree(71)  # fast                                      # needs sage.rings.finite_rings
         []
         sage: E.isogenies_prime_degree(73)      # long time                             # needs sage.rings.finite_rings
         []

@@ -1154,11 +1154,11 @@ def two_descent_by_two_isogeny(E,
         sage: x,y = var('x,y')                                                          # needs sage.symbolic
         sage: E = EllipticCurve(y^2 == x^3 + x^2 - 25*x + 39)                           # needs sage.symbolic
         sage: n1, n2, n1_prime, n2_prime = two_descent_by_two_isogeny(E)                # needs sage.symbolic
-        sage: log(n1,2) + log(n1_prime,2) - 2 # the rank                                # needs sage.symbolic
+        sage: log(n1,2) + log(n1_prime,2) - 2  # the rank                               # needs sage.symbolic
         2
         sage: E = EllipticCurve(y^2 + x*y + y == x^3 - 131*x + 558)                     # needs sage.symbolic
         sage: n1, n2, n1_prime, n2_prime = two_descent_by_two_isogeny(E)                # needs sage.symbolic
-        sage: log(n1,2) + log(n1_prime,2) - 2 # the rank                                # needs sage.symbolic
+        sage: log(n1,2) + log(n1_prime,2) - 2  # the rank                               # needs sage.symbolic
         3
 
     Using the verbosity option::

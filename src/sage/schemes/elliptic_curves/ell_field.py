@@ -335,7 +335,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``other`` -- an elliptic curves with the same base field as self.
+        - ``other`` -- an elliptic curve with the same base field as ``self``.
 
         OUTPUT:
 
@@ -366,7 +366,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             2
             sage: E1.is_quadratic_twist(E1)
             1
-            sage: type(E1.is_quadratic_twist(E1)) == type(E1.is_quadratic_twist(E2))   #trac 6574
+            sage: type(E1.is_quadratic_twist(E1)) == type(E1.is_quadratic_twist(E2))   # Issue #6574
             True
 
         ::
@@ -505,7 +505,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve_from_j(GF(13)(1728))
             sage: E1 = E.quartic_twist(2)
             sage: D = E.is_quartic_twist(E1); D!=0
@@ -833,17 +832,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         The 2-division field is the same as the splitting field of
         the 2-division polynomial (therefore, it has degree 1, 2, 3 or 6)::
 
+            sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('15a1')
-            sage: K.<b> = E.division_field(2); K                                        # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(2); K
             Number Field in b with defining polynomial x
             sage: E = EllipticCurve('14a1')
-            sage: K.<b> = E.division_field(2); K                                        # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(2); K
             Number Field in b with defining polynomial x^2 + 5*x + 92
             sage: E = EllipticCurve('196b1')
-            sage: K.<b> = E.division_field(2); K                                        # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(2); K
             Number Field in b with defining polynomial x^3 + x^2 - 114*x - 127
             sage: E = EllipticCurve('19a1')
-            sage: K.<b> = E.division_field(2); K                                        # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(2); K
             Number Field in b with defining polynomial
              x^6 + 10*x^5 + 24*x^4 - 212*x^3 + 1364*x^2 + 24072*x + 104292
 
@@ -851,11 +851,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         field of the `\ell`-division polynomial, or a quadratic extension
         of it. ::
 
+            sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('50a1')
-            sage: F.<a> = E.division_polynomial(3).splitting_field(simplify_all=True); F            # needs sage.rings.number_field
+            sage: F.<a> = E.division_polynomial(3).splitting_field(simplify_all=True); F
             Number Field in a
              with defining polynomial x^6 - 3*x^5 + 4*x^4 - 3*x^3 - 2*x^2 + 3*x + 3
-            sage: K.<b> = E.division_field(3, simplify_all=True); K                     # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(3, simplify_all=True); K
             Number Field in b
              with defining polynomial x^6 - 3*x^5 + 4*x^4 - 3*x^3 - 2*x^2 + 3*x + 3
 
@@ -863,22 +864,24 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         3-division polynomial remains the same, but the 3-division field
         becomes a quadratic extension::
 
-            sage: E = E.quadratic_twist(5)  # 50b3                                      # needs sage.rings.number_field
-            sage: F.<a> = E.division_polynomial(3).splitting_field(simplify_all=True); F            # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: E = E.quadratic_twist(5)  # 50b3
+            sage: F.<a> = E.division_polynomial(3).splitting_field(simplify_all=True); F
             Number Field in a
              with defining polynomial x^6 - 3*x^5 + 4*x^4 - 3*x^3 - 2*x^2 + 3*x + 3
-            sage: K.<b> = E.division_field(3, simplify_all=True); K                     # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(3, simplify_all=True); K
             Number Field in b with defining polynomial x^12 - 3*x^11 + 8*x^10 - 15*x^9
              + 30*x^8 - 63*x^7 + 109*x^6 - 144*x^5 + 150*x^4 - 120*x^3 + 68*x^2 - 24*x + 4
 
         Try another quadratic twist, this time over a subfield of `F`::
 
-            sage: G.<c>,_,_ = F.subfields(3)[0]                                         # needs sage.rings.number_field
-            sage: E = E.base_extend(G).quadratic_twist(c); E                            # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: G.<c>,_,_ = F.subfields(3)[0]
+            sage: E = E.base_extend(G).quadratic_twist(c); E
             Elliptic Curve defined
              by y^2 = x^3 + 5*a0*x^2 + (-200*a0^2)*x + (-42000*a0^2+42000*a0+126000)
              over Number Field in a0 with defining polynomial x^3 - 3*x^2 + 3*x + 9
-            sage: K.<b> = E.division_field(3, simplify_all=True); K                     # needs sage.rings.number_field
+            sage: K.<b> = E.division_field(3, simplify_all=True); K
             Number Field in b with defining polynomial
              x^12 + 5*x^10 + 40*x^8 + 315*x^6 + 750*x^4 + 675*x^2 + 2025
 
@@ -916,24 +919,25 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: E = EllipticCurve([0,0,0,0,i])                                        # needs sage.rings.number_field
-            sage: L.<b> = E.division_field(2); L                                        # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: E = EllipticCurve([0,0,0,0,i])
+            sage: L.<b> = E.division_field(2); L
             Number Field in b with defining polynomial x^4 - x^2 + 1
-            sage: L.<b>, phi = E.division_field(2, map=True); phi                       # needs sage.rings.number_field
+            sage: L.<b>, phi = E.division_field(2, map=True); phi
             Ring morphism:
               From: Number Field in i with defining polynomial x^2 + 1
               To:   Number Field in b with defining polynomial x^4 - x^2 + 1
               Defn: i |--> -b^3
-            sage: L.<b>, phi = E.division_field(3, map=True)                            # needs sage.rings.number_field
-            sage: L                                                                     # needs sage.rings.number_field
+            sage: L.<b>, phi = E.division_field(3, map=True)
+            sage: L
             Number Field in b with defining polynomial x^24 - 6*x^22 - 12*x^21
              - 21*x^20 + 216*x^19 + 48*x^18 + 804*x^17 + 1194*x^16 - 13488*x^15
              + 21222*x^14 + 44196*x^13 - 47977*x^12 - 102888*x^11 + 173424*x^10
              - 172308*x^9 + 302046*x^8 + 252864*x^7 - 931182*x^6 + 180300*x^5
              + 879567*x^4 - 415896*x^3 + 1941012*x^2 + 650220*x + 443089
-            sage: phi                                                                   # needs sage.rings.number_field
+            sage: phi
             Ring morphism:
               From: Number Field in i with defining polynomial x^2 + 1
               To:   Number Field in b with defining polynomial x^24 ...
@@ -1199,7 +1203,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(19),[1,1])
             sage: P = E(15,3); Q = E(2,12)
             sage: (P.order(), Q.order())
@@ -1244,11 +1247,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         :trac:`23222`, the following raised no error but returned an
         invalid morphism.  See also :trac:`11578`::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^2 - x - 1)                                      # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [-13392, -1080432])                              # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: phi = E.isogeny( (x-564)*(x - 396/5*a + 348/5) )                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - x - 1)
+            sage: E = EllipticCurve(K, [-13392, -1080432])
+            sage: R.<x> = K[]
+            sage: phi = E.isogeny( (x-564)*(x - 396/5*a + 348/5) )
             Traceback (most recent call last):
             ...
             ValueError: the polynomial x^2 + (-396/5*a - 2472/5)*x + 223344/5*a - 196272/5 does not
@@ -1357,7 +1361,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Examples over finite fields::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.pari
             sage: E = EllipticCurve(GF(next_prime(1000000)), [7,8])
             sage: E.isogenies_prime_degree(2)
             [Isogeny of degree 2
@@ -1426,10 +1430,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
                 to Elliptic Curve defined by y^2 = x^3 + 390065*x + 605596 over Finite Field of size 1000003]
 
-            sage: E = EllipticCurve(GF(17), [2,0])                                      # needs sage.rings.finite_rings
-            sage: E.isogenies_prime_degree(3)                                           # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(17), [2,0])
+            sage: E.isogenies_prime_degree(3)
             []
-            sage: E.isogenies_prime_degree(2)                                           # needs sage.rings.finite_rings
+            sage: E.isogenies_prime_degree(2)
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 17
               to Elliptic Curve defined by y^2 = x^3 + 9*x over Finite Field of size 17,
@@ -1443,7 +1447,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         The base field matters, over a field extension we find more
         isogenies::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(13), [2,8])
             sage: E.isogenies_prime_degree(max_l=3)
             [Isogeny of degree 2
@@ -1452,6 +1455,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              Isogeny of degree 3
               from Elliptic Curve defined by y^2 = x^3 + 2*x + 8 over Finite Field of size 13
                 to Elliptic Curve defined by y^2 = x^3 + 9*x + 11 over Finite Field of size 13]
+
+            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(13^6), [2,8])
             sage: E.isogenies_prime_degree(max_l=3)
             [Isogeny of degree 2
@@ -1479,7 +1484,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         If the degree equals the characteristic, we find only separable
         isogenies::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(13), [2,8])
             sage: E.isogenies_prime_degree(13)
             [Isogeny of degree 13
@@ -1490,6 +1494,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             [Isogeny of degree 5
               from Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
                 to Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 5]
+
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(3^4)
             sage: E = EllipticCurve(k, [0,1,0,0,a])
             sage: E.isogenies_prime_degree(3)
@@ -1521,10 +1527,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Examples over number fields (other than QQ)::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: QQroot2.<e> = NumberField(x^2 - 2)                                    # needs sage.rings.number_field
-            sage: E = EllipticCurve(QQroot2, j=8000)                                    # needs sage.rings.number_field
-            sage: E.isogenies_prime_degree()                                            # needs sage.rings.number_field
+            sage: QQroot2.<e> = NumberField(x^2 - 2)
+            sage: E = EllipticCurve(QQroot2, j=8000)
+            sage: E.isogenies_prime_degree()
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 = x^3 + (-150528000)*x + (-629407744000)
                    over Number Field in e with defining polynomial x^2 - 2
@@ -1540,17 +1547,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                    over Number Field in e with defining polynomial x^2 - 2
                 to Elliptic Curve defined by y^2 = x^3 + (-220500*e-257250)*x + (-54022500*e-88837000)
                    over Number Field in e with defining polynomial x^2 - 2]
-
-            sage: E = EllipticCurve(QQroot2, [1,0,1,4, -6]); E                          # needs sage.rings.number_field
+            sage: E = EllipticCurve(QQroot2, [1,0,1,4, -6]); E
             Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6)
              over Number Field in e with defining polynomial x^2 - 2
-            sage: E.isogenies_prime_degree(2)                                           # needs sage.rings.number_field
+            sage: E.isogenies_prime_degree(2)
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6)
                    over Number Field in e with defining polynomial x^2 - 2
                 to Elliptic Curve defined by y^2 + x*y + y = x^3 + (-36)*x + (-70)
                    over Number Field in e with defining polynomial x^2 - 2]
-            sage: E.isogenies_prime_degree(3)                                           # needs sage.rings.number_field
+            sage: E.isogenies_prime_degree(3)
             [Isogeny of degree 3
               from Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x + (-6)
                    over Number Field in e with defining polynomial x^2 - 2
@@ -1818,17 +1824,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Ordinary curve over finite extension field of degree 2::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.graphs sage.rings.finite_rings
             sage: x = polygen(ZZ, 'x')
             sage: E = EllipticCurve(GF(59^2, "i", x^2 + 1), j=5)
-            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G        # needs sage.graphs
+            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G
             Graph on 20 vertices
-            sage: G.vertices(sort=True)                                                 # needs sage.graphs
+            sage: G.vertices(sort=True)
             ['1',
              '12',
              ...
              'i + 55']
-            sage: G.edges(sort=True)                                                    # needs sage.graphs
+            sage: G.edges(sort=True)
             [('1', '28*i + 11', None),
              ('1', '31*i + 11', None),
              ...
@@ -1836,25 +1842,25 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Supersingular curve over prime field::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.graphs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(419), j=1728)
-            sage: G3 = E.isogeny_ell_graph(3, directed=False, label_by_j=True); G3      # needs sage.graphs
+            sage: G3 = E.isogeny_ell_graph(3, directed=False, label_by_j=True); G3
             Graph on 27 vertices
-            sage: G3.vertices(sort=True)                                                # needs sage.graphs
+            sage: G3.vertices(sort=True)
             ['0',
              '0*',
              ...
              '98*']
-            sage: G3.edges(sort=True)                                                   # needs sage.graphs
+            sage: G3.edges(sort=True)
             [('0', '0*', None),
              ('0', '13', None),
              ...
              ('48*', '98*', None)]
-             sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G5     # needs sage.graphs
+             sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True); G5
              Graph on 9 vertices
-             sage: G5.vertices(sort=True)                                               # needs sage.graphs
+             sage: G5.vertices(sort=True)
              ['13', '13*', '407', '407*', '52', '62', '62*', '98', '98*']
-             sage: G5.edges(sort=True)                                                  # needs sage.graphs
+             sage: G5.edges(sort=True)
              [('13', '52', None),
               ('13', '98', None),
               ...
@@ -1862,31 +1868,31 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Supersingular curve over finite extension field of degree 2::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.graphs sage.rings.finite_rings
             sage: K = GF(431^2, "i", x^2 + 1)
             sage: E = EllipticCurve(K, j=0)
             sage: E.is_supersingular()
             True
-            sage: G = E.isogeny_ell_graph(2, directed=True, label_by_j=True); G         # needs sage.graphs
+            sage: G = E.isogeny_ell_graph(2, directed=True, label_by_j=True); G
             Looped multi-digraph on 37 vertices
-            sage: G.vertices(sort=True)                                                 # needs sage.graphs
+            sage: G.vertices(sort=True)
             ['0',
              '102',
              ...
              '87*i + 190']
-            sage: G.edges(sort=True)                                                    # needs sage.graphs
+            sage: G.edges(sort=True)
             [('0', '125', None),
              ('0', '125', None),
              ...
              '81*i + 65', None)]
-            sage: H = E.isogeny_ell_graph(2, directed=False, label_by_j=True); H        # needs sage.graphs
+            sage: H = E.isogeny_ell_graph(2, directed=False, label_by_j=True); H
             Looped multi-graph on 37 vertices
-            sage: H.vertices(sort=True)                                                 # needs sage.graphs
+            sage: H.vertices(sort=True)
             ['0',
              '102',
              ...
              '87*i + 190']
-            sage: H.edges(sort=True)                                                    # needs sage.graphs
+            sage: H.edges(sort=True)
             [('0', '125', None),
              ('102', '125', None),
              ...
@@ -1894,28 +1900,28 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Curve over a quadratic number field::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
             sage: K.<e> = NumberField(x^2 - 2)
             sage: E = EllipticCurve(K, [1, 0, 1, 4, -6])
-            sage: G2 = E.isogeny_ell_graph(2, directed=False)                           # needs sage.graphs
-            sage: G2.vertices(sort=True)                                                # needs sage.graphs
+            sage: G2 = E.isogeny_ell_graph(2, directed=False)
+            sage: G2.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
              'y^2 + x*y + y = x^3 + (-36)*x + (-70)',
              'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
-            sage: G2.edges(sort=True)                                                   # needs sage.graphs
+            sage: G2.edges(sort=True)
             [('y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
               'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
               'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
               'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
-            sage: G3 = E.isogeny_ell_graph(3, directed=False)                           # needs sage.graphs
-            sage: G3.vertices(sort=True)                                                # needs sage.graphs
+            sage: G3 = E.isogeny_ell_graph(3, directed=False)
+            sage: G3.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-1)*x',
              'y^2 + x*y + y = x^3 + (-171)*x + (-874)',
              'y^2 + x*y + y = x^3 + 4*x + (-6)']
-            sage: G3.edges(sort=True)                                                   # needs sage.graphs
+            sage: G3.edges(sort=True)
             [('y^2 + x*y + y = x^3 + (-1)*x',
               'y^2 + x*y + y = x^3 + 4*x + (-6)', None),
              ('y^2 + x*y + y = x^3 + (-171)*x + (-874)',
@@ -1923,22 +1929,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.graphs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(11), j=0)
-            sage: G0 = E.isogeny_ell_graph(2, directed=False)                           # needs sage.graphs
-            sage: G0.is_directed()                                                      # needs sage.graphs
+            sage: G0 = E.isogeny_ell_graph(2, directed=False)
+            sage: G0.is_directed()
             False
-            sage: G1 = E.isogeny_ell_graph(2, directed=True)                            # needs sage.graphs
-            sage: G1.is_directed()                                                      # needs sage.graphs
+            sage: G1 = E.isogeny_ell_graph(2, directed=True)
+            sage: G1.is_directed()
             True
-            sage: G2 = E.isogeny_ell_graph(2, label_by_j=False)                         # needs sage.graphs
-            sage: G2.vertices(sort=True)                                                # needs sage.graphs
+            sage: G2 = E.isogeny_ell_graph(2, label_by_j=False)
+            sage: G2.vertices(sort=True)
             ['y^2 = x^3 + 1',
              'y^2 = x^3 + 2',
              'y^2 = x^3 + 5*x',
              'y^2 = x^3 + 7*x']
-            sage: G3 = E.isogeny_ell_graph(2, label_by_j=True)                          # needs sage.graphs
-            sage: G3.vertices(sort=True)                                                # needs sage.graphs
+            sage: G3 = E.isogeny_ell_graph(2, label_by_j=True)
+            sage: G3.vertices(sort=True)
             ['0', '0*', '1', '1*']
         """
 

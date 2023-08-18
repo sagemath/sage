@@ -1086,7 +1086,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
             sage: D = Conic(K, [3, 2, 5])                                               # needs sage.rings.number_field
-            sage: D.rational_point(algorithm = 'rnfisnorm') # output is random          # needs sage.rings.number_field
+            sage: D.rational_point(algorithm = 'rnfisnorm')  # output is random         # needs sage.rings.number_field
             (-3 : 4*i : 1)
 
             sage: # needs sage.rings.number_field
