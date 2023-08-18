@@ -17,7 +17,9 @@ install_requires =
     SPKG_INSTALL_REQUIRES_numpy
     SPKG_INSTALL_REQUIRES_sagemath_categories
     SPKG_INSTALL_REQUIRES_sagemath_modules
+    SPKG_INSTALL_REQUIRES_sagemath_ntl
     SPKG_INSTALL_REQUIRES_sage_conf
+    SPKG_INSTALL_REQUIRES_sympy
 
 [options.package_data]
 
@@ -41,10 +43,11 @@ axiom           = # FIXME
 giac            = SPKG_INSTALL_REQUIRES_sagemath_giac
 ginac           = # no extra needed, same as pynac
 maxima          = # no extra needed
+ntl             = # no extra needed
 primecount      = SPKG_INSTALL_REQUIRES_primecountpy
 pynac           = # no extra needed
 singular        = # no extra needed
-sympy           = SPKG_INSTALL_REQUIRES_sympy
+sympy           = # no extra needed
 
 # extras by other features
 plot            = SPKG_INSTALL_REQUIRES_sagemath_plot
