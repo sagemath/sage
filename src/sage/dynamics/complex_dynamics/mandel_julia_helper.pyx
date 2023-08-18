@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.plot
 r"""
 Mandelbrot and Julia sets (Cython helper)
 
