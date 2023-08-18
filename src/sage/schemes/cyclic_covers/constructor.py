@@ -83,8 +83,8 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
     Double roots::
 
-        sage: P.<x> = GF(7)[]                                                           # needs sage.rings.finite_rings
-        sage: CyclicCover(2, (x^3-x+2)^2*(x^6-1))                                       # needs sage.rings.finite_rings
+        sage: P.<x> = GF(7)[]
+        sage: CyclicCover(2, (x^3-x+2)^2*(x^6-1))
         Traceback (most recent call last):
         ...
         ValueError: Not a smooth Cyclic Cover of P^1: singularity in the provided affine patch.

@@ -180,7 +180,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
     ::
 
-        sage: A.<x,y,z> = AffineSpace(GF(7), 3)                                         # needs sage.rings.finite_rings
+        sage: A.<x,y,z> = AffineSpace(GF(7), 3)
         sage: C = Curve([x^2 - z, z - 8*x], A); C                                       # needs sage.rings.finite_rings
         Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
     """
@@ -199,7 +199,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(7), 3)                                     # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(7), 3)
             sage: C = Curve([x^2 - z, z - 8*x], A); C                                   # needs sage.rings.finite_rings
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
@@ -845,7 +845,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(7), 3)                                     # needs sage.rings.number_field
+            sage: A.<x,y,z> = AffineSpace(GF(7), 3)
             sage: C = Curve([x^2 - z, z - 8*x], A); C                                   # needs sage.rings.number_field
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
@@ -2033,7 +2033,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(2), 2)                                       # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(2), 2)
             sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # needs sage.rings.finite_rings
             sage: C.genus()   # indirect doctest                                        # needs sage.rings.finite_rings
             1
@@ -2147,7 +2147,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # needs sage.rings.finite_rings
             sage: C._nonsingular_model                                                  # needs sage.rings.finite_rings
             (Function field in z defined by z^3 + 10*x,
@@ -2254,7 +2254,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # needs sage.rings.finite_rings
             sage: C._function_field                                                     # needs sage.rings.finite_rings
             Function field in z defined by z^3 + 10*x
@@ -2268,7 +2268,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # needs sage.rings.finite_rings
             sage: C._lift_to_function_field                                             # needs sage.rings.finite_rings
             Ring morphism:
@@ -2288,7 +2288,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # needs sage.rings.finite_rings
             sage: C._coordinate_functions                                               # needs sage.rings.finite_rings
             [x, z^2, z]
@@ -2351,7 +2351,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # needs sage.rings.finite_rings
             sage: C.singular_closed_points()                                            # needs sage.rings.finite_rings
             []
@@ -2463,7 +2463,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # needs sage.rings.finite_rings
             sage: C.places_at_infinity()                                                # needs sage.rings.finite_rings
             [Place (1/x, 1/x*z^2)]
@@ -2588,7 +2588,7 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
     EXAMPLES::
 
-        sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                        # needs sage.rings.finite_rings
+        sage: A.<x,y,z> = AffineSpace(GF(11), 3)
         sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A); C                            # needs sage.rings.finite_rings
         Affine Curve over Finite Field of size 11
          defined by -y^2 + x*z, -z^2 + y, -y*z + x
@@ -2655,7 +2655,7 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(7), 2)                                       # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7), 2)
             sage: C = Curve(x^2 - x^4 - y^4)                                            # needs sage.rings.finite_rings
             sage: C.closed_points()                                                     # needs sage.rings.finite_rings
             [Point (x, y),

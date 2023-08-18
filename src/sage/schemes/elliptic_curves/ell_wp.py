@@ -284,8 +284,8 @@ def compute_wp_fast(k, A, B, m):
         sage: compute_wp_fast(QQ, 1, 8, 7)
         z^-2 - 1/5*z^2 - 8/7*z^4 + 1/75*z^6 + O(z^7)
 
-        sage: k = GF(37)                                                                # needs sage.rings.finite_rings
-        sage: compute_wp_fast(k, k(1), k(8), 5)                                         # needs sage.rings.finite_rings
+        sage: k = GF(37)
+        sage: compute_wp_fast(k, k(1), k(8), 5)
         z^-2 + 22*z^2 + 20*z^4 + O(z^5)
     """
     R = PowerSeriesRing(k,'z',default_prec=m+5)

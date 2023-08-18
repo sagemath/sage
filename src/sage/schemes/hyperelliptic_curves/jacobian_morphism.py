@@ -36,18 +36,18 @@ Jacobian has complex multiplication.
 
 ::
 
-    sage: x = GF(37)['x'].gen()                                                         # needs sage.rings.finite_rings
-    sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x); H              # needs sage.rings.finite_rings
+    sage: x = GF(37)['x'].gen()
+    sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x); H
     Hyperelliptic Curve over Finite Field of size 37 defined
      by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
 At this time, Jacobians of hyperelliptic curves are handled
 differently than elliptic curves::
 
-    sage: J = H.jacobian(); J                                                           # needs sage.rings.finite_rings
+    sage: J = H.jacobian(); J
     Jacobian of Hyperelliptic Curve over Finite Field of size 37 defined
      by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
-    sage: J = J(J.base_ring()); J                                                       # needs sage.rings.finite_rings
+    sage: J = J(J.base_ring()); J
     Set of rational points of Jacobian of Hyperelliptic Curve over Finite Field
      of size 37 defined by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
@@ -376,9 +376,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # needs sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37));  J                                          # needs sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37));  J
             Set of rational points of Jacobian of Hyperelliptic Curve over
              Finite Field of size 37 defined by
             y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
@@ -662,9 +662,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # needs sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # needs sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
 
         ::
 
@@ -748,9 +748,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # needs sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # needs sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
 
         ::
 
@@ -779,9 +779,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # needs sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # needs sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
 
         ::
 

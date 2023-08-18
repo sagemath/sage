@@ -130,8 +130,8 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True)
             (True, (-3 : (t + 1)/t : 1))
-            sage: R.<t> = FiniteField(23)[]                                             # needs sage.rings.finite_rings
-            sage: C = Conic([2, t^2 + 1, t^2 + 5])                                      # needs sage.rings.finite_rings
+            sage: R.<t> = FiniteField(23)[]
+            sage: C = Conic([2, t^2 + 1, t^2 + 5])
             sage: C.has_rational_point()                                                # needs sage.rings.finite_rings
             True
             sage: C.has_rational_point(point=True)                                      # needs sage.rings.finite_rings
@@ -198,8 +198,8 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
         ``has_rational_point`` fails for some conics over function fields
         over finite fields, due to :trac:`20003`::
 
-            sage: K.<t> = PolynomialRing(GF(7))                                         # needs sage.rings.finite_rings
-            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,                 # needs sage.rings.finite_rings
+            sage: K.<t> = PolynomialRing(GF(7))
+            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
             ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
             sage: C.has_rational_point()                                                # needs sage.rings.finite_rings
             Traceback (most recent call last):

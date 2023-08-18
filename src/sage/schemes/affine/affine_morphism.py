@@ -663,7 +663,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x> = AffineSpace(GF(5), 1)
             sage: H = End(A)
             sage: f = H([x^2])
-            sage: type(f.as_dynamical_system())                                         # needs sage.rings.finite_rings sage.schemes
+            sage: type(f.as_dynamical_system())                                         # needs sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine_finite_field'>
 
         ::

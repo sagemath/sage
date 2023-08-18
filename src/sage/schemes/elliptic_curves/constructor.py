@@ -115,9 +115,9 @@ class EllipticCurveFactory(UniqueFactory):
 
     We create curves over a finite field as follows::
 
-        sage: EllipticCurve([GF(5)(0),0,1,-1,0])                                        # needs sage.rings.finite_rings
+        sage: EllipticCurve([GF(5)(0),0,1,-1,0])
         Elliptic Curve defined by y^2 + y = x^3 + 4*x over Finite Field of size 5
-        sage: EllipticCurve(GF(5), [0, 0,1,-1,0])                                       # needs sage.rings.finite_rings
+        sage: EllipticCurve(GF(5), [0, 0,1,-1,0])
         Elliptic Curve defined by y^2 + y = x^3 + 4*x over Finite Field of size 5
 
     Elliptic curves over `\ZZ/N\ZZ` with `N` prime are of type
@@ -159,8 +159,8 @@ class EllipticCurveFactory(UniqueFactory):
         sage: EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
         Elliptic Curve defined by y^2 + y = x^3 + x - 9 over Rational Field
 
-        sage: R.<x,y> = GF(5)[]                                                         # needs sage.rings.finite_rings
-        sage: EllipticCurve(x^3 + x^2 + 2 - y^2 - y*x)                                  # needs sage.rings.finite_rings
+        sage: R.<x,y> = GF(5)[]
+        sage: EllipticCurve(x^3 + x^2 + 2 - y^2 - y*x)
         Elliptic Curve defined by y^2 + x*y  = x^3 + x^2 + 2 over Finite Field of size 5
 
     We can also create elliptic curves by giving a smooth plane cubic with a rational point::
@@ -178,7 +178,7 @@ class EllipticCurveFactory(UniqueFactory):
         1728
         '32a2'
 
-        sage: E = EllipticCurve(j=GF(5)(2)); E; E.j_invariant()                         # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(j=GF(5)(2)); E; E.j_invariant()
         Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
         2
 
@@ -256,7 +256,7 @@ class EllipticCurveFactory(UniqueFactory):
         ...
         ValueError: First parameter (if present) must be a ring when j is specified
 
-        sage: EllipticCurve(GF(5), j=3/5)                                               # needs sage.rings.finite_rings
+        sage: EllipticCurve(GF(5), j=3/5)
         Traceback (most recent call last):
         ...
         ValueError: First parameter must be a ring containing 3/5
@@ -462,8 +462,8 @@ class EllipticCurveFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)))          # needs sage.rings.finite_rings
-            sage: type(E)                                                               # needs sage.rings.finite_rings
+            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)))
+            sage: type(E)
             <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
 
         .. NOTE::
@@ -1072,7 +1072,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: K.<t> = FunctionField(QQ)
         sage: R.<x,y,z> = K[]
         sage: cubic = x^3 + t*y^3 + (1+t)*z^3
-        sage: EllipticCurve_from_cubic(cubic, [1,1,-1], morphism=False)
+        sage: EllipticCurve_from_cubic(cubic, [1,1,-1], morphism=False)                 # needs sage.libs.singular
         Elliptic Curve defined by y^2 + ((162*t^6+486*t^5+810*t^4+810*t^3+486*t^2+162*t)/(t^6+12*t^5-3*t^4-20*t^3-3*t^2+12*t+1))*x*y + ((314928*t^14+4094064*t^13+23462136*t^12+78102144*t^11+167561379*t^10+243026001*t^9+243026001*t^8+167561379*t^7+78102144*t^6+23462136*t^5+4094064*t^4+314928*t^3)/(t^14+40*t^13+577*t^12+3524*t^11+8075*t^10+5288*t^9-8661*t^8-17688*t^7-8661*t^6+5288*t^5+8075*t^4+3524*t^3+577*t^2+40*t+1))*y = x^3 + ((2187*t^12+13122*t^11-17496*t^10-207765*t^9-516132*t^8-673596*t^7-516132*t^6-207765*t^5-17496*t^4+13122*t^3+2187*t^2)/(t^12+24*t^11+138*t^10-112*t^9-477*t^8+72*t^7+708*t^6+72*t^5-477*t^4-112*t^3+138*t^2+24*t+1))*x^2
          over Rational function field in t over Rational Field
 
@@ -1374,8 +1374,8 @@ def projective_point(p):
         sage: from sage.schemes.elliptic_curves.constructor import projective_point
         sage: projective_point([4/5, 6/5, 8/5])
         [2, 3, 4]
-        sage: F = GF(11)                                                                # needs sage.rings.finite_rings
-        sage: projective_point([F(4), F(8), F(2)])                                      # needs sage.rings.finite_rings
+        sage: F = GF(11)
+        sage: projective_point([F(4), F(8), F(2)])
         [4, 8, 2]
     """
     from sage.rings.integer import GCD_list

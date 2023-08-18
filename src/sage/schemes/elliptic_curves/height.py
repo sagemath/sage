@@ -798,7 +798,7 @@ class EllipticCurveCanonicalHeight:
         The base field must be a number field (or `\QQ`)::
 
             sage: from sage.schemes.elliptic_curves.height import EllipticCurveCanonicalHeight
-            sage: E = EllipticCurve(GF(7), [0,0,0,0,1])                                 # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(7), [0,0,0,0,1])
             sage: EllipticCurveCanonicalHeight(E)                                       # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
