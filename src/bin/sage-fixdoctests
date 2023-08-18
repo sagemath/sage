@@ -267,7 +267,7 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
                     print("sage-fixdoctests: This is a NameError from the top level of the doctest")  # so we keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
                     name = m.group(1)
-                    if name == 'I':
+                    if name in ['I', 'i']:
                         add_tags = ['sage.symbolic']  # This is how we mark it currently (2023-08)
                     elif len(name) >= 2 and (feature := name_feature(name)) and feature.name != 'sage.all':
                         # Don't mark use of 'x' '# needs sage.symbolic'; that's almost always wrong
