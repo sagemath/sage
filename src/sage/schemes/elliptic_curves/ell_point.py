@@ -1300,8 +1300,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         order of this point. How unlikely is determined by the factorization of
         the actual order, and the actual group structure::
 
-            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12           # needs sage.rings.finite_rings
-            sage: G = E(5, 0)   # G has order 2                                         # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(7), [0, 1])  # This curve has order 12
+            sage: G = E(5, 0)   # G has order 2
             sage: G.set_order(11)                                                       # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -1550,30 +1550,30 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         A three-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(0), 2])                                      # needs sage.rings.finite_rings
-            sage: P = E(5, 1); Q = E(0, 3);                                             # needs sage.rings.finite_rings
-            sage: P._miller_(Q, 3)                                                      # needs sage.rings.finite_rings
+            sage: E = EllipticCurve([GF(7)(0), 2])
+            sage: P = E(5, 1); Q = E(0, 3);
+            sage: P._miller_(Q, 3)
             4
 
         A 4-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(-1), 0])                                     # needs sage.rings.finite_rings
-            sage: P = E(5, 1); Q = E(4, 2)                                              # needs sage.rings.finite_rings
-            sage: P._miller_(Q, 4)                                                      # needs sage.rings.finite_rings
+            sage: E = EllipticCurve([GF(7)(-1), 0])
+            sage: P = E(5, 1); Q = E(4, 2)
+            sage: P._miller_(Q, 4)
             3
 
         A 5-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(-1), 4])                                     # needs sage.rings.finite_rings
-            sage: P = E(4, 1); Q = E(6, 5)                                              # needs sage.rings.finite_rings
-            sage: P._miller_(Q, 5)                                                      # needs sage.rings.finite_rings
+            sage: E = EllipticCurve([GF(7)(-1), 4])
+            sage: P = E(4, 1); Q = E(6, 5)
+            sage: P._miller_(Q, 5)
             1
 
         A 6-torsion example::
 
-            sage: E = EllipticCurve([GF(7)(3), 1])                                      # needs sage.rings.finite_rings
-            sage: P = E(5, 1); Q = E(3, 3)                                              # needs sage.rings.finite_rings
-            sage: P._miller_(Q, 6)                                                      # needs sage.rings.finite_rings
+            sage: E = EllipticCurve([GF(7)(3), 1])
+            sage: P = E(5, 1); Q = E(3, 3)
+            sage: P._miller_(Q, 6)
             5
 
         An example which is part of an ate pairing calculation. The trace of
@@ -3647,8 +3647,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(17), [1,-1])                                     # needs sage.rings.finite_rings
-            sage: P = E([13, 4])                                                        # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(17), [1,-1])
+            sage: P = E([13, 4])
             sage: P._magma_init_(magma)         # optional - magma                      # needs sage.rings.finite_rings
             'EllipticCurve([_sage_ref...|GF(17)!0,GF(17)!0,GF(17)!0,GF(17)!1,GF(17)!16])![13,4]'
         """
@@ -3905,9 +3905,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(7), [1,3])                                       # needs sage.rings.finite_rings
-            sage: P = E.points()[3]                                                     # needs sage.rings.finite_rings
-            sage: P.has_finite_order()                                                  # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(7), [1,3])
+            sage: P = E.points()[3]
+            sage: P.has_finite_order()
             True
         """
         return True

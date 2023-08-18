@@ -48,8 +48,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(3), [0, -1, 0, -346, 2652])                      # needs sage.rings.finite_rings
-            sage: E.genus()                                                             # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(3), [0, -1, 0, -346, 2652])
+            sage: E.genus()
             1
 
             sage: R = FractionField(QQ['z'])
@@ -1227,7 +1227,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Not all polynomials define a finite subgroup (:trac:`6384`)::
 
-            sage: E = EllipticCurve(GF(31), [1,0,0,1,2])                                # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(31), [1,0,0,1,2])
             sage: phi = E.isogeny([14,27,4,1])                                          # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -1508,8 +1508,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         In the supersingular case, there are no separable isogenies of
         degree equal to the characteristic::
 
-            sage: E = EllipticCurve(GF(5), [0,1])                                       # needs sage.rings.finite_rings
-            sage: E.isogenies_prime_degree(5)                                           # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(5), [0,1])
+            sage: E.isogenies_prime_degree(5)
             []
 
         An example over a rational function field::

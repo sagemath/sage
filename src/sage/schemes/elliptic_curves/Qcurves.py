@@ -204,8 +204,8 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
     TESTS::
 
-        sage: E = EllipticCurve([GF(5)(t) for t in [2,3,5,7,11]])                       # needs sage.rings.finite_rings
-        sage: is_Q_curve(E)                                                             # needs sage.rings.finite_rings
+        sage: E = EllipticCurve([GF(5)(t) for t in [2,3,5,7,11]])
+        sage: is_Q_curve(E)
         Traceback (most recent call last):
         ...
         TypeError: Elliptic Curve defined by ... must be an elliptic curve
@@ -520,13 +520,13 @@ def conjugacy_test(jlist, verbose=False):
         []
         sage: conjugacy_test([3 + a, 3 - a])                                            # needs sage.rings.number_field
         [x^2 - 6*x + 7]
-        sage: x = polygen(QQ)                                                           # needs sage.rings.number_field
-        sage: f = x^3 - 3                                                               # needs sage.rings.number_field
+        sage: x = polygen(QQ)
+        sage: f = x^3 - 3
         sage: K.<a> = f.splitting_field()                                               # needs sage.rings.number_field
         sage: js = f.roots(K, multiplicities=False)                                     # needs sage.rings.number_field
         sage: conjugacy_test(js)                                                        # needs sage.rings.number_field
         []
-        sage: f = x^4 - 3                                                               # needs sage.rings.number_field
+        sage: f = x^4 - 3
         sage: K.<a> = NumberField(f)                                                    # needs sage.rings.number_field
         sage: js = f.roots(K, multiplicities=False)                                     # needs sage.rings.number_field
         sage: conjugacy_test(js)                                                        # needs sage.rings.number_field

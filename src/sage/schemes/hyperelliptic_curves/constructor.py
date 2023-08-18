@@ -80,27 +80,26 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Characteristic two::
 
-        sage: P.<x> = GF(8, 'a')[]                                                      # needs sage.rings.finite_rings
-        sage: HyperellipticCurve(x^7 + 1, x)                                            # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: P.<x> = GF(8, 'a')[]
+        sage: HyperellipticCurve(x^7 + 1, x)
         Hyperelliptic Curve over Finite Field in a of size 2^3
          defined by y^2 + x*y = x^7 + 1
-        sage: HyperellipticCurve(x^8 + x^7 + 1, x^4 + 1)                                # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^8 + x^7 + 1, x^4 + 1)
         Hyperelliptic Curve over Finite Field in a of size 2^3
          defined by y^2 + (x^4 + 1)*y = x^8 + x^7 + 1
-
-        sage: HyperellipticCurve(x^8 + 1, x)                                            # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^8 + 1, x)
         Traceback (most recent call last):
         ...
         ValueError: Not a hyperelliptic curve: highly singular at infinity.
-
-        sage: HyperellipticCurve(x^8 + x^7 + 1, x^4)                                    # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^8 + x^7 + 1, x^4)
         Traceback (most recent call last):
         ...
         ValueError: Not a hyperelliptic curve: singularity in the provided affine patch.
 
-        sage: F.<t> = PowerSeriesRing(FiniteField(2))                                   # needs sage.rings.finite_rings
-        sage: P.<x> = PolynomialRing(FractionField(F))                                  # needs sage.rings.finite_rings
-        sage: HyperellipticCurve(x^5 + t, x)                                            # needs sage.rings.finite_rings
+        sage: F.<t> = PowerSeriesRing(FiniteField(2))
+        sage: P.<x> = PolynomialRing(FractionField(F))
+        sage: HyperellipticCurve(x^5 + t, x)
         Hyperelliptic Curve over Laurent Series Ring in t over Finite Field of size 2
          defined by y^2 + x*y = x^5 + t
 
@@ -124,13 +123,13 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Double roots::
 
-        sage: P.<x> = GF(7)[]                                                           # needs sage.rings.finite_rings
+        sage: P.<x> = GF(7)[]
         sage: HyperellipticCurve((x^3-x+2)^2*(x^6-1))
         Traceback (most recent call last):
         ...
         ValueError: Not a hyperelliptic curve: singularity in the provided affine patch.
 
-        sage: HyperellipticCurve((x^3-x+2)^2*(x^6-1), check_squarefree=False)           # needs sage.rings.finite_rings
+        sage: HyperellipticCurve((x^3-x+2)^2*(x^6-1), check_squarefree=False)
         Hyperelliptic Curve over Finite Field of size 7 defined by
          y^2 = x^12 + 5*x^10 + 4*x^9 + x^8 + 3*x^7 + 3*x^6 + 2*x^4 + 3*x^3 + 6*x^2 + 4*x + 3
 
@@ -155,9 +154,9 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     An example with a singularity over an inseparable extension of the
     base field::
 
-        sage: F.<t> = GF(5)[]                                                           # needs sage.rings.finite_rings
-        sage: P.<x> = F[]                                                               # needs sage.rings.finite_rings
-        sage: HyperellipticCurve(x^5 + t)                                               # needs sage.rings.finite_rings
+        sage: F.<t> = GF(5)[]
+        sage: P.<x> = F[]
+        sage: HyperellipticCurve(x^5 + t)
         Traceback (most recent call last):
         ...
         ValueError: Not a hyperelliptic curve: singularity in the provided affine patch.
@@ -190,9 +189,10 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Check that the inheritance is correct::
 
-        sage: R.<t> = PolynomialRing(GF(next_prime(10^9)))                              # needs sage.rings.finite_rings
-        sage: C = HyperellipticCurve(t^5 + t + 1)                                       # needs sage.rings.finite_rings
-        sage: type(C).mro()                                                             # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: R.<t> = PolynomialRing(GF(next_prime(10^9)))
+        sage: C = HyperellipticCurve(t^5 + t + 1)
+        sage: type(C).mro()
         [<class 'sage.schemes.hyperelliptic_curves.constructor.HyperellipticCurve_g2_FiniteField_with_category'>,
          <class 'sage.schemes.hyperelliptic_curves.constructor.HyperellipticCurve_g2_FiniteField'>,
          <class 'sage.schemes.hyperelliptic_curves.hyperelliptic_g2.HyperellipticCurve_g2'>,

@@ -13,7 +13,7 @@ EXAMPLES::
 
 ::
 
-    sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                         # needs sage.rings.finite_rings
+    sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
     sage: Curve(y^2*z^7 - x^9 - x*z^8)                                                  # needs sage.rings.finite_rings
     Projective Plane Curve over Finite Field of size 5
      defined by -x^9 + y^2*z^7 - x*z^8
@@ -127,7 +127,7 @@ def Curve(F, A=None):
 
     Affine plane curves.  ::
 
-        sage: x,y = GF(7)['x,y'].gens()                                                 # needs sage.rings.finite_rings
+        sage: x,y = GF(7)['x,y'].gens()
         sage: C = Curve(y^2 + x^3 + x^10); C                                            # needs sage.rings.finite_rings
         Affine Plane Curve over Finite Field of size 7 defined by x^10 + x^3 + y^2
         sage: C.genus()                                                                 # needs sage.rings.finite_rings

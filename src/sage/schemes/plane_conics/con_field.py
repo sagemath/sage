@@ -160,10 +160,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(QQ, [1,2,3,4,5,6]).coefficients()
             [1, 2, 3, 4, 5, 6]
 
-            sage: P.<x,y,z> = GF(13)[]                                                  # needs sage.rings.finite_rings
-            sage: a = Conic(x^2 + 5*x*y + y^2 + z^2).coefficients(); a                  # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = GF(13)[]
+            sage: a = Conic(x^2 + 5*x*y + y^2 + z^2).coefficients(); a
             [1, 5, 0, 1, 0, 1]
-            sage: Conic(a)                                                              # needs sage.rings.finite_rings
+            sage: Conic(a)
             Projective Conic Curve over Finite Field of size 13
             defined by x^2 + 5*x*y + y^2 + z^2
         """
@@ -232,10 +232,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         Determinants are only defined in characteristic different from `2`::
 
-            sage: C = Conic(GF(2), [1, 1, 1, 1, 1, 0])                                  # needs sage.rings.finite_rings
-            sage: C.is_smooth()                                                         # needs sage.rings.finite_rings
+            sage: C = Conic(GF(2), [1, 1, 1, 1, 1, 0])
+            sage: C.is_smooth()
             True
-            sage: C.determinant()                                                       # needs sage.rings.finite_rings
+            sage: C.determinant()
             Traceback (most recent call last):
             ...
             ValueError: The conic self (= Projective Conic Curve over Finite Field
@@ -334,7 +334,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: Conic(GF(2), [1,1,1,1,1,0]).diagonalization()                         # needs sage.rings.finite_rings
+            sage: Conic(GF(2), [1,1,1,1,1,0]).diagonalization()
             Traceback (most recent call last):
             ...
             ValueError: The conic self (= Projective Conic Curve over Finite Field
@@ -581,11 +581,11 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: c.has_singular_point(point = True)
             (True, (0 : 1 : 0))
 
-            sage: P.<x,y,z> = GF(7)[]                                                   # needs sage.rings.finite_rings
-            sage: e = Conic((x+y+z)*(x-y+2*z)); e                                       # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = GF(7)[]
+            sage: e = Conic((x+y+z)*(x-y+2*z)); e
             Projective Conic Curve over Finite Field of size 7
              defined by x^2 - y^2 + 3*x*z + y*z + 2*z^2
-            sage: e.has_singular_point(point = True)                                    # needs sage.rings.finite_rings
+            sage: e.has_singular_point(point = True)
             (True, (2 : 4 : 1))
 
             sage: Conic([1, 1, -1]).has_singular_point()
@@ -602,7 +602,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic([a, a + 1, 1]).has_singular_point(point=True)                   # needs sage.rings.finite_rings
             (True, (a + 1 : 0 : 1))
 
-            sage: P.<t> = GF(2)[]                                                       # needs sage.rings.finite_rings
+            sage: P.<t> = GF(2)[]
             sage: C = Conic(P, [t,t,1]); C                                              # needs sage.libs.ntl sage.rings.finite_rings
             Projective Conic Curve over Fraction Field of Univariate Polynomial Ring
              in t over Finite Field of size 2 (using GF2X) defined by t*x^2 + t*y^2 + z^2
@@ -757,7 +757,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: Conic([1,-1,0]).is_smooth()
             False
-            sage: Conic(GF(2),[1,1,1,1,1,0]).is_smooth()                                # needs sage.rings.finite_rings
+            sage: Conic(GF(2),[1,1,1,1,1,0]).is_smooth()
             True
         """
         if self.base_ring().characteristic() == 2:
@@ -823,9 +823,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             [1/2   1   0]
             [  0   0   1]
 
-            sage: R.<x, y, z> = GF(2)[]                                                 # needs sage.rings.finite_rings
-            sage: C = Conic(x^2 + x*y + y^2 + x*z + z^2)                                # needs sage.rings.finite_rings
-            sage: C.matrix()                                                            # needs sage.rings.finite_rings
+            sage: R.<x, y, z> = GF(2)[]
+            sage: C = Conic(x^2 + x*y + y^2 + x*z + z^2)
+            sage: C.matrix()
             [1 1 1]
             [0 1 0]
             [0 0 1]
@@ -853,7 +853,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         An example over a finite field ::
 
-            sage: c = Conic(GF(2), [1,1,1,1,1,0])                                       # needs sage.rings.finite_rings
+            sage: c = Conic(GF(2), [1,1,1,1,1,0])
             sage: f, g = c.parametrization(); f, g                                      # needs sage.rings.finite_rings
             (Scheme morphism:
               From: Projective Space of dimension 1 over Finite Field of size 2
@@ -1013,7 +1013,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: c = Conic(GF(2), [1,1,1,1,1,0])                                       # needs sage.rings.finite_rings
+            sage: c = Conic(GF(2), [1,1,1,1,1,0])
             sage: [c.random_rational_point() for i in range(10)]              # random  # needs sage.rings.finite_rings
             [(1 : 0 : 1), (1 : 0 : 1), (1 : 0 : 1), (0 : 1 : 1), (1 : 0 : 1),
              (0 : 0 : 1), (1 : 0 : 1), (1 : 0 : 1), (0 : 0 : 1), (1 : 0 : 1)]
@@ -1192,7 +1192,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: Conic(GF(2), [1,1,1,1,1,1]).singular_point()                          # needs sage.rings.finite_rings
+            sage: Conic(GF(2), [1,1,1,1,1,1]).singular_point()
             (1 : 1 : 1)
 
         ``ValueError`` is raised if the conic has no rational singular point

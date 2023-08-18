@@ -328,7 +328,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
             sage: R.<a> = QQ[]
             sage: K.<b> = NumberField(a^8 - a^4 + 1)                                    # needs sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)                                    # needs sage.rings.number_field
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve([359/12*x*y^2*z^2 + 2*y*z^4 + 187/12*y^3*z^2 + x*z^4        # needs sage.rings.number_field
             ....:            + 67/3*x^2*y*z^2 + 117/4*y^5 + 9*x^5 + 6*x^3*z^2
             ....:            + 393/4*x*y^4 + 145*x^2*y^3 + 115*x^3*y^2 + 49*x^4*y], P)
@@ -458,7 +458,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
             sage: R.<a> = QQ[]
             sage: K.<b> = NumberField(a^2 + a + 1)                                      # needs sage.rings.number_field
-            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)                                  # needs sage.rings.number_field
+            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: C = Curve([y^2 - w*z, w^3 - y^3], P)                                  # needs sage.rings.number_field
             sage: D = Curve([x*y - w*z, z^3 - y^3], P)                                  # needs sage.rings.number_field
             sage: C.intersection_points(D, F=K)                                         # needs sage.rings.number_field

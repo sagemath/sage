@@ -3,9 +3,9 @@ Hyperelliptic curves over a general ring
 
 EXAMPLES::
 
-    sage: P.<x> = GF(5)[]                                                               # needs sage.rings.finite_rings
-    sage: f = x^5 - 3*x^4 - 2*x^3 + 6*x^2 + 3*x - 1                                     # needs sage.rings.finite_rings
-    sage: C = HyperellipticCurve(f); C                                                  # needs sage.rings.finite_rings
+    sage: P.<x> = GF(5)[]
+    sage: f = x^5 - 3*x^4 - 2*x^3 + 6*x^2 + 3*x - 1
+    sage: C = HyperellipticCurve(f); C
     Hyperelliptic Curve over Finite Field of size 5
      defined by y^2 = x^5 + 2*x^4 + 3*x^3 + x^2 + 3*x + 4
 
@@ -86,14 +86,14 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         sage: C0 = HyperellipticCurve(f0)
         sage: f1 = x^5 - x^3 + x - 22
         sage: C1 = HyperellipticCurve(f1)
-        sage: Q.<y> = GF(5)[]                                                           # needs sage.rings.finite_rings
-        sage: f2 = y^5 - y^3 + y - 22                                                   # needs sage.rings.finite_rings
-        sage: C2 = HyperellipticCurve(f2)                                               # needs sage.rings.finite_rings
+        sage: Q.<y> = GF(5)[]
+        sage: f2 = y^5 - y^3 + y - 22
+        sage: C2 = HyperellipticCurve(f2)
         sage: hash(C0) == hash(C0)
         True
         sage: hash(C0) == hash(C1)
         False
-        sage: hash(C1) == hash(C2)                                                      # needs sage.rings.finite_rings
+        sage: hash(C1) == hash(C2)
         False
     """
     def __init__(self, PP, f, h=None, names=None, genus=None):
@@ -138,8 +138,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
              defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5
               + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
 
-            sage: R.<x> = FiniteField(7)[]                                              # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^8 + x + 5)                                   # needs sage.rings.finite_rings
+            sage: R.<x> = FiniteField(7)[]
+            sage: H = HyperellipticCurve(x^8 + x + 5)
             sage: H.base_extend(FiniteField(7^2, 'a'))                                  # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 7^2
              defined by y^2 = x^8 + x + 5
@@ -226,9 +226,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
-            sage: R.<x> = GF(13)[]                                                      # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^8 + 1)                                       # needs sage.rings.finite_rings
-            sage: H.is_smooth()                                                         # needs sage.rings.finite_rings
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^8 + 1)
+            sage: H.is_smooth()
             True
 
         A hyperelliptic curve with genus at least 2 always has a singularity at

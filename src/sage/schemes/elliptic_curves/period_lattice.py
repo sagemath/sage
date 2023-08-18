@@ -1058,6 +1058,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: embs = K.embeddings(ComplexField())

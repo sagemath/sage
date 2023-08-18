@@ -128,32 +128,32 @@ def _isogeny_determine_algorithm(E, kernel):
 
     This helper function will be implicitly called by the following examples::
 
-        sage: R.<x> = GF(5)[]                                                           # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(GF(5), [0,0,0,1,0])  # indirect doctest                 # needs sage.rings.finite_rings
+        sage: R.<x> = GF(5)[]
+        sage: E = EllipticCurve(GF(5), [0,0,0,1,0])  # indirect doctest
 
     We can construct the same isogeny from a kernel polynomial::
 
-        sage: phi = EllipticCurveIsogeny(E, x + 3)  # indirect doctest                  # needs sage.rings.finite_rings
+        sage: phi = EllipticCurveIsogeny(E, x + 3)  # indirect doctest
 
     or from a list of coefficients of a kernel polynomial::
 
-        sage: phi == EllipticCurveIsogeny(E, [3,1])  # indirect doctest                 # needs sage.rings.finite_rings
+        sage: phi == EllipticCurveIsogeny(E, [3,1])  # indirect doctest
         True
 
     or from a rational point which generates the kernel::
 
-        sage: phi == EllipticCurveIsogeny(E, E((2,0)))  # indirect doctest              # needs sage.rings.finite_rings
+        sage: phi == EllipticCurveIsogeny(E, E((2,0)))  # indirect doctest
         True
 
     In the first two cases, Kohel's algorithm will be used, while in
     the third case it is Vélu::
 
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import _isogeny_determine_algorithm
-        sage: _isogeny_determine_algorithm(E, x + 3)                                    # needs sage.rings.finite_rings
+        sage: _isogeny_determine_algorithm(E, x + 3)
         'kohel'
-        sage: _isogeny_determine_algorithm(E, [3, 1])                                   # needs sage.rings.finite_rings
+        sage: _isogeny_determine_algorithm(E, [3, 1])
         'kohel'
-        sage: _isogeny_determine_algorithm(E, E((2,0)))                                 # needs sage.rings.finite_rings
+        sage: _isogeny_determine_algorithm(E, E((2,0)))
         'velu'
     """
     kernel_is_list = isinstance(kernel, list)
@@ -211,8 +211,8 @@ def isogeny_codomain_from_kernel(E, kernel, degree=None):
         Elliptic Curve defined by y^2 + x*y + y = x^3 + 5*x + 2
          over Finite Field of size 7
 
-        sage: E = EllipticCurve(GF(19), [1,2,3,4,5])                                    # needs sage.rings.finite_rings
-        sage: kernel_list = [E((15,10)), E((10,3)), E((6,5))]                           # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(19), [1,2,3,4,5])
+        sage: kernel_list = [E((15,10)), E((10,3)), E((6,5))]
         sage: isogeny_codomain_from_kernel(E, kernel_list)                              # needs sage.rings.finite_rings
         Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 15
          over Finite Field of size 19
@@ -892,12 +892,12 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
     Composition tests (see :trac:`16245`, cf. :trac:`34410`)::
 
-        sage: E = EllipticCurve(j=GF(7)(0))                                             # needs sage.rings.finite_rings
-        sage: phi = E.isogeny([E(0), E((0,1)), E((0,-1))]); phi                         # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(j=GF(7)(0))
+        sage: phi = E.isogeny([E(0), E((0,1)), E((0,-1))]); phi
         Isogeny of degree 3
          from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
            to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
-        sage: phi2 = phi * phi; phi2                                                    # needs sage.rings.finite_rings
+        sage: phi2 = phi * phi; phi2
         Composite morphism of degree 9 = 3^2:
           From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
           To:   Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
@@ -1030,15 +1030,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(2), [0,0,1,0,1])                                 # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(2), [0,0,1,0,1])
             sage: phi = EllipticCurveIsogeny(E, [1,1]); phi                             # needs sage.rings.finite_rings
             Isogeny of degree 3
              from Elliptic Curve defined by y^2 + y = x^3 + 1 over Finite Field of size 2
                to Elliptic Curve defined by y^2 + y = x^3 over Finite Field of size 2
 
-            sage: E = EllipticCurve(GF(31), [0,0,0,1,0])                                # needs sage.rings.finite_rings
-            sage: P = E((2,17))                                                         # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, P); phi                                 # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(31), [0,0,0,1,0])
+            sage: P = E((2,17))
+            sage: phi = EllipticCurveIsogeny(E, P); phi
             Isogeny of degree 8
              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 31
                to Elliptic Curve defined by y^2 = x^3 + 10*x + 28 over Finite Field of size 31
@@ -1484,9 +1484,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(31), [1,0,1,1,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, E((0,0)) )                              # needs sage.rings.finite_rings
-            sage: phi._repr_()                                                          # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(31), [1,0,1,1,0])
+            sage: phi = EllipticCurveIsogeny(E, E((0,0)) )
+            sage: phi._repr_()
             'Isogeny of degree 17 from Elliptic Curve defined by y^2 + x*y + y = x^3 + x over Finite Field of size 31 to Elliptic Curve defined by y^2 + x*y + y = x^3 + 14*x + 9 over Finite Field of size 31'
 
             sage: E = EllipticCurve(QQ, [1,0,0,1,9])
@@ -1590,8 +1590,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(j=GF(17)(0))                                        # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, E((-1,0)))                              # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(j=GF(17)(0))
+            sage: phi = EllipticCurveIsogeny(E, E((-1,0)))
 
         The constructor calls this function itself, so the fields it
         sets are already defined::
@@ -1753,9 +1753,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         The following examples inherently exercise this function::
 
-            sage: E = EllipticCurve(j=GF(7)(1728))                                      # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, E((0,0)))                               # needs sage.rings.finite_rings
-            sage: phi.kernel_polynomial()  # implicit doctest                           # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(j=GF(7)(1728))
+            sage: phi = EllipticCurveIsogeny(E, E((0,0)))
+            sage: phi.kernel_polynomial()  # implicit doctest
             x
         """
         if self.__kernel_polynomial is None:
@@ -1926,12 +1926,12 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         The following example inherently exercises this function::
 
-            sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, E((0,0))); phi                          # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])
+            sage: phi = EllipticCurveIsogeny(E, E((0,0))); phi
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 7
-            sage: phi._EllipticCurveIsogeny__init_from_kernel_list([E(0), E((0,0))])    # needs sage.rings.finite_rings
+            sage: phi._EllipticCurveIsogeny__init_from_kernel_list([E(0), E((0,0))])
 
         The following example demonstrates the necessity of avoiding any calls
         to P.order(), since such calls involve factoring the group order which
@@ -2266,16 +2266,16 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         These examples inherently exercise this private function::
 
-            sage: R.<x> = GF(7)[]                                                       # needs sage.rings.finite_rings
-            sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, x);phi                                  # needs sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
+            sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])
+            sage: phi = EllipticCurveIsogeny(E, x);phi
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 7
 
-            sage: phi._EllipticCurveIsogeny__init_from_kernel_polynomial(x)             # needs sage.rings.finite_rings
+            sage: phi._EllipticCurveIsogeny__init_from_kernel_polynomial(x)
 
-            sage: E = EllipticCurve(GF(7), [0,-1,0,0,1])                                # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(7), [0,-1,0,0,1])
             sage: phi = EllipticCurveIsogeny(E, x+6, degree=3); phi                     # needs sage.rings.finite_rings
             Isogeny of degree 3
              from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 1 over Finite Field of size 7
@@ -2367,16 +2367,16 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         These examples inherently exercise this private function::
 
-            sage: R.<x> = GF(7)[]                                                       # needs sage.rings.finite_rings
-            sage: E = EllipticCurve(GF(7), [-1,0])                                      # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, x); phi                                 # needs sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
+            sage: E = EllipticCurve(GF(7), [-1,0])
+            sage: phi = EllipticCurveIsogeny(E, x); phi
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 7
 
             sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import two_torsion_part
-            sage: psig = two_torsion_part(E,x)                                          # needs sage.rings.finite_rings
-            sage: phi._EllipticCurveIsogeny__init_even_kernel_polynomial(E,psig)        # needs sage.rings.finite_rings
+            sage: psig = two_torsion_part(E,x)
+            sage: phi._EllipticCurveIsogeny__init_even_kernel_polynomial(E,psig)
             (x^3 + 6*x, (x^3 + x)*y, 6, 0, 1, 2)
 
             sage: F = GF(2^4, 'alpha'); R.<x> = F[]                                     # needs sage.rings.finite_rings
@@ -2485,14 +2485,14 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         These examples inherently exercise this private function::
 
-            sage: R.<x> = GF(7)[]                                                       # needs sage.rings.finite_rings
-            sage: E = EllipticCurve(GF(7), [0,-1,0,0,1])                                # needs sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
+            sage: E = EllipticCurve(GF(7), [0,-1,0,0,1])
             sage: phi = EllipticCurveIsogeny(E, x+6, degree=3); phi                     # needs sage.rings.finite_rings
             Isogeny of degree 3
              from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 1 over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 4*x + 2 over Finite Field of size 7
 
-            sage: R.<x> = GF(7)[]                                                       # needs sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
             sage: phi._EllipticCurveIsogeny__init_odd_kernel_polynomial(E, x+6)         # needs sage.rings.finite_rings
             (x^3 + 5*x^2 + 3*x + 2, (x^3 + 4*x^2 + x)*y, 2, 6, 1, 3)
 
@@ -2589,8 +2589,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         These examples inherently exercise this private function::
 
-            sage: R.<x> = GF(7)[]                                                       # needs sage.rings.finite_rings
-            sage: E = EllipticCurve(GF(7), [0,-1,0,0,1])                                # needs sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
+            sage: E = EllipticCurve(GF(7), [0,-1,0,0,1])
             sage: phi = EllipticCurveIsogeny(E, x+6, degree=3); phi                     # needs sage.rings.finite_rings
             Isogeny of degree 3
              from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 1 over Finite Field of size 7
@@ -2841,8 +2841,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.rational_maps()
             (x, y)
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, E((0,0)))                               # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = EllipticCurveIsogeny(E, E((0,0)))
             sage: phi.rational_maps()                                                   # needs sage.rings.finite_rings
             ((x^2 + 3)/x, (x^2*y - 3*y)/x^2)
         """
@@ -2868,9 +2868,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.x_rational_map()
             x
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, E((0,0)))                               # needs sage.rings.finite_rings
-            sage: phi.x_rational_map()                                                  # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = EllipticCurveIsogeny(E, E((0,0)))
+            sage: phi.x_rational_map()
             (x^2 + 3)/x
         """
         self.__initialize_rational_maps()
@@ -2926,14 +2926,14 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.kernel_polynomial()
             x^2 - 21*x + 80
 
-            sage: E = EllipticCurve(GF(17), [1,-1,1,-1,1])                              # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, [1])                                    # needs sage.rings.finite_rings
-            sage: phi.kernel_polynomial()                                               # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(17), [1,-1,1,-1,1])
+            sage: phi = EllipticCurveIsogeny(E, [1])
+            sage: phi.kernel_polynomial()
             1
 
-            sage: E = EllipticCurve(GF(31), [0,0,0,3,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E, [0,3,0,1])                              # needs sage.rings.finite_rings
-            sage: phi.kernel_polynomial()                                               # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(31), [0,0,0,3,0])
+            sage: phi = EllipticCurveIsogeny(E, [0,3,0,1])
+            sage: phi.kernel_polynomial()
             x^3 + 3*x
         """
         if self.__kernel_polynomial is None:
@@ -2949,9 +2949,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])                                # needs sage.rings.finite_rings
-            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))                              # needs sage.rings.finite_rings
-            sage: phi.is_separable()                                                    # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
+            sage: phi.is_separable()
             True
 
         ::
