@@ -3082,6 +3082,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return all( answer[1] for answer in all_homologies_in_list_vanish(facs_divided) )
 
+    def is_gorenstein(self):
+        m = len(self.vertices())
+        n = self.dimension() + 1;
+        return self.is_cohen_macaulay() and self.betti(n-m) == 1
+
+    def is_gorenstein_star(self):
+        return self.core().is_gorenstein()
+
     def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
         """
         Return the largest sub-simplicial complex of ``self`` containing
