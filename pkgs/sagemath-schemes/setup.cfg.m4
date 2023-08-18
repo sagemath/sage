@@ -26,7 +26,7 @@ m4ri    = # FIXME
 m4rie   = # FIXME
 meataxe = SPKG_INSTALL_REQUIRES_sagemath_meataxe
 mpfi    = # FIXME
-ntl     = # FIXME
+ntl     = SPKG_INSTALL_REQUIRES_sagemath_ntl
 numpy   = SPKG_INSTALL_REQUIRES_numpy
 pari    = SPKG_INSTALL_REQUIRES_sagemath_pari
 

@@ -1,1 +1,1 @@
-tox sagemath_repl
+tox sagemath_repl sagemath_pari sagemath_ntl
