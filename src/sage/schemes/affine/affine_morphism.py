@@ -711,12 +711,13 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: k.<w> = NumberField(x^2 + 5)                                          # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(k, 2)                                           # needs sage.rings.number_field
+            sage: k.<w> = NumberField(x^2 + 5)
+            sage: A.<x,y> = AffineSpace(k, 2)
             sage: H = Hom(A, A)
-            sage: f = H([13*w*x^2 + 4*y, 1/w*y^2])                                      # needs sage.rings.number_field
-            sage: f.global_height(prec=2)                                               # needs sage.rings.number_field
+            sage: f = H([13*w*x^2 + 4*y, 1/w*y^2])
+            sage: f.global_height(prec=2)
             4.0
 
         ::
@@ -789,12 +790,13 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
-            sage: P.<x,y> = AffineSpace(K, 2)                                           # needs sage.rings.number_field
+            sage: K.<w> = NumberField(z^2 - 2)
+            sage: P.<x,y> = AffineSpace(K, 2)
             sage: H = Hom(P, P)
-            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2])                                     # needs sage.rings.number_field
-            sage: f.local_height(K.ideal(3))                                            # needs sage.rings.number_field
+            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2])
+            sage: f.local_height(K.ideal(3))
             1.09861228866811
         """
         K = FractionField(self.domain().base_ring())
@@ -836,12 +838,13 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(z^2 - 2)                                          # needs sage.rings.number_field
-            sage: P.<x,y> = AffineSpace(K, 2)                                           # needs sage.rings.number_field
+            sage: K.<w> = NumberField(z^2 - 2)
+            sage: P.<x,y> = AffineSpace(K, 2)
             sage: H = Hom(P, P)
-            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2])                                     # needs sage.rings.number_field
-            sage: f.local_height_arch(1)                                                # needs sage.rings.number_field
+            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2])
+            sage: f.local_height_arch(1)
             0.6931471805599453094172321214582
         """
         K = FractionField(self.domain().base_ring())
@@ -1161,11 +1164,12 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: A.<x> = AffineSpace(QQbar, 1)                                         # needs sage.rings.number_field
-            sage: H = End(A)                                                            # needs sage.rings.number_field
-            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])                         # needs sage.rings.number_field sage.symbolic
-            sage: f.reduce_base_field()                                                 # needs sage.rings.number_field sage.symbolic
+            sage: A.<x> = AffineSpace(QQbar, 1)
+            sage: H = End(A)
+            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])                         # needs sage.symbolic
+            sage: f.reduce_base_field()                                                 # needs sage.symbolic
             Scheme endomorphism of Affine Space of dimension 1 over Number
             Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
              with a = 1.442249570307409? + 1.414213562373095?*I
@@ -1176,14 +1180,15 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(x^3 - x + 1,                                      # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - x + 1,
             ....:                     embedding=(x^3 + x + 1).roots(ring=CC)[0][0])
-            sage: A.<x> = AffineSpace(K, 1)                                             # needs sage.rings.number_field
-            sage: A2.<u,v> = AffineSpace(K, 2)                                          # needs sage.rings.number_field
-            sage: H = Hom(A, A2)                                                        # needs sage.rings.number_field
-            sage: f = H([x^2 + a*x + 3, 5*x])                                           # needs sage.rings.number_field
-            sage: f.reduce_base_field()                                                 # needs sage.rings.number_field
+            sage: A.<x> = AffineSpace(K, 1)
+            sage: A2.<u,v> = AffineSpace(K, 2)
+            sage: H = Hom(A, A2)
+            sage: f = H([x^2 + a*x + 3, 5*x])
+            sage: f.reduce_base_field()
             Scheme morphism:
               From: Affine Space of dimension 1 over Number Field in a with
                     defining polynomial x^3 - x + 1 with a = -1.324717957244746?
@@ -1310,23 +1315,24 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: A1.<w> = AffineSpace(QQ, 1)
             sage: A2.<x,y> = AffineSpace(QQ, 2)
             sage: f = A2.hom([x + y], A1)
-            sage: f.image()                                                             # needs sage.libs.singular
+            sage: f.image()
             Closed subscheme of Affine Space of dimension 1 over Rational Field defined by:
               (no polynomials)
             sage: f = A2.hom([x, x], A2)
-            sage: f.image()                                                             # needs sage.libs.singular
+            sage: f.image()
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x - y
             sage: f = A2.hom([x^2, x^3], A2)
-            sage: f.image()                                                             # needs sage.libs.singular
+            sage: f.image()
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               x^3 - y^2
             sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
             sage: f = A2.hom([x, x^2, x^3], P2)
-            sage: f.image()                                                             # needs sage.libs.singular
+            sage: f.image()
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x1^2 - x0*x2
         """
@@ -1399,11 +1405,12 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: A2.<x,y> = AffineSpace(QQ, 2)
             sage: A1.<a> = AffineSpace(QQ, 1)
             sage: X = A2.subscheme([x^2 - y^2 - y])
             sage: f = X.hom([x/y], A1)
-            sage: f.representatives()                                                   # needs sage.libs.singular
+            sage: f.representatives()
             [Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y
@@ -1414,8 +1421,8 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
                      defined by: x^2 - y^2 - y
                To:   Affine Space of dimension 1 over Rational Field
                Defn: Defined on coordinates by sending (x, y) to ((y + 1)/x)]
-            sage: g = _[1]                                                              # needs sage.libs.singular
-            sage: g.representatives()                                                   # needs sage.libs.singular
+            sage: g = _[1]
+            sage: g.representatives()
             [Scheme morphism:
                From: Closed subscheme of Affine Space of dimension 2 over Rational Field
                      defined by: x^2 - y^2 - y

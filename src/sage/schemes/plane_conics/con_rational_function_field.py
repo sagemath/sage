@@ -130,16 +130,19 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True)
             (True, (-3 : (t + 1)/t : 1))
+
             sage: R.<t> = FiniteField(23)[]
             sage: C = Conic([2, t^2 + 1, t^2 + 5])
-            sage: C.has_rational_point()                                                # needs sage.rings.finite_rings
+            sage: C.has_rational_point()
             True
-            sage: C.has_rational_point(point=True)                                      # needs sage.rings.finite_rings
+            sage: C.has_rational_point(point=True)
             (True, (5*t : 8 : 1))
-            sage: F.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: R.<t> = F[]                                                           # needs sage.rings.number_field
-            sage: C = Conic([1, i*t, -t^2 + 4])                                         # needs sage.rings.number_field
-            sage: C.has_rational_point(point=True)                                      # needs sage.rings.number_field
+
+            sage: # needs sage.rings.number_field
+            sage: F.<i> = QuadraticField(-1)
+            sage: R.<t> = F[]
+            sage: C = Conic([1, i*t, -t^2 + 4])
+            sage: C.has_rational_point(point=True)
             (True, (-t - 2*i : -2*i : 1))
 
         It works on non-diagonal conics as well::
@@ -183,8 +186,8 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: P.<u> = QQ[]
             sage: E = P.fraction_field()
             sage: Q.<Y> = E[]
-            sage: F.<v> = E.extension(Y^2 - u^3 - 1)                                    # needs sage.rings.function_field
-            sage: R.<t> = F[]                                                           # needs sage.rings.function_field
+            sage: F.<v> = E.extension(Y^2 - u^3 - 1)
+            sage: R.<t> = F[]
             sage: K = R.fraction_field()                                                # needs sage.rings.function_field
             sage: C = Conic(K, [u, v, 1])                                               # needs sage.rings.function_field
             sage: C.has_rational_point()                                                # needs sage.rings.function_field
@@ -201,7 +204,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: K.<t> = PolynomialRing(GF(7))
             sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
             ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
-            sage: C.has_rational_point()                                                # needs sage.rings.finite_rings
+            sage: C.has_rational_point()
             Traceback (most recent call last):
             ...
             TypeError: self (=Scheme morphism:
@@ -480,14 +483,14 @@ for function field of characteristic 2.")
             sage: K.<t> = PolynomialRing(QQ, 't')
             sage: C = Conic(K, [t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: supp = [[t^2 - 2], [t], [t^3 + 13/2*t^2 + t - 9]]
-            sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]
-            sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]
-            sage: tbar3 = QQ.extension(supp[2][0], 'tbar').gens()[0]
-            sage: roots = [[tbar1 + 1], [1/3*tbar2^0], [2/3*tbar3^2 + 11/3*tbar3 - 3]]
-            sage: C.find_point(supp, roots, 1)
+            sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
+            sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
+            sage: tbar3 = QQ.extension(supp[2][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
+            sage: roots = [[tbar1 + 1], [1/3*tbar2^0], [2/3*tbar3^2 + 11/3*tbar3 - 3]]  # needs sage.rings.number_field
+            sage: C.find_point(supp, roots, 1)                                          # needs sage.rings.number_field
             (3 : t + 1 : 1)
-            sage: roots = [[-tbar1 - 1], [-1/3*tbar2^0], [-2/3*tbar3^2 - 11/3*tbar3 + 3]]
-            sage: C.find_point(supp, roots, 1)
+            sage: roots = [[-tbar1 - 1], [-1/3*tbar2^0], [-2/3*tbar3^2 - 11/3*tbar3 + 3]]           # needs sage.rings.number_field
+            sage: C.find_point(supp, roots, 1)                                          # needs sage.rings.number_field
             (3 : -t - 1 : 1)
         """
         Ft = self.base().base()

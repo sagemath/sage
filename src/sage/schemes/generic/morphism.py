@@ -613,7 +613,7 @@ class SchemeMorphism(Element):
 
         OUTPUT:
 
-        Assuming that self and other are open immersions with the same
+        Assuming that ``self`` and ``other`` are open immersions with the same
         domain, return scheme obtained by gluing along the images.
 
         EXAMPLES:
@@ -622,28 +622,29 @@ class SchemeMorphism(Element):
         `\mathrm{Spec}(\QQ)` by gluing two copies of `\mathbb{A}^1`
         minus a point::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<xbar, ybar> = R.quotient(x*y - 1)                                  # needs sage.libs.singular
+            sage: S.<xbar, ybar> = R.quotient(x*y - 1)
             sage: Rx = PolynomialRing(QQ, 'x')
-            sage: i1 = Rx.hom([xbar])                                                   # needs sage.libs.singular
+            sage: i1 = Rx.hom([xbar])
             sage: Ry = PolynomialRing(QQ, 'y')
-            sage: i2 = Ry.hom([ybar])                                                   # needs sage.libs.singular
+            sage: i2 = Ry.hom([ybar])
             sage: Sch = Schemes()
-            sage: f1 = Sch(i1)                                                          # needs sage.libs.singular
-            sage: f2 = Sch(i2)                                                          # needs sage.libs.singular
+            sage: f1 = Sch(i1)
+            sage: f2 = Sch(i2)
 
         Now f1 and f2 have the same domain, which is a
         `\mathbb{A}^1` minus a point. We glue along the domain::
 
-            sage: P1 = f1.glue_along_domains(f2); P1                                    # needs sage.libs.singular
+            sage: # needs sage.libs.singular
+            sage: P1 = f1.glue_along_domains(f2); P1
             Scheme obtained by gluing X and Y along U, where
               X: Spectrum of Univariate Polynomial Ring in x over Rational Field
               Y: Spectrum of Univariate Polynomial Ring in y over Rational Field
               U: Spectrum of Quotient of Multivariate Polynomial Ring in x, y
                  over Rational Field by the ideal (x*y - 1)
-
-            sage: a, b = P1.gluing_maps()                                               # needs sage.libs.singular
-            sage: a                                                                     # needs sage.libs.singular
+            sage: a, b = P1.gluing_maps()
+            sage: a
             Affine Scheme morphism:
               From: Spectrum of Quotient of Multivariate Polynomial Ring in x, y
                     over Rational Field by the ideal (x*y - 1)
@@ -653,7 +654,7 @@ class SchemeMorphism(Element):
                       To:   Quotient of Multivariate Polynomial Ring in x, y over
                             Rational Field by the ideal (x*y - 1)
                       Defn: x |--> xbar
-            sage: b                                                                     # needs sage.libs.singular
+            sage: b
             Affine Scheme morphism:
               From: Spectrum of Quotient of Multivariate Polynomial Ring in x, y
                     over Rational Field by the ideal (x*y - 1)
@@ -1342,27 +1343,29 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: R.<t> = QQ[]
-            sage: K.<v> = QuadraticField(2)                                             # needs sage.rings.number_field
-            sage: K2.<w> = NumberField(t**4 - 2)                                        # needs sage.rings.number_field
+            sage: K.<v> = QuadraticField(2)
+            sage: K2.<w> = NumberField(t**4 - 2)
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: phi = K.embeddings(K2)[0]                                             # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x**2 + 3*y**2, y**2])                 # needs sage.rings.number_field
-            sage: f.change_ring(phi)                                                    # needs sage.rings.number_field
+            sage: phi = K.embeddings(K2)[0]
+            sage: f = DynamicalSystem_projective([x**2 + 3*y**2, y**2])
+            sage: f.change_ring(phi)
             Dynamical System of Projective Space of dimension 1 over
              Number Field in w with defining polynomial t^4 - 2
               Defn: Defined on coordinates by sending (x : y) to (x^2 + 3*y^2 : y^2)
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<t> = QQ[]
-            sage: K.<u> = QuadraticField(2)                                             # needs sage.rings.number_field
-            sage: K1.<v> = NumberField(t^4 - 2)                                         # needs sage.rings.number_field
-            sage: K2.<w> = NumberField(t^8 - 2)                                         # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: phi = K1.embeddings(K2)[0]                                            # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([x^2 + 3*y^2, y^2])                    # needs sage.rings.number_field
-            sage: f.change_ring(phi)                                                    # needs sage.rings.number_field
+            sage: K.<u> = QuadraticField(2)
+            sage: K1.<v> = NumberField(t^4 - 2)
+            sage: K2.<w> = NumberField(t^8 - 2)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: phi = K1.embeddings(K2)[0]
+            sage: f = DynamicalSystem_projective([x^2 + 3*y^2, y^2])
+            sage: f.change_ring(phi)
             Traceback (most recent call last):
             ...
             ValueError: no canonical coercion of base ring of morphism to domain of embedding
@@ -1401,10 +1404,11 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         Check that :trac:`16834` is fixed::
 
+            sage: # needs sage.rings.real_mpfr
             sage: A.<x,y,z> = AffineSpace(RR, 3)
             sage: h = Hom(A, A)
             sage: f = h([x^2 + 1.5, y^3, z^5 - 2.0])
-            sage: f.change_ring(CC)                                                     # needs sage.rings.real_mpfr
+            sage: f.change_ring(CC)
             Scheme endomorphism of Affine Space of dimension 3 over
              Complex Field with 53 bits of precision
               Defn: Defined on coordinates by sending (x, y, z) to
@@ -1435,18 +1439,19 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(x^3 - x + 1)                                      # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - x + 1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: H = End(P)
-            sage: f = H([x^2 + a*x*y + a^2*y^2, y^2])                                   # needs sage.rings.number_field
-            sage: emb = K.embeddings(QQbar)                                             # needs sage.rings.number_field
-            sage: f.change_ring(emb[0])                                                 # needs sage.rings.number_field
+            sage: f = H([x^2 + a*x*y + a^2*y^2, y^2])
+            sage: emb = K.embeddings(QQbar)
+            sage: f.change_ring(emb[0])
             Scheme endomorphism of Projective Space of dimension 1
              over Algebraic Field
                Defn: Defined on coordinates by sending (x : y) to
                      (x^2 + (-1.324717957244746?)*x*y + 1.754877666246693?*y^2 : y^2)
-            sage: f.change_ring(emb[1])                                                 # needs sage.rings.number_field
+            sage: f.change_ring(emb[1])
             Scheme endomorphism of Projective Space of dimension 1
              over Algebraic Field
                Defn: Defined on coordinates by sending (x : y) to
@@ -1468,14 +1473,15 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         ::
 
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(-1)
-            sage: K.<w> = QuadraticField(2, embedding=QQbar(-sqrt(2)))                  # needs sage.rings.number_field sage.symbolic
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field sage.symbolic
+            sage: K.<w> = QuadraticField(2, embedding=QQbar(-sqrt(2)))
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: X = P.subscheme(x - y)
             sage: H = End(X)
-            sage: f = H([6*x^2 + 2*x*y + 16*y^2, -w*x^2 - 4*x*y - 4*y^2])               # needs sage.rings.number_field sage.symbolic
-            sage: f.change_ring(QQbar)                                                  # needs sage.rings.number_field sage.symbolic
+            sage: f = H([6*x^2 + 2*x*y + 16*y^2, -w*x^2 - 4*x*y - 4*y^2])
+            sage: f.change_ring(QQbar)
             Scheme endomorphism of Closed subscheme of Projective Space of dimension 1
              over Algebraic Field defined by: x - y
               Defn: Defined on coordinates by sending (x : y) to
@@ -1483,13 +1489,14 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: f = x^6 - 2
-            sage: L.<b> = NumberField(f, embedding=f.roots(QQbar)[1][0])                # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(L, 2)                                           # needs sage.rings.number_field
+            sage: L.<b> = NumberField(f, embedding=f.roots(QQbar)[1][0])
+            sage: A.<x,y> = AffineSpace(L, 2)
             sage: H = Hom(A, A)
-            sage: F = H([b*x/y, 1 + y])                                                 # needs sage.rings.number_field
-            sage: F.change_ring(QQbar)                                                  # needs sage.rings.number_field
+            sage: F = H([b*x/y, 1 + y])
+            sage: F.change_ring(QQbar)
             Scheme endomorphism of Affine Space of dimension 2 over Algebraic Field
               Defn: Defined on coordinates by sending (x, y) to
                     (1.122462048309373?*x/y, y + 1)
@@ -1613,10 +1620,10 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: R.<c> = QQ[]
             sage: P.<x,y> = ProjectiveSpace(R, 1)
             sage: f = DynamicalSystem_projective([x^2 + c*y^2, y^2], domain=P)
-            sage: F = f.dynatomic_polynomial(3)
+            sage: F = f.dynatomic_polynomial(3)                                         # needs sage.libs.pari
             sage: g = F.specialization({c: 1}); g
             x^6 + x^5*y + 4*x^4*y^2 + 3*x^3*y^3 + 7*x^2*y^4 + 4*x*y^5 + 5*y^6
-            sage: g == f.specialization({c:1}).dynatomic_polynomial(3)
+            sage: g == f.specialization({c:1}).dynatomic_polynomial(3)                  # needs sage.libs.pari
             True
 
         ::
@@ -1719,15 +1726,16 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         Not both defined by polynomials::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2 - 2)                                          # needs sage.rings.number_field
-            sage: p1, p2 = K.Hom(K)                                                     # needs sage.rings.number_field
-            sage: R.<x,y> = K[]                                                         # needs sage.rings.number_field
-            sage: q1 = R.Hom(R)(p1)                                                     # needs sage.rings.number_field
-            sage: A = AffineSpace(R)                                                    # needs sage.rings.number_field
-            sage: f1 = A.Hom(A)(q1)                                                     # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: p1, p2 = K.Hom(K)
+            sage: R.<x,y> = K[]
+            sage: q1 = R.Hom(R)(p1)
+            sage: A = AffineSpace(R)
+            sage: f1 = A.Hom(A)(q1)
             sage: g = A.Hom(A)([x^2 - y, y + 1])
-            sage: g*f1                                                                  # needs sage.rings.number_field
+            sage: g*f1
             Composite map:
               From: Affine Space of dimension 2 over Number Field in a
                     with defining polynomial x^2 - 2
@@ -2003,14 +2011,15 @@ class SchemeMorphism_point(SchemeMorphism):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(x^2 - x + 1)                                      # needs sage.rings.number_field
-            sage: P.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: Q = P([a + 1, 1])                                                     # needs sage.rings.number_field
-            sage: emb = K.embeddings(QQbar)                                             # needs sage.rings.number_field
-            sage: Q.change_ring(emb[0])                                                 # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 - x + 1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: Q = P([a + 1, 1])
+            sage: emb = K.embeddings(QQbar)
+            sage: Q.change_ring(emb[0])
             (1.5000000000000000? - 0.866025403784439?*I : 1)
-            sage: Q.change_ring(emb[1])                                                 # needs sage.rings.number_field
+            sage: Q.change_ring(emb[1])
             (1.5000000000000000? + 0.866025403784439?*I : 1)
 
         ::
@@ -2024,12 +2033,13 @@ class SchemeMorphism_point(SchemeMorphism):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: f = x^6 - 2
-            sage: L.<b> = NumberField(f, embedding=f.roots(QQbar)[1][0])                # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(L, 2)                                           # needs sage.rings.number_field
-            sage: P = A([b,1])                                                          # needs sage.rings.number_field
-            sage: P.change_ring(QQbar)                                                  # needs sage.rings.number_field
+            sage: L.<b> = NumberField(f, embedding=f.roots(QQbar)[1][0])
+            sage: A.<x,y> = AffineSpace(L, 2)
+            sage: P = A([b,1])
+            sage: P.change_ring(QQbar)
             (1.122462048309373?, 1)
         """
         S = self.codomain().change_ring(R)
