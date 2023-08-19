@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.combinat sage.modules sage.rings.finite_rings
 r"""
 Mini-AES
 
