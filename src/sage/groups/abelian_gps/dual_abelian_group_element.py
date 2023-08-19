@@ -1,16 +1,15 @@
 # sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.rings.number_field
 """
 Elements (characters) of the dual group of a finite Abelian group
 
 To obtain the dual group of a finite Abelian group, use the
 :meth:`~sage.groups.abelian_gps.abelian_group.dual_group` method::
 
-    sage: F = AbelianGroup([2,3,5,7,8], names="abcde")
-    sage: F
+    sage: F = AbelianGroup([2,3,5,7,8], names="abcde"); F
     Multiplicative Abelian group isomorphic to C2 x C3 x C5 x C7 x C8
 
-    sage: Fd = F.dual_group(names="ABCDE")
-    sage: Fd
+    sage: Fd = F.dual_group(names="ABCDE"); Fd
     Dual of Abelian Group isomorphic to Z/2Z x Z/3Z x Z/5Z x Z/7Z x Z/8Z
     over Cyclotomic Field of order 840 and degree 192
 
@@ -118,7 +117,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             sage: a, = F.gens()
             sage: Fd = F.dual_group(names="A", base_ring=GF(29))
             sage: A, = Fd.gens()
-            sage: A(a)
+            sage: A(a)                                                                  # needs sage.libs.pari
             16
         """
         F = self.parent().base_ring()

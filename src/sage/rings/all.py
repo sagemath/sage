@@ -44,9 +44,6 @@ from .all__sagemath_symbolics import *
 # Finite fields
 from .finite_rings.all import *
 
-# Number field
-from .number_field.all import *
-
 # Function field
 from .function_field.all import *
 
@@ -60,26 +57,6 @@ from .valuation.all import *
 # Polynomial Rings and Polynomial Quotient Rings
 from .polynomial.all import *
 
-
-# Algebraic numbers
-from .qqbar import (AlgebraicRealField, AA,
-                   AlgebraicReal,
-                   AlgebraicField, QQbar,
-                   AlgebraicNumber,
-                   number_field_elements_from_algebraics)
-from .universal_cyclotomic_field import UniversalCyclotomicField, E
-
-# Intervals
-from .real_mpfi import (RealIntervalField,
-                       RIF,
-                       RealInterval)
-
-# Complex numbers
-from .complex_interval_field import ComplexIntervalField
-from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
-
-lazy_import("sage.rings.imaginary_unit", "I")
-
 # Tate algebras
 from .tate_algebra import TateAlgebra
 
@@ -90,10 +67,6 @@ from .pari_ring import PariRing, Pari
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 
 from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
-
-from .monomials import monomials
-
-from .cif import CIF
 
 # invariant theory
 from .invariants.all import *

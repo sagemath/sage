@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.rings.number_field
 r"""
 Dual groups of Finite Multiplicative Abelian Groups
 
@@ -26,6 +27,7 @@ EXAMPLES::
     sage: F = AbelianGroup(5, [2,5,7,8,9], names='abcde')
     sage: (a, b, c, d, e) = F.gens()
 
+    sage:
     sage: Fd = F.dual_group(names='ABCDE')
     sage: Fd.base_ring()
     Cyclotomic Field of order 2520 and degree 576

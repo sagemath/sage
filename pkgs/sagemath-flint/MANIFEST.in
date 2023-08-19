@@ -37,22 +37,25 @@ graft             sage/libs/mpfi                            # entangled with num
 include sage/rings/real_mpfi.p*                         # -> convert/mpfi
 include sage/rings/real_interval_absolute.p*
 include sage/rings/real_interval_field.p*                       # deprecated
-include sage/rings/convert/mpfi.p*            # -> complex_interval -> ...
+
+graft sage/rings/convert                                        # only module mpfi
 # FIXME: split out complex_interval stuff from convert/mpfi ....
 include sage/rings/complex_interval.p*                # needs flint
 include sage/rings/complex_interval_field.p*
+include sage/rings/cif.p*
 
 include sage/rings/polynomial/real_roots.p*   # needs flint, numpy
+include sage/rings/polynomial/complex_roots.p*
 include sage/rings/polynomial/refine_root.p*
-
+include sage/rings/polynomial/polynomial_number_field.p*
 graft sage/rings/number_field
 exclude sage/rings/number_field/totallyreal*.p*                 # cimports cypari2
 include           sage/rings/number_field/number_field_element_quadratic.p*   #### this is entangled with NTL
-
+include sage/rings/monomials.p*
 include sage/rings/qqbar.p*
-include sage/rings/universal_cyclotomic_field.py
+include sage/rings/universal_cyclotomic_field.p*
 
-
+include sage/rings/imaginary_unit.p*
 
 global-exclude    all__sagemath_*.p*
 global-include    all__sagemath_flint.py

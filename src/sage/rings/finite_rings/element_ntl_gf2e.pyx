@@ -299,7 +299,6 @@ cdef class Cache_ntl_gf2e(Cache_base):
         cdef FiniteField_ntl_gf2eElement x
         cdef FiniteField_ntl_gf2eElement g
         cdef Py_ssize_t i
-        from sage.libs.gap.element import GapElement_FiniteField
 
         if is_IntegerMod(e):
             e = e.lift()
@@ -359,11 +358,14 @@ cdef class Cache_ntl_gf2e(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif isinstance(e, GapElement_FiniteField):
-            return e.sage(ring=self._parent)
-
         elif isinstance(e, GapElement):
+            from sage.libs.gap.element import GapElement_FiniteField
+
+            if isinstance(e, GapElement_FiniteField):
+                return e.sage(ring=self._parent)
+
             from sage.libs.gap.libgap import libgap
+
             return libgap(e).sage(ring=self._parent)
 
         else:

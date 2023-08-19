@@ -1,4 +1,4 @@
-# coding: utf-8
+# sage_setup: distribution = sagemath-flint
 
 from .number_field.number_field import GaussianField
 

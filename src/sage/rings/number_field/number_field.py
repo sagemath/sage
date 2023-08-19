@@ -113,7 +113,6 @@ from sage.misc.superseded import (deprecation,
 
 
 import sage.libs.ntl.all as ntl
-import sage.interfaces.gap
 
 import sage.rings.complex_mpfr
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -4642,7 +4641,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         if not self.is_absolute():
             raise NotImplementedError("Currently, only simple algebraic extensions are implemented in gap")
-        G = sage.interfaces.gap.gap
+        from sage.interfaces.gap import gap as G
+
         q = self.polynomial()
         if q.variable_name() != 'E':
             return 'CallFuncList(function() local %s,E; %s:=Indeterminate(%s,"%s"); E:=AlgebraicExtension(%s,%s,"%s"); return E; end,[])' % (q.variable_name(), q.variable_name(), G(self.base_ring()).name(), q.variable_name(), G(self.base_ring()).name(), repr(self.polynomial()), str(self.gen()))

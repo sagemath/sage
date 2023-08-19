@@ -49,6 +49,7 @@ The elements come with a coercion embedding into the
 :meth:`~AbelianGroupWithValues_class.values_group`, so you can use the
 group elements instead of the values::
 
+    sage: # needs sage.rings.number_field
     sage: CF3.<zeta> = CyclotomicField(3)
     sage: Z3.<g> = AbelianGroupWithValues([zeta], [3])
     sage: Z3.values_group()
@@ -160,6 +161,7 @@ class AbelianGroupWithValuesEmbedding(Morphism):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: Z4.<g> = AbelianGroupWithValues([I], [4])
         sage: embedding = Z4.values_embedding();  embedding
         Generic morphism:
@@ -179,9 +181,9 @@ class AbelianGroupWithValuesEmbedding(Morphism):
 
         TESTS::
 
-            sage: Z4 = AbelianGroupWithValues([I], [4])
+            sage: Z4 = AbelianGroupWithValues([I], [4])                                 # needs sage.symbolic
             sage: from sage.groups.abelian_gps.values import AbelianGroupWithValuesEmbedding
-            sage: AbelianGroupWithValuesEmbedding(Z4, Z4.values_group())
+            sage: AbelianGroupWithValuesEmbedding(Z4, Z4.values_group())                # needs sage.symbolic
             Generic morphism:
               From: Multiplicative Abelian group isomorphic to C4
               To:   Number Field in I with defining polynomial x^2 + 1 with I = 1*I
@@ -204,6 +206,7 @@ class AbelianGroupWithValuesEmbedding(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: Z4.<g> = AbelianGroupWithValues([I], [4])
             sage: embedding = Z4.values_embedding()
             sage: embedding(g)
@@ -474,8 +477,8 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
             sage: G.values_group()
             Integer Ring
 
-            sage: Z4 = AbelianGroupWithValues([I], [4])
-            sage: Z4.values_group()
+            sage: Z4 = AbelianGroupWithValues([I], [4])                                 # needs sage.symbolic
+            sage: Z4.values_group()                                                     # needs sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         return self._values_group
@@ -490,8 +493,8 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
         EXAMPLES::
 
-            sage: Z4 = AbelianGroupWithValues([I], [4])
-            sage: Z4.values_embedding()
+            sage: Z4 = AbelianGroupWithValues([I], [4])                                 # needs sage.symbolic
+            sage: Z4.values_embedding()                                                 # needs sage.symbolic
             Generic morphism:
               From: Multiplicative Abelian group isomorphic to C4
               To:   Number Field in I with defining polynomial x^2 + 1 with I = 1*I
