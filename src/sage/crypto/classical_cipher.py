@@ -477,7 +477,7 @@ class TranspositionCipher(SymmetricKeyCipher):
             sage: K = [ 14-i for i in range(14) ]; K
             [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
             sage: e = E(K)                                                              # needs sage.groups
-            sage: m = S("THECATINTHEHAT")                                               # needs sage.groups
+            sage: m = S("THECATINTHEHAT")
             sage: e(m)                                                                  # needs sage.groups
             TAHEHTNITACEHT
 
@@ -485,7 +485,7 @@ class TranspositionCipher(SymmetricKeyCipher):
 
             sage: S = AlphabeticStrings()
             sage: E = TranspositionCryptosystem(S,15)                                   # needs sage.groups
-            sage: m = S("THECATANDTHEHAT")                                              # needs sage.groups
+            sage: m = S("THECATANDTHEHAT")
             sage: G = E.key_space(); G                                                  # needs sage.groups
             Symmetric group of order 15! as a permutation group
             sage: g = G([ 3, 2, 1, 6, 5, 4, 9, 8, 7, 12, 11, 10, 15, 14, 13 ])          # needs sage.groups

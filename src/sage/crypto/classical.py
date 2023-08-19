@@ -1205,7 +1205,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
         capital letters of the English alphabet, there are 12 such integers
         relatively prime to `n`::
 
-            sage: euler_phi(A.alphabet_size())
+            sage: euler_phi(A.alphabet_size())                                          # needs sage.libs.pari
             12
 
         And here is a list of those integers::
@@ -3306,8 +3306,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
             sage: M = AlphabeticStrings()
             sage: E = TranspositionCryptosystem(M,14); E                                # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
-            sage: K = [ 14-i for i in range(14) ]
-            sage: K
+            sage: K = [14 - i for i in range(14)]; K
             [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
             sage: e = E(K)                                                              # needs sage.groups
             sage: m = M("THECATINTHEHAT")
@@ -3331,10 +3330,9 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         EXAMPLES::
 
             sage: A = AlphabeticStrings()
-            sage: T = TranspositionCryptosystem(A, 14)
-            sage: T
+            sage: T = TranspositionCryptosystem(A, 14); T                               # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
-            sage: T._repr_()
+            sage: T._repr_()                                                            # needs sage.groups
             'Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14'
         """
         return "Transposition cryptosystem on %s of block length %s" % (

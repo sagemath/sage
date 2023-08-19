@@ -17,7 +17,7 @@ EXAMPLES::
     Boolean function with 8 variables
     sage: B.nonlinearity()
     112
-    sage: B.algebraic_immunity()
+    sage: B.algebraic_immunity()                                                        # needs sage.rings.polynomial.pbori
     4
 
 AUTHOR:
@@ -63,7 +63,7 @@ cdef walsh_hadamard(long *f, int ldn):
 
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: B = BooleanFunction([1,0,0,1])
-        sage: B.walsh_hadamard_transform() # indirect doctest
+        sage: B.walsh_hadamard_transform()  # indirect doctest
         (0, 0, 0, -4)
     """
     cdef long n, ldm, m, mh, t1, t2, r, j, u, v
@@ -567,23 +567,24 @@ cdef class BooleanFunction(SageObject):
             sage: BooleanFunction('00ab').truth_table(format='hex')                     # needs sage.rings.polynomial.pbori
             '00ab'
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: H = '0abbacadabbacad0'
             sage: len(H)
             16
-            sage: T = BooleanFunction(H).truth_table(format='hex')                      # needs sage.rings.polynomial.pbori
+            sage: T = BooleanFunction(H).truth_table(format='hex')
             sage: T == H
             True
             sage: H = H * 4
-            sage: T = BooleanFunction(H).truth_table(format='hex')                      # needs sage.rings.polynomial.pbori
+            sage: T = BooleanFunction(H).truth_table(format='hex')
             sage: T == H
             True
             sage: H = H * 4
-            sage: T = BooleanFunction(H).truth_table(format='hex')                      # needs sage.rings.polynomial.pbori
+            sage: T = BooleanFunction(H).truth_table(format='hex')
             sage: T == H
             True
             sage: len(T)
             256
-            sage: B.truth_table(format='oct')                                           # needs sage.rings.polynomial.pbori
+            sage: B.truth_table(format='oct')
             Traceback (most recent call last):
             ...
             ValueError: unknown output format
@@ -1074,9 +1075,10 @@ cdef class BooleanFunction(SageObject):
             sage: B.algebraic_immunity()
             2
 
-            sage: R.<x> = GF(2^8,'a')[]                                                 # needs sage.rings.finite_rings
-            sage: B = BooleanFunction(x^31)                                             # needs sage.rings.finite_rings sage.rings.polynomial.pbori
-            sage: B.algebraic_immunity()                                                # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: R.<x> = GF(2^8,'a')[]
+            sage: B = BooleanFunction(x^31)
+            sage: B.algebraic_immunity()
             4
         """
         f = self
@@ -1102,13 +1104,14 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: from sage.crypto.boolean_function import BooleanFunction
-            sage: B.<x0, x1, x2, x3> = BooleanPolynomialRing()                          # needs sage.rings.polynomial.pbori
-            sage: f = BooleanFunction(x1*x2 + x1*x2*x3 + x1)                            # needs sage.rings.polynomial.pbori
-            sage: f.algebraic_degree()                                                  # needs sage.rings.polynomial.pbori
+            sage: B.<x0, x1, x2, x3> = BooleanPolynomialRing()
+            sage: f = BooleanFunction(x1*x2 + x1*x2*x3 + x1)
+            sage: f.algebraic_degree()
             3
             sage: g = BooleanFunction([0, 0])
-            sage: g.algebraic_degree()                                                  # needs sage.rings.polynomial.pbori
+            sage: g.algebraic_degree()
             -1
         """
         return self.algebraic_normal_form().degree()
@@ -1248,15 +1251,16 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: f = BooleanFunction([0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0])
-            sage: LS = f.linear_structures()                                            # needs sage.modules
-            sage: LS.dimension()                                                        # needs sage.modules
+            sage: LS = f.linear_structures()
+            sage: LS.dimension()
             2
-            sage: LS.basis_matrix()                                                     # needs sage.modules
+            sage: LS.basis_matrix()
             [1 0 0 0]
             [0 0 0 1]
-            sage: LS.list()                                                             # needs sage.modules
+            sage: LS.list()
             [(0, 0, 0, 0), (1, 0, 0, 0), (0, 0, 0, 1), (1, 0, 0, 1)]
         """
         from sage.modules.free_module import VectorSpace
@@ -1283,15 +1287,16 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: f = BooleanFunction([0,1,0,1,0,1,0,1])
-            sage: f.derivative(1).algebraic_normal_form()                               # needs sage.rings.polynomial.pbori
+            sage: f.derivative(1).algebraic_normal_form()
             1
             sage: u = [1,0,0]
-            sage: f.derivative(u).algebraic_normal_form()                               # needs sage.rings.polynomial.pbori
+            sage: f.derivative(u).algebraic_normal_form()
             1
             sage: v = vector(GF(2), u)                                                  # needs sage.modules
-            sage: f.derivative(v).algebraic_normal_form()                               # needs sage.modules sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: f.derivative(v).algebraic_normal_form()                               # needs sage.modules
             1
             sage: f.derivative(8).algebraic_normal_form()
             Traceback (most recent call last):
@@ -1393,7 +1398,7 @@ def unpickle_BooleanFunction(bool_list):
 
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: B = BooleanFunction([0,1,1,0])
-        sage: loads(dumps(B)) == B # indirect doctest
+        sage: loads(dumps(B)) == B  # indirect doctest
         True
     """
     return BooleanFunction(bool_list)
@@ -1426,7 +1431,7 @@ cdef class BooleanFunctionIterator:
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(1)
-            sage: [b for b in B] # indirect doctest
+            sage: [b for b in B]  # indirect doctest
             [False, False]
         """
         return self
