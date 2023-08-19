@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Resolvable Balanced Incomplete Block Design (RBIBD)
 

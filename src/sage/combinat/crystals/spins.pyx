@@ -99,6 +99,7 @@ def CrystalOfSpins(ct):
     else:
         raise NotImplementedError
 
+
 #########################
 # Type D spins
 #########################
@@ -135,6 +136,7 @@ def CrystalOfSpinsPlus(ct):
     else:
         raise NotImplementedError
 
+
 def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
@@ -168,6 +170,7 @@ def CrystalOfSpinsMinus(ct):
     else:
         raise NotImplementedError
 
+
 class GenericCrystalOfSpins(UniqueRepresentation, Parent):
     """
     A generic crystal of spins.
@@ -181,11 +184,11 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         """
         self._cartan_type = CartanType(ct)
         if case == "spins":
-            self.rename("The crystal of spins for type %s"%ct)
+            self.rename("The crystal of spins for type %s" % ct)
         elif case == "plus":
-            self.rename("The plus crystal of spins for type %s"%ct)
+            self.rename("The plus crystal of spins for type %s" % ct)
         else:
-            self.rename("The minus crystal of spins for type %s"%ct)
+            self.rename("The minus crystal of spins for type %s" % ct)
 
         self.Element = element_class
         Parent.__init__(self, category=ClassicalCrystals())
@@ -249,6 +252,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         if parent(x) is not self or parent(y) is not self:
             raise ValueError("both elements must be in this crystal")
         return self._digraph_closure.has_edge(x, y)
+
 
 cdef class Spin(Element):
     """

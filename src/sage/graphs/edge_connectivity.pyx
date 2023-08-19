@@ -56,10 +56,10 @@ cdef class GabowEdgeConnectivity:
     A random `d`-regular digraph is `d`-edge-connected::
 
         sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
-        sage: D = DiGraph(graphs.RandomRegular(6, 50))                                  # optional - networkx
-        sage: while not D.is_strongly_connected():                                      # optional - networkx
+        sage: D = DiGraph(graphs.RandomRegular(6, 50))                                  # needs networkx
+        sage: while not D.is_strongly_connected():                                      # needs networkx
         ....:     D = DiGraph(graphs.RandomRegular(6, 50))
-        sage: GabowEdgeConnectivity(D).edge_connectivity()                              # optional - networkx
+        sage: GabowEdgeConnectivity(D).edge_connectivity()                              # needs networkx
         6
 
     A complete digraph with `n` vertices is `n-1`-edge-connected::
@@ -72,15 +72,16 @@ cdef class GabowEdgeConnectivity:
     Check that we get the same result when with and without the DFS-based
     speed-up initialization proposed in [GKLP2021]_::
 
-        sage: G = graphs.RandomBarabasiAlbert(100, 2)                                   # optional - networkx
-        sage: D = DiGraph(G)                                                            # optional - networkx
-        sage: ec1 = GabowEdgeConnectivity(D,                                            # optional - networkx
+        sage: # needs networkx
+        sage: G = graphs.RandomBarabasiAlbert(100, 2)
+        sage: D = DiGraph(G)
+        sage: ec1 = GabowEdgeConnectivity(D,
         ....:                             dfs_preprocessing=False).edge_connectivity()
-        sage: ec2 = GabowEdgeConnectivity(D,                                            # optional - networkx
+        sage: ec2 = GabowEdgeConnectivity(D,
         ....:                             dfs_preprocessing=True).edge_connectivity()
-        sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True,                    # optional - networkx
+        sage: ec3 = GabowEdgeConnectivity(D, dfs_preprocessing=True,
         ....:                             use_rec=True).edge_connectivity()
-        sage: ec1 == ec2 and ec2 == ec3                                                 # optional - networkx
+        sage: ec1 == ec2 and ec2 == ec3
         True
 
     TESTS:

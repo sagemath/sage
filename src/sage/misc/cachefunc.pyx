@@ -2210,7 +2210,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
 
         """
         # initialize CachedFunction
-        if isinstance(f,basestring):
+        if isinstance(f,str):
             try:
                 F = getattr(inst.__class__,f)
             except AttributeError:

@@ -993,7 +993,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             (False, 2)
         """
         if ((self.is_ranked() and len(self.meet_irreducibles()) == self.rank()) or
-            self.cardinality() == 0):
+                self.cardinality() == 0):
             return (True, None) if certificate else True
         if not certificate:
             return False
@@ -1081,7 +1081,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             (False, 6)
         """
         if ((self.is_ranked() and len(self.join_irreducibles()) == self.rank()) or
-            self.cardinality() == 0):
+                self.cardinality() == 0):
             return (True, None) if certificate else True
         if not certificate:
             return False
@@ -1250,8 +1250,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return ok
 
         if (self.is_graded() and
-         self.rank() == len(self.join_irreducibles()) ==
-         len(self.meet_irreducibles())):
+                self.rank() == len(self.join_irreducibles()) ==
+                len(self.meet_irreducibles())):
             return ok
 
         if not certificate:
@@ -1988,8 +1988,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
                 # Get elements more than B levels below it.
                 too_close = set(H.breadth_first_search(j,
-                                                      neighbors=H.neighbors_in,
-                                                      distance=B - 2))
+                                                       neighbors=H.neighbors_in,
+                                                       distance=B - 2))
                 elems = [e for e in H.order_ideal([j]) if e not in too_close]
 
                 achains = PairwiseCompatibleSubsets(elems,
@@ -2649,7 +2649,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             for x in self.principal_lower_set(b):
                 for a in self:
                     if (self.join(x, self.meet(a, b)) !=
-                        self.meet(self.join(x, a), b)):
+                            self.meet(self.join(x, a), b)):
                         if certificate:
                             return (False, (x, a, b))
                         return False
@@ -3259,7 +3259,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         for i in range(n):
             for j in range(i):
                 if (o_meet(self[i], self[j]) not in self or
-                    o_join(self[i], self[j]) not in self):
+                        o_join(self[i], self[j]) not in self):
                     return False
         return True
 
@@ -4127,7 +4127,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         meetands = []
         for a in H.neighbors_out(e):
             above_a = list(H.depth_first_search(a))
-            go_up = lambda v: [v_ for v_ in H.neighbors_out(v) if v_ not in above_a]
+
+            def go_up(v):
+                return [v_ for v_ in H.neighbors_out(v) if v_ not in above_a]
+
             result = None
             for v in H.depth_first_search(e, neighbors=go_up):
                 if H.out_degree(v) == 1 and next(H.neighbor_out_iterator(v)) in above_a:
@@ -4190,7 +4193,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         joinands = []
         for a in H.neighbors_in(e):
             below_a = list(H.depth_first_search(a, neighbors=H.neighbors_in))
-            go_down = lambda v: [v_ for v_ in H.neighbors_in(v) if v_ not in below_a]
+
+            def go_down(v):
+                return [v_ for v_ in H.neighbors_in(v) if v_ not in below_a]
+
             result = None
             for v in H.depth_first_search(e, neighbors=go_down):
                 if H.in_degree(v) == 1 and next(H.neighbor_in_iterator(v)) in below_a:
@@ -4200,7 +4206,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             joinands.append(result)
         return [self._vertex_to_element(v) for v in joinands]
 
-    def is_constructible_by_doublings(self, type):
+    def is_constructible_by_doublings(self, type) -> bool:
         r"""
         Return ``True`` if the lattice is constructible by doublings, and
         ``False`` otherwise.

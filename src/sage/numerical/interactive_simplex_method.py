@@ -185,7 +185,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.special import column_matrix
 from sage.matrix.special import identity_matrix
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.special import random_matrix
 from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method

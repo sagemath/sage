@@ -217,7 +217,7 @@ class HypergraphGenerators():
 
             sage: h = hypergraphs.CompleteUniform(5, 2); h
             Incidence structure with 5 points and 10 blocks
-            sage: len(h.packing())
+            sage: len(h.packing())                                                      # needs sage.numerical.mip
             2
         """
         from sage.combinat.designs.incidence_structures import IncidenceStructure
@@ -306,34 +306,35 @@ class HypergraphGenerators():
 
         EXAMPLES::
 
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).num_blocks()              # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).num_blocks()              # needs numpy
             19600
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).num_blocks()              # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).num_blocks()              # needs numpy
             0
 
         TESTS::
 
-            sage: hypergraphs.BinomialRandomUniform(50, 3, -0.1)                        # optional - numpy
+            sage: # needs numpy
+            sage: hypergraphs.BinomialRandomUniform(50, 3, -0.1)
             Traceback (most recent call last):
             ...
             ValueError: edge probability should be in [0,1]
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 1.1)                         # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 1.1)
             Traceback (most recent call last):
             ...
             ValueError: edge probability should be in [0,1]
-            sage: hypergraphs.BinomialRandomUniform(-50, 3, 0.17)                       # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(-50, 3, 0.17)
             Traceback (most recent call last):
             ...
             ValueError: number of vertices should be non-negative
-            sage: hypergraphs.BinomialRandomUniform(50.9, 3, 0.17)                      # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(50.9, 3, 0.17)
             Traceback (most recent call last):
             ...
             ValueError: number of vertices should be an integer
-            sage: hypergraphs.BinomialRandomUniform(50, -3, 0.17)                       # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(50, -3, 0.17)
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be non-negative
-            sage: hypergraphs.BinomialRandomUniform(50, I, 0.17)                        # optional - numpy
+            sage: hypergraphs.BinomialRandomUniform(50, I, 0.17)
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be an integer

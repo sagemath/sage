@@ -884,6 +884,7 @@ class NumberField_relative(NumberField_generic):
 
         Examples from :trac:`4727`::
 
+            sage: # needs sage.symbolic
             sage: K.<j,b> = QQ[sqrt(-1), sqrt(2)]
             sage: j
             I
@@ -912,7 +913,8 @@ class NumberField_relative(NumberField_generic):
             sage: L(L)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert Number Field in a0 with defining polynomial x^2 + 1 over its base field to Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            TypeError: unable to convert Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            to Number Field in a0 with defining polynomial x^2 + 1 over its base field
             sage: L in L
             False
 
@@ -1672,7 +1674,7 @@ class NumberField_relative(NumberField_generic):
             sage: k.<a> = NumberField(x^2 + 1); k
             Number Field in a with defining polynomial x^2 + 1
             sage: y = polygen(k)
-            sage: m.<b> = k.extension(y^2+3); m
+            sage: m.<b> = k.extension(y^2 + 3); m
             Number Field in b with defining polynomial x^2 + 3 over its base field
             sage: c = m.gen(); c # indirect doctest
             b
@@ -2455,20 +2457,20 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]
-            sage: R = P.order([a,b,c]); R
+            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]                             # needs sage.symbolic
+            sage: R = P.order([a,b,c]); R                                               # needs sage.symbolic
             Relative Order in Number Field in sqrt2
              with defining polynomial x^2 - 2 over its base field
 
         The base ring of an order in a relative extension is still `\ZZ`.::
 
-            sage: R.base_ring()
+            sage: R.base_ring()                                                         # needs sage.symbolic
             Integer Ring
 
         One must give enough generators to generate a ring of finite index
         in the maximal order::
 
-            sage: P.order([a, b])
+            sage: P.order([a, b])                                                       # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the rank of the span of gens is wrong

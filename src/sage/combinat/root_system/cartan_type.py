@@ -1739,7 +1739,7 @@ class CartanType_crystallographic(CartanType_abstract):
             M[i, n * i + j] = m[i,j]
             M[j, n * i + j] -= m[j,i]
         kern = M.integer_kernel()
-        c = len(self.dynkin_diagram().connected_components())
+        c = len(self.dynkin_diagram().connected_components(sort=False))
         if kern.dimension() < c:
             # the Cartan matrix is not symmetrizable
             return None
