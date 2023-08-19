@@ -2830,8 +2830,8 @@ class FiniteWord_class(Word_class):
             if i < right:
                 resultLengths[i] = min(right - i, resultLengths[2 * center - i])
             l, r = i - resultLengths[i], i + resultLengths[i]
-            while (l >= 0 and r < wordWithSpecialLetter.length() 
-                   and updatedMorphism(wordWithSpecialLetter[l])[0] == wordWithSpecialLetter[r] 
+            while (l >= 0 and r < wordWithSpecialLetter.length()
+                   and updatedMorphism(wordWithSpecialLetter[l])[0] == wordWithSpecialLetter[r]
                    and wordWithSpecialLetter[l] == updatedMorphism(wordWithSpecialLetter[r])[0]):
                 resultLengths[i] += 1
                 l -= 1
@@ -3150,99 +3150,44 @@ class FiniteWord_class(Word_class):
             sage: Word().g_defect()
             0
         """
-        # TODO - Add more private methods (without tests!) and use them here
-        from sage.combinat.words.morphism import WordMorphism
-        # Generate G
-        specialLetters = self._not_used_letters(2)
-        specialLetterOne, specialLetterTwo = specialLetters[0], specialLetters[1]
-        specialMorphism = WordMorphism({specialLetterOne: specialLetterOne, specialLetterTwo: specialLetterTwo})
-        specialAntimorphism = WordMorphism({specialLetterOne: specialLetterTwo, specialLetterTwo: specialLetterOne})
-        domains = set()
-        properMorphisms = []
-        for morphism in morphisms:
-            if not isinstance(morphism, WordMorphism):
-                morphism = WordMorphism(morphism)
-            if not morphism.is_letter_permutation():
-                raise ValueError("All morphisms must be letter permutations")
-            domains.add(morphism.domain())
-            properMorphisms.append(specialMorphism.extend_by(morphism))
-        properAntimorphisms = []
-        for antimorphism in antimorphisms:
-            if not isinstance(antimorphism, WordMorphism):
-                antimorphism = WordMorphism(antimorphism)
-            if not antimorphism.is_letter_permutation():
-                raise ValueError("All antimorphisms must be letter permutations")
-            domains.add(antimorphism.domain())
-            properAntimorphisms.append(specialAntimorphism.extend_by(antimorphism))
-        if len(domains) >= 2:
-            raise ValueError("All morphisms and antimorphisms must have the same domain")
-        domain = set(self.letters())
-        if len(domains) == 1:
-            domain = set(domains.pop().alphabet())
-        
-        # TODO - refactor how unused letters are generated
-        
-        if specialLetterOne in domain or specialLetterTwo in domain:
-            raise ValueError("Collision between domain of (anti)morphisms and generated letters `%s` and `%s`", 
-                             specialLetterOne, specialLetterTwo)
-        properMorphisms.append(specialMorphism.extend_by(WordMorphism({x: x for x in domain})))
-        if not properAntimorphisms:
-            properAntimorphisms.append(specialAntimorphism.extend_by(WordMorphism({x: x for x in domain})))
-        domain = list(domain)
-        domain.append(specialLetterOne)
-        domain.append(specialLetterTwo)
-        permutationGroupGens = []
-        for morphism in properMorphisms:
-            currentGen = []
-            for letter in domain:
-                currentGen.append(morphism(letter)[0])
-            permutationGroupGens.append(currentGen)
-        for antimorphism in properAntimorphisms:
-            currentGen = []
-            for letter in domain:
-                currentGen.append(antimorphism(letter)[0])
-            permutationGroupGens.append(currentGen)
-        from sage.groups.perm_gps.permgroup import PermutationGroup
-        permutationGroupForG = PermutationGroup(permutationGroupGens, domain=domain)
-        morphismsG = []
-        antimorphismsG = []
-        for permutation in permutationGroupForG.list():
-            permutationDict = permutation.dict()
-            if permutationDict[specialLetterOne] == specialLetterOne:
-                del permutationDict[specialLetterOne]
-                del permutationDict[specialLetterTwo]
-                morphismsG.append(WordMorphism(permutationDict))
-            else:
-                del permutationDict[specialLetterOne]
-                del permutationDict[specialLetterTwo]
-                antimorphismsG.append(WordMorphism(permutationDict))
-        inverseMorphismsG = []
-        for morphism in morphismsG:
-            inverseMorphismDict = dict()
-            for letter in morphism.domain().alphabet():
-                inverseMorphismDict[morphism(letter)[0]] = letter
-            inverseMorphismsG.append(WordMorphism(inverseMorphismDict))
-        # Compute g_G
-        g_G = 0
-        alreadyFoundLetters = set()
-        for letter in self.letters():
-            if not(letter in alreadyFoundLetters):
-                letterContributes = True
-                alreadyFoundLetters.add(letter)
-                for antimorphism in antimorphismsG:
-                    if letter == antimorphism(letter)[0]:
-                        letterContributes = False
-                    alreadyFoundLetters.add(antimorphism(letter)[0])
-                for morphism in morphismsG:
-                    alreadyFoundLetters.add(morphism(letter)[0])
-                if letterContributes:
-                    g_G += 1
-        # Compute amount of distinct palindromic classes of equivalency
-        specialLetter = self._not_used_letter()
+        morphismsG, antimorphismsG, inverseMorphismsG = \
+            self._g_defect_generate_morphisms_and_antimorpisms_group(morphisms, antimorphisms)
+        g_G = self._g_defect_secondary_subtrahend(morphismsG, antimorphismsG)
         palindromesTrees = []
         for antimorphism in antimorphismsG:
             _, palindromesTree = self._get_palindromic_factors_data(f=antimorphism)
             palindromesTrees.append((palindromesTree, antimorphism))
+        gPalindromesTree = self._g_defect_build_g_palindromes_tree(
+            morphismsG, inverseMorphismsG, palindromesTrees)
+        distinctPalindromesCount = 0
+        for node in gPalindromesTree:
+            if not node[3]:
+                distinctPalindromesCount += 1
+        return self.length() + 1 - g_G - distinctPalindromesCount
+
+    def _g_defect_build_g_palindromes_tree(self, morphismsG, inverseMorphismsG, palindromesTrees):
+        r"""
+        This is private method. It is used in g_defect method to build
+        tree graph, which contains data about `G`-palindromic
+        classes of equivalence of factors of ``self``.
+
+        INPUT:
+
+        - ``morphismsG`` -- list of all morphisms of `G`.
+
+        - ``inverseMorphismsG`` -- list of inverses of all morphisms of `G`.
+
+        - ``palindromesTrees`` -- list of tree graphs, which contain data
+        about palindromic factors of ``self``. Contains one tree graph for
+        every antimorphism of `G`.
+
+        OUTPUT:
+
+        a tree -- tree graph, which contains data about `G`-palindromic
+        classes of equivalence of factors of ``self``.
+        """
+        domain = set(morphismsG[0].domain().alphabet())
+        specialLetter = self._not_used_letter(prohibitedLetters=domain)
         emptyStringDict = dict()
         emptyStringDictList = []
         emptyStringDictLocalIndexesList = []
@@ -3312,11 +3257,189 @@ class FiniteWord_class(Word_class):
                     currentPalindromes.append(None)
                     for neighbour in palindrome[0].items():
                         currentPalindromes.append(neighbour)
-        distinctPalindromesCount = 0
-        for node in gPalindromesTree:
-            if not node[3]:
-                distinctPalindromesCount += 1
-        return self.length() + 1 - g_G - distinctPalindromesCount
+        return gPalindromesTree
+
+    def _g_defect_secondary_subtrahend(self, morphismsG, antimorphismsG):
+        r"""
+        This is private method. It is used in g_defect method to calculate
+        secondary subtrahend `g_G(self)` in *G-defect* formula using already
+        generated group of morphisms and antimorphisms `G`.
+
+        INPUT:
+
+        - ``morphismsG`` -- list of all morphisms of `G`.
+
+        - ``antimorphismsG`` -- list of all antimorphisms of `G`.
+
+        OUTPUT:
+
+        an integer -- `g_G(self)`
+        """
+        g_G = 0
+        alreadyFoundLetters = set()
+        for letter in self.letters():
+            if not(letter in alreadyFoundLetters):
+                letterContributes = True
+                alreadyFoundLetters.add(letter)
+                for antimorphism in antimorphismsG:
+                    if letter == antimorphism(letter)[0]:
+                        letterContributes = False
+                    alreadyFoundLetters.add(antimorphism(letter)[0])
+                for morphism in morphismsG:
+                    alreadyFoundLetters.add(morphism(letter)[0])
+                if letterContributes:
+                    g_G += 1
+        return g_G
+
+    def _g_defect_generate_morphisms_and_antimorpisms_group(self, morphisms, antimorphisms):
+        r"""
+        This is private method. It is used in g_defect method to generate
+        group of morphisms and antimorphisms `G`, which is generate from
+        ``morphisms`` and ``antimorphisms``.
+
+        INPUT:
+
+        - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
+        on the alphabet of ``self``. Letter permutations must be callable on
+        letters as well as words (e.g. ``WordMorphism``). If the identity
+        morphisms is not in `morphisms`, then it is added automatically.
+
+        - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
+        on the alphabet of ``self``. If ``antimorphisms`` is empty, then
+        antimorphism which acts as identity on letters is added to it.
+        Letter permutations must be callable on letters as well
+        as words (e.g. ``WordMorphism``).
+
+        OUTPUT:
+
+        - ``list`` -- list of morphisms of `G`.
+        - ``list`` -- list of antimorphisms of `G`.
+        - ``list`` -- list of inverses of morphisms of `G`.
+
+        ALGORITHM:
+
+        Two letters `s_1` and `s_2` not present in ``self`` and domains
+        of (anti)morphisms are generated.
+
+        From definition of `G`, all ``morphisms`` and ``antimorpisms``
+        work as letter permutations on same domain. We update all
+        `m \in morphisms` with `m(s_1) = s_1` and `m(s_2) = s_2`,
+        and we update all `am \in antimorphisms` with
+        `am(s_1) = s_2` and `am(s_2) = s_1`.
+
+        After that we generate a permutation group from updated
+        ``morphisms`` and ``antimorphisms``, and finally,
+        remove `s_1` and `s_2` from domains of all generated
+        permutations. Permutations `p`, such that
+        `p(s_1) = s_1` and `p(s_2) = s_2`, become morphisms in `G`.
+        Permutations `p`, such that `p(s_1) = s_2` and `p(s_2) = s_1`,
+        become antimorphisms in `G`.
+        """
+        from sage.combinat.words.morphism import WordMorphism
+        updatedMorphisms, updatedAntimorphisms, specialLetterOne, specialLetterTwo, updatedDomain = \
+            self._g_defect_update_morphisms_and_antimorpisms(morphisms, antimorphisms)
+        permutationGroupGens = []
+        for morphism in updatedMorphisms:
+            currentGen = []
+            for letter in updatedDomain:
+                currentGen.append(morphism(letter)[0])
+            permutationGroupGens.append(currentGen)
+        for antimorphism in updatedAntimorphisms:
+            currentGen = []
+            for letter in updatedDomain:
+                currentGen.append(antimorphism(letter)[0])
+            permutationGroupGens.append(currentGen)
+        from sage.groups.perm_gps.permgroup import PermutationGroup
+        permutationGroupForG = PermutationGroup(permutationGroupGens, domain=updatedDomain)
+        morphismsG = []
+        antimorphismsG = []
+        for permutation in permutationGroupForG.list():
+            permutationDict = permutation.dict()
+            if permutationDict[specialLetterOne] == specialLetterOne:
+                del permutationDict[specialLetterOne]
+                del permutationDict[specialLetterTwo]
+                morphismsG.append(WordMorphism(permutationDict))
+            else:
+                del permutationDict[specialLetterOne]
+                del permutationDict[specialLetterTwo]
+                antimorphismsG.append(WordMorphism(permutationDict))
+        inverseMorphismsG = []
+        for morphism in morphismsG:
+            inverseMorphismDict = dict()
+            for letter in morphism.domain().alphabet():
+                inverseMorphismDict[morphism(letter)[0]] = letter
+            inverseMorphismsG.append(WordMorphism(inverseMorphismDict))
+        return morphismsG, antimorphismsG, inverseMorphismsG
+
+    def _g_defect_update_morphisms_and_antimorpisms(self, morphisms, antimorphisms):
+        r"""
+        This is private method. It is used in g_defect method to generate
+        2 letters `s_1` and `s_2`, which are not present in
+        domain of ``morphisms`` and ``antimorphisms``, and then return
+        updated ``morphisms`` and ``antimorphisms`` with updated domain,
+        which includes `s_1` and `s_2`.
+
+        INPUT:
+
+        - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
+        on the alphabet of ``self``. Letter permutations must be callable on
+        letters as well as words (e.g. ``WordMorphism``). If the identity
+        morphisms is not in `morphisms`, then it is added automatically.
+
+        - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
+        on the alphabet of ``self``. If ``antimorphisms`` is empty, then
+        antimorphism which acts as identity on letters is added to it.
+        Letter permutations must be callable on letters as well
+        as words (e.g. ``WordMorphism``).
+
+        OUTPUT:
+
+        - ``list`` -- list of morphisms with updated domain.
+        - ``list`` -- list of antimorphisms with updated domain.
+        - ``letter`` -- generated letter `s_1`.
+        - ``letter`` -- generated letter `s_2`.
+        - ``list`` -- list of letters of updated domain.
+        """
+        from sage.combinat.words.morphism import WordMorphism
+        domains = set()
+        properMorphisms = []
+        for morphism in morphisms:
+            if not isinstance(morphism, WordMorphism):
+                morphism = WordMorphism(morphism)
+            if not morphism.is_letter_permutation():
+                raise ValueError("All morphisms must be letter permutations")
+            domains.add(morphism.domain())
+            properMorphisms.append(morphism)
+        properAntimorphisms = []
+        for antimorphism in antimorphisms:
+            if not isinstance(antimorphism, WordMorphism):
+                antimorphism = WordMorphism(antimorphism)
+            if not antimorphism.is_letter_permutation():
+                raise ValueError("All antimorphisms must be letter permutations")
+            domains.add(antimorphism.domain())
+            properAntimorphisms.append(antimorphism)
+        if len(domains) >= 2:
+            raise ValueError("All morphisms and antimorphisms must have the same domain")
+        domain = set(self.letters())
+        if len(domains) == 1:
+            domain = set(domains.pop().alphabet())
+        specialLetters = self._not_used_letters(2, prohibitedLetters=domain)
+        specialLetterOne, specialLetterTwo = specialLetters[0], specialLetters[1]
+        specialMorphism = WordMorphism({specialLetterOne: specialLetterOne, specialLetterTwo: specialLetterTwo})
+        specialAntimorphism = WordMorphism({specialLetterOne: specialLetterTwo, specialLetterTwo: specialLetterOne})
+        updatedMorphisms = []
+        for morphism in properMorphisms:
+            updatedMorphisms.append(specialMorphism.extend_by(morphism))
+        updatedAntimorphisms = []
+        for antimorphism in properAntimorphisms:
+            updatedAntimorphisms.append(specialAntimorphism.extend_by(antimorphism))
+        updatedMorphisms.append(specialMorphism.extend_by(WordMorphism({x: x for x in domain})))
+        if not updatedAntimorphisms:
+            updatedAntimorphisms.append(specialAntimorphism.extend_by(WordMorphism({x: x for x in domain})))
+        domain = list(domain)
+        domain.append(specialLetterOne)
+        domain.append(specialLetterTwo)
+        return updatedMorphisms, updatedAntimorphisms, specialLetterOne, specialLetterTwo, domain
 
     def is_full(self, f=None):
         r"""
@@ -3487,80 +3610,81 @@ class FiniteWord_class(Word_class):
         square = self * self
         return square.lps(f=f).length() >= self.length()
 
-    def _not_used_letter(self, morphism):
+    def _not_used_letter(self, prohibitedLetters=set()):
         r"""
-        This is private method. It returns a letter not contained in ``self``,
-        domain of ``morphism`` and codomain of ``morphism``.
+        This is private method. It returns a letter not contained in ``self``
+        and ``prohibitedLetters``.
 
         INPUT:
 
-        - ``morphism`` -- word morphism on the alphabet of ``self``.
+        - ``prohibitedLetters`` -- iterable
+          (default is empty Python set) of letters.
 
         OUTPUT:
 
         an integer -- lowest non-negative integer which is not contained
-        as a letter in ``self``, domain of ``morphism``
-        and codomain of ``morphism``.
+        as a letter in ``self`` and ``prohibitedLetters``.
 
         EXAMPLES::
 
-            sage: f = WordMorphism('a->ab,b->a')
+            sage: letters = ['a', 'b']
             sage: w = Word('abcd')
-            sage: w._not_used_letter(f)
+            sage: w._not_used_letter(prohibitedLetters=letters)
             0
-            sage: f = WordMorphism({0 -> 'ba', 'a' -> 2})
+            sage: w._not_used_letter()
+            0
+            sage: letters = set({'a', 0, 'b', 2})
             sage: w = Word([1, 2, 3])
-            sage: w._not_used_letter(f)
+            sage: w._not_used_letter(prohibitedLetters=letters)
             4
-            sage: f = WordMorphism({0 -> [2, 3, 5]})
-            sage: w = Word([3, 1, 'ab', 0, 'c', 2])
-            sage: w._not_used_letter(f)
+            sage: w._not_used_letter()
+            0
+            sage: letters = set({2, 3, 0, 5})
+            sage: w = Word([3, 1, 'ab', 0, 'c', 0])
+            sage: w._not_used_letter(prohibitedLetters=letters)
             4
+            sage: w._not_used_letter()
+            2
         """
-        lettersSet = set(morphism.domain().alphabet()).union(
-            set(morphism.codomain().alphabet())).union(set(self.letters()))
-        res = 0
-        while res in lettersSet:
-            res += 1
-        return res
+        return self._not_used_letters(1, prohibitedLetters=prohibitedLetters)[0]
 
-    def _not_used_letters(self, morphism, n):
+    def _not_used_letters(self, n, prohibitedLetters=set()):
         r"""
-        This is private method. It return ``n`` letters not contained
-        in ``self``, domain of ``morphism`` and codomain of ``morphism``.
+        This is private method. It returns ``n`` letters not contained
+        in ``self`` and ``prohibitedLetters``.
 
         INPUT:
 
         - ``n`` -- non-negative integer, amount of letters
-        which will be returned
+          which will be returned
 
-        - ``morphism`` -- word morphism on the alphabet of ``self``.
+        - ``prohibitedLetters`` -- iterable
+          (default is empty Python set) of letters.
 
         OUTPUT:
 
         a list -- list of lowest non-negative integers
-        which are not contained as letters in ``self``,
-        domain of ``morphism`` and codomain of ``morphism``.
+        which are not contained as letters in ``self``
+        and ``prohibitedLetters``.
 
         EXAMPLES::
 
-            sage: f = WordMorphism('a->ab,b->a')
+            sage: letters = ['b', 'a', 'b']
             sage: w = Word('abcd')
-            sage: w._not_used_letters(f, 3)
+            sage: w._not_used_letters(3, prohibitedLetters=letters)
             [0, 1, 2]
-            sage: f = WordMorphism({0 -> 'ba', 'a' -> 2})
+            sage: letters = set({'b', 0, 'a', 2})
             sage: w = Word([1, 2, 3])
-            sage: w._not_used_letters(f, 2)
+            sage: w._not_used_letters(2, prohibitedLetters=letters)
             [4, 5]
-            sage: f = WordMorphism({0 -> [2, 5]})
+            sage: letters = set({2, 0, 5})
             sage: w = Word([3, 'ab', 0, 'c', 2])
-            sage: w._not_used_letters(f, 4)
+            sage: w._not_used_letters(4, prohibitedLetters=letters)
             [1, 4, 6, 7]
         """
         if n < 0:
             raise ValueError("Parameter `n` must be a non-negative integer")
-        lettersSet = set(morphism.domain().alphabet()).union(
-            set(morphism.codomain().alphabet())).union(set(self.letters()))
+        lettersSet = set(self.letters()).union(prohibitedLetters)
         res = []
         num = 0
         while len(res) < n:
@@ -3572,7 +3696,7 @@ class FiniteWord_class(Word_class):
 
     def _insert_not_used_letter_between_consecutive_letters(self, f=None):
         r"""
-        This is private method. It returns copy of ``self`` with not used letter inserted 
+        This is private method. It returns copy of ``self`` with not used letter inserted
         between each pair of consecutive letters of ``self`` and updated morphism.
 
         INPUT:
@@ -3584,7 +3708,7 @@ class FiniteWord_class(Word_class):
 
         OUTPUT:
 
-        - a word -- copy of ``self`` with not used letter inserted 
+        - a word -- copy of ``self`` with not used letter inserted
         between each pair of consecutive letters.
         - a morphism -- copy of ``f`` which returns the letter which was inserted
         into ``self``, when applied on the same letter.
@@ -3600,7 +3724,17 @@ class FiniteWord_class(Word_class):
             sage: letter
             0
         """
-        specialLetter = self._not_used_letter()
+        from sage.combinat.words.morphism import WordMorphism
+        specialLetter = None
+        if f is not None:
+            if not isinstance(f, WordMorphism):
+                f = WordMorphism(f)
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
+            morphismLetters = set(f.domain().alphabet())
+            specialLetter = self._not_used_letter(prohibitedLetters=morphismLetters)
+        else:
+            specialLetter = self._not_used_letter()
         updatedLetterList = []
         for letter in self:
             updatedLetterList.append(letter)
@@ -3609,15 +3743,12 @@ class FiniteWord_class(Word_class):
             updatedLetterList.pop()
         from sage.combinat.words.word import Word
         wordWithSpecialLetter = Word(updatedLetterList)
-        from sage.combinat.words.morphism import WordMorphism
         specialLetterMorphism = WordMorphism({specialLetter: specialLetter})
-        updatedMorphism = specialLetterMorphism.extend_by(WordMorphism({x: x for x in self.letters()}))
+        updatedMorphism = None
         if f is not None:
-            if not isinstance(f, WordMorphism):
-                f = WordMorphism(f)
-            if not f.is_letter_permutation():
-                raise ValueError("f must be a letter permutation")
             updatedMorphism = specialLetterMorphism.extend_by(f)
+        else:
+            updatedMorphism = specialLetterMorphism.extend_by(WordMorphism({x: x for x in self.letters()}))
         return wordWithSpecialLetter, updatedMorphism, specialLetter
 
     def _find_lps_for_all_prefixes_from_maximal_palindrome_lengths(self, maximalPalindromeLengths):
@@ -3803,8 +3934,9 @@ class FiniteWord_class(Word_class):
 
         - ``list`` -- list of lengths of the maximal palindromes (or ``f``-palindrome)
         for each symmetry axis (letter or space between two letters).
-        - ``list`` -- list of nodes of palindromes tree as described
-        in [Rom2023]_, the first node is the root.
+        - ``tree`` -- tree graph, which contains data about palindromic
+        (or ``f``-palindromic) factors as described in [Rom2023]_.
+        Represented as Python list, the first node is the root.
 
         ALGORITHM:
 
@@ -3812,55 +3944,37 @@ class FiniteWord_class(Word_class):
 
         Time complexity is linear from length of ``self``.
         """
-        # TODO - Add more private methods (without tests!) and use them here
-        wordWithSpecialLetter, updatedMorphism, specialLetter = self._insert_not_used_letter_between_consecutive_letters(f=f)
-        # Manacher's algorithm part
-        maximalPalindromeRadiuses = [0] * wordWithSpecialLetter.length()
-        maximalPalindromeLengths = [0] * wordWithSpecialLetter.length()
-        initialPalindromeRadiuses = [0] * wordWithSpecialLetter.length()
-        previousPositions = [None] * wordWithSpecialLetter.length()
-        center, right = 0, 0
-        for i in range(wordWithSpecialLetter.length()):
-            if i < right:
-                maximalPalindromeRadiuses[i] = min(right - i, maximalPalindromeRadiuses[2 * center - i])
-                initialPalindromeRadiuses[i] = maximalPalindromeRadiuses[i]
-                previousPositions[i] = 2 * center - i
-                if initialPalindromeRadiuses[2 * center - i] == maximalPalindromeRadiuses[2 * center - i]:
-                    previousPositions[i] = previousPositions[2 * center - i]
-            l, r = i - maximalPalindromeRadiuses[i], i + maximalPalindromeRadiuses[i]
-            while (l >= 0 and r < wordWithSpecialLetter.length() 
-                   and updatedMorphism(wordWithSpecialLetter[l])[0] == wordWithSpecialLetter[r] 
-                   and wordWithSpecialLetter[l] == updatedMorphism(wordWithSpecialLetter[r])[0]):
-                maximalPalindromeRadiuses[i] += 1
-                l -= 1
-                r += 1
-            if i + maximalPalindromeRadiuses[i] > right:
-                center = i
-                right = i + maximalPalindromeRadiuses[i]
-        evenPosResults = [max(x + x % 2 - 1, 0) for x in maximalPalindromeRadiuses[::2]]
-        oddPosResults = [x - x % 2 for x in maximalPalindromeRadiuses[1::2]]
-        maximalPalindromeLengths[::2] = evenPosResults
-        maximalPalindromeLengths[1::2] = oddPosResults
-        # Building forest used later to build palindromes tree
-        diffForest = []
-        treeAndNodeIndexes = [None] * len(previousPositions)
-        i = 0 
-        while i < len(previousPositions):
-            if initialPalindromeRadiuses[i] != maximalPalindromeRadiuses[i]:
-                if previousPositions[i] is None:
-                    treeIndex, nodeIndex = len(diffForest), 0
-                    diffForest.append([[i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []]])
-                    treeAndNodeIndexes[i] = (treeIndex, nodeIndex)
-                else:
-                    previousPositionIndex = previousPositions[i]
-                    treeIndex, nodeIndex = treeAndNodeIndexes[previousPositionIndex]
-                    tree = diffForest[treeIndex]
-                    newNodeIndex = len(tree)
-                    tree[nodeIndex][3].append(newNodeIndex)
-                    tree.append([i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []])
-                    treeAndNodeIndexes[i] = (treeIndex, newNodeIndex)
-            i += 1
-        # Building palindromes tree
+        wordWithSpecialLetter, updatedMorphism, specialLetter = \
+            self._insert_not_used_letter_between_consecutive_letters(f=f)
+        maximalPalindromeRadiuses, maximalPalindromeLengths, initialPalindromeRadiuses, previousPositions = \
+            self._get_data_from_manachers_algorithm(wordWithSpecialLetter, updatedMorphism)
+        diffForest = self._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            maximalPalindromeRadiuses, initialPalindromeRadiuses, previousPositions)
+        palindromesTree = self._build_palindromes_tree(diffForest, wordWithSpecialLetter, specialLetter)
+        return maximalPalindromeLengths, palindromesTree
+
+    def _build_palindromes_tree(self, diffForest, wordWithSpecialLetter, specialLetter):
+        r"""
+        This is private method. It uses data extracted from apply of
+        Manacher's algorithm on ``wordWithSpecialLetter`` to build
+        tree graph which contains data about palindromic factors
+        of ``wordWithSpecialLetter``.
+
+        INPUT:
+
+        - ``diffForest`` -- forest graph, which contains data extracted
+        from apply of Manacher's algorithm on ``wordWithSpecialLetter``.
+        - ``wordWithSpecialLetter`` -- a word, such that
+        every second letter of it is the same letter and all other letters
+        are different from this letter.
+        - ``specialLetter`` -- a letter, which is the every second letter
+        of ``wordWithSpecialLetter``.
+
+        OUTPUT:
+
+        a tree -- tree graph, which contains data about
+        palindromic factors of ``wordWithSpecialLetter``.
+        """
         palindromesTree = [[dict(), None, 0, False]]
         for tree in diffForest:
             nodeIndexesToTraverse = [[0]]
@@ -3904,7 +4018,115 @@ class FiniteWord_class(Word_class):
                 else:
                     nodeIndexesToTraverse.pop()
                     palindromeIndexes.pop()
-        return maximalPalindromeLengths, palindromesTree
+        return palindromesTree
+
+    def _get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            self, maximalPalindromeRadiuses, initialPalindromeRadiuses, previousPositions):
+        r"""
+        This is private method. It takes data about already applied
+        Manacher's algorithm and accumulates it in format of forest graph.
+
+        INPUT:
+
+        - ``maximalPalindromeRadiuses`` -- list of radiuses of the maximal
+        palindromesfor each symmetry axis (letter or space between
+        two letters).
+        - ``initialPalindromeRadiuses`` -- for each symmetry axis (letter
+        or space between two letters) a radius of the palindrome, which
+        was initial palindrome from which Manacher's algorithm
+        started to increment radius in this symmetry axis.
+        - ``previousPositions`` -- for each symmetry axis (letter or space
+        between two letters) an index of ``wordWithSpecialLetter``, from
+        which Manacher's algorithm copied initial radius in this
+        symmetry axis (``None`` if radius was not copied in this
+        symmetry axis).
+
+        OUTPUT:
+
+        a forest -- forest graph, which contains accumulated data
+        about applied Manacher's algorithm
+        """
+        diffForest = []
+        treeAndNodeIndexes = [None] * len(previousPositions)
+        i = 0
+        while i < len(previousPositions):
+            if initialPalindromeRadiuses[i] != maximalPalindromeRadiuses[i]:
+                if previousPositions[i] is None:
+                    treeIndex, nodeIndex = len(diffForest), 0
+                    diffForest.append([[i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []]])
+                    treeAndNodeIndexes[i] = (treeIndex, nodeIndex)
+                else:
+                    previousPositionIndex = previousPositions[i]
+                    treeIndex, nodeIndex = treeAndNodeIndexes[previousPositionIndex]
+                    tree = diffForest[treeIndex]
+                    newNodeIndex = len(tree)
+                    tree[nodeIndex][3].append(newNodeIndex)
+                    tree.append([i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []])
+                    treeAndNodeIndexes[i] = (treeIndex, newNodeIndex)
+            i += 1
+        return diffForest
+
+    def _get_data_from_manachers_algorithm(self, word, morphism):
+        r"""
+        This is private method. It returns some data about ``word``,
+        which is gather during apply of Manacher's algorithm on ``word``.
+
+        INPUT:
+
+        - ``word`` -- a word, such that every second letter of it
+        is the same letter and all other letters are different from
+        this letter. Manacher's algorithm will be applied on this word.
+        - ``morphism`` -- a morphism which will be used for defining
+        which factors of ``word`` are palindromes.
+
+        OUTPUT:
+
+        - ``list`` -- list of radiuses of the maximal palindromes
+        for each symmetry axis (letter or space between two letters).
+        - ``list`` -- list of lengths of the maximal palindromes
+        for each symmetry axis (letter or space between two letters).
+        - ``list`` -- for each symmetry axis (letter or space
+        between two letters) a radius of the palindrome, which
+        was initial palindrome from which Manacher's algorithm
+        started to increment radius in this symmetry axis.
+        - ``list`` -- for each symmetry axis (letter or space
+        between two letters) an index of ``word``, from
+        which Manacher's algorithm copied initial radius in this
+        symmetry axis (``None`` if radius was not copied in this
+        symmetry axis).
+
+        ALGORITHM:
+
+        Manacher's algorithm from [Man1975]_
+        """
+        maximalPalindromeRadiuses = [0] * word.length()
+        maximalPalindromeLengths = [0] * word.length()
+        initialPalindromeRadiuses = [0] * word.length()
+        previousPositions = [None] * word.length()
+        center, right = 0, 0
+        for i in range(word.length()):
+            if i < right:
+                maximalPalindromeRadiuses[i] = min(right - i, maximalPalindromeRadiuses[2 * center - i])
+                initialPalindromeRadiuses[i] = maximalPalindromeRadiuses[i]
+                previousPositions[i] = 2 * center - i
+                if initialPalindromeRadiuses[2 * center - i] == maximalPalindromeRadiuses[2 * center - i]:
+                    previousPositions[i] = previousPositions[2 * center - i]
+            l, r = i - maximalPalindromeRadiuses[i], i + maximalPalindromeRadiuses[i]
+            while (l >= 0 and r < word.length()
+                   and morphism(word[l])[0] == word[r]
+                   and word[l] == morphism(word[r])[0]):
+                maximalPalindromeRadiuses[i] += 1
+                l -= 1
+                r += 1
+            if i + maximalPalindromeRadiuses[i] > right:
+                center = i
+                right = i + maximalPalindromeRadiuses[i]
+        evenPosResults = [max(x + x % 2 - 1, 0) for x in maximalPalindromeRadiuses[::2]]
+        oddPosResults = [x - x % 2 for x in maximalPalindromeRadiuses[1::2]]
+        maximalPalindromeLengths[::2] = evenPosResults
+        maximalPalindromeLengths[1::2] = oddPosResults
+        return maximalPalindromeRadiuses, maximalPalindromeLengths, \
+            initialPalindromeRadiuses, previousPositions
 
     def length_border(self):
         r"""
