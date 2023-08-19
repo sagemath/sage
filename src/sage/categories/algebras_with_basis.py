@@ -228,7 +228,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
             @cached_method
-            def _one_from_cartesian_product_of_one_basis(self):
+            def one_from_cartesian_product_of_one_basis(self):
                 """
                 Return the one of this Cartesian product of algebras, as per
                 ``Monoids.ParentMethods.one``
@@ -249,7 +249,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     word:
 
                     sage: B = cartesian_product((A, A, A))                              # optional - sage.combinat
-                    sage: B.one_from_cartesian_product_of_one_basis()                   # optional - sage.combinat
+                    sage: B.one_from_cartesian_product_of_one_basis()                  # optional - sage.combinat
                     B[(0, word: )] + B[(1, word: )] + B[(2, word: )]
                     sage: B.one()                                                       # optional - sage.combinat
                     B[(0, word: )] + B[(1, word: )] + B[(2, word: )]
@@ -273,7 +273,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     B[(0, word: )] + B[(1, word: )] + B[(2, word: )]
                 """
                 if all(hasattr(module, "one_basis") and module.one_basis is not NotImplemented for module in self._sets):
-                    return self._one_from_cartesian_product_of_one_basis
+                    return self.one_from_cartesian_product_of_one_basis
                 return self._one_generic
 
             _one_generic = UnitalAlgebras.CartesianProducts.ParentMethods.one

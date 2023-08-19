@@ -400,12 +400,12 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 sage: from sage.categories.unital_algebras import UnitalAlgebras
                 sage: C = UnitalAlgebras(QQ).CartesianProducts()
                 sage: C.extra_super_categories()
-                [Category of algebras over Rational Field]
+                [Category of unital algebras over Rational Field]
                 sage: sorted(C.super_categories(), key=str)
                 [Category of Cartesian products of distributive magmas and additive magmas,
-                 Category of Cartesian products of monoids,
+                 Category of Cartesian products of unital magmas,
                  Category of Cartesian products of vector spaces over Rational Field,
-                 Category of algebras over Rational Field]
+                 Category of unital algebras over Rational Field]
             """
             return [self.base_category()]
 
@@ -428,5 +428,5 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     sage: all(b == b * one for b in C.basis())
                     True
                 """
-                return self.sum(self.cartesian_embedding(i)(C.one())
-                                for i, C in enumerate(self.cartesian_factors()))
+                data = enumerate(self.cartesian_factors())
+                return self._cartesian_product_of_elements([C.one() for i, C in data])
