@@ -32,6 +32,7 @@ AUTHOR:
 from cysignals.signals cimport sig_check
 from libc.string cimport memcpy
 
+from sage.data_structures.bitset_base cimport *
 from sage.misc.superseded import deprecated_function_alias
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
