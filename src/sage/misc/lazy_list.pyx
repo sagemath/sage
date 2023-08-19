@@ -1059,7 +1059,11 @@ cdef class lazy_list_from_function(lazy_list_generic):
             step         1
         """
         while len(self.cache) <= i:
-            self.cache.append(self.callable(len(self.cache)))
+            try:
+                value = self.callable(len(self.cache))
+            except StopIteration:
+                return 1
+            self.cache.append(value)
 
     def __reduce__(self):
         r"""
