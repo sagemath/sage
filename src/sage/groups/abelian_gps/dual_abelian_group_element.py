@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Elements (characters) of the dual group of a finite Abelian group
 

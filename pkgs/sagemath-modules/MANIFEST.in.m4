@@ -122,6 +122,11 @@ include sage/geometry/toric_lattice*.p*
 
 # Also just modules
 graft sage/groups/additive_abelian
+graft sage/groups/abelian_gps
+exclude sage/groups/abelian_gps/abelian_group_morphism.p*       # gap
+exclude sage/groups/abelian_gps/abelian_aut.p*                  # gap
+exclude sage/groups/abelian_gps/*gap*.p*                        # gap
+exclude sage/groups/abelian_gps/all.p*
 
 # Need sage.combinat.free_module for polyhedral modules
 include sage/combinat/free_module.py

@@ -14,6 +14,9 @@ include           sage/graphs/spanning_tree.p*
 graft             sage/groups/perm_gps
 prune             sage/groups/perm_gps/partn_ref                        # sagemath-categories
 include           sage/groups/*gap*.p*
+include           sage/groups/abelian_gps/abelian_group_gap.p*
+include           sage/groups/abelian_gps/abelian_aut.p*
+include           sage/groups/abelian_gps/abelian_group_morphism.p*
 include           sage/groups/matrix_gps/group_element.pxd              # FIXME
 include           sage/groups/matrix_gps/*_gap.*
 include           sage/groups/semimonomial_transformations/all.py       # FIXME
