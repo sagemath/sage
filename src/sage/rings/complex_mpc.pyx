@@ -1571,26 +1571,6 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_norm(x.value, self.value, (<RealField_class>x._parent).rnd)
         return x
 
-    def __rtruediv__(self, left):
-        r"""
-        Returns the quotient of ``left`` with ``self``, that is: ``left/self``
-        as a complex number.
-
-        INPUT:
-
-        - ``left`` -- a complex number
-
-        EXAMPLES::
-
-            sage: MPC = MPComplexField()
-            sage: a = MPC(2, 2)
-            sage: a.__rtruediv__(MPC(1))
-            0.250000000000000 - 0.250000000000000*I
-            sage: MPC(1)/a
-            0.250000000000000 - 0.250000000000000*I
-        """
-        return MPComplexNumber(self._parent, left)/self
-
     def __pow__(self, right, modulus):
         """
         Compute ``self`` raised to the power of exponent, rounded in
