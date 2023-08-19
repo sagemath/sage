@@ -985,7 +985,7 @@ class HyperplaneArrangementElement(Element):
 
         .. MATH::
 
-            \Psi_A(z) := sum_{X \in L} |\mu(B,X)| z^{\dim X},
+            \Psi_A(z) := \sum_{X \in L} |\mu(B,X)| z^{\dim X},
 
         where `L` is the intersection poset of `A`, `B` is the minimal
         element of `L` (here, the `0` dimensional subspace), and
@@ -1035,7 +1035,7 @@ class HyperplaneArrangementElement(Element):
 
         .. MATH::
 
-            P_A(z) := sum_{X \in L} |\mu(B,X)| (z - 1)^{\mathrm{codim} X},
+            P_A(z) := \sum_{X \in L} |\mu(B,X)| (z - 1)^{\mathrm{codim} X},
 
         where `L` is the intersection poset of `A`, `B` is the minimal
         element of `L` (here, the `0` dimensional subspace), and
@@ -1108,7 +1108,7 @@ class HyperplaneArrangementElement(Element):
             sage: all(c > 0 for H in B for c in H.primitive_eulerian_polynomial().coefficients())
             True
 
-        We verify Example 9.4 in [BHS2023]_ showing a hyperplane arrangemen
+        We verify Example 9.4 in [BHS2023]_ showing a hyperplane arrangement
         whose primitive Eulerian polynomial does not have real roots (in
         general, the graphical arrangement of a cycle graph corresponds
         to the arrangements in Example 9.4)::
