@@ -263,7 +263,6 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]
         sage: p1 = w^2 + x^2 + y^2 + z^2
         sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2

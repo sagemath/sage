@@ -787,8 +787,8 @@ def isogenies_3(E, minimal_models=True):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_3
-        sage: E = EllipticCurve(GF(17), [1,1])                                          # needs sage.rings.finite_rings
-        sage: [phi.codomain().ainvs() for phi in isogenies_3(E)]                        # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(17), [1,1])
+        sage: [phi.codomain().ainvs() for phi in isogenies_3(E)]
         [(0, 0, 0, 9, 7), (0, 0, 0, 0, 1)]
 
         sage: E = EllipticCurve(GF(17^2,'a'), [1,1])                                    # needs sage.rings.finite_rings
@@ -955,8 +955,8 @@ def isogenies_5_1728(E, minimal_models=True):
         sage: isogenies_5_1728(E)
         []
 
-        sage: E = EllipticCurve(GF(13), [11,0])                                         # needs sage.rings.finite_rings
-        sage: isogenies_5_1728(E)                                                       # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(13), [11,0])
+        sage: isogenies_5_1728(E)
         [Isogeny of degree 5
           from Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13
             to Elliptic Curve defined by y^2 = x^3 + 11*x over Finite Field of size 13,
@@ -1112,9 +1112,9 @@ def isogenies_7_0(E, minimal_models=True):
 
     Now some examples of 7-isogenies which are not endomorphisms::
 
-        sage: K = GF(101)                                                               # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(K, [0,1])                                               # needs sage.rings.finite_rings
-        sage: isogenies_7_0(E)                                                          # needs sage.rings.finite_rings
+        sage: K = GF(101)
+        sage: E = EllipticCurve(K, [0,1])
+        sage: isogenies_7_0(E)
         [Isogeny of degree 7
           from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 101
             to Elliptic Curve defined by y^2 = x^3 + 55*x + 100 over Finite Field of size 101,
@@ -1223,8 +1223,8 @@ def isogenies_7_1728(E, minimal_models=True):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_7_1728
-        sage: E = EllipticCurve(GF(47), [1, 0])                                         # needs sage.rings.finite_rings
-        sage: isogenies_7_1728(E)                                                       # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(47), [1, 0])
+        sage: isogenies_7_1728(E)
         [Isogeny of degree 7
           from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 47
             to Elliptic Curve defined by y^2 = x^3 + 26 over Finite Field of size 47,
@@ -1376,9 +1376,9 @@ def isogenies_13_0(E, minimal_models=True):
 
     A previous implementation did not work in some characteristics::
 
-        sage: K = GF(29)                                                                # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(j=K(0))                                                 # needs sage.rings.finite_rings
-        sage: isogenies_13_0(E)                                                         # needs sage.rings.finite_rings
+        sage: K = GF(29)
+        sage: E = EllipticCurve(j=K(0))
+        sage: isogenies_13_0(E)
         [Isogeny of degree 13
           from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 29
             to Elliptic Curve defined by y^2 = x^3 + 26*x + 12 over Finite Field of size 29,
@@ -1388,10 +1388,10 @@ def isogenies_13_0(E, minimal_models=True):
 
     ::
 
-        sage: K = GF(101)                                                               # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(j=K(0)); E.ainvs()                                      # needs sage.rings.finite_rings
+        sage: K = GF(101)
+        sage: E = EllipticCurve(j=K(0)); E.ainvs()
         (0, 0, 0, 0, 1)
-        sage: [phi.codomain().ainvs() for phi in isogenies_13_0(E)]                     # needs sage.rings.finite_rings
+        sage: [phi.codomain().ainvs() for phi in isogenies_13_0(E)]
         [(0, 0, 0, 64, 36), (0, 0, 0, 42, 66)]
 
     ::
@@ -1494,7 +1494,6 @@ def isogenies_13_1728(E, minimal_models=True):
 
     ::
 
-        sage: # needs sage.rings.finite_rings
         sage: K = GF(83)
         sage: E = EllipticCurve(K, [0,0,0,5,0]); E.ainvs()
         (0, 0, 0, 5, 0)
@@ -1513,9 +1512,9 @@ def isogenies_13_1728(E, minimal_models=True):
 
     ::
 
-        sage: K = GF(23)                                                                # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(K, [1,0])                                               # needs sage.rings.finite_rings
-        sage: isogenies_13_1728(E)                                                      # needs sage.rings.finite_rings
+        sage: K = GF(23)
+        sage: E = EllipticCurve(K, [1,0])
+        sage: isogenies_13_1728(E)
         [Isogeny of degree 13
           from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 23
             to Elliptic Curve defined by y^2 = x^3 + 16 over Finite Field of size 23,
@@ -1925,8 +1924,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
                over Number Field in a with defining polynomial x^2 - 253
                with a = 15.905973720586867?]
 
-        sage: E = EllipticCurve_from_j(GF(5)(1))                                        # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree_genus_plus_0(E, 41)                                # needs sage.rings.finite_rings
+        sage: E = EllipticCurve_from_j(GF(5)(1))
+        sage: isogenies_prime_degree_genus_plus_0(E, 41)
         [Isogeny of degree 41
           from Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
             to Elliptic Curve defined by y^2 = x^3 + x + 3 over Finite Field of size 5,
@@ -1968,8 +1967,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
                over Number Field in a with defining polynomial x^2 + 66827
                with a = 258.5091874576221?*I]
 
-        sage: E = EllipticCurve_from_j(GF(13)(5))                                       # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree_genus_plus_0(E, 71)                                # needs sage.rings.finite_rings
+        sage: E = EllipticCurve_from_j(GF(13)(5))
+        sage: isogenies_prime_degree_genus_plus_0(E, 71)
         [Isogeny of degree 71
           from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 13
             to Elliptic Curve defined by y^2 = x^3 + 10*x + 7 over Finite Field of size 13,
@@ -1977,8 +1976,8 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
           from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field of size 13
             to Elliptic Curve defined by y^2 = x^3 + 10*x + 7 over Finite Field of size 13]
 
-        sage: E = EllipticCurve(GF(13), [0,1,1,1,0])                                    # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree_genus_plus_0(E)                                    # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(13), [0,1,1,1,0])
+        sage: isogenies_prime_degree_genus_plus_0(E)
         [Isogeny of degree 17
           from Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 13
             to Elliptic Curve defined by y^2 + y = x^3 + x^2 + 10*x + 1 over Finite Field of size 13,
@@ -2360,7 +2359,6 @@ def is_kernel_polynomial(E, m, f):
     into 14 factors each of degree 6, but only two of these is a
     kernel polynomial for a 13-isogeny::
 
-        sage: # needs sage.rings.finite_rings
         sage: F = GF(3)
         sage: E = EllipticCurve(F, [0,0,0,-1,0])
         sage: f13 = E.division_polynomial(13)
@@ -2519,7 +2517,7 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_prime_degree_general
         sage: ainvs = (0,1,1,-1,-1)
-        sage: for l in prime_range(50):                                                 # needs sage.rings.finite_rings
+        sage: for l in prime_range(50):
         ....:     E = EllipticCurve(GF(l),ainvs)
         ....:     isogenies_prime_degree_general(E,l)
         []
@@ -2562,7 +2560,6 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
     factors of degree 6 each, but only two those are kernel
     polynomials::
 
-        sage: # needs sage.rings.finite_rings
         sage: F3 = GF(3)
         sage: E = EllipticCurve(F3, [0,0,0,-1,0])
         sage: Psi13 = E.division_polynomial(13)
@@ -2735,7 +2732,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_prime_degree
         sage: ainvs = (0,1,1,-1,-1)
-        sage: for l in prime_range(50):                                                 # needs sage.rings.finite_rings
+        sage: for l in prime_range(50):
         ....:     E = EllipticCurve(GF(l), ainvs)
         ....:     isogenies_prime_degree(E, l)
         []
@@ -2787,10 +2784,10 @@ def isogenies_prime_degree(E, l, minimal_models=True):
     primes (11, 17, 19, 23, 29, 31, 41, 47, 59, 71) than when the
     generic code must be used::
 
-        sage: E = EllipticCurve(GF(101), [-3440, 77658])                                # needs sage.rings.finite_rings
-        sage: E.isogenies_prime_degree(71)  # fast                                      # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(101), [-3440, 77658])
+        sage: E.isogenies_prime_degree(71)  # fast
         []
-        sage: E.isogenies_prime_degree(73)      # long time                             # needs sage.rings.finite_rings
+        sage: E.isogenies_prime_degree(73)      # long time
         []
 
     Test that :trac:`32269` is fixed::

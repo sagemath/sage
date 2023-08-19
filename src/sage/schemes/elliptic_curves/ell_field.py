@@ -1900,7 +1900,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: # needs sage.graphs sage.rings.number_field
             sage: K.<e> = NumberField(x^2 - 2)                                          # needs sage.rings.finite_rings
             sage: E = EllipticCurve(K, [1, 0, 1, 4, -6])                                # needs sage.rings.finite_rings
-            sage: G2 = E.isogeny_ell_graph(2, directed=False)
+            sage: G2 = E.isogeny_ell_graph(2, directed=False)                           # needs sage.rings.finite_rings
             sage: G2.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
              'y^2 + x*y + y = x^3 + (-36)*x + (-70)',
@@ -1913,7 +1913,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
              ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
               'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
-            sage: G3 = E.isogeny_ell_graph(3, directed=False)
+            sage: G3 = E.isogeny_ell_graph(3, directed=False)                           # needs sage.rings.finite_rings
             sage: G3.vertices(sort=True)
             ['y^2 + x*y + y = x^3 + (-1)*x',
              'y^2 + x*y + y = x^3 + (-171)*x + (-874)',

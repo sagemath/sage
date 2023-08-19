@@ -14,7 +14,6 @@ the user.
 
 EXAMPLES::
 
-    sage: # needs sage.rings.finite_rings
     sage: P2 = toric_varieties.P2(base_ring=GF(3))
     sage: point_set = P2.point_set()
     sage: point_set.cardinality()
@@ -124,8 +123,8 @@ class NaiveFinitePointEnumerator():
 
             sage: from sage.schemes.toric.points import NaiveFinitePointEnumerator
             sage: fan = toric_varieties.P2().fan()
-            sage: n = NaiveFinitePointEnumerator(fan, GF(3))                            # needs sage.rings.finite_rings
-            sage: next(iter(n))                                                         # needs sage.rings.finite_rings
+            sage: n = NaiveFinitePointEnumerator(fan, GF(3))
+            sage: next(iter(n))
             (0, 0, 1)
         """
         assert ring.is_finite()
@@ -146,8 +145,8 @@ class NaiveFinitePointEnumerator():
             sage: fan.rays()
             Empty collection
             in 2-d lattice N
-            sage: n = NaiveFinitePointEnumerator(fan, GF(3))                            # needs sage.rings.finite_rings
-            sage: n.rays()                                                              # needs sage.rings.finite_rings
+            sage: n = NaiveFinitePointEnumerator(fan, GF(3))
+            sage: n.rays()
             N(1, 0),
             N(0, 1)
             in 2-d lattice N
@@ -161,9 +160,9 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(5))                              # needs sage.rings.finite_rings
-            sage: ne = P2.point_set()._naive_enumerator()                               # needs sage.rings.finite_rings
-            sage: ne.units()                                                            # needs sage.rings.finite_rings
+            sage: P2 = toric_varieties.P2(base_ring=GF(5))
+            sage: ne = P2.point_set()._naive_enumerator()
+            sage: ne.units()
             (1, 2, 3, 4)
         """
         return tuple(x for x in self.ring if x != 0)
@@ -184,7 +183,6 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: P2 = toric_varieties.P2(base_ring=GF(5))
             sage: ne = P2.point_set()._naive_enumerator()
             sage: ne.roots(2)
@@ -208,11 +206,11 @@ class NaiveFinitePointEnumerator():
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: X.Chow_group().degree(1)                                              # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: X.Chow_group().degree(1)
             C3 x Z
-            sage: enum = X.point_set()._naive_enumerator()                              # needs sage.rings.finite_rings
-            sage: enum._Chow_group_free()                                               # needs sage.rings.finite_rings
+            sage: enum = X.point_set()._naive_enumerator()
+            sage: enum._Chow_group_free()
             ((1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4), (5, 5, 5), (6, 6, 6))
         """
         units = self.units()
@@ -236,11 +234,11 @@ class NaiveFinitePointEnumerator():
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: X.Chow_group().degree(1)                                              # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: X.Chow_group().degree(1)
             C3 x Z
-            sage: enum = X.point_set()._naive_enumerator()                              # needs sage.rings.finite_rings
-            sage: enum._Chow_group_torsion()                                            # needs sage.rings.finite_rings
+            sage: enum = X.point_set()._naive_enumerator()
+            sage: enum._Chow_group_torsion()
             ((1, 2, 4), (1, 4, 2))
         """
         if self.fan.is_smooth():
@@ -269,19 +267,19 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: P2_123 = toric_varieties.P2_123(base_ring=GF(5))                      # needs sage.rings.finite_rings
-            sage: ni = P2_123.point_set()._naive_enumerator()                           # needs sage.rings.finite_rings
-            sage: ni.rescalings()                                                       # needs sage.rings.finite_rings
+            sage: P2_123 = toric_varieties.P2_123(base_ring=GF(5))
+            sage: ni = P2_123.point_set()._naive_enumerator()
+            sage: ni.rescalings()
             ((1, 1, 1), (1, 4, 4), (4, 2, 3), (4, 3, 2))
 
-            sage: dP8 = toric_varieties.dP8(base_ring=GF(3))                            # needs sage.rings.finite_rings
-            sage: ni = dP8.point_set()._naive_enumerator()                              # needs sage.rings.finite_rings
-            sage: ni.rescalings()                                                       # needs sage.rings.finite_rings
+            sage: dP8 = toric_varieties.dP8(base_ring=GF(3))
+            sage: ni = dP8.point_set()._naive_enumerator()
+            sage: ni.rescalings()
             ((1, 1, 1, 1), (1, 2, 2, 2), (2, 1, 2, 1), (2, 2, 1, 2))
 
-            sage: P1xP1 = toric_varieties.P1xP1(base_ring=GF(3))                        # needs sage.rings.finite_rings
-            sage: ni = P1xP1.point_set()._naive_enumerator()                            # needs sage.rings.finite_rings
-            sage: ni.rescalings()                                                       # needs sage.rings.finite_rings
+            sage: P1xP1 = toric_varieties.P1xP1(base_ring=GF(3))
+            sage: ni = P1xP1.point_set()._naive_enumerator()
+            sage: ni.rescalings()
             ((1, 1, 1, 1), (1, 1, 2, 2), (2, 2, 1, 1), (2, 2, 2, 2))
         """
         free = self._Chow_group_free()
@@ -305,7 +303,6 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: P2_123 = toric_varieties.P2_123(base_ring=GF(7))
             sage: ne = P2_123.point_set()._naive_enumerator()
             sage: sorted(ne.orbit([1, 0, 0]))
@@ -334,9 +331,9 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: dP6 = toric_varieties.dP6(base_ring=GF(11))                           # needs sage.rings.finite_rings
-            sage: ne = dP6.point_set()._naive_enumerator()                              # needs sage.rings.finite_rings
-            sage: for cone in ne.cone_iter():                                           # needs sage.rings.finite_rings
+            sage: dP6 = toric_varieties.dP6(base_ring=GF(11))
+            sage: ne = dP6.point_set()._naive_enumerator()
+            sage: for cone in ne.cone_iter():
             ....:     print(cone.ambient_ray_indices())
             (0, 1)
             (1, 2)
@@ -367,24 +364,24 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(2))                              # needs sage.rings.finite_rings
-            sage: ni = P2.point_set()._naive_enumerator()                               # needs sage.rings.finite_rings
-            sage: list(ni.coordinate_iter())                                            # needs sage.rings.finite_rings
+            sage: P2 = toric_varieties.P2(base_ring=GF(2))
+            sage: ni = P2.point_set()._naive_enumerator()
+            sage: list(ni.coordinate_iter())
             [(0, 0, 1), (1, 0, 0), (0, 1, 0), (0, 1, 1),
              (1, 0, 1), (1, 1, 0), (1, 1, 1)]
 
-            sage: P1xP1 = toric_varieties.P1xP1(base_ring=GF(2))                        # needs sage.rings.finite_rings
-            sage: ni = P1xP1.point_set()._naive_enumerator()                            # needs sage.rings.finite_rings
-            sage: list(ni.coordinate_iter())                                            # needs sage.rings.finite_rings
+            sage: P1xP1 = toric_varieties.P1xP1(base_ring=GF(2))
+            sage: ni = P1xP1.point_set()._naive_enumerator()
+            sage: list(ni.coordinate_iter())
             [(0, 1, 0, 1), (1, 0, 0, 1), (1, 0, 1, 0),
              (0, 1, 1, 0), (0, 1, 1, 1), (1, 0, 1, 1),
              (1, 1, 0, 1), (1, 1, 1, 0), (1, 1, 1, 1)]
 
         TESTS::
 
-            sage: V = ToricVariety(Fan([Cone([(1,1)])]), base_ring=GF(3))               # needs sage.rings.finite_rings
-            sage: ni = V.point_set()._naive_enumerator()                                # needs sage.rings.finite_rings
-            sage: list(ni.coordinate_iter())                                            # needs sage.rings.finite_rings
+            sage: V = ToricVariety(Fan([Cone([(1,1)])]), base_ring=GF(3))
+            sage: ni = V.point_set()._naive_enumerator()
+            sage: list(ni.coordinate_iter())
             [(0, 1), (0, 2), (1, 1), (1, 2), (2, 1), (2, 2)]
         """
         units = [x for x in self.ring if x != 0]
@@ -409,15 +406,15 @@ class NaiveFinitePointEnumerator():
 
         EXAMPLES::
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(2))                              # needs sage.rings.finite_rings
-            sage: ni = P2.point_set()._naive_enumerator()                               # needs sage.rings.finite_rings
-            sage: list(ni)                                                              # needs sage.rings.finite_rings
+            sage: P2 = toric_varieties.P2(base_ring=GF(2))
+            sage: ni = P2.point_set()._naive_enumerator()
+            sage: list(ni)
             [(0, 0, 1), (1, 0, 0), (0, 1, 0), (0, 1, 1),
              (1, 0, 1), (1, 1, 0), (1, 1, 1)]
 
-            sage: P1xP1 = toric_varieties.P1xP1(base_ring=GF(3))                        # needs sage.rings.finite_rings
-            sage: ni = P1xP1.point_set()._naive_enumerator()                            # needs sage.rings.finite_rings
-            sage: list(ni)                                                              # needs sage.rings.finite_rings
+            sage: P1xP1 = toric_varieties.P1xP1(base_ring=GF(3))
+            sage: ni = P1xP1.point_set()._naive_enumerator()
+            sage: list(ni)
             [(0, 1, 0, 1), (1, 0, 0, 1), (1, 0, 1, 0), (0, 1, 1, 0),
              (0, 1, 1, 1), (0, 1, 1, 2), (1, 0, 1, 1), (1, 0, 1, 2),
              (1, 1, 0, 1), (1, 2, 0, 1), (1, 1, 1, 0), (1, 2, 1, 0),
@@ -466,7 +463,6 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: point_set = toric_varieties.P2(base_ring=GF(5)).point_set()
             sage: ffe = point_set._finite_field_enumerator()
             sage: ffe.root_generator(2)
@@ -504,13 +500,13 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: X.Chow_group().degree(1)                                              # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: X.Chow_group().degree(1)
             C3 x Z
-            sage: enum = X.point_set()._finite_field_enumerator()                       # needs sage.rings.finite_rings
-            sage: enum._Chow_group_free()                                               # needs sage.rings.finite_rings
+            sage: enum = X.point_set()._finite_field_enumerator()
+            sage: enum._Chow_group_free()
             ((1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4), (5, 5, 5), (6, 6, 6))
-            sage: enum._Chow_group_free_generators()                                    # needs sage.rings.finite_rings
+            sage: enum._Chow_group_free_generators()
             ((3, 3, 3),)
         """
         result = []
@@ -533,13 +529,13 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: X.Chow_group().degree(1)                                              # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: X.Chow_group().degree(1)
             C3 x Z
-            sage: enum = X.point_set()._finite_field_enumerator()                       # needs sage.rings.finite_rings
-            sage: enum._Chow_group_torsion()                                            # needs sage.rings.finite_rings
+            sage: enum = X.point_set()._finite_field_enumerator()
+            sage: enum._Chow_group_torsion()
             ((1, 2, 4), (1, 4, 2))
-            sage: enum._Chow_group_torsion_generators()                                 # needs sage.rings.finite_rings
+            sage: enum._Chow_group_torsion_generators()
             ((1, 2, 4),)
         """
         if self.fan.is_smooth():
@@ -634,7 +630,6 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: point_set = toric_varieties.P2_123(base_ring=GF(5)).point_set()
             sage: ffe = point_set._finite_field_enumerator()
             sage: ffe.rescalings()
@@ -663,22 +658,22 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: point_set = X.point_set()                                             # needs sage.rings.finite_rings
-            sage: ffe = point_set._finite_field_enumerator()                            # needs sage.rings.finite_rings
-            sage: cpi = ffe.cone_points_iter()                                          # needs sage.rings.finite_rings
-            sage: cone, nonzero_points, cokernel = list(cpi)[5]                         # needs sage.rings.finite_rings
-            sage: cone                                                                  # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: point_set = X.point_set()
+            sage: ffe = point_set._finite_field_enumerator()
+            sage: cpi = ffe.cone_points_iter()
+            sage: cone, nonzero_points, cokernel = list(cpi)[5]
+            sage: cone
             1-d cone of Rational polyhedral fan in 2-d lattice N
-            sage: cone.ambient_ray_indices()                                            # needs sage.rings.finite_rings
+            sage: cone.ambient_ray_indices()
             (2,)
-            sage: nonzero_points                                                        # needs sage.rings.finite_rings
+            sage: nonzero_points
             [0, 1]
-            sage: cokernel                                                              # needs sage.rings.finite_rings
+            sage: cokernel
             Finitely generated module V/W over Integer Ring with invariants (2)
-            sage: list(cokernel)                                                        # needs sage.rings.finite_rings
+            sage: list(cokernel)
             [(0), (1)]
-            sage: [p.lift() for p in cokernel]                                          # needs sage.rings.finite_rings
+            sage: [p.lift() for p in cokernel]
             [(0, 0), (0, 1)]
         """
         from sage.matrix.constructor import matrix, block_matrix, identity_matrix
@@ -712,22 +707,22 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         EXAMPLES::
 
-            sage: point_set = toric_varieties.P2(base_ring=GF(2)).point_set()           # needs sage.rings.finite_rings
-            sage: ffe = point_set._finite_field_enumerator()                            # needs sage.rings.finite_rings
-            sage: list(ffe)                                                             # needs sage.rings.finite_rings
+            sage: point_set = toric_varieties.P2(base_ring=GF(2)).point_set()
+            sage: ffe = point_set._finite_field_enumerator()
+            sage: list(ffe)
             [(0, 0, 1), (1, 0, 0), (0, 1, 0), (0, 1, 1),
              (1, 0, 1), (1, 1, 0), (1, 1, 1)]
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: point_set = X.point_set()                                             # needs sage.rings.finite_rings
-            sage: ffe = point_set._finite_field_enumerator()                            # needs sage.rings.finite_rings
-            sage: list(ffe)                                                             # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: point_set = X.point_set()
+            sage: ffe = point_set._finite_field_enumerator()
+            sage: list(ffe)
             [(1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 1, 3), (1, 0, 1),
              (1, 0, 3), (1, 1, 0), (1, 3, 0), (1, 1, 1), (1, 1, 3), (1, 1, 2),
              (1, 1, 6), (1, 1, 4), (1, 1, 5), (1, 3, 2), (1, 3, 6), (1, 3, 4),
              (1, 3, 5), (1, 3, 1), (1, 3, 3)]
-            sage: set(point_set._naive_enumerator()) == set(ffe)                        # needs sage.rings.finite_rings
+            sage: set(point_set._naive_enumerator()) == set(ffe)
             True
         """
         nrays = len(self.rays())
@@ -749,10 +744,10 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_ring=GF(7))                                # needs sage.rings.finite_rings
-            sage: point_set = X.point_set()                                             # needs sage.rings.finite_rings
-            sage: ffe = point_set._finite_field_enumerator()                            # needs sage.rings.finite_rings
-            sage: ffe.cardinality()                                                     # needs sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_ring=GF(7))
+            sage: point_set = X.point_set()
+            sage: ffe = point_set._finite_field_enumerator()
+            sage: ffe.cardinality()
             21
         """
         n = 0
@@ -834,14 +829,14 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         EXAMPLES::
 
             sage: R.<s> = QQ[]
-            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(7))                                  # needs sage.rings.finite_rings
-            sage: X = P2.subscheme([x^3 + 2*y^3 + 3*z^3, x*y*z + x*y^2])                            # needs sage.rings.finite_rings
-            sage: point_set = X.point_set()                                                         # needs sage.rings.finite_rings
-            sage: ffe = point_set._enumerator()                                                     # needs sage.rings.finite_rings
-            sage: cone, nonzero_coordinates, cokernel = list(ffe.ambient.cone_points_iter())[5]     # needs sage.rings.finite_rings
-            sage: cone.ambient_ray_indices(), nonzero_coordinates                                   # needs sage.rings.finite_rings
+            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(7))
+            sage: X = P2.subscheme([x^3 + 2*y^3 + 3*z^3, x*y*z + x*y^2])
+            sage: point_set = X.point_set()
+            sage: ffe = point_set._enumerator()
+            sage: cone, nonzero_coordinates, cokernel = list(ffe.ambient.cone_points_iter())[5]
+            sage: cone.ambient_ray_indices(), nonzero_coordinates
             ((2,), [0, 1])
-            sage: ffe.inhomogeneous_equations(R, nonzero_coordinates, cokernel)                     # needs sage.rings.finite_rings
+            sage: ffe.inhomogeneous_equations(R, nonzero_coordinates, cokernel)
             [2*s^3 + 1, s^2]
         """
         nrays = len(self.ambient.rays())
@@ -875,7 +870,6 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<s> = GF(7)[]
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(7))
             sage: X = P2.subscheme(1)
@@ -904,7 +898,6 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<s> = GF(7)[]
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(7))
             sage: X = P2.subscheme(1)
@@ -951,7 +944,6 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(7))
             sage: X = P2.subscheme([x^3 + 2*y^3 + 3*z^3, x*y*z + x*y^2])
             sage: point_set = X.point_set()
@@ -988,7 +980,6 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(7))
             sage: X = P2.subscheme([x^3 + 2*y^3 + 3*z^3, x*y*z + x*y^2])
             sage: point_set = X.point_set()
@@ -1013,10 +1004,10 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         EXAMPLES::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X.<u,v,w> = ToricVariety(fan, base_ring=GF(7))                        # needs sage.rings.finite_rings
-            sage: Y = X.subscheme(u^3 + v^3 + w^3 + u*v*w)                              # needs sage.rings.finite_rings
-            sage: point_set = Y.point_set()                                             # needs sage.rings.finite_rings
-            sage: list(point_set)                                                       # needs sage.rings.finite_rings
+            sage: X.<u,v,w> = ToricVariety(fan, base_ring=GF(7))
+            sage: Y = X.subscheme(u^3 + v^3 + w^3 + u*v*w)
+            sage: point_set = Y.point_set()
+            sage: list(point_set)
             [[0 : 1 : 3],
              [1 : 0 : 3],
              [1 : 3 : 0],
@@ -1024,8 +1015,8 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
              [1 : 1 : 4],
              [1 : 3 : 2],
              [1 : 3 : 5]]
-            sage: ffe = point_set._enumerator()                                         # needs sage.rings.finite_rings
-            sage: ffe.cardinality()                                                     # needs sage.rings.finite_rings
+            sage: ffe = point_set._enumerator()
+            sage: ffe.cardinality()
             7
         """
         n = 0
