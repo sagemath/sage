@@ -14,7 +14,6 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: # needs sage.rings.finite_rings
     sage: x,y,z = ProjectiveSpace(2, GF(5), names='x,y,z').gens()
     sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
     sage: pts = C.rational_points(); pts
@@ -110,8 +109,8 @@ def is_Divisor(x):
 
         sage: from sage.schemes.generic.divisor import is_Divisor
         sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-        sage: C = Curve(y^2 - x^9 - x)                                                  # needs sage.rings.finite_rings
-        sage: is_Divisor(C.divisor([]))                                                 # needs sage.rings.finite_rings
+        sage: C = Curve(y^2 - x^9 - x)
+        sage: is_Divisor(C.divisor([]))
         True
         sage: is_Divisor("Ceci n'est pas un diviseur")
         False
@@ -225,7 +224,6 @@ class Divisor_generic(FormalSum):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<x, y> = AffineSpace(2, GF(5))
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
@@ -372,7 +370,6 @@ class Divisor_curve(Divisor_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
@@ -386,7 +383,6 @@ class Divisor_curve(Divisor_generic):
 
         This checks that :trac:`10732` is fixed::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x, y, z> = GF(5)[]
             sage: C = Curve(x^7 + y^7 + z^7)
             sage: pts = C.rational_points()
@@ -422,7 +418,6 @@ class Divisor_curve(Divisor_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts

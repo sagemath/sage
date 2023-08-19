@@ -174,7 +174,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
             sage: A.<x, y> = GF(7)[]
             sage: B.<t> = GF(7)[]
             sage: f = A.hom((t^2, t^3))
-            sage: Spec(f)
+            sage: Spec(f)  # indirect doctest
             Affine Scheme morphism:
               From: Spectrum of Univariate Polynomial Ring in t over Finite Field of size 7
               To:   Spectrum of Multivariate Polynomial Ring in x, y over Finite Field of size 7

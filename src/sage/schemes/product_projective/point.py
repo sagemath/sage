@@ -450,11 +450,12 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: k.<w> = NumberField(x^2 + 5)                                          # needs sage.rings.number_field
-            sage: PP = ProductProjectiveSpaces(k, [1, 2], 'y')                          # needs sage.rings.number_field
-            sage: Q = PP([3, 5*w + 1, 1, 7*w, 10])                                      # needs sage.rings.number_field
-            sage: Q.global_height()                                                     # needs sage.rings.number_field
+            sage: k.<w> = NumberField(x^2 + 5)
+            sage: PP = ProductProjectiveSpaces(k, [1, 2], 'y')
+            sage: Q = PP([3, 5*w + 1, 1, 7*w, 10])
+            sage: Q.global_height()
             2.75062910527236
 
         ::

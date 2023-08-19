@@ -126,12 +126,13 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurve(x^5 - 10*x + 9)
-            sage: K = Qp(3, 5)                                                          # needs sage.rings.padics
-            sage: L.<a> = K.extension(x^30 - 3)                                         # needs sage.rings.padics
-            sage: HK = H.change_ring(K)                                                 # needs sage.rings.padics
-            sage: HL = HK.change_ring(L); HL                                            # needs sage.rings.padics
+            sage: K = Qp(3, 5)
+            sage: L.<a> = K.extension(x^30 - 3)
+            sage: HK = H.change_ring(K)
+            sage: HL = HK.change_ring(L); HL
             Hyperelliptic Curve
              over 3-adic Eisenstein Extension Field in a defined by x^30 - 3
              defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5
@@ -234,14 +235,15 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         infinity when viewed as a *plane* projective curve. This can be seen in
         the following example.::
 
-            sage: R.<x> = GF(27, 'a')[]                                                 # needs sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^10 + 2)                                      # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x> = GF(27, 'a')[]
+            sage: H = HyperellipticCurve(x^10 + 2)
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(-1)
-            sage: H.is_smooth()                                                         # needs sage.rings.finite_rings
+            sage: H.is_smooth()
             True
             sage: from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
-            sage: ProjectivePlaneCurve.is_smooth(H)                                     # needs sage.rings.finite_rings
+            sage: ProjectivePlaneCurve.is_smooth(H)
             False
         """
         return True
@@ -309,21 +311,25 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             points on their reductions.  43 and 67 split completely in the
             compositum, so when we reduce we find:
 
-            sage: P2 = K2.factor(43)[0][0]                                              # needs sage.rings.number_field
-            sage: P3 = K3.factor(43)[0][0]                                              # needs sage.rings.number_field
-            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P2 = K2.factor(43)[0][0]
+            sage: P3 = K3.factor(43)[0][0]
+            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()
             x^4 - 16*x^3 + 134*x^2 - 688*x + 1849
-            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()          # needs sage.rings.number_field
+            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()
             x^4 - 16*x^3 + 134*x^2 - 688*x + 1849
+
             sage: H.change_ring(GF(43)).odd_degree_model().frobenius_polynomial()       # needs sage.rings.finite_rings
             x^4 - 16*x^3 + 134*x^2 - 688*x + 1849
 
-            sage: P2 = K2.factor(67)[0][0]                                              # needs sage.rings.number_field
-            sage: P3 = K3.factor(67)[0][0]                                              # needs sage.rings.number_field
-            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()          # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P2 = K2.factor(67)[0][0]
+            sage: P3 = K3.factor(67)[0][0]
+            sage: Hp2.change_ring(K2.residue_field(P2)).frobenius_polynomial()
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
-            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()          # needs sage.rings.number_field
+            sage: Hp3.change_ring(K3.residue_field(P3)).frobenius_polynomial()
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
+
             sage: H.change_ring(GF(67)).odd_degree_model().frobenius_polynomial()       # needs sage.rings.finite_rings
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
 
@@ -382,17 +388,18 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1, x); C
             Hyperelliptic Curve over Rational Field
             defined by y^2 + x*y = x^3 + x - 1
-            sage: magma(C)                                          # optional - magma
+            sage: magma(C)
             Hyperelliptic Curve defined by y^2 + x*y = x^3 + x - 1 over Rational Field
             sage: R.<x> = GF(9,'a')[]; C = HyperellipticCurve(x^3 + x - 1, x^10); C     # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2
-            sage: D = magma(C); D               # optional - magma                      # needs sage.rings.finite_rings
+            sage: D = magma(C); D                                                       # needs sage.rings.finite_rings
             Hyperelliptic Curve defined by y^2 + (x^10)*y = x^3 + x + 2 over GF(3^2)
-            sage: D.sage()                      # optional - magma                      # needs sage.rings.finite_rings
+            sage: D.sage()                                                              # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2
         """

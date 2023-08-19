@@ -54,24 +54,24 @@ differently than elliptic curves::
 Points on the Jacobian are represented by Mumford's polynomials.
 First we find a couple of points on the curve::
 
-    sage: P1 = H.lift_x(2); P1                                                          # needs sage.rings.finite_rings
+    sage: P1 = H.lift_x(2); P1
     (2 : 11 : 1)
-    sage: Q1 = H.lift_x(10); Q1                                                         # needs sage.rings.finite_rings
+    sage: Q1 = H.lift_x(10); Q1
     (10 : 18 : 1)
 
 Observe that 2 and 10 are the roots of the polynomials in x,
 respectively::
 
-    sage: P = J(P1); P                                                                  # needs sage.rings.finite_rings
+    sage: P = J(P1); P
     (x + 35, y + 26)
-    sage: Q = J(Q1); Q                                                                  # needs sage.rings.finite_rings
+    sage: Q = J(Q1); Q
     (x + 27, y + 19)
 
 ::
 
-    sage: P + Q                                                                         # needs sage.rings.finite_rings
+    sage: P + Q
     (x^2 + 25*x + 20, y + 13*x)
-    sage: (x^2 + 25*x + 20).roots(multiplicities=False)                                 # needs sage.rings.finite_rings
+    sage: (x^2 + 25*x + 20).roots(multiplicities=False)
     [10, 2]
 
 Frobenius satisfies
@@ -85,7 +85,6 @@ on the Jacobian of this reduction and the order of the Jacobian is
 
 ::
 
-    sage: # needs sage.rings.finite_rings
     sage: 1904*P
     (1)
     sage: 34*P == 0
@@ -97,7 +96,6 @@ on the Jacobian of this reduction and the order of the Jacobian is
 
 ::
 
-    sage: # needs sage.rings.finite_rings
     sage: Q*1904
     (1)
     sage: Q*238 == 0
@@ -385,13 +383,13 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1  # indirect doctest                           # needs sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1  # indirect doctest
             (x + 35, y + 26)
-            sage: P1.parent()                                                           # needs sage.rings.finite_rings
+            sage: P1.parent()
             Set of rational points of Jacobian of Hyperelliptic Curve over
              Finite Field of size 37 defined by
             y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
-            sage: type(P1)                                                              # needs sage.rings.finite_rings
+            sage: type(P1)
             <class 'sage.schemes.hyperelliptic_curves.jacobian_morphism.JacobianMorphism_divisor_class_field'>
         """
         SchemeMorphism.__init__(self, parent)
@@ -668,11 +666,11 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1                                               # needs sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: P1 == 0  # indirect doctest                                           # needs sage.rings.finite_rings
+            sage: P1 == 0  # indirect doctest
             False
-            sage: P1 - P1 == 0  # indirect doctest                                      # needs sage.rings.finite_rings
+            sage: P1 - P1 == 0  # indirect doctest
             True
         """
         return self.__polys[0] != 1
@@ -683,7 +681,6 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: x = GF(37)['x'].gen()
             sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
             sage: J = H.jacobian()(GF(37))
@@ -696,7 +693,6 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: H2 = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x, x)
             sage: J2 = H2.jacobian()(GF(37))
             sage: P2 = J2(H2.lift_x(2)); P2
@@ -710,18 +706,19 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         The following was fixed in :trac:`14264`::
 
+            sage: # needs sage.rings.number_field
             sage: P.<x> = QQ[]
             sage: f = x^5 - x + 1; h = x
             sage: C = HyperellipticCurve(f, h, 'u,v')
             sage: J = C.jacobian()
-            sage: K.<t> = NumberField(x^2 - 2)                                          # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: Q = J(K)([x^2 - t, R(1)])                                             # needs sage.rings.number_field
-            sage: Q                                                                     # needs sage.rings.number_field
+            sage: K.<t> = NumberField(x^2 - 2)
+            sage: R.<x> = K[]
+            sage: Q = J(K)([x^2 - t, R(1)])
+            sage: Q
             (u^2 - t, v - 1)
-            sage: -Q                                                                    # needs sage.rings.number_field
+            sage: -Q
             (u^2 - t, v + u + 1)
-            sage: Q + (-Q)  # indirect doctest                                          # needs sage.rings.number_field
+            sage: Q + (-Q)  # indirect doctest
             (1)
 
         """
@@ -754,9 +751,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1                                               # needs sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: P1 + P1  # indirect doctest                                           # needs sage.rings.finite_rings
+            sage: P1 + P1  # indirect doctest
             (x^2 + 33*x + 4, y + 13*x)
         """
         X = self.parent()
@@ -785,24 +782,24 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1                                               # needs sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: P1 - P1  # indirect doctest                                           # needs sage.rings.finite_rings
+            sage: P1 - P1  # indirect doctest
             (1)
 
         ::
 
-            sage: P2 = J(H.lift_x(4)); P2                                               # needs sage.rings.finite_rings
+            sage: P2 = J(H.lift_x(4)); P2
             (x + 33, y + 34)
 
         Observe that the `x`-coordinates are the same but the
         `y`-coordinates differ::
 
-            sage: P1 - P2  # indirect doctest                                           # needs sage.rings.finite_rings
+            sage: P1 - P2  # indirect doctest
             (x^2 + 31*x + 8, y + 7*x + 12)
-            sage: P1 + P2  # indirect doctest                                           # needs sage.rings.finite_rings
+            sage: P1 + P2  # indirect doctest
             (x^2 + 31*x + 8, y + 4*x + 18)
-            sage: (P1 - P2) - (P1 + P2) + 2*P2  # indirect doctest                      # needs sage.rings.finite_rings
+            sage: (P1 - P2) - (P1 + P2) + 2*P2  # indirect doctest
             (1)
         """
         return self + (-other)

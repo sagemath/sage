@@ -639,12 +639,13 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: F_points([2,5])
             (2, 2)
 
+            sage: # needs sage.rings.finite_rings
             sage: P2 = ProjectiveSpace(GF(3), 2)
-            sage: F.<a> = GF(9, 'a')                                                    # needs sage.rings.finite_rings
+            sage: F.<a> = GF(9, 'a')
             sage: F_points = P2(F)
             sage: type(F_points)
             <class 'sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field_with_category'>
-            sage: F_points([4,2*a])                                                     # needs sage.rings.finite_rings
+            sage: F_points([4,2*a])
             (1 : 2*a : 1)
 
         TESTS::
@@ -668,17 +669,16 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: P2 = ProjectiveSpace(QQ, 2)
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                # needs sage.rings.number_field
-            sage: K_points = P2(K);  K_points                                           # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + x - (3^3-3))
+            sage: K_points = P2(K);  K_points
             Set of rational points of Projective Space of dimension 2
              over Number Field in a with defining polynomial x^2 + x - 24
-
-            sage: K_points.codomain()                                                   # needs sage.rings.number_field
+            sage: K_points.codomain()
             Projective Space of dimension 2 over Rational Field
-
-            sage: K_points.extended_codomain()                                          # needs sage.rings.number_field
+            sage: K_points.extended_codomain()
             Projective Space of dimension 2
              over Number Field in a with defining polynomial x^2 + x - 24
         """
@@ -740,8 +740,8 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: toric_varieties.P2().point_set().cardinality()                        # needs sage.geometry.polyhedron
             +Infinity
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # needs sage.geometry.polyhedron sage.rings.finite_rings
-            sage: P2.point_set().cardinality()                                          # needs sage.geometry.polyhedron sage.rings.finite_rings
+            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # needs sage.geometry.polyhedron
+            sage: P2.point_set().cardinality()                                          # needs sage.geometry.polyhedron
             13
         """
         if hasattr(self, 'is_finite') and not self.is_finite():
@@ -761,8 +761,8 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # needs sage.geometry.polyhedron sage.rings.finite_rings
-            sage: P1.point_set().list()                                                 # needs sage.geometry.polyhedron sage.rings.finite_rings
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # needs sage.geometry.polyhedron
+            sage: P1.point_set().list()                                                 # needs sage.geometry.polyhedron
             ([0 : 1], [1 : 0], [1 : 1], [1 : 2])
         """
         return tuple(self)

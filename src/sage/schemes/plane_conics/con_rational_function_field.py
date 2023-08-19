@@ -480,17 +480,18 @@ for function field of characteristic 2.")
 
         Different solubility certificates give different points::
 
+            sage: # needs sage.rings.number_field
             sage: K.<t> = PolynomialRing(QQ, 't')
             sage: C = Conic(K, [t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: supp = [[t^2 - 2], [t], [t^3 + 13/2*t^2 + t - 9]]
-            sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
-            sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
-            sage: tbar3 = QQ.extension(supp[2][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
-            sage: roots = [[tbar1 + 1], [1/3*tbar2^0], [2/3*tbar3^2 + 11/3*tbar3 - 3]]  # needs sage.rings.number_field
-            sage: C.find_point(supp, roots, 1)                                          # needs sage.rings.number_field
+            sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]
+            sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]
+            sage: tbar3 = QQ.extension(supp[2][0], 'tbar').gens()[0]
+            sage: roots = [[tbar1 + 1], [1/3*tbar2^0], [2/3*tbar3^2 + 11/3*tbar3 - 3]]
+            sage: C.find_point(supp, roots, 1)
             (3 : t + 1 : 1)
-            sage: roots = [[-tbar1 - 1], [-1/3*tbar2^0], [-2/3*tbar3^2 - 11/3*tbar3 + 3]]           # needs sage.rings.number_field
-            sage: C.find_point(supp, roots, 1)                                          # needs sage.rings.number_field
+            sage: roots = [[-tbar1 - 1], [-1/3*tbar2^0], [-2/3*tbar3^2 - 11/3*tbar3 + 3]]
+            sage: C.find_point(supp, roots, 1)
             (3 : -t - 1 : 1)
         """
         Ft = self.base().base()

@@ -1836,12 +1836,13 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<k> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # needs sage.rings.number_field
-            sage: plane1 = P.subscheme(k*x + 2*k*y + z)                                 # needs sage.rings.number_field
-            sage: plane2 = P.subscheme(7*k*x + y + 9*z)                                 # needs sage.rings.number_field
-            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # needs sage.modules sage.rings.number_field
+            sage: K.<k> = NumberField(x^2 + 1)
+            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
+            sage: plane1 = P.subscheme(k*x + 2*k*y + z)
+            sage: plane2 = P.subscheme(7*k*x + y + 9*z)
+            sage: m = P.hyperplane_transformation_matrix(plane1, plane2); m             # needs sage.modules
             [   1    0    0    0]
             [   0 14*k    0    0]
             [   0    0  7/9    0]

@@ -681,7 +681,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: phi2 = EllipticCurveHom_composite(phi1.codomain(), phi1(Q))           # needs sage.rings.number_field
             sage: psi1 = EllipticCurveHom_composite(E, Q)                               # needs sage.rings.number_field
             sage: psi2 = EllipticCurveHom_composite(psi1.codomain(), psi1(P))           # needs sage.rings.number_field
-            sage: phi2 * phi1 == psi2 * psi1
+            sage: phi2 * phi1 == psi2 * psi1                                            # needs sage.rings.number_field
             True
         """
         if op != op_EQ:
