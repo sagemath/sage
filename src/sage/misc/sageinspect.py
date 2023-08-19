@@ -224,7 +224,11 @@ def isclassinstance(obj):
     return (not inspect.isclass(obj) and
             hasattr(obj, '__class__') and
             hasattr(obj.__class__, '__module__') and
-            obj.__class__.__module__ not in builtin_mods)
+            obj.__class__.__module__ not in builtin_mods and
+            # Starting with Cython 3, Cython's builtin types have __module__ set
+            # to the shared module names like _cython_3_0_0.
+            not (isinstance(obj.__class__.__module__, str) and
+                 obj.__class__.__module__.startswith('_cython_')))
 
 
 # Parse strings of form "File: sage/rings/rational.pyx (starting at line 1080)"
