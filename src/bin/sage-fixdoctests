@@ -393,7 +393,7 @@ def doctest_blocks(args, input_filenames, distribution=None, venv=None, environm
     if venv or environment_args:
         # Test the doctester, putting the output of the test into sage's temporary directory
         input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{shlex.quote(input)}'
         if cmdline not in tested_doctesters:
             print(f'Running "{cmdline}"')
             if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
