@@ -26,8 +26,8 @@ Projective, over `\QQ`::
 Projective over a finite field::
 
     sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-    sage: E = EllipticCurve('72').change_ring(GF(19))                                   # needs sage.rings.finite_rings sage.schemes
-    sage: enum_projective_finite_field(E)                                               # needs sage.rings.finite_rings sage.schemes
+    sage: E = EllipticCurve('72').change_ring(GF(19))                                   # needs sage.schemes
+    sage: enum_projective_finite_field(E)                                               # needs sage.schemes
     [(0 : 1 : 0), (1 : 0 : 1), (3 : 0 : 1), (4 : 9 : 1), (4 : 10 : 1),
      (6 : 6 : 1), (6 : 13 : 1), (7 : 6 : 1), (7 : 13 : 1), (9 : 4 : 1),
      (9 : 15 : 1), (12 : 8 : 1), (12 : 11 : 1), (13 : 8 : 1), (13 : 11 : 1),
@@ -255,6 +255,7 @@ def enum_projective_finite_field(X):
 
     ::
 
+        sage: # needs sage.rings.finite_rings
         sage: F = GF(9, 'a')                                                            # needs sage.rings.finite_rings
         sage: P.<X,Y,Z> = ProjectiveSpace(2,F)
         sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                              # needs sage.rings.finite_rings sage.schemes
