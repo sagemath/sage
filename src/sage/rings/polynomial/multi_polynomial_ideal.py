@@ -4269,8 +4269,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             Macaulay2's ``GroebnerBasis`` command with the strategy "MGB" (if available)
 
         ``'msolve'``
-            `optional package msolve <../spkg/msolve.html>`_ (degrevlex order,
-            prime fields)
+            `optional package msolve <../spkg/msolve.html>`_ (degrevlex order)
 
         ``'magma:GroebnerBasis'``
             Magma's ``Groebnerbasis`` command (if available)
