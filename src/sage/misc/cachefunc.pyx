@@ -2848,8 +2848,6 @@ cdef class CachedMethod():
                 try:
                     if METH_NOARGS&PyCFunction_GetFlags(f.__get__(inst,cls)):
                         self.nargs = 1
-                    else:
-                        self.nargs = 2
                 except Exception:
                     pass
             if self.nargs == 0:
