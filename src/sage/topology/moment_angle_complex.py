@@ -435,9 +435,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return number_of_vertices + dim + 1
 
     @cached_method  # maybe ignore the algorithm?
-    def _homology_group(self, i, base_ring, cohomology, algorithm, verbose):
+    def _homology_group(self, i, base_ring, cohomology, algorithm, verbose, reduced):
         """
-        The `i`-th reduced homology group of ``self``.
+        The `i`-th (reduced) homology group of ``self``.
 
         .. SEEALSO::
 
@@ -448,15 +448,15 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
             Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
-            sage: Z._homology_group(3, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False)
+            sage: Z._homology_group(3, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             Z
-            sage: Z._homology_group(4, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False)
+            sage: Z._homology_group(4, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             0
             sage: Z.homology()
             {0: 0, 1: 0, 2: 0, 3: Z, 4: 0, 5: 0, 6: 0, 7: 0}
             sage: RP = simplicial_complexes.RealProjectivePlane()
             sage: Z = MomentAngleComplex(RP)
-            sage: Z._homology_group(8, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False)
+            sage: Z._homology_group(8, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             C2
 
         This yields the same result as creating a cubical complex
@@ -468,9 +468,15 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 729 cubes
-            sage: Z.cubical_complex().homology(5) == Z._homology_group(5, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False)
+            sage: Z.cubical_complex().homology(5) == Z._homology_group(5, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             True
         """
+        if i == 0:
+            # This is a special case when computing (co)homology
+            if reduced:
+                return HomologyGroup(0, base_ring)
+            return HomologyGroup(1, base_ring)
+
         vertices = self._simplicial_complex.vertices()
         n = len(vertices)
         invfac = []
@@ -481,11 +487,11 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                 if base_ring.is_field():
                     invfac.append(S.homology(i-j-1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
-                                             verbose=verbose).dimension())
+                                             verbose=verbose, reduced=True).dimension())
                 else:
                     invfac.extend(S.homology(i-j-1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
-                                             verbose=verbose)._original_invts)
+                                             verbose=verbose, reduced=True)._original_invts)
 
         if base_ring.is_field():
             return HomologyGroup(sum(invfac), base_ring)
@@ -493,9 +499,10 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         m = len(invfac)
         return HomologyGroup(m, base_ring, invfac)
 
-    def homology(self, dim=None, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False):
+    def homology(self, dim=None, base_ring=ZZ, cohomology=False,
+                 algorithm='pari', verbose=False, reduced=True):
         r"""
-        The reduced homology of ``self``.
+        The (reduced) homology of ``self``.
 
         INPUT:
 
@@ -508,6 +515,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
           see below for a description of what they mean
         - ``verbose`` -- boolean (default: ``False``); if ``True``,
           print some messages as the homology is computed
+        - ``reduced`` -- boolean (default: ``True``); if ``True``,
+          return the reduced homology
 
         ALGORITHM:
 
@@ -601,10 +610,11 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             dims = range(self.dimension()+1)
 
         answer = {i: self._homology_group(i, base_ring=base_ring, cohomology=cohomology,
-                                          algorithm=algorithm, verbose=verbose) for i in dims}
+                                          algorithm=algorithm, verbose=verbose, reduced=reduced) for i in dims}
         return answer
 
-    def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari', verbose=False):
+    def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
+                   verbose=False, reduced=True):
         r"""
         The reduced cohomology of ``self``.
 
@@ -632,7 +642,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             True
         """
         return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
-                             algorithm=algorithm, verbose=verbose)
+                             algorithm=algorithm, verbose=verbose, reduced=reduced)
 
     def betti(self, dim=None):
         r"""
