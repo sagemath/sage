@@ -1106,15 +1106,16 @@ class AffineSpace_field(AffineSpace_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
-            sage: AK.<x,y> = AffineSpace(K, 2)                                          # needs sage.rings.number_field
-            sage: AK.weil_restriction()                                                 # needs sage.rings.number_field
+            sage: K.<w> = NumberField(x^5 - 2)
+            sage: AK.<x,y> = AffineSpace(K, 2)
+            sage: AK.weil_restriction()
             Affine Space of dimension 10 over Rational Field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: L.<v> = K.extension(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: AL.<x,y> = AffineSpace(L, 2)                                          # needs sage.rings.number_field
-            sage: AL.weil_restriction()                                                 # needs sage.rings.number_field
+            sage: R.<x> = K[]
+            sage: L.<v> = K.extension(x^2 + 1)
+            sage: AL.<x,y> = AffineSpace(L, 2)
+            sage: AL.weil_restriction()
             Affine Space of dimension 4 over Number Field in w
              with defining polynomial x^5 - 2
         """

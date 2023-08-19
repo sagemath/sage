@@ -535,7 +535,6 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: w1 == w2
             False
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve_from_j(GF(7)(0))
             sage: F = E.change_weierstrass_model(2,3,4,5)
             sage: a = E.isomorphisms(F)

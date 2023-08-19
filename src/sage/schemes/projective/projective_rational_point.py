@@ -243,8 +243,8 @@ def enum_projective_finite_field(X):
 
     EXAMPLES::
 
-        sage: F = GF(53)                                                                            # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                                     # optional - sage.rings.finite_rings
+        sage: F = GF(53)                                                                            # needs sage.rings.finite_rings
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                                     # needs sage.rings.finite_rings
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
         sage: F = GF(53)
         sage: P.<X,Y,Z> = ProjectiveSpace(2, F)

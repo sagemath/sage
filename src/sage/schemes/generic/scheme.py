@@ -740,7 +740,7 @@ class Scheme(Parent):
             sage: R.<t> = PowerSeriesRing(Integers())
             sage: C.zeta_series(4, t)                                                   # needs sage.rings.finite_rings sage.schemes
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
-            sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)                                  # optional - sage.rings.finite_rings
+            sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)                                  # needs sage.rings.finite_rings
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
 
         If the scheme has a method ``zeta_function``, this is used to

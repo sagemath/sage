@@ -1682,28 +1682,29 @@ class PeriodLattice_ell(PeriodLattice):
 
         See :trac:`10026` and :trac:`11767`::
 
-            sage: K.<w> = QuadraticField(2)                                                         # needs sage.rings.number_field
-            sage: E = EllipticCurve([0, -1, 1, -3*w - 4, 3*w + 4])                                  # needs sage.rings.number_field
-            sage: T = E.simon_two_descent(lim1=20, lim3=5, limtriv=20)                              # needs sage.rings.number_field
-            sage: P, Q = T[2]                                                                       # needs sage.rings.number_field
-            sage: embs = K.embeddings(CC)                                                           # needs sage.rings.number_field
-            sage: Lambda = E.period_lattice(embs[0])                                                # needs sage.rings.number_field
-            sage: Lambda.elliptic_logarithm(P, 100)                                                 # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(2)
+            sage: E = EllipticCurve([0, -1, 1, -3*w - 4, 3*w + 4])
+            sage: T = E.simon_two_descent(lim1=20, lim3=5, limtriv=20)
+            sage: P, Q = T[2]
+            sage: embs = K.embeddings(CC)
+            sage: Lambda = E.period_lattice(embs[0])
+            sage: Lambda.elliptic_logarithm(P, 100)
             4.7100131126199672766973600998
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^2 + x + 5)                                                  # needs sage.rings.number_field
-            sage: E = EllipticCurve(K, [0,0,1,-3,-5])                                               # needs sage.rings.number_field
-            sage: P = E([0,a])                                                                      # needs sage.rings.number_field
-            sage: Lambda = P.curve().period_lattice(K.embeddings(ComplexField(600))[0])             # needs sage.rings.number_field
-            sage: Lambda.elliptic_logarithm(P, prec=600)                                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + x + 5)
+            sage: E = EllipticCurve(K, [0,0,1,-3,-5])
+            sage: P = E([0,a])
+            sage: Lambda = P.curve().period_lattice(K.embeddings(ComplexField(600))[0])
+            sage: Lambda.elliptic_logarithm(P, prec=600)
             -0.842248166487739393375018008381693990800588864069506187033873183845246233548058477561706400464057832396643843146464236956684557207157300006542470428493573195030603817094900751609464 - 0.571366031453267388121279381354098224265947866751130917440598461117775339240176310729173301979590106474259885638797913383502735083088736326391919063211421189027226502851390118943491*I
-            sage: K.<a> = QuadraticField(-5)                                                        # needs sage.rings.number_field
-            sage: E = EllipticCurve([1,1,a,a,0])                                                    # needs sage.rings.number_field
-            sage: P = E(0, 0)                                                                       # needs sage.rings.number_field
-            sage: L = P.curve().period_lattice(K.embeddings(ComplexField())[0])                     # needs sage.rings.number_field
-            sage: L.elliptic_logarithm(P, prec=500)                                                 # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(-5)
+            sage: E = EllipticCurve([1,1,a,a,0])
+            sage: P = E(0, 0)
+            sage: L = P.curve().period_lattice(K.embeddings(ComplexField())[0])
+            sage: L.elliptic_logarithm(P, prec=500)
             1.17058357737548897849026170185581196033579563441850967539191867385734983296504066660506637438866628981886518901958717288150400849746892393771983141354 - 1.13513899565966043682474529757126359416758251309237866586896869548539516543734207347695898664875799307727928332953834601460994992792519799260968053875*I
-            sage: L.elliptic_logarithm(P, prec=1000)                                                # needs sage.rings.number_field
+            sage: L.elliptic_logarithm(P, prec=1000)
             1.17058357737548897849026170185581196033579563441850967539191867385734983296504066660506637438866628981886518901958717288150400849746892393771983141354014895386251320571643977497740116710952913769943240797618468987304985625823413440999754037939123032233879499904283600304184828809773650066658885672885 - 1.13513899565966043682474529757126359416758251309237866586896869548539516543734207347695898664875799307727928332953834601460994992792519799260968053875387282656993476491590607092182964878750169490985439873220720963653658829712494879003124071110818175013453207439440032582917366703476398880865439217473*I
         """
         if not P.curve() is self.E:
@@ -1818,13 +1819,14 @@ class PeriodLattice_ell(PeriodLattice):
 
         Test to show that :trac:`8820` is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('37a')
-            sage: K.<a> = QuadraticField(-5)                                            # needs sage.rings.number_field
-            sage: L = E.change_ring(K).period_lattice(K.places()[0])                    # needs sage.rings.number_field
-            sage: L.elliptic_exponential(CDF(.1,.1))                                    # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(-5)
+            sage: L = E.change_ring(K).period_lattice(K.places()[0])
+            sage: L.elliptic_exponential(CDF(.1,.1))
             (0.0000142854026029... - 49.9960001066650*I
              : 249.520141250950 + 250.019855549131*I : 1.00000000000000)
-            sage: L.elliptic_exponential(CDF(.1,.1), to_curve=False)                    # needs sage.rings.number_field
+            sage: L.elliptic_exponential(CDF(.1,.1), to_curve=False)
             (0.0000142854026029447 - 49.9960001066650*I,
              500.040282501900 + 500.039711098263*I)
 
@@ -1839,12 +1841,13 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('37a')
-            sage: K.<a> = QuadraticField(-5)                                            # needs sage.rings.number_field
-            sage: L = E.change_ring(K).period_lattice(K.places()[0])                    # needs sage.rings.number_field
-            sage: P = L.elliptic_exponential(0); P                                      # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(-5)
+            sage: L = E.change_ring(K).period_lattice(K.places()[0])
+            sage: P = L.elliptic_exponential(0); P
             (0.000000000000000 : 1.00000000000000 : 0.000000000000000)
-            sage: P.parent()                                                            # needs sage.rings.number_field
+            sage: P.parent()
             Abelian group of points on Elliptic Curve defined by
              y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x
              over Complex Field with 53 bits of precision
@@ -1950,6 +1953,7 @@ def reduce_tau(tau):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: from sage.schemes.elliptic_curves.period_lattice import reduce_tau
         sage: reduce_tau(CC(1.23,3.45))
         (0.230000000000000 + 3.45000000000000*I, [1, -1, 0, 1])
@@ -1997,6 +2001,7 @@ def normalise_periods(w1, w2):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: from sage.schemes.elliptic_curves.period_lattice import reduce_tau, normalise_periods
         sage: w1 = CC(1.234, 3.456)
         sage: w2 = CC(1.234, 3.456000001)
@@ -2038,6 +2043,7 @@ def extended_agm_iteration(a, b, c):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_mpfr
         sage: from sage.schemes.elliptic_curves.period_lattice import extended_agm_iteration
         sage: extended_agm_iteration(RR(1), RR(2), RR(3))
         (1.45679103104691, 1.45679103104691, 3.21245294970054)
@@ -2048,7 +2054,7 @@ def extended_agm_iteration(a, b, c):
 
     TESTS::
 
-        sage: extended_agm_iteration(1,2,3)
+        sage: extended_agm_iteration(1,2,3)                                             # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: values must be real or complex numbers

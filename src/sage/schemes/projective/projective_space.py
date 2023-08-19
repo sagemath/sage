@@ -1030,11 +1030,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: CF.<a> = CyclotomicField(3)                                           # needs sage.rings.number_field
-            sage: R.<x> = CF[]                                                          # needs sage.rings.number_field
-            sage: L.<l> = CF.extension(x^3 + 2)                                         # needs sage.rings.number_field
-            sage: Q.<x,y> = ProjectiveSpace(L, 1)                                       # needs sage.rings.number_field
-            sage: sorted(list(Q.points_of_bounded_height(bound=1)))                     # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: CF.<a> = CyclotomicField(3)
+            sage: R.<x> = CF[]
+            sage: L.<l> = CF.extension(x^3 + 2)
+            sage: Q.<x,y> = ProjectiveSpace(L, 1)
+            sage: sorted(list(Q.points_of_bounded_height(bound=1)))
             [(0 : 1), (1 : 0), (a + 1 : 1), (a : 1),
              (-1 : 1), (-a - 1 : 1), (-a : 1), (1 : 1)]
 

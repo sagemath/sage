@@ -188,12 +188,13 @@ def enum_affine_number_field(X, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 2, 'v')                                             # needs sage.rings.number_field
-        sage: A.<x,y,z> = AffineSpace(K, 3)                                             # needs sage.rings.number_field
-        sage: X = A.subscheme([y^2 - x])                                                # needs sage.rings.number_field
-        sage: enum_affine_number_field(X(K), bound=2**0.5)                              # needs sage.rings.number_field
+        sage: K = NumberField(u^2 + 2, 'v')
+        sage: A.<x,y,z> = AffineSpace(K, 3)
+        sage: X = A.subscheme([y^2 - x])
+        sage: enum_affine_number_field(X(K), bound=2**0.5)
         [(0, 0, -1), (0, 0, -v), (0, 0, -1/2*v), (0, 0, 0), (0, 0, 1/2*v),
          (0, 0, v), (0, 0, 1), (1, -1, -1), (1, -1, -v), (1, -1, -1/2*v),
          (1, -1, 0), (1, -1, 1/2*v), (1, -1, v), (1, -1, 1), (1, 1, -1),
@@ -201,12 +202,13 @@ def enum_affine_number_field(X, **kwds):
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.affine.affine_rational_point import enum_affine_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 3, 'v')                                             # needs sage.rings.number_field
-        sage: A.<x,y> = AffineSpace(K, 2)                                               # needs sage.rings.number_field
-        sage: X = A.subscheme(x - y)                                                    # needs sage.rings.number_field
-        sage: enum_affine_number_field(X, bound=3**0.25)                                # needs sage.rings.number_field
+        sage: K = NumberField(u^2 + 3, 'v')
+        sage: A.<x,y> = AffineSpace(K, 2)
+        sage: X = A.subscheme(x - y)
+        sage: enum_affine_number_field(X, bound=3**0.25)
         [(-1, -1), (-1/2*v - 1/2, -1/2*v - 1/2), (1/2*v - 1/2, 1/2*v - 1/2),
          (0, 0), (-1/2*v + 1/2, -1/2*v + 1/2), (1/2*v + 1/2, 1/2*v + 1/2), (1, 1)]
     """

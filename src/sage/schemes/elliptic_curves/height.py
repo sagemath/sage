@@ -799,7 +799,7 @@ class EllipticCurveCanonicalHeight:
 
             sage: from sage.schemes.elliptic_curves.height import EllipticCurveCanonicalHeight
             sage: E = EllipticCurve(GF(7), [0,0,0,0,1])
-            sage: EllipticCurveCanonicalHeight(E)                                       # needs sage.rings.finite_rings
+            sage: EllipticCurveCanonicalHeight(E)
             Traceback (most recent call last):
             ...
             ValueError: EllipticCurveCanonicalHeight class can only be created

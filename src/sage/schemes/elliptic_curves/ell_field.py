@@ -112,7 +112,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         A characteristic 2 example::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(2), [1,0,1,1,1])
             sage: E1 = E.quadratic_twist(1)
             sage: E.is_isomorphic(E1)
@@ -574,7 +573,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve_from_j(GF(13)(0))
             sage: E1 = E.sextic_twist(2)
             sage: D = E.is_sextic_twist(E1); D != 0
@@ -1228,7 +1226,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Not all polynomials define a finite subgroup (:trac:`6384`)::
 
             sage: E = EllipticCurve(GF(31), [1,0,0,1,2])
-            sage: phi = E.isogeny([14,27,4,1])                                          # needs sage.rings.finite_rings
+            sage: phi = E.isogeny([14,27,4,1])
             Traceback (most recent call last):
             ...
             ValueError: the polynomial x^3 + 4*x^2 + 27*x + 14 does not define a finite
@@ -1262,7 +1260,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         We check that the cached order is correctly copied over::
 
             sage: # needs sage.rings.finite_rings
-            sage: E = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E = EllipticCurve(GF(2^127 - 1), [1,2,3,4,5])
             sage: E.set_order(170141183460469231746191640949390434666)
             sage: phi = E.isogeny(E.lift_x(77347718128277853096420969229987528666))
             sage: phi.codomain()._order
@@ -1514,7 +1512,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         An example over a rational function field::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
             sage: E = EllipticCurve(K, [1, t^5])
@@ -1900,8 +1897,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Curve over a quadratic number field::
 
-            sage: # needs sage.graphs sage.rings.finite_rings sage.rings.number_field
-            sage: K.<e> = NumberField(x^2 - 2)
+            sage: # needs sage.graphs sage.rings.number_field
+            sage: K.<e> = NumberField(x^2 - 2)                                          # needs sage.rings.finite_rings
             sage: E = EllipticCurve(K, [1, 0, 1, 4, -6])
             sage: G2 = E.isogeny_ell_graph(2, directed=False)
             sage: G2.vertices(sort=True)
@@ -1929,7 +1926,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         TESTS::
 
-            sage: # needs sage.graphs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(11), j=0)
             sage: G0 = E.isogeny_ell_graph(2, directed=False)
             sage: G0.is_directed()
