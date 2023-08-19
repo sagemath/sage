@@ -123,7 +123,7 @@ class MobilePoset(FinitePoset):
                     continue
 
                 G_un.delete_edge(lc, r)
-                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc)))
+                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc, sort=False)))
                 if P.top() != lc or not P.is_d_complete():
                     return False
                 G_un.add_edge(lc, r)

@@ -158,7 +158,7 @@ cdef class SatSolver:
             if line.startswith("x"):
                 line = line[1:].split(" ")
                 clause = [int(e) for e in line if e]
-                clause = clause[:-1] # strip trailing zero
+                clause = clause[:-1]  # strip trailing zero
                 try:
                     self.add_xor_clause(clause)
                 except AttributeError:

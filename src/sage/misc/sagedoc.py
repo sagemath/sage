@@ -41,6 +41,7 @@ Check that sphinx is not imported at Sage start-up::
 # ****************************************************************************
 import os
 import re
+import shutil
 import sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
@@ -589,6 +590,35 @@ def process_mathtt(s):
     return s
 
 
+def process_optional_doctest_tags(s):
+    r"""
+    Remove ``# optional/needs`` doctest tags for present features from docstring ``s``.
+
+    EXAMPLES:
+
+        sage: from sage.misc.sagedoc import process_optional_doctest_tags
+        sage: process_optional_doctest_tags("sage: # needs sage.rings.finite_rings\nsage: K.<x> = FunctionField(GF(5^2,'a')); K\nRational function field in x over Finite Field in a of size 5^2")  # needs sage.rings.finite_rings
+        "sage: K.<x> = FunctionField(GF(5^2,'a')); K\nRational function field in x over Finite Field in a of size 5^2"
+    """
+    import io
+    from sage.doctest.external import available_software
+    from sage.doctest.parsing import parse_optional_tags, update_optional_tags
+
+    start = 0
+    with io.StringIO() as output:
+        for m in re.finditer('( *sage: *.*#.*)\n', s):
+            output.write(s[start:m.start(0)])
+            line = m.group(1)
+            tags = [tag for tag in parse_optional_tags(line)
+                    if tag not in available_software]
+            line = update_optional_tags(line, tags=tags)
+            if not re.fullmatch(' *sage: *', line):
+                print(line, file=output)
+            start = m.end(0)
+        output.write(s[start:])
+        return output.getvalue()
+
+
 def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
@@ -768,6 +798,10 @@ def format(s, embedded=False):
             s = process_mathtt(s)
         s = process_extlinks(s, embedded=embedded)
         s = detex(s, embedded=embedded)
+
+    if not embedded:
+        s = process_optional_doctest_tags(s)
+
     return s
 
 

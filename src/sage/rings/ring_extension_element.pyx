@@ -29,7 +29,7 @@ from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithGen, RingExtensionFractionField
-from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule
+from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule, are_equal_morphisms
 from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
@@ -266,6 +266,93 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             \frac{1}{2}
         """
         return latex(self._backend)
+
+    def backend(self, force=False):
+        """
+        Return the backend of this element.
+
+        INPUT:
+
+        - ``force`` -- a boolean (default: ``False``); if ``False``,
+          raise an error if the backend is not exposed
+
+        EXAMPLES::
+
+            sage: F = GF(5^2)
+            sage: K.<z> = GF(5^4).over(F)
+            sage: x = z^10
+            sage: x
+            (z2 + 2) + (3*z2 + 1)*z
+            sage: y = x.backend()
+            sage: y
+            4*z4^3 + 2*z4^2 + 4*z4 + 4
+            sage: y.parent()
+            Finite Field in z4 of size 5^4
+
+        """
+        if force or (<RingExtension_generic>(self._parent))._is_backend_exposed:
+            return self._backend
+        raise ValueError("backend is not exposed; try force=True")
+
+    def in_base(self):
+        r"""
+        Return this element as an element of the base.
+
+        EXAMPLES::
+
+            sage: F = GF(5^2)
+            sage: K.<z> = GF(5^4).over(F)
+            sage: x = z^3 + z^2 + z + 4
+            sage: y = x.in_base()
+            sage: y
+            z2 + 1
+            sage: y.parent()
+            Finite Field in z2 of size 5^2
+
+        When the element is not in the base, an error is raised::
+
+            sage: z.in_base()
+            Traceback (most recent call last):
+            ...
+            ValueError: z is not in the base
+
+        ::
+
+            sage: S.<X> = F[]
+            sage: E = S.over(F)
+            sage: f = E(1)
+            sage: g = f.in_base()
+            sage: g
+            1
+            sage: g.parent()
+            Finite Field in z2 of size 5^2
+
+        TESTS::
+
+        We check the case of a tower of extensions::
+
+            sage: F = GF(5^2)
+            sage: K.<u> = GF(5^4).over(F)
+            sage: L.<v> = GF(5^8).over(K)
+            sage: x = 4*v^7 + v^6 + 3*v^4 + v^3 + v^2 + 4
+            sage: x.in_base()
+            u
+
+        """
+        cdef RingExtension_generic parent = <RingExtension_generic>self._parent
+        if isinstance(parent, RingExtensionWithGen):
+            v = self.vector()
+            for i in range(1, len(v)):
+                if v[i]:
+                    raise ValueError("%s is not in the base" % self)
+            return v[0]
+        else:
+            f = parent._backend_defining_morphism
+            base = f.domain()
+            ring = f.codomain()
+            if ring.has_coerce_map_from(base) and are_equal_morphisms(f, None):
+                return parent.base()(base(self._backend))
+        raise NotImplementedError("cannot cast %s to the base" % self)
 
     cpdef _richcmp_(left, right, int op):
         r"""

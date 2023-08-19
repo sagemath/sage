@@ -6008,7 +6008,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([x^3 + x*y^2, y^3])
             sage: m = matrix(QQ, 2, 2, [-201221, -1, 1, 0])
             sage: f = f.conjugate(m)
-            sage: f.reduced_form(prec=50, smallest_coeffs=False)  # needs 2 periodic
+            sage: f.reduced_form(prec=50, smallest_coeffs=False)  # this needs 2 periodic
             Traceback (most recent call last):
             ...
             ValueError: accuracy of Newton's root not within tolerance(0.000066... > 1e-06),
@@ -6026,7 +6026,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ::
 
             sage: PS.<x,y> = ProjectiveSpace(ZZ, 1)
-            sage: f = DynamicalSystem_projective([x^2 + x*y, y^2])  # needs 3 periodic
+            sage: f = DynamicalSystem_projective([x^2 + x*y, y^2])  # this needs 3 periodic
             sage: m = matrix(QQ, 2, 2, [-221, -1, 1, 0])
             sage: f = f.conjugate(m)
             sage: f.reduced_form(prec=200, smallest_coeffs=False)

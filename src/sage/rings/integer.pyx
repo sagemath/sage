@@ -1902,7 +1902,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: b'hi' * 8 == b'hihihihihihihihi'
             True
         """
-        if isinstance(s, (list, tuple, basestring, bytes)):
+        if isinstance(s, (list, tuple, str, bytes)):
             if mpz_fits_slong_p(self.value):
                 return s * mpz_get_si(self.value)
             else:
@@ -2852,12 +2852,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         except (ValueError, TypeError):
             pass
 
-        if type(m) == Integer and type(self) == Integer:
+        if isinstance(m, Integer):
             elog = self.exact_log(m)
             if elog == -sage.rings.infinity.infinity or m**elog == self:
                 return elog
 
-        if (type(m) == Rational and type(self) == Integer
+        if (isinstance(m, Rational)
                 and m.numer() == 1):
             elog = -self.exact_log(m.denom())
             if m**elog == self:
