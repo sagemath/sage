@@ -328,7 +328,7 @@ cdef class FiniteField(Field):
             sage: p = next_prime(2^64)
             sage: k.<a> = FiniteField(p^2, impl="pari")
             sage: it = iter(k); it
-            <generator object at ...>
+            <...generator object at ...>
             sage: [next(it) for i in range(10)]
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
