@@ -218,7 +218,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from sage.matrix.constructor import identity_matrix, block_matrix
     from sage.matrix.matrix_space import MatrixSpace
-    from sage.rings.integer_ring import IntegerRing
+    from sage.rings.integer_ring import ZZ
     if seed is not None:
         from sage.misc.randstate import set_random_seed
         set_random_seed(seed)
@@ -227,7 +227,6 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         if n != 1:
             raise ValueError('random bases require n = 1')
 
-    ZZ = IntegerRing()
     ZZ_q = IntegerModRing(q)
     A = identity_matrix(ZZ_q, n)
 
