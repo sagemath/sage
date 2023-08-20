@@ -116,16 +116,15 @@ class Function_exp_integral_e(BuiltinFunction):
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: f = exp_integral_e(2,x)                                                   # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x = var('x')
+        sage: f = exp_integral_e(2,x)
+        sage: f.diff(x)
         -exp_integral_e(1, x)
-
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f.integrate(x)
         -exp_integral_e(3, x)
-
-        sage: f = exp_integral_e(-1, x)                                                 # needs sage.symbolic
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f = exp_integral_e(-1, x)
+        sage: f.integrate(x)
         Ei(-x) - gamma(-1, x)
 
     Some special values of ``exp_integral_e`` can be simplified.
@@ -247,13 +246,13 @@ class Function_exp_integral_e(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = exp_integral_e(2, x)                                              # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = exp_integral_e(2, x)
+            sage: f.diff(x)
             -exp_integral_e(1, x)
-
-            sage: f = exp_integral_e(2, sqrt(x))                                        # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = exp_integral_e(2, sqrt(x))
+            sage: f.diff(x)
             -1/2*exp_integral_e(1, sqrt(x))/sqrt(x)
         """
         if n in ZZ and n > 0:
@@ -298,12 +297,12 @@ class Function_exp_integral_e1(BuiltinFunction):
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: f = exp_integral_e1(x)                                                    # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x = var('x')
+        sage: f = exp_integral_e1(x)
+        sage: f.diff(x)
         -e^(-x)/x
-
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f.integrate(x)
         -exp_integral_e(2, x)
 
     ALGORITHM:
@@ -359,13 +358,13 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = exp_integral_e1(x)                                                # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = exp_integral_e1(x)
+            sage: f.diff(x)
             -e^(-x)/x
-
-            sage: f = exp_integral_e1(x^2)                                              # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = exp_integral_e1(x^2)
+            sage: f.diff(x)
             -2*e^(-x^2)/x
 
         """
@@ -400,19 +399,19 @@ class Function_log_integral(BuiltinFunction):
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: f = log_integral(x)                                                       # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x = var('x')
+        sage: f = log_integral(x)
+        sage: f.diff(x)
         1/log(x)
-
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f.integrate(x)
         x*log_integral(x) - Ei(2*log(x))
 
     Here is a test from the mpmath documentation. There are
     1,925,320,391,606,803,968,923 many prime numbers less than 1e23. The
     value of ``log_integral(1e23)`` is very close to this::
 
-        sage: log_integral(1e23)                                                        # needs sage.symbolic
+        sage: log_integral(1e23)                                                        # needs mpmath
         1.92532039161405e21
 
     ALGORITHM:
@@ -479,7 +478,7 @@ class Function_log_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(log_integral(1e6))                                                  # needs sage.symbolic
+            sage: N(log_integral(1e6))                                                  # needs mpmath
             78627.5491594622
             sage: log_integral(RealField(200)(1e6))                                     # needs sage.rings.real_mpfr
             78627.549159462181919862910747947261161321874382421767074759
@@ -493,13 +492,13 @@ class Function_log_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = log_integral(x)                                                   # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = log_integral(x)
+            sage: f.diff(x)
             1/log(x)
-
-            sage: f = log_integral(x^2)                                                 # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = log_integral(x^2)
+            sage: f.diff(x)
             2*x/log(x^2)
 
         """
@@ -584,7 +583,7 @@ class Function_log_integral_offset(BuiltinFunction):
         1.2428254968641898308632562019 + 0.87232935488528370139883806779*I
         sage: log_integral_offset(2)
         0
-        sage: for n in range(1,7):
+        sage: for n in range(1,7):                                                      # needs primecountpy
         ....:  print('%-10s%-10s%-20s'%(10^n, prime_pi(10^n), N(Li(10^n))))
         10        4         5.12043572466980
         100       25        29.0809778039621
@@ -689,13 +688,13 @@ class Function_log_integral_offset(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = log_integral_offset(x)                                            # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = log_integral_offset(x)
+            sage: f.diff(x)
             1/log(x)
-
-            sage: f = log_integral_offset(x^2)                                          # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = log_integral_offset(x^2)
+            sage: f.diff(x)
             2*x/log(x^2)
         """
         return 1/log(z)
@@ -736,7 +735,7 @@ class Function_sin_integral(BuiltinFunction):
 
     The limit of `\operatorname{Si}(z)` as `z \to \infty` is `\pi/2`::
 
-        sage: N(sin_integral(1e23))                                                     # needs sage.symbolic
+        sage: N(sin_integral(1e23))                                                     # needs mpmath
         1.57079632679490
         sage: N(pi/2)                                                                   # needs sage.symbolic
         1.57079632679490
@@ -760,15 +759,14 @@ class Function_sin_integral(BuiltinFunction):
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: f = sin_integral(x)                                                       # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x = var('x')
+        sage: f = sin_integral(x)
+        sage: f.diff(x)
         sin(x)/x
-
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f.integrate(x)
         x*sin_integral(x) + cos(x)
-
-        sage: integrate(sin(x)/x, x)                                                    # needs sage.symbolic
+        sage: integrate(sin(x)/x, x)
         -1/2*I*Ei(I*x) + 1/2*I*Ei(-I*x)
 
 
@@ -883,13 +881,13 @@ class Function_sin_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = sin_integral(x)                                                   # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = sin_integral(x)
+            sage: f.diff(x)
             sin(x)/x
-
-            sage: f = sin_integral(x^2)                                                 # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = sin_integral(x^2)
+            sage: f.diff(x)
             2*sin(x^2)/x
 
         """
@@ -919,7 +917,7 @@ class Function_cos_integral(BuiltinFunction):
         0.119629786008000
         sage: cos_integral(0)                                                           # needs sage.symbolic
         cos_integral(0)
-        sage: N(cos_integral(0))                                                        # needs sage.symbolic
+        sage: N(cos_integral(0))                                                        # needs mpmath
         -infinity
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
@@ -953,12 +951,12 @@ class Function_cos_integral(BuiltinFunction):
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: f = cos_integral(x)                                                       # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x = var('x')
+        sage: f = cos_integral(x)
+        sage: f.diff(x)
         cos(x)/x
-
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f.integrate(x)
         x*cos_integral(x) - sin(x)
 
     The Nielsen spiral is the parametric plot of (Si(t), Ci(t))::
@@ -1025,13 +1023,13 @@ class Function_cos_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = cos_integral(x)                                                   # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = cos_integral(x)
+            sage: f.diff(x)
             cos(x)/x
-
-            sage: f = cos_integral(x^2)                                                 # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = cos_integral(x^2)
+            sage: f.diff(x)
             2*cos(x^2)/x
 
         """
@@ -1083,7 +1081,7 @@ class Function_sinh_integral(BuiltinFunction):
 
     The limit `\operatorname{Shi}(z)` as `z \to \infty` is `\infty`::
 
-        sage: N(sinh_integral(Infinity))                                                # needs sage.symbolic
+        sage: N(sinh_integral(Infinity))                                                # needs mpmath
         +infinity
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
@@ -1103,9 +1101,9 @@ class Function_sinh_integral(BuiltinFunction):
 
         sage: integrate(sinh_integral(x), x, 0, 1/2)                                    # needs sage.symbolic
         -cosh(1/2) + 1/2*sinh_integral(1/2) + 1
-        sage: integrate(sinh_integral(x), x, 0, 1/2).n() # correct                      # needs sage.symbolic
+        sage: integrate(sinh_integral(x), x, 0, 1/2).n()  # correct                     # needs sage.symbolic
         0.125872409703453
-        sage: integrate(sinh_integral(x), x, 0, 0.5).n() # fixed in maxima 5.29.1       # needs sage.symbolic
+        sage: integrate(sinh_integral(x), x, 0, 0.5).n()  # fixed in maxima 5.29.1      # needs sage.symbolic
         0.125872409703453
 
     ALGORITHM:
@@ -1177,13 +1175,13 @@ class Function_sinh_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = sinh_integral(x)                                                  # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = sinh_integral(x)
+            sage: f.diff(x)
             sinh(x)/x
-
-            sage: f = sinh_integral(ln(x))                                              # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = sinh_integral(ln(x))
+            sage: f.diff(x)
             1/2*(x^2 - 1)/(x^2*log(x))
 
         """
@@ -1224,7 +1222,7 @@ class Function_cosh_integral(BuiltinFunction):
     Here is an example from the mpmath documentation::
 
         sage: f(x) = cosh_integral(x)                                                   # needs sage.symbolic
-        sage: find_root(f, 0.1, 1.0)                                                    # needs sage.symbolic
+        sage: find_root(f, 0.1, 1.0)                                                    # needs scipy sage.symbolic
         0.523822571389...
 
     Compare ``cosh_integral(3.0)`` to the definition of the value using
@@ -1243,17 +1241,17 @@ class Function_cosh_integral(BuiltinFunction):
 
     The limit of `\operatorname{Chi}(z)` as `z \to \infty` is `\infty`::
 
-        sage: N(cosh_integral(Infinity))                                                # needs sage.symbolic
+        sage: N(cosh_integral(Infinity))                                                # needs mpmath
         +infinity
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: f = cosh_integral(x)                                                      # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: x = var('x')
+        sage: f = cosh_integral(x)
+        sage: f.diff(x)
         cosh(x)/x
-
-        sage: f.integrate(x)                                                            # needs sage.symbolic
+        sage: f.integrate(x)
         x*cosh_integral(x) - sinh(x)
 
     ALGORITHM:
@@ -1305,13 +1303,13 @@ class Function_cosh_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: x = var('x')                                                          # needs sage.symbolic
-            sage: f = cosh_integral(x)                                                  # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x = var('x')
+            sage: f = cosh_integral(x)
+            sage: f.diff(x)
             cosh(x)/x
-
-            sage: f = cosh_integral(ln(x))                                              # needs sage.symbolic
-            sage: f.diff(x)                                                             # needs sage.symbolic
+            sage: f = cosh_integral(ln(x))
+            sage: f.diff(x)
             1/2*(x^2 + 1)/(x^2*log(x))
 
         """
@@ -1344,16 +1342,18 @@ class Function_exp_integral(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: Ei(10)                                                                    # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: Ei(10)
         Ei(10)
-        sage: Ei(I)                                                                     # needs sage.symbolic
+        sage: Ei(I)
         Ei(I)
-        sage: Ei(3+I)                                                                   # needs sage.symbolic
+        sage: Ei(3+I)
         Ei(I + 3)
+        sage: Ei(10r)
+        Ei(10)
+
         sage: Ei(1.3)                                                                   # needs mpmath
         2.72139888023202
-        sage: Ei(10r)                                                                   # needs sage.symbolic
-        Ei(10)
         sage: Ei(1.3r)                                                                  # needs mpmath
         2.7213988802320235
 
@@ -1470,21 +1470,23 @@ def exponential_integral_1(x, n=0):
 
     EXAMPLES::
 
-        sage: exponential_integral_1(2)                                                 # needs sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: exponential_integral_1(2)
         0.0489005107080611
-        sage: exponential_integral_1(2, 4)  # abs tol 1e-18                             # needs sage.libs.pari
+        sage: exponential_integral_1(2, 4)  # abs tol 1e-18
         [0.0489005107080611, 0.00377935240984891, 0.000360082452162659, 0.0000376656228439245]
-        sage: exponential_integral_1(40, 5)                                             # needs sage.libs.pari
+        sage: exponential_integral_1(40, 5)
         [0.000000000000000, 2.22854325868847e-37, 6.33732515501151e-55,
          2.02336191509997e-72, 6.88522610630764e-90]
+        sage: r = exponential_integral_1(RealField(150)(1)); r
+        0.21938393439552027367716377546012164903104729
+        sage: parent(r)
+        Real Field with 150 bits of precision
+        sage: exponential_integral_1(RealField(150)(100))
+        3.6835977616820321802351926205081189876552201e-46
+
         sage: exponential_integral_1(0)
         +Infinity
-        sage: r = exponential_integral_1(RealField(150)(1)); r                          # needs sage.libs.pari
-        0.21938393439552027367716377546012164903104729
-        sage: parent(r)                                                                 # needs sage.libs.pari
-        Real Field with 150 bits of precision
-        sage: exponential_integral_1(RealField(150)(100))                               # needs sage.libs.pari
-        3.6835977616820321802351926205081189876552201e-46
 
     TESTS:
 
