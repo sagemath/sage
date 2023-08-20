@@ -124,9 +124,13 @@ def call_pickled_function(fpargs):
 def pickleMethod(method):
     'support function for copyreg to pickle method refs'
 
-    # Note: On Python 3 there is no .im_class but we can get the instance's
-    # class through .__self__.__class__
-    cls = getattr(method, 'im_class', method.__self__.__class__)
+    if isinstance(method.__self__, type):
+        # This is a class method, so get it from the type directly
+        return (getattr, (method.__self__, method.__func__.__name__))
+    else:
+        # Note: On Python 3 there is no .im_class but we can get the instance's
+        # class through .__self__.__class__
+        cls = getattr(method, 'im_class', method.__self__.__class__)
     return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
 
 
