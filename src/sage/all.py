@@ -117,10 +117,8 @@ lazy_import('sage.interacts', 'all', 'interacts')
 
 try:
     from .all__sagemath_plot import *
-    from sage.manifolds.all import *
     from .all__sagemath_symbolics import *
     from sage.lfunctions.all import *
-    from sage.geometry.riemannian_manifolds.all   import *
 except ImportError:
     pass
 
