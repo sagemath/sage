@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # cython: binding=True
 """
 Chromatic polynomial

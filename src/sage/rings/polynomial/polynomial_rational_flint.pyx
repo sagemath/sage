@@ -38,8 +38,6 @@ from sage.libs.flint.fmpq cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpq_poly cimport *
 
-from sage.interfaces.singular import singular as singular_default
-
 from cypari2.gen import Gen as pari_gen
 
 from sage.rings.complex_arb cimport ComplexBall
@@ -332,13 +330,13 @@ cdef class Polynomial_rational_flint(Polynomial):
         fmpq_poly_set(res.__poly, self.__poly)
         return res
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Return a Singular representation of ``self``.
 
         INPUT:
 
-        - ``singular`` - Singular interpreter (default: default interpreter)
+        - ``singular`` -- Singular interpreter (default: default interpreter)
 
         EXAMPLES::
 
@@ -347,6 +345,8 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: singular(f)
             3*x^2+2*x+5
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         self._parent._singular_(singular).set_ring()  # Expensive!
         return singular(self._singular_init_())
 
