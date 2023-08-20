@@ -23,11 +23,12 @@ install_requires =
 test        = SPKG_INSTALL_REQUIRES_sagemath_repl
 
 # general libraries
-flint       =
+flint       = SPKG_INSTALL_REQUIRES_sagemath_flint
 
 # polyhedral libraries
 4ti2        = # FIXME
 cddlib      = # FIXME
+latte       = sagemath-polyhedra[latte_int]  # alias
 latte_int   = # FIXME
 normaliz    = SPKG_INSTALL_REQUIRES_pynormaliz
 polymake    = SPKG_INSTALL_REQUIRES_jupymake
@@ -54,7 +55,7 @@ scip        = SPKG_INSTALL_REQUIRES_pyscipopt
 QQ  =
 ZZ  =
 RDF = # FIXME: cddlib
-NumberField = # FIXME
+NumberField = sagemath-polyhedra[flint]
 
 # features
 graphs      = SPKG_INSTALL_REQUIRES_sagemath_graphs
