@@ -28,19 +28,18 @@ EXAMPLES:
 Inverse hyperbolic functions have logarithmic expressions,
 so expressions of the form ``exp(c*f(x))`` simplify::
 
-    sage: exp(2*atanh(x))                                                               # needs sage.symbolic
+    sage: # needs sage.symbolic
+    sage: exp(2*atanh(x))
     -(x + 1)/(x - 1)
-    sage: exp(2*acoth(x))                                                               # needs sage.symbolic
+    sage: exp(2*acoth(x))
     (x + 1)/(x - 1)
-
-    sage: exp(2*asinh(x))                                                               # needs sage.symbolic
+    sage: exp(2*asinh(x))
     (x + sqrt(x^2 + 1))^2
-    sage: exp(2*acosh(x))                                                               # needs sage.symbolic
+    sage: exp(2*acosh(x))
     (x + sqrt(x^2 - 1))^2
-
-    sage: exp(2*asech(x))                                                               # needs sage.symbolic
+    sage: exp(2*asech(x))
     (sqrt(-x^2 + 1)/x + 1/x)^2
-    sage: exp(2*acsch(x))                                                               # needs sage.symbolic
+    sage: exp(2*acsch(x))
     (sqrt(1/x^2 + 1) + 1/x)^2
 """
 
@@ -54,18 +53,19 @@ class Function_sinh(GinacFunction):
 
         EXAMPLES::
 
-            sage: sinh(pi)                                                              # needs sage.symbolic
-            sinh(pi)
             sage: sinh(3.1415)
             11.5476653707437
-            sage: float(sinh(pi))                                                       # needs sage.symbolic
-            11.54873935725774...
-            sage: RR(sinh(pi))                                                          # needs sage.symbolic
-            11.5487393572577
 
-            sage: latex(sinh(x))                                                        # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: sinh(pi)
+            sinh(pi)
+            sage: float(sinh(pi))
+            11.54873935725774...
+            sage: RR(sinh(pi))
+            11.5487393572577
+            sage: latex(sinh(x))
             \sinh\left(x\right)
-            sage: sinh(x)._sympy_()                                                     # needs sympy sage.symbolic
+            sage: sinh(x)._sympy_()                                                     # needs sympy
             sinh(x)
 
         To prevent automatic evaluation, use the ``hold`` parameter::
@@ -91,18 +91,19 @@ class Function_cosh(GinacFunction):
 
         EXAMPLES::
 
-            sage: cosh(pi)                                                              # needs sage.symbolic
-            cosh(pi)
             sage: cosh(3.1415)
             11.5908832931176
-            sage: float(cosh(pi))                                                       # needs sage.symbolic
-            11.591953275521519
-            sage: RR(cosh(1/2))                                                         # needs sage.symbolic
-            1.12762596520638
 
-            sage: latex(cosh(x))                                                        # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: cosh(pi)
+            cosh(pi)
+            sage: float(cosh(pi))
+            11.591953275521519
+            sage: RR(cosh(1/2))
+            1.12762596520638
+            sage: latex(cosh(x))
             \cosh\left(x\right)
-            sage: cosh(x)._sympy_()                                                     # needs sympy sage.symbolic
+            sage: cosh(x)._sympy_()                                                     # needs sympy
             cosh(x)
 
         To prevent automatic evaluation, use the ``hold`` parameter::
@@ -128,26 +129,28 @@ class Function_tanh(GinacFunction):
 
         EXAMPLES::
 
-            sage: tanh(pi)                                                              # needs sage.symbolic
-            tanh(pi)
             sage: tanh(3.1415)
             0.996271386633702
-            sage: float(tanh(pi))                                                       # needs sage.symbolic
-            0.99627207622075
             sage: tan(3.1415/4)
             0.999953674278156
-            sage: tanh(pi/4)                                                            # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: tanh(pi)
+            tanh(pi)
+            sage: float(tanh(pi))
+            0.99627207622075
+            sage: tanh(pi/4)
             tanh(1/4*pi)
-            sage: RR(tanh(1/2))                                                         # needs sage.symbolic
+            sage: RR(tanh(1/2))
             0.462117157260010
 
         ::
 
-            sage: CC(tanh(pi + I*e))                                                    # needs sage.symbolic
+            sage: CC(tanh(pi + I*e))                                                    # needs sage.rings.real_mpfr sage.symbolic
             0.997524731976164 - 0.00279068768100315*I
-            sage: ComplexField(100)(tanh(pi + I*e))                                     # needs sage.symbolic
+            sage: ComplexField(100)(tanh(pi + I*e))                                     # needs sage.rings.real_mpfr sage.symbolic
             0.99752473197616361034204366446 - 0.0027906876810031453884245163923*I
-            sage: CDF(tanh(pi + I*e))  # rel tol 2e-15                                  # needs sage.symbolic
+            sage: CDF(tanh(pi + I*e))  # rel tol 2e-15                                  # needs sage.rings.complex_double sage.symbolic
             0.9975247319761636 - 0.002790687681003147*I
 
         To prevent automatic evaluation, use the ``hold`` parameter::
@@ -194,28 +197,30 @@ class Function_coth(GinacFunction):
 
         EXAMPLES::
 
-            sage: coth(pi)                                                              # needs sage.symbolic
-            coth(pi)
-            sage: coth(0)                                                               # needs sage.symbolic
-            Infinity
-            sage: coth(pi*I)                                                            # needs sage.symbolic
-            Infinity
-            sage: coth(pi*I/2)                                                          # needs sage.symbolic
-            0
-            sage: coth(7*pi*I/2)                                                        # needs sage.symbolic
-            0
-            sage: coth(8*pi*I/2)                                                        # needs sage.symbolic
-            Infinity
-            sage: coth(7.*pi*I/2)                                                       # needs sage.symbolic
-            -I*cot(3.50000000000000*pi)
             sage: coth(3.1415)
             1.00374256795520
-            sage: float(coth(pi))                                                       # needs sage.symbolic
-            1.0037418731973213
-            sage: RR(coth(pi))                                                          # needs sage.symbolic
-            1.00374187319732
             sage: coth(complex(1, 2))  # abs tol 1e-15                                  # needs sage.rings.complex_double
             (0.8213297974938518+0.17138361290918508j)
+
+            sage: # needs sage.symbolic
+            sage: coth(pi)
+            coth(pi)
+            sage: coth(0)
+            Infinity
+            sage: coth(pi*I)
+            Infinity
+            sage: coth(pi*I/2)
+            0
+            sage: coth(7*pi*I/2)
+            0
+            sage: coth(8*pi*I/2)
+            Infinity
+            sage: coth(7.*pi*I/2)
+            -I*cot(3.50000000000000*pi)
+            sage: float(coth(pi))
+            1.0037418731973213
+            sage: RR(coth(pi))
+            1.00374187319732
 
             sage: # needs sage.symbolic
             sage: bool(diff(coth(x), x) == diff(1/tanh(x), x))
@@ -251,25 +256,27 @@ class Function_sech(GinacFunction):
 
         EXAMPLES::
 
-            sage: sech(pi)                                                              # needs sage.symbolic
-            sech(pi)
             sage: sech(3.1415)
             0.0862747018248192
-            sage: float(sech(pi))                                                       # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: sech(pi)
+            sech(pi)
+            sage: float(sech(pi))
             0.0862667383340544...
-            sage: RR(sech(pi))                                                          # needs sage.symbolic
+            sage: RR(sech(pi))
             0.0862667383340544
-            sage: sech(0)                                                               # needs sage.symbolic
+            sage: sech(0)
             1
-            sage: sech(pi*I)                                                            # needs sage.symbolic
+            sage: sech(pi*I)
             -1
-            sage: sech(pi*I/2)                                                          # needs sage.symbolic
+            sage: sech(pi*I/2)
             Infinity
-            sage: sech(7*pi*I/2)                                                        # needs sage.symbolic
+            sage: sech(7*pi*I/2)
             Infinity
-            sage: sech(8*pi*I/2)                                                        # needs sage.symbolic
+            sage: sech(8*pi*I/2)
             1
-            sage: sech(8.*pi*I/2)                                                       # needs sage.symbolic
+            sage: sech(8.*pi*I/2)
             sec(4.00000000000000*pi)
 
             sage: # needs sage.symbolic
@@ -306,23 +313,25 @@ class Function_csch(GinacFunction):
 
         EXAMPLES::
 
-            sage: csch(pi)                                                              # needs sage.symbolic
-            csch(pi)
             sage: csch(3.1415)
             0.0865975907592133
-            sage: float(csch(pi))                                                       # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: csch(pi)
+            csch(pi)
+            sage: float(csch(pi))
             0.0865895375300469...
-            sage: RR(csch(pi))                                                          # needs sage.symbolic
+            sage: RR(csch(pi))
             0.0865895375300470
-            sage: csch(0)                                                               # needs sage.symbolic
+            sage: csch(0)
             Infinity
-            sage: csch(pi*I)                                                            # needs sage.symbolic
+            sage: csch(pi*I)
             Infinity
-            sage: csch(pi*I/2)                                                          # needs sage.symbolic
+            sage: csch(pi*I/2)
             -I
-            sage: csch(7*pi*I/2)                                                        # needs sage.symbolic
+            sage: csch(7*pi*I/2)
             I
-            sage: csch(7.*pi*I/2)                                                       # needs sage.symbolic
+            sage: csch(7.*pi*I/2)
             -I*csc(3.50000000000000*pi)
 
             sage: # needs sage.symbolic
@@ -427,14 +436,16 @@ class Function_arccosh(GinacFunction):
 
         EXAMPLES::
 
-            sage: acosh(1/2)                                                            # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: acosh(1/2)
             arccosh(1/2)
-            sage: acosh(1 + I*1.0)                                                      # needs sage.symbolic
+            sage: acosh(1 + I*1.0)
             1.06127506190504 + 0.904556894302381*I
-            sage: float(acosh(2))                                                       # needs sage.symbolic
+            sage: float(acosh(2))
             1.3169578969248168
-            sage: cosh(float(acosh(2)))                                                 # needs sage.symbolic
+            sage: cosh(float(acosh(2)))
             2.0
+
             sage: acosh(complex(1, 2))  # abs tol 1e-15                                 # needs sage.rings.complex_double
             (1.5285709194809982+1.1437177404024204j)
 
@@ -447,17 +458,19 @@ class Function_arccosh(GinacFunction):
 
         ::
 
-            sage: acosh(0.5)                                                            # needs sage.symbolic
-            NaN
-            sage: acosh(1/2)                                                            # needs sage.symbolic
-            arccosh(1/2)
-            sage: acosh(1/2).n()                                                        # needs sage.symbolic
-            NaN
             sage: acosh(CC(0.5))                                                        # needs sage.rings.real_mpfr
             1.04719755119660*I
-            sage: acosh(0)                                                              # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: acosh(0.5)
+            NaN
+            sage: acosh(1/2)
+            arccosh(1/2)
+            sage: acosh(1/2).n()
+            NaN
+            sage: acosh(0)
             1/2*I*pi
-            sage: acosh(-1)                                                             # needs sage.symbolic
+            sage: acosh(-1)
             I*pi
 
         To prevent automatic evaluation use the ``hold`` argument::
@@ -592,9 +605,9 @@ class Function_arccoth(GinacFunction):
 
             sage: float(acoth(2))                                                       # needs sage.symbolic
             0.5493061443340549
-            sage: float(acoth(2).n(53))   # Correct result to 53 bits                   # needs sage.symbolic
+            sage: float(acoth(2).n(53))   # Correct result to 53 bits                   # needs sage.rings.real_mpfr sage.symbolic
             0.5493061443340549
-            sage: float(acoth(2).n(100))  # Compute 100 bits and then round to 53       # needs sage.symbolic
+            sage: float(acoth(2).n(100))  # Compute 100 bits and then round to 53       # needs sage.rings.real_mpfr sage.symbolic
             0.5493061443340549
 
         TESTS::
