@@ -1508,7 +1508,7 @@ class E1Star(SageObject):
             raise ValueError("iterations (=%s) must be >= 0" % iterations)
         else:
             old_faces = patch
-            for i in range(iterations):
+            for _ in range(iterations):
                 new_faces = []
                 for f in old_faces:
                     new_faces.extend(self._call_on_face(f, color=f.color()))

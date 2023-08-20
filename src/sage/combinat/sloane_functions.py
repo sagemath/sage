@@ -600,10 +600,10 @@ class A000008(SloaneSequence):
             sage: [sloane.A000008._eval(n) for n in range(14)]
             [1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 11, 12, 15, 16]
         """
-        from sage.rings.big_oh import O
-        R, x = QQ[['x']].objgen()
-        p = 1/((1-x)*(1-x**2)*(1-x**5)*(1-x**10)+O(x**(n+4)))
-        return ZZ(p.coefficients()[n])
+        from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+        x = LazyPowerSeriesRing(ZZ, 'x').gen()
+        p = 1/((1-x)*(1-x**2)*(1-x**5)*(1-x**10))
+        return ZZ(p.coefficient(n)
 
 
 class A000009(SloaneSequence):
@@ -657,7 +657,7 @@ class A000009(SloaneSequence):
             sage: [next(it) for i in range(14)]
             [1, 1, 1, 2, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18]
         """
-        R, x = QQ['x'].objgen()
+        _, x = QQ['x'].objgen()
         k = 0
         yield ZZ.one()
         p = 1
