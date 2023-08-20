@@ -1408,12 +1408,16 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
     def global_height(self, prec=None):
         """
         Return the (projective) global height of the subscheme.
+
         INPUT:
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
+
         OUTPUT:
         - a real number.
+
         EXAMPLES::
+
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
@@ -1433,13 +1437,17 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
     def local_height(self, v, prec=None):
         """
         Return the (projective) local height of the subscheme.
+
         INPUT:
         - ``v`` -- a prime or prime ideal of the base ring.
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
+
         OUTPUT:
         - a real number.
+
         EXAMPLES::
+
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: I = NF.ideal(3)
@@ -1460,13 +1468,17 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
     def local_height_arch(self, i, prec=None):
         """
         Return the local height at the ``i``-th infinite place of the subscheme.
+
         INPUT:
         - ``i`` -- an integer.
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
+
         OUTPUT:
         - a real number.
+
         EXAMPLES::
+
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
