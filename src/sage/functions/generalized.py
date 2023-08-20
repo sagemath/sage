@@ -560,9 +560,9 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: kronecker_delta(1,2)
+        sage: kronecker_delta(1,2)                                                      # needs sage.rings.complex_interval_field
         0
-        sage: kronecker_delta(1,1)
+        sage: kronecker_delta(1,1)                                                      # needs sage.rings.complex_interval_field
         1
         sage: m, n = var('m,n')                                                         # needs sage.symbolic
         sage: kronecker_delta(m, n)                                                     # needs sage.symbolic
@@ -579,9 +579,9 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(1,2)
+            sage: kronecker_delta(1,2)                                                  # needs sage.rings.complex_interval_field
             0
-            sage: kronecker_delta(1,1)
+            sage: kronecker_delta(1,1)                                                  # needs sage.rings.complex_interval_field
             1
             sage: y = var('y')                                                          # needs sage.symbolic
             sage: kronecker_delta(x, y)._sympy_()                                       # needs sympy sage.symbolic
@@ -598,9 +598,9 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(1,2)
+            sage: kronecker_delta(1,2)                                                  # needs sage.rings.complex_interval_field
             0
-            sage: kronecker_delta(1,1)
+            sage: kronecker_delta(1,1)                                                  # needs sage.rings.complex_interval_field
             1
 
         Kronecker delta is a symmetric function. We keep arguments sorted to
