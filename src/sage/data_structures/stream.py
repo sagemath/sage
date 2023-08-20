@@ -280,7 +280,7 @@ class Stream_inexact(Stream):
 
     def __getitem__(self, n):
         """
-        Return the `n`-th coefficient of ``self``.
+        Return the ``n``-th coefficient of ``self``.
 
         INPUT:
 
@@ -381,7 +381,7 @@ class Stream_inexact(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is nonzero.
+        that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -506,7 +506,7 @@ class Stream_exact(Stream):
         # complicated otherwise
         for i, v in enumerate(initial_coefficients):
             if v:
-                # We have found the first nonzero coefficient
+                # We have found the first non-zero coefficient
                 order += i
                 initial_coefficients = initial_coefficients[i:]
                 if order + len(initial_coefficients) == self._degree:
@@ -585,7 +585,7 @@ class Stream_exact(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index
-        ``n`` such that ``self[n]`` is nonzero.
+        ``n`` such that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -1444,7 +1444,7 @@ class Stream_dirichlet_convolve(Stream_binary):
             or self._right._approximate_order <= 0):
             raise ValueError("Dirichlet convolution is only defined for "
                              "coefficient streams with minimal index of "
-                             "nonzero coefficient at least 1")
+                             "non-zero coefficient at least 1")
         return self._left._approximate_order * self._right._approximate_order
 
     def get_coefficient(self, n):
@@ -2364,7 +2364,7 @@ class Stream_cauchy_invert(Stream_unary):
 
 class Stream_map_coefficients(Stream_inexact):
     r"""
-    The stream with ``function`` applied to each nonzero coefficient
+    The stream with ``function`` applied to each non-zero coefficient
     of ``series``.
 
     INPUT:
@@ -2536,7 +2536,7 @@ class Stream_shift(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index
-        ``n`` such that ``self[n]`` is nonzero.
+        ``n`` such that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -2766,7 +2766,7 @@ class Stream_truncated(Stream_inexact):
     def order(self):
         """
         Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is nonzero.
+        that ``self[n]`` is non-zero.
 
         EXAMPLES::
 

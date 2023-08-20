@@ -1293,6 +1293,24 @@ class LazyModuleElement(Element):
             sage: (f*s[1]).revert() + 1 - f                                             # optional - sage.combinat
             O^7
 
+        Undefined series inside of another series (see :issue:`35071`)::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = z^2
+            sage: b = L.undefined(valuation=1)
+            sage: b.define(z*f(f(b)))
+            sage: b
+            O(z^8)
+
+            sage: L.<x> = LazyPowerSeriesRing(ZZ)
+            sage: f = L.undefined()
+            sage: f.define(L(lambda n: 0 if not n else sigma(f[n-1]+1)))
+            sage: f
+            x + 3*x^2 + 7*x^3 + 15*x^4 + 31*x^5 + 63*x^6 + O(x^7)
+            sage: f = L.undefined()
+            sage: f.define((1/(1-L(lambda n: 0 if not n else sigma(f[n-1]+1)))))
+            sage: f
+            1 + 3*x + 16*x^2 + 87*x^3 + 607*x^4 + 4518*x^5 + 30549*x^6 + O(x^7)
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")
@@ -4659,19 +4677,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: g.define((z - (f - z)(g)))
             sage: g
             z - z^2 + 2*z^3 - 6*z^4 + 20*z^5 - 70*z^6 + 256*z^7 + O(z^8)
-
-        Check that issue :trac:`35071` is fixed::
-
-            sage: L.<z> = LazyPowerSeriesRing(QQ)
-            sage: f = z^2
-            sage: g = L.undefined(valuation=1)
-            sage: g.define(z*f(f(g)))
-            sage: g
-            O(z^8)
-
-            sage: g = L(lambda n: n)
-            sage: f(g)
-            z^2 + 4*z^3 + 10*z^4 + 20*z^5 + 35*z^6 + O(z^7)
         """
         fP = parent(self)
         if len(g) != fP._arity:

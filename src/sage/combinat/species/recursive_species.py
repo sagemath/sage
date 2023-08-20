@@ -402,7 +402,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
             sage: F.isotype_generating_series()[0:10]
             [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 
-        Check that issues :trac:`35071` is fixed::
+        Check that :issue:`35071` is fixed::
 
             sage: X = species.SingletonSpecies()
             sage: E = species.SetSpecies(max=3)
