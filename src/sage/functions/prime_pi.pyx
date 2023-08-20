@@ -1,3 +1,4 @@
+# sage.doctest: needs primecountpy
 r"""
 Counting primes
 
@@ -83,7 +84,7 @@ cdef class PrimePi(BuiltinFunction):
         The :func:`prime_pi` function also has a special plotting method, so it
         plots quickly and perfectly as a step function::
 
-            sage: P = plot(prime_pi, 50, 100)                                           # needs sage.plot
+            sage: P = plot(prime_pi, 50, 100)                                           # needs sage.plot sage.symbolic
 
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
@@ -95,13 +96,14 @@ cdef class PrimePi(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: prime_pi.__call__(756)                                                # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: prime_pi.__call__(756)
             133
-            sage: prime_pi.__call__(6574, 577)                                          # needs sage.symbolic
+            sage: prime_pi.__call__(6574, 577)
             850
-            sage: f(x) = prime_pi.__call__(x^2); f(x)                                   # needs sage.symbolic
+            sage: f(x) = prime_pi.__call__(x^2); f(x)
             prime_pi(x^2)
-            sage: f(5)                                                                  # needs sage.symbolic
+            sage: f(5)
             9
             sage: prime_pi.__call__(1, 2, 3)
             Traceback (most recent call last):
@@ -117,7 +119,6 @@ cdef class PrimePi(BuiltinFunction):
         r"""
         EXAMPLES::
 
-            sage: # needs primecountpy
             sage: prime_pi._eval_(7)
             4
             sage: prime_pi._eval_(100)
@@ -133,7 +134,7 @@ cdef class PrimePi(BuiltinFunction):
 
         Make sure we actually compute correct results for 64-bit entries::
 
-            sage: for i in (32..42): prime_pi(2^i)      # long time (13s on sage.math, 2011), needs primecountpy
+            sage: for i in (32..42): prime_pi(2^i)      # long time (13s on sage.math, 2011)
             203280221
             393615806
             762939111
@@ -149,7 +150,7 @@ cdef class PrimePi(BuiltinFunction):
         This implementation uses 64-bit ints and does not support
         :math:`x \geq 2^63`::
 
-            sage: prime_pi(2^63)                                                        # needs primecountpy
+            sage: prime_pi(2^63)
             Traceback (most recent call last):
             ...
             OverflowError: ...to convert...
@@ -158,9 +159,9 @@ cdef class PrimePi(BuiltinFunction):
 
         Check that :trac:`24960` is fixed::
 
-            sage: prime_pi(642763101936913)                                             # needs primecountpy
+            sage: prime_pi(642763101936913)
             19439675999019
-            sage: prime_pi(10.5)                                                        # needs primecountpy
+            sage: prime_pi(10.5)
             4
         """
         from sage.functions.other import floor
@@ -186,9 +187,9 @@ cdef class PrimePi(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: plot(prime_pi, 1, 100)                                                # needs sage.plot
+            sage: plot(prime_pi, 1, 100)                                                # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: prime_pi.plot(1, 51, thickness=2, vertical_lines=False)               # needs sage.plot
+            sage: prime_pi.plot(1, 51, thickness=2, vertical_lines=False)               # needs sage.plot sage.symbolic
             Graphics object consisting of 16 graphics primitives
         """
         from sage.plot.step import plot_step_function
@@ -231,11 +232,11 @@ cpdef Integer legendre_phi(x, a):
 
         sage: legendre_phi(100, 0)
         100
-        sage: legendre_phi(29375, 1)                                                    # needs primecountpy
+        sage: legendre_phi(29375, 1)
         14688
-        sage: legendre_phi(91753, 5973)                                                 # needs primecountpy
+        sage: legendre_phi(91753, 5973)
         2893
-        sage: legendre_phi(4215701455, 6450023226)                                      # needs primecountpy
+        sage: legendre_phi(4215701455, 6450023226)
         1
 
     """
