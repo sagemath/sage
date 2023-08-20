@@ -42,7 +42,7 @@ class Function_gamma(GinacFunction):
             sage: from sage.functions.gamma import gamma1
             sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari
             -4.0537030780372815e-10 - 5.773299834553605e-10*I
-            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari
+            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari sage.symbolic
             -0.15494982830181067 - 0.49801566811835607*I
 
         Recall that `\Gamma(n)` is `n-1` factorial::
@@ -75,7 +75,7 @@ class Function_gamma(GinacFunction):
             gamma(I)
             sage: gamma1(i).n()                                                         # needs sage.symbolic
             -0.154949828301811 - 0.498015668118356*I
-            sage: gamma1(int(5))                                                        # needs sage.rings.complex_double
+            sage: gamma1(int(5))
             24
 
         ::
@@ -142,7 +142,7 @@ class Function_gamma(GinacFunction):
             Infinity
             sage: RDF(-1).gamma()
             NaN
-            sage: CDF(-1).gamma()                                                       # needs sage.rings.complex_double
+            sage: CDF(-1).gamma()                                                       # needs sage.libs.pari sage.rings.complex_double
             Infinity
 
         Check if :trac:`8297` is fixed::
@@ -205,20 +205,22 @@ class Function_log_gamma(GinacFunction):
         Numerical evaluation happens when appropriate, to the
         appropriate accuracy (see :trac:`10072`)::
 
-            sage: log_gamma(6)                                                          # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: log_gamma(6)
             log(120)
-            sage: log_gamma(6.)                                                         # needs sage.symbolic
+            sage: log_gamma(6.)
             4.78749174278205
-            sage: log_gamma(6).n()                                                      # needs sage.symbolic
+            sage: log_gamma(6).n()
             4.78749174278205
+            sage: log_gamma(2.4 + I)
+            -0.0308566579348816 + 0.693427705955790*I
+            sage: log_gamma(-3.1)
+            0.400311696703985 - 12.5663706143592*I
+            sage: log_gamma(-1.1) == log(gamma(-1.1))
+            False
+
             sage: log_gamma(RealField(100)(6))                                          # needs sage.rings.real_mpfr
             4.7874917427820459942477009345
-            sage: log_gamma(2.4 + I)                                                    # needs sage.symbolic
-            -0.0308566579348816 + 0.693427705955790*I
-            sage: log_gamma(-3.1)                                                       # needs sage.symbolic
-            0.400311696703985 - 12.5663706143592*I
-            sage: log_gamma(-1.1) == log(gamma(-1.1))                                   # needs sage.symbolic
-            False
 
         Symbolic input works (see :trac:`10075`)::
 
@@ -231,13 +233,14 @@ class Function_log_gamma(GinacFunction):
 
         Check that :trac:`12521` is fixed::
 
-            sage: log_gamma(-2.1)                                                       # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: log_gamma(-2.1)
             1.53171380819509 - 9.42477796076938*I
-            sage: log_gamma(CC(-2.1))                                                   # needs sage.rings.real
+            sage: log_gamma(CC(-2.1))
             1.53171380819509 - 9.42477796076938*I
-            sage: log_gamma(-21/10).n()                                                 # needs sage.symbolic
+            sage: log_gamma(-21/10).n()
             1.53171380819509 - 9.42477796076938*I
-            sage: exp(log_gamma(-1.3) + log_gamma(-0.4) -                               # needs sage.symbolic
+            sage: exp(log_gamma(-1.3) + log_gamma(-0.4) -
             ....:     log_gamma(-1.3 - 0.4)).real_part()  # beta(-1.3, -0.4)
             -4.92909641669610
 
@@ -252,21 +255,23 @@ class Function_log_gamma(GinacFunction):
 
         TESTS::
 
-            sage: log_gamma(-2.1 + I)                                                   # needs sage.symbolic
-            -1.90373724496982 - 7.18482377077183*I
             sage: log_gamma(pari(6))                                                    # needs sage.libs.pari
             4.78749174278205
-            sage: log_gamma(x)._sympy_()                                                # needs sympy sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: log_gamma(-2.1 + I)
+            -1.90373724496982 - 7.18482377077183*I
+            sage: log_gamma(x)._sympy_()                                                # needs sympy
             loggamma(x)
             sage: log_gamma(CC(6))                                                      # needs sage.rings.real_mpfr
             4.78749174278205
             sage: log_gamma(CC(-2.5))                                                   # needs sage.rings.real_mpfr
             -0.0562437164976741 - 9.42477796076938*I
-            sage: log_gamma(RDF(-2.5))                                                  # needs sage.symbolic
+            sage: log_gamma(RDF(-2.5))
             -0.056243716497674054 - 9.42477796076938*I
             sage: log_gamma(CDF(-2.5))                                                  # needs sage.rings.complex_double
             -0.056243716497674054 - 9.42477796076938*I
-            sage: log_gamma(float(-2.5))                                                # needs sage.symbolic
+            sage: log_gamma(float(-2.5))
             (-0.056243716497674054-9.42477796076938j)
             sage: log_gamma(complex(-2.5))                                              # needs sage.rings.complex_double
             (-0.056243716497674054-9.42477796076938j)
@@ -311,22 +316,26 @@ class Function_gamma_inc(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: gamma_inc(CDF(0,1), 3)                                                # needs sage.rings.complex_double
+            sage: gamma_inc(CDF(0,1), 3)                                                # needs sage.libs.pari sage.rings.complex_double
             0.0032085749933691158 + 0.012406185811871568*I
             sage: gamma_inc(RDF(1), 3)                                                  # needs sage.rings.complex_double
             0.049787068367863944
-            sage: gamma_inc(3, 2)                                                       # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: gamma_inc(3, 2)
             gamma(3, 2)
-            sage: gamma_inc(x, 0)                                                       # needs sage.symbolic
+            sage: gamma_inc(x, 0)
             gamma(x)
-            sage: latex(gamma_inc(3, 2))                                                # needs sage.symbolic
+            sage: latex(gamma_inc(3, 2))
             \Gamma\left(3, 2\right)
-            sage: loads(dumps((gamma_inc(3, 2))))                                       # needs sage.symbolic
+            sage: loads(dumps((gamma_inc(3, 2))))
             gamma(3, 2)
+
             sage: i = ComplexField(30).0; gamma_inc(2, 1 + i)                           # needs sage.rings.real_mpfr
             0.70709210 - 0.42035364*I
             sage: gamma_inc(2., 5)                                                      # needs sage.rings.complex_double
             0.0404276819945128
+
             sage: x, y = var('x,y')                                                     # needs sage.symbolic
             sage: gamma_inc(x,y).diff(x)                                                # needs sage.symbolic
             diff(gamma(x, y), x)
@@ -347,7 +356,7 @@ class Function_gamma_inc(BuiltinFunction):
             sage: gamma(-1, 5)._fricas_()                                       # optional - fricas, needs sage.symbolic
             Gamma(- 1,5)
 
-            sage: var('t')                                                      # optional - fricas, needs sage.symbolic
+            sage: var('t')                                                              # needs sage.symbolic
             t
             sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas, needs sage.symbolic
             gamma(t, x)
@@ -386,17 +395,19 @@ class Function_gamma_inc(BuiltinFunction):
             1.00000000000000
             sage: gamma_inc(2, 0)                                                       # needs sage.rings.real_mpfr
             1
-            sage: gamma_inc(1/2, 2)                                                     # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: gamma_inc(1/2, 2)
             -sqrt(pi)*(erf(sqrt(2)) - 1)
-            sage: gamma_inc(1/2, 1)                                                     # needs sage.symbolic
+            sage: gamma_inc(1/2, 1)
             -sqrt(pi)*(erf(1) - 1)
-            sage: gamma_inc(1/2, 0)                                                     # needs sage.symbolic
+            sage: gamma_inc(1/2, 0)
             sqrt(pi)
-            sage: gamma_inc(x, 0)                                                       # needs sage.symbolic
+            sage: gamma_inc(x, 0)
             gamma(x)
-            sage: gamma_inc(1, 2)                                                       # needs sage.symbolic
+            sage: gamma_inc(1, 2)
             e^(-2)
-            sage: gamma_inc(0, 2)                                                       # needs sage.symbolic
+            sage: gamma_inc(0, 2)
             -Ei(-2)
         """
         if y == 0:
@@ -496,17 +507,20 @@ class Function_gamma_inc_lower(BuiltinFunction):
             -0.1581584032951798 - 0.5104218539302277*I
             sage: gamma_inc_lower(RDF(1), 3)                                            # needs sage.rings.complex_double
             0.950212931632136
-            sage: gamma_inc_lower(3, 2, hold=True)                                      # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: gamma_inc_lower(3, 2, hold=True)
             gamma_inc_lower(3, 2)
-            sage: gamma_inc_lower(3, 2)                                                 # needs sage.symbolic
+            sage: gamma_inc_lower(3, 2)
             -10*e^(-2) + 2
-            sage: gamma_inc_lower(x, 0)                                                 # needs sage.symbolic
+            sage: gamma_inc_lower(x, 0)
             0
-            sage: latex(gamma_inc_lower(x, x))                                          # needs sage.symbolic
+            sage: latex(gamma_inc_lower(x, x))
             \gamma\left(x, x\right)
-            sage: loads(dumps((gamma_inc_lower(x, x))))                                 # needs sage.symbolic
+            sage: loads(dumps((gamma_inc_lower(x, x))))
             gamma_inc_lower(x, x)
-            sage: i = ComplexField(30).0; gamma_inc_lower(2, 1 + i)                     # needs sage.symbolic
+
+            sage: i = ComplexField(30).0; gamma_inc_lower(2, 1 + i)                     # needs sage.rings.real_mpfr
             0.29290790 + 0.42035364*I
             sage: gamma_inc_lower(2., 5)                                                # needs sage.rings.complex_double
             0.959572318005487
@@ -532,25 +546,27 @@ class Function_gamma_inc_lower(BuiltinFunction):
 
             sage: gamma_inc_lower(2., 0)                                                # needs sage.rings.complex_double
             0.000000000000000
-            sage: gamma_inc_lower(2, 0)                                                 # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: gamma_inc_lower(2, 0)
             0
-            sage: gamma_inc_lower(1/2, 2)                                               # needs sage.symbolic
+            sage: gamma_inc_lower(1/2, 2)
             sqrt(pi)*erf(sqrt(2))
-            sage: gamma_inc_lower(1/2, 1)                                               # needs sage.symbolic
+            sage: gamma_inc_lower(1/2, 1)
             sqrt(pi)*erf(1)
-            sage: gamma_inc_lower(1/2, 0)                                               # needs sage.symbolic
+            sage: gamma_inc_lower(1/2, 0)
             0
-            sage: gamma_inc_lower(x, 0)                                                 # needs sage.symbolic
+            sage: gamma_inc_lower(x, 0)
             0
-            sage: gamma_inc_lower(1, 2)                                                 # needs sage.symbolic
+            sage: gamma_inc_lower(1, 2)
             -e^(-2) + 1
-            sage: gamma_inc_lower(0, 2)                                                 # needs sage.symbolic
+            sage: gamma_inc_lower(0, 2)
             +Infinity
-            sage: gamma_inc_lower(2, 377/79)                                            # needs sage.symbolic
+            sage: gamma_inc_lower(2, 377/79)
             -456/79*e^(-377/79) + 1
-            sage: gamma_inc_lower(3, x)                                                 # needs sage.symbolic
+            sage: gamma_inc_lower(3, x)
             -(x^2 + 2*x + 2)*e^(-x) + 2
-            sage: gamma_inc_lower(9/2, 37/7)                                            # needs sage.symbolic
+            sage: gamma_inc_lower(9/2, 37/7)
             -1/38416*sqrt(pi)*(1672946*sqrt(259)*e^(-37/7)/sqrt(pi) - 252105*erf(1/7*sqrt(259)))
         """
         if y == 0:
@@ -572,7 +588,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
             0.646647167633873
             sage: gamma_inc_lower(3, 2).n(200)                                          # needs sage.symbolic
             0.646647167633873081060005050275155...
-            sage: gamma_inc_lower(0, 2.)                                                # needs sage.symbolic
+            sage: gamma_inc_lower(0, 2.)                                                # needs sage.rings.real_mpfr
             +infinity
         """
         R = parent or s_parent(x)
@@ -764,7 +780,7 @@ class Function_psi1(GinacFunction):
 
             sage: psi(.5)                                                               # needs sage.symbolic
             -1.96351002602142
-            sage: psi(RealField(100)(.5))                                               # needs sage.rings.real_mpfr
+            sage: psi(RealField(100)(.5))                                               # needs sage.rings.real_mpfr sage.symbolic
             -1.9635100260214234794409763330
 
         TESTS::
@@ -1054,7 +1070,7 @@ class Function_beta(GinacFunction):
         r"""
         TESTS::
 
-            sage: RBF(beta(sin(3), sqrt(RBF(2).add_error(1e-8)/3)))  # abs tol 6e-7     # needs sage.libs.flint
+            sage: RBF(beta(sin(3), sqrt(RBF(2).add_error(1e-8)/3)))  # abs tol 6e-7     # needs sage.libs.flint sage.symbolic
             [7.407662 +/- 6.17e-7]
         """
         return [x, y]
