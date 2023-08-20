@@ -988,66 +988,6 @@ class LazyModuleElement(Element):
         """
         return hash(self._coeff_stream)
 
-    def __bool__(self):
-        """
-        Return ``True`` if ``self`` is not known to be zero.
-
-        TESTS::
-
-            sage: L.<z> = LazyLaurentSeriesRing(GF(2))                                  # optional - sage.rings.finite_rings
-            sage: bool(z - z)                                                           # optional - sage.rings.finite_rings
-            False
-            sage: f = 1/(1 - z)                                                         # optional - sage.rings.finite_rings
-            sage: bool(f)                                                               # optional - sage.rings.finite_rings
-            True
-            sage: M = L(lambda n: n, valuation=0); M                                    # optional - sage.rings.finite_rings
-            z + z^3 + z^5 + O(z^7)
-            sage: M.is_zero()                                                           # optional - sage.rings.finite_rings
-            False
-            sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M                 # optional - sage.rings.finite_rings
-            O(z^7)
-            sage: bool(M)                                                               # optional - sage.rings.finite_rings
-            True
-            sage: M[15]                                                                 # optional - sage.rings.finite_rings
-            1
-            sage: bool(M)                                                               # optional - sage.rings.finite_rings
-            True
-
-            sage: L.<z> = LazyLaurentSeriesRing(GF(2), sparse=True)                     # optional - sage.rings.finite_rings
-            sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M                 # optional - sage.rings.finite_rings
-            O(z^7)
-            sage: bool(M)
-            True
-            sage: M[15]                                                                 # optional - sage.rings.finite_rings
-            1
-            sage: bool(M)                                                               # optional - sage.rings.finite_rings
-            True
-
-        Uninitialized series::
-
-            sage: g = L.undefined(valuation=0)                                          # optional - sage.rings.finite_rings
-            sage: bool(g)                                                               # optional - sage.rings.finite_rings
-            True
-            sage: g.define(0)                                                           # optional - sage.rings.finite_rings
-            sage: bool(g)                                                               # optional - sage.rings.finite_rings
-            False
-
-            sage: g = L.undefined(valuation=0)                                          # optional - sage.rings.finite_rings
-            sage: bool(g)                                                               # optional - sage.rings.finite_rings
-            True
-            sage: g.define(1 + z)                                                       # optional - sage.rings.finite_rings
-            sage: bool(g)                                                               # optional - sage.rings.finite_rings
-            True
-
-            sage: g = L.undefined(valuation=0)                                          # optional - sage.rings.finite_rings
-            sage: bool(g)                                                               # optional - sage.rings.finite_rings
-            True
-            sage: g.define(1 + z*g)                                                     # optional - sage.rings.finite_rings
-            sage: bool(g)                                                               # optional - sage.rings.finite_rings
-            True
-        """
-        return bool(self._coeff_stream)
-
     def define(self, s):
         r"""
         Define an equation by ``self = s``.
@@ -3147,8 +3087,28 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: f / f
             s[]
 
+        Dividing when the coefficient ring is a lazy Dirichlet ring::
+
+            sage: D = LazyDirichletSeriesRing(QQ, "s")
+            sage: zeta = D(constant=1)
+            sage: L.<t> = LazyLaurentSeriesRing(D)
+            sage: 1 / (1 - t*zeta)
+            (1 + O(1/(8^s)))
+             + (1 + 1/(2^s) + 1/(3^s) + 1/(4^s) + 1/(5^s) + 1/(6^s) + 1/(7^s) + O(1/(8^s)))*t
+             + ... + O(t^7)
+
+        Check for dividing by other type of `0` series::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: f = L(lambda n: 0, valuation=0)
+            sage: L.options.halting_precision = 20
+            sage: 1 / f
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: cannot divide by 0
+            sage: L.options._reset()
         """
-        if isinstance(other._coeff_stream, Stream_zero):
+        if not other:
             raise ZeroDivisionError("cannot divide by 0")
 
         P = self.parent()
@@ -3271,7 +3231,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: g // f
             1 + x + 3*x^3 + x^4 + 6*x^5 + 5*x^6 + O(x^7)
         """
-        if isinstance(other._coeff_stream, Stream_zero):
+        if not other:
             raise ZeroDivisionError("cannot divide by 0")
         P = self.parent()
         if P not in IntegralDomains():
