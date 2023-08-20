@@ -12,6 +12,9 @@ include sage/rings/polynomial/*_ntl.p*
 include sage/rings/polynomial/polynomial_zz_pex.p*
 include sage/rings/polynomial/polynomial_template.pxi
 include sage/rings/polynomial/polynomial_template_header.pxi
+#include sage/rings/polynomial/polynomial_gf2x.p*               # inexplicably also needs m4ri; -> could go in a distribution 'sagemath-gf2x' with dep on sagemath-ntl, sagemath-m4ri
+
+include sage/rings/bernmm.p*            # dep of sage.rings.bernoulli_mod_p
 
 # pxd dependencies - FIXME
 include sage/ext/mod_int.pxd
@@ -34,6 +37,7 @@ include sage/schemes/hyperelliptic_curves/hypellfrob.p*
 global-exclude *.c
 global-exclude *.cpp
 
+graft sage/rings/bernmm
 graft sage/schemes/hyperelliptic_curves/hypellfrob
 
 global-exclude all__sagemath_*.py
