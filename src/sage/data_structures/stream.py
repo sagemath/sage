@@ -186,7 +186,7 @@ class Stream():
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
         The default implementation is ``False``.
 
@@ -243,7 +243,7 @@ class Stream_inexact(Stream):
 
     def is_nonzero(self):
         r"""
-        Return ``True`` if and only if the cache contains a nonzero element.
+        Return ``True`` if and only if the cache contains a non-zero element.
 
         EXAMPLES::
 
@@ -332,7 +332,7 @@ class Stream_inexact(Stream):
 
     def __getitem__(self, n):
         """
-        Return the `n`-th coefficient of ``self``.
+        Return the ``n``-th coefficient of ``self``.
 
         INPUT:
 
@@ -433,7 +433,7 @@ class Stream_inexact(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is nonzero.
+        that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -659,7 +659,7 @@ class Stream_exact(Stream):
         # complicated otherwise
         for i, v in enumerate(initial_coefficients):
             if v:
-                # We have found the first nonzero coefficient
+                # We have found the first non-zero coefficient
                 order += i
                 initial_coefficients = initial_coefficients[i:]
                 if order + len(initial_coefficients) == self._degree:
@@ -738,7 +738,7 @@ class Stream_exact(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index
-        ``n`` such that ``self[n]`` is nonzero.
+        ``n`` such that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -869,9 +869,9 @@ class Stream_exact(Stream):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
-        An assumption of this class is that it is nonzero.
+        An assumption of this class is that it is non-zero.
 
         EXAMPLES::
 
@@ -1578,7 +1578,7 @@ class Stream_cauchy_mul(Stream_binary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
         EXAMPLES::
 
@@ -1594,6 +1594,14 @@ class Stream_cauchy_mul(Stream_binary):
             True
         """
         return self._left.is_nonzero() and self._right.is_nonzero()
+
+
+class Stream_cauchy_mul_commutative(Stream_cauchy_mul, Stream_binaryCommutative):
+    """
+    Operator for multiplication of two coefficient streams using the
+    Cauchy product for commutative multiplication of coefficients.
+    """
+    pass
 
 
 class Stream_dirichlet_convolve(Stream_binary):
@@ -1644,7 +1652,7 @@ class Stream_dirichlet_convolve(Stream_binary):
             or self._right._approximate_order <= 0):
             raise ValueError("Dirichlet convolution is only defined for "
                              "coefficient streams with minimal index of "
-                             "nonzero coefficient at least 1")
+                             "non-zero coefficient at least 1")
         return self._left._approximate_order * self._right._approximate_order
 
     def get_coefficient(self, n):
@@ -2236,6 +2244,11 @@ class Stream_scalar(Stream_inexact):
     Base class for operators multiplying a coefficient stream by a
     scalar.
 
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+    - ``scalar`` -- a non-zero, non-one scalar
+
     .. TODO::
 
         This does not inherit from :class:`Stream_unary`, because of
@@ -2322,7 +2335,7 @@ class Stream_scalar(Stream_inexact):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
         EXAMPLES::
 
@@ -2355,7 +2368,7 @@ class Stream_rmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a non-zero scalar
+    - ``scalar`` -- a non-zero, non-one scalar
 
     EXAMPLES::
 
@@ -2397,7 +2410,7 @@ class Stream_lmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a non-zero scalar
+    - ``scalar`` -- a non-zero, non-one scalar
 
     EXAMPLES::
 
@@ -2504,7 +2517,7 @@ class Stream_neg(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
         EXAMPLES::
 
@@ -2643,9 +2656,9 @@ class Stream_cauchy_invert(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
-        An assumption of this class is that it is nonzero.
+        An assumption of this class is that it is non-zero.
 
         EXAMPLES::
 
@@ -2660,7 +2673,7 @@ class Stream_cauchy_invert(Stream_unary):
 
 class Stream_map_coefficients(Stream_inexact):
     r"""
-    The stream with ``function`` applied to each nonzero coefficient
+    The stream with ``function`` applied to each non-zero coefficient
     of ``series``.
 
     INPUT:
@@ -2787,7 +2800,7 @@ class Stream_map_coefficients(Stream_inexact):
 
 class Stream_shift(Stream):
     """
-    Operator for shifting a nonzero, nonexact stream.
+    Operator for shifting a non-zero, non-exact stream.
 
     Instances of this class share the cache with its input stream.
 
@@ -2833,7 +2846,7 @@ class Stream_shift(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index
-        ``n`` such that ``self[n]`` is nonzero.
+        ``n`` such that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -2903,9 +2916,9 @@ class Stream_shift(Stream):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
-        An assumption of this class is that it is nonzero.
+        An assumption of this class is that it is non-zero.
 
         EXAMPLES::
 
@@ -2925,7 +2938,7 @@ class Stream_shift(Stream):
 
 class Stream_truncated(Stream_inexact):
     """
-    Operator for shifting a nonzero, nonexact stream that has
+    Operator for shifting a non-zero, non-exact stream that has
     been shifted below its minimal valuation.
 
     Instances of this class share the cache with its input stream.
@@ -3086,7 +3099,7 @@ class Stream_truncated(Stream_inexact):
     def order(self):
         """
         Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is nonzero.
+        that ``self[n]`` is non-zero.
 
         EXAMPLES::
 
@@ -3132,7 +3145,7 @@ class Stream_truncated(Stream_inexact):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
         EXAMPLES::
 
@@ -3180,7 +3193,7 @@ class Stream_truncated(Stream_inexact):
 
 class Stream_derivative(Stream_inexact):
     """
-    Operator for taking derivatives of a stream.
+    Operator for taking derivatives of a non-exact stream.
 
     INPUT:
 
@@ -3293,7 +3306,7 @@ class Stream_derivative(Stream_inexact):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be nonzero.
+        to be non-zero.
 
         EXAMPLES::
 

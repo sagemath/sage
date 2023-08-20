@@ -196,6 +196,19 @@ components are in the correct ring::
     sage: L = LazySymmetricFunctions(s)                                                 # optional - sage.combinat sage.rings.finite_rings
     sage: check(L, lambda n: sum(k*s(la) for k, la in enumerate(Partitions(n))),        # optional - sage.combinat sage.rings.finite_rings
     ....:       valuation=0)
+
+Check that we can invert matrices::
+
+    sage: L.<z> = LazyLaurentSeriesRing(QQ)
+    sage: a11 = 1 + L(lambda n: 1 if not n else 0, valuation=0)
+    sage: a12 = 1 + L(lambda n: 1 if n == 1 else 0, valuation=0)
+    sage: a21 = 1 + L(lambda n: 1 if n == 2 else 0, valuation=0)
+    sage: a22 = 1 + L(lambda n: 1 if n == 3 else 0, valuation=0)
+    sage: m = matrix([[a11, a12], [a21, a22]])
+    sage: m.inverse()
+    [   1 + z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7) -1 - 2*z - 3*z^2 - 4*z^3 - 5*z^4 - 6*z^5 - 7*z^6 + O(z^7)]
+    [  -1 - z - 3*z^2 - 3*z^3 - 5*z^4 - 5*z^5 - 7*z^6 + O(z^7)  2 + 2*z + 4*z^2 + 4*z^3 + 6*z^4 + 6*z^5 + 8*z^6 + O(z^7)]
+
 """
 
 # ****************************************************************************
@@ -219,6 +232,7 @@ from sage.arith.misc import divisors, factorial, moebius
 from sage.combinat.partition import Partition, Partitions
 from sage.misc.derivative import derivative_parse
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.rings import Rings
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -228,6 +242,7 @@ from sage.categories.tensor import tensor
 from sage.data_structures.stream import (
     Stream_add,
     Stream_cauchy_mul,
+    Stream_cauchy_mul_commutative,
     Stream_sub,
     Stream_cauchy_compose,
     Stream_lmul,
@@ -1062,9 +1077,9 @@ class LazyModuleElement(Element):
             False
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M                 # optional - sage.rings.finite_rings
             O(z^7)
-            sage: bool(M)
+            sage: bool(M)                                                               # optional - sage.rings.finite_rings
             True
-            sage: M[15]
+            sage: M[15]                                                                 # optional - sage.rings.finite_rings
             1
             sage: bool(M)                                                               # optional - sage.rings.finite_rings
             True
@@ -1072,9 +1087,9 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(GF(2), sparse=True)                     # optional - sage.rings.finite_rings
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M                 # optional - sage.rings.finite_rings
             O(z^7)
-            sage: bool(M)
+            sage: bool(M)                                                               # optional - sage.rings.finite_rings
             True
-            sage: M[15]
+            sage: M[15]                                                                 # optional - sage.rings.finite_rings
             1
             sage: bool(M)                                                               # optional - sage.rings.finite_rings
             True
@@ -1227,7 +1242,7 @@ class LazyModuleElement(Element):
             sage: binomial(2000, 1000) / C[1000]
             1001
 
-        The Catalan numbers but with a valuation 1::
+        The Catalan numbers but with a valuation `1`::
 
             sage: B = L.undefined(valuation=1)
             sage: B.define(z + B^2)
@@ -1990,6 +2005,19 @@ class LazyModuleElement(Element):
             sage: f = L(constant=2)
             sage: 2*f
             0
+
+        Check that non-commutativity is taken into account::
+
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: L.<z> = LazyPowerSeriesRing(M)
+            sage: f = L(lambda n: matrix([[1,n],[0,1]]))
+            sage: m = matrix([[1,0],[1,1]])
+            sage: (m * f - f * m)[1]
+            [-1  0]
+            [ 0  1]
+            sage: m * f[1] - f[1] * m
+            [-1  0]
+            [ 0  1]
         """
         # With the current design, the coercion model does not have
         # enough information to detect a priori that this method only
@@ -2030,7 +2058,7 @@ class LazyModuleElement(Element):
                                                    order=v,
                                                    constant=c,
                                                    degree=coeff_stream._degree))
-        if self_on_left or R.is_commutative():
+        if self_on_left or R in Rings().Commutative():
             return P.element_class(P, Stream_lmul(coeff_stream, scalar,
                                                   P.is_sparse()))
         return P.element_class(P, Stream_rmul(coeff_stream, scalar,
@@ -2996,6 +3024,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
             and right.order() == 0
             and not right._constant):
             return self  # right == 1
+        if ((isinstance(left, Stream_cauchy_invert) and left._series == right)
+            or (isinstance(right, Stream_cauchy_invert) and right._series == left)):
+            return P.one()
         # The product is exact if and only if both factors are exact
         # and one of the factors has eventually 0 coefficients:
         # (p + a x^d/(1-x))(q + b x^e/(1-x))
@@ -3043,7 +3074,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                         constant=c)
             return P.element_class(P, coeff_stream)
 
-        return P.element_class(P, Stream_cauchy_mul(left, right, P.is_sparse()))
+        if P in Rings().Commutative():
+            coeff_stream = Stream_cauchy_mul_commutative(left, right, P.is_sparse())
+        else:
+            coeff_stream = Stream_cauchy_mul(left, right, P.is_sparse())
+        return P.element_class(P, coeff_stream)
 
     def __pow__(self, n):
         r"""
@@ -3185,7 +3220,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: g = L([2], valuation=-1, constant=1); g
             2*x^-1 + 1 + x + x^2 + O(x^3)
             sage: g * g^-1
-            1 + O(x^7)
+            1
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: ~(x + x^2)
@@ -3368,7 +3403,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             return self
 
         # self is right
-        if left is right:
+        if left == right:
             return P.one()
 
         if (P._minimal_valuation is not None
@@ -3443,7 +3478,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # P._minimal_valuation is zero, because we allow division by
         # series of positive valuation
         right_inverse = Stream_cauchy_invert(right)
-        return P.element_class(P, Stream_cauchy_mul(left, right_inverse, P.is_sparse()))
+        if P in Rings().Commutative():
+            coeff_stream = Stream_cauchy_mul_commutative(left, right_inverse, P.is_sparse())
+        else:
+            coeff_stream = Stream_cauchy_mul(left, right_inverse, P.is_sparse())
+        return P.element_class(P, coeff_stream)
 
     def _floordiv_(self, other):
         r"""
@@ -3534,7 +3573,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  False, 0)
         f = P.undefined(valuation=0)
-        d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
+        # d_self and f._coeff_stream always commute, the coefficients
+        # of the product are of the form sum_{k=1}^n a_k a_{n+1-k}.
+        d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
                                        False, 0)
         f._coeff_stream._target = int_d_self_f
@@ -3583,9 +3624,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # multivariate power series
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  P.is_sparse(), 0)
-        d_self_quo_self = Stream_cauchy_mul(d_self,
-                                            Stream_cauchy_invert(coeff_stream),
-                                            P.is_sparse())
+        coeff_stream_inverse = Stream_cauchy_invert(coeff_stream)
+        # d_self and coeff_stream_inverse always commute
+        d_self_quo_self = Stream_cauchy_mul_commutative(d_self,
+                                                        coeff_stream_inverse,
+                                                        P.is_sparse())
         int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
                                               P.is_sparse(), 1)
         return P.element_class(P, int_d_self_quo_self)
