@@ -52,22 +52,24 @@ class Function_zeta(GinacFunction):
 
         EXAMPLES::
 
-            sage: zeta(x)                                                               # needs sage.symbolic
-            zeta(x)
-            sage: zeta(2)                                                               # needs sage.symbolic
-            1/6*pi^2
-            sage: zeta(2.)                                                              # needs sage.symbolic
-            1.64493406684823
             sage: RR = RealField(200)                                                   # needs sage.rings.real_mpfr
             sage: zeta(RR(2))                                                           # needs sage.rings.real_mpfr
             1.6449340668482264364724151666460251892189499012067984377356
-            sage: zeta(I)                                                               # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: zeta(x)
+            zeta(x)
+            sage: zeta(2)
+            1/6*pi^2
+            sage: zeta(2.)
+            1.64493406684823
+            sage: zeta(I)
             zeta(I)
-            sage: zeta(I).n()                                                           # needs sage.symbolic
+            sage: zeta(I).n()
             0.00330022368532410 - 0.418155449141322*I
-            sage: zeta(sqrt(2))                                                         # needs sage.symbolic
+            sage: zeta(sqrt(2))
             zeta(sqrt(2))
-            sage: zeta(sqrt(2)).n()  # rel tol 1e-10                                    # needs sage.symbolic
+            sage: zeta(sqrt(2)).n()  # rel tol 1e-10
             3.02073767948603
 
         It is possible to use the ``hold`` argument to prevent
@@ -175,16 +177,17 @@ class Function_stieltjes(GinacFunction):
 
         EXAMPLES::
 
-            sage: _ = var('n')                                                          # needs sage.symbolic
-            sage: stieltjes(n)                                                          # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: _ = var('n')
+            sage: stieltjes(n)
             stieltjes(n)
-            sage: stieltjes(0)                                                          # needs sage.symbolic
+            sage: stieltjes(0)
             euler_gamma
-            sage: stieltjes(2)                                                          # needs sage.symbolic
+            sage: stieltjes(2)
             stieltjes(2)
-            sage: stieltjes(int(2))                                                     # needs sage.symbolic
+            sage: stieltjes(int(2))
             stieltjes(2)
-            sage: stieltjes(2).n(100)                                                   # needs sage.symbolic
+            sage: stieltjes(2).n(100)
             -0.0096903631928723184845303860352
             sage: RR = RealField(200)                                                   # needs sage.rings.real_mpfr
             sage: stieltjes(RR(2))                                                      # needs sage.rings.real_mpfr
@@ -236,16 +239,18 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hurwitz_zeta(x, 1)                                                    # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: hurwitz_zeta(x, 1)
             zeta(x)
-            sage: hurwitz_zeta(4, 3)                                                    # needs sage.symbolic
+            sage: hurwitz_zeta(4, 3)
             1/90*pi^4 - 17/16
-            sage: hurwitz_zeta(-4, x)                                                   # needs sage.symbolic
+            sage: hurwitz_zeta(-4, x)
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
+            sage: hurwitz_zeta(0, x)
+            -x + 1/2
+
             sage: hurwitz_zeta(3, 0.5)                                                  # needs mpmath
             8.41439832211716
-            sage: hurwitz_zeta(0, x)                                                    # needs sage.symbolic
-            -x + 1/2
         """
         if x == 1:
             return zeta(s)
@@ -264,7 +269,7 @@ class Function_HurwitzZeta(BuiltinFunction):
             12.1038134956837
             sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs sage.symbolic
             12.103813495683755105709077413
-            sage: hurwitz_zeta(11/10, 1 + 1j).n()                                       # needs sage.rings.realpfr
+            sage: hurwitz_zeta(11/10, 1 + 1j).n()
             9.85014164287853 - 1.06139499403981*I
         """
         return _mpmath_utils_call(_mpmath_zeta, s, x, parent=parent)
@@ -321,7 +326,7 @@ def hurwitz_zeta(s, x, **kwargs):
 
     Numerical evaluations::
 
-        sage: hurwitz_zeta(3, 1/2).n()                                                  # needs sage.symbolic
+        sage: hurwitz_zeta(3, 1/2).n()                                                  # needs mpmath
         8.41439832211716
         sage: hurwitz_zeta(11/10, 1/2).n()                                              # needs sage.symbolic
         12.1038134956837
@@ -426,19 +431,21 @@ def zeta_symmetric(s):
     EXAMPLES::
 
         sage: # needs sage.rings.real_mpfr
+        sage: RR = RealField(200)
+        sage: zeta_symmetric(RR(0.7))
+        0.49758041465112690357779107525638385212657443284080589766062
+
+        sage: # needs sage.libs.pari sage.rings.real_mpfr
         sage: zeta_symmetric(0.7)
         0.497580414651127
         sage: zeta_symmetric(1 - 0.7)
         0.497580414651127
-        sage: RR = RealField(200)
-        sage: zeta_symmetric(RR(0.7))
-        0.49758041465112690357779107525638385212657443284080589766062
         sage: C.<i> = ComplexField()
-        sage: zeta_symmetric(0.5 + i*14.0)                                              # needs sage.libs.pari
+        sage: zeta_symmetric(0.5 + i*14.0)
         0.000201294444235258 + 1.49077798716757e-19*I
-        sage: zeta_symmetric(0.5 + i*14.1)                                              # needs sage.libs.pari
+        sage: zeta_symmetric(0.5 + i*14.1)
         0.0000489893483255687 + 4.40457132572236e-20*I
-        sage: zeta_symmetric(0.5 + i*14.2)                                              # needs sage.libs.pari
+        sage: zeta_symmetric(0.5 + i*14.2)
         -0.0000868931282620101 + 7.11507675693612e-20*I
 
     REFERENCE:
