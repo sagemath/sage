@@ -271,7 +271,7 @@ entries of `A`. ::
 
     sage: # needs sage.libs.gap
     sage: rcpc = rgf.compose(rgf.shift_rows_poly_constr(),
-    ....:                    rgf.mix_columns_poly_constr()); rcpc                                                                          # needs sage.libs.gap
+    ....:                    rgf.mix_columns_poly_constr()); rcpc
     A polynomial constructor of a round component of Rijndael-GF block cipher
      with block length 4, key length 6, and 12 rounds.
     sage: rcpc(2, 1)

@@ -297,8 +297,8 @@ class LWE(SageObject):
         fix the representation and recover the correct standard deviation of the
         noise::
 
-            sage: from numpy import std                                                             # optional - numpy
-            sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:             # optional - numpy
+            sage: from numpy import std                                                             # needs numpy
+            sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:             # needs numpy
             ....:     L = []  # reset L to avoid quadratic behaviour
             ....:     add_samples()
 
@@ -591,12 +591,12 @@ class RingLWE(SageObject):
             sage: # needs sage.libs.pari
             sage: from sage.crypto.lwe import DiscreteGaussianDistributionPolynomialSampler, RingLWE
             sage: N = 16
-            sage: n = euler_phi(N)                                                      # needs sage.libs.pari
-            sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n, 5)      # needs sage.libs.pari
-            sage: ringlwe = RingLWE(N, 257, D, secret_dist='uniform')                   # needs sage.libs.pari
-            sage: ringlwe()[0].parent()                                                 # needs sage.libs.pari
+            sage: n = euler_phi(N)
+            sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n, 5)
+            sage: ringlwe = RingLWE(N, 257, D, secret_dist='uniform')
+            sage: ringlwe()[0].parent()
             Vector space of dimension 8 over Ring of integers modulo 257
-            sage: ringlwe()[1].parent()                                                 # needs sage.libs.pari
+            sage: ringlwe()[1].parent()
             Vector space of dimension 8 over Ring of integers modulo 257
         """
         if self.m is not None:
