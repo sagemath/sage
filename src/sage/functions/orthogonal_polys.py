@@ -584,18 +584,20 @@ class ChebyshevFunction(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: var('n,x')                                                            # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('n,x')
             (n, x)
-            sage: chebyshev_T(5, x)                                                     # needs sage.symbolic
+            sage: chebyshev_T(5, x)
             16*x^5 - 20*x^3 + 5*x
-            sage: chebyshev_T(64, x)                                                    # needs sage.symbolic
+            sage: chebyshev_T(64, x)
             2*(2*(2*(2*(2*(2*x^2 - 1)^2 - 1)^2 - 1)^2 - 1)^2 - 1)^2 - 1
-            sage: chebyshev_T(n, -1)                                                    # needs sage.symbolic
+            sage: chebyshev_T(n, -1)
             (-1)^n
-            sage: chebyshev_T(-7, x)                                                    # needs sage.symbolic
+            sage: chebyshev_T(-7, x)
             64*x^7 - 112*x^5 + 56*x^3 - 7*x
-            sage: chebyshev_T(3/2, x)                                                   # needs sage.symbolic
+            sage: chebyshev_T(3/2, x)
             chebyshev_T(3/2, x)
+
             sage: R.<t> = QQ[]
             sage: chebyshev_T(2,t)
             2*t^2 - 1
@@ -666,17 +668,18 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: var('n, x')                                                           # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('n, x')
             (n, x)
             sage: from sage.functions.orthogonal_polys import Func_chebyshev_T
             sage: chebyshev_T2 = Func_chebyshev_T()
-            sage: chebyshev_T2(1, x)                                                    # needs sage.symbolic
+            sage: chebyshev_T2(1, x)
             x
-            sage: chebyshev_T(x, x)._sympy_()                                           # needs sympy sage.symbolic
+            sage: chebyshev_T(x, x)._sympy_()                                           # needs sympy
             chebyshevt(x, x)
-            sage: maxima(chebyshev_T(1, x, hold=True))                                  # needs sage.symbolic
+            sage: maxima(chebyshev_T(1, x, hold=True))
             _SAGE_VAR_x
-            sage: maxima(chebyshev_T(n, chebyshev_T(n, x)))                             # needs sage.symbolic
+            sage: maxima(chebyshev_T(n, chebyshev_T(n, x)))
             chebyshev_t(_SAGE_VAR_n,chebyshev_t(_SAGE_VAR_n,_SAGE_VAR_x))
         """
         ChebyshevFunction.__init__(self, 'chebyshev_T', nargs=2,
@@ -745,19 +748,20 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: chebyshev_T._evalf_(10, 3)                                            # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: chebyshev_T._evalf_(10, 3)
             2.26195370000000e7
-            sage: chebyshev_T._evalf_(10, 3, parent=RealField(75))                      # needs sage.rings.real_mpfr
+            sage: chebyshev_T._evalf_(10, 3, parent=RealField(75))
             2.261953700000000000000e7
             sage: chebyshev_T._evalf_(10, I)                                            # needs sage.symbolic
             -3363.00000000000
-            sage: chebyshev_T._evalf_(5, 0.3)                                           # needs sage.rings.real_mpfr
+            sage: chebyshev_T._evalf_(5, 0.3)
             0.998880000000000
-            sage: chebyshev_T(1/2, 0)                                                   # needs sage.rings.real_mpfr
+            sage: chebyshev_T(1/2, 0)
             0.707106781186548
-            sage: chebyshev_T(1/2, 3/2)                                                 # needs sage.rings.real_mpfr
+            sage: chebyshev_T(1/2, 3/2)
             1.11803398874989
-            sage: chebyshev_T._evalf_(1.5, Mod(8,9))                                    # needs sage.rings.real_mpfr
+            sage: chebyshev_T._evalf_(1.5, Mod(8,9))
             Traceback (most recent call last):
             ...
             TypeError: cannot evaluate chebyshev_T with parent Ring of integers modulo 9
@@ -766,7 +770,7 @@ class Func_chebyshev_T(ChebyshevFunction):
 
             sage: chebyshev_T(1234.5, RDF(2.1))                                         # needs sage.rings.real_mpfr
             5.48174256255782e735
-            sage: chebyshev_T(1234.5, I)                                                # needs sage.symbolic
+            sage: chebyshev_T(1234.5, I)                                                # needs sage.rings.real_mpfr sage.symbolic
             -1.21629397684152e472 - 1.21629397684152e472*I
 
         For large values of ``n``, mpmath fails (but the algebraic formula
@@ -813,18 +817,20 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: chebyshev_T.eval_formula(-1, x)                                       # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: chebyshev_T.eval_formula(-1, x)
             x
-            sage: chebyshev_T.eval_formula(0, x)                                        # needs sage.symbolic
+            sage: chebyshev_T.eval_formula(0, x)
             1
-            sage: chebyshev_T.eval_formula(1, x)                                        # needs sage.symbolic
+            sage: chebyshev_T.eval_formula(1, x)
             x
+            sage: chebyshev_T.eval_formula(10, x)
+            512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1
+            sage: chebyshev_T.eval_algebraic(10, x).expand()
+            512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1
+
             sage: chebyshev_T.eval_formula(2, 0.1) == chebyshev_T._evalf_(2, 0.1)       # needs sage.rings.complex_double
             True
-            sage: chebyshev_T.eval_formula(10, x)                                       # needs sage.symbolic
-            512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1
-            sage: chebyshev_T.eval_algebraic(10, x).expand()                            # needs sage.symbolic
-            512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1
         """
         if n < 0:
             return self.eval_formula(-n, x)
@@ -912,7 +918,7 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: # needs numpy
+            sage: # needs numpy scipy
             sage: import numpy
             sage: z = numpy.array([1,2])
             sage: z2 = numpy.array([[1,2],[1,2]])
@@ -981,17 +987,18 @@ class Func_chebyshev_U(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: var('n, x')                                                           # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('n, x')
             (n, x)
             sage: from sage.functions.orthogonal_polys import Func_chebyshev_U
             sage: chebyshev_U2 = Func_chebyshev_U()
-            sage: chebyshev_U2(1, x)                                                    # needs sage.symbolic
+            sage: chebyshev_U2(1, x)
             2*x
-            sage: chebyshev_U(x, x)._sympy_()                                           # needs sympy sage.symbolic
+            sage: chebyshev_U(x, x)._sympy_()                                           # needs sympy
             chebyshevu(x, x)
-            sage: maxima(chebyshev_U(2,x, hold=True))                                   # needs sage.symbolic
+            sage: maxima(chebyshev_U(2,x, hold=True))
             3*(...-...(8*(1-_SAGE_VAR_x))/3)+(4*(1-_SAGE_VAR_x)^2)/3+1)
-            sage: maxima(chebyshev_U(n,x, hold=True))                                   # needs sage.symbolic
+            sage: maxima(chebyshev_U(n,x, hold=True))
             chebyshev_u(_SAGE_VAR_n,_SAGE_VAR_x)
         """
         ChebyshevFunction.__init__(self, 'chebyshev_U', nargs=2,
@@ -1135,7 +1142,7 @@ class Func_chebyshev_U(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: chebyshev_U(5,-4+3.*I)
+            sage: chebyshev_U(5,-4+3.*I)                                                # needs sage.symbolic
             98280.0000000000 - 11310.0000000000*I
             sage: chebyshev_U(10, 3).n(75)                                              # needs sage.symbolic
             4.661117900000000000000e7
@@ -1201,7 +1208,7 @@ class Func_chebyshev_U(ChebyshevFunction):
 
         EXAMPLES::
 
-            sage: # needs numpy
+            sage: # needs numpy scipy
             sage: import numpy
             sage: z = numpy.array([1,2])
             sage: z2 = numpy.array([[1,2],[1,2]])
@@ -1251,15 +1258,16 @@ class Func_legendre_P(GinacFunction):
     r"""
     EXAMPLES::
 
-        sage: legendre_P(4, 2.0)                                                        # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: legendre_P(4, 2.0)
         55.3750000000000
-        sage: legendre_P(1, x)                                                          # needs sage.symbolic
+        sage: legendre_P(1, x)
         x
-        sage: legendre_P(4, x + 1)                                                      # needs sage.symbolic
+        sage: legendre_P(4, x + 1)
         35/8*(x + 1)^4 - 15/4*(x + 1)^2 + 3/8
         sage: legendre_P(1/2, I+1.)
         1.05338240025858 + 0.359890322109665*I
-        sage: legendre_P(0, SR(1)).parent()                                             # needs sage.symbolic
+        sage: legendre_P(0, SR(1)).parent()
         Symbolic Ring
 
         sage: legendre_P(0, 0)                                                          # needs sage.symbolic
@@ -1267,37 +1275,39 @@ class Func_legendre_P(GinacFunction):
         sage: legendre_P(1, x)                                                          # needs sage.symbolic
         x
 
-        sage: legendre_P(4, 2.)                                                         # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: legendre_P(4, 2.)
         55.3750000000000
-        sage: legendre_P(5.5, 1.00001)                                                  # needs sage.symbolic
+        sage: legendre_P(5.5, 1.00001)
         1.00017875754114
-        sage: legendre_P(1/2, I + 1).n()                                                # needs sage.symbolic
+        sage: legendre_P(1/2, I + 1).n()
         1.05338240025858 + 0.359890322109665*I
-        sage: legendre_P(1/2, I + 1).n(59)                                              # needs sage.symbolic
+        sage: legendre_P(1/2, I + 1).n(59)
         1.0533824002585801 + 0.35989032210966539*I
-        sage: legendre_P(42, RR(12345678))                                              # needs sage.symbolic
+        sage: legendre_P(42, RR(12345678))
         2.66314881466753e309
         sage: legendre_P(42, Reals(20)(12345678))
         2.6632e309
-        sage: legendre_P(201/2, 0).n()                                                  # needs sage.symbolic
+        sage: legendre_P(201/2, 0).n()
         0.0561386178630179
-        sage: legendre_P(201/2, 0).n(100)                                               # needs sage.symbolic
+        sage: legendre_P(201/2, 0).n(100)
         0.056138617863017877699963095883
 
+        sage: # needs sage.symbolic
         sage: R.<x> = QQ[]
-        sage: legendre_P(4, x)                                                          # needs sage.symbolic
+        sage: legendre_P(4, x)
         35/8*x^4 - 15/4*x^2 + 3/8
-        sage: legendre_P(10000, x).coefficient(x, 1)                                    # needs sage.symbolic
+        sage: legendre_P(10000, x).coefficient(x, 1)
         0
-        sage: var('t,x')                                                                # needs sage.symbolic
+        sage: var('t,x')
         (t, x)
-        sage: legendre_P(-5, t)                                                         # needs sage.symbolic
+        sage: legendre_P(-5, t)
         35/8*t^4 - 15/4*t^2 + 3/8
-        sage: legendre_P(4, x + 1)                                                      # needs sage.symbolic
+        sage: legendre_P(4, x + 1)
         35/8*(x + 1)^4 - 15/4*(x + 1)^2 + 3/8
-        sage: legendre_P(4, sqrt(2))                                                    # needs sage.symbolic
+        sage: legendre_P(4, sqrt(2))
         83/8
-        sage: legendre_P(4, I*e)                                                        # needs sage.symbolic
+        sage: legendre_P(4, I*e)
         35/8*e^4 + 15/4*e^2 + 3/8
 
         sage: # needs sage.symbolic
@@ -1369,15 +1379,16 @@ class Func_legendre_Q(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: legendre_Q(2,x)                                                       # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: legendre_Q(2,x)
             1/4*(3*x^2 - 1)*(log(x + 1) - log(-x + 1)) - 3/2*x
-            sage: legendre_Q(5, 0)                                                      # needs sage.symbolic
+            sage: legendre_Q(5, 0)
             -8/15
-            sage: legendre_Q(2, 2*x)                                                    # needs sage.symbolic
+            sage: legendre_Q(2, 2*x)
             1/4*(12*x^2 - 1)*(log(2*x + 1) - log(-2*x + 1)) - 3*x
             sage: legendre_Q(1/2, I+1.)
             -0.511424110789061 + 1.34356195297194*I
-            sage: legendre_Q(-1, x)                                                     # needs sage.symbolic
+            sage: legendre_Q(-1, x)
             Infinity
         """
         ret = self._eval_special_values_(n, x)
@@ -1437,7 +1448,7 @@ class Func_legendre_Q(BuiltinFunction):
 
             sage: legendre_Q(4, 2.)                                                     # needs mpmath
             0.00116107583162041 - 86.9828465962674*I
-            sage: legendre_Q(1/2, I+1.)
+            sage: legendre_Q(1/2, I+1.)                                                 # needs sage.symbolic
             -0.511424110789061 + 1.34356195297194*I
             sage: legendre_Q(1/2, I+1).n(59)                                            # needs sage.symbolic
             -0.51142411078906080 + 1.3435619529719394*I
@@ -1490,14 +1501,16 @@ class Func_legendre_Q(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: legendre_Q.eval_formula(1, x)                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: legendre_Q.eval_formula(1, x)
             1/2*x*(log(x + 1) - log(-x + 1)) - 1
-            sage: legendre_Q.eval_formula(2, x).expand().collect(log(1+x)).collect(log(1-x))        # needs sage.symbolic
+            sage: legendre_Q.eval_formula(2, x).expand().collect(log(1+x)).collect(log(1-x))
             1/4*(3*x^2 - 1)*log(x + 1) - 1/4*(3*x^2 - 1)*log(-x + 1) - 3/2*x
-            sage: legendre_Q.eval_formula(20, x).coefficient(x, 10)                     # needs sage.symbolic
+            sage: legendre_Q.eval_formula(20, x).coefficient(x, 10)
             -29113619535/131072*log(x + 1) + 29113619535/131072*log(-x + 1)
-            sage: legendre_Q(0, 2)                                                      # needs sage.symbolic
+            sage: legendre_Q(0, 2)
             -1/2*I*pi + 1/2*log(3)
+
             sage: legendre_Q(0, 2.)                                                     # needs mpmath
             0.549306144334055 - 1.57079632679490*I
         """
@@ -1818,9 +1831,9 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
             sage: gen_legendre_P(10, 2, 3).n()  # abs tol 1e-14                         # needs sage.symbolic
             -7.19496360000000e8
-            sage: gen_legendre_P(5/2,2,1.+I)
+            sage: gen_legendre_P(5/2,2,1.+I)                                            # needs sage.symbolic
             14.3165258449040 - 12.7850496155152*I
-            sage: gen_legendre_P(5/2, 2, ComplexField(70)(1+I))                         # needs sage.rings.real_mpfr
+            sage: gen_legendre_P(5/2, 2, ComplexField(70)(1+I))                         # needs sage.rings.real_mpfr sage.symbolic
             14.316525844904028532 - 12.785049615515157033*I
             sage: gen_legendre_P(2/3, 1, 0.)                                            # needs mpmath
             -0.773063511309286
@@ -2041,45 +2054,44 @@ class Func_hermite(GinacFunction):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: x = PolynomialRing(QQ, 'x').gen()
-        sage: hermite(2, x)                                                             # needs sage.symbolic
+        sage: hermite(2, x)
         4*x^2 - 2
-        sage: hermite(3, x)                                                             # needs sage.symbolic
+        sage: hermite(3, x)
         8*x^3 - 12*x
-        sage: hermite(3, 2)                                                             # needs sage.symbolic
+        sage: hermite(3, 2)
         40
         sage: S.<y> = PolynomialRing(RR)
-        sage: hermite(3, y)                                                             # needs sage.symbolic
+        sage: hermite(3, y)
         8.00000000000000*y^3 - 12.0000000000000*y
         sage: R.<x,y> = QQ[]
-        sage: hermite(3, y^2)                                                           # needs sage.symbolic
+        sage: hermite(3, y^2)
         8*y^6 - 12*y^2
-        sage: w = var('w')                                                              # needs sage.symbolic
-        sage: hermite(3, 2*w)                                                           # needs sage.symbolic
+        sage: w = var('w')
+        sage: hermite(3, 2*w)
         64*w^3 - 24*w
-        sage: hermite(5, 3.1416)                                                        # needs sage.symbolic
+        sage: hermite(5, 3.1416)
         5208.69733891963
-        sage: hermite(5, RealField(100)(pi))                                            # needs sage.symbolic
+        sage: hermite(5, RealField(100)(pi))
         5208.6167627118104649470287166
 
     Check that :trac:`17192` is fixed::
 
+        sage: # needs sage.symbolic
         sage: x = PolynomialRing(QQ, 'x').gen()
-        sage: hermite(0, x)                                                             # needs sage.symbolic
+        sage: hermite(0, x)
         1
-
-        sage: hermite(-1, x)                                                            # needs sage.symbolic
+        sage: hermite(-1, x)
         Traceback (most recent call last):
         ...
         RuntimeError: hermite_eval: The index n must be a nonnegative integer
-
-        sage: hermite(-7, x)                                                            # needs sage.symbolic
+        sage: hermite(-7, x)
         Traceback (most recent call last):
         ...
         RuntimeError: hermite_eval: The index n must be a nonnegative integer
-
-        sage: m, x = SR.var('m,x')                                                      # needs sage.symbolic
-        sage: hermite(m, x).diff(m)                                                     # needs sage.symbolic
+        sage: m, x = SR.var('m,x')
+        sage: hermite(m, x).diff(m)
         Traceback (most recent call last):
         ...
         RuntimeError: derivative w.r.t. to the index is not supported yet
@@ -2135,7 +2147,7 @@ class Func_jacobi_P(OrthogonalFunction):
         sage: x = PolynomialRing(QQ, 'x').gen()
         sage: jacobi_P(2,0,0,x)
         3/2*x^2 - 1/2
-        sage: jacobi_P(2,1,2,1.2)
+        sage: jacobi_P(2,1,2,1.2)                                                       # needs sage.symbolic
         5.01000000000000
     """
     def __init__(self):
@@ -2224,7 +2236,7 @@ class Func_jacobi_P(OrthogonalFunction):
         """
         EXAMPLES::
 
-            sage: jacobi_P(2, 1, 2, 1.2)
+            sage: jacobi_P(2, 1, 2, 1.2)                                                # needs sage.symbolic
             5.01000000000000
             sage: jacobi_P(2, 1, 2, 1.2, hold=True).n(20)                               # needs sage.symbolic
             5.0100
@@ -2271,25 +2283,26 @@ class Func_ultraspherical(GinacFunction):
 
     EXAMPLES::
 
-        sage: ultraspherical(8, 101/11, x)                                              # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: ultraspherical(8, 101/11, x)
         795972057547264/214358881*x^8 - 62604543852032/19487171*x^6...
         sage: x = PolynomialRing(QQ, 'x').gen()
-        sage: ultraspherical(2, 3/2, x)                                                 # needs sage.symbolic
+        sage: ultraspherical(2, 3/2, x)
         15/2*x^2 - 3/2
-        sage: ultraspherical(1, 1, x)                                                   # needs sage.symbolic
+        sage: ultraspherical(1, 1, x)
         2*x
         sage: t = PolynomialRing(RationalField(), "t").gen()
-        sage: gegenbauer(3, 2, t)                                                       # needs sage.symbolic
+        sage: gegenbauer(3, 2, t)
         32*t^3 - 12*t
-        sage: x = SR.var('x')                                                           # needs sage.symbolic
+        sage: x = SR.var('x')
         sage: n = ZZ.random_element(5, 5001)
         sage: a = QQ.random_element().abs() + 5
-        sage: s = (  (n + 1)*ultraspherical(n + 1, a, x)                                # needs sage.symbolic
+        sage: s = (  (n + 1)*ultraspherical(n + 1, a, x)
         ....:      - 2*x*(n + a)*ultraspherical(n, a, x)
         ....:      + (n + 2*a - 1)*ultraspherical(n - 1, a, x) )
-        sage: s.expand().is_zero()                                                      # needs sage.symbolic
+        sage: s.expand().is_zero()
         True
-        sage: ultraspherical(5, 9/10, 3.1416)                                           # needs sage.symbolic
+        sage: ultraspherical(5, 9/10, 3.1416)
         6949.55439044240
         sage: ultraspherical(5, 9/10, RealField(100)(pi))                               # needs sage.rings.real_mpfr
         6949.4695419382702451843080687
@@ -2390,15 +2403,19 @@ class Func_laguerre(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: n, x = var('n,x')                                                     # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: n, x = var('n,x')
+            sage: laguerre(x, x)._sympy_()                                              # needs sympy
+            laguerre(x, x)
+            sage: maxima(laguerre(1, x, hold=True))
+            1-_SAGE_VAR_x
+            sage: maxima(laguerre(n, laguerre(n, x)))
+            laguerre(_SAGE_VAR_n,laguerre(_SAGE_VAR_n,_SAGE_VAR_x))
+
+        TESTS::
+
             sage: loads(dumps(laguerre))
             laguerre
-            sage: laguerre(x, x)._sympy_()                                              # needs sympy sage.symbolic
-            laguerre(x, x)
-            sage: maxima(laguerre(1, x, hold=True))                                     # needs sage.symbolic
-            1-_SAGE_VAR_x
-            sage: maxima(laguerre(n, laguerre(n, x)))                                   # needs sage.symbolic
-            laguerre(_SAGE_VAR_n,laguerre(_SAGE_VAR_n,_SAGE_VAR_x))
         """
         OrthogonalFunction.__init__(self, "laguerre", nargs=2, latex_name=r"L",
                 conversions={'maxima': 'laguerre',
@@ -2467,7 +2484,7 @@ class Func_laguerre(OrthogonalFunction):
             1/24*x^4 - 2/3*x^3 + 3*x^2 - 4*x + 1
             sage: laguerre(4, x + 1)                                                    # needs mpmath
             1/24*(x + 1)^4 - 2/3*(x + 1)^3 + 3*(x + 1)^2 - 4*x - 3
-            sage: laguerre(10,1+I)
+            sage: laguerre(10,1+I)                                                      # needs sage.symbolic
             142511/113400*I + 95867/22680
         """
         if hasattr(x, 'pyobject'):
@@ -2486,7 +2503,7 @@ class Func_laguerre(OrthogonalFunction):
 
             sage: laguerre(100, RealField(300)(pi))                                     # needs sage.symbolic
             -0.638322077840648311606324...
-            sage: laguerre(10,1.+I)
+            sage: laguerre(10,1.+I)                                                     # needs sage.symbolic
             4.22694003527337 + 1.25671075837743*I
             sage: laguerre(-9, 2.)                                                      # needs sage.symbolic
             1566.22186244286
@@ -2541,15 +2558,19 @@ class Func_gen_laguerre(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: a, n, x = var('a, n, x')                                              # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a, n, x = var('a, n, x')
+            sage: gen_laguerre(x, x, x)._sympy_()                                       # needs sympy
+            assoc_laguerre(x, x, x)
+            sage: maxima(gen_laguerre(1, 2, x, hold=True))
+            3*(1-_SAGE_VAR_x/3)
+            sage: maxima(gen_laguerre(n, a, gen_laguerre(n, a, x)))
+            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
+
+        TESTS::
+
             sage: loads(dumps(gen_laguerre))
             gen_laguerre
-            sage: gen_laguerre(x, x, x)._sympy_()                                       # needs sympy sage.symbolic
-            assoc_laguerre(x, x, x)
-            sage: maxima(gen_laguerre(1, 2, x, hold=True))                              # needs sage.symbolic
-            3*(1-_SAGE_VAR_x/3)
-            sage: maxima(gen_laguerre(n, a, gen_laguerre(n, a, x)))                     # needs sage.symbolic
-            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
         """
         OrthogonalFunction.__init__(self, "gen_laguerre", nargs=3, latex_name=r"L",
                                     conversions={'maxima': 'gen_laguerre',
@@ -2617,7 +2638,7 @@ class Func_gen_laguerre(OrthogonalFunction):
             1/24*x^4 - 7/12*x^3 + 35/16*x^2 - 35/16*x + 35/128
             sage: gen_laguerre(4, -1/2, x + 1)                                          # needs mpmath
             1/24*(x + 1)^4 - 7/12*(x + 1)^3 + 35/16*(x + 1)^2 - 35/16*x - 245/128
-            sage: gen_laguerre(10, 1, 1+I)
+            sage: gen_laguerre(10, 1, 1+I)                                              # needs sage.symbolic
             25189/2100*I + 11792/2835
         """
         return sum(binomial(n + a, n - k) * (-1)**k / factorial(k) * x**k
@@ -2629,7 +2650,7 @@ class Func_gen_laguerre(OrthogonalFunction):
 
             sage: gen_laguerre(100, 1, RealField(300)(pi))                              # needs sage.symbolic
             -0.89430788373354541911...
-            sage: gen_laguerre(10,1/2,1.+I)
+            sage: gen_laguerre(10,1/2,1.+I)                                             # needs sage.symbolic
             5.34469635574906 + 5.23754057922902*I
         """
         the_parent = kwds.get('parent', None)
@@ -2783,20 +2804,22 @@ class Func_krawtchouk(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: x, n, p = var('x,n,p')                                                # needs sage.symbolic
-            sage: krawtchouk.eval_recursive(0, x, n, p)                                 # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x, n, p = var('x,n,p')
+            sage: krawtchouk.eval_recursive(0, x, n, p)
             1
-            sage: krawtchouk.eval_recursive(1, x, n, p)                                 # needs sage.symbolic
+            sage: krawtchouk.eval_recursive(1, x, n, p)
             -n*p + x
-            sage: krawtchouk.eval_recursive(2, x, n, p).collect(x)                      # needs sage.symbolic
+            sage: krawtchouk.eval_recursive(2, x, n, p).collect(x)
             1/2*n^2*p^2 + 1/2*n*(p - 1)*p - n*p^2 + 1/2*n*p
              - 1/2*(2*n*p - 2*p + 1)*x + 1/2*x^2
-            sage: bool(krawtchouk.eval_recursive(2, x, n, p) == krawtchouk(2, x, n, p))             # needs sage.symbolic
+            sage: bool(krawtchouk.eval_recursive(2, x, n, p) == krawtchouk(2, x, n, p))
             True
-            sage: bool(krawtchouk.eval_recursive(3, x, n, p) == krawtchouk(3, x, n, p))             # needs sage.symbolic
+            sage: bool(krawtchouk.eval_recursive(3, x, n, p) == krawtchouk(3, x, n, p))
             True
-            sage: bool(krawtchouk.eval_recursive(4, x, n, p) == krawtchouk(4, x, n, p))             # needs sage.symbolic
+            sage: bool(krawtchouk.eval_recursive(4, x, n, p) == krawtchouk(4, x, n, p))
             True
+
             sage: M = matrix([[-1/2, -1], [1, 0]])                                      # needs sage.modules
             sage: krawtchouk.eval_recursive(2, M, 3, 1/2)                               # needs sage.modules
             [ 9/8  7/4]
@@ -2956,22 +2979,23 @@ class Func_hahn(OrthogonalFunction):
 
     We verify the orthogonality for `n = 3`::
 
+        sage: # needs sage.symbolic
         sage: n = 2
-        sage: a, b = SR.var('a,b')                                                      # needs sage.symbolic
+        sage: a, b = SR.var('a,b')
         sage: def rho(k, a, b, n):
         ....:     return binomial(a + k, k) * binomial(b + n - k, n - k)
-        sage: M = matrix([[sum(rho(k, a, b, n)                                          # needs sage.symbolic
+        sage: M = matrix([[sum(rho(k, a, b, n)
         ....:                  * hahn(i, k, a, b, n) * hahn(j, k, a, b, n)
         ....:                  for k in range(n + 1)).expand().factor()
         ....:              for i in range(n+1)] for j in range(n+1)])
-        sage: M = M.factor()                                                            # needs sage.symbolic
-        sage: P = rising_factorial                                                      # needs sage.symbolic
+        sage: M = M.factor()
+        sage: P = rising_factorial
         sage: def diag(i, a, b, n):
         ....:    return ((-1)^i * factorial(i) * P(b + 1, i) * P(i + a + b + 1, n + 1)
         ....:            / (factorial(n) * (2*i + a + b + 1) * P(-n, i) * P(a + 1, i)))
-        sage: all(M[i,i] == diag(i, a, b, n) for i in range(3))                         # needs sage.symbolic
+        sage: all(M[i,i] == diag(i, a, b, n) for i in range(3))
         True
-        sage: all(M[i,j] == 0 for i in range(3) for j in range(3) if i != j)            # needs sage.symbolic
+        sage: all(M[i,j] == 0 for i in range(3) for j in range(3) if i != j)
         True
     """
     def __init__(self):
@@ -3047,20 +3071,21 @@ class Func_hahn(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: x, a, b, n = var('x,a,b,n')                                           # needs sage.symbolic
-            sage: hahn.eval_recursive(0, x, a, b, n)                                    # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x, a, b, n = var('x,a,b,n')
+            sage: hahn.eval_recursive(0, x, a, b, n)
             1
-            sage: hahn.eval_recursive(1, x, a, b, n)                                    # needs sage.symbolic
+            sage: hahn.eval_recursive(1, x, a, b, n)
             -(a + b + 2)*x/((a + 1)*n) + 1
-            sage: bool(hahn(2, x, a, b, n) == hahn.eval_recursive(2, x, a, b, n))       # needs sage.symbolic
+            sage: bool(hahn(2, x, a, b, n) == hahn.eval_recursive(2, x, a, b, n))
             True
-            sage: bool(hahn(3, x, a, b, n) == hahn.eval_recursive(3, x, a, b, n))       # needs sage.symbolic
+            sage: bool(hahn(3, x, a, b, n) == hahn.eval_recursive(3, x, a, b, n))
             True
-            sage: bool(hahn(4, x, a, b, n) == hahn.eval_recursive(4, x, a, b, n))       # needs sage.symbolic
+            sage: bool(hahn(4, x, a, b, n) == hahn.eval_recursive(4, x, a, b, n))
             True
             sage: M = matrix([[-1/2, -1], [1, 0]])                                      # needs sage.modules
-            sage: ret = hahn.eval_recursive(2, M, 1, 2, n).simplify_full().factor()     # needs sage.modules sage.symbolic
-            sage: ret                                                                   # needs sage.modules sage.symbolic
+            sage: ret = hahn.eval_recursive(2, M, 1, 2, n).simplify_full().factor()     # needs sage.modules
+            sage: ret                                                                   # needs sage.modules
             [1/4*(4*n^2 + 8*n - 19)/((n - 1)*n)          3/2*(4*n + 3)/((n - 1)*n)]
             [        -3/2*(4*n + 3)/((n - 1)*n)          (n^2 - n - 7)/((n - 1)*n)]
         """
