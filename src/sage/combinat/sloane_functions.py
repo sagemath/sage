@@ -603,7 +603,7 @@ class A000008(SloaneSequence):
         from sage.rings.lazy_series_ring import LazyPowerSeriesRing
         x = LazyPowerSeriesRing(ZZ, 'x').gen()
         p = 1/((1-x)*(1-x**2)*(1-x**5)*(1-x**10))
-        return ZZ(p.coefficient(n)
+        return ZZ(p.coefficient(n))
 
 
 class A000009(SloaneSequence):
@@ -8327,7 +8327,7 @@ def perm_mh(m, h):
     for i in range(m):
         for j in range(n):
             if i <= j and j <= i + h:
-                A[i,j] = 1
+                A[i, j] = 1
     return A.permanent()
 
 
