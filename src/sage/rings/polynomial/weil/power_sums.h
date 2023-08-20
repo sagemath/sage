@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-flint
+ */
 #pragma once
 #include <flint/flint.h>
 #include <flint/fmpz_poly.h>

@@ -115,10 +115,6 @@ from cysignals.alarm import alarm, cancel_alarm
 # Lazily import interacts (#15335)
 lazy_import('sage.interacts', 'all', 'interacts')
 
-# The code executed here uses a large amount of Sage components
-from sage.rings.qqbar import _init_qqbar
-_init_qqbar()
-
 try:
     from .all__sagemath_plot import *
     from sage.manifolds.all import *

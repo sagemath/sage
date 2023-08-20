@@ -16,10 +16,12 @@ include           sage/libs/pari/all.py                                         
 graft             sage/libs/linkages                                            # FIXME
 recursive-include sage/matrix *.pxd                                             # FIXME
 include           sage/matrix/matrix_complex_ball_dense.p*
+include           sage/matrix/misc_flint.p*
 include           sage/misc/binary_tree.p*                                      # FIXME
 include           sage/misc/all.py                                              # FIXME
-recursive-include sage/rings *.pxd                                              # FIXME
+recursive-include sage/rings *.pxd *.pxi                                        # FIXME
 include           sage/rings/*_arb.p*
+include           sage/rings/*_flint.p*
 include           sage/rings/finite_rings/*.pxd                                 # FIXME
 include           sage/rings/finite_rings/integer_mod_limits.h                  # FIXME
 include           sage/rings/finite_rings/all.py                                # FIXME
@@ -29,7 +31,13 @@ include           sage/rings/padics/*.pxd                                       
 include           sage/rings/padics/*.pxi                                       # FIXME
 include           sage/rings/polynomial/*_flint.p*
 include           sage/rings/polynomial/*_arb.p*
+include           sage/rings/polynomial/hilbert.p*
+graft             sage/rings/polynomial/weil
+include           sage/rings/fraction_field_FpT.p*
 
+include           sage/combinat/posets/hasse_cython_flint.p*
+include           sage/graphs/chrompoly.p*
+include           sage/graphs/matchpoly.p*
 
 ## Number fields, MPFI
 
