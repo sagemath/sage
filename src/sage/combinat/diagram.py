@@ -502,9 +502,9 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: from sage.combinat.diagram import Diagram
             sage: D = Diagram([(0,0), (1,1), (2,2), (2,3)])
-            sage: SM = D.specht_module(QQ)
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())
+            sage: SM = D.specht_module(QQ)                                              # needs sage.modules
+            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.modules
             s[2, 1, 1] + s[2, 2] + 2*s[3, 1] + s[4]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -527,9 +527,9 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: from sage.combinat.diagram import Diagram
             sage: D = Diagram([(0,0), (1,1), (2,2), (2,3)])
-            sage: D.specht_module_dimension()
+            sage: D.specht_module_dimension()                                           # needs sage.modules
             12
-            sage: D.specht_module(QQ).dimension()
+            sage: D.specht_module(QQ).dimension()                                       # needs sage.modules
             12
         """
         from sage.combinat.specht_module import specht_module_rank
@@ -661,9 +661,9 @@ class Diagrams(UniqueRepresentation, Parent):
             . . O
 
 
-            sage: from sage.combinat.tiling import Polyomino
-            sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)])
-            sage: Dgms(p).pp()
+            sage: from sage.combinat.tiling import Polyomino                            # needs sage.modules
+            sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)])                              # needs sage.modules
+            sage: Dgms(p).pp()                                                          # needs sage.modules
             O . .
             O O O
 
@@ -676,8 +676,8 @@ class Diagrams(UniqueRepresentation, Parent):
             O O . .
             O O O O
 
-            sage: M = Matrix([[1,1,1,1],[1,1,0,0],[0,0,0,0],[1,1,0,0],[1,1,1,1]])
-            sage: Dgms(M).pp()
+            sage: M = Matrix([[1,1,1,1],[1,1,0,0],[0,0,0,0],[1,1,0,0],[1,1,1,1]])       # needs sage.modules
+            sage: Dgms(M).pp()                                                          # needs sage.modules
             O O O O
             O O . .
             . . . .
@@ -721,23 +721,23 @@ class Diagrams(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: from sage.combinat.tiling import Polyomino
-            sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)])
+            sage: from sage.combinat.tiling import Polyomino                            # needs sage.modules
+            sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)])                              # needs sage.modules
             sage: from sage.combinat.diagram import Diagrams
-            sage: Diagrams()(p).pp()
+            sage: Diagrams()(p).pp()                                                    # needs sage.modules
             O . .
             O O O
 
         We can also call this method directly::
 
-            sage: Diagrams().from_polyomino(p).pp()
+            sage: Diagrams().from_polyomino(p).pp()                                     # needs sage.modules
             O . .
             O O O
 
         This only works for a 2d :class:`~sage.combinat.tiling.Polyomino`::
 
-            sage: p = Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')
-            sage: Diagrams().from_polyomino(p)
+            sage: p = Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')     # needs sage.modules
+            sage: Diagrams().from_polyomino(p)                                          # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: the polyomino must be 2 dimensional
@@ -782,17 +782,17 @@ class Diagrams(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = matrix([[1,0,1,1],[0,1,1,0]])                                     # optional - sage.modules
+            sage: M = matrix([[1,0,1,1],[0,1,1,0]])                                     # needs sage.modules
             sage: from sage.combinat.diagram import Diagrams
-            sage: Diagrams()(M).pp()                                                    # optional - sage.modules
+            sage: Diagrams()(M).pp()                                                    # needs sage.modules
             O . O O
             . O O .
-            sage: Diagrams().from_zero_one_matrix(M).pp()                               # optional - sage.modules
+            sage: Diagrams().from_zero_one_matrix(M).pp()                               # needs sage.modules
             O . O O
             . O O .
 
-            sage: M = matrix([[1, 0, 0], [1, 0, 0], [0, 0, 0]])                         # optional - sage.modules
-            sage: Diagrams()(M).pp()                                                    # optional - sage.modules
+            sage: M = matrix([[1, 0, 0], [1, 0, 0], [0, 0, 0]])                         # needs sage.modules
+            sage: Diagrams()(M).pp()                                                    # needs sage.modules
             O . .
             O . .
             . . .
@@ -1440,10 +1440,10 @@ class NorthwestDiagrams(Diagrams):
 
         EXAMPLES::
 
-            sage: p = ParallelogramPolyomino([[0, 0, 1, 0, 0, 0, 1, 1],                 # optional - sage.modules
+            sage: p = ParallelogramPolyomino([[0, 0, 1, 0, 0, 0, 1, 1],                 # needs sage.modules
             ....:                              [1, 1, 0, 1, 0, 0, 0, 0]])
             sage: from sage.combinat.diagram import NorthwestDiagrams
-            sage: NorthwestDiagrams().from_parallelogram_polyomino(p).pp()
+            sage: NorthwestDiagrams().from_parallelogram_polyomino(p).pp()              # needs sage.modules
             O O .
             O O O
             . O O
@@ -1499,8 +1499,8 @@ def RotheDiagram(w):
     :class:`sage.combinat.permutations.Permutations` are supported. In
     particular, elements of permutation groups are not supported::
 
-        sage: w = SymmetricGroup(9).an_element()
-        sage: RotheDiagram(w)
+        sage: w = SymmetricGroup(9).an_element()                                        # needs sage.groups
+        sage: RotheDiagram(w)                                                           # needs sage.groups
         Traceback (most recent call last):
         ...
         ValueError: w must be a permutation

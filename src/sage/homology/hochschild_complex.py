@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat        (because all doctests use FreeAlgebra, SymmetricGroupAlgebra, etc.)
+# sage.doctest: needs sage.combinat        (because all doctests use FreeAlgebra, SymmetricGroupAlgebra, etc.)
 """
 Hochschild Complexes
 """

@@ -3105,8 +3105,9 @@ REFERENCES:
              with tunable clustering*, Phys. Rev. E (2002). vol 65, no 2, 026107.
              :doi:`10.1103/PhysRevE.65.026107`.
 
-.. [HKL2021] Clemens Heuberger, Daniel Krenn, Gabriel F. Lipnik, "Asymptotic
-             Analysis of `q`-Recursive Sequences", :arxiv:`2105.04334`, 2021.
+.. [HKL2022] Clemens Heuberger, Daniel Krenn, Gabriel F. Lipnik, "Asymptotic
+             Analysis of `q`-Recursive Sequences". Algorithmica **84** (2022),
+             2480–2532. :doi:`10.1007/s00453-022-00950-y`.
 
 .. [HKOTY1999] \G. Hatayama, A. Kuniba, M. Okado, T. Tagaki, and Y. Yamada,
                *Remarks on fermionic formula*. Contemp. Math., **248** (1999).
@@ -5084,6 +5085,11 @@ REFERENCES:
 
 .. [Pos2005] \A. Postnikov, Affine approach to quantum Schubert
              calculus, Duke Math. J. 128 (2005) 473-509
+
+.. [Pot1998] Potemine, I.Y.,
+             Minimal Terminal Q-Factorial Models of Drinfeld Coarse Moduli Schemes.
+             Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
+             :doi:`10.1023/A:1009724323513`
 
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.

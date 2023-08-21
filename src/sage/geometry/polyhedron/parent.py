@@ -64,7 +64,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
     EXAMPLES::
 
         sage: from sage.geometry.polyhedron.parent import Polyhedra
-        sage: Polyhedra(AA, 3)                                                          # optional - sage.rings.number_field
+        sage: Polyhedra(AA, 3)                                                          # needs sage.rings.number_field
         Polyhedra in AA^3
         sage: Polyhedra(ZZ, 3)
         Polyhedra in ZZ^3
@@ -96,34 +96,34 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
 
     TESTS::
 
-        sage: Polyhedra(RR, 3, backend='field')                                         # optional - sage.rings.real_mpfr
+        sage: Polyhedra(RR, 3, backend='field')                                         # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: the 'field' backend for polyhedron cannot be used with non-exact fields
-        sage: Polyhedra(RR, 3)                                                          # optional - sage.rings.real_mpfr
+        sage: Polyhedra(RR, 3)                                                          # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: no default backend for computations with Real Field with 53 bits of precision
-        sage: Polyhedra(QQ[I], 2)                                                       # optional - sage.rings.number_field
+        sage: Polyhedra(QQ[I], 2)                                                       # needs sage.rings.number_field
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring: Number Field in I
         with defining polynomial x^2 + 1 with I = 1*I
         cannot be coerced to a real field
-        sage: Polyhedra(AA, 3, backend='polymake')                             # optional - jupymake sage.rings.number_field
+        sage: Polyhedra(AA, 3, backend='polymake')      # optional - jupymake           # needs sage.rings.number_field
         Traceback (most recent call last):
         ...
         ValueError: the 'polymake' backend for polyhedron cannot be used with Algebraic Real Field
 
-        sage: Polyhedra(QQ, 2, backend='normaliz')                           # optional - pynormaliz
+        sage: Polyhedra(QQ, 2, backend='normaliz')
         Polyhedra in QQ^2
-        sage: Polyhedra(SR, 2, backend='normaliz')                           # optional - pynormaliz sage.symbolic
+        sage: Polyhedra(SR, 2, backend='normaliz')      # optional - pynormaliz         # needs sage.symbolic
         Polyhedra in (Symbolic Ring)^2
-        sage: SCR = SR.subring(no_variables=True)                                       # optional - sage.symbolic
-        sage: Polyhedra(SCR, 2, backend='normaliz')                          # optional - pynormaliz sage.symbolic
+        sage: SCR = SR.subring(no_variables=True)                                       # needs sage.symbolic
+        sage: Polyhedra(SCR, 2, backend='normaliz')     # optional - pynormaliz         # needs sage.symbolic
         Polyhedra in (Symbolic Constants Subring)^2
 
-        sage: Polyhedra(SCR, 2, backend='number_field')                                 # optional - sage.symbolic
+        sage: Polyhedra(SCR, 2, backend='number_field')                                 # needs sage.symbolic
         Polyhedra in (Symbolic Constants Subring)^2
 
     """
@@ -272,13 +272,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P.cardinality()
             +Infinity
 
-            sage: P = Polyhedra(AA, 0)                                                  # optional - sage.rings.number_field
-            sage: P.category()                                                          # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = Polyhedra(AA, 0)
+            sage: P.category()
             Category of finite enumerated polyhedral sets over Algebraic Real Field
-            sage: P.list()                                                              # optional - sage.rings.number_field
+            sage: P.list()
             [The empty polyhedron in AA^0,
              A 0-dimensional polyhedron in AA^0 defined as the convex hull of 1 vertex]
-            sage: P.cardinality()                                                       # optional - sage.rings.number_field
+            sage: P.cardinality()
             2
         """
         if self.ambient_dim():
@@ -516,8 +517,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(QQ, 3)._repr_base_ring()
             'QQ'
             sage: x = polygen(ZZ, 'x')
-            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())              # optional - sage.rings.number_field
-            sage: Polyhedra(K, 4)._repr_base_ring()                                     # optional - sage.rings.number_field
+            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())              # needs sage.rings.number_field
+            sage: Polyhedra(K, 4)._repr_base_ring()                                     # needs sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)'
         """
 
@@ -551,8 +552,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(QQ, 3)._repr_ambient_module()
             'QQ^3'
             sage: x = polygen(ZZ, 'x')
-            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())              # optional - sage.rings.number_field
-            sage: Polyhedra(K, 4)._repr_ambient_module()                                # optional - sage.rings.number_field
+            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())              # needs sage.rings.number_field
+            sage: Polyhedra(K, 4)._repr_ambient_module()                                # needs sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)^4'
         """
         s = self._repr_base_ring()
@@ -607,13 +608,14 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         Check that :trac:`21270` is fixed::
 
-            sage: poly = polytopes.regular_polygon(7)                                   # optional - sage.rings.number_field
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP',                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: poly = polytopes.regular_polygon(7)
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP',
             ....:                                return_variable=True)
-            sage: lp.set_objective(x[0] + x[1])                                         # optional - sage.rings.number_field
-            sage: b = lp.get_backend()                                                  # optional - sage.rings.number_field
-            sage: P = b.interactive_lp_problem()                                        # optional - sage.rings.number_field
-            sage: p = P.plot()                                                          # optional - sage.plot sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1])
+            sage: b = lp.get_backend()
+            sage: P = b.interactive_lp_problem()
+            sage: p = P.plot()                                                          # needs sage.plot
 
             sage: Q = Polyhedron(ieqs=[[-499999, 1000000], [1499999, -1000000]])
             sage: P = Polyhedron(ieqs=[[0, 1.0], [1.0, -1.0]], base_ring=RDF)
@@ -635,11 +637,12 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         When the parent of the object is not ``self``, the default is not to copy::
 
-            sage: Q = P.base_extend(AA)                                                 # optional - sage.rings.number_field
-            sage: q = Q._element_constructor_(p)                                        # optional - sage.rings.number_field
-            sage: q is p                                                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: Q = P.base_extend(AA)
+            sage: q = Q._element_constructor_(p)
+            sage: q is p
             False
-            sage: q = Q._element_constructor_(p, copy=False)                            # optional - sage.rings.number_field
+            sage: q = Q._element_constructor_(p, copy=False)
             Traceback (most recent call last):
             ...
             ValueError: you need to make a copy when changing the parent
@@ -726,10 +729,10 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P(p)
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
 
-            sage: P = Polyhedra(AA, 3, backend='field')                                 # optional - sage.rings.number_field
+            sage: P = Polyhedra(AA, 3, backend='field')                                 # needs sage.rings.number_field
             sage: vertices = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
-            sage: p = Polyhedron(vertices=vertices)                                     # optional - sage.rings.number_field
-            sage: P(p)                                                                  # optional - sage.rings.number_field
+            sage: p = Polyhedron(vertices=vertices)
+            sage: P(p)                                                                  # needs sage.rings.number_field
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 4 vertices
         """
         Vrep = None
@@ -866,15 +869,15 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         Test that :trac:`28770` is fixed::
 
             sage: z = QQ['z'].0
-            sage: K = NumberField(z^2 - 2, 's')                                         # optional - sage.rings.number_field
-            sage: triangle_QQ._coerce_base_ring(K)                                      # optional - sage.rings.number_field
+            sage: K = NumberField(z^2 - 2, 's')                                         # needs sage.rings.number_field
+            sage: triangle_QQ._coerce_base_ring(K)                                      # needs sage.rings.number_field
             Number Field in s with defining polynomial z^2 - 2
-            sage: triangle_QQ._coerce_base_ring(K.gen())                                # optional - sage.rings.number_field
+            sage: triangle_QQ._coerce_base_ring(K.gen())                                # needs sage.rings.number_field
             Number Field in s with defining polynomial z^2 - 2
 
             sage: z = QQ['z'].0
-            sage: K = NumberField(z^2 - 2, 's')                                         # optional - sage.rings.number_field
-            sage: K.gen() * polytopes.simplex(backend='field')                          # optional - sage.rings.number_field
+            sage: K = NumberField(z^2 - 2, 's')                                         # needs sage.rings.number_field
+            sage: K.gen() * polytopes.simplex(backend='field')                          # needs sage.rings.number_field
             A 3-dimensional polyhedron in
              (Number Field in s with defining polynomial z^2 - 2)^4
              defined as the convex hull of 4 vertices
@@ -1286,9 +1289,9 @@ def does_backend_handle_base_ring(base_ring, backend):
         sage: from sage.geometry.polyhedron.parent import does_backend_handle_base_ring
         sage: does_backend_handle_base_ring(QQ, 'ppl')
         True
-        sage: does_backend_handle_base_ring(QQ[sqrt(5)], 'ppl')                         # optional - sage.rings.number_field sage.symbolic
+        sage: does_backend_handle_base_ring(QQ[sqrt(5)], 'ppl')                         # needs sage.rings.number_field sage.symbolic
         False
-        sage: does_backend_handle_base_ring(QQ[sqrt(5)], 'field')                       # optional - sage.rings.number_field sage.symbolic
+        sage: does_backend_handle_base_ring(QQ[sqrt(5)], 'field')                       # needs sage.rings.number_field sage.symbolic
         True
     """
     try:
