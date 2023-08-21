@@ -16,6 +16,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.algebras import Algebras
+from sage.categories.modules import Modules
+from sage.categories.algebras import Algebras
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -818,43 +821,65 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
     def cohomology_ring(self, base_ring):
-        from sage.categories.cartesian_product import cartesian_product
+         #return CohomologyRingFromProduct(base_ring=base_ring, moment_angle_complex=self)
+         return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
-        vertices = self._simplicial_complex.vertices()
-        n = len(vertices)
-        L = []
-
-        for i in range(n+1):
-            for x in combinations(vertices, i):
-                subcomplex = self._simplicial_complex.generated_subcomplex(x, is_mutable=False)
-                L.append(subcomplex.cohomology_ring())
-
-        return cartesian_product(L)
-        #return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
-
+#################### ignore this one for now
+#class CohomologyRingFromProduct():
+    #def __init__(self, moment_angle_complex, base_ring):
+        #from sage.categories.cartesian_product import cartesian_product
+        #self._complex = moment_angle_complex
+        #self._base_ring = base_ring
+#
+        #vertices = moment_angle_complex.simplicial_complex().vertices()
+        #n = len(vertices)
+        #L = []
+#
+        #for x in moment_angle_complex.simplicial_complex().facets():
+            #subcomplex = moment_angle_complex.simplicial_complex().generated_subcomplex(x, is_mutable=False)
+            #L.append(subcomplex.cohomology_ring())
+#
+        #self._cohomology_ring = cartesian_product(L)
+#
+    #def cohomology_ring(self):
+        #return self._cohomology_ring
+#
+    #def _repr_(self):
+        #return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
+#
+####
 # maybe just create a method instead of a classs?
 class CohomologyRing(CombinatorialFreeModule):
     def __init__(self, base_ring, moment_angle_complex):
         self._complex = moment_angle_complex
+        self._base_ring = base_ring
 
         vertices = moment_angle_complex._simplicial_complex.vertices()
         n = len(vertices)
         self._graded_indices = {}
+        self._gens = {}
         indices = []
         for deg in range(moment_angle_complex.dimension() + 1):
             num_of_gens = 0
+            self._gens[deg] = []
             for i in range(n+1):
                 for x in combinations(vertices, i):
                     S = moment_angle_complex._simplicial_complex.generated_subcomplex(x, is_mutable=False)
                     # Because of the empty combination
-                    if len(S.vertices()) > 0:
-                        if isinstance(S.cohomology(deg-i-1, generators=True), list):
-                            num_of_gens += len(S.cohomology(deg-i-1, generators=True))
+                    if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, generators=True), list):
+                        if len(S.cohomology(deg-i-1, generators=True)) > 0:
+                            self._gens[deg].append([x, deg-i-1, S.cohomology(deg-i-1, generators=True)[0]])
+                        num_of_gens += len(S.cohomology(deg-i-1, generators=True))
+                        print("{}, {}: {} - {}".format(deg, i, x, S.cohomology(deg-i-1, generators=True)))
+                    elif len(S.vertices()) == 0 and deg == 0:
+                        num_of_gens = 1
 
             indices.extend([(deg, k) for k in range(num_of_gens)])
             self._graded_indices[deg] = range(num_of_gens)
 
-        CombinatorialFreeModule.__init__(self, base_ring, indices)
+        print(self._gens)
+        cat = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
+        CombinatorialFreeModule.__init__(self, base_ring, indices, category=cat)
 
     def basis(self, d=None):
         if d is None:
@@ -875,6 +900,35 @@ class CohomologyRing(CombinatorialFreeModule):
 
     _latex_term = _repr_term
 
+    def one(self):
+        one = self._base_ring.one()
+        d = {(0,i): one for i in self._graded_indices[0]}
+        return self._from_dict(d, remove_zeros=False)
+
+    def product_on_basis(self, li, ri):
+        # TODO def eps and get the cohomology class of res
+        from sage.topology.simplicial_complex import Simplex
+
+        try:
+            left = self._gens[li[0]][li[1]]
+            right = self._gens[ri[0]][ri[1]]
+            set_left = set(left[0])
+            set_right = set(right[0])
+            subcomplex_left = left[2][1].leading_item()[0].set()
+            subcomplex_right = right[2][1].leading_item()[0].set()
+            if not set_left.isdisjoint(set_right):
+                return self.zero()
+
+            union = set_left.union(set_right)
+            res_union = subcomplex_left.union(subcomplex_right)
+            subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
+            res = dict(subcomplex_union.n_chains(left[1] + right[1]+ 1, cochains=True).basis()).get(Simplex(res_union), 0)
+            print(res)
+            return self.one()
+        except IndexError:
+            pass
+        return self.one()
+
     class Element(CombinatorialFreeModule.Element):
         def cup_product(self, other):
-            return super(self) * super(other)
+            return self * other
