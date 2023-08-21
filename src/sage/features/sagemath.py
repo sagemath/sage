@@ -569,6 +569,32 @@ class sage__libs__ntl(JoinFeature):
                              spkg='sagemath_ntl', type='standard')
 
 
+class sage__libs__giac(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.giac`.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__giac
+        sage: sage__libs__giac().is_present()                                           # needs sage.libs.giac
+        FeatureTestResult('sage.libs.giac', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__giac
+            sage: isinstance(sage__libs__giac(), sage__libs__giac)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.giac',
+                             [PythonModule('sage.libs.giac.giac')],
+                             spkg='sagemath_giac', type='standard')
+
+
 class sage__libs__pari(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
@@ -1023,9 +1049,11 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double', type='standard')
 
 
-class sage__rings__real_interval_field(PythonModule):
+class sage__rings__real_interval_field(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_interval_field`.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_mpfi`.
+
+    It provides the :class:`RealIntervalField`.
 
     TESTS::
 
@@ -1041,7 +1069,9 @@ class sage__rings__real_interval_field(PythonModule):
             sage: isinstance(sage__rings__real_interval_field(), sage__rings__real_interval_field)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.real_interval_field', type='standard')
+        JoinFeature.__init__(self, 'sage.rings.real_interval_field',
+                             [PythonModule('sage.rings.real_mpfi')],
+                             type='standard')
 
 
 class sage__rings__real_mpfr(JoinFeature):
@@ -1206,6 +1236,7 @@ def all_features():
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),
+            sage__libs__giac(),
             sage__libs__linbox(),
             sage__libs__m4ri(),
             sage__libs__ntl(),
