@@ -2,6 +2,20 @@
 r"""
 Conversion of symbolic expressions to SymPy
 """
+# ****************************************************************************
+#       Copyright (C) 2009 Mike Hansen
+#                     2011 D. S. McNeil
+#                     2011 Francois Bissey
+#                     2017 Ralf Stephan
+#                     2017 Marco Mancini
+#                     2017 Travis Scrimshaw
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 
