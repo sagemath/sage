@@ -148,14 +148,15 @@ of T in its saturation, which is 1 in this case.
 
 ::
 
-    sage: T = E.image_of_hecke_algebra()  # long time
-    sage: T.gens()  # long time
+    sage: # long time
+    sage: T = E.image_of_hecke_algebra()
+    sage: T.gens()
     (Abelian variety endomorphism of Abelian variety J0(33) of dimension 3,
      Abelian variety endomorphism of Abelian variety J0(33) of dimension 3,
      Abelian variety endomorphism of Abelian variety J0(33) of dimension 3)
-    sage: T.index_in(E)  # long time
+    sage: T.index_in(E)
     +Infinity
-    sage: T.index_in_saturation()  # long time
+    sage: T.index_in_saturation()
     1
 
 AUTHORS:
