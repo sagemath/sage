@@ -207,11 +207,21 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     r"""
     Return the list of objects from ``module_name`` whose name is ``name``.
 
-    If ``module_name`` is ``None``, the function runs through all
-    loaded modules and returns the list of objects whose name matches ``name``.
+    INPUT:
 
-    If ``module_name`` is not ``None``, then search only in submodules of
-    ``module_name``.
+    - ``name`` -- string
+
+    - ``module_name`` -- string or ``None``:
+
+      - If ``module_name`` is ``None``, the function runs through all
+        loaded modules and returns the list of objects whose name matches ``name``.
+
+      - If ``module_name`` is a string, then search only in submodules of
+        ``module_name``.
+
+    - ``include_lazy_imports`` -- boolean (default: ``False``); whether to
+      include unresolved lazy imports (i.e., :class:`~sage.misc.lazy_import.LazyImport`
+      objects) in the output.
 
     In order to search through more modules you might use the function
     :func:`load_submodules`.
@@ -239,6 +249,16 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
         1
         sage: dt.find_objects_from_name is dt.find_objects_from_name
         True
+
+    When ``include_lazy_imports=True`` is used, several
+    :class:`~sage.misc.lazy_import.LazyImport` objects that are resolving to the
+    same object may be included in the output::
+
+        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)
+        [Real Field with 53 bits of precision,
+         ...
+         Real Field with 53 bits of precision,
+         RR]
 
     .. NOTE::
 
