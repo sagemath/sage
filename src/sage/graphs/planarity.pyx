@@ -167,7 +167,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
                         multiedges=g.allows_multiple_edges(),
                         name="Kuratowski subgraph of (%s)" % g.name())
         if g.get_pos():
-            G.set_pos({u: g._pos[u] for u in g_dict.keys()})
+            G.set_pos({u: g._pos[u] for u in g_dict})
         return (False, G)
 
     if set_pos or set_embedding:
