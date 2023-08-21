@@ -3,8 +3,7 @@ Enumeration of Totally Real Fields: PHC interface
 
 AUTHORS:
 
-    -- John Voight (2007-10-10):
-        * Zeroth attempt.
+- John Voight (2007-10-10): Zeroth attempt.
 """
 
 # ****************************************************************************
@@ -23,14 +22,14 @@ import sage.misc.misc
 
 def coefficients_to_power_sums(n, m, a):
     r"""
-    Takes the list a, representing a list of initial coefficients of
-    a (monic) polynomial of degree n, and returns the power sums
-    of the roots of f up to (m-1)th powers.
+    Take the list ``a``, representing a list of initial coefficients of
+    a (monic) polynomial of degree `n`, and return the power sums
+    of the roots of `f` up to `(m-1)`-th powers.
 
     INPUT:
 
-    - n -- integer, the degree
-    - a -- list of integers, the coefficients
+    - ``n`` -- integer, the degree
+    - ``a`` -- list of integers, the coefficients
 
     OUTPUT:
 
@@ -87,15 +86,16 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     EXAMPLES::
 
+        sage: # optional - phc
         sage: from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
-        sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1]) # optional - phc
+        sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1])
         []
-        sage: x, y = __lagrange_bounds_phc(3,2,[8,1,2,0,1]) # optional - phc
-        sage: x # optional - phc
+        sage: x, y = __lagrange_bounds_phc(3,2,[8,1,2,0,1])
+        sage: x
         -1.3333333333333299
-        sage: y < 0.00000001 # optional - phc
+        sage: y < 0.00000001
         True
-        sage: __lagrange_bounds_phc(3,1,[8,1,2,0,1]) # optional - phc
+        sage: __lagrange_bounds_phc(3,1,[8,1,2,0,1])
         []
     """
 

@@ -81,7 +81,9 @@ class MagmaFree:
     """
     def eval(self, x, **kwds):
         return magma_free_eval(x)
+
     def __call__(self, code, strip=True, columns=0):
         return magma_free_eval(code, strip=strip, columns=columns)
+
 
 magma_free = MagmaFree()

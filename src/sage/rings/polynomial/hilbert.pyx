@@ -20,9 +20,10 @@ in any example with more than 34 variables.
 #
 #*****************************************************************************
 
+import sage.interfaces.abc
+
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-from sage.interfaces.singular import Singular
 
 from cysignals.memory cimport sig_malloc
 from cpython.list cimport PyList_GET_ITEM
@@ -442,16 +443,16 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         sage: I = singular.ideal(['x^2','y^2','z^2'])
         sage: first_hilbert_series(I)
         -t^6 + 3*t^4 - 3*t^2 + 1
-        sage: first_hilbert_series(I,return_grading=True)
+        sage: first_hilbert_series(I, return_grading=True)
         (-t^6 + 3*t^4 - 3*t^2 + 1, (1, 1, 1))
-        sage: first_hilbert_series(I,grading=(1,2,3))
+        sage: first_hilbert_series(I, grading=(1,2,3))
         -t^12 + t^10 + t^8 - t^4 - t^2 + 1
 
     TESTS:
 
     We test against some corner cases::
 
-        sage: R.<x,y,z>=PolynomialRing(QQ)
+        sage: R.<x,y,z> = PolynomialRing(QQ)
         sage: I = 0*R
         sage: first_hilbert_series(I)
         1
@@ -476,7 +477,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
     cdef Polynomial_integer_dense_flint fhs = Polynomial_integer_dense_flint.__new__(Polynomial_integer_dense_flint)
     fhs._parent = PR
     fhs._is_gen = 0
-    if isinstance(I.parent(), Singular):
+    if isinstance(I, sage.interfaces.abc.SingularElement):
         S = I._check_valid()
         # First, we need to deal with quotient rings, which also covers the case
         # of graded commutative rings that arise as cohomology rings in odd characteristic.
@@ -559,30 +560,23 @@ def hilbert_poincare_series(I, grading=None):
 
         sage: from sage.rings.polynomial.hilbert import hilbert_poincare_series
         sage: R = PolynomialRing(QQ,'x',9)
-        sage: I = [m.lm() for m in ((matrix(R,3,R.gens())^2).list()*R).groebner_basis()]*R
+        sage: I = [m.lm()
+        ....:      for m in ((matrix(R, 3, R.gens())^2).list() * R).groebner_basis()] * R
         sage: hilbert_poincare_series(I)
         (t^7 - 3*t^6 + 2*t^5 + 2*t^4 - 2*t^3 + 6*t^2 + 5*t + 1)/(t^4 - 4*t^3 + 6*t^2 - 4*t + 1)
-        sage: hilbert_poincare_series((R*R.gens())^2, grading=range(1,10))
+        sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))
         t^9 + t^8 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1
 
     The following example is taken from :trac:`20145`::
 
-        sage: n=4;m=11;P = PolynomialRing(QQ,n*m,"x"); x = P.gens(); M = Matrix(n,x)
+        sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)
         sage: from sage.rings.polynomial.hilbert import first_hilbert_series
         sage: I = P.ideal(M.minors(2))
-        sage: J = P*[m.lm() for m in I.groebner_basis()]
+        sage: J = P * [m.lm() for m in I.groebner_basis()]
         sage: hilbert_poincare_series(J).numerator()
         120*t^3 + 135*t^2 + 30*t + 1
         sage: hilbert_poincare_series(J).denominator().factor()
         (t - 1)^14
-
-    This example exceeded the capabilities of Singular before version 4.2.1p2.
-    In Singular 4.3.1, it works correctly on 64-bit, but on 32-bit, it prints overflow warnings
-    and omits some terms.
-
-        sage: J.hilbert_numerator(algorithm='singular')
-        120*t^33 - 3465*t^32 + 48180*t^31 - 429374*t^30 + 2753520*t^29 - 13522410*t^28 + 52832780*t^27 - 168384150*t^26 + 445188744*t^25 - 987193350*t^24 + 1847488500*t^23 + 1372406746*t^22 - 403422496*t^21 - 8403314*t^20 - 471656596*t^19 + 1806623746*t^18 + 752776200*t^17 + 752776200*t^16 - 1580830020*t^15 + 1673936550*t^14 - 1294246800*t^13 + 786893250*t^12 - 382391100*t^11 + 146679390*t^10 - 42299400*t^9 + 7837830*t^8 - 172260*t^7 - 468930*t^6 + 183744*t^5 - 39270*t^4 + 5060*t^3 - 330*t^2 + 1  # 64-bit
-        ...120*t^33 - 3465*t^32 + 48180*t^31 - ...  # 32-bit
     """
     cdef Polynomial_integer_dense_flint HP
     HP, grading = first_hilbert_series(I, grading=grading, return_grading=True)

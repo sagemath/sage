@@ -146,7 +146,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         ni = G.generator_orders()
         ngens = G.ngens()
 
-        H0=[self(0)]
+        H0 = [self(0)]
         if ngens == 0:    # trivial group
             return H0
         for m in range(1,ni[0]):
@@ -155,7 +155,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             return H0
 
         # else noncyclic group
-        H1=[self(0)]
+        H1 = [self(0)]
         for m in range(1,ni[1]):
             H1.append(H1[-1]+pts[1])
         return [P+Q for P in H0 for Q in H1]
@@ -207,10 +207,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         from sage.structure.sequence import Sequence
         k = self.base_ring()
-        if k.is_prime_field() and k.order()>50:
+        if k.is_prime_field() and k.order() > 50:
             v = self._points_via_group_structure()
         else:
-            v =self._points_fast_sqrt()
+            v = self._points_fast_sqrt()
         v.sort()
         self.__points = Sequence(v, immutable=True)
         return self.__points
@@ -861,8 +861,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             ...
             (10 : 0 : 1) 2
         """
-        for P in self.points():
-            yield P
+        yield from self.points()
 
     def __getitem__(self, n):
         """
@@ -1498,7 +1497,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         phi = gen_to_sage(pari.polmodular(ell),{'x':X, 'y':Y})
         j1 = phi([x,j]).roots(multiplicities=False)
         nj1 = len(j1)
-        on_floor = self.two_torsion_rank() < 2 if ell==2 else nj1 <= ell
+        on_floor = self.two_torsion_rank() < 2 if ell == 2 else nj1 <= ell
         if on_floor:
             return 0
         if e == 1 or nj1 != ell+1:  # double roots can only happen at the surface
@@ -1569,11 +1568,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             raise ValueError("Elliptic curve ({}) must be ordinary".format(self))
         D1 = self.frobenius_discriminant()
         D0 = D1.squarefree_part()
-        if D0%4 !=1:
+        if D0 % 4 != 1:
             D0 *= 4
         v = ZZ(D1//D0).isqrt()
         h0 = D0.class_number()
-        if h%h0:
+        if h % h0:
             raise ValueError("Incorrect class number {}".format(h))
         from sage.schemes.elliptic_curves.cm import OrderClassNumber
         cs = [v//f for f in v.divisors() if OrderClassNumber(D0,h0,f) == h] # cofactors c=v/f compatible with h(f**2D0)=h
@@ -1754,7 +1753,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         twists = None
         if not j:
             twists = curves_with_j_0(K)
-        elif j==1728:
+        elif j == 1728:
             twists = curves_with_j_1728(K)
         if twists: # i.e. if j=0 or 1728
             # replace the one isomorphic to self with self and move to front
@@ -1823,19 +1822,19 @@ def curves_with_j_0(K):
     if not K.is_finite():
         raise ValueError("field must be finite")
     p = K.characteristic()
-    if p==2:
+    if p == 2:
         return curves_with_j_0_char2(K)
-    if p==3:
+    if p == 3:
         return curves_with_j_0_char3(K)
     q = K.cardinality()
-    if q%3==2:
+    if q % 3 == 2:
         # Then we only have two quadratic twists (and -3 is non-square)
         return [EllipticCurve(K, [0,a]) for a in [1,-27]]
     # Now we have genuine sextic twists, find D generating K* mod 6th powers
     q2 = (q-1)//2
     q3 = (q-1)//3
     D = K.gen()
-    while not D or D**q2 == 1 or D**q3==1:
+    while not D or D**q2 == 1 or D**q3 == 1:
         D = K.random_element()
     return [EllipticCurve(K, [0,D**i]) for i in range(6)]
 
@@ -1880,12 +1879,12 @@ def curves_with_j_1728(K):
     if not K.is_finite():
         raise ValueError("field must be finite")
     p = K.characteristic()
-    if p==2:
+    if p == 2:
         return curves_with_j_0_char2(K)
-    if p==3:
+    if p == 3:
         return curves_with_j_0_char3(K)
     q = K.cardinality()
-    if q%4==3:
+    if q % 4 == 3:
         return [EllipticCurve(K, [a,0]) for a in [1,-1]]
     # Now we have genuine quartic twists, find D generating K* mod 4th powers
     q2 = (q-1)//2
@@ -1954,8 +1953,10 @@ def curves_with_j_0_char2(K):
     """
     if not K.is_finite() or K.characteristic() != 2:
         raise ValueError("field must be finite of characteristic 2")
-    if K.degree()%2:
-        return [EllipticCurve(K,[0,0,1,0,0]), EllipticCurve(K,[0,0,1,1,0]),  EllipticCurve(K,[0,0,1,1,1])]
+    if K.degree() % 2:
+        return [EllipticCurve(K, [0, 0, 1, 0, 0]),
+                EllipticCurve(K, [0, 0, 1, 1, 0]),
+                EllipticCurve(K, [0, 0, 1, 1, 1])]
     # find a,b,c,d,e such that
     # a is not a cube, i.e. a**((q-1)//3)!=1
     # Tr(b)=1
@@ -1965,13 +1966,13 @@ def curves_with_j_0_char2(K):
     a = b = c = d = e = None
     x = polygen(K)
     q3 = (K.cardinality()-1)//3
-    while not a or a**q3==1:
+    while not a or a**q3 == 1:
         a = K.random_element()
     asq = a*a
     while not b or not b.trace():
         b = K.random_element()
     c = K.one() # OK if degree is 2 mod 4
-    if K.degree()%4 == 0:
+    if K.degree() % 4 == 0:
         while (x**4+x+c).roots():
             c = K.random_element()
     while not d or (x**2+a*x+d).roots():
@@ -2048,7 +2049,7 @@ def curves_with_j_0_char3(K):
     while not b or not b.trace():
         b = K.random_element()
 
-    if K.degree()%2:
+    if K.degree() % 2:
         return [EllipticCurve(K, a4a6) for a4a6 in
             [[1,0], [-1,0], [-1,b], [-1,-b]]]
 
@@ -2201,7 +2202,7 @@ def supersingular_j_polynomial(p, use_cache=True):
         raise ValueError("p (=%s) should be a prime number" % p)
 
     J = polygen(GF(p),'j')
-    if p<13:
+    if p < 13:
         return J.parent().one()
     if use_cache:
         fill_ss_j_dict()
@@ -2209,7 +2210,7 @@ def supersingular_j_polynomial(p, use_cache=True):
             return J.parent()(supersingular_j_polynomials[p])
 
     from sage.misc.misc_c import prod
-    m=(p-1)//2
+    m = (p-1)//2
     X,T = PolynomialRing(GF(p),2,names=['X','T']).gens()
     H = sum(binomial(m, i) ** 2 * T ** i for i in range(m + 1))
     F = T**2 * (T-1)**2 * X - 256*(T**2-T+1)**3

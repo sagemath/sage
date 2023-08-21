@@ -30,7 +30,7 @@ import random
 from . import modsym
 import sage.modular.dirichlet as dirichlet
 import sage.modular.arithgroup.all as arithgroup
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 
 
 class Test:
@@ -67,9 +67,9 @@ class Test:
             weights = list(range(2, int(weights) + 1))
         self.levels = levels
         self.weights = weights
-        if not(levels):
+        if not levels:
             raise RuntimeError("levels must have positive length")
-        if not(weights):
+        if not weights:
             raise RuntimeError("weights must have positive length")
         self.current_space = None
         self.onlyg0 = onlyg0
@@ -78,7 +78,7 @@ class Test:
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -111,7 +111,7 @@ class Test:
         elif self.onlychar:
             which = 2
         else:
-            which = random.randrange(0,3)
+            which = random.randrange(0, 3)
         if which == 0:
             print("gamma0")
             M = self._modular_symbols_space_gamma0()
@@ -251,9 +251,9 @@ class Test:
         total = cputime()
         n = 1
         while seconds == 0 or cputime(total) < seconds:
-            s = "** test_dimension: number %s"%n
+            s = "** test_dimension: number %s" % n
             if seconds > 0:
-                s += " (will stop after about %s seconds)"%seconds
+                s += " (will stop after about %s seconds)" % seconds
             t = cputime()
             self._do(name)
             print("\ttime=%s\telapsed=%s" % (cputime(t), cputime(total)))
@@ -292,7 +292,7 @@ class Test:
         d = V.dimension()
         d2 = M._cuspidal_new_submodule_dimension_formula()
         assert d == d2, \
-            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s."%(M, d, d2)
+            "Test failed for M=\"%s\", where computed dimension is %s but formula dimension is %s." % (M, d, d2)
 
     def test_csns_nscs(self):
         """

@@ -25,18 +25,18 @@ from math import sin, cos, pi
 
 class Circle(GraphicPrimitive):
     """
-    Primitive class for the Circle graphics type.  See circle? for information
+    Primitive class for the :class:`Circle` graphics type.  See ``circle?`` for information
     about actually plotting circles.
 
     INPUT:
 
-    - x -- `x`-coordinate of center of Circle
+    - ``x`` -- `x`-coordinate of center of Circle
 
-    - y -- `y`-coordinate of center of Circle
+    - ``y`` -- `y`-coordinate of center of Circle
 
-    - r -- radius of Circle object
+    - ``r`` -- radius of Circle object
 
-    - options -- dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -80,7 +80,7 @@ class Circle(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -139,6 +139,7 @@ class Circle(GraphicPrimitive):
         """
         TESTS::
 
+            sage: from math import pi
             sage: C = circle((2,pi), 2, edgecolor='black', facecolor='green', fill=True)
         """
         import matplotlib.patches as patches
@@ -182,7 +183,8 @@ class Circle(GraphicPrimitive):
         This example uses this method implicitly, but does not pass
         the optional parameter z to this method::
 
-            sage: sum([circle((random(),random()), random()).plot3d(z=random()) for _ in range(20)])
+            sage: sum(circle((random(),random()), random()).plot3d(z=random())
+            ....:     for _ in range(20))
             Graphics3d Object
 
         .. PLOT::
@@ -192,6 +194,7 @@ class Circle(GraphicPrimitive):
 
         These examples are explicit, and pass z to this method::
 
+            sage: from math import pi
             sage: C = circle((2,pi), 2, hue=.8, alpha=.3, fill=True)
             sage: c = C[0]
             sage: d = c.plot3d(z=2)
@@ -304,14 +307,16 @@ def circle(center, radius, **options):
     Here we make a more complicated plot, with many circles of different colors::
 
         sage: g = Graphics()
-        sage: step=6; ocur=1/5; paths=16
+        sage: step = 6; ocur = 1/5; paths = 16
         sage: PI = math.pi    # numerical for speed -- fine for graphics
         sage: for r in range(1,paths+1):
-        ....:     for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n)) for n in srange(0, 2*PI+PI/step, PI/step)]:
+        ....:     for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n))
+        ....:                 for n in srange(0, 2*PI+PI/step, PI/step)]:
         ....:         g += circle((x,y), ocur, rgbcolor=hue(r/paths))
         ....:     rnext = (r+1)^2
         ....:     ocur = (rnext-r)-ocur
-        sage: g.show(xmin=-(paths+1)^2, xmax=(paths+1)^2, ymin=-(paths+1)^2, ymax=(paths+1)^2, figsize=[6,6])
+        sage: g.show(xmin=-(paths+1)^2, xmax=(paths+1)^2,
+        ....:        ymin=-(paths+1)^2, ymax=(paths+1)^2, figsize=[6,6])
 
     .. PLOT::
 
@@ -358,7 +363,8 @@ def circle(center, radius, **options):
 
     And circles with legends::
 
-        sage: circle((4,5), 1, rgbcolor='yellow', fill=True, legend_label='the sun').show(xmin=0, ymin=0)
+        sage: circle((4,5), 1, rgbcolor='yellow', fill=True,
+        ....:        legend_label='the sun').show(xmin=0, ymin=0)
 
     .. PLOT::
 
@@ -368,7 +374,8 @@ def circle(center, radius, **options):
 
     ::
 
-        sage: circle((4,5), 1, legend_label='the sun', legend_color='yellow').show(xmin=0, ymin=0)
+        sage: circle((4,5), 1,
+        ....:        legend_label='the sun', legend_color='yellow').show(xmin=0, ymin=0)
 
     .. PLOT::
 
@@ -378,12 +385,12 @@ def circle(center, radius, **options):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: circle((0, 0), 2, figsize=[10,10]) # That circle is huge!
+        sage: circle((0, 0), 2, figsize=[10,10])  # That circle is huge!
         Graphics object consisting of 1 graphics primitive
 
     ::
 
-        sage: circle((0, 0), 2).show(figsize=[10,10]) # These are equivalent
+        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent
 
     TESTS:
 

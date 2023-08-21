@@ -68,8 +68,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import kronecker, next_prime
-from sage.libs.pari.all import pari
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.modular.arithgroup.all import Gamma0
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -77,6 +77,8 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.richcmp import richcmp_method, richcmp
+
+lazy_import('sage.libs.pari.all', 'pari')
 
 
 ZZy = PolynomialRing(ZZ, 'y')
@@ -233,8 +235,8 @@ def dimension_supersingular_module(prime, level=1):
 
     - Iftikhar Burhanuddin - burhanud@usc.edu
     """
-    if not(Integer(prime).is_prime()):
-        raise ValueError("%s is not a prime" % prime)
+    if not Integer(prime).is_prime():
+        raise ValueError(f"{prime} is not a prime")
 
     if level == 1:
         return Gamma0(prime).dimension_modular_forms(2)
@@ -243,8 +245,7 @@ def dimension_supersingular_module(prime, level=1):
     # elif (level in [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 16, 18, 25]):
     # compute basis
 
-    else:
-        raise NotImplementedError
+    raise NotImplementedError
 
 
 def supersingular_D(prime):
@@ -331,12 +332,12 @@ def supersingular_j(FF):
 
     - Iftikhar Burhanuddin -- burhanud@usc.edu
     """
-    if not(FF.is_field()) or not(FF.is_finite()):
+    if not FF.is_field() or not FF.is_finite():
         raise ValueError("%s is not a finite field" % FF)
     prime = FF.characteristic()
-    if not(Integer(prime).is_prime()):
+    if not Integer(prime).is_prime():
         raise ValueError("%s is not a prime" % prime)
-    if not(Integer(FF.cardinality())) == Integer(prime**2):
+    if FF.cardinality() != Integer(prime**2):
         raise ValueError("%s is not a quadratic extension" % FF)
     if kronecker(-1, prime) != 1:
         j_invss = 1728                 # (2^2 * 3)^3

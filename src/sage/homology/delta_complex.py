@@ -8,8 +8,8 @@ from sage.misc.superseded import deprecated_function_alias
 import sage.topology.delta_complex
 
 DeltaComplex = deprecated_function_alias(31925,
-                sage.topology.delta_complex.DeltaComplex)
+                                         sage.topology.delta_complex.DeltaComplex)
 DeltaComplexExamples = deprecated_function_alias(31925,
-                        sage.topology.delta_complex.DeltaComplexExamples)
+                                                 sage.topology.delta_complex.DeltaComplexExamples)
 delta_complexes = deprecated_function_alias(31925,
-                   sage.topology.delta_complex.delta_complexes)
+                                            sage.topology.delta_complex.delta_complexes)

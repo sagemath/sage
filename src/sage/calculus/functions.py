@@ -1,8 +1,11 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Calculus functions
 """
-from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix, is_Vector, Expression
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 from .functional import diff
 
@@ -134,9 +137,9 @@ def jacobian(functions, variables):
         [    x^3*cos(y)   3*x^2*sin(y)]
         [ cos(x)*cos(y) -sin(x)*sin(y)]
         [             0            e^x]
-
     """
-    if is_Matrix(functions) and (functions.nrows()==1 or functions.ncols()==1):
+    if is_Matrix(functions) and (functions.nrows() == 1
+                                 or functions.ncols() == 1):
         functions = functions.list()
     elif not (isinstance(functions, (tuple, list)) or is_Vector(functions)):
         functions = [functions]

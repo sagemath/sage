@@ -372,7 +372,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
         sage: G = Graph([(0, 1)])
         sage: cutwidth(G, algorithm="exponential")
         (1, [0, 1])
-        sage: cutwidth(G, algorithm="MILP", solver='GLPK')
+        sage: cutwidth(G, algorithm="MILP", solver='GLPK')                              # needs sage.numerical.mip
         (1, [0, 1])
 
     Cutwidth of a disconnected graph::
@@ -382,7 +382,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
         sage: G.add_edge(2, 3)
         sage: cutwidth(G, algorithm="exponential")
         (1, [2, 3, 0, 1, 4])
-        sage: cutwidth(G, algorithm="MILP", solver='GLPK')
+        sage: cutwidth(G, algorithm="MILP", solver='GLPK')                              # needs sage.numerical.mip
         (1, [2, 3, 0, 1, 4])
     """
     from sage.graphs.graph import Graph
@@ -643,9 +643,9 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.CycleGraph(5)
-        sage: cw, L = cutwidth.cutwidth_MILP(G); cw
+        sage: cw, L = cutwidth.cutwidth_MILP(G); cw                                     # needs sage.numerical.mip
         2
-        sage: cw == cutwidth.width_of_cut_decomposition(G, L)
+        sage: cw == cutwidth.width_of_cut_decomposition(G, L)                           # needs sage.numerical.mip
         True
         sage: cwe, Le = cutwidth.cutwidth_dyn(G); cwe
         2
@@ -654,18 +654,18 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.CompleteGraph(4)
-        sage: cw, L = cutwidth.cutwidth_MILP(G); cw
+        sage: cw, L = cutwidth.cutwidth_MILP(G); cw                                     # needs sage.numerical.mip
         4
-        sage: cw == cutwidth.width_of_cut_decomposition(G, L)
+        sage: cw == cutwidth.width_of_cut_decomposition(G, L)                           # needs sage.numerical.mip
         True
 
     Cutwidth of a Path graph::
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.PathGraph(3)
-        sage: cw, L = cutwidth.cutwidth_MILP(G); cw
+        sage: cw, L = cutwidth.cutwidth_MILP(G); cw                                     # needs sage.numerical.mip
         1
-        sage: cw == cutwidth.width_of_cut_decomposition(G, L)
+        sage: cw == cutwidth.width_of_cut_decomposition(G, L)                           # needs sage.numerical.mip
         True
 
     TESTS:
@@ -673,7 +673,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
     Comparison with exponential algorithm::
 
         sage: from sage.graphs.graph_decompositions import cutwidth
-        sage: for i in range(2):  # long time
+        sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth.cutwidth_dyn(G)
         ....:     vm, lm = cutwidth.cutwidth_MILP(G, solver='GLPK')
@@ -684,7 +684,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth_MILP
         sage: G = graphs.CycleGraph(3)
-        sage: cutwidth_MILP(G, lower_bound=G.size()+1)
+        sage: cutwidth_MILP(G, lower_bound=G.size()+1)                                  # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         MIPSolverException: ...

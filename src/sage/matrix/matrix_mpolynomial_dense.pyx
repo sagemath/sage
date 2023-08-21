@@ -15,16 +15,11 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-
-
-from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
-
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
@@ -270,13 +265,13 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             m = len(E)
             n = len(E[0])
 
-            for r in xrange(m):
+            for r in range(m):
                 for c in range(n):
                     self.set_unsafe(r, c, E[r][c])
-                for c in xrange(n, self.ncols()):
+                for c in range(n, self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
-            for r in xrange(m, self.nrows()):
-                for c in xrange(self.ncols()):
+            for r in range(m, self.nrows()):
+                for c in range(self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
 
             from sage.rings.integer_ring import ZZ

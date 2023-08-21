@@ -414,7 +414,7 @@ def KnightGraph(dim_list, one=1, two=2, relabel=False):
     The `(6,6)`-Knight Graph is Hamiltonian::
 
         sage: G = graphs.KnightGraph( [6, 6] )
-        sage: G.is_hamiltonian()
+        sage: G.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,

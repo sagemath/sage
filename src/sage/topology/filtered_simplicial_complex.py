@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 r"""
 Finite filtered complexes
 
@@ -16,25 +16,26 @@ The algorithm used in this module comes from [ZC2005]_.
 EXAMPLES::
 
     sage: FilteredSimplicialComplex([([0], 0), ([1], 0), ([0, 1], 1)])
-    Filtered complex on vertex set (0, 1) and with simplices ((0,) : 0), ((1,) : 0), ((0, 1) : 1)
+    Filtered complex on vertex set (0, 1) and
+     with simplices ((0,) : 0), ((1,) : 0), ((0, 1) : 1)
 
 Sage can compute persistent homology of simplicial complexes::
 
     sage: X = FilteredSimplicialComplex([([0], 0), ([1], 0), ([0, 1], 1)])
-    sage: X.persistence_intervals(0)
+    sage: X.persistence_intervals(0)                                                    # needs sage.modules
     [(0, 1), (0, +Infinity)]
 
 FilteredSimplicialComplex objects are mutable. Filtration values can be
 set with the ``filtration`` method as follows::
 
     sage: X = FilteredSimplicialComplex() # returns an empty complex
-    sage: X.persistence_intervals(1)
+    sage: X.persistence_intervals(1)                                                    # needs sage.modules
     []
     sage: X.filtration(Simplex([0, 2]), 0) # recursively adds faces
     sage: X.filtration(Simplex([0, 1]), 0)
     sage: X.filtration(Simplex([1, 2]), 0)
     sage: X.filtration(Simplex([0, 1, 2]), 1) # closes the circle
-    sage: X.persistence_intervals(1)
+    sage: X.persistence_intervals(1)                                                    # needs sage.modules
     [(0, 1)]
 
 The filtration value of a simplex can be accessed as well with the
@@ -82,13 +83,15 @@ rather than a ``Simplex``. This can make code more readable / clear::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.topology.simplicial_complex import Simplex, SimplicialComplex
-from sage.modules.free_module import FreeModule
-from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.misc.cachefunc import cached_method
+from sage.structure.sage_object import SageObject
+from sage.topology.simplicial_complex import Simplex, SimplicialComplex
+
+lazy_import('sage.modules.free_module', 'FreeModule')
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
 
 class FilteredSimplicialComplex(SageObject):
@@ -359,7 +362,8 @@ class FilteredSimplicialComplex(SageObject):
             sage: a.insert([0, 2], 2)
             sage: b = a.prune(1)
             sage: b
-            Filtered complex on vertex set (0, 1) and with simplices ((0,) : 0), ((1,) : 1), ((0, 1) : 1)
+            Filtered complex on vertex set (0, 1) and
+             with simplices ((0,) : 0), ((1,) : 1), ((0, 1) : 1)
         """
         result_complex = FilteredSimplicialComplex()
         for s in self._filtration_dict:
@@ -394,7 +398,7 @@ class FilteredSimplicialComplex(SageObject):
         EXAMPLES::
 
             sage: X = FilteredSimplicialComplex([([0], 0), ([1], 0), ([0,1], 2)])
-            sage: X._persistent_homology()[0]
+            sage: X._persistent_homology()[0]                                           # needs sage.modules
             [(0, 2), (0, +Infinity)]
 
         Some homology elements may have a lifespan or persistence of 0.
@@ -402,7 +406,7 @@ class FilteredSimplicialComplex(SageObject):
 
             sage: X = FilteredSimplicialComplex()
             sage: X.insert([0,1],1) # opens a hole and closes it instantly
-            sage: X._persistent_homology(strict=False)[0]
+            sage: X._persistent_homology(strict=False)[0]                               # needs sage.modules
             [(1, 1), (1, +Infinity)]
 
         REFERENCES:
@@ -417,11 +421,11 @@ class FilteredSimplicialComplex(SageObject):
             ....:      ([1, 2], 1), ([0, 3], 2), ([2, 3], 2), ([0, 2], 3),
             ....:      ([0, 1, 2], 4), ([0, 2, 3], 5)]
             sage: X = FilteredSimplicialComplex(l)
-            sage: X.persistence_intervals(0)
+            sage: X.persistence_intervals(0)                                            # needs sage.modules
             [(0, 1), (1, 2), (0, +Infinity)]
-            sage: X.persistence_intervals(1)
+            sage: X.persistence_intervals(1)                                            # needs sage.modules
             [(3, 4), (2, 5)]
-            sage: X.persistence_intervals(0, strict=False)
+            sage: X.persistence_intervals(0, strict=False)                              # needs sage.modules
             [(0, 1), (1, 1), (1, 2), (0, +Infinity)]
         """
         # first, order the simplices in lexico order
@@ -506,18 +510,19 @@ class FilteredSimplicialComplex(SageObject):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: X = FilteredSimplicialComplex([([0], 0), ([1, 2], 10)])
             sage: int_list = X._persistent_homology()
             sage: int_list[0]
             [(0, +Infinity), (10, +Infinity)]
-            sage: X._add_interval(Simplex([0]), Simplex([1, 2]),int_list)
+            sage: X._add_interval(Simplex([0]), Simplex([1, 2]), int_list)
             sage: int_list[0]
             [(0, +Infinity), (10, +Infinity), (0, 10)]
 
         Infinite interval::
 
             sage: int_list2 = [[],[]]
-            sage: X._add_interval(Simplex([1, 2]), None, int_list2)
+            sage: X._add_interval(Simplex([1, 2]), None, int_list2)                     # needs sage.modules
             sage: int_list2[1]
             [(10, +Infinity)]
         """
@@ -552,12 +557,12 @@ class FilteredSimplicialComplex(SageObject):
             sage: l = [([0], 0), ([1], 0), ([2], 1), ([3], 1), ([0, 1], 1), ([1, 2], 1),
             ....:      ([0, 3], 2), ([2, 3], 2), ([0, 2], 3), ([0, 1, 2], 4)]
             sage: X = FilteredSimplicialComplex(l)
-            sage: X._persistent_homology()
+            sage: X._persistent_homology()                                              # needs sage.modules
             [[(0, 1), (1, 2), (0, +Infinity)], [(3, 4), (2, +Infinity)], []]
-            sage: X._remove_pivot_rows(Simplex([0,1,2]), list(X._filtration_dict))
+            sage: X._remove_pivot_rows(Simplex([0,1,2]), list(X._filtration_dict))      # needs sage.modules
             0
             sage: X.insert([0,2,3],5)
-            sage: X._remove_pivot_rows(Simplex([0,2,3]), list(X._filtration_dict))
+            sage: X._remove_pivot_rows(Simplex([0,2,3]), list(X._filtration_dict))      # needs sage.modules
             B[(2, 3)]
         """
         d = self._chaingroup()
@@ -602,6 +607,7 @@ class FilteredSimplicialComplex(SageObject):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: X = FilteredSimplicialComplex([([0], 0), ([1], 5), ([0, 1], 18), ([0, 2, 3], 32)])
             sage: X._persistent_homology()
             [[(5, 18), (0, +Infinity)], [], []]
@@ -637,7 +643,7 @@ class FilteredSimplicialComplex(SageObject):
         EXAMPLES::
 
             sage: X = FilteredSimplicialComplex([([0], 0), ([1], 1), ([0,1], 2)])
-            sage: X.persistence_intervals(0)
+            sage: X.persistence_intervals(0)                                            # needs sage.modules
             [(1, 2), (0, +Infinity)]
         """
         if verbose is None:
@@ -672,16 +678,16 @@ class FilteredSimplicialComplex(SageObject):
         EXAMPLES::
 
             sage: X = FilteredSimplicialComplex([([0], 0), ([1], 0), ([0,1], 2)])
-            sage: X.betti_number(0, 0.5, 1)
+            sage: X.betti_number(0, 0.5, 1)                                             # needs sage.modules
             2
-            sage: X.betti_number(0, 1.5, 1)
+            sage: X.betti_number(0, 1.5, 1)                                             # needs sage.modules
             1
 
         If an element vanishes at time ``a + b`` exactly,
         it does not count towards the Betti number::
 
             sage: X = FilteredSimplicialComplex([([0], 0), ([1], 0), ([0,1], 2)])
-            sage: X.betti_number(0, 1.5, 0.5)
+            sage: X.betti_number(0, 1.5, 0.5)                                           # needs sage.modules
             1
         """
         if verbose is None:

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Evenly distributed sets in finite fields
 
@@ -359,7 +359,8 @@ cdef class EvenlyDistributedSetsBacktracker:
 
             sage: EvenlyDistributedSetsBacktracker(GF(25,'a'), 4)
             4-evenly distributed sets (up to isomorphism) in Finite Field in a of size 5^2
-            sage: EvenlyDistributedSetsBacktracker(GF(25,'a'), 4, up_to_isomorphism=False)
+            sage: EvenlyDistributedSetsBacktracker(GF(25,'a'), 4,
+            ....:                                  up_to_isomorphism=False)
             4-evenly distributed sets in Finite Field in a of size 5^2
         """
         return "{}-evenly distributed sets {} in {}".format(
@@ -378,13 +379,14 @@ cdef class EvenlyDistributedSetsBacktracker:
 
             sage: from sage.combinat.designs.evenly_distributed_sets import EvenlyDistributedSetsBacktracker
 
-            sage: E = EvenlyDistributedSetsBacktracker(GF(25,'a'),4)
-            sage: E
-            4-evenly distributed sets (up to isomorphism) in Finite Field in a of size 5^2
+            sage: E = EvenlyDistributedSetsBacktracker(GF(25,'a'), 4); E
+            4-evenly distributed sets (up to isomorphism)
+             in Finite Field in a of size 5^2
             sage: E.cardinality()
             4
 
-            sage: E = EvenlyDistributedSetsBacktracker(GF(25,'a'), 4, up_to_isomorphism=False)
+            sage: E = EvenlyDistributedSetsBacktracker(GF(25,'a'), 4,
+            ....:                                      up_to_isomorphism=False)
             sage: E.cardinality()
             40
         """

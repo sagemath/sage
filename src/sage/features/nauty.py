@@ -19,7 +19,7 @@ from .join_feature import JoinFeature
 
 class NautyExecutable(Executable):
     r"""
-    A :class:`~sage.features.Feature` which checks for nauty executables.
+    A :class:`~sage.features.Feature` which checks for executables from the :ref:`nauty <spkg_nauty>` package.
 
     EXAMPLES::
 
@@ -37,13 +37,14 @@ class NautyExecutable(Executable):
         """
         Executable.__init__(self, name=f"nauty_{name}",
                             executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
-                            spkg="nauty")
+                            spkg="nauty",
+                            type="standard")
 
 
 class Nauty(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of the executables
-    which comes as a part of ``nauty``.
+    which comes as a part of :ref:`nauty <spkg_nauty>`.
 
     EXAMPLES::
 

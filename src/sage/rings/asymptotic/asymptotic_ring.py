@@ -4075,7 +4075,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
         if isinstance(data, MutablePoset):
             return self.element_class(self, data, simplify=simplify, convert=convert)
 
-        if type(data) == self.element_class and data.parent() == self:
+        if type(data) is self.element_class and data.parent() == self:
             return data
 
         if isinstance(data, AsymptoticExpansion):
@@ -4984,7 +4984,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             sage: F_X == F_Y
             False
         """
-        return (type(self) == type(other)
+        return (type(self) is type(other)
                 and self.growth_group == other.growth_group
                 and self._default_prec_ == other._default_prec_
                 and self._category_ == other._category_

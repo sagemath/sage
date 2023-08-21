@@ -537,9 +537,9 @@ def test_finite_poset(P):
     P_dual = P.dual()
     selfdual_properties = ['chain', 'bounded', 'connected', 'graded', 'ranked', 'series_parallel', 'slender', 'lattice']
     for prop in selfdual_properties:
-        f = attrcall('is_'+prop)
+        f = attrcall('is_' + prop)
         if f(P) != f(P_dual):
-            raise ValueError("error in self-dual property %s" % prop)
+            raise ValueError(f"error in self-dual property {prop}")
     if P.is_graded():
         if P.is_bounded():
             if P.is_eulerian() != P_dual.is_eulerian():
@@ -547,7 +547,7 @@ def test_finite_poset(P):
             if P.is_eulerian():
                 P_ = P.star_product(P)
                 if not P_.is_eulerian():
-                    raise("error in star product / eulerian")
+                    raise ValueError("error in star product / eulerian")
         chain1 = P.random_maximal_chain()
         if len(chain1) != h1:
             raise ValueError("error in is_graded")

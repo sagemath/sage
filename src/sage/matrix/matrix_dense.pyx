@@ -10,7 +10,6 @@ TESTS::
 
 cimport sage.matrix.matrix as matrix
 
-from sage.structure.element cimport Element, RingElement
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 import sage.matrix.matrix_space
 import sage.structure.sequence

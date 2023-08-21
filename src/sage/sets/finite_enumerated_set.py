@@ -23,7 +23,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import EmptySetError
 from sage.rings.integer import Integer
 
-#################################################################
+
 class FiniteEnumeratedSet(UniqueRepresentation, Parent):
     """
     A class for finite enumerated set.
@@ -271,7 +271,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     index = rank
 
-    def unrank(self,i):
+    def unrank(self, i):
         r"""
         Return the element at position ``i``.
 
@@ -402,5 +402,5 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         try:
             return self._elements[self.rank(el)]
-        except (ValueError,KeyError):
-            raise ValueError("%s not in %s"%(el, self))
+        except (ValueError, KeyError):
+            raise ValueError("%s not in %s" % (el, self))

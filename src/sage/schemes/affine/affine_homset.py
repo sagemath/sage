@@ -45,6 +45,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
 
+
 # *******************************************************************
 #  Affine varieties
 # *******************************************************************
@@ -274,63 +275,63 @@ class SchemeHomset_points_affine(SchemeHomset_points):
                 numerical = False
             # Then X must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
-            if dim_ideal < 0: # no points
+            if dim_ideal < 0:  # no points
                 return []
-            if dim_ideal == 0: # if X zero-dimensional
+            if dim_ideal == 0:  # if X zero-dimensional
                 rat_points = []
                 AS = X.ambient_space()
                 N = AS.dimension_relative()
                 BR = X.base_ring()
-                #need a lexicographic ordering for elimination
+                # need a lexicographic ordering for elimination
                 R = PolynomialRing(BR, N, AS.gens(), order='lex')
                 I = R.ideal(X.defining_polynomials())
                 I0 = R.ideal(0)
-                #Determine the points through elimination
-                #This is much faster than using the I.variety() function on each affine chart.
+                # Determine the points through elimination
+                # This is much faster than using the I.variety() function on each affine chart.
                 G = I.groebner_basis()
                 if G != [1]:
                     P = {}
                     points = [P]
-                    #work backwards from solving each equation for the possible
-                    #values of the next coordinate
+                    # work backwards from solving each equation for the possible
+                    # values of the next coordinate
                     for i in range(len(G) - 1, -1, -1):
                         new_points = []
                         good = 0
                         for P in points:
-                            #substitute in our dictionary entry that has the values
-                            #of coordinates known so far. This results in a single
-                            #variable polynomial (by elimination)
+                            # substitute in our dictionary entry that has the values
+                            # of coordinates known so far. This results in a single
+                            # variable polynomial (by elimination)
                             L = G[i].substitute(P)
                             if R(L).degree() > 0:
                                 if numerical:
                                     for pol in L.univariate_polynomial().roots(multiplicities=False):
                                         r = L.variables()[0]
                                         varindex = R.gens().index(r)
-                                        P.update({R.gen(varindex):pol})
+                                        P.update({R.gen(varindex): pol})
                                         new_points.append(copy(P))
                                         good = 1
                                 else:
                                     L = L.factor()
-                                #the linear factors give the possible rational values of
-                                #this coordinate
+                                # the linear factors give the possible rational values of
+                                # this coordinate
                                     for pol, pow in L:
                                         if pol.degree() == 1 and len(pol.variables()) == 1:
                                             good = 1
                                             r = pol.variables()[0]
                                             varindex = R.gens().index(r)
-                                            #add this coordinates information to
-                                            #each dictionary entry
-                                            P.update({R.gen(varindex):-pol.constant_coefficient() /
-                                            pol.monomial_coefficient(r)})
+                                            # add this coordinates information to
+                                            # each dictionary entry
+                                            P.update({R.gen(varindex):
+                                                      -pol.constant_coefficient() / pol.monomial_coefficient(r)})
                                             new_points.append(copy(P))
                             else:
                                 new_points.append(P)
                                 good = 1
                         if good:
                             points = new_points
-                    #the dictionary entries now have values for all coordinates
-                    #they are the rational solutions to the equations
-                    #make them into affine points
+                    # the dictionary entries now have values for all coordinates
+                    # they are the rational solutions to the equations
+                    # make them into affine points
                     for i in range(len(points)):
                         if numerical:
                             if len(points[i]) == N:
@@ -350,19 +351,19 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         prec = kwds.pop('precision', 53)
         if is_RationalField(R) or R == ZZ:
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_rational_field
-            return enum_affine_rational_field(self,B)
+            return enum_affine_rational_field(self, B)
         if R in NumberFields():
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_number_field
             return enum_affine_number_field(self, bound=B, tolerance=tol, precision=prec)
         elif isinstance(R, FiniteField):
             from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
             return enum_affine_finite_field(self)
         else:
-            raise TypeError("unable to enumerate points over %s"%R)
+            raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """
@@ -447,7 +448,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         if not is_AffineSpace(X) and X.base_ring() in Fields():
             # Then X must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
-            if dim_ideal != 0: # no points
+            if dim_ideal != 0:  # no points
                 return []
         else:
             return []

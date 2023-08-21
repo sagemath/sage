@@ -20,9 +20,6 @@ Base class for groups
 doc="""
 Base class for all groups
 """
-
-import random
-
 from sage.rings.infinity import infinity
 import sage.rings.integer_ring
 

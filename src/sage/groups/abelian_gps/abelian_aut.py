@@ -55,8 +55,8 @@ or create subgroups and do the same for them::
 
 Only automorphism groups of finite abelian groups are supported::
 
-    sage: G = AbelianGroupGap([0,2])        # optional gap_packages
-    sage: autG = G.aut()                    # optional gap_packages
+    sage: G = AbelianGroupGap([0,2])        # optional - gap_package_polycyclic
+    sage: autG = G.aut()                    # optional - gap_package_polycyclic
     Traceback (most recent call last):
     ...
     ValueError: only finite abelian groups are supported

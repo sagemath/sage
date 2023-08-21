@@ -68,17 +68,19 @@ import weakref
 from sage.arith.misc import divisors
 from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.modular.dirichlet import DirichletGroup, trivial_character
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
+
+lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 
 
 _wscache = {}

@@ -16,7 +16,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
@@ -29,14 +28,16 @@ from .element_base cimport FinitePolyExtElement
 from .integer_mod import IntegerMod_abstract
 
 import sage.rings.integer
-from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
-from sage.structure.element cimport Element, ModuleElement, RingElement
 from sage.structure.richcmp cimport rich_to_bool
 
+try:
+    from sage.modules.free_module_element import FreeModuleElement
+except ImportError:
+    FreeModuleElement = ()
 
 from sage.interfaces.abc import GapElement
 
@@ -470,13 +471,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             if t == t_FF_FpXQ:
                 f = cgetg(n + 2, t_POL)
                 set_gel(f, 1, gmael(g, 2, 1))
-                for i in xrange(n):
+                for i in range(n):
                     xi = Integer(x[i])
                     set_gel(f, i + 2, _new_GEN_from_mpz_t(xi.value))
             elif t == t_FF_Flxq or t == t_FF_F2xq:
                 f = cgetg(n + 2, t_VECSMALL)
                 set_gel(f, 1, gmael(g, 2, 1))
-                for i in xrange(n):
+                for i in range(n):
                     set_uel(f, i + 2, x[i])
                 if t == t_FF_F2xq:
                     f = Flx_to_F2x(f)
@@ -1332,9 +1333,10 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(2^3, 'aa', impl='pari_ffelt')
             sage: aa = F.multiplicative_generator()
-            sage: gap(aa) # indirect doctest
+            sage: gap(aa)  # indirect doctest
             Z(2^3)
             sage: b = F.multiplicative_generator()
             sage: a = b^3
@@ -1349,6 +1351,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         You can specify the instance of the Gap interpreter that is used::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(200)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_ (gap)
@@ -1358,6 +1361,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         Gap only supports relatively small finite fields::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(1000)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_init_()

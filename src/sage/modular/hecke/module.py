@@ -1696,7 +1696,6 @@ class HeckeModule_free_module(HeckeModule_generic):
         Next we define a function that does the above::
 
             sage: def b(N,k=2):
-            ....:    t=cputime()
             ....:    S = ModularSymbols(N,k,sign=-1).cuspidal_submodule().new_submodule()
             ....:    for A in S.decomposition():
             ....:        print("{} {}".format(N, A.system_of_eigenvalues(5)))

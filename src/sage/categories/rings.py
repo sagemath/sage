@@ -218,7 +218,7 @@ class Rings(CategoryWithAxiom):
                 Ring endomorphism of Univariate Polynomial Ring in x over Rational Field
                     Defn: x |--> x + 1
 
-                sage: g = f.extend_to_fraction_field(); g
+                sage: g = f.extend_to_fraction_field(); g                               # optional - sage.libs.singular
                 Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x
                  over Rational Field
                     Defn: x |--> x + 1

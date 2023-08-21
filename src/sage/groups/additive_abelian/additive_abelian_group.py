@@ -353,7 +353,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         if not self.invariants():
             return ZZ(1)
         else:
-            ann =  self.annihilator().gen()
+            ann = self.annihilator().gen()
             if ann:
                 return ann
             return ZZ(0)

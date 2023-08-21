@@ -13,7 +13,7 @@ that are readable and idiomatic.::
 
     sage: sage_input(3)
     3
-    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)
+    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # optional - sage.symbolic
     # Verified
     R.<x> = RR[]
     x^2 + 6.2831853071795862*x + 9.869604401089358
@@ -2812,14 +2812,14 @@ class SIE_gens_constructor(SageInputExpression):
         We also can't use the preparser syntax if there is a conflict
         between generator names.  For example, this works::
 
-            sage: sage_input((polygen(ZZ), polygen(GF(17), 'y')))
+            sage: sage_input((polygen(ZZ), polygen(GF(17), 'y')))                       # optional - sage.rings.finite_rings
             R1.<x> = ZZ[]
             R2.<y> = GF(17)[]
             (x, y)
 
         but this can't use the preparser syntax.::
 
-            sage: sage_input((polygen(ZZ), polygen(GF(17))))
+            sage: sage_input((polygen(ZZ), polygen(GF(17))))                            # optional - sage.rings.finite_rings
             R1 = ZZ['x']
             x1 = R1.gen()
             R2 = GF(17)['x']

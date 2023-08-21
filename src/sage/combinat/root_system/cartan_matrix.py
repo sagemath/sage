@@ -32,7 +32,7 @@ from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.matrix.matrix_integer_sparse import Matrix_integer_sparse
 from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract

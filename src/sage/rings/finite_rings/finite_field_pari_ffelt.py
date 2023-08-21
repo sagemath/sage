@@ -213,12 +213,12 @@ class FiniteField_pari_ffelt(FiniteField):
         TESTS::
 
             sage: F = FiniteField(37^10, 'a', impl='pari_ffelt')
-            sage: x = F.random_element()
-            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x)) for k in range(1, 30) if k % 10 != 0)
+            sage: x = F.random_element()                                                # needs sage.modules
+            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x))                    # needs sage.modules
+            ....:     for k in range(1, 30) if k % 10 != 0)
             True
-            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x
+            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x                            # needs sage.modules
             True
-
         """
         k = k % self.degree()
         if k == 0:

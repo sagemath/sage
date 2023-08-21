@@ -39,7 +39,8 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): initial version
 
 """
-#*****************************************************************************
+
+# ****************************************************************************
 #       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2019      Brent Baccala
 #
@@ -47,7 +48,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import random
 

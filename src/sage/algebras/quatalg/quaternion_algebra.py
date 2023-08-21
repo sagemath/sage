@@ -1031,8 +1031,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(19).discriminant()
             19
 
-            sage: F.<a> = NumberField(x^2-x-1)
-            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a,F(-1))
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a, F(-1))
             sage: B.discriminant()
             Fractional ideal (2)
 
@@ -2920,10 +2921,8 @@ def basis_for_quaternion_lattice(gens, reverse=True):
         sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
         sage: basis_for_quaternion_lattice([i+j, i-j, 2*k, A(1/3)])
         [1/3, 2*i, i + j, 2*k]
-
         sage: basis_for_quaternion_lattice([A(1),i,j,k])
         [1, i, j, k]
-
     """
     if not gens:
         return []

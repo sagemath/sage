@@ -222,7 +222,7 @@ class FusionDouble(CombinatorialFreeModule):
         TESTS::
 
             sage: D = FusionDouble(SymmetricGroup(4))
-            
+
             sage: all(D._char_cache(b.support_of_term(), b.g()) == b.char()(b.g())
             ....:     for b in D.basis())
             True
@@ -711,7 +711,7 @@ class FusionDouble(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: FusionDouble(DiCyclicGroup(4)).group()
-            Diyclic group of order 16 as a permutation group
+            Dicyclic group of order 16 as a permutation group
         """
         return self._G
 

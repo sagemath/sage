@@ -3,14 +3,16 @@
 Places of function fields: rational
 """
 
-#*****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2019      Brent Baccala
+#                     2021      Jonathan Kliem
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .place import FunctionFieldPlace
 
@@ -75,7 +77,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: p = O.ideal(x^2 + x + 1).place()
-            sage: k, fr_k, to_k = p.residue_field()
+            sage: k, fr_k, to_k = p.residue_field()                                     # needs sage.rings.function_field
             sage: k
             Finite Field in z2 of size 2^2
             sage: fr_k
@@ -167,7 +169,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
             sage: p = L.places_finite()[0]
             sage: p.valuation_ring()
             Valuation ring at Place (x, x*y)

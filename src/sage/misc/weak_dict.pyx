@@ -118,15 +118,13 @@ See :trac:`13394` for a discussion of some of the design considerations.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import weakref
 from weakref import KeyedRef
 from copy import deepcopy
 
 from cpython.dict cimport PyDict_SetItem, PyDict_Next
 from cpython.tuple cimport PyTuple_GET_SIZE, PyTuple_New
 from cpython.weakref cimport PyWeakref_NewRef
-from cpython.object cimport PyObject_Hash
-from cpython.ref cimport Py_INCREF, Py_XINCREF, Py_XDECREF
+from cpython.ref cimport Py_INCREF
 from sage.cpython.dict_del_by_value cimport *
 
 from sage.misc.superseded import deprecation

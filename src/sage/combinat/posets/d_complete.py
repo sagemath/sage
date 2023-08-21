@@ -59,8 +59,8 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P._hooks
             {0: 1, 1: 2, 2: 2, 3: 3}
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = DCompletePoset(Posets.YoungDiagramPoset(Partition([3,2,1]))._hasse_diagram.reverse())
-            sage: P._hooks
+            sage: P = DCompletePoset(Posets.YoungDiagramPoset(Partition([3,2,1]))._hasse_diagram.reverse())     # optional - sage.combinat
+            sage: P._hooks                                                                                      # optional - sage.combinat
             {0: 5, 1: 3, 2: 1, 3: 3, 4: 1, 5: 1}
         """
         hooks = {}
@@ -150,8 +150,9 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P.get_hooks()
             {0: 1, 1: 2, 2: 2, 3: 3}
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = DCompletePoset(Posets.YoungDiagramPoset(Partition([3,2,1]))._hasse_diagram.reverse())
-            sage: P.get_hooks()
+            sage: YDP321 = Posets.YoungDiagramPoset(Partition([3,2,1]))                 # optional - sage.combinat
+            sage: P = DCompletePoset(YDP321._hasse_diagram.reverse())                   # optional - sage.combinat
+            sage: P.get_hooks()                                                         # optional - sage.combinat
             {0: 5, 1: 3, 2: 1, 3: 3, 4: 1, 5: 1}
         """
         return dict(self._hooks)
@@ -166,8 +167,9 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P = DCompletePoset(DiGraph({0: [1, 2], 1: [3], 2: [3], 3: []}))
             sage: P.hook_product()
             12
-            sage: P = DCompletePoset(posets.YoungDiagramPoset(Partition([3,2,1]), dual=True))
-            sage: P.hook_product()
+            sage: P = DCompletePoset(posets.YoungDiagramPoset(Partition([3,2,1]),       # optional - sage.combinat
+            ....:                    dual=True))
+            sage: P.hook_product()                                                      # optional - sage.combinat
             45
         """
         if not self._hasse_diagram:

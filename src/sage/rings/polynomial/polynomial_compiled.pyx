@@ -12,7 +12,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ################################################################################
 
 from sage.misc.binary_tree cimport BinaryTree
@@ -140,9 +140,8 @@ cdef class CompiledPolynomialFunction:
         Return the resultant head DAG node, and a binary tree
         containing the dummy nodes.
         """
-
         cdef BinaryTree gaps
-        cdef int d, i
+        cdef int d
         cdef generic_pd s
 
         s = univar_pd()
@@ -154,7 +153,7 @@ cdef class CompiledPolynomialFunction:
         s = coeff_pd(d)
         gap_width = 0
 
-        d-= 1
+        d -= 1
         while d > 0:
             gap_width += 1
             if self._coeffs[d]:

@@ -279,6 +279,7 @@ cdef class Map(Element):
             sage: import gc
             sage: _ = gc.collect()
             sage: C = Q.__class__.__base__                                              # optional - sage.rings.number_field
+            sage: x = None
             sage: numberQuadFields = len([x for x in gc.get_objects()                   # optional - sage.rings.number_field
             ....:                         if isinstance(x, C)])
             sage: del Q, x                                                              # optional - sage.rings.number_field
@@ -344,6 +345,7 @@ cdef class Map(Element):
             sage: import gc
             sage: _ = gc.collect()
             sage: C = Q.__class__.__base__                                              # optional - sage.rings.number_field
+            sage: x = None
             sage: numberQuadFields = len([x for x in gc.get_objects()                   # optional - sage.rings.number_field
             ....:                         if isinstance(x, C)])
             sage: del Q, x                                                              # optional - sage.rings.number_field

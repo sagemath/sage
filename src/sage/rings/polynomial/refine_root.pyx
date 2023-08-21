@@ -38,6 +38,7 @@ def refine_root(ip, ipd, irt, fld):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.rings.polynomial.refine_root import refine_root
         sage: x = polygen(ZZ)
         sage: p = x^9 - 1

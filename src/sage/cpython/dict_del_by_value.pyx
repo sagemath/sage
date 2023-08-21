@@ -160,11 +160,12 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
     ep.me_value = NULL
     mp.ma_used -= 1
     dictkeys_set_index(keys, i, DKIX_DUMMY)
-    #We have transferred the to-be-deleted references to the list T
-    #we now delete the list so that the actual decref happens through a
-    #deallocation routine that uses the Python Trashcan macros to
-    #avoid stack overflow in deleting deep structures.
+    # We have transferred the to-be-deleted references to the list T
+    # we now delete the list so that the actual decref happens through a
+    # deallocation routine that uses the Python Trashcan macros to
+    # avoid stack overflow in deleting deep structures.
     del T
+
 
 def test_del_dictitem_by_exact_value(D, value, h):
     """

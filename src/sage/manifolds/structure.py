@@ -93,7 +93,7 @@ class DifferentialStructure(Singleton):
     chart = DiffChart
     name = "differentiable"
     scalar_field_algebra = DiffScalarFieldAlgebra
-    homset =  DifferentiableManifoldHomset
+    homset = DifferentiableManifoldHomset
 
     def subcategory(self, cat):
         """
@@ -118,7 +118,7 @@ class RealDifferentialStructure(Singleton):
     chart = RealDiffChart
     name = "differentiable"
     scalar_field_algebra = DiffScalarFieldAlgebra
-    homset =  DifferentiableManifoldHomset
+    homset = DifferentiableManifoldHomset
 
     def subcategory(self, cat):
         """
@@ -142,7 +142,7 @@ class PseudoRiemannianStructure(Singleton):
     chart = RealDiffChart
     name = "pseudo-Riemannian"
     scalar_field_algebra = DiffScalarFieldAlgebra
-    homset =  DifferentiableManifoldHomset
+    homset = DifferentiableManifoldHomset
 
     def subcategory(self, cat):
         """
@@ -166,7 +166,7 @@ class RiemannianStructure(Singleton):
     chart = RealDiffChart
     name = "Riemannian"
     scalar_field_algebra = DiffScalarFieldAlgebra
-    homset =  DifferentiableManifoldHomset
+    homset = DifferentiableManifoldHomset
 
     def subcategory(self, cat):
         """
@@ -190,7 +190,7 @@ class LorentzianStructure(Singleton):
     chart = RealDiffChart
     name = "Lorentzian"
     scalar_field_algebra = DiffScalarFieldAlgebra
-    homset =  DifferentiableManifoldHomset
+    homset = DifferentiableManifoldHomset
 
     def subcategory(self, cat):
         """
@@ -214,7 +214,7 @@ class DegenerateStructure(Singleton):
     chart = RealDiffChart
     name = "degenerate_metric"
     scalar_field_algebra = DiffScalarFieldAlgebra
-    homset =  DifferentiableManifoldHomset
+    homset = DifferentiableManifoldHomset
 
     def subcategory(self, cat):
         """

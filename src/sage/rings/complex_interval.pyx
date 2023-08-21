@@ -64,13 +64,12 @@ from sage.libs.flint.fmpz cimport *
 from sage.libs.mpfr cimport MPFR_RNDU, MPFR_RNDD
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
-from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
+from sage.structure.element cimport FieldElement
 from sage.structure.parent cimport Parent
 from .complex_mpfr cimport ComplexNumber
-from .complex_mpfr import ComplexField
 from sage.rings.integer cimport Integer
 cimport sage.rings.real_mpfi as real_mpfi
-from .real_mpfr cimport RealNumber, RealField
+from .real_mpfr cimport RealNumber
 from .convert.mpfi cimport mpfi_set_sage
 from .infinity import infinity
 
@@ -90,7 +89,7 @@ def is_ComplexIntervalFieldElement(x):
     return isinstance(x, ComplexIntervalFieldElement)
 
 
-cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
+cdef class ComplexIntervalFieldElement(FieldElement):
     """
     A complex interval.
 

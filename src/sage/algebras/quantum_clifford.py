@@ -27,7 +27,7 @@ from sage.sets.family import Family
 from sage.rings.fraction_field import FractionField
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from itertools import product
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 
 class QuantumCliffordAlgebra(CombinatorialFreeModule):
     r"""

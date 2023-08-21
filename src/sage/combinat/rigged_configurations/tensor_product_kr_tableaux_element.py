@@ -9,7 +9,7 @@ AUTHORS:
 - Travis Scrimshaw (2010-09-26): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010, 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -21,8 +21,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
 
@@ -158,7 +158,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         ret_str = repr(self[0])
         for i in range(1, len(self)):
             ret_str += " (X) " + repr(self[i])
-        return(ret_str)
+        return ret_str
 
     def _repr_diagram(self):
         """
@@ -179,7 +179,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
             sage: Partitions.options._reset()
         """
         comp = [crys._repr_diagram().splitlines() for crys in self]
-        num_comp = len(comp) # number of components
+        num_comp = len(comp)  # number of components
         col_len = [len(t) > 0 and len(t[0]) or 1 for t in comp]  # columns per component
         num_rows = max(len(t) for t in comp)                     # number of rows
 
@@ -190,11 +190,11 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
             diag += '\n'
             for c in range(num_comp):
                 if c > 0:
-                    diag += '     ' # For the tensor symbol
+                    diag += '     '  # For the tensor symbol
                 if row < len(comp[c]):
                     diag += comp[c][row]
                 else:
-                    diag += ' '*col_len[c]
+                    diag += ' ' * col_len[c]
         return diag
 
     def pp(self):
@@ -244,7 +244,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
             Tensor product of Kirillov-Reshetikhin tableaux of type ['A', 3, 1] and factor(s) ((1, 3), (2, 2))
         """
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux \
-                import TensorProductOfKirillovReshetikhinTableaux
+            import TensorProductOfKirillovReshetikhinTableaux
         P = self.parent()
         P = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, reversed(P.dims))
         return P(*[x.lusztig_involution() for x in reversed(self)])
@@ -266,11 +266,11 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         P = self.parent()
         if P.dims[0][1] == 1:
             raise ValueError("cannot split a single column")
-        r,s = P.dims[0]
-        B = [[r,1], [r,s-1]]
+        r, s = P.dims[0]
+        B = [[r, 1], [r, s - 1]]
         B.extend(P.dims[1:])
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux \
-                import TensorProductOfKirillovReshetikhinTableaux
+            import TensorProductOfKirillovReshetikhinTableaux
         TP = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, B)
         x = self[0].left_split()
         return TP(*(list(x) + self[1:]))
@@ -298,12 +298,12 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         P = self.parent()
         if P.dims[-1][1] == 1:
             raise ValueError("cannot split a single column")
-        r,s = P.dims[-1]
+        r, s = P.dims[-1]
         B = list(P.dims[:-1])
-        B.append([r, s-1])
+        B.append([r, s - 1])
         B.append([r, 1])
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux \
-                import TensorProductOfKirillovReshetikhinTableaux
+            import TensorProductOfKirillovReshetikhinTableaux
         TP = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, B)
         x = self[-1].right_split()
         return TP(*(self[:-1] + list(x)))

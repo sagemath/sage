@@ -202,7 +202,7 @@ class ConstructionFunctor(Functor):
             sage: I == I        # indirect doctest
             True
         """
-        return type(self) == type(other)
+        return type(self) is type(other)
 
     def __ne__(self, other):
         """
@@ -525,7 +525,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         if isinstance(other, CompositeConstructionFunctor):
             return self.all == other.all
         else:
-            return type(self) == type(other)
+            return type(self) is type(other)
 
     def __ne__(self, other):
         """
@@ -677,7 +677,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
             sage: I == QQ.construction()[0]
             False
         """
-        c = (type(self) == type(other))
+        c = (type(self) is type(other))
         if not c:
             if isinstance(other, IdentityFunctor_generic):
                 return True
@@ -1758,10 +1758,11 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F2 = LaurentPolynomialFunctor('s', multi_variate=True)
             sage: F3 = LaurentPolynomialFunctor(['s','t'])
             sage: F1(F2(QQ))
-            Univariate Laurent Polynomial Ring in t over Univariate Laurent Polynomial Ring in s over Rational Field
-            sage: F2(F1(QQ))
+            Univariate Laurent Polynomial Ring in t over
+             Univariate Laurent Polynomial Ring in s over Rational Field
+            sage: F2(F1(QQ))                                                            # optional - sage.modules
             Multivariate Laurent Polynomial Ring in t, s over Rational Field
-            sage: F3(QQ)
+            sage: F3(QQ)                                                                # optional - sage.modules
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
@@ -1782,10 +1783,11 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             sage: F2 = LaurentPolynomialFunctor('s', multi_variate=True)
             sage: F3 = LaurentPolynomialFunctor(['s','t'])
             sage: F1(F2(QQ))          # indirect doctest
-            Univariate Laurent Polynomial Ring in t over Univariate Laurent Polynomial Ring in s over Rational Field
-            sage: F2(F1(QQ))
+            Univariate Laurent Polynomial Ring in t over
+             Univariate Laurent Polynomial Ring in s over Rational Field
+            sage: F2(F1(QQ))                                                            # optional - sage.modules
             Multivariate Laurent Polynomial Ring in t, s over Rational Field
-            sage: F3(QQ)
+            sage: F3(QQ)                                                                # optional - sage.modules
             Multivariate Laurent Polynomial Ring in s, t over Rational Field
 
         """
@@ -2984,7 +2986,7 @@ class QuotientFunctor(ConstructionFunctor):
         """
         if not isinstance(other, QuotientFunctor):
             return False
-        return (type(self) == type(other) and
+        return (type(self) is type(other) and
                 self.domain() == other.domain() and
                 self.codomain() == other.codomain() and
                 self.names == other.names and
@@ -3945,7 +3947,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM == FG                                                              # optional - sage.symbolic
+            sage: FM == FG                                                              # optional - sage.libs.gap sage.symbolic
             False
             sage: FM == loads(dumps(FM))                                                # optional - sage.symbolic
             True
@@ -3977,7 +3979,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM == FG       # indirect doctest                                     # optional - sage.symbolic
+            sage: FM == FG       # indirect doctest                                     # optional - sage.libs.gap sage.symbolic
             False
             sage: FM == loads(dumps(FM))                                                # optional - sage.symbolic
             True
@@ -3996,7 +3998,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)                                 # optional - sage.libs.gap
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # optional - sage.symbolic
-            sage: FM != FG       # indirect doctest                                     # optional - sage.symbolic
+            sage: FM != FG       # indirect doctest                                     # optional - sage.libs.gap sage.symbolic
             True
             sage: FM != loads(dumps(FM))                                                # optional - sage.symbolic
             False

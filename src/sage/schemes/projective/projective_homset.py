@@ -579,10 +579,11 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
     The bug reported at :trac:`1785` is fixed::
 
-        sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                                # optional - sage.rings.number_field
-        sage: E = EllipticCurve('37a')                                                              # optional - sage.rings.number_field
-        sage: X = E(K)                                                                              # optional - sage.rings.number_field
-        sage: X                                                                                     # optional - sage.rings.number_field
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                    # optional - sage.rings.number_field
+        sage: E = EllipticCurve('37a')                                                  # optional - sage.rings.number_field
+        sage: X = E(K)                                                                  # optional - sage.rings.number_field
+        sage: X                                                                         # optional - sage.rings.number_field
         Abelian group of points on
          Elliptic Curve defined by y^2 + y = x^3 + (-1)*x
           over Number Field in a with defining polynomial x^2 + x - 24

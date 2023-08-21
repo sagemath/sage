@@ -105,7 +105,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         # TODO: use self.element_class for consistency
         # At this point (2011/03) TestSuite fails if we do so
         self._element_class = element_class
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'depth', category = FiniteEnumeratedSets())
+        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='depth', category=FiniteEnumeratedSets())
 
     def __eq__(self, other):
         """

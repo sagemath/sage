@@ -395,7 +395,7 @@ def ArithmeticSubgroup_Permutation(
                 S3 = L * ~R
         elif S2 is not None: # initialize from L,S2
             if S3 is None:
-                S3 =  ~S2 * ~L
+                S3 = ~S2 * ~L
             if R is None:
                 R = ~S2 * ~L * S2
         elif S3 is not None: # initialize from L,S3

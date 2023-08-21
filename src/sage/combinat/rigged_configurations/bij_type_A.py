@@ -21,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -33,8 +33,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_abstract_class import KRTToRCBijectionAbstract
 from sage.combinat.rigged_configurations.bij_abstract_class import RCToKRTBijectionAbstract
@@ -122,7 +122,7 @@ class RCToKRTBijectionTypeA(RCToKRTBijectionAbstract):
             sage: bijection.next_state(1)
             5
         """
-        height -= 1 # indexing
+        height -= 1  # indexing
         n = self.n
         ell = [None] * n
         b = None
@@ -158,4 +158,4 @@ class RCToKRTBijectionTypeA(RCToKRTBijectionAbstract):
         if row_num is not None:
             self.cur_partitions[n - 1].rigging[row_num] = self.cur_partitions[n - 1].vacancy_numbers[row_num]
 
-        return(b)
+        return b

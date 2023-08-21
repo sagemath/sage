@@ -60,7 +60,7 @@ def find_min(vect):
     return min
 
 
-def IntegerVectorsIterator(vect, min = None):
+def IntegerVectorsIterator(vect, min=None):
     """
     Return an iterator over the list of integer vectors which are componentwise
     less than or equal to ``vect``, and lexicographically greater than or equal
@@ -161,7 +161,7 @@ class VectorPartition(CombinatorialElement):
             sage: V.partition_at_vertex(1)
             [4, 2]
         """
-        return Partition(sorted([vec[i] for vec in self._list], reverse = True))
+        return Partition(sorted([vec[i] for vec in self._list], reverse=True))
 
 
 class VectorPartitions(UniqueRepresentation, Parent):

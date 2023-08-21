@@ -16,20 +16,22 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.free_module_element import vector
-from sage.rings.imaginary_unit import I
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.power_series_ring import is_PowerSeriesRing
-from sage.rings.qqbar import AlgebraicField
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
 from .abstract_ring import FormsRing_abstract
+
+lazy_import('sage.rings.imaginary_unit', 'I')
+lazy_import('sage.rings.qqbar', 'QQbar')
 
 
 class FormsSpace_abstract(FormsRing_abstract):
@@ -82,11 +84,11 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.is_homogeneous()
             True
         """
-        #from space import canonical_parameters
-        #(group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
+        # from space import canonical_parameters
+        # (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
 
         super().__init__(group=group, base_ring=base_ring, red_hom=True, n=n)
-        #self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
+        # self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
 
         self._weight = k
         self._ep = ep
@@ -571,14 +573,13 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: el.parent() == subspace
             True
         """
-
         if not self.module():
-            raise ValueError("No free module defined for {}".format(self))
+            raise ValueError(f"no free module defined for {self}")
         basis = self.gens()
-        assert(len(basis) == len(vec))
+        assert len(basis) == len(vec)
         # vec = self.module()(self.module().linear_combination_of_basis(vec))
         # this also handles the trivial case (dimension 0)
-        return self(sum([vec[k]*basis[k] for k in range(0, len(vec))]))
+        return self(sum([vec[k] * basis[k] for k in range(len(vec))]))
 
     def element_from_ambient_coordinates(self, vec):
         r"""
@@ -757,7 +758,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         if (gamma.is_translation()):
             return ZZ(1)
         elif (gamma.is_reflection()):
-            return self._ep * (t/AlgebraicField()(I))**self._weight
+            return self._ep * (t/QQbar(I))**self._weight
         else:
             L = [v for v in gamma.word_S_T()[0]]
             aut_f = ZZ(1)
@@ -967,7 +968,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         J_qexp = self.J_inv().q_expansion(prec=order_inf - m, fix_d=fix_d, d_num_prec=d_num_prec)
 
         # The precision could be infinity, otherwise we could do this:
-        #assert(temp_reminder.prec() == 1)
+        # assert temp_reminder.prec() == 1
         temp_reminder = (1 / simple_qexp / q**(-m)).add_bigoh(1)
 
         fab_pol = q.parent()([])
@@ -1109,7 +1110,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         j_qexp = self.j_inv().q_expansion(prec=order_inf - m, fix_d=fix_d, d_num_prec=d_num_prec)
 
         # The precision could be infinity, otherwise we could do this:
-        #assert(temp_reminder.prec() == 1)
+        # assert temp_reminder.prec() == 1
         temp_reminder = (1 / simple_qexp / q**(-m)).add_bigoh(1)
 
         fab_pol = q.parent()([])
@@ -1121,8 +1122,8 @@ class FormsSpace_abstract(FormsRing_abstract):
             temp_reminder -= temp_coeff*j_qexp**temp_exp
             # The first term is zero only up to numerical errors,
             # so we manually have to remove it
-            if (not d.parent().is_exact()):
-                temp_reminder=temp_reminder.truncate_neg(-temp_exp+1)
+            if not d.parent().is_exact():
+                temp_reminder = temp_reminder.truncate_neg(-temp_exp+1)
 
         return fab_pol.polynomial()
 

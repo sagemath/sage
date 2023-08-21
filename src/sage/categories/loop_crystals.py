@@ -868,7 +868,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 B = P0.algebra(q.parent())
                 if group_components:
                     G = self.digraph(index_set=self.cartan_type().classical().index_set())
-                    C = G.connected_components()
+                    C = G.connected_components(sort=False)
                     return B.sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c)
                                  for c in C)
                 return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
@@ -968,7 +968,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for b in hw)
                     True
                 """
-                from sage.functions.other import ceil
+                from sage.arith.misc import integer_ceil as ceil
 
                 C = self.parent().crystals[0]
                 ell = ceil(C.s()/C.cartan_type().c()[C.r()])
@@ -1101,7 +1101,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for elt in hw)
                     True
                 """
-                from sage.functions.other import ceil
+                from sage.arith.misc import integer_ceil as ceil
 
                 ell = max(ceil(K.s()/K.cartan_type().c()[K.r()])
                           for K in self.parent().crystals)

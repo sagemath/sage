@@ -2,15 +2,15 @@
 
 """Utilities for interfacing with the standard library's atexit module."""
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import atexit
 
@@ -51,7 +51,8 @@ cdef class restore_atexit:
         sage: import atexit
         sage: from sage.cpython.atexit import restore_atexit
         sage: def handler(*args, **kwargs):
-        ....:     import sys # see https://github.com/sagemath/sage/issues/25270#comment:56
+        ....:     import sys
+        ....:     # see https://github.com/sagemath/sage/issues/25270#comment:56
         ....:     sys.stdout.write(str((args, kwargs)))
         ....:     sys.stdout.write('\n')
         sage: atexit.register(handler, 1, 2, c=3)
@@ -188,6 +189,7 @@ cdef extern from *:
         PyObject* kwargs
     atexit_callback** _atexit_callbacks(object module)
 
+
 def _get_exithandlers():
     """Return list of exit handlers registered with the atexit module."""
     cdef atexit_callback ** callbacks
@@ -206,9 +208,10 @@ def _get_exithandlers():
         else:
             kwargs = {}
         exithandlers.append((<object>callback.func,
-                                <object>callback.args,
-                                kwargs))
+                             <object>callback.args,
+                             kwargs))
     return exithandlers
+
 
 def _set_exithandlers(exithandlers):
     """

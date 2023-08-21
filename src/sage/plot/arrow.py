@@ -586,7 +586,8 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
     A pretty circle of arrows::
 
-        sage: sum([arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi)) for x in [0..2*pi,step=0.1]])
+        sage: sum(arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi))                         # needs sage.symbolic
+        ....:     for x in [0..2*pi, step=0.1])
         Graphics object consisting of 63 graphics primitives
 
     .. PLOT::

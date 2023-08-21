@@ -21,7 +21,7 @@ and C. Pernet. The functions available are:
 - ``void linbox_fmpz_mat_det(fmpz_t det, fmpz_mat_t A)``: set ``det`` to the
   determinant of the square matrix ``A``
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht
 #       Copyright (C) 2008 Clement Pernet
 #       Copyright (C) 2017-2018 Vincent Delecroix
@@ -30,15 +30,13 @@ and C. Pernet. The functions available are:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.libs.gmp.types cimport mpz_t, mpz_srcptr, mpz_ptr
-from sage.libs.gmp.mpz cimport mpz_set
-from sage.libs.flint.types cimport fmpz, fmpz_t
+from sage.libs.flint.types cimport fmpz_t
 from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry, fmpz_mat_nrows, fmpz_mat_ncols
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_set_coeff_mpz, fmpz_poly_fit_length, _fmpz_poly_set_length, fmpz_poly_one
+from sage.libs.flint.fmpz_poly cimport fmpz_poly_set_coeff_mpz, fmpz_poly_fit_length, _fmpz_poly_set_length
 
 cimport sage.libs.linbox.givaro as givaro
 cimport sage.libs.linbox.linbox as linbox

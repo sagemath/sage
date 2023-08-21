@@ -211,7 +211,8 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
                 aug, cgd.object_stack[cgd.level], &cgd.degree_stack[cgd.level],
                 &cgd.mem_err)
             cgd.object_stack[cgd.level] = next_candidate
-            if cgd.mem_err: continue
+            if cgd.mem_err:
+                continue
             next_cand_deg = cgd.degree_stack[cgd.level]
             if cgd.agcl_work_spaces[cgd.level] is NULL:
                 # allocate a work space if it hasn't been allocated already

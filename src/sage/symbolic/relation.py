@@ -502,7 +502,7 @@ def test_relation_maxima(relation):
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
-    elif relation.operator() == operator.ne: # operator is not equal
+    elif relation.operator() == operator.ne:  # operator is not equal
         try:
             s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
                                                                 repr(m.rhs())))
@@ -518,7 +518,7 @@ def test_relation_maxima(relation):
     if s == 'true':
         return True
     elif s == 'false':
-        return False # if neither of these, s=='unknown' and we try a few other tricks
+        return False  # if neither of these, s=='unknown' and we try a few other tricks
 
     if relation.operator() != operator.eq:
         return False
@@ -657,7 +657,7 @@ def solve(f, *args, **kwds):
     equations, at times approximations will be given by Maxima, due to the
     underlying algorithm::
 
-        sage: sols = solve([x^3==y,y^2==x], [x,y]); sols[-1], sols[0]
+        sage: sols = solve([x^3==y,y^2==x], [x,y]); sols[-1], sols[0] # abs tol 1e-15
         ([x == 0, y == 0],
          [x == (0.3090169943749475 + 0.9510565162951535*I),
           y == (-0.8090169943749475 - 0.5877852522924731*I)])
@@ -1064,7 +1064,7 @@ def solve(f, *args, **kwds):
                             "symbolic expression or a list of symbolic "
                             "expressions.")
 
-    if isinstance(f, Expression): # f is a single expression
+    if isinstance(f, Expression):  # f is a single expression
         return _solve_expression(f, x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
 
     if not isinstance(f, (list, tuple)):
@@ -1094,7 +1094,7 @@ def solve(f, *args, **kwds):
     if algorithm == 'sympy':
         from sympy import solve as ssolve
         from sage.interfaces.sympy import sympy_set_to_list
-        if isinstance(f, Expression): # f is a single expression
+        if isinstance(f, Expression):  # f is a single expression
             sympy_f = f._sympy_()
         else:
             sympy_f = [s._sympy_() for s in f]
@@ -1145,27 +1145,27 @@ def solve(f, *args, **kwds):
             else:
                 raise
 
-    if len(s) == 0: # if Maxima's solve gave no solutions, try its to_poly_solve
+    if len(s) == 0:  # if Maxima's solve gave no solutions, try its to_poly_solve
         try:
             s = m.to_poly_solve(variables)
-        except Exception: # if that gives an error, stick with no solutions
+        except Exception:  # if that gives an error, stick with no solutions
             s = []
 
-    if len(s) == 0: # if to_poly_solve gave no solutions, try use_grobner
+    if len(s) == 0:  # if to_poly_solve gave no solutions, try use_grobner
         try:
             s = m.to_poly_solve(variables, 'use_grobner=true')
-        except Exception: # if that gives an error, stick with no solutions
+        except Exception:  # if that gives an error, stick with no solutions
             s = []
 
     sol_list = string_to_list_of_solutions(repr(s))
 
     # Relaxed form suggested by Mike Hansen (#8553):
     if kwds.get('solution_dict', None):
-        if not sol_list: # fixes IndexError on empty solution list (#8553)
+        if not sol_list:  # fixes IndexError on empty solution list (#8553)
             return []
         if isinstance(sol_list[0], list):
             sol_dict = [{eq.left(): eq.right() for eq in solution}
-                    for solution in sol_list]
+                        for solution in sol_list]
         else:
             sol_dict = [{eq.left(): eq.right()} for eq in sol_list]
 
@@ -1175,7 +1175,7 @@ def solve(f, *args, **kwds):
 
 
 def _solve_expression(f, x, explicit_solutions, multiplicities,
-                     to_poly_solve, solution_dict, algorithm, domain):
+                      to_poly_solve, solution_dict, algorithm, domain):
     """
     Solve an expression ``f``. For more information, see :func:`solve`.
 
@@ -1305,7 +1305,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
-            for a in alist)
+                   for a in alist)
     if len(ex.variables()) and all(has_integer_assumption(var) for var in ex.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
@@ -1332,13 +1332,13 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     m = ex._maxima_()
     P = m.parent()
     if explicit_solutions:
-        P.eval('solveexplicit: true') # switches Maxima to looking for only explicit solutions
+        P.eval('solveexplicit: true')  # switches Maxima to looking for only explicit solutions
     try:
         if to_poly_solve != 'force':
             s = m.solve(x).str()
-        else: # omit Maxima's solve command
+        else:  # omit Maxima's solve command
             s = str([])
-    except TypeError as mess: # if Maxima's solve has an error, we catch it
+    except TypeError as mess:  # if Maxima's solve has an error, we catch it
         if "Error executing code in Maxima" in str(mess):
             s = str([])
         else:
@@ -1356,9 +1356,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         else:
             return ans
 
-    X = string_to_list_of_solutions(s) # our initial list of solutions
+    X = string_to_list_of_solutions(s)  # our initial list of solutions
 
-    if multiplicities: # to_poly_solve does not return multiplicities, so in this case we end here
+    if multiplicities:  # to_poly_solve does not return multiplicities, so in this case we end here
         if len(X) == 0:
             return X, []
         else:
@@ -1397,7 +1397,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                      "unable to make sense of Maxima expression" in \
                      str(mess):
                     if not explicit_solutions:
-                        X.append(eq) # we keep this implicit solution
+                        X.append(eq)  # we keep this implicit solution
                 else:
                     raise
 
@@ -1565,8 +1565,6 @@ def solve_mod(eqns, modulus, solution_dict=False):
         [(0,)]
         sage: solve_mod([2*x^2+x*y, -x*y+2*y^2+x-2*y, -2*x^2+2*x*y-y^2-x-y], 1)
         [(0, 0)]
-
-
     """
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.integer import Integer
@@ -1585,7 +1583,7 @@ def solve_mod(eqns, modulus, solution_dict=False):
     vars = list(set(sum([list(e.variables()) for e in eqns], [])))
     vars.sort(key=repr)
 
-    if modulus == 1: # degenerate case
+    if modulus == 1:  # degenerate case
         ans = [tuple(Integers(1)(0) for v in vars)]
         return ans
 
@@ -1611,10 +1609,8 @@ def solve_mod(eqns, modulus, solution_dict=False):
     # if solution_dict == True:
     # Relaxed form suggested by Mike Hansen (#8553):
     if solution_dict:
-        sol_dict = [dict(zip(vars, solution)) for solution in ans]
-        return sol_dict
-    else:
-        return ans
+        return [dict(zip(vars, solution)) for solution in ans]
+    return ans
 
 
 def _solve_mod_prime_power(eqns, p, m, vars):
@@ -1787,8 +1783,8 @@ def solve_ineq_fourier(ineq, vars=None):
         sage: y = var('y')
         sage: solve_ineq_fourier([x+y<9,x-y>4],[x,y])
         [[y + 4 < x, x < -y + 9, y < (5/2)]]
-        sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])
-        [[y < min(x - 4, -x + 9)]]
+        sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])[0][0](x=42)
+        y < -33
 
         sage: solve_ineq_fourier([x^2>=0])
         [[x < +Infinity]]

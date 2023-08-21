@@ -48,7 +48,11 @@ done
       if [ -f "$spkg"/install-requires.txt -a -d "$spkg"/src ]; then
           ( echo "# This file is updated on every release by the sage-update-version script"
             # Normalize the package name to PyPI convention (dashes, not underscores)
-            pkg=${spkg//_/-}
+            if [ "$spkg" = sagelib ]; then
+                pkg=sagemath-standard
+            else
+                pkg=${spkg//_/-}
+            fi
             # Normalize the version (updated above as VERSION.txt) according to PEP440.
             version=$(cat "$spkg"/package-version.txt)
             version=${version//.beta/b}
@@ -86,17 +90,17 @@ echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
 # Regenerate auto-generated files tarball
 "$SAGE_ROOT/bootstrap" -s
 
-# Create json file for Zenodo
+# Create CITATION file for Zenodo-GitHub integration
 export SAGE_VERSION
 export SAGE_RELEASE_DATE
-envsubst <"$SAGE_ROOT/.zenodo.json.in" >"$SAGE_ROOT/.zenodo.json"
+envsubst <"$SAGE_ROOT/CITATION.cff.in" >"$SAGE_ROOT/CITATION.cff"
 
 # Commit auto-generated changes
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/VERSION.txt" \
-    "$SAGE_ROOT/.zenodo.json" \
     "$SAGE_SRC/sage/version.py" \
     "$SAGE_SRC/VERSION.txt" \
+    "$SAGE_ROOT/CITATION.cff" \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 """
 Interpolation algorithms for the Guruswami-Sudan decoder
 
@@ -174,6 +175,7 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
     - ``tau`` -- an integer, the number of errors one wants to decode.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
+
         - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
         - the second integer is the list size parameter.
 
@@ -222,10 +224,10 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
 
 def gs_interpolation_linalg(points, tau, parameters, wy):
     r"""
-    Compute an interpolation polynomial Q(x,y) for the Guruswami-Sudan algorithm
+    Compute an interpolation polynomial `Q(x,y)` for the Guruswami-Sudan algorithm
     by solving a linear system of equations.
 
-    ``Q`` is a bivariate polynomial over the field of the points, such that the
+    `Q` is a bivariate polynomial over the field of the points, such that the
     polynomial has a zero of multiplicity at least `s` at each of the points,
     where `s` is the multiplicity parameter. Furthermore, its ``(1,
     wy)``-weighted degree should be less than
@@ -240,11 +242,13 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     - ``tau`` -- an integer, the number of errors one wants to decode.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
-        - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
-        - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
-      ``(1,wy)`` weighted degree.
+      - the first integer is the multiplicity parameter of Guruswami-Sudan
+        algorithm and
+      - the second integer is the list size parameter.
+
+    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
+      ``(1, wy)``-weighted degree.
 
     EXAMPLES:
 
@@ -253,12 +257,14 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
         sage: from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg
         sage: F = GF(11)
-        sage: points = [(F(x),F(y)) for (x,y) in [(0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]]
+        sage: points = [(F(x), F(y))
+        ....:           for (x, y) in [(0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]]
         sage: tau = 3
         sage: params = (2, 4)
         sage: wy = 1
         sage: Q = gs_interpolation_linalg(points, tau, params, wy); Q
-        4*x^5 - 4*x^4*y - 2*x^2*y^3 - x*y^4 + 3*x^4 - 4*x^2*y^2 + 5*y^4 - x^3 + x^2*y + 5*x*y^2 - 5*y^3 + 3*x*y - 2*y^2 + x - 4*y + 1
+        4*x^5 - 4*x^4*y - 2*x^2*y^3 - x*y^4 + 3*x^4 - 4*x^2*y^2 + 5*y^4 - x^3 + x^2*y
+         + 5*x*y^2 - 5*y^3 + 3*x*y - 2*y^2 + x - 4*y + 1
 
     We verify that the interpolation polynomial has a zero of multiplicity at least 2 in each point::
 
@@ -286,7 +292,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
 def lee_osullivan_module(points, parameters, wy):
     r"""
-    Returns the analytically straight-forward basis for the `\GF q[x]` module
+    Return the analytically straight-forward basis for the `\GF{q}[x]` module
     containing all interpolation polynomials, as according to Lee and
     O'Sullivan.
 
@@ -294,7 +300,7 @@ def lee_osullivan_module(points, parameters, wy):
     interpolation polynomial through the sought interpolation points `(x_i,
     y_i)`, i.e. `R(x_i) = y_i`. Let `G(x) = \prod_{i=1}^n (x-x_i)`. Then the
     `i`'th row of the basis matrix of the module is the coefficient-vector of
-    the following polynomial in `\GF q[x][y]`:
+    the following polynomial in `\GF{q}[x][y]`:
 
         `P_i(x,y) = G(x)^{[i-s]} (y - R(x))^{i - [i-s]} y^{[i-s]}` ,
 
@@ -305,22 +311,24 @@ def lee_osullivan_module(points, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek ``Q`` with
-      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
+    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek `Q` with
+      ``(xi,yi)`` being a root of `Q` with multiplicity `s`.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
-        - the first integer is the multiplicity parameter `s` of Guruswami-Sudan algorithm and
-        - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
+      - the first integer is the multiplicity parameter `s` of Guruswami-Sudan
+        algorithm and
+      - the second integer is the list size parameter.
+
+    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
       ``(1,wy)`` weighted degree.
 
     EXAMPLES::
 
         sage: from sage.coding.guruswami_sudan.interpolation import lee_osullivan_module
         sage: F = GF(11)
-        sage: points = [(F(0), F(2)), (F(1), F(5)), (F(2), F(0)), (F(3), F(4)), (F(4), F(9))\
-                , (F(5), F(1)), (F(6), F(9)), (F(7), F(10))]
+        sage: points = [(F(0), F(2)), (F(1), F(5)), (F(2), F(0)), (F(3), F(4)),
+        ....:           (F(4), F(9)), (F(5), F(1)), (F(6), F(9)), (F(7), F(10))]
         sage: params = (1, 1)
         sage: wy = 1
         sage: lee_osullivan_module(points, params, wy)
@@ -363,8 +371,10 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     - ``tau`` -- an integer, the number of errors one wants to decode.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
-        - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
-        - the second integer is the list size parameter.
+
+      - the first integer is the multiplicity parameter of Guruswami-Sudan
+        algorithm and
+      - the second integer is the list size parameter.
 
     - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
       ``(1,wy)`` weighted degree.
@@ -373,13 +383,13 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
 
         sage: from sage.coding.guruswami_sudan.interpolation import gs_interpolation_lee_osullivan
         sage: F = GF(11)
-        sage: points = [(F(0), F(2)), (F(1), F(5)), (F(2), F(0)), (F(3), F(4)), (F(4), F(9))\
-                , (F(5), F(1)), (F(6), F(9)), (F(7), F(10))]
+        sage: points = [(F(0), F(2)), (F(1), F(5)), (F(2), F(0)), (F(3), F(4)),
+        ....:           (F(4), F(9)), (F(5), F(1)), (F(6), F(9)), (F(7), F(10))]
         sage: tau = 1
         sage: params = (1, 1)
         sage: wy = 1
         sage: Q = gs_interpolation_lee_osullivan(points, tau, params, wy)
-        sage: Q / Q.lc() # make monic
+        sage: Q / Q.lc()  # make monic
         x^3*y + 2*x^3 - x^2*y + 5*x^2 + 5*x*y - 5*x + 2*y - 4
     """
     from .utils import _degree_of_vector

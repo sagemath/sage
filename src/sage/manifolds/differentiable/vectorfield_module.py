@@ -951,7 +951,9 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
         return self.exterior_power(degree).element_class(self, degree,
-                                       name=name, latex_name=latex_name)
+                                                         name=name,
+                                                         latex_name=latex_name)
+
     @overload
     def alternating_form(
         self, degree: Literal[0], name=None, latex_name=None

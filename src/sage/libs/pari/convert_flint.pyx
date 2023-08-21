@@ -9,19 +9,19 @@ AUTHORS:
   generic C-interface in ``Pari`` (:trac:`20241`)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Luca De Feo <luca.defeo@polytechnique.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on
 
-from sage.libs.flint.fmpz cimport fmpz_get_mpz, COEFF_IS_MPZ, COEFF_TO_PTR, fmpz_is_one
+from sage.libs.flint.fmpz cimport COEFF_IS_MPZ, COEFF_TO_PTR, fmpz_is_one
 from sage.libs.flint.fmpq cimport fmpq_numref, fmpq_denref
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_nrows, fmpz_mat_ncols, fmpz_mat_entry
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_nrows, fmpq_mat_ncols, fmpq_mat_entry

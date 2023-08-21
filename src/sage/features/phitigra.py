@@ -1,5 +1,5 @@
 r"""
-Check for phitigra
+Check for ``phitigra``
 """
 
 # *****************************************************************************
@@ -16,7 +16,7 @@ from . import PythonModule
 
 class Phitigra(PythonModule):
     r"""
-    A :class:`sage.features.Feature` describing the presence of phitigra.
+    A :class:`sage.features.Feature` describing the presence of :ref:`phitigra <spkg_phitigra>`.
 
     Phitigra is provided by an optional package in the Sage distribution.
 

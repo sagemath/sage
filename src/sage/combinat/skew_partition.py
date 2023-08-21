@@ -1068,18 +1068,18 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()
-            sage: dag.edges(sort=True)
+            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()                     # optional - sage.graphs
+            sage: dag.edges(sort=True)                                                  # optional - sage.graphs
             [('0,1', '0,2', None),
             ('0,1', '1,1', None),
             ('0,2', '1,2', None),
             ('1,1', '1,2', None)]
-            sage: dag.vertices(sort=True)
+            sage: dag.vertices(sort=True)                                               # optional - sage.graphs
             ['0,1', '0,2', '1,1', '1,2', '2,0']
-            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")
-            sage: dag.edges(sort=True)
+            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")       # optional - sage.graphs
+            sage: dag.edges(sort=True)                                                  # optional - sage.graphs
             [((0, 1), (0, 2), None), ((0, 1), (1, 1), None)]
-            sage: dag.vertices(sort=True)
+            sage: dag.vertices(sort=True)                                               # optional - sage.graphs
             [(0, 1), (0, 2), (1, 1), (2, 0)]
         """
         outer = list(self.outer())
@@ -1874,7 +1874,7 @@ class SkewPartitions_n(SkewPartitions):
             return ZZ.one()
 
         if self.overlap > 0:
-            gg = Compositions(self.n, min_part = max(1, self.overlap))
+            gg = Compositions(self.n, min_part=max(1, self.overlap))
         else:
             gg = Compositions(self.n)
 
@@ -1925,7 +1925,7 @@ class SkewPartitions_n(SkewPartitions):
             sage: SkewPartitions(3, overlap=4).list()
             []
         """
-        for co in Compositions(self.n, min_part = max(1, self.overlap)):
+        for co in Compositions(self.n, min_part=max(1, self.overlap)):
             for sp in SkewPartitions(row_lengths=co, overlap=self.overlap):
                 yield self.element_class(self, sp)
 

@@ -381,7 +381,7 @@ def DiCyclicPresentation(n):
         raise ValueError('input integer must be greater than 1')
 
     F = FreeGroup(['a','b'])
-    rls =  F([1])**(2*n), F([2,2])*F([-1])**n, F([-2,1,2,1])
+    rls = F([1])**(2*n), F([2,2])*F([-1])**n, F([-2,1,2,1])
     return FinitelyPresentedGroup(F, rls)
 
 def SymmetricPresentation(n):

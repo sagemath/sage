@@ -33,6 +33,8 @@ TESTS::
 from copy import copy
 from random import randrange
 
+import sage.rings.abc
+
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import divisors, next_prime, is_prime
 from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
@@ -55,7 +57,6 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.ring import is_Ring
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
@@ -66,6 +67,7 @@ from sage.structure.sequence import Sequence, Sequence_generic
 
 lazy_import('sage.databases.cremona',
             ['cremona_letter_code', 'CremonaDatabase'])
+
 
 from . import homspace
 from . import lseries
@@ -798,8 +800,8 @@ class ModularAbelianVariety_abstract(Parent):
             L = B.base_field()
             if K == L:
                 F = K
-            elif K == QQbar or L == QQbar:
-                F = QQbar
+            elif isinstance(K, sage.rings.abc.AlgebraicField) or isinstance(L, sage.rings.abc.AlgebraicField):
+                from sage.rings.qqbar import QQbar as F
             else:
                 # TODO -- improve this
                 raise ValueError("please specify a category")
@@ -997,7 +999,7 @@ class ModularAbelianVariety_abstract(Parent):
                 for v in V.coordinate_module(S).basis()]
 
         if A.dimension() > 0:
-            finitegroup_base_field = QQbar
+            from sage.rings.qqbar import QQbar as finitegroup_base_field
         else:
             finitegroup_base_field = self.base_field()
         G = self.finite_subgroup(gens, field_of_definition=finitegroup_base_field)
@@ -3126,7 +3128,7 @@ class ModularAbelianVariety_abstract(Parent):
                     raise ValueError("X must be a subgroup of self.")
 
         if field_of_definition is None:
-            field_of_definition = QQbar
+            from sage.rings.qqbar import QQbar as field_of_definition
 
         return FiniteSubgroup_lattice(
             self, X, field_of_definition=field_of_definition, check=check)

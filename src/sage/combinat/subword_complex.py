@@ -83,13 +83,13 @@ real space::
     sage: W = CoxeterGroup(['A',3]); I = list(W.index_set())
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
-    sage: S.brick_polytope()
+    sage: S.brick_polytope()                                                            # optional - sage.geometry.polyhedron
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 14 vertices
 
     sage: W = CoxeterGroup(['H',3]); I = list(W.index_set())
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
-    sage: S.brick_polytope()
+    sage: S.brick_polytope()                                                            # optional - sage.geometry.polyhedron
     doctest:...: RuntimeWarning: the polytope is built with rational vertices
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
 
@@ -754,20 +754,20 @@ class SubwordComplexFacet(Simplex, Element):
             sage: W = ReflectionGroup(['A',2])                          # optional - gap3
             sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
             sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F.plot()                               # optional - gap3
+            sage: F = SC([1,2]); F.plot()                               # optional - gap3 sage.plot
             Graphics object consisting of 26 graphics primitives
 
             sage: W = CoxeterGroup(['A',2])
             sage: w = W.from_reduced_word([1,2,1])
             sage: SC = SubwordComplex([1,2,1,2,1],w)
-            sage: F = SC([1,2]); F.plot()
+            sage: F = SC([1,2]); F.plot()                                               # optional - sage.plot
             Graphics object consisting of 26 graphics primitives
 
             sage: W = ReflectionGroup(['B',3])                          # optional - gap3
             sage: c = W.from_reduced_word([1,2,3])                      # optional - gap3
             sage: Q = c.reduced_word()*2 + W.w0.coxeter_sorting_word(c) # optional - gap3
             sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
-            sage: F = SC[15]; F.plot()                                  # optional - gap3
+            sage: F = SC[15]; F.plot()                                  # optional - gap3 sage.plot
             Graphics object consisting of 53 graphics primitives
 
         TESTS::
@@ -776,7 +776,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: c = W.from_reduced_word([1,2,3,4])                    # optional - gap3
             sage: Q = c.reduced_word() + W.w0.coxeter_sorting_word(c)   # optional - gap3
             sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
-            sage: F = SC[1]; F.plot()                                   # optional - gap3
+            sage: F = SC[1]; F.plot()                                   # optional - gap3 sage.plot
             Traceback (most recent call last):
             ...
             ValueError: plotting is currently only implemented for irreducibles types A, B, and C.
@@ -785,7 +785,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: c = W.from_reduced_word([1,2,3,4])
             sage: Q = c.reduced_word() + W.w0.coxeter_sorting_word(c)
             sage: SC = SubwordComplex(Q, W.w0)
-            sage: F = SC[1]; F.plot()
+            sage: F = SC[1]; F.plot()                                                   # optional - sage.plot
             Traceback (most recent call last):
             ...
             ValueError: plotting is currently only implemented for irreducibles types A, B, and C.

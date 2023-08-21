@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Ideals of non-commutative rings
 

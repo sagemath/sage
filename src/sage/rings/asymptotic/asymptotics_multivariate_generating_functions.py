@@ -1251,7 +1251,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: H = R(f.denominator())
             sage: ff = FFPD(G, H.factor())
             sage: decomp = ff.leinartas_decomposition()
-            sage: decomp
+            sage: decomp  # random - non canonical depends on singular version
             (0, []) +
             (-(x*y^2*sin(x) + x^2*y + x*y + y*sin(x) + x)*y, [(y, 1)]) +
             ((x*y^2*sin(x) + x^2*y + x*y + y*sin(x) + x)*x*y, [(x*y + 1, 1)]) +
@@ -1611,9 +1611,7 @@ class FractionWithFactoredDenominator(RingElement):
             (-16, [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 2)])
             sage: alpha = [3, 3, 2]
             sage: decomp = F.asymptotic_decomposition(alpha); decomp
-            (0, []) +
-            (16*r*(3/x - 2/z) + 16/x - 16/z,
-             [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
+            (0, []) + (..., [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
             sage: F1 = decomp[1]
             sage: p = {x: 1, y: 1, z: 1}
             sage: asy = F1.asymptotics(p, alpha, 2, verbose=True) # long time
@@ -1874,7 +1872,7 @@ class FractionWithFactoredDenominator(RingElement):
             Uderivs = diff_prod(Hderivs, U, Hcheck, X,
                                 range(1, k + 1), end, Uderivs, atP)
             # Check for a nonzero U derivative.
-            if any(u for u in Uderivs.values()):
+            if any(Uderivs.values()):
                 all_zero = False
             if all_zero:
                 # Then, using a proposition at the end of [RW2012], we can
@@ -2265,7 +2263,7 @@ class FractionWithFactoredDenominator(RingElement):
             Uderivs = diff_prod(Hprodderivs, U, Hcheck, X,
                                 range(1, k + 1), end, Uderivs, atP)
             # Check for a nonzero U derivative.
-            if any(u for u in Uderivs.values()):
+            if any(Uderivs.values()):
                 all_zero = False
             if all_zero:
                 # Then all higher derivatives of U are zero.

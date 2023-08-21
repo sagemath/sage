@@ -1,7 +1,7 @@
 """
-Vectors over the symbolic ring
+Dense vectors over the symbolic ring
 
-Implements vectors over the symbolic ring.
+Implements dense vectors over the symbolic ring.
 
 AUTHORS:
 

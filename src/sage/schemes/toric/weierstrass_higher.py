@@ -20,14 +20,14 @@ Hence, the Weierstrass form of this complete intersection is `Y^2 =
 X^3 - \frac{1}{4} X Z^4`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.invariants.invariant_theory import invariant_theory
@@ -168,9 +168,9 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     # construct auxiliary polynomial ring to work with the rhs of the syzygy
     R = biquadratic.ring()
     n = R.ngens()
-    R_aux = PolynomialRing(R.base_ring(), n+2, 'aux')
-    to_aux = dict()
-    from_aux = dict()
+    R_aux = PolynomialRing(R.base_ring(), n + 2, 'aux')
+    to_aux = {}
+    from_aux = {}
     for var, var_aux in zip(R.gens(), R_aux.gens()[0:n]):
         to_aux[var] = var_aux
         from_aux[var_aux] = var
@@ -181,9 +181,9 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     # Syzygy is J^2 = syz_rhs + (terms that vanish on the biquadratic) with
     # J = biquadratic.J_covariant()
     syz_rhs = T**4 * biquadratic.Delta_invariant().subs(to_aux) \
-        - T**3*T_prime * biquadratic.Theta_invariant().subs(to_aux) \
-        + T**2*T_prime**2 * biquadratic.Phi_invariant().subs(to_aux) \
-        - T*T_prime**3 * biquadratic.Theta_prime_invariant().subs(to_aux) \
+        - T**3 * T_prime * biquadratic.Theta_invariant().subs(to_aux) \
+        + T**2 * T_prime**2 * biquadratic.Phi_invariant().subs(to_aux) \
+        - T * T_prime**3 * biquadratic.Theta_prime_invariant().subs(to_aux) \
         + T_prime**4 * biquadratic.Delta_prime_invariant().subs(to_aux)
     quartic = invariant_theory.binary_quartic(syz_rhs, [T, T_prime])
     return (biquadratic, quartic, from_aux)
@@ -224,7 +224,7 @@ def WeierstrassForm_P3(quadratic1, quadratic2, variables=None):
         _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=variables)
     a = quartic.EisensteinD().subs(from_aux)
     b = quartic.EisensteinE().subs(from_aux)
-    return (-4*a, 16*b)
+    return (-4 * a, 16 * b)
 
 
 ######################################################################
@@ -287,4 +287,4 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
     J = biquadratic.J_covariant()
     g = quartic.g_covariant().subs(from_aux)
     h = quartic.h_covariant().subs(from_aux)
-    return (4*g, 4*h, J)
+    return (4 * g, 4 * h, J)

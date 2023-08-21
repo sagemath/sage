@@ -705,9 +705,9 @@ class FiniteWords(AbstractLanguage):
         Construction of a word path from a finite word::
 
             sage: W = FiniteWords('abcd')
-            sage: P = WordPaths('abcd')
+            sage: P = WordPaths('abcd')                                                 # optional - sage.modules
             sage: w = W('aaab')
-            sage: P(w)
+            sage: P(w)                                                                  # optional - sage.modules
             Path: aaab
 
         Construction of a word path from a Christoffel word::
@@ -715,8 +715,8 @@ class FiniteWords(AbstractLanguage):
             sage: w = words.ChristoffelWord(5,8)
             sage: w
             word: 0010010100101
-            sage: P = WordPaths([0,1,2,3])
-            sage: P(w)
+            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
+            sage: P(w)                                                                  # optional - sage.modules
             Path: 0010010100101
 
         Construction of a word represented by a list from a word
@@ -744,19 +744,19 @@ class FiniteWords(AbstractLanguage):
 
             sage: w = words.FibonacciWord()
             sage: f = w[:100]
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(f); p
+            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
+            sage: p = P(f); p                                                           # optional - sage.modules
             Path: 0100101001001010010100100101001001010010...
-            sage: p.length()
+            sage: p.length()                                                            # optional - sage.modules
             100
 
         Creation of a word path from a FiniteWord_callable::
 
             sage: g = W(lambda n:n%2, length = 100)
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(g); p
+            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
+            sage: p = P(g); p                                                           # optional - sage.modules
             Path: 0101010101010101010101010101010101010101...
-            sage: p.length()
+            sage: p.length()                                                            # optional - sage.modules
             100
 
         Creation of a word from a pickled function::
@@ -1018,7 +1018,7 @@ class FiniteWords(AbstractLanguage):
 
         TESTS::
 
-            sage: _ = FiniteWords(GF(5)).random_element()
+            sage: _ = FiniteWords(GF(5)).random_element()                               # optional - sage.rings.finite_rings
         """
         if length is None:
             length = ZZ.random_element(0, 10)
@@ -1928,9 +1928,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         Construction of a word path from a finite word::
 
             sage: W = Words('abcd')
-            sage: P = WordPaths('abcd')
+            sage: P = WordPaths('abcd')                                                 # optional - sage.modules
             sage: w = W('aaab')
-            sage: P(w)
+            sage: P(w)                                                                  # optional - sage.modules
             Path: aaab
 
         Construction of a word path from a Christoffel word::
@@ -1938,8 +1938,8 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             sage: w = words.ChristoffelWord(5,8)
             sage: w
             word: 0010010100101
-            sage: P = WordPaths([0,1,2,3])
-            sage: P(w)
+            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
+            sage: P(w)                                                                  # optional - sage.modules
             Path: 0010010100101
 
         Construction of a word represented by a list from a word
@@ -1967,19 +1967,19 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
             sage: w = words.FibonacciWord()
             sage: f = w[:100]
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(f); p
+            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
+            sage: p = P(f); p                                                           # optional - sage.modules
             Path: 0100101001001010010100100101001001010010...
-            sage: p.length()
+            sage: p.length()                                                            # optional - sage.modules
             100
 
         Creation of a word path from a FiniteWord_callable::
 
-            sage: g = Word(lambda n:n%2, length = 100)
-            sage: P = WordPaths([0,1,2,3])
-            sage: p = P(g); p
+            sage: g = Word(lambda n: n%2, length=100)
+            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
+            sage: p = P(g); p                                                           # optional - sage.modules
             Path: 0101010101010101010101010101010101010101...
-            sage: p.length()
+            sage: p.length()                                                            # optional - sage.modules
             100
 
         Creation of a word from a pickled function::
@@ -2215,7 +2215,7 @@ class Words_n(Parent):
 
         TESTS::
 
-            sage: _ = Words(GF(5),4).random_element()
+            sage: _ = Words(GF(5),4).random_element()                                   # optional - sage.rings.finite_rings
 
         Check that :trac:`18283` is fixed::
 

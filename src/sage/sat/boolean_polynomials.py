@@ -219,7 +219,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
        instead of classes is discouraged because these objects are
        stateful.
     """
-    assert(n>0)
+    assert n > 0
 
     try:
         len(F)
@@ -234,7 +234,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         target_variables = PolynomialSequence(F).variables()
     else:
         target_variables = PolynomialSequence(target_variables).variables()
-        assert(set(target_variables).issubset(set(P.gens())))
+        assert set(target_variables).issubset(set(P.gens()))
 
     # instantiate the SAT solver
 

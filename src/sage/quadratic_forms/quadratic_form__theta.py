@@ -307,7 +307,7 @@ def theta_series_degree_2(Q, prec):
     """
     from sage.arith.misc import integer_floor as floor
     from sage.misc.functional import sqrt
-    from sage.misc.misc import cputime
+    from sage.misc.timing import cputime
     from sage.misc.verbose import verbose
 
     if Q.base_ring() != ZZ:

@@ -496,6 +496,46 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return m.length()
 
+    def casimir_element(self, order=2):
+        r"""
+        Return the Casimir element of ``self``.
+
+        .. SEEALSO::
+
+            :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.FiniteDimensionalLieAlgebrasWithBasis.ParentMethods.casimir_element`
+
+        INPUT:
+
+        - ``order`` -- (default: ``2``) the order of the Casimir element
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['G', 2])
+            sage: U = L.pbw_basis()
+            sage: C = U.casimir_element(); C
+            1/4*PBW[alpha[2]]*PBW[-alpha[2]] + 1/12*PBW[alpha[1]]*PBW[-alpha[1]]
+             + 1/12*PBW[alpha[1] + alpha[2]]*PBW[-alpha[1] - alpha[2]] + 1/12*PBW[2*alpha[1] + alpha[2]]*PBW[-2*alpha[1] - alpha[2]]
+             + 1/4*PBW[3*alpha[1] + alpha[2]]*PBW[-3*alpha[1] - alpha[2]]
+             + 1/4*PBW[3*alpha[1] + 2*alpha[2]]*PBW[-3*alpha[1] - 2*alpha[2]]
+             + 1/12*PBW[alphacheck[1]]^2 + 1/4*PBW[alphacheck[1]]*PBW[alphacheck[2]]
+             + 1/4*PBW[alphacheck[2]]^2 - 5/12*PBW[alphacheck[1]] - 3/4*PBW[alphacheck[2]]
+            sage: all(g * C == C * g for g in U.algebra_generators())
+            True
+
+        TESTS::
+
+            sage: H = lie_algebras.Heisenberg(QQ, oo)
+            sage: U = H.pbw_basis()
+            sage: U.casimir_element()
+            Traceback (most recent call last):
+            ...
+            ValueError: the Lie algebra must be finite dimensional
+        """
+        from sage.rings.infinity import Infinity
+        if self._g.dimension() == Infinity:
+            raise ValueError("the Lie algebra must be finite dimensional")
+        return self._g.casimir_element(order=order, UEA=self)
+
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):
             """

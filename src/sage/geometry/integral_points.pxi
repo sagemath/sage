@@ -474,8 +474,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Long ints and non-integral polyhedra are explicitly allowed::
 
-        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)
-        sage: len( rectangular_box_points([-100], [100], polytope) )
+        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # needs sage.symbolic
+        sage: len(rectangular_box_points([-100], [100], polytope))                      # needs sage.symbolic
         31
 
         sage: halfplane = Polyhedron(ieqs=[(-1,1,0)])
@@ -488,6 +488,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Using a PPL polyhedron::
 
+        sage: # needs pplpy
         sage: from ppl import Variable, Generator_System, C_Polyhedron, point
         sage: gs = Generator_System()
         sage: x = Variable(0); y = Variable(1); z = Variable(2)
@@ -739,7 +740,7 @@ cdef class Inequality_generic:
     EXAMPLES::
 
         sage: from sage.geometry.integral_points import Inequality_generic
-        sage: Inequality_generic([2*pi,sqrt(3),7/2], -5.5)
+        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # needs sage.symbolic
         generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
     """
 
@@ -761,7 +762,7 @@ cdef class Inequality_generic:
         EXAMPLES::
 
             sage: from sage.geometry.integral_points import Inequality_generic
-            sage: Inequality_generic([2*pi,sqrt(3),7/2], -5.5)
+            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # needs sage.symbolic
             generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
         """
         self.A = A
@@ -1131,6 +1132,7 @@ cdef class InequalityCollection:
 
         EXAMPLES::
 
+            sage: # needs pplpy
             sage: from ppl import Variable, Generator_System, C_Polyhedron, point
             sage: gs = Generator_System()
             sage: x = Variable(0); y = Variable(1); z = Variable(2)
@@ -1191,8 +1193,8 @@ cdef class InequalityCollection:
         Check that :trac:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)  # optional - sage.rings.number_field
-            sage: P.integral_points()                       # optional - sage.rings.number_field
+            sage: P += 1/1000*polytopes.regular_polygon(5)                              # needs sage.rings.number_field
+            sage: P.integral_points()                                                   # needs sage.rings.number_field
             ((0, 0), (17, 3))
         """
         cdef list A

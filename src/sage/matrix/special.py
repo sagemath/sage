@@ -2972,8 +2972,8 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
-        sage: y = var('y')
-        sage: K = NumberField(y^2-2*y-2, 'y')
+        sage: y = polygen(ZZ, 'y')
+        sage: K = NumberField(y^2 - 2*y - 2, 'y')
         sage: C = random_matrix(K, 3, algorithm='unimodular')
         sage: det(C)
         1

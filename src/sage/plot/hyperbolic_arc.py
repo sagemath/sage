@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Arcs in hyperbolic geometry
 

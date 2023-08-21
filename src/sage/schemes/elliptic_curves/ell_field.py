@@ -12,11 +12,13 @@ This module defines the class :class:`EllipticCurve_field`, based on
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sage.rings.all as rings
 import sage.rings.abc
 from sage.categories.number_fields import NumberFields
 from sage.categories.finite_fields import FiniteFields
-
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.rational_field import QQ
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -55,7 +57,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.genus()
             1
         """
-        return rings.ZZ.one()
+        return ZZ.one()
 
     r"""
     Twists: rewritten by John Cremona as follows:
@@ -149,13 +151,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         if D is None:
             if K.is_finite():
-                x = rings.polygen(K)
+                x = polygen(K)
                 if char == 2:
                     # We find D such that x^2+x+D is irreducible. If the
                     # degree is odd we can take D=1; otherwise it suffices to
                     # consider odd powers of a generator.
                     D = K(1)
-                    if K.degree()%2==0:
+                    if K.degree() % 2 == 0:
                         D = K.gen()
                         a = D**2
                         while (x**2 + x + D).roots():
@@ -172,26 +174,26 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 raise ValueError("twisting parameter D must be specified over infinite fields.")
         else:
             try:
-                D=K(D)
+                D = K(D)
             except ValueError:
                 raise ValueError("twisting parameter D must be in the base field.")
 
-            if char!=2 and D.is_zero():
+            if char != 2 and D.is_zero():
                 raise ValueError("twisting parameter D must be nonzero when characteristic is not 2")
 
-        if char!=2:
-            b2,b4,b6,b8=self.b_invariants()
+        if char != 2:
+            b2,b4,b6,b8 = self.b_invariants()
             # E is isomorphic to  [0,b2,0,8*b4,16*b6]
             return EllipticCurve(K,[0,b2*D,0,8*b4*D**2,16*b6*D**3])
 
         # now char==2
-        if self.j_invariant() !=0: # iff a1!=0
-            a1,a2,a3,a4,a6=self.ainvs()
-            E0=self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
+        if self.j_invariant() != 0: # iff a1!=0
+            a1,a2,a3,a4,a6 = self.ainvs()
+            E0 = self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
             # which has the form = [1,A2,0,0,A6]
-            assert E0.a1()==K(1)
-            assert E0.a3()==K(0)
-            assert E0.a4()==K(0)
+            assert E0.a1() == K(1)
+            assert E0.a3() == K(0)
+            assert E0.a4() == K(0)
             return EllipticCurve(K,[1,E0.a2()+D,0,0,E0.a6()])
         else:
             raise ValueError("Quadratic twist not implemented in char 2 when j=0")
@@ -229,9 +231,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
         """
-        f=self.division_polynomial(rings.Integer(2))
-        n=len(f.roots())+1
-        return rings.Integer(n).ord(rings.Integer(2))
+        f = self.division_polynomial(Integer(2))
+        n = len(f.roots())+1
+        return Integer(n).ord(Integer(2))
 
     def quartic_twist(self, D):
         r"""
@@ -258,22 +260,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.is_isomorphic(E1, GF(13^4,'a'))                                     # optional - sage.rings.finite_rings
             True
         """
-        K=self.base_ring()
-        char=K.characteristic()
-        D=K(D)
+        K = self.base_ring()
+        char = K.characteristic()
+        D = K(D)
 
-        if char==2 or char==3:
+        if char == 2 or char == 3:
             raise ValueError("Quartic twist not defined in chars 2,3")
 
-        if self.j_invariant() !=K(1728):
+        if self.j_invariant() != K(1728):
             raise ValueError("Quartic twist not defined when j!=1728")
 
         if D.is_zero():
             raise ValueError("quartic twist requires a nonzero argument")
 
-        c4,c6=self.c_invariants()
+        c4,c6 = self.c_invariants()
         # E is isomorphic to  [0,0,0,-27*c4,0]
-        assert c6==0
+        assert c6 == 0
         return EllipticCurve(K,[0,0,0,-27*c4*D,0])
 
     def sextic_twist(self, D):
@@ -303,22 +305,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.is_isomorphic(E1, GF(13^6,'a'))                                     # optional - sage.rings.finite_rings
             True
         """
-        K=self.base_ring()
-        char=K.characteristic()
-        D=K(D)
+        K = self.base_ring()
+        char = K.characteristic()
+        D = K(D)
 
-        if char==2 or char==3:
+        if char == 2 or char == 3:
             raise ValueError("Sextic twist not defined in chars 2,3")
 
-        if self.j_invariant() !=K(0):
+        if self.j_invariant() != K(0):
             raise ValueError("Sextic twist not defined when j!=0")
 
         if D.is_zero():
             raise ValueError("Sextic twist requires a nonzero argument")
 
-        c4,c6=self.c_invariants()
+        c4,c6 = self.c_invariants()
         # E is isomorphic to  [0,0,0,0,-54*c6]
-        assert c4==0
+        assert c4 == 0
         return EllipticCurve(K,[0,0,0,0,-54*c6*D])
 
     def is_quadratic_twist(self, other):
@@ -420,21 +422,21 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         zero = K.zero()
         if not K == F.base_ring():
             return zero
-        j=E.j_invariant()
+        j = E.j_invariant()
         if j != F.j_invariant():
             return zero
 
         if E.is_isomorphic(F):
-            if K is rings.QQ:
-                return rings.ZZ(1)
+            if K is QQ:
+                return ZZ(1)
             return K.one()
 
-        char=K.characteristic()
+        char = K.characteristic()
 
-        if char==2:
+        if char == 2:
             raise NotImplementedError("not implemented in characteristic 2")
-        elif char==3:
-            if j==0:
+        elif char == 3:
+            if j == 0:
                 raise NotImplementedError("not implemented in characteristic 3 for curves of j-invariant 0")
             D = E.b2()/F.b2()
 
@@ -443,18 +445,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             c4E,c6E = E.c_invariants()
             c4F,c6F = F.c_invariants()
 
-            if j==0:
+            if j == 0:
                 um = c6E/c6F
-                x=rings.polygen(K)
-                ulist=(x**3-um).roots(multiplicities=False)
+                x = polygen(K)
+                ulist = (x**3-um).roots(multiplicities=False)
                 if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
-            elif j==1728:
-                um=c4E/c4F
-                x=rings.polygen(K)
-                ulist=(x**2-um).roots(multiplicities=False)
+            elif j == 1728:
+                um = c4E/c4F
+                x = polygen(K)
+                ulist = (x**2-um).roots(multiplicities=False)
                 if not ulist:
                     D = zero
                 else:
@@ -467,7 +469,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if D.is_zero():
             return D
 
-        if K is rings.QQ:
+        if K is QQ:
             D = D.squarefree_part()
 
         assert E.quadratic_twist(D).is_isomorphic(F)
@@ -519,18 +521,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         zero = K.zero()
         if not K == F.base_ring():
             return zero
-        j=E.j_invariant()
-        if j != F.j_invariant() or j!=K(1728):
+        j = E.j_invariant()
+        if j != F.j_invariant() or j != K(1728):
             return zero
 
         if E.is_isomorphic(F):
             return K.one()
 
-        char=K.characteristic()
+        char = K.characteristic()
 
-        if char==2:
+        if char == 2:
             raise NotImplementedError("not implemented in characteristic 2")
-        elif char==3:
+        elif char == 3:
             raise NotImplementedError("not implemented in characteristic 3")
         else:
             # now char!=2,3:
@@ -588,18 +590,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         zero = K.zero()
         if not K == F.base_ring():
             return zero
-        j=E.j_invariant()
+        j = E.j_invariant()
         if j != F.j_invariant() or not j.is_zero():
             return zero
 
         if E.is_isomorphic(F):
             return K.one()
 
-        char=K.characteristic()
+        char = K.characteristic()
 
-        if char==2:
+        if char == 2:
             raise NotImplementedError("not implemented in characteristic 2")
-        elif char==3:
+        elif char == 3:
             raise NotImplementedError("not implemented in characteristic 3")
         else:
             # now char!=2,3:
@@ -649,7 +651,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ::
 
             sage: F.<b> = QuadraticField(23)                                            # optional - sage.rings.number_field
-            sage: G.<a> = F.extension(x^3 + 5)
+            sage: x = polygen(ZZ, 'x')
+            sage: G.<a> = F.extension(x^3 + 5)                                          # optional - sage.rings.number_field
             sage: E = EllipticCurve(j=1728*b).change_ring(G)                            # optional - sage.rings.number_field
             sage: EF = E.descend_to(F); EF                                              # optional - sage.rings.number_field
             [Elliptic Curve defined by y^2 = x^3 + (27*b-621)*x + (-1296*b+2484)
@@ -707,7 +710,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         # j-invariant is in the image, otherwise return an empty list:
 
         j = self.j_invariant()
-        from sage.rings.rational_field import QQ
         if K == QQ:
             try:
                 jK = QQ(j)
@@ -995,7 +997,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - Lorenz Panny (2022): extend to finite fields
         """
         from sage.misc.verbose import verbose
-        l = rings.Integer(l)
+        l = Integer(l)
         if not l.is_prime():
             raise ValueError("l must be a prime number")
 
@@ -1051,7 +1053,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         # Polynomial defining the corresponding Y-coordinate
         curve = self.defining_polynomial().map_coefficients(F_to_K)
-        ypol = curve(X, rings.polygen(K), 1)
+        ypol = curve(X, polygen(K), 1)
         L = ypol.splitting_field(names, map=map, **kwds)
         if map:
             L, K_to_L = L
@@ -1494,6 +1496,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Examples over number fields (other than QQ)::
 
+            sage: x = polygen(ZZ, 'x')
             sage: QQroot2.<e> = NumberField(x^2 - 2)                                    # optional - sage.rings.number_field
             sage: E = EllipticCurve(QQroot2, j=8000)                                    # optional - sage.rings.number_field
             sage: E.isogenies_prime_degree()                                            # optional - sage.rings.number_field
@@ -1569,7 +1572,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("This code could be implemented for general real fields, but has not been yet.")
         if isinstance(F, sage.rings.abc.ComplexField):
             raise NotImplementedError("This code could be implemented for general complex fields, but has not been yet.")
-        if F is rings.QQbar:
+        if isinstance(F, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")
 
         if l is None:
@@ -1579,9 +1582,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             try:
                 l = list(l)
             except TypeError:
-                L = [rings.ZZ(l)]
+                L = [ZZ(l)]
             else:
-                L = [rings.ZZ(d) for d in l]
+                L = [ZZ(d) for d in l]
 
         from .isogeny_small_degree import isogenies_prime_degree
         return sum([isogenies_prime_degree(self, d) for d in L], [])
@@ -1757,7 +1760,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             R = k['x']
             x = R.gen()
             E = self.short_weierstrass_model()
-            f=(x**3+E.a4()*x+E.a6())**((p-1)//2)
+            f = (x**3+E.a4()*x+E.a6())**((p-1)//2)
             return f.coefficients(sparse=False)[p-1]
 
     def isogeny_ell_graph(self, l, directed=True, label_by_j=False):
@@ -1789,6 +1792,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Ordinary curve over finite extension field of degree 2::
 
+            sage: x = polygen(ZZ, 'x')
             sage: E = EllipticCurve(GF(59^2, "i", x^2 + 1), j=5)                        # optional - sage.rings.finite_rings
             sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True)           # optional - sage.graphs sage.rings.finite_rings
             sage: G                                                                     # optional - sage.graphs sage.rings.finite_rings

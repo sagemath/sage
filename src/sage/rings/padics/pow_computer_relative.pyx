@@ -17,7 +17,7 @@ AUTHORS:
 - David Roe, Julian Rüth (2017-06-11): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #                     2017 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -25,18 +25,12 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cysignals.memory cimport sig_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
-
-from sage.libs.gmp.mpz cimport mpz_init, mpz_clear, mpz_pow_ui
-
-from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
+
 
 cdef class PowComputer_relative(PowComputer_class):
     r"""

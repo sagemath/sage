@@ -10,8 +10,8 @@ import sage.topology.cubical_complex
 
 Cube = deprecated_function_alias(31925, sage.topology.cubical_complex.Cube)
 CubicalComplex = deprecated_function_alias(31925,
-                  sage.topology.cubical_complex.CubicalComplex)
+                                           sage.topology.cubical_complex.CubicalComplex)
 CubicalComplexExamples = deprecated_function_alias(31925,
-                          sage.topology.cubical_complex.CubicalComplexExamples)
+                                                   sage.topology.cubical_complex.CubicalComplexExamples)
 cubical_complexes = deprecated_function_alias(31925,
-                     sage.topology.cubical_complex.cubical_complexes)
+                                              sage.topology.cubical_complex.cubical_complexes)

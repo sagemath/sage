@@ -877,6 +877,7 @@ def _Omega_factors_denominator_(x, y):
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: B.<zeta> = ZZ.extension(cyclotomic_polynomial(3))
         sage: L.<x, y> = LaurentPolynomialRing(B)
         sage: _Omega_factors_denominator_(((x, -x),), ((y,),))

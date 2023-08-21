@@ -584,23 +584,23 @@ class Homset(Set_generic):
 
     Homsets of unique parents are unique as well::
 
-        sage: H = End(AffineSpace(2, names='x,y'))
-        sage: loads(dumps(AffineSpace(2, names='x,y'))) is AffineSpace(2, names='x,y')
+        sage: H = End(AffineSpace(2, names='x,y'))                                      # optional - sage.modules
+        sage: loads(dumps(AffineSpace(2, names='x,y'))) is AffineSpace(2, names='x,y')  # optional - sage.modules
         True
-        sage: loads(dumps(H)) is H
+        sage: loads(dumps(H)) is H                                                      # optional - sage.modules
         True
 
     Conversely, homsets of non-unique parents are non-unique::
 
-        sage: P11 = ProductProjectiveSpaces(QQ, [1, 1])
-        sage: H = End(P11)
-        sage: loads(dumps(P11)) is ProductProjectiveSpaces(QQ, [1, 1])
+        sage: P11 = ProductProjectiveSpaces(QQ, [1, 1])                                 # optional - sage.schemes
+        sage: H = End(P11)                                                              # optional - sage.schemes
+        sage: loads(dumps(P11)) is ProductProjectiveSpaces(QQ, [1, 1])                  # optional - sage.schemes
         False
-        sage: loads(dumps(P11)) == ProductProjectiveSpaces(QQ, [1, 1])
+        sage: loads(dumps(P11)) == ProductProjectiveSpaces(QQ, [1, 1])                  # optional - sage.schemes
         True
-        sage: loads(dumps(H)) is H
+        sage: loads(dumps(H)) is H                                                      # optional - sage.schemes
         False
-        sage: loads(dumps(H)) == H
+        sage: loads(dumps(H)) == H                                                      # optional - sage.schemes
         True
     """
     def __init__(self, X, Y, category=None, base=None, check=True):

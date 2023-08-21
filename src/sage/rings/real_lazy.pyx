@@ -1689,7 +1689,8 @@ cdef class LazyAlgebraic(LazyFieldElement):
         TESTS::
 
             sage: from sage.rings.real_lazy import LazyAlgebraic
-            sage: a = LazyAlgebraic(RLF, x^2-2, 1.5)
+            sage: x = polygen(QQ)
+            sage: a = LazyAlgebraic(RLF, x^2 - 2, 1.5)
             sage: float(loads(dumps(a))) == float(a)
             True
         """

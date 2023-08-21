@@ -22,11 +22,10 @@ AUTHOR::
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 from sage.structure.element cimport parent
-from sage.rings.ring cimport Ring
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.matrix.matrix_space import MatrixSpace
@@ -34,11 +33,8 @@ from sage.matrix.matrix2 import NotFullRankError
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial as SkewPolynomial
 from sage.rings.polynomial.skew_polynomial_finite_order cimport SkewPolynomial_finite_order_dense
 
-from sage.combinat.permutation import Permutation, Permutations
-from sage.combinat.partition import Partition
 from sage.structure.factorization import Factorization
 from sage.misc.mrange import xmrange_iter
 from sage.misc.prandom import sample

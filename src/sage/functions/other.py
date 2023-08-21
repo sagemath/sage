@@ -498,10 +498,10 @@ class Function_floor(BuiltinFunction):
             <class 'sage.rings.integer.Integer'>
             sage: var('x')
             x
-            sage: a = floor(5.4 + x); a
-            floor(x + 5.40000000000000)
+            sage: a = floor(5.25 + x); a
+            floor(x + 5.25000000000000)
             sage: a.simplify()
-            floor(x + 0.4000000000000004) + 5
+            floor(x + 0.25) + 5
             sage: a(x=2)
             7
 

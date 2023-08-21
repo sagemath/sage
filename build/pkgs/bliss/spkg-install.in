@@ -1,4 +1,4 @@
 cd src
-sdh_configure --disable-gmp
+sdh_cmake -DUSE_GMP=OFF -DCMAKE_VERBOSE_MAKEFILE=ON
 sdh_make
 sdh_make_install

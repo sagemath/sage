@@ -596,7 +596,7 @@ class Gamma0_class(GammaH_class):
         N = self.level()
         k = ZZ(k)
 
-        if not(p == 0 or N % p):
+        if not (p == 0 or N % p):
             return (self.dimension_cusp_forms(k) -
                     2 * self.restrict(N // p).dimension_new_cusp_forms(k))
 

@@ -15,7 +15,7 @@ from . import Executable, FeatureTestResult
 
 class FFmpeg(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``ffmpeg``
+    A :class:`~sage.features.Feature` describing the presence of :ref:`ffmpeg <spkg_ffmpeg>`.
 
     EXAMPLES::
 

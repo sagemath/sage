@@ -609,7 +609,7 @@ cdef class Farey:
             s = r'\left( -\infty'
             a = [x._latex_() for x in self.fractions()] + [r'\infty']
             b = self.pairings()
-            for i in xrange(len(a)):
+            for i in range(len(a)):
                 u = b[i]
                 if u == -3:
                     u = r'\bullet'

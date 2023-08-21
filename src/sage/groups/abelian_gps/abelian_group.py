@@ -856,7 +856,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         Requires the optional ``gap_packages`` for infinite groups::
 
             sage: G = AbelianGroup(3, [0,3,4], names="abc")
-            sage: libgap(G)   # optional - gap_packages
+            sage: libgap(G)   # optional - gap_package_polycyclic
             Pcp-group with orders [ 0, 3, 4 ]
         """
         from sage.libs.gap.libgap import libgap
@@ -885,7 +885,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
             sage: G = AbelianGroup(3,[0,3,4], names="abc"); G
             Multiplicative Abelian group isomorphic to Z x C3 x C4
-            sage: G._gap_init_()   # optional - gap_packages
+            sage: G._gap_init_()   # optional - gap_package_polycyclic
             'AbelianPcpGroup([0, 3, 4])'
         """
         if self.is_finite():

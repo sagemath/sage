@@ -18,4 +18,3 @@ cdef class Spin_crystal_type_D_element(Spin):
     cpdef Spin f(self, int i)
     cpdef int epsilon(self, int i)
     cpdef int phi(self, int i)
-

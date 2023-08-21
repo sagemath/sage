@@ -269,10 +269,14 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
             sage: E = EllipticCurve(GF(11), [1,1])
             sage: pi = EllipticCurveHom_frobenius(E)
-            sage: P = E.change_ring(GF(11^6)).lift_x(GF(11^3).gen()); P
-            (6*z6^5 + 8*z6^4 + 8*z6^3 + 6*z6^2 + 10*z6 + 5 : 2*z6^5 + 2*z6^4 + 2*z6^3 + 4*z6 + 6 : 1)
-            sage: pi._eval(P)
-            (z6^5 + 3*z6^4 + 3*z6^3 + 6*z6^2 + 9 : z6^5 + 10*z6^4 + 10*z6^3 + 5*z6^2 + 4*z6 + 8 : 1)
+            sage: Ebar = E.change_ring(GF(11^6))
+            sage: z6 = GF(11^6).gen()
+            sage: P = Ebar.lift_x(GF(11^3).gen())
+            sage: p = Ebar(6*z6^5 + 8*z6^4 + 8*z6^3 + 6*z6^2 + 10*z6 + 5, 2*z6^5 + 2*z6^4 + 2*z6^3 + 4*z6 + 6, 1)
+            sage: Q = pi._eval(P)
+            sage: q = Ebar(z6^5 + 3*z6^4 + 3*z6^3 + 6*z6^2 + 9, z6^5 + 10*z6^4 + 10*z6^3 + 5*z6^2 + 4*z6 + 8, 1)
+            sage: (P == p and Q == q) or (P == -p and Q == -q)
+            True
         """
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f'{P} not on {self._domain}')

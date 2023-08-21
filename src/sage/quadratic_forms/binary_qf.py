@@ -137,8 +137,7 @@ class BinaryQF(SageObject):
         """
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         if b is None and c is None:
-            if (isinstance(a, (list, tuple))
-                and len(a) == 3):
+            if isinstance(a, (list, tuple)) and len(a) == 3:
                 a, b, c = a
             elif a == 0:
                 a = b = c = 0
@@ -215,8 +214,8 @@ class BinaryQF(SageObject):
             return BinaryQF(self.__pari__().qfbcompraw(right))
         # ...or a 2x2 matrix...
         if (isinstance(right.parent(), MatrixSpace)
-            and right.nrows() == right.ncols() == 2):
-            aa,bb,cc,dd = right.list()
+                and right.nrows() == right.ncols() == 2):
+            aa, bb, cc, dd = right.list()
             A = self.polynomial()(aa, cc)
             C = self.polynomial()(bb, dd)
             B = self.polynomial()(aa + bb, cc + dd) - A - C
@@ -536,10 +535,10 @@ class BinaryQF(SageObject):
         if not isinstance(R, MPolynomialRing_base) or R.ngens() != 2:
             raise TypeError(f'not a bivariate polynomial ring: {R}')
         if not all(mon.degree() == 2 for mon in poly.monomials()):
-            raise ValueError(f'polynomial has monomials of degree != 2')
-        x,y = R.gens()
+            raise ValueError('polynomial has monomials of degree != 2')
+        x, y = R.gens()
         coeffs = (poly.monomial_coefficient(mon) for mon in (x**2, x*y, y**2))
-        a,b,c = map(ZZ, coeffs)
+        a, b, c = map(ZZ, coeffs)
         return BinaryQF(a, b, c)
 
     @cached_method
@@ -924,7 +923,7 @@ class BinaryQF(SageObject):
                                           'supported using PARI')
 
             if transformation:
-                y,g = self.__pari__().qfbredsl2()
+                y, g = self.__pari__().qfbredsl2()
                 return BinaryQF(y), Matrix(ZZ, g)
             return BinaryQF(self.__pari__().qfbred())
 
@@ -1153,7 +1152,7 @@ class BinaryQF(SageObject):
                     'implemented for non-square discriminants')
         if proper:
             # Prop 6.10.5 in Buchmann Vollmer
-            C = list(self.cycle(proper=False)) # make a copy so we can modify it
+            C = list(self.cycle(proper=False))  # make a copy that we can modify
             if len(C) % 2:
                 C += C
             for i in range(len(C)//2):
@@ -1316,7 +1315,7 @@ class BinaryQF(SageObject):
             sage: Q1.is_equivalent(Q2, proper=True)                                     # optional - sage.libs.pari
             True
         """
-        if type(other) != type(self):
+        if not isinstance(other, BinaryQF):
             raise TypeError("%s is not a BinaryQF" % other)
         if self.discriminant() != other.discriminant():
             return False
@@ -1342,7 +1341,7 @@ class BinaryQF(SageObject):
                     return is_properly_equiv
                 else:
                     g = gcd(a, b)
-                    return is_properly_equiv or ((gcd(ao,b) == g) and ((a*ao - g**2) % (b*g) == 0))
+                    return is_properly_equiv or ((gcd(ao, b) == g) and ((a*ao - g**2) % (b*g) == 0))
 
             proper_cycle = otherred.cycle(proper=True)
 
@@ -1654,13 +1653,13 @@ class BinaryQF(SageObject):
                 # https://math.stackexchange.com/a/980075
                 w = self.discriminant().sqrt()
                 r = (-self._b + (w if w != self._b else -w)) / (2*self._a)
-                p,q = r.as_integer_ratio()
-                g,u,v = p.xgcd(q)
-                M = Matrix(ZZ, [[v,p],[-u,q]])
+                p, q = r.as_integer_ratio()
+                g, u, v = p.xgcd(q)
+                M = Matrix(ZZ, [[v, p], [-u, q]])
             elif self._c:
-                M = Matrix(ZZ, [[0,1],[1,0]])
+                M = Matrix(ZZ, [[0, 1], [1, 0]])
             else:
-                M = Matrix(ZZ, [[1,0],[0,1]])
+                M = Matrix(ZZ, [[1, 0], [0, 1]])
             assert M.is_unit()
             Q = self.matrix_action_right(M)
             assert not Q._c
@@ -1845,7 +1844,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             c = ZZ(0)
             # -b/2 < a <= b/2
             for a in xsrange((-b/2).floor() + 1, (b/2).floor() + 1):
-                if (not primitive_only) or (gcd([a,b,c]) == 1):
+                if not primitive_only or (gcd([a, b, c]) == 1):
                     form_list.append(BinaryQF(a, b, c))
         # We follow the description of Buchmann/Vollmer 6.7.1.  They
         # enumerate all reduced forms.  We only want representatives.
@@ -1879,14 +1878,14 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             a4 = 4*a
             s = D + a*a4
             w = 1+(s-1).isqrt() if s > 0 else 0
-            if w%2 != D%2:
+            if w % 2 != D % 2:
                 w += 1
             for b in xsrange(w, a+1, 2):
                 t = b*b-D
                 if t % a4 == 0:
                     c = t // a4
-                    if (not primitive_only) or gcd([a, b, c]) == 1:
-                        if b>0 and a>b and c>a:
+                    if not primitive_only or gcd([a, b, c]) == 1:
+                        if c > a > b > 0:
                             form_list.append(BinaryQF([a, -b, c]))
                         form_list.append(BinaryQF([a, b, c]))
     if not proper or D > 0:

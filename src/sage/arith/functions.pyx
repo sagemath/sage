@@ -72,25 +72,25 @@ def lcm(a, b=None):
 
     Make sure we try `\QQ` and not merely `\ZZ` (:trac:`13014`)::
 
-        sage: bool(lcm(2/5, 3/7) == lcm(SR(2/5), SR(3/7)))
+        sage: bool(lcm(2/5, 3/7) == lcm(SR(2/5), SR(3/7)))                              # optional - sage.symbolic
         True
 
     Make sure that the lcm of Expressions stays symbolic::
 
         sage: parent(lcm(2, 4))
         Integer Ring
-        sage: parent(lcm(SR(2), 4))
+        sage: parent(lcm(SR(2), 4))                                                     # optional - sage.symbolic
         Symbolic Ring
-        sage: parent(lcm(2, SR(4)))
+        sage: parent(lcm(2, SR(4)))                                                     # optional - sage.symbolic
         Symbolic Ring
-        sage: parent(lcm(SR(2), SR(4)))
+        sage: parent(lcm(SR(2), SR(4)))                                                 # optional - sage.symbolic
         Symbolic Ring
 
     Verify that objects without lcm methods but which can't be
     coerced to `\ZZ` or `\QQ` raise an error::
 
-        sage: F.<x,y> = FreeMonoid(2)
-        sage: lcm(x,y)
+        sage: F.<x,y> = FreeMonoid(2)                                                   # optional - sage.groups
+        sage: lcm(x,y)                                                                  # optional - sage.groups
         Traceback (most recent call last):
         ...
         TypeError: unable to find lcm of x and y

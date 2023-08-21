@@ -323,6 +323,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
 
     ::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
         sage: V = QuadraticForm(K, 4, [1, 0, 0, 0, 2*a, 0, 0, a, 0, 2]); V          # optional - sage.rings.number_field
         Quadratic form in 4 variables over Number Field in a

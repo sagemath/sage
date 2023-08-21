@@ -21,8 +21,8 @@ Submodules of Hecke modules
 import sage.arith.all as arith
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
+from sage.modules.free_module import is_FreeModule
 from sage.structure.richcmp import richcmp_method, richcmp_not_equal
-import sage.modules.all
 
 from . import module
 
@@ -80,7 +80,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         from . import ambient_module
         if not isinstance(ambient, ambient_module.AmbientHeckeModule):
             raise TypeError("ambient must be an ambient Hecke module")
-        if not sage.modules.free_module.is_FreeModule(submodule):
+        if not is_FreeModule(submodule):
             raise TypeError("submodule must be a free module")
         if not submodule.is_submodule(ambient.free_module()):
             raise ValueError("submodule must be a submodule of the ambient free module")
@@ -94,7 +94,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         module.HeckeModule_free_module.__init__(self,
                                   ambient.base_ring(), ambient.level(), ambient.weight())
         if not (dual_free_module is None):
-            if not sage.modules.free_module.is_FreeModule(dual_free_module):
+            if not is_FreeModule(dual_free_module):
                 raise TypeError("dual_free_module must be a free module")
             if dual_free_module.rank() != submodule.rank():
                 raise ArithmeticError("dual_free_module must have the same rank as submodule")
@@ -908,7 +908,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             sage: S.submodule(S[0].free_module())
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_0(18) of weight 4 with sign 0 over Rational Field
         """
-        if not sage.modules.free_module.is_FreeModule(M):
+        if not is_FreeModule(M):
             V = self.ambient_module().free_module()
             if isinstance(M, (list, tuple)):
                 M = V.span([V(x.element()) for x in M])

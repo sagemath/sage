@@ -20,11 +20,8 @@ AUTHOR:
 
 - William Stein (2008)
 """
-
-from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
-from sage.modules.free_module_element import vector
 I = CDF.gen()
 
 from sage.stats.time_series cimport TimeSeries

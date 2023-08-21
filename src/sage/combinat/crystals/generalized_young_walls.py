@@ -562,8 +562,8 @@ class GeneralizedYoungWall(CombinatorialElement):
             for i in r:
                 W.append(-1*alpha[i])
         if not root_lattice:
-            return E(sum(w for w in W))
-        return L(sum(w for w in W))
+            return E(sum(W))
+        return L(sum(W))
 
     def epsilon(self, i):
         r"""

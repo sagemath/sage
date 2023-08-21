@@ -103,8 +103,10 @@ class FreeAbelianMonoidFactory(UniqueFactory):
         n = int(n)
         names = normalize_names(n, names)
         return (n, names)
+
     def create_object(self, version, key):
         return FreeAbelianMonoid_class(*key)
+
 
 FreeAbelianMonoid_factory = FreeAbelianMonoidFactory("sage.monoids.free_abelian_monoid.FreeAbelianMonoid_factory")
 

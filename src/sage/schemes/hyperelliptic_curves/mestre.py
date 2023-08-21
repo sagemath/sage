@@ -248,6 +248,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     Note that the algorithm works over number fields as well::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k = NumberField(x^2 - 41, 'a')                                            # optional - sage.rings.number_field
         sage: a = k.an_element()                                                        # optional - sage.rings.number_field
         sage: Mestre_conic([1, 2 + a, a, 4 + a])                                        # optional - sage.rings.number_field

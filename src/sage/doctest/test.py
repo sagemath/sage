@@ -251,16 +251,24 @@ doesn't hurt::
 
 Even though the doctester master process has exited, the child process
 is still alive, but it should be killed automatically
-after the `die_timeout` given above (10 seconds)::
+after the ``die_timeout`` given above (10 seconds)::
 
-    sage: pid = int(open(F).read())    # long time
-    sage: time.sleep(2)                # long time
-    sage: os.kill(pid, signal.SIGQUIT) # long time; 2 seconds passed => still alive
-    sage: time.sleep(8)                # long time
-    sage: os.kill(pid, signal.SIGQUIT) # long time; 10 seconds passed => dead
+    sage: # long time
+    sage: pid = int(open(F).read())
+    sage: time.sleep(2)
+    sage: os.kill(pid, signal.SIGQUIT)  # 2 seconds passed => still alive
+    sage: time.sleep(8)
+    sage: os.kill(pid, signal.SIGQUIT)  # 10 seconds passed => dead  # random
     Traceback (most recent call last):
     ...
     ProcessLookupError: ...
+
+If the child process is dead and removed, the last output should be as above.
+However, the child process interrupted its parent process (see
+``"interrupt_diehard.rst"``), and became an orphan process. Depending on the
+system, an orphan process may eventually become a zombie process instead of
+being removed, and then the last output would just be a blank. Hence the ``#
+random`` tag.
 
 Test a doctest failing with ``abort()``::
 
@@ -457,13 +465,12 @@ Test the ``--show-skipped`` option::
     Running doctests ...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 show_skipped.rst
-        1 unlabeled test not run
         2 tests not run due to known bugs
         1 gap test not run
         1 long test not run
         1 not tested test not run
         0 tests not run because we ran out of time
-        [1 test, ... s]
+        [2 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -477,11 +484,10 @@ Optional tests are run correctly::
     Running doctests ...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 show_skipped.rst
-        1 unlabeled test not run
         2 tests not run due to known bugs
         1 not tested test not run
         0 tests not run because we ran out of time
-        [3 tests, ... s]
+        [4 tests, ... s]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -493,10 +499,9 @@ Optional tests are run correctly::
     Running doctests ...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 show_skipped.rst
-        1 unlabeled test not run
         2 tests not run due to known bugs
         1 not tested test not run
-        1 sage test not run
+        2 sage tests not run
         0 tests not run because we ran out of time
         [2 tests, ... s]
     ----------------------------------------------------------------------

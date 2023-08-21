@@ -61,12 +61,11 @@ AUTHOR:
 #       Copyright (C) 2007,2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #############################################################################
 
 # Standard python imports
 import builtins
-import os
 import types
 
 # We want the caller's locals, but locals() is emulated in Cython

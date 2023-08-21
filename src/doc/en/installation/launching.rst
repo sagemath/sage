@@ -29,6 +29,18 @@ To start a Jupyter Notebook instead of a Sage console, run the command
 instead of just ``sage``. To quit the Jupyter Notebook press ``<Ctrl> + <c>``
 twice in the console where you launched the command.
 
+You can pass extra parameters to this command. For example,
+
+.. CODE-BLOCK:: bash
+
+    sage -n jupyter --port 8899
+
+will run the Jupyter server on a port different from the default (8888).
+In particular on WSL, this is very useful because Jupyter may not be able to
+detect whether the default port is already taken by another instance of
+Jupyter running in Windows.
+
+
 Environment variables
 ---------------------
 
@@ -83,7 +95,8 @@ the internet, e.g. https://www.ssh.com/ssh/tunneling/example.
 WSL Post-installation steps
 ---------------------------
 
-If you've installed Sage Math from source on WSL, there are a couple of extra steps you can do to make your life easier:
+If you've installed SageMath from source on WSL, there are a couple of extra steps you can do to make your life easier:
+
 
 Create a notebook launch script
 """""""""""""""""""""""""""""""

@@ -54,7 +54,7 @@ cdef class Transformation:
         # this raw data is used for optimized transformations
         m_data = self.matrix.list()
         cdef int i
-        for i from 0 <= i < 12:
+        for i in range(12):
             self._matrix_data[i] = m_data[i]
 
     def get_matrix(self):
@@ -95,7 +95,7 @@ cdef class Transformation:
         point_c_transform(&lower, self._matrix_data, bounds[0])
         point_c_transform(&upper, self._matrix_data, bounds[0])
         cdef int i
-        for i from 1 <= i < 8:
+        for i in range(1, 8):
             temp.x = bounds[ i & 1      ].x
             temp.y = bounds[(i & 2) >> 1].y
             temp.z = bounds[(i & 4) >> 2].z

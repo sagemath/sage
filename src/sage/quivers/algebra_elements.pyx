@@ -89,15 +89,16 @@ cdef class PathAlgebraElement(RingElement):
     faster, but the timing for path algebra elements has improved by
     about 20%::
 
-        sage: timeit('pF^5+3*pF^3')    # not tested
+        sage: # not tested
+        sage: timeit('pF^5+3*pF^3')
         1 loops, best of 3: 338 ms per loop
-        sage: timeit('pP^5+3*pP^3')    # not tested
+        sage: timeit('pP^5+3*pP^3')
         100 loops, best of 3: 2.55 ms per loop
-        sage: timeit('pF2^7')          # not tested
+        sage: timeit('pF2^7')
         10000 loops, best of 3: 513 ms per loop
-        sage: timeit('pL2^7')          # not tested
+        sage: timeit('pL2^7')
         125 loops, best of 3: 1.99 ms per loop
-        sage: timeit('pP2^7')          # not tested
+        sage: timeit('pP2^7')
         10000 loops, best of 3: 1.54 ms per loop
 
     So, if one is merely interested in basic arithmetic operations for

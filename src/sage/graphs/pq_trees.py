@@ -365,8 +365,7 @@ class PQ:
             {2, 3}
             ('P', [{2, 4}, {8, 2}, {9, 2}])
         """
-        for i in self._children:
-            yield i
+        yield from self._children
 
     def number_of_children(self):
         r"""
@@ -795,13 +794,11 @@ class P(PQ):
             ({2, 4}, {0, 8}, {1, 2}, {0, 5})
             ({2, 4}, {0, 8}, {0, 5}, {1, 2})
             ...
-
         """
         from itertools import permutations, product
         for p in permutations(self._children):
-            for o in product(*[x.orderings() if isinstance(x, PQ) else [x]
-                               for x in p]):
-                yield o
+            yield from product(*[x.orderings() if isinstance(x, PQ) else [x]
+                                 for x in p])
 
 
 class Q(PQ):
@@ -1124,8 +1121,7 @@ class Q(PQ):
         """
         if len(self._children) == 1:
             c = self._children[0]
-            for o in (c.orderings() if isinstance(c, PQ) else [c]):
-                yield o
+            yield from (c.orderings() if isinstance(c, PQ) else [c])
         else:
             from itertools import product
             for o in product(*[x.orderings() if isinstance(x, PQ) else [x]

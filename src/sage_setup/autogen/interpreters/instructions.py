@@ -187,6 +187,7 @@ class InstrSpec(object):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: InstrSpec('add', pg('SS','S'), code='o0 = i0+i1;')
         add: SS->S = 'o0 = i0+i1;'
@@ -213,7 +214,7 @@ class InstrSpec(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: pg = RDFInterpreter().pg
             sage: InstrSpec('add', pg('SS','S'), code='o0 = i0+i1;')
             add: SS->S = 'o0 = i0+i1;'
@@ -288,6 +289,7 @@ class InstrSpec(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: pg = RDFInterpreter().pg
             sage: InstrSpec('add', pg('SS','S'), code='o0 = i0+i1;')
             add: SS->S = 'o0 = i0+i1;'
@@ -310,6 +312,7 @@ def instr_infix(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: instr_infix('mul', pg('SS', 'S'), '*')
         mul: SS->S = 'o0 = i0 * i1;'
@@ -325,6 +328,7 @@ def instr_funcall_2args(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: instr_funcall_2args('atan2', pg('SS', 'S'), 'atan2')
         atan2: SS->S = 'o0 = atan2(i0, i1);'
@@ -340,6 +344,7 @@ def instr_unary(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: instr_unary('sin', pg('S','S'), 'sin(i0)')
         sin: S->S = 'o0 = sin(i0);'
@@ -357,6 +362,7 @@ def instr_funcall_2args_mpfr(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rr import RRInterpreter
         sage: pg = RRInterpreter().pg
         sage: instr_funcall_2args_mpfr('add', pg('SS','S'), 'mpfr_add')
         add: SS->S = 'mpfr_add(o0, i0, i1, MPFR_RNDN);'
@@ -372,6 +378,7 @@ def instr_funcall_1arg_mpfr(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.rr import RRInterpreter
         sage: pg = RRInterpreter().pg
         sage: instr_funcall_1arg_mpfr('exp', pg('S','S'), 'mpfr_exp')
         exp: S->S = 'mpfr_exp(o0, i0, MPFR_RNDN);'
@@ -386,6 +393,7 @@ def instr_funcall_2args_mpc(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.cc import CCInterpreter
         sage: pg = CCInterpreter().pg
         sage: instr_funcall_2args_mpc('add', pg('SS','S'), 'mpc_add')
         add: SS->S = 'mpc_add(o0, i0, i1, MPC_RNDNN);'
@@ -400,6 +408,7 @@ def instr_funcall_1arg_mpc(name, io, op):
     EXAMPLES::
 
         sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.specs.cc import CCInterpreter
         sage: pg = CCInterpreter().pg
         sage: instr_funcall_1arg_mpc('exp', pg('S','S'), 'mpc_exp')
         exp: S->S = 'mpc_exp(o0, i0, MPC_RNDNN);'

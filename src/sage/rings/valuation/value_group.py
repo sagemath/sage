@@ -676,8 +676,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
         yield self(0)
         if self.is_trivial():
             return
-        for g in self._generators:
-            yield g
+        yield from self._generators
         from sage.rings.integer_ring import ZZ
         for x in (ZZ**len(self._generators)).some_elements():
             yield QQ.coerce(sum([abs(c) * g

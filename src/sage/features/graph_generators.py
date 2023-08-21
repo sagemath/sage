@@ -1,5 +1,5 @@
 r"""
-Features for testing the presence of various graph generator programs
+Features for testing the presence of graph generator programs ``benzene``, ``buckygen``, ``plantri``
 """
 
 # *****************************************************************************
@@ -23,7 +23,7 @@ from . import Executable, FeatureTestResult
 
 class Plantri(Executable):
     r"""
-    A :class:`~sage.features.Feature` which checks for the ``plantri`` binary.
+    A :class:`~sage.features.Feature` which checks for the :ref:`plantri <spkg_plantri>` binary.
 
     EXAMPLES::
 
@@ -70,7 +70,7 @@ class Plantri(Executable):
 
 class Buckygen(Executable):
     r"""
-    A :class:`~sage.features.Feature` which checks for the ``buckygen`` binary.
+    A :class:`~sage.features.Feature` which checks for the :ref:`buckygen <spkg_buckygen>` binary.
 
     EXAMPLES::
 
@@ -117,7 +117,7 @@ class Buckygen(Executable):
 
 class Benzene(Executable):
     r"""
-    A :class:`~sage.features.Feature` which checks for the ``benzene``
+    A :class:`~sage.features.Feature` which checks for the :ref:`benzene <spkg_benzene>`
     binary.
 
     EXAMPLES::

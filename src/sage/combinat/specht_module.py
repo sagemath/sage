@@ -24,6 +24,7 @@ from sage.rings.rational_field import QQ
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules_with_basis import ModulesWithBasis
 
+
 class SpechtModule(SubmoduleWithBasis):
     r"""
     A Specht module.
@@ -143,7 +144,7 @@ class SpechtModule(SubmoduleWithBasis):
         basis = SGA.echelon_form(span_set, False, order=support_order)
         basis = Family(basis)
         SubmoduleWithBasis.__init__(self, basis, support_order, ambient=SGA,
-                                     unitriangular=False, category=Mod.Subobjects())
+                                    unitriangular=False, category=Mod.Subobjects())
 
     def _repr_(self):
         r"""
@@ -335,6 +336,7 @@ class SpechtModule(SubmoduleWithBasis):
                     return P.retract(P._ambient(x) * self.lift())
             return None
 
+
 def _to_diagram(D):
     r"""
     Convert ``D`` to a list of cells representing a diagram.
@@ -371,6 +373,7 @@ def _to_diagram(D):
     else:
         D = [tuple(cell) for cell in D]
     return D
+
 
 def specht_module_spanning_set(D, SGA=None):
     r"""
@@ -428,14 +431,15 @@ def specht_module_spanning_set(D, SGA=None):
         col_perm = [set() for _ in range(nc)]
         for i, cell in enumerate(D):
             x, y = cell
-            row_perm[x].add(w(i+1)-1)
-            col_perm[y].add(w(i+1)-1)
+            row_perm[x].add(w(i + 1) - 1)
+            col_perm[y].add(w(i + 1) - 1)
         if row_diagram == row_perm:
             row_stab += B[w]
         if col_diagram == col_perm:
             col_stab += w.sign() * B[w]
     gen = col_stab * row_stab
     return tuple([b * gen for b in B])
+
 
 def specht_module_rank(D, base_ring=None):
     r"""

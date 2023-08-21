@@ -162,7 +162,7 @@ cdef class IndependentSets:
             ....:         IS2.extend(map(Set, list(G.subgraph_search_iterator(Graph(n), induced=True, return_graphs=False))))
             ....:     if len(IS) != len(set(IS2)):
             ....:        raise ValueError("something goes wrong")
-            sage: for i in range(5):
+            sage: for i in range(5):                                                    # needs sage.modules
             ....:     check_with_subgraph_search(graphs.RandomGNP(11, .3))
 
         Empty graph::

@@ -39,14 +39,14 @@ EXAMPLES::
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import builtins
 from io import StringIO

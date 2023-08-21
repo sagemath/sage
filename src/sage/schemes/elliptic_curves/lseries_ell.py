@@ -98,7 +98,7 @@ class Lseries_ell(SageObject):
             sage: L._repr_()
             'Complex L-series of the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
         """
-        return "Complex L-series of the %s"%self.__E
+        return "Complex L-series of the %s" % self.__E
 
     def dokchitser(self, prec=53,
                    max_imaginary_part=0,

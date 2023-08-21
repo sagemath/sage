@@ -15,18 +15,18 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2007-10)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include "sage/libs/ntl/decl.pxi"
@@ -34,11 +34,8 @@ from cypari2.paridecl cimport *
 
 from sage.structure.richcmp cimport (richcmp,
                                      richcmp_not_equal, rich_to_bool)
-from sage.structure.element cimport Element, ModuleElement, RingElement
 
 from sage.structure.parent cimport Parent
-
-from sage.rings.ring cimport Ring
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
@@ -46,13 +43,8 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from sage.misc.randstate import current_randstate
-from sage.arith.long cimport pyobject_to_long
-
 from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.interfaces.abc import GapElement
 

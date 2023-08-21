@@ -2427,7 +2427,7 @@ class QepcadCell:
                         index = (index,)
                 self._index = index
 
-                self._dimension = sum([r&1 for r in index])
+                self._dimension = sum([r & 1 for r in index])
             if 'Level        ' in line:
                 self._level = int(line.split(':')[1].strip())
             if 'Number of children' in line:

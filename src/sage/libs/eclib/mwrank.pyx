@@ -18,9 +18,7 @@ EXAMPLES::
     sage: t
     [[1:2:1]]
 """
-
 import os
-import sys
 
 from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off

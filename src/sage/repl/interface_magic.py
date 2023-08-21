@@ -97,7 +97,7 @@ class InterfaceMagic():
         except ImportError:
             return
         for name, obj in sage.interfaces.all.__dict__.items():
-            if isinstance(obj, sage.interfaces.interface.Interface):
+            if isinstance(obj, (sage.interfaces.interface.Interface, sage.misc.lazy_import.LazyImport)):
                 yield cls(name, obj)
 
     @classmethod

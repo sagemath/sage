@@ -31,9 +31,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
 from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (set_partition_iterator, perfect_matchings_iterator,
+from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
 from sage.graphs.graph import Graph
@@ -231,7 +232,7 @@ def planar_partitions_rec(X):
         if len(X) > 1:
             yield ([X[0]], [X[1]])
         return
-    from sage.misc.misc import powerset
+    from sage.combinat.subset import powerset
     from itertools import product
     for S in powerset(range(len(X)-1)):
         if not S:
@@ -2053,9 +2054,9 @@ class DiagramAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: q = var('q')
-            sage: PA = PartitionAlgebra(2, q)
-            sage: PA.order()
+            sage: q = var('q')                                                          # optional - sage.symbolic
+            sage: PA = PartitionAlgebra(2, q)                                           # optional - sage.symbolic
+            sage: PA.order()                                                            # optional - sage.symbolic
             2
         """
         return self._k
@@ -2412,23 +2413,24 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     ::
 
-        sage: q = var('q')
-        sage: PA = PartitionAlgebra(2, q); PA
+        sage: q = var('q')                                                              # optional - sage.symbolic
+        sage: PA = PartitionAlgebra(2, q); PA                                           # optional - sage.symbolic
         Partition Algebra of rank 2 with parameter q over Symbolic Ring
-        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])
+        sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])                            # optional - sage.symbolic
         True
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2                    # optional - sage.symbolic
+        ....:   == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]]))
         True
 
     The identity element of the partition algebra is the set
     partition `\{\{1,-1\}, \{2,-2\}, \ldots, \{k,-k\}\}`::
 
-        sage: P = PA.basis().list()
-        sage: PA.one()
+        sage: P = PA.basis().list()                                                     # optional - sage.symbolic
+        sage: PA.one()                                                                  # optional - sage.symbolic
         P{{-2, 2}, {-1, 1}}
-        sage: PA.one() * P[7] == P[7]
+        sage: PA.one() * P[7] == P[7]                                                   # optional - sage.symbolic
         True
-        sage: P[7] * PA.one() == P[7]
+        sage: P[7] * PA.one() == P[7]                                                   # optional - sage.symbolic
         True
 
     We now give some further examples of the use of the other arguments.
@@ -2445,21 +2447,22 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: PA = PartitionAlgebra(2, 5, base_ring=ZZ, prefix='B')
         sage: PA
         Partition Algebra of rank 2 with parameter 5 over Integer Ring
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
+        ....:   == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]]))
         True
 
     Symmetric group algebra elements and elements from other subalgebras
     of the partition algebra (e.g., ``BrauerAlgebra`` and
     ``TemperleyLiebAlgebra``) can also be coerced into the partition algebra::
 
-        sage: S = SymmetricGroupAlgebra(SR, 2)
-        sage: B = BrauerAlgebra(2, x, SR)
-        sage: A = PartitionAlgebra(2, x, SR)
-        sage: S([2,1])*A([[1,-1],[2,-2]])
+        sage: S = SymmetricGroupAlgebra(SR, 2)                                          # optional - sage.symbolic
+        sage: B = BrauerAlgebra(2, x, SR)                                               # optional - sage.symbolic
+        sage: A = PartitionAlgebra(2, x, SR)                                            # optional - sage.symbolic
+        sage: S([2,1]) * A([[1,-1],[2,-2]])                                             # optional - sage.symbolic
         P{{-2, 1}, {-1, 2}}
-        sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])
+        sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])                                 # optional - sage.symbolic
         P{{-2}, {-1}, {1, 2}}
-        sage: A([[1],[-1],[2,-2]]) * B([[-1,-2],[2,1]])
+        sage: A([[1],[-1],[2,-2]]) * B([[-1,-2],[2,1]])                                 # optional - sage.symbolic
         P{{-2, -1}, {1}, {2}}
 
     The same is true if the elements come from a subalgebra of a partition
@@ -2470,7 +2473,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: S = SymmetricGroupAlgebra(ZZ, 2)
         sage: B = BrauerAlgebra(2, q, ZZ[q])
         sage: A = PartitionAlgebra(3, q, R)
-        sage: S([2,1])*A([[1,-1],[2,-3],[3,-2]])
+        sage: S([2,1]) * A([[1,-1],[2,-3],[3,-2]])
         P{{-3, 1}, {-2, 3}, {-1, 2}}
         sage: A(B([[-1,-2],[2,1]]))
         P{{-3, 3}, {-2, -1}, {1, 2}}
@@ -2490,21 +2493,21 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
     Shorthands for working with basis elements are as follows::
 
         sage: S = SymmetricGroupAlgebra(ZZ, 3)
-        sage: A = PartitionAlgebra(3, x, SR)
+        sage: A = PartitionAlgebra(3, x, SR)                                            # optional - sage.symbolic
 
-        sage: A([[1,3],[-1],[-3]]) # pair up the omitted nodes as `{-i, i}`, if possible
+        sage: A([[1,3],[-1],[-3]])  # pair up the omitted nodes as `{-i, i}`, if possible   # optional - sage.symbolic
         P{{-3}, {-2, 2}, {-1}, {1, 3}}
-        sage: A([[1,3],[-1],[-3]]) == A[[1,3],[-1],[-3]]
+        sage: A([[1,3],[-1],[-3]]) == A[[1,3],[-1],[-3]]                                # optional - sage.symbolic
         True
 
-        sage: A([[1,2]])
+        sage: A([[1,2]])                                                                # optional - sage.symbolic
         P{{-3, 3}, {-2}, {-1}, {1, 2}}
-        sage: A([[1,2]]) == A[[1,2]]
+        sage: A([[1,2]]) == A[[1,2]]                                                    # optional - sage.symbolic
         True
 
-        sage: A([2,3,1]) # permutations in one-line notation are imported as well
+        sage: A([2,3,1])  # permutations in one-line notation are imported as well      # optional - sage.symbolic
         P{{-3, 2}, {-2, 1}, {-1, 3}}
-        sage: A([2,3,1]) == A(S([2,3,1]))
+        sage: A([2,3,1]) == A(S([2,3,1]))                                               # optional - sage.symbolic
         True
     """
     @staticmethod
@@ -3592,9 +3595,9 @@ class SubPartitionAlgebra(DiagramBasis):
 
         EXAMPLES::
 
-            sage: x = var('x')
-            sage: BA = BrauerAlgebra(2, x)
-            sage: BA.ambient()
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: BA = BrauerAlgebra(2, x)                                              # optional - sage.symbolic
+            sage: BA.ambient()                                                          # optional - sage.symbolic
             Partition Algebra of rank 2 with parameter x over Symbolic Ring
         """
         return self.lift.codomain()
@@ -3833,11 +3836,11 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
         EXAMPLES::
 
-            sage: z = var('z')
-            sage: B = BrauerAlgebra(3,z)
-            sage: B.jucys_murphy(1)
+            sage: z = var('z')                                                          # optional - sage.symbolic
+            sage: B = BrauerAlgebra(3,z)                                                # optional - sage.symbolic
+            sage: B.jucys_murphy(1)                                                     # optional - sage.symbolic
             (1/2*z-1/2)*B{{-3, 3}, {-2, 2}, {-1, 1}}
-            sage: B.jucys_murphy(3)
+            sage: B.jucys_murphy(3)                                                     # optional - sage.symbolic
             -B{{-3, -2}, {-1, 1}, {2, 3}} - B{{-3, -1}, {-2, 2}, {1, 3}}
              + B{{-3, 1}, {-2, 2}, {-1, 3}} + B{{-3, 2}, {-2, 3}, {-1, 1}}
              + (1/2*z-1/2)*B{{-3, 3}, {-2, 2}, {-1, 1}}

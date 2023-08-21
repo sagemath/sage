@@ -43,7 +43,7 @@ Test that write errors to stderr are handled gracefully by GAP
 """
 
 from .all import *
-from sage.misc.misc import cputime, walltime
+from sage.misc.timing import cputime, walltime
 import sys
 
 def manyvars(s, num=70000, inlen=1, step=2000):

@@ -312,7 +312,7 @@ class LWE(SageObject):
             IndexError: Number of available samples exhausted.
         """
         self.n  = ZZ(n)
-        self.m =  m
+        self.m = m
         self.__i = 0
         self.K  = IntegerModRing(q)
         self.FM = FreeModule(self.K, n)
@@ -545,7 +545,7 @@ class RingLWE(SageObject):
         """
         self.N  = ZZ(N)
         self.n = euler_phi(N)
-        self.m =  m
+        self.m = m
         self.__i = 0
         self.K  = IntegerModRing(q)
 

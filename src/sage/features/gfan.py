@@ -16,7 +16,7 @@ from . import Executable
 
 class GfanExecutable(Executable):
     r"""
-    A :class:`~sage.features.Feature` for the gfan executables.
+    A :class:`~sage.features.Feature` for the :ref:`gfan <spkg_gfan>` executables.
     """
     def __init__(self, cmd=None):
         r"""
@@ -30,7 +30,7 @@ class GfanExecutable(Executable):
             name = "gfan"
         else:
             name = f"gfan_{cmd}"
-        Executable.__init__(self, name, executable=name, spkg="gfan")
+        Executable.__init__(self, name, executable=name, spkg="gfan", type='standard')
 
 
 def all_features():

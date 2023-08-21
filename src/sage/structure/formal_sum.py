@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules
 """
 Formal sums
 
@@ -49,7 +50,7 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -61,8 +62,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.repr import repr_lincomb
 import operator
@@ -73,7 +74,7 @@ from sage.structure.element import ModuleElement
 from sage.structure.richcmp import richcmp
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
-from sage.structure.coerce import LeftModuleAction, RightModuleAction
+from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
 from sage.categories.action import PrecomposedAction
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -103,24 +104,25 @@ class FormalSum(ModuleElement):
             sage: a.reduce()
             sage: a
             4*2/3 - 5*7
-            sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)], parent=FormalSums(GF(5)))
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)))    # optional - sage.rings.finite_rings
             4*2/3
 
         Notice below that the coefficient 5 doesn't get reduced modulo 5::
 
-            sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)], parent=FormalSums(GF(5)), check=False)
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)),    # optional - sage.rings.finite_rings
+            ....:           check=False)
             4*2/3 - 5*7
 
         Make sure we first reduce before checking coefficient types::
 
-            sage: x,y = var('x, y')
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))
+            sage: x,y = var('x, y')                                                     # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))                           # optional - sage.symbolic
             1/2*x + 2*y
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this rational to integer
-            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))
+            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))                  # optional - sage.symbolic
             x + 2*y
         """
         if x == 0:
@@ -309,11 +311,12 @@ class FormalSums(UniqueRepresentation, Module):
         Abelian Group of all Formal Finite Sums over Integer Ring
         sage: FormalSums(ZZ)
         Abelian Group of all Formal Finite Sums over Integer Ring
-        sage: FormalSums(GF(7))
+        sage: FormalSums(GF(7))                                                         # optional - sage.rings.finite_rings
         Abelian Group of all Formal Finite Sums over Finite Field of size 7
-        sage: FormalSums(ZZ[sqrt(2)])
-        Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
-        sage: FormalSums(GF(9,'a'))
+        sage: FormalSums(ZZ[sqrt(2)])                                                   # optional - sage.symbolic sage.rings.number_field
+        Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2
+         with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
+        sage: FormalSums(GF(9,'a'))                                                     # optional - sage.rings.finite_rings
         Abelian Group of all Formal Finite Sums over Finite Field in a of size 3^2
 
     TESTS::
@@ -322,6 +325,7 @@ class FormalSums(UniqueRepresentation, Module):
 
     """
     Element = FormalSum
+
     @staticmethod
     def __classcall__(cls, base_ring=ZZ):
         """
@@ -338,9 +342,9 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: FormalSums(GF(7))
+            sage: FormalSums(GF(7))                                                     # optional - sage.rings.finite_rings
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
-            sage: FormalSums(GF(7))._repr_()
+            sage: FormalSums(GF(7))._repr_()                                            # optional - sage.rings.finite_rings
             'Abelian Group of all Formal Finite Sums over Finite Field of size 7'
         """
         return "Abelian Group of all Formal Finite Sums over %s"%self.base_ring()
@@ -400,12 +404,12 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7
+            sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7                            # optional - sage.rings.finite_rings
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
 
         The following tests against a bug that was fixed at :trac:`18795`::
 
-            sage: isinstance(F7, F7.category().parent_class)
+            sage: isinstance(F7, F7.category().parent_class)                            # optional - sage.rings.finite_rings
             True
         """
         if self.base_ring().has_coerce_map_from(R):
@@ -418,7 +422,8 @@ class FormalSums(UniqueRepresentation, Module):
         EXAMPLES::
 
             sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
-            Right scalar multiplication by Real Field with 53 bits of precision on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
+            Right scalar multiplication by Real Field with 53 bits of precision
+             on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
 
             sage: A = FormalSums(ZZ);  A.get_action(QQ)
             Right scalar multiplication by Rational Field on Abelian Group of all Formal Finite Sums over Rational Field

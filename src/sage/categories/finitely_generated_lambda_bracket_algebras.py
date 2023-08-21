@@ -31,6 +31,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
         Category of finitely generated lambda bracket algebras over Algebraic Field
     """
     _base_category_class_and_axiom = (LambdaBracketAlgebras, "FinitelyGeneratedAsLambdaBracketAlgebra")
+
     class ParentMethods:
         def ngens(self):
             r"""

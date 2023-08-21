@@ -126,6 +126,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             """
             raise NotImplementedError("ideals of Lie Conformal algebras are "
                                       "not implemented yet")
+
     class ElementMethods:
 
         @coerce_binop

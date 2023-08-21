@@ -434,6 +434,7 @@ def hasse_invariant(self, p):
 
     ::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 23)                                         # optional - sage.rings.number_field
         sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                             # optional - sage.rings.number_field
         sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]                    # optional - sage.rings.number_field
@@ -516,6 +517,7 @@ def hasse_invariant__OMeara(self, p):
 
     ::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 23)                                         # optional - sage.rings.number_field
         sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                             # optional - sage.rings.number_field
         sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]            # optional - sage.rings.number_field

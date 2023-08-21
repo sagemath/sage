@@ -46,7 +46,9 @@ class JoinFeature(Feature):
         sage: F.is_present()
         FeatureTestResult('xxyyyy', False)
     """
-    def __init__(self, name, features, spkg=None, url=None, description=None):
+
+    def __init__(self, name, features, spkg=None, url=None, description=None, type=None,
+                 **kwds):
         """
         TESTS:
 
@@ -68,7 +70,15 @@ class JoinFeature(Feature):
                 raise ValueError('given features have more than one url; provide url argument')
             elif len(urls) == 1:
                 url = next(iter(urls))
-        super().__init__(name, spkg=spkg, url=url, description=description)
+        if type is None:
+            if any(f._spkg_type() == 'experimental' for f in features):
+                type = 'experimental'
+            elif any(f._spkg_type() == 'optional' for f in features):
+                type = 'optional'
+            else:
+                type = 'standard'
+
+        super().__init__(name, spkg=spkg, url=url, description=description, type=type, **kwds)
         self._features = features
 
     def _is_present(self):
@@ -116,3 +126,50 @@ class JoinFeature(Feature):
             if not test:
                 return test
         return FeatureTestResult(self, True)
+
+    def hide(self):
+        r"""
+        Hide this feature and all its joined features.
+
+        EXAMPLES::
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: f = sage__groups()
+            sage: f.hide()
+            sage: f._features[0].is_present()
+            FeatureTestResult('sage.groups.perm_gps.permgroup', False)
+
+            sage: f.require()
+            Traceback (most recent call last):
+            ...
+            FeatureNotPresentError: sage.groups is not available.
+            Feature `sage.groups` is hidden.
+            Use method `unhide` to make it available again.
+        """
+        for f in self._features:
+            f.hide()
+        super(JoinFeature, self).hide()
+
+    def unhide(self):
+        r"""
+        Revert what :meth:`hide` does.
+
+        EXAMPLES::
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: f = sage__groups()
+            sage: f.hide()
+            sage: f.is_present()
+            FeatureTestResult('sage.groups', False)
+            sage: f._features[0].is_present()
+            FeatureTestResult('sage.groups.perm_gps.permgroup', False)
+
+            sage: f.unhide()
+            sage: f.is_present()    # optional sage.groups
+            FeatureTestResult('sage.groups', True)
+            sage: f._features[0].is_present() # optional sage.groups
+            FeatureTestResult('sage.groups.perm_gps.permgroup', True)
+        """
+        for f in self._features:
+            f.unhide()
+        super(JoinFeature, self).unhide()

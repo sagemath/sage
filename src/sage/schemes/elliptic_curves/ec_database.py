@@ -133,7 +133,7 @@ class EllipticCurves:
             []
         """
         from sage.env import ELLCURVE_DATA_DIR
-        data = os.path.join(ELLCURVE_DATA_DIR, 'rank%s'%rank)
+        data = os.path.join(ELLCURVE_DATA_DIR, 'rank%s' % rank)
         try:
             f = open(data)
         except IOError:
@@ -151,7 +151,7 @@ class EllipticCurves:
             # NOTE: only change this bound below after checking/fixing
             # the Cremona labels in the elliptic_curves package!
             if N <= 400000:
-                label = '%s%s%s'%(N, iso, num)
+                label = '%s%s%s' % (N, iso, num)
             else:
                 label = None
 

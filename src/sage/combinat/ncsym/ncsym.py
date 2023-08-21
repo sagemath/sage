@@ -297,7 +297,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed once CategoryObject won't override base_ring
         category = GradedHopfAlgebras(R)  # TODO: .Cocommutative()
-        Parent.__init__(self, category = category.WithRealizations())
+        Parent.__init__(self, category=category.WithRealizations())
 
     def _repr_(self):
         r"""

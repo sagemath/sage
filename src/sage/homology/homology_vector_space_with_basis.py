@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
+
 """
 Homology and cohomology with a basis
 
@@ -30,8 +31,13 @@ from sage.categories.algebras import Algebras
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
-from sage.topology.simplicial_complex import SimplicialComplex
-from sage.topology.simplicial_set import SimplicialSet_arbitrary
+
+try:
+    from sage.topology.simplicial_complex import SimplicialComplex
+    from sage.topology.simplicial_set import SimplicialSet_arbitrary
+except ImportError:
+    SimplicialComplex = SimplicialSet_arbitrary = ()
+
 
 class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     r"""
@@ -129,6 +135,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     `\Delta`-complex model can be obtained by sending `x` to `u+v`,
     `y` to `v`. ::
 
+        sage: # needs sage.groups
         sage: X = simplicial_sets.RealProjectiveSpace(6)
         sage: H_X = X.cohomology_ring(GF(2))
         sage: a = H_X.basis()[1,0]
@@ -140,6 +147,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     All products of positive-dimensional elements in a suspension
     should be zero::
 
+        sage: # needs sage.groups
         sage: Y = X.suspension()
         sage: H_Y = Y.cohomology_ring(GF(2))
         sage: b = H_Y.basis()[2,0]
@@ -403,7 +411,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             """
             if not self.is_homogeneous():
                 raise ValueError("only defined for homogeneous elements")
-            return sum(c * self.parent()._to_cycle_on_basis(i) for i,c in self)
+            return sum(c * self.parent()._to_cycle_on_basis(i) for i, c in self)
+
 
 class CohomologyRing(HomologyVectorSpaceWithBasis):
     """
@@ -446,6 +455,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         sage: y.Sq(2)
         h^{4,0}
 
+        sage: # needs sage.groups
         sage: Y = simplicial_sets.RealProjectiveSpace(6).suspension()
         sage: H_Y = Y.cohomology_ring(GF(2))
         sage: b = H_Y.basis()[2,0]
@@ -502,7 +512,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             True
         """
         one = self.base_ring().one()
-        d = {(0,i): one for i in self._graded_indices[0]}
+        d = {(0, i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
 
     @cached_method
@@ -570,9 +580,9 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         and simplicial sets::
 
             sage: from sage.topology.simplicial_set_examples import RealProjectiveSpace
-            sage: RP5 = RealProjectiveSpace(5)
-            sage: x = RP5.cohomology_ring(GF(2)).basis()[1,0]
-            sage: x**4
+            sage: RP5 = RealProjectiveSpace(5)                                          # needs sage.groups
+            sage: x = RP5.cohomology_ring(GF(2)).basis()[1,0]                           # needs sage.groups
+            sage: x**4                                                                  # needs sage.groups
             h^{4,0}
 
         A non-connected example::
@@ -711,9 +721,9 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             one machine, 20 seconds with a simplicial complex, 4 ms
             with a simplicial set). ::
 
-                sage: RP4_ss = simplicial_sets.RealProjectiveSpace(4)
-                sage: z_ss = RP4_ss.cohomology_ring(GF(2)).basis()[3,0]
-                sage: z_ss.Sq(1)
+                sage: RP4_ss = simplicial_sets.RealProjectiveSpace(4)                   # needs sage.groups
+                sage: z_ss = RP4_ss.cohomology_ring(GF(2)).basis()[3,0]                 # needs sage.groups
+                sage: z_ss.Sq(1)                                                        # needs sage.groups
                 h^{4,0}
 
             TESTS::
@@ -749,7 +759,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             ret = P.zero()
             H = scomplex.homology_with_basis(base_ring)
             deg_comp = {}
-            for index,coeff in self:
+            for index, coeff in self:
                 d = deg_comp.get(index[0], {})
                 d[index] = coeff
                 deg_comp[index[0]] = d
@@ -822,7 +832,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                             if ((hasattr(left, 'is_nondegenerate')
                                  and left.is_nondegenerate()
                                  and right.is_nondegenerate())
-                                or not hasattr(left, 'is_nondegenerate')):
+                                    or not hasattr(left, 'is_nondegenerate')):
                                 left = n_chains(left)
                                 right = n_chains(right)
                                 gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
@@ -830,6 +840,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                         result[(m, gamma_index)] = gamma_coeff
                 ret += P._from_dict(result, remove_zeros=False)
             return ret
+
 
 def sum_indices(k, i_k_plus_one, S_k_plus_one):
     r"""

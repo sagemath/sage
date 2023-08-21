@@ -209,8 +209,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()        # optional - sage.symbolic
              2
             x  + x
         """
@@ -226,8 +226,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()
+            sage: x = var('x')                                                          # optional - sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()      # optional - sage.symbolic
              2
             x  + x
         """
@@ -561,8 +561,8 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
         ::
 
             sage: A = cartesian_product([ZZ, ZZ])
-            sage: B = cartesian_product([GF(3), GF(5)])
-            sage: A((3,5)) == B((0,0))
+            sage: B = cartesian_product([GF(3), GF(5)])                                 # optional - sage.rings.finite_rings
+            sage: A((3,5)) == B((0,0))                                                  # optional - sage.rings.finite_rings
             True
         """
         if type(self) is type(right):

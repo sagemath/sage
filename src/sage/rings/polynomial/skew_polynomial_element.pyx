@@ -45,24 +45,13 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
-
-import re
 from cysignals.signals cimport sig_check
 
-from sage.rings.infinity import infinity
-from sage.structure.factorization import Factorization
-from sage.structure.element cimport Element, RingElement, AlgebraElement, ModuleElement
-from sage.misc.abstract_method import abstract_method
-from sage.categories.homset import Hom
-from sage.categories.fields import Fields
+from sage.structure.element cimport Element, RingElement, ModuleElement
 from sage.rings.integer cimport Integer
-from cpython.object cimport PyObject_RichCompare
-from sage.categories.map cimport Map
-from sage.rings.morphism cimport Morphism, RingHomomorphism
-from sage.rings.polynomial.polynomial_element cimport _dict_to_list
-from sage.structure.element import coerce_binop
+from sage.rings.morphism cimport RingHomomorphism
 from sage.misc.superseded import experimental
 
 from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial

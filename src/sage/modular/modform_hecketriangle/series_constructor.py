@@ -11,14 +11,14 @@ AUTHORS:
    ``J_inv_ZZ`` is the main function used to determine all Fourier expansions.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import bernoulli, sigma, rising_factorial
 from sage.misc.cachefunc import cached_method
@@ -369,17 +369,15 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).G_inv_ZZ()
             q^-1 - 1/8 - 59/1024*q + O(q^2)
         """
-
         n = self.hecke_n()
         # Note that G_inv is not a weakly holomorphic form (because of the behavior at -1)
-        if (n == infinity):
+        if n == infinity:
             q = self._series_ring.gen()
             temp_expr = (self.J_inv_ZZ()/self.f_inf_ZZ()*q**2).power_series()
             return 1/q*self.f_i_ZZ()*(temp_expr.log()/2).exp()
         elif (ZZ(2).divides(n)):
             return self.f_i_ZZ()*(self.f_rho_ZZ()**(ZZ(n/ZZ(2))))/self.f_inf_ZZ()
         else:
-            #return self._qseries_ring([])
             raise ValueError("G_inv doesn't exist for n={}.".format(self.hecke_n()))
 
     @cached_method

@@ -43,7 +43,8 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
 
     EXAMPLES::
 
-        sage: F.<x> = NumberField(x^2 -2)
+        sage: x = polygen(ZZ, 'x')
+        sage: F.<x> = NumberField(x^2 - 2)
         sage: R = lie_conformal_algebras.N2(F); R
         The N=2 super Lie conformal algebra over Number Field in x with defining polynomial x^2 - 2
         sage: R.inject_variables()

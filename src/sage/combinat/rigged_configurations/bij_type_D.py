@@ -20,7 +20,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,8 +32,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
@@ -83,7 +83,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
             r = cur_crystal.parent().r()
             # Iterate through the columns
             for col_number, cur_column in enumerate(reversed(cur_crystal.to_array(False))):
-                self.cur_path.insert(0, []) # Prepend an empty list
+                self.cur_path.insert(0, [])  # Prepend an empty list
 
                 # Check to see if we are a spinor column
                 if r >= self.n-1:
@@ -102,7 +102,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
                     # This check is needed for the n-1 spin column
                     if self.cur_dims[0][0] < r:
                         self.cur_dims[0][0] += 1
-                    val = letter.value # Convert from a CrystalOfLetter to an Integer
+                    val = letter.value  # Convert from a CrystalOfLetter to an Integer
 
                     if verbose:
                         print("====================")
@@ -112,7 +112,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
                         print("--------------------\n")
 
                     # Build the next state
-                    self.cur_path[0].insert(0, [letter]) # Prepend the value
+                    self.cur_path[0].insert(0, [letter])  # Prepend the value
                     self.next_state(val)
 
                 # Check to see if we are a spinor column
@@ -139,7 +139,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
                     for a in range(self.n):
                         self._update_vacancy_nums(a)
 
-        self.ret_rig_con.set_immutable() # Return it to immutable
+        self.ret_rig_con.set_immutable()  # Return it to immutable
         return self.ret_rig_con
 
     def next_state(self, val):
@@ -495,7 +495,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                         b = self.next_state(self.n)
                         if b == self.n:
                             b = -self.n
-                        ret_crystal_path[-1].append(letters(b)) # Append the rank
+                        ret_crystal_path[-1].append(letters(b))  # Append the rank
 
                         if build_graph:
                             y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
@@ -509,7 +509,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                         print(ret_crystal_path)
                         print("--------------------\n")
 
-                    self.cur_dims[0][0] -= 1 # This takes care of the indexing
+                    self.cur_dims[0][0] -= 1  # This takes care of the indexing
                     b = self.next_state(self.cur_dims[0][0])
 
                     # Corrections for spinor
@@ -518,13 +518,13 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                         b = -(self.n-1)
 
                     # Make sure we have a crystal letter
-                    ret_crystal_path[-1].append(letters(b)) # Append the rank
+                    ret_crystal_path[-1].append(letters(b))  # Append the rank
 
                     if build_graph:
                         y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                         self._graph.append([self._graph[-1][1], (y, len(self._graph)), letters(b)])
 
-                self.cur_dims.pop(0) # Pop off the leading column
+                self.cur_dims.pop(0)  # Pop off the leading column
 
                 # Check to see if we were a spinor
                 if dim[0] >= self.n-1:
@@ -677,7 +677,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
             self.cur_partitions[n - 1].rigging[ret_row_bar_next] = \
               self.cur_partitions[n - 1].vacancy_numbers[ret_row_bar_next]
 
-        return(b)
+        return b
 
     def doubling_map(self):
         r"""

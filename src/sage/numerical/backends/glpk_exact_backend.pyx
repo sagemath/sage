@@ -19,9 +19,13 @@ cdef class GLPKExactBackend(GLPKBackend):
     """
     MIP Backend that runs the GLPK solver in exact rational simplex mode.
 
-    The only access to data is via double-precision floats, however. It
-    reconstructs rationals from doubles and also provides results
-    as doubles.
+    The only access to data is via double-precision floats, which
+    means that rationals in the input data may be rounded before
+    the exact solver sees them. Thus, it is unreasonable to expect
+    that arbitrary LPs with rational coefficients are solved exactly.
+    Once the LP has been read into the backend, it reconstructs
+    rationals from doubles and does solve exactly over the rationals,
+    but results are returned as as doubles.
 
     There is no support for integer variables.
     """

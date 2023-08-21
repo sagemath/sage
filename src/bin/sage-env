@@ -440,9 +440,6 @@ if [ -d "$DOT_SAGE" ] ; then
     fi
 fi
 
-if [ -n "$SAGE_LOCAL" ]; then
-    export MAXIMA_PREFIX="$SAGE_LOCAL"
-fi
 export MAXIMA_USERDIR="$DOT_SAGE/maxima"
 
 if [ -n "$SAGE_LOCAL" ]; then

@@ -589,10 +589,11 @@ class Monoids(CategoryWithAxiom):
                     True
                     sage: SG4(Permutation([1,3,2,4])).is_central()                      # optional - sage.groups sage.modules
                     False
+
                     sage: A = GroupAlgebras(QQ).example(); A                            # optional - sage.groups sage.modules
                     Algebra of Dihedral group of order 8
                      as a permutation group over Rational Field
-                    sage: sum(i for i in A.basis()).is_central()                        # optional - sage.groups sage.modules
+                    sage: sum(A.basis()).is_central()                                   # optional - sage.groups sage.modules
                     True
                 """
                 return all(i * self == self * i

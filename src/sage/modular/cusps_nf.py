@@ -9,6 +9,7 @@ EXAMPLES:
 
 The space of cusps over a number field k::
 
+    sage: x = polygen(ZZ, 'x')
     sage: k.<a> = NumberField(x^2 + 5)
     sage: kCusps = NFCusps(k); kCusps
     Set of all cusps of Number Field in a with defining polynomial x^2 + 5
@@ -102,6 +103,7 @@ def list_of_representatives(N):
     EXAMPLES::
 
         sage: from sage.modular.cusps_nf import list_of_representatives
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^4 + 13*x^3 - 11)
         sage: N = k.ideal(713, a + 208)
         sage: L = list_of_representatives(N); L
@@ -127,6 +129,7 @@ def NFCusps(number_field):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^2 + 5)
         sage: kCusps = NFCusps(k); kCusps
         Set of all cusps of Number Field in a with defining polynomial x^2 + 5
@@ -152,6 +155,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^2 + 5)
         sage: kCusps = NFCusps(k); kCusps
         Set of all cusps of Number Field in a with defining polynomial x^2 + 5
@@ -162,6 +166,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 + x^2 + 13)
             sage: kCusps = NFCusps(k); kCusps
             Set of all cusps of Number Field in a with defining polynomial x^3 + x^2 + 13
@@ -175,6 +180,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5)
             sage: L.<a> = NumberField(x^2 + 23)
             sage: kCusps = NFCusps(k); kCusps
@@ -198,6 +204,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5)
             sage: L.<a> = NumberField(x^2 + 23)
             sage: kCusps = NFCusps(k); kCusps
@@ -219,6 +226,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 2)
             sage: kCusps = NFCusps(k)
             sage: kCusps
@@ -239,6 +247,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5)
             sage: kCusps = NFCusps(k)
             sage: latex(kCusps) # indirect doctest
@@ -252,6 +261,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 5)
             sage: kCusps = NFCusps(k)
             sage: c = kCusps(a,2)
@@ -283,10 +293,11 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-             sage: k.<a> = NumberField(x^2 + 5)
-             sage: kCusps = NFCusps(k)
-             sage: kCusps.zero()
-             Cusp [0: 1] of Number Field in a with defining polynomial x^2 + 5
+            sage: x = polygen(ZZ, 'x')
+            sage: k.<a> = NumberField(x^2 + 5)
+            sage: kCusps = NFCusps(k)
+            sage: kCusps.zero()
+            Cusp [0: 1] of Number Field in a with defining polynomial x^2 + 5
         """
         return self(0)
 
@@ -296,6 +307,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: kCusps = NFCusps(k)
             sage: kCusps.number_field()
@@ -337,6 +349,7 @@ class NFCusp(Element):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^2 + 5)
         sage: NFCusp(k, a, 2)
         Cusp [a: 2] of Number Field in a with defining polynomial x^2 + 5
@@ -416,6 +429,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: c = NFCusp(k, 3, a+1); c
             Cusp [3: a + 1] of Number Field in a with defining polynomial x^2 + 1
@@ -554,6 +568,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: c = NFCusp(k, a, 2); c
             Cusp [a: 2] of Number Field in a with defining polynomial x^2 + 1
@@ -576,6 +591,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 2)
             sage: alpha = NFCusp(k, 1, a + 1)
             sage: alpha.number_field()
@@ -589,6 +605,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: NFCusp(k, a, 2).is_infinity()
             False
@@ -605,6 +622,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: c = NFCusp(k, a, 2)
             sage: c.numerator()
@@ -623,6 +641,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: c = NFCusp(k, a, 2)
             sage: c.denominator()
@@ -642,6 +661,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 2)
             sage: NFCusp(k, a, 2)._number_field_element_()
             1/2*a
@@ -660,6 +680,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 2)
             sage: NFCusp(k, a+1)._ring_of_integers_element_()
             a + 1
@@ -684,6 +705,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 11)
             sage: latex(NFCusp(k, 3*a, a + 1)) # indirect doctest
             \[3 a: a + 1\]
@@ -709,6 +731,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 + x + 1)
             sage: kCusps = NFCusps(k)
 
@@ -746,6 +769,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: c = NFCusp(k, a, a+1); c
             Cusp [a: a + 1] of Number Field in a with defining polynomial x^2 + 23
@@ -771,6 +795,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: beta = NFCusp(k, 0, 1)
             sage: beta.apply([0, -1, 1, 0])
@@ -788,6 +813,7 @@ class NFCusp(Element):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 23)
             sage: alpha = NFCusp(k, 3, a-1)
             sage: alpha.ideal()
@@ -812,6 +838,7 @@ class NFCusp(Element):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^3 + 11)
             sage: alpha = NFCusp(k, oo)
             sage: alpha.ABmatrix()
@@ -901,8 +928,9 @@ class NFCusp(Element):
 
         ::
 
-            sage: K.<a> = NumberField(x^3-10)
-            sage: N = K.ideal(a-1)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 10)
+            sage: N = K.ideal(a - 1)
             sage: alpha = NFCusp(K, 0)
             sage: beta = NFCusp(K, oo)
             sage: alpha.is_Gamma0_equivalent(beta, N)
@@ -1008,6 +1036,7 @@ def Gamma0_NFCusps(N):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^2 + 5)
         sage: N = k.ideal(3)
         sage: L = Gamma0_NFCusps(N)
@@ -1026,6 +1055,7 @@ def Gamma0_NFCusps(N):
 
     Another example::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^4 - x^3 -21*x^2 + 17*x + 133)
         sage: N = k.ideal(5)
         sage: from sage.modular.cusps_nf import number_of_Gamma0_NFCusps
@@ -1099,6 +1129,7 @@ def number_of_Gamma0_NFCusps(N):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(2, a+1)
         sage: from sage.modular.cusps_nf import number_of_Gamma0_NFCusps
@@ -1144,6 +1175,7 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^3 + 11)
         sage: N = k.ideal(5, a + 1)
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
@@ -1203,6 +1235,7 @@ def units_mod_ideal(I):
     EXAMPLES::
 
         sage: from sage.modular.cusps_nf import units_mod_ideal
+        sage: x = polygen(ZZ, 'x')
         sage: k.<a> = NumberField(x^2 + 1)
         sage: I = k.ideal(a + 1)
         sage: units_mod_ideal(I)

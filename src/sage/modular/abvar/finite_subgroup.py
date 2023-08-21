@@ -97,6 +97,9 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
+
+from sage.misc.lazy_import import lazy_import
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module import Module
 from sage.modules.free_module import is_FreeModule
@@ -105,7 +108,6 @@ from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
@@ -521,7 +523,7 @@ class FiniteSubgroup(Module):
             'Finite subgroup with invariants [3, 3, 3, 3, 3, 3, 3, 3, 3, 3] over QQ of Abelian variety J0(42) of dimension 5'
         """
         K = self.__field_of_definition
-        if K == QQbar:
+        if isinstance(K, sage.rings.abc.AlgebraicField):
             field = "QQbar"
         elif K == QQ:
             field = "QQ"
@@ -750,6 +752,8 @@ class FiniteSubgroup(Module):
             sage: H == G.subgroup([[1/11,0,0,0]])
             True
         """
+        from sage.rings.qqbar import QQbar
+
         if not isinstance(gens, (tuple, list)):
             raise TypeError("gens must be a list or tuple")
         A = self.abelian_variety()
@@ -815,7 +819,7 @@ class FiniteSubgroup(Module):
 
 
 class FiniteSubgroup_lattice(FiniteSubgroup):
-    def __init__(self, abvar, lattice, field_of_definition=QQbar, check=True):
+    def __init__(self, abvar, lattice, field_of_definition=None, check=True):
         """
         A finite subgroup of a modular abelian variety that is defined by a
         given lattice.
@@ -841,6 +845,8 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
             sage: G = J.finite_subgroup([[1/3,0], [0,1/5]]); G
             Finite subgroup with invariants [15] over QQbar of Abelian variety J0(11) of dimension 1
         """
+        if field_of_definition is None:
+            from sage.rings.qqbar import QQbar as field_of_definition
         if check:
             from .abvar import is_ModularAbelianVariety
             if not is_FreeModule(lattice) or lattice.base_ring() != ZZ:

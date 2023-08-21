@@ -671,7 +671,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     coleman_integrals_on_basis_hyperelliptic = coleman_integrals_on_basis
 
-
 #    def invariant_differential(self):
 #        """
 #        Returns the invariant differential `dx/2y` on self

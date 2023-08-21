@@ -205,7 +205,7 @@ cdef class _LazyString():
 
     cdef val(self):
         cdef f = self.func
-        if isinstance(f, basestring):
+        if isinstance(f, str):
             return f % self.args
         return PyObject_Call(f, self.args, self.kwargs)
 

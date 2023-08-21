@@ -241,6 +241,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: A.<sqrt2> = QQ.extension(x^2 - 2)
             sage: K.<sqrt2> = A.over()
             sage: f = K.hom([-sqrt2])
@@ -477,6 +478,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<sqrt5> = QQ.extension(x^2 - 5)
             sage: K.<sqrt5> = A.over()
             sage: f = K.hom([-sqrt5])
@@ -556,6 +558,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 5)
             sage: K = A.over()
             sage: K.coerce_map_from(A)
@@ -648,6 +651,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
         TESTS::
 
+            sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 5)
             sage: K = A.over()
             sage: A.convert_map_from(K)

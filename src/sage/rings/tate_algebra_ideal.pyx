@@ -20,15 +20,13 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.rings.ideal import Ideal_generic
-from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_GT, op_LE, op_GE
 
-from sage.structure.element cimport Element
 from sage.rings.polynomial.polydict cimport PolyDict
 
 from sage.rings.tate_algebra_element cimport TateAlgebraTerm
