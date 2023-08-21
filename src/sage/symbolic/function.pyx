@@ -99,7 +99,7 @@ is attempted, and after that ``sin()`` which succeeds::
     5
     sage: f(0, hold=True)                                                               # needs sage.symbolic
     my_sin(0)
-    sage: f(0, hold=True).n()
+    sage: f(0, hold=True).n()                                                           # needs sage.rings.real_mpfr
     3.50000000000000
     sage: f(CBF(0))                                                                     # needs sage.libs.flint
     0
@@ -315,7 +315,7 @@ cdef class Function(SageObject):
             3
             sage: test(2., 4)
             3.00000000000000
-            sage: test(1 + 1.0*I, 2)
+            sage: test(1 + 1.0*I, 2)                                                    # needs sage.symbolic
             2.00000000000000 + 1.00000000000000*I
             sage: class Test2(BuiltinFunction):
             ....:     def __init__(self):
@@ -350,9 +350,9 @@ cdef class Function(SageObject):
         EXAMPLES::
 
             sage: f = function('f', nargs=1, conjugate_func=lambda self, x: 2r*x)       # needs sage.symbolic
-            sage: f.__hash__() #random                                                  # needs sage.symbolic
+            sage: f.__hash__()    # random                                              # needs sage.symbolic
             -2224334885124003860
-            sage: hash(f(2)) #random                                                    # needs sage.symbolic
+            sage: hash(f(2))      # random                                              # needs sage.symbolic
             4168614485
         """
         return hash(self._name)*(self._nargs+1)*self._serial
@@ -416,20 +416,19 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)                                        # needs sage.symbolic
-            sage: x,y,z = var("x y z")                                                  # needs sage.symbolic
-            sage: foo(x, y)                                                             # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: foo = function("foo", nargs=2)
+            sage: x,y,z = var("x y z")
+            sage: foo(x, y)
             foo(x, y)
-
-            sage: foo(y)                                                                # needs sage.symbolic
+            sage: foo(y)
             Traceback (most recent call last):
             ...
             TypeError: Symbolic function foo takes exactly 2 arguments (1 given)
-
-            sage: bar = function("bar")                                                 # needs sage.symbolic
-            sage: bar(x)                                                                # needs sage.symbolic
+            sage: bar = function("bar")
+            sage: bar(x)
             bar(x)
-            sage: bar(x, y)                                                             # needs sage.symbolic
+            sage: bar(x, y)
             bar(x, y)
 
         The `hold` argument prevents automatic evaluation of the function::
@@ -514,7 +513,7 @@ cdef class Function(SageObject):
 
         Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
 
-            sage: # needs numpy
+            sage: # needs numpy sage.symbolic
             sage: import numpy
             sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)
             sage: real_part(a)
@@ -752,13 +751,13 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: import numpy                                                          # needs numpy
-            sage: a = numpy.arange(5)                                                   # needs numpy
-            sage: csc(a)                                                                # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: a = numpy.arange(5)
+            sage: csc(a)
             doctest:...: RuntimeWarning: divide by zero encountered in ...divide
             array([        inf,  1.18839511,  1.09975017,  7.0861674 , -1.32134871])
-
-            sage: factorial(a)                                                          # needs numpy
+            sage: factorial(a)
             Traceback (most recent call last):
             ...
             NotImplementedError: The Function factorial does
@@ -1195,7 +1194,7 @@ cdef class SymbolicFunction(Function):
             foo
             sage: foo(2, 3)                                                             # needs sage.symbolic
             foo(2, 3)
-            sage: foo(2, 3).n()
+            sage: foo(2, 3).n()                                                         # needs sage.rings.real_mpfr
             12.0000000000000
             sage: foo(2, 3).conjugate()                                                 # needs sage.symbolic
             2
