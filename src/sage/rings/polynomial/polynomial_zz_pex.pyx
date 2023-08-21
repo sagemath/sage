@@ -12,6 +12,7 @@ AUTHOR:
 
 - Yann Laigle-Chapuy (2010-01) initial implementation
 - Lorenz Panny (2023-01): :meth:`minpoly_mod`
+- Giacomo Pope (2023-08): :meth:`reverse`, :meth:`inverse_series_trunc`
 """
 from cysignals.signals cimport sig_on, sig_off
 
@@ -514,10 +515,11 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f.reverse(degree=200)
             2*x^200 + 3*x^199 + 5*x^198 + 7*x^197 + 11*x^196 + 13*x^195 + 17*x^194 + 19*x^193
             sage: f.reverse(degree=0)
-            ValueError                                Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
+            ValueError: degree argument must be a non-negative integer, got 0
             sage: f.reverse(degree=-5)
-            ValueError                                Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: degree argument must be a non-negative integer, got -5
         """
@@ -574,16 +576,16 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f.inverse_series_trunc(3)
             61*x^2 + 40*x + 82
             sage: f.inverse_series_trunc(0)
-            ValueError                                Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: the precision must be positive, got 0
             sage: f.inverse_series_trunc(-1)
-            ValueError                                Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: the precision must be positive, got -1
             sage: f = x + x^2 + x^3
             sage: f.inverse_series_trunc(5)
-            ValueError                                Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: constant term 0 is not a unit
         """
