@@ -435,7 +435,7 @@ cdef class SBox(SageObject):
             return self._S_list[<Integer> X]
 
         # Handle non-integer inputs: vectors, finite field elements to-integer-coercible elements
-        #cdef int i
+        # cdef int i
         if isinstance(X, Element):
             K = X.parent()
             if K.base_ring().characteristic() != 2:
@@ -948,8 +948,6 @@ cdef class SBox(SageObject):
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t n = self.n
 
-        F = GF(2)
-
         if X is None and Y is None:
             P = self.ring()
             X = P.gens()[:m]
@@ -1056,7 +1054,7 @@ cdef class SBox(SageObject):
         cdef int i
         for i in range(2**m):
             x = k(vector(self.to_bits(i, m)))
-            l.append( (x, self(x)) )
+            l.append((x, self(x)))
 
         P = PolynomialRing(k, 'x')
         return P.lagrange_polynomial(l)

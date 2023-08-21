@@ -111,7 +111,8 @@ cdef class Heilbronn:
 
         EXAMPLES::
 
-            sage: H = sage.modular.modsym.heilbronn.Heilbronn()
+            sage: from sage.modular.modsym.heilbronn import Heilbronn
+            sage: H = Heilbronn()
             sage: H._initialize_list()
             Traceback (most recent call last):
             ...
@@ -343,6 +344,7 @@ cdef class HeilbronnCremona(Heilbronn):
 
         EXAMPLES::
 
+            sage: from sage.modular.modsym.heilbronn import HeilbronnCremona
             sage: H = HeilbronnCremona.__new__(HeilbronnCremona)
             sage: H.p = 5
             sage: H
@@ -457,6 +459,7 @@ cdef class HeilbronnMerel(Heilbronn):
 
         EXAMPLES::
 
+            sage: from sage.modular.modsym.heilbronn import HeilbronnMerel
             sage: H = HeilbronnMerel.__new__(HeilbronnMerel)
             sage: H.n = 5
             sage: H
