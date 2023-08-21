@@ -3017,11 +3017,12 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if ncols < 0 or col < 0 or col + ncols > self._ncols:
             raise IndexError("columns out of range")
 
-        if col == 0 and ncols == self._ncols:
-            cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=self._ncols)
-            memcpy(M._entries, self._entries+row*ncols, sizeof(celement)*ncols*nrows)
-
         cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=ncols)
+
+        if col == 0 and ncols == self._ncols:
+            memcpy(M._entries, self._entries+row*ncols, sizeof(celement)*ncols*nrows)
+            return M
+
         cdef Py_ssize_t i,r
         for i,r in enumerate(range(row, row+nrows)) :
             memcpy(M._entries + (i*ncols), self._entries+self._ncols*r+col, sizeof(celement)*ncols)
