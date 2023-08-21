@@ -113,7 +113,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         return series_ring.zero()
 
     _itgs = _gs
-    _cis  = _gs
+    _cis = _gs
 
     def _structures(self, structure_class, labels):
         """

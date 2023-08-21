@@ -64,9 +64,9 @@ class RootSpace(CombinatorialFreeModule):
         self.root_system = root_system
         CombinatorialFreeModule.__init__(self, base_ring,
                                          root_system.index_set(),
-                                         prefix = "alphacheck" if root_system.dual_side else "alpha",
-                                         latex_prefix = "\\alpha^\\vee" if root_system.dual_side else "\\alpha",
-                                         category = RootLatticeRealizations(base_ring))
+                                         prefix="alphacheck" if root_system.dual_side else "alpha",
+                                         latex_prefix="\\alpha^\\vee" if root_system.dual_side else "\\alpha",
+                                         category=RootLatticeRealizations(base_ring))
         if base_ring is not ZZ:
             # Register the partial conversion back from ``self`` to the root lattice
             # See :meth:`_to_root_lattice` for tests
@@ -139,7 +139,7 @@ class RootSpace(CombinatorialFreeModule):
         """
         R = self.base_ring()
         C = self.cartan_type().symmetrizer().map(R)
-        return self.module_morphism(diagonal = C.__getitem__,
+        return self.module_morphism(diagonal=C.__getitem__,
                                     codomain=self.coroot_space(R))
 
     def _to_root_lattice(self, x):
@@ -228,7 +228,7 @@ class RootSpace(CombinatorialFreeModule):
 
         def basis_value(basis, i):
             return basis[i]
-        return self.module_morphism(on_basis = functools.partial(basis_value, basis) , codomain=L)
+        return self.module_morphism(on_basis=functools.partial(basis_value, basis) , codomain=L)
 
 
 class RootSpaceElement(CombinatorialFreeModule.Element):

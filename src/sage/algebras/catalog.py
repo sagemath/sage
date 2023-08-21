@@ -23,6 +23,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.Descent <sage.combinat.descent_algebra.DescentAlgebra>`
 - :class:`algebras.DifferentialWeyl
   <sage.algebras.weyl_algebra.DifferentialWeylAlgebra>`
+- :class:`algebras.DownUp <sage.algebras.down_up_algebra.DownUpAlgebra>`
 - :class:`algebras.Exterior <sage.algebras.clifford_algebra.ExteriorAlgebra>`
 - :class:`algebras.FiniteDimensional
   <sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra>`
@@ -47,6 +48,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.MalvenutoReutenauer <sage.combinat.fqsym.FreeQuasisymmetricFunctions>`
 - :class:`algebras.NilCoxeter
   <sage.algebras.nil_coxeter_algebra.NilCoxeterAlgebra>`
+- :class:`algebras.Octonion <sage.algebras.octonion_algebra.OctonionAlgebra>`
 - :class:`algebras.OrlikTerao
   <sage.algebras.orlik_terao.OrlikTeraoAlgebra>`
 - :class:`algebras.OrlikSolomon
@@ -134,6 +136,8 @@ lazy_import('sage.algebras.tensor_algebra', 'TensorAlgebra', 'Tensor')
 lazy_import('sage.algebras.quantum_groups.quantum_group_gap', 'QuantumGroup')
 lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
            'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
+lazy_import('sage.algebras.down_up_algebra', 'DownUpAlgebra', 'DownUp')
 lazy_import('sage.algebras.yangian', 'Yangian')
+lazy_import('sage.algebras.octonion_algebra', 'OctonionAlgebra', 'Octonion')
 
 del lazy_import  # We remove the object from here so it doesn't appear under tab completion

@@ -1060,7 +1060,7 @@ class ModularFormsRing(Parent):
 
             # we may need to increase the precision of the cached cusp
             # generators
-            G =  []
+            G = []
             for j,f,F in self.__cached_cusp_gens:
                 if f.prec() >= working_prec:
                     f = F.qexp(working_prec).change_ring(self.base_ring())

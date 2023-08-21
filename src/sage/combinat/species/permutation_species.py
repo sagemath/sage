@@ -97,7 +97,8 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
              ['a', 'c', 'b', 'd'],
              ['a', 'c', 'b', 'd']]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         S = SymmetricGroup(len(self._labels))
         p = self.permutation_group_element()
         return PermutationGroup(S.centralizer(p).gens())

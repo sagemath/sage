@@ -622,7 +622,6 @@ class QuasiModularFormsElement(ModuleElement):
 
     homogeneous_component = __getitem__  # alias
 
-
     def serre_derivative(self):
         r"""
         Return the Serre derivative of the given quasimodular form.

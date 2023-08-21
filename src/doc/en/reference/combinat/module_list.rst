@@ -143,7 +143,6 @@ Comprehensive Module List
     sage/combinat/integer_vector_weighted
     sage/combinat/integer_vectors_mod_permgroup
     sage/combinat/interval_posets
-    sage/combinat/k_regular_sequence
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
     sage/combinat/key_polynomial
@@ -206,6 +205,7 @@ Comprehensive Module List
     sage/combinat/quickref
     sage/combinat/ranker
     sage/combinat/recognizable_series
+    sage/combinat/regular_sequence
     sage/combinat/restricted_growth
     sage/combinat/ribbon
     sage/combinat/ribbon_shaped_tableau
@@ -291,6 +291,7 @@ Comprehensive Module List
     sage/combinat/rsk
     sage/combinat/schubert_polynomial
     sage/combinat/set_partition
+    sage/combinat/set_partition_iterator
     sage/combinat/set_partition_ordered
     sage/combinat/sf/all
     sage/combinat/sf/character
@@ -368,7 +369,7 @@ Comprehensive Module List
     sage/combinat/tutorial
     sage/combinat/vector_partition
     sage/combinat/words/abstract_word
-    sage/combinat/words
+    sage/combinat/words/all
     sage/combinat/words/alphabet
     sage/combinat/words/finite_word
     sage/combinat/words/infinite_word

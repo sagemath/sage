@@ -39,7 +39,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
     EXAMPLES::
 
         sage: from sage.categories.poor_man_map import PoorManMap
-        sage: f = PoorManMap(factorial, domain = (1, 2, 3), codomain = (1, 2, 6))
+        sage: f = PoorManMap(factorial, domain=(1, 2, 3), codomain=(1, 2, 6))
         sage: f
         A map from (1, 2, 3) to (1, 2, 6)
         sage: f(3)
@@ -48,12 +48,12 @@ class PoorManMap(sage.structure.sage_object.SageObject):
     The composition of several functions can be created by passing in a tuple
     of functions::
 
-        sage: i = PoorManMap((factorial, sqrt), domain= (1, 4, 9), codomain = (1, 2, 6))
+        sage: i = PoorManMap((factorial, sqrt), domain=(1, 4, 9), codomain=(1, 2, 6))
 
     However, the same effect can also be achieved by just composing maps::
 
-        sage: g = PoorManMap(factorial, domain = (1, 2, 3), codomain = (1, 2, 6))
-        sage: h = PoorManMap(sqrt, domain = (1, 4, 9), codomain = (1, 2, 3))
+        sage: g = PoorManMap(factorial, domain=(1, 2, 3), codomain=(1, 2, 6))
+        sage: h = PoorManMap(sqrt, domain=(1, 4, 9), codomain=(1, 2, 3))
         sage: i == g*h
         True
 
@@ -63,8 +63,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         TESTS::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: f = PoorManMap(factorial, domain = (1, 2, 3), codomain = (1, 2, 6))
-            sage: g = PoorManMap(sqrt, domain = (1, 4, 9), codomain = (1, 2, 6))
+            sage: f = PoorManMap(factorial, domain=(1, 2, 3), codomain=(1, 2, 6))
+            sage: g = PoorManMap(sqrt, domain=(1, 4, 9), codomain=(1, 2, 6))
 
             sage: TestSuite(f).run()
             sage: TestSuite(f*g).run()
@@ -85,11 +85,11 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: from sage.categories.poor_man_map import PoorManMap
             sage: PoorManMap(lambda x: x+2)  # indirect doctest
             A map
-            sage: PoorManMap(lambda x: x+2, domain = (1,2,3))
+            sage: PoorManMap(lambda x: x+2, domain=(1,2,3))
             A map from (1, 2, 3)
-            sage: PoorManMap(lambda x: x+2, domain = (1,2,3))
+            sage: PoorManMap(lambda x: x+2, domain=(1,2,3))
             A map from (1, 2, 3)
-            sage: PoorManMap(lambda x: x+2, codomain = (3,4,5))
+            sage: PoorManMap(lambda x: x+2, codomain=(3,4,5))
             A map to (3, 4, 5)
 
         """
@@ -104,7 +104,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: PoorManMap(lambda x: x+1, domain = (1,2,3), codomain = (2,3,4)).domain()
+            sage: PoorManMap(lambda x: x+1, domain=(1,2,3), codomain=(2,3,4)).domain()
             (1, 2, 3)
         """
         return self._domain
@@ -116,7 +116,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: PoorManMap(lambda x: x+1, domain = (1,2,3), codomain = (2,3,4)).codomain()
+            sage: PoorManMap(lambda x: x+1, domain=(1,2,3), codomain=(2,3,4)).codomain()
             (2, 3, 4)
         """
         return self._codomain
@@ -128,12 +128,12 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: f = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6))
-            sage: g = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6))
-            sage: h1 = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6,8))
-            sage: h2 = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6,8))
-            sage: h3 = PoorManMap(factorial, domain = (1,2,3,4), codomain = (1,2,6))
-            sage: h4 = PoorManMap(lambda x: x, domain = (1,2,3), codomain = (1,2,6))
+            sage: f = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
+            sage: g = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
+            sage: h1 = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6,8))
+            sage: h2 = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6,8))
+            sage: h3 = PoorManMap(factorial, domain=(1,2,3,4), codomain=(1,2,6))
+            sage: h4 = PoorManMap(lambda x: x, domain=(1,2,3), codomain=(1,2,6))
             sage: f == g, f == h1, f == h2, f == h3, f == h4, f == 1, 1 == f
             (True, False, False, False, False, False, False)
 
@@ -153,12 +153,12 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: f = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6))
-            sage: g = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6))
-            sage: h1 = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6,8))
-            sage: h2 = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6,8))
-            sage: h3 = PoorManMap(factorial, domain = (1,2,3,4), codomain = (1,2,6))
-            sage: h4 = PoorManMap(lambda x: x, domain = (1,2,3), codomain = (1,2,6))
+            sage: f = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
+            sage: g = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
+            sage: h1 = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6,8))
+            sage: h2 = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6,8))
+            sage: h3 = PoorManMap(factorial, domain=(1,2,3,4), codomain=(1,2,6))
+            sage: h4 = PoorManMap(lambda x: x, domain=(1,2,3), codomain=(1,2,6))
             sage: f != g, f != h1, f != h2, f != h3, f != h4, f != 1, 1 != f
             (False, True, True, True, True, True, True)
 
@@ -172,8 +172,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         TESTS::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: f = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6))
-            sage: g = PoorManMap(factorial, domain = (1,2,3), codomain = (1,2,6))
+            sage: f = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
+            sage: g = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
             sage: hash(f) == hash(g)
             True
 
@@ -194,8 +194,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: f = PoorManMap(lambda x: x+1, domain = (1,2,3), codomain = (2,3,4))
-            sage: g = PoorManMap(lambda x: -x,  domain = (2,3,4), codomain = (-2,-3,-4))
+            sage: f = PoorManMap(lambda x: x+1, domain=(1,2,3), codomain=(2,3,4))
+            sage: g = PoorManMap(lambda x: -x,  domain=(2,3,4), codomain=(-2,-3,-4))
             sage: g*f
             A map from (1, 2, 3) to (-2, -3, -4)
 
@@ -208,8 +208,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
         But it is detected here::
 
-            sage: g = PoorManMap(factorial, domain = ZZ, codomain = ZZ)
-            sage: h = PoorManMap(sqrt, domain = RR, codomain = CC)
+            sage: g = PoorManMap(factorial, domain=ZZ, codomain=ZZ)
+            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)
             sage: g*h
             Traceback (most recent call last):
             ...
@@ -248,11 +248,11 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: f = PoorManMap(lambda x: x+1, domain = (1,2,3), codomain = (2,3,4))
+            sage: f = PoorManMap(lambda x: x+1, domain=(1,2,3), codomain=(2,3,4))
             sage: f(2)
             3
 
-            sage: g = PoorManMap(lambda x: -x,  domain = (2,3,4), codomain = (-2,-3,-4))
+            sage: g = PoorManMap(lambda x: -x,  domain=(2,3,4), codomain=(-2,-3,-4))
             sage: (g*f)(2)
             -3
 
@@ -266,8 +266,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
-            sage: h._sympy_()
+            sage: h = PoorManMap(sin, domain=RR, codomain=RR)                           # optional - sage.symbolic
+            sage: h._sympy_()                                                           # optional - sage.symbolic
             sin
         """
         from sympy import Lambda, sympify

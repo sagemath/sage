@@ -61,6 +61,8 @@ subgroups of index p
 -- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
                            the exceptional complex reflection group `G_m`
 
+-- SmallPermutationGroup, a permutation realization of an group specified by its GAP id.
+
 AUTHOR:
 
 - David Joyner (2007-06): split from permgp.py (suggested by Nick Alexander)
@@ -132,7 +134,7 @@ class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: SymmetricGroup(['a','b']).domain() #indirect doctest
+            sage: SymmetricGroup(['a','b']).domain()  # indirect doctest
             {'a', 'b'}
         """
         domain = kwds.pop('domain', None)
@@ -677,7 +679,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             Alternating group of order 6!/2 as a permutation group
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
             sage: G = AlternatingGroup([1,2,4,5])
             sage: G
@@ -918,7 +920,7 @@ class DiCyclicGroup(PermutationGroup_unique):
     TESTS::
 
         sage: groups.permutation.DiCyclic(6)
-        Diyclic group of order 24 as a permutation group
+        Dicyclic group of order 24 as a permutation group
 
     AUTHOR:
 
@@ -974,9 +976,9 @@ class DiCyclicGroup(PermutationGroup_unique):
         EXAMPLES::
 
             sage: DiCyclicGroup(12)
-            Diyclic group of order 48 as a permutation group
+            Dicyclic group of order 48 as a permutation group
         """
-        return "Diyclic group of order %s as a permutation group"%self.order()
+        return "Dicyclic group of order %s as a permutation group"%self.order()
 
     def is_commutative(self):
         r"""
@@ -1061,14 +1063,15 @@ class JankoGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G                            # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category()                                                  # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains",       # optional - gap_package_atlasrep internet
+            ....:                        "_test_enumerated_set_iter_list"])
         """
         if n not in [1, 2, 3]:
             raise ValueError("n must belong to {1,2,3}")
@@ -1081,7 +1084,7 @@ class JankoGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G                            # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
         """
         return "Janko group J%s of order %s as a permutation group" % (self._n, self.order())
@@ -1094,14 +1097,15 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G                    # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category() # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains",       # optional - gap_package_atlasrep internet
+            ....:                        "_test_enumerated_set_iter_list"])
         """
         libgap.load_package("atlasrep")
         PermutationGroup_generic.__init__(self, gap_group='AtlasGroup("Suz")')
@@ -1110,7 +1114,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G                    # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
         """
         return "Sporadic Suzuki group acting on 1782 points"
@@ -1985,7 +1989,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         TESTS::
 
-            sage: TransitiveGroups() # indirect doctest
+            sage: TransitiveGroups()  # indirect doctest
             Transitive Groups
         """
         return "Transitive Groups"
@@ -2099,7 +2103,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: list(TransitiveGroups(5)) # indirect doctest
+            sage: list(TransitiveGroups(5))  # indirect doctest
             [Transitive group number 1 of degree 5,
              Transitive group number 2 of degree 5,
              Transitive group number 3 of degree 5,
@@ -2373,7 +2377,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
     The following test is broken, see :trac:`22576`::
 
-        sage: TestSuite(PrimitiveGroups()).run() # known bug # long time
+        sage: TestSuite(PrimitiveGroups()).run()  # known bug, long time
     """
     def __init__(self):
         """
@@ -2397,7 +2401,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
         TESTS::
 
-            sage: PrimitiveGroups() # indirect doctest
+            sage: PrimitiveGroups()  # indirect doctest
             Primitive Groups
         """
         return "Primitive Groups"
@@ -2531,7 +2535,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: list(PrimitiveGroups(5)) # indirect doctest
+            sage: list(PrimitiveGroups(5))  # indirect doctest
             [C(5), D(2*5), AGL(1, 5), A(5), S(5)]
         """
         for n in range(1, self.cardinality() + 1):
@@ -2648,7 +2652,7 @@ class PGL(PermutationGroup_plg):
 
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
         TESTS::
 
@@ -2716,7 +2720,7 @@ class PSL(PermutationGroup_plg):
 
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
         TESTS::
 
@@ -2782,7 +2786,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,13)
-            sage: G.ramification_module_decomposition_hurwitz_curve() # random, optional - gap_packages
+            sage: G.ramification_module_decomposition_hurwitz_curve()  # random, optional - gap_packages
             [0, 7, 7, 12, 12, 12, 13, 15, 14]
 
         This means, for example, that the trivial representation does not
@@ -2832,7 +2836,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,7)
-            sage: G.ramification_module_decomposition_modular_curve() # random, optional - gap_packages
+            sage: G.ramification_module_decomposition_modular_curve()  # random, optional - gap_packages
             [0, 4, 3, 6, 7, 8]
 
         This means, for example, that the trivial representation does not
@@ -3435,3 +3439,105 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret = [self._m * i for i in reversed(range(self._n-1))]
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
+
+class SmallPermutationGroup(PermutationGroup_generic):
+    r"""
+    A GAP SmallGroup, returned as a permutation group.
+
+    GAP contains a library SGL of small groups, each identified by
+    its GAP SmallGroup id. (MAGMA uses the same identifiers).
+    The GAP SmallGroup id is a pair ``[n,k]`` consisting of
+    ``n``, the order of the group, and ``k``, an index determining
+    the group specifically. This class can construct the group as a
+    permutation group from this data.
+
+    INPUT:
+
+    - ``order`` -- the order of the group
+
+    - ``gap_id`` -- the numerical index in the GAP id of the group
+
+    Generators may be obtained through the :meth:`gens` method.
+    These could change for a particular group in later releases
+    of GAP. In many instances the degree of the constructed group
+    ``SmallPermutationGroup(n,k)`` will be a permutation group on
+    `n` letters, but this will not always be true.
+
+    EXAMPLES::
+
+        sage: G = SmallPermutationGroup(12,4); G
+        Group of order 12 and GAP Id 4 as a permutation group
+        sage: G.gens()
+        ((1,2)(3,5)(4,10)(6,8)(7,12)(9,11),
+        (1,3)(2,5)(4,7)(6,9)(8,11)(10,12),
+        (1,4,8)(2,6,10)(3,7,11)(5,9,12))
+        sage: G.character_table()
+        [ 1  1  1  1  1  1]
+        [ 1 -1 -1  1  1 -1]
+        [ 1 -1  1  1 -1  1]
+        [ 1  1 -1  1 -1 -1]
+        [ 2  0 -2 -1  0  1]
+        [ 2  0  2 -1  0 -1]
+        sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
+        sage: all(SmallPermutationGroup(n,k).id()==[n,k] for n in [1..64] for k in [1..numgps(n)])
+        True
+        sage: H = SmallPermutationGroup(6,1)
+        sage: H.is_abelian()
+        False
+        sage: [H.centralizer(g) for g in H.conjugacy_classes_representatives()]
+        [Subgroup generated by [(1,2)(3,6)(4,5), (1,3,5)(2,4,6)] of (Group of order 6 and GAP Id 1 as a permutation group),
+        Subgroup generated by [(1,2)(3,6)(4,5)] of (Group of order 6 and GAP Id 1 as a permutation group),
+        Subgroup generated by [(1,3,5)(2,4,6), (1,5,3)(2,6,4)] of (Group of order 6 and GAP Id 1 as a permutation group)]
+    """
+
+    def __init__(self, order, gap_id):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: TestSuite(SmallPermutationGroup(60,5)).run()
+        """
+        self._n = order
+        self._gap_id = gap_id
+        self._gap_small_group = libgap.SmallGroup(order,gap_id)
+        gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
+        PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
+
+    def _repr_(self):
+        r"""
+        EXAMPLES::
+
+            sage: G = SmallPermutationGroup(12,4); G
+            Group of order 12 and GAP Id 4 as a permutation group
+        """
+        return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
+
+    def order(self):
+        """
+        Return the order of the group corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: [SmallPermutationGroup(21,k).order() for k in [1,2]]
+            [21, 21]
+        """
+        return self._n
+
+    def gap_small_group(self):
+        r"""
+        Return the GAP small group object corresponding to ``self``.
+
+        GAP realizes some small groups as PermutationGroup, others as PcGroups
+        (polycyclic groups). The :class:`SmallPermutationGroup` class always
+        returns a PermutationGroup, but in the process of creating this group
+        a GAP SmallGroup is generated. This method returns that group.
+
+        EXAMPLES::
+
+            sage: SmallPermutationGroup(168,41).gap_small_group()
+            <pc group of size 168 with 5 generators>
+            sage: SmallPermutationGroup(168,42).gap_small_group()
+            Group([ (3,4)(5,6), (1,2,3)(4,5,7) ])
+        """
+        return self._gap_small_group

@@ -80,33 +80,35 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: TestSuite(V).run()
         """
         try:
-            assert (ngens > 0 and ngens % 2 == 0)
+            assert (ngens > 0 and not ngens % 2)
         except AssertionError:
             raise ValueError("ngens should be an even positive integer, " +
                              "got {}".format(ngens))
         latex_names = None
+        half = ngens // 2
         if (names is None) and (index_set is None):
             from sage.misc.defaults import variable_names as varnames
             from sage.misc.defaults import latex_variable_names as laxnames
-            names = varnames(ngens/2,'b') + varnames(ngens/2,'c')
-            latex_names =  tuple(laxnames(ngens/2,'b') +\
-                                          laxnames(ngens/2,'c')) + ('K',)
+            names = varnames(half, 'b') + varnames(half, 'c')
+            latex_names = tuple(laxnames(half, 'b') +
+                                laxnames(half, 'c')) + ('K',)
 
         from sage.structure.indexed_generators import \
-                                                standardize_names_index_set
-        names,index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+            standardize_names_index_set
+        names, index_set = standardize_names_index_set(names=names,
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         from sage.matrix.special import identity_matrix
-        A = identity_matrix(R, ngens // 2)
+        A = identity_matrix(R, half)
         from sage.matrix.special import block_matrix
-        gram_matrix = block_matrix([[R.zero(),A],[A,R.zero()]])
-        ghostsdict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
-                    index_set.rank(j)]}} for i in index_set for j in index_set}
-        weights = (1,)*(ngens//2) + (0,)*(ngens//2)
-        parity = (1,)*ngens
+        gram_matrix = block_matrix([[R.zero(), A], [A, R.zero()]])
+        ghostsdict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
+                                                         index_set.rank(j)]}}
+                      for i in index_set for j in index_set}
+        weights = (1,) * half + (0,) * half
+        parity = (1,) * ngens
         super().__init__(R,
-                         ghostsdict,names=names,
+                         ghostsdict, names=names,
                          latex_names=latex_names,
                          index_set=index_set,
                          weights=weights,

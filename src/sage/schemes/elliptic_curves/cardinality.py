@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 """
 Specific algorithms to compute cardinality of elliptic curves over a finite field
 
@@ -39,19 +40,22 @@ def _cardinality_with_j_invariant_1728(self):
     An example with q=p=1 (mod 4)::
 
         sage: F = GF(10009)
-        sage: [_cardinality_with_j_invariant_1728(EllipticCurve(F,[0,0,0,11^i,0])) for i in range(4)]
+        sage: [_cardinality_with_j_invariant_1728(EllipticCurve(F, [0,0,0,11^i,0]))
+        ....:  for i in range(4)]
         [10016, 10210, 10004, 9810]
 
     An example with q=p=3 (mod 4)::
 
         sage: F = GF(10007)
-        sage: [_cardinality_with_j_invariant_1728(EllipticCurve(F,[0,0,0,5^i,0])) for i in range(4)]
+        sage: [_cardinality_with_j_invariant_1728(EllipticCurve(F, [0,0,0,5^i,0]))
+        ....:  for i in range(4)]
         [10008, 10008, 10008, 10008]
 
     An example with `q=p^2`, p=3 (mod 4)::
 
         sage: F.<a> = GF(10007^2,'a')
-        sage: [_cardinality_with_j_invariant_1728(EllipticCurve(F,[0,0,0,a^i,0])) for i in range(4)]
+        sage: [_cardinality_with_j_invariant_1728(EllipticCurve(F,[0,0,0,a^i,0]))
+        ....:  for i in range(4)]
         [100160064, 100140050, 100120036, 100140050]
 
     Examples with `q=2^d`, d odd (3 isomorphism classes)::
@@ -68,8 +72,9 @@ def _cardinality_with_j_invariant_1728(self):
 
         sage: F.<a> = GF(2**16,'a')
         sage: b = a^11 # trace 1
-        sage: ais = [[0,0,1,0,0],[0,0,1,0,b],[0,0,1,b,0],[0,0,a,0,0],[0,0,a,0,a^2*b],[0,0,a^2,0,0],[0,0,a^2,0,a^4*b]]
-        sage: curves = [EllipticCurve(F,ai) for ai in ais]
+        sage: ais = [[0,0,1,0,0], [0,0,1,0,b], [0,0,1,b,0], [0,0,a,0,0],
+        ....:        [0,0,a,0,a^2*b], [0,0,a^2,0,0], [0,0,a^2,0,a^4*b]]
+        sage: curves = [EllipticCurve(F, ai) for ai in ais]
         sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
@@ -79,8 +84,8 @@ def _cardinality_with_j_invariant_1728(self):
 
         sage: F.<a> = GF(3**15,'a')
         sage: b = a^7  # has trace 1
-        sage: ais = [[0,0,0,1,0],[0,0,0,-1,0],[0,0,0,-1,b],[0,0,0,-1,-b]]
-        sage: curves = [EllipticCurve(F,ai) for ai in ais]
+        sage: ais = [[0,0,0,1,0], [0,0,0,-1,0], [0,0,0,-1,b], [0,0,0,-1,-b]]
+        sage: curves = [EllipticCurve(F, ai) for ai in ais]
         sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
@@ -91,8 +96,9 @@ def _cardinality_with_j_invariant_1728(self):
         sage: F.<g> = GF(3^18,'g')
         sage: i = F(-1).sqrt()
         sage: a = g^8  # has trace 1
-        sage: ais = [[0,0,0,1,0],[0,0,0,1,i*a],[0,0,0,g,0],[0,0,0,g^3,0],[0,0,0,g^2,0], [0,0,0,g^2,i*a*g^3]]
-        sage: curves = [EllipticCurve(F,ai) for ai in ais]
+        sage: ais = [[0,0,0,1,0], [0,0,0,1,i*a], [0,0,0,g,0],
+        ....:        [0,0,0,g^3,0], [0,0,0,g^2,0], [0,0,0,g^2,i*a*g^3]]
+        sage: curves = [EllipticCurve(F, ai) for ai in ais]
         sage: all((e1 == e2 or not e1.is_isomorphic(e2)) for e1 in curves for e2 in curves)
         True
         sage: [_cardinality_with_j_invariant_1728(e) for e in curves]
@@ -374,10 +380,10 @@ def cardinality_exhaustive(self):
     EXAMPLES::
 
         sage: p = next_prime(10^3)
-        sage: E = EllipticCurve(GF(p),[3,4])
+        sage: E = EllipticCurve(GF(p), [3,4])
         sage: E.cardinality_exhaustive()
         1020
-        sage: E = EllipticCurve(GF(3^4,'a'),[1,1])
+        sage: E = EllipticCurve(GF(3^4,'a'), [1,1])
         sage: E.cardinality_exhaustive()
         64
     """
@@ -405,10 +411,10 @@ def cardinality_bsgs(self, verbose=False):
     EXAMPLES::
 
         sage: p = next_prime(10^3)
-        sage: E = EllipticCurve(GF(p),[3,4])
+        sage: E = EllipticCurve(GF(p), [3,4])
         sage: E.cardinality_bsgs()
         1020
-        sage: E = EllipticCurve(GF(3^4,'a'),[1,1])
+        sage: E = EllipticCurve(GF(3^4,'a'), [1,1])
         sage: E.cardinality_bsgs()
         64
         sage: F.<a> = GF(101^3,'a')
@@ -543,7 +549,8 @@ def _cardinality_subfield(self, jpol):
         sage: from sage.schemes.elliptic_curves.cardinality import _cardinality_subfield
         sage: k.<a> = GF(7^5)
         sage: E = EllipticCurve(k, [1,2,3,4,5]); E
-        Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field in a of size 7^5
+        Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5
+         over Finite Field in a of size 7^5
         sage: _cardinality_subfield(E, E.j_invariant().minimal_polynomial())
         17019
 

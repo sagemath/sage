@@ -52,7 +52,7 @@ divisor representing a divisor class::
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.libs.gmp.mpq cimport *
@@ -62,7 +62,7 @@ from sage.modules.free_module_element import vector
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 from sage.rings.rational_field import QQ
 from sage.rings.rational cimport Rational
-from sage.structure.element cimport Element, Vector
+from sage.structure.element cimport Vector
 from sage.structure.element import is_Vector
 
 
@@ -80,13 +80,11 @@ def is_ToricRationalDivisorClass(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.divisor_class import (
-        ....:   is_ToricRationalDivisorClass)
+        sage: from sage.schemes.toric.divisor_class import is_ToricRationalDivisorClass
         sage: is_ToricRationalDivisorClass(1)
         False
         sage: dP6 = toric_varieties.dP6()
-        sage: D = dP6.rational_class_group().gen(0)
-        sage: D
+        sage: D = dP6.rational_class_group().gen(0); D
         Divisor class [1, 0, 0, 0]
         sage: is_ToricRationalDivisorClass(D)
         True

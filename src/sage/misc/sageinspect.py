@@ -1920,8 +1920,8 @@ def _sage_getdoc_unformatted(obj):
         Integer(x=None, base=0)
         File: sage/rings/integer.pyx (starting at line ...)
         <BLANKLINE>
-            The ``Integer`` class represents arbitrary precision
-            integers. It derives from the ``Element`` class, so
+            The :class:`Integer` class represents arbitrary precision
+            integers. It derives from the :class:`Element` class, so
             integers can be used as ring elements anywhere in Sage.
         ...
 
@@ -1995,8 +1995,8 @@ def sage_getdoc_original(obj):
 
         sage: print(sage_getdoc_original(sage.rings.integer.Integer))
         <BLANKLINE>
-            The ``Integer`` class represents arbitrary precision
-            integers. It derives from the ``Element`` class, so
+            The :class:`Integer` class represents arbitrary precision
+            integers. It derives from the :class:`Element` class, so
             integers can be used as ring elements anywhere in Sage.
         ...
 
@@ -2351,7 +2351,7 @@ def sage_getsourcelines(obj):
           '    def __cinit__(self):\n',
         ...)
         sage: sage_getsourcelines(I)
-        ([...'class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \\\n',
+        ([...'class MPolynomialIdeal(MPolynomialIdeal_singular_repr,\n',
         ...)
         sage: x = var('x')
         sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
@@ -2398,10 +2398,10 @@ def sage_getsourcelines(obj):
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
         sage: sage_getsourcelines(I)
-        ([...'class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \\\n',
-          '                        MPolynomialIdeal_macaulay2_repr, \\\n',
-          '                        MPolynomialIdeal_magma_repr, \\\n',
-          '                        Ideal_generic ):\n',
+        ([...'class MPolynomialIdeal(MPolynomialIdeal_singular_repr,\n',
+          '                       MPolynomialIdeal_macaulay2_repr,\n',
+          '                       MPolynomialIdeal_magma_repr,\n',
+          '                       Ideal_generic):\n',
           '    def __init__(self, ring, gens, coerce=True):\n',
           ...)
 

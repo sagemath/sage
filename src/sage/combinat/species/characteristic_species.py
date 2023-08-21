@@ -88,7 +88,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
             sage: a.automorphism_group()
             Symmetric group of order 3! as a permutation group
         """
-        from sage.groups.all import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return SymmetricGroup(len(self._labels))
 
 

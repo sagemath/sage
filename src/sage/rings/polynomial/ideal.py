@@ -26,7 +26,7 @@ class Ideal_1poly_field(Ideal_pid):
     """
     def residue_class_degree(self):
         """
-        Returns the degree of the generator of this ideal.
+        Return the degree of the generator of this ideal.
 
         This function is included for compatibility with ideals in rings of integers of number fields.
 
@@ -41,13 +41,14 @@ class Ideal_1poly_field(Ideal_pid):
 
     def residue_field(self, names=None, check=True):
         r"""
-        If this ideal is `P \subset F_p[t]`, returns the quotient `F_p[t]/P`.
+        If this ideal is `P \subset F_p[t]`, return the quotient `F_p[t]/P`.
 
         EXAMPLES::
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + 2*t + 9)
-            sage: k.<a> = P.residue_field(); k
-            Residue field in a of Principal ideal (t^3 + 2*t + 9) of Univariate Polynomial Ring in t over Finite Field of size 17
+            sage: k.<a> = P.residue_field(); k                                          # needs sage.rings.finite_rings
+            Residue field in a of Principal ideal (t^3 + 2*t + 9) of
+             Univariate Polynomial Ring in t over Finite Field of size 17
         """
         if check:
             if not self.ring().base_ring().is_finite():

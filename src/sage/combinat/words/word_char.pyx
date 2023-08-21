@@ -17,7 +17,7 @@ from sage.data_structures.bitset_base cimport *
 
 cimport cython
 from cpython.object cimport Py_EQ, Py_NE
-from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.integer cimport smallInteger
 from sage.rings.rational cimport Rational
 from libc.string cimport memcpy, memcmp
 from sage.combinat.words.word_datatypes cimport WordDatatype
@@ -31,6 +31,7 @@ import itertools
 
 # the maximum value of a size_t
 cdef size_t SIZE_T_MAX = -(<size_t> 1)
+
 
 def reversed_word_iterator(WordDatatype_char w):
     r"""
@@ -47,6 +48,7 @@ def reversed_word_iterator(WordDatatype_char w):
     cdef ssize_t i
     for i in range(w._length-1, -1, -1):
         yield w._data[i]
+
 
 cdef class WordDatatype_char(WordDatatype):
     r"""
@@ -361,7 +363,7 @@ cdef class WordDatatype_char(WordDatatype):
         """
         cdef Py_ssize_t i, start, stop, step, slicelength
         cdef unsigned char * data
-        cdef size_t j,k
+        cdef size_t j, k
         if isinstance(key, slice):
             # here the key is a slice
             PySlice_GetIndicesEx(key,
@@ -374,7 +376,7 @@ cdef class WordDatatype_char(WordDatatype):
                 return self._new_c(self._data+start, stop-start, self)
             data = <unsigned char *>check_allocarray(slicelength, sizeof(unsigned char))
             j = 0
-            for k in range(start,stop,step):
+            for k in range(start, stop, step):
                 data[j] = self._data[k]
                 j += 1
             return self._new_c(data, slicelength, None)
@@ -392,7 +394,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __iter__(self):
         r"""
-        Iterator over the letter of self
+        Iterator over the letters of ``self``.
 
         EXAMPLES::
 
@@ -406,7 +408,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __reversed__(self):
         r"""
-        Reversed iterator over the letter of self
+        Reversed iterator over the letters of ``self``.
 
         EXAMPLES::
 
@@ -533,7 +535,6 @@ cdef class WordDatatype_char(WordDatatype):
             raise ValueError("a word cannot be taken modulo")
 
         if exp == float('inf'):
-            from sage.rings.infinity import Infinity
 
             def fcn(n):
                 return self[n % self.length()]

@@ -1,7 +1,8 @@
 "Operators"
 
 import operator
-from sage.symbolic.ring import is_SymbolicVariable, SR
+
+from sage.structure.element import Expression
 
 
 def add_vararg(first, *rest):
@@ -63,12 +64,13 @@ arithmetic_operators = {add_vararg: '+',
                         operator.floordiv: '//',
                         operator.pow: '^'}
 
-relation_operators = {operator.eq:'==',
-                      operator.lt:'<',
-                      operator.gt:'>',
-                      operator.ne:'!=',
-                      operator.le:'<=',
-                      operator.ge:'>='}
+relation_operators = {operator.eq: '==',
+                      operator.lt: '<',
+                      operator.gt: '>',
+                      operator.ne: '!=',
+                      operator.le: '<=',
+                      operator.ge: '>='}
+
 
 class FDerivativeOperator():
     r"""
@@ -123,7 +125,7 @@ class FDerivativeOperator():
            D[0](f)(1)
 
         """
-        if (not all(is_SymbolicVariable(x) for x in args) or
+        if (not all(isinstance(x, Expression) and x.is_symbol() for x in args) or
                 len(args) != len(set(args))):
             # An evaluated derivative of the form f'(1) is not a
             # symbolic variable, yet we would like to treat it
@@ -131,6 +133,8 @@ class FDerivativeOperator():
             # temporary variable e.g. `t0` and then evaluate the
             # derivative f'(t0) symbolically at t0=1. See trac
             # #12796.
+            from sage.symbolic.ring import SR
+
             temp_args = SR.temp_var(n=len(args))
             vars = [temp_args[i] for i in self._parameter_set]
             return self._f(*temp_args).diff(*vars).function(*temp_args)(*args)
@@ -197,6 +201,7 @@ class FDerivativeOperator():
         """
         return self._parameter_set
 
+
 class DerivativeOperator():
     """
     Derivative operator.
@@ -226,8 +231,10 @@ class DerivativeOperator():
     class DerivativeOperatorWithParameters():
         def __init__(self, parameter_set):
             self._parameter_set = parameter_set
+
         def __call__(self, function):
             return FDerivativeOperator(function, self._parameter_set)
+
         def __repr__(self):
             """
             Return the string representation of this derivative operator.
@@ -256,5 +263,6 @@ class DerivativeOperator():
         if not isinstance(args, tuple):
             args = (args,)
         return self.DerivativeOperatorWithParameters(args)
+
 
 D = DerivativeOperator()

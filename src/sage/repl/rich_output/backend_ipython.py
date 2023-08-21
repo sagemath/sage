@@ -6,14 +6,14 @@ This module defines the IPython backends for
 :mod:`sage.repl.rich_output`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import sys
@@ -428,8 +428,7 @@ class BackendIPythonCommandline(BackendIPython):
         return '\n<script src="{0}"></script>'.format(script)
 
 
-IFRAME_TEMPLATE = \
-"""
+IFRAME_TEMPLATE = """
 <iframe srcdoc="{escaped_html}"
         width="{width}"
         height="{height}"
@@ -543,35 +542,35 @@ class BackendIPythonNotebook(BackendIPython):
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputHtml):
-            data = {'text/html':  rich_output.html.get_str(),
+            data = {'text/html': rich_output.html.get_str(),
                     'text/plain': plain_text.text.get_str()}
             if rich_output.latex:
                 data['text/latex'] = rich_output.latex.get_str()
             return (data, {})
         elif isinstance(rich_output, OutputImagePng):
-            return ({'image/png':  rich_output.png.get(),
+            return ({'image/png': rich_output.png.get(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageGif):
-            return ({'text/html':  rich_output.html_fragment(),
+            return ({'text/html': rich_output.html_fragment(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageJpg):
-            return ({'image/jpeg':  rich_output.jpg.get(),
-                     'text/plain':  plain_text.text.get_str(),
+            return ({'image/jpeg': rich_output.jpg.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageSvg):
             return ({'image/svg+xml': rich_output.svg.get(),
-                     'text/plain':    plain_text.text.get_str(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImagePdf):
-            return ({'image/png':  rich_output.png.get(),
+            return ({'image/png': rich_output.png.get(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneJmol):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
-            return ({'text/html':  jsmol.iframe(),
+            return ({'text/html': jsmol.iframe(),
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
@@ -581,7 +580,7 @@ class BackendIPythonNotebook(BackendIPython):
                 width='100%',
                 height=400,
             )
-            return ({'text/html':  iframe,
+            return ({'text/html': iframe,
                      'text/plain': plain_text.text.get_str(),
             }, {})
         else:

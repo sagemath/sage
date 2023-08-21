@@ -23,21 +23,21 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     """
     EXAMPLES::
 
-        sage: FF = FiniteField(2003)
-        sage: R.<x> = PolynomialRing(FF)
-        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560
-        sage: C = HyperellipticCurve(f)
-        sage: J = C.jacobian()
-        sage: a = x**2 + 376*x + 245; b = 1015*x + 1368
-        sage: X = J(FF)
-        sage: D = X([a,b])
-        sage: D
+        sage: FF = FiniteField(2003)                                                    # optional - sage.rings.finite_rings
+        sage: R.<x> = PolynomialRing(FF)                                                # optional - sage.rings.finite_rings
+        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560                            # optional - sage.rings.finite_rings
+        sage: C = HyperellipticCurve(f)                                                 # optional - sage.rings.finite_rings
+        sage: J = C.jacobian()                                                          # optional - sage.rings.finite_rings
+        sage: a = x**2 + 376*x + 245; b = 1015*x + 1368                                 # optional - sage.rings.finite_rings
+        sage: X = J(FF)                                                                 # optional - sage.rings.finite_rings
+        sage: D = X([a,b])                                                              # optional - sage.rings.finite_rings
+        sage: D                                                                         # optional - sage.rings.finite_rings
         (x^2 + 376*x + 245, y + 988*x + 635)
-        sage: J(0)
+        sage: J(0)                                                                      # optional - sage.rings.finite_rings
         (1)
-        sage: D == J([a,b])
+        sage: D == J([a,b])                                                             # optional - sage.rings.finite_rings
         True
-        sage: D == D + J(0)
+        sage: D == D + J(0)                                                             # optional - sage.rings.finite_rings
         True
 
     An more extended example, demonstrating arithmetic in J(QQ) and
@@ -56,24 +56,29 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         sage: C.defining_polynomial()
         -x0^5 + x0*x1*x2^3 + x1^2*x2^3 + x0*x2^4 - x2^5
         sage: C(QQ)
-        Set of rational points of Hyperelliptic Curve over Rational Field defined by v^2 + u*v = u^5 - u + 1
-        sage: K.<t> = NumberField(x^2-2)
-        sage: C(K)
-        Set of rational points of Hyperelliptic Curve over Number Field in t with defining polynomial x^2 - 2 defined by v^2 + u*v = u^5 - u + 1
+        Set of rational points of Hyperelliptic Curve over Rational Field
+         defined by v^2 + u*v = u^5 - u + 1
+        sage: K.<t> = NumberField(x^2 - 2)                                              # optional - sage.rings.number_field
+        sage: C(K)                                                                      # optional - sage.rings.number_field
+        Set of rational points of Hyperelliptic Curve
+         over Number Field in t with defining polynomial x^2 - 2
+         defined by v^2 + u*v = u^5 - u + 1
         sage: P = C(QQ)(0,1,1); P
         (0 : 1 : 1)
         sage: P == C(0,1,1)
         True
         sage: C(0,1,1).parent()
-        Set of rational points of Hyperelliptic Curve over Rational Field defined by v^2 + u*v = u^5 - u + 1
-        sage: P1 = C(K)(P)
-        sage: P2 = C(K)([2,4*t-1,1])
-        sage: P3 = C(K)([-1/2,1/8*(7*t+2),1])
-        sage: P1, P2, P3
+        Set of rational points of Hyperelliptic Curve over Rational Field
+         defined by v^2 + u*v = u^5 - u + 1
+        sage: P1 = C(K)(P)                                                              # optional - sage.rings.number_field
+        sage: P2 = C(K)([2, 4*t - 1, 1])                                                # optional - sage.rings.number_field
+        sage: P3 = C(K)([-1/2, 1/8*(7*t+2), 1])                                         # optional - sage.rings.number_field
+        sage: P1, P2, P3                                                                # optional - sage.rings.number_field
         ((0 : 1 : 1), (2 : 4*t - 1 : 1), (-1/2 : 7/8*t + 1/4 : 1))
         sage: J = C.jacobian()
         sage: J
-        Jacobian of Hyperelliptic Curve over Rational Field defined by v^2 + u*v = u^5 - u + 1
+        Jacobian of Hyperelliptic Curve over Rational Field
+        defined by v^2 + u*v = u^5 - u + 1
         sage: Q = J(QQ)(P); Q
         (u, v - 1)
         sage: for i in range(6): Q*i
@@ -83,47 +88,54 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         (u^2, v + 1)
         (u, v + 1)
         (1)
-        sage: Q1 = J(K)(P1); print("%s -> %s"%( P1, Q1 ))
+        sage: Q1 = J(K)(P1); print("%s -> %s"%( P1, Q1 ))                               # optional - sage.rings.number_field
         (0 : 1 : 1) -> (u, v - 1)
-        sage: Q2 = J(K)(P2); print("%s -> %s"%( P2, Q2 ))
+        sage: Q2 = J(K)(P2); print("%s -> %s"%( P2, Q2 ))                               # optional - sage.rings.number_field
         (2 : 4*t - 1 : 1) -> (u - 2, v - 4*t + 1)
-        sage: Q3 = J(K)(P3); print("%s -> %s"%( P3, Q3 ))
+        sage: Q3 = J(K)(P3); print("%s -> %s"%( P3, Q3 ))                               # optional - sage.rings.number_field
         (-1/2 : 7/8*t + 1/4 : 1) -> (u + 1/2, v - 7/8*t - 1/4)
-        sage: R.<x> = PolynomialRing(K)
-        sage: Q4 = J(K)([x^2-t,R(1)])
-        sage: for i in range(4): Q4*i
+        sage: R.<x> = PolynomialRing(K)                                                 # optional - sage.rings.number_field
+        sage: Q4 = J(K)([x^2 - t, R(1)])                                                # optional - sage.rings.number_field
+        sage: for i in range(4): Q4*i                                                   # optional - sage.rings.number_field
         (1)
         (u^2 - t, v - 1)
         (u^2 + (-3/4*t - 9/16)*u + 1/2*t + 1/4, v + (-1/32*t - 57/64)*u + 1/2*t + 9/16)
-        (u^2 + (1352416/247009*t - 1636930/247009)*u - 1156544/247009*t + 1900544/247009, v + (-2326345442/122763473*t + 3233153137/122763473)*u + 2439343104/122763473*t - 3350862929/122763473)
-        sage: R2 = Q2*5; R2
-        (u^2 - 3789465233/116983808*u - 267915823/58491904, v + (-233827256513849/1789384327168*t + 1/2)*u - 15782925357447/894692163584*t)
-        sage: R3 = Q3*5; R3
-        (u^2 + 5663300808399913890623/14426454798950909645952*u - 26531814176395676231273/28852909597901819291904, v + (253155440321645614070860868199103/2450498420175733688903836378159104*t + 1/2)*u + 2427708505064902611513563431764311/4900996840351467377807672756318208*t)
-        sage: R4 = Q4*5; R4
-        (u^2 - 3789465233/116983808*u - 267915823/58491904, v + (233827256513849/1789384327168*t + 1/2)*u + 15782925357447/894692163584*t)
+        (u^2 + (1352416/247009*t - 1636930/247009)*u - 1156544/247009*t + 1900544/247009,
+         v + (-2326345442/122763473*t + 3233153137/122763473)*u
+                                      + 2439343104/122763473*t - 3350862929/122763473)
+        sage: R2 = Q2*5; R2                                                             # optional - sage.rings.number_field
+        (u^2 - 3789465233/116983808*u - 267915823/58491904,
+         v + (-233827256513849/1789384327168*t + 1/2)*u - 15782925357447/894692163584*t)
+        sage: R3 = Q3*5; R3                                                             # optional - sage.rings.number_field
+        (u^2 + 5663300808399913890623/14426454798950909645952*u
+             - 26531814176395676231273/28852909597901819291904,
+         v + (253155440321645614070860868199103/2450498420175733688903836378159104*t + 1/2)*u
+           + 2427708505064902611513563431764311/4900996840351467377807672756318208*t)
+        sage: R4 = Q4*5; R4                                                             # optional - sage.rings.number_field
+        (u^2 - 3789465233/116983808*u - 267915823/58491904,
+         v + (233827256513849/1789384327168*t + 1/2)*u + 15782925357447/894692163584*t)
 
     Thus we find the following identity::
 
-        sage: 5*Q2 + 5*Q4
+        sage: 5*Q2 + 5*Q4                                                               # optional - sage.rings.number_field
         (1)
 
     Moreover the following relation holds in the 5-torsion subgroup::
 
-        sage: Q2 + Q4 == 2*Q1
+        sage: Q2 + Q4 == 2*Q1                                                           # optional - sage.rings.number_field
         True
 
     TESTS::
 
-        sage: k.<a> = GF(9); R.<x> = k[]
-        sage: J1 = HyperellipticCurve(x^3 + x - 1, x+a).jacobian()
-        sage: FF = FiniteField(2003)
-        sage: R.<x> = PolynomialRing(FF)
-        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560
-        sage: J2 = HyperellipticCurve(f).jacobian()
-        sage: J1 == J1
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # optional - sage.rings.finite_rings
+        sage: J1 = HyperellipticCurve(x^3 + x - 1, x + a).jacobian()                    # optional - sage.rings.finite_rings
+        sage: FF = FiniteField(2003)                                                    # optional - sage.rings.finite_rings
+        sage: R.<x> = PolynomialRing(FF)                                                # optional - sage.rings.finite_rings
+        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560                            # optional - sage.rings.finite_rings
+        sage: J2 = HyperellipticCurve(f).jacobian()                                     # optional - sage.rings.finite_rings
+        sage: J1 == J1                                                                  # optional - sage.rings.finite_rings
         True
-        sage: J1 == J2
+        sage: J1 == J2                                                                  # optional - sage.rings.finite_rings
         False
     """
     def dimension(self):
@@ -136,12 +148,12 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(9); R.<x> = k[]
-            sage: HyperellipticCurve(x^3 + x - 1, x+a).jacobian().dimension()
+            sage: k.<a> = GF(9); R.<x> = k[]                                            # optional - sage.rings.finite_rings
+            sage: HyperellipticCurve(x^3 + x - 1, x + a).jacobian().dimension()         # optional - sage.rings.finite_rings
             1
-            sage: g = HyperellipticCurve(x^6 + x - 1, x+a).jacobian().dimension(); g
+            sage: g = HyperellipticCurve(x^6 + x - 1, x + a).jacobian().dimension(); g  # optional - sage.rings.finite_rings
             2
-            sage: type(g)
+            sage: type(g)                                                               # optional - sage.rings.finite_rings
             <... 'sage.rings.integer.Integer'>
         """
         return Integer(self.curve().genus())

@@ -217,7 +217,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         deg = monic_polynomial.degree()
 
         from sage.structure.category_object import normalize_names
-        self._root_names  = normalize_names(deg-1, names)
+        self._root_names = normalize_names(deg-1, names)
         root_names = list(self._root_names)
         verbose("Create splitting algebra to base ring %s and polynomial %s (%s %s)"
                 % (base_ring, monic_polynomial, iterate, warning))
@@ -238,8 +238,8 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         if deg < 1:
             raise ValueError("the degree of the polynomial must positive")
 
-        self._splitting_roots     = []
-        self._coefficients_list   = []
+        self._splitting_roots = []
+        self._coefficients_list = []
         self._invertible_elements = {}
 
         if isinstance(base_ring, SplittingAlgebra):
@@ -289,12 +289,12 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
             SplittingAlgebra.__init__(self, q, root_names_reduces, warning=False)
 
-            splitting_roots   = base_ring_step._splitting_roots   + self._splitting_roots
+            splitting_roots = base_ring_step._splitting_roots + self._splitting_roots
             coefficients_list = base_ring_step._coefficients_list + self._coefficients_list
 
             verbose("Adding roots: %s" % (splitting_roots))
 
-            self._splitting_roots   = splitting_roots
+            self._splitting_roots = splitting_roots
             self._coefficients_list = coefficients_list
         else:
             PolynomialQuotientRing_domain.__init__(self, P, p, root_name)
@@ -343,14 +343,14 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         # ------------------------------------------------------------------
         if cf0_inv is not None:
             deg_cf = len(cf)-1
-            pf  =  P(cf)
+            pf = P(cf)
             for root in self._splitting_roots:
                 check = self(pf)
                 if not check.is_zero():
                     continue
                 root_inv = self.one()
                 for pos in range(deg_cf-1 ):
-                    root_inv =  (-1 )**(pos+1 ) * cf[deg_cf-pos-1 ] - root_inv * root
+                    root_inv = (-1 )**(pos+1 ) * cf[deg_cf-pos-1 ] - root_inv * root
                 verbose("inverse %s of root %s" % (root_inv, root))
                 root_inv = (-1 )**(deg_cf) * cf0_inv * root_inv
                 self._invertible_elements.update({root:root_inv})

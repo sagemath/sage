@@ -150,7 +150,7 @@ cdef class IntList:
             return rich_to_bool(op, -1 if c < 0 else 1)
         return rich_to_bool(op, 0)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate memory used by the IntList, if it was allocated.
         """

@@ -84,7 +84,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
         sage: K.<w> = NumberField(x^2-x-232)
         sage: E = EllipticCurve([2-w,18+3*w,209+9*w,2581+175*w,852-55*w])
-        sage: E.simon_two_descent()
+        sage: E.simon_two_descent()  # long time
         (0, 2, [])
     """
     init()
@@ -133,18 +133,18 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         if limtriv is None:
             limtriv = 2
 
-    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;'%(
+    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;' % (
        verbose, lim1, lim3, limtriv, maxprob, limbigprime))
 
     if verbose >= 2:
         print(cmd)
-    s = gp.eval('ans=%s;'%cmd)
+    s = gp.eval('ans=%s;' % cmd)
     if s.find(" *** ") != -1:
-        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program"%s)
+        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program" % s)
     if verbose > 0:
         print(s)
     v = gp.eval('ans')
-    if v=='ans': # then the call to ellQ_ellrank() or bnfellrank() failed
+    if v == 'ans': # then the call to ellQ_ellrank() or bnfellrank() failed
         raise RuntimeError("An error occurred while running Simon's 2-descent program")
     if verbose >= 2:
         print("v = %s" % v)

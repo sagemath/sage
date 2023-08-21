@@ -1683,7 +1683,6 @@ class Components(SageObject):
         """
         return self + other
 
-
     def __sub__(self, other):
         r"""
         Component subtraction.
@@ -1757,7 +1756,6 @@ class Components(SageObject):
 
         """
         return (-self) + other
-
 
     def __mul__(self, other):
         r"""
@@ -1921,7 +1919,6 @@ class Components(SageObject):
                 for ind_o, val_o in other._comp.items():
                     result._comp[ind_s + ind_o] = val_s * val_o
         return result
-
 
     def __rmul__(self, other):
         r"""
@@ -2521,11 +2518,8 @@ class Components(SageObject):
             sage: list(c.non_redundant_index_generator())
             [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1),
              (3, 2), (3, 3)]
-
         """
-        for ind in self.index_generator():
-            yield ind
-
+        yield from self.index_generator()
 
     def symmetrize(self, *pos):
         r"""
@@ -3996,7 +3990,6 @@ class CompWithSym(Components):
                 result[[ind_res]] = res
             return result
 
-
     def non_redundant_index_generator(self):
         r"""
         Generator of indices, with only ordered indices in case of symmetries,
@@ -4438,7 +4431,6 @@ class CompWithSym(Components):
                 sum += self[[ind_perm]]
             result[[ind]] = sum / sym_group.order()
         return result
-
 
     def antisymmetrize(self, *pos):
         r"""
@@ -5339,7 +5331,6 @@ class CompFullyAntiSym(CompWithSym):
         """
         return CompFullyAntiSym(self._ring, self._frame, self._nid, self._sindex,
                                 self._output_formatter)
-
 
     def __add__(self, other):
         r"""

@@ -409,7 +409,6 @@ cdef class QuiverPath(MonoidElement):
         cdef tuple E
         cdef Py_ssize_t start, stop, step, slicelength
         cdef int init, end
-        cdef size_t i,ind
         cdef QuiverPath OUT
         if isinstance(index, slice):
             PySlice_GetIndicesEx(index, self._path.length,
@@ -599,7 +598,7 @@ cdef class QuiverPath(MonoidElement):
         """
         if self._parent is not P._parent:
             return (None, None, None)
-        cdef size_t i, start
+        cdef size_t i
         sig_on()
         i = biseq_startswith_tail(P._path, self._path, 0)
         sig_off()
@@ -665,8 +664,6 @@ cdef class QuiverPath(MonoidElement):
             raise ValueError("the two paths belong to different quivers")
         if subpath._path.length == 0:
             raise ValueError("we only consider sub-paths of positive length")
-        cdef size_t i
-        cdef size_t max_i, bitsize
         if self._path.length < subpath._path.length:
             return 0
         if biseq_contains(self._path, subpath._path, 0) == -1:

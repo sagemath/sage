@@ -9,9 +9,11 @@ VERSION = "@PACKAGE_VERSION@"
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
 
-MAXIMA = "@prefix@/bin/maxima"
+# The path to the standalone maxima executable.
+MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)
 
-# Delete this line if your ECL can load maxima without further prodding.
+# Set this to the empty string if your ECL can load maxima without
+# further prodding.
 MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace('${prefix}', SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.

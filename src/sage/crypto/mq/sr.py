@@ -665,7 +665,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr1 != sr2
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def sub_bytes(self, d):
         r"""
@@ -1091,7 +1091,7 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         return self.vector(self.random_state_array(*args, **kwds))
 
-    def random_element(self, elem_type = "vector", *args, **kwds):
+    def random_element(self, elem_type="vector", *args, **kwds):
         """
         Return a random element for self.  Other arguments and keywords are
         passed to random_* methods.
@@ -1569,7 +1569,7 @@ class SR_generic(MPolynomialSystemGenerator):
         format_string = self.varformatstr(name, self.n, self.r*self.c, self.e)
         return format_string % (nr, rc, e)
 
-    def varstrs(self, name, nr, rc = None, e = None):
+    def varstrs(self, name, nr, rc=None, e=None):
         """
         Return a list of strings representing variables in ``self``.
 
@@ -1804,7 +1804,7 @@ class SR_generic(MPolynomialSystemGenerator):
             names += self.varstrs("s", _n, r, e)
 
         if reverse_variables:
-            names +=  self.varstrs("k", 0, r*c, e)
+            names += self.varstrs("k", 0, r*c, e)
 
         #from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
 
@@ -1970,7 +1970,7 @@ class SR_generic(MPolynomialSystemGenerator):
                     sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[2*e : 3*e] , e )
                     sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
 
-            si =  L * si + d + rc
+            si = L * si + d + rc
             Sum = Matrix(R, r*e, 1)
             lin = []
             if c > 1:
@@ -2284,7 +2284,7 @@ class SR_gf2n(SR_generic):
 
         return shift_rows
 
-    def lin_matrix(self, length = None):
+    def lin_matrix(self, length=None):
         """
         Return the ``Lin`` matrix.
 
@@ -2716,9 +2716,9 @@ class SR_gf2(SR_generic):
             M = Matrix(k, r, r, [a+1, a, a, a+1])
 
         elif r == 4:
-            M = Matrix(k, r, [a, a+1, 1, 1, \
-                             1, a, a+1, 1, \
-                             1, 1, a, a+1, \
+            M = Matrix(k, r, [a, a+1, 1, 1,
+                             1, a, a+1, 1,
+                             1, 1, a, a+1,
                              a+1, 1, 1, a])
 
         mix_columns = Matrix(k, r*c, r*c)
@@ -2757,18 +2757,18 @@ class SR_gf2(SR_generic):
             length = r*c
 
         if e == 8:
-            Z = Matrix(GF(2), 8, 8, [1, 0, 0, 0, 1, 1, 1, 1, \
-                                  1, 1, 0, 0, 0, 1, 1, 1, \
-                                  1, 1, 1, 0, 0, 0, 1, 1, \
-                                  1, 1, 1, 1, 0, 0, 0, 1, \
-                                  1, 1, 1, 1, 1, 0, 0, 0, \
-                                  0, 1, 1, 1, 1, 1, 0, 0, \
-                                  0, 0, 1, 1, 1, 1, 1, 0, \
+            Z = Matrix(GF(2), 8, 8, [1, 0, 0, 0, 1, 1, 1, 1,
+                                  1, 1, 0, 0, 0, 1, 1, 1,
+                                  1, 1, 1, 0, 0, 0, 1, 1,
+                                  1, 1, 1, 1, 0, 0, 0, 1,
+                                  1, 1, 1, 1, 1, 0, 0, 0,
+                                  0, 1, 1, 1, 1, 1, 0, 0,
+                                  0, 0, 1, 1, 1, 1, 1, 0,
                                   0, 0, 0, 1, 1, 1, 1, 1])
         else:
-            Z = Matrix(GF(2), 4, 4, [1, 1, 1, 0, \
-                                  0, 1, 1, 1, \
-                                  1, 0, 1, 1, \
+            Z = Matrix(GF(2), 4, 4, [1, 1, 1, 0,
+                                  0, 1, 1, 1,
+                                  1, 0, 1, 1,
                                   1, 1, 0, 1])
 
         Z = Z.transpose() # account for endianess mismatch
@@ -2963,36 +2963,36 @@ class SR_gf2(SR_generic):
                  w7*x6 + w7*x4 + w7*x3 + w6*x7 + w6*x5 + w6*x4 + w6*x0 + w5*x6 + w5*x5 + w5*x1 + w4*x7 + w4*x6 + w4*x2 + w3*x7 + w3*x3 + w2*x4 + w1*x5 + w0*x6,
                  w7*x5 + w7*x3 + w7*x2 + w6*x6 + w6*x4 + w6*x3 + w5*x7 + w5*x5 + w5*x4 + w5*x0 + w4*x6 + w4*x5 + w4*x1 + w3*x7 + w3*x6 + w3*x2 + w2*x7 + w2*x3 + w1*x4 + w0*x5,
                  w7*x7 + w7*x4 + w7*x2 + w7*x1 + w6*x5 + w6*x3 + w6*x2 + w5*x6 + w5*x4 + w5*x3 + w4*x7 + w4*x5 + w4*x4 + w4*x0 + w3*x6 + w3*x5 + w3*x1 + w2*x7 + w2*x6 + w2*x2 + w1*x7 + w1*x3 + w0*x4,
-                 w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w4*x7 + w4*x6 + w4*x4 + w3*x7 + w3*x5 + w3*x0 + w2*x6 + w2*x1 \
+                 w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w4*x7 + w4*x6 + w4*x4 + w3*x7 + w3*x5 + w3*x0 + w2*x6 + w2*x1
                      + w1*x7 + w1*x2 + w0*x3,
                  w7*x6 + w7*x3 + w7*x2 + w6*x7 + w6*x4 + w6*x3 + w5*x5 + w5*x4 + w4*x6 + w4*x5 + w3*x7 + w3*x6 + w2*x7 + w2*x0 + w1*x1 + w0*x2,
                  w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x7 + w5*x4 + w5*x3 + w4*x5 + w4*x4 + w3*x6 + w3*x5 + w2*x7 + w2*x6 + w1*x7 + w1*x0 + w0*x1,
                  w7*x6 + w7*x5 + w7*x2 + w7*x0 + w6*x7 + w6*x4 + w6*x3 + w5*x7 + w5*x6 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w3*x7 + w3*x4 + w3*x2 + w2*x6 + w2*x5 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + x7,
-                 w7*x6 + w7*x3 + w7*x2 + w6*x6 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x3 + w4*x7 + w4*x6 + w4*x3 + w4*x1 + w3*x5 + w3*x4 + w2*x7 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w0*x5 + w0*x3 \
+                 w7*x6 + w7*x3 + w7*x2 + w6*x6 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x3 + w4*x7 + w4*x6 + w4*x3 + w4*x1 + w3*x5 + w3*x4 + w2*x7 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w0*x5 + w0*x3
                      + x6,
-                 w7*x7 + w7*x5 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x6 + w5*x5 + w5*x2 + w5*x0 + w4*x7 + w4*x4 + w4*x3 + w3*x7 + w3*x6 + w3*x3 + w3*x1 + w2*x5 + w2*x4 + w1*x7 + w1*x4 + w1*x2 \
+                 w7*x7 + w7*x5 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x6 + w5*x5 + w5*x2 + w5*x0 + w4*x7 + w4*x4 + w4*x3 + w3*x7 + w3*x6 + w3*x3 + w3*x1 + w2*x5 + w2*x4 + w1*x7 + w1*x4 + w1*x2
                      + w0*x6 + w0*x5 + x5,
-                 w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x1 + w5*x6 + w5*x3 + w5*x2 + w4*x6 + w4*x5 + w4*x2 + w4*x0 + w3*x7 + w3*x4 + w3*x3 + w2*x7 + w2*x6 + w2*x3 + w2*x1 + w1*x5 \
+                 w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x1 + w5*x6 + w5*x3 + w5*x2 + w4*x6 + w4*x5 + w4*x2 + w4*x0 + w3*x7 + w3*x4 + w3*x3 + w2*x7 + w2*x6 + w2*x3 + w2*x1 + w1*x5
                      + w1*x4 + w0*x7 + w0*x4 + w0*x2 + x4,
-                 w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w4*x6 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x0 \
+                 w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w4*x6 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x0
                      + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x1 + w0*x7 + w0*x6 + w0*x5 + w0*x4 + x3,
-                 w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x3 + w2*x7 + w2*x4 + w2*x0 \
+                 w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x3 + w2*x7 + w2*x4 + w2*x0
                      + w1*x7 + w1*x6 + w1*x4 + w0*x5 + w0*x1 + x2,
-                 w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x3 + w2*x7 + w2*x6 + w2*x5 + w2*x3 \
+                 w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x3 + w2*x7 + w2*x6 + w2*x5 + w2*x3
                      + w1*x7 + w1*x4 + w1*x0 + w0*x7 + w0*x6 + w0*x4 + x1,
                  w7*x7 + w7*x4 + w7*x3 + w6*x7 + w6*x6 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w4*x7 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w2*x5 + w2*x3 + w1*x7 + w1*x6 + w0*x6 + w0*x4 + w0*x0 + x0,
                  w7*x6 + w7*x5 + w7*x3 + w7*x0 + w7 + w6*x7 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x2 + w5*x1 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x1 + w2*x7 + w2*x3 + w1*x5 + w0*x7,
-                 w7*x5 + w7*x4 + w7*x2 + w6*x7 + w6*x6 + w6*x4 + w6*x1 + w6 + w5*x6 + w5*x3 + w5*x1 + w5*x0 + w4*x5 + w4*x3 + w4*x2 + w3*x7 + w3*x5 + w3*x4 + w3*x0 + w2*x7 + w2*x6 + w2*x2 + w1*x4 \
+                 w7*x5 + w7*x4 + w7*x2 + w6*x7 + w6*x6 + w6*x4 + w6*x1 + w6 + w5*x6 + w5*x3 + w5*x1 + w5*x0 + w4*x5 + w4*x3 + w4*x2 + w3*x7 + w3*x5 + w3*x4 + w3*x0 + w2*x7 + w2*x6 + w2*x2 + w1*x4
                      + w0*x6,
-                 w7*x7 + w7*x4 + w7*x3 + w7*x1 + w6*x6 + w6*x5 + w6*x3 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w5*x0 + w5 + w4*x7 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5 + w2*x1 \
+                 w7*x7 + w7*x4 + w7*x3 + w7*x1 + w6*x6 + w6*x5 + w6*x3 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w5*x0 + w5 + w4*x7 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5 + w2*x1
                      + w1*x7 + w1*x3 + w0*x5,
-                 w7*x7 + w7*x6 + w7*x3 + w7*x2 + w7*x0 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x4 + w5*x1 + w4*x6 + w4*x3 + w4*x1 + w4*x0 + w4 + w3*x5 + w3*x3 + w3*x2 + w2*x7 + w2*x5 + w2*x4 \
+                 w7*x7 + w7*x6 + w7*x3 + w7*x2 + w7*x0 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x4 + w5*x1 + w4*x6 + w4*x3 + w4*x1 + w4*x0 + w4 + w3*x5 + w3*x3 + w3*x2 + w2*x7 + w2*x5 + w2*x4
                      + w2*x0 + w1*x7 + w1*x6 + w1*x2 + w0*x4,
-                 w7*x3 + w7*x2 + w7*x1 + w7*x0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w5*x0 + w4*x7 + w4*x6 + w4*x5 + w4*x4 \
+                 w7*x3 + w7*x2 + w7*x1 + w7*x0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w5*x0 + w4*x7 + w4*x6 + w4*x5 + w4*x4
                      + w4*x3 + w4*x2 + w4*x0 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3 + w2*x7 + w2*x6 + w2*x4 + w1*x6 + w1*x1 + w0*x3,
-                 w7*x7 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w4*x1 + w3*x7 + w3*x4 \
+                 w7*x7 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w4*x1 + w3*x7 + w3*x4
                      + w3*x3 + w2*x6 + w2*x5 + w2 + w1*x7 + w1*x0 + w0*x2,
-                 w7*x6 + w7*x5 + w7*x4 + w7*x2 + w7*x1 + w7*x0 + w6*x7 + w6*x6 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x7 + w4*x6 + w4*x4 + w4*x1 + w4*x0 + w3*x6 \
+                 w7*x6 + w7*x5 + w7*x4 + w7*x2 + w7*x1 + w7*x0 + w6*x7 + w6*x6 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x7 + w4*x6 + w4*x4 + w4*x1 + w4*x0 + w3*x6
                      + w3*x3 + w3*x2 + w2*x5 + w2*x4 + w1*x7 + w1*x6 + w1 + w0*x1,
                  w7*x7 + w7*x6 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x1 + w6*x0 + w5*x5 + w5*x3 + w5*x2 + w4*x7 + w4*x5 + w4*x4 + w4*x0 + w3*x7 + w3*x6 + w3*x2 + w2*x4 + w1*x6 + w0*x0 + w0]
 
@@ -3000,58 +3000,58 @@ class SR_gf2(SR_generic):
                 l.append(w7*x6 + w7*x5 + w7*x1 + w6*x7 + w6*x6 + w6*x2 + w5*x7 + w5*x3 + w4*x4 + w3*x5 + w2*x6 + w1*x7 + w0*x0 + 1)
 
             if not biaffine_only:
-                l.extend([w7**2 + w7*w6 + w7*w3 + w7*w1 + w7*x7 + w7*x6 + w7*x5 + w7*x2 + w7*x1 + w7*x0 + w6**2 + w6*w0 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5**2 + w5*w4 + w5*w3 \
-                              + w5*w2 + w5*x7 + w5*x5 + w5*x4 + w5*x1 + w5*x0 + w4**2 + w4*w2 + w4*w0 + w4*x5 + w4*x4 + w4*x2 + w3*w2 + w3*x6 + w3*x3 + w3*x1 + w3*x0 + w2*x7 + w2*x5 + w2*x4 \
+                l.extend([w7**2 + w7*w6 + w7*w3 + w7*w1 + w7*x7 + w7*x6 + w7*x5 + w7*x2 + w7*x1 + w7*x0 + w6**2 + w6*w0 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5**2 + w5*w4 + w5*w3
+                              + w5*w2 + w5*x7 + w5*x5 + w5*x4 + w5*x1 + w5*x0 + w4**2 + w4*w2 + w4*w0 + w4*x5 + w4*x4 + w4*x2 + w3*w2 + w3*x6 + w3*x3 + w3*x1 + w3*x0 + w2*x7 + w2*x5 + w2*x4
                               + w2*x0 + w1*x4 + w0**2 + w0*x0,
-                          w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3*x7 + w3*x5 + w3*x2 \
-                              + w2*x7 + w2*x6 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w0*x6 + w0*x5 + w0*x4 + w0*x2 + w0*x1 + x7**2 + x7*x6 + x7*x5 + x7*x3 + x7*x1 + x7*x0 + x6*x2 \
+                          w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3*x7 + w3*x5 + w3*x2
+                              + w2*x7 + w2*x6 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w0*x6 + w0*x5 + w0*x4 + w0*x2 + w0*x1 + x7**2 + x7*x6 + x7*x5 + x7*x3 + x7*x1 + x7*x0 + x6*x2
                               + x6*x1 + x5*x4 + x5*x3 + x5*x2 + x5*x1 + x4*x3 + x4*x2 + x4*x1 + x3**2 + x3*x2 + x2*x1 + x2*x0,
-                          w7*x5 + w7*x4 + w7*x3 + w7*x1 + w7*x0 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x3 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3*x1 \
-                              + w2*x6 + w2*x3 + w1*x7 + w1*x4 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + x7*x3 + x7*x2 + x6*x5 + x6*x4 + x6*x3 + x6*x2 + x6*x0 + x5*x4 + x5*x3 + x5*x2 + x4**2 + x4*x3 \
+                          w7*x5 + w7*x4 + w7*x3 + w7*x1 + w7*x0 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x3 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3*x1
+                              + w2*x6 + w2*x3 + w1*x7 + w1*x4 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + x7*x3 + x7*x2 + x6*x5 + x6*x4 + x6*x3 + x6*x2 + x6*x0 + x5*x4 + x5*x3 + x5*x2 + x4**2 + x4*x3
                               + x3*x2 + x3*x1,
-                          w7*w3 + w7*w2 + w7*x6 + w7*x5 + w7*x4 + w7*x1 + w7*x0 + w6*w5 + w6*w4 + w6*w3 + w6*w2 + w6*w0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*w4 + w5*w3 + w5*w2 + w5*x7 \
-                              + w5*x6 + w5*x4 + w5*x3 + w5*x0 + w4**2 + w4*w3 + w4*x7 + w4*x4 + w4*x3 + w4*x1 + w3*w2 + w3*w1 + w3*x7 + w3*x5 + w3*x2 + w3*x0 + w2*x6 + w2*x4 + w2*x3 + w1*x7 \
+                          w7*w3 + w7*w2 + w7*x6 + w7*x5 + w7*x4 + w7*x1 + w7*x0 + w6*w5 + w6*w4 + w6*w3 + w6*w2 + w6*w0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*w4 + w5*w3 + w5*w2 + w5*x7
+                              + w5*x6 + w5*x4 + w5*x3 + w5*x0 + w4**2 + w4*w3 + w4*x7 + w4*x4 + w4*x3 + w4*x1 + w3*w2 + w3*w1 + w3*x7 + w3*x5 + w3*x2 + w3*x0 + w2*x6 + w2*x4 + w2*x3 + w1*x7
                               + w1*x3 + w0*x7,
-                          w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w6*x1 + w5*x5 + w5*x3 + w5*x2 + w4*x3 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6 \
-                              + w2*x5 + w2*x3 + w2*x2 + w1*x6 + w1*x4 + w1*x3 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x4 + x7*x1 + x7*x0 + x6*x0 + x5**2 + x5*x2 + x5*x1 + x5*x0 + x4**2 + x4*x0 \
+                          w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w6*x1 + w5*x5 + w5*x3 + w5*x2 + w4*x3 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6
+                              + w2*x5 + w2*x3 + w2*x2 + w1*x6 + w1*x4 + w1*x3 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x4 + x7*x1 + x7*x0 + x6*x0 + x5**2 + x5*x2 + x5*x1 + x5*x0 + x4**2 + x4*x0
                               + x3*x2 + x3*x0 + x1**2,
-                          w7*w6 + w7*w5 + w7*w4 + w7*w3 + w7*x7 + w7*x5 + w7*x4 + w7*x3 + w7*x0 + w6**2 + w6*w5 + w6*w4 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*w4 \
-                              + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x2 + w4*w2 + w4*w1 + w4*x7 + w4*x6 + w4*x3 + w4*x2 + w4*x0 + w3*w0 + w3*x7 + w3*x6 + w3*x4 + w3*x1 + w2**2 \
+                          w7*w6 + w7*w5 + w7*w4 + w7*w3 + w7*x7 + w7*x5 + w7*x4 + w7*x3 + w7*x0 + w6**2 + w6*w5 + w6*w4 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*w4
+                              + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x2 + w4*w2 + w4*w1 + w4*x7 + w4*x6 + w4*x3 + w4*x2 + w4*x0 + w3*w0 + w3*x7 + w3*x6 + w3*x4 + w3*x1 + w2**2
                               + w2*x5 + w2*x3 + w2*x2 + w1*x7 + w1*x6 + w1*x2 + w0*x6,
-                          w7*w5 + w7*w4 + w7*w1 + w7*w0 + w7*x6 + w7*x2 + w6*w0 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w5**2 + w5*w2 + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x2 + w4**2 + w4*w0 \
-                              + w4*x6 + w4*x1 + w4*x0 + w3*w2 + w3*w0 + w3*x5 + w3*x4 + w3*x3 + w3*x2 + w3*x1 + w3*x0 + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w2*x2 + w2*x0 + w1**2 + w1*x7 \
+                          w7*w5 + w7*w4 + w7*w1 + w7*w0 + w7*x6 + w7*x2 + w6*w0 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w5**2 + w5*w2 + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x2 + w4**2 + w4*w0
+                              + w4*x6 + w4*x1 + w4*x0 + w3*w2 + w3*w0 + w3*x5 + w3*x4 + w3*x3 + w3*x2 + w3*x1 + w3*x0 + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w2*x2 + w2*x0 + w1**2 + w1*x7
                               + w1*x6 + w1*x4 + w0*x3,
-                          w7*x7 + w7*x6 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w3*x7 + w3*x6 + w3*x3 \
-                              + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w1*x1 + w0*x6 + w0*x3 + x7**2 + x7*x5 + x7*x3 + x6**2 + x6*x5 + x6*x2 + x6*x0 + x5**2 \
+                          w7*x7 + w7*x6 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w3*x7 + w3*x6 + w3*x3
+                              + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w1*x1 + w0*x6 + w0*x3 + x7**2 + x7*x5 + x7*x3 + x6**2 + x6*x5 + x6*x2 + x6*x0 + x5**2
                               + x4**2 + x4*x3 + x4*x2 + x4*x1 + x3**2 + x3*x1 + x2*x1,
-                          w7**2 + w7*w6 + w7*w5 + w7*w3 + w7*w1 + w7*w0 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*w2 + w6*w1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w6*x1 + w6*x0 + w5*w4 + w5*w3 \
-                              + w5*w2 + w5*w1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x1 + w4*x0 + w3**2 + w3*w2 + w3*x5 + w3*x4 \
+                          w7**2 + w7*w6 + w7*w5 + w7*w3 + w7*w1 + w7*w0 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*w2 + w6*w1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w6*x1 + w6*x0 + w5*w4 + w5*w3
+                              + w5*w2 + w5*w1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x1 + w4*x0 + w3**2 + w3*w2 + w3*x5 + w3*x4
                               + w3*x2 + w2*w1 + w2*w0 + w2*x6 + w2*x3 + w2*x1 + w2*x0 + w1*x7 + w1*x5 + w1*x4 + w1*x0 + w0*x4,
-                          w7*x7 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x3 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w2*x7 + w2*x4 + w1*x7 \
-                              + w1*x6 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + w0*x2 + w0*x0 + x7**2 + x7*x6 + x7*x3 + x7*x1 + x6**2 + x6*x0 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x4**2 \
+                          w7*x7 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x3 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w2*x7 + w2*x4 + w1*x7
+                              + w1*x6 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + w0*x2 + w0*x0 + x7**2 + x7*x6 + x7*x3 + x7*x1 + x6**2 + x6*x0 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x4**2
                               + x4*x2 + x4*x0 + x3*x2 + x0**2,
-                          w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x4 \
-                              + w3*x2 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x3 + w0*x7 + w0*x4 + x7*x6 + x7*x5 + x7*x4 + x7*x3 + x6**2 + x6*x5 + x6*x4 + x6*x2 + x6*x1 + x6*x0 \
+                          w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x4
+                              + w3*x2 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x3 + w0*x7 + w0*x4 + x7*x6 + x7*x5 + x7*x4 + x7*x3 + x6**2 + x6*x5 + x6*x4 + x6*x2 + x6*x1 + x6*x0
                               + x5*x4 + x5*x1 + x5*x0 + x4*x2 + x4*x1 + x3*x0 + x2**2,
-                          w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x7 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w4*x7 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x4 + w3*x3 + w2*x2 + w2*x0 \
-                              + w1*x6 + w1*x5 + w1*x4 + w1*x3 + w1*x2 + w0*x7 + w0*x5 + w0*x4 + x7**2 + x7*x4 + x7*x2 + x6*x4 + x6*x3 + x6*x2 + x6*x1 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x5*x0 \
+                          w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x7 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w4*x7 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x4 + w3*x3 + w2*x2 + w2*x0
+                              + w1*x6 + w1*x5 + w1*x4 + w1*x3 + w1*x2 + w0*x7 + w0*x5 + w0*x4 + x7**2 + x7*x4 + x7*x2 + x6*x4 + x6*x3 + x6*x2 + x6*x1 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x5*x0
                               + x4*x3 + x4*x2 + x4*x1 + x3**2 + x2*x0 + x1*x0,
-                          w7*x6 + w7*x5 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w5*x7 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w4*x1 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5 \
-                              + w2*x4 + w2*x3 + w1*x2 + w1*x0 + w0*x6 + w0*x5 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x2 + x7*x0 + x6**2 + x6*x5 + x6*x2 + x6*x1 + x6*x0 + x5**2 + x5*x4 + x4**2 \
+                          w7*x6 + w7*x5 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w5*x7 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w4*x1 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5
+                              + w2*x4 + w2*x3 + w1*x2 + w1*x0 + w0*x6 + w0*x5 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x2 + x7*x0 + x6**2 + x6*x5 + x6*x2 + x6*x1 + x6*x0 + x5**2 + x5*x4 + x4**2
                               + x4*x2 + x4*x1 + x4*x0 + x3**2 + x3*x2 + x1*x0,
-                          w7**2 + w7*w5 + w7*w3 + w7*x7 + w7*x6 + w7*x4 + w7*x3 + w7*x2 + w6**2 + w6*w5 + w6*w2 + w6*w0 + w6*x7 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5**2 + w5*x7 + w5*x6 \
-                              + w5*x5 + w5*x4 + w5*x2 + w5*x1 + w4**2 + w4*w3 + w4*w2 + w4*w1 + w4*x6 + w4*x5 + w4*x2 + w4*x1 + w3**2 + w3*w1 + w3*x6 + w3*x5 + w3*x3 + w3*x0 + w2*w1 + w2*x7 \
+                          w7**2 + w7*w5 + w7*w3 + w7*x7 + w7*x6 + w7*x4 + w7*x3 + w7*x2 + w6**2 + w6*w5 + w6*w2 + w6*w0 + w6*x7 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5**2 + w5*x7 + w5*x6
+                              + w5*x5 + w5*x4 + w5*x2 + w5*x1 + w4**2 + w4*w3 + w4*w2 + w4*w1 + w4*x6 + w4*x5 + w4*x2 + w4*x1 + w3**2 + w3*w1 + w3*x6 + w3*x5 + w3*x3 + w3*x0 + w2*w1 + w2*x7
                               + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x5 + w1*x1 + w0*x5,
-                          w7*w5 + w7*w2 + w7*w0 + w7*x5 + w7*x3 + w6**2 + w6*w5 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x3 + w6*x2 + w6*x0 + w5**2 + w5*w4 + w5*x7 + w5*x6 + w5*x4 + w5*x2 + w5*x0 \
-                              + w4**2 + w4*w2 + w4*w1 + w4*w0 + w4*x6 + w4*x4 + w4*x3 + w4*x2 + w4*x0 + w3**2 + w3*w2 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6 + w2*x4 \
+                          w7*w5 + w7*w2 + w7*w0 + w7*x5 + w7*x3 + w6**2 + w6*w5 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x3 + w6*x2 + w6*x0 + w5**2 + w5*w4 + w5*x7 + w5*x6 + w5*x4 + w5*x2 + w5*x0
+                              + w4**2 + w4*w2 + w4*w1 + w4*w0 + w4*x6 + w4*x4 + w4*x3 + w4*x2 + w4*x0 + w3**2 + w3*w2 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6 + w2*x4
                               + w2*x1 + w2*x0 + w1*w0 + w1*x5 + w1*x4 + w0*x1,
-                          w7**2 + w7*w4 + w7*w2 + w7*x6 + w7*x4 + w7*x0 + w6*w4 + w6*w3 + w6*w2 + w6*w1 + w6*x4 + w6*x3 + w6*x1 + w5**2 + w5*w4 + w5*w3 + w5*w2 + w5*w0 + w5*x7 + w5*x5 + w5*x3 \
-                              + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3**2 + w3*x7 + w3*x5 + w3*x4 + w3*x3 + w3*x1 + w2*w0 + w2*x7 + w2*x5 \
+                          w7**2 + w7*w4 + w7*w2 + w7*x6 + w7*x4 + w7*x0 + w6*w4 + w6*w3 + w6*w2 + w6*w1 + w6*x4 + w6*x3 + w6*x1 + w5**2 + w5*w4 + w5*w3 + w5*w2 + w5*w0 + w5*x7 + w5*x5 + w5*x3
+                              + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3**2 + w3*x7 + w3*x5 + w3*x4 + w3*x3 + w3*x1 + w2*w0 + w2*x7 + w2*x5
                               + w2*x2 + w2*x1 + w1*w0 + w1*x6 + w1*x5 + w0*x2])
 
         return l
 
-    def _inversion_polynomials_single_sbox(self, x= None, w=None, biaffine_only=None, correct_only=None):
+    def _inversion_polynomials_single_sbox(self, x=None, w=None, biaffine_only=None, correct_only=None):
         """
         Generate inversion polynomials of a single S-box.
 
@@ -3283,7 +3283,7 @@ class SR_gf2_2(SR_gf2):
             w = P.gens()[:e]
 
         S = self.sbox(inversion_only=True)
-        F =  S.polynomials(w, x, degree=e-2, groebner=groebner)
+        F = S.polynomials(w, x, degree=e-2, groebner=groebner)
         return F
 
 class AllowZeroInversionsContext:
@@ -3301,6 +3301,7 @@ class AllowZeroInversionsContext:
             a^2 + a
         """
         self.sr = sr
+
     def __enter__(self):
         """
         EXAMPLES::
@@ -3318,6 +3319,7 @@ class AllowZeroInversionsContext:
         """
         self.allow_zero_inversions = self.sr._allow_zero_inversions
         self.sr._allow_zero_inversions = True
+
     def __exit__(self, typ, value, tb):
         """
         EXAMPLES::

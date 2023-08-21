@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Drinfeld modules over a base
 
@@ -425,7 +426,7 @@ class DrinfeldModules(Category_over_base_ring):
             0
         """
         if self._characteristic is None:
-            raise NotImplementedError('function ring characteristic not ' \
+            raise NotImplementedError('function ring characteristic not '
                                       'implemented in this case')
         return self._characteristic
 
@@ -498,7 +499,7 @@ class DrinfeldModules(Category_over_base_ring):
         gen = self._ore_polring(gen)
         T = self._function_ring.gen()
         if gen[0] != self._base_morphism(T):
-            raise ValueError('constant coefficient must equal that of the ' \
+            raise ValueError('constant coefficient must equal that of the '
                              'category')
         return DrinfeldModule(self._function_ring, gen)
 
@@ -767,3 +768,23 @@ class DrinfeldModules(Category_over_base_ring):
                 True
             """
             return self.category().ore_polring()
+
+        def ore_variable(self):
+            r"""
+            Return the variable of the Ore polynomial ring of this Drinfeld module.
+
+            EXAMPLES::
+
+                sage: Fq = GF(25)
+                sage: A.<T> = Fq[]
+                sage: K.<z12> = Fq.extension(6)
+                sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+                sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+
+                sage: phi.ore_polring()
+                Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
+                sage: phi.ore_variable()
+                t
+
+            """
+            return self.category().ore_polring().gen()

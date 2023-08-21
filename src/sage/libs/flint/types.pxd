@@ -1,4 +1,4 @@
-# distutils: depends = flint/flint.h flint/fmpz.h flint/fmpz_poly.h flint/fmpz_mat.h flint/fmpq.h flint/fmpq_poly.h flint/fmpq_mat.h flint/fmpz_mod_poly.h flint/nmod_poly.h flint/fq.h flint/fq_nmod.h flint/ulong_extras.h flint/padic.h flint/padic_poly.h flint/qadic.h flint/fmpz_poly_q.h
+# distutils: depends = flint/flint.h flint/fmpz.h flint/fmpz_factor.h flint/fmpz_poly.h flint/fmpz_mat.h flint/fmpq.h flint/fmpq_poly.h flint/fmpq_mat.h flint/fmpz_mod_poly.h flint/nmod_poly.h flint/fq.h flint/fq_nmod.h flint/ulong_extras.h flint/padic.h flint/padic_poly.h flint/qadic.h flint/fmpz_poly_q.h
 
 """
 Declarations for FLINT types
@@ -41,6 +41,17 @@ cdef extern from "flint_wrap.h":
         mp_bitcnt_t norm
 
     ctypedef fmpz_preinvn_struct[1] fmpz_preinvn_t
+
+# flint/fmpz_factor.h:
+cdef extern from "flint_wrap.h":
+    ctypedef struct fmpz_factor_struct:
+        int sign
+        fmpz* p
+        ulong* exp
+        slong alloc
+        slong num
+
+    ctypedef fmpz_factor_struct fmpz_factor_t[1]
 
 # flint/fmpz_mod.h:
 cdef extern from "flint_wrap.h":

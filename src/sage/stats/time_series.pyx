@@ -36,19 +36,19 @@ AUTHOR:
 - William Stein
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AsString
-from libc.math cimport exp, floor, log, pow, sqrt
+from libc.math cimport exp, log, pow, sqrt
 from libc.string cimport memcpy
 from cysignals.memory cimport sig_malloc, sig_free
 from sage.structure.richcmp cimport rich_to_bool
@@ -223,7 +223,7 @@ cdef class TimeSeries:
             return rich_to_bool(op, -1 if c < 0 else 1)
         return rich_to_bool(op, 0)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Free up memory used by a time series.
 

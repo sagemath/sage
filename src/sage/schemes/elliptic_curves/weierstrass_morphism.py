@@ -258,12 +258,14 @@ def _isomorphisms(E, F):
 
         sage: p = random_prime(100)
         sage: F = GF(p).algebraic_closure()
-        sage: while True:
-        ....:     try:
-        ....:         E = EllipticCurve(list((F^5).random_element()))
-        ....:     except ArithmeticError:
-        ....:         continue
-        ....:     break
+        sage: j = F.random_element()
+        sage: while j in (0, 1728):     # skip the hard case
+        ....:     j = F.random_element()
+        sage: j = F(choice((0, 1728)))  # long time -- do the hard case
+        sage: E = EllipticCurve_from_j(j)
+        sage: u,r,s,t = (F^4).random_element()
+        sage: u = u or 1
+        sage: E = E.change_weierstrass_model(u,r,s,t)
         sage: Aut = E.automorphisms()
         sage: len(set(Aut)) == len(Aut)
         True
@@ -379,7 +381,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
     - ``E`` -- an ``EllipticCurve``, or ``None`` (see below).
 
     - ``urst`` -- a 4-tuple `(u,r,s,t)`, a :class:`baseWI` object,
-                  or ``None`` (see below).
+      or ``None`` (see below).
 
     - ``F`` -- an ``EllipticCurve``, or ``None`` (see below).
 
@@ -421,16 +423,16 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
         sage: WeierstrassIsomorphism(EllipticCurve([0,1,2,3,4]), (-1,2,3,4))
         Elliptic-curve morphism:
-        From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
-        To:   Elliptic Curve defined by y^2 - 6*x*y - 10*y = x^3 - 2*x^2 - 11*x - 2 over Rational Field
-        Via:  (u,r,s,t) = (-1, 2, 3, 4)
+          From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
+          To:   Elliptic Curve defined by y^2 - 6*x*y - 10*y = x^3 - 2*x^2 - 11*x - 2 over Rational Field
+          Via:  (u,r,s,t) = (-1, 2, 3, 4)
         sage: E = EllipticCurve([0,1,2,3,4])
         sage: F = EllipticCurve(E.cremona_label())
         sage: WeierstrassIsomorphism(E, None, F)
         Elliptic-curve morphism:
-        From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
-        To:   Elliptic Curve defined by y^2  = x^3 + x^2 + 3*x + 5 over Rational Field
-        Via:  (u,r,s,t) = (1, 0, 0, -1)
+          From: Elliptic Curve defined by y^2 + 2*y = x^3 + x^2 + 3*x + 4 over Rational Field
+          To:   Elliptic Curve defined by y^2  = x^3 + x^2 + 3*x + 5 over Rational Field
+          Via:  (u,r,s,t) = (1, 0, 0, -1)
         sage: w = WeierstrassIsomorphism(None, (1,0,0,-1), F)
         sage: w._domain == E
         True
@@ -443,10 +445,10 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         Check for :trac:`33215`::
 
-            sage: E = EllipticCurve(GF(71^2),[5,5])
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: iso = WeierstrassIsomorphism(E, (1,2,3,4))
-            sage: ~iso  # indirect doctest
+            sage: E = EllipticCurve(GF(71^2), [5,5])                                    # optional - sage.rings.finite_rings
+            sage: iso = WeierstrassIsomorphism(E, (1,2,3,4))                            # optional - sage.rings.finite_rings
+            sage: ~iso  # indirect doctest                                              # optional - sage.rings.finite_rings
             Elliptic-curve morphism:
               From: Elliptic Curve defined by y^2 + 6*x*y + 8*y = x^3 + 68*x^2 + 64*x + 7 over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 71^2
@@ -454,8 +456,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         Test for :trac:`33312`::
 
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: type(iso.degree())
+            sage: type(iso.degree())                                                    # optional - sage.rings.finite_rings
             <class 'sage.rings.integer.Integer'>
         """
         from .ell_generic import is_EllipticCurve
@@ -534,16 +535,16 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: w1 == w2
             False
 
-            sage: E = EllipticCurve_from_j(GF(7)(0))
-            sage: F = E.change_weierstrass_model(2,3,4,5)
-            sage: a = E.isomorphisms(F)
-            sage: b = [w*a[0] for w in F.automorphisms()]
-            sage: b.sort()
-            sage: a == b
+            sage: E = EllipticCurve_from_j(GF(7)(0))                                    # optional - sage.rings.finite_rings
+            sage: F = E.change_weierstrass_model(2,3,4,5)                               # optional - sage.rings.finite_rings
+            sage: a = E.isomorphisms(F)                                                 # optional - sage.rings.finite_rings
+            sage: b = [w*a[0] for w in F.automorphisms()]                               # optional - sage.rings.finite_rings
+            sage: b.sort()                                                              # optional - sage.rings.finite_rings
+            sage: a == b                                                                # optional - sage.rings.finite_rings
             True
-            sage: c = [a[0]*w for w in E.automorphisms()]
-            sage: c.sort()
-            sage: a == c
+            sage: c = [a[0]*w for w in E.automorphisms()]                               # optional - sage.rings.finite_rings
+            sage: c.sort()                                                              # optional - sage.rings.finite_rings
+            sage: a == c                                                                # optional - sage.rings.finite_rings
             True
         """
         if not isinstance(left, WeierstrassIsomorphism) or not isinstance(right, WeierstrassIsomorphism):
@@ -589,15 +590,17 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: E = EllipticCurve([i,0]); E
-            Elliptic Curve defined by y^2 = x^3 + I*x over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
-            sage: iso = WeierstrassIsomorphism(E, (i,1,2,3))
-            sage: P = E.change_ring(QQbar).lift_x(QQbar.random_element())
-            sage: Q = iso._eval(P)
-            sage: Q.curve()
-            Elliptic Curve defined by y^2 + (-4*I)*x*y + 6*I*y = x^3 + x^2 + (I-9)*x + (-I+8) over Algebraic Field
-            sage: y = next(filter(bool, iter(QQbar.random_element, None)))  # sample until nonzero
-            sage: iso._eval((0, y, 0)) == 0
+            sage: E = EllipticCurve([i, 0]); E                                                      # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 = x^3 + I*x
+             over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            sage: iso = WeierstrassIsomorphism(E, (i,1,2,3))                                        # optional - sage.rings.number_field
+            sage: P = E.change_ring(QQbar).lift_x(QQbar.random_element())                           # optional - sage.rings.number_field
+            sage: Q = iso._eval(P)                                                                  # optional - sage.rings.number_field
+            sage: Q.curve()                                                                         # optional - sage.rings.number_field
+            Elliptic Curve defined by y^2 + (-4*I)*x*y + 6*I*y = x^3 + x^2 + (I-9)*x + (-I+8)
+             over Algebraic Field
+            sage: y = next(filter(bool, iter(QQbar.random_element, None)))  # sample until nonzero  # optional - sage.rings.number_field
+            sage: iso._eval((0, y, 0)) == 0                                                         # optional - sage.rings.number_field
             True
         """
         if self._domain.defining_polynomial()(*P):
@@ -634,14 +637,14 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         Check that copying the order over works::
 
-            sage: E = EllipticCurve(GF(431^2), [1,0])
-            sage: i = next(a for a in E.automorphisms() if a^2 == -a^24)
-            sage: P,_ = E.gens()
-            sage: P._order
+            sage: E = EllipticCurve(GF(431^2), [1,0])                                               # optional - sage.rings.finite_rings
+            sage: i = next(a for a in E.automorphisms() if a^2 == -a^24)                            # optional - sage.rings.finite_rings
+            sage: P,_ = E.gens()                                                                    # optional - sage.rings.finite_rings
+            sage: P._order                                                                          # optional - sage.rings.finite_rings
             432
-            sage: i(P)._order
+            sage: i(P)._order                                                                       # optional - sage.rings.finite_rings
             432
-            sage: E(i(P))._order
+            sage: E(i(P))._order                                                                    # optional - sage.rings.finite_rings
             432
         """
         if P[2] == 0:
@@ -732,9 +735,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: E2 = E1.change_weierstrass_model([2,3,4,5])
             sage: E1.isomorphism_to(E2)
             Elliptic-curve morphism:
-            From: Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
-            To:   Elliptic Curve defined by y^2 + 4*x*y + 11/8*y = x^3 - 7/4*x^2 - 3/2*x - 9/32 over Rational Field
-            Via:  (u,r,s,t) = (2, 3, 4, 5)
+              From: Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 4*x*y + 11/8*y = x^3 - 7/4*x^2 - 3/2*x - 9/32 over Rational Field
+              Via:  (u,r,s,t) = (2, 3, 4, 5)
         """
         return EllipticCurveHom.__repr__(self) + "\n  Via:  (u,r,s,t) = " + baseWI.__repr__(self)
 
@@ -750,8 +753,10 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: E2 = EllipticCurve_from_j(E1.j_invariant())
             sage: iso = E1.isomorphism_to(E2); iso
             Elliptic-curve morphism:
-              From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55 over Rational Field
-              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681 over Rational Field
+              From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55
+                    over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
+                    over Rational Field
               Via:  (u,r,s,t) = (1, -17, -5, 77)
             sage: iso.rational_maps()
             (x + 17, 5*x + y + 8)
@@ -763,11 +768,11 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         ::
 
-            sage: E = EllipticCurve(GF(65537), [1,1,1,1,1])
-            sage: w = E.isomorphism_to(E.short_weierstrass_model())
-            sage: f,g = w.rational_maps()
-            sage: P = E.random_point()
-            sage: w(P).xy() == (f(P.xy()), g(P.xy()))
+            sage: E = EllipticCurve(GF(65537), [1,1,1,1,1])                             # optional - sage.rings.finite_rings
+            sage: w = E.isomorphism_to(E.short_weierstrass_model())                     # optional - sage.rings.finite_rings
+            sage: f,g = w.rational_maps()                                               # optional - sage.rings.finite_rings
+            sage: P = E.random_point()                                                  # optional - sage.rings.finite_rings
+            sage: w(P).xy() == (f(P.xy()), g(P.xy()))                                   # optional - sage.rings.finite_rings
             True
 
         TESTS:
@@ -791,8 +796,10 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: E2 = EllipticCurve_from_j(E1.j_invariant())
             sage: iso = E1.isomorphism_to(E2); iso
             Elliptic-curve morphism:
-              From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55 over Rational Field
-              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681 over Rational Field
+              From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55
+                    over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
+                    over Rational Field
               Via:  (u,r,s,t) = (1, -17, -5, 77)
             sage: iso.x_rational_map()
             x + 17
@@ -824,7 +831,11 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: iso.kernel_polynomial()
             1
             sage: psi = E1.isogeny(iso.kernel_polynomial(), codomain=E2); psi
-            Isogeny of degree 1 from Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681 over Rational Field
+            Isogeny of degree 1
+             from Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55
+                  over Rational Field
+               to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 684*x + 6681
+                  over Rational Field
             sage: psi in {iso, -iso}
             True
 
@@ -844,8 +855,8 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(31337), [0,1])
-            sage: {f.is_separable() for f in E.automorphisms()}
+            sage: E = EllipticCurve(GF(31337), [0,1])                                   # optional - sage.rings.finite_rings
+            sage: {f.is_separable() for f in E.automorphisms()}                         # optional - sage.rings.finite_rings
             {True}
         """
         return True
@@ -859,9 +870,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: E = EllipticCurve(QuadraticField(-3), [0,1])
-            sage: w = WeierstrassIsomorphism(E, (CyclotomicField(3).gen(),0,0,0))
-            sage: (w.dual() * w).rational_maps()
+            sage: E = EllipticCurve(QuadraticField(-3), [0,1])                          # optional - sage.rings.number_field
+            sage: w = WeierstrassIsomorphism(E, (CyclotomicField(3).gen(),0,0,0))       # optional - sage.rings.number_field
+            sage: (w.dual() * w).rational_maps()                                        # optional - sage.rings.number_field
             (x, y)
 
         ::
@@ -887,7 +898,8 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: -w
             Elliptic-curve morphism:
               From: Elliptic Curve defined by y^2 + 11*x*y + 33*y = x^3 + 22*x^2 + 44*x + 55 over Rational Field
-              To:   Elliptic Curve defined by y^2 + 17/6*x*y + 49/13068*y = x^3 - 769/396*x^2 - 3397/862488*x + 44863/7513995456 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 17/6*x*y + 49/13068*y = x^3 - 769/396*x^2 - 3397/862488*x + 44863/7513995456
+                    over Rational Field
               Via:  (u,r,s,t) = (-66, 77, -99, -979)
             sage: -(-w) == w
             True
@@ -895,22 +907,22 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         ::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: K.<a> = QuadraticField(-3)
-            sage: E = EllipticCurve(K, [0,1])
-            sage: w = WeierstrassIsomorphism(E, (CyclotomicField(3).gen(),0,0,0))
-            sage: w.tuple()
+            sage: K.<a> = QuadraticField(-3)                                            # optional - sage.rings.number_field
+            sage: E = EllipticCurve(K, [0,1])                                           # optional - sage.rings.number_field
+            sage: w = WeierstrassIsomorphism(E, (CyclotomicField(3).gen(),0,0,0))       # optional - sage.rings.number_field
+            sage: w.tuple()                                                             # optional - sage.rings.number_field
             (1/2*a - 1/2, 0, 0, 0)
-            sage: (-w).tuple()
+            sage: (-w).tuple()                                                          # optional - sage.rings.number_field
             (-1/2*a + 1/2, 0, 0, 0)
-            sage: (-w)^3 == -(w^3)
+            sage: (-w)^3 == -(w^3)                                                      # optional - sage.rings.number_field
             True
 
         ::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
-            sage: E = EllipticCurve(QuadraticField(-1), [1,0])
-            sage: t = WeierstrassIsomorphism(E, (i,0,0,0))
-            sage: -t^2 == identity_morphism(E)
+            sage: E = EllipticCurve(QuadraticField(-1), [1,0])                          # optional - sage.rings.number_field
+            sage: t = WeierstrassIsomorphism(E, (i,0,0,0))                              # optional - sage.rings.number_field
+            sage: -t^2 == identity_morphism(E)                                          # optional - sage.rings.number_field
             True
         """
         a1,_,a3,_,_ = self._domain.a_invariants()
@@ -931,8 +943,8 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(QQbar, [0,1])
-            sage: all(f.scaling_factor() == f.formal()[1] for f in E.automorphisms())
+            sage: E = EllipticCurve(QQbar, [0,1])                                       # optional - sage.rings.number_field
+            sage: all(f.scaling_factor() == f.formal()[1] for f in E.automorphisms())   # optional - sage.rings.number_field
             True
 
         ALGORITHM: The scaling factor equals the `u` component of

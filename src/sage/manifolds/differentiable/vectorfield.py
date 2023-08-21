@@ -359,7 +359,6 @@ class VectorField(MultivectorField):
             resu.set_name(name=name, latex_name=latex_name)
         return resu
 
-
     @options(max_range=8, scale=1, color='blue')
     def plot(self, chart=None, ambient_coords=None, mapping=None,
              chart_domain=None, fixed_coords=None, ranges=None,

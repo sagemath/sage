@@ -1323,7 +1323,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         self._principal_directions[screen._name] = res
         return res
 
-
     def mean_curvature(self, screen=None):
         r"""
 

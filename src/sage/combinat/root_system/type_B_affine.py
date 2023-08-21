@@ -192,7 +192,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             return CartanType(["A",1,1]).ascii_art(label, node)
         if n == 2:
             return CartanType(["C",2,1]).relabel({0:0, 1:2, 2:1}).ascii_art(label, node)
-        ret  = "    {} {}\n    |\n    |\n".format(node(label(0)), label(0))
+        ret = "    {} {}\n    |\n    |\n".format(node(label(0)), label(0))
         ret += "---".join(node(label(i)) for i in range(1,n)) + "=>={}\n".format(node(label(n)))
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret

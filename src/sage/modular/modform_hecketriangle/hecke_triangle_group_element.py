@@ -17,13 +17,15 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.cc import CC
-from sage.rings.qqbar import AA, QQbar
+
+lazy_import('sage.rings.qqbar', 'AA')
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
@@ -202,10 +204,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             (((1, 1), (0, 1)), 1)
         """
         res = []
-        ID  = self.parent().I()._matrix
-        T   = self.parent().T()._matrix
-        S   = self.parent().S()._matrix
-        M   = self._matrix
+        ID = self.parent().I()._matrix
+        T = self.parent().T()._matrix
+        S = self.parent().S()._matrix
+        M = self._matrix
         lam = self.parent().lam()
         zero = ZZ.zero()
         one = ZZ.one()
@@ -602,22 +604,22 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             # emb = self.root_extension_embedding(QQbar)
             raise NotImplementedError
 
-        emb      = self.root_extension_embedding(AA)
-        G        = self.parent()
-        S        = G.S()
-        TI       = G.T().inverse()
-        lam      = G.lam()
+        emb = self.root_extension_embedding(AA)
+        G = self.parent()
+        S = G.S()
+        TI = G.T().inverse()
+        lam = G.lam()
 
-        p        = self.fixed_points()[0]
+        p = self.fixed_points()[0]
 
-        cf_dict  = {}
-        L        = []
+        cf_dict = {}
+        L = []
         cf_index = ZZ.zero()
-        one      = ZZ.one()
+        one = ZZ.one()
 
-        while(p not in cf_dict):
+        while p not in cf_dict:
             cf_dict[p] = cf_index
-            if (p == infinity):
+            if p == infinity:
                 # TODO: The choice of r doesn't matter?
                 r = ZZ.zero()
             #elif self.is_elliptic():
@@ -765,22 +767,24 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         G = self.parent()
         zero = ZZ.zero()
-        one  = ZZ.one()
+        one = ZZ.one()
 
         # The elliptic case (for this case we use a special notation):
         if self.is_elliptic():
             if self.parent().n() == infinity:
                 raise NotImplementedError
 
-            emb    = self.root_extension_embedding(QQbar)
-            p      = self.fixed_points()[0]
-            embp   = emb(p)
+            from sage.rings.qqbar import QQbar
+
+            emb = self.root_extension_embedding(QQbar)
+            p = self.fixed_points()[0]
+            embp = emb(p)
             embp.simplify()
             embp.exactify()
             (R, embw) = G.get_FD(embp)
-            w      = R.inverse().acton(p)
+            w = R.inverse().acton(p)
             # we should have: embw == emb(w)
-            embw   = emb(w)
+            embw = emb(w)
             embw.simplify()
             embw.exactify()
 
@@ -807,7 +811,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         (preperiod, period) = self.continued_fraction()
 
         number_of_ones = []
-        list_larger  = []
+        list_larger = []
         ones = 0
         for l in period:
             if l > 1:
@@ -819,12 +823,12 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         number_of_ones.append(ones)
 
         initial_ones = number_of_ones.pop(0)
-        if len(list_larger) == 0:
-            list_v1           = [-ZZ(1)]
-            list_vlarger      = [ initial_ones + 2 ]
+        if not list_larger:
+            list_v1 = [-ZZ(1)]
+            list_vlarger = [ initial_ones + 2 ]
         else:
-            list_v1           = [ v-2 for v in list_larger ]
-            list_vlarger      = [ v+2 for v in number_of_ones ]
+            list_v1 = [ v-2 for v in list_larger ]
+            list_vlarger = [ v+2 for v in number_of_ones ]
             list_vlarger[-1] += initial_ones
 
         L = []
@@ -835,7 +839,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         L_len = len(L)
         k = 0
-        while(k < L_len - 1):
+        while k < L_len - 1:
             if L[k][0] == L[k+1][0]:
                 k_entry = L.pop(k+1)
                 L[k][1] += k_entry[1]
@@ -1331,8 +1335,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             warn("The case n=infinity here is not verified at all and probably wrong!")
 
         zero = ZZ.zero()
-        one  = ZZ.one()
-        two  = ZZ(2)
+        one = ZZ.one()
+        two = ZZ(2)
 
         if self.is_identity():
             return zero
@@ -1352,7 +1356,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 Uj = G.I()
                 for j in range(1, G.n()):
                     Uj *= U
-                    if U_power  == Uj:
+                    if U_power == Uj:
                         #L = [one, ZZ(j)]
                         break
                     elif U_power == -Uj:
@@ -3223,26 +3227,26 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         INPUT:
 
         - ``f``   -- A function in ``tau`` (or an object for which
-                     evaluation at ``self.acton(tau)`` makes sense.
+          evaluation at ``self.acton(tau)`` makes sense.
 
         - ``tau`` -- Where to evaluate the result.
-                     This should be a valid argument for :meth:`acton`.
+          This should be a valid argument for :meth:`acton`.
 
-                     If ``tau`` is a point of ``HyperbolicPlane()`` then
-                     its coordinates in the upper half plane model are used.
+          If ``tau`` is a point of ``HyperbolicPlane()`` then
+          its coordinates in the upper half plane model are used.
 
-                     Default: ``None`` in which case ``f`` has to be
-                     a rational function / polynomial in one variable and
-                     the generator of the polynomial ring is used for ``tau``.
-                     That way ``slash`` acts on rational functions / polynomials.
+          Default: ``None`` in which case ``f`` has to be
+          a rational function / polynomial in one variable and
+          the generator of the polynomial ring is used for ``tau``.
+          That way ``slash`` acts on rational functions / polynomials.
 
         - ``k``   -- An even integer.
 
-                     Default: ``None`` in which case ``f`` either
-                     has to be a rational function / polynomial in one
-                     variable (then -degree is used).
-                     Or ``f`` needs to have a ``weight`` attribute which
-                     is then used.
+          Default: ``None`` in which case ``f`` either
+          has to be a rational function / polynomial in one
+          variable (then -degree is used).
+          Or ``f`` needs to have a ``weight`` attribute which
+          is then used.
 
         EXAMPLES::
 
@@ -3321,4 +3325,5 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el.as_hyperbolic_plane_isometry("KM").parent()
             Set of Morphisms from Hyperbolic plane in the Klein Disk Model to Hyperbolic plane in the Klein Disk Model in Category of hyperbolic models of Hyperbolic plane
         """
+        from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
         return HyperbolicPlane().UHP().get_isometry(self._matrix).to_model(model)

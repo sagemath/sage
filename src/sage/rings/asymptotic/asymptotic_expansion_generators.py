@@ -197,7 +197,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         return result
 
-
     @staticmethod
     def log_Stirling(var, precision=None, skip_constant_summand=False):
         r"""
@@ -321,7 +320,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         return result
 
-
     @staticmethod
     def _log_StirlingNegativePowers_(var, precision):
         r"""
@@ -370,7 +368,6 @@ class AsymptoticExpansionGenerators(SageObject):
                       for k in srange(2, 2*precision + 2, 2)),
                      A.zero())
         return result + (1 / n**(2*precision + 1)).O()
-
 
     @staticmethod
     def HarmonicNumber(var, precision=None, skip_constant_summand=False):
@@ -476,7 +473,6 @@ class AsymptoticExpansionGenerators(SageObject):
             result += (1 / n**(2*precision - 4)).O()
 
         return result
-
 
     @staticmethod
     def Binomial_kn_over_n(var, k, precision=None, skip_constant_factor=False):
@@ -602,7 +598,6 @@ class AsymptoticExpansionGenerators(SageObject):
             result *= (k/((k-1)*2*SCR('pi'))).sqrt()
 
         return result
-
 
     @staticmethod
     def SingularityAnalysis(var, zeta=1, alpha=0, beta=0, delta=0,
@@ -961,7 +956,6 @@ class AsymptoticExpansionGenerators(SageObject):
         if precision is None:
             precision = series_precision()
 
-
         if not normalized and not (beta in ZZ and delta in ZZ):
             raise ValueError("beta and delta must be integers")
         if delta != 0:
@@ -1039,7 +1033,6 @@ class AsymptoticExpansionGenerators(SageObject):
         result *= exponential_factor * polynomial_factor * logarithmic_factor
 
         return result
-
 
     @staticmethod
     @experimental(20050)
@@ -1208,7 +1201,6 @@ class AsymptoticExpansionGenerators(SageObject):
 
         return A(tau) + ansatz(prec=precision-1).map_coefficients(lambda term: term.subs(solution_dict).simplify_rational())
 
-
     @staticmethod
     @experimental(20050)
     def ImplicitExpansionPeriodicPart(var, phi, period, tau=None, precision=None):
@@ -1297,7 +1289,6 @@ class AsymptoticExpansionGenerators(SageObject):
         rho = tau/phi(tau)
         Z = aperiodic_expansion.parent().gen()
         return 1/rho * (aperiodic_expansion/(1 - 1/Z))**(1/period)
-
 
     @staticmethod
     def InverseFunctionAnalysis(var, phi, tau=None, period=1, precision=None):

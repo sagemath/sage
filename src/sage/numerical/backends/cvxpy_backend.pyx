@@ -8,7 +8,6 @@ AUTHORS:
 - Matthias Koeppe (2022-03)    : this backend
 
 """
-
 # ****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
@@ -22,7 +21,6 @@ AUTHORS:
 
 from sage.numerical.mip import MIPSolverException
 from sage.rings.real_double import RDF
-from sage.modules.free_module_element import vector
 from copy import copy
 import cvxpy
 from cvxpy.atoms.affine.add_expr import AddExpression
@@ -235,7 +233,7 @@ cdef class CVXPYBackend:
             1.0
         """
         cdef int vtype = int(binary) + int(continuous) + int(integer)
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")

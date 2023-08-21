@@ -453,7 +453,7 @@ cdef int refine_set(PartitionStack *PS, void *S, int *cells_to_refine_by, int ct
         return 0
     cdef subset *subset1 = <subset *> S
     cdef int *scratch = subset1.scratch
-    cdef int start, i, n = PS.degree, x
+    cdef int start, i, n = PS.degree
     start = 0
     while start < n:
         i = 0
@@ -463,7 +463,7 @@ cdef int refine_set(PartitionStack *PS, void *S, int *cells_to_refine_by, int ct
                 break
             i += 1
         sort_by_function(PS, start, scratch)
-        start += i+1
+        start += i + 1
     return 0
 
 cdef inline int _bint_cmp(bint a, bint b):
@@ -478,9 +478,10 @@ cdef int compare_sets(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree
     cdef bitset_s set1 = subset1.bits
     cdef bitset_s set2 = subset2.bits
     cdef int i, j
-    for i from 0 <= i < degree:
+    for i in range(degree):
         j = _bint_cmp(bitset_in(&set1, gamma_1[i]), bitset_in(&set2, gamma_2[i]))
-        if j != 0: return j
+        if j != 0:
+            return j
     return 0
 
 cdef void *allocate_subset(int n):
@@ -554,12 +555,11 @@ cdef int generate_child_subsets(void *S, aut_gp_and_can_lab *group, iterator *ch
     Sets up an iterator of augmentations, i.e., elements to add to the given set.
     """
     cdef subset *subset1 = <subset *> S
-    cdef bitset_s set1 = subset1.bits
     cdef int i, j, n = group.group.degree
     cdef subset_generator_data *sgd = <subset_generator_data *> child_iterator.data
     OP_clear(sgd.orbits)
-    for i from 0 <= i < group.num_gens:
-        for j from 0 <= j < n:
+    for i in range(group.num_gens):
+        for j in range(n):
             OP_join(sgd.orbits, j, group.generators[n*i + j])
     i = bitset_first(&subset1.bits)
     j = bitset_next(&subset1.bits, i+1)
@@ -594,7 +594,6 @@ cdef void *canonical_set_parent(void *child, void *parent, int *permutation, int
     storing the result to ``parent``.
     """
     cdef subset *set1 = <subset *> child
-    cdef bitset_t can_par
     cdef int i, max_in_can_lab, max_loc, n = set1.bits.size
     cdef subset *par
     if parent is NULL:
@@ -659,7 +658,8 @@ cdef void free_subset_gen(iterator *subset_gen):
     r"""
     Frees the iterator of subsets.
     """
-    if subset_gen is NULL: return
+    if subset_gen is NULL:
+        return
     cdef canonical_generator_data *cgd = <canonical_generator_data *> subset_gen.data
     deallocate_cgd(cgd)
     sig_free(subset_gen)
@@ -844,7 +844,8 @@ def sets_modulo_perm_group(list generators, int max_size,
         start_canonical_generator(group, NULL, n, subset_gen)
     while not mem_err:
         thing = <subset *> subset_iterator.next(subset_iterator.data, NULL, &mem_err)
-        if thing is NULL: break
+        if thing is NULL:
+            break
         out_list.append( bitset_list(&thing.bits) )
     free_subset_gen(subset_gen)
     SC_dealloc(group)

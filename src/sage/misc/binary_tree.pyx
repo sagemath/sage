@@ -63,7 +63,6 @@ cdef object binary_tree_get(binary_tree_node *self, int key):
 
 cdef object binary_tree_delete(binary_tree_node *self, int key):
     cdef object t
-    cdef binary_tree_node *cur
     if self.key > key:
         if self.left == NULL:
             return None
@@ -507,9 +506,9 @@ class Test:
         """
         from sage.misc.prandom import randint
         t = BinaryTree()
-        for i in xrange(cycles):
-            r = randint(0,8)
-            s = randint(0,values)
+        for i in range(cycles):
+            r = randint(0, 8)
+            s = randint(0, values)
             if r==1:
                 t.insert(s)
             elif r == 2:

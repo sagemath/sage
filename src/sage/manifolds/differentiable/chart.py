@@ -679,7 +679,6 @@ class DiffChart(Chart):
         return list(var(list_strings_velocities))
 
 
-
 #*****************************************************************************
 
 class RealDiffChart(DiffChart, RealChart):
@@ -1000,7 +999,6 @@ class RealDiffChart(DiffChart, RealChart):
         # Construction of the coordinate frame associated to the chart:
         self._frame = CoordFrame(self)
         self._coframe = self._frame._coframe
-
 
     def restrict(self, subset, restrictions=None):
         r"""

@@ -949,17 +949,17 @@ def Lfunction_from_character(chi, type="complex"):
     OMEGA=1.0/ ( CCC(0,1)**a * (CCC(modulus)).sqrt()/chi.gauss_sum() )
 
     if type == "complex":
-        dir_coeffs = [CCC(chi(n)) for n in xrange(1, modulus + 1)]
+        dir_coeffs = [CCC(chi(n)) for n in range(1, modulus + 1)]
         return Lfunction_C("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if type not in ["double", "int"]:
         raise ValueError("unknown type")
     if chi.order() != 2:
         raise ValueError("For non quadratic characters you must use type=\"complex\"")
     if type == "double":
-        dir_coeffs = [RRR(chi(n)) for n in xrange(1, modulus + 1)]
+        dir_coeffs = [RRR(chi(n)) for n in range(1, modulus + 1)]
         return Lfunction_D("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if type == "int":
-        dir_coeffs = [Integer(chi(n)) for n in xrange(1, modulus + 1)]
+        dir_coeffs = [Integer(chi(n)) for n in range(1, modulus + 1)]
         return Lfunction_I("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
 
 
@@ -990,15 +990,13 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
         True
         sage: (L.value(0.5, derivative=1) - 0.305999773835200).abs() < 1e-6
         True
-
     """
-    import sage.libs.lcalc.lcalc_Lfunction
     Q = RRR(E.conductor()).sqrt() / RRR(2 * pi)
     poles = []
     residues = []
     dir_coeffs = E.anlist(number_of_coeffs)
     dir_coeffs = [RRR(dir_coeffs[i]) / (RRR(i)).sqrt()
-                  for i in xrange(1, number_of_coeffs)]
+                  for i in range(1, number_of_coeffs)]
     OMEGA = E.root_number()
     return Lfunction_D("", 2, dir_coeffs, 0, Q, OMEGA, [1], [.5],
                        poles, residues)

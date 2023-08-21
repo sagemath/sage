@@ -9,13 +9,11 @@ Singleton categories
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
+from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
-from sage.structure.unique_representation import UniqueRepresentation
 
 from cpython.type cimport PyType_IsSubtype
 
@@ -83,6 +81,7 @@ cdef class Category_contains_method_by_parent_class:
             except AttributeError:
                 return False
 
+
 class Category_singleton(Category):
     """
     A base class for implementing singleton category
@@ -136,13 +135,14 @@ class Category_singleton(Category):
     One sees that containment tests for the singleton class is a lot faster
     than for a usual class::
 
-        sage: timeit("R in MyRings()", number=10000)                  # not tested
+        sage: # not tested
+        sage: timeit("R in MyRings()", number=10000)
         10000 loops, best of 3: 7.12 µs per loop
-        sage: timeit("R1 in MyRings()", number=10000)                 # not tested
+        sage: timeit("R1 in MyRings()", number=10000)
         10000 loops, best of 3: 6.98 µs per loop
-        sage: timeit("R in MyRingsSingleton()", number=10000)         # not tested
+        sage: timeit("R in MyRingsSingleton()", number=10000)
         10000 loops, best of 3: 3.08 µs per loop
-        sage: timeit("R2 in MyRingsSingleton()", number=10000)        # not tested
+        sage: timeit("R2 in MyRingsSingleton()", number=10000)
         10000 loops, best of 3: 2.99 µs per loop
 
     So this is an improvement, but not yet competitive with a pure

@@ -1,5 +1,5 @@
 r"""
-Features for testing the presence of package systems
+Features for testing the presence of package systems ``sage_spkg``, ``conda``, ``pip``, ``debian``, ``fedora`` etc.
 """
 
 # *****************************************************************************

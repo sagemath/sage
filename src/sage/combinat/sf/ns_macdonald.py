@@ -533,8 +533,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: q,t = var('q,t')
-            sage: a.coeff(q,t)
+            sage: q,t = var('q,t')                                                      # optional - sage.symbolic
+            sage: a.coeff(q,t)                                                          # optional - sage.symbolic
             (t - 1)^4/((q^2*t^3 - 1)^2*(q*t^2 - 1)^2)
         """
         res = 1
@@ -554,8 +554,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: q,t = var('q,t')
-            sage: a.coeff_integral(q,t)
+            sage: q,t = var('q,t')                                                      # optional - sage.symbolic
+            sage: a.coeff_integral(q,t)                                                 # optional - sage.symbolic
             (q^2*t^3 - 1)^2*(q*t^2 - 1)^2*(t - 1)^4
         """
         res = 1
@@ -806,15 +806,15 @@ def _check_muqt(mu, q, t, pi=None):
 
     ::
 
-        sage: q,t = var('q,t')
-        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,None)
+        sage: q,t = var('q,t')                                                          # optional - sage.symbolic
+        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,None)                            # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: you must specify either both q and t or neither of them
 
     ::
 
-        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,2)
+        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,2)                               # optional - sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: the parents of q and t must be the same

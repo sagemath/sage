@@ -62,9 +62,7 @@ def is_KlyachkoBundle(X):
 
     - ``X`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: A boolean.
 
     EXAMPLES::
 
@@ -93,12 +91,12 @@ def Bundle(toric_variety, multi_filtration, check=True):
     EXAMPLES::
 
         sage: P1 = toric_varieties.P1()
-        sage: v1, v2, v3 = [(1,0,0),(0,1,0),(0,0,1)]
-        sage: F1 = FilteredVectorSpace({1:[v1, v2, v3], 3:[v1]})
-        sage: F2 = FilteredVectorSpace({0:[v1, v2, v3], 2:[v2, v3]})
+        sage: v1, v2, v3 = [(1,0,0), (0,1,0), (0,0,1)]
+        sage: F1 = FilteredVectorSpace({1: [v1, v2, v3], 3: [v1]})
+        sage: F2 = FilteredVectorSpace({0: [v1, v2, v3], 2: [v2, v3]})
         sage: P1 = toric_varieties.P1()
         sage: r1, r2 = P1.fan().rays()
-        sage: F = MultiFilteredVectorSpace({r1:F1, r2:F2});  F
+        sage: F = MultiFilteredVectorSpace({r1: F1, r2: F2});  F
         Filtrations
             N(-1): QQ^3 >= QQ^2 >= QQ^2 >=  0   >= 0
              N(1): QQ^3 >= QQ^3 >= QQ^1 >= QQ^1 >= 0
@@ -110,7 +108,7 @@ def Bundle(toric_variety, multi_filtration, check=True):
         sage: P1.sheaves.Klyachko(F)
         Rank 3 bundle on 1-d CPR-Fano toric variety covered by 2 affine patches.
 
-        sage: P1.sheaves.Klyachko({r1:F1, r2:F2})   # alternative
+        sage: P1.sheaves.Klyachko({r1: F1, r2: F2})   # alternative
         Rank 3 bundle on 1-d CPR-Fano toric variety covered by 2 affine patches.
 
     The above is just a shorthand for::
@@ -157,8 +155,8 @@ class KlyachkoBundle_class(SageObject):
             sage: P1 = toric_varieties.P1()
             sage: r1, r2 = P1.fan().rays()
             sage: F = MultiFilteredVectorSpace({
-            ....:      r1:FilteredVectorSpace(3,1),
-            ....:      r2:FilteredVectorSpace(3,0)});  F
+            ....:      r1: FilteredVectorSpace(3,1),
+            ....:      r2: FilteredVectorSpace(3,0)});  F
             Filtrations
                 N(-1): QQ^3 >=  0   >= 0
                  N(1): QQ^3 >= QQ^3 >= 0
@@ -183,9 +181,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the base toric variety.
 
-        OUTPUT:
-
-        A toric variety.
+        OUTPUT: A toric variety.
 
         EXAMPLES::
 
@@ -201,9 +197,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the base field.
 
-        OUTPUT:
-
-        A field.
+        OUTPUT: A field.
 
         EXAMPLES::
 
@@ -217,9 +211,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the generic fiber of the vector bundle.
 
-        OUTPUT:
-
-        A vector space over :meth:`base_ring`.
+        OUTPUT: A vector space over :meth:`base_ring`.
 
         EXAMPLES::
 
@@ -227,16 +219,14 @@ class KlyachkoBundle_class(SageObject):
             sage: T_P2.fiber()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         return VectorSpace(self.base_ring(), self.rank())
 
     def rank(self):
         r"""
         Return the rank of the vector bundle.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -250,9 +240,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: A string.
 
         EXAMPLES::
 
@@ -331,8 +319,7 @@ class KlyachkoBundle_class(SageObject):
             sage: TX = toric_varieties.dP6().sheaves.tangent_bundle()
             sage: TX.get_degree(0, 1)
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1]
+            Basis matrix: [0 1]
         """
         return self.get_filtration(ray).get_degree(i)
 
@@ -363,12 +350,10 @@ class KlyachkoBundle_class(SageObject):
             sage: V = X.sheaves.tangent_bundle()
             sage: V.filtration_intersection(fan(1)[0], 1)
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.filtration_intersection(fan(2)[0], 1)
             Vector space of degree 2 and dimension 0 over Rational Field
-            Basis matrix:
-            []
+            Basis matrix: []
         """
         sigma = self._variety.fan().embed(sigma)
         V = self.fiber()
@@ -401,16 +386,13 @@ class KlyachkoBundle_class(SageObject):
             sage: V = X.sheaves.tangent_bundle()
             sage: V.E_degree(X.fan().ray(0), (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.E_degree(X.fan(1)[0], (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.E_degree(0, (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
         """
         fan = self.variety().fan()
         N = fan.lattice()
@@ -430,7 +412,7 @@ class KlyachkoBundle_class(SageObject):
     @cached_method
     def E_intersection(self, sigma, m):
         r"""
-        Return the vector subspace ``E^\sigma(m)``.
+        Return the vector subspace `E^\sigma(m)`.
 
         See [Kly1990]_, equation 4.1.
 
@@ -441,9 +423,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT:
-
-        The subspace `E^\sigma(m)`
+        OUTPUT: The subspace `E^\sigma(m)`.
 
         EXAMPLES::
 
@@ -452,12 +432,10 @@ class KlyachkoBundle_class(SageObject):
             sage: V = X.sheaves.tangent_bundle()
             sage: V.E_intersection(fan(1)[0], (1,0))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+            Basis matrix: [1 0]
             sage: V.E_intersection(fan(2)[0], (-1,1))
             Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1]
+            Basis matrix: [0 1]
 
         For the empty cone, this is always the whole vector space::
 
@@ -484,9 +462,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT:
-
-        The subspace `E_\sigma(m)`
+        OUTPUT: The subspace `E_\sigma(m)`.
 
         EXAMPLES::
 
@@ -499,17 +475,16 @@ class KlyachkoBundle_class(SageObject):
             sage: m.set_immutable()
             sage: V.E_quotient(cone, m)
             Vector space quotient V/W of dimension 1 over Rational Field where
-            V: Vector space of dimension 2 over Rational Field
-            W: Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 0]
+             V: Vector space of dimension 2 over Rational Field
+             W: Vector space of degree 2 and dimension 1 over Rational Field
+                Basis matrix: [1 0]
             sage: V.E_quotient(fan(2)[0], (-1,1))
             Vector space quotient V/W of dimension 0 over Rational Field where
-            V: Vector space of dimension 2 over Rational Field
-            W: Vector space of degree 2 and dimension 2 over Rational Field
-            Basis matrix:
-            [1 0]
-            [0 1]
+             V: Vector space of dimension 2 over Rational Field
+             W: Vector space of degree 2 and dimension 2 over Rational Field
+                Basis matrix:
+                [1 0]
+                [0 1]
         """
         sigma = self._variety.fan().embed(sigma)
         V = self.fiber()
@@ -545,10 +520,10 @@ class KlyachkoBundle_class(SageObject):
 
             sage: P3 = toric_varieties.P(3)
             sage: rays = [(1,0,0), (0,1,0), (0,0,1)]
-            sage: F1 = FilteredVectorSpace(rays, {0:[0], 1:[2], 2:[1]})
+            sage: F1 = FilteredVectorSpace(rays, {0: [0], 1: [2], 2: [1]})
             sage: F2 = FilteredVectorSpace(3, 0)
             sage: r = P3.fan().rays()
-            sage: V = P3.sheaves.Klyachko({r[0]:F1, r[1]:F2, r[2]:F2, r[3]:F2})
+            sage: V = P3.sheaves.Klyachko({r[0]: F1, r[1]: F2, r[2]: F2, r[3]: F2})
             sage: tau = Cone([(1,0,0), (0,1,0)])
             sage: sigma = Cone([(1,0,0)])
             sage: M = P3.fan().dual_lattice()
@@ -556,30 +531,26 @@ class KlyachkoBundle_class(SageObject):
             sage: m.set_immutable()
             sage: V.E_quotient(sigma, m)
             Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
+             V: Vector space of dimension 3 over Rational Field
+             W: Vector space of degree 3 and dimension 1 over Rational Field
+                Basis matrix: [0 1 0]
             sage: V.E_quotient(tau, m)
             Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
+             V: Vector space of dimension 3 over Rational Field
+             W: Vector space of degree 3 and dimension 1 over Rational Field
+                Basis matrix: [0 1 0]
             sage: V.E_quotient_projection(sigma, tau, m)
             Vector space morphism represented by the matrix:
-            [1 0]
-            [0 1]
-            Domain: Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
-            Codomain: Vector space quotient V/W of dimension 2 over Rational Field where
-            V: Vector space of dimension 3 over Rational Field
-            W: Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [0 1 0]
+             [1 0]
+             [0 1]
+             Domain:   Vector space quotient V/W of dimension 2 over Rational Field where
+                       V: Vector space of dimension 3 over Rational Field
+                       W: Vector space of degree 3 and dimension 1 over Rational Field
+                          Basis matrix: [0 1 0]
+             Codomain: Vector space quotient V/W of dimension 2 over Rational Field where
+                       V: Vector space of dimension 3 over Rational Field
+                       W: Vector space of degree 3 and dimension 1 over Rational Field
+                          Basis matrix: [0 1 0]
         """
         if not sigma.is_face_of(tau):
             raise ValueError('the cone sigma is not a face of the cone tau')
@@ -608,10 +579,10 @@ class KlyachkoBundle_class(SageObject):
 
             sage: P3 = toric_varieties.P(3)
             sage: rays = [(1,0,0), (0,1,0), (0,0,1)]
-            sage: F1 = FilteredVectorSpace(rays, {0:[0], 1:[2], 2:[1]})
-            sage: F2 = FilteredVectorSpace(rays, {0:[1,2], 1:[0]})
+            sage: F1 = FilteredVectorSpace(rays, {0: [0], 1: [2], 2: [1]})
+            sage: F2 = FilteredVectorSpace(rays, {0: [1,2], 1: [0]})
             sage: r = P3.fan().rays()
-            sage: V = P3.sheaves.Klyachko({r[0]:F1, r[1]:F2, r[2]:F2, r[3]:F2})
+            sage: V = P3.sheaves.Klyachko({r[0]: F1, r[1]: F2, r[2]: F2, r[3]: F2})
             sage: tau = Cone([(1,0,0), (0,1,0)])
             sage: sigma = Cone([(1, 0, 0)])
             sage: M = P3.fan().dual_lattice()
@@ -621,7 +592,7 @@ class KlyachkoBundle_class(SageObject):
 
             sage: F = CyclotomicField(3)
             sage: P3 = toric_varieties.P(3).change_ring(F)
-            sage: V = P3.sheaves.Klyachko({r[0]:F1, r[1]:F2, r[2]:F2, r[3]:F2})
+            sage: V = P3.sheaves.Klyachko({r[0]: F1, r[1]: F2, r[2]: F2, r[3]: F2})
             sage: V.cohomology_complex(m)
             Chain complex with at most 2 nonzero terms over Cyclotomic
             Field of order 3 and degree 2
@@ -702,7 +673,7 @@ class KlyachkoBundle_class(SageObject):
             H^*i(P^2, TP^2)_M(1, -1) = (1, 0, 0)
             H^*i(P^2, TP^2)_M(1, 0) = (1, 0, 0)
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         if weight is None:
             raise NotImplementedError('sum over weights is not implemented')
         else:
@@ -737,9 +708,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -748,7 +717,7 @@ class KlyachkoBundle_class(SageObject):
             sage: V2 = X.sheaves.trivial_bundle(2)
             sage: V2 == V1
             False
-            sage: V2 == V1+V1
+            sage: V2 == V1 + V1
             True
 
             sage: T_X = X.sheaves.tangent_bundle()
@@ -774,9 +743,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -800,9 +767,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- a Klyachko bundle over the same base.
 
-        OUTPUT:
-
-        The direct sum as a new Klyachko bundle.
+        OUTPUT: The direct sum as a new Klyachko bundle.
 
         EXAMPLES::
 
@@ -832,9 +797,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- a Klyachko bundle over the same base.
 
-        OUTPUT:
-
-        The tensor product as a new Klyachko bundle.
+        OUTPUT: The tensor product as a new Klyachko bundle.
 
         EXAMPLES::
 
@@ -888,18 +851,16 @@ class KlyachkoBundle_class(SageObject):
 
         - ``n`` -- integer.
 
-        OUTPUT:
-
-        The `n`-th symmetric power as a new Klyachko bundle.
+        OUTPUT: The `n`-th symmetric power as a new Klyachko bundle.
 
         EXAMPLES::
 
             sage: P1 = toric_varieties.P1()
             sage: H = P1.divisor(0)
             sage: L = P1.sheaves.line_bundle(H)
-            sage: (L+L).symmetric_power(2)
+            sage: (L + L).symmetric_power(2)
             Rank 3 bundle on 1-d CPR-Fano toric variety covered by 2 affine patches.
-            sage: (L+L).symmetric_power(2) == L*L+L*L+L*L
+            sage: (L + L).symmetric_power(2) == L*L + L*L + L*L
             True
         """
         filt = self._filt.symmetric_power(n)
@@ -909,9 +870,7 @@ class KlyachkoBundle_class(SageObject):
         """
         Return the dual bundle.
 
-        OUTPUT:
-
-        The dual bundle as a new Klyachko bundle.
+        OUTPUT: The dual bundle as a new Klyachko bundle.
 
         EXAMPLES::
 

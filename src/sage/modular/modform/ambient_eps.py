@@ -75,7 +75,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
-import sage.rings.all as rings
+from sage.rings.integer import Integer
 
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
@@ -200,7 +200,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             return self
         return ambient_R.ModularFormsAmbient_R(self, base_ring=base_ring)
 
-    @cached_method(key=lambda self, sign: rings.Integer(sign)) # convert sign to an Integer before looking this up in the cache
+    @cached_method(key=lambda self, sign: Integer(sign)) # convert sign to an Integer before looking this up in the cache
     def modular_symbols(self, sign=0):
         """
         Return corresponding space of modular symbols with given sign.
@@ -220,7 +220,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             ...
             ValueError: sign must be -1, 0, or 1
         """
-        sign = rings.Integer(sign)
+        sign = Integer(sign)
         return modsym.ModularSymbols(self.character(),
                                      weight=self.weight(),
                                      sign=sign,

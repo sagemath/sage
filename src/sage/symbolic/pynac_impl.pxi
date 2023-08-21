@@ -1873,7 +1873,7 @@ cdef py_atan2(x, y):
         sage: atan2(RDF(-3), RDF(-1))
         -1.8925468811915387
     """
-    from sage.symbolic.constants import pi, NaN
+    from sage.symbolic.constants import I, pi, NaN
     P = coercion_model.common_parent(x, y)
     if P is ZZ:
         P = RR
@@ -2417,22 +2417,21 @@ import sage.rings.real_double
 ginac_pyinit_Float(sage.rings.real_double.RDF)
 
 cdef Element pynac_I
-I = None
 
 
 def init_pynac_I():
     """
-    Initialize the numeric I object in pynac. We use the generator of QQ(i).
+    Initialize the numeric ``I`` object in pynac. We use the generator of ``QQ(i)``.
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import I as symbolic_I
+        sage: from sage.symbolic.constants import I as symbolic_I
         sage: symbolic_I
         I
         sage: symbolic_I^2
         -1
 
-    Note that conversions to real fields will give TypeErrors::
+    Note that conversions to real fields will give :class:`TypeError`::
 
         sage: float(symbolic_I)
         Traceback (most recent call last):
@@ -2480,22 +2479,22 @@ def init_pynac_I():
         sage: maxima(2*symbolic_I)
         2*%i
 
-    TESTS:
+    TESTS::
 
         sage: repr(symbolic_I)
         'I'
         sage: latex(symbolic_I)
         i
 
-        sage: sage.symbolic.expression.init_pynac_I()
-        sage: type(sage.symbolic.expression.I)
+        sage: I = sage.symbolic.expression.init_pynac_I()
+        sage: type(I)
         <class 'sage.symbolic.expression.Expression'>
-        sage: type(sage.symbolic.expression.I.pyobject())
+        sage: type(I.pyobject())
         <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
     Check that :trac:`10064` is fixed::
 
-        sage: y = symbolic_I*symbolic_I*x / x # so y is the expression -1
+        sage: y = symbolic_I*symbolic_I*x / x  # so y is the expression -1
         sage: y.is_positive()
         False
         sage: z = -x / x
@@ -2509,12 +2508,12 @@ def init_pynac_I():
         sage: x * ((3*I + 4)*x - 5)
         ((3*I + 4)*x - 5)*x
     """
-    global pynac_I, I
+    global pynac_I
     from sage.rings.number_field.number_field import GaussianField
     pynac_I = GaussianField().gen()
     ginac_pyinit_I(pynac_I)
     from .ring import SR
-    I = new_Expression_from_GEx(SR, g_I)
+    return new_Expression_from_GEx(SR, g_I)
 
 
 def init_function_table():
@@ -2610,6 +2609,5 @@ def init_function_table():
 
 
 init_function_table()
-init_pynac_I()
 
 set_ginac_fn_serial()

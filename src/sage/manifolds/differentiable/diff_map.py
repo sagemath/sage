@@ -1144,7 +1144,6 @@ class DiffMap(ContinuousMap):
                             resu._components[frame] = comp
         return resu
 
-
     def pushforward(self, tensor):
         r"""
         Pushforward operator associated with ``self``.

@@ -234,11 +234,7 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element
 from sage.structure.element import is_Matrix
-from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.rings.integer_ring import ZZ
 
 
@@ -2134,11 +2130,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.remove_constraint(2)
             sage: p.solve()
             6.0
-
         """
         from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
         from sage.numerical.linear_tensor import is_LinearTensor
-        from sage.numerical.linear_tensor_constraints import  is_LinearTensorConstraint
+        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
         if is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
             # Find the parent for the coefficients
             if is_LinearFunction(linear_function):

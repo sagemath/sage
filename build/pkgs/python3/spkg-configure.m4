@@ -20,7 +20,7 @@ SAGE_SPKG_CONFIGURE([python3], [
    dnl
    dnl However, if we add another package (providing a shared library linked into a Python module)
    dnl that also uses libsqlite3, then we will have to put the DEPCHECK back in.
-   SAGE_SPKG_DEPCHECK([bzip2 liblzma libffi], [
+   SAGE_SPKG_DEPCHECK([bzip2 liblzma libffi zlib], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
       dnl  Trac #31160: We no longer check for readline here.

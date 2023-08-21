@@ -819,7 +819,6 @@ class DiffScalarField(ScalarField):
     derivative = differential  # allows one to use functional notation,
                                # e.g. diff(f) for f.differential()
 
-
     def lie_derivative(self, vector):
         r"""
         Compute the Lie derivative with respect to a vector field.

@@ -35,8 +35,6 @@ There is also a mixed version:
 
 from cpython cimport *
 
-from sage.symbolic.ring import SR
-
 
 cdef int print_order_c(Expression lhs, Expression rhs):
     """
@@ -80,8 +78,10 @@ cpdef int print_order(lhs, rhs) except -2:
         1
     """
     if not isinstance(lhs, Expression):
+        from sage.symbolic.ring import SR
         lhs = SR(lhs)
     if not isinstance(rhs, Expression):
+        from sage.symbolic.ring import SR
         rhs = SR(rhs)
     return print_order_c(lhs, rhs)
 
@@ -103,7 +103,10 @@ class _print_key():
             sage: _print_key(1)
             <sage.symbolic.expression._print_key object at 0x...>
         """
-        self.ex = ex if isinstance(ex, Expression) else SR(ex)
+        if not isinstance(ex, Expression):
+            from sage.symbolic.ring import SR
+            ex = SR(ex)
+        self.ex = ex
 
     def __lt__(self, other):
         """
@@ -171,7 +174,10 @@ class _math_key():
             sage: _math_key(1)
             <sage.symbolic.expression._math_key object at 0x...>
         """
-        self.ex = ex if isinstance(ex, Expression) else SR(ex)
+        if not isinstance(ex, Expression):
+            from sage.symbolic.ring import SR
+            ex = SR(ex)
+        self.ex = ex
 
     def __lt__(self, other):
         """
@@ -284,8 +290,10 @@ cpdef int mixed_order(lhs, rhs) except -2:
     if lhs is rhs:
         return 0
     if not isinstance(lhs, Expression):
+        from sage.symbolic.ring import SR
         lhs = SR(lhs)
     if not isinstance(rhs, Expression):
+        from sage.symbolic.ring import SR
         rhs = SR(rhs)
     less_than = _mixed_key(lhs) < _mixed_key(rhs)
     if less_than:
@@ -318,7 +326,10 @@ class _mixed_key():
             sage: _mixed_key(1)
             <sage.symbolic.expression._mixed_key object at 0x...>
         """
-        self.ex = ex if isinstance(ex, Expression) else SR(ex)
+        if not isinstance(ex, Expression):
+            from sage.symbolic.ring import SR
+            ex = SR(ex)
+        self.ex = ex
 
     def __lt__(self, other):
         """

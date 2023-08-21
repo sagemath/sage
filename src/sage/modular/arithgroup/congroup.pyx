@@ -105,10 +105,10 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         14
     """
     if N % M != 0:
-        raise ArithmeticError("M (=%s) must be a divisor of N (=%s)" % (M,N))
+        raise ArithmeticError(f"M (={M}) must be a divisor of N (={N})")
 
-    if (N/M) % t != 0:
-        raise ArithmeticError("t (=%s) must be a divisor of N/M (=%s)"%(t,N/M))
+    if (N // M) % t != 0:
+        raise ArithmeticError(f"t (={t}) must be a divisor of N/M (={N//M})")
 
     cdef int n, i, j, k, aa, bb, cc, dd, g, Ndivt, halfmax, is_new
     cdef int* R
@@ -122,7 +122,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
     while k < n:
         # try to find another coset representative.
         cc = M*random.randrange(-halfmax, halfmax+1)
-        dd =   random.randrange(-halfmax, halfmax+1)
+        dd = random.randrange(-halfmax, halfmax+1)
         g = arith_int.c_xgcd_int(-cc,dd,&bb,&aa)
         if g == 0:
             continue
@@ -134,8 +134,8 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         is_new = 1
         for i from 0 <= i < k:
             j = 4*i
-            if (R[j+1]*aa - R[j]*bb)%t == 0 and \
-               (R[j+3]*cc - R[j+2]*dd)%Ndivt == 0:
+            if (R[j+1]*aa - R[j]*bb) % t == 0 and \
+               (R[j+3]*cc - R[j+2]*dd) % Ndivt == 0:
                 is_new = 0
                 break
         # If our matrix is new add it to the list.
@@ -148,11 +148,12 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
 
     # Return the list left multiplied by T.
     S = []
-    for i from 0 <= i < k:
+    for i in range(k):
         j = 4*i
         S.append([R[j], R[j+1], R[j+2]*t, R[j+3]*t])
     sig_free(R)
     return S
+
 
 def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     r"""
@@ -204,29 +205,28 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         sage: len(degeneracy_coset_representatives_gamma1(13, 1, 13))
         168
     """
-
     if N % M != 0:
-        raise ArithmeticError("M (=%s) must be a divisor of N (=%s)" % (M,N))
+        raise ArithmeticError(f"M (={M}) must be a divisor of N (={N})")
 
-    if (N/M) % t != 0:
-        raise ArithmeticError("t (=%s) must be a divisor of N/M (=%s)"%(t,N/M))
+    if (N // M) % t != 0:
+        raise ArithmeticError(f"t (={t}) must be a divisor of N/M (={N//M})")
 
     cdef int d, g, i, j, k, n, aa, bb, cc, dd, Ndivt, halfmax, is_new
     cdef int* R
 
     # total number of coset representatives that we'll find
     n = Gamma1(N).index() / Gamma1(M).index()
-    d = arith_int.c_gcd_int(t, N/t)
+    d = arith_int.c_gcd_int(t, N // t)
     n = n / d
     k = 0   # number found so far
-    Ndivt = N / t
+    Ndivt = N // t
     R = <int*>check_allocarray(4 * n, sizeof(int))
     halfmax = 2*(n+10)
     while k < n:
         # try to find another coset representative.
-        cc =     M*random.randrange(-halfmax, halfmax+1)
-        dd = 1 + M*random.randrange(-halfmax, halfmax+1)
-        g = arith_int.c_xgcd_int(-cc,dd,&bb,&aa)
+        cc = M * random.randrange(-halfmax, halfmax + 1)
+        dd = 1 + M * random.randrange(-halfmax, halfmax + 1)
+        g = arith_int.c_xgcd_int(-cc, dd, &bb, &aa)
         if g == 0:
             continue
         cc = cc / g
@@ -239,10 +239,10 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         is_new = 1
         for i from 0 <= i < k:
             j = 4*i
-            if (R[j] - aa)%t == 0 and \
-               (R[j+1] - bb)%t == 0 and \
-               (R[j+2] - cc)%(Ndivt) == 0 and \
-               (R[j+3] - dd)%(Ndivt) == 0:
+            if (R[j] - aa) % t == 0 and \
+               (R[j+1] - bb) % t == 0 and \
+               (R[j+2] - cc) % Ndivt == 0 and \
+               (R[j+3] - dd) % Ndivt == 0:
                 is_new = 0
                 break
         # If our matrix is new add it to the list.
@@ -263,6 +263,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         S.append([R[j], R[j+1], R[j+2]*t, R[j+3]*t])
     sig_free(R)
     return S
+
 
 def generators_helper(coset_reps, level):
     r"""

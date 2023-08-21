@@ -13,22 +13,22 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: x,y,z = ProjectiveSpace(2, GF(5), names='x,y,z').gens()
-    sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
-    sage: pts = C.rational_points(); pts
+    sage: x,y,z = ProjectiveSpace(2, GF(5), names='x,y,z').gens()                       # optional - sage.rings.finite_rings
+    sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                              # optional - sage.rings.finite_rings
+    sage: pts = C.rational_points(); pts                                                # optional - sage.rings.finite_rings
     [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1), (3 : 1 : 1), (3 : 4 : 1)]
-    sage: D1 = C.divisor(pts[0])*3
-    sage: D2 = C.divisor(pts[1])
-    sage: D3 = 10*C.divisor(pts[5])
-    sage: D1.parent() is D2.parent()
+    sage: D1 = C.divisor(pts[0])*3                                                      # optional - sage.rings.finite_rings
+    sage: D2 = C.divisor(pts[1])                                                        # optional - sage.rings.finite_rings
+    sage: D3 = 10*C.divisor(pts[5])                                                     # optional - sage.rings.finite_rings
+    sage: D1.parent() is D2.parent()                                                    # optional - sage.rings.finite_rings
     True
-    sage: D = D1 - D2 + D3; D
+    sage: D = D1 - D2 + D3; D                                                           # optional - sage.rings.finite_rings
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
-    sage: D[1][0]
+    sage: D[1][0]                                                                       # optional - sage.rings.finite_rings
     -1
-    sage: D[1][1]
+    sage: D[1][1]                                                                       # optional - sage.rings.finite_rings
     Ideal (x, z) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
-    sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10,pts[5])])
+    sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10, pts[5])])                          # optional - sage.rings.finite_rings
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
 #*******************************************************************************
@@ -107,9 +107,9 @@ def is_Divisor(x):
     EXAMPLES::
 
         sage: from sage.schemes.generic.divisor import is_Divisor
-        sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-        sage: C = Curve(y^2 - x^9 - x)
-        sage: is_Divisor( C.divisor([]) )
+        sage: x,y = AffineSpace(2, GF(5), names='xy').gens()                            # optional - sage.rings.finite_rings
+        sage: C = Curve(y^2 - x^9 - x)                                                  # optional - sage.rings.finite_rings
+        sage: is_Divisor(C.divisor([]))                                                 # optional - sage.rings.finite_rings
         True
         sage: is_Divisor("Ceci n'est pas un diviseur")
         False
@@ -223,13 +223,13 @@ class Divisor_generic(FormalSum):
 
         EXAMPLES::
 
-            sage: A.<x, y> = AffineSpace(2, GF(5))
-            sage: C = Curve(y^2 - x^9 - x)
-            sage: pts = C.rational_points(); pts
+            sage: A.<x, y> = AffineSpace(2, GF(5))                                      # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 - x^9 - x)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.rational_points(); pts                                        # optional - sage.rings.finite_rings
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
-            sage: D = C.divisor(pts[0])*3 - C.divisor(pts[1]); D
+            sage: D = C.divisor(pts[0])*3 - C.divisor(pts[1]); D                        # optional - sage.rings.finite_rings
             3*(x, y) - (x - 2, y - 2)
-            sage: D.scheme()
+            sage: D.scheme()                                                            # optional - sage.rings.finite_rings
             Affine Plane Curve over Finite Field of size 5 defined by -x^9 + y^2 - x
         """
         return self.parent().scheme()
@@ -291,7 +291,7 @@ class Divisor_curve(Divisor_generic):
             sage: P = E(0,0)
             sage: from sage.schemes.generic.divisor import Divisor_curve
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
-            sage: Divisor_curve([(1,P)], parent=DivisorGroup(E))
+            sage: Divisor_curve([(1, P)], parent=DivisorGroup(E))
             (x, y)
         """
         from sage.schemes.generic.divisor_group import DivisorGroup_curve
@@ -369,31 +369,31 @@ class Divisor_curve(Divisor_generic):
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-            sage: C = Curve(y^2 - x^9 - x)
-            sage: pts = C.rational_points(); pts
+            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()                        # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 - x^9 - x)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.rational_points(); pts                                        # optional - sage.rings.finite_rings
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
-            sage: D = C.divisor_group()([(3,pts[0]), (-1, pts[1])]); D
+            sage: D = C.divisor_group()([(3, pts[0]), (-1, pts[1])]); D                 # optional - sage.rings.finite_rings
             3*(x, y) - (x - 2, y - 2)
-            sage: D.support()
+            sage: D.support()                                                           # optional - sage.rings.finite_rings
             [(0, 0), (2, 2)]
 
         TESTS:
 
         This checks that :trac:`10732` is fixed::
 
-            sage: R.<x, y, z> = GF(5)[]
-            sage: C = Curve(x^7 + y^7 + z^7)
-            sage: pts = C.rational_points()
-            sage: D = C.divisor([(2, pts[0])])
-            sage: D.support()
+            sage: R.<x, y, z> = GF(5)[]                                                 # optional - sage.rings.finite_rings
+            sage: C = Curve(x^7 + y^7 + z^7)                                            # optional - sage.rings.finite_rings
+            sage: pts = C.rational_points()                                             # optional - sage.rings.finite_rings
+            sage: D = C.divisor([(2, pts[0])])                                          # optional - sage.rings.finite_rings
+            sage: D.support()                                                           # optional - sage.rings.finite_rings
             [(0 : 4 : 1)]
-            sage: (D + D).support()
+            sage: (D + D).support()                                                     # optional - sage.rings.finite_rings
             [(0 : 4 : 1)]
-            sage: E = C.divisor([(-3, pts[1]), (1, pts[2])])
-            sage: (D - 2*E).support()
+            sage: E = C.divisor([(-3, pts[1]), (1, pts[2])])                            # optional - sage.rings.finite_rings
+            sage: (D - 2*E).support()                                                   # optional - sage.rings.finite_rings
             [(0 : 4 : 1), (1 : 2 : 1), (2 : 1 : 1)]
-            sage: (D - D).support()
+            sage: (D - D).support()                                                     # optional - sage.rings.finite_rings
             []
         """
         try:
@@ -411,25 +411,24 @@ class Divisor_curve(Divisor_generic):
             self._support = [s[1] for s in pts]
             return self._support
 
-
     def coefficient(self, P):
         """
         Return the coefficient of a given point P in this divisor.
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-            sage: C = Curve(y^2 - x^9 - x)
-            sage: pts = C.rational_points(); pts
+            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()                        # optional - sage.rings.finite_rings
+            sage: C = Curve(y^2 - x^9 - x)                                              # optional - sage.rings.finite_rings
+            sage: pts = C.rational_points(); pts                                        # optional - sage.rings.finite_rings
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
-            sage: D = C.divisor(pts[0])
-            sage: D.coefficient(pts[0])
+            sage: D = C.divisor(pts[0])                                                 # optional - sage.rings.finite_rings
+            sage: D.coefficient(pts[0])                                                 # optional - sage.rings.finite_rings
             1
-            sage: D = C.divisor([(3,pts[0]), (-1,pts[1])]); D
+            sage: D = C.divisor([(3, pts[0]), (-1, pts[1])]); D                         # optional - sage.rings.finite_rings
             3*(x, y) - (x - 2, y - 2)
-            sage: D.coefficient(pts[0])
+            sage: D.coefficient(pts[0])                                                 # optional - sage.rings.finite_rings
             3
-            sage: D.coefficient(pts[1])
+            sage: D.coefficient(pts[1])                                                 # optional - sage.rings.finite_rings
             -1
         """
         P = self.parent().scheme()(P)

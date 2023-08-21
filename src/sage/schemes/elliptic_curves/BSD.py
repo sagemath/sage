@@ -3,6 +3,7 @@
 
 from sage.arith.misc import prime_divisors
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.rings.number_field.number_field import QuadraticField
 from sage.functions.other import ceil
@@ -21,7 +22,8 @@ class BSD_data:
         sage: D.curve=EllipticCurve('11a')
         sage: D.update()
         sage: D.Sha
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+        Tate-Shafarevich group for the Elliptic Curve
+         defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
     def __init__(self):
         self.curve = None
@@ -52,7 +54,8 @@ class BSD_data:
             sage: D.curve = EllipticCurve('11a')
             sage: D.update()
             sage: D.Sha
-            Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Tate-Shafarevich group for the Elliptic Curve
+             defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
         """
         self.two_tor_rk = self.curve.two_torsion_rank()
         self.Sha = self.curve.sha()
@@ -87,11 +90,17 @@ def simon_two_descent_work(E, two_tor_rk):
         sage: from sage.schemes.elliptic_curves.BSD import simon_two_descent_work
         sage: E = EllipticCurve('14a')
         sage: simon_two_descent_work(E, E.two_torsion_rank())
+        doctest:warning
+        ...
+        DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
+        See https://github.com/sagemath/sage/issues/35621 for details.
         (0, 0, 0, 0, [])
         sage: E = EllipticCurve('37a')
         sage: simon_two_descent_work(E, E.two_torsion_rank())
         (1, 1, 0, 0, [(0 : 0 : 1)])
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35621, 'Use the two-descent in pari instead, as this script has been ported over to pari.')
     rank_lower_bd, two_sel_rk, gens = E.simon_two_descent()
     rank_upper_bd = two_sel_rk - two_tor_rk
     gens = [P for P in gens if P.additive_order() == Infinity]
@@ -137,6 +146,55 @@ def mwrank_two_descent_work(E, two_tor_rk):
     sha2_lower_bd = MWRC.selmer_rank() - two_tor_rk - rank_upper_bd
     sha2_upper_bd = MWRC.selmer_rank() - two_tor_rk - rank_lower_bd
     return rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens
+
+def pari_two_descent_work(E):
+    r"""
+    Prepare the output from pari by two-isogeny.
+
+    INPUT:
+
+    - ``E`` -- an elliptic curve
+
+    OUTPUT: A tuple of 5 elements with the first 4 being integers.
+
+    - a lower bound on the rank
+
+    - an upper bound on the rank
+
+    - a lower bound on the rank of Sha[2]
+
+    - an upper bound on the rank of Sha[2]
+
+    - a list of the generators found
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.BSD import pari_two_descent_work
+        sage: E = EllipticCurve('14a')
+        sage: pari_two_descent_work(E)
+        (0, 0, 0, 0, [])
+        sage: E = EllipticCurve('37a')
+        sage: pari_two_descent_work(E) # random, up to sign
+        (1, 1, 0, 0, [(0 : -1 : 1)])
+        sage: E = EllipticCurve('210e7')
+        sage: pari_two_descent_work(E)
+        (0, 2, 0, 2, [])
+        sage: E = EllipticCurve('66b3')
+        sage: pari_two_descent_work(E)
+        (0, 0, 2, 2, [])
+
+    """
+    ep = E.pari_curve()
+    lower, rank_upper_bd, s, pts = ep.ellrank()
+    gens = sorted([E.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+    gens = E.saturation(gens)[0]
+    # this is explained in the pari-gp documentation:
+    # s is the dimension of Sha[2]/2Sha[4],
+    # which is a lower bound for dim Sha[2]
+    # dim Sha[2] = dim Sel2 - rank E(Q) - dim tors
+    # rank_upper_bd = dim Sel_2 - dim tors - s
+    sha_upper_bd = rank_upper_bd - len(gens) + s
+    return len(gens), rank_upper_bd, s, sha_upper_bd, gens
 
 
 def native_two_isogeny_descent_work(E, two_tor_rk):
@@ -247,12 +305,12 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     - ``verbosity`` -- int, how much information about the proof to print.
 
-        - 0: print nothing
-        - 1: print sketch of proof
-        - 2: print information about remaining primes
+      - 0: print nothing
+      - 1: print sketch of proof
+      - 2: print information about remaining primes
 
     - ``two_desc`` -- string (default ``'mwrank'``), what to use for the
-      two-descent. Options are ``'mwrank', 'simon', 'sage'``
+      two-descent. Options are ``'mwrank', 'pari', 'sage'``
 
     - ``proof`` -- bool or None (default: None, see
       proof.elliptic_curve or sage.structure.proof). If False, this
@@ -315,7 +373,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         True for p = 3 by Kolyvagin bound
         True for p = 5 by Kolyvagin bound
         []
-        sage: E.prove_BSD(two_desc='simon')
+        sage: E.prove_BSD(two_desc='pari')
         []
 
     A rank two curve::
@@ -351,13 +409,16 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: E.prove_BSD()
         Traceback (most recent call last):
         ...
-        RuntimeError: It seems that the rank conjecture does not hold for this curve (Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field)! This may be a counterexample to BSD, but is more likely a bug.
+        RuntimeError: It seems that the rank conjecture does not hold for this curve
+        (Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field)!
+        This may be a counterexample to BSD, but is more likely a bug.
 
     We test the consistency check for the 2-part of Sha::
 
         sage: E = EllipticCurve('37a')
         sage: S = E.sha(); S
-        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+        Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x
+         over Rational Field
         sage: def foo(use_database):
         ....:  return 4
         sage: S.an = foo
@@ -428,6 +489,15 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         p = 2: True by 2-descent
         True for p not in {2} by Kolyvagin.
         []
+
+    ::
+
+        sage: E = EllipticCurve('66b3')
+        sage: E.prove_BSD(two_desc="pari",verbosity=1)
+        p = 2: True by 2-descent
+        True for p not in {2} by Kolyvagin.
+        []
+
     """
     if proof is None:
         from sage.structure.proof.proof import get_flag
@@ -456,8 +526,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     if two_desc == 'mwrank':
         M = mwrank_two_descent_work(BSD.curve, BSD.two_tor_rk)
-    elif two_desc == 'simon':
-        M = simon_two_descent_work(BSD.curve, BSD.two_tor_rk)
+    elif two_desc == 'pari':
+        M = pari_two_descent_work(BSD.curve)
     elif two_desc == 'sage':
         M = native_two_isogeny_descent_work(BSD.curve, BSD.two_tor_rk)
     else:

@@ -171,7 +171,7 @@ class DivisorGroup_generic(FormalSums):
         EXAMPLES::
 
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
-            sage: DivZZ=DivisorGroup(Spec(ZZ))
+            sage: DivZZ = DivisorGroup(Spec(ZZ))
             sage: DivZZ([(2,5)])
             2*V(5)
         """
@@ -222,16 +222,16 @@ class DivisorGroup_generic(FormalSums):
         EXAMPLES::
 
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
-            sage: DivisorGroup(Spec(ZZ),ZZ).base_extend(QQ)
+            sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(QQ)
             Group of QQ-Divisors on Spectrum of Integer Ring
-            sage: DivisorGroup(Spec(ZZ),ZZ).base_extend(GF(7))
+            sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(GF(7))                         # optional - sage.rings.finite_rings
             Group of (Finite Field of size 7)-Divisors on Spectrum of Integer Ring
 
         Divisor groups are unique::
 
             sage: A.<x, y> = AffineSpace(2, CC)
             sage: C = Curve(y^2 - x^9 - x)
-            sage: DivisorGroup(C,ZZ).base_extend(QQ) is DivisorGroup(C,QQ)
+            sage: DivisorGroup(C, ZZ).base_extend(QQ) is DivisorGroup(C, QQ)
             True
         """
         if self.base_ring().has_coerce_map_from(R):

@@ -100,7 +100,7 @@ class FastCrystal(UniqueRepresentation, Parent):
          [2, 1, 0]]
     """
     @staticmethod
-    def __classcall__(cls, cartan_type, shape, format = "string"):
+    def __classcall__(cls, cartan_type, shape, format="string"):
         """
         Normalize the input arguments to ensure unique representation
 
@@ -126,7 +126,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             The fast crystal for A2 with shape [4,1]
             sage: TestSuite(C).run()
         """
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
 #        super().__init__(category = FiniteEnumeratedSets())
         self._cartan_type = ct
         if ct[1] != 2:

@@ -36,6 +36,7 @@
 #include <flint/fmpq_mat.h>
 #include <flint/fmpq_poly.h>
 #include <flint/fmpz.h>
+#include <flint/fmpz_factor.h>
 #include <flint/fmpz_mod.h>
 #include <flint/fmpz_mat.h>
 #include <flint/fmpz_poly_mat.h>
@@ -50,6 +51,7 @@
 #include <flint/padic.h>
 #include <flint/padic_poly.h>
 #include <flint/qadic.h>
+#include <flint/qsieve.h>
 #include <flint/ulong_extras.h>
 
 #undef ulong

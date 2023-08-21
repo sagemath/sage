@@ -17,7 +17,7 @@ Product Projective, over `\QQ`::
     sage: PP.<x,y,z> = ProductProjectiveSpaces([1,0], QQ)
     sage: from sage.schemes.product_projective.rational_point import \
             enum_product_projective_rational_field
-    sage: enum_product_projective_rational_field(PP,3)
+    sage: enum_product_projective_rational_field(PP, 3)
     [(-3 : 1 , 1), (-2 : 1 , 1), (-3/2 : 1 , 1),
      (-1 : 1 , 1), (-2/3 : 1 , 1), (-1/2 : 1 , 1),
      (-1/3 : 1 , 1), (0 : 1 , 1), (1/3 : 1 , 1),
@@ -27,11 +27,11 @@ Product Projective, over `\QQ`::
 
 Product projective over finite field::
 
-    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1,1], GF(7))
-    sage: X = P1.subscheme([2*x+3*y])
+    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))                         # optional - sage.rings.finite_rings
+    sage: X = P1.subscheme([2*x + 3*y])                                                 # optional - sage.rings.finite_rings
     sage: from sage.schemes.product_projective.rational_point import \
             enum_product_projective_finite_field
-    sage: enum_product_projective_finite_field(X)
+    sage: enum_product_projective_finite_field(X)                                       # optional - sage.rings.finite_rings
     [(2 : 1 , 0 : 1), (2 : 1 , 1 : 0), (2 : 1 , 1 : 1),
      (2 : 1 , 2 : 1), (2 : 1 , 3 : 1), (2 : 1 , 4 : 1),
      (2 : 1 , 5 : 1), (2 : 1 , 6 : 1)]
@@ -89,7 +89,7 @@ def enum_product_projective_rational_field(X, B):
         sage: PP.<x0,x1,x2,x3,x4> = ProductProjectiveSpaces([1, 2], QQ)
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_rational_field
-        sage: enum_product_projective_rational_field(PP,1)
+        sage: enum_product_projective_rational_field(PP, 1)
         [(-1 : 1 , -1 : -1 : 1), (-1 : 1 , -1 : 0 : 1), (-1 : 1 , -1 : 1 : 0),
          (-1 : 1 , -1 : 1 : 1), (-1 : 1 , 0 : -1 : 1), (-1 : 1 , 0 : 0 : 1),
          (-1 : 1 , 0 : 1 : 0), (-1 : 1 , 0 : 1 : 1), (-1 : 1 , 1 : -1 : 1),
@@ -111,11 +111,11 @@ def enum_product_projective_rational_field(X, B):
 
     ::
 
-        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2,1], QQ)
-        sage: X = PP.subscheme([x^2 + x*y + y*z, u*u-v*u])
+        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
+        sage: X = PP.subscheme([x^2 + x*y + y*z, u*u - v*u])
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_rational_field
-        sage: enum_product_projective_rational_field(X,4)
+        sage: enum_product_projective_rational_field(X, 4)
         [(-2 : 4 : 1 , 0 : 1), (-2 : 4 : 1 , 1 : 1), (-1 : 1 : 0 , 0 : 1),
          (-1 : 1 : 0 , 1 : 1), (-2/3 : -4/3 : 1 , 0 : 1), (-2/3 : -4/3 : 1 , 1 : 1),
          (-1/2 : -1/2 : 1 , 0 : 1), (-1/2 : -1/2 : 1 , 1 : 1),
@@ -208,12 +208,12 @@ def enum_product_projective_number_field(X, **kwds):
     EXAMPLES::
 
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 2, 'v')
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)
-        sage: X = PP.subscheme([x^2 + 2*y^2])
+        sage: K = NumberField(u^2 + 2, 'v')                                             # optional - sage.rings.number_field
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)                         # optional - sage.rings.number_field
+        sage: X = PP.subscheme([x^2 + 2*y^2])                                           # optional - sage.rings.number_field
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_number_field
-        sage: enum_product_projective_number_field(X, bound=1.5)
+        sage: enum_product_projective_number_field(X, bound=1.5)                        # optional - sage.rings.number_field
         [(-v : 1 , -1 : 1), (-v : 1 , -v : 1), (-v : 1 , -1/2*v : 1),
          (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1), (-v : 1 , v : 1),
          (-v : 1 , 1 : 0), (-v : 1 , 1 : 1), (v : 1 , -1 : 1),
@@ -261,10 +261,10 @@ def enum_product_projective_finite_field(X):
 
     EXAMPLES::
 
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))                     # optional - sage.rings.finite_rings
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_finite_field
-        sage: enum_product_projective_finite_field(PP)
+        sage: enum_product_projective_finite_field(PP)                                  # optional - sage.rings.finite_rings
         [(0 : 1 , 0 : 1), (0 : 1 , 1 : 0), (0 : 1 , 1 : 1),
          (0 : 1 , 2 : 1), (1 : 0 , 0 : 1), (1 : 0 , 1 : 0),
          (1 : 0 , 1 : 1), (1 : 0 , 2 : 1), (1 : 1 , 0 : 1),
@@ -274,11 +274,11 @@ def enum_product_projective_finite_field(X):
 
     ::
 
-        sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))
-        sage: X = PP.subscheme([x0^2 + 2*x1^2])
+        sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))                # optional - sage.rings.finite_rings
+        sage: X = PP.subscheme([x0^2 + 2*x1^2])                                         # optional - sage.rings.finite_rings
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_finite_field
-        sage: len(enum_product_projective_finite_field(X))
+        sage: len(enum_product_projective_finite_field(X))                              # optional - sage.rings.finite_rings
         36
     """
     if is_Scheme(X):
@@ -334,8 +334,8 @@ def sieve(X, bound):
     EXAMPLES::
 
         sage: from sage.schemes.product_projective.rational_point import sieve
-        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2,1], QQ)
-        sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u-v*u])
+        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
+        sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u - v*u])
         sage: sieve(X, 2)
         [(0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1/2 : -1/2 : 1 , 0 : 1),
          (1/2 : -1/2 : 1 , 1 : 1), (1/2 : 1/2 : 1 , 0 : 1), (1/2 : 1/2 : 1 , 1 : 1),
@@ -471,15 +471,16 @@ def sieve(X, bound):
                 # lift all coordinates of given point using chinese remainder theorem
                 L = [modulo_points[j][tupl[j]][k].lift() for j in range(len_primes - 1)]
                 L.append(point_p_max[k].lift())
-                point.append( crt(L, primes_list) )
+                point.append(crt(L, primes_list))
 
             for i in range(num_comp):
                 for j in range(comp_dim_relative[i]):
                     m[i][j] = point[dim_prefix[i] + j]
 
             # generating matrix to compute LLL reduction for each component
-            M = [matrix(ZZ, comp_dim_relative[i] + 1, comp_dim_relative[i], m[i]) \
-                                                                for i in range(num_comp)]
+            M = [matrix(ZZ, comp_dim_relative[i] + 1,
+                        comp_dim_relative[i], m[i])
+                 for i in range(num_comp)]
             A = [M[i].LLL() for i in range(num_comp)]
             point = []
             for i in range(num_comp):

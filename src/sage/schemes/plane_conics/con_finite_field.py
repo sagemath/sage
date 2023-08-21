@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings
 r"""
 Projective plane conics over finite fields
 
@@ -37,7 +38,8 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
         sage: K.<a> = FiniteField(9, 'a')
         sage: P.<X, Y, Z> = K[]
         sage: Conic(X^2 + Y^2 - a*Z^2)
-        Projective Conic Curve over Finite Field in a of size 3^2 defined by X^2 + Y^2 + (-a)*Z^2
+        Projective Conic Curve over Finite Field in a of size 3^2
+         defined by X^2 + Y^2 + (-a)*Z^2
 
     ::
 
@@ -94,36 +96,50 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
             True
 
             sage: C = Conic(FiniteField(2), [1, 1, 1, 1, 1, 0]); C
-            Projective Conic Curve over Finite Field of size 2 defined by x^2 + x*y + y^2 + x*z + y*z
+            Projective Conic Curve over Finite Field of size 2
+             defined by x^2 + x*y + y^2 + x*z + y*z
             sage: C.has_rational_point(point = True)  # output is random
             (True, (0 : 0 : 1))
 
             sage: p = next_prime(10^50)
             sage: F = FiniteField(p)
             sage: C = Conic(F, [1, 2, 3]); C
-            Projective Conic Curve over Finite Field of size 100000000000000000000000000000000000000000000000151 defined by x^2 + 2*y^2 + 3*z^2
+            Projective Conic Curve over Finite Field
+             of size 100000000000000000000000000000000000000000000000151
+             defined by x^2 + 2*y^2 + 3*z^2
             sage: C.has_rational_point(point = True)  # output is random
             (True,
-             (14971942941468509742682168602989039212496867586852 : 75235465708017792892762202088174741054630437326388 : 1)
+             (14971942941468509742682168602989039212496867586852
+              : 75235465708017792892762202088174741054630437326388 : 1)
 
             sage: F.<a> = FiniteField(7^20)
             sage: C = Conic([1, a, -5]); C
-            Projective Conic Curve over Finite Field in a of size 7^20 defined by x^2 + a*y^2 + 2*z^2
+            Projective Conic Curve over Finite Field in a of size 7^20
+             defined by x^2 + a*y^2 + 2*z^2
             sage: C.has_rational_point(point = True)  # output is random
             (True,
-             (a^18 + 2*a^17 + 4*a^16 + 6*a^13 + a^12 + 6*a^11 + 3*a^10 + 4*a^9 + 2*a^8 + 4*a^7 + a^6 + 4*a^4 + 6*a^2 + 3*a + 6 : 5*a^19 + 5*a^18 + 5*a^17 + a^16 + 2*a^15 + 3*a^14 + 4*a^13 + 5*a^12 + a^11 + 3*a^10 + 2*a^8 + 3*a^7 + 4*a^6 + 4*a^5 + 6*a^3 + 5*a^2 + 2*a + 4 : 1))
+             (a^18 + 2*a^17 + 4*a^16 + 6*a^13 + a^12 + 6*a^11 + 3*a^10 + 4*a^9 + 2*a^8
+                + 4*a^7 + a^6 + 4*a^4 + 6*a^2 + 3*a + 6
+              : 5*a^19 + 5*a^18 + 5*a^17 + a^16 + 2*a^15 + 3*a^14 + 4*a^13 + 5*a^12
+                + a^11 + 3*a^10 + 2*a^8 + 3*a^7 + 4*a^6 + 4*a^5 + 6*a^3 + 5*a^2 + 2*a + 4
+              : 1))
 
         TESTS::
 
             sage: l = Sequence(cartesian_product_iterator([[0, 1] for i in range(6)]))
             sage: bigF = GF(next_prime(2^100))
             sage: bigF2 = GF(next_prime(2^50)^2, 'b')
-            sage: m = [[F(b) for b in a] for a in l for F in [GF(2), GF(4, 'a'), GF(5), GF(9, 'a'), bigF, bigF2]]
-            sage: m += [[F.random_element() for i in range(6)] for j in range(20) for F in [GF(5), bigF]]
+            sage: m = [[F(b) for b in a]
+            ....:      for a in l
+            ....:      for F in [GF(2), GF(4, 'a'), GF(5), GF(9, 'a'), bigF, bigF2]]
+            sage: m += [[F.random_element() for i in range(6)]
+            ....:       for j in range(20) for F in [GF(5), bigF]]
             sage: c = [Conic(a) for a in m if a != [0,0,0,0,0,0]]
             sage: assert all(C.has_rational_point() for C in c)
             sage: r = randrange(0, 5)
-            sage: assert all(C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c[r::5])  # long time (1.4s on sage.math, 2013)
+            sage: assert all(C.defining_polynomial()(  # long time (1.4s on sage.math, 2013)
+            ....:                Sequence(C.has_rational_point(point=True)[1])) == 0
+            ....:            for C in c[r::5])
         """
         if not point:
             return True

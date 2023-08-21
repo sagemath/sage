@@ -466,7 +466,6 @@ class FreeModuleHomset(Homset):
 
     #### End of methods required for any Parent
 
-
     #### Monoid methods (case of an endomorphism set) ####
 
     def one(self):

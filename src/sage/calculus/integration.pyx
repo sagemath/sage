@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Numerical Integration
 
@@ -456,6 +457,11 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         recursive stratified sampling
       * 'vegas' -- The VEGAS algorithm of Lepage is based on importance
         sampling.
+
+    OUTPUT:
+
+    A tuple whose first component is the approximated integral and whose second
+    component is an error estimate.
 
     EXAMPLES::
 

@@ -93,11 +93,11 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal_libsingular cimport sage_ideal_to_singular_ideal, singular_ideal_to_sage_sequence
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
 
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
-from sage.libs.singular.polynomial cimport singular_vector_maximal_component, singular_polynomial_check
+from sage.libs.singular.polynomial cimport singular_vector_maximal_component
 from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec
 from sage.libs.singular.singular import error_messages
 
@@ -686,8 +686,8 @@ cdef class Converter(SageObject):
         ncols = mat.ncols
         nrows = mat.nrows
         result = Matrix(self._sage_ring, nrows, ncols)
-        for i in xrange(nrows):
-            for j in xrange(ncols):
+        for i in range(nrows):
+            for j in range(ncols):
                 p = new_sage_polynomial(self._sage_ring, mat.m[i*ncols+j])
                 mat.m[i*ncols+j]=NULL
                 result[i,j] = p
@@ -767,8 +767,8 @@ cdef class Converter(SageObject):
         nrows = mat.rows()
 
         result = Matrix(ZZ, nrows, ncols)
-        for i in xrange(nrows):
-            for j in xrange(ncols):
+        for i in range(nrows):
+            for j in range(ncols):
                 result[i,j] = mat.get(i*ncols+j)
         return result
 
@@ -828,8 +828,8 @@ cdef class Converter(SageObject):
         ncols = mat.ncols()
         nrows = mat.nrows()
         cdef matrix* _m=mpNew(nrows,ncols)
-        for i in xrange(nrows):
-            for j in xrange(ncols):
+        for i in range(nrows):
+            for j in range(ncols):
                 #FIXME
                 p = copy_sage_polynomial_into_singular_poly(mat[i,j])
                 _m.m[ncols*i+j]=p
@@ -853,7 +853,7 @@ cdef class Converter(SageObject):
         cdef lists *singular_list=<lists*>omAlloc0Bin(slists_bin)
         singular_list.Init(n)
         cdef leftv* iv
-        for i in xrange(n):
+        for i in range(n):
             iv=c.pop_front()
             memcpy(&singular_list.m[i],iv,sizeof(leftv))
             omFreeBin(iv, sleftv_bin)
@@ -868,7 +868,7 @@ cdef class Converter(SageObject):
         cdef intvec *iv = new intvec()
         iv.resize(s)
 
-        for i in xrange(s):
+        for i in range(s):
             iv.ivGetVec()[i]=<int>a[i]
         return self._append(<void*>iv, INTVEC_CMD)
 
@@ -896,8 +896,8 @@ cdef class Converter(SageObject):
         cdef int ncols = <int> a.ncols()
         cdef intvec *iv = new intvec(nrows, ncols, 0)
 
-        for i in xrange(nrows):
-            for j in xrange(ncols):
+        for i in range(nrows):
+            for j in range(ncols):
                 iv.ivGetVec()[i*ncols+j]=<int>a[i,j]
         return self._append(<void*>iv, INTMAT_CMD)
 
@@ -971,7 +971,7 @@ cdef class Converter(SageObject):
         elif rtyp == LIST_CMD:
             singular_list = <lists*> to_convert.data
             ret = []
-            for i in xrange(singular_list.nr+1):
+            for i in range(singular_list.nr+1):
                 ret.append(self.to_python(&(singular_list.m[i])))
             return ret
         elif rtyp == MODUL_CMD:
@@ -1299,7 +1299,7 @@ cdef class SingularFunction(SageObject):
             ring = self.common_ring(args, ring)
             if ring is None:
                 if dummy_ring is None:
-                    from sage.rings.polynomial.all import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                     from sage.rings.rational_field import QQ
                     dummy_ring = PolynomialRing(QQ, "dummy", implementation="singular") # seems a reasonable default
                 ring = dummy_ring

@@ -102,7 +102,8 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: [a.transport(g) for g in a.automorphism_group()]
             [{1, 3}, {1, 3}, {1, 3}, {1, 3}]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         a = SymmetricGroup(self._list)
         b = SymmetricGroup(self.complement()._list)
         return PermutationGroup(a.gens() + b.gens())

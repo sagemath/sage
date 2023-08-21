@@ -11,9 +11,9 @@ import datetime
 
 __all__ = ["easter", "EASTER_JULIAN", "EASTER_ORTHODOX", "EASTER_WESTERN"]
 
-EASTER_JULIAN   = 1
+EASTER_JULIAN = 1
 EASTER_ORTHODOX = 2
-EASTER_WESTERN  = 3
+EASTER_WESTERN = 3
 
 
 def easter(year, algorithm=EASTER_WESTERN):

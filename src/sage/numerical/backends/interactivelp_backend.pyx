@@ -228,7 +228,7 @@ cdef class InteractiveLPBackend:
         """
         A, b, c, x, constraint_types, variable_types, problem_type, ring, d = self._AbcxCVPRd()
         cdef int vtype = int(binary) + int(continuous) + int(integer)
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")

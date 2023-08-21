@@ -108,7 +108,7 @@ def nodes_uncached(degree, prec):
         performance.
     """
     cdef long j,j1,n
-    cdef RealNumber r,t1,t2,t3,t4,a,w
+    cdef RealNumber r,t1,t2,t4,a,w
     cdef mpfr_t u,v
     cdef RealField_class R
     if prec < 53:
@@ -132,11 +132,11 @@ def nodes_uncached(degree, prec):
     else:
         nodes = []
         n = degree
-        for j in xrange(1, n // 2 + 1):
+        for j in range(1, n // 2 + 1):
             r = R(math.cos(math.pi*(j-0.25)/(n+0.5)))
             while True:
                 t1,t2=ONE,ZERO
-                for j1 in xrange(1,n+1):
+                for j1 in range(1,n+1):
                     mpfr_mul(u,r.value,t1.value,rnd)
                     mpfr_mul_si(u,u,2*j1-1,rnd)
                     mpfr_mul_si(v,t2.value,j1-1,rnd)
@@ -250,10 +250,11 @@ def estimate_error(results, prec, epsilon):
         2.328235...e-10
     """
     if len(results)==2:
-        return max((results[0][i]-results[1][i]).abs() for i in xrange(len(results[0])))
+        return max((results[0][i]-results[1][i]).abs()
+                   for i in range(len(results[0])))
     e = []
-    ZERO = 0*epsilon
-    for i in xrange(len(results[0])):
+    ZERO = 0 * epsilon
+    for i in range(len(results[0])):
         try:
             if results[-1][i] == results[-2][i] == results[-3][i]:
                 e.append(0*epsilon)

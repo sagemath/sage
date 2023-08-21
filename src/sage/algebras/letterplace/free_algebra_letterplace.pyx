@@ -115,8 +115,6 @@ TESTS::
     algebras with different term orderings, yet.
 
 """
-
-from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function
 from sage.libs.singular.function cimport RingWrap
@@ -178,7 +176,6 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
         (Lexicographic term order of length 3,
          Lexicographic term order of length 3)
     """
-    n = base_ring.ngens()
     T0 = base_ring.term_order()
     T = T0
     cdef i
@@ -596,7 +593,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         cdef list tmp
         for i from 0<=i<nblocks:
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j, E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
@@ -629,7 +626,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         cdef list names = self.latex_variable_names()
         for i from 0<=i<nblocks:
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j, E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
@@ -682,9 +679,8 @@ cdef class FreeAlgebra_letterplace(Algebra):
         C = self.current_ring()
         cdef FreeAlgebraElement_letterplace x
         ngens = self.__ngens
-        degbound = self._degbound
         cdef list G = [C(x._poly) for x in g]
-        from sage.groups.perm_gps.all import CyclicPermutationGroup
+        from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
         CG = CyclicPermutationGroup(C.ngens())
         for y in G:
             out.extend([y] + [y * CG[ngens * (n + 1)]
@@ -863,7 +859,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             (2)*y*y*y + z*z + t*y
 
         """
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
             return sage_eval(x, locals=self.gens_dict())
         try:
