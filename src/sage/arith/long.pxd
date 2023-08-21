@@ -81,7 +81,7 @@ cdef enum:
 cdef inline bint integer_check_long(x, long* value, int* err) except -1:
     """
     Return whether ``x`` is some integer type. This is true for the
-    Python type ``long``, for Sage Integers and for types
+    Python type ``int``, for Sage Integers and for types
     implementing ``__index__``.
 
     If possible, compute the value of this integer as C long and store
