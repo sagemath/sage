@@ -10,13 +10,26 @@ An Orthogonal Array, denoted OA`(N;t,k,v)` is a covering array with the
 property that every sequence of `t`-elements appears in exactly one row.
 (See :mod:`sage.combinat.designs.orthogonal_arrays`).
 
+This module collects methods relating to covering arrays, some of which
+are inherited from orthogonal array methods. This module defines the
+following functions:
+
+.. csv-table::
+    :class: contentstable
+    :widths: 30, 70
+    :delim: |
+
+    :meth:`~sage.combinat.designs.designs_pyx.is_covering_array` | Check that the list of lists `array` is an `CA(N;t,k,v)`.
+    :meth:`~sage.combinat.designs.orthogonal_arrays.OA_relabel` | Return a relabelled version of the CA.
+    :meth:`~sage.combinat.designs.orthogonal_arrays.OA_standard_label` | Return a version of the CA relabelled to symbols `(0,\dots,n-1)`.
+
 REFERENCES:
 
 - [Colb2004]_
 
-- [Sher2006]_
+- [SMC2006]_
 
-- [Wal2007]_
+- [WC2007]_
 
 AUTHORS:
 
