@@ -2176,9 +2176,7 @@ cdef class Matrix(Matrix0):
             [5 4]
 
         For example here we take from row 1 columns 2 then 0 twice, and do
-        this 3 times.
-
-        ::
+        this 3 times::
 
             sage: A.matrix_from_rows_and_columns([1,1,1],[2,0,0])
             [5 3 3]
