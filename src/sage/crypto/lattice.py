@@ -50,15 +50,22 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     - ``n`` -- Determinant size, primal: `det(L) = q^n`, dual: `det(L) = q^{m-n}`.
       For ideal lattices this is also the degree of the quotient polynomial.
+
     - ``m`` -- Lattice dimension, `L \subseteq Z^m`.
+
     - ``q`` -- Coefficient size, `q-Z^m \subseteq L`.
+
     - ``seed`` -- Randomness seed.
+
     - ``quotient`` -- For the type ``'ideal'``, this determines the quotient
       polynomial. Ignored for all other types.
+
     - ``dual`` -- Set this flag if you want a basis for `q-dual(L)`, for example
       for Regev's LWE bases [Reg2005]_.
+
     - ``ntl`` -- Set this flag if you want the lattice basis in NTL readable
       format.
+
     - ``lattice`` -- Set this flag if you want a
       :class:`FreeModule_submodule_with_basis_integer` object instead
       of an integer matrix representing the basis.
