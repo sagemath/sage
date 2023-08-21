@@ -169,17 +169,18 @@ class HillCipher(SymmetricKeyCipher):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3); E                                          # needs sage.modules
+            sage: E = HillCryptosystem(S,3); E
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
-            sage: M = E.key_space()                                                     # needs sage.modules
-            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A                                   # needs sage.modules
+            sage: M = E.key_space()
+            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A
             [1 0 1]
             [0 1 1]
             [2 2 3]
-            sage: e = E(A); e                                                           # needs sage.modules
+            sage: e = E(A); e
             Hill cipher on Free alphabetic string monoid on A-Z of block length 3
-            sage: e(S("LAMAISONBLANCHE"))                                               # needs sage.modules
+            sage: e(S("LAMAISONBLANCHE"))
             JYVKSKQPELAYKPV
 
         TESTS::
