@@ -324,9 +324,10 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.sagemath import sage__rings__function_field
             sage: sage__rings__function_field().joined_features()
             [Feature('sage.rings.function_field.function_field_polymod'),
-            Feature('sage.libs.singular'),
-            Feature('sage.libs.singular.singular'),
-            Feature('sage.interfaces.singular')]
+             Feature('sage.libs.singular'),
+             Feature('sage.libs.singular.singular'),
+             Feature('sage.interfaces.singular'),
+             Feature('sage.rings.polynomial.plural')]
             sage: from sage.features.interfaces import Mathematica
             sage: Mathematica().joined_features()
             []
