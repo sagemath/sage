@@ -546,7 +546,7 @@ class YangBaxterGraph_generic(SageObject):
             from copy import copy
             Y = copy(self)
         digraph = Y._digraph
-        for u, v in digraph.edges(sort=True, labels=False):
+        for u, v in digraph.edges(sort=False, labels=False):
             digraph.set_edge_label(u, v, edge_dict[u, v])
         if not inplace:
             return Y
