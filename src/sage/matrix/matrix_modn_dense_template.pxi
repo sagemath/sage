@@ -3127,7 +3127,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i, row in enumerate(rows):
             if row < 0 or row >= self._nrows:
                 raise IndexError("row index out of range")
-            memcpy(A._entries+(i*self._ncols), self._entries+(row*self._ncols), sizeof(celement)*self._ncols)
+            memcpy(A._matrix[i], self._matrix[row], sizeof(celement)*self._ncols)
 
         return A
 
