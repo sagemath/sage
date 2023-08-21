@@ -130,7 +130,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         sage: p, q, a, b = prikey                                                       # needs sage.symbolic
         sage: pubkey == p * q                                                           # needs sage.symbolic
         True
-        sage: gcd(p, q) == a*p + b*q == 1
+        sage: gcd(p, q) == a*p + b*q == 1                                               # needs sage.symbolic
         True
     """
 
