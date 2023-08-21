@@ -449,11 +449,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         if zeroed_alloc:
             self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
-            self._matrix = <celement **>check_calloc(self._nrows, sizeof(celement*))
         else:
             self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
-            self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
-
+            
+        self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
         cdef unsigned int k
         cdef Py_ssize_t i
         k = 0
