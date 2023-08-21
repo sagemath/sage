@@ -70,7 +70,7 @@ TESTS::
 
 from cysignals.signals cimport sig_on, sig_off, sig_check
 
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.list cimport *
 from cpython.ref cimport *
 
@@ -2793,8 +2793,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         cdef long long_exp
         cdef int_fast32_t res
         cdef mpz_t res_mpz
-        if type(exp) is int and -100000 < PyInt_AS_LONG(exp) < 100000:
-            long_exp = PyInt_AS_LONG(exp)
+        if type(exp) is int and -100000 < PyLong_AsLong(exp) < 100000:
+            long_exp = PyLong_AsLong(exp)
         elif type(exp) is Integer and mpz_cmpabs_ui((<Integer>exp).value, 100000) == -1:
             long_exp = mpz_get_si((<Integer>exp).value)
         else:
@@ -3624,8 +3624,8 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         cdef long long_exp
         cdef int_fast64_t res
         cdef mpz_t res_mpz
-        if type(exp) is int and -100000 < PyInt_AS_LONG(exp) < 100000:
-            long_exp = PyInt_AS_LONG(exp)
+        if type(exp) is int and -100000 < PyLong_AsLong(exp) < 100000:
+            long_exp = PyLong_AsLong(exp)
         elif type(exp) is Integer and mpz_cmpabs_ui((<Integer>exp).value, 100000) == -1:
             long_exp = mpz_get_si((<Integer>exp).value)
         else:

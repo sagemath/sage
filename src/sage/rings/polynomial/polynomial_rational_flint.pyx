@@ -25,7 +25,7 @@ AUTHOR:
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from sage.arith.long cimport pyobject_to_long
 
 from sage.libs.arb.acb cimport acb_div_fmpz
@@ -522,7 +522,7 @@ cdef class Polynomial_rational_flint(Polynomial):
                 sig_str("FLINT exception")
                 fmpz_init(tmpfz)
                 fmpq_init(tmpfq)
-                fmpz_set_si(tmpfz, PyInt_AS_LONG(a))
+                fmpz_set_si(tmpfz, PyLong_AsLong(a))
                 fmpq_poly_evaluate_fmpz(tmpfq, self.__poly, tmpfz)
                 fmpq_get_mpq(r.value, tmpfq)
                 fmpq_clear(tmpfq)

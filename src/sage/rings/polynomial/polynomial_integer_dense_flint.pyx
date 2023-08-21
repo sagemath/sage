@@ -42,7 +42,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 include "sage/libs/ntl/decl.pxi"
 
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from sage.libs.gmp.mpz cimport *
 from sage.arith.long cimport pyobject_to_long, is_small_python_int
 
@@ -421,7 +421,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 sig_on()
                 fmpz_init(a_fmpz)
                 fmpz_init(z_fmpz)
-                fmpz_set_si(a_fmpz, PyInt_AS_LONG(x0))
+                fmpz_set_si(a_fmpz, PyLong_AsLong(x0))
                 fmpz_poly_evaluate_fmpz(z_fmpz, self.__poly, a_fmpz)
                 fmpz_get_mpz(z.value, z_fmpz)
                 fmpz_clear(a_fmpz)
