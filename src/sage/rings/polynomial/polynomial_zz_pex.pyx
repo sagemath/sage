@@ -16,7 +16,6 @@ AUTHOR:
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
-from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
@@ -26,7 +25,7 @@ from sage.libs.ntl.convert cimport ZZ_to_mpz
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
 
-cdef cparent get_cparent(parent) except ? NULL:
+cdef cparent get_cparent(parent) except? NULL:
     if parent is None:
         return NULL
     cdef ntl_ZZ_pEContext_class pec
@@ -34,7 +33,7 @@ cdef cparent get_cparent(parent) except ? NULL:
         pec = parent._modulus
     except AttributeError:
         return NULL
-    return & (pec.ptrs)
+    return &(pec.ptrs)
 
 # first we include the definitions
 include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
@@ -42,6 +41,7 @@ include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
+from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
 cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
     cdef list L = []
@@ -52,12 +52,12 @@ cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
 
     c_pX = ZZ_pE_to_ZZ_pX(x)
     d = ZZ_pX_deg(c_pX)
-    if d >= 0:
+    if d>=0:
         for 0 <= j <= d:
             c_p = ZZ_pX_coeff(c_pX, j)
             c_c = ZZ_p_rep(c_p)
             ans = Integer.__new__(Integer)
-            ZZ_to_mpz(ans.value, & c_c)
+            ZZ_to_mpz(ans.value, &c_c)
             L.append(ans)
     return L
 
@@ -73,7 +73,6 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         sage: (x^3 + a*x^2 + 1) * (x + a)
         x^4 + 2*a*x^3 + a^2*x^2 + x + a
     """
-
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         r"""
         Create a new univariate polynomials over `\GF{p^n}`.
@@ -125,8 +124,8 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         try:
             if (x.parent() is parent.base_ring()) or (x.parent() == parent.base_ring()):
                 Polynomial.__init__(self, parent, is_gen=is_gen)
-                ( < Polynomial_template > self)._cparent = get_cparent(parent)
-                celement_construct(&self.x, ( < Polynomial_template > self)._cparent)
+                (<Polynomial_template>self)._cparent = get_cparent(parent)
+                celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 d = parent._modulus.ZZ_pE(list(x.polynomial()))
                 ZZ_pEX_SetCoeff(self.x, 0, d.x)
                 return
@@ -138,10 +137,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         if isinstance(x, (list, tuple)):
             Polynomial.__init__(self, parent, is_gen=is_gen)
-            ( < Polynomial_template > self)._cparent = get_cparent(parent)
-            celement_construct(&self.x, ( < Polynomial_template > self)._cparent)
+            (<Polynomial_template>self)._cparent = get_cparent(parent)
+            celement_construct(&self.x, (<Polynomial_template>self)._cparent)
             K = parent.base_ring()
-            for i, e in enumerate(x):
+            for i,e in enumerate(x):
                 # self(x) is supposed to be a conversion,
                 # not necessarily a coercion. So, we must
                 # not do K.coerce(e) but K(e).
@@ -196,7 +195,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         K = self._parent.base_ring()
         return [K(ZZ_pE_c_to_list(ZZ_pEX_coeff(self.x, i)))
-                for i in range(celement_len(&self.x, ( < Polynomial_template > self)._cparent))]
+                for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
     cpdef _lmul_(self, Element left):
         r"""
@@ -212,9 +211,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         cdef ntl_ZZ_pE d
         cdef Polynomial_ZZ_pEX r
         r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
-        celement_construct(&r.x, ( < Polynomial_template > self)._cparent)
-        r._parent = ( < Polynomial_template > self)._parent
-        r._cparent = ( < Polynomial_template > self)._cparent
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
         d = self._parent._modulus.ZZ_pE(list(left.polynomial()))
         ZZ_pEX_mul_ZZ_pE(r.x, self.x, d.x)
         return r
@@ -263,15 +262,15 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         if kwds:
             if x:
-                raise TypeError("%s__call__() takes exactly 1 argument" % type(self))
+                raise TypeError("%s__call__() takes exactly 1 argument"%type(self))
             try:
                 x = [kwds.pop(self.variable_name())]
             except KeyError:
                 pass
         if kwds:
-            raise TypeError("%s__call__() accepts no named argument except '%s'" % (type(self), self.variable_name()))
-        if len(x) != 1:
-            raise TypeError("%s__call__() takes exactly 1 positional argument" % type(self))
+            raise TypeError("%s__call__() accepts no named argument except '%s'"%(type(self),self.variable_name()))
+        if len(x)!=1:
+            raise TypeError("%s__call__() takes exactly 1 positional argument"%type(self))
 
         a = x[0]
         try:
@@ -311,7 +310,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         if other.parent() is not self._parent:
             other = self._parent.coerce(other)
 
-        ZZ_pEX_resultant(r, self.x, ( < Polynomial_ZZ_pEX > other).x)
+        ZZ_pEX_resultant(r, self.x, (<Polynomial_ZZ_pEX>other).x)
 
         K = self._parent.base_ring()
         return K(K.polynomial_ring()(ZZ_pE_c_to_list(r)))
@@ -350,15 +349,15 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             False
         """
         self._parent._modulus.restore()
-        if algorithm == "fast_when_false":
+        if algorithm=="fast_when_false":
             sig_on()
             res = ZZ_pEX_IterIrredTest(self.x)
             sig_off()
-        elif algorithm == "fast_when_true":
+        elif algorithm=="fast_when_true":
             sig_on()
             res = ZZ_pEX_DetIrredTest(self.x)
             sig_off()
-        elif algorithm == "probabilistic":
+        elif algorithm=="probabilistic":
             sig_on()
             res = ZZ_pEX_ProbIrredTest(self.x, iter)
             sig_off()
@@ -403,11 +402,11 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         cdef Polynomial_ZZ_pEX r
         r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
-        celement_construct(&r.x, ( < Polynomial_template > self)._cparent)
-        r._parent = ( < Polynomial_template > self)._parent
-        r._cparent = ( < Polynomial_template > self)._cparent
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
 
-        ZZ_pEX_MinPolyMod(r.x, ( < Polynomial_ZZ_pEX > (self % other)).x, ( < Polynomial_ZZ_pEX > other).x)
+        ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
         return r
 
     cpdef _richcmp_(self, other, int op):
@@ -453,9 +452,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         self._parent._modulus.restore()
         cdef Polynomial_ZZ_pEX r
         r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
-        celement_construct(&r.x, ( < Polynomial_template > self)._cparent)
-        r._parent = ( < Polynomial_template > self)._parent
-        r._cparent = ( < Polynomial_template > self)._cparent
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
         ZZ_pEX_LeftShift(r.x, self.x, n)
         return r
 
@@ -527,9 +526,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         # Construct output polynomial
         cdef Polynomial_ZZ_pEX r
         r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
-        celement_construct(&r.x, ( < Polynomial_template > self)._cparent)
-        r._parent = ( < Polynomial_template > self)._parent
-        r._cparent = ( < Polynomial_template > self)._cparent
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
 
         # When a degree has been supplied, ensure it is a valid input
         cdef unsigned long d
@@ -540,9 +539,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
                 d = degree
             except ValueError:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
-            ZZ_pEX_reverse_hi(r.x, ( < Polynomial_ZZ_pEX > self).x, d)
+            ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
         else:
-            ZZ_pEX_reverse(r.x, ( < Polynomial_ZZ_pEX > self).x)
+            ZZ_pEX_reverse(r.x, (<Polynomial_ZZ_pEX> self).x)
         return r
 
     def inverse_series_trunc(self, prec):
@@ -602,9 +601,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         # Construct output polynomial
         cdef Polynomial_ZZ_pEX r
         r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
-        celement_construct(&r.x, (< Polynomial_template > self)._cparent)
-        r._parent = (< Polynomial_template > self)._parent
-        r._cparent = (< Polynomial_template > self)._cparent
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
 
         # Call to NTL for the inverse truncation
         if prec > 0:
