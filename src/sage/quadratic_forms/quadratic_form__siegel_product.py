@@ -111,7 +111,7 @@ def siegel_product(self, u):
             factor1 *= i
 
         genericfactor = factor1 * ((u / f) ** m) \
-            * QQ(sqrt((2 ** n) *  f) / (u * d)) \
+            * QQ(sqrt((2 ** n) * f) / (u * d)) \
             * abs(QuadraticBernoulliNumber(m, d1) / bernoulli(2*m))
 
     # DIAGNOSTIC

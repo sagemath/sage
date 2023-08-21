@@ -387,10 +387,10 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = CircuitClosuresMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)
-            sage: M1._is_isomorphic(M2)
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
             sage: M1 = CircuitClosuresMatroid(matroids.named_matroids.Fano())
             sage: M2 = matroids.named_matroids.NonFano()

@@ -54,7 +54,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         - ``polys`` -- anything that defines a point in the class.
 
         - ``check`` -- Boolean. Whether or not to perform input checks.
-          (Default:`` True``)
+          (Default: ``True``)
 
         EXAMPLES::
 

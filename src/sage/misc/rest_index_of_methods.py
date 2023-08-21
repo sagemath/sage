@@ -255,7 +255,7 @@ def list_of_subfunctions(root, only_local_functions=True):
         else:
             return inspect.isclass(root) or not (f is gen_rest_table_index)
 
-    functions =  {getattr(root,name):name for name,f in root.__dict__.items() if
+    functions = {getattr(root,name):name for name,f in root.__dict__.items() if
                   (not name.startswith('_')          and # private functions
                    not hasattr(f,'issue_number')      and # deprecated functions
                    not inspect.isclass(f)            and # classes

@@ -40,19 +40,21 @@ from sage.structure.list_clone import ClonableArray
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.combinat_cython import (set_partition_iterator,
-                                           set_partition_iterator_blocks)
+from sage.combinat.set_partition_iterator import (set_partition_iterator,
+                                                  set_partition_iterator_blocks)
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.combinat import bell_number, stirling_number2 as stirling2
 from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
-from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.sets.disjoint_set import DisjointSet
-from sage.combinat.posets.hasse_diagram import HasseDiagram
+
+lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
+lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
 
 
 class AbstractSetPartition(ClonableArray,
@@ -1891,7 +1893,7 @@ class SetPartition(AbstractSetPartition,
         EXAMPLES::
 
             sage: p = SetPartition([[1,10,11],[2,3,7],[4,5,6],[8,9]])
-            sage: p.plot()
+            sage: p.plot()                                                              # optional - sage.plot sage.symbolic
             Graphics object consisting of 29 graphics primitives
 
         .. PLOT::
@@ -1902,7 +1904,7 @@ class SetPartition(AbstractSetPartition,
         ::
 
             sage: p = SetPartition([[1,3,4],[2,5]])
-            sage: print(p.plot().description())
+            sage: print(p.plot().description())                                         # optional - sage.plot sage.symbolic
             Point set defined by 1 point(s):    [(0.0, 0.0)]
             Point set defined by 1 point(s):    [(1.0, 0.0)]
             Point set defined by 1 point(s):    [(2.0, 0.0)]
@@ -1920,7 +1922,7 @@ class SetPartition(AbstractSetPartition,
             Arc with center (2.5,-1.5) radii (2.1213203435...,2.1213203435...)
              angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
             sage: p = SetPartition([['a','c'],['b','d'],['e']])
-            sage: print(p.plot().description())
+            sage: print(p.plot().description())                                         # optional - sage.plot sage.symbolic
             Point set defined by 1 point(s):  [(0.0, 0.0)]
             Point set defined by 1 point(s):    [(1.0, 0.0)]
             Point set defined by 1 point(s):    [(2.0, 0.0)]
@@ -1936,7 +1938,8 @@ class SetPartition(AbstractSetPartition,
             Arc with center (2.0,-1.0) radii (1.41421356237...,1.41421356237...)
              angle 0.0 inside the sector (0.785398163397...,2.35619449019...)
             sage: p = SetPartition([['a','c'],['b','d'],['e']])
-            sage: print(p.plot(base_set_dict={'a':0,'b':1,'c':2,'d':-2.3,'e':5.4}).description())
+            sage: print(p.plot(base_set_dict={'a':0,'b':1,'c':2,                        # optional - sage.plot sage.symbolic
+            ....:                             'd':-2.3,'e':5.4}).description())
             Point set defined by 1 point(s):    [(-2.3, 0.0)]
             Point set defined by 1 point(s):    [(0.0, 0.0)]
             Point set defined by 1 point(s):    [(1.0, 0.0)]

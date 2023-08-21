@@ -11,7 +11,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ
+
 
 def expnums(int n, int aa):
     r"""

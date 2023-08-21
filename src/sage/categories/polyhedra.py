@@ -26,10 +26,10 @@ class PolyhedralSets(Category_over_base_ring):
 
         sage: TestSuite(PolyhedralSets(RDF)).run()
 
-        sage: P = Polyhedron()
-        sage: P.parent().category().element_class
+        sage: P = Polyhedron()                                                          # optional - sage.geometry.polyhedron
+        sage: P.parent().category().element_class                                       # optional - sage.geometry.polyhedron
         <class 'sage.categories.category.JoinCategory.element_class'>
-        sage: P.parent().category().element_class.mro()
+        sage: P.parent().category().element_class.mro()                                 # optional - sage.geometry.polyhedron
         [<class 'sage.categories.category.JoinCategory.element_class'>,
          <class 'sage.categories.polyhedra.PolyhedralSets.element_class'>,
          <class 'sage.categories.magmas.Magmas.Commutative.element_class'>,
@@ -45,7 +45,7 @@ class PolyhedralSets(Category_over_base_ring):
          <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.element_class'>,
          <class 'sage.categories.objects.Objects.element_class'>,
          <class 'object'>]
-        sage: isinstance(P, P.parent().category().element_class)
+        sage: isinstance(P, P.parent().category().element_class)                        # optional - sage.geometry.polyhedron
         True
     """
 
@@ -53,7 +53,7 @@ class PolyhedralSets(Category_over_base_ring):
         """
         TESTS::
 
-            sage: PolyhedralSets(AA)
+            sage: PolyhedralSets(AA)                                                    # optional - sage.rings.number_field
             Category of polyhedral sets over Algebraic Real Field
         """
         Category_over_base_ring.__init__(self, R)

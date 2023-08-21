@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.libs.pari
 """
 Examples of sets
 """
@@ -538,6 +539,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         return self.element_class(self, Integer(e))
 
     from sage.structure.element_wrapper import ElementWrapper
+
     class Element (ElementWrapper, PrimeNumbers_Abstract.Element):
         def _integer_(self, IntRing):
             """

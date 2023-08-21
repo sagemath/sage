@@ -126,7 +126,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
     else:
         elements = [matrix(F, 2, [1,0,0,1])]
 
-    rational_roots = h.roots(multiplicities = False)
+    rational_roots = h.roots(multiplicities=False)
 
     min_poly = 1
 
@@ -743,7 +743,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # compute automorphisms mod p
             phi_p = f.change_ring(GF(p))/g.change_ring(GF(p))
             sorted_automorphisms = automorphism_group_FF(phi_p)
-            sorted_automorphisms.sort(key = PGL_order)
+            sorted_automorphisms.sort(key=PGL_order)
             orders = [PGL_order(A) for A in sorted_automorphisms]
 
             automorphisms.append(sorted_automorphisms)

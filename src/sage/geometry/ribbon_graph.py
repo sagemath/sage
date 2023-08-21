@@ -1221,7 +1221,7 @@ def bipartite_ribbon_graph(p, q):
         elif (i+1) % q != 0:
             k = (i+1) % q
         t = 0
-        if (i+1) %  q != 0:
+        if (i+1) % q != 0:
             t = 1
         aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() +1]
         rho += [aux_edge]

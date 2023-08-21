@@ -202,14 +202,14 @@ class KodairaSymbol_class(SageObject):
                 else:
                     self._pari = -self._n - 4
                 self._str = "I" + symbol + "*"
-                self._latex = "I_{%s}^*"%(symbol)
+                self._latex = "I_{%s}^*" % (symbol)
             else:
                 if self._n == 0:
                     self._pari = 1
                 else:
                     self._pari = self._n + 4
                 self._str = "I" + symbol
-                self._latex = "I_{%s}"%(symbol)
+                self._latex = "I_{%s}" % (symbol)
         else:
             raise ValueError("input is not a Kodaira symbol")
 

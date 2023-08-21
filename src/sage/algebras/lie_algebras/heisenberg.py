@@ -261,7 +261,7 @@ class HeisenbergAlgebra_fd():
         """
         if self._n == 0:
             return Family(['z'], lambda i: self.z())
-        k =  ['p%s'%i for i in range(1, self._n+1)]
+        k = ['p%s'%i for i in range(1, self._n+1)]
         k += ['q%s'%i for i in range(1, self._n+1)]
         d = {}
         for i in range(1, self._n+1):

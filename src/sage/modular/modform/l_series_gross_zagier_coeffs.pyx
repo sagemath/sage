@@ -74,7 +74,6 @@ def bqf_theta_series(Q, long bound, var=None):
 
 
 cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) except NULL:
-    cdef long i
     cdef long x, y, yD
     cdef long xmax, ymin, ymax
     cdef double sqrt_yD

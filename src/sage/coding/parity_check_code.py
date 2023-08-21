@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Parity-check code
 
@@ -5,8 +6,8 @@ A simple way of detecting up to one error is to use the device of adding a
 parity check to ensure that the sum of the digits in a transmitted word is
 even.
 
-A parity-check code of dimension `k` over `F_q` is the set:
-`\{(m_1, m_2, \dots, m_k, - \Sigma_{i=1}^k m_i) \mid (m_1, m_2, \dots, m_k) \in F_q^k\}`
+A parity-check code of dimension `k` over `\GF{q}` is the set:
+`\{(m_1, m_2, \dots, m_k, - \Sigma_{i=1}^k m_i) \mid (m_1, m_2, \dots, m_k) \in \GF{q}^k\}`
 
 REFERENCE:
 

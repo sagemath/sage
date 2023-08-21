@@ -16,14 +16,14 @@ The Cayley graph of the Weyl Group of type ['A', 3]::
     sage: w = WeylGroup(['A',3])
     sage: d = w.cayley_graph(); d
     Digraph on 24 vertices
-    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)
+    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)               # optional - sage.plot
 
 The Cayley graph of the Weyl Group of type ['D', 4]::
 
     sage: w = WeylGroup(['D',4])
     sage: d = w.cayley_graph(); d
     Digraph on 192 vertices
-    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03) #long time (less than one minute)
+    sage: d.show3d(color_by_label=True, edge_size=0.01, vertex_size=0.03)  # long time (less than one minute)   # optional - sage.plot
 
 .. TODO::
 
@@ -185,7 +185,7 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
     TESTS::
 
         sage: TestSuite(WeylGroup(["A",3])).run()
-        sage: TestSuite(WeylGroup(["A",3,1])).run() # long time
+        sage: TestSuite(WeylGroup(["A",2,1])).run() # long time
 
         sage: W = WeylGroup(['A',3,1])
         sage: s = W.simple_reflections()
@@ -199,7 +199,7 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
     """
     if implementation == "permutation":
         return WeylGroup_permutation(x, prefix)
-    elif implementation != "matrix":
+    if implementation != "matrix":
         raise ValueError("invalid implementation")
 
     if x in RootLatticeRealizations:
@@ -230,6 +230,10 @@ class WeylGroup_gens(UniqueRepresentation,
             sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
             sage: W = WeylGroup(cm)
             sage: TestSuite(W).run() # long time
+
+        TESTS::
+
+            sage: W = WeylGroup(SymmetricGroup(1))
         """
         self._domain = domain
         if self.cartan_type().is_affine():
@@ -247,7 +251,10 @@ class WeylGroup_gens(UniqueRepresentation,
         gens_matrix = [self.morphism_matrix(self.domain().simple_reflection(i))
                        for i in self.index_set()]
         from sage.libs.gap.libgap import libgap
-        libgap_group = libgap.Group(gens_matrix)
+        if not gens_matrix:
+            libgap_group = libgap.Group([], matrix(ZZ, 1, 1, [1]))
+        else:
+            libgap_group = libgap.Group(gens_matrix)
         degree = ZZ(self.domain().dimension())
         ring = self.domain().base_ring()
         FinitelyGeneratedMatrixGroup_gap.__init__(
@@ -284,8 +291,9 @@ class WeylGroup_gens(UniqueRepresentation,
 
     # Should be implemented in (morphisms of) modules with basis
     def morphism_matrix(self, f):
-        return matrix(self.domain().base_ring(), [f(b).to_vector()
-                           for b in self.domain().basis()]).transpose()
+        return matrix(self.domain().base_ring(),
+                      [f(b).to_vector()
+                       for b in self.domain().basis()]).transpose()
 
     def from_morphism(self, f):
         return self._element_constructor_(self.morphism_matrix(f))
@@ -396,10 +404,10 @@ class WeylGroup_gens(UniqueRepresentation,
             sage: WeylGroup(['A', 3, 1])
             Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
         """
-        return "Weyl Group of type %s (as a matrix group acting on the %s)" % (self.cartan_type(),
-                                            self._domain._name_string(capitalize=False,
-                                                                      base_ring=False,
-                                                                      type=False))
+        domain = self._domain._name_string(capitalize=False,
+                                           base_ring=False,
+                                           type=False)
+        return "Weyl Group of type %s (as a matrix group acting on the %s)" % (self.cartan_type(), domain)
 
     def character_table(self):
         """
@@ -504,19 +512,19 @@ class WeylGroup_gens(UniqueRepresentation,
             sage: all(WeylGroup(t).long_element() == WeylGroup(t).long_element_hardcoded() for t in types)  # long time (17s on sage.math, 2011)
             True
         """
-        type = self.cartan_type()
-        if type[0] == 'D' and type[1] % 2:
+        typ = self.cartan_type()
+        if typ[0] == 'D' and typ[1] % 2:
             l = [-1 for i in range(self.n - 1)]
             l.append(1)
             m = diagonal_matrix(QQ, l)
-        elif type[0] == 'A':
+        elif typ[0] == 'A':
             l = [0 for k in range((self.n)**2)]
             for k in range(self.n - 1, (self.n)**2 - 1, self.n - 1):
                 l[k] = 1
             m = matrix(QQ, self.n, l)
-        elif type[0] == 'E':
-            if type[1] == 6:
-                half = ZZ(1) / ZZ(2)
+        elif typ[0] == 'E':
+            if typ[1] == 6:
+                half = QQ((1, 2))
                 l = [[-half, -half, -half, half, 0, 0, 0, 0],
                      [-half, -half, half, -half, 0, 0, 0, 0],
                      [-half, half, -half, -half, 0, 0, 0, 0],
@@ -528,15 +536,15 @@ class WeylGroup_gens(UniqueRepresentation,
                 m = matrix(QQ, 8, l)
             else:
                 raise NotImplementedError("not implemented yet for this type")
-        elif type[0] == 'G':
-            third = ZZ(1) / ZZ(3)
-            twothirds = ZZ(2) / ZZ(3)
+        elif typ[0] == 'G':
+            third = QQ((1, 3))
+            twothirds = QQ((2, 3))
             l = [[-third, twothirds, twothirds],
                  [twothirds, -third, twothirds],
                  [twothirds, twothirds, -third]]
             m = matrix(QQ, 3, l)
         else:
-            m = diagonal_matrix([-1 for i in range(self.n)])
+            m = diagonal_matrix([-1] * self.n)
         return self(m)
 
     def classical(self):
@@ -546,7 +554,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
         Caveat: we assume that 0 is a special node of the Dynkin diagram
 
-        TODO: extract parabolic subgroup method
+        .. TODO:: extract parabolic subgroup method
 
         EXAMPLES::
 
@@ -642,10 +650,10 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
             sage: RootSystem(['C',4,1]).coweight_lattice().weyl_group().classical()
             Parabolic Subgroup of the Weyl Group of type ['C', 4, 1]^* (as a matrix group acting on the coweight lattice)
         """
-        return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)" % (self.domain().cartan_type(),
-                                                        self._domain._name_string(capitalize=False,
-                                                                                  base_ring=False,
-                                                                                  type=False))
+        domain = self._domain._name_string(capitalize=False,
+                                           base_ring=False,
+                                           type=False)
+        return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)" % (self.domain().cartan_type(), domain)
 
     def weyl_group(self, prefix="hereditary"):
         """
@@ -740,15 +748,14 @@ class WeylGroupElement(MatrixGroupElement_gap):
         """
         if self._parent._prefix is None:
             return MatrixGroupElement_gap._repr_(self)
-        else:
-            redword = self.reduced_word()
-            if len(redword) == 0:
-                return "1"
-            else:
-                ret = ""
-                for i in redword[:-1]:
-                    ret += "%s%d*" % (self._parent._prefix, i)
-            return ret + "%s%d" % (self._parent._prefix, redword[-1])
+
+        redword = self.reduced_word()
+        if len(redword) == 0:
+            return "1"
+
+        ret = "".join("%s%d*" % (self._parent._prefix, i)
+                      for i in redword[:-1])
+        return ret + "%s%d" % (self._parent._prefix, redword[-1])
 
     def _latex_(self):
         r"""
@@ -771,13 +778,12 @@ class WeylGroupElement(MatrixGroupElement_gap):
         """
         if self._parent._prefix is None:
             return MatrixGroupElement_gap._latex_(self)
-        else:
-            redword = self.reduced_word()
-            if not redword:
-                return "1"
-            else:
-                return "".join("%s_{%d}" % (self._parent._prefix, i)
-                               for i in redword)
+
+        redword = self.reduced_word()
+        if not redword:
+            return "1"
+
+        return "".join("%s_{%d}" % (self._parent._prefix, i) for i in redword)
 
     def __eq__(self, other):
         """
@@ -849,7 +855,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
     # Descents
     # #######################################################################
 
-    def has_descent(self, i, positive=False, side="right"):
+    def has_descent(self, i, positive=False, side="right") -> bool:
         """
         Test if ``self`` has a descent at position ``i``.
 
@@ -911,13 +917,12 @@ class WeylGroupElement(MatrixGroupElement_gap):
         else:
             use_rho = side == "left"
 
-        if use_rho is not (side == "left"):
-            self = ~self
+        element = self if use_rho is (side == "left") else ~self
 
         if use_rho:
-            s = self.action(L.rho()).scalar(L.alphacheck()[i]) >= 0
+            s = element.action(L.rho()).scalar(L.alphacheck()[i]) >= 0
         else:
-            s = self.action(L.alpha()[i]).is_positive_root()
+            s = element.action(L.alpha()[i]).is_positive_root()
 
         return s is positive
 
@@ -967,12 +972,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
         s = self.parent().simple_reflections()
         if side == "right":
             return self * s[i]
-        else:
-            return s[i] * self
-
-# TODO
-# The methods first_descent, descents, reduced_word appear almost verbatim in
-# root_lattice_realizations and need to be factored out!
+        return s[i] * self
 
     def to_permutation(self):
         """

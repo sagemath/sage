@@ -281,7 +281,7 @@ Test all interacts from the Sage interact library::
     sage: test(interacts.statistics.coin)
     ...Interactive function <function coin at ...> with 2 widgets
       n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
-      interval: IntRangeSlider(value=(0, 0), description='Plotting range (y)', max=1)
+      interval: FloatRangeSlider(value=(0.45, 0.55), description='Plotting range (y)', max=1.0)
 
 Test matrix control (see :trac:`27735`)::
 

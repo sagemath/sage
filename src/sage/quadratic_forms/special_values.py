@@ -188,12 +188,12 @@ def QuadraticBernoulliNumber(k, d):
     f = abs(d1)
 
     # Make the (usual) k-th Bernoulli polynomial
-    x =  PolynomialRing(QQ, 'x').gen()
+    x = PolynomialRing(QQ, 'x').gen()
     bp = bernoulli_polynomial(x, k)
 
     # Make the k-th quadratic Bernoulli number
-    total = sum([kronecker_symbol(d1, i) * bp(i/f)  for i in range(f)])
-    total *= (f ** (k-1))
+    total = sum([kronecker_symbol(d1, i) * bp(i / f) for i in range(f)])
+    total *= f**(k - 1)
 
     return total
 

@@ -132,9 +132,9 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.misc.superseded import deprecation_cython as deprecation
 
-from sage.structure.element cimport RingElement, Element, ModuleElement
+from sage.structure.element cimport Element
 from sage.structure.element cimport have_same_parent
-from sage.structure.richcmp cimport rich_to_bool_sgn, rich_to_bool
+from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
 
@@ -153,10 +153,6 @@ from .rational cimport Rational
 
 from sage.categories.map cimport Map
 
-cdef ZZ, QQ, RDF
-from .integer_ring import ZZ
-from .rational_field import QQ
-from .real_double import RDF
 from .real_double cimport RealDoubleElement
 
 import sage.rings.rational_field
@@ -729,6 +725,10 @@ cdef class RealField_class(sage.rings.abc.RealField):
             sage: R.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         """
+        from .integer_ring import ZZ
+        from .rational_field import QQ
+        from .real_double import RDF
+
         if S is ZZ:
             return ZZtoRR(ZZ, self)
         elif S is QQ:
@@ -1438,12 +1438,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: import numpy
-            sage: numpy.arange(10.0)
+            sage: import numpy                                                          # optional - numpy
+            sage: numpy.arange(10.0)                                                    # optional - numpy
             array([0., 1., 2., 3., 4., 5., 6., 7., 8., 9.])
-            sage: numpy.array([1.0, 1.1, 1.2]).dtype
+            sage: numpy.array([1.0, 1.1, 1.2]).dtype                                    # optional - numpy
             dtype('float64')
-            sage: numpy.array([1.000000000000000000000000000000000000]).dtype
+            sage: numpy.array([1.000000000000000000000000000000000000]).dtype           # optional - numpy
             dtype('O')
         """
         if (<RealField_class>self._parent).__prec <= 53:
@@ -1872,6 +1872,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealField(100)(2).imag()
             0
         """
+        from .integer_ring import ZZ
+
         return ZZ(0)
 
     def str(self, int base=10, size_t digits=0, *, no_sci=None,
@@ -5858,21 +5860,20 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
 
     # Check for a valid base
     if base < 2 or base > 62:
-        raise ValueError("base (=%s) must be an integer between 2 and 62"%base)
+        raise ValueError(f"base (={base}) must be an integer between 2 and 62")
 
     if base == 10 and min_prec == 53 and len(s) <= 15 and rnd == "RNDN":
         R = RR
     else:
         # For bases 15 and up, treat 'e' as digit
         if base <= 14 and ('e' in s or 'E' in s):
-            #Figure out the exponent
-            index = max( s.find('e'), s.find('E') )
-            exponent = int(s[index+1:])
+            # Figure out the exponent
+            index = max(s.find('e'), s.find('E'))
             mantissa = s[:index]
         else:
             mantissa = s
 
-        #Find the first nonzero entry in rest
+        # Find the first nonzero entry in rest
         sigfig_mantissa = mantissa.lstrip('-0.')
         sigfigs = len(sigfig_mantissa) - ('.' in sigfig_mantissa)
 

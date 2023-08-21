@@ -163,7 +163,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
     _stable_abstract_classes = [
         cartan_type.CartanType_simple]
 
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         EXAMPLES::
 

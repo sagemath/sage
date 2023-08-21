@@ -551,7 +551,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         # We must check that the generator(s) in the free generator module are
         # not hit by relations, since we are not guaranteed that the
         # presentation we have is minimal.
-        X = sorted(x for x in self.generator_degrees())
+        X = sorted(self.generator_degrees())
 
         previous = None
         for k in X:

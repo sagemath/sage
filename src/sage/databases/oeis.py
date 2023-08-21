@@ -1481,9 +1481,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence(ident='A999991', keywords='sign,full')
             sage: for i in s: pass
         """
-        for x in self.first_terms():
-            yield x
-        if not self.is_full() is True:
+        yield from self.first_terms()
+        if self.is_full() is not True:
             raise LookupError("future values not provided by OEIS")
 
     def references(self):

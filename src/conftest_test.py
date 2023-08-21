@@ -1,4 +1,10 @@
+from pathlib import Path
 import subprocess
+
+
+from sage.env import SAGE_SRC
+
+input_file = Path(SAGE_SRC) / "conftest_inputtest.py"
 
 
 class TestOldDoctestSageScript:
@@ -6,7 +12,7 @@ class TestOldDoctestSageScript:
 
     def test_invoke_on_inputtest_file(self):
         result = subprocess.run(
-            ["sage", "-t", "./src/conftest_inputtest.py"],
+            ["sage", "-t", input_file],
             capture_output=True,
             text=True,
         )
@@ -27,7 +33,7 @@ class TestPytestSageScript:
 
     def test_invoke_on_inputtest_file(self):
         result = subprocess.run(
-            ["sage", "--pytest", "./src/conftest_inputtest.py"],
+            ["sage", "--pytest", input_file],
             capture_output=True,
             text=True,
         )

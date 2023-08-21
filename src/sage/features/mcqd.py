@@ -17,7 +17,8 @@ from .join_feature import JoinFeature
 
 class Mcqd(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`~sage.graphs.mcqd`
+    A :class:`~sage.features.Feature` describing the presence of the :mod:`~sage.graphs.mcqd` module,
+    which is the SageMath interface to the :ref:`mcqd <spkg_mcqd>` library
 
     EXAMPLES::
 
