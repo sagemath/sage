@@ -2049,21 +2049,17 @@ class Stream_plethysm(Stream_binary):
         if not n:  # special case of 0
             if self._right[0]:
                 assert self._degree_f is not None, "the plethysm with a lazy symmetric function of valuation 0 is defined only for symmetric functions of finite support"
+                K = self._degree_f
+            else:
+                K = 1
+        else:
+            K = n + 1
 
-                return sum((c * self.compute_product(n, la)
-                            for k in range(self._left._approximate_order, self._degree_f)
-                            if self._left[k] # necessary, because it might be int(0)
-                            for la, c in self._left[k]),
-                           self._basis.zero())
-
-        # this also needs to be executed if not n and not
-        # self._right[0]
-        res = sum((c * self.compute_product(n, la)
-                   for k in range(self._left._approximate_order, n+1)
-                   if self._left[k] # necessary, because it might be int(0)
-                   for la, c in self._left[k]),
-                  self._basis.zero())
-        return res
+        return sum((c * self.compute_product(n, la)
+                    for k in range(self._left._approximate_order, K)
+                    if self._left[k] # necessary, because it might be int(0)
+                    for la, c in self._left[k]),
+                   self._basis.zero())
 
     def compute_product(self, n, la):
         r"""
@@ -2138,8 +2134,8 @@ class Stream_plethysm(Stream_binary):
 
         INPUT:
 
-        - ``i``,  ``m`` -- positive integers;
-        - ``d``  -- integer;
+        - ``i``, ``m`` -- positive integers
+        - ``d`` -- integer
 
         EXAMPLES::
 
