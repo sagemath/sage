@@ -877,7 +877,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
               Defn: Defined on coordinates by sending (x : y) to ...
             sage: h[0]/h[1]
             x/y
-            sage: h.is_one()                    # known bug
+            sage: h.is_one()                    # known bug (see :trac:`31892`)
             True
             sage: (x,y,z) = c.gens()
             sage: x.parent()
@@ -1119,12 +1119,12 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: # needs sage.rings.number_field
             sage: F = Conic([L.gen(), 30, -20])
             sage: q = F.rational_point(algorithm='magma')       # optional - magma
-            sage: q  # random                            # optional - magma
+            sage: q  # random                                   # optional - magma
             (-10/7*s + 40/7 : 5/7*s - 6/7 : 1)
             sage: p = F.rational_point(read_cache=False)
             sage: p  # random
             (788210*s - 1114700 : -171135*s + 242022 : 1)
-            sage: len(str(p)) > len(str(q))     # optional - magma
+            sage: len(str(p)) > len(str(q))                     # optional - magma
             True
 
             sage: # needs sage.rings.number_field
@@ -1135,14 +1135,14 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             False
             sage: G.has_rational_point(algorithm='local', read_cache=False)
             False
-            sage: G.rational_point(algorithm='magma')   # optional - magma
+            sage: G.rational_point(algorithm='magma')           # optional - magma
             Traceback (most recent call last):
             ...
             ValueError: Conic Projective Conic Curve over Number Field in s
             with defining polynomial x^2 - 2 with s = 1.414213562373095?
             defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over
             Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
-            sage: G.rational_point(algorithm='magma',   # optional - magma
+            sage: G.rational_point(algorithm='magma',           # optional - magma
             ....:                  read_cache=False)
             Traceback (most recent call last):
             ...
