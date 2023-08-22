@@ -236,7 +236,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')                                   # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')
             sage: P = PS([0, 1])
             sage: P == PS(0)
             True
@@ -327,7 +328,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')                                   # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')
             sage: P = PS([0, 1])
             sage: P != PS(0)
             False
@@ -509,11 +511,12 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
+            sage: # needs sage.libs.pari
             sage: R.<t> = PolynomialRing(QQ)
-            sage: S = R.quo(R.ideal(t^3))                                               # needs sage.libs.pari
-            sage: P.<x,y,z> = ProjectiveSpace(S, 2)                                     # needs sage.libs.pari
+            sage: S = R.quo(R.ideal(t^3))
+            sage: P.<x,y,z> = ProjectiveSpace(S, 2)
             sage: Q = P(t, 1, 1)
-            sage: Q.scale_by(t);Q                                                       # needs sage.libs.pari
+            sage: Q.scale_by(t);Q
             (tbar^2 : tbar : tbar)
 
         ::
@@ -551,9 +554,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: P = ProjectiveSpace(Zp(7), 2, 'x')                                    # needs sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: P = ProjectiveSpace(Zp(7), 2, 'x')
             sage: p = P([-5, -15, -2])
-            sage: p.normalize_coordinates(); p                                          # needs sage.rings.padics
+            sage: p.normalize_coordinates(); p
             (5 + O(7^20) : 1 + 2*7 + O(7^20) : 2 + O(7^20))
 
         ::
