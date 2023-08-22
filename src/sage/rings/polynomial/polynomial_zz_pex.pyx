@@ -491,7 +491,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         r"""
         Return the polynomial obtained by reversing the coefficients
         of this polynomial.  If degree is set then this function behaves
-        as if this polynomial has degree `degree`.
+        as if this polynomial has degree ``degree``.
 
         EXAMPLES::
 
@@ -547,6 +547,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
     def inverse_series_trunc(self, prec):
         r"""
         Compute and return the inverse of self modulo `x^prec`.
+        
         The constant term of self must be invertible.
 
         EXAMPLES::
