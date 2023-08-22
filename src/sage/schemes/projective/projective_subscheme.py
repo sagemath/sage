@@ -1410,10 +1410,12 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         Return the (projective) global height of the subscheme.
 
         INPUT:
+
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
         OUTPUT:
+
         - a real number.
 
         EXAMPLES::
@@ -1439,11 +1441,14 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         Return the (projective) local height of the subscheme.
 
         INPUT:
+
         - ``v`` -- a prime or prime ideal of the base ring.
+
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
         OUTPUT:
+
         - a real number.
 
         EXAMPLES::
@@ -1470,11 +1475,14 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         Return the local height at the ``i``-th infinite place of the subscheme.
 
         INPUT:
+
         - ``i`` -- an integer.
+
         - ``prec`` -- desired floating point precision (default:
           default RealField precision).
 
         OUTPUT:
+
         - a real number.
 
         EXAMPLES::
