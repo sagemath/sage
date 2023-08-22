@@ -846,7 +846,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         ::
 
             sage: A.<x,y,z> = AffineSpace(GF(7), 3)
-            sage: C = Curve([x^2 - z, z - 8*x], A); C                                   # needs sage.rings.number_field
+            sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
         super().__init__(A, X)
