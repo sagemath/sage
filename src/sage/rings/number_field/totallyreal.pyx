@@ -292,7 +292,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     f_out[n_int] = 1
 
     if keep_fields:
-        if type(keep_fields) == bool:
+        if isinstance(keep_fields, bool):
             keepB = pari(int(math.floor(B*math.log(B))))
         else:
             keepB = pari(keep_fields)
@@ -337,7 +337,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     if verbose:
         verb_int = 1
         saveout = sys.stdout
-        if type(verbose) == str:
+        if isinstance(verbose, str):
             fsock = open(verbose, 'w')
             sys.stdout = fsock
         # Else, print to screen
@@ -458,7 +458,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         print("Polynomials with nfdisc <= B:", counts[3])
         for i from 0 <= i < lenS:
             print(S[i])
-        if type(verbose) == str:
+        if isinstance(verbose, str):
             fsock.close()
         sys.stdout = saveout
 

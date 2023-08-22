@@ -103,8 +103,8 @@ def locally_GQ42_distance_transitive_graph():
 
     EXAMPLES::
 
-        sage: G = graphs.locally_GQ42_distance_transitive_graph()  # optional - internet gap_packages
-        sage: G.is_distance_regular(True)  # optional - internet gap_packages
+        sage: G = graphs.locally_GQ42_distance_transitive_graph()       # optional - internet gap_package_atlasrep
+        sage: G.is_distance_regular(True)                               # optional - internet gap_package_atlasrep
         ([45, 32, 12, 1, None], [None, 1, 6, 32, 45])
 
     REFERENCES:
@@ -217,8 +217,8 @@ def graph_3O73():
 
     EXAMPLES::
 
-        sage: G = graphs.graph_3O73()  # optional - internet gap_packages
-        sage: G.is_distance_regular(True)  # optional - internet gap_packages
+        sage: G = graphs.graph_3O73()                           # optional - internet gap_package_atlasrep
+        sage: G.is_distance_regular(True)                       # optional - internet gap_package_atlasrep
         ([117, 80, 24, 1, None], [None, 1, 12, 80, 117])
 
     REFERENCES:
@@ -272,8 +272,8 @@ def J2Graph():
 
     EXAMPLES::
 
-        sage: G = graphs.J2Graph()  # optional - internet gap_packages
-        sage: G.is_distance_regular(True) # optional - internet gap_packages
+        sage: G = graphs.J2Graph()                              # optional - internet gap_package_atlasrep
+        sage: G.is_distance_regular(True)                       # optional - internet gap_package_atlasrep
         ([10, 8, 8, 2, None], [None, 1, 1, 4, 5])
 
     REFERENCES:
@@ -295,8 +295,8 @@ def IvanovIvanovFaradjevGraph():
 
     EXAMPLES::
 
-        sage: G = graphs.IvanovIvanovFaradjevGraph()  # optional - internet gap_packages
-        sage: G.is_distance_regular(True)  # optional - internet gap_packages
+        sage: G = graphs.IvanovIvanovFaradjevGraph()            # optional - internet gap_package_atlasrep
+        sage: G.is_distance_regular(True)                       # optional - internet gap_package_atlasrep
         ([7, 6, 4, 4, 4, 1, 1, 1, None], [None, 1, 1, 1, 2, 4, 4, 6, 7])
 
     REFERENCES:
@@ -1310,7 +1310,7 @@ def GeneralisedDodecagonGraph(const int s, const int t):
 
     EXAMPLES::
 
-        sage: # optional - gap_packages internet
+        sage: # optional - gap_package_atlasrep internet
         sage: G = graphs.GeneralisedDodecagonGraph(1, 5)
         sage: G.is_distance_regular(True)
         ([6, 5, 5, 5, 5, 5, None], [None, 1, 1, 1, 1, 1, 6])
@@ -1335,7 +1335,7 @@ def GeneralisedDodecagonGraph(const int s, const int t):
 
     Test all graphs of order `(1, q)`::
 
-        sage: # optional - gap_packages internet
+        sage: # optional - gap_package_atlasrep internet
         sage: G = graphs.GeneralisedDodecagonGraph(1, 4)
         sage: G.is_distance_regular(True)
         ([5, 4, 4, 4, 4, 4, None], [None, 1, 1, 1, 1, 1, 5])
@@ -1351,7 +1351,7 @@ def GeneralisedDodecagonGraph(const int s, const int t):
 
     Now test all graphs of order `(q, 1)`::
 
-        sage: # optional - gap_packages internet
+        sage: # optional - gap_package_atlasrep internet
         sage: G = graphs.GeneralisedDodecagonGraph(4, 1)
         sage: G.is_distance_regular(True)
         ([8, 4, 4, 4, 4, 4, None], [None, 1, 1, 1, 1, 1, 2])
@@ -1422,8 +1422,8 @@ def GeneralisedOctagonGraph(const int s, const int t):
         sage: G = graphs.GeneralisedOctagonGraph(1, 4)
         sage: G.is_distance_regular(True)
         ([5, 4, 4, 4, None], [None, 1, 1, 1, 5])
-        sage: G = graphs.GeneralisedOctagonGraph(2, 4)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G = graphs.GeneralisedOctagonGraph(2, 4)          # optional - gap_package_atlasrep internet
+        sage: G.is_distance_regular(True)                       # optional - gap_package_atlasrep internet
         ([10, 8, 8, 8, None], [None, 1, 1, 1, 5])
         sage: G = graphs.GeneralisedOctagonGraph(5, 1)
         sage: G.is_distance_regular(True)
@@ -1530,8 +1530,8 @@ def GeneralisedHexagonGraph(const int s, const int t):
     EXAMPLES::
 
         sage: # needs sage.libs.gap
-        sage: G = graphs.GeneralisedHexagonGraph(5, 5)  # optional - gap_packages internet
-        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        sage: G = graphs.GeneralisedHexagonGraph(5, 5)          # optional - gap_package_atlasrep internet
+        sage: G.is_distance_regular(True)                       # optional - gap_package_atlasrep internet
         ([30, 25, 25, None], [None, 1, 1, 6])
         sage: G = graphs.GeneralisedHexagonGraph(7, 1)
         sage: G.is_distance_regular(True)
@@ -1552,7 +1552,7 @@ def GeneralisedHexagonGraph(const int s, const int t):
 
     TESTS::
 
-        sage: # optional - gap_packages internet
+        sage: # optional - gap_package_atlasrep internet
         sage: G = graphs.GeneralisedHexagonGraph(4, 4)
         sage: G.is_distance_regular(True)
         ([20, 16, 16, None], [None, 1, 1, 5])
@@ -1755,15 +1755,15 @@ def _line_graph_generalised_polygon(H):
     EXAMPLES::
 
         sage: # needs sage.libs.gap
-        sage: from sage.graphs.generators.distance_regular import \
-        ....: _line_graph_generalised_polygon
+        sage: from sage.graphs.generators.distance_regular import (
+        ....:     _line_graph_generalised_polygon)
         sage: G = graphs.GeneralisedHexagonGraph(1, 8)
         sage: H = _line_graph_generalised_polygon(G)
         sage: H.is_distance_regular(True)
         ([16, 8, 8, None], [None, 1, 1, 2])
-        sage: G = graphs.GeneralisedHexagonGraph(3, 3) # optional - gap_packages internet
-        sage: H = _line_graph_generalised_polygon(G)   # optional - gap_packages internet
-        sage: G.is_isomorphic(H)                       # optional - gap_packages internet
+        sage: G = graphs.GeneralisedHexagonGraph(3, 3)          # optional - gap_package_atlasrep internet
+        sage: H = _line_graph_generalised_polygon(G)            # optional - gap_package_atlasrep internet
+        sage: G.is_isomorphic(H)                                # optional - gap_package_atlasrep internet
         True
 
     REFERENCES:
@@ -1908,7 +1908,7 @@ def is_classical_parameters_graph(list array):
         ....: is_classical_parameters_graph
         sage: is_classical_parameters_graph([68, 64, 1, 17])  # srg not drg             # needs sage.combinat
         False
-        sage: G = graphs.GossetGraph() # sporadic classical parameters graph
+        sage: G = graphs.GossetGraph()  # sporadic classical parameters graph
         sage: G.is_distance_regular(True)
         ([27, 10, 1, None], [None, 1, 10, 27])
         sage: is_classical_parameters_graph([27, 10, 1, 1, 10, 27])                     # needs sage.combinat
@@ -2145,7 +2145,7 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
         Symplectic Dual Polar Graph DSp(6, 2): Graph on 135 vertices
         sage: graph_with_classical_parameters(3, 2, 2, 14, 7)  # long time
         Grassmann graph J_2(6, 3): Graph on 1395 vertices
-        sage: graph_with_classical_parameters(3, -2, -2, 6, 6) # optional - gap_packages internet
+        sage: graph_with_classical_parameters(3, -2, -2, 6, 6)  # optional - gap_package_atlasrep internet
         Generalised hexagon of order (2, 8): Graph on 819 vertices
     """
     from sage.rings.rational import Rational
@@ -2728,7 +2728,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
         sage: graphs.distance_regular_graph([3, 2, 2, 1, 2, 1, 1, 2, 2, 3],
         ....:                               existence=True)
         False
-        sage: graphs.distance_regular_graph([18, 16, 16, 1, 1, 9])  # optional - internet gap_packages
+        sage: graphs.distance_regular_graph([18, 16, 16, 1, 1, 9])              # optional - internet gap_package_atlasrep
         Generalised hexagon of order (2, 8): Graph on 819 vertices
 
         sage: # needs sage.combinat

@@ -28,7 +28,6 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.pari.all import pari, pari_gen
 from sage.misc.fast_methods import Singleton
 from sage.modular.modsym.p1list import lift_to_sl2z_llong
 from sage.rings.infinity import Infinity, InfinityRing
@@ -40,6 +39,11 @@ from sage.structure.element import Element, is_InfinityElement
 from sage.structure.element import is_Matrix
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
+
+try:
+    from sage.libs.pari.all import pari, pari_gen
+except ImportError:
+    pari_gen = ()
 
 
 class Cusp(Element):

@@ -99,12 +99,18 @@ The above is consistent with the following analytic computation::
 import sage.rings.abc
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
-import sage.rings.all as rings
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.number_field.number_field import QuadraticField
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.real_mpfi import RealIntervalField
+from sage.rings.infinity import Infinity as infinity
+from sage.rings.fast_arith import prime_range
 
 from sage.arith.functions import lcm
 from sage.arith.misc import (binomial, factorial, prime_divisors,
                              GCD as gcd, XGCD as xgcd)
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -3566,14 +3572,14 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
                 return v[0]
 
         g, d = make_monic(f)
-        K = rings.NumberField(g, var)
+        K = NumberField(g, var)
         x = K.gen() / d
         if optimize:
             KO, from_KO, to_KO = K.optimized_representation()
             K = KO
             x = to_KO(x)
             if K.degree() < 2 * self.ring_class_field().degree_over_K():
-                M = rings.QuadraticField(self.discriminant(),'b')
+                M = QuadraticField(self.discriminant(),'b')
                 KD = K.composite_fields(M, names='a')[0]
                 phi = K.embeddings(KD)[0]
                 x = phi(x)
@@ -3808,7 +3814,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         R, U = self._good_tau_representatives()
         E = self.__E
         phi = E.modular_parametrization()
-        C = rings.ComplexField(prec)
+        C = ComplexField(prec)
         F = E.change_ring(C)
         s = 0
         for u, weight in U:
@@ -4324,7 +4330,7 @@ class KolyvaginPoint(HeegnerPoint):
             R = 2*P
         else:
             R = P + E.point([x.conjugate() for x in P],check=False)
-        F = self.curve().change_ring(rings.RealField(prec))
+        F = self.curve().change_ring(RealField(prec))
         return F.point([x.real() for x in R], check=False)
 
     @cached_method
@@ -6591,12 +6597,12 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
     eps = self.root_number()
     L1_vanishes = self.lseries().L1_vanishes()
 
-    IR = rings.RealIntervalField(20)    # TODO: why 20 bits here?
+    IR = RealIntervalField(20)    # TODO: why 20 bits here?
 
     if eps == 1 and L1_vanishes:
         return IR(0) # rank even hence >= 2, so Heegner point is torsion.
 
-    RR = rings.RealField()
+    RR = RealField()
     from math import sqrt
 
     alpha = RR(sqrt(abs(D)))/(2*self.period_lattice().complex_area())
@@ -6740,13 +6746,13 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
         raise ArithmeticError("Discriminant (=%s) must be a fundamental discriminant that satisfies the Heegner hypothesis." % D)
 
     if check_rank and self.rank() >= 2:
-        return rings.infinity
+        return infinity
 
     # First compute upper bound on height of Heegner point.
     tm = verbose("computing heegner point height...")
     h0 = self.heegner_point_height(D, prec=prec, check_rank=check_rank)
     if h0 == 0:
-        return rings.infinity
+        return infinity
 
     # We divide by 2 to get the height **over Q** of the
     # Heegner point on the twist.
@@ -6768,7 +6774,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
 
     from .ell_rational_field import _MAX_HEIGHT
 
-    IR = rings.RealIntervalField(20)  # todo: 20?
+    IR = RealIntervalField(20)  # todo: 20?
 
     a = 1
     if c > _MAX_HEIGHT or F is self:
@@ -6795,7 +6801,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
     verbose("doing point search")
     P = F.point_search(c)
     verbose("done with point search")
-    P = [x for x in P if x.order() == rings.infinity]
+    P = [x for x in P if x.order() == infinity]
     a = 1
     if len(P) == 0:
         return IR(1)
@@ -6833,7 +6839,7 @@ def _adjust_heegner_index(self, a):
         1.?e-8
     """
     if a.lower() < 0:
-        IR = rings.RealIntervalField(20)  # todo: 20?
+        IR = RealIntervalField(20)  # todo: 20?
         a = IR((0, a.upper()))
     return a.sqrt()
 
@@ -6940,7 +6946,7 @@ def heegner_index_bound(self, D=0, prec=5, max_height=None):
 
         S, I, reg = F.saturation(P)
 
-        IR = rings.RealIntervalField(20)  # todo: 20?
+        IR = RealIntervalField(20)  # todo: 20?
         h = IR(reg-eps,reg+eps)
         ind2 = ht/(h/2)
         verbose("index squared = %s" % ind2)
@@ -6956,17 +6962,17 @@ def heegner_index_bound(self, D=0, prec=5, max_height=None):
     # First try a quick search, in case we get lucky and find
     # a generator.
     P = F.point_search(13, rank_bound=1)
-    P = [x for x in P if x.order() == rings.infinity]
+    P = [x for x in P if x.order() == infinity]
     if len(P) > 0:
         return _bound(P)
 
     # Do search to eliminate possibility that Heegner point is
     # divisible by primes up to p, without finding Heegner point.
     P = F.point_search(c, rank_bound=1)
-    P = [x for x in P if x.order() == rings.infinity]
+    P = [x for x in P if x.order() == infinity]
     if len(P) == 0:
         # We've eliminated the possibility of a divisor up to p.
-        return rings.prime_range(3, p), D, False
+        return prime_range(3, p), D, False
     else:
         return _bound(P)
 
@@ -7036,7 +7042,7 @@ def _heegner_index_in_EK(self, D):
 
     E = self  # nice shortcut
     F = E.quadratic_twist(D).minimal_model()
-    K = rings.QuadraticField(D, 'a')
+    K = QuadraticField(D, 'a')
 
     # Define a map phi that we'll use to put the points of E^D(QQ)
     # into E(K):
@@ -7051,11 +7057,11 @@ def _heegner_index_in_EK(self, D):
             ((z.order() % 2 == 0 and len(z.order().factor()) == 1))]
 
     r = len(basis)   # rank
-    V = rings.QQ**r
+    V = QQ**r
     B = []
 
     # Iterate through reps for A/(2*A) creating vectors in (1/2)*ZZ^r
-    for v in rings.GF(2)**r:
+    for v in GF(2)**r:
         if not v:
             continue
         P = sum([basis[i] for i in range(r) if v[i]])
@@ -7063,9 +7069,9 @@ def _heegner_index_in_EK(self, D):
             if (P+t).is_divisible_by(2):
                 B.append(V(v)/2)
 
-    A = rings.ZZ**r
+    A = ZZ**r
     # Take span of our vectors in (1/2)*ZZ^r, along with ZZ^r.  This is E(K)/tor.
-    W = V.span(B, rings.ZZ) + A
+    W = V.span(B, ZZ) + A
 
     # Compute the index in E(K)/tor of A = E(Q)/tor + E^D(Q)/tor, cache, and return.
     index = A.index_in(W)
@@ -7165,7 +7171,7 @@ def heegner_sha_an(self, D, prec=53):
     # see page 311 of [GZ1986]_ for the formula.
     E = self  # notational convenience
     F = E.quadratic_twist(D).minimal_model()
-    K = rings.QuadraticField(D, 'a')
+    K = QuadraticField(D, 'a')
 
     # Compute each of the quantities in BSD
     #  - The torsion subgroup over K.

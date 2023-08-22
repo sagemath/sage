@@ -919,3 +919,64 @@ def _new_invariant_is_linearly_independent(F, invariants):
     if len(invariants)==0:
         return True
     return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()
+
+def _hilbert_series(S):
+    """
+    EXAMPLES::
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import _hilbert_series
+        sage: def test_invariants(group):
+        ....:     invs=group.invariant_generators()
+        ....:     for inv in invs:
+        ....:         assert group.random_element()@inv==inv
+        sage: def test_hilbert(group):
+        ....:     invs=group.invariant_generators()
+        ....:     R=invs[0].parent()
+        ....:     subring=R.subring_generated_by(invs)
+        ....:     h1=subring.hilbert_series(algorithm="sage")
+        ....:     h2=subring.hilbert_series(algorithm="singular")
+        ....:     m=group.molien_series(return_series=False)
+        ....:     assert h1==h2 and h2==m
+        sage: K = CyclotomicField(4)
+        sage: i=K.gen()
+        sage: tetra=MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
+        sage: test_invariants(tetra)
+        sage: test_hilbert(tetra)
+        sage: for n in range(2,4):
+        ....:     M = MatrixSpace(QQ, n)
+        ....:     identity=MatrixGroup([M.identity_matrix()])
+        ....:     alternating=MatrixGroup([M(g.matrix()) for g in AlternatingGroup(n).gens()])
+        ....:     symmetric=MatrixGroup([M(g.matrix()) for g in SymmetricGroup(n).gens()])
+        ....:     for g in (identity, alternating, symmetric):
+        ....:         test_invariants(g)
+        ....:         test_hilbert(g)
+        sage: K = CyclotomicField(8)
+        sage: v=K.gen()
+        sage: a = v-v**3 #sqrt(2)
+        sage: i = v**2
+        sage: octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],[(1+i)/a, 0,  0, (1-i)/a])
+        sage: test_invariants(octa)
+        sage: test_hilbert(octa)
+        sage: K = CyclotomicField(10)
+        sage: v=K.gen()
+        sage: z5 = v**2
+        sage: i = z5**5
+        sage: a = 2*z5**3 + 2*z5**2 + 1 #sqrt(5)
+        sage: Ico = MatrixGroup([[z5**3,0, 0,z5**2],[0,1, -1,0],[(z5**4-z5)/a, (z5**2-z5**3)/a, (z5**2-z5**3)/a, -(z5**4-z5)/a]])
+        sage: test_invariants(Ico)
+        sage: test_hilbert(Ico)
+        sage: K = GF(5)
+        sage: S = MatrixGroup(SymmetricGroup(4))
+        sage: G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])for m in S.gens()])
+        sage: test_invariants(G)
+        sage: test_hilbert(G)
+        sage: i = GF(7)(3)
+        sage: G = MatrixGroup([[i**3,0, 0,-i**3], [i**2,0, 0,-i**2]])
+        sage: test_invariants(G)
+        sage: test_hilbert(G)
+    """
+    R=S[0].parent().base_ring()
+    T=PolynomialRing(R, len(S), "a")
+    h=T.hom(S)                          
+    I=h.kernel()                        
+    degrees=[s.degree() for s in S]
+    return I.hilbert_series(grading=degrees, algorithm="sage") # 2s are degrees of the elements of S

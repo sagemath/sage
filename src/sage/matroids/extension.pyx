@@ -484,7 +484,7 @@ cdef class MatroidExtensions(LinearSubclasses):
         """
         if M.full_rank() == 0:
             pass
-        if type(M) == BasisMatroid:
+        if isinstance(M, BasisMatroid):
             BM = M
         else:
             BM = BasisMatroid(M)

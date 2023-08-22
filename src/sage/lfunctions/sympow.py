@@ -51,7 +51,7 @@ import os
 from sage.structure.sage_object import SageObject
 from sage.misc.pager import pager
 from sage.misc.verbose import verbose
-import sage.rings.all
+from sage.rings.integer import Integer
 
 
 class Sympow(SageObject):
@@ -237,7 +237,7 @@ class Sympow(SageObject):
         if i == -1:
             print(self._fix_err(v))
             raise RuntimeError("failed to compute modular degree")
-        return sage.rings.all.Integer(v[i + len(s):])
+        return Integer(v[i + len(s):])
 
     def analytic_rank(self, E):
         r"""
@@ -296,7 +296,7 @@ class Sympow(SageObject):
             print(self._fix_err(v))
             raise RuntimeError("failed to compute analytic rank")
         j = v.rfind(':')
-        r = sage.rings.all.Integer(v[i + len(s):j])
+        r = Integer(v[i + len(s):j])
         i = v.rfind(' ')
         L = v[i + 1:]
         return r, L

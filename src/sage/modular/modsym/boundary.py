@@ -101,7 +101,8 @@ import sage.modular.dirichlet as dirichlet
 import sage.modular.hecke.all as hecke
 from sage.modular.modsym.manin_symbol import ManinSymbol
 
-import sage.rings.all as rings
+from sage.rings.rational_field import Q as QQ
+from sage.rings.ring import Ring
 
 from . import element
 
@@ -283,7 +284,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
                  group=arithgroup.Gamma0(1),
                  weight=2,
                  sign=0,
-                 base_ring=rings.QQ,
+                 base_ring=QQ,
                  character=None):
         """
         Space of boundary symbols for a congruence subgroup of SL_2(Z).
@@ -319,7 +320,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         if not arithgroup.is_CongruenceSubgroup(group):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
-        if not isinstance(base_ring, rings.Ring) and rings.is_CommutativeRing(base_ring):
+        if not isinstance(base_ring, Ring):
             raise TypeError("base_ring must be a commutative ring")
         if character is None and arithgroup.is_Gamma0(group):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
