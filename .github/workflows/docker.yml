@@ -28,7 +28,6 @@ on:
            "debian-bullseye",
            "debian-bookworm",
            "debian-sid",
-           "linuxmint-19.3-gcc_8-python3.8",
            "linuxmint-20.1",
            "linuxmint-20.2",
            "linuxmint-20.3",
