@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-environment
+# sage_setup:distribution = sagemath-environment
 """
 Recognizing package directories
 """
@@ -27,12 +27,12 @@ class SourceDistributionFilter:
 
     - ``include_distributions`` -- (default: ``None``) if not ``None``,
       should be a sequence or set of strings: include files whose
-      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      ``distribution`` (from a ``# sage_setup:`` ``distribution = PACKAGE``
       directive in the source file) is an element of ``distributions``.
 
     - ``exclude_distributions`` -- (default: ``None``) if not ``None``,
       should be a sequence or set of strings: exclude files whose
-      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      ``distribution`` (from a ``# sage_setup:`` ``distribution = PACKAGE``
       directive in the module source file) is in ``exclude_distributions``.
 
     EXAMPLES::
@@ -96,7 +96,7 @@ distribution_directive = re.compile(r"(\s*#?\s*)(sage_setup:\s*distribution\s*=\
 
 def read_distribution(src_file):
     r"""
-    Parse ``src_file`` for a ``# sage_setup: distribution = PKG`` directive.
+    Parse ``src_file`` for a ``# sage_setup:`` ``distribution = PKG`` directive.
 
     INPUT:
 
@@ -136,12 +136,12 @@ def read_distribution(src_file):
 
 def update_distribution(src_file, distribution, *, verbose=False):
     r"""
-    Add or update a ``# sage_setup: distribution = PKG`` directive in ``src_file``.
+    Add or update a ``# sage_setup:`` ``distribution = PKG`` directive in ``src_file``.
 
-    For a Python or Cython file, if a ``sage_setup: distribution`` directive
+    For a Python or Cython file, if a ``distribution`` directive
     is not already present, it is added.
 
-    For any other file, if a ``sage_setup: distribution`` directive is not already
+    For any other file, if a ``distribution`` directive is not already
     present, no action is taken.
 
     INPUT:
@@ -168,20 +168,20 @@ def update_distribution(src_file, distribution, *, verbose=False):
         sage: test('module.py', '# Python file\n')
         # Python file
         ====
-        # sage_setup: distribution = sagemath-categories
+        # sage_setup: distribution...= sagemath-categories
         # Python file
         ====
-        # sage_setup: distribution =
+        # sage_setup: distribution...=
         # Python file
-        sage: test('file.cpp', '// sage_setup: distribution=sagemath-modules\n'
+        sage: test('file.cpp', '// sage_setup: ' 'distribution=sagemath-modules\n'
         ....:                  '// C++ file with existing directive\n')
-        // sage_setup: distribution=sagemath-modules
+        // sage_setup: distribution...=sagemath-modules
         // C++ file with existing directive
         ====
-        // sage_setup: distribution = sagemath-categories
+        // sage_setup: distribution...= sagemath-categories
         // C++ file with existing directive
         ====
-        // sage_setup: distribution =
+        // sage_setup: distribution...=
         // C++ file with existing directive
         sage: test('file.cpp', '// C++ file without existing directive\n')
         // C++ file without existing directive
@@ -192,9 +192,13 @@ def update_distribution(src_file, distribution, *, verbose=False):
     """
     if not distribution:
         distribution = ''
-    directive = f'sage_setup: distribution = {distribution}'.rstrip()
-    with open(src_file, 'r') as f:
-        src_lines = f.read().splitlines(keepends=True)
+    directive = 'sage_setup: ' f'distribution = {distribution}'.rstrip()
+    try:
+        with open(src_file, 'r') as f:
+            src_lines = f.read().splitlines(keepends=True)
+    except UnicodeDecodeError:
+        # Silently skip binary files
+        return
     any_found = False
     any_change = False
     for i, line in enumerate(src_lines):
@@ -210,7 +214,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
                 src_lines[i] = line
                 any_change = True
                 if verbose:
-                    print(f"Changed 'sage_setup: distribution' in {src_file!r} "
+                    print(f"Changed 'sage_setup: " f"distribution' in {src_file!r} "
                           f"from {old_distribution!r} to {distribution!r}")
             any_found = True
     if not any_found:
@@ -219,7 +223,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
             src_lines.insert(0, f'# {directive}\n')
             any_change = True
             if verbose:
-                print(f"Added 'sage_setup: distribution = {distribution}' "
+                print("Added 'sage_setup: " f"distribution = {distribution}' "
                       f"directive in {src_file!r}")
     if not any_change:
         return
@@ -246,7 +250,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     - ``distribution_filter`` -- (optional, default: ``None``)
       only consider ``all*.py`` files whose distribution (from a
-      ``# sage_setup: distribution = PACKAGE`` directive in the source file)
+      ``# sage_setup:`` ``distribution = PACKAGE`` directive in the source file)
       is an element of ``distribution_filter``.
 
     EXAMPLES:
