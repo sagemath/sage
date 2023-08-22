@@ -24,6 +24,7 @@ on:
            "ubuntu-kinetic",
            "ubuntu-lunar",
            "ubuntu-mantic",
+           "debian-buster-gcc_spkg",
            "debian-bullseye",
            "debian-bookworm",
            "debian-sid",
