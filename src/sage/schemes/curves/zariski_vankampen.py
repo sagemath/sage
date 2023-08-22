@@ -357,10 +357,13 @@ def voronoi_cells(V):
 
     OUTPUT:
 
-    The graph of the 1-skeleton of ``G``, the subgraph ``E`` of the boundary, a vertex ``p`` in ``E``,
-    a counterclockwise orientation ``EC`` of ``E`` (as an ordered list of vertices with identical
-    first and last elements), and the dual graph ``DG`` of ``V``, where the vertices are labelled
-    by the compact regions of ``V`` and the edges by their dual edges.
+    - ``G`` -- the graph of the 1-skeleton of ``V``
+    - ``E`` -- the subgraph of the boundary
+    - ``p`` -- a vertex in ``E``
+    - ``EC`` -- a list of vertices (representing a counterclockwise orientation  of ``E``) with identical
+                first and last elements)
+    - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
+                by the compact regions of ``V`` and the edges by their dual edges.
 
     EXAMPLES::
 
@@ -568,17 +571,17 @@ def newton(f, x0, i0):
     return x0 - f(x0) / f.derivative()(i0)
 
 
-def fieldI(F0):
+def fieldI(field):
     r"""
     Return the (either double or trivial) extension of a number field which contains ``I``.
 
     INPUT:
 
-    - ``F0`` -- a number field with an embedding in ``QQbar``.
+    - ``field`` -- a number field with an embedding in ``QQbar``.
 
     OUTPUT:
 
-    The extension ``F`` of ``F0`` containing  ``I`` with  an embedding in ``QQbar``.
+    The extension ``F`` of ``field`` containing  ``I`` with  an embedding in ``QQbar``.
 
     EXAMPLES::
 
@@ -590,7 +593,7 @@ def fieldI(F0):
         Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
         with b = 0.4863890359345430? + 1.000000000000000?*I
 
-    Another example where ``F`` and ``F0`` coincide.::
+    If ``I`` is already in the field, the result is the field itself::
 
         sage: from sage.schemes.curves.zariski_vankampen import fieldI
         sage: p = QQ[x](x^4 + 1)
@@ -601,17 +604,17 @@ def fieldI(F0):
         True
     """
     I0 = QQbar.gen()
-    if I0 in F0:
-        return F0
-    F0a = F0[I0]
-    F1a = F0a.absolute_field('b0')
-    b0 = F1a.gen()
+    if I0 in field:
+        return field
+    field_a = field[I0]
+    field_b = field_a.absolute_field('b0')
+    b0 = field_b.gen()
     q = b0.minpoly()
-    qembd = F1a.embeddings(QQbar)
+    qembd = field_b.embeddings(QQbar)
     for h1 in qembd:
         b1 = h1(b0)
-        b2 = h1(F1a(F0a.gen(0)))
-        b3 = F0.gen(0)
+        b2 = h1(field_b(field_a.gen(0)))
+        b3 = field.gen(0)
         F1 = NumberField(q, 'b', embedding=b1)
         if b3 in F1 and b2.imag() > 0:
             return F1
@@ -773,7 +776,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     - ``glist`` -- a tuple of polynomials in two variables
     - ``x0`` -- a Gauss rational
     - ``x1`` -- a Gauss rational
-    - ``precision`` -- a dictionary (default, an empty one) which will apply to each element of ``glist`` a *precision*
+    - ``precision`` -- a dictionary (default, an empty one) which assigns a number precision bits to each element of ``glist``
 
     OUTPUT:
 
@@ -1320,7 +1323,7 @@ def braid2rels(L):
     k = min(T1) - 1
     B0 = BraidGroup(m)
     F0 = FreeGroup(m)
-    br0 = B0([sign(_)*(abs(_)-k) for _ in T])
+    br0 = B0([_-k for _ in T])
     br0_left = leftnormalform(br0)
     q, r = ZZ(br0_left[0][0]).quo_rem(2)
     br1 = B0.delta()**r * B0(prod(B0(_) for _ in br0_left[1:]))
