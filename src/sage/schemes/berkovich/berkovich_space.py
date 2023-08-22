@@ -211,7 +211,6 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: A.<x> = Qq(27)
             sage: C = Berkovich_Cp_Affine(A)
@@ -260,7 +259,6 @@ class Berkovich_Cp(Berkovich):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(5)
             sage: A.<x> = Qq(25)
             sage: C = Berkovich_Cp_Affine(A)
