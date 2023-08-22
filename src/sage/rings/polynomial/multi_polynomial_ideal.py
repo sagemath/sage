@@ -5045,18 +5045,17 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: J.is_homogeneous()
             True
         """
-        # if not grading:
-        #     for f in self.gens():
-        #         if not f.is_homogeneous():
-        #             return False
-        # else:
-        if grading:
-            grading_dict={var:grade for var, grade in zip(self.ring().gens(), grading)}
+        if not grading:
+            for f in self.gens():
+                if not f.is_homogeneous():
+                    return False
+        elif not isinstance(grading, (list, tuple)) or any(not isinstance(x, sage.rings.integer.Integer) for x in grading):
+            raise TypeError("grading must be a list or a tuple of integers")
         else:
-            grading_dict={var:1 for var in self.ring().gens()}
-        for f in self.gens():
-            if not f.is_homogeneous_with_grading(grading_dict):
-                return False
+            grading_dict={var:grade for var, grade in zip(self.ring().gens(), grading)}
+            for f in self.gens():
+                if not f.is_homogeneous_with_grading(grading_dict):
+                    return False
         return True
 
 
