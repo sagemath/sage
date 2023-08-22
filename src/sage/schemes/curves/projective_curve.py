@@ -201,6 +201,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         Projective Curve over Cyclotomic Field of order 11 and degree 10 defined
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
+
     def __init__(self, A, X):
         """
         Initialize.
@@ -603,6 +604,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         Projective Plane Curve over Finite Field in v of size 5^2
          defined by y^2*z - x*z^2 - z^3
     """
+
     def __init__(self, A, f):
         """
         Initialize.
@@ -1436,6 +1438,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                       + (-3/16*a - 1/4)*y*z^3 + (1/16*a + 3/32)*z^4)
         """
         # helper function for extending the base field
+
         def extension(self):
             F = self.base_ring()
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
@@ -1742,7 +1745,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: C.fundamental_group()                         # optional - sirocco
+            sage: C.fundamental_group()            # random     # optional - sirocco
             Finitely presented group < x1, x3 | (x3^-1*x1^-1*x3*x1^-1)^2*x3^-1,
                                                 x3*(x1^-1*x3^-1)^2*x1^-1*(x3*x1)^2 >
 

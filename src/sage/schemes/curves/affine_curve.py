@@ -1834,8 +1834,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        bm = braid_monodromy(f)[0]
-        return bm
+        return braid_monodromy(f)[0]
 
     def riemann_surface(self, **kwargs):
         r"""
