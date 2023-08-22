@@ -427,7 +427,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(Qp(3))
             sage: Q1 = B(9)
             sage: Q1._custom_abs(Q1.center())
@@ -452,7 +451,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(5)
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
@@ -481,7 +479,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(5)
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
@@ -635,7 +632,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         The diameter of a type IV point is the limit of the radii::
 
-            sage:
             sage: R.<x> = PolynomialRing(Qp(3))
             sage: f = R(2)
             sage: S.<y> = PolynomialRing(RR)
@@ -646,7 +642,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1/81, 1)
             sage: Q2 = B(1/3)
@@ -699,7 +694,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1/4, 4)
             sage: Q2 = B(1/4, 6)
@@ -751,7 +745,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 9)
             sage: Q2 = B(1/27, 1/27)
@@ -761,7 +754,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 9)
             sage: Q2 = B(1/2)
@@ -799,7 +791,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1/4, 4)
             sage: Q2 = B(1/4, 6)
@@ -863,7 +854,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(27, 1)
             sage: Q2 = B(1/3, 2)
@@ -873,7 +863,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(27, 1)
             sage: Q2 = B(1/3, 2)
@@ -907,7 +896,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 2)
             sage: Q2 = B(1/9, 1)
@@ -946,7 +934,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(Qp(3))
             sage: Q1 = B(1/4, 4)
             sage: Q2 = B(1/4, 6)
@@ -1188,7 +1175,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
     Type IV points can be constructed from univariate functions, with arbitrary precision::
 
-        sage:
         sage: A.<t> = Qq(27)
         sage: R.<x> = PolynomialRing(A)
         sage: f = (1 + t)^2*x
@@ -1223,7 +1209,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
     TESTS::
 
-        sage:
         sage: A = Berkovich_Cp_Affine(3)
         sage: Q1 = A(3, 1); Q1
         Type II point centered at 3 + O(3^21) of radius 3^0
@@ -1250,7 +1235,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         sage: Q5 == Q6                                                                  # needs sage.symbolic
         True
 
-        sage:
         sage: k = Qp(5)
         sage: R.<x> = k[]
         sage: l.<w> = k.extension(x^2 - 5)
@@ -1305,7 +1289,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         ::
 
-            sage:
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
             sage: f = T(1/t)
@@ -1341,7 +1324,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(1, RR(3**(1/2)))                                               # needs sage.symbolic
             sage: Q2 = B(1, 3**(1/2))                                                   # needs sage.symbolic
@@ -1392,7 +1374,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1, RR(3**(1/2)))                                               # needs sage.symbolic
             sage: Q2 = B(1, 3**(1/2))                                                   # needs sage.symbolic
@@ -1440,7 +1421,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(5, 0.5)
             sage: Q2 = B(5, 1)
@@ -1585,7 +1565,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 2)
@@ -1758,7 +1737,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective((3))
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 4)
@@ -1866,7 +1844,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
     Type IV points can be created from lists of centers and radii::
 
-        sage:
         sage: b = S((3,2))  # create centers
         sage: c = S((4,3))
         sage: d = S((2,3))
@@ -1884,7 +1861,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
     the sequence of disks can not be the point at infinity in `P^1(\CC_p)`, only functions
     into `\CC_p` are supported::
 
-        sage:
         sage: L.<t> = PolynomialRing(Qp(5))
         sage: T = FractionField(L)
         sage: f = T(1/t)
@@ -1954,7 +1930,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         ::
 
-            sage:
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
             sage: f = T(1/t)
@@ -1994,7 +1969,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B([2, 2], RR(3**(1/2)))                                          # needs sage.symbolic
             sage: Q2 = B([1, 1], 3**(1/2))                                              # needs sage.symbolic
@@ -2047,7 +2021,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: P = ProjectiveSpace(B.base_ring(), 1)
             sage: Q1 = B(P.point([2, 2], False), RR(3**(1/2)))                          # needs sage.symbolic
@@ -2096,7 +2069,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(5, 0.5)
             sage: Q2 = B(5, 1)
@@ -2276,7 +2248,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 2)
@@ -2296,7 +2267,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         TESTS::
 
-            sage:
             sage: Q4 = B(1/3**8 + 2, 1)
             sage: Q2.join(Q4, basepoint=Q1)
             Type III point centered at (2 + O(3^20) : 1 + O(3^20)) of radius 2.00000000000000
@@ -2537,7 +2507,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 4)
@@ -2553,7 +2522,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         TESTS::
 
-            sage:
             sage: B = Berkovich_Cp_Projective(3)
             sage: infty = B((1, 0))
             sage: zero = B(0)
