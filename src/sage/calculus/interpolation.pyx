@@ -55,9 +55,9 @@ cdef class Spline:
 
     This example is in the GSL documentation::
 
-        sage: v = [(i + sin(i)/2, i+cos(i^2)) for i in range(10)]
+        sage: v = [(i + RDF(i).sin()/2, i + RDF(i^2).cos()) for i in range(10)]
         sage: s = spline(v)
-        sage: show(point(v) + plot(s,0,9, hue=.8))
+        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # needs sage.plot
 
     We compute the area underneath the spline::
 
@@ -77,13 +77,13 @@ cdef class Spline:
     We compute the first and second-order derivatives at a few points::
 
         sage: s.derivative(5)
-        -0.16230085261803...
+        -0.1623008526180...
         sage: s.derivative(6)
-        0.20997986285714...
+        0.2099798628571...
         sage: s.derivative(5, order=2)
-        -3.08747074561380...
+        -3.0874707456138...
         sage: s.derivative(6, order=2)
-        2.61876848274853...
+        2.6187684827485...
 
     Only the first two derivatives are supported::
 
@@ -118,7 +118,7 @@ cdef class Spline:
 
         Replace `0`-th point, which changes the spline::
 
-            sage: S[0]=(0,1); S
+            sage: S[0] = (0,1); S
             [(0, 1), (2, 3), (4, 5)]
             sage: S(1.5)
             2.5

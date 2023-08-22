@@ -11,7 +11,7 @@ AUTHORS:
 - Jeroen Demeyer (2014-10-20): move this function from ``gmp.pxi``,
   simplify and fix some bugs, see :trac:`17180`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 ???
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -19,8 +19,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 

@@ -64,8 +64,8 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
     - ``color`` -- a string (``"red"``, ``"green"`` etc)
       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
-    -  ``opacity`` -- (default: 1) if less than 1 then is
-       transparent
+    - ``opacity`` -- (default: 1) if less than 1 then is
+      transparent
 
     EXAMPLES:
 
@@ -117,6 +117,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         ....:            (-sqrt(2.)/3,-sqrt(6.)/3,-1./3), (2*sqrt(2.)/3,0,-1./3)],\
         ....:            color=col, thickness=10, aspect_ratio=[1,1,1])
 
+        sage: from math import pi
         sage: v  = (sqrt(5.)/2-5/6, 5/6*sqrt(3.)-sqrt(15.)/2, sqrt(5.)/3)
         sage: t  = acos(sqrt(5.)/3)/2
         sage: t1 = tetra('blue').rotateZ(t)
@@ -160,7 +161,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
     This function should work for anything than can be turned into a
     list, such as iterators and such (see :trac:`10478`)::
 
-        sage: line3d(iter([(0,0,0), (sqrt(3), 2, 4)]))
+        sage: line3d(iter([(0,0,0), (sqrt(3), 2, 4)]))                                  # needs sage.symbolic
         Graphics3d Object
         sage: line3d((x, x^2, x^3) for x in range(5))
         Graphics3d Object
@@ -210,13 +211,13 @@ def bezier3d(path, **options):
 
     -  ``thickness`` -- (default: 2)
 
-    - ``color`` -- a string (``"red"``, ``"green"`` etc)
-      or a tuple (r, g, b) with r, g, b numbers between 0 and 1
+    -  ``color`` -- a string (``"red"``, ``"green"`` etc)
+       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
     -  ``opacity`` -- (default: 1) if less than 1 then is
        transparent
 
-    -  ``aspect_ratio`` -- (default:[1,1,1])
+    -  ``aspect_ratio`` -- (default: [1,1,1])
 
     The path is a list of curves, and each curve is a list of points.
     Each point is a tuple (x,y,z).
@@ -248,9 +249,9 @@ def bezier3d(path, **options):
 
     EXAMPLES::
 
-        sage: path = [[(0,0,0),(.5,.1,.2),(.75,3,-1),(1,1,0)],[(.5,1,.2),(1,.5,0)],[(.7,.2,.5)]]
-        sage: b = bezier3d(path, color='green')
-        sage: b
+        sage: path = [[(0,0,0),(.5,.1,.2),(.75,3,-1),(1,1,0)],
+        ....:         [(.5,1,.2),(1,.5,0)], [(.7,.2,.5)]]
+        sage: b = bezier3d(path, color='green'); b                                      # needs sage.symbolic
         Graphics3d Object
 
     .. PLOT::
@@ -261,8 +262,7 @@ def bezier3d(path, **options):
     To construct a simple curve, create a list containing a single list::
 
         sage: path = [[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]]
-        sage: curve = bezier3d(path, thickness=5, color='blue')
-        sage: curve
+        sage: curve = bezier3d(path, thickness=5, color='blue'); curve                  # needs sage.symbolic
         Graphics3d Object
 
     .. PLOT::
@@ -274,13 +274,16 @@ def bezier3d(path, **options):
 
     Check for :trac:`31640`::
 
-        sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)], [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
-        sage: bp = bezier_path(p2d)
-        sage: bp.plot3d()
+        sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)],
+        ....:        [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
+        sage: bp = bezier_path(p2d)                                                     # needs sage.symbolic
+        sage: bp.plot3d()                                                               # needs sage.symbolic
         Graphics3d Object
 
-        sage: p3d = p3d = [[(3,0,0),(3,0.1,0),(2.9,0.2,0),(2.8,0.3,0)], [(2.7,0.4,0),(2,0.5,0),(2.5,0.5,0)], [(2.3,0.5,0),(2.2,0.4,0),(2.1,0.3,0)]]
-        sage: bezier3d(p3d)
+        sage: p3d = [[(3,0,0),(3,0.1,0),(2.9,0.2,0),(2.8,0.3,0)],
+        ....:        [(2.7,0.4,0),(2,0.5,0),(2.5,0.5,0)],
+        ....:        [(2.3,0.5,0),(2.2,0.4,0),(2.1,0.3,0)]]
+        sage: bezier3d(p3d)                                                             # needs sage.symbolic
         Graphics3d Object
     """
     from . import parametric_plot3d as P3D
@@ -336,7 +339,8 @@ def polygon3d(points, **options):
 
     Some modern art -- a random polygon::
 
-        sage: v = [(randrange(-5,5), randrange(-5,5), randrange(-5, 5)) for _ in range(10)]
+        sage: v = [(randrange(-5,5), randrange(-5,5), randrange(-5, 5))
+        ....:      for _ in range(10)]
         sage: polygon3d(v)
         Graphics3d Object
 
@@ -347,7 +351,8 @@ def polygon3d(points, **options):
 
     A bent transparent green triangle::
 
-        sage: polygon3d([[1, 2, 3], [0,1,0], [1,0,1], [3,0,0]], color=(0,1,0), opacity=0.7)
+        sage: polygon3d([[1, 2, 3], [0,1,0], [1,0,1], [3,0,0]],
+        ....:           color=(0,1,0), opacity=0.7)
         Graphics3d Object
 
     .. PLOT::
@@ -356,7 +361,8 @@ def polygon3d(points, **options):
 
     This is the same as using ``alpha=0.7``::
 
-        sage: polygon3d([[1, 2, 3], [0,1,0], [1,0,1], [3,0,0]], color=(0,1,0), alpha=0.7)
+        sage: polygon3d([[1, 2, 3], [0,1,0], [1,0,1], [3,0,0]],
+        ....:           color=(0,1,0), alpha=0.7)
         Graphics3d Object
 
     .. PLOT::
@@ -373,7 +379,7 @@ def polygons3d(faces, points, **options):
     """
     Draw the union of several polygons in 3d.
 
-    Useful to plot a polyhedron as just one ``IndexFaceSet``.
+    Useful to plot a polyhedron as just one :class:`IndexFaceSet`.
 
     INPUT:
 
@@ -426,8 +432,8 @@ def frame3d(lower_left, upper_right, **kwds):
 
     This is usually used for making an actual plot::
 
-        sage: y = var('y')
-        sage: plot3d(sin(x^2+y^2),(x,0,pi),(y,0,pi))
+        sage: y = var('y')                                                              # needs sage.symbolic
+        sage: plot3d(sin(x^2+y^2), (x,0,pi), (y,0,pi))                                  # needs sage.symbolic
         Graphics3d Object
     """
     x0, y0, z0 = lower_left
@@ -483,10 +489,11 @@ def frame_labels(lower_left, upper_right,
 
     This is usually used for making an actual plot::
 
+        sage: # needs sage.symbolic
         sage: y = var('y')
-        sage: P = plot3d(sin(x^2+y^2),(x,0,pi),(y,0,pi))
+        sage: P = plot3d(sin(x^2+y^2), (x,0,pi), (y,0,pi))
         sage: a,b = P._rescale_for_frame_aspect_ratio_and_zoom(1.0,[1,1,1],1)
-        sage: F = frame_labels(a,b,*P._box_for_aspect_ratio("automatic",a,b))
+        sage: F = frame_labels(a, b, *P._box_for_aspect_ratio("automatic",a,b))
         sage: F.jmol_repr(F.default_render_params())[0]
         [['select atomno = 1', 'color atom  [76,76,76]', 'label "0.0"']]
 
@@ -749,7 +756,7 @@ def sphere(center=(0, 0, 0), size=1, **kwds):
     Spheres of radii 1 and 2 one stuck into the other::
 
         sage: sphere(color='orange') + sphere(color=(0,0,0.3),
-        ....:        center=(0,0,-2),size=2,opacity=0.9)
+        ....:                                 center=(0,0,-2), size=2, opacity=0.9)
         Graphics3d Object
 
     .. PLOT::
@@ -758,9 +765,9 @@ def sphere(center=(0, 0, 0), size=1, **kwds):
 
     We draw a transparent sphere on a saddle. ::
 
-        sage: u,v = var('u v')
-        sage: saddle = plot3d(u^2 - v^2, (u,-2,2), (v,-2,2))
-        sage: sphere((0,0,1), color='red', opacity=0.5, aspect_ratio=[1,1,1]) + saddle
+        sage: u,v = var('u v')                                                          # needs sage.symbolic
+        sage: saddle = plot3d(u^2 - v^2, (u,-2,2), (v,-2,2))                            # needs sage.symbolic
+        sage: sphere((0,0,1), color='red', opacity=0.5, aspect_ratio=[1,1,1]) + saddle  # needs sage.symbolic
         Graphics3d Object
 
     .. PLOT::
@@ -1048,7 +1055,8 @@ class Line(PrimitiveObject):
     EXAMPLES::
 
         sage: from sage.plot.plot3d.shapes2 import Line
-        sage: Line([(i*math.sin(i), i*math.cos(i), i/3) for i in range(30)], arrow_head=True)
+        sage: Line([(i*math.sin(i), i*math.cos(i), i/3) for i in range(30)],
+        ....:      arrow_head=True)
         Graphics3d Object
 
     Smooth angles less than 90 degrees::
@@ -1060,10 +1068,10 @@ class Line(PrimitiveObject):
 
         sage: N = 11
         sage: c = 0.4
-        sage: sum([Line([(i,1,0), (i,0,0), (i,cos(2*pi*i/N), sin(2*pi*i/N))],
-        ....:     corner_cutoff=c,
-        ....:     color='red' if -cos(2*pi*i/N)<=c else 'blue')
-        ....:     for i in range(N+1)])
+        sage: sum(Line([(i,1,0), (i,0,0), (i,cos(2*pi*i/N), sin(2*pi*i/N))],            # needs sage.symbolic
+        ....:          corner_cutoff=c,
+        ....:          color='red' if -cos(2*pi*i/N)<=c else 'blue')
+        ....:     for i in range(N+1))
         Graphics3d Object
     """
     def __init__(self, points, thickness=5, corner_cutoff=0.5,
@@ -1099,10 +1107,10 @@ class Line(PrimitiveObject):
         TESTS::
 
             sage: from sage.plot.plot3d.shapes2 import Line
-            sage: L = Line([(i,i^2-1,-2*ln(i)) for i in [10,20,30]])
-            sage: L.bounding_box()
+            sage: L = Line([(i, i^2 - 1, -2*ln(i)) for i in [10,20,30]])                # needs sage.symbolic
+            sage: L.bounding_box()                                                      # needs sage.symbolic
             ((10.0, 99.0, -6.802394763324311),
-            (30.0, 899.0, -4.605170185988092))
+             (30.0, 899.0, -4.605170185988092))
         """
         try:
             return self.__bounding_box
@@ -1117,8 +1125,9 @@ class Line(PrimitiveObject):
 
         TESTS::
 
-            sage: L = line3d([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],color='red')
-            sage: L.tachyon_repr(L.default_render_params())[0]
+            sage: L = line3d([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],           # needs sage.symbolic
+            ....:            color='red')
+            sage: L.tachyon_repr(L.default_render_params())[0]                          # needs sage.symbolic
             'FCylinder base 1.0 0.0 0.0 apex 0.9999500004166653 0.009999833334166664 0.0001 rad 0.005 texture...'
         """
         T = render_params.transform
@@ -1149,8 +1158,9 @@ class Line(PrimitiveObject):
         TESTS::
 
             sage: from sage.plot.plot3d.shapes2 import Line
-            sage: L = Line([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],color='red')
-            sage: L.obj_repr(L.default_render_params())[0][0][0][2][:3]
+            sage: L = Line([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],             # needs sage.symbolic
+            ....:          color='red')
+            sage: L.obj_repr(L.default_render_params())[0][0][0][2][:3]                 # needs sage.symbolic
             ['v 0.99995 0.00999983 0.0001',
              'v 1.02376 0.010195 -0.00750607',
              'v 1.00007 0.0102504 -0.0248984']
@@ -1172,8 +1182,9 @@ class Line(PrimitiveObject):
 
         TESTS::
 
-            sage: L = line3d([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],color='red')
-            sage: L.jmol_repr(L.default_render_params())[0][:42]
+            sage: L = line3d([(cos(i),sin(i),i^2) for i in srange(0,10,.01)],           # needs sage.symbolic
+            ....:            color='red')
+            sage: L.jmol_repr(L.default_render_params())[0][:42]                        # needs sage.symbolic
             'draw line_1 diameter 1 curve {1.0 0.0 0.0}'
         """
         T = render_params.transform
@@ -1410,15 +1421,15 @@ def point3d(v, size=5, **kwds):
     -  ``size`` -- (default: 5) size of the point (or
        points)
 
-    - ``color`` -- a string (``"red"``, ``"green"`` etc)
-      or a tuple (r, g, b) with r, g, b numbers between 0 and 1
+    -  ``color`` -- a string (``"red"``, ``"green"`` etc)
+       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
     -  ``opacity`` -- (default: 1) if less than 1 then is
        transparent
 
     EXAMPLES::
 
-        sage: sum([point3d((i,i^2,i^3), size=5) for i in range(10)])
+        sage: sum(point3d((i,i^2,i^3), size=5) for i in range(10))
         Graphics3d Object
 
     .. PLOT::
@@ -1431,15 +1442,15 @@ def point3d(v, size=5, **kwds):
         sage: print(point(vector((2,3,4))))
         Graphics3d Object
 
-        sage: c = polytopes.hypercube(3)
-        sage: v = c.vertices()[0];  v
+        sage: c = polytopes.hypercube(3)                                                # needs sage.geometry.polyhedron
+        sage: v = c.vertices()[0];  v                                                   # needs sage.geometry.polyhedron
         A vertex at (1, -1, -1)
-        sage: print(point(v))
+        sage: print(point(v))                                                           # needs sage.geometry.polyhedron
         Graphics3d Object
 
     We check to make sure the options work::
 
-        sage: point3d((4,3,2),size=20,color='red',opacity=.5)
+        sage: point3d((4,3,2), size=20, color='red', opacity=.5)
         Graphics3d Object
 
     .. PLOT::
@@ -1469,7 +1480,7 @@ def point3d(v, size=5, **kwds):
 
     We check that iterators of points are accepted (:trac:`13890`)::
 
-        sage: point3d(iter([(1,1,2),(2,3,4),(3,5,8)]),size=20,color='red')
+        sage: point3d(iter([(1,1,2),(2,3,4),(3,5,8)]), size=20, color='red')
         Graphics3d Object
 
     TESTS::

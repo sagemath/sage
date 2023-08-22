@@ -27,6 +27,7 @@ from sage.arith.misc import divisors, next_prime
 from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import EchelonMatrixKey, FreeModule, VectorSpace
 from sage.modules.free_module_element import FreeModuleElement
@@ -46,7 +47,7 @@ from sage.modular.arithgroup.all import Gamma0, is_Gamma0  # for Sturm bound giv
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
-from . import hecke_operator
+lazy_import('sage.modular.modsym', 'hecke_operator')
 
 
 def is_ModularSymbolsSpace(x):

@@ -40,7 +40,7 @@ or immediately during assignment like this::
 
 from sage.structure.sage_object import SageObject
 
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 from sage.geometry.fan import Fan
 from sage.geometry.lattice_polytope import LatticePolytope
