@@ -432,3 +432,60 @@ def walk_packages(path=None, prefix='', onerror=None):
                 path = [p for p in path if not seen(p)]
 
                 yield from walk_packages(path, info.name + '.', onerror)
+
+
+if __name__ == '__main__':
+
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(description="Maintenance tool for distribution packages of the Sage library",
+                            epilog=("Example usage:\n\n  grep '^sage/' pkgs/sagemath-ntl/sagemath_ntl.egg-info/SOURCES.txt "
+                                    "| (cd src && xargs ../sage -fixdistributions --set sagemath-ntl)"""))
+    parser.add_argument('--add', metavar='distribution', type=str, default=None,
+                        help=("add a 'sage_setup: distribution' directive to FILES; "
+                              "do not change files that already have a nonempty directive"))
+    parser.add_argument('--set', metavar='distribution', type=str, default=None,
+                        help="add or update the 'sage_setup: distribution' directive in FILES")
+    parser.add_argument("filename", nargs='*', type=str,
+                        help="source files or directories (default: all file from SAGE_SRC)")
+
+    args = parser.parse_args()
+
+    if not args.filename:
+        from sage.env import SAGE_SRC
+        if (not SAGE_SRC
+                or not os.path.exists(os.path.join(SAGE_SRC, 'sage'))
+                or not os.path.exists(os.path.join(SAGE_SRC, 'conftest_test.py'))):
+            print(f'{SAGE_SRC=} does not seem to contain a copy of the Sage source tree')
+            sys.exit(1)
+        args.filename = [os.path.join(SAGE_SRC, 'sage')]
+
+    def handle_file(path):
+        if args.set is not None:
+            update_distribution(path, args.set, verbose=True)
+        elif args.add is not None and not read_distribution(path):
+            update_distribution(path, args.add, verbose=True)
+        else:
+            distribution = read_distribution(path)
+            print(f'{path}: file in distribution {distribution!r}')
+
+    for path in args.filename:
+        if os.path.isdir(path):
+            if not is_package_or_sage_namespace_package_dir(path):
+                print(f'{path}: non-package directory')
+            else:
+                for root, dirs, files in os.walk(path):
+                    for dir in sorted(dirs):
+                        path = os.path.join(root, dir)
+                        if any(dir.startswith(prefix) for prefix in ['.', 'build', 'dist', '__pycache__']):
+                            # Silently skip
+                            dirs.remove(dir)
+                        elif not is_package_or_sage_namespace_package_dir(path):
+                            print(f'{path}: non-package directory')
+                            dirs.remove(dir)
+                    for file in sorted(files):
+                        if any(file.endswith(ext) for ext in [".pyc", ".pyo", ".bak", ".so", "~"]):
+                            continue
+                        handle_file(os.path.join(root, file))
+        else:
+            handle_file(path)
