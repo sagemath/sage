@@ -5400,7 +5400,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             p_Setm(mon, _ring)
             _p = p_Add_q(_p, mon, _ring)
         return new_MP(self._parent, _p)
-    
+
     def resultant(self, MPolynomial_libsingular other, variable=None):
         """
         Compute the resultant of this polynomial and the first

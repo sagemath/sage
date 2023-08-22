@@ -29,7 +29,3 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
             return True
         except ValueError as e:
             return False
-    
-
-
-

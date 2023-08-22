@@ -3064,7 +3064,6 @@ class MPolynomialIdeal_singular_repr(
 
             return hilbert_poincare_series(gb, grading)
         elif algorithm == 'singular':
-
             t = ZZ['t'].gen()
             n = self.ring().ngens()
 
@@ -5057,7 +5056,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 if not f.is_homogeneous_with_grading(grading_dict):
                     return False
         return True
-
 
     def degree_of_semi_regularity(self):
         r"""
