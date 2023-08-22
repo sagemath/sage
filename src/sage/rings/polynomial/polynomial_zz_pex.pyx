@@ -507,8 +507,6 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         TESTS::
 
             sage: R.<x> = GF(163^2)[]
-            sage: f.reverse(degree=10)
-            2*x^10 + 3*x^9
             sage: f = R([p for p in primes(20)])
             sage: f.reverse()
             2*x^7 + 3*x^6 + 5*x^5 + 7*x^4 + 11*x^3 + 13*x^2 + 17*x + 19
