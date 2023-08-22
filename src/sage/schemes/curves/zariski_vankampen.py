@@ -361,9 +361,9 @@ def voronoi_cells(V):
     - ``E`` -- the subgraph of the boundary
     - ``p`` -- a vertex in ``E``
     - ``EC`` -- a list of vertices (representing a counterclockwise orientation  of ``E``) with identical
-                first and last elements)
+      first and last elements)
     - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
-                by the compact regions of ``V`` and the edges by their dual edges.
+      by the compact regions of ``V`` and the edges by their dual edges.
 
     EXAMPLES::
 
@@ -1380,9 +1380,8 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
-    - ``vertical`` -- list of integers (default: ``[]``); a list of integers in ``[1..r]`` where
-      ``r`` is the number of braids; the corresponding vertical lines are taking out from the complement
-      of the curve.
+    - ``vertical`` -- list of integers (default: ``[]``); the indices in ``[1..r]`` of the braids that
+      surround a vertical line
 
     If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
     is returned.
@@ -1465,10 +1464,9 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
       the complement in the affine plane will be computed
 
     - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
-      ``simplified`` is set to ``False``, and
       a presentation of the fundamental group with the homotopy type
-      of the complement of the affine curve will be computed, adding
-      one relation if ``projective`` is set to ``True``.
+      of the complement of the affine curve is computed, ``simplified`` is ignored.
+      One relation is added if ``projective`` is set to ``True``.
 
     If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
     is returned.
@@ -1515,7 +1513,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
 
-    We compute the fundamental group of the complement of a quartic with ``True`` for ``Puiseux``::
+    We compute the fundamental group of the complement of a quartic using the ``puiseux`` option::
 
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
         sage: R.<x, y> = QQ[]
