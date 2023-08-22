@@ -306,9 +306,9 @@ def hadamard_matrix_paleyII(n):
 
     H = symmetric_conference_matrix_paley(q+1)
 
-    tr = { 0: matrix(2, 2, [ 1, -1, -1, -1]),
-           1: matrix(2, 2, [ 1,  1,  1, -1]),
-          -1: matrix(2, 2, [-1, -1, -1,  1])}
+    tr = {0: matrix(2, 2, [1, -1, -1, -1]),
+          1: matrix(2, 2, [1, 1, 1, -1]),
+          -1: matrix(2, 2, [-1, -1, -1, 1])}
 
     H = block_matrix(q+1, q+1, [tr[v] for r in H for v in r])
 
@@ -408,14 +408,14 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     e = matrix([[1] * (2*m)])
     one = matrix([1])
-    H = block_matrix([[ one,       -e,  one,        e,  one,        e,  one,        e],
-                      [-e.T,  T(0, 0),  e.T,  T(0, 1),  e.T,  T(0, 2),  e.T,  T(0, 3)],
-                      [-one,       -e,  one,       -e,  one,        e, -one,       -e],
-                      [-e.T, -T(1, 0), -e.T,  T(1, 1),  e.T,  T(1, 2), -e.T, -T(1, 3)],
-                      [-one,       -e, -one,       -e,  one,       -e,  one,        e],
-                      [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T,  T(2, 2),  e.T,  T(2, 3)],
-                      [-one,       -e,  one,        e, -one,       -e,  one,       -e],
-                      [-e.T, -T(3, 0),  e.T,  T(3, 1), -e.T, -T(3, 2), -e.T,  T(3, 3)]])
+    H = block_matrix([[one, -e, one, e, one, e, one, e],
+                      [-e.T, T(0, 0), e.T, T(0, 1), e.T, T(0, 2), e.T, T(0, 3)],
+                      [-one, -e, one, -e, one, e, -one, -e],
+                      [-e.T, -T(1, 0), -e.T, T(1, 1), e.T, T(1, 2), -e.T, -T(1, 3)],
+                      [-one, -e, -one, -e, one, -e, one, e],
+                      [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T, T(2, 2), e.T, T(2, 3)],
+                      [-one, -e, one, e, -one, -e, one, -e],
+                      [-e.T, -T(3, 0), e.T, T(3, 1), -e.T, -T(3, 2), -e.T, T(3, 3)]])
 
     if check:
         assert is_hadamard_matrix(H)
@@ -442,7 +442,7 @@ def hadamard_matrix_williamson_type(a, b, c, d, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_williamson_type
-        sage: a = [ 1,  1, 1]
+        sage: a = [ 1, 1, 1]
         sage: b = [ 1, -1, -1]
         sage: c = [ 1, -1, -1]
         sage: d = [ 1, -1, -1]
@@ -451,7 +451,7 @@ def hadamard_matrix_williamson_type(a, b, c, d, check=True):
     TESTS::
 
         sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_williamson_type, is_hadamard_matrix
-        sage: a = [ 1,  1, 1]
+        sage: a = [ 1, 1, 1]
         sage: b = [ 1, -1, -1]
         sage: c = [ 1, -1, -1]
         sage: d = [ 1, -1, -1]
@@ -474,10 +474,10 @@ def hadamard_matrix_williamson_type(a, b, c, d, check=True):
     assert len(a) == len(b) == len(c) == len(d)
     assert A*A.T+B*B.T+C*C.T+D*D.T == 4*n*I(n)
 
-    M = block_matrix([[ A,  B,  C,  D],
-                      [-B,  A, -D,  C],
-                      [-C,  D,  A, -B],
-                      [-D, -C,  B,  A]])
+    M = block_matrix([[A, B, C, D],
+                      [-B, A, -D, C],
+                      [-C, D, A, -B],
+                      [-D, -C, B, A]])
     if check:
         assert is_hadamard_matrix(M, normalized=False, skew=False)
     return M
@@ -656,18 +656,18 @@ def hadamard_matrix_156():
 
     A, B, C, D = map(matrix.circulant, [a, b, c, d])
 
-    return block_matrix([[ A,  A,  A,  B, -B,  C, -C, -D,  B,  C, -D, -D],
-                         [ A, -A,  B, -A, -B, -D,  D, -C, -B, -D, -C, -C],
-                         [ A, -B, -A,  A, -D,  D, -B,  B, -C, -D,  C, -C],
-                         [ B,  A, -A, -A,  D,  D,  D,  C,  C, -B, -B, -C],
-                         [ B, -D,  D,  D,  A,  A,  A,  C, -C,  B, -C,  B],
-                         [ B,  C, -D,  D,  A, -A,  C, -A, -D,  C,  B, -B],
-                         [ D, -C,  B, -B,  A, -C, -A,  A,  B,  C,  D, -D],
-                         [-C, -D, -C, -D,  C,  A, -A, -A, -D,  B, -B, -B],
-                         [ D, -C, -B, -B, -B,  C,  C, -D,  A,  A,  A,  D],
-                         [-D, -B,  C,  C,  C,  B,  B, -D,  A, -A,  D, -A],
-                         [ C, -B, -C,  C,  D, -B, -D, -B,  A, -D, -A,  A],
-                         [-C, -D, -D,  C, -C, -B,  B,  B,  D,  A, -A, -A]])
+    return block_matrix([[A, A, A, B, -B, C, -C, -D, B, C, -D, -D],
+                         [A, -A, B, -A, -B, -D, D, -C, -B, -D, -C, -C],
+                         [A, -B, -A, A, -D, D, -B, B, -C, -D, C, -C],
+                         [B, A, -A, -A, D, D, D, C, C, -B, -B, -C],
+                         [B, -D, D, D, A, A, A, C, -C, B, -C, B],
+                         [B, C, -D, D, A, -A, C, -A, -D, C, B, -B],
+                         [D, -C, B, -B, A, -C, -A, A, B, C, D, -D],
+                         [-C, -D, -C, -D, C, A, -A, -A, -D, B, -B, -B],
+                         [D, -C, -B, -B, -B, C, C, -D, A, A, A, D],
+                         [-D, -B, C, C, C, B, B, -D, A, -A, D, -A],
+                         [C, -B, -C, C, D, -B, -D, -B, A, -D, -A, A],
+                         [-C, -D, -D, C, -C, -B, B, B, D, A, -A, -A]])
 
 
 def construction_four_symbol_delta_code_I(X, Y, Z, W):
@@ -931,10 +931,10 @@ def _construction_goethals_seidel_matrix(A, B, C, D):
     """
     n = len(A[0])
     R = matrix(ZZ, n, n, lambda i, j: 1 if i+j == n-1 else 0)
-    return block_matrix([[   A,    B*R,    C*R,    D*R],
-                         [-B*R,      A, -D.T*R,  C.T*R],
-                         [-C*R,  D.T*R,      A, -B.T*R],
-                         [-D*R, -C.T*R,  B.T*R,      A]])
+    return block_matrix([[A, B*R, C*R, D*R],
+                         [-B*R, A, -D.T*R, C.T*R],
+                         [-C*R, D.T*R, A, -B.T*R],
+                         [-D*R, -C.T*R, B.T*R, A]])
 
 
 def hadamard_matrix_from_sds(n, existence=False, check=True):
@@ -998,7 +998,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
 
     if n <= 0 or n % 4 != 0:
-        raise ValueError(f'n must be a positive multiple of four.')
+        raise ValueError('n must be a positive multiple of four.')
     t = n // 4
 
     if existence:
@@ -1335,9 +1335,9 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
     assert e1*e1.T == t*I(t4) and e2*e2.T == t*I(t4) and e3*e3.T == t*I(t4) and e4*e4.T == t*I(t4)
 
     units = [e1, e2, e3, e4]
-    for i in range(len(units)):
+    for i, ui in enumerate(units):
         for j in range(i+1, len(units)):
-            assert units[i]*units[j].T + units[j]*units[i].T == 0*I(t4)
+            assert ui*units[j].T + units[j]*ui.T == 0*I(t4)
 
     H = e1.tensor_product(A) + e2.tensor_product(B) + e3.tensor_product(C) + e4.tensor_product(D)
     if check:
@@ -1478,14 +1478,14 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     e = matrix([1]*(q-1))
     m1 = matrix([-1])
     p1 = matrix([1])
-    H = block_matrix([[  p1,   m1,   p1,   p1,     e,       e,       e,       e],
-                      [  p1,   p1,   m1,   p1,    -e,       e,      -e,       e],
-                      [  m1,   p1,   p1,   p1,    -e,       e,       e,      -e],
-                      [  m1,   m1,   m1,   p1,    -e,      -e,       e,       e],
-                      [-e.T,  e.T,  e.T, -e.T,    A1,    A2*P,    A3*P,    A4*P],
-                      [-e.T, -e.T,  e.T,  e.T, -A2*P,      A1, -A4.T*P,  A3.T*P],
-                      [-e.T, -e.T, -e.T, -e.T, -A3*P,  A4.T*P,      A1, -A2.T*P],
-                      [ e.T, -e.T,  e.T, -e.T, -A4*P, -A3.T*P,  A2.T*P,      A1]])
+    H = block_matrix([[p1, m1, p1, p1, e, e, e, e],
+                      [p1, p1, m1, p1, -e, e, -e, e],
+                      [m1, p1, p1, p1, -e, e, e, -e],
+                      [m1, m1, m1, p1, -e, -e, e, e],
+                      [-e.T, e.T, e.T, -e.T, A1, A2*P, A3*P, A4*P],
+                      [-e.T, -e.T, e.T, e.T, -A2*P, A1, -A4.T*P, A3.T*P],
+                      [-e.T, -e.T, -e.T, -e.T, -A3*P, A4.T*P, A1, -A2.T*P],
+                      [e.T, -e.T, e.T, -e.T, -A4*P, -A3.T*P, A2.T*P, A1]])
     if check:
         assert is_hadamard_matrix(H, verbose=True)
 
@@ -1990,7 +1990,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n, e, existence=Fal
           sqn is not None and
           sqn % 4 == 2 and
           strongly_regular_graph(sqn-1, (sqn-2)//2, (sqn-6)//4,
-            existence=True) is True and
+                                 existence=True) is True and
           is_prime_power(ZZ(sqn + 1))):
         if existence:
             return true()
@@ -2003,7 +2003,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n, e, existence=Fal
             e2 = e1*e
             n2 = n//n1
             if (regular_symmetric_hadamard_matrix_with_constant_diagonal(n1, e1, existence=True) is True and
-                regular_symmetric_hadamard_matrix_with_constant_diagonal(n2, e2, existence=True)) is True:
+                    regular_symmetric_hadamard_matrix_with_constant_diagonal(n2, e2, existence=True)) is True:
                 if existence:
                     return true()
                 M1 = regular_symmetric_hadamard_matrix_with_constant_diagonal(n1, e1)
@@ -2205,7 +2205,7 @@ def rshcd_from_close_prime_powers(n):
     - [SWW1972]_
     """
     if n % 4:
-        raise ValueError("n(={}) must be congruent to 0 mod 4")
+        raise ValueError(f"n(={n}) must be congruent to 0 mod 4")
 
     a, b = sorted([n-1, n+1], key=lambda x: -x % 4)
     Sa = _helper_payley_matrix(a)
@@ -2214,7 +2214,9 @@ def rshcd_from_close_prime_powers(n):
 
     K = (U*Sa).tensor_product(Sb) + U.tensor_product(J(b)-I(b)) - J(a).tensor_product(I(b))
 
-    F = lambda x: diagonal_matrix([-(-1)**i for i in range(x)])
+    def F(x):
+        return diagonal_matrix([-(-1)**i for i in range(x)])
+
     G = block_diagonal_matrix([J(1), I(a).tensor_product(F(b))])
     e = matrix(a*b, [1]*(a*b))
     H = block_matrix(2, [-J(1), e.transpose(), e, K])
@@ -2245,10 +2247,10 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.hadamard_matrix import williamson_goethals_seidel_skew_hadamard_matrix as WGS
-        sage: a = [ 1,  1, 1, -1,  1, -1,  1, -1, -1]
-        sage: b = [ 1, -1, 1,  1, -1, -1,  1,  1, -1]
+        sage: a = [ 1, 1, 1, -1, 1, -1, 1, -1, -1]
+        sage: b = [ 1, -1, 1, 1, -1, -1, 1, 1, -1]
         sage: c = [-1, -1]+[1]*6+[-1]
-        sage: d = [ 1,  1, 1, -1,  1,  1, -1,  1,  1]
+        sage: d = [ 1, 1, 1, -1, 1, 1, -1, 1, 1]
         sage: M = WGS(a,b,c,d,check=True)
 
     REFERENCES:
@@ -2456,14 +2458,14 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
     D2 = []
 
     indices = set()
-    for i in range(len(Dnot)):
+    for i, Dnoti in enumerate(Dnot):
         if i in indices:
             continue
         indices.add(i)
         for j in range(i+1, len(Dnot)):
-            if j not in indices and Dnot[i] % m == Dnot[j] % m:
+            if j not in indices and Dnoti % m == Dnot[j] % m:
                 indices.add(j)
-                D2.append(Dnot[i])
+                D2.append(Dnoti)
 
     D2 = [d % m for d in D2]
     D1 = [d % m for d in D1]
@@ -2624,7 +2626,7 @@ def skew_hadamard_matrix_from_orthogonal_design(n, existence=False, check=True):
     """
     # We use value i to represent entries where variable x_i should be, and -i for -x_i
     orthogonal_designs = {
-        (1, 1, 26): [[1, 3, 3, -3, 3, -3, -3],  [2, 3, 3, -3, 3, -3, -3],
+        (1, 1, 26): [[1, 3, 3, -3, 3, -3, -3], [2, 3, 3, -3, 3, -3, -3],
                      [3, 3, 3, -3, 3, 3, 3], [3, 3, -3, -3, -3, 3, -3]]
     }
 
@@ -2922,10 +2924,10 @@ def skew_hadamard_matrix_from_good_matrices(a, b, c, d, check=True):
     C = back_circulant(c)
     D = back_circulant(d)
 
-    H = block_matrix([[ A,  B,  C,  D],
-                      [-B,  A,  D, -C],
-                      [-C, -D,  A,  B],
-                      [-D,  C, -B,  A]])
+    H = block_matrix([[A, B, C, D],
+                      [-B, A, D, -C],
+                      [-C, -D, A, B],
+                      [-D, C, -B, A]])
 
     if check:
         assert is_hadamard_matrix(H, skew=True)
@@ -3184,13 +3186,13 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
             for d in divisors(n)[2:-2]:  # skip 1, 2, n/2, and n
                 n1 = n//d
                 if is_prime_power(d - 1) and (d % 4 == 0) and (n1 % 4 == 0)\
-                    and skew_hadamard_matrix(n1, existence=True) is True:
+                        and skew_hadamard_matrix(n1, existence=True) is True:
                     if existence:
                         return true()
                     H = skew_hadamard_matrix(n1, check=False)-I(n1)
                     U = matrix(ZZ, d, lambda i, j: -1 if i == j == 0 else
-                                        1 if i == j == 1 or (i > 1 and j-1 == d-i)
-                                          else 0)
+                               1 if i == j == 1 or (i > 1 and j-1 == d-i)
+                               else 0)
                     A = block_matrix([[matrix([0]), matrix(ZZ, 1, d-1, [1]*(d-1))],
                                       [matrix(ZZ, d-1, 1, [-1]*(d-1)),
                                        _helper_payley_matrix(d-1, zero_position=0)]])+I(d)
@@ -3256,7 +3258,7 @@ def symmetric_conference_matrix(n, check=True):
         raise
     C = matrix([0]+[1]*(n-1)).stack(matrix([1]*(n-1)).stack(m.seidel_adjacency_matrix()).T)
     if check:
-        assert (C == C.T and C**2 == (n-1)*I(n))
+        assert C == C.T and C**2 == (n-1)*I(n)
     return C
 
 
@@ -3301,12 +3303,12 @@ def szekeres_difference_set_pair(m, check=True):
     B = [b for b in G if b + F.one() in sG]
     if check:
         from itertools import product, chain
-        assert (len(A) == len(B) == m)
+        assert len(A) == len(B) == m
         if m > 1:
-            assert (sG == set([xy[0] / xy[1]
-                              for xy in chain(product(A, A), product(B, B))]))
-        assert (all(F.one() / b + F.one() in sG for b in B))
-        assert (not any(F.one() / a - F.one() in sG for a in A))
+            assert sG == set([xy[0] / xy[1]
+                              for xy in chain(product(A, A), product(B, B))])
+        assert all(F.one() / b + F.one() in sG for b in B)
+        assert not any(F.one() / a - F.one() in sG for a in A)
     return G, A, B
 
 
@@ -3404,10 +3406,10 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         A_t_W = A.tensor_product(W)
         e_t_f = e.tensor_product(f)
         H = block_matrix([
-            [J(1, 1),                f,                      e_t_f,                  -e_t_f],
-            [f.T,                  J4m,     e.tensor_product(W-II),  e.tensor_product(W+II)],
-            [ e_t_f.T, (e.T).tensor_product(W-II), A_t_W+JJ.tensor_product(II),         H34],
-            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T,      -A_t_W+JJ.tensor_product(II)]])
+            [J(1, 1), f, e_t_f, -e_t_f],
+            [f.T, J4m, e.tensor_product(W-II), e.tensor_product(W+II)],
+            [e_t_f.T, (e.T).tensor_product(W-II), A_t_W+JJ.tensor_product(II), H34],
+            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T, -A_t_W+JJ.tensor_product(II)]])
         return H
 
 
@@ -3553,10 +3555,10 @@ def amicable_hadamard_matrices_wallis(n, check=True):
     e = matrix([1 for _ in range(q)])
     one = matrix([1])
 
-    M = block_matrix([[ one, e],
+    M = block_matrix([[one, e],
                       [-e.T, P]])
     N = block_matrix([[-one, -e],
-                      [-e.T,  D]])
+                      [-e.T, D]])
 
     if check:
         assert are_amicable_hadamard_matrices(M, N)
