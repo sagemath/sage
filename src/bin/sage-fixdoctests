@@ -471,7 +471,7 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
                                                 for tag, explanation in tags.items()
                                                 if explanation or tag not in file_optional_tags}
                     line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
-                    if not line.rstrip():
+                    if re.fullmatch(' *sage: *', line):
                         # persistent (block-scoped or file-scoped) tag was removed, so remove the whole line
                         line = None
                 else:
