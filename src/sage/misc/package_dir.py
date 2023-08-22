@@ -14,6 +14,7 @@ Recognizing package directories
 
 import os
 import glob
+import re
 import sys
 from contextlib import contextmanager
 
@@ -90,8 +91,11 @@ class SourceDistributionFilter:
             return distribution not in self._exclude_distributions
 
 
+distribution_directive = re.compile(r"(\s*#?\s*)(sage_setup:\s*distribution\s*=\s*([-_A-Za-z0-9]*))")
+
+
 def read_distribution(src_file):
-    """
+    r"""
     Parse ``src_file`` for a ``# sage_setup: distribution = PKG`` directive.
 
     INPUT:
@@ -128,6 +132,101 @@ def read_distribution(src_file):
                 if key == "distribution":
                     return value
     return ''
+
+
+def update_distribution(src_file, distribution, *, verbose=False):
+    r"""
+    Add or update a ``# sage_setup: distribution = PKG`` directive in ``src_file``.
+
+    For a Python or Cython file, if a ``sage_setup: distribution`` directive
+    is not already present, it is added.
+
+    For any other file, if a ``sage_setup: distribution`` directive is not already
+    present, no action is taken.
+
+    INPUT:
+
+    - ``src_file`` -- file name of a source file
+
+    EXAMPLES::
+
+        sage: from sage.misc.package_dir import read_distribution, update_distribution
+        sage: import tempfile
+        sage: def test(filename, file_contents):
+        ....:     with tempfile.TemporaryDirectory() as d:
+        ....:         fname = os.path.join(d, filename)
+        ....:         with open(fname, 'w') as f:
+        ....:             f.write(file_contents)
+        ....:         with open(fname, 'r') as f:
+        ....:             print(f.read() + "====")
+        ....:         update_distribution(fname, 'sagemath-categories')
+        ....:         with open(fname, 'r') as f:
+        ....:             print(f.read() + "====")
+        ....:         update_distribution(fname, '')
+        ....:         with open(fname, 'r') as f:
+        ....:             print(f.read(), end="")
+        sage: test('module.py', '# Python file\n')
+        # Python file
+        ====
+        # sage_setup: distribution = sagemath-categories
+        # Python file
+        ====
+        # sage_setup: distribution =
+        # Python file
+        sage: test('file.cpp', '// sage_setup: distribution=sagemath-modules\n'
+        ....:                  '// C++ file with existing directive\n')
+        // sage_setup: distribution=sagemath-modules
+        // C++ file with existing directive
+        ====
+        // sage_setup: distribution = sagemath-categories
+        // C++ file with existing directive
+        ====
+        // sage_setup: distribution =
+        // C++ file with existing directive
+        sage: test('file.cpp', '// C++ file without existing directive\n')
+        // C++ file without existing directive
+        ====
+        // C++ file without existing directive
+        ====
+        // C++ file without existing directive
+    """
+    if not distribution:
+        distribution = ''
+    directive = f'sage_setup: distribution = {distribution}'.rstrip()
+    with open(src_file, 'r') as f:
+        src_lines = f.read().splitlines(keepends=True)
+    any_found = False
+    any_change = False
+    for i, line in enumerate(src_lines):
+        if m := distribution_directive.search(line):
+            old_distribution = m.group(3)
+            if any_found:
+                # Found a second distribution directive; remove it.
+                if not (line := distribution_directive.sub(r'', line)):
+                    line = None
+            else:
+                line = distribution_directive.sub(fr'\1{directive}', line)
+            if line != src_lines[i]:
+                src_lines[i] = line
+                any_change = True
+                if verbose:
+                    print(f"Changed 'sage_setup: distribution' in {src_file!r} "
+                          f"from {old_distribution!r} to {distribution!r}")
+            any_found = True
+    if not any_found:
+        if any(src_file.endswith(ext)
+               for ext in [".pxd", ".pxi", ".py", ".pyx", ".sage"]):
+            src_lines.insert(0, f'# {directive}\n')
+            any_change = True
+            if verbose:
+                print(f"Added 'sage_setup: distribution = {distribution}' "
+                      f"directive in {src_file!r}")
+    if not any_change:
+        return
+    with open(src_file, 'w') as f:
+        for line in src_lines:
+            if line is not None:
+                f.write(line)
 
 
 def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
