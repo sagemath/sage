@@ -979,4 +979,5 @@ def _hilbert_series(S):
     h=T.hom(S)                          
     I=h.kernel()                        
     degrees=[s.degree() for s in S]
-    return I.hilbert_series(grading=degrees, algorithm="sage") # 2s are degrees of the elements of S
+    return I.hilbert_series(grading=degrees, algorithm="sage")
+
