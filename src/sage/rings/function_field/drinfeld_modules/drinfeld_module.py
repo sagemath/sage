@@ -1433,6 +1433,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.goss_polynomial(10)
             X^10 + (1/(T^3 + 2*T))*X^8 + (1/(T^6 + T^4 + T^2))*X^6 + (1/(T^9 + 2*T^3))*X^4 + (1/(T^18 + 2*T^12 + 2*T^10 + T^4))*X^2
 
+        TESTS::
+
+            sage: Fq.<z> = GF(25)
+            sage: A.<T> = Fq[]
+            sage: phi = DrinfeldModule(A, [z, 1])
+            sage: phi.goss_polynomial(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: characteristic must be zero (=T^2 + 4*T + 2)
+
         REFERENCE:
 
         Section 3 of [Gek1988]_ provides an exposition of Goss
