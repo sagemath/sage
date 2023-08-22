@@ -90,7 +90,7 @@ We test corner cases for multiplication::
 from libc.stdint cimport uint64_t
 from cpython.bytes cimport *
 
-from cysignals.memory cimport check_malloc, check_allocarray, sig_malloc, sig_free
+from cysignals.memory cimport check_malloc, check_allocarray, check_calloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
@@ -123,7 +123,7 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
-from .args cimport MatrixArgs_init
+from .args cimport SparseEntry, MatrixArgs_init
 
 
 from sage.cpython.string cimport char_to_str
@@ -3105,7 +3105,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                 A._matrix[i][j] = self._matrix[i][col]
 
         return A
-        
+
     def matrix_from_rows(self, rows):
         """
         Return the matrix constructed from self using rows with indices in
@@ -3189,7 +3189,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                 raise IndexError("row index out of range")
             for j, col in enumerate(columns):
                 A._matrix[i][j] = self._matrix[row][col]
-                
+
         return A
 
     def __bool__(self):
