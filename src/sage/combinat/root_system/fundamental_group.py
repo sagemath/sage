@@ -323,6 +323,9 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
             Doesn't work on ambient spaces.
         """
         return wt.map_support(self.parent().action(self.value()))
+    def __hash__(self):
+        return hash(self.value())
+
 
 
 class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
