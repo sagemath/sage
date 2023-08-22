@@ -1087,7 +1087,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: K.<i> = QuadraticField(-1)                                            # needs sage.rings.number_field
             sage: D = Conic(K, [3, 2, 5])                                               # needs sage.rings.number_field
-            sage: D.rational_point(algorithm='rnfisnorm')  # output is random           # needs sage.rings.number_field
+            sage: D.rational_point(algorithm='rnfisnorm')   # output is random          # needs sage.rings.number_field
             (-3 : 4*i : 1)
 
             sage: # needs sage.rings.number_field
@@ -1104,15 +1104,16 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: # optional - magma, needs sage.rings.number_field
             sage: q = C.rational_point(algorithm='magma',
             ....:                      read_cache=False)
-            sage: q                       # output is random
+            sage: q                                         # output is random
             (1/5*b^2 : 1/5*b^2 : 1)
             sage: C.defining_polynomial()(list(q))
             0
             sage: len(str(p)) > 1.5*len(str(q))
             True
-            sage: D.rational_point(algorithm='magma',
+            sage: D.rational_point(algorithm='magma',       # random
+            ....:                  read_cache=False)
             (1 : 2*i : 1)
-            sage: E.rational_point(algorithm='magma',
+            sage: E.rational_point(algorithm='magma',       # random
             ....:                  read_cache=False)
             (-s : 1 : 1)
 
@@ -1133,7 +1134,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             False
             sage: G.has_rational_point(read_cache=False)
             False
-            sage: G.has_rational_point(algorithm='local', read_cache=False)
+            sage: G.has_rational_point(algorithm='local',
+            ....:                      read_cache=False)
             False
             sage: G.rational_point(algorithm='magma')           # optional - magma
             Traceback (most recent call last):
@@ -1157,7 +1159,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: C = Conic([1, a, -5]); C                                              # needs sage.rings.finite_rings
             Projective Conic Curve over Finite Field in a of size 7^20
             defined by x^2 + a*y^2 + 2*z^2
-            sage: C.rational_point()  # output is random                                # needs sage.rings.finite_rings
+            sage: C.rational_point()                        # output is random          # needs sage.rings.finite_rings
             (4*a^19 + 5*a^18 + 4*a^17 + a^16 + 6*a^15 + 3*a^13 + 6*a^11 + a^9
                + 3*a^8 + 2*a^7 + 4*a^6 + 3*a^5 + 3*a^4 + a^3 + a + 6
              : 5*a^18 + a^17 + a^16 + 6*a^15 + 4*a^14 + a^13 + 5*a^12 + 5*a^10
