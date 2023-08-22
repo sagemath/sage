@@ -14,15 +14,46 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
         self._one_element = self._element_constructor_(1)
         self._homdomain = self._hom.domain()   
 
-
-
-
-    #########################
-    ##!!!!!! DISCUSS !!!!!!##
-    #########################
     def _element_constructor_(self, element):
         assert element in self
         return MPolynomial_subring_element(self, element)
+
+    # both spellings are used in methods inherited from MPolynomial_libsingular
+    def _element_constructor(self, *args, **kwargs):
+        return self._element_constructor_(*args, **kwargs)
+    
+    def __call__(self, *args, **kwargs):
+        return self._element_constructor_(*args, **kwargs)
+
+    
+    def construct(self, element, return_string=False):
+        """
+        sage: R.<a,b,c>=ZZ[]
+        sage: s=R.subring_generated_by([a**2, b**3+c])
+        sage: e=s(b^6 - 4*a^2*b^3 + a^4 + 2*b^3*c - 4*a^2*c + c^2 + 2)
+        sage: e.construction()
+        a0^2 - 4*a0*a1 + a1^2 + 2
+        Where a0=(a^2), a1=(b^3 + c)
+        """
+        try:
+            quotientring_element=self._quotientring_element_representation_(element)
+            mapping_string=", ".join([f"{qg}=({rg})" for qg,rg in zip(self._homdomain.gens(), self.gens())])
+            construction_string=f"{quotientring_element}\nWhere {mapping_string}"
+            if return_string:return construction_string
+            else: print(construction_string)
+        except ValueError:
+            raise ValueError(f"{element} cannot be constructed in {self}.")
+        
+    def _quotientring_element_representation_(self, element):
+        """
+        sage: R.<a,b,c>=ZZ[]
+        sage: s=R.subring_generated_by([a**2, b**3+c])
+        sage: e=s(b^6 - 4*a^2*b^3 + a^4 + 2*b^3*c - 4*a^2*c + c^2 + 2)
+        sage: e.as_quotientring_element()
+        a0^2 - 4*a0*a1 + a1^2 + 2
+        """
+        assert isinstance(element, MPolynomial_subring_element) and element._parent is self
+        return self._hom.inverse_image(element.element())
 
 
     def __repr__(self):
@@ -64,20 +95,26 @@ class MPolynomial_subring(MPolynomialRing_libsingular):
         True
         """
         try:
-            self._hom.inverse_image(other)
-            return True
+            if isinstance(other, MPolynomial_subring_element):
+                self._hom.inverse_image(other.element())
+                return True
+            # add more cases
+            else:
+                self._hom.inverse_image(other)
+                return True
         except ValueError as e:
             return False
     
     def random_element(self):
+        """
+        sage: R.<a,b,c>=ZZ[]
+        sage: s=R.subring_generated_by([a**2, b**3+c])
+        sage: e=s.random_element()
+        sage: se=s._quotientring_element_representation_(e)
+        sage: s(s._hom(se))==e
+        True
+        """
         return self._element_constructor_(self._hom(self._homdomain.random_element()))
     
     def _an_element_(self):
         return self._element_constructor_(self._hom(self._homdomain._an_element_()))
-
-
-
-    
-
-
-
