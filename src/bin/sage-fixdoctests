@@ -37,7 +37,7 @@ import shlex
 import subprocess
 import sys
 
-from argparse import ArgumentParser, FileType
+from argparse import ArgumentParser
 from pathlib import Path
 
 from sage.doctest.control import DocTestDefaults, DocTestController
@@ -551,8 +551,9 @@ if __name__ == "__main__":
                              'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
                              'sagemath-groups',
                              'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
-                             'sagemath-polyhedra',
+                             'sagemath-polyhedra', 'sagemath-polyhedra[standard]',
                              'sagemath-schemes', 'sagemath-schemes[ntl]', 'sagemath-schemes[pari]',
+                             'sagemath-symbolics',
                              '']  # monolithic distribution
         args.ignore_bad_distributions = True
 
