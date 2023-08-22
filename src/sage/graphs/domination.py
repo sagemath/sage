@@ -512,7 +512,7 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
     - ``total`` -- boolean (default: ``False``); when ``True``, computes a total
       dominating set (see the See the :wikipedia:`Dominating_set`)
 
-     - ``connected`` -- boolean (default: ``False``); when ``True``, computes a
+    - ``connected`` -- boolean (default: ``False``); when ``True``, computes a
       connected dominating set (see :wikipedia:`Connected_dominating_set`)
 
     - ``value_only`` -- boolean (default: ``False``); whether to only return the
