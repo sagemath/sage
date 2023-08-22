@@ -7,8 +7,6 @@ prune .tox
 exclude *.m4
 include requirements.txt
 
-global-include all__sagemath_schemes.py
-
 graft sage/schemes
 graft sage/modular
 graft sage/dynamics/arithmetic_dynamics
@@ -16,6 +14,7 @@ graft sage/dynamics/arithmetic_dynamics
 prune sage/schemes/affine
 prune sage/schemes/projective
 prune sage/schemes/generic
+prune sage/schemes/product_projective
 # in sagemath-polyhedra
 prune sage/schemes/toric
 # Has compile-time dependencies on sagemath-ntl
@@ -29,6 +28,8 @@ exclude sage/schemes/elliptic_curves/descent_two_isogeny.p*
 #exclude sage/modular/arithgroup/arithgroup_element.pyx          # via Matrix_integer_dense
 #exclude sage/modular/arithgroup/congroup.pyx                    # via Matrix_integer_dense
 
+global-exclude all__sagemath_*.*
+global-include all__sagemath_schemes.py
 
 global-exclude *.py[co]
 global-exclude *.so

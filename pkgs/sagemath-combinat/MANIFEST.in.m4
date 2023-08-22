@@ -7,8 +7,6 @@ prune .tox
 exclude *.m4
 include requirements.txt
 
-global-include all__sagemath_combinat.py
-
 graft sage/algebras
 graft sage/combinat
 graft sage/monoids
@@ -86,6 +84,8 @@ prune sage/algebras/letterplace                             # singular
 prune sage/algebras/fusion_rings                            # number_field (ntl), singular
 prune sage/algebras/lie_algebras                # needs modules
 
+global-exclude all__sagemath_*.*
+global-include all__sagemath_combinat.py
 
 global-exclude *.py[co]
 global-exclude *.so
