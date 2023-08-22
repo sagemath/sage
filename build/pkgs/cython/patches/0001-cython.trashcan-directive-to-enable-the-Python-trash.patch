@@ -1,18 +1,12 @@
-From 452076a52040a789a4b010a6d8d6abda56d060b4 Mon Sep 17 00:00:00 2001
-From: Jeroen Demeyer <J.Demeyer@UGent.be>
-Date: Thu, 14 Feb 2019 10:02:41 +0100
-Subject: [PATCH] @cython.trashcan directive to enable the Python trashcan for
- deallocations
+See https://github.com/cython/cython/pull/2842
 
----
- Cython/Compiler/ModuleNode.py   |  10 +++
- Cython/Compiler/Options.py      |   4 +-
- Cython/Compiler/PyrexTypes.py   |   8 +-
- Cython/Compiler/Symtab.py       |  18 +++-
- Cython/Utility/ExtensionTypes.c |  43 ++++++++++
- tests/run/trashcan.pyx          | 148 ++++++++++++++++++++++++++++++++
- 6 files changed, 228 insertions(+), 3 deletions(-)
- create mode 100644 tests/run/trashcan.pyx
+and https://github.com/cython/cython/pull/4475
+
+commit c47c4ef735c4b7f1863b21bbe6f112b06c4aad05
+Author: Jeroen Demeyer <J.Demeyer@UGent.be>
+Date:   Thu Feb 14 10:02:41 2019 +0100
+
+    @cython.trashcan directive to enable the Python trashcan for deallocations
 
 diff --git a/Cython/Compiler/ModuleNode.py b/Cython/Compiler/ModuleNode.py
 index 56845330d..3a3e8a956 100644
@@ -147,7 +141,7 @@ diff --git a/Cython/Utility/ExtensionTypes.c b/Cython/Utility/ExtensionTypes.c
 index dc187ab49..f359165df 100644
 --- a/Cython/Utility/ExtensionTypes.c
 +++ b/Cython/Utility/ExtensionTypes.c
-@@ -119,6 +119,49 @@ static int __Pyx_PyType_Ready(PyTypeObject *t) {
+@@ -119,6 +119,54 @@ static int __Pyx_PyType_Ready(PyTypeObject *t) {
      return r;
  }
  
@@ -159,7 +153,12 @@ index dc187ab49..f359165df 100644
 +
 +// This requires CPython version >= 2.7.4
 +// (or >= 3.2.4 but we don't support such old Python 3 versions anyway)
-+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x02070400
++#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x03080000
++// https://github.com/python/cpython/pull/11841 merged so Cython reimplementation
++// is no longer necessary
++#define __Pyx_TRASHCAN_BEGIN Py_TRASHCAN_BEGIN
++#define __Pyx_TRASHCAN_END Py_TRASHCAN_END
++#elif CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x02070400
 +#define __Pyx_TRASHCAN_BEGIN_CONDITION(op, cond) \
 +    do { \
 +        PyThreadState *_tstate = NULL; \
