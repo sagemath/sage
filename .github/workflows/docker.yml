@@ -27,6 +27,7 @@ on:
            "debian-buster-gcc_spkg",
            "debian-bullseye",
            "debian-bookworm",
+           "debian-trixie",
            "debian-sid",
            "linuxmint-20.1",
            "linuxmint-20.2",
