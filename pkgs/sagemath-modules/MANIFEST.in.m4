@@ -78,7 +78,7 @@ exclude sage/misc/binary_tree.p*
 exclude sage/misc/package.py
 exclude sage/misc/package_dir.py
 exclude sage/misc/temporary_file.py
-include sage/misc/viewer.py
+exclude sage/misc/viewer.py
 
 
 # Exclude what's in sagemath-repl
@@ -234,6 +234,7 @@ include sage/rings/real_double_element_gsl.p*
 graft sage/calculus
 # exclude what is included in sagemath-categories
 exclude sage/calculus/functional.p*
+exclude sage/calculus/functions.p*
 # exclude symbolics
 exclude sage/calculus/all.*
 exclude sage/calculus/calculus.*

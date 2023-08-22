@@ -61,7 +61,8 @@ include sage/rings/localization.p*
 include sage/rings/morphism.p*
 
 include sage/rings/abc.*
-include sage/rings/integer*.*
+include sage/rings/integer*.p*
+exclude sage/rings/integer_fake.pxd     # in sagemath-objects
 include sage/rings/rational*.*
 include sage/rings/infinity.*
 include sage/rings/factorint.p*
@@ -96,7 +97,12 @@ exclude sage/groups/perm_gps/partn_ref/refinement_binary.p*    # sagemath-module
 
 # These might later go to a separate distribution sagemath-functions (> sagemath-objects);
 # but sage.functions currently depends on basic rings (QQ etc)
-include sage/arith/*.*
+graft sage/arith
+# Exclude what is included in sagemath-objects already
+exclude sage/arith/long.p*
+exclude sage/arith/numerical_approx.p*
+exclude sage/arith/power.p*
+
 include sage/calculus/functional.p*
 include sage/calculus/functions.p*
 include sage/misc/derivative.p*

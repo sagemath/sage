@@ -47,7 +47,6 @@ include sage/misc/constant_function.*
 include sage/misc/call.*
 include sage/misc/bindable_class.*
 include sage/misc/namespace_package.p*
-include sage/misc/package_dir.py
 
 include sage/misc/verbose.*
 include sage/misc/repr.*
