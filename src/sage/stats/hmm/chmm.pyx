@@ -1,4 +1,4 @@
-# sage.doctest: optional - numpy
+# sage.doctest: needs numpy
 r"""
 Continuous Emission Hidden Markov Models
 
@@ -164,25 +164,24 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-       - ``A`` -- a list of lists or a square `N \times N` matrix, whose
-         `(i,j)` entry gives the probability of transitioning from
-         state `i` to state `j`.
+        - ``A`` -- a list of lists or a square `N \times N` matrix, whose
+          `(i,j)` entry gives the probability of transitioning from
+          state `i` to state `j`.
 
-       - ``B`` -- a list of `N` pairs ``(mu, std)``, where if ``B[i]=(mu,std)``,
-         then the probability distribution associated with state `i`
-         normal with mean ``mu`` and standard deviation ``std``.
+        - ``B`` -- a list of `N` pairs ``(mu, std)``, where if ``B[i]=(mu,std)``,
+          then the probability distribution associated with state `i`
+          normal with mean ``mu`` and standard deviation ``std``.
 
-       - ``pi`` -- the probabilities of starting in each initial
-         state, i.e., ``pi[i]`` is the probability of starting in
-         state `i`.
+        - ``pi`` -- the probabilities of starting in each initial
+          state, i.e., ``pi[i]`` is the probability of starting in
+          state `i`.
 
-       - ``normalize`` -- bool (default: ``True``); if given, input is
-         normalized to define valid probability distributions,
-         e.g., the entries of `A` are made nonnegative and the rows
-         sum to 1.
+        - ``normalize`` -- bool (default: ``True``); if given, input is
+          normalized to define valid probability distributions,
+          e.g., the entries of `A` are made nonnegative and the rows
+          sum to 1.
 
         EXAMPLES::
-
 
             sage: hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,1), (-1,1)], [.5,.5])
             Gaussian Hidden Markov Model with 2 States
@@ -1422,7 +1421,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             sage: m.emission_parameters()
             [0.4*N(0.0,1.0) + 0.6*N(1.0,0.1),
              1.0*N(0.0,1.0)]
-        r"""
+        """
         if not isinstance(obs, TimeSeries):
             obs = TimeSeries(obs)
         cdef TimeSeries _obs = obs
