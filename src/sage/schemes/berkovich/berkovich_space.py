@@ -391,7 +391,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
     field, any point of a Berkovich space backed by a number field
     must be centered at a point of that number field::
 
-            sage: # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
         sage: A.<a> = NumberField(x^3 + 20)
         sage: ideal = A.prime_above(3)
@@ -469,8 +469,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)
-            sage: B
+            sage: B = Berkovich_Cp_Affine(3); B
             Affine Berkovich line over Cp(3) of precision 20
 
         ::
@@ -704,8 +703,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(3)
-            sage: B
+            sage: B = Berkovich_Cp_Projective(3); B
             Projective Berkovich line over Cp(3) of precision 20
 
         ::
