@@ -1,4 +1,4 @@
-# sage_setup:distribution = sagemath-environment
+# sage_setup: distribution = sagemath-environment
 """
 Recognizing package directories
 """
@@ -450,12 +450,32 @@ if __name__ == '__main__':
                               "do not change files that already have a nonempty directive"))
     parser.add_argument('--set', metavar='distribution', type=str, default=None,
                         help="add or update the 'sage_setup: distribution' directive in FILES")
+    parser.add_argument('--from-egg-info', action="store_true", default=False,
+                        help="take FILES from pkgs/DISTRIBUTION/DISTRIBUTION.egg-info/SOURCES.txt")
     parser.add_argument("filename", nargs='*', type=str,
-                        help="source files or directories (default: all file from SAGE_SRC)")
+                        help="source files or directories (default: all files from SAGE_SRC)")
 
     args = parser.parse_args()
 
-    if not args.filename:
+    distribution = args.set or args.add
+
+    if args.from_egg_info:
+        from sage.env import SAGE_ROOT
+        if not distribution:
+            print("Switch '--from-egg-info' must be used with either "
+                  "'--add DISTRIBUTION' or '--set DISTRIBUTION'")
+            sys.exit(1)
+        if (not SAGE_ROOT
+                or not os.path.exists(os.path.join(SAGE_ROOT, 'pkgs', distribution))):
+            print(f'{SAGE_ROOT=} does not seem to contain a copy of the Sage source root')
+            sys.exit(1)
+        distribution_underscore = distribution.replace('-', '_')
+        with open(os.path.join(SAGE_ROOT, 'pkgs', distribution,
+                               f'{distribution_underscore}.egg-info', 'SOURCES.txt'), "r") as f:
+            args.filename.extend(os.path.join(SAGE_ROOT, 'src', line.strip())
+                                 for line in f
+                                 if line.startswith('sage/'))
+    elif not args.filename:
         from sage.env import SAGE_SRC
         if (not SAGE_SRC
                 or not os.path.exists(os.path.join(SAGE_SRC, 'sage'))
