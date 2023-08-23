@@ -65,6 +65,11 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
         ....:             for j, i in PMs )
         sage: all(results)  # long time
         True
+
+    TESTS:
+
+    Check that a bug introduced in :issue:`35997` is fixed::
+
         sage: from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
         sage: P = Polyhedron([(-4,-6),(-4,-5),(0,0),(1,0),(5,6)])
         sage: PM = P.slack_matrix().transpose()

@@ -3198,8 +3198,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             ....:             for j, i in PMs )
             sage: all(results)  # long time
             True
-            sage: P = Polyhedron([(-4,-6),(-4,-5),(0,0),(1,0),(5,6)])
-            sage: P.lattice_polytope()._palp_PM_max()
+
+        TESTS:
+
+        Check that a bug introduced in :issue:`35997` is fixed::
+
+            sage: P = LatticePolytope([(-4,-6),(-4,-5),(0,0),(1,0),(5,6)])
+            sage: P._palp_PM_max()
             [9 5 4 0 0]
             [6 0 6 5 0]
             [1 5 0 0 4]
