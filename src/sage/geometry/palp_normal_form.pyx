@@ -1,3 +1,24 @@
+r"""
+PALP normal form of vertices of a lattice polytope
+"""
+# ****************************************************************************
+#       Copyright (C) 2013      Jan Keitel
+#                     2014      Volker Braun
+#                     2018      Christian Stump
+#                     2019      Vincent Delecroix
+#                     2019      Jonathan Kliem
+#                     2021      Michael Orlitzky
+#                     2018-2022 Frédéric Chapoton
+#                     2023      Luze Xu
+#                     2023      Matthias Koeppe
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
@@ -7,8 +28,7 @@ from sage.structure.element import Matrix
 
 def _palp_PM_max(Matrix_integer_dense PM, check=False):
     r"""
-    Compute the permutation normal form of the vertex facet pairing
-    matrix .
+    Compute the permutation normal form of the vertex facet pairing matrix.
 
     The permutation normal form of a matrix is defined as the lexicographic
     maximum under all permutations of its rows and columns. For more
