@@ -1412,7 +1412,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default ``RealField`` precision).
 
         OUTPUT:
 
@@ -1445,7 +1445,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         - ``v`` -- a prime or prime ideal of the base ring.
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default ``RealField`` precision).
 
         OUTPUT:
 
@@ -1479,7 +1479,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         - ``i`` -- an integer.
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default ``RealField`` precision).
 
         OUTPUT:
 
