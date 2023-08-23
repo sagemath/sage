@@ -1298,13 +1298,36 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         return coercion_model.bin_op(left, right, operator.mul)
 
-    cpdef PermutationGroupElement _transpose_left(self, int j, int k):
+    cpdef PermutationGroupElement _transpose_left(self, j, k):
+        r"""
+        Return the product of the transposition `(j, k)` with ``self``.
+
+        EXAMPLES::
+
+            sage: S = SymmetricGroup(5)
+            sage: s = S([5, 2, 4, 3, 1])
+            sage: s._transpose_left(2, 3)
+            (1,5)(2,4,3)
+            sage: S((2, 3)) * s
+            (1,5)(2,4,3)
+
+            sage: S = SymmetricGroup(["a", "b", "c", "d", "e"])
+            sage: s = S(["e", "b", "d", "c", "a"])
+            sage: s._transpose_left("b", "c")
+            ('a','e')('b','d','c')
+            sage: S(("b", "c")) * s
+            ('a','e')('b','d','c')
+        """
         if j == k:
             return self
         cdef PermutationGroupElement prod = self._new_c()
         cdef int i
         for i from 0 <= i < self.n:
             prod.perm[i] = self.perm[i]
+        if not self._parent._has_natural_domain():
+            convert_dict = self._parent._domain_to_gap
+            j = convert_dict[j]
+            k = convert_dict[k]
         prod.perm[j - 1], prod.perm[k - 1] = self.perm[k - 1], self.perm[j - 1]
         return prod
 

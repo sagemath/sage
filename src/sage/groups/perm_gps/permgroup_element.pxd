@@ -18,7 +18,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
     cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert)
 
     cpdef _mul_(self, other)
-    cpdef PermutationGroupElement _transpose_left(self, int j, int k)
+    cpdef PermutationGroupElement _transpose_left(self, j, k)
     cpdef PermutationGroupElement _generate_new(self, list new_list)
     cpdef PermutationGroupElement _generate_new_GAP(self, old)
     cpdef _gap_list(self)
