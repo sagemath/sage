@@ -93,8 +93,27 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2007-2013 Andrey Novoseltsev <novoselt@gmail.com>
-#       Copyright (C) 2007-2013 William Stein <wstein@gmail.com>
+#       Copyright (C) 2007-2017 Andrey Novoseltsev <novoselt@gmail.com>
+#                     2007-2013 William Stein <wstein@gmail.com>
+#                     2009      Mike Hansen
+#                     2009-2020 John H. Palmieri
+#                     2010-2014 Volker Braun
+#                     2012      Samuel Gonshaw
+#                     2013      Jan Keitel
+#                     2014      André Apitzsch
+#                     2014      Wilfried Luebbe
+#                     2015-2022 Frédéric Chapoton
+#                     2015      Ursula Whitcher
+#                     2016      Jori Mäntysalo
+#                     2017      Travis Scrimshaw
+#                     2018      Christian Stump
+#                     2018      Vincent Klein
+#                     2019      Vincent Delecroix
+#                     2019      Jonathan Kliem
+#                     2020      Samuel Lelièvre
+#                     2021-2023 Matthias Koeppe
+#                     2022      David Coudert
+#                     2023      Luze Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
