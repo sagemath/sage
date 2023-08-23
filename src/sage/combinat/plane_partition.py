@@ -879,7 +879,14 @@ class PlanePartition(ClonableArray,
             sage: PP = PlanePartition([[3,2],[2,0],[0,0]])
             sage: PP.is_SPP()
             True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_SPP()
+            True
         """
+        if not self:
+            return True
         Z = self.z_tableau()
         c1 = len(Z)
         c2 = len(Z[0])
@@ -907,6 +914,11 @@ class PlanePartition(ClonableArray,
             sage: PP = PlanePartition([[3,2,2],[3,1,0],[1,1,0]])
             sage: PP.is_CSPP()
             True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_CSPP()
+            True
         """
         if self.z_tableau() == self.y_tableau():
             return True
@@ -926,6 +938,11 @@ class PlanePartition(ClonableArray,
             False
             sage: PP = PlanePartition([[3,3,3],[3,3,2],[3,2,1]])
             sage: PP.is_TSPP()
+            True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_TSPP()
             True
         """
         return self.is_CSPP() and self.is_SPP()
@@ -950,6 +967,11 @@ class PlanePartition(ClonableArray,
             sage: PP = PlanePartitions([4,4,4])([[4,4,4,4],[4,4,2,0],[4,2,0,0],[0,0,0,0]])
             sage: PP.is_SCPP()
             True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_SCPP()
+            True
         """
         return self.z_tableau(tableau=False) == self.complement(tableau_only=True)
 
@@ -964,6 +986,11 @@ class PlanePartition(ClonableArray,
             False
             sage: PP = PlanePartition([[4,4,3,2],[4,4,2,1],[4,2,0,0],[2,0,0,0]])
             sage: PP.is_TCPP()
+            True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_TCPP()
             True
         """
         return self.transpose(True) == self.complement(True)
@@ -990,6 +1017,11 @@ class PlanePartition(ClonableArray,
             sage: PP = PlanePartition([[4,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,0]])
             sage: PP.is_SSCPP()
             True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_SSCPP()
+            True
         """
         return self.is_SPP() and self.is_SCPP()
 
@@ -1005,6 +1037,11 @@ class PlanePartition(ClonableArray,
             False
             sage: PP = PlanePartition([[4,4,3,2],[4,3,2,1],[3,2,1,0],[2,1,0,0]])
             sage: PP.is_CSTCPP()
+            True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_CSTCPP()
             True
         """
         return self.is_CSPP() and self.is_TCPP()
@@ -1022,6 +1059,11 @@ class PlanePartition(ClonableArray,
             sage: PP = PlanePartition([[4,4,4,1],[3,3,2,1],[3,2,1,1],[3,0,0,0]])
             sage: PP.is_CSSCPP()
             True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_CSSCPP()
+            True
         """
         return self.is_CSPP() and self.is_SCPP()
 
@@ -1037,6 +1079,11 @@ class PlanePartition(ClonableArray,
             False
             sage: PP = PlanePartition([[4,4,3,2],[4,3,2,1],[3,2,1,0],[2,1,0,0]])
             sage: PP.is_TSSCPP()
+            True
+
+        TESTS::
+
+            sage: PlanePartition([]).is_TSSCPP()
             True
         """
         return self.is_TSPP() and self.is_SCPP()
@@ -1609,10 +1656,20 @@ class PlanePartitions_box(PlanePartitions):
 
             sage: list(PlanePartitions([1,2,1]))
             [Plane partition [], Plane partition [[1]], Plane partition [[1, 1]]]
+
+        TESTS::
+
+            sage: all(len(set(PP)) == PP.cardinality()
+            ....:     for b in cartesian_product([range(4)]*3)
+            ....:     if (PP := PlanePartitions(b)))
+            True
         """
         A = self._box[0]
         B = self._box[1]
         C = self._box[2]
+        if not A:
+            yield self.element_class(self, [], check=False)
+            return
         from sage.combinat.tableau import SemistandardTableaux as SST
         for T in SST([B for i in range(A)], max_entry=C + A):  # type:ignore
             PP = [[0 for _ in range(B)] for _ in range(A)]
@@ -1725,7 +1782,7 @@ class PlanePartitions_n(PlanePartitions):
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality() for n in range(1, 10) if (PP := PlanePartitions(n)))
+            sage: all(len(set(PP)) == PP.cardinality() for n in range(9) if (PP := PlanePartitions(n)))
             True
         """
         from sage.combinat.partition import Partitions
@@ -1944,7 +2001,9 @@ class PlanePartitions_SPP(PlanePartitions):
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality() for n in range(1, 5) if (PP := PlanePartitions([n]*3, symmetry='SPP')))
+            sage: all(len(set(PP)) == PP.cardinality()
+            ....:     for a, b in cartesian_product([range(4)]*2)
+            ....:     if (PP := PlanePartitions([a, a, b], symmetry='SPP')))
             True
         """
         for acl in self.to_poset().antichains_iterator():
@@ -2174,7 +2233,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality() for n in range(1, 5) if (PP := PlanePartitions([n]*3, symmetry='CSPP')))
+            sage: all(len(set(PP)) == PP.cardinality() for n in range(5) if (PP := PlanePartitions([n]*3, symmetry='CSPP')))
             True
         """
         for acl in self.to_poset().antichains_iterator():
@@ -2357,11 +2416,11 @@ class PlanePartitions_TSPP(PlanePartitions):
 
         TESTS::
 
-            sage: all(len(set(PP)) == PP.cardinality() for n in range(1, 5) if (PP := PlanePartitions([n]*3, symmetry='TSPP')))
+            sage: all(len(set(PP)) == PP.cardinality() for n in range(5) if (PP := PlanePartitions([n]*3, symmetry='TSPP')))
             True
         """
-        for A in self.to_poset().antichains_iterator():
-            yield self.from_antichain(A)
+        for acl in self.to_poset().antichains_iterator():
+            yield self.from_antichain(acl)
 
     def cardinality(self) -> Integer:
         r"""
@@ -2457,37 +2516,39 @@ class PlanePartitions_SCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,4,5], symmetry='SCPP')
             sage: len(set(PP)) == PP.cardinality()
             True
+
+            sage: all(len(set(PP)) == PP.cardinality()
+            ....:     for b in cartesian_product([range(4)]*3)
+            ....:     if is_even(prod(b)) and (PP := PlanePartitions(b, symmetry='SCPP')))
+            True
         """
         b = self._box[0]
         a = self._box[1]
         c = self._box[2]
 
         def Partitions_inside_lambda(la):
-            "Iterate over all partitions contained in la with the same number of parts including 0s."
-            if not la:
-                yield []
-                return
-            for mu_0 in range(la[0], 0, -1):
-                new_la = [min(mu_0, la[i]) for i in range(1, len(la))]
-                for mu in Partitions_inside_lambda(new_la):
-                    yield [mu_0] + mu
-            yield [0] * len(la)
-            return
+            """
+            Iterate over all partitions contained in la with the same number
+            of parts including 0s.
+            """
+            from sage.combinat.partition import Partitions
+            for k in range(sum(la), -1, -1):
+                for mu in Partitions(k, outer=la):
+                    yield mu + [0]*(len(la)-len(mu))
 
         def Partitions_inside_lambda_with_smallest_at_least_k(la, k):
-            "Iterate over all partitions contained in la with the smallest entry at least k."
-            if not la:
-                yield []
-                return
-            if la[-1] < k:
-                yield
-                return
-            for mu in Partitions_inside_lambda([val-k for val in la]):
+            """
+            Iterate over all partitions contained in la with the smallest
+            entry at least k.
+            """
+            for mu in Partitions_inside_lambda([val - k for val in la]):
                 yield [mu[i] + k for i in range(len(la))]
-            return
 
         def possible_middle_row_for_b_odd(a, c):
-            "Iterate over all possible middle row for SCPP inside box(a,b,c) when b is odd."
+            """
+            Iterate over all possible middle row for SCPP inside box(a,b,c)
+            when b is odd.
+            """
             if a * c % 2 == 1:
                 yield
                 return
@@ -2496,18 +2557,22 @@ class PlanePartitions_SCPP(PlanePartitions):
                 if not a % 2:
                     la = nu + mu
                 else:
-                    la = nu + [c//2] + mu
+                    la = nu + [c // 2] + mu
                 yield la
-            return
 
         def possible_middle_row_for_b_even(a, c):
-            "Iterate over all possible middle ((b/2)+1)st row for SCPP inside box(a,b,c) when b is even."
+            """
+            Iterate over all possible middle ((b/2)+1)st row for SCPP inside
+            box(a,b,c) when b is even.
+            """
             for mu in Partitions_inside_lambda([c // 2 for i in range((a+1) // 2)]):
+                if not mu:
+                    yield []
+                    continue
                 nu = [c - mu[len(mu)-1-i] for i in range(a // 2)]
                 for tau in Partitions_inside_lambda_with_smallest_at_least_k(nu, mu[0]):
                     la = tau + mu
                     yield la
-            return
 
         def PPs_with_first_row_la_and_with_k_rows(la, k):
             "Iterate over PPs with first row la and with k rows in total."
@@ -2520,7 +2585,6 @@ class PlanePartitions_SCPP(PlanePartitions):
             for mu in Partitions_inside_lambda(la):
                 for PP in PPs_with_first_row_la_and_with_k_rows(mu, k-1):
                     yield [la] + PP
-            return
 
         def complement(PP, c):
             "Return the complement of PP with respect to height c"
@@ -2531,18 +2595,19 @@ class PlanePartitions_SCPP(PlanePartitions):
             return [[c - PP[b-1-i][a-1-j] for j in range(a)] for i in range(b)]
 
         if b % 2 == 1:
-            for la in possible_middle_row_for_b_odd(a, c):   # la is the middle row of SCPP
+            # la is the middle row of SCPP
+            for la in possible_middle_row_for_b_odd(a, c):
                 for PP in PPs_with_first_row_la_and_with_k_rows(la, (b+1) // 2):
                     PP_below = PP[1:]
                     PP_above = complement(PP_below, c)
                     yield self.element_class(self, PP_above + [la] + PP_below)
         else:
-            for la in possible_middle_row_for_b_even(a, c):  # la is the middle ((a/2)+1)st row of SCPP
+            # la is the middle ((a/2)+1)st row of SCPP
+            for la in possible_middle_row_for_b_even(a, c):
                 for PP in PPs_with_first_row_la_and_with_k_rows(la, b // 2):
                     PP_below = PP
                     PP_above = complement(PP_below, c)
                     yield self.element_class(self, PP_above + PP_below)
-        return
 
     def cardinality(self) -> Integer:
         r"""
@@ -2718,7 +2783,6 @@ class PlanePartitions_TCPP(PlanePartitions):
         for p in PlanePartitions(self._box):
             if p.is_TCPP():
                 yield self.element_class(self, p)
-        return
 
     def cardinality(self) -> Integer:
         r"""
@@ -2741,8 +2805,10 @@ class PlanePartitions_TCPP(PlanePartitions):
         a = self._box[0]
         c = self._box[2]
         return Integer(binomial(c // 2 + a - 1, a - 1)
-                       * prod((c + i + j + 1) / (i + j + 1)
-                              for j in range(1, a - 1) for i in range(1, 1 + j)))
+                       * prod(c + i + j + 1
+                              for j in range(1, a - 1) for i in range(1, 1 + j))
+                       // prod(i + j + 1
+                               for j in range(1, a - 1) for i in range(1, 1 + j)))
 
 
 # Class 7
@@ -2797,14 +2863,22 @@ class PlanePartitions_SSCPP(PlanePartitions):
         EXAMPLES::
 
             sage: list(PlanePartitions([4,4,2], symmetry='SSCPP'))
-            [Plane partition [[2, 2, 2, 1], [2, 2, 1], [2, 1], [1]],
+            [Plane partition [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]],
              Plane partition [[2, 2, 2, 1], [2, 1, 1], [2, 1, 1], [1]],
              Plane partition [[2, 2, 1, 1], [2, 2, 1, 1], [1, 1], [1, 1]],
+             Plane partition [[2, 2, 2, 1], [2, 2, 1], [2, 1], [1]],
              Plane partition [[2, 2, 1, 1], [2, 1, 1, 1], [1, 1, 1], [1, 1]],
-             Plane partition [[2, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1]],
-             Plane partition [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]]
+             Plane partition [[2, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1]]]
+
+        TESTS::
+
+            sage: all(len(set(PP)) == PP.cardinality()
+            ....:     for a, b in cartesian_product([range(5), range(0, 5, 2)])
+            ....:     if (PP := PlanePartitions([a, a, b], symmetry='SSCPP')))
+            True
         """
-        for p in PlanePartitions(self._box):
+        # any SSCPP is a SPP
+        for p in PlanePartitions(self._box, symmetry='SPP'):
             if p.is_SSCPP():
                 yield self.element_class(self, p)
 
@@ -2896,8 +2970,16 @@ class PlanePartitions_CSTCPP(PlanePartitions):
 
             sage: list(PlanePartitions([2,2,2], symmetry='CSTCPP'))
             [Plane partition [[2, 1], [1]]]
+
+        TESTS::
+
+            sage: all(len(set(PP)) == PP.cardinality()
+            ....:     for n in range(0, 5, 2)
+            ....:     if (PP := PlanePartitions([n]*3, symmetry='CSTCPP')))
+            True
         """
-        for p in PlanePartitions(self._box):
+        # any CSTCPP is a TSPP, a SSCPP and a CSSCPP
+        for p in PlanePartitions(self._box, symmetry='TSPP'):
             if p.is_CSTCPP():
                 yield self.element_class(self, p)
 
@@ -2973,7 +3055,8 @@ class PlanePartitions_CSSCPP(PlanePartitions):
             sage: list(PlanePartitions([2,2,2], symmetry='CSSCPP'))
             [Plane partition [[2, 1], [1]]]
         """
-        for p in PlanePartitions(self._box):
+        # any CSSCPP is a SCPP and an CSPP, there are much fewer CSPP
+        for p in PlanePartitions(self._box, symmetry='CSPP'):
             if p.is_CSSCPP():
                 yield self.element_class(self, p)
 
@@ -3191,7 +3274,6 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         """
         for acl in self.to_poset().antichains_iterator():
             yield self.from_antichain(acl)
-        return
 
     def cardinality(self) -> Integer:
         r"""
