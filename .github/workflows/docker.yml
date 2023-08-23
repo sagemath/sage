@@ -18,6 +18,7 @@ on:
         default: >-
           ["ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
+           "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-kinetic",
