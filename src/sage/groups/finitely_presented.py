@@ -1497,7 +1497,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
     def epimorphisms(self, H):
         r"""
-        Return the epimorphisms from `self` to `H`, up to automorphism of `H`.
+        Return the epimorphisms from ``self`` to `H`, up to automorphism of `H`.
 
         INPUT:
 
@@ -1624,7 +1624,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``R`` -- a ring of Laurent polynomials over ``ring``
 
-        - ``ideal`` -- an list of generators of an ideal ``I``of ``R`` such that ``R/I`` is
+        - ``ideal`` -- an list of generators of an ideal ``I`` of ``R`` such that ``R/I`` is
           the group algebra of the abelianization of ``self``
 
         EXAMPLES::
@@ -1683,9 +1683,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     def char_var(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
         r"""
         Return the characteristic varieties of the group ``self``. There are several definitions
-        of the characteristic varieties of a group `G`, see e.g. [CS1999]_. Let `\Lambda` be the
+        of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
         group algebra of `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus). Each
-        element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k`th-characteristic
+        element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k` th-characteristic
         variety is
 
         .. MATH::
