@@ -1,12 +1,12 @@
 r"""
 Covering Arrays (CA)
 
-A Covering Array, denoted CA`(N;t,k,v)`, is an `N` by `k` array with
+A Covering Array, denoted `CA(N;t,k,v)`, is an `N` by `k` array with
 entries from a set of `v` elements with the property that in every
 selection of `t` columns, every sequence of `t` elements appears in at
 least one row.
 
-An Orthogonal Array, denoted OA`(N;t,k,v)` is a covering array with the
+An Orthogonal Array, denoted `OA(N;t,k,v)` is a covering array with the
 property that every sequence of `t`-elements appears in exactly one row.
 (See :mod:`sage.combinat.designs.orthogonal_arrays`).
 
@@ -19,9 +19,9 @@ following functions:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~sage.combinat.designs.designs_pyx.is_covering_array` | Check that the list of lists `array` is an `CA(N;t,k,v)`.
-    :meth:`~sage.combinat.designs.orthogonal_arrays.OA_relabel` | Return a relabelled version of the CA.
-    :meth:`~sage.combinat.designs.orthogonal_arrays.OA_standard_label` | Return a version of the CA relabelled to symbols `(0,\dots,n-1)`.
+    :meth:`~sage.combinat.designs.designs_pyx.is_covering_array` | Check that an input list of lists is a `CA(N;t,k,v)`.
+    :meth:`~sage.combinat.designs.covering_array.CA_relabel` | Return a relabelled version of the CA.
+    :meth:`~sage.combinat.designs.covering_array.CA_standard_label` | Return a version of the CA relabelled to symbols `(0,\dots,n-1)`.
 
 REFERENCES:
 
