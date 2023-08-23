@@ -55,8 +55,7 @@ cdef class KSHandler:
     - ``n_slots`` -- the total number of F-symbols
     - ``field`` -- F-matrix's base cyclotomic field
     - ``use_mp`` -- a boolean indicating whether to construct a shared
-      memory block to back ``self``. Requires Python 3.8+, since we
-      must import the ``multiprocessing.shared_memory`` module.
+      memory block to back ``self``.
     - ``init_data`` -- a dictionary or :class:`KSHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``name`` -- the name of a shared memory object (used by child processes
@@ -390,9 +389,6 @@ cdef class FvarsHandler:
     The parent process should construct this object without a
     ``name`` attribute. Children processes use the ``name`` attribute,
     accessed via ``self.shm.name`` to attach to the shared memory block.
-
-    Multiprocessing requires Python 3.8+, since we must import the
-    ``multiprocessing.shared_memory`` module.
 
     INPUT:
 

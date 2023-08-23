@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Install pycodestyle
       run: pip install tox pycodestyle
     - name: Lint using pycodestyle
@@ -31,7 +31,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Install relint
       run: pip install tox relint
     - name: Lint using relint
@@ -45,7 +45,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Install tox
       run: pip install tox
     - name: Lint using tox -e rst
