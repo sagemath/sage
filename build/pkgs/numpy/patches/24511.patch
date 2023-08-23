@@ -1,0 +1,30 @@
+From 31234832591b09e1982b386ff6811d348a129ec2 Mon Sep 17 00:00:00 2001
+From: mattip <matti.picus@gmail.com>
+Date: Wed, 23 Aug 2023 16:01:40 +0300
+Subject: [PATCH] use a default assignment for git_hash [skip ci]
+
+---
+ numpy/_build_utils/gitversion.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/numpy/_build_utils/gitversion.py b/numpy/_build_utils/gitversion.py
+index d910581a85d..6686ddb51fd 100644
+--- a/numpy/_build_utils/gitversion.py
++++ b/numpy/_build_utils/gitversion.py
+@@ -24,6 +24,7 @@ def git_version(version):
+     import subprocess
+     import os.path
+ 
++    git_hash = ''
+     try:
+         p = subprocess.Popen(
+             ['git', 'log', '-1', '--format="%H %aI"'],
+@@ -48,8 +49,6 @@ def git_version(version):
+             # Only attach git tag to development versions
+             if 'dev' in version:
+                 version += f'+git{git_date}.{git_hash[:7]}'
+-        else:
+-            git_hash = ''
+ 
+     return version, git_hash
+ 
