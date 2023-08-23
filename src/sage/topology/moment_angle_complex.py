@@ -868,7 +868,7 @@ class CohomologyRing(CombinatorialFreeModule):
                     # Because of the empty combination
                     if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, generators=True), list):
                         if len(S.cohomology(deg-i-1, generators=True)) > 0:
-                            self._gens[deg].append([x, deg-i-1, S.cohomology(deg-i-1, generators=True)[0]])
+                            self._gens[deg].append([set(x), deg-i-1, S.cohomology(deg-i-1, generators=True)[0]])
                         num_of_gens += len(S.cohomology(deg-i-1, generators=True))
                         print("{}, {}: {} - {}".format(deg, i, x, S.cohomology(deg-i-1, generators=True)))
                     elif len(S.vertices()) == 0 and deg == 0:
@@ -878,6 +878,8 @@ class CohomologyRing(CombinatorialFreeModule):
             self._graded_indices[deg] = range(num_of_gens)
 
         print(self._gens)
+        # ALGRbras/ union/ cartesian_product of modules with basis
+        # have to implement my own multiplication
         cat = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         CombinatorialFreeModule.__init__(self, base_ring, indices, category=cat)
 
@@ -905,15 +907,26 @@ class CohomologyRing(CombinatorialFreeModule):
         d = {(0,i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
 
+    @cached_method
+    def _to_cycle_on_basis(self, i):
+        self._gens[i[0]][i[1]]
+        subcomplex = self._complex.simplicial_complex().generated_subcomplex(self._gens[i[0]][i[1]][0], is_mutable=False)
+        cochains = subcomplex.n_chains(self._gens[i[0]][i[1]][1], base_ring=self._base_ring, cochains=True)
+        cochain = self._gens[i[0]][i[1]][2][1]
+        return (subcomplex, cochains.from_vector(cochain.to_vector()))
+
+    # @cached_method
     def product_on_basis(self, li, ri):
         # TODO def eps and get the cohomology class of res
         from sage.topology.simplicial_complex import Simplex
+        from sage.homology.chain_homotopy import ChainContraction
 
         try:
             left = self._gens[li[0]][li[1]]
             right = self._gens[ri[0]][ri[1]]
-            set_left = set(left[0])
-            set_right = set(right[0])
+            set_left = left[0]
+            set_right = right[0]
+            # be careful when having multiple generators here
             subcomplex_left = left[2][1].leading_item()[0].set()
             subcomplex_right = right[2][1].leading_item()[0].set()
             if not set_left.isdisjoint(set_right):
@@ -924,11 +937,26 @@ class CohomologyRing(CombinatorialFreeModule):
             subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
             res = dict(subcomplex_union.n_chains(left[1] + right[1]+ 1, cochains=True).basis()).get(Simplex(res_union), 0)
             print(res)
+
+            phi, M = subcomplex_union.algebraic_topological_model(self._base_ring)
+            print(phi.dual().pi())
+            print("Cohomology gens:")
+            for i in range(subcomplex_union.dimension() + 1):
+                print("{} : {}".format(i, phi.dual().pi().in_degree(i)))
+
             return self.one()
         except IndexError:
             pass
         return self.one()
 
     class Element(CombinatorialFreeModule.Element):
+        def to_cycle(self):
+            if not self.is_homogeneous():
+                raise ValueError("only defined for homogeneous elements")
+            ind = self.leading_item()[0]
+            first = self.parent()._gens[ind[0]][ind[1]][0]
+            second = sum(c * self.parent()._to_cycle_on_basis(i)[1] for i,c in self)
+            return (self.parent()._complex.simplicial_complex().generated_subcomplex(first), second)
+
         def cup_product(self, other):
             return self * other
