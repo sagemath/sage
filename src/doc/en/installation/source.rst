@@ -546,7 +546,7 @@ If
    sage: import _tkinter
    sage: import Tkinter
 
-does not raise an ``ImportError``, then it worked.
+does not raise an :class:`ImportError`, then it worked.
 
 .. _build-from-source-step-by-step:
 

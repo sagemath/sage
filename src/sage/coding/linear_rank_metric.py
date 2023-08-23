@@ -391,7 +391,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
              sage: from sage.coding.linear_rank_metric import AbstractLinearRankMetricCode
              sage: class RankRepetitionCode(AbstractLinearRankMetricCode):
              ....:   def __init__(self, base_field, sub_field, length):
-             ....:       super().__init__(self, base_field, sub_field, length,
+             ....:       super().__init__(base_field, sub_field, length,
              ....:                        "GeneratorMatrix", "NearestNeighbor")
              ....:       beta = base_field.gen()
              ....:       self._generator_matrix = matrix(base_field,

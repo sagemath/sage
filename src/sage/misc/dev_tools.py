@@ -31,6 +31,7 @@ def runsnake(command):
 
     EXAMPLES::
 
+        sage: from sage.misc.dev_tools import runsnake
         sage: runsnake("list(SymmetricGroup(3))")        # optional - runsnake
 
     ``command`` is first preparsed (see :func:`preparse`)::

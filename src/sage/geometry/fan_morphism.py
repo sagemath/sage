@@ -319,15 +319,15 @@ class FanMorphism(FreeModuleMorphism):
         EXAMPLES::
 
             sage: A2 = toric_varieties.A2()
-            sage: P3 = toric_varieties.P(3)                                     # optional - palp
+            sage: P3 = toric_varieties.P(3)                                             # needs palp
             sage: m = matrix([(2,0,0), (1,1,0)])
-            sage: phi = A2.hom(m, P3).fan_morphism(); phi                       # optional - palp
+            sage: phi = A2.hom(m, P3).fan_morphism(); phi                               # needs palp
             Fan morphism defined by the matrix
             [2 0 0]
             [1 1 0]
             Domain fan: Rational polyhedral fan in 2-d lattice N
             Codomain fan: Rational polyhedral fan in 3-d lattice N
-            sage: prod(phi.factor())  # indirect test                           # optional - palp
+            sage: prod(phi.factor())  # indirect test                                   # needs palp
             Fan morphism defined by the matrix
             [2 0 0]
             [1 1 0]
@@ -529,13 +529,14 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: Sigma = toric_varieties.dP8().fan()                           # optional - palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)        # optional - palp
-            sage: phi._ray_index_map()                                          # optional - palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: phi._ray_index_map()
             (-1, 1, -1, 0)
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)            # optional - palp
-            sage: xi._ray_index_map()                                           # optional - palp
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: xi._ray_index_map()
             Traceback (most recent call last):
             ...
             ValueError: ray #1 is mapped into a 2-d cone!
@@ -1040,32 +1041,33 @@ class FanMorphism(FreeModuleMorphism):
 
         EXAMPLES::
 
-            sage: Sigma = toric_varieties.dP8().fan()                           # optional - palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)        # optional - palp
-            sage: phi.index()                                                   # optional - palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: phi.index()
             1
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)        # optional - palp
-            sage: psi.index()                                                   # optional - palp
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: psi.index()
             2
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)            # optional - palp
-            sage: xi.index()                                                    # optional - palp
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: xi.index()
             +Infinity
 
         Infinite index in the last example indicates that the image has positive
         codimension in the codomain. Let's look at the rays of our fans::
 
-            sage: Sigma_p.rays()
+            sage: Sigma_p.rays()                                                        # needs palp
             N( 1),
             N(-1)
             in 1-d lattice N
-            sage: Sigma.rays()                                                  # optional - palp
+            sage: Sigma.rays()                                                          # needs palp
             N( 1,  1),
             N( 0,  1),
             N(-1, -1),
             N( 1,  0)
             in 2-d lattice N
-            sage: xi.factor()[0].domain_fan().rays()                            # optional - palp
+            sage: xi.factor()[0].domain_fan().rays()                                    # needs palp
             N(-1, 0),
             N( 1, 0)
             in Sublattice <N(1, 0)>
@@ -1081,25 +1083,26 @@ class FanMorphism(FreeModuleMorphism):
         1-d cones are ``None``, except for one which is infinite, and all
         indices over 2-d cones are ``None``, except for one which is 1::
 
-            sage: [xi.index(cone) for cone in Sigma(1)]                         # optional - palp
+            sage: [xi.index(cone) for cone in Sigma(1)]                                 # needs palp
             [None, None, None, +Infinity]
-            sage: [xi.index(cone) for cone in Sigma(2)]                         # optional - palp
+            sage: [xi.index(cone) for cone in Sigma(2)]                                 # needs palp
             [None, 1, None, None]
 
         TESTS::
 
-            sage: Sigma = toric_varieties.dP8().fan()                           # optional - palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.Cube_nonpolyhedral().fan()
             sage: m = matrix([[2,6,10], [7,11,13]])
-            sage: zeta = FanMorphism(m, Sigma, Sigma_p, subdivide=True)         # optional - palp
-            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]       # optional - palp
+            sage: zeta = FanMorphism(m, Sigma, Sigma_p, subdivide=True)
+            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]
             [+Infinity, None, None, None, None, None, None, None, None, None,
              4, 4, None, 4, None, None, 2, None, 4, None, 4, 1, 1, 1, 1, 1, 1]
-            sage: zeta = prod(zeta.factor()[1:])                                # optional - palp
-            sage: Sigma_p = zeta.codomain_fan()                                 # optional - palp
-            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]       # optional - palp
+            sage: zeta = prod(zeta.factor()[1:])
+            sage: Sigma_p = zeta.codomain_fan()
+            sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]
             [4, 4, 4, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1]
-            sage: zeta.index() == zeta.index(Sigma_p(0)[0])                     # optional - palp
+            sage: zeta.index() == zeta.index(Sigma_p(0)[0])
             True
         """
         if cone is None:
@@ -1130,14 +1133,15 @@ class FanMorphism(FreeModuleMorphism):
 
         EXAMPLES::
 
-            sage: Sigma = toric_varieties.dP8().fan()                           # optional - palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)        # optional - palp
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)        # optional - palp
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)            # optional - palp
-            sage: phi.index(), psi.index(), xi.index()                          # optional - palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: phi.index(), psi.index(), xi.index()
             (1, 2, +Infinity)
-            sage: phi.is_birational(), psi.is_birational(), xi.is_birational()  # optional - palp
+            sage: phi.is_birational(), psi.is_birational(), xi.is_birational()
             (True, False, False)
         """
         return self.index() == 1
@@ -1178,26 +1182,27 @@ class FanMorphism(FreeModuleMorphism):
         We consider several maps between fans of a del Pezzo surface and the
         projective line::
 
-            sage: Sigma = toric_varieties.dP8().fan()                           # optional - palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)        # optional - palp
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)        # optional - palp
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)            # optional - palp
-            sage: phi.is_bundle()                                               # optional - palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: phi.is_bundle()
             True
-            sage: phi.is_fibration()                                            # optional - palp
+            sage: phi.is_fibration()
             True
-            sage: phi.index()                                                   # optional - palp
+            sage: phi.index()
             1
-            sage: psi.is_bundle()                                               # optional - palp
+            sage: psi.is_bundle()
             False
-            sage: psi.is_fibration()                                            # optional - palp
+            sage: psi.is_fibration()
             True
-            sage: psi.index()                                                   # optional - palp
+            sage: psi.index()
             2
-            sage: xi.is_fibration()                                             # optional - palp
+            sage: xi.is_fibration()
             False
-            sage: xi.index()                                                    # optional - palp
+            sage: xi.index()
             +Infinity
 
         The first of these maps induces not only a fibration, but a fiber
@@ -1270,26 +1275,27 @@ class FanMorphism(FreeModuleMorphism):
         We consider several maps between fans of a del Pezzo surface and the
         projective line::
 
-            sage: Sigma = toric_varieties.dP8().fan()                           # optional - palp
+            sage: # needs palp
+            sage: Sigma = toric_varieties.dP8().fan()
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)        # optional - palp
-            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)        # optional - palp
-            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)            # optional - palp
-            sage: phi.is_bundle()                                               # optional - palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)
+            sage: psi = FanMorphism(matrix([[2], [-2]]), Sigma, Sigma_p)
+            sage: xi = FanMorphism(matrix([[1, 0]]), Sigma_p, Sigma)
+            sage: phi.is_bundle()
             True
-            sage: phi.is_fibration()                                            # optional - palp
+            sage: phi.is_fibration()
             True
-            sage: phi.index()                                                   # optional - palp
+            sage: phi.index()
             1
-            sage: psi.is_bundle()                                               # optional - palp
+            sage: psi.is_bundle()
             False
-            sage: psi.is_fibration()                                            # optional - palp
+            sage: psi.is_fibration()
             True
-            sage: psi.index()                                                   # optional - palp
+            sage: psi.index()
             2
-            sage: xi.is_fibration()                                             # optional - palp
+            sage: xi.is_fibration()
             False
-            sage: xi.index()                                                    # optional - palp
+            sage: xi.index()
             +Infinity
 
         The first of these maps induces not only a fibration, but a fiber
@@ -1384,9 +1390,9 @@ class FanMorphism(FreeModuleMorphism):
 
         We also embed the affine plane into the projective one::
 
-            sage: P2 = toric_varieties.P(2).fan()                               # optional - palp
+            sage: P2 = toric_varieties.P(2).fan()                                       # needs palp
             sage: m = identity_matrix(2)
-            sage: FanMorphism(m, A2, P2).is_injective()                         # optional - palp
+            sage: FanMorphism(m, A2, P2).is_injective()                                 # needs palp
             True
         """
         if self.matrix().index_in_saturation() != 1:
@@ -1564,15 +1570,16 @@ class FanMorphism(FreeModuleMorphism):
 
         We check that reviewer's example from :trac:`9972` is handled correctly::
 
+            sage: # needs palp
             sage: N1 = ToricLattice(1)
             sage: N2 = ToricLattice(2)
             sage: Hom21 = Hom(N2, N1)
             sage: pr = Hom21([N1.0,0])
-            sage: P1xP1 = toric_varieties.P1xP1()                               # optional - palp
-            sage: f = FanMorphism(pr, P1xP1.fan())                              # optional - palp
-            sage: c = f.image_cone(Cone([(1,0), (0,1)])); c                     # optional - palp
+            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: f = FanMorphism(pr, P1xP1.fan())
+            sage: c = f.image_cone(Cone([(1,0), (0,1)])); c
             1-d cone of Rational polyhedral fan in 1-d lattice N
-            sage: f.preimage_cones(c)                                           # optional - palp
+            sage: f.preimage_cones(c)
             (1-d cone of Rational polyhedral fan in 2-d lattice N,
              2-d cone of Rational polyhedral fan in 2-d lattice N,
              2-d cone of Rational polyhedral fan in 2-d lattice N)
@@ -1678,8 +1685,8 @@ class FanMorphism(FreeModuleMorphism):
 
         Consider a projection of a del Pezzo surface onto the projective line::
 
-            sage: Sigma = toric_varieties.dP6().fan()                           # optional - palp
-            sage: Sigma.rays()                                                  # optional - palp
+            sage: Sigma = toric_varieties.dP6().fan()                                   # needs palp
+            sage: Sigma.rays()                                                          # needs palp
             N( 0,  1),
             N(-1,  0),
             N(-1, -1),
@@ -1688,7 +1695,7 @@ class FanMorphism(FreeModuleMorphism):
             N( 1,  1)
             in 2-d lattice N
             sage: Sigma_p = toric_varieties.P1().fan()
-            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)        # optional - palp
+            sage: phi = FanMorphism(matrix([[1], [-1]]), Sigma, Sigma_p)                # needs palp
 
         Under this map, one pair of rays is mapped to the origin, one in the
         positive direction, and one in the negative one. Also three
@@ -1696,28 +1703,28 @@ class FanMorphism(FreeModuleMorphism):
         the negative one, so there are 5 preimage cones corresponding to either
         of the rays of the codomain fan ``Sigma_p``::
 
-            sage: len(phi.preimage_cones(Cone([(1,)])))                         # optional - palp
+            sage: len(phi.preimage_cones(Cone([(1,)])))                                 # needs palp
             5
 
         Yet only rays are primitive::
 
-            sage: phi.primitive_preimage_cones(Cone([(1,)]))                    # optional - palp
+            sage: phi.primitive_preimage_cones(Cone([(1,)]))                            # needs palp
             (1-d cone of Rational polyhedral fan in 2-d lattice N,
              1-d cone of Rational polyhedral fan in 2-d lattice N)
 
         Since all primitive cones are mapped onto their images bijectively, we
         get a fibration::
 
-            sage: phi.is_fibration()                                            # optional - palp
+            sage: phi.is_fibration()                                                    # needs palp
             True
 
         But since there are several primitive cones corresponding to the same
         cone of the codomain fan, this map is not a bundle, even though its
         index is 1::
 
-            sage: phi.is_bundle()                                               # optional - palp
+            sage: phi.is_bundle()                                                       # needs palp
             False
-            sage: phi.index()                                                   # optional - palp
+            sage: phi.index()                                                           # needs palp
             1
         """
         sigma_p = self._codomain_fan.embed(cone) # Necessary if used as a key
@@ -1771,10 +1778,10 @@ class FanMorphism(FreeModuleMorphism):
         coordinate planes"::
 
             sage: A2 = toric_varieties.A2()
-            sage: P3 = toric_varieties.P(3)                                             # optional - palp
+            sage: P3 = toric_varieties.P(3)                                             # needs palp
             sage: m = matrix([(2,0,0), (1,1,0)])
-            sage: phi = A2.hom(m, P3)                                                   # optional - palp
-            sage: phi.as_polynomial_map()                                               # optional - palp
+            sage: phi = A2.hom(m, P3)                                                   # needs palp
+            sage: phi.as_polynomial_map()                                               # needs palp
             Scheme morphism:
               From: 2-d affine toric variety
               To:   3-d CPR-Fano toric variety covered by 4 affine patches
@@ -1783,18 +1790,19 @@ class FanMorphism(FreeModuleMorphism):
 
         Now we will work with the underlying fan morphism::
 
-            sage: phi = phi.fan_morphism(); phi                                         # optional - palp
+            sage: # needs palp
+            sage: phi = phi.fan_morphism(); phi
             Fan morphism defined by the matrix
             [2 0 0]
             [1 1 0]
             Domain fan: Rational polyhedral fan in 2-d lattice N
             Codomain fan: Rational polyhedral fan in 3-d lattice N
-            sage: phi.is_surjective(), phi.is_birational(), phi.is_injective()          # optional - palp
+            sage: phi.is_surjective(), phi.is_birational(), phi.is_injective()
             (False, False, False)
-            sage: phi_i, phi_b, phi_s = phi.factor()                                    # optional - palp
-            sage: phi_s.is_surjective(), phi_b.is_birational(), phi_i.is_injective()    # optional - palp
+            sage: phi_i, phi_b, phi_s = phi.factor()
+            sage: phi_s.is_surjective(), phi_b.is_birational(), phi_i.is_injective()
             (True, True, True)
-            sage: prod(phi.factor()) == phi                                             # optional - palp
+            sage: prod(phi.factor()) == phi
             True
 
         Double cover (surjective)::
@@ -1803,26 +1811,26 @@ class FanMorphism(FreeModuleMorphism):
             N(1, 0),
             N(0, 1)
             in 2-d lattice N
-            sage: phi_s                                                                 # optional - palp
+            sage: phi_s                                                                 # needs palp
             Fan morphism defined by the matrix
             [2 0]
             [1 1]
             Domain fan: Rational polyhedral fan in 2-d lattice N
             Codomain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
-            sage: phi_s.codomain_fan().rays()                                           # optional - palp
+            sage: phi_s.codomain_fan().rays()                                           # needs palp
             N(1, 0, 0),
             N(1, 1, 0)
             in Sublattice <N(1, 0, 0), N(0, 1, 0)>
 
         Blowup chart (birational)::
 
-            sage: phi_b                                                                 # optional - palp
+            sage: phi_b                                                                 # needs palp
             Fan morphism defined by the matrix
             [1 0]
             [0 1]
             Domain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
             Codomain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
-            sage: phi_b.codomain_fan().rays()                                           # optional - palp
+            sage: phi_b.codomain_fan().rays()                                           # needs palp
             N(-1, -1, 0),
             N( 0,  1, 0),
             N( 1,  0, 0)
@@ -1830,13 +1838,13 @@ class FanMorphism(FreeModuleMorphism):
 
         Coordinate plane inclusion (injective)::
 
-            sage: phi_i                                                                 # optional - palp
+            sage: phi_i                                                                 # needs palp
             Fan morphism defined by the matrix
             [1 0 0]
             [0 1 0]
             Domain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
             Codomain fan: Rational polyhedral fan in 3-d lattice N
-            sage: phi.codomain_fan().rays()                                             # optional - palp
+            sage: phi.codomain_fan().rays()                                             # needs palp
             N( 1,  0,  0),
             N( 0,  1,  0),
             N( 0,  0,  1),
@@ -1845,16 +1853,17 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS::
 
-            sage: phi_s.matrix() * phi_b.matrix() * phi_i.matrix() == m                 # optional - palp
+            sage: phi_s.matrix() * phi_b.matrix() * phi_i.matrix() == m                 # needs palp
             True
 
-            sage: phi.domain_fan() is phi_s.domain_fan()                                # optional - palp
+            sage: # needs palp
+            sage: phi.domain_fan() is phi_s.domain_fan()
             True
-            sage: phi_s.codomain_fan() is phi_b.domain_fan()                            # optional - palp
+            sage: phi_s.codomain_fan() is phi_b.domain_fan()
             True
-            sage: phi_b.codomain_fan() is phi_i.domain_fan()                            # optional - palp
+            sage: phi_b.codomain_fan() is phi_i.domain_fan()
             True
-            sage: phi_i.codomain_fan() is phi.codomain_fan()                            # optional - palp
+            sage: phi_i.codomain_fan() is phi.codomain_fan()
             True
 
             sage: trivialfan2 = Fan([], [], lattice=ToricLattice(2))

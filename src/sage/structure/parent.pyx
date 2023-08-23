@@ -832,7 +832,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: MatrixSpace(ZZ, 2)._repr_option('element_ascii_art')                  # optional - sage.modules
             True
         """
-        if not isinstance(key, basestring):
+        if not isinstance(key, str):
             raise ValueError('key must be a string')
         defaults = {'ascii_art': False,
                     'element_ascii_art': False,

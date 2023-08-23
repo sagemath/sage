@@ -186,14 +186,14 @@ from sage.misc.lazy_attribute import lazy_attribute
 from . import morphism
 
 import sage.rings.integer_ring
-import sage.rings.all
+from sage.rings.infinity import Infinity
 
 from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix, identity_matrix
 from sage.structure.element import is_Matrix
 
-ZZ = sage.rings.integer_ring.ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class Homspace(HomsetWithBase):
@@ -882,7 +882,7 @@ class EndomorphismSubring(Homspace, Ring):
         M = self.free_module()
         N = other.free_module()
         if M.rank() < N.rank():
-            return sage.rings.all.Infinity
+            return Infinity
         return M.index_in(N)
 
     def index_in_saturation(self):
