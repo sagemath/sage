@@ -271,7 +271,7 @@ def corrected_voronoi_diagram(points):
     return V
 
 
-def orient_circuit(circuit, convex=False):
+def orient_circuit(circuit, convex=False, precision=53, verbose=False):
     r"""
     Reverse a circuit if it goes clockwise; otherwise leave it unchanged.
 
@@ -280,7 +280,11 @@ def orient_circuit(circuit, convex=False):
     - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
         by a list of edges
 
-    - ``convex`` -- a boolean function, if set to ``True`` a simpler computation is made
+    - ``convex`` -- boolean (default -- `False`), if set to ``True`` a simpler computation is made
+
+    -  ``precision`` -- bits of precision (default -- 53)
+
+    - ``verbose`` -- boolean (default -- ``False``) for testing purposes
 
     OUTPUT:
 
@@ -320,6 +324,20 @@ def orient_circuit(circuit, convex=False):
         True
         sage: cir_oriented == orient_circuit(cir, convex=True)
         True
+        sage: P0=[(1,1/2),(0,1),(1,1)]; P1=[(0,3/2),(-1,0)]
+        sage: Q=Polyhedron(P0).vertices()
+        sage: Q = [Q[2], Q[0], Q[1]] + [_ for _ in reversed(Polyhedron(P1).vertices())]
+        sage: Q
+        [A vertex at (1, 1/2), A vertex at (0, 1), A vertex at (1, 1),
+         A vertex at (0, 3/2), A vertex at (-1, 0)]
+        sage: E = Graph()
+        sage: for v, w in zip(Q, Q[1:] + [Q[0]]):
+        ....:   E.add_edge((v, w))
+        sage: cir = orient_circuit(E.eulerian_circuit(), precision=1, verbose=True)
+        2
+        sage: cir
+        (A vertex at (1, 1/2), A vertex at (0, 1), A vertex at (1, 1),
+         A vertex at (0, 3/2), A vertex at (-1, 0), A vertex at (1, 1/2))
     """
     vectors = [v[1].vector() - v[0].vector() for v in circuit]
     circuit_vertex = (circuit[0][0],) + tuple(e[1] for e in circuit)
@@ -332,7 +350,7 @@ def orient_circuit(circuit, convex=False):
         elif pr < 0:
             # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
             return tuple(reversed(circuit_vertex))
-    prec = 53
+    prec = precision
     while True:
         CIF = ComplexIntervalField(prec)
         totalangle = sum((CIF(*vectors[i]) / CIF(*vectors[i - 1])).argument()
@@ -344,6 +362,8 @@ def orient_circuit(circuit, convex=False):
             # return circuit
             return circuit_vertex
         prec *= 2
+        if verbose:
+            print(prec)
 
 
 def voronoi_cells(V):
@@ -776,7 +796,8 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     - ``glist`` -- a tuple of polynomials in two variables
     - ``x0`` -- a Gauss rational
     - ``x1`` -- a Gauss rational
-    - ``precision`` -- a dictionary (default, an empty one) which assigns a number precision bits to each element of ``glist``
+    - ``precision`` -- a dictionary (default `dict()`) which assigns a number precision bits
+      to each element of ``glist``
 
     OUTPUT:
 
