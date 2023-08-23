@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 PALP normal form of vertices of a lattice polytope
 """
@@ -56,8 +57,8 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
 
         sage: o = lattice_polytope.cross_polytope(2)
         sage: PM = o.vertex_facet_pairing_matrix()
-        sage: PM_max = PM.permutation_normal_form()                                 # optional - sage.graphs
-        sage: PM_max == o._palp_PM_max()                                            # optional - sage.graphs
+        sage: PM_max = PM.permutation_normal_form()
+        sage: PM_max == o._palp_PM_max()
         True
         sage: P2 = ReflexivePolytope(2, 0)
         sage: PM_max, permutations = P2._palp_PM_max(check=True)
@@ -362,9 +363,9 @@ def _palp_canonical_order(vertices, PM_max, permutations):
 
         sage: L = lattice_polytope.cross_polytope(2)
         sage: V = L.vertices()
-        sage: PM_max, permutations = L._palp_PM_max(check=True)                         # optional - sage.groups
+        sage: PM_max, permutations = L._palp_PM_max(check=True)
         sage: from sage.geometry.lattice_polytope import _palp_canonical_order
-        sage: _palp_canonical_order(V, PM_max, permutations)                            # optional - sage.groups
+        sage: _palp_canonical_order(V, PM_max, permutations)
         (M( 1,  0),
          M( 0,  1),
          M( 0, -1),
