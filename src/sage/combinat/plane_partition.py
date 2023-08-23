@@ -38,7 +38,7 @@ from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
-from sage.arith.misc import Sigma, integer_floor as floor, integer_ceil as ceil, binomial, factorial
+from sage.arith.misc import Sigma, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -1651,7 +1651,6 @@ class PlanePartitions_box(PlanePartitions):
                             for j in range(1, B + 1)
                             for k in range(1, C + 1)))
 
-
     def random_element(self) -> PP:
         r"""
         Return a uniformly random plane partition inside a box.
@@ -2200,13 +2199,13 @@ class PlanePartitions_CSPP(PlanePartitions):
             132
         """
         a = self._box[0]
-        numerator = (prod(3*i - 1 for i in range(1, a+1))
-                     * prod(i + j + a - 1 for j in range(1, a+1)
-                            for i in range(1, j+1)))
-        denominator = (prod(3*i - 2 for i in range(1, a+1))
-                       * prod(2*i + j - 1 for j in range(1, a+1)
-                              for i in range(1, j+1)))
-        return Integer(numerator // denominator)
+        num = (prod(3*i - 1 for i in range(1, a + 1))
+               * prod(i + j + a - 1 for j in range(1, a + 1)
+                      for i in range(1, j + 1)))
+        den = (prod(3*i - 2 for i in range(1, a + 1))
+               * prod(2*i + j - 1 for j in range(1, a + 1)
+                      for i in range(1, j + 1)))
+        return Integer(num // den)
 
 
 # Class 4
@@ -2382,8 +2381,9 @@ class PlanePartitions_TSPP(PlanePartitions):
             66
         """
         a = self._box[0]
-        return Integer(prod(i + j + a - 1 for j in range(1, a+1) for i in range(1, j+1))
-                       // prod(i + 2*j - 2 for j in range(1, a+1) for i in range(1, j+1)))
+        num = prod(i + j + a - 1 for j in range(1, a + 1) for i in range(1, j + 1))
+        den = prod(i + 2*j - 2 for j in range(1, a + 1) for i in range(1, j + 1))
+        return Integer(num // den)
 
 
 # Class 5
@@ -2740,9 +2740,9 @@ class PlanePartitions_TCPP(PlanePartitions):
         """
         a = self._box[0]
         c = self._box[2]
-        return Integer(binomial(c//2 + a - 1, a - 1)
+        return Integer(binomial(c // 2 + a - 1, a - 1)
                        * prod((c + i + j + 1) / (i + j + 1)
-                              for j in range(1, 1+a-2) for i in range(1, 1+j)))
+                              for j in range(1, a - 1) for i in range(1, 1 + j)))
 
 
 # Class 7
@@ -2837,10 +2837,15 @@ class PlanePartitions_SSCPP(PlanePartitions):
         """
         a = self._box[0]
         c = self._box[2]
-        return Integer(prod(Integer(i + j + k - 1) / Integer(i + j + k - 2)
-                            for i in range(1, 1+a//2)
-                            for j in range(1, 1+ceil(a/2))
-                            for k in range(1, 1+c//2)))
+        num = prod(i + j + k - 1
+                   for i in range(1, 1 + a // 2)
+                   for j in range(1, 1 + (a + 1) // 2)
+                   for k in range(1, 1 + c // 2))
+        den = prod(i + j + k - 2
+                   for i in range(1, 1 + a // 2)
+                   for j in range(1, 1 + (a + 1) // 2)
+                   for k in range(1, 1 + c // 2))
+        return Integer(num // den)
 
 
 # Class 8
@@ -2914,7 +2919,9 @@ class PlanePartitions_CSTCPP(PlanePartitions):
             11
         """
         a = self._box[0] // 2
-        return Integer(prod((3*i+1) * factorial(6*i) * factorial(2*i) / (factorial(4*i+1) * factorial(4*i)) for i in range(a)))
+        num = prod((3*i + 1) * factorial(6*i) * factorial(2*i) for i in range(a))
+        den = prod((factorial(4*i + 1) * factorial(4*i)) for i in range(a))
+        return Integer(num // den)
 
 
 # Class 9
@@ -2988,7 +2995,9 @@ class PlanePartitions_CSSCPP(PlanePartitions):
             49
         """
         a = self._box[0] // 2
-        return Integer(prod(factorial(3*i+1)**2 / factorial(a+i)**2 for i in range(a)))
+        num = prod(factorial(3*i + 1)**2 for i in range(a))
+        den = prod(factorial(a + i)**2 for i in range(a))
+        return Integer(num // den)
 
 
 # Class 10
@@ -3202,4 +3211,6 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             7
         """
         a = self._box[0] // 2
-        return Integer(prod(factorial(3*i+1) / factorial(a+i) for i in range(a)))
+        num = prod(factorial(3*i + 1) for i in range(a))
+        den = prod(factorial(a + i) for i in range(a))
+        return Integer(num // den)
