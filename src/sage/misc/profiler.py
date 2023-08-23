@@ -28,6 +28,7 @@ class Profiler:
 
     EXAMPLES::
 
+        from sage.misc.profiler import Profiler
         sage: def f():                        # not tested
         ....:     p = Profiler()
 
@@ -42,11 +43,12 @@ class Profiler:
     You can create a checkpoints without a string; ``Profiler``
     will use the source code instead::
 
-        sage: p()                             # not tested
-        sage: y = factor(25)                  # not tested
-        sage: p("last step")                  # not tested
-        sage: z = factor(35)                  # not tested
-        sage: p()                             # not tested
+        sage: # not tested
+        sage: p()
+        sage: y = factor(25)
+        sage: p("last step")
+        sage: z = factor(35)
+        sage: p()
 
     This will give a nice list of timings between checkpoints::
 

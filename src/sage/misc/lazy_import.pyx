@@ -1104,7 +1104,7 @@ def lazy_import(module, names, as_=None, *,
     """
     if as_ is None:
         as_ = names
-    if isinstance(names, basestring):
+    if isinstance(names, str):
         names = [names]
         as_ = [as_]
     else:

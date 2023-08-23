@@ -23,10 +23,13 @@ Miscellaneous `p`-adic methods
 
 import math
 
-import sage.arith.all as arith
-import sage.matrix.all as matrix
-import sage.misc.misc as misc
-import sage.rings.all as rings
+from sage.arith.functions import lcm as LCM
+from sage.arith.misc import valuation
+from sage.matrix.constructor import matrix
+from sage.misc.misc import newton_method_sizes
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.padics.factory import Qp as pAdicField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.schemes.hyperelliptic_curves.hypellfrob
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 
@@ -61,7 +64,7 @@ def __check_padic_hypotheses(self, p):
         ArithmeticError: p must be a good ordinary prime
 
     """
-    p = rings.Integer(p)
+    p = Integer(p)
     if not p.is_prime():
         raise ValueError("p = (%s) must be prime" % p)
     if p == 2:
@@ -399,7 +402,7 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
     K = Qp(p, prec=prec)
 
     rank = self.rank()
-    M = matrix.matrix(K, rank, rank, 0)
+    M = matrix(K, rank, rank, 0)
     if rank == 0:
         return M
 
@@ -630,7 +633,7 @@ def _multiple_to_make_good_reduction(E):
               "Please change the model first.")
         raise NotImplementedError(st)
     if E.is_minimal():
-        n2 = arith.LCM(E.tamagawa_numbers())
+        n2 = LCM(E.tamagawa_numbers())
     else:
         # generalising to number fields one can get the u from local_data
         Emin = E.global_minimal_model()
@@ -651,7 +654,7 @@ def _multiple_to_make_good_reduction(E):
         otherbad = Integer(Emin.discriminant()).prime_divisors()
         otherbad = [p for p in otherbad if u%p != 0 ]
         li += [E.tamagawa_number(p) for p in otherbad]
-        n2 = arith.LCM(li)
+        n2 = LCM(li)
     return n2
 
 def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
@@ -805,13 +808,13 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     # For notation and definitions, see [Har2009]_.
 
-    n1 = self.change_ring(rings.GF(p)).cardinality()
+    n1 = self.change_ring(GF(p)).cardinality()
     n2 = _multiple_to_make_good_reduction(self)
-    n = arith.LCM(n1, n2)
+    n = LCM(n1, n2)
     m = int(n / n2)
 
-    adjusted_prec = prec + 2 * arith.valuation(n, p)   # this is M'
-    R = rings.Integers(p ** adjusted_prec)
+    adjusted_prec = prec + 2 * valuation(n, p)   # this is M'
+    R = Integers(p ** adjusted_prec)
 
     if sigma is None:
         sigma = self.padic_sigma(p, adjusted_prec, check_hypotheses=False)
@@ -948,15 +951,15 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     # For notation and definitions, [Har2009]_
 
-    n1 = self.change_ring(rings.GF(p)).cardinality()
+    n1 = self.change_ring(GF(p)).cardinality()
     n2 = _multiple_to_make_good_reduction(self)
-    n = arith.LCM(n1, n2)
+    n = LCM(n1, n2)
     m = int(n / n2)
 
     lamb = int(math.floor(math.sqrt(prec)))
 
-    adjusted_prec = prec + 2 * arith.valuation(n, p)   # this is M'
-    R = rings.Integers(p ** (adjusted_prec + 2*lamb))
+    adjusted_prec = prec + 2 * valuation(n, p)   # this is M'
+    R = Integers(p ** (adjusted_prec + 2*lamb))
 
     sigma = self.padic_sigma_truncated(p, N=adjusted_prec, E2=E2, lamb=lamb)
 
@@ -1150,7 +1153,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     QQt = LaurentSeriesRing(RationalField(), "x")
 
-    R = rings.Integers(p**(N-2))
+    R = Integers(p**(N-2))
     X = self.change_ring(R)
     c = (X.a1()**2 + 4*X.a2() - R(E2)) / 12
 
@@ -1171,7 +1174,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     assert A.valuation() == -1 and A[-1] == 1
     A = A - A.parent().gen() ** (-1)
     A = A.power_series().list()
-    R = rings.Integers(p**(N-1))
+    R = Integers(p**(N-1))
     A = [R(u) for u in A]
     A[0] = self.change_ring(R).a1()/2     # fix constant term
     A = PowerSeriesRing(R, "x")(A, len(A))
@@ -1184,7 +1187,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     # [Note: there are actually more digits available, but it's a bit
     # tricky to figure out exactly how many, and we only need p^(N-k+1)
     # for p-adic height purposes anyway]
-    K = rings.pAdicField(p, N + 1)
+    K = pAdicField(p, N + 1)
 
     sigma = sigma.padded_list(N+1)
 
@@ -1193,13 +1196,13 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     for n in range(2, N+1):
         sigma[n] = K(sigma[n].lift(), N - n + 1)
 
-    S = rings.PowerSeriesRing(K, "t", N+1)
+    S = PowerSeriesRing(K, "t", N+1)
     sigma = S(sigma, N+1)
 
     # if requested, check that sigma satisfies the appropriate
     # differential equation
     if check:
-        R = rings.Integers(p**N)
+        R = Integers(p**N)
         X = self.change_ring(R)
         x = X.formal_group().x(N+5)       # few extra terms for safety
         f = X.formal_group().differential(N+5)
@@ -1337,7 +1340,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     QQt = LaurentSeriesRing(RationalField(), "x")
 
-    R = rings.Integers(p**(N-2))
+    R = Integers(p**(N-2))
     X = self.change_ring(R)
     c = (X.a1()**2 + 4*X.a2() - R(E2)) / 12
 
@@ -1358,7 +1361,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     assert A.valuation() == -1 and A[-1] == 1
     A = A - A.parent().gen() ** (-1)
     A = A.power_series().list()
-    R = rings.Integers(p**(N-1+lamb))
+    R = Integers(p**(N-1+lamb))
     A = [R(u) for u in A]
     A[0] = self.change_ring(R).a1()/2     # fix constant term
     A = PowerSeriesRing(R, "x")(A, len(A))
@@ -1368,7 +1371,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     # Convert the answer to power series over p-adics; drop the precision
     # of the t^j coefficient to p^{N - 2 + (3 - j)(lamb + 1)}).
-    K = rings.pAdicField(p, N - 2 + 3*(lamb+1))
+    K = pAdicField(p, N - 2 + 3*(lamb+1))
 
     sigma = sigma.padded_list(trunc+1)
 
@@ -1377,7 +1380,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     for j in range(2, trunc+1):
         sigma[j] = K(sigma[j].lift(), N - 2 + (3 - j)*(lamb+1))
 
-    S = rings.PowerSeriesRing(K, "t", trunc + 1)
+    S = PowerSeriesRing(K, "t", trunc + 1)
     sigma = S(sigma, trunc+1)
 
     return sigma
@@ -1551,7 +1554,7 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
     frob_p_n = frob_p**prec
 
     # todo: think about the sign of this. Is it correct?
-    output_ring = rings.pAdicField(p, prec)
+    output_ring = pAdicField(p, prec)
 
     E2_of_X = output_ring( (-12 * frob_p_n[0,1] / frob_p_n[1,1]).lift() ) \
               + O(p**prec)
@@ -1686,16 +1689,16 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
         else:
             trace = self.ap(p)
 
-        base_ring = rings.Integers(p**adjusted_prec)
+        base_ring = Integers(p**adjusted_prec)
 
-        R, x = rings.PolynomialRing(base_ring, 'x').objgen()
+        R, x = PolynomialRing(base_ring, 'x').objgen()
         Q = x**3 + base_ring(X.a4()) * x + base_ring(X.a6())
         frob_p = sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius(
                          Q, p, adjusted_prec, trace)
 
     else:   # algorithm == "sqrtp"
         p_to_prec = p**prec
-        R = rings.PolynomialRing(Integers(), "x")
+        R = PolynomialRing(Integers(), "x")
         Q = R([X.a6() % p_to_prec, X.a4() % p_to_prec, 0, 1])
         frob_p = sage.schemes.hyperelliptic_curves.hypellfrob.hypellfrob(p, prec, Q)
 
@@ -1776,7 +1779,7 @@ def _brent(F, p, N):
     G = Rx.one()
 
     # loop over an appropriate increasing sequence of lengths s
-    for s in misc.newton_method_sizes(N):
+    for s in newton_method_sizes(N):
         # zero-extend to s terms
         # todo: there has to be a better way in Sage to do this...
         G = Rx(G.list(), s)

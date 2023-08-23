@@ -16,7 +16,12 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2016 KWANKYU LEE <ekwankyu@gmail.com>
+#       Copyright (C) 2016      Kwankyu Lee <ekwankyu@gmail.com>
+#                     2018      Thierry Monteil
+#                     2018-2021 Sébastien Labbé
+#                     2019      Markus Wageringel
+#                     2020      John H. Palmieri
+#                     2021      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

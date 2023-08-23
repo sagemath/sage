@@ -536,30 +536,30 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
         sage: length = 512
         sage: hidden = 110
         sage: p = next_prime(2^int(round(length/2)))
-        sage: q = next_prime( round(pi.n()*p) )
-        sage: N = p*q
+        sage: q = next_prime(round(pi.n()*p))                                           # needs sage.symbolic
+        sage: N = p*q                                                                   # needs sage.symbolic
 
     Now we disturb the low 110 bits of `q`::
 
-        sage: qbar = q + ZZ.random_element(0,2^hidden-1)
+        sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)                             # needs sage.symbolic
 
     And try to recover `q` from it::
 
-        sage: F.<x> = PolynomialRing(Zmod(N), implementation='NTL')
-        sage: f = x - qbar
+        sage: F.<x> = PolynomialRing(Zmod(N), implementation='NTL')                     # needs sage.symbolic
+        sage: f = x - qbar                                                              # needs sage.symbolic
 
     We know that the error is `\le 2^{\text{hidden}}-1` and that the modulus
     we are looking for is `\ge \sqrt{N}`::
 
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(2)
-        sage: d = f.small_roots(X=2^hidden-1, beta=0.5)[0] # time random
+        sage: d = f.small_roots(X=2^hidden-1, beta=0.5)[0] # time random                # needs sage.symbolic
         verbose 2 (<module>) m = 4
         verbose 2 (<module>) t = 4
         verbose 2 (<module>) X = 1298074214633706907132624082305023
         verbose 1 (<module>) LLL of 8x8 matrix (algorithm fpLLL:wrapper)
         verbose 1 (<module>) LLL finished (time = 0.006998)
-        sage: q == qbar - d
+        sage: q == qbar - d                                                             # needs sage.symbolic
         True
 
     REFERENCES:
@@ -1061,8 +1061,8 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
         TESTS::
 
-            sage: y = var("y")
-            sage: f._derivative(y)
+            sage: y = var("y")                                                          # needs sage.symbolic
+            sage: f._derivative(y)                                                      # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y
@@ -1619,8 +1619,8 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
         TESTS::
 
-            sage: y = var("y")
-            sage: f._derivative(y)
+            sage: y = var("y")                                                          # needs sage.symbolic
+            sage: f._derivative(y)                                                      # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y

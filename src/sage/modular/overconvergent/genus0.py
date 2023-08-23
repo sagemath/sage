@@ -177,24 +177,26 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
 from sage.modular.dirichlet import trivial_character
 from sage.modular.etaproducts import EtaProduct
 from sage.modular.modform.element import ModularFormElement
 from sage.modular.modform.hecke_operator_on_qexp import hecke_operator_on_qexp
-from sage.modular.modform.j_invariant import j_invariant_qexp
 from sage.modules.free_module_element import vector
 from sage.modules.module import Module
 from sage.rings.big_oh import O
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import Vector, ModuleElement
 from sage.structure.richcmp import richcmp
+
+lazy_import('sage.modular.modform.j_invariant', 'j_invariant_qexp')
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 from .weightspace import WeightSpace_constructor as WeightSpace, WeightCharacter
 

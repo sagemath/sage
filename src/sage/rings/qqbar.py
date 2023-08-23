@@ -560,6 +560,7 @@ import sage.rings.number_field.number_field_base
 from sage.misc.fast_methods import Singleton
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_string import lazy_string
+from sage.misc.misc import increase_recursion_limit
 from sage.structure.coerce import parent_is_numerical, parent_is_real_numerical
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp, richcmp_method,
@@ -8543,9 +8544,7 @@ class ANBinaryExpr(ANDescr):
             sage: sys.setrecursionlimit(old_recursion_limit)
         """
         import sys
-        old_recursion_limit = sys.getrecursionlimit()
-        sys.setrecursionlimit(old_recursion_limit + 10)
-        try:
+        with increase_recursion_limit(10):
             left = self._left
             right = self._right
             left.exactify()
@@ -8560,8 +8559,7 @@ class ANBinaryExpr(ANDescr):
                 return ANRational(value)
             else:
                 return ANExtensionElement(gen, value)
-        finally:
-            sys.setrecursionlimit(old_recursion_limit)
+
 
 # These are the functions used to add, subtract, multiply, and divide
 # algebraic numbers. Basically, we try to compute exactly if both
