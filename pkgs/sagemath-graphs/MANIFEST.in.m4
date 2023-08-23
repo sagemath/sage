@@ -32,9 +32,12 @@ include sage/combinat/finite_state_machine*.p*
 #include src/sage/combinat/rigged_configurations/kleber_tree.py # want?
 
 graft sage/graphs
+prune sage/graphs/bliss_cpp
+exclude sage/graphs/mcqd.p*
+exclude sage/graph_decompositions/*tdlib*.*
+
 exclude sage/graphs/chrompoly.p*                        # needs flint
 exclude sage/graphs/matchpoly.p*                        # needs flint
-exclude sage/graphs/convexity_properties.p*             # cimports sage.numerical.backends.generic
 
 include sage/groups/perm_gps/partn_ref/refinement_graphs.p*
 

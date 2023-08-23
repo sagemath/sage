@@ -234,6 +234,8 @@ graft sage/schemes/product_projective
 graft sage/sets
 exclude sage/sets/pythonclass.*                                 # sagemath-objects
 
+include sage/numerical/backends/generic*backend.p*
+
 ## These two should probably go to sagemath-combinat instead.
 # include sage/data_structures/stream.p*
 # include sage/rings/lazy_series*.p*

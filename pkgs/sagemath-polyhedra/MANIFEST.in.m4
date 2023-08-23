@@ -11,7 +11,7 @@ include sage/interfaces/latte.p*
 include sage/interfaces/four_ti_2.p*
 
 graft sage/geometry
-exclude sage/geometry/abc.py                            # in sagemath-categories
+exclude sage/geometry/abc.p*                            # in sagemath-categories
 exclude sage/geometry/toric_lattice*.p*                 # in sagemath-modules
 exclude sage/geometry/all.py
 prune sage/geometry/hyperbolic_space
@@ -22,6 +22,7 @@ exclude sage/geometry/integral_points_integer_dense.pyx  # depends on matrix_int
 graft sage/game_theory
 
 graft sage/numerical
+exclude sage/numerical/backends/generic*backend.p*      # sagemath-categories
 exclude sage/numerical/gauss_legendre.p*                # sagemath-modules
 exclude sage/numerical/optimize.p*                      # sagemath-modules
 exclude sage/numerical/backends/glpk*.p*                # sagemath-glpk

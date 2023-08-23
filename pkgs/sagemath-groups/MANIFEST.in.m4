@@ -11,7 +11,11 @@ graft sage/groups
 # exclude what is in sagemath-objects
 exclude sage/groups/group.*
 exclude sage/groups/old.*
+# exclude what is in sagemath-categories
+exclude sage/groups/generic.p*
+exclude sage/groups/groups_catalog.p*
 # exclude what is in sagemath-modules
+prune sage/groups/abelian_gps
 prune sage/groups/additive_abelian
 prune sage/groups/affine_gps
 prune sage/groups/matrix_gps
