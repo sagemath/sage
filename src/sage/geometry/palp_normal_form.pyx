@@ -109,18 +109,19 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
     S_v = SymmetricGroup(n_v)
     S_f = SymmetricGroup(n_f)
 
-    # and find all the ways of making the first row of PM_max
-    def index_of_max(iterable):
-        # returns the index of max of any iterable
-        return max(enumerate(iterable), key=lambda x: x[1])[0]
-
     cdef int n_s = 1
     cdef dict permutations = {0: [S_f.one(), S_v.one()]}
     cdef int j, k, m, d
     cdef int element, max_element
 
     for j in range(n_v):
-        m = index_of_max(PM.get_unsafe_int(0, (<PermutationGroupElement> permutations[0][1])(i + 1) - 1) for i in range(j, n_v))
+        max_element = PM.get_unsafe_int(0, (<PermutationGroupElement> permutations[0][1])(j + 1) - 1)
+        m = 0
+        for i in range(j + 1, n_v):
+            element = PM.get_unsafe_int(0, (<PermutationGroupElement> permutations[0][1])(i + 1) - 1)
+            if element > max_element:
+                max_element = element
+                m = i - j
         if m > 0:
             permutations[0][1] = (<PermutationGroupElement> permutations[0][1])._transpose_left(j + 1, m + j + 1)
 
