@@ -669,7 +669,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.plot()                                                             # optional - sage.plot
+            sage: PP.plot()                                                     # optional - sage.plot
             Graphics object consisting of 27 graphics primitives
         """
         from sage.functions.trig import cos, sin
@@ -766,7 +766,7 @@ class PlanePartition(ClonableArray,
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-            sage: PP.plot3d()                                                           # optional - sage.plot
+            sage: PP.plot3d()                                                   # optional - sage.plot
             Graphics3d Object
         """
         if colors is None:
@@ -1491,7 +1491,7 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
 
             sage: from sage.combinat.plane_partition import PlanePartitions_all
             sage: P = PlanePartitions_all()
-            sage: TestSuite(P).run()  # long time
+            sage: TestSuite(P).run()
         """
         # We manually set these here rather than invoking the super().__init__().
         # This is so DisjointUnionEnumeratedSets can make the Parent.__init__() call.
@@ -1545,7 +1545,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([4,3,2])
-            sage: TestSuite(PP).run()
+            sage: TestSuite(PP).run()                                           # long time
         """
         super().__init__(box_size, category=FiniteEnumeratedSets())
 
@@ -2828,7 +2828,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
             sage: TestSuite(PP).run()
 
             sage: PP = PlanePartitions([4, 4, 2], symmetry='SSCPP')
-            sage: TestSuite(PP).run()  # long time
+            sage: TestSuite(PP).run()
 
             sage: PlanePartitions([4, 2, 2], symmetry='SSCPP')
             Traceback (most recent call last):
