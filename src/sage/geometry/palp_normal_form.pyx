@@ -82,7 +82,7 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
     cdef int element, max_element
 
     for j in range(n_v):
-        m = index_of_max(PM[0, i] for i in range(j, n_v))
+        m = index_of_max(PM.get_unsafe_int(0, (<PermutationGroupElement> permutations[0][1])(i + 1) - 1) for i in range(j, n_v))
         if m > 0:
             permutations[0][1] = (<PermutationGroupElement> permutations[0][1])._transpose_left(j + 1, m + j + 1)
 
