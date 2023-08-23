@@ -128,10 +128,8 @@ def pickleMethod(method):
         # This is a class method, so get it from the type directly
         return (getattr, (method.__self__, method.__func__.__name__))
     else:
-        # Note: On Python 3 there is no .im_class but we can get the instance's
-        # class through .__self__.__class__
-        cls = getattr(method, 'im_class', method.__self__.__class__)
-    return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
+        cls = method.__self__.__class__
+        return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
 
 
 def unpickleMethod(im_name,
@@ -143,10 +141,7 @@ def unpickleMethod(im_name,
         if __self__ is None:
             return unbound
 
-        # Note: On Python 2 "unbound methods" are just functions, so they don't
-        # have a __func__
-        bound = types.MethodType(getattr(unbound, '__func__', unbound),
-                                 __self__)
+        bound = types.MethodType(unbound, __self__)
         return bound
     except AttributeError:
         assert __self__ is not None, "No recourse: no instance to guess from."
@@ -154,11 +149,8 @@ def unpickleMethod(im_name,
         # changed around since we pickled this method, we may still be
         # able to get it by looking on the instance's current class.
         unbound = getattr(__self__.__class__, im_name)
-        if __self__ is None:
-            return unbound
 
-        bound = types.MethodType(getattr(unbound, '__func__', unbound),
-                                 __self__)
+        bound = types.MethodType(unbound, __self__)
         return bound
 
 
