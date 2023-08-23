@@ -33,7 +33,7 @@ cmdclass = dict(build_cython=sage_build_cython,
 from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     '.', ['sage'],   # for now, we do most of the filtering using MANIFEST
-    distributions=['', 'sagemath-graphs'])
+    distributions=['', 'sagemath-combinat'])
 log.debug('python_packages = {0}'.format(python_packages))
 log.debug('python_modules = {0}'.format(python_modules))
 log.debug('cython_modules = {0}'.format(cython_modules))
