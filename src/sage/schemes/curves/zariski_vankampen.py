@@ -1166,7 +1166,8 @@ def braid_monodromy(f, arrangement=()):
         True
         sage: bm1[1]  # optional - sirocco
         {0: 0, 1: 1, 2: 0, 3: 0}
-
+        sage: braid_monodromy(R(1))
+        ([], {})
     """
     global roots_interval_cache
     F = fieldI(f.base_ring())
