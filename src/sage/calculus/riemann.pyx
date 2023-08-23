@@ -1,3 +1,4 @@
+# sage.doctest: needs numpy sage.symbolic
 """
 Riemann Mapping
 
@@ -293,7 +294,9 @@ cdef class Riemann_Map:
     cdef _generate_theta_array(self):
         """
         Generates the essential data for the Riemann map, primarily the
-        Szego kernel and boundary correspondence.  See [KT1986]_ for the algorithm.
+        Szegő kernel and boundary correspondence.
+
+        See [KT1986]_ for the algorithm.
 
         TESTS::
 
@@ -301,16 +304,16 @@ cdef class Riemann_Map:
             sage: fprime(t) = I*e^(I*t) + 0.5*I*e^(-I*t)
             sage: m = Riemann_Map([f], [fprime], 0, N = 10)
         """
-        cdef np.ndarray[COMPLEX_T,ndim =1] cp = self.cps.flatten()
-        cdef np.ndarray[COMPLEX_T,ndim =1] dp = self.dps.flatten()
+        cdef np.ndarray[COMPLEX_T, ndim=1] cp = self.cps.flatten()
+        cdef np.ndarray[COMPLEX_T, ndim=1] dp = self.dps.flatten()
         cdef int N = self.N
         cdef int NB = N * self.B
         cdef int B = self.B
         cdef int i, k
         cdef FLOAT_T saa, t0
         cdef np.ndarray[FLOAT_T, ndim=1] adp, sadp
-        cdef np.ndarray[COMPLEX_T,ndim =1] h, hconj, g, normalized_dp, C, phi
-        cdef np.ndarray[COMPLEX_T,ndim =2] K
+        cdef np.ndarray[COMPLEX_T, ndim=1] h, hconj, g, normalized_dp, C, phi
+        cdef np.ndarray[COMPLEX_T, ndim=2] K
         cdef np.ndarray[FLOAT_T, ndim=2] theta_array
         # Setting things up to use the Nystrom method
         adp = abs(dp)
@@ -1188,9 +1191,10 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
 
         sage: from sage.calculus.riemann import complex_to_spiderweb
         sage: import numpy
-        sage: zval = numpy.array([[0, 1, 1000],[.2+.3j,1,-.3j],[0,0,0]],dtype = numpy.complex128)
+        sage: zval = numpy.array([[0,1,1000], [.2+.3j,1,-.3j], [0,0,0]],
+        ....:                    dtype=numpy.complex128)
         sage: deriv = numpy.array([[.1]],dtype = numpy.float64)
-        sage: complex_to_spiderweb(zval, deriv,deriv, 4,4,[0,0,0],1,False,0.001)
+        sage: complex_to_spiderweb(zval, deriv, deriv, 4, 4, [0,0,0], 1, False, 0.001)
         array([[[1., 1., 1.],
                 [1., 1., 1.],
                 [1., 1., 1.]],
@@ -1203,7 +1207,7 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
                 [1., 1., 1.],
                 [1., 1., 1.]]])
 
-        sage: complex_to_spiderweb(zval, deriv,deriv, 4,4,[0,0,0],1,True,0.001)
+        sage: complex_to_spiderweb(zval, deriv, deriv, 4, 4, [0,0,0], 1, True, 0.001)
         array([[[1.        , 1.        , 1.        ],
                 [1.        , 0.05558355, 0.05558355],
                 [0.17301243, 0.        , 0.        ]],
@@ -1278,12 +1282,12 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
 
         sage: from sage.calculus.riemann import complex_to_rgb
         sage: import numpy
-        sage: complex_to_rgb(numpy.array([[0, 1, 1000]], dtype = numpy.complex128))
+        sage: complex_to_rgb(numpy.array([[0, 1, 1000]], dtype=numpy.complex128))
         array([[[1.        , 1.        , 1.        ],
                 [1.        , 0.05558355, 0.05558355],
                 [0.17301243, 0.        , 0.        ]]])
 
-        sage: complex_to_rgb(numpy.array([[0, 1j, 1000j]], dtype = numpy.complex128))
+        sage: complex_to_rgb(numpy.array([[0, 1j, 1000j]], dtype=numpy.complex128))
         array([[[1.        , 1.        , 1.        ],
                 [0.52779177, 1.        , 0.05558355],
                 [0.08650622, 0.17301243, 0.        ]]])

@@ -79,6 +79,7 @@ TEXT_HTML = 'text/html'
 
 lazy_import('matplotlib.figure', 'Figure')
 
+
 class SageDisplayFormatter(DisplayFormatter):
 
     def __init__(self, *args, **kwds):
@@ -194,7 +195,7 @@ class SageDisplayFormatter(DisplayFormatter):
         # if it is not plain and dull
         if (not isinstance(obj, IPYTHON_NATIVE_TYPES) and
             not set(sage_format.keys()).issubset([PLAIN_TEXT]) and
-            not isinstance(obj, Figure)):
+                not isinstance(obj, Figure)):
             return sage_format, sage_metadata
 
         if self.ipython_display_formatter(obj):

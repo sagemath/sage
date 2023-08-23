@@ -14,10 +14,10 @@ We test coercion in a particularly complicated situation::
 
     sage: W.<w> = QQ['w']
     sage: WZ.<z> = W['z']
-    sage: m = matrix(WZ, 2, 2, [1, z, z, z^2])                                          # optional - sage.modules
-    sage: a = m.charpoly()                                                              # optional - sage.modules
-    sage: R.<x> = WZ[]                                                                  # optional - sage.modules
-    sage: R(a)                                                                          # optional - sage.modules
+    sage: m = matrix(WZ, 2, 2, [1, z, z, z^2])                                          # needs sage.modules
+    sage: a = m.charpoly()                                                              # needs sage.modules
+    sage: R.<x> = WZ[]
+    sage: R(a)                                                                          # needs sage.modules
     x^2 + (-z^2 - 1)*x
 """
 
@@ -34,7 +34,11 @@ from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
 
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
 
-from sage.libs.pari.all import pari_gen
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
+
 from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
 from sage.structure.element import coerce_binop, parent
 
@@ -65,15 +69,16 @@ class Polynomial_generic_sparse(Polynomial):
 
     A more extensive example::
 
-        sage: A.<T> = PolynomialRing(Integers(5), sparse=True)                          # optional - sage.libs.pari
-        sage: f = T^2 + 1; B = A.quo(f)                                                 # optional - sage.libs.pari
-        sage: C.<s> = PolynomialRing(B)                                                 # optional - sage.libs.pari
-        sage: C                                                                         # optional - sage.libs.pari
+        sage: # needs sage.libs.pari
+        sage: A.<T> = PolynomialRing(Integers(5), sparse=True)
+        sage: f = T^2 + 1; B = A.quo(f)
+        sage: C.<s> = PolynomialRing(B)
+        sage: C
         Univariate Polynomial Ring in s over Univariate Quotient Polynomial Ring in Tbar
          over Ring of integers modulo 5 with modulus T^2 + 1
-        sage: s + T                                                                     # optional - sage.libs.pari
+        sage: s + T
         s + Tbar
-        sage: (s + T)**2                                                                # optional - sage.libs.pari
+        sage: (s + T)**2
         s^2 + 2*Tbar*s + 4
 
     """
@@ -81,11 +86,11 @@ class Polynomial_generic_sparse(Polynomial):
         """
         TESTS::
 
-            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])
+            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])                    # needs sage.rings.real_interval_field
             0.?*z + 0.?
-            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))
+            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))                    # needs sage.rings.real_interval_field
             0.?*z + 0.?
-            sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])
+            sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])     # needs sage.rings.complex_interval_field
             0.?*z + 0.? + 0.?*I
         """
         Polynomial.__init__(self, parent, is_gen=is_gen)
@@ -190,13 +195,14 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<w> = PolynomialRing(GF(9, 'a'), sparse=True)                       # optional - sage.rings.finite_rings
-            sage: f = w^1997 - w^10000                                                  # optional - sage.rings.finite_rings
-            sage: f.valuation()                                                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<w> = PolynomialRing(GF(9, 'a'), sparse=True)
+            sage: f = w^1997 - w^10000
+            sage: f.valuation()
             1997
-            sage: R(19).valuation()                                                     # optional - sage.rings.finite_rings
+            sage: R(19).valuation()
             0
-            sage: R(0).valuation()                                                      # optional - sage.rings.finite_rings
+            sage: R(0).valuation()
             +Infinity
         """
         if not self.__coeffs:
@@ -245,10 +251,10 @@ class Polynomial_generic_sparse(Polynomial):
         Check that :trac:`28187` is fixed::
 
             sage: R = PolynomialRing(ZZ, 't', sparse=True)
-            sage: t, u = var('t, u')                                                    # optional - sage.symbolic
-            sage: R.gen()._derivative(t)                                                # optional - sage.symbolic
+            sage: t, u = var('t, u')                                                    # needs sage.symbolic
+            sage: R.gen()._derivative(t)                                                # needs sage.symbolic
             1
-            sage: R.gen()._derivative(u)                                                # optional - sage.symbolic
+            sage: R.gen()._derivative(u)                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to u
@@ -356,6 +362,7 @@ class Polynomial_generic_sparse(Polynomial):
         r"""
         EXAMPLES::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<w> = PolynomialRing(CDF, sparse=True)
             sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)
             sage: f._repr()   # abs tol 1e-15
@@ -365,8 +372,8 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS::
 
-            sage: pol = RIF['x']([0, 0, (-1,1)])
-            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)
+            sage: pol = RIF['x']([0, 0, (-1,1)])                                        # needs sage.rings.real_interval_field
+            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)                            # needs sage.rings.real_interval_field
             0.?*x^2
 
         AUTHOR:
@@ -418,40 +425,42 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: R.<w> = PolynomialRing(RDF, sparse=True)
-            sage: e = RDF(e)                                                            # optional - sage.symbolic
-            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14             # optional - sage.symbolic
+            sage: e = RDF(e)
+            sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14
             20.085536923187664*w^3 + 7.3890560989306495*w^2 + 2.718281828459045*w + 1.0
-            sage: f[1]  # abs tol 5e-16                                                 # optional - sage.symbolic
+            sage: f[1]  # abs tol 5e-16
             2.718281828459045
-            sage: f[5]                                                                  # optional - sage.symbolic
+            sage: f[5]
             0.0
-            sage: f[-1]                                                                 # optional - sage.symbolic
+            sage: f[-1]
             0.0
-            sage: R.<x> = PolynomialRing(RealField(19), sparse=True)
-            sage: f = (2-3.5*x)^3; f
+
+            sage: R.<x> = PolynomialRing(RealField(19), sparse=True)                    # needs sage.rings.real_mpfr
+            sage: f = (2-3.5*x)^3; f                                                    # needs sage.rings.real_mpfr
             -42.875*x^3 + 73.500*x^2 - 42.000*x + 8.0000
 
         Using slices, we can truncate polynomials::
 
-            sage: f[:2]
+            sage: f[:2]                                                                 # needs sage.rings.real_mpfr
             -42.000*x + 8.0000
 
         Any other kind of slicing is an error, see :trac:`18940`::
 
-            sage: f[1:3]
+            sage: f[1:3]                                                                # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             IndexError: polynomial slicing with a start is not defined
 
-            sage: f[1:3:2]
+            sage: f[1:3:2]                                                              # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             IndexError: polynomial slicing with a step is not defined
 
         TESTS::
 
-            sage: f["hello"]
+            sage: f["hello"]                                                            # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: list indices must be integers, not str
@@ -486,6 +495,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<z> = PolynomialRing(CC, sparse=True)
             sage: f = z^2 + CC.0; f
             1.00000000000000*z^2 + 1.00000000000000*I
@@ -495,8 +505,8 @@ class Polynomial_generic_sparse(Polynomial):
 
         Much more nasty::
 
-            sage: z._unsafe_mutate(1, 0)
-            sage: z
+            sage: z._unsafe_mutate(1, 0)                                                # needs sage.rings.real_mpfr
+            sage: z                                                                     # needs sage.rings.real_mpfr
             0
         """
         n = int(n)
@@ -549,14 +559,15 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<x> = PolynomialRing(QQbar, sparse=True)                            # optional - sage.rings.number_field
-            sage: f = (1+2*x)^3 + 3*x; f                                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x> = PolynomialRing(QQbar, sparse=True)
+            sage: f = (1+2*x)^3 + 3*x; f
             8*x^3 + 12*x^2 + 9*x + 1
-            sage: g = f // (1+2*x); g                                                   # optional - sage.rings.number_field
+            sage: g = f // (1+2*x); g
             4*x^2 + 4*x + 5/2
-            sage: f - g * (1+2*x)                                                       # optional - sage.rings.number_field
+            sage: f - g * (1+2*x)
             -3/2
-            sage: f.quo_rem(1+2*x)                                                      # optional - sage.rings.number_field
+            sage: f.quo_rem(1+2*x)
             (4*x^2 + 4*x + 5/2, -3/2)
 
         """
@@ -827,12 +838,13 @@ class Polynomial_generic_sparse(Polynomial):
 
         Polynomials over noncommutative rings are also allowed::
 
-            sage: HH = QuaternionAlgebra(QQ, -1, -1)                                    # optional - sage.combinat sage.modules
-            sage: P.<x> = PolynomialRing(HH, sparse=True)                               # optional - sage.combinat sage.modules
-            sage: f = P.random_element(5)                                               # optional - sage.combinat sage.modules
-            sage: g = P.random_element((0, 5))                                          # optional - sage.combinat sage.modules
-            sage: q, r = f.quo_rem(g)                                                   # optional - sage.combinat sage.modules
-            sage: f == q*g + r                                                          # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: HH = QuaternionAlgebra(QQ, -1, -1)
+            sage: P.<x> = PolynomialRing(HH, sparse=True)
+            sage: f = P.random_element(5)
+            sage: g = P.random_element((0, 5))
+            sage: q, r = f.quo_rem(g)
+            sage: f == q*g + r
             True
 
         TESTS::
@@ -1066,12 +1078,13 @@ class Polynomial_generic_field(Polynomial_singular_repr,
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<y> = PolynomialRing(QQ)
-            sage: K.<t> = NumberField(y^2 - 2)                                          # optional - sage.rings.number_field
-            sage: P.<x> = PolynomialRing(K)                                             # optional - sage.rings.number_field
-            sage: x.quo_rem(K(1))                                                       # optional - sage.rings.number_field
+            sage: K.<t> = NumberField(y^2 - 2)
+            sage: P.<x> = PolynomialRing(K)
+            sage: x.quo_rem(K(1))
             (x, 0)
-            sage: x.xgcd(K(1))                                                          # optional - sage.rings.number_field
+            sage: x.xgcd(K(1))
             (1, 0, 1)
         """
         P = self.parent()
@@ -1142,15 +1155,16 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<t> = K[]                                                           # optional - sage.rings.padics
-            sage: f = 5 + 3*t + t^4 + 25*t^10                                           # optional - sage.rings.padics
-            sage: f.newton_polygon()                                                    # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5)
+            sage: R.<t> = K[]
+            sage: f = 5 + 3*t + t^4 + 25*t^10
+            sage: f.newton_polygon()
             Finite Newton polygon with 4 vertices: (0, 1), (1, 0), (4, 0), (10, 2)
-            sage: f.newton_slopes()                                                     # optional - sage.rings.padics
+            sage: f.newton_slopes()
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
 
-            sage: f.newton_slopes(repetition=False)                                     # optional - sage.rings.padics
+            sage: f.newton_slopes(repetition=False)                                     # needs sage.rings.padics
             [1, 0, -1/3]
 
         AUTHOR:
@@ -1170,15 +1184,16 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<t> = K[]                                                           # optional - sage.rings.padics
-            sage: f = 5 + 3*t + t^4 + 25*t^10                                           # optional - sage.rings.padics
-            sage: f.newton_polygon()                                                    # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5)
+            sage: R.<t> = K[]
+            sage: f = 5 + 3*t + t^4 + 25*t^10
+            sage: f.newton_polygon()
             Finite Newton polygon with 4 vertices: (0, 1), (1, 0), (4, 0), (10, 2)
 
-            sage: g = f + K(0,0)*t^4; g                                                 # optional - sage.rings.padics
+            sage: g = f + K(0,0)*t^4; g                                                 # needs sage.rings.padics
             (5^2 + O(5^22))*t^10 + O(5^0)*t^4 + (3 + O(5^20))*t + 5 + O(5^21)
-            sage: g.newton_polygon()                                                    # optional - sage.rings.padics
+            sage: g.newton_polygon()                                                    # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             PrecisionError: The coefficient of t^4 has not enough precision
@@ -1187,10 +1202,10 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         Check that :trac:`22936` is fixed::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: R.<y> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: p = x^2 + y + x*y^2                                                   # optional - sage.rings.finite_rings
-            sage: p.newton_polygon()                                                    # optional - sage.rings.finite_rings
+            sage: S.<x> = PowerSeriesRing(GF(5))
+            sage: R.<y> = S[]
+            sage: p = x^2 + y + x*y^2
+            sage: p.newton_polygon()                                                    # needs sage.geometry.polyhedron
             Finite Newton polygon with 3 vertices: (0, 2), (1, 0), (2, 1)
 
         AUTHOR:
@@ -1225,16 +1240,17 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: K = Qp(5, 10)                                                         # optional - sage.rings.padics
-            sage: P.<x> = PolynomialRing(K)                                             # optional - sage.rings.padics
-            sage: f = x^2 + 1                                                           # optional - sage.rings.padics
-            sage: root = f.hensel_lift(2); root                                         # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5, 10)
+            sage: P.<x> = PolynomialRing(K)
+            sage: f = x^2 + 1
+            sage: root = f.hensel_lift(2); root
             2 + 5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + 2*5^6 + 3*5^7 + 3*5^9 + O(5^10)
-            sage: f(root)                                                               # optional - sage.rings.padics
+            sage: f(root)
             O(5^10)
 
-            sage: g = (x^2 + 1) * (x - 7)                                               # optional - sage.rings.padics
-            sage: g.hensel_lift(2)  # here, 2 is a multiple root modulo p               # optional - sage.rings.padics
+            sage: g = (x^2 + 1) * (x - 7)                                               # needs sage.rings.padics
+            sage: g.hensel_lift(2)  # here, 2 is a multiple root modulo p               # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: a is not close enough to a root of this polynomial
@@ -1273,27 +1289,28 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<x> = K[]                                                           # optional - sage.rings.padics
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<t> = K[]                                                           # optional - sage.rings.padics
-            sage: f = 5 + 3*t + t^4 + 25*t^10                                           # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5)
+            sage: R.<x> = K[]
+            sage: K = Qp(5)
+            sage: R.<t> = K[]
+            sage: f = 5 + 3*t + t^4 + 25*t^10
 
-            sage: g = f._factor_of_degree(4)                                            # optional - sage.rings.padics
-            sage: (f % g).is_zero()                                                     # optional - sage.rings.padics
+            sage: g = f._factor_of_degree(4)                                            # needs sage.rings.padics
+            sage: (f % g).is_zero()                                                     # needs sage.rings.padics
             True
 
-            sage: g = f._factor_of_degree(3)    # not tested                            # optional - sage.rings.padics
+            sage: g = f._factor_of_degree(3)    # not tested                            # needs sage.rings.padics
             Traceback (most recent call last)
             ...
             KeyboardInterrupt:
 
         TESTS::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: R.<y> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: p = x^2 + y + x*y^2                                                   # optional - sage.rings.finite_rings
-            sage: p._factor_of_degree(1)                                                # optional - sage.rings.finite_rings
+            sage: S.<x> = PowerSeriesRing(GF(5))
+            sage: R.<y> = S[]
+            sage: p = x^2 + y + x*y^2
+            sage: p._factor_of_degree(1)
             (1 + O(x^20))*y + x^2 + x^5 + 2*x^8 + 4*x^14 + 2*x^17 + 2*x^20 + O(x^22)
 
         AUTHOR:
@@ -1337,30 +1354,31 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<x> = K[]                                                           # optional - sage.rings.padics
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<t> = K[]                                                           # optional - sage.rings.padics
-            sage: f = 5 + 3*t + t^4 + 25*t^10                                           # optional - sage.rings.padics
-            sage: f.newton_slopes()                                                     # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5)
+            sage: R.<x> = K[]
+            sage: K = Qp(5)
+            sage: R.<t> = K[]
+            sage: f = 5 + 3*t + t^4 + 25*t^10
+            sage: f.newton_slopes()
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
 
-            sage: g = f.factor_of_slope(0)                                              # optional - sage.rings.padics
-            sage: g.newton_slopes()                                                     # optional - sage.rings.padics
+            sage: g = f.factor_of_slope(0)                                              # needs sage.rings.padics
+            sage: g.newton_slopes()                                                     # needs sage.rings.padics
             [0, 0, 0]
-            sage: (f % g).is_zero()                                                     # optional - sage.rings.padics
+            sage: (f % g).is_zero()                                                     # needs sage.rings.padics
             True
 
-            sage: h = f.factor_of_slope()                                               # optional - sage.rings.padics
-            sage: h.newton_slopes()                                                     # optional - sage.rings.padics
+            sage: h = f.factor_of_slope()                                               # needs sage.rings.padics
+            sage: h.newton_slopes()                                                     # needs sage.rings.padics
             [1]
-            sage: (f % h).is_zero()                                                     # optional - sage.rings.padics
+            sage: (f % h).is_zero()                                                     # needs sage.rings.padics
             True
 
         If ``slope`` is not a slope of ``self``, the corresponding factor
         is `1`::
 
-            sage: f.factor_of_slope(-1)                                                 # optional - sage.rings.padics
+            sage: f.factor_of_slope(-1)                                                 # needs sage.rings.padics
             1 + O(5^20)
 
         AUTHOR:
@@ -1406,18 +1424,19 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<x> = K[]                                                           # optional - sage.rings.padics
-            sage: K = Qp(5)                                                             # optional - sage.rings.padics
-            sage: R.<t> = K[]                                                           # optional - sage.rings.padics
-            sage: f = 5 + 3*t + t^4 + 25*t^10                                           # optional - sage.rings.padics
-            sage: f.newton_slopes()                                                     # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5)
+            sage: R.<x> = K[]
+            sage: K = Qp(5)
+            sage: R.<t> = K[]
+            sage: f = 5 + 3*t + t^4 + 25*t^10
+            sage: f.newton_slopes()
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
 
-            sage: F = f.slope_factorization()                                           # optional - sage.rings.padics
-            sage: F.prod() == f                                                         # optional - sage.rings.padics
+            sage: F = f.slope_factorization()                                           # needs sage.rings.padics
+            sage: F.prod() == f                                                         # needs sage.rings.padics
             True
-            sage: for (f,_) in F:                                                       # optional - sage.rings.padics
+            sage: for (f,_) in F:                                                       # needs sage.rings.padics
             ....:     print(f.newton_slopes())
             [-1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
             [0, 0, 0]
@@ -1425,10 +1444,10 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: S.<x> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: R.<y> = S[]                                                           # optional - sage.rings.finite_rings
-            sage: p = x^2 + y + x*y^2                                                   # optional - sage.rings.finite_rings
-            sage: p.slope_factorization()                                               # optional - sage.rings.finite_rings
+            sage: S.<x> = PowerSeriesRing(GF(5))
+            sage: R.<y> = S[]
+            sage: p = x^2 + y + x*y^2
+            sage: p.slope_factorization()                                               # needs sage.geometry.polyhedron
             (x)
             * ((x + O(x^22))*y + 1 + 4*x^3 + 4*x^6 + 3*x^9 + x^15 + 3*x^18 + O(x^21))
             * ((x^-1 + O(x^20))*y + x + x^4 + 2*x^7 + 4*x^13 + 2*x^16 + 2*x^19 + O(x^22))
@@ -1483,11 +1502,12 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: R = Zp(2)                                                             # optional - sage.rings.padics
-            sage: S.<x> = R[]                                                           # optional - sage.rings.padics
-            sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)                            # optional - sage.rings.padics
-            sage: Q = P^2                                                               # optional - sage.rings.padics
-            sage: Q.roots(algorithm="sage")  # indirect doctest                         # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R = Zp(2)
+            sage: S.<x> = R[]
+            sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)
+            sage: Q = P^2
+            sage: Q.roots(algorithm="sage")  # indirect doctest
             [(2^4 + O(2^14), 2),
              (2^3 + O(2^13), 2),
              (2^2 + O(2^12), 2),
@@ -1591,9 +1611,11 @@ class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_g
 # XXX:  Ensures that the generic polynomials implemented in Sage via PARI  #
 # until at least until 4.5.0 unpickle correctly as polynomials implemented #
 # via FLINT.                                                               #
-from sage.misc.persist import register_unpickle_override
-from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
-
-register_unpickle_override(
-    'sage.rings.polynomial.polynomial_element_generic',
-    'Polynomial_rational_dense', Polynomial_rational_flint)
+try:
+    from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+except ImportError:
+    pass
+else:
+    from sage.misc.persist import register_unpickle_override
+    register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
+                               'Polynomial_rational_dense', Polynomial_rational_flint)

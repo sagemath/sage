@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Helper functions for mutation types of quivers
 
@@ -55,20 +56,20 @@ def is_mutation_finite(M, nr_of_checks=None):
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 
         sage: Q = ClusterQuiver(['A',10])
-        sage: M = Q.b_matrix()
-        sage: is_mutation_finite(M)
+        sage: M = Q.b_matrix()                                                          # needs sage.modules
+        sage: is_mutation_finite(M)                                                     # needs sage.modules
         (True, None)
 
         sage: Q = ClusterQuiver([(0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(2,9)])
-        sage: M = Q.b_matrix()
-        sage: is_mutation_finite(M) # random
+        sage: M = Q.b_matrix()                                                          # needs sage.modules
+        sage: is_mutation_finite(M)  # random                                           # needs sage.modules
         (False, [9, 6, 9, 8, 9, 4, 0, 4, 5, 2, 1, 0, 1, 0, 7, 1, 9, 2, 5, 7, 8, 6, 3, 0, 2, 5, 4, 2, 6, 9, 2, 7, 3, 5, 3, 7, 9, 5, 9, 0, 2, 7, 9, 2, 4, 2, 1, 6, 9, 4, 3, 5, 0, 8, 2, 9, 5, 3, 7, 0, 1, 8, 3, 7, 2, 7, 3, 4, 8, 0, 4, 9, 5, 2, 8, 4, 8, 1, 7, 8, 9, 1, 5, 0, 8, 7, 4, 8, 9, 8, 0, 7, 4, 7, 1, 2, 8, 6, 1, 3, 9, 3, 9, 1, 3, 2, 4, 9, 5, 1, 2, 9, 4, 8, 5, 3, 4, 6, 8, 9, 2, 5, 9, 4, 6, 2, 1, 4, 9, 6, 0, 9, 8, 0, 4, 7, 9, 2, 1, 6])
 
     Check that :trac:`19495` is fixed::
 
-        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S
+        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S                  # needs sage.modules
         A seed for a cluster algebra of rank 1
-        sage: S.is_mutation_finite()
+        sage: S.is_mutation_finite()                                                    # needs sage.modules
         True
     """
     import random
@@ -895,7 +896,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     dg_tmp = DiGraph( dg )
                     dg_tmp.delete_vertices( c1 )
 
-                    components = dg_tmp.connected_components()
+                    components = dg_tmp.connected_components(sort=False)
                     # if not len(components) == 2:
                     if len(components) != 2:
                         return _false_return(4)
@@ -937,7 +938,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     else:
                         c2.reverse()
                         dg_tmp.delete_edge( tuple( c2 ) )
-                    components = dg_tmp.connected_components()
+                    components = dg_tmp.connected_components(sort=False)
                     if len(components) != 2:
                         return _false_return(7)
                     else:
@@ -1189,7 +1190,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
             edge = long_cycle[0][0]
             sg = DiGraph( dg )
             sg. delete_vertices(edge)
-            connected_components = sg.connected_components()
+            connected_components = sg.connected_components(sort=False)
             cycle = []
             if connected_components:
                 cycle.append( ( edge[0], edge[1], len( connected_components[0] ) + 1 ) )
@@ -1199,7 +1200,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
             for edge in tmp:
                 sg = DiGraph( dg )
                 sg. delete_vertices(edge)
-                connected_components = sg.connected_components()
+                connected_components = sg.connected_components(sort=False)
                 if len( connected_components ) == 2:
                     #if len( list_intersection( [ connected_components[0], list_substract( long_cycle[0], [edge] )[0] ] ) ) > 0:
                     if len( set(connected_components[0]).intersection( set(long_cycle[0]).difference([edge]).pop() ) ) > 0:
@@ -1428,7 +1429,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
     TESTS::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _random_tests
-        sage: _random_tests( ['A',3], 1)
+        sage: _random_tests( ['A',3], 1)                                                # needs sage.modules
         testing ['A', 3]
     """
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver

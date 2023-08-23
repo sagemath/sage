@@ -1662,20 +1662,29 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if self.ncols() == 0 or self.nrows() == 0:
             return self._is_empty_popov(row_wise)
         leading_positions = self.leading_positions(shifts, row_wise)
-        # here, it will be convenient to have leading position
-        # larger than ncols for zero/empty rows
-        leading_positions = [pos if pos>=0 else self.ncols() + 1 for pos in leading_positions]
+        # here, because of the below sorting and of the convention that zero
+        # rows (resp. columns) are at the bottom (resp. right) of the matrix in
+        # the row-wise case (resp. column-wise case), it will be convenient to
+        # have leading position ncols (resp. nrows) for these zero vectors
+        pos_zero_vec = self.ncols() if row_wise else self.nrows()
+        leading_positions = [pos if pos>=0 else pos_zero_vec + 1 \
+                                         for pos in leading_positions]
         # leading positions should not have duplicates, which is equivalent to:
         # once sorted, it doesn't contain a pair of equal successive entries
         if not ordered:
             leading_positions.sort()
         # check that there is no zero vector, if it is forbidden
-        if leading_positions[-1] > self.ncols() and not include_zero_vectors:
+        # (in the ordered case, even though we have not sorted, this test of
+        # the last leading position is sufficient: in any case, if there is a
+        # zero vector followed by a nonzero one, the testing loop below will
+        # return False)
+        if leading_positions[-1] > pos_zero_vec and not include_zero_vectors:
             return False
-        # now leading_positions is nondecreasing: it remains to test whether
-        # it is strictly increasing (at least until the zero rows part)
+        # it remains to test whether leading_positions is strictly increasing
+        # until it reaches a zero vector (note this also checks that there is
+        # no zero vector encountered after a nonzero one)
         for index,next_leading_position in enumerate(leading_positions[1:]):
-            if next_leading_position <= self.ncols() and \
+            if next_leading_position <= pos_zero_vec and \
                     next_leading_position <= leading_positions[index]:
                 return False
         return True

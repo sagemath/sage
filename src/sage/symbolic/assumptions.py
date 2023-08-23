@@ -261,7 +261,7 @@ class GenericDeclaration(UniqueRepresentation):
             cur = maxima.get("context")
             # Redeclaring on the existing context does not seem to trigger
             # inconsistency checking.
-            ## maxima.set("context", self._context._maxima_init_())
+            # maxima.set("context", self._context._maxima_init_())
             # Instead, use a temporary context for this purpose
             context = maxima.newcontext('context' + maxima._next_var_name())
             must_declare = True
@@ -272,7 +272,7 @@ class GenericDeclaration(UniqueRepresentation):
             try:
                 maxima.eval("declare(%s, %s)" % (self._var._maxima_init_(), self._assumption))
             except RuntimeError as mess:
-                if 'inconsistent' in str(mess): # note Maxima doesn't tell you if declarations are redundant
+                if 'inconsistent' in str(mess):  # note Maxima doesn't tell you if declarations are redundant
                     # Inconsistency with one of the active contexts.
                     raise ValueError("Assumption is inconsistent")
                 else:
@@ -316,9 +316,9 @@ class GenericDeclaration(UniqueRepresentation):
             except KeyError:
                 return
             maxima.deactivate(self._context)
-        else: # trying to forget a declaration explicitly rather than implicitly
+        else:  # trying to forget a declaration explicitly rather than implicitly
             for x in _assumptions:
-                if repr(self) == repr(x): # so by implication x is also a GenericDeclaration
+                if repr(self) == repr(x):  # so by implication x is also a GenericDeclaration
                     x.forget()
                     break
             return
@@ -945,8 +945,8 @@ class assuming:
             sage: bool(x>-1)
             False
         """
-        self.replace=kwds.pop("replace",False)
-        self.Ass=args
+        self.replace = kwds.pop("replace", False)
+        self.Ass = args
 
     def __enter__(self):
         r"""
@@ -964,7 +964,7 @@ class assuming:
             False
         """
         if self.replace:
-            self.OldAss=assumptions()
+            self.OldAss = assumptions()
             forget(assumptions())
         assume(self.Ass)
 

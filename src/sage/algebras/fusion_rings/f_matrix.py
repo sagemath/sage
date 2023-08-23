@@ -1726,11 +1726,11 @@ class FMatrix(SageObject):
         if eqns is None:
             eqns = self.ideal_basis
         graph = self.equations_graph(eqns)
-        partition = {tuple(c): [] for c in graph.connected_components()}
+        partition = {tuple(c): [] for c in graph.connected_components(sort=True)}
         for eq_tup in eqns:
-            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0]))].append(eq_tup)
+            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), len(graph.connected_components())))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
             print(graph.connected_components_sizes())
         return partition
 

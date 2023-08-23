@@ -877,7 +877,7 @@ class FinitePoset(UniqueRepresentation, Parent):
     Conversion to some other software is possible::
 
         sage: P = posets.TamariLattice(3)
-        sage: libgap(P)  # optional - gap_packages
+        sage: libgap(P)                                         # optional - gap_package_qpa
         <A poset on 5 points>
 
         sage: P = Poset({1:[2],2:[]})
@@ -1368,11 +1368,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset(([1,2], [[1,2]]), cover_relations = True)
-            sage: print(P._latex_()) #optional - dot2tex graphviz
+            sage: print(P._latex_())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_...) at (6.0...bp,...bp) [draw,draw=none] {$...$};
-              \node (node_...) at (6.0...bp,...bp) [draw,draw=none] {$...$};
+            \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
               \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
@@ -5330,7 +5330,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         fusion = fusion.transitive_closure()
         resu = []
-        for s in fusion.connected_components():
+        for s in fusion.connected_components(sort=False):
             subg = [x for x in prod_dg if all(x[i] == v0[i] for i in factors_range
                                               if i not in s)]
             resu.append(Poset(prod_dg.subgraph(subg)))
@@ -8828,11 +8828,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.TamariLattice(3)
-            sage: libgap(P)  # optional - gap_packages
+            sage: libgap(P)                                     # optional - gap_package_qpa
             <A poset on 5 points>
-            sage: A = libgap(GF(2)).PosetAlgebra(P); A  # optional - gap_packages
+            sage: A = libgap(GF(2)).PosetAlgebra(P); A          # optional - gap_package_qpa
             <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generator)>>
-            sage: A.Dimension()  # optional - gap_packages
+            sage: A.Dimension()                                 # optional - gap_package_qpa
             13
         """
         from sage.libs.gap.libgap import libgap

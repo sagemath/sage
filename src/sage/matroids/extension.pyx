@@ -59,7 +59,7 @@ cdef class CutNode:
 
         EXAMPLES::
 
-            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest     # optional - sage.rings.finite_rings
+            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest
             16
         """
         cdef CutNode node
@@ -484,7 +484,7 @@ cdef class MatroidExtensions(LinearSubclasses):
         """
         if M.full_rank() == 0:
             pass
-        if type(M) == BasisMatroid:
+        if isinstance(M, BasisMatroid):
             BM = M
         else:
             BM = BasisMatroid(M)
