@@ -1152,6 +1152,49 @@ are available:
    ptest`` has not been run yet.
 
 
+Testing GitHub Actions locally
+==============================
+
+`act <https://github.com/nektos/act>`_ is a tool, written in Go, and using Docker,
+to run GitHub Actions locally; in particular, it speeds up developing Actions.
+We recommend using `gh extension` facility to install `act`. ::
+
+    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+
+Extra steps needed for configuration of Docker to run Actions locally can be found on
+`act's GitHub <https://github.com/nektos/act>`_
+
+Here we give a very short sampling of `act`'s capabilities. If you installed standalone
+`act`, it should be called as `act`, not as `gh act`.
+After the set up, one can e.g. list all the available actions::
+
+    [alice@localhost sage]$ gh act -l
+    Stage  Job ID                  Job name                                                   Workflow name                                      Workflow file           Events
+    0      build                   build                                                      Build & Test                                       build.yml               workflow_dispatch,pull_request,push
+    0      test                    Conda                                                      Build & Test using Conda                           ci-conda.yml            push,pull_request,workflow_dispatch
+    0      cygwin-stage-i-b        cygwin-stage-i-b                                           CI cygwin-standard                                 ci-cygwin-standard.yml  push,workflow_dispatch
+    [...]
+
+run a particular action ``foobar`` ::
+
+    [alice@localhost sage]$ gh act -j foobar
+    ...
+
+and so on.
+
+By default, `act` pulls all the data needed from the next, but it can also cache it,
+speeding up repeated runs quite a lot. The following repeats running of ``foobar`` using cached data::
+
+    [alice@localhost sage]$ gh act -p false -v -r -j foobar
+
+Here `-p false` means using already pulled Docker images, and `-r` means do not remove Docker images
+after a successful run which used them. This, and many more details, can be found by running `gh act -h`, as well
+as reading `act`'s documentation.
+
+.. TODO::
+
+   Add more Sage-specfic details for using `act`. PRs welcome!
+
 Using our pre-built Docker images for development in VS Code
 ============================================================
 

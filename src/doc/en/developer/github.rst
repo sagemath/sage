@@ -73,32 +73,17 @@ and check::
 
 which will show the default repo along with its readme, which is quite long.
 
-Framework for testing GitHub Actions locally
---------------------------------------------
+``gh`` extensions
+-----------------
 
-A useful extension to ``gh`` allows testing of Sage's GitHub Actions locally,
-using Docker. It is called ``act`` and can be installed as a ``gh extension``::
+``gh`` is extendable; e.g.  a useful extension to ``gh`` allows testing of
+Sage's GitHub Actions locally, using Docker. It is called ``act`` and can be
+installed by running
 
     [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
 
-Extra steps needed for configuration of Docker to run Actions locally can be found on
-`act's GitHub <https://github.com/nektos/act>`_
-
-After it's set up, one can e.g. list all the available actions::
-
-    [alice@localhost sage]$ gh act -l
-    Stage  Job ID                  Job name                                                   Workflow name                                      Workflow file           Events
-    0      build                   build                                                      Build & Test                                       build.yml               workflow_dispatch,pull_request,push
-    0      test                    Conda                                                      Build & Test using Conda                           ci-conda.yml            push,pull_request,workflow_dispatch
-    0      cygwin-stage-i-b        cygwin-stage-i-b                                           CI cygwin-standard                                 ci-cygwin-standard.yml  push,workflow_dispatch
-    [...]
-
-run a particular action ``foobar`` ::
-
-    [alice@localhost sage]$ gh act -j foobar
-    ...
-
-and so on.
+Append `--force` flag to force an upgrade.
+More details on configuring and using `gh act` are in :ref:`chapter-portability_testing`.
 
 
 Linking Git to your GitHub account
