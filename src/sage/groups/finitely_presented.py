@@ -128,7 +128,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#from sage.arith.misc import GCD as gcd
+# from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
 from sage.functions.generalized import sign
 from sage.groups.free_group import FreeGroupElement
@@ -1367,10 +1367,15 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         OUTPUT:
 
-        The abelianization ``ab`` of ``self`` with a minimal number `n` of generators.
-        A Laurent polynomial ring ``R`` with `n`. An ``ideal`` to take into account the finite
-        order of some generators of ``ab``. A list ``image`` with the images of the generators
-        of ``self`` in the quotient of ``R`` by ``ideal``.
+        - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
+          with a minimal number `n` of generators.
+
+        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
+
+        - ``ideal`` -- aa list of generators of an ideal ``I`` in ``R`` such that ``R/I``
+          is the group algebra of ``ab`` over ``ring``
+
+        - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
 
         EXAMPLES::
 
@@ -1615,8 +1620,12 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         OUTPUT:
 
-        A matrix with coefficients in the group algebra of the abelianized.
-        This algebra is of the form `R/I` and `R` and `I` are also given.
+        - ``A`` -- a matrix with coefficients in ``R``
+
+        - ``R`` -- a ring of Laurent polynomials over ``ring``
+
+        - ``ideal`` -- an list of generators of an ideal ``I``of ``R`` such that ``R/I`` is
+          the group algebra of the abelianization of ``self``
 
         EXAMPLES::
 
@@ -1672,8 +1681,18 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         return A, R, ideal
 
     def char_var(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
-        """
-        Return the characteristic varieties of the group ``self``.
+        r"""
+        Return the characteristic varieties of the group ``self``. There are several definitions
+        of the characteristic varieties of a group `G`, see e.g. [CS1999]_. Let `\Lambda` be the
+        group algebra of `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus). Each
+        element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k`th-characteristic
+        variety is
+
+        .. MATH::
+
+            V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}
+
+        These varieties are defined by ideals in `\Lambda`
 
         INPUT:
 
