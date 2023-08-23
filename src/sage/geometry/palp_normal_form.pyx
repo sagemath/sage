@@ -65,6 +65,18 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
         ....:             for j, i in PMs )
         sage: all(results)  # long time
         True
+        sage: from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
+        sage: P = Polyhedron([(-4,-6),(-4,-5),(0,0),(1,0),(5,6)])
+        sage: PM = P.slack_matrix().transpose()
+        sage: _palp_PM_max(PM)
+        [9 5 4 0 0]
+        [6 0 6 5 0]
+        [1 5 0 0 4]
+        [0 6 0 1 6]
+        [0 0 3 5 3]
+        sage: PM_max, permutations = _palp_PM_max(PM, check=True)
+        sage: _palp_canonical_order(P.vertices(), PM_max, permutations)
+        ([(1, 0), (0, 0), (2, 4), (1, 5), (-1, 1)], (1,2,3))
     """
     cdef int n_v = PM.ncols()
     cdef int n_f = PM.nrows()

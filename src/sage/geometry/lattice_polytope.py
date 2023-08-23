@@ -3198,6 +3198,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             ....:             for j, i in PMs )
             sage: all(results)  # long time
             True
+            sage: P = Polyhedron([(-4,-6),(-4,-5),(0,0),(1,0),(5,6)])
+            sage: P.lattice_polytope()._palp_PM_max()
+            [9 5 4 0 0]
+            [6 0 6 5 0]
+            [1 5 0 0 4]
+            [0 6 0 1 6]
+            [0 0 3 5 3]
         """
         from .palp_normal_form import _palp_PM_max
         return _palp_PM_max(self.vertex_facet_pairing_matrix(), check)
