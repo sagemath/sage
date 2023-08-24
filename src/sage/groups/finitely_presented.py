@@ -1362,8 +1362,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- base ring (default ``QQ``). The base ring for
-          the group algebra of ``self``.
+        - ``ring`` -- (default: ``QQ``); the base ring for
+          the group algebra of ``self``
 
         OUTPUT:
 
