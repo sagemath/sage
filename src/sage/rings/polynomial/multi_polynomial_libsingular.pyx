@@ -230,15 +230,6 @@ from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.categories.number_fields import NumberFields
 
-from sage.categories.action import Action
-from sage.matrix.matrix_space import MatrixSpace
-from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.matrix.constructor import matrix as MatrixConstructor
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from operator import matmul
-from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
-
 from sage.structure.element import coerce_binop
 
 from sage.structure.parent cimport Parent
