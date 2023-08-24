@@ -506,7 +506,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: s.parent()
         Real Double Field
         sage: T.distribution_function(0)
-        0.0
+        0.5
 
     The gamma distribution has two parameters ``a`` and ``b``::
 
