@@ -1266,11 +1266,9 @@ cdef class Pygen(GiacMethods_base):
         GIAC_archive( <string>encstring23(filename), (<Pygen>self).gptr[0], context_ptr)
         sig_off()
 
-
-
     # NB: with giac <= 1.2.3-57 redim doesn't have a non evaluated for so Pygen('redim') fails.
     # hence replacement  for redim:
-    def redim(self,a,b=None):
+    def redim(self, a, b=None):
         """
         Increase the size of a matrix when possible, otherwise return self.
 

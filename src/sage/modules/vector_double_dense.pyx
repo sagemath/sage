@@ -471,7 +471,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         # p = 0 returns integer *count* of non-zero entries
         return RDF(n)
 
-
     #############################
     # statistics
     #############################

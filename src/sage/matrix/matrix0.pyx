@@ -581,7 +581,6 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         self.set_unsafe(i, j, elt + self.get_unsafe(i, j))
 
-
 ##     def _get_very_unsafe(self, i, j):
 ##         r"""
 ##         Entry access, but potentially fast since it might be without
@@ -2239,8 +2238,6 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         return "\\left" + matrix_delimiters[0] + "\\begin{array}{%s}\n"%format + s + "\n\\end{array}\\right" + matrix_delimiters[1]
 
-
-
     ###################################################
     ## Basic Properties
     ###################################################
@@ -2310,7 +2307,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         - Benjamin Lundell (2012-02-09): examples
         """
         return (self._nrows,self._ncols)
-
 
     ###################################################
     # Functions

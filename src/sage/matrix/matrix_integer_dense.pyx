@@ -1094,15 +1094,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return ans
 
-
-    ########################################################################
+    ##########################################################
     # LEVEL 3 functionality (Optional)
     #    * __deepcopy__
     #  x * __invert__
     #    * Matrix windows -- only if you need strassen for that base
     #    * Other functions (list them here):
     #    * Specialized echelon form
-    ########################################################################
+    ##########################################################
 
     def is_primitive(self):
         r"""
@@ -2743,11 +2742,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         import sage.libs.ntl.ntl_mat_ZZ
         return sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols, self.list())
 
-
-    ####################################################################################
+    #########################################################
     # LLL
-    ####################################################################################
-
+    #########################################################
     def BKZ(self, delta=None, algorithm="fpLLL", fp=None, block_size=10, prune=0,
             use_givens=False, precision=0, proof=None, **kwds):
         """
@@ -5165,10 +5162,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_free(T_rows)
         return res
 
-
-    #################################################################
+    #################################################
     # operations with matrices
-    #################################################################
+    #################################################
 
     def row(self, Py_ssize_t i, from_list=False):
         """

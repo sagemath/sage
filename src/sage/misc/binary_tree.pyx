@@ -179,13 +179,13 @@ cdef object binary_tree_list(binary_tree_node *cur, int behavior):
     return arry
 
 
-
 cdef class BinaryTree:
     """
     A simple binary tree with integer keys.
     """
     def __cinit__(BinaryTree self):
         self.head = NULL
+
     def __dealloc__(BinaryTree self):
         """
         TESTS:
@@ -234,6 +234,7 @@ cdef class BinaryTree:
             self.head = BinaryTreeNode(ckey, value)
         else:
             binary_tree_insert(self.head, ckey, value)
+
     def delete(BinaryTree self, int key):
         """
         Removes a the node corresponding to key, and returns the value
@@ -277,6 +278,7 @@ cdef class BinaryTree:
             return r
         else:
             return binary_tree_delete(self.head, key)
+
     def get(BinaryTree self, int key):
         """
         Returns the value associated with the key given.
@@ -295,6 +297,7 @@ cdef class BinaryTree:
             return None
         else:
             return binary_tree_get(self.head, key)
+
     def contains(BinaryTree self, int key):
         """
         Returns True if a node with the given key exists
@@ -312,11 +315,9 @@ cdef class BinaryTree:
         """
         if self.head == NULL:
             return False
-        else:
-            if binary_tree_get(self.head, key) is not None:
-                return True
-            else:
-                return False
+
+        return binary_tree_get(self.head, key) is not None
+
     def get_max(BinaryTree self):
         """
         Returns the value of the node with the maximal key value.
@@ -328,6 +329,7 @@ cdef class BinaryTree:
         while cur.right != NULL:
             cur = cur.right
         return <object>cur.value
+
     def get_min(BinaryTree self):
         """
         Returns the value of the node with the minimal key value.
@@ -339,6 +341,7 @@ cdef class BinaryTree:
         while cur.left != NULL:
             cur = cur.left
         return <object>cur.value
+
     def pop_max(BinaryTree self):
         """
         Returns the value of the node with the maximal key value,
@@ -379,6 +382,7 @@ cdef class BinaryTree:
         max = <object>cur.right.value
         cur.right = binary_tree_right_excise(cur.right)
         return max
+
     def pop_min(BinaryTree self):
         """
         Returns the value of the node with the minimal key value,

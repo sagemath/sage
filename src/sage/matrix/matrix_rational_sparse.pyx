@@ -14,15 +14,15 @@ TESTS::
     []
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_calloc, sig_free
@@ -151,7 +151,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
 
-
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle
@@ -268,7 +267,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_clear(s)
         return ans
 
-
     ########################################################################
     # def _pickle(self):
     # def _unpickle(self, data, int version):   # use version >= 0
@@ -281,16 +279,16 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-# TODO
-##     cpdef _lmul_(self, Element right):
-##         """
-##         EXAMPLES::
-##
-##             sage: a = matrix(QQ,2,range(6))
-##             sage: (3/4) * a
-##             [   0  3/4  3/2]
-##             [ 9/4    3 15/4]
-##         """
+    # TODO
+    ##     cpdef _lmul_(self, Element right):
+    ##         """
+    ##         EXAMPLES::
+    ##
+    ##             sage: a = matrix(QQ,2,range(6))
+    ##             sage: (3/4) * a
+    ##             [   0  3/4  3/2]
+    ##             [ 9/4    3 15/4]
+    ##         """
 
     def _dict(self):
         """
@@ -303,16 +301,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
                 x = Rational()
                 mpq_set((<Rational>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
-
 
     ########################################################################
     # LEVEL 3 functionality (Optional)
@@ -346,7 +343,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef Py_ssize_t i, j
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
-                nzp.append((i,self._matrix[i].positions[j]))
+                nzp.append((i, self._matrix[i].positions[j]))
         self.cache('nonzero_positions', nzp)
         if copy:
             return list(nzp)
@@ -384,12 +381,12 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             for j from 0 <= j < self._matrix[i].num_nonzero:
                 mpq_get_num(x, self._matrix[i].entries[j])
                 mpz_abs(x, x)
-                if mpz_cmp(h,x) < 0:
-                    mpz_set(h,x)
+                if mpz_cmp(h, x) < 0:
+                    mpz_set(h, x)
                 mpq_get_den(x, self._matrix[i].entries[j])
                 mpz_abs(x, x)
-                if mpz_cmp(h,x) < 0:
-                    mpz_set(h,x)
+                if mpz_cmp(h, x) < 0:
+                    mpz_set(h, x)
         sig_off()
         mpz_set(height, h)
         mpz_clear(h)
@@ -397,9 +394,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return 0
 
     cdef int mpz_denom(self, mpz_t d) except -1:
-        mpz_set_si(d,1)
+        mpz_set_si(d, 1)
         cdef Py_ssize_t i, j
-        cdef mpq_vector *v
 
         sig_on()
         for i from 0 <= i < self._nrows:
@@ -408,14 +404,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         sig_off()
         return 0
 
-
     def denominator(self):
         """
         Return the denominator of this matrix.
 
         OUTPUT:
 
-            -- Sage Integer
+        - Sage Integer
 
         EXAMPLES::
 
@@ -554,7 +549,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
         """
-        label = 'echelon_form_%s'%algorithm
+        label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
         if x is not None:
             return x
@@ -589,10 +584,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         from .misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
         E, pivots = matrix_rational_echelon_form_multimodular(self,
-                                 height_guess=height_guess, proof=proof)
+            height_guess=height_guess, proof=proof)
         E._parent = self._parent
         return E, pivots
-
 
     def set_row_to_multiple_of_row(self, i, j, s):
         """
@@ -695,7 +689,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [ 3  4  5]
         """
         # this function exists just because it is useful for modular symbols presentations.
-        self.check_row_bounds_and_mutability(i,i)
+        self.check_row_bounds_and_mutability(i, i)
         if r < 0 or r >= A.nrows():
             raise IndexError("invalid row")
 
@@ -715,7 +709,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -727,7 +720,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         allocate_mpq_vector(v, n)
         v.num_nonzero = n
         v.degree = self._ncols
-
 
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
@@ -804,4 +796,4 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 # used for a function above
 cdef mpq_t minus_one
 mpq_init(minus_one)
-mpq_set_si(minus_one, -1,1)
+mpq_set_si(minus_one, -1, 1)
