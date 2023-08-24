@@ -1539,7 +1539,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         R = self.parent()
         n = R.ngens()
         S = R.polynomial_ring()
-        if self == 0:
+        if not self:
             return (self, R(1))
         minimo = tuple(min(a[1].degree(v) for a in self) for v in R.gens())
         mon = R({minimo:1})
