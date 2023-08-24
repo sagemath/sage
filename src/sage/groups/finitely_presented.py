@@ -1617,7 +1617,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``ring`` -- (default: ``QQ``) the base ring of the
           group algebra
-        - ``abelianized`` -- optional; the data of the abelianization
+        - ``abelianized`` -- optional (default: ``None``); a tuple containing the output of
+          ``self.abelianization()`` to avoid recomputation
         - ``simplified`` -- boolean (default: ``False``); if set to
           ``True`` use Gauss elimination and erase rows and columns
 
@@ -1740,16 +1741,16 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: A, R, I = G.abelian_alexander_matrix()
             sage: G.char_var(groebner=True) == G.char_var(groebner=True, matrix_ideal=(A, I))
             True
-        sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
-        sage: G.char_var()
-        [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field]
-        sage: G.char_var(ring=ZZ)
-        [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring]
-        sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
-        sage: G.char_var()
-        [Ideal (1 - f2 + f2^2, -1 + f2 - f2^2) of Univariate Laurent Polynomial Ring in f2 over Rational Field]
-        sage: G.char_var(groebner=True)
-        [[1 - f2 + f2^2]]
+            sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
+            sage: G.char_var()
+            [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field]
+            sage: G.char_var(ring=ZZ)
+            [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring]
+            sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
+            sage: G.char_var()
+            [Ideal (1 - f2 + f2^2, -1 + f2 - f2^2) of Univariate Laurent Polynomial Ring in f2 over Rational Field]
+            sage: G.char_var(groebner=True)
+            [[1 - f2 + f2^2]]
         """
         if matrix_ideal is None:
             A, R, ideal = self.abelian_alexander_matrix(ring=ring, abelianized=abelianized, simplified=True)
@@ -1766,13 +1767,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         if not groebner or not R.base_ring().is_field():
             return res
         if R.ngens() == 1:
-            res0 = [gcd(S(_) for _ in J.gens()) for J in res]
+            res0 = [gcd(S(p) for p in J.gens()) for J in res]
             res1 = []
             for p in res0:
                 if p == 0:
                     res1.append([R(0)])
                 else:
-                    fct = [_[0] for _ in R(p).factor()]
+                    fct = [q[0] for q in R(p).factor()]
                     if len(fct) > 0:
                         res1.append(fct)
             return res1

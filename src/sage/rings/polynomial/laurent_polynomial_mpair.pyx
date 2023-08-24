@@ -113,16 +113,16 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                     if isinstance(k, tuple):
                         k = ETuple(k)
                     D[k] = x_k
-                    self._mon = self._mon.emin(k) # point-wise min of _mon and k
+                    self._mon = self._mon.emin(k)  # point-wise min of _mon and k
                 else:
                     x = D
-                if not self._mon.is_constant(): # factor out _mon
+                if not self._mon.is_constant():  # factor out _mon
                     x = {k.esub(self._mon): x_k for k, x_k in x.iteritems()}
             elif (isinstance(x, LaurentPolynomial_mpair) and
                   parent.variable_names() == x.parent().variable_names()):
                 self._mon = (<LaurentPolynomial_mpair>x)._mon
                 x = (<LaurentPolynomial_mpair>x)._poly
-            else: # since x should coerce into parent, _mon should be (0,...,0)
+            else:  # since x should coerce into parent, _mon should be (0,...,0)
                 self._mon = ETuple({}, int(parent.ngens()))
         self._poly = parent._R(x)
         CommutativeAlgebraElement.__init__(self, parent)
@@ -275,7 +275,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             self._mon = ETuple({}, int(self._parent.ngens()))
             return
 
-        #cdef dict D = <dict> self._poly._mpoly_dict_recursive(
+        # cdef dict D = <dict> self._poly._mpoly_dict_recursive(
         #                                <tuple> self._parent.variable_names(),
         #                                self._parent.base_ring()
         #                                )
@@ -310,7 +310,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: a.dict()  # indirect doctest
             {(0, 0): 3, (2, -1): 1}
         """
-        #cdef dict D = <dict> self._poly._mpoly_dict_recursive(self._parent.variable_names(),
+        # cdef dict D = <dict> self._poly._mpoly_dict_recursive(self._parent.variable_names(),
         #                                                      self._parent.base_ring())
         cdef dict D = <dict> self._poly.dict()
         cdef dict DD
@@ -1236,7 +1236,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         if kwds:
             f = self.subs(**kwds)
-            if x: # More than 1 non-keyword argument
+            if x:  # More than 1 non-keyword argument
                 return f(*x)
             else:
                 return f
@@ -1251,7 +1251,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise TypeError("number of arguments does not match the number"
                             " of generators in parent")
 
-        #Check to make sure that we aren't dividing by zero
+        # Check to make sure that we aren't dividing by zero
         cdef Py_ssize_t m
         for m in range(l):
             if x[m] == 0:
@@ -1514,11 +1514,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             x = 'x'
             i = 0
 
-        #construct ring if none
+        # construct ring if none
         if R is None:
             R = LaurentPolynomialRing(self.base_ring(), x)
 
-        return R({m[i]: c for m,c in self.dict().iteritems()})
+        return R({m[i]: c for m, c in self.dict().iteritems()})
 
     def polynomial_construction(self):
         """
