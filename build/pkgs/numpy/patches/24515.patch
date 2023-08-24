@@ -1,0 +1,66 @@
+From e150c31194a3faff43791aa5ad3055db07f5e6e0 Mon Sep 17 00:00:00 2001
+From: Ralf Gommers <ralf.gommers@gmail.com>
+Date: Thu, 24 Aug 2023 05:18:55 +0200
+Subject: [PATCH] BUG: fix issue with git-version script, needs a shebang to
+ run
+
+Closes gh-24514
+---
+ meson.build                      |  2 +-
+ numpy/_build_utils/gitversion.py |  1 +
+ numpy/meson.build                | 13 +++++--------
+ 3 files changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index a9e68c2eb94..0469f7f4590 100644
+--- a/meson.build
++++ b/meson.build
+@@ -3,7 +3,7 @@ project(
+   'c', 'cpp', 'cython',
+   version: run_command(
+     # This should become `numpy/_version.py` in NumPy 2.0
+-    ['python', 'numpy/_build_utils/gitversion.py'],
++    ['numpy/_build_utils/gitversion.py'],
+     check: true).stdout().strip(),
+   license: 'BSD-3',
+   meson_version: '>=1.2.99',  # version in vendored-meson is 1.2.99
+diff --git a/numpy/_build_utils/gitversion.py b/numpy/_build_utils/gitversion.py
+index 6686ddb51fd..4ee6e00bbd6 100644
+--- a/numpy/_build_utils/gitversion.py
++++ b/numpy/_build_utils/gitversion.py
+@@ -1,3 +1,4 @@
++#!/usr/bin/env python3
+ import os
+ import textwrap
+ 
+diff --git a/numpy/meson.build b/numpy/meson.build
+index 9b9a3581a9c..40766081d14 100644
+--- a/numpy/meson.build
++++ b/numpy/meson.build
+@@ -188,14 +188,6 @@ if not have_lapack and not allow_noblas
+         'for some linear algebra operations).')
+ endif
+ 
+-# Generate version.py for sdist
+-gitversion = files('_build_utils/gitversion.py')[0]
+-python_bin = py.full_path()
+-meson.add_dist_script(
+-  py,
+-  [gitversion, '--meson-dist', '--write', 'numpy/version.py']
+-)
+-
+ # Copy the main __init__.py|pxd files to the build dir (needed for Cython)
+ __init__py = fs.copyfile('__init__.py')
+ __init__pxd = fs.copyfile('__init__.pxd')
+@@ -257,6 +249,11 @@ endif
+ 
+ np_dir = py.get_install_dir() / 'numpy'
+ 
++# Generate version.py for sdist
++meson.add_dist_script(
++   ['_build_utils/gitversion.py', '--meson-dist', '--write',
++     'numpy/version.py']
++)
+ if not fs.exists('version.py')
+   generate_version = custom_target(
+     'generate-version',
