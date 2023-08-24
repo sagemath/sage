@@ -2122,7 +2122,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage_res = res_parent(sage_res)
         return sage_res
 
-
     def __hash__(self):
         """
         This hash incorporates the variable name in an effort to
