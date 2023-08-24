@@ -309,9 +309,11 @@ executable::
     sage: latex.engine('pdflatex')
 
 At this point a command like ``view(graphs.CompleteGraph(4))`` should produce a
-PDF with an appropriate image of the complete graph `K_4`. (In fact, the first
-step could be omitted as the preamble is automatically set up properly for
-graphs.)
+PDF with an appropriate image of the complete graph `K_4`.
+
+Actually the preliminary steps could be omitted as the preamble is
+automatically set up properly for graphs and ``pdflatex`` is the default LaTeX
+engine in Sage. Try the command again after restarting Sage.
 
 Note that there is a variety of options to affect how a graph is rendered in
 LaTeX via ``tkz-graph``, which is outside the scope of this section. See the
