@@ -47,26 +47,37 @@ viewer will be called to display the output.
 In the Jupyter notebook, you can see the rendered LaTeX representation of the
 output of the entered commands automatically. You can start this
 automatic rendering by executing ``%display latex`` (and stop by executing
-``%display plain``). Thus, in the Jupyter notebook, you get::
+``%display plain``). Thus, in the Jupyter notebook, you get
+
+.. JUPYTER-EXECUTE::
 
     %display latex
     var('z')
-    ...
     z^12
-    ...
-    sqrt(z^2 + 1/2)
-    ...
-    'a string'
-    ...
-    QQ
-    ...
-    ZZ['x']
-    ...
-    matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
-    ...
 
-where ``...`` denotes the rendered LaTeX representation, which we cannot show
-here on a web browser, of course.
+.. JUPYTER-EXECUTE::
+
+    sqrt(z^2 + 1/2)
+
+.. JUPYTER-EXECUTE::
+
+    'a string'
+
+.. JUPYTER-EXECUTE::
+
+    QQ
+
+.. JUPYTER-EXECUTE::
+
+    ZZ['x']
+
+.. JUPYTER-EXECUTE::
+
+    matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
+
+.. JUPYTER-EXECUTE::
+
+    %display plain
 
 The Jupyter notebook uses `MathJax <http://www.mathjax.org>`_ to render
 mathematics cleanly in a web browser. MathJax is an open source JavaScript
