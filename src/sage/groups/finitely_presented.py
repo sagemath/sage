@@ -1355,10 +1355,49 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         invariants = self.gap().AbelianInvariants()
         return tuple(i.sage() for i in invariants)
 
-    def abelianization(self, ring=QQ):
+
+    def abelianization_map(self):
         r"""
-        Return the abelianization of ``self`` together with
-        the needed information to recover its group algebra.
+        Return the abelianization map of ``self``.
+
+        OUTPUT:
+
+        The abelianization  map of ``self`` as a homomorphism of finitely presented groups.
+
+       EXAMPLES::
+
+            sage: G = FreeGroup(4, 'g')
+            sage: G.inject_variables(verbose=False)
+            sage: H = G.quotient([g1^2, g2*g1*g2^(-1)*g1^(-1), g1*g3^(-2), g0^4])
+            sage: H.abelianization_map()
+            Group morphism:
+                From: Finitely presented group  < g0, g1, g2, g3 | g1^2, g2*g1*g2^-1*g1^-1, g1*g3^-2, g0^4 >
+                To:   Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4, f3^-1*f4^-1*f3*f4, f2^4, f3^4 >
+            sage: g=FreeGroup(0)/[]
+            sage: g.abelianization_map()
+            Group endomorphism of Finitely presented group  <  |  >
+        """
+        if len(self.generators()) == 0:
+            return self.hom(codomain=self, im_gens=[])
+        hom_ab_libgap = libgap(self).MaximalAbelianQuotient()
+        ab_libgap = hom_ab_libgap.Range()
+        hom_ab_fp = ab_libgap.IsomorphismFpGroup()
+        ab_libgap_fp = hom_ab_fp.Range()
+        hom_simply = ab_libgap_fp.IsomorphismSimplifiedFpGroup()
+        ab = wrap_FpGroup(hom_simply.Range())
+        images = []
+        for f in self.gens():
+            f0 = hom_ab_libgap.Image(f)
+            f1 = hom_ab_fp.Image(f0)
+            f2 = hom_simply.Image(f1)
+            L = f2.UnderlyingElement().LetterRepAssocWord()
+            images.append(ab([int(j) for j in L]))
+        return self.hom(codomain=ab, im_gens=images)
+
+    def abelianization_to_algebra(self, ring=QQ):
+        r"""
+        Return the group algebra of the abelianization of ``self``
+        together with the monomials representing the generators of ``self``.
 
         INPUT:
 
@@ -1370,10 +1409,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
           with a minimal number `n` of generators.
 
-        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
+        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``.
 
-        - ``ideal`` -- aa list of generators of an ideal ``I`` in ``R`` such that ``R/I``
-          is the group algebra of ``ab`` over ``ring``
+        - ``ideal`` -- a list of generators of an ideal ``I`` in ``R`` such that ``R/I``
+          is the group algebra of the abelianization over ``ring``
 
         - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
 
@@ -1383,23 +1422,19 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: G.inject_variables()
             Defining g0, g1, g2, g3
             sage: H = G.quotient([g1^2, g2*g1*g2^(-1)*g1^(-1), g1*g3^(-2), g0^4])
-            sage: H.abelianization()
-            (Finitely presented group < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4,
-                                                     f3^-1*f4^-1*f3*f4, f2^4, f3^4 >,
+            sage: H.abelianization_to_algebra()
+            (Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4,
+                                                      f3^-1*f4^-1*f3*f4, f2^4, f3^4 >,
              Multivariate Laurent Polynomial Ring in f2, f3, f4 over Rational Field,
              [f2^4 - 1, f3^4 - 1], [f2^-1*f3^-2, f3^-2, f4, f3])
             sage: g=FreeGroup(0)/[]
-            sage: g.abelianization()
+            sage: g.abelianization_to_algebra()
             (Finitely presented group  <  |  >, Rational Field, [], [])
         """
         if len(self.generators()) == 0:
             return self, ring, [], []
-        hom_ab_libgap = libgap(self).MaximalAbelianQuotient()
-        ab_libgap = hom_ab_libgap.Range()
-        hom_ab_fp = ab_libgap.IsomorphismFpGroup()
-        ab_libgap_fp = hom_ab_fp.Range()
-        hom = ab_libgap_fp.IsomorphismSimplifiedFpGroup()
-        ab = wrap_FpGroup(hom.Range())
+        hom_ab = self.abelianization_map()
+        ab = hom_ab.codomain()
         R = LaurentPolynomialRing(ring, ab.gens())
         ideal = []
         for a in ab.relations():
@@ -1409,12 +1444,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                 j = a_T[0]
                 m = len(a_T)
                 ideal.append(R.gen(j - 1) ** m - 1)
+        images0 = [hom_ab(g).Tietze() for g in self.gens()]
         images = []
-        for f in self.gens():
-            f0 = hom_ab_libgap.Image(f)
-            f1 = hom_ab_fp.Image(f0)
-            f2 = hom.Image(f1)
-            L = f2.UnderlyingElement().LetterRepAssocWord()
+        for L in images0:
             p = R.one()
             for a in L:
                 if a > 0:
@@ -1618,7 +1650,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         - ``ring`` -- (default: ``QQ``) the base ring of the
           group algebra
         - ``abelianized`` -- optional (default: ``None``); a tuple containing the output of
-          ``self.abelianization()`` to avoid recomputation
+          ``self.abelianization_to_algebra()`` to avoid recomputation
         - ``simplified`` -- boolean (default: ``False``); if set to
           ``True`` use Gauss elimination and erase rows and columns
 
@@ -1644,7 +1676,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             Multivariate Laurent Polynomial Ring in f1, f2, f3 over Rational Field
             sage: ideal
             []
-            sage: abel = H.abelianization()
+            sage: abel = H.abelianization_to_algebra()
             sage: (A, R, ideal) == H.abelian_alexander_matrix(abelianized=abel)
             True
             sage: G=FreeGroup(3)/[(2,1,1), (1,2,2,3,3)]
@@ -1658,7 +1690,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             ([], Integer Ring, [])
         """
         if abelianized is None:
-            ab, R, ideal, images = self.abelianization(ring=ring)
+            ab, R, ideal, images = self.abelianization_to_algebra(ring=ring)
         else:
             ab, R, ideal, images = abelianized
         A = self.alexander_matrix(im_gens=images)
@@ -1710,7 +1742,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
         - ``matrix_ideal`` -- optional; an abelian Alexander matrix and an ideal
-        - ``abelianized`` -- optional; the data of the abelianization
+        - ``abelianized`` -- optional; the data of of the output of ``abelianization_to_algebra``
         - ``groebner`` -- boolean (default: ``False``); If set to
           ``True`` the minimal associated primes of the ideals and their
           groebner bases are computed; ignored if the base ring
