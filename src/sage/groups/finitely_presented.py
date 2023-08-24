@@ -1707,18 +1707,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- base ring (default: ``QQ``). The base ring of the
-          group algebra
-
-        - ``matrix_ideal`` -- optional. An abelian Alexander matrix and an ideal,
-          to avoid recomputations.
-
-        - ``abelianized`` -- optional. The data of the abelianization.
-
-        - ``groebner`` -- boolean (default: ``False``). If set to
+        - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
+        - ``matrix_ideal`` -- optional; an abelian Alexander matrix and an ideal
+        - ``abelianized`` -- optional; the data of the abelianization
+        - ``groebner`` -- boolean (default: ``False``); If set to
           ``True`` the minimal associated primes of the ideals and their
-          groebner bases are computed-. It has no effect if the base ring
-          is not a field.
+          groebner bases are computed; ignored if the base ring
+          is not a field
 
         OUTPUT:
 
