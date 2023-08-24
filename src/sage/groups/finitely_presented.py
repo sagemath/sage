@@ -1668,7 +1668,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                 return A, R, ideal
             simpli = True
             while simpli:
-                i, j = [0, 0]
+                i = 0
+                j = 0
                 unidad = False
                 while not unidad and i < n and j < m:
                     p = A[i, j]
