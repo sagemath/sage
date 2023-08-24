@@ -1758,7 +1758,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             R = A.base_ring()
         res = []
         S = R.polynomial_ring()
-        ideal = [S(_) for _ in ideal]
+        ideal = [S(elt) for elt in ideal]
         for j in range(1, A.ncols()):
             L = [p.polynomial_construction()[0] for p in A.minors(j)]
             J = R.ideal(L + ideal)
