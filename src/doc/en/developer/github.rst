@@ -82,8 +82,8 @@ installed by running
 
     [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
 
-Append `--force` flag to force an upgrade.
-More details on configuring and using `gh act` are in :ref:`chapter-portability_testing`.
+Append ``--force`` flag to force an upgrade.
+More details on configuring and using ``gh act`` are in :ref:`chapter-portability_testing`.
 
 
 Linking Git to your GitHub account
