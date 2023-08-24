@@ -1701,7 +1701,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         .. MATH::
 
-            V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}
+            V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}.
 
         These varieties are defined by ideals in `\Lambda`
 
