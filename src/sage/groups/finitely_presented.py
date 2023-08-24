@@ -1718,7 +1718,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         OUTPUT:
 
         If ``groebner`` is ``False`` a list of ideals defining the characteristic varieties.
-        If it is True, a list of lists for groebner bases for each ideal.
+        If it is ``True``, a list of lists for Gröbner bases for each ideal.
 
         EXAMPLES::
 
