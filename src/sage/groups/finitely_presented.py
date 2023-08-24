@@ -1615,13 +1615,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- base ring (default: ``QQ``). The base ring of the
+        - ``ring`` -- (default: ``QQ``) the base ring of the
           group algebra
-
-        - ``abelianized`` -- optional. The data of the abelianization.
-
-        - ``simplified`` -- boolean (default: ``False``). If set to
-          ``True`` use Gauss elimination and erase rows and columns.
+        - ``abelianized`` -- optional; the data of the abelianization
+        - ``simplified`` -- boolean (default: ``False``); if set to
+          ``True`` use Gauss elimination and erase rows and columns
 
         OUTPUT:
 
