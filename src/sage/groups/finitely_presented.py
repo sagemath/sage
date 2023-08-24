@@ -128,7 +128,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# from sage.arith.misc import GCD as gcd
+from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
 from sage.functions.generalized import sign
 from sage.groups.free_group import FreeGroupElement
@@ -1388,7 +1388,12 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                                                      f3^-1*f4^-1*f3*f4, f2^4, f3^4 >,
              Multivariate Laurent Polynomial Ring in f2, f3, f4 over Rational Field,
              [f2^4 - 1, f3^4 - 1], [f2^-1*f3^-2, f3^-2, f4, f3])
+            sage: g=FreeGroup(0)/[]
+            sage: g.abelianization()
+            (Finitely presented group  <  |  >, Rational Field, [], [])
         """
+        if len(self.generators()) == 0:
+            return self, ring, [], []
         hom_ab_libgap = libgap(self).MaximalAbelianQuotient()
         ab_libgap = hom_ab_libgap.Range()
         hom_ab_fp = ab_libgap.IsomorphismFpGroup()
@@ -1646,6 +1651,12 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: G=FreeGroup(3)/[(2,1,1), (1,2,2,3,3)]
             sage: A, R, ideal = G.abelian_alexander_matrix(simplified=True); A
             [-f3^2 - f3^4 - f3^6         f3^3 + f3^6]
+            sage: g=FreeGroup(1)/[]
+            sage: g.abelian_alexander_matrix()
+            ([], Integer Ring, [])
+            sage: g=FreeGroup(0)/[]
+            sage: g.abelian_alexander_matrix()
+            ([], Integer Ring, [])
         """
         if abelianized is None:
             ab, R, ideal, images = self.abelianization(ring=ring)
@@ -1654,9 +1665,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         A = self.alexander_matrix(im_gens=images)
         if simplified:
             n, m = A.dimensions()
-            if 0 in (n, m):
-                return A
             R = A.base_ring()
+            if 0 in (n, m):
+                return A, R, ideal
             simpli = True
             while simpli:
                 i, j = [0, 0]
@@ -1717,7 +1728,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         EXAMPLES::
 
             sage: L = [2*(i, j) + 2* (-i, -j) for i, j in ((1, 2), (2, 3), (3, 1))]
-            sage: G=FreeGroup(3) / L
+            sage: G = FreeGroup(3) / L
             sage: G.char_var(groebner=True)
             [[(f1 - 1, f2 - 1, f3 - 1),
              (f1 + 1, f2 - 1, f3 - 1),
@@ -1731,6 +1742,19 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
              (f2*f3 + 1, f1 - f2),
              (f2*f3 + 1, f1 - f3),
              (f1*f3 + 1, f2 - f3)]]
+            sage: A, R, I = G.abelian_alexander_matrix()
+            sage: G.char_var(groebner=True) == G.char_var(groebner=True, matrix_ideal=(A, I))
+            True
+        sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
+        sage: G.char_var()
+        [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field]
+        sage: G.char_var(ring=ZZ)
+        [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring]
+        sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
+        sage: G.char_var()
+        [Ideal (1 - f2 + f2^2, -1 + f2 - f2^2) of Univariate Laurent Polynomial Ring in f2 over Rational Field]
+        sage: G.char_var(groebner=True)
+        [[1 - f2 + f2^2]]
         """
         if matrix_ideal is None:
             A, R, ideal = self.abelian_alexander_matrix(ring=ring, abelianized=abelianized, simplified=True)
@@ -1747,15 +1771,15 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         if not groebner or not R.base_ring().is_field():
             return res
         if R.ngens() == 1:
-            res0 = [[S(_) for _ in J.gens()] for J in res]
+            res0 = [gcd(S(_) for _ in J.gens()) for J in res]
             res1 = []
-            for JL in res0:
-                J = S.ideal(JL)
-                LJ = J.minimal_associated_primes()
-                fct = [id.groebner_basis() for id in LJ]
-                fct = [a for a in fct if S.gen() not in a]
-                if fct != [(S.one(),)]:
-                    res1.append(fct)
+            for p in res0:
+                if p == 0:
+                    res1.append([R(0)])
+                else:
+                    fct = [_[0] for _ in R(p).factor()]
+                    if len(fct) > 0:
+                        res1.append(fct)
             return res1
         res1 = []
         for J in res:
