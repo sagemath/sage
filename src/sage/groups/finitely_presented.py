@@ -1362,8 +1362,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- base ring (default ``QQ``). The base ring for
-          the group algebra of ``self``.
+        - ``ring`` -- (default: ``QQ``); the base ring for
+          the group algebra of ``self``
 
         OUTPUT:
 
@@ -1615,13 +1615,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- base ring (default: ``QQ``). The base ring of the
+        - ``ring`` -- (default: ``QQ``) the base ring of the
           group algebra
-
-        - ``abelianized`` -- optional. The data of the abelianization.
-
-        - ``simplified`` -- boolean (default: ``False``). If set to
-          ``True`` use Gauss elimination and erase rows and columns.
+        - ``abelianized`` -- optional; the data of the abelianization
+        - ``simplified`` -- boolean (default: ``False``); if set to
+          ``True`` use Gauss elimination and erase rows and columns
 
         OUTPUT:
 
@@ -1670,7 +1668,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                 return A, R, ideal
             simpli = True
             while simpli:
-                i, j = [0, 0]
+                i = 0
+                j = 0
                 unidad = False
                 while not unidad and i < n and j < m:
                     p = A[i, j]
@@ -1693,37 +1692,33 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
     def char_var(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
         r"""
-        Return the characteristic varieties of the group ``self``. There are several definitions
-        of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
+        Return the characteristic varieties of the group ``self``.
+
+        There are several definitions of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
         group algebra of `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus). Each
         element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k` th-characteristic
         variety is
 
         .. MATH::
 
-            V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}
+            V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}.
 
         These varieties are defined by ideals in `\Lambda`
 
         INPUT:
 
-        - ``ring`` -- base ring (default: ``QQ``). The base ring of the
-          group algebra
-
-        - ``matrix_ideal`` -- optional. An abelian Alexander matrix and an ideal,
-          to avoid recomputations.
-
-        - ``abelianized`` -- optional. The data of the abelianization.
-
-        - ``groebner`` -- boolean (default: ``False``). If set to
+        - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
+        - ``matrix_ideal`` -- optional; an abelian Alexander matrix and an ideal
+        - ``abelianized`` -- optional; the data of the abelianization
+        - ``groebner`` -- boolean (default: ``False``); If set to
           ``True`` the minimal associated primes of the ideals and their
-          groebner bases are computed-. It has no effect if the base ring
-          is not a field.
+          groebner bases are computed; ignored if the base ring
+          is not a field
 
         OUTPUT:
 
         If ``groebner`` is ``False`` a list of ideals defining the characteristic varieties.
-        If it is True, a list of lists for groebner bases for each ideal.
+        If it is ``True``, a list of lists for Gröbner bases for each ideal.
 
         EXAMPLES::
 
@@ -1763,7 +1758,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             R = A.base_ring()
         res = []
         S = R.polynomial_ring()
-        ideal = [S(_) for _ in ideal]
+        ideal = [S(elt) for elt in ideal]
         for j in range(1, A.ncols()):
             L = [p.polynomial_construction()[0] for p in A.minors(j)]
             J = R.ideal(L + ideal)
