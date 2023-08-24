@@ -1362,7 +1362,7 @@ class RegularSequence(RecognizableSeries):
 
         .. SEEALSO::
 
-            :mod:`boundedness of `k`-regular sequences <sage.combinat.regular_sequence_bounded>`
+            :mod:`boundedness of k-regular sequences <sage.combinat.regular_sequence_bounded>`
 
         TESTS::
 
