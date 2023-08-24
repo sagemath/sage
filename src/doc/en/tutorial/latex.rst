@@ -49,19 +49,20 @@ output of the entered commands automatically. You can start this
 automatic rendering by executing ``%display latex`` (and stop by executing
 ``%display plain``). Thus, in the Jupyter notebook, you get::
 
-    sage: %display latex
-    sage: var('z')
-    sage: z^12
+    %display latex
+    var('z')
     ...
-    sage: sqrt(z^2 + 1/2)
+    z^12
     ...
-    sage: 'a string'
+    sqrt(z^2 + 1/2)
     ...
-    sage: QQ
+    'a string'
     ...
-    sage: ZZ['x']
+    QQ
     ...
-    sage: matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
+    ZZ['x']
+    ...
+    matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
     ...
 
 where ``...`` denotes the rendered LaTeX representation, which we cannot show
@@ -295,21 +296,22 @@ example of combinatorial graphs, that use ``tkz-graph`` LaTeX package.
     installation. Even if not, it should be easy to find instructions to
     install them.
 
-For convenience, the relevant packages are already included to the default
+First, we ensure that the relevant packages are included by adding them to the
 preamble of the LaTeX document. ::
 
-    sage: latex.extra_preamble()
-    '\\usepackage{tikz}\n\\usepackage{tkz-graph}\n\\usepackage{tkz-berge}\n\\usetikzlibrary{arrows,shapes}'
+    sage: latex.extra_preamble('\\usepackage{tikz}\n\\usepackage{tkz-graph}\n'
+    ....:                      '\\usepackage{tkz-berge}\n\\usetikzlibrary{arrows,shapes}')
 
 The images of graphs do not form properly when a dvi file is used as an
 intermediate format, so it is best to set the latex engine to the ``pdflatex``
-executable, which is also the default::
+executable::
 
-    sage: latex.engine()
-    'pdflatex'
+    sage: latex.engine('pdflatex')
 
-At this point a command like ``view(graphs.CompleteGraph(4))``
-should produce a PDF with an appropriate image of the complete graph `K_4`.
+At this point a command like ``view(graphs.CompleteGraph(4))`` should produce a
+PDF with an appropriate image of the complete graph `K_4`. (In fact, the first
+step could be omitted as the preamble is automatically set up properly for
+graphs.)
 
 Note that there is a variety of options to affect how a graph is rendered in
 LaTeX via ``tkz-graph``, which is outside the scope of this section. See the
