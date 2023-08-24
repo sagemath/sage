@@ -507,7 +507,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         Real Double Field
         sage: T.distribution_function(0)
         0.0
-    
+
     The gamma distribution has two parameters ``a`` and ``b``::
 
         sage: a = 2
