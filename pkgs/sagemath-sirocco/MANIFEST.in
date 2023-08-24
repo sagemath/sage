@@ -1,9 +1,10 @@
-global-include all__sagemath_sirocco.py
-
 include VERSION.txt
 
 global-exclude *.c
 global-exclude *.cpp
+
+global-exclude all__sagemath_*.*
+global-include all__sagemath_sirocco.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

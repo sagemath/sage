@@ -92,8 +92,9 @@ import weakref
 
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
-import sage.rings.rational_field as rational_field
-import sage.rings.all as rings
+from sage.rings.integer import Integer
+from sage.rings.ring import CommutativeRing
+from sage.rings.rational_field import RationalField
 
 
 def canonical_parameters(group, weight, sign, base_ring):
@@ -114,15 +115,15 @@ def canonical_parameters(group, weight, sign, base_ring):
         sage: type(p1[1])
         <class 'sage.rings.integer.Integer'>
     """
-    sign = rings.Integer(sign)
+    sign = Integer(sign)
     if sign not in [-1, 0, 1]:
         raise ValueError("sign must be -1, 0, or 1")
 
-    weight = rings.Integer(weight)
+    weight = Integer(weight)
     if weight <= 1:
         raise ValueError("the weight must be at least 2")
 
-    if isinstance(group, (int, rings.Integer)):
+    if isinstance(group, (int, Integer)):
         group = arithgroup.Gamma0(group)
     elif isinstance(group, dirichlet.DirichletCharacter):
         if group.is_trivial():
@@ -134,9 +135,9 @@ def canonical_parameters(group, weight, sign, base_ring):
                 base_ring = eps.base_ring()
 
     if base_ring is None:
-        base_ring = rational_field.RationalField()
+        base_ring = RationalField()
 
-    if not isinstance(base_ring, rings.CommutativeRing):
+    if not isinstance(base_ring, CommutativeRing):
         raise TypeError(f"base_ring (={base_ring}) must be a commutative ring")
 
     if not base_ring.is_field():

@@ -96,10 +96,6 @@ cdef extern from "gap/lists.h" nogil:
     Obj ELM_LIST(Obj lst, int pos)
 
 
-cdef extern from "gap/listfunc.h" nogil:
-    void AddList(Obj list, Obj obj)
-
-
 cdef extern from "gap/objects.h" nogil:
     bint IS_MUTABLE_OBJ(Obj obj)
     Obj SHALLOW_COPY_OBJ(Obj obj)

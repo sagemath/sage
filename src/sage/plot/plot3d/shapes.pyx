@@ -12,8 +12,10 @@ EXAMPLES::
     sage: from sage.plot.plot3d.shapes import *
     sage: S = Sphere(.5, color='yellow')
     sage: S += Cone(.5, .5, color='red').translate(0,0,.3)
-    sage: S += Sphere(.1, color='white').translate(.45,-.1,.15) + Sphere(.05, color='black').translate(.51,-.1,.17)
-    sage: S += Sphere(.1, color='white').translate(.45, .1,.15) + Sphere(.05, color='black').translate(.51, .1,.17)
+    sage: S += Sphere(.1, color='white').translate(.45,-.1,.15)
+    sage: S += Sphere(.05, color='black').translate(.51,-.1,.17)
+    sage: S += Sphere(.1, color='white').translate(.45, .1,.15)
+    sage: S += Sphere(.05, color='black').translate(.51, .1,.17)
     sage: S += Sphere(.1, color='yellow').translate(.5, 0, -.2)
     sage: S.show()
     sage: S.scale(1,1,2).show()
@@ -78,7 +80,7 @@ def validate_frame_size(size):
         Traceback (most recent call last):
         ...
         ValueError: each box dimension must be nonnegative
-        sage: validate_frame_size([sqrt(-1),3,2])
+        sage: validate_frame_size([sqrt(-1),3,2])                                       # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: each box dimension must coerce to a float
@@ -125,7 +127,8 @@ class Box(IndexFaceSet):
 
     A stack of boxes::
 
-        sage: show(sum([Box([2,3,1], color="red").translate((0,0,6*i)) for i in [0..3]]))
+        sage: show(sum(Box([2,3,1], color="red").translate((0,0,6*i))
+        ....:          for i in [0..3]))
 
     .. PLOT::
 
@@ -135,8 +138,10 @@ class Box(IndexFaceSet):
 
     A sinusoidal stack of multicolored boxes::
 
-        sage: B = sum([Box([2,4,1/4], color=(i/4,i/5,1)).translate((sin(i),0,5-i)) for i in [0..20]])
-        sage: show(B, figsize=6)
+        sage: B = sum(Box([2,4,1/4],                                                    # needs sage.symbolic
+        ....:             color=(i/4,i/5,1)).translate((sin(i),0,5-i))
+        ....:         for i in [0..20])
+        sage: show(B, figsize=6)                                                        # needs sage.symbolic
 
     .. PLOT::
 
@@ -265,7 +270,8 @@ cdef class Cone(ParametricSurface):
     EXAMPLES::
 
         sage: from sage.plot.plot3d.shapes import Cone
-        sage: c = Cone(3/2, 1, color='red') + Cone(1, 2, color='yellow').translate(3, 0, 0)
+        sage: c = Cone(3/2, 1, color='red')
+        sage: c += Cone(1, 2, color='yellow').translate(3, 0, 0)
         sage: c.show(aspect_ratio=1)
 
     .. PLOT::
@@ -286,7 +292,8 @@ cdef class Cone(ParametricSurface):
 
     A spiky plot of the sine function::
 
-        sage: sum(Cone(.1, sin(n), color='yellow').translate(n, sin(n), 0) for n in [0..10, step=.1])
+        sage: sum(Cone(.1, sin(n), color='yellow').translate(n, sin(n), 0)              # needs sage.symbolic
+        ....:     for n in [0..10, step=.1])
         Graphics3d Object
 
     .. PLOT::
@@ -296,9 +303,11 @@ cdef class Cone(ParametricSurface):
 
     A Christmas tree::
 
-        sage: T = sum(Cone(exp(-n/5), 4/3*exp(-n/5), color=(0, .5, 0)).translate(0, 0, -3*exp(-n/5)) for n in [1..7])
-        sage: T += Cone(1/8, 1, color='brown').translate(0, 0, -3)
-        sage: T.show(aspect_ratio=1, frame=False)
+        sage: T = sum(Cone(exp(-n/5), 4/3*exp(-n/5),                                    # needs sage.symbolic
+        ....:              color=(0, .5, 0)).translate(0, 0, -3*exp(-n/5))
+        ....:         for n in [1..7])
+        sage: T += Cone(1/8, 1, color='brown').translate(0, 0, -3)                      # needs sage.symbolic
+        sage: T.show(aspect_ratio=1, frame=False)                                       # needs sage.symbolic
 
     .. PLOT::
 
@@ -376,12 +385,13 @@ cdef class Cylinder(ParametricSurface):
 
     - ``closed`` -- whether or not to include the ends (default ``True``)
 
-    - ``**kwds`` -- passed to the ParametricSurface constructor
+    - ``**kwds`` -- passed to the :class:`ParametricSurface` constructor
 
     EXAMPLES::
 
         sage: from sage.plot.plot3d.shapes import Cylinder
-        sage: c = Cylinder(3/2, 1, color='red') + Cylinder(1, 2, color='yellow').translate(3, 0, 0)
+        sage: c = Cylinder(3/2, 1, color='red')
+        sage: c += Cylinder(1, 2, color='yellow').translate(3, 0, 0)
         sage: c.show(aspect_ratio=1)
 
     .. PLOT::
@@ -402,8 +412,10 @@ cdef class Cylinder(ParametricSurface):
 
     Some gears::
 
+        sage: # needs sage.symbolic
         sage: G = Cylinder(1, .5) + Cylinder(.25, 3).translate(0, 0, -3)
-        sage: G += sum(Cylinder(.2, 1).translate(cos(2*pi*n/9), sin(2*pi*n/9), 0) for n in [1..9])
+        sage: G += sum(Cylinder(.2, 1).translate(cos(2*pi*n/9), sin(2*pi*n/9), 0)
+        ....:          for n in [1..9])
         sage: G += G.translate(2.3, 0, -.5)
         sage: G += G.translate(3.5, 2, -1)
         sage: G.show(aspect_ratio=1, frame=False)
@@ -537,7 +549,8 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
             sage: from sage.plot.plot3d.transform import Transformation
             sage: Cylinder(1, 5).get_endpoints()
             ((0, 0, 0), (0, 0, 5.0))
-            sage: Cylinder(1, 5).get_endpoints(Transformation(trans=(1,2,3), scale=(2,2,2)))
+            sage: Cylinder(1, 5).get_endpoints(Transformation(trans=(1,2,3),
+            ....:                                             scale=(2,2,2)))
             ((1.0, 2.0, 3.0), (1.0, 2.0, 13.0))
         """
         if transform is None:
@@ -553,7 +566,8 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
             sage: from sage.plot.plot3d.transform import Transformation
             sage: Cylinder(3, 1).get_radius()
             3.0
-            sage: Cylinder(3, 1).get_radius(Transformation(trans=(1,2,3), scale=(2,2,2)))
+            sage: Cylinder(3, 1).get_radius(Transformation(trans=(1,2,3),
+            ....:                                          scale=(2,2,2)))
             6.0
         """
         if transform is None:
@@ -670,12 +684,12 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
 
     INPUT:
 
-    - start -- (x,y,z) point; the starting point of the arrow
-    - end -- (x,y,z) point; the end point
-    - width -- (default: 1); how wide the arrow is
-    - radius -- (default: width/50.0) the radius of the arrow
-    - head_radius -- (default: 3*radius); radius of arrow head
-    - head_len -- (default: 3*head_radius); len of arrow head
+    - ``start`` -- (x,y,z) point; the starting point of the arrow
+    - ``end`` -- (x,y,z) point; the end point
+    - ``width`` -- (default: 1); how wide the arrow is
+    - ``radius`` -- (default: ``width/50.0``) the radius of the arrow
+    - ``head_radius`` -- (default: ``3*radius``); radius of arrow head
+    - ``head_len`` -- (default: ``3*head_radius``); len of arrow head
 
     EXAMPLES:
 
@@ -708,7 +722,8 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
 
     A fat arrow head::
 
-        sage: arrow3d((2,1,0), (1,1,1), color='green', head_radius=0.3, aspect_ratio=[1,1,1])
+        sage: arrow3d((2,1,0), (1,1,1), color='green', head_radius=0.3,
+        ....:         aspect_ratio=[1,1,1])
         Graphics3d Object
 
     .. PLOT::
@@ -717,7 +732,8 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
 
     Many arrows arranged in a circle (flying spears?)::
 
-        sage: sum([arrow3d((cos(t),sin(t),0),(cos(t),sin(t),1)) for t in [0,0.3,..,2*pi]])
+        sage: sum(arrow3d((cos(t),sin(t),0), (cos(t),sin(t),1))                         # needs sage.symbolic
+        ....:     for t in [0,0.3,..,2*pi])
         Graphics3d Object
 
     .. PLOT::
@@ -730,7 +746,7 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
         sphinx_plot(G)
 
     Change the width of the arrow. (Note: for an arrow that scales with zoom, please consider
-    the ``line3d`` function with the option ``arrow_head=True``)::
+    the :func:`line3d` function with the option ``arrow_head=True``)::
 
         sage: arrow3d((0,0,0), (1,1,1), width=1)
         Graphics3d Object
@@ -804,7 +820,7 @@ cdef class Sphere(ParametricSurface):
         from sage.plot.plot3d.shapes import Sphere
         sphinx_plot(Sphere(3))
 
-    Plot with aspect_ratio=1 to see it unsquashed::
+    Plot with ``aspect_ratio=1`` to see it unsquashed::
 
         sage: S = Sphere(3, color='blue') + Sphere(2, color='red').translate(0,3,0)
         sage: S.show(aspect_ratio=1)
@@ -970,8 +986,8 @@ cdef class Torus(ParametricSurface):
     """
     INPUT:
 
-    - R -- (default: 1) outer radius
-    - r -- (default: .3) inner radius
+    - ``R`` -- (default: ``1``) outer radius
+    - ``r`` -- (default: ``.3``) inner radius
 
     OUTPUT:
 
@@ -998,7 +1014,8 @@ cdef class Torus(ParametricSurface):
 
     A rubberband ball::
 
-        sage: show(sum([Torus(1, .03, color=(1, t/30.0, 0)).rotate((1,1,1),t) for t in range(30)]))
+        sage: show(sum(Torus(1, .03, color=(1, t/30.0, 0)).rotate((1,1,1), t)
+        ....:          for t in range(30)))
 
     .. PLOT::
 
@@ -1007,8 +1024,12 @@ cdef class Torus(ParametricSurface):
 
     Mmm... doughnuts::
 
-        sage: D = Torus(1, .4, color=(.5, .3, .2)) + Torus(1, .3, color='yellow').translate(0, 0, .15)
-        sage: G = sum(D.translate(RDF.random_element(-.2, .2), RDF.random_element(-.2, .2), .8*t) for t in range(10))
+        sage: D = Torus(1, .4, color=(.5, .3, .2))
+        sage: D += Torus(1, .3, color='yellow').translate(0, 0, .15)
+        sage: G = sum(D.translate(RDF.random_element(-.2, .2),
+        ....:                     RDF.random_element(-.2, .2),
+        ....:                     .8*t)
+        ....:         for t in range(10))
         sage: G.show(aspect_ratio=1, frame=False)
 
     .. PLOT::
