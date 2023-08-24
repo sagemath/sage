@@ -1692,8 +1692,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
     def char_var(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
         r"""
-        Return the characteristic varieties of the group ``self``. There are several definitions
-        of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
+        Return the characteristic varieties of the group ``self``.
+
+        There are several definitions of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
         group algebra of `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus). Each
         element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k` th-characteristic
         variety is
