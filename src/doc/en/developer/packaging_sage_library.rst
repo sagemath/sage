@@ -156,7 +156,7 @@ The source directory of a distribution package, such as
 
   adds or updates the directives in the specified files; and::
 
-    $ ./sage --fixdistributions --set sagemath-polyhedra \
+    $ ./sage --fixdistributions --add sagemath-polyhedra \
          src/sage/geometry/polyhedron
 
   adds the directive to all files in the given directory that do not
