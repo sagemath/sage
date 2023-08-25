@@ -968,19 +968,31 @@ class PolynomialFunctor(ConstructionFunctor):
             sage: P = ZZ['x'].construction()[0]
             sage: Q = ZZ['y','x'].construction()[0]
             sage: P.merge(Q)
+            MPoly[y,x]
             sage: P.merge(P) is P
             True
 
+        TESTS::
+
+            sage: P = ZZ['x'].construction()[0]
+            sage: Q = ZZ['y'].construction()[0]
+            sage: P.merge(Q)
+            MPoly[x,y]
         """
+        if isinstance(other, PolynomialFunctor):
+            if self.var == other.var:
+                # i.e. they only differ in sparsity
+                if not self.sparse:
+                    return self
+                return other
+            return MultiPolynomialFunctor((self.var, other.var), None)
+
         if isinstance(other, MultiPolynomialFunctor):
-            return other.merge(self)
-        elif self == other:
-            # i.e., they only differ in sparsity
-            if not self.sparse:
-                return self
-            return other
-        else:
-            return None
+            if self.var in other.vars:
+                return other
+            return MultiPolynomialFunctor((self.var,) + other.vars, None)
+
+        return None
 
     def _repr_(self):
         """
@@ -1113,35 +1125,63 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, IdentityConstructionFunctor):
             return self
-        if isinstance(other, MultiPolynomialFunctor):
-            if self.term_order != other.term_order:
-                raise CoercionException("Incompatible term orders (%s,%s)." % (self.term_order, other.term_order))
-            if set(self.vars).intersection(other.vars):
-                raise CoercionException("Overlapping variables (%s,%s)" % (self.vars, other.vars))
-            return MultiPolynomialFunctor(other.vars + self.vars, self.term_order)
-        elif (isinstance(other, CompositeConstructionFunctor)
-              and isinstance(other.all[-1], MultiPolynomialFunctor)):
+        if isinstance(other, (MultiPolynomialFunctor, PolynomialFunctor)):
+            return other.merge(self)
+            # if self.term_order != other.term_order:
+            #     raise CoercionException("Incompatible term orders (%s,%s)." % (self.term_order, other.term_order))
+            # if set(self.vars).intersection(other.vars):
+            #     raise CoercionException("Overlapping variables (%s,%s)" % (self.vars, other.vars))
+            # return MultiPolynomialFunctor(other.vars + self.vars, self.term_order)
+        if (isinstance(other, CompositeConstructionFunctor)
+                and isinstance(other.all[-1], (MultiPolynomialFunctor, PolynomialFunctor))):
             return CompositeConstructionFunctor(other.all[:-1], self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """
         Merge ``self`` with another construction functor, or return ``None``.
 
+        One can merge only with PolynomialFunctor and MultiPolynomialFunctor.
+
         EXAMPLES::
 
             sage: F = sage.categories.pushout.MultiPolynomialFunctor(['x','y'], None)
-            sage: G = sage.categories.pushout.MultiPolynomialFunctor(['t'], None)
-            sage: F.merge(G) is None
-            True
+            sage: G = sage.categories.pushout.MultiPolynomialFunctor(['t','u'], None)
+            sage: F.merge(G)
+            MPoly[x,y,t,u]
             sage: F.merge(F)
             MPoly[x,y]
+
+        TESTS::
+
+            sage: P = ZZ['x,y'].construction()[0]
+            sage: Q = ZZ['u'].construction()[0]
+            sage: P.merge(Q)
+            MPoly[x,y,u]
+
+            sage: P = ZZ['x,y'].construction()[0]
+            sage: Q = ZZ['y,z'].construction()[0]
+            sage: P.merge(Q)
+            MPoly[x,y,z]
         """
-        if self == other:
-            return self
-        else:
-            return None
+        if isinstance(other, MultiPolynomialFunctor):
+            if self.vars == other.vars:
+                return self
+            ret = list(self.vars)
+            cur_vars = set(ret)
+            for v in other.vars:
+                if v not in cur_vars:
+                    ret.append(v)
+            return MultiPolynomialFunctor(ret, None)
+
+        if isinstance(other, PolynomialFunctor):
+            ret = self.vars
+            v = other.var
+            if v not in set(ret):
+                ret += (v,)
+            return MultiPolynomialFunctor(ret, None)
+
+        return None
 
     def expand(self):
         """
@@ -1164,11 +1204,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             Multivariate Polynomial Ring in x, y, z, t over Rational Field
             sage: T.<y,s> = QQ[]
             sage: x + s
-            Traceback (most recent call last):
-            ...
-            TypeError: unsupported operand parent(s) for +:
-            'Multivariate Polynomial Ring in x, y, z over Integer Ring' and
-            'Multivariate Polynomial Ring in y, s over Rational Field'
+            x + s
             sage: R = PolynomialRing(ZZ, 'x', 50)
             sage: S = PolynomialRing(GF(5), 'x', 20)                                    # optional - sage.rings.finite_rings
             sage: R.gen(0) + S.gen(0)                                                   # optional - sage.rings.finite_rings
@@ -3063,16 +3099,16 @@ class QuotientFunctor(ConstructionFunctor):
         # Get the optional arguments:
         as_field = self.as_field or other.as_field
         kwds = {}
-        for k,v in self.kwds.items():
+        for k, v in self.kwds.items():
             kwds[k] = v
-        for k,v in other.kwds.items():
-            if k=='category':
+        for k, v in other.kwds.items():
+            if k == 'category':
                 if kwds[k] is not None:
-                    kwds[k] = v.join([v,kwds[k]])
+                    kwds[k] = v.join([v, kwds[k]])
                 else:
                     kwds[k] = v
                 continue
-            if k in kwds and kwds[k] is not None and v!=kwds[k]:
+            if k in kwds and kwds[k] is not None and v != kwds[k]:
                 # Don't know what default to choose. Hence: No merge!
                 return None
             kwds[k] = v
@@ -4077,11 +4113,7 @@ def pushout(R, S):
     ::
 
         sage: pushout(ZZ['x,y,z'], QQ['w,z,t'])
-        Traceback (most recent call last):
-        ...
-        CoercionException: ('Ambiguous Base Extension',
-        Multivariate Polynomial Ring in x, y, z over Integer Ring,
-        Multivariate Polynomial Ring in w, z, t over Rational Field)
+        Multivariate Polynomial Ring in w, x, y, z, t over Rational Field
         sage: pushout(ZZ['x,y,z'], QQ['w,x,z,t'])
         Multivariate Polynomial Ring in w, x, y, z, t over Rational Field
 
@@ -4252,9 +4284,7 @@ def pushout(R, S):
         Generalized Polynomial Ring in X^(Integer Ring)
           over Multivariate Polynomial Ring in a, b, c over Rational Field
         sage: pushout(GP_ZZ(ZZ['a,b']), GP_ZZ(ZZ['c,d']))
-        Traceback (most recent call last):
-        ...
-        CoercionException: ('Ambiguous Base Extension', ...)
+        Generalized Polynomial Ring in X^(Integer Ring) over Multivariate Polynomial Ring in c, a, d, b over Integer Ring
 
     ::
 
@@ -4284,9 +4314,7 @@ def pushout(R, S):
         Generalized Polynomial Ring in X^(Univariate Polynomial Ring in t
           over Rational Field) over Rational Field
         sage: pushout(GP_ZZt(ZZ['a,b']), GP_QQ(ZZ['c,d']))
-        Traceback (most recent call last):
-        ...
-        CoercionException: ('Ambiguous Base Extension', ...)
+        Generalized Polynomial Ring in X^(Univariate Polynomial Ring in t over Rational Field) over Multivariate Polynomial Ring in c, a, d, b over Integer Ring
         sage: pushout(GP_ZZt(ZZ['a,b']), GP_QQ(ZZ['b,c']))
         Generalized Polynomial Ring
          in X^(Univariate Polynomial Ring in t over Rational Field)
