@@ -448,9 +448,9 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         (t - 1)/(q*t - 1)*x0 + x1
         sage: NS.E([0,1])                                                               # needs sage.groups
         (t - 1)/(q*t - 1)*x0 + x1
-        sage: NS.E([2,0])                                                               # needs sage.groups
-        x0^2 + (q*t - q)/(q*t - 1)*x0*x1
         sage: EE([2,0])
+        x0^2 + (q*t - q)/(q*t - 1)*x0*x1
+        sage: NS.E([2,0])                                                               # needs sage.groups
         x0^2 + (q*t - q)/(q*t - 1)*x0*x1
 
     The same, directly in the ambient lattice with several shifts::
@@ -681,13 +681,15 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
-        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))   # long time (23s), needs sage.combinat
+
+        sage: # needs sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
+        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))   # long time (23s)
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
-        sage: B = crystals.KirillovReshetikhin(['B',3,1],1,1)                           # needs sage.combinat
-        sage: T = crystals.TensorProduct(B,B)                                           # needs sage.combinat
-        sage: (T.one_dimensional_configuration_sum(q)   # long time (2s)                # needs sage.combinat
+        sage: B = crystals.KirillovReshetikhin(['B',3,1],1,1)
+        sage: T = crystals.TensorProduct(B,B)
+        sage: (T.one_dimensional_configuration_sum(q)   # long time (2s)
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
 
@@ -710,12 +712,14 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
-        sage: g = E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))        # long time (30s)
-        sage: f = LS.one_dimensional_configuration_sum(q)       # long time (1.5s), needs sage.combinat
-        sage: P = g.support()[0].parent()       # long time                             # needs sage.combinat
-        sage: B = P.algebra(q.parent())         # long time                             # needs sage.combinat
-        sage: sum(p[1]*B(P(p[0])) for p in f) == g      # long time                     # needs sage.combinat
+
+        sage: # long time, needs sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
+        sage: g = E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))    # 30s
+        sage: f = LS.one_dimensional_configuration_sum(q)                   # 1.5s
+        sage: P = g.support()[0].parent()
+        sage: B = P.algebra(q.parent())
+        sage: sum(p[1]*B(P(p[0])) for p in f) == g
         True
 
     ::
@@ -728,12 +732,14 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL, q, t, -1)
         sage: omega = E.keys().fundamental_weights()
         sage: La = R.weight_space().basis()
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])                          # needs sage.combinat
-        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))           # long time (20s), not tested, needs sage.combinat
+
+        sage: # needs sage.combinat
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
+        sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))           # long time (20s), not tested
         ....:   == LS.one_dimensional_configuration_sum(q)
         True
-        sage: LS = crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])                    # needs sage.combinat
-        sage: (E[-omega[1]-omega[2]].map_coefficients(lambda x: x.subs(t=0))    # not tested, long time (23s)
+        sage: LS = crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])
+        sage: (E[-omega[1]-omega[2]].map_coefficients(lambda x: x.subs(t=0))    # long time (23s), not tested
         ....:   == LS.one_dimensional_configuration_sum(q))
         True
 
@@ -1588,17 +1594,18 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(["B",3])                                                # needs sage.libs.gap
-            sage: W.element_class._repr_ = lambda x: "".join(str(i)                     # needs sage.libs.gap
+            sage: # needs sage.libs.gap
+            sage: W = WeylGroup(["B",3])
+            sage: W.element_class._repr_ = lambda x: "".join(str(i)
             ....:                                            for i in x.reduced_word())
             sage: K = QQ['q1,q2']
             sage: q1, q2 = K.gens()
-            sage: KW = W.algebra(K)                                                     # needs sage.libs.gap
-            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)                # needs sage.libs.gap
-            sage: E = T.Y_eigenvectors()                                                # needs sage.libs.gap
-            sage: w = W.an_element(); w                                                 # needs sage.libs.gap
+            sage: KW = W.algebra(K)
+            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)
+            sage: E = T.Y_eigenvectors()
+            sage: w = W.an_element(); w
             123
-            sage: E.twist(w,1)                                                          # needs sage.libs.gap
+            sage: E.twist(w,1)
             1231
         """
         return mu.simple_reflection(i)
@@ -1763,13 +1770,15 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: E = NonSymmetricMacdonaldPolynomials(KL,q, q1, q2)
             sage: L0 = E.keys()
             sage: alpha = L.simple_coroots()
-            sage: E.eigenvalue(L0((0,0)), alpha[0])  # not checked # not tested
+
+            sage: # not tested
+            sage: E.eigenvalue(L0((0,0)), alpha[0])  # not checked
             q/t
-            sage: E.eigenvalue(L0((1,0)), alpha[1])  # What Mark got by hand # not tested
+            sage: E.eigenvalue(L0((1,0)), alpha[1])  # What Mark got by hand
             q
-            sage: E.eigenvalue(L0((1,0)), alpha[2])  # not checked # not tested
+            sage: E.eigenvalue(L0((1,0)), alpha[2])  # not checked
             t
-            sage: E.eigenvalue(L0((1,0)), alpha[0])  # not checked # not tested
+            sage: E.eigenvalue(L0((1,0)), alpha[0])  # not checked
             1
 
             sage: L = RootSystem("B2~*").ambient_space()
