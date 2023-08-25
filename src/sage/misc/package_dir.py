@@ -476,6 +476,10 @@ if __name__ == '__main__':
                                  for line in f
                                  if line.startswith('sage/'))
     elif not args.filename:
+        if distribution:
+            print("Switches '--add' and '--set' require the switch '--from-egg-info' "
+                  "or one or more file or directory names")
+            sys.exit(1)
         from sage.env import SAGE_SRC
         if (not SAGE_SRC
                 or not os.path.exists(os.path.join(SAGE_SRC, 'sage'))
