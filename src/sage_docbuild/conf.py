@@ -310,6 +310,7 @@ if PythonModule("furo").is_present():
     # or fully qualified paths (eg. https://...)
     html_css_files = [
         'custom-furo.css',
+        'custom-jupyter-sphinx.css',
     ]
     # A list of paths that contain extra templates (or templates that overwrite
     # builtin/theme-specific templates). Relative paths are taken as relative
