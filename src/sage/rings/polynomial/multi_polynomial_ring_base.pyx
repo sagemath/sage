@@ -1839,8 +1839,7 @@ class MatrixPolynomialAction(Action):
 
     def _act_(self, mat, polynomial):
         assert mat.base_ring()==polynomial.base_ring()
-        polynomial_vars=polynomial.parent().gens()
-        vars_to_sub_module_context=mat*MatrixConstructor(polynomial_vars).transpose()
-        vars_to_sub_ring_context=map(PolynomialRing(mat.base_ring(), polynomial_vars), vars_to_sub_module_context)
-        substitution_dict={v:s for v,s in zip(polynomial_vars, vars_to_sub_ring_context)}
+        vars_to_sub_module_context=mat*self._vars_vector
+        vars_to_sub_ring_context=map(PolynomialRing(mat.base_ring(), self._poly_vars), vars_to_sub_module_context)
+        substitution_dict={v:s for v,s in zip(self._poly_vars, vars_to_sub_ring_context)}
         return polynomial.subs(substitution_dict)
