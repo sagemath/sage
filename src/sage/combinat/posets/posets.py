@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# sage.doctest: needs sage.graphs sage.modules sage.plot sage.rings.finite_rings
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Finite posets
 
@@ -434,7 +434,8 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
        With a function that identifies the cover relations: the set
        partitions of `\{1, 2, 3\}` ordered by refinement::
 
-          sage: elms = SetPartitions(3)                                                 # needs sage.combinat
+          sage: # optional - sage.combinat
+          sage: elms = SetPartitions(3)
           sage: def fcn(A, B):
           ....:     if len(A) != len(B)+1:
           ....:         return False
@@ -442,7 +443,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
           ....:         if not any(set(a).issubset(b) for b in B):
           ....:             return False
           ....:     return True
-          sage: Poset((elms, fcn), cover_relations=True)                                # needs sage.combinat
+          sage: Poset((elms, fcn), cover_relations=True)
           Finite poset containing 5 elements
 
     3. A dictionary of upper covers::
@@ -1932,12 +1933,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         This function can be used without any parameters::
 
+            sage: # optional - sage.plot
             sage: D12 = posets.DivisorLattice(12)
             sage: D12.plot()
             Graphics object consisting of 14 graphics primitives
 
         Just the abstract form of the poset; examples of relabeling::
 
+            sage: # optional - sage.plot
             sage: D12.plot(label_elements=False)
             Graphics object consisting of 8 graphics primitives
             sage: d = {1: 0, 2: 'a', 3: 'b', 4: 'c', 6: 'd', 12: 1}
@@ -1949,12 +1952,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Some settings for coverings::
 
+            sage: # optional - sage.plot
             sage: d = {(a, b): b/a for a, b in D12.cover_relations()}
             sage: D12.plot(cover_labels=d, cover_color='gray', cover_style='dotted')
             Graphics object consisting of 21 graphics primitives
 
         To emphasize some elements and show some options::
 
+            sage: # optional - sage.plot
             sage: L = LatticePoset({0: [1, 2, 3, 4], 1: [12], 2: [6, 7],
             ....:                   3: [5, 9], 4: [5, 6, 10, 11], 5: [13],
             ....:                   6: [12], 7: [12, 8, 9], 8: [13], 9: [13],
@@ -1973,6 +1978,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         We check that ``label_elements`` and ``element_labels`` are honored::
 
+            sage: # optional - sage.plot
             sage: def get_plot_labels(P):
             ....:     return sorted(t.string for t in P
             ....:                   if isinstance(t, sage.plot.text.Text))
@@ -1990,6 +1996,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The following checks that :trac:`18936` has been fixed and labels still work::
 
+            sage: # optional - sage.plot
             sage: P = Poset({0: [1,2], 1:[3]})
             sage: heights = {1 : [0], 2 : [1], 3 : [2,3]}
             sage: P.plot(heights=heights)
@@ -2000,6 +2007,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The following checks that equal labels are allowed (:trac:`15206`)::
 
+            sage: # optional - sage.plot
             sage: P = Poset({1: [2,3]})
             sage: labs = {i: P.rank(i) for i in range(1, 4)}; labs
             {1: 0, 2: 1, 3: 1}
@@ -2008,6 +2016,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The following checks that non-hashable labels are allowed (:trac:`15206`)::
 
+            sage: # optional - sage.plot
             sage: P = Poset({1: [2,3]})
             sage: labs = {1: [2, 3], 2: [], 3: []}; labs
             {1: [2, 3], 2: [], 3: []}
@@ -2016,6 +2025,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Plot of the empty poset::
 
+            sage: # optional - sage.plot
             sage: P = Poset({})
             sage: P.plot()
             Graphics object consisting of 0 graphics primitives
@@ -2103,6 +2113,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # optional - sage.plot
             sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
             sage: D.plot(label_elements=False)
             Graphics object consisting of 6 graphics primitives
@@ -2112,9 +2123,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         One more example with cover labels::
 
+            sage: # optional - sage.plot
             sage: P = posets.PentagonPoset()
             sage: P.show(cover_labels=lambda a, b: a - b)
-
         """
         # We split the arguments into those meant for plot() and those meant for show()
         #
@@ -6710,12 +6721,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # optional - sage.plot
             sage: P = Poset((divisors(1000), attrcall("divides")))
             sage: P.order_ideal_plot([20, 25])
             Graphics object consisting of 41 graphics primitives
 
         TESTS::
 
+            sage: # optional - sage.plot
             sage: P = Poset()  # Test empty poset
             sage: P.order_ideal_plot([])
             Graphics object consisting of 0 graphics primitives
