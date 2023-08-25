@@ -652,11 +652,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: La = R.weight_space().basis()
         sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
         sage: (E[-2*omega[1]].map_coefficients(lambda x: x.subs(t=0))   # long time (15s)
-        ....:   == LS.one_dimensional_configuration_sum(q)
+        ....:   == LS.one_dimensional_configuration_sum(q))
         True
         sage: LS = crystals.ProjectedLevelZeroLSPaths(La[1] + La[2])
-        sage: (E[-omega[1]-omega[2]].map_coefficients(lambda x: x.subs(t=0))    # long time (45s)
-        ....:   == LS.one_dimensional_configuration_sum(q)
+        sage: (E[-omega[1] - omega[2]].map_coefficients(lambda x: x.subs(t=0))  # long time (45s)
+        ....:   == LS.one_dimensional_configuration_sum(q))
         True
 
     ::
