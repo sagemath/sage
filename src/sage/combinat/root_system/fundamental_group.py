@@ -327,7 +327,6 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         return hash(self.value())
 
 
-
 class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                                       Parent):
     r"""
