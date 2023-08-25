@@ -1634,9 +1634,9 @@ class Graph(GenericGraph):
             sage: g.is_forest(certificate=True)
             (True, None)
             sage: (2*g + graphs.PetersenGraph() + g).is_forest(certificate=True)
-            (False, [68, 66, 69, 67, 65])
+            (False, [64, 69, 67, 65, 60])
         """
-        connected_components = self.connected_components()
+        connected_components = self.connected_components(sort=False)
         number_of_connected_components = len(connected_components)
         isit = (self.order() ==
                 self.size() + number_of_connected_components)
@@ -8910,7 +8910,7 @@ class Graph(GenericGraph):
         if not self:
             yield []
             return
-        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components()):
+        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components(sort=False)):
             return
 
         def rec(G):
@@ -9164,7 +9164,7 @@ class Graph(GenericGraph):
 
         self._scream_if_not_simple()
         if not self.is_connected():
-            connected_i = self.connected_component_containing_vertex(i)
+            connected_i = self.connected_component_containing_vertex(i, sort=False)
             if j in connected_i:
                 component = self.subgraph(connected_i)
                 return component.effective_resistance(i, j)

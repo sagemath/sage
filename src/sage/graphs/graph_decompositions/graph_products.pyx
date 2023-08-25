@@ -309,7 +309,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     # Gathering the connected components, relabeling the vertices on-the-fly
     edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-             for cc in h.connected_components()]
+             for cc in h.connected_components(sort=False)]
 
     # Only one connected component ?
     if len(edges) == 1:
@@ -320,7 +320,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     for cc in edges:
         tmp = Graph()
         tmp.add_edges(cc)
-        factors.append(tmp.subgraph(vertices=tmp.connected_components()[0]))
+        factors.append(tmp.subgraph(vertices=tmp.connected_components(sort=False)[0]))
 
     # Computing the product of these graphs
     answer = factors[0]

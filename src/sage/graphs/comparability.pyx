@@ -257,7 +257,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
     # Each vertex can partition its neighbors into equivalence classes
     equivalence_classes = {}
     for v in g:
-        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components()
+        equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components(sort=False)
 
     # We build a graph h with one vertex per (vertex of g + equivalence class)
     from sage.graphs.graph import Graph
@@ -288,7 +288,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
         if equivalence_class:
 
             # Returning the largest equivalence class
-            cc = sorted(h.connected_components(), key=len)[-1]
+            cc = sorted(h.connected_components(sort=False), key=len)[-1]
 
             edges = []
             for v, sid in cc:

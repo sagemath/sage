@@ -342,7 +342,7 @@ def is_partial_cube(G, certificate=False):
 
         # Map vertices to components of labeled-edge graph
         component = {}
-        for i, SCC in enumerate(labeled.connected_components()):
+        for i, SCC in enumerate(labeled.connected_components(sort=False)):
             for v in SCC:
                 component[v] = i
 

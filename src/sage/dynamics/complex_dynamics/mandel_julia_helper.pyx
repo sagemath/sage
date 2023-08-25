@@ -680,6 +680,15 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         sage: f = z^4 - z + c
         sage: polynomial_mandelbrot(f, pixel_count=100)
         100x100px 24-bit RGB image
+
+    ::
+
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import polynomial_mandelbrot
+        sage: B.<c> = CC[]
+        sage: R.<z> = B[]
+        sage: f = z^2*(z-c) + c
+        sage: polynomial_mandelbrot(f, pixel_count=100)
+        100x100px 24-bit RGB image
     """
 
     cdef:
@@ -763,7 +772,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         df = f.derivative(z).univariate_polynomial()
         critical_pts = df.roots(multiplicities=False)
         constant_c = True
-    except PariError:
+    except (PariError, TypeError):
         constant_c = False
 
     # If c is in the constant term of the polynomial, then the critical points

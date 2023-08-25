@@ -4078,7 +4078,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             v = self.vertices()[0]
         else:
             v = simplex[0]
-        vertices = self.graph().connected_component_containing_vertex(v)
+        vertices = self.graph().connected_component_containing_vertex(v, sort=False)
         facets = [f for f in self.facets() if f.is_face(Simplex(vertices))]
         return SimplicialComplex(facets)
 

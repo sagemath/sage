@@ -309,9 +309,15 @@ cdef class TwoSumNode(SumNode):
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+<<<<<<< HEAD
             sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True), 
             ....:                       [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0]
             ....:                       ,[1, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+=======
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                       [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
+            ....:                        [1, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+>>>>>>> 49f2c333b70169cdd361ccc8a1d704075697fe01
             [1 1 1 1 1]
             [1 1 1 0 0]
             [1 0 1 1 0]
@@ -337,7 +343,11 @@ cdef class TwoSumNode(SumNode):
         return Matrix_cmr_chr_sparse.two_sum(M1, M2, x - 1, y - 1)
 
 cdef class ThreeSumNode(SumNode):
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 49f2c333b70169cdd361ccc8a1d704075697fe01
     def block_matrix_form(self):
         M1, M2 = self.summand_matrices()
         x, y= len(M1.columns()), len(M2.columns())

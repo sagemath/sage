@@ -465,9 +465,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         which one is 0 and the other is 1
         - ``first_col_index2`` -- index of the other column which is identical to second_mat[second_col_index1] in every entry except for one 
         row in which one is 0 and the other is 1
+
         EXAMPLES::
 
-        
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
             ....:                      [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
             ....:                       [0, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M
@@ -551,9 +552,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             u = list(second_subrows[i])
             r.extend(u)
             row_list.append(r)
+<<<<<<< HEAD
         x1 = len(first_subrows)
         x2 = len(first_submat.columns())
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
+=======
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
+>>>>>>> 49f2c333b70169cdd361ccc8a1d704075697fe01
 
     def delete_rows(self, indices):
         rows = self.rows()
@@ -866,9 +871,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: N = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True), [[1, 0, 0, 0, 1, -1, 0, 0, 0],
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True), [[1, 0, 0, 0, 1, -1, 1, 0, 0],
             ....:                                  [0, 1, 0, 0, 0, 1, -1, 1, 0], [0, 0, 1, 0, 0, 0, 1, -1, 1], 
-            ....:                                  [0, 0, 0, 1, -1, 0, 0, 0, -1]]); N
+            ....:                                  [0, 0, 0, 1, 1, 0, 0, 1, -1]]); M
             [ 1  0  0  0  1 -1  1  0  0]
             [ 0  1  0  0  0  1 -1  1  0]
             [ 0  0  1  0  0  0  1 -1  1]

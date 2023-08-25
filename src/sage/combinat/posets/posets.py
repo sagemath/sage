@@ -1368,11 +1368,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Poset(([1,2], [[1,2]]), cover_relations = True)
-            sage: print(P._latex_()) #optional - dot2tex graphviz
+            sage: print(P._latex_())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_...) at (6.0...bp,...bp) [draw,draw=none] {$...$};
-              \node (node_...) at (6.0...bp,...bp) [draw,draw=none] {$...$};
+            \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
               \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
@@ -5330,7 +5330,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         fusion = fusion.transitive_closure()
         resu = []
-        for s in fusion.connected_components():
+        for s in fusion.connected_components(sort=False):
             subg = [x for x in prod_dg if all(x[i] == v0[i] for i in factors_range
                                               if i not in s)]
             resu.append(Poset(prod_dg.subgraph(subg)))

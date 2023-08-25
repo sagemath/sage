@@ -47,8 +47,8 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
     sage: E = EllipticCurve('43a'); P = E.heegner_point(-7)
     sage: P.x_poly_exact()
     x
-    sage: P.point_exact()
-    (0 : 0 : 1)
+    sage: z = P.point_exact(); z == E(0,0,1) or -z == E(0,0,1)
+    True
 
     sage: E = EllipticCurve('997a')
     sage: E.rank()
@@ -58,16 +58,17 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
     sage: P = E.heegner_point(-19)
     sage: P.x_poly_exact()
     x - 141/49
-    sage: P.point_exact()
-    (141/49 : -162/343 : 1)
+    sage: z = P.point_exact(); z == E(141/49, -162/343, 1)  or -z == E(141/49, -162/343, 1)
+    True
 
 Here we find that the Heegner point generates a subgroup of index 3::
 
     sage: E = EllipticCurve('92b1')
     sage: E.heegner_discriminants_list(1)
     [-7]
-    sage: P = E.heegner_point(-7); z = P.point_exact(); z
-    (0 : 1 : 1)
+    sage: P = E.heegner_point(-7)
+    sage: z = P.point_exact(); z == E(0, 1, 1)  or -z == E(0, 1, 1)
+    True
     sage: E.regulator()
     0.0498083972980648
     sage: z.height()
@@ -6421,8 +6422,8 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
         sage: P = E.heegner_point(-7); P                          # indirect doctest
         Heegner point of discriminant -7 on elliptic curve of conductor 37
-        sage: P.point_exact()
-        (0 : 0 : 1)
+        sage: z = P.point_exact(); z == E(0, 0, 1)  or -z == E(0, 0, 1)
+        True
         sage: P.curve()
         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: P = E.heegner_point(-40).point_exact(); P
@@ -7139,14 +7140,15 @@ def heegner_sha_an(self, D, prec=53):
     2.3 in [GZ1986]_ page 311, then that conjecture is
     false, as the following example shows::
 
-        sage: E = EllipticCurve('65a')                              # long time
-        sage: E.heegner_sha_an(-56)                                 # long time
+        sage: # long time
+        sage: E = EllipticCurve('65a')
+        sage: E.heegner_sha_an(-56)
         1.00000000000000
-        sage: E.torsion_order()                                     # long time
+        sage: E.torsion_order()
         2
-        sage: E.tamagawa_product()                                  # long time
+        sage: E.tamagawa_product()
         1
-        sage: E.quadratic_twist(-56).rank()                         # long time
+        sage: E.quadratic_twist(-56).rank()
         2
     """
     # check conditions, then return from cache if possible.

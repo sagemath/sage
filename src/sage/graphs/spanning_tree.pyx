@@ -1178,8 +1178,8 @@ def spanning_trees(g, labels=False):
             # e=xy links the CC (connected component) of forest containing x
             # with the CC containing y. Any other edge which does that cannot be
             # added to forest anymore, and B is the list of them
-            c1 = forest.connected_component_containing_vertex(e[0])
-            c2 = forest.connected_component_containing_vertex(e[1])
+            c1 = forest.connected_component_containing_vertex(e[0], sort=False)
+            c2 = forest.connected_component_containing_vertex(e[1], sort=False)
             G.delete_edge(e)
             B = G.edge_boundary(c1, c2, sort=False)
             G.add_edge(e)

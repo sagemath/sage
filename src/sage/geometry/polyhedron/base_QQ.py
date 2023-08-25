@@ -1180,7 +1180,7 @@ class Polyhedron_QQ(Polyhedron_base):
             True
             sage: Hstar = p3.Hstar_function(S3)                         # optional - pynormaliz
             sage: Hlin  = p3.Hstar_function(S3,                         # optional - pynormaliz
-            ....:                           output='Hstar_as_lin_comb')]
+            ....:                           output='Hstar_as_lin_comb')
             sage: p3.is_effective(Hstar, Hlin)                          # optional - pynormaliz
             True
 
@@ -1242,7 +1242,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p2 = Polyhedron(vertices=[[0], [1/2]],                     # optional - pynormaliz
             ....:                 backend='normaliz')
             sage: Hstar    = p2.Hstar_function()                             # optional - pynormaliz
-            sage: Hstarlin = p2.Hstar_function(output='Hstar_as_lin_comb')]  # optional - pynormaliz
+            sage: Hstarlin = p2.Hstar_function(output='Hstar_as_lin_comb')   # optional - pynormaliz
             sage: p1._is_effective_normaliz(Hstar, Hstarlin)                 # optional - pynormaliz
             Traceback (most recent call last):
             ...

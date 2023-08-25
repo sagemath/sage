@@ -44,6 +44,9 @@ include sage/geometry/triangulation/triangulations.cc
 include sage/geometry/triangulation/data.cc
 include sage/geometry/triangulation/functions.cc
 
+# Exclude extension modules shipped by optional packages
+exclude sage/graphs/bliss.pyx
+
 global-exclude __pycache__
 global-exclude *.py[co]
 global-exclude *.bak

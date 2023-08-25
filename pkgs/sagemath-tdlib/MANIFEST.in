@@ -1,0 +1,17 @@
+global-include all__sagemath_tdlib.py
+
+include VERSION.txt
+
+global-exclude *.c
+global-exclude *.cpp
+
+include sage/graphs/graph_decompositions/sage_tdlib.cpp
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

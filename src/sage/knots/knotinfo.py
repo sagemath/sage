@@ -175,13 +175,14 @@ Using the ``column_type`` of a property::
 
 You can launch web-pages attached to the links::
 
-    sage: K.diagram()                 # not tested
+    sage: # not tested
+    sage: K.diagram()
     True
-    sage: L.diagram(single=True)      # not tested
+    sage: L.diagram(single=True)
     True
-    sage: L.knot_atlas_webpage()      # not tested
+    sage: L.knot_atlas_webpage()
     True
-    sage: K.knotilus_webpage()        # not tested
+    sage: K.knotilus_webpage()
     True
 
 and the description web-pages of the properties::
