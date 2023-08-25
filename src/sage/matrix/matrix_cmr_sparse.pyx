@@ -552,13 +552,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             u = list(second_subrows[i])
             r.extend(u)
             row_list.append(r)
-<<<<<<< HEAD
-        x1 = len(first_subrows)
-        x2 = len(first_submat.columns())
-        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
-=======
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
->>>>>>> 49f2c333b70169cdd361ccc8a1d704075697fe01
 
     def delete_rows(self, indices):
         rows = self.rows()
