@@ -77,7 +77,7 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
 
       AS_IF(
         [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c dnl
-           "from setuptools.version import pkg_resources;              dnl
+           "import pkg_resources;                                      dnl
             pkg_resources.require('${SAGE_PKG_VERSPEC}'.splitlines())" dnl
 	 2>&AS_MESSAGE_LOG_FD],
         [AC_MSG_RESULT(yes)],
