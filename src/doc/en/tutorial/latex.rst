@@ -213,12 +213,14 @@ In the Jupyter notebook,
     sqrt(x + y)
 
 .. JUPYTER-EXECUTE::
+
     latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
     sqrt(x + y)
 
 .. JUPYTER-EXECUTE::
+
    latex.extra_macros('')
-    %display plain
+   %display plain
 
 
 .. _sec-custom-processing:
