@@ -170,12 +170,27 @@ done in written work.  This is accomplished by redefining the
     <html>\[\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(False)
 
+In the Jupyter notebook, you see
+
+.. JUPYTER-EXECUTE::
+
+    %display latex
+    QQ
+
+.. JUPYTER-EXECUTE::
+
+    latex.blackboard_bold(True)
+    QQ
+
+.. JUPYTER-EXECUTE::
+
+    latex.blackboard_bold(False)
+    %display plain
+
 It is possible to take advantage of the extensible nature of LaTeX by adding in
 new macros. Individual macros can be added so that they are used when MathJax
-interprets a LaTeX snippet in the notebook.  ::
+interprets a LaTeX snippet. ::
 
-    sage: latex.extra_macros()
-    ''
     sage: latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
     sage: latex.extra_macros()
     '\\newcommand{\\sqrt}[1]{(#1)^\\frac{1}{2}}'
@@ -187,6 +202,23 @@ interprets a LaTeX snippet in the notebook.  ::
     sage: mj = MathJax()
     sage: mj(sqrt(x + y))
     <html>\[\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}\sqrt{x + y}\]</html>
+    sage: latex.extra_macros('')
+
+In the Jupyter notebook,
+
+.. JUPYTER-EXECUTE::
+
+    %display latex
+    var('x y')
+    sqrt(x + y)
+
+.. JUPYTER-EXECUTE::
+    latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
+    sqrt(x + y)
+
+.. JUPYTER-EXECUTE::
+   latex.extra_macros('')
+    %display plain
 
 
 .. _sec-custom-processing:
