@@ -47,37 +47,41 @@ viewer will be called to display the output.
 In the Jupyter notebook, you can see the rendered LaTeX representation of the
 output of the entered commands automatically. You can start this
 automatic rendering by executing ``%display latex`` (and stop by executing
-``%display plain``). Thus, in the Jupyter notebook, you get
+``%display plain``).
 
-.. JUPYTER-EXECUTE::
+.. ONLY:: html
 
-    %display latex
-    var('z')
-    z^12
+    Thus, in the Jupyter notebook, you get
 
-.. JUPYTER-EXECUTE::
+    .. JUPYTER-EXECUTE::
 
-    sqrt(z^2 + 1/2)
+        %display latex
+        var('z')
+        z^12
 
-.. JUPYTER-EXECUTE::
+    .. JUPYTER-EXECUTE::
 
-    'a string'
+        sqrt(z^2 + 1/2)
 
-.. JUPYTER-EXECUTE::
+    .. JUPYTER-EXECUTE::
 
-    QQ
+        'a string'
 
-.. JUPYTER-EXECUTE::
+    .. JUPYTER-EXECUTE::
 
-    ZZ['x']
+        QQ
 
-.. JUPYTER-EXECUTE::
+    .. JUPYTER-EXECUTE::
 
-    matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
+        ZZ['x']
 
-.. JUPYTER-EXECUTE::
+    .. JUPYTER-EXECUTE::
 
-    %display plain
+        matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
+
+    .. JUPYTER-EXECUTE::
+
+        %display plain
 
 The Jupyter notebook uses `MathJax <http://www.mathjax.org>`_ to render
 mathematics cleanly in a web browser. MathJax is an open source JavaScript
@@ -170,22 +174,24 @@ done in written work.  This is accomplished by redefining the
     <html>\[\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(False)
 
-In the Jupyter notebook, you see
+.. ONLY:: html
 
-.. JUPYTER-EXECUTE::
+    In the Jupyter notebook,
 
-    %display latex
-    QQ
+    .. JUPYTER-EXECUTE::
 
-.. JUPYTER-EXECUTE::
+        %display latex
+        QQ
 
-    latex.blackboard_bold(True)
-    QQ
+    .. JUPYTER-EXECUTE::
 
-.. JUPYTER-EXECUTE::
+        latex.blackboard_bold(True)
+        QQ
 
-    latex.blackboard_bold(False)
-    %display plain
+    .. JUPYTER-EXECUTE::
+
+        latex.blackboard_bold(False)
+        %display plain
 
 It is possible to take advantage of the extensible nature of LaTeX by adding in
 new macros. Individual macros can be added so that they are used when MathJax
@@ -204,23 +210,25 @@ interprets a LaTeX snippet. ::
     <html>\[\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}\sqrt{x + y}\]</html>
     sage: latex.extra_macros('')
 
-In the Jupyter notebook,
+.. ONLY:: html
 
-.. JUPYTER-EXECUTE::
+    In the Jupyter notebook,
 
-    %display latex
-    var('x y')
-    sqrt(x + y)
+    .. JUPYTER-EXECUTE::
 
-.. JUPYTER-EXECUTE::
+        %display latex
+        var('x y')
+        sqrt(x + y)
 
-    latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
-    sqrt(x + y)
+    .. JUPYTER-EXECUTE::
 
-.. JUPYTER-EXECUTE::
+        latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
+        sqrt(x + y)
 
-   latex.extra_macros('')
-   %display plain
+    .. JUPYTER-EXECUTE::
+
+       latex.extra_macros('')
+       %display plain
 
 
 .. _sec-custom-processing:
