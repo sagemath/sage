@@ -416,26 +416,28 @@ class AmbientSpace(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: L = RootSystem(["B",2,1]).ambient_space()
             sage: e = L.basis()
-            sage: L._plot_projection(e[0])                                              # needs sage.symbolic
+            sage: L._plot_projection(e[0])
             (1, 0, 0)
-            sage: L._plot_projection(e[1])                                              # needs sage.symbolic
+            sage: L._plot_projection(e[1])
             (0, 1, 0)
-            sage: L._plot_projection(e["delta"])                                        # needs sage.symbolic
+            sage: L._plot_projection(e["delta"])
             (0, 0, 0)
-            sage: L._plot_projection(e["deltacheck"])                                   # needs sage.symbolic
+            sage: L._plot_projection(e["deltacheck"])
             (0, 0, 1)
 
+            sage: # needs sage.symbolic
             sage: L = RootSystem(["A",2,1]).ambient_space()
             sage: e = L.basis()
-            sage: L._plot_projection(e[0])                                              # needs sage.symbolic
+            sage: L._plot_projection(e[0])
             (1/2, 989/1142, 0)
-            sage: L._plot_projection(e[1])                                              # needs sage.symbolic
+            sage: L._plot_projection(e[1])
             (-1, 0, 0)
-            sage: L._plot_projection(e["delta"])                                        # needs sage.symbolic
+            sage: L._plot_projection(e["delta"])
             (0, 0, 0)
-            sage: L._plot_projection(e["deltacheck"])                                   # needs sage.symbolic
+            sage: L._plot_projection(e["deltacheck"])
             (0, 0, 1)
         """
         from sage.modules.free_module_element import vector

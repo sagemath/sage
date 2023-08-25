@@ -374,15 +374,16 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: root_lattice = RootSystem(['C',2]).root_lattice()
-            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()               # needs sage.graphs
+            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()
             alphacheck[1] + 2*alphacheck[2]
-            sage: root_lattice.from_vector(vector([2,1])).max_coroot_le()               # needs sage.graphs
+            sage: root_lattice.from_vector(vector([2,1])).max_coroot_le()
             alphacheck[1] + 2*alphacheck[2]
             sage: root_lattice = RootSystem(['B',2]).root_lattice()
-            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()               # needs sage.graphs
+            sage: root_lattice.from_vector(vector([1,1])).max_coroot_le()
             2*alphacheck[1] + alphacheck[2]
-            sage: root_lattice.from_vector(vector([1,2])).max_coroot_le()               # needs sage.graphs
+            sage: root_lattice.from_vector(vector([1,2])).max_coroot_le()
             2*alphacheck[1] + alphacheck[2]
 
             sage: root_lattice.zero().max_coroot_le() is None                           # needs sage.graphs

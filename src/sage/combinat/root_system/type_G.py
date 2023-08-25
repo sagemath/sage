@@ -32,18 +32,19 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     By default, this ambient space uses the barycentric projection for plotting::
 
+        sage: # needs sage.symbolic
         sage: L = RootSystem(["G",2]).ambient_space()
         sage: e = L.basis()
-        sage: L._plot_projection(e[0])                                                  # needs sage.symbolic
+        sage: L._plot_projection(e[0])
         (1/2, 989/1142)
-        sage: L._plot_projection(e[1])                                                  # needs sage.symbolic
+        sage: L._plot_projection(e[1])
         (-1, 0)
-        sage: L._plot_projection(e[2])                                                  # needs sage.symbolic
+        sage: L._plot_projection(e[2])
         (1/2, -989/1142)
         sage: L = RootSystem(["A",3]).ambient_space()
         sage: l = L.an_element(); l
         (2, 2, 3, 0)
-        sage: L._plot_projection(l)                                                     # needs sage.symbolic
+        sage: L._plot_projection(l)
         (0, -1121/1189, 7/3)
 
     .. SEEALSO::
