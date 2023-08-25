@@ -434,7 +434,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
        With a function that identifies the cover relations: the set
        partitions of `\{1, 2, 3\}` ordered by refinement::
 
-          sage: # optional - sage.combinat
+          sage: # needs sage.combinat
           sage: elms = SetPartitions(3)
           sage: def fcn(A, B):
           ....:     if len(A) != len(B)+1:
@@ -1933,14 +1933,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         This function can be used without any parameters::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: D12 = posets.DivisorLattice(12)
             sage: D12.plot()
             Graphics object consisting of 14 graphics primitives
 
         Just the abstract form of the poset; examples of relabeling::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: D12.plot(label_elements=False)
             Graphics object consisting of 8 graphics primitives
             sage: d = {1: 0, 2: 'a', 3: 'b', 4: 'c', 6: 'd', 12: 1}
@@ -1952,14 +1952,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Some settings for coverings::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: d = {(a, b): b/a for a, b in D12.cover_relations()}
             sage: D12.plot(cover_labels=d, cover_color='gray', cover_style='dotted')
             Graphics object consisting of 21 graphics primitives
 
         To emphasize some elements and show some options::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: L = LatticePoset({0: [1, 2, 3, 4], 1: [12], 2: [6, 7],
             ....:                   3: [5, 9], 4: [5, 6, 10, 11], 5: [13],
             ....:                   6: [12], 7: [12, 8, 9], 8: [13], 9: [13],
@@ -1978,7 +1978,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         We check that ``label_elements`` and ``element_labels`` are honored::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: def get_plot_labels(P):
             ....:     return sorted(t.string for t in P
             ....:                   if isinstance(t, sage.plot.text.Text))
@@ -1996,7 +1996,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The following checks that :trac:`18936` has been fixed and labels still work::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = Poset({0: [1,2], 1:[3]})
             sage: heights = {1 : [0], 2 : [1], 3 : [2,3]}
             sage: P.plot(heights=heights)
@@ -2007,7 +2007,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The following checks that equal labels are allowed (:trac:`15206`)::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = Poset({1: [2,3]})
             sage: labs = {i: P.rank(i) for i in range(1, 4)}; labs
             {1: 0, 2: 1, 3: 1}
@@ -2016,7 +2016,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The following checks that non-hashable labels are allowed (:trac:`15206`)::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = Poset({1: [2,3]})
             sage: labs = {1: [2, 3], 2: [], 3: []}; labs
             {1: [2, 3], 2: [], 3: []}
@@ -2025,7 +2025,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Plot of the empty poset::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = Poset({})
             sage: P.plot()
             Graphics object consisting of 0 graphics primitives
@@ -2113,7 +2113,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })
             sage: D.plot(label_elements=False)
             Graphics object consisting of 6 graphics primitives
@@ -2123,7 +2123,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         One more example with cover labels::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = posets.PentagonPoset()
             sage: P.show(cover_labels=lambda a, b: a - b)
         """
@@ -3716,37 +3716,39 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: needs sage.groups sage.libs.flint
             sage: P = posets.PentagonPoset()
-            sage: P.magnitude()                                                         # needs sage.libs.flint
+            sage: P.magnitude()
             1
 
-            sage: W = SymmetricGroup(4)                                                 # needs sage.groups
-            sage: P = W.noncrossing_partition_lattice().without_bounds()                # needs sage.groups
-            sage: P.magnitude()                                                         # needs sage.groups sage.libs.flint
+            sage: W = SymmetricGroup(4)
+            sage: P = W.noncrossing_partition_lattice().without_bounds()
+            sage: P.magnitude()
             -4
 
             sage: P = posets.TamariLattice(4).without_bounds()
-            sage: P.magnitude()                                                         # needs sage.libs.flint
+            sage: P.magnitude()
             0
 
         .. SEEALSO:: :meth:`order_complex`
 
         TESTS::
 
+            sage: needs sage.groups sage.libs.flint
             sage: P1 = posets.RandomPoset(20, 0.05)
             sage: P2 = posets.RandomPoset(20, 0.05)
-            sage: m1 = P1.magnitude()                                                   # needs sage.libs.flint
-            sage: m2 = P2.magnitude()                                                   # needs sage.libs.flint
+            sage: m1 = P1.magnitude()
+            sage: m2 = P2.magnitude()
             sage: U = P1.disjoint_union(P2)
             sage: P = P1.product(P2)
-            sage: U.magnitude() == m1 + m2                                              # needs sage.libs.flint
+            sage: U.magnitude() == m1 + m2
             True
-            sage: P.magnitude() == m1*m2                                                # needs sage.libs.flint
+            sage: P.magnitude() == m1*m2
             True
 
-            sage: Poset({}).magnitude()                                                 # needs sage.libs.flint
+            sage: Poset({}).magnitude()
             0
-            sage: Poset({1:[]}).magnitude()                                             # needs sage.libs.flint
+            sage: Poset({1:[]}).magnitude()
             1
         """
         H = self._hasse_diagram
@@ -6721,14 +6723,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = Poset((divisors(1000), attrcall("divides")))
             sage: P.order_ideal_plot([20, 25])
             Graphics object consisting of 41 graphics primitives
 
         TESTS::
 
-            sage: # optional - sage.plot
+            sage: # needs sage.plot
             sage: P = Poset()  # Test empty poset
             sage: P.order_ideal_plot([])
             Graphics object consisting of 0 graphics primitives
@@ -8389,18 +8391,19 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: P = Poset([[3,2,1], [[3,1],[2,1]]])
-            sage: P.greene_shape()                                                      # needs sage.combinat
+            sage: P.greene_shape()
             [2, 1]
             sage: P = Poset([[1,2,3,4], [[1,4],[2,4],[4,3]]])
-            sage: P.greene_shape()                                                      # needs sage.combinat
+            sage: P.greene_shape()
             [3, 1]
             sage: P = Poset([[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
             ....:            [[1,4],[2,4],[4,3]]])
-            sage: P.greene_shape()                                                      # needs sage.combinat
+            sage: P.greene_shape()
             [3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             sage: P = Poset([[],[]])
-            sage: P.greene_shape()                                                      # needs sage.combinat
+            sage: P.greene_shape()
             []
 
         AUTHOR:
@@ -8408,15 +8411,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         - Darij Grinberg (2013-05-09)
         """
         from sage.combinat.partition import Partition
-        (G, a) = self.frank_network()
+        G, a = self.frank_network()
         n = len(self)
         chron = _ford_fulkerson_chronicle(G, (-1, 0), (2, 0), a)
         size = 0
         ps = []
         part = 0
-        (pold, vold) = (0, 0)
+        pold, vold = (0, 0)
         while size != n:
-            (p, v) = next(chron)
+            p, v = next(chron)
             if v > vold:
                 size += p
                 if part > 0:
