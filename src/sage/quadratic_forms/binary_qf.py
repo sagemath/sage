@@ -1663,7 +1663,7 @@ class BinaryQF(SageObject):
                 w = self.discriminant().sqrt()
                 r = (-self._b + (w if w != self._b else -w)) / (2*self._a)
                 p, q = r.as_integer_ratio()
-                g, u, v = p.xgcd(q)
+                _, u, v = p.xgcd(q)
                 M = Matrix(ZZ, [[v, p], [-u, q]])
             elif self._c:
                 M = Matrix(ZZ, [[0, 1], [1, 0]])
