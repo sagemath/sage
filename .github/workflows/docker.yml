@@ -23,9 +23,10 @@ on:
            "ubuntu-kinetic",
            "ubuntu-lunar",
            "ubuntu-mantic",
-           "debian-buster",
+           "debian-buster-gcc_spkg",
            "debian-bullseye",
            "debian-bookworm",
+           "debian-trixie",
            "debian-sid",
            "linuxmint-20.1",
            "linuxmint-20.2",
@@ -57,7 +58,6 @@ on:
            "opensuse-tumbleweed-python3.10",
            "conda-forge",
            "ubuntu-bionic-gcc_8-i386",
-           "debian-buster-i386",
            "debian-bullseye-i386",
            ]
       tox_packages_factors:
