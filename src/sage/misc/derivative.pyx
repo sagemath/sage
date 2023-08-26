@@ -186,8 +186,8 @@ def multi_derivative(F, args):
 
     INPUT:
 
-        F -- any object with a _derivative(var) method.
-        args -- any tuple that can be processed by derivative_parse().
+    - ``F`` -- any object with a ``_derivative(var)`` method.
+    - ``args`` -- any tuple that can be processed by :func:`derivative_parse`.
 
     EXAMPLES::
 
