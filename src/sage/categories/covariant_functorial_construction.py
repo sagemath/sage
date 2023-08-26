@@ -134,8 +134,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])                      # optional - sage.modules
-            sage: tensor.category_from_parents((E, E, E))                               # optional - sage.modules
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])                      # needs sage.modules
+            sage: tensor.category_from_parents((E, E, E))                               # needs sage.modules
             Category of tensor products of
              finite dimensional vector spaces with basis over Rational Field
         """
@@ -214,8 +214,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # optional - sage.modules
-            sage: tensor((E, E, E))                                                     # optional - sage.modules
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # needs sage.modules
+            sage: tensor((E, E, E))                                                     # needs sage.modules
             E # E # E
         """
         args = tuple(args)  # a bit brute force; let's see if this becomes a bottleneck later
