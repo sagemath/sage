@@ -38,8 +38,11 @@ Check the fix from :trac:`8323`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import contextlib
+import functools
 import os
 import pdb
+import sys
 import warnings
 
 from .lazy_string import lazy_string
@@ -1132,3 +1135,68 @@ def inject_variable_test(name, value, depth):
         inject_variable(name, value)
     else:
         inject_variable_test(name, value, depth - 1)
+
+
+# from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
+def run_once(func):
+    """
+    Runs a function (successfully) only once.
+
+    The running can be reset by setting the ``has_run`` attribute to False
+
+    TESTS::
+
+        sage: from sage.repl.ipython_extension import run_once
+        sage: @run_once
+        ....: def foo(work):
+        ....:     if work:
+        ....:         return 'foo worked'
+        ....:     raise RuntimeError("foo didn't work")
+        sage: foo(False)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: foo didn't work
+        sage: foo(True)
+        'foo worked'
+        sage: foo(False)
+        sage: foo(True)
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            result = func(*args, **kwargs)
+            wrapper.has_run = True
+            return result
+    wrapper.has_run = False
+    return wrapper
+
+
+@contextlib.contextmanager
+def increase_recursion_limit(increment):
+    r"""
+    Context manager to temporarily change the Python maximum recursion depth.
+
+    INPUT:
+
+    - `increment`: increment to add to the current limit
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import increase_recursion_limit
+        sage: def rec(n): None if n == 0 else rec(n-1)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+        sage: with increase_recursion_limit(10000): rec(10000)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+    """
+    old_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(old_limit + increment)
+    try:
+        yield
+    finally:
+        sys.setrecursionlimit(old_limit)

@@ -2,7 +2,7 @@ r"""
 List of coset representatives for `\Gamma_1(N)` in `\SL_2(\ZZ)`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -16,8 +16,8 @@ List of coset representatives for `\Gamma_1(N)` in `\SL_2(\ZZ)`
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import GCD
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -96,12 +96,13 @@ class G1list(SageObject):
             sage: L = sage.modular.modsym.g1list.G1list(3); L.__repr__()
             'List of coset representatives for Gamma_1(3) in SL_2(Z)'
         """
-        return "List of coset representatives for Gamma_1(%s) in SL_2(Z)"%self.__N
+        return f"List of coset representatives for Gamma_1({self.__N}) in SL_2(Z)"
 
     def list(self):
         r"""
-        Return a list of vectors representing the cosets. Do not change the
-        returned list!
+        Return a list of vectors representing the cosets.
+
+        Do not change the returned list!
 
         EXAMPLES::
 
@@ -169,7 +170,8 @@ class _G1list_old_pickle(G1list):
         # We don't really want this class, but we want to handle new
         #   pickles without creating a new class
         self.__class__ = G1list
-        self.__dict__ = state # Default pickling is ``state = self.__dict__``
+        self.__dict__ = state  # Default pickling is ``state = self.__dict__``
+
 
 register_unpickle_override('sage.modular.modsym.g1list', 'G1list',
                            _G1list_old_pickle)

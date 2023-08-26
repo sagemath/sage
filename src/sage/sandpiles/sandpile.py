@@ -326,7 +326,7 @@ from sage.combinat.parking_functions import ParkingFunctions
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.vector_partition import IntegerVectorsIterator
 from sage.functions.log import exp
-from sage.functions.other import binomial
+from sage.arith.misc import binomial
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph

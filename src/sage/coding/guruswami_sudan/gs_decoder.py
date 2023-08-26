@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
@@ -754,7 +754,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def decode_to_message(self, r):
         r"""
-        Decodes ``r`` to the list of polynomials whose encoding by
+        Decode ``r`` to the list of polynomials whose encoding by
         :meth:`self.code()` is within Hamming distance
         :meth:`self.decoding_radius` of ``r``.
 
@@ -795,7 +795,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             Traceback (most recent call last):
             ...
             ValueError: The provided root-finding algorithm has a wrong signature.
-            See the documentation of `GSD.rootfinding_algorithm()` for details
+            See the documentation of `...rootfinding_algorithm()` for details
         """
         return [self.connected_encoder().unencode(c) for c in self.decode_to_code(r)]
 

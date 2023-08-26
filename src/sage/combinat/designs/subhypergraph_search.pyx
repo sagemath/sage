@@ -444,8 +444,8 @@ cdef class SubHypergraphSearch:
 
         EXAMPLES::
 
-            sage: d = designs.projective_plane(3)
-            sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()
+            sage: d = designs.projective_plane(3)                                       # needs sage.schemes
+            sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()            # needs sage.schemes
         """
         cdef hypergraph h2 = self.h2
         cdef int x,y,i

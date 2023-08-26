@@ -743,7 +743,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         sage: newg = minimal_schnyder_wood(g)
         sage: newg.edges(sort=True)
         [(0, -3, 'red'), (0, -2, 'blue'), (0, -1, 'green')]
-        sage: newg.plot(color_by_label={'red':'red','blue':'blue',                      # optional - sage.plot
+        sage: newg.plot(color_by_label={'red':'red','blue':'blue',                      # needs sage.plot
         ....:  'green':'green',None:'black'})
         Graphics object consisting of 8 graphics primitives
 
