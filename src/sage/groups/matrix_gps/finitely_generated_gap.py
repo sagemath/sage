@@ -926,7 +926,9 @@ def _hilbert_series(S):
         sage: from sage.groups.matrix_gps.finitely_generated_gap import _hilbert_series
         sage: def test_invariants(group):
         ....:     invs=group.invariant_generators()
-        ....:     for inv in invs:
+        ....:     invariant_ring=invs[0].parent().subring_generated_by(invs)
+        ....:     for i in range(5):
+        ....:         inv=invariant_ring.random_element().element()
         ....:         assert group.random_element()@inv==inv
         sage: def test_hilbert(group):
         ....:     invs=group.invariant_generators()
