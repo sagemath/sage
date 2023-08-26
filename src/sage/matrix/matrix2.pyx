@@ -115,6 +115,7 @@ def ideal_or_fractional(R, *args):
 
 _Fields = Fields()
 
+
 cdef class Matrix(Matrix1):
     """
     Base class for matrices, part 2

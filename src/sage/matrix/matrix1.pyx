@@ -1473,10 +1473,10 @@ cdef class Matrix(Matrix0):
         tmp = [self.get_unsafe(i,j) for j in range(self._ncols)]
         return V(tmp, coerce=False, copy=False, check=False)
 
-
     ###########################################################################
     # Building matrices out of other matrices, rows, or columns
     ###########################################################################
+
     def stack(self, bottom, subdivide=False):
         r"""
         Return a new matrix formed by appending the matrix (or vector)
@@ -2539,10 +2539,9 @@ cdef class Matrix(Matrix0):
                     M.set_unsafe(i, j, one)
         return M
 
-
-    ####################################################################################
+    ######################################################################
     # Change of representation between dense and sparse.
-    ####################################################################################
+    ######################################################################
 
     def dense_matrix(self):
         """
