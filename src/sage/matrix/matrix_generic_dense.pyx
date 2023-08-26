@@ -69,9 +69,10 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :trac:`9049` is not an issue any
         more::
 
-            sage: S.<t>=PolynomialRing(QQ)
-            sage: F.<q>=QQ.extension(t^4+1)
-            sage: R.<x,y>=PolynomialRing(F)
+            sage: # needs sage.rings.number_field
+            sage: S.<t> = PolynomialRing(QQ)
+            sage: F.<q> = QQ.extension(t^4 + 1)
+            sage: R.<x,y> = PolynomialRing(F)
             sage: M = MatrixSpace(R, 1, 2)
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             sage: Matrix_generic_dense(M, (x, y), True, True)
@@ -214,7 +215,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._add_(b)
@@ -237,7 +239,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._sub_(b)
