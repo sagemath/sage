@@ -29,6 +29,7 @@ from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_proj
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 
@@ -462,6 +463,396 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         """
         return tuple(self._dynamical_systems)
 
+    def nth_iterate(self, p, n):
+        r"""
+        Return a set of values that results from evaluating this dynamical semigroup
+        on the value ``p`` a total of ``n`` times.
+
+        INPUT:
+
+        - ``p`` -- a value on which dynamical systems can evaluate
+        - ``n`` -- a nonnegative integer
+
+        OUTPUT: a set of values
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 0)
+            {(2 : 1)}
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 1)
+            {(4 : 1)}
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x^2, y^2],))
+            sage: f.nth_iterate(2, 2)
+            {(16 : 1)}
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 0)
+            {(2 : 1)}
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 1)
+            {(3 : 1), (4 : 1)}
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 2)
+            {(5/3 : 1), (2 : 1), (9 : 1), (16 : 1)}
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, 3.5)
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(2, -3)
+            Traceback (most recent call last):
+            ...
+            ValueError: -3 must be a nonnegative integer
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: f.nth_iterate(3, 2) == (f * f)(3)
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSemigroup(([x + y, x - y], [x^2, y^2]))
+            sage: one = QQ(1)
+            sage: f.nth_iterate(2, one)
+            {(3 : 1), (4 : 1)}
+
+        """
+        n = ZZ(n)
+        if n < 0:
+            raise ValueError(str(n) + " must be a nonnegative integer")
+        result = {self.domain()(p)}
+        for i in range(1, n + 1):
+            next_iteration = set()
+            for point in result:
+                next_iteration.update(self(point))
+            result = next_iteration
+        return result
+
+    def _mul_(self, other_dynamical_semigroup):
+        r"""
+        Return a new :class:`DynamicalSemigroup` that is the result of multiplying
+        this dynamical semigroup with another dynamical semigroup of the same type
+        using the * operator.
+
+        Let `f` be a dynamical semigroup with generators `\{ f_1, f_2, \dots, f_m \}`
+        and `g` be a dynamical semigroup with generators `\{ g_1, g_2, \dots, g_n \}`.
+        The product `f * g` has generators
+        `\{ f_i(g_j) : 1 \leq i \leq m, 1 \leq j \leq n \}`.
+
+        INPUT:
+
+        - ``other_dynamical_semigroup`` -- a dynamical semigroup
+
+        OUTPUT: :class:`DynamicalSemigroup`
+
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x^10, y^10], P)
+            sage: f = DynamicalSemigroup(f1)
+            sage: f*f
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^100 : y^100)
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem_affine(x^10, A)
+            sage: f = DynamicalSemigroup(f1)
+            sage: f*f
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^100)
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x^2 + x * y, y^2 + x * y], P)
+            sage: g1 = DynamicalSystem([x^3 + x^2 * y, y^3 + x * y^2], P)
+            sage: f = DynamicalSemigroup(f1)
+            sage: g = DynamicalSemigroup(g1)
+            sage: f*g
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^6 + 2*x^5*y + 2*x^4*y^2 + 2*x^3*y^3 + x^2*y^4 : x^4*y^2 + 2*x^3*y^3 + 2*x^2*y^4 + 2*x*y^5 + y^6)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x^2 + x * y, y^2 + x * y], P)
+            sage: f2 = DynamicalSystem([x^2 - x * y, y^2 - x * y], P)
+            sage: g1 = DynamicalSystem([x^3 + x^2 * y, y^3 + x * y^2], P)
+            sage: g2 = DynamicalSystem([x^3 - x^2 * y, y^3 - x * y^2], P)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f*g
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^6 + 2*x^5*y + 2*x^4*y^2 + 2*x^3*y^3 + x^2*y^4 : x^4*y^2 + 2*x^3*y^3 + 2*x^2*y^4 + 2*x*y^5 + y^6)
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^6 - 2*x^5*y + 2*x^3*y^3 - x^2*y^4 : -x^4*y^2 + 2*x^3*y^3 - 2*x*y^5 + y^6)
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x^2 + x * y, y^2 - x * y], P)
+            sage: g1 = DynamicalSystem([x^3 - x^2 * y, y^3 + x * y^2], P)
+            sage: f = DynamicalSemigroup(f1)
+            sage: g = DynamicalSemigroup(g1)
+            sage: f*g == g*f
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x^2 + x * y, y^2 + x * y], P)
+            sage: g1 = DynamicalSystem([x^3 + x^2 * y, y^3 + x * y^2], P)
+            sage: h1 = DynamicalSystem([x^4 + x^3 * y, y^4 + x * y^3], P)
+            sage: f = DynamicalSemigroup(f1)
+            sage: g = DynamicalSemigroup(g1)
+            sage: h = DynamicalSemigroup(h1)
+            sage: (f*g)*h == f*(g*h)
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: f = DynamicalSemigroup(f1)
+            sage: f*1
+            Traceback (most recent call last):
+            ...
+            TypeError: can only multiply dynamical semigroups with other dynamical semigroups of the same type
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: A.<z> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem_projective([x, y], P)
+            sage: g1 = DynamicalSystem_affine(z, A)
+            sage: f = DynamicalSemigroup_projective(f1)
+            sage: g = DynamicalSemigroup_affine(g1)
+            sage: f*g
+            Traceback (most recent call last):
+            ...
+            TypeError: can only multiply dynamical semigroups with other dynamical semigroups of the same type
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(RR, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: g1 = DynamicalSystem([z, w], Q)
+            sage: f = DynamicalSemigroup(f1)
+            sage: g = DynamicalSemigroup(g1)
+            sage: f*g
+            Traceback (most recent call last):
+            ...
+            ValueError: left dynamical semigroup's domain must equal right dynamical semigroup's codomain
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: Q.<z,w> = ProjectiveSpace(QQ, 1)
+            sage: f1 = DynamicalSystem([x, y], P)
+            sage: g1 = DynamicalSystem([z, w], Q)
+            sage: f = DynamicalSemigroup(f1)
+            sage: g = DynamicalSemigroup(g1)
+            sage: f*g
+            Traceback (most recent call last):
+            ...
+            ValueError: left dynamical semigroup's domain must equal right dynamical semigroup's codomain
+
+        """
+        if type(self) != type(other_dynamical_semigroup):
+            raise TypeError("can only multiply dynamical semigroups with other dynamical semigroups of the same type")
+        if self.domain() != other_dynamical_semigroup.codomain():
+            raise ValueError("left dynamical semigroup's domain must equal right dynamical semigroup's codomain")
+        composite_systems = []
+        for f in self.defining_systems():
+            for g in other_dynamical_semigroup.defining_systems():
+                composite_systems.append(DynamicalSystem(f*g))
+        return DynamicalSemigroup(composite_systems)
+
+    def __pow__(self, n):
+        r"""
+        Return a new dynamical semigroup that is this dynamical semigroup with itself ``n`` times.
+        If ``n`` is zero, return a dynamical semigroup with the identity map.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        OUTPUT: :class:`DynamicalSemigroup`
+
+        EXAMPLES:
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d^2
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^4)
+
+        ::
+
+            sage: A.<x, y, z, w, t, u ,v> = AffineSpace(QQ, 7)
+            sage: f = DynamicalSystem([t + u, v - w, x + y, z^2, u * t, v^2 - w^2, x * y * z], A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d^0
+            Dynamical semigroup over Affine Space of dimension 7 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 7 over Rational Field
+              Defn: Defined on coordinates by sending (x, y, z, w, t, u, v) to
+                    (x, y, z, w, t, u, v)
+
+        TESTS::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d*d == d^2
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: d^3 * d^2 == d^(3 + 2)
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: (d^3)^2 == d^(3 * 2)
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: g1 = DynamicalSystem(x^3 + x - 1, A)
+            sage: g2 = DynamicalSystem(x^2 - x + 1, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: (f * g) ^ 2 == f^2 * g^2
+            False
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: g1 = DynamicalSystem(x^3 + x - 1, A)
+            sage: g2 = DynamicalSystem(x^2 - x + 1, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: f * g^0 == f
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: g1 = DynamicalSystem(x^3 + x - 1, A)
+            sage: g2 = DynamicalSystem(x^2 - x + 1, A)
+            sage: f = DynamicalSemigroup((f1, f2))
+            sage: g = DynamicalSemigroup((g1, g2))
+            sage: g * f^0 == g
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup((f1, f2))
+            sage: d^1.5
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f1 = DynamicalSystem(x^2 + 1, A)
+            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: d = DynamicalSemigroup((f1, f2))
+            sage: d^(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: -1 must be a nonnegative integer
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup(f)
+            sage: two = RR(2)
+            sage: d^two
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^4)
+        """
+        n = ZZ(n)
+        if n < 0:
+            raise ValueError(str(n) + " must be a nonnegative integer")
+        if n == 0:
+            return DynamicalSemigroup(DynamicalSystem(self.defining_systems()[0] ** 0))
+        result = self
+        for i in range(n - 1):
+            result = result * self
+        return result
+
     def _repr_(self):
         r"""
         Return the :class:`String` representation of this dynamical semigroup.
@@ -613,6 +1004,71 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             return DynamicalSemigroup_projective_finite_field(systems)
         return DynamicalSemigroup_projective_field(systems)
 
+    def dehomogenize(self, n):
+        r"""
+        Return a new :class:`DynamicalSemigroup_projective` with the dehomogenization at ``n`` of
+        the generators of this dynamical semigroup.
+
+        INPUT:
+
+        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+          then the two values of the tuple are assumed to be the same
+
+        OUTPUT: :class:`DynamicalSemigroup_affine`
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize(0)
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (y) to
+                    (y)
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (y) to
+                    (y^2)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize(1)
+            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x)
+            Dynamical System of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2)
+
+        TESTS::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x, y], P)
+            sage: g = DynamicalSystem([x^2, y^2], P)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.dehomogenize((1, 0))
+            Traceback (most recent call last):
+            ...
+            ValueError: Scheme morphism:
+              From: Affine Space of dimension 1 over Rational Field
+              To:   Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (1/x) is not a `DynamicalSystem_affine` object
+        """
+        new_systems = []
+        for ds in self.defining_systems():
+            new_system = ds.dehomogenize(n)
+            if not isinstance(new_system, DynamicalSystem_affine):
+                raise ValueError(str(new_system) + " is not a `DynamicalSystem_affine` object")
+            new_systems.append(new_system)
+        return DynamicalSemigroup_affine(new_systems)
+
 class DynamicalSemigroup_projective_field(DynamicalSemigroup_projective):
     pass
 
@@ -673,6 +1129,53 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         if isinstance(systems[0].base_ring(), FiniteField):
             return DynamicalSemigroup_affine_finite_field(systems)
         return DynamicalSemigroup_affine_field(systems)
+
+    def homogenize(self, n):
+        r"""
+        Return a new :class:`DynamicalSemigroup_projective` with the homogenization at ``n`` of
+        the generators of this dynamical semigroup.
+
+        INPUT:
+
+        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+          then the two values of the tuple are assumed to be the same
+
+        OUTPUT: :class:`DynamicalSemigroup_projective`
+
+        EXAMPLES::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x + 1, A)
+            sage: g = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.homogenize(1)
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x0 + x1 : x1)
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x0^2 : x1^2)
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: f = DynamicalSystem(x + 1, A)
+            sage: g = DynamicalSystem(x^2, A)
+            sage: d = DynamicalSemigroup((f, g))
+            sage: d.homogenize((1, 0))
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x1 : x0 + x1)
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x0 : x1) to
+                    (x1^2 : x0^2)
+        """
+        new_systems = []
+        for ds in self.defining_systems():
+            new_systems.append(ds.homogenize(n))
+        return DynamicalSemigroup_projective(new_systems)
 
 class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
     pass
