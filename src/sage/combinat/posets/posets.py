@@ -1855,10 +1855,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_linear_extension(['David', 'McNeil', 'La', 'Lamentable', 'Aventure', 'de', 'Simon', 'Wiesenthal'])
             False
         """
-        index = {x: i for (i, x) in enumerate(l)}
+        index = {x: i for i, x in enumerate(l)}
         return (len(l) == self.cardinality() and
                 all(x in index for x in self) and
-                all(index[i] < index[j] for (i, j) in self.cover_relations()))
+                all(index[i] < index[j] for i, j in self.cover_relations()))
 
     def list(self):
         """
@@ -2057,7 +2057,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         if label_elements and element_labels is not None:
             from sage.misc.element_with_label import ElementWithLabel
             relabeling = {self(element): ElementWithLabel(self(element), label)
-                          for (element, label) in element_labels.items()}
+                          for element, label in element_labels.items()}
             graph = graph.relabel(relabeling, inplace=False)
             if heights is not None:
                 for key in heights:
@@ -2065,14 +2065,14 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         if cover_labels is not None:
             if callable(cover_labels):
-                for (v, w) in graph.edges(sort=True, labels=False):
+                for v, w in graph.edges(sort=True, labels=False):
                     graph.set_edge_label(v, w, cover_labels(v, w))
             elif isinstance(cover_labels, dict):
-                for (v, w) in cover_labels:
+                for v, w in cover_labels:
                     graph.set_edge_label(self(v), self(w),
                                          cover_labels[(v, w)])
             else:
-                for (v, w, l) in cover_labels:
+                for v, w, l in cover_labels:
                     graph.set_edge_label(self(v), self(w), l)
             cover_labels = True
         else:
@@ -2575,7 +2575,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         ints = [tuple(u) for u in self.relations()]
 
         covers = []
-        for (a, b) in ints:
+        for a, b in ints:
             covers.extend([[(a, b), (a, bb)] for bb in self.upper_covers(b)])
             if a != b:
                 covers.extend([[(a, b), (aa, b)] for aa in self.upper_covers(a)
@@ -3716,7 +3716,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: needs sage.groups sage.libs.flint
+            sage: # needs sage.groups sage.libs.flint
             sage: P = posets.PentagonPoset()
             sage: P.magnitude()
             1
@@ -3734,7 +3734,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: needs sage.groups sage.libs.flint
+            sage: # needs sage.groups sage.libs.flint
             sage: P1 = posets.RandomPoset(20, 0.05)
             sage: P2 = posets.RandomPoset(20, 0.05)
             sage: m1 = P1.magnitude()
@@ -8363,7 +8363,6 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Darij Grinberg (2013-05-09)
         """
-        from sage.graphs.digraph import DiGraph
         P0 = [(0, i) for i in self]
         pdict = {(-1, 0): P0, (2, 0): []}
         for i in self:
@@ -9108,8 +9107,6 @@ def _ford_fulkerson_chronicle(G, s, t, a):
         sage: next(ffc)
         (11, 2)
     """
-    from sage.graphs.digraph import DiGraph
-
     # pi: potential function as a dictionary.
     pi = {v: 0 for v in G.vertex_iterator()}
     # p: value of the potential pi.
