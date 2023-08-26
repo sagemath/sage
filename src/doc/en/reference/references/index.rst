@@ -4588,6 +4588,9 @@ REFERENCES:
 .. [Mil1974] \J. W. Milnor and J. D. Stasheff, *Characteristic Classes*,
              University Press, Princeton and Tokyo, 1974.
 
+.. [Mil2006] \J. W. Milnor, *On Lattes maps*,
+             Dynamics on the Riemann sphere, Eur. Math. Soc., 9–43
+
 .. [Mil1978] \S. Milne, *A q-analog of restricted growth functions,
              Dobinsky’s equality and Charlier
              polynomials*. Trans. Amer. Math. Soc., 245 (1978),
