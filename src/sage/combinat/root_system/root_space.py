@@ -328,13 +328,15 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
     def quantum_root(self):
         r"""
-        Return ``True`` if ``self`` is a quantum root and ``False`` otherwise.
+        Check whether ``self`` is a quantum root.
 
         INPUT:
 
         - ``self`` -- an element of the nonnegative integer span of simple roots.
 
-        A root `\alpha` is a quantum root if `\ell(s_\alpha) = \langle 2 \rho, \alpha^\vee \rangle - 1` where `\ell` is the length function, `s_\alpha` is the reflection across the hyperplane orthogonal to `\alpha`, and `2\rho` is the sum of positive roots.
+        A root `\alpha` is a quantum root if `\ell(s_\alpha) = \langle 2 \rho, \alpha^\vee \rangle - 1`
+        where `\ell` is the length function, `s_\alpha` is the reflection across the hyperplane
+        orthogonal to `\alpha`, and `2\rho` is the sum of positive roots.
 
         .. warning::
 
@@ -412,7 +414,9 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
     def max_quantum_element(self):
         r"""
-        Return a reduced word for the longest element of the Weyl group whose shortest path in the quantum Bruhat graph to the identity, has sum of quantum coroots at most ``self``.
+        Return a reduced word for the longest element of the Weyl group
+        whose shortest path in the quantum Bruhat graph to the identity
+        has sum of quantum coroots at most ``self``.
 
         INPUT:
 

@@ -331,59 +331,61 @@ This includes the two degenerate cases::
 For the user convenience, Kac's notations for twisted affine types are
 automatically translated into the previous ones::
 
+    sage: # needs sage.graphs
     sage: CartanType(["A", 9, 2])
     ['B', 5, 1]^*
-    sage: CartanType(["A", 9, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["A", 9, 2]).dynkin_diagram()
         O 0
         |
         |
     O---O---O---O=<=O
     1   2   3   4   5
     B5~*
-    sage: CartanType(["A", 10, 2]).dynkin_diagram()                                     # needs sage.graphs
+    sage: CartanType(["A", 10, 2]).dynkin_diagram()
     O=<=O---O---O---O=<=O
     0   1   2   3   4   5
     BC5~
-    sage: CartanType(["D", 5, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 5, 2]).dynkin_diagram()
     O=<=O---O---O=>=O
     0   1   2   3   4
     C4~*
-    sage: CartanType(["D", 4, 3]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 4, 3]).dynkin_diagram()
       3
     O=>=O---O
     2   1   0
     G2~* relabelled by {0: 0, 1: 2, 2: 1}
-    sage: CartanType(["E", 6, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["E", 6, 2]).dynkin_diagram()
     O---O---O=<=O---O
     0   1   2   3   4
     F4~*
 
 Additionally one can set the notation option to use Kac's notation::
 
+    sage: # needs sage.graphs
     sage: CartanType.options['notation'] = 'Kac'
     sage: CartanType(["A", 9, 2])
     ['A', 9, 2]
-    sage: CartanType(["A", 9, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["A", 9, 2]).dynkin_diagram()
         O 0
         |
         |
     O---O---O---O=<=O
     1   2   3   4   5
     A9^2
-    sage: CartanType(["A", 10, 2]).dynkin_diagram()                                     # needs sage.graphs
+    sage: CartanType(["A", 10, 2]).dynkin_diagram()
     O=<=O---O---O---O=<=O
     0   1   2   3   4   5
     A10^2
-    sage: CartanType(["D", 5, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 5, 2]).dynkin_diagram()
     O=<=O---O---O=>=O
     0   1   2   3   4
     D5^2
-    sage: CartanType(["D", 4, 3]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 4, 3]).dynkin_diagram()
       3
     O=>=O---O
     2   1   0
     D4^3
-    sage: CartanType(["E", 6, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["E", 6, 2]).dynkin_diagram()
     O---O---O=<=O---O
     0   1   2   3   4
     E6^2
@@ -1415,7 +1417,8 @@ class CartanType_abstract():
              [['C', 1], True], [['C', 5], False],
              [['D', 2], True], [['D', 3], True], [['D', 5], True],
              [['E', 6], True], [['E', 7], True], [['E', 8], True],
-             [['F', 4], False], [['G', 2], False], [['I', 5], False], [['H', 3], False], [['H', 4], False],
+             [['F', 4], False], [['G', 2], False], [['I', 5], False],
+             [['H', 3], False], [['H', 4], False],
              [['A', 1, 1], False], [['A', 5, 1], True],
              [['B', 1, 1], False], [['B', 5, 1], False],
              [['C', 1, 1], False], [['C', 5, 1], False],
@@ -1423,7 +1426,8 @@ class CartanType_abstract():
              [['E', 6, 1], True], [['E', 7, 1], True], [['E', 8, 1], True],
              [['F', 4, 1], False], [['G', 2, 1], False],
              [['BC', 1, 2], False], [['BC', 5, 2], False],
-             [['B', 5, 1]^*, False], [['C', 4, 1]^*, False], [['F', 4, 1]^*, False], [['G', 2, 1]^*, False],
+             [['B', 5, 1]^*, False], [['C', 4, 1]^*, False],
+             [['F', 4, 1]^*, False], [['G', 2, 1]^*, False],
              [['BC', 1, 2]^*, False], [['BC', 5, 2]^*, False]]
         """
         return False
@@ -1937,7 +1941,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
             sage: CartanType(['A', 3, 1]).is_untwisted_affine()
             True
-            sage: CartanType(['A', 3, 1]).dual().is_untwisted_affine() # this one is self dual!
+            sage: CartanType(['A', 3, 1]).dual().is_untwisted_affine()  # this one is self dual!
             True
             sage: CartanType(['B', 3, 1]).dual().is_untwisted_affine()
             False
@@ -2313,8 +2317,8 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         as unit vector on the `x`-axis, and the projection `\omega_2`
         at level 0 of `\Lambda_2` as unit vector of the `y`-axis::
 
-            sage: omega1 = Lambda[1]-2*Lambda[0]
-            sage: omega2 = Lambda[2]-2*Lambda[0]
+            sage: omega1 = Lambda[1] - 2*Lambda[0]
+            sage: omega2 = Lambda[2] - 2*Lambda[0]
             sage: omega1.level(), omega2.level()                                        # needs sage.graphs
             (0, 0)
 

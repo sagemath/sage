@@ -300,7 +300,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             if self.root_system.is_finite() and self.root_system.is_irreducible():
                 try:
                     tester.assertTrue(self.highest_root().is_dominant())
-                except ImportError:  # when sagemath-graphs is missing (Dynkin diagram)
+                except ImportError:  # when sage.graphs is missing (Dynkin diagram)
                     pass
 
         @cached_method
@@ -551,11 +551,12 @@ class WeightLatticeRealizations(Category_over_base_ring):
             Translations by elements of the root lattice induce a
             trivial Dynkin diagram automorphism::
 
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[0].translation)        # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[0].translation)
                 {0: 0, 1: 1, 2: 2}
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[1].translation)        # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[1].translation)
                 {0: 0, 1: 1, 2: 2}
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[2].translation)        # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[2].translation)
                 {0: 0, 1: 1, 2: 2}
 
             This is no more the case for translations by general
@@ -564,23 +565,26 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: omega1 = Lambda[1] - Lambda[0]
                 sage: omega2 = Lambda[2] - Lambda[0]
 
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)          # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)
                 {0: 1, 1: 2, 2: 0}
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)          # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)
                 {0: 2, 1: 0, 2: 1}
 
+                sage: # needs sage.graphs
                 sage: R = RootSystem(['C',2,1]).weight_lattice()
-                sage: alpha = R.simple_roots()                                          # needs sage.graphs
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[1].translation)        # needs sage.graphs
+                sage: alpha = R.simple_roots()
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[1].translation)
                 {0: 2, 1: 1, 2: 0}
 
+                sage: # needs sage.graphs
                 sage: R = RootSystem(['D',5,1]).weight_lattice()
                 sage: Lambda = R.fundamental_weights()
                 sage: omega1 = Lambda[1] - Lambda[0]
                 sage: omega2 = Lambda[2] - 2*Lambda[0]
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)          # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)
                 {0: 1, 1: 0, 2: 2, 3: 3, 4: 5, 5: 4}
-                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)          # needs sage.graphs
+                sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)
                 {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
 
             Algorithm: computes `w` of the decomposition, and see how
@@ -676,7 +680,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 return
             try:
                 alpha = self.simple_roots()
-            except ImportError:  # when sagemath-graphs is not available
+            except ImportError:  # when sage.graphs is not available
                 return
             Lambda = self.fundamental_weights()
             rho = self.rho()
