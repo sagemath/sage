@@ -503,7 +503,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             return self
         construction = self.construction()
         if construction is not None:
-            functor, arg = construction
+            functor, _ = construction
             from sage.categories.pushout import VectorFunctor
             if isinstance(functor, VectorFunctor):
                 return functor(R)
