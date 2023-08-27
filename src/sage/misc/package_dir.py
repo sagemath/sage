@@ -197,7 +197,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
     directive = 'sage_setup: ' f'distribution = {distribution}'.rstrip()
     try:
         with open(src_file, 'r') as f:
-            src_lines = f.read().splitlines(keepends=True)
+            src_lines = f.read().splitlines()
     except UnicodeDecodeError:
         # Silently skip binary files
         return
@@ -222,7 +222,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
     if not any_found:
         if any(src_file.endswith(ext)
                for ext in [".pxd", ".pxi", ".py", ".pyx", ".sage"]):
-            src_lines.insert(0, f'# {directive}\n')
+            src_lines.insert(0, f'# {directive}')
             any_change = True
             if verbose:
                 print(f"{src_file}: added 'sage_setup: "
@@ -232,7 +232,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
     with open(src_file, 'w') as f:
         for line in src_lines:
             if line is not None:
-                f.write(line)
+                f.write(line + '\n')
 
 
 def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
