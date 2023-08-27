@@ -214,7 +214,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
                 src_lines[i] = line
                 any_change = True
                 if verbose:
-                    print(f"Changed 'sage_setup: " f"distribution' in {src_file!r} "
+                    print(f"{src_file}: changed 'sage_setup: " f"distribution' "
                           f"from {old_distribution!r} to {distribution!r}")
             any_found = True
     if not any_found:
@@ -223,8 +223,8 @@ def update_distribution(src_file, distribution, *, verbose=False):
             src_lines.insert(0, f'# {directive}\n')
             any_change = True
             if verbose:
-                print("Added 'sage_setup: " f"distribution = {distribution}' "
-                      f"directive in {src_file!r}")
+                print(f"{src_file}: Added 'sage_setup: "
+                      f"distribution = {distribution}' directive")
     if not any_change:
         return
     with open(src_file, 'w') as f:
