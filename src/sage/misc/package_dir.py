@@ -16,6 +16,8 @@ import os
 import glob
 import re
 import sys
+
+from collections import defaultdict
 from contextlib import contextmanager
 
 
@@ -438,6 +440,20 @@ def walk_packages(path=None, prefix='', onerror=None):
                 yield from walk_packages(path, info.name + '.', onerror)
 
 
+def _all_filename(distribution):
+    if not distribution:
+        return 'all.py'
+    return f"all__{distribution.replace('-', '_')}.py"
+
+
+def _distribution_from_all_filename(filename):
+    if m := re.match('all(__(.*?))?[.]py', file):
+        if distribution_per_all_filename := m.group(2):
+            return distribution_per_all_filename.replace('_', '-')
+        return ''
+    return False
+
+
 if __name__ == '__main__':
 
     from argparse import ArgumentParser
@@ -486,9 +502,14 @@ if __name__ == '__main__':
                 or not os.path.exists(os.path.join(SAGE_SRC, 'conftest_test.py'))):
             print(f'{SAGE_SRC=} does not seem to contain a copy of the Sage source tree')
             sys.exit(1)
-        args.filename = [os.path.join(SAGE_SRC, 'sage')]
+        args.filename = [os.path.relpath(os.path.join(SAGE_SRC, 'sage'))]
 
-    def handle_file(path):
+    ordinary_packages = set()
+    package_distributions_per_directives = defaultdict(set)     # path -> set of strings (distributions)
+    package_distributions_per_all_files = defaultdict(set)      # path -> set of strings (distributions)
+
+    def handle_file(root, file):
+        path = os.path.join(root, file)
         if args.set is not None:
             update_distribution(path, args.set, verbose=True)
         elif args.add is not None and not read_distribution(path):
@@ -496,6 +517,13 @@ if __name__ == '__main__':
         else:
             distribution = read_distribution(path)
             print(f'{path}: file in distribution {distribution!r}')
+        package_distributions_per_directives[root].add(distribution)
+        if file.startswith('__init__.'):
+            ordinary_packages.add(root)
+        elif (distribution_per_all_filename := _distribution_from_all_filename(file)) is not False:
+            if distribution_per_all_filename != distribution:
+                print(f'{path}: file should go in distribution {distribution_per_all_filename!r}, not {distribution!r}')
+            package_distributions_per_all_files[root].add(distribution_per_all_filename)
 
     for path in args.filename:
         if os.path.isdir(path):
@@ -514,6 +542,21 @@ if __name__ == '__main__':
                     for file in sorted(files):
                         if any(file.endswith(ext) for ext in [".pyc", ".pyo", ".bak", ".so", "~"]):
                             continue
-                        handle_file(os.path.join(root, file))
+                        handle_file(root, file)
         else:
             handle_file(path)
+
+    for package in ordinary_packages:
+        if len(package_distributions_per_directives[package]) > 1:
+            print(f'{package}: ordinary packages (with __init__.py) cannot be split in several distributions ('
+                  + ', '.join(f'{dist!r}'
+                              for dist in sorted(package_distributions_per_directives[package])) + ')')
+
+    for package, distributions in package_distributions_per_directives.items():
+        if package in ordinary_packages:
+            pass
+        elif ((missing_all_files := distributions - package_distributions_per_all_files[package])
+                and not(missing_all_files == set(['']) and len(distributions) < 2)):
+            s = '' if len(missing_all_files) == 1 else 's'
+            print(f'{package}: missing file{s} ' + ', '.join(_all_filename(distribution)
+                                                             for distribution in missing_all_files))
