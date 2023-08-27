@@ -232,7 +232,7 @@ cdef class RealIntervalField(Field):
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.RealIntervalField.__subclasses__()
+        sage: sage.rings.abc.RealIntervalField.__subclasses__()                         # needs sage.rings.real_interval_field
         [<class 'sage.rings.real_mpfi.RealIntervalField_class'>]
 
         sage: len(sage.rings.abc.RealIntervalField.__subclasses__()) <= 1
@@ -332,7 +332,7 @@ class ComplexIntervalField(Field):
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.ComplexIntervalField.__subclasses__()
+        sage: sage.rings.abc.ComplexIntervalField.__subclasses__()                      # needs sage.rings.complex_interval_field
         [<class 'sage.rings.complex_interval_field.ComplexIntervalField_class'>]
 
         sage: len(sage.rings.abc.ComplexIntervalField.__subclasses__()) <= 1
