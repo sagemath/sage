@@ -1745,9 +1745,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: C.fundamental_group()            # random     # optional - sirocco
-            Finitely presented group < x1, x3 | (x3^-1*x1^-1*x3*x1^-1)^2*x3^-1,
-                                                x3*(x1^-1*x3^-1)^2*x1^-1*(x3*x1)^2 >
+            sage: C.fundamental_group().sorted_presentation()                 # optional - sirocco
+            Finitely presented group < x0, x1 | x1^-1*(x1^-1*x0^-1*x1*x0^-1)^2,
+                                                (x1^-1*x0^-1)^2*(x1*x0)^2*x1*x0^-1 >
 
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group

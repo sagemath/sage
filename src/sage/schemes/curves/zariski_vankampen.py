@@ -1618,15 +1618,17 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
         sage: g, dic = fundamental_group_arrangement(flist) # optional - sirocco
-        sage: g # optional - sirocco
-        Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
+        sage: g.sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x2^-1*x0^-1*x2*x0*x2*x0^-1, x1^-1*x0^-1*x1*x0 >
         sage: dic # optional - sirocco
         {0: [x0, x2, x0], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
-        sage: fundamental_group_arrangement(flist, simplified=False) # optional - sirocco
-        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2,
-         x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1,
-         x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1,
-         1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >,
+        sage: g, dic = fundamental_group_arrangement(flist, simplified=False)  # optional - sirocco
+        sage: g.sorted_presentation(), dic  # optional - sirocco
+        (Finitely presented group < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1, x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
+                                                     x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x3*x2,
+                                                     x3^-1*x2^-1*x1*x2*x3*x2^-1*x1^-1*x2, x3^-1*x1^-1*x0*x1,
+                                                     x2^-1*x1^-1*x0^-1*x1*x2^-1*x1^-1*x0*x1*x2*x3, x1^-1*x0^-1*x1*x0,
+                                                     x1^-1*x0^-1*x1*x0, x1^-1*x0*x1*x0^-1, x1^-1*x0*x1*x0^-1 >,
          {0: [x0, x2, x3], 1: [x1], 2: [x3^-1*x2^-1*x1^-1*x0^-1]})
         sage: fundamental_group_arrangement(flist, projective=True) # optional - sirocco
         (Finitely presented group < x |  >, {0: [x0, x0, x0], 1: [x0^-3]})
