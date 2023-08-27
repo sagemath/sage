@@ -66,22 +66,25 @@ def BullGraph():
     `x` is a variable, `A` the adjacency matrix of the graph, and `I`
     the identity matrix of the same dimensions as `A`::
 
+        sage: # needs sage.libs.flint
         sage: chrompoly = g.chromatic_polynomial()                                      # needs sage.libs.flint
         sage: x = chrompoly.parent()('x')                                               # needs sage.libs.flint
         sage: x * (x - 2) * (x - 1)^3 == chrompoly                                      # needs sage.libs.flint
         True
-        sage: charpoly = g.characteristic_polynomial()
-        sage: M = g.adjacency_matrix(); M
+
+        sage: # needs sage.libs.flint sage.modules
+        sage: charpoly = g.characteristic_polynomial()                                  # needs sage.modules
+        sage: M = g.adjacency_matrix(); M                                               # needs sage.modules
         [0 1 1 0 0]
         [1 0 1 1 0]
         [1 1 0 0 1]
         [0 1 0 0 0]
         [0 0 1 0 0]
-        sage: Id = identity_matrix(ZZ, M.nrows())
-        sage: D = x*Id - M                                                              # needs sage.libs.flint
-        sage: D.determinant() == charpoly                                               # needs sage.libs.flint sage.symbolic
+        sage: Id = identity_matrix(ZZ, M.nrows())                                       # needs sage.modules
+        sage: D = x*Id - M                                                              # needs sage.libs.flint sage.modules
+        sage: D.determinant() == charpoly                                               # needs sage.libs.flint sage.modules sage.symbolic
         True
-        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly                             # needs sage.libs.flint
+        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly                             # needs sage.libs.flint sage.modules
         True
     """
     edge_list = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4)]

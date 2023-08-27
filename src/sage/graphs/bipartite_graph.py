@@ -1530,8 +1530,8 @@ class BipartiteGraph(Graph):
         polynomial::
 
             sage: g = graphs.RandomTree(20)
-            sage: p = g.characteristic_polynomial()
-            sage: p == BipartiteGraph(g).matching_polynomial(algorithm='rook')
+            sage: p = g.characteristic_polynomial()                                     # needs sage.modules
+            sage: p == BipartiteGraph(g).matching_polynomial(algorithm='rook')          # needs sage.modules
             True
 
         TESTS::
