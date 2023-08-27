@@ -8029,7 +8029,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
         TESTS::
 
             sage: P = Permutations(descents=([1,0,2], 5))
-            sage: TestSuite(P).run()                                                    # needs sage.graphs
+            sage: TestSuite(P).run()                                                    # needs sage.graphs sage.modules
         """
         StandardPermutations_n_abstract.__init__(self, n)
         self._d = d
@@ -8418,7 +8418,7 @@ class StandardPermutations_recoils(Permutations):
 
         EXAMPLES::
 
-            sage: Permutations(recoils=[2,2]).list()                                    # needs sage.graphs
+            sage: Permutations(recoils=[2,2]).list()                                    # needs sage.graphs sage.modules
             [[3, 1, 4, 2], [3, 4, 1, 2], [1, 3, 4, 2], [1, 3, 2, 4], [3, 1, 2, 4]]
         """
         recoils = self.recoils
