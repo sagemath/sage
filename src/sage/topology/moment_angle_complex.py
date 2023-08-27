@@ -917,7 +917,7 @@ class CohomologyRing(CombinatorialFreeModule):
 
     # @cached_method
     def product_on_basis(self, li, ri):
-        # TODO def eps and get the cohomology class of res
+        # TODO def eps
         from sage.topology.simplicial_complex import Simplex
         from sage.homology.chain_homotopy import ChainContraction
 
@@ -935,19 +935,20 @@ class CohomologyRing(CombinatorialFreeModule):
             union = set_left.union(set_right)
             res_union = subcomplex_left.union(subcomplex_right)
             subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
-            res = dict(subcomplex_union.n_chains(left[1] + right[1]+ 1, cochains=True).basis()).get(Simplex(res_union), 0)
-            print(res)
+            deg = left[1] + right[1]+ 1
 
-            phi, M = subcomplex_union.algebraic_topological_model(self._base_ring)
-            print(phi.dual().pi())
-            print("Cohomology gens:")
-            for i in range(subcomplex_union.dimension() + 1):
-                print("{} : {}".format(i, phi.dual().pi().in_degree(i)))
+            if subcomplex_union.n_chains(deg, cochains=True).has_key(Simplex(res_union)):
+                res_cochain = dict(subcomplex_union.n_chains(deg, cochains=True).basis()).get(Simplex(res_union), 0)
+                phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
+                coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
+                res = self.zero()
+                for i in range(len(coeff_vec)+1):
+                    res += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
+            else:
+                return self.zero()
 
-            return self.one()
         except IndexError:
             pass
-        return self.one()
 
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
@@ -960,3 +961,9 @@ class CohomologyRing(CombinatorialFreeModule):
 
         def cup_product(self, other):
             return self * other
+
+# used for computing coeffeicients when multiplying in cohomology
+def eps(element, simplicial_complex):
+    if element not in simplicial_complex._vertex_to_index:
+        raise ValueError("element is not a vertex of simplicial_complex")
+    return (-1) ** simplicial_complex._vertex_to_index[element]
