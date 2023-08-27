@@ -12,9 +12,21 @@ python_requires = >=3.8, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_sage_conf
     SPKG_INSTALL_REQUIRES_six
-    SPKG_INSTALL_REQUIRES_sagemath_polyhedra
-    SPKG_INSTALL_REQUIRES_sagemath_graphs
+    SPKG_INSTALL_REQUIRES_sagemath_categories
     SPKG_INSTALL_REQUIRES_sagemath_combinat
+    SPKG_INSTALL_REQUIRES_sagemath_environment
+    SPKG_INSTALL_REQUIRES_sagemath_flint
+    SPKG_INSTALL_REQUIRES_sagemath_gap
+    SPKG_INSTALL_REQUIRES_sagemath_glpk
+    SPKG_INSTALL_REQUIRES_sagemath_graphs
+    SPKG_INSTALL_REQUIRES_sagemath_groups
+    SPKG_INSTALL_REQUIRES_sagemath_homfly
+    SPKG_INSTALL_REQUIRES_sagemath_modules
+    SPKG_INSTALL_REQUIRES_sagemath_mpmath
+    SPKG_INSTALL_REQUIRES_sagemath_ntl
+    SPKG_INSTALL_REQUIRES_sagemath_objects
+    SPKG_INSTALL_REQUIRES_sagemath_pari
+    SPKG_INSTALL_REQUIRES_sagemath_polyhedra
     SPKG_INSTALL_REQUIRES_sagemath_repl
     SPKG_INSTALL_REQUIRES_sagemath_schemes
 dnl From build/pkgs/sagelib/dependencies

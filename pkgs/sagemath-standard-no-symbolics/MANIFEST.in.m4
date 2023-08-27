@@ -6,8 +6,6 @@ include(`../sagelib/src/MANIFEST.in')
 exclude *.m4
 include requirements.txt
 
-global-include all__sagemath_standard_no_symbolics.py
-
 prune sage/symbolic
 prune sage/manifolds
 prune sage/lfunctions
@@ -46,7 +44,7 @@ prune sage/algebras/finite_dimensional_algebras
 prune sage/arith
 prune sage/calculus
 prune sage/categories
-prune sage/coding/guruswami_sudan
+prune sage/coding
 prune sage/combinat/crystals
 prune sage/combinat/designs
 prune sage/combinat/integer_lists
@@ -54,6 +52,7 @@ prune sage/combinat/rigged_configurations
 prune sage/combinat/sf
 prune sage/combinat/species
 prune sage/combinat/words
+prune sage/cpython
 prune sage/crypto
 prune sage/doctest
 prune sage/dynamics/arithmetic_dynamics
@@ -64,24 +63,32 @@ prune sage/games
 prune sage/geometry/hyperplane_arrangement
 prune sage/geometry/polyhedron
 prune sage/geometry/triangulation
-prune sage/groups/additive_abelian
+prune sage/groups
+prune sage/libs/gap
+prune sage/libs/giac
+prune sage/libs/gmp
 prune sage/libs/gsl
 prune sage/libs/lrcalc
+prune sage/libs/mpc
 prune sage/libs/mpfr
 prune sage/libs/mpmath
+prune sage/libs/ntl
+prune sage/libs/pari
 prune sage/libs/symmetrica
 prune sage/matroids
+prune sage/misc
 prune sage/monoids
 prune sage/parallel
+prune sage/probability
 prune sage/repl
+prune sage/rings/bernmm
+prune sage/rings/polynomial/weil
 prune sage/rings/semirings
 prune sage/sandpiles
 prune sage/sat
-prune sage/schemes/affine
-prune sage/schemes/product_projective
-prune sage/schemes/projective
+prune sage/schemes
 prune sage/sets
-prune sage/stats/distributions
+prune sage/stats
 prune sage/structure
 prune sage/symbolic
 prune sage/tensor
@@ -90,6 +97,6 @@ prune sage/topology
 include sage/calculus/all__sagemath_standard_no_symbolics.py
 include sage/calculus/integration.p*
 
-include sage/*/all.py
-include sage/*/*/all.py
-include sage/*/*/*/all.py
+global-exclude all__sagemath_*.py
+global-include all.py
+global-include all__sagemath_standard_no_symbolics.py
