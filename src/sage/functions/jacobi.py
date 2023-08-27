@@ -362,7 +362,7 @@ class Jacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_sn(3, 4).n(100)                                                # needs mpmath
+            sage: jacobi_sn(3, 4).n(100)                                                # needs mpmath sage.symbolic
             -0.33260000892770027112809652714 + 1.7077912301715219199143891076e-33*I
             sage: jacobi_dn(I, I).n()                                                   # needs mpmath sage.symbolic
             0.874189950651018 + 0.667346865048825*I
@@ -376,17 +376,17 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
-            sage: # needs mpmath
-            sage: from sage.libs.mpmath.all import almosteq
+            sage: # needs mpmath sage.symbolic
+            sage: from mpmath import almosteq
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
-            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
+            sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),
             ....:          jacobi_sn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
+            sage: almosteq(jacobi_cn(x, b).series(x, 10).subs(x=a),
             ....:          jacobi_cn(a, b), abs_eps=0.01)
             True
-            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),                     # needs sage.symbolic
+            sage: almosteq(jacobi_dn(x, b).series(x, 10).subs(x=a),
             ....:          jacobi_dn(a, b), abs_eps=0.01)
             True
         """
@@ -568,7 +568,7 @@ class InverseJacobi(BuiltinFunction):
         Check that the simplifications are correct::
 
             sage: # needs mpmath sage.symbolic
-            sage: from sage.libs.mpmath.all import almosteq
+            sage: from mpmath import almosteq
             sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),
             ....:          n(inverse_jacobi_cd(1, -8)))
             True
@@ -734,55 +734,56 @@ class InverseJacobi(BuiltinFunction):
         Check that ``dy/dx * dx/dy == 1``, where ``y = jacobi_pq(x, m)`` and
         ``x = inverse_jacobi_pq(y, m)``::
 
-            sage: from sage.libs.mpmath.all import almosteq                             # needs mpmath
+            sage: # needs mpmath sage.symbolic
+            sage: from mpmath import almosteq
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
-            sage: m = var('m')                                                                                          # needs sage.symbolic
-            sage: almosteq(abs((diff(jacobi_cd(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: m = var('m')
+            sage: almosteq(abs((diff(jacobi_cd(x, m), x) *
             ....:               diff(inverse_jacobi_cd(x, m), x).subs(x=jacobi_cd(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_cn(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_cn(x, m), x) *
             ....:               diff(inverse_jacobi_cn(x, m), x).subs(x=jacobi_cn(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_cs(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_cs(x, m), x) *
             ....:               diff(inverse_jacobi_cs(x, m), x).subs(x=jacobi_cs(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_dc(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_dc(x, m), x) *
             ....:               diff(inverse_jacobi_dc(x, m), x).subs(x=jacobi_dc(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_dn(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_dn(x, m), x) *
             ....:               diff(inverse_jacobi_dn(x, m), x).subs(x=jacobi_dn(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_ds(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_ds(x, m), x) *
             ....:               diff(inverse_jacobi_ds(x, m), x).subs(x=jacobi_ds(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_nc(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_nc(x, m), x) *
             ....:               diff(inverse_jacobi_nc(x, m), x).subs(x=jacobi_nc(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_nd(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_nd(x, m), x) *
             ....:               diff(inverse_jacobi_nd(x, m), x).subs(x=jacobi_nd(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_ns(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_ns(x, m), x) *
             ....:               diff(inverse_jacobi_ns(x, m), x).subs(x=jacobi_ns(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_sc(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_sc(x, m), x) *
             ....:               diff(inverse_jacobi_sc(x, m), x).subs(x=jacobi_sc(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_sd(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_sd(x, m), x) *
             ....:               diff(inverse_jacobi_sd(x, m), x).subs(x=jacobi_sd(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
-            sage: almosteq(abs((diff(jacobi_sn(x, m), x) *                                                              # needs mpmath sage.symbolic
+            sage: almosteq(abs((diff(jacobi_sn(x, m), x) *
             ....:               diff(inverse_jacobi_sn(x, m), x).subs(x=jacobi_sn(x, m))).subs(x=a, m=b)),
             ....:          1, abs_eps=1e-14)
             True
@@ -942,15 +943,17 @@ def jacobi(kind, z, m, **kwargs):
 
     EXAMPLES::
 
-        sage: jacobi('sn', 1, 1)                                                        # needs mpmath
+        sage: # needs mpmath
+        sage: jacobi('sn', 1, 1)
         tanh(1)
-        sage: jacobi('cd', 1, 1/2)                                                      # needs mpmath
+        sage: jacobi('cd', 1, 1/2)
         jacobi_cd(1, 1/2)
-        sage: RDF(jacobi('cd', 1, 1/2))                                                 # needs mpmath
+        sage: RDF(jacobi('cd', 1, 1/2))
         0.7240097216593705
-        sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),                    # needs mpmath
+        sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),
         ....:  RDF(jacobi('cn', 1, 1/2) / jacobi('dn', 1, 1/2)))
         (0.5959765676721407, 0.8231610016315962, 0.7240097216593705)
+
         sage: jsn = jacobi('sn', x, 1)                                                  # needs sage.symbolic
         sage: P = plot(jsn, 0, 1)                                                       # needs sage.plot sage.symbolic
     """
@@ -1157,7 +1160,7 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from sage.libs.mpmath.all import ellipfun, chop                           # needs mpmath
+        sage: from mpmath import ellipfun, chop                                         # needs mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
         sage: # needs mpmath
@@ -1633,7 +1636,7 @@ def jacobi_am_f(x, m):
     TESTS::
 
         sage: # needs mpmath
-        sage: from sage.libs.mpmath.all import ellipf
+        sage: from mpmath import ellipf
         sage: from sage.functions.jacobi import jacobi_am_f
         sage: ellipf(jacobi_am_f(0.5, 1), 1)
         mpf('0.5')

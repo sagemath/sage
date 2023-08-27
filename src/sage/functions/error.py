@@ -117,9 +117,9 @@ class Function_erf(BuiltinFunction):
 
      Check that it's odd::
 
-         sage: erf(1.0)                                                                 # needs sage.symbolic
+         sage: erf(1.0)                                                                 # needs mpmath
          0.842700792949715
-         sage: erf(-1.0)                                                                # needs sage.symbolic
+         sage: erf(-1.0)                                                                # needs mpmath
          -0.842700792949715
 
     Check against other implementations and against the definition::
@@ -128,7 +128,7 @@ class Function_erf(BuiltinFunction):
         0.999977909503001
         sage: maxima.erf(3).n()                                                         # needs sage.symbolic
         0.999977909503001
-        sage: 1 - pari(3).erfc()                                                        # needs sage.libs.pari sage.symbolic
+        sage: 1 - pari(3).erfc()                                                        # needs sage.libs.pari
         0.999977909503001
         sage: RR(3).erf()                                                               # needs sage.rings.real_mpfr
         0.999977909503001
@@ -278,7 +278,7 @@ class Function_erf(BuiltinFunction):
 
         Check that real ball evaluation is fixed :trac:`28061`::
 
-            sage: RealBallField(128)(erf(5)) # abs tol 1e-38                            # needs sage.symbolic
+            sage: RealBallField(128)(erf(5))  # abs tol 1e-38                           # needs sage.symbolic
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)
@@ -538,7 +538,7 @@ class Function_erfinv(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: erfinv(0)                                                             # needs sage.symbolic
+            sage: erfinv(0)                                                             # needs mpmath
             0
             sage: erfinv(SR(0))                                                         # needs sage.symbolic
             0

@@ -5,6 +5,7 @@ Faster versions of some key functions in mpmath.libmp
 from .ext_impl cimport *
 from sage.libs.gmp.all cimport *
 
+# the next line is used by mpmath
 from .ext_impl import exp_fixed, cos_sin_fixed, log_int_fixed
 
 # Note: not thread-safe
@@ -12,6 +13,7 @@ cdef MPF tmp1
 cdef MPF tmp2
 MPF_init(&tmp1)
 MPF_init(&tmp2)
+
 
 def mpf_add(tuple x, tuple y, int prec=0, str rnd='d'):
     cdef MPopts opts
@@ -22,6 +24,7 @@ def mpf_add(tuple x, tuple y, int prec=0, str rnd='d'):
     MPF_add(&tmp1, &tmp1, &tmp2, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_sub(tuple x, tuple y, int prec=0, str rnd='d'):
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -30,6 +33,7 @@ def mpf_sub(tuple x, tuple y, int prec=0, str rnd='d'):
     opts.prec = prec
     MPF_sub(&tmp1, &tmp1, &tmp2, opts)
     return MPF_to_tuple(&tmp1)
+
 
 def mpf_mul(tuple x, tuple y, int prec=0, str rnd='d'):
     cdef MPopts opts
@@ -40,6 +44,7 @@ def mpf_mul(tuple x, tuple y, int prec=0, str rnd='d'):
     MPF_mul(&tmp1, &tmp1, &tmp2, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_div(tuple x, tuple y, int prec, str rnd='d'):
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -49,9 +54,10 @@ def mpf_div(tuple x, tuple y, int prec, str rnd='d'):
     MPF_div(&tmp1, &tmp1, &tmp2, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_sqrt(tuple x, int prec, str rnd='d'):
     """
-    Computes sqrt(x) with mpf value tuples.
+    Compute sqrt(x) with mpf value tuples.
 
     EXAMPLES::
 
@@ -60,7 +66,6 @@ def mpf_sqrt(tuple x, int prec, str rnd='d'):
         sage: y = mpf_sqrt(x, 53, 'n')
         sage: to_float(y)
         1.4142135623730951
-
     """
     if x[0]:
         import sage.libs.mpmath._vendor.mpmath.libmp as libmp
@@ -72,9 +77,10 @@ def mpf_sqrt(tuple x, int prec, str rnd='d'):
     MPF_sqrt(&tmp1, &tmp1, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_log(tuple x, int prec, str rnd='d'):
     """
-    Computes log(x) with mpf value tuples.
+    Compute log(x) with mpf value tuples.
 
     EXAMPLES::
 
@@ -83,7 +89,6 @@ def mpf_log(tuple x, int prec, str rnd='d'):
         sage: y = mpf_log(x, 53, 'n')
         sage: to_float(y)
         0.6931471805599453
-
     """
     if x[0]:
         import sage.libs.mpmath._vendor.mpmath.libmp as libmp
@@ -95,9 +100,10 @@ def mpf_log(tuple x, int prec, str rnd='d'):
     MPF_log(&tmp1, &tmp1, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_exp(tuple x, int prec, str rnd='d'):
     """
-    Computes exp(x) with mpf value tuples.
+    Compute exp(x) with mpf value tuples.
 
     EXAMPLES::
 
@@ -106,7 +112,6 @@ def mpf_exp(tuple x, int prec, str rnd='d'):
         sage: z = mpf_exp(x, 53, 'n')
         sage: to_float(z)
         7.38905609893065
-
     """
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -115,9 +120,10 @@ def mpf_exp(tuple x, int prec, str rnd='d'):
     MPF_exp(&tmp1, &tmp1, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_cos(tuple x, int prec, str rnd='d'):
     """
-    Computes cos(x) with mpf value tuples.
+    Compute cos(x) with mpf value tuples.
 
     EXAMPLES::
 
@@ -126,7 +132,6 @@ def mpf_cos(tuple x, int prec, str rnd='d'):
         sage: y = mpf_cos(x, 53, 'n')
         sage: to_float(y)
         0.5403023058681398
-
     """
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -135,9 +140,10 @@ def mpf_cos(tuple x, int prec, str rnd='d'):
     MPF_cos(&tmp1, &tmp1, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpf_sin(tuple x, int prec, str rnd='d'):
     """
-    Computes sin(x) with mpf value tuples.
+    Compute sin(x) with mpf value tuples.
 
     EXAMPLES::
 
@@ -146,7 +152,6 @@ def mpf_sin(tuple x, int prec, str rnd='d'):
         sage: y = mpf_sin(x, 53, 'n')
         sage: to_float(y)
         0.8414709848078965
-
     """
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -155,9 +160,10 @@ def mpf_sin(tuple x, int prec, str rnd='d'):
     MPF_sin(&tmp1, &tmp1, opts)
     return MPF_to_tuple(&tmp1)
 
+
 def mpc_sqrt(tuple z, int prec, str rnd='d'):
     """
-    Computes sqrt(z) with mpc value tuples.
+    Compute sqrt(z) with mpc value tuples.
 
     EXAMPLES::
 
@@ -177,9 +183,10 @@ def mpc_sqrt(tuple z, int prec, str rnd='d'):
     MPF_complex_sqrt(&tmp1, &tmp2, &tmp1, &tmp2, opts)
     return MPF_to_tuple(&tmp1), MPF_to_tuple(&tmp2)
 
+
 def mpc_exp(tuple z, int prec, str rnd='d'):
     """
-    Computes exp(z) with mpc value tuples.
+    Compute exp(z) with mpc value tuples.
 
     EXAMPLES::
 
@@ -199,9 +206,10 @@ def mpc_exp(tuple z, int prec, str rnd='d'):
     MPF_complex_exp(&tmp1, &tmp2, &tmp1, &tmp2, opts)
     return MPF_to_tuple(&tmp1), MPF_to_tuple(&tmp2)
 
+
 def mpf_pow(tuple x, tuple y, int prec, str rnd='d'):
     """
-    Computes x ^ y with mpf value tuples.
+    Compute x ^ y with mpf value tuples.
 
     EXAMPLES::
 

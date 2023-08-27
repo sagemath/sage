@@ -492,6 +492,7 @@ cdef class CmpKey:
         True
     """
     cdef int count
+
     def __init__(self):
         """
         Sets the internal category counter to zero.

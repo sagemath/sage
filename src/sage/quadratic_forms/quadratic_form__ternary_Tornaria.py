@@ -574,7 +574,7 @@ def representation_vector_list(self, B, maxvectors=10**8):
         ...
         PariError: domain error in minim0: form is not positive definite
     """
-    n, m, vs = self.__pari__().qfminim(2 * (B - 1), maxvectors)
+    n, _, vs = self.__pari__().qfminim(2 * (B - 1), maxvectors)
 
     if n != 2 * len(vs):
         raise RuntimeError("insufficient number of vectors")

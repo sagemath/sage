@@ -90,7 +90,7 @@ We test corner cases for multiplication::
 from libc.stdint cimport uint64_t
 from cpython.bytes cimport *
 
-from cysignals.memory cimport check_malloc, check_allocarray, sig_malloc, sig_free
+from cysignals.memory cimport check_malloc, check_allocarray, check_calloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
@@ -123,7 +123,7 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
-from .args cimport MatrixArgs_init
+from .args cimport SparseEntry, MatrixArgs_init
 
 
 from sage.cpython.string cimport char_to_str
@@ -441,15 +441,18 @@ cpdef __matrix_from_rows_of_matrices(X):
 
 
 cdef class Matrix_modn_dense_template(Matrix_dense):
-    def __cinit__(self):
+    def __cinit__(self, *args, bint zeroed_alloc=True, **kwds):
         cdef long p = self._base_ring.characteristic()
         self.p = p
         if p >= MAX_MODULUS:
             raise OverflowError("p (=%s) must be < %s."%(p, MAX_MODULUS))
 
-        self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
+        if zeroed_alloc:
+            self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
+        else:
+            self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
+            
         self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
-
         cdef unsigned int k
         cdef Py_ssize_t i
         k = 0
@@ -518,27 +521,28 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         """
         ma = MatrixArgs_init(parent, entries)
         cdef long i, j
-        it = ma.iter(False)
+        it = ma.iter(convert=False, sparse=True)
         R = ma.base
         p = R.characteristic()
-        for i in range(ma.nrows):
-            v = self._matrix[i]
-            for j in range(ma.ncols):
-                x = next(it)
-                if type(x) is int:
-                    tmp = (<long>x) % p
-                    v[j] = tmp + (tmp<0)*p
-                elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
-                    v[j] = <celement>(<IntegerMod_int>x).ivalue
-                elif type(x) is Integer:
-                    if coerce:
-                        v[j] = mpz_fdiv_ui((<Integer>x).value, p)
-                    else:
-                        v[j] = mpz_get_ui((<Integer>x).value)
-                elif coerce:
-                    v[j] = R(x)
+        
+        for t in it:
+            se = <SparseEntry>t
+            x = se.entry
+            v = self._matrix[se.i]
+            if type(x) is int:
+                tmp = (<long>x) % p
+                v[se.j] = tmp + (tmp<0)*p
+            elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
+                v[se.j] = <celement>(<IntegerMod_int>x).ivalue
+            elif type(x) is Integer:
+                if coerce:
+                    v[se.j] = mpz_fdiv_ui((<Integer>x).value, p)
                 else:
-                    v[j] = <celement>x
+                    v[se.j] = mpz_get_ui((<Integer>x).value)
+            elif coerce:
+                v[se.j] = R(x)
+            else:
+                v[se.j] = <celement>x
 
     cdef long _hash_(self) except -1:
         """
@@ -787,7 +791,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef Matrix_modn_dense_template M
         cdef celement p = self.p
 
-        M = self.__class__.__new__(self.__class__, self._parent,None,None,None)
+        M = self.__class__.__new__(self.__class__, self._parent,None,None,None, zeroed_alloc=False)
 
         sig_on()
         for i in range(self._nrows*self._ncols):
@@ -826,7 +830,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef celement p = self.p
         cdef celement a = left
 
-        M = self.__class__.__new__(self.__class__, self._parent,None,None,None)
+        M = self.__class__.__new__(self.__class__, self._parent,None,None,None,zeroed_alloc=False)
 
         sig_on()
         for i in range(self._nrows*self._ncols):
@@ -845,7 +849,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             False
         """
         cdef Matrix_modn_dense_template A
-        A = self.__class__.__new__(self.__class__, self._parent, 0, 0, 0)
+        A = self.__class__.__new__(self.__class__,self._parent,None,None,None,zeroed_alloc=False)
         memcpy(A._entries, self._entries, sizeof(celement)*self._nrows*self._ncols)
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
@@ -884,7 +888,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef celement k, p
         cdef Matrix_modn_dense_template M
 
-        M = self.__class__.__new__(self.__class__, self._parent,None,None,None)
+        M = self.__class__.__new__(self.__class__, self._parent,None,None,None,zeroed_alloc=False)
         p = self.p
         cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
 
@@ -921,7 +925,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef celement k, p
         cdef Matrix_modn_dense_template M
 
-        M = self.__class__.__new__(self.__class__, self._parent, None, None, None)
+        M = self.__class__.__new__(self.__class__, self._parent, None, None, None, zeroed_alloc=False)
         p = self.p
         cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
 
@@ -3020,14 +3024,21 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if nrows == -1:
             nrows = self._nrows - row
 
-        if col != 0 or ncols != self._ncols:
-            return self.matrix_from_rows_and_columns(range(row, row+nrows), range(col, col+ncols))
-
         if nrows < 0 or row < 0 or row + nrows > self._nrows:
             raise IndexError("rows out of range")
+        if ncols < 0 or col < 0 or col + ncols > self._ncols:
+            raise IndexError("columns out of range")
 
-        cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=self._ncols)
-        memcpy(M._entries, self._entries+row*ncols, sizeof(celement)*ncols*nrows)
+        cdef Matrix_modn_dense_template M = self.new_matrix(nrows=nrows, ncols=ncols)
+
+        if col == 0 and ncols == self._ncols:
+            memcpy(M._entries, self._matrix[row], sizeof(celement)*ncols*nrows)
+            return M
+
+        cdef Py_ssize_t i,r
+        for i,r in enumerate(range(row, row+nrows)) :
+            memcpy(M._matrix[i], self._matrix[r]+col, sizeof(celement)*ncols)
+
         return M
 
     def _matrices_from_rows(self, Py_ssize_t nrows, Py_ssize_t ncols):
@@ -3072,6 +3083,122 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             memcpy(M._entries, self._entries+i*n, sizeof(celement)*n)
             ans.append(M)
         return ans
+
+    def matrix_from_columns(self, columns):
+        """
+        Return the matrix constructed from self using columns with indices
+        in the columns list.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = M(range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_columns([2,1])
+            [2 1]
+            [5 4]
+            [0 7]
+        """
+        cdef Py_ssize_t ncols = len(columns)
+
+        # Construct new matrix
+        cdef Matrix_modn_dense_template A = self.new_matrix(ncols=ncols)
+        cdef Py_ssize_t i, j, col
+        for j, col in enumerate(columns):
+            if col < 0 or col >= self._ncols:
+                raise IndexError("column index out of range")
+            for i in range(self._nrows):
+                A._matrix[i][j] = self._matrix[i][col]
+
+        return A
+
+    def matrix_from_rows(self, rows):
+        """
+        Return the matrix constructed from self using rows with indices in
+        the rows list.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = M(range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_rows([2,1])
+            [6 7 0]
+            [3 4 5]
+        """
+        cdef Py_ssize_t nrows = len(rows)
+
+        # Construct new matrix
+        cdef Matrix_modn_dense_template A = self.new_matrix(nrows=nrows)
+
+        cdef Py_ssize_t i, row
+        for i, row in enumerate(rows):
+            if row < 0 or row >= self._nrows:
+                raise IndexError("row index out of range")
+            memcpy(A._matrix[i], self._matrix[row], sizeof(celement)*self._ncols)
+
+        return A
+
+    def matrix_from_rows_and_columns(self, rows, columns):
+        """
+        Return the matrix constructed from self from the given rows and
+        columns.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = M(range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_rows_and_columns([1], [0,2])
+            [3 5]
+            sage: A.matrix_from_rows_and_columns([1,2], [1,2])
+            [4 5]
+            [7 0]
+
+        Note that row and column indices can be reordered or repeated::
+
+            sage: A.matrix_from_rows_and_columns([2,1], [2,1])
+            [0 7]
+            [5 4]
+
+        For example here we take from row 1 columns 2 then 0 twice, and do
+        this 3 times::
+
+            sage: A.matrix_from_rows_and_columns([1,1,1],[2,0,0])
+            [5 3 3]
+            [5 3 3]
+            [5 3 3]
+
+        AUTHORS:
+
+        - Jaap Spies (2006-02-18)
+
+        - Didier Deshommes: some Pyrex speedups implemented
+        """
+        cdef Py_ssize_t ncols = len(columns)
+        cdef Py_ssize_t nrows = len(rows)
+
+        # Check whether column indices are valid
+        cdef Py_ssize_t i, j, row, col
+        for col in columns:
+            if col < 0 or col >= self._ncols:
+                raise IndexError("column index out of range")
+
+        # Construct new matrix
+        cdef Matrix_modn_dense_template A = self.new_matrix(nrows=nrows, ncols=ncols)
+        for i, row in enumerate(rows):
+            if row < 0 or row >= self._nrows:
+                raise IndexError("row index out of range")
+            for j, col in enumerate(columns):
+                A._matrix[i][j] = self._matrix[row][col]
+
+        return A
 
     def __bool__(self):
         """

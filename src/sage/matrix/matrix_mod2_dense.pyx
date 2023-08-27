@@ -2057,10 +2057,12 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
 
     return A
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.matrix.matrix_mod2_dense',
                            'unpickle_matrix_mod2_dense_v1',
                            unpickle_matrix_mod2_dense_v2)
+
 
 def from_png(filename):
     """

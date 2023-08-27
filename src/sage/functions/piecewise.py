@@ -759,7 +759,8 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f2(x) = 3 - x
                 sage: f = piecewise([[(-2, 0), f1], [(0, 3), f2]])
                 sage: f.integral()
-                piecewise(x|-->2*x + 4 on (-2, 0), x|-->-1/2*x^2 + 3*x + 4 on (0, 3); x)
+                piecewise(x|-->2*x + 4 on (-2, 0),
+                          x|-->-1/2*x^2 + 3*x + 4 on (0, 3); x)
 
                 sage: f1(y) = -1
                 sage: f2(y) = y + 3
@@ -952,7 +953,8 @@ class PiecewiseFunction(BuiltinFunction):
                 piecewise(x|-->x on (0, 1],
                           x|-->-x + 2 on (1, 2]; x)
                 sage: h = f.convolution(g); h
-                piecewise(x|-->1/2*x^2 on (0, 1], x|-->-x^2 + 3*x - 3/2 on (1, 2],
+                piecewise(x|-->1/2*x^2 on (0, 1],
+                          x|-->-x^2 + 3*x - 3/2 on (1, 2],
                           x|-->1/2*x^2 - 3*x + 9/2 on (2, 3]; x)
 
             Example 1::
@@ -1059,7 +1061,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([[[-1,1], 1 - x^2]])
                 sage: f.trapezoid(4).integral(definite=True)
                 5/4
-                sage: f = piecewise([[[-1,1], 1/2 + x - x^3]]) ## example 3
+                sage: f = piecewise([[[-1,1], 1/2 + x - x^3]])          ## example 3
                 sage: f.trapezoid(6).integral(definite=True)
                 1
 
@@ -1204,7 +1206,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             The default half-period is 2 and one has::
 
-                sage: f2.fourier_series_cosine_coefficient(3)  # half-period = 2
+                sage: f2.fourier_series_cosine_coefficient(3)     # half-period = 2
                 0
 
             The Fourier coefficient `-4/(9\pi^2)` obtained above is actually

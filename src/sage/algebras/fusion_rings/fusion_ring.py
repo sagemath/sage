@@ -1289,7 +1289,7 @@ class FusionRing(WeylCharacterRing):
           we don't run the solver again.
         - ``use_mp`` -- (default: ``True``) a boolean indicating whether
           to use multiprocessing to speed up the computation; this is
-          highly recommended. Python 3.8+ is required.
+          highly recommended.
         - ``verbose`` -- (default: ``True``) boolean indicating whether
           to be verbose with the computation
 

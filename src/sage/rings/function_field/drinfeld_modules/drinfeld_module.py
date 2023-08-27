@@ -1361,6 +1361,102 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen
 
+    @cached_method
+    def _compute_goss_polynomial(self, n, q, poly_ring, X):
+        r"""
+        Utility function for computing the n-th Goss polynomial.
+
+        The user should not call this method directly, but
+        :meth:`goss_polynomial` instead.
+
+        TESTS::
+
+            sage: A = GF(2^2)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T+1, T^2, 1])
+            sage: poly_ring = phi.base()['X']
+            sage: X = poly_ring.gen()
+            sage: phi._compute_goss_polynomial(0, 2^2, poly_ring, X)
+            0
+            sage: phi._compute_goss_polynomial(3, 2^2, poly_ring, X)
+            X^3
+            sage: phi._compute_goss_polynomial(4*3, 2^2, poly_ring, X)
+            X^12
+            sage: phi._compute_goss_polynomial(9, 2^2, poly_ring, X)
+            X^9 + (1/(T^3 + T^2 + T))*X^6 + (1/(T^6 + T^4 + T^2))*X^3
+
+        """
+        # Trivial cases
+        if n.is_zero():
+            return poly_ring.zero()
+        if n <= q - 1:
+            return X**n
+        if n % q == 0:
+            return self.goss_polynomial(n // q)**q
+        # General case
+        pol = sum(self._compute_coefficient_exp(i+1)
+                  *self._compute_goss_polynomial(n - q**(i+1), q, poly_ring, X)
+                  for i in range(0, (n.log(q).n()).floor()))
+        return X*(self._compute_goss_polynomial(n - 1, q, poly_ring, X) + pol)
+
+    def goss_polynomial(self, n, var='X'):
+        r"""
+        Return the `n`-th Goss polynomial of the Drinfeld module.
+
+        Note that Goss polynomials are only defined for Drinfeld modules
+        of characteristic zero.
+
+        INPUT:
+
+        - ``n`` (integer) -- the index of the Goss polynomial
+
+        - ``var`` (str, default: ``'X'``) -- the name of polynomial
+          variable.
+
+        OUTPUT:
+
+        - a univariate polynomial in ``var`` over the base `A`-field.
+
+        EXAMPLES::
+
+            sage: A = GF(3)['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])  # Carlitz module
+            sage: phi.goss_polynomial(1)
+            X
+            sage: phi.goss_polynomial(2)
+            X^2
+            sage: phi.goss_polynomial(4)
+            X^4 + (1/(T^3 + 2*T))*X^2
+            sage: phi.goss_polynomial(5)
+            X^5 + (2/(T^3 + 2*T))*X^3
+            sage: phi.goss_polynomial(10)
+            X^10 + (1/(T^3 + 2*T))*X^8 + (1/(T^6 + T^4 + T^2))*X^6 + (1/(T^9 + 2*T^3))*X^4 + (1/(T^18 + 2*T^12 + 2*T^10 + T^4))*X^2
+
+        TESTS::
+
+            sage: Fq.<z> = GF(25)
+            sage: A.<T> = Fq[]
+            sage: phi = DrinfeldModule(A, [z, 1])
+            sage: phi.goss_polynomial(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: characteristic must be zero (=T^2 + 4*T + 2)
+
+        REFERENCE:
+
+        Section 3 of [Gek1988]_ provides an exposition of Goss
+        polynomials.
+        """
+        if self.category()._characteristic:
+            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
+        n = ZZ(n)
+        K = self.base()
+        poly_ring = K[var]
+        X = poly_ring.gen()
+        q = self._Fq.cardinality()
+        return self._compute_goss_polynomial(n, q, poly_ring, X)
+
     def height(self):
         r"""
         Return the height of the Drinfeld module if the function field

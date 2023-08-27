@@ -1435,7 +1435,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         return self.key_space().nrows()
 
     def random_key(self):
-        """
+        r"""
         A random key within the key space of this Hill cipher. That is,
         generate a random `m \times m` matrix to be used as a block
         permutation, where `m` is the block length of this Hill cipher. If

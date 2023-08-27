@@ -367,9 +367,8 @@ def signature(self):
         [ * * * 9 ]
         sage: Q.signature()
         2
-
     """
-    (p, n, z) = self.signature_vector()
+    p, n, _ = self.signature_vector()
     return p - n
 
 

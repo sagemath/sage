@@ -1,6 +1,21 @@
 r"""
 Conversion of symbolic expressions to algebraic numbers
 """
+# ****************************************************************************
+#       Copyright (C) 2009-2012 Mike Hansen
+#                     2015-2018 Ralf Stephan
+#                     2015      Nils Bruin
+#                     2017      Jeroen Demeyer
+#                     2019-2022 Frédéric Chapoton
+#                     2021      Dave Witte Morris
+#                     2023      Vincent Delecroix
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce

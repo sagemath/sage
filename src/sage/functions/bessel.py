@@ -122,16 +122,16 @@ EXAMPLES:
 
     Evaluate the Bessel J function symbolically and numerically::
 
-        sage: bessel_J(0, x)                                                            # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: bessel_J(0, x)
         bessel_J(0, x)
-        sage: bessel_J(0, 0)                                                            # needs sage.symbolic
+        sage: bessel_J(0, 0)
         1
-        sage: bessel_J(0, x).diff(x)                                                    # needs sage.symbolic
+        sage: bessel_J(0, x).diff(x)
         -1/2*bessel_J(1, x) + 1/2*bessel_J(-1, x)
-
-        sage: N(bessel_J(0, 0), digits=20)                                              # needs sage.symbolic
+        sage: N(bessel_J(0, 0), digits=20)
         1.0000000000000000000
-        sage: find_root(bessel_J(0,x), 0, 5)                                            # needs sage.symbolic
+        sage: find_root(bessel_J(0,x), 0, 5)                                            # needs scipy
         2.404825557695773
 
     Plot the Bessel J function::
@@ -274,24 +274,25 @@ class Function_Bessel_J(BuiltinFunction):
 
         sage: bessel_J(1.0, 1.0)                                                        # needs mpmath
         0.440050585744933
-        sage: bessel_J(2, I).n(digits=30)                                               # needs sage.symbolic
-        -0.135747669767038281182852569995
 
-        sage: bessel_J(1, x)                                                            # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: bessel_J(2, I).n(digits=30)
+        -0.135747669767038281182852569995
+        sage: bessel_J(1, x)
         bessel_J(1, x)
-        sage: n = var('n')                                                              # needs sage.symbolic
-        sage: bessel_J(n, x)                                                            # needs sage.symbolic
+        sage: n = var('n')
+        sage: bessel_J(n, x)
         bessel_J(n, x)
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_J(pi, bessel_J(1, I)); a                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: a = bessel_J(pi, bessel_J(1, I)); a
         bessel_J(pi, bessel_J(1, I))
-        sage: N(a, digits=20)                                                           # needs sage.symbolic
+        sage: N(a, digits=20)
         0.00059023706363796717363 - 0.0026098820470081958110*I
-
-        sage: f = bessel_J(2, x)                                                        # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: f = bessel_J(2, x)
+        sage: f.diff(x)
         -1/2*bessel_J(3, x) + 1/2*bessel_J(1, x)
 
     Comparison to a well-known integral representation of `J_1(1)`::
@@ -485,25 +486,27 @@ class Function_Bessel_Y(BuiltinFunction):
         bessel_Y(1, x)
         sage: bessel_Y(1.0, 1.0)                                                        # needs mpmath
         -0.781212821300289
-        sage: n = var('n')                                                              # needs sage.symbolic
-        sage: bessel_Y(n, x)                                                            # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: n = var('n')
+        sage: bessel_Y(n, x)
         bessel_Y(n, x)
-        sage: bessel_Y(2, I).n()                                                        # needs sage.symbolic
+        sage: bessel_Y(2, I).n()
         1.03440456978312 - 0.135747669767038*I
-        sage: bessel_Y(0, 0).n()                                                        # needs sage.symbolic
+        sage: bessel_Y(0, 0).n()
         -infinity
-        sage: bessel_Y(0, 1).n(128)                                                     # needs sage.symbolic
+        sage: bessel_Y(0, 1).n(128)
         0.088256964215676957982926766023515162828
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_Y(pi, bessel_Y(1, I)); a                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: a = bessel_Y(pi, bessel_Y(1, I)); a
         bessel_Y(pi, bessel_Y(1, I))
-        sage: N(a, digits=20)                                                           # needs sage.symbolic
+        sage: N(a, digits=20)
         4.2059146571791095708 + 21.307914215321993526*I
-
-        sage: f = bessel_Y(2, x)                                                        # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: f = bessel_Y(2, x)
+        sage: f.diff(x)
         -1/2*bessel_Y(3, x) + 1/2*bessel_Y(1, x)
 
     High precision and complex valued inputs (see :trac:`4230`)::
@@ -609,14 +612,14 @@ class Function_Bessel_Y(BuiltinFunction):
 
             sage: bessel_Y(0.5, 1.5)                                                    # needs mpmath
             -0.0460831658930974
-            sage: bessel_Y(1.0+2*I, 3.0+4*I)                                            # needs sage.symbolic
+            sage: bessel_Y(1.0+2*I, 3.0+4*I)                                            # needs mpmath sage.symbolic
             0.699410324467538 + 0.228917940896421*I
-            sage: bessel_Y(0, 1).n(256)                                                 # needs sage.symbolic
+            sage: bessel_Y(0, 1).n(256)                                                 # needs mpmath sage.symbolic
             0.08825696421567695798292676602351516282781752309067554671104384761199978932351
 
         Check for correct rounding (:trac:`17122`)::
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs mpmath sage.rings.real_mpfr
             sage: R = RealField(113)
             sage: a = R("8.935761195587725798762818805462843676e-01")
             sage: aa = RealField(200)(a)
@@ -685,24 +688,26 @@ class Function_Bessel_I(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: bessel_I(1, x)                                                            # needs sage.symbolic
-        bessel_I(1, x)
         sage: bessel_I(1.0, 1.0)                                                        # needs mpmath
         0.565159103992485
-        sage: n = var('n')                                                              # needs sage.symbolic
-        sage: bessel_I(n, x)                                                            # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: bessel_I(1, x)
+        bessel_I(1, x)
+        sage: n = var('n')
+        sage: bessel_I(n, x)
         bessel_I(n, x)
-        sage: bessel_I(2, I).n()                                                        # needs sage.symbolic
+        sage: bessel_I(2, I).n()
         -0.114903484931900
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_I(pi, bessel_I(1, I))                                          # needs sage.symbolic
-        sage: N(a, digits=20)                                                           # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: a = bessel_I(pi, bessel_I(1, I))
+        sage: N(a, digits=20)
         0.00026073272117205890524 - 0.0011528954889080572268*I
-
-        sage: f = bessel_I(2, x)                                                        # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: f = bessel_I(2, x)
+        sage: f.diff(x)
         1/2*bessel_I(3, x) + 1/2*bessel_I(1, x)
 
     Special identities that bessel_I satisfies::
@@ -877,32 +882,33 @@ class Function_Bessel_K(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: bessel_K(1, x)                                                            # needs sage.symbolic
-        bessel_K(1, x)
         sage: bessel_K(1.0, 1.0)                                                        # needs mpmath
         0.601907230197235
-        sage: n = var('n')                                                              # needs sage.symbolic
-        sage: bessel_K(n, x)                                                            # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: bessel_K(1, x)
+        bessel_K(1, x)
+        sage: n = var('n')
+        sage: bessel_K(n, x)
         bessel_K(n, x)
-        sage: bessel_K(2, I).n()                                                        # needs sage.symbolic
+        sage: bessel_K(2, I).n()
         -2.59288617549120 + 0.180489972066962*I
 
     Examples of symbolic manipulation::
 
-        sage: a = bessel_K(pi, bessel_K(1, I)); a                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: a = bessel_K(pi, bessel_K(1, I)); a
         bessel_K(pi, bessel_K(1, I))
-        sage: N(a, digits=20)                                                           # needs sage.symbolic
+        sage: N(a, digits=20)
         3.8507583115005220156 + 0.068528298579883425456*I
-
-        sage: f = bessel_K(2, x)                                                        # needs sage.symbolic
-        sage: f.diff(x)                                                                 # needs sage.symbolic
+        sage: f = bessel_K(2, x)
+        sage: f.diff(x)
         -1/2*bessel_K(3, x) - 1/2*bessel_K(1, x)
-
-        sage: bessel_K(1/2, x)                                                          # needs sage.symbolic
+        sage: bessel_K(1/2, x)
         sqrt(1/2)*sqrt(pi)*e^(-x)/sqrt(x)
-        sage: bessel_K(1/2, -1)                                                         # needs sage.symbolic
+        sage: bessel_K(1/2, -1)
         -I*sqrt(1/2)*sqrt(pi)*e
-        sage: bessel_K(1/2, 1)                                                          # needs sage.symbolic
+        sage: bessel_K(1/2, 1)
         sqrt(1/2)*sqrt(pi)*e^(-1)
 
     Examples of asymptotic behavior::
@@ -920,7 +926,7 @@ class Function_Bessel_K(BuiltinFunction):
         0.42102443824070833333562737921260903614
         sage: bessel_K(0, RealField(200)(1))                                            # needs sage.rings.real_mpfr
         0.42102443824070833333562737921260903613621974822666047229897
-        sage: bessel_K(0, ComplexField(200)(0.5+I))                                     # needs sage.symbolic
+        sage: bessel_K(0, ComplexField(200)(0.5+I))                                     # needs sage.rings.real_mpfr sage.symbolic
         0.058365979093103864080375311643360048144715516692187818271179
          - 0.67645499731334483535184142196073004335768129348518210260256*I
 
@@ -974,7 +980,7 @@ class Function_Bessel_K(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: sage.functions.bessel.Function_Bessel_K()                             # needs sage.symbolic
+            sage: sage.functions.bessel.Function_Bessel_K()
             bessel_K
             sage: bessel_K(x, x)._sympy_()                                              # needs sympy sage.symbolic
             besselk(x, x)
@@ -1088,15 +1094,17 @@ def Bessel(*args, **kwds):
 
         sage: Bessel()
         bessel_J
-        sage: Bessel(1)(x)                                                              # needs sage.symbolic
-        bessel_J(1, x)
-        sage: Bessel(1, 'Y')(x)                                                         # needs sage.symbolic
-        bessel_Y(1, x)
-        sage: Bessel(-2, 'Y')(x)                                                        # needs sage.symbolic
-        bessel_Y(-2, x)
         sage: Bessel(typ='K')
         bessel_K
-        sage: Bessel(0, typ='I')(x)                                                     # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: Bessel(1)(x)
+        bessel_J(1, x)
+        sage: Bessel(1, 'Y')(x)
+        bessel_Y(1, x)
+        sage: Bessel(-2, 'Y')(x)
+        bessel_Y(-2, x)
+        sage: Bessel(0, typ='I')(x)
         bessel_I(0, x)
 
     Evaluation::
@@ -1104,17 +1112,18 @@ def Bessel(*args, **kwds):
         sage: f = Bessel(1)
         sage: f(3.0)                                                                    # needs mpmath
         0.339058958525936
-        sage: f(3)                                                                      # needs sage.symbolic
-        bessel_J(1, 3)
-        sage: f(3).n(digits=50)                                                         # needs sage.symbolic
-        0.33905895852593645892551459720647889697308041819801
 
-        sage: g = Bessel(typ='J')
-        sage: g(1,3)                                                                    # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: f(3)
         bessel_J(1, 3)
-        sage: g(2, 3+I).n()                                                             # needs sage.symbolic
+        sage: f(3).n(digits=50)
+        0.33905895852593645892551459720647889697308041819801
+        sage: g = Bessel(typ='J')
+        sage: g(1,3)
+        bessel_J(1, 3)
+        sage: g(2, 3+I).n()
         0.634160370148554 + 0.0253384000032695*I
-        sage: abs(numerical_integral(1/pi*cos(3*sin(x)), 0.0, pi)[0]                    # needs sage.symbolic
+        sage: abs(numerical_integral(1/pi*cos(3*sin(x)), 0.0, pi)[0]
         ....:      - Bessel(0, 'J')(3.0)) < 1e-15
         True
 
@@ -1178,13 +1187,13 @@ def Bessel(*args, **kwds):
         sage: plot(f, (x, 1, 10))                                                       # needs sage.plot sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
-        sage: plot([Bessel(i, 'J') for i in range(5)], 2, 10)                           # needs sage.plot sage.symbolic
+        sage: plot([Bessel(i, 'J') for i in range(5)], 2, 10)                           # needs sage.plot
         Graphics object consisting of 5 graphics primitives
 
-        sage: G = Graphics()                                                            # needs sage.plot sage.symbolic
+        sage: G = Graphics()                                                            # needs sage.plot
         sage: G += sum(plot(Bessel(i), 0, 4*pi, rgbcolor=hue(sin(pi*i/10)))             # needs sage.plot sage.symbolic
         ....:          for i in range(5))
-        sage: show(G)                                                                   # needs sage.plot sage.symbolic
+        sage: show(G)                                                                   # needs sage.plot
 
     A recreation of Abramowitz and Stegun Figure 9.1::
 
@@ -1521,7 +1530,7 @@ class Function_Hankel1(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hankel1)                                                        # needs sage.symbolic
+            sage: latex(hankel1)
             H_{\nu}^{(1)}
         """
         return r'H_{\nu}^{(1)}'
@@ -1608,7 +1617,7 @@ class Function_Hankel2(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(hankel2)                                                        # needs sage.symbolic
+            sage: latex(hankel2)
             H_{\nu}^{(2)}
         """
         return r'H_{\nu}^{(2)}'
@@ -1651,21 +1660,23 @@ class SphericalBesselJ(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: spherical_bessel_J(3, x)                                                  # needs sage.symbolic
-        spherical_bessel_J(3, x)
-        sage: spherical_bessel_J(3 + 0.2 * I, 3)                                        # needs sage.symbolic
-        0.150770999183897 - 0.0260662466510632*I
-        sage: spherical_bessel_J(3, x).series(x == 2, 10).subs(x=3).n()                 # needs sage.symbolic
-        0.152051648665037
         sage: spherical_bessel_J(3, 3.)                                                 # needs mpmath
         0.152051662030533
         sage: spherical_bessel_J(2.,3.)      # rel tol 1e-10                            # needs mpmath
         0.2986374970757335
-        sage: spherical_bessel_J(4, x).simplify()                                       # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: spherical_bessel_J(3, x)
+        spherical_bessel_J(3, x)
+        sage: spherical_bessel_J(3 + 0.2 * I, 3)
+        0.150770999183897 - 0.0260662466510632*I
+        sage: spherical_bessel_J(3, x).series(x == 2, 10).subs(x=3).n()
+        0.152051648665037
+        sage: spherical_bessel_J(4, x).simplify()
         -((45/x^2 - 105/x^4 - 1)*sin(x) + 5*(21/x^2 - 2)*cos(x)/x)/x
-        sage: integrate(spherical_bessel_J(1,x)^2,(x,0,oo))                             # needs sage.symbolic
+        sage: integrate(spherical_bessel_J(1,x)^2,(x,0,oo))
         1/6*pi
-        sage: latex(spherical_bessel_J(4, x))                                           # needs sage.symbolic
+        sage: latex(spherical_bessel_J(4, x))
         j_{4}\left(x\right)
 
     REFERENCES:

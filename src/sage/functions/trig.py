@@ -13,15 +13,14 @@ class Function_sin(GinacFunction):
 
         EXAMPLES::
 
-            sage: sin(0)                                                                # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: sin(0)
             0
-            sage: sin(x).subs(x==0)                                                     # needs sage.symbolic
+            sage: sin(x).subs(x==0)
             0
-            sage: sin(2).n(100)                                                         # needs sage.symbolic
+            sage: sin(2).n(100)
             0.90929742682568169539601986591
-            sage: loads(dumps(sin))
-            sin
-            sage: sin(x)._sympy_()                                                      # needs sympy sage.symbolic
+            sage: sin(x)._sympy_()                                                      # needs sympy
             sin(x)
 
         We can prevent evaluation using the ``hold`` parameter::
@@ -46,6 +45,9 @@ class Function_sin(GinacFunction):
             0
 
         TESTS::
+
+            sage: loads(dumps(sin))
+            sin
 
             sage: conjugate(sin(x))                                                     # needs sage.symbolic
             sin(conjugate(x))
@@ -140,15 +142,14 @@ class Function_cos(GinacFunction):
 
         EXAMPLES::
 
-            sage: cos(pi)                                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: cos(pi)
             -1
-            sage: cos(x).subs(x==pi)                                                    # needs sage.symbolic
+            sage: cos(x).subs(x==pi)
             -1
-            sage: cos(2).n(100)                                                         # needs sage.symbolic
+            sage: cos(2).n(100)
             -0.41614683654714238699756822950
-            sage: loads(dumps(cos))
-            cos
-            sage: cos(x)._sympy_()                                                      # needs sympy sage.symbolic
+            sage: cos(x)._sympy_()                                                      # needs sympy
             cos(x)
 
         We can prevent evaluation using the ``hold`` parameter::
@@ -176,6 +177,9 @@ class Function_cos(GinacFunction):
             1/2
 
         TESTS::
+
+            sage: loads(dumps(cos))
+            cos
 
             sage: conjugate(cos(x))                                                     # needs sage.symbolic
             cos(conjugate(x))
@@ -206,17 +210,19 @@ class Function_tan(GinacFunction):
 
         EXAMPLES::
 
-            sage: tan(pi)                                                               # needs sage.symbolic
-            0
             sage: tan(3.1415)
             -0.0000926535900581913
             sage: tan(3.1415/4)
             0.999953674278156
-            sage: tan(pi/4)                                                             # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: tan(pi)
+            0
+            sage: tan(pi/4)
             1
-            sage: tan(1/2)                                                              # needs sage.symbolic
+            sage: tan(1/2)
             tan(1/2)
-            sage: RR(tan(1/2))                                                          # needs sage.symbolic
+            sage: RR(tan(1/2))
             0.546302489843790
 
         We can prevent evaluation using the ``hold`` parameter::
@@ -966,10 +972,11 @@ class Function_arctan2(GinacFunction):
 
         The function also works with numpy arrays as input::
 
-            sage: import numpy                                                          # needs numpy
-            sage: a = numpy.linspace(1, 3, 3)                                           # needs numpy
-            sage: b = numpy.linspace(3, 6, 3)                                           # needs numpy
-            sage: atan2(a, b)                                                           # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: a = numpy.linspace(1, 3, 3)
+            sage: b = numpy.linspace(3, 6, 3)
+            sage: atan2(a, b)
             array([0.32175055, 0.41822433, 0.46364761])
 
             sage: atan2(1,a)                                                            # needs numpy

@@ -219,16 +219,16 @@ class FunctionAiryAiSimple(BuiltinFunction):
             0.00659113935746072
             sage: airy_ai_simple(3).n(algorithm='mpmath', prec=100)
             0.0065911393574607191442574484080
-            sage: airy_ai_simple(3).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_ai_simple(3).n(algorithm='scipy')  # rel tol 1e-10               # needs scipy
             0.006591139357460719
             sage: airy_ai_simple(I).n(algorithm='scipy')  # rel tol 1e-10
             0.33149330543214117 - 0.3174498589684438*I
 
         TESTS::
 
-            sage: parent(airy_ai_simple(3).n(algorithm='scipy'))                        # needs sage.symbolic
+            sage: parent(airy_ai_simple(3).n(algorithm='scipy'))                        # needs scipy sage.rings.real_mpfr sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_ai_simple(3).n(algorithm='scipy', prec=200)                      # needs sage.symbolic
+            sage: airy_ai_simple(3).n(algorithm='scipy', prec=200)                      # needs scipy sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_ai not implemented for precision > 53
@@ -318,16 +318,16 @@ class FunctionAiryAiPrime(BuiltinFunction):
             -0.00195864095020418
             sage: airy_ai_prime(4).n(algorithm='mpmath', prec=100)
             -0.0019586409502041789001381409184
-            sage: airy_ai_prime(4).n(algorithm='scipy')    # rel tol 1e-10
+            sage: airy_ai_prime(4).n(algorithm='scipy')    # rel tol 1e-10              # needs scipy
             -0.00195864095020418
-            sage: airy_ai_prime(I).n(algorithm='scipy')    # rel tol 1e-10
+            sage: airy_ai_prime(I).n(algorithm='scipy')    # rel tol 1e-10              # needs scipy
             -0.43249265984180707 + 0.09804785622924324*I
 
         TESTS::
 
-            sage: parent(airy_ai_prime(3).n(algorithm='scipy'))                         # needs sage.symbolic
+            sage: parent(airy_ai_prime(3).n(algorithm='scipy'))                         # needs scipy sage.rings.real_mpfr sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_ai_prime(3).n(algorithm='scipy', prec=200)                       # needs sage.symbolic
+            sage: airy_ai_prime(3).n(algorithm='scipy', prec=200)                       # needs scipy sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_ai_prime not implemented
@@ -446,7 +446,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         0.034924130423274379135322080792
         sage: airy_ai(2).n(algorithm='mpmath', prec=100)                                # needs sage.symbolic
         0.034924130423274379135322080792
-        sage: airy_ai(2).n(algorithm='scipy')  # rel tol 1e-10                          # needs sage.symbolic
+        sage: airy_ai(2).n(algorithm='scipy')  # rel tol 1e-10                          # needs scipy sage.symbolic
         0.03492413042327323
 
     And the derivatives can be evaluated::
@@ -560,7 +560,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
             sage: from sage.functions.airy import airy_bi_general
             sage: x, n = var('x n')                                                     # needs sage.symbolic
-            sage: airy_bi_general(-2, 1.0)                                              # needs sage.symbolic
+            sage: airy_bi_general(-2, 1.0)                                              # needs mpmath
             0.388621540699059
             sage: airy_bi_general(n, 1.0)                                               # needs sage.symbolic
             airy_bi(n, 1.00000000000000)
@@ -579,7 +579,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.functions.airy import airy_bi_general
-            sage: airy_bi_general(-2, 1.0)                                              # needs sage.symbolic
+            sage: airy_bi_general(-2, 1.0)                                              # needs mpmath
             0.388621540699059
 
         """
@@ -629,7 +629,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             1/3*3^(5/6)/gamma(2/3)
             sage: airy_bi_simple(0.0)                                                   # needs mpmath
             0.614926627446001
-            sage: airy_bi_simple(0).n() == airy_bi(0.0)                                 # needs sage.symbolic
+            sage: airy_bi_simple(0).n() == airy_bi(0.0)                                 # needs mpmath sage.symbolic
             True
             sage: airy_bi_simple(I)                                                     # needs sage.symbolic
             airy_bi(I)
@@ -654,20 +654,20 @@ class FunctionAiryBiSimple(BuiltinFunction):
         We can use several methods for numerical evaluation::
 
             sage: # needs sage.symbolic
-            sage: airy_bi_simple(3).n(algorithm='mpmath')
+            sage: airy_bi_simple(3).n(algorithm='mpmath')                               # needs mpmath
             14.0373289637302
-            sage: airy_bi_simple(3).n(algorithm='mpmath', prec=100)
+            sage: airy_bi_simple(3).n(algorithm='mpmath', prec=100)                     # needs mpmath
             14.037328963730232031740267314
-            sage: airy_bi_simple(3).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_simple(3).n(algorithm='scipy')  # rel tol 1e-10               # needs scipy
             14.037328963730136
-            sage: airy_bi_simple(I).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_simple(I).n(algorithm='scipy')  # rel tol 1e-10               # needs scipy
             0.648858208330395 + 0.34495863476804844*I
 
         TESTS::
 
-            sage: parent(airy_bi_simple(3).n(algorithm='scipy'))                        # needs sage.symbolic
+            sage: parent(airy_bi_simple(3).n(algorithm='scipy'))                        # needs scipy sage.rings.real_mpfr sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_bi_simple(3).n(algorithm='scipy', prec=200)                      # needs sage.symbolic
+            sage: airy_bi_simple(3).n(algorithm='scipy', prec=200)                      # needs scipy sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_bi not implemented for precision > 53
@@ -758,16 +758,16 @@ class FunctionAiryBiPrime(BuiltinFunction):
             161.926683504613
             sage: airy_bi_prime(4).n(algorithm='mpmath', prec=100)
             161.92668350461340184309492429
-            sage: airy_bi_prime(4).n(algorithm='scipy')  # rel tol 1e-10
+            sage: airy_bi_prime(4).n(algorithm='scipy')  # rel tol 1e-10                # needs scipy
             161.92668350461398
             sage: airy_bi_prime(I).n(algorithm='scipy')  # rel tol 1e-10
             0.135026646710819 - 0.1288373867812549*I
 
         TESTS::
 
-            sage: parent(airy_bi_prime(3).n(algorithm='scipy'))                         # needs sage.symbolic
+            sage: parent(airy_bi_prime(3).n(algorithm='scipy'))                         # needs scipy sage.rings.real_mpfr sage.symbolic
             Real Field with 53 bits of precision
-            sage: airy_bi_prime(3).n(algorithm='scipy', prec=200)                       # needs sage.symbolic
+            sage: airy_bi_prime(3).n(algorithm='scipy', prec=200)                       # needs scipy sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: airy_bi_prime not implemented
@@ -887,7 +887,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         3.2980949999782147102806044252
         sage: airy_bi(2).n(algorithm='mpmath', prec=100)                                # needs sage.symbolic
         3.2980949999782147102806044252
-        sage: airy_bi(2).n(algorithm='scipy')  # rel tol 1e-10                          # needs sage.symbolic
+        sage: airy_bi(2).n(algorithm='scipy')  # rel tol 1e-10                          # needs scipy sage.symbolic
         3.2980949999782134
 
     And the derivatives can be evaluated::

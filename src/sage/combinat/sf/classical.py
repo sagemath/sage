@@ -20,9 +20,8 @@ Classical symmetric functions
 from sage.combinat.partition import _Partitions
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.rational_field import RationalField
-
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 from . import hall_littlewood
 from . import sfa
@@ -30,9 +29,6 @@ from . import llt
 from . import macdonald
 from . import jack
 from . import orthotriang
-
-ZZ = IntegerRing()
-QQ = RationalField()
 
 translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM', 'elementary':'ELMSYM', 'Schur':'SCHUR'}
 

@@ -21,7 +21,7 @@ Examples from :trac:`9908`::
     hypergeometric((1, 1, -1/2*I*sqrt(3) - 1/2, 1/2*I*sqrt(3) - 1/2),...
     (2, -1/2*I*sqrt(3) + 1/2, 1/2*I*sqrt(3) + 1/2), 1/2*I)
     sage: res = sum((-1)^x/((2*x + 1)*factorial(2*x + 1)), x, 0, oo)
-    sage: res                                   # not tested
+    sage: res                                   # not tested (depends on maxima version)
     hypergeometric((1/2,), (3/2, 3/2), -1/4)
     sage: res in [hypergeometric((1/2,), (3/2, 3/2), -1/4), sin_integral(1)]
     True
@@ -156,7 +156,7 @@ Series expansions of confluent hypergeometric functions::
     1 + 1*x + 1/2*x^2 + Order(x^3)
     sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n()                   # needs sage.symbolic
     0.403652637676806
-    sage: hypergeometric_U(2, 2, 1).n()                                                 # needs sage.symbolic
+    sage: hypergeometric_U(2, 2, 1).n()                                                 # needs mpmath sage.symbolic
     0.403652637676806
 """
 
@@ -368,7 +368,7 @@ class Hypergeometric(BuiltinFunction):
 
             sage: hypergeometric([1, 1], [2], -1).n()                                   # needs sage.symbolic
             0.693147180559945
-            sage: hypergeometric([], [], RealField(100)(1))                             # needs sage.rings.real_mpfr
+            sage: hypergeometric([], [], RealField(100)(1))                             # needs sage.rings.real_mpfr sage.symbolic
             2.7182818284590452353602874714
 
         """
@@ -416,10 +416,11 @@ class Hypergeometric(BuiltinFunction):
 
             EXAMPLES::
 
-                sage: h = hypergeometric([], [], x)                                     # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: h = hypergeometric([], [], x)
                 sage: from sage.ext.fast_callable import ExpressionTreeBuilder
                 sage: etb = ExpressionTreeBuilder(vars=['x'])
-                sage: h._fast_callable_(etb)                                            # needs sage.symbolic
+                sage: h._fast_callable_(etb)
                 {hypergeometric((), (), x)}(v_0)
 
                 sage: var('x, y')                                                       # needs sage.symbolic
@@ -674,18 +675,20 @@ class Hypergeometric(BuiltinFunction):
 
             EXAMPLES::
 
-                sage: x = hypergeometric([6, 1], [3, 4, 5], 10)                         # needs sage.symbolic
-                sage: y = x.deflated(); y                                               # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: x = hypergeometric([6, 1], [3, 4, 5], 10)
+                sage: y = x.deflated(); y
                 1/252*hypergeometric((4,), (7, 8), 10)
                  + 1/12*hypergeometric((3,), (6, 7), 10)
                  + 1/2*hypergeometric((2,), (5, 6), 10)
                  + hypergeometric((1,), (4, 5), 10)
-                sage: x.n(); y.n()                                                      # needs sage.symbolic
+                sage: x.n(); y.n()
                 2.87893612686782
                 2.87893612686782
 
-                sage: x = hypergeometric([6, 7], [3, 4, 5], 10)                         # needs sage.symbolic
-                sage: y = x.deflated(); y                                               # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: x = hypergeometric([6, 7], [3, 4, 5], 10)
+                sage: y = x.deflated(); y
                 25/27216*hypergeometric((), (11,), 10)
                  + 25/648*hypergeometric((), (10,), 10)
                  + 265/504*hypergeometric((), (9,), 10)
@@ -693,7 +696,7 @@ class Hypergeometric(BuiltinFunction):
                  + 19/3*hypergeometric((), (7,), 10)
                  + 5*hypergeometric((), (6,), 10)
                  + hypergeometric((), (5,), 10)
-                sage: x.n(); y.n()                                                      # needs sage.symbolic
+                sage: x.n(); y.n()
                 63.0734110716969
                 63.0734110716969
             """
@@ -705,10 +708,11 @@ class Hypergeometric(BuiltinFunction):
 
             EXAMPLES::
 
-                sage: x = hypergeometric([5], [4], 3)                                   # needs sage.symbolic
-                sage: y = x.deflated(); y                                               # needs sage.symbolic
+                sage: # needs sage.symbolic
+                sage: x = hypergeometric([5], [4], 3)
+                sage: y = x.deflated(); y
                 7/4*hypergeometric((), (), 3)
-                sage: x.n(); y.n()                                                      # needs sage.symbolic
+                sage: x.n(); y.n()
                 35.1496896155784
                 35.1496896155784
             """
@@ -953,18 +957,21 @@ class Hypergeometric_M(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: hypergeometric_M(1, 1, 1)                                                 # needs sage.symbolic
-        hypergeometric_M(1, 1, 1)
+
         sage: hypergeometric_M(1, 1, 1.)                                                # needs mpmath
         2.71828182845905
-        sage: hypergeometric_M(1, 1, 1).n(70)                                           # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: hypergeometric_M(1, 1, 1)
+        hypergeometric_M(1, 1, 1)
+        sage: hypergeometric_M(1, 1, 1).n(70)                                           # needs mpmath
         2.7182818284590452354
-        sage: hypergeometric_M(1, 1, 1).simplify_hypergeometric()                       # needs sage.symbolic
+        sage: hypergeometric_M(1, 1, 1).simplify_hypergeometric()
         e
-        sage: hypergeometric_M(1, 1/2, x).simplify_hypergeometric()                     # needs sage.symbolic
-        (-I*sqrt(pi)*x*erf(I*sqrt(-x))*e^x + sqrt(-x))/sqrt(-x)
-        sage: hypergeometric_M(1, 3/2, 1).simplify_hypergeometric()                     # needs sage.symbolic
+        sage: hypergeometric_M(1, 3/2, 1).simplify_hypergeometric()
         1/2*sqrt(pi)*erf(1)*e
+        sage: hypergeometric_M(1, 1/2, x).simplify_hypergeometric()
+        (-I*sqrt(pi)*x*erf(I*sqrt(-x))*e^x + sqrt(-x))/sqrt(-x)
     """
     def __init__(self):
         r"""
@@ -999,7 +1006,7 @@ class Hypergeometric_M(BuiltinFunction):
         """
         TESTS::
 
-            sage: hypergeometric_M(1, 1, 1).n()                                         # needs sage.symbolic
+            sage: hypergeometric_M(1,1,1).n()                                           # needs mpmath sage.symbolic
             2.71828182845905
         """
         return _mpmath_call(_mpmath_hyp1f1, a, b, z, parent=parent)
@@ -1063,21 +1070,24 @@ class Hypergeometric_U(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: hypergeometric_U(1, 1, 1)                                                 # needs sage.symbolic
+        sage: # needs mpmath
+        sage: hypergeometric_U(1, 1, 1)
         hypergeometric_U(1, 1, 1)
-        sage: hypergeometric_U(1, 1, 1.)                                                # needs mpmath
+        sage: hypergeometric_U(1, 1, 1.)
         0.596347362323194
-        sage: hypergeometric_U(1, 1, 1).n(70)                                           # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: hypergeometric_U(1, 1, 1).n(70)                                           # needs mpmath
         0.59634736232319407434
-        sage: hypergeometric_U(10^4, 1/3, 1).n()                                        # needs sage.symbolic
+        sage: hypergeometric_U(10^4, 1/3, 1).n()                                        # needs sage.libs.pari
         6.60377008885811e-35745
+        sage: hypergeometric_U(1, 2, 2).simplify_hypergeometric()
+        1/2
+
         sage: hypergeometric_U(2 + I, 2, 1).n()                                         # needs sage.symbolic
         0.183481989942099 - 0.458685959185190*I
         sage: hypergeometric_U(1, 3, x).simplify_hypergeometric()                       # needs sage.symbolic
         (x + 1)/x^2
-        sage: hypergeometric_U(1, 2, 2).simplify_hypergeometric()                       # needs sage.symbolic
-        1/2
-
     """
     def __init__(self):
         r"""
@@ -1103,7 +1113,7 @@ class Hypergeometric_U(BuiltinFunction):
         """
         TESTS::
 
-            sage: hypergeometric_U(1, 1, 1).n()                                         # needs sage.symbolic
+            sage: hypergeometric_U(1, 1, 1).n()                                         # needs mpmath sage.symbolic
             0.596347362323194
         """
         return _mpmath_call(_mpmath_hyperu, a, b, z, parent=parent)

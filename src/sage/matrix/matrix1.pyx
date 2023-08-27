@@ -1473,10 +1473,10 @@ cdef class Matrix(Matrix0):
         tmp = [self.get_unsafe(i,j) for j in range(self._ncols)]
         return V(tmp, coerce=False, copy=False, check=False)
 
-
     ###########################################################################
     # Building matrices out of other matrices, rows, or columns
     ###########################################################################
+
     def stack(self, bottom, subdivide=False):
         r"""
         Return a new matrix formed by appending the matrix (or vector)
@@ -2194,9 +2194,7 @@ cdef class Matrix(Matrix0):
             [5 4]
 
         For example here we take from row 1 columns 2 then 0 twice, and do
-        this 3 times.
-
-        ::
+        this 3 times::
 
             sage: A.matrix_from_rows_and_columns([1,1,1], [2,0,0])
             [5 3 3]
@@ -2542,10 +2540,9 @@ cdef class Matrix(Matrix0):
                     M.set_unsafe(i, j, one)
         return M
 
-
-    ####################################################################################
+    ######################################################################
     # Change of representation between dense and sparse.
-    ####################################################################################
+    ######################################################################
 
     def dense_matrix(self):
         """

@@ -50,15 +50,22 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     - ``n`` -- Determinant size, primal: `det(L) = q^n`, dual: `det(L) = q^{m-n}`.
       For ideal lattices this is also the degree of the quotient polynomial.
+
     - ``m`` -- Lattice dimension, `L \subseteq Z^m`.
+
     - ``q`` -- Coefficient size, `q-Z^m \subseteq L`.
+
     - ``seed`` -- Randomness seed.
+
     - ``quotient`` -- For the type ``'ideal'``, this determines the quotient
       polynomial. Ignored for all other types.
+
     - ``dual`` -- Set this flag if you want a basis for `q-dual(L)`, for example
       for Regev's LWE bases [Reg2005]_.
+
     - ``ntl`` -- Set this flag if you want the lattice basis in NTL readable
       format.
+
     - ``lattice`` -- Set this flag if you want a
       :class:`FreeModule_submodule_with_basis_integer` object instead
       of an integer matrix representing the basis.
@@ -221,7 +228,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from sage.matrix.constructor import identity_matrix, block_matrix
     from sage.matrix.matrix_space import MatrixSpace
-    from sage.rings.integer_ring import IntegerRing
+    from sage.rings.integer_ring import ZZ
     if seed is not None:
         from sage.misc.randstate import set_random_seed
         set_random_seed(seed)
@@ -230,7 +237,6 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         if n != 1:
             raise ValueError('random bases require n = 1')
 
-    ZZ = IntegerRing()
     ZZ_q = IntegerModRing(q)
     A = identity_matrix(ZZ_q, n)
 

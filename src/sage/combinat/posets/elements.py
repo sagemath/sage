@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Elements of posets, lattices, semilattices, etc.
 """
@@ -78,7 +79,6 @@ class PosetElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: m = matrix(2, [1,2,3,4])
             sage: m.set_immutable()
             sage: P = Poset(([m],[]), facade=False)
@@ -245,13 +245,13 @@ class MeetSemilatticeElement(PosetElement):
         EXAMPLES::
 
             sage: D = posets.DiamondPoset(5, facade=False)
-            sage: D(1) * D(2)                                                           # needs sage.modules
+            sage: D(1) * D(2)
             0
-            sage: D(1) * D(1)                                                           # needs sage.modules
+            sage: D(1) * D(1)
             1
-            sage: D(1) * D(0)                                                           # needs sage.modules
+            sage: D(1) * D(0)
             0
-            sage: D(1) * D(4)                                                           # needs sage.modules
+            sage: D(1) * D(4)
             1
         """
         return self.parent().meet(self, other)
@@ -265,13 +265,13 @@ class JoinSemilatticeElement(PosetElement):
         EXAMPLES::
 
             sage: D = posets.DiamondPoset(5,facade=False)
-            sage: D(1) + D(2)                                                           # needs sage.modules
+            sage: D(1) + D(2)
             4
-            sage: D(1) + D(1)                                                           # needs sage.modules
+            sage: D(1) + D(1)
             1
-            sage: D(1) + D(4)                                                           # needs sage.modules
+            sage: D(1) + D(4)
             4
-            sage: D(1) + D(0)                                                           # needs sage.modules
+            sage: D(1) + D(0)
             1
         """
         return self.parent().join(self, other)

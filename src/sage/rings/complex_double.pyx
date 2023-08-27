@@ -1990,10 +1990,10 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return self._new_c(gsl_complex_arcsec(self._complex))
 
-
     #######################################################################
     # Complex Hyperbolic Functions
     #######################################################################
+
     def sinh(self):
         r"""
         This function returns the complex hyperbolic sine of the complex

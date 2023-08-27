@@ -838,8 +838,8 @@ cdef class BooleanFunction(SageObject):
         correlation immune of order `m`.
 
         A Boolean function is said to be correlation immune of order
-        `m`, if the output of the function is statistically
-        independent of the combination of any m of its inputs.
+        `m` if the output of the function is statistically
+        independent of the combination of any `m` of its inputs.
 
         EXAMPLES::
 

@@ -45,24 +45,26 @@ class Function_exp(GinacFunction):
 
     EXAMPLES::
 
-        sage: exp(-1)                                                                   # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: exp(-1)
         e^(-1)
-        sage: exp(2)                                                                    # needs sage.symbolic
+        sage: exp(2)
         e^2
-        sage: exp(2).n(100)                                                             # needs sage.symbolic
+        sage: exp(2).n(100)
         7.3890560989306502272304274606
-        sage: exp(x^2 + log(x))                                                         # needs sage.symbolic
+        sage: exp(x^2 + log(x))
         e^(x^2 + log(x))
-        sage: exp(x^2 + log(x)).simplify()                                              # needs sage.symbolic
+        sage: exp(x^2 + log(x)).simplify()
         x*e^(x^2)
-        sage: exp(2.5)                                                                  # needs sage.symbolic
+        sage: exp(2.5)
         12.1824939607035
+        sage: exp(I*pi/12)
+        (1/4*I + 1/4)*sqrt(6) - (1/4*I - 1/4)*sqrt(2)
+
         sage: exp(float(2.5))
         12.182493960703473
-        sage: exp(RDF('2.5'))                                                           # needs sage.symbolic
+        sage: exp(RDF('2.5'))
         12.182493960703473
-        sage: exp(I*pi/12)                                                              # needs sage.symbolic
-        (1/4*I + 1/4)*sqrt(6) - (1/4*I - 1/4)*sqrt(2)
 
     To prevent automatic evaluation, use the ``hold`` parameter::
 
@@ -330,25 +332,23 @@ class Function_polylog(GinacFunction):
             sage: polylog(4, 0.5)
             0.517479061673899
 
-            sage: polylog(1, x)                                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: polylog(1, x)
             -log(-x + 1)
-            sage: polylog(2, x^2 + 1)                                                   # needs sage.symbolic
+            sage: polylog(2, x^2 + 1)
             dilog(x^2 + 1)
-
-            sage: f = polylog(4, 1); f                                                  # needs sage.symbolic
+            sage: f = polylog(4, 1); f
             1/90*pi^4
-            sage: f.n()                                                                 # needs sage.symbolic
+            sage: f.n()
             1.08232323371114
-
-            sage: polylog(4, 2).n()                                                     # needs sage.symbolic
+            sage: polylog(4, 2).n()
             2.42786280675470 - 0.174371300025453*I
-            sage: complex(polylog(4, 2))                                                # needs sage.symbolic
+            sage: complex(polylog(4, 2))
             (2.4278628067547032-0.17437130002545306j)
-            sage: float(polylog(4, 0.5))                                                # needs sage.symbolic
+            sage: float(polylog(4, 0.5))
             0.5174790616738993
-
-            sage: z = var('z')                                                          # needs sage.symbolic
-            sage: polylog(2, z).series(z==0, 5)                                         # needs sage.symbolic
+            sage: z = var('z')
+            sage: polylog(2, z).series(z==0, 5)
             1*z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + Order(z^5)
 
             sage: loads(dumps(polylog))
@@ -528,12 +528,14 @@ class Function_dilog(GinacFunction):
             0.582240526465012
             sage: dilog(-1.0)                                                           # needs sage.symbolic
             -0.822467033424113
-            sage: y = dilog(RealField(13)(0.5))                                         # needs sage.rings.real_mpfr
-            sage: parent(y)                                                             # needs sage.symbolic
+
+            sage: # needs sage.rings.real_mpfr sage.symbolic
+            sage: y = dilog(RealField(13)(0.5))
+            sage: parent(y)
             Real Field with 13 bits of precision
-            sage: dilog(RealField(13)(1.1))                                             # needs sage.rings.real_mpfr
+            sage: dilog(RealField(13)(1.1))
             1.96 - 0.300*I
-            sage: parent(_)                                                             # needs sage.rings.real_mpfr
+            sage: parent(_)
             Complex Field with 13 bits of precision
         """
         GinacFunction.__init__(self, 'dilog',
@@ -595,7 +597,7 @@ class Function_lambert_w(BuiltinFunction):
         0.567143290409784
         sage: lambert_w(-1).n()                                                         # needs mpmath
         -0.318131505204764 + 1.33723570143069*I
-        sage: lambert_w(-1.5 + 5*I)                                                     # needs mpmath sage.su
+        sage: lambert_w(-1.5 + 5*I)                                                     # needs mpmath sage.symbolic
         1.17418016254171 + 1.10651494102011*I
 
     Evaluation of other branches::
@@ -1131,25 +1133,27 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: harmonic_number(x, 0)                                                 # needs sage.symbolic
-            x
-            sage: harmonic_number(x, 1)                                                 # needs sage.symbolic
-            harmonic_number(x)
             sage: harmonic_number(5)                                                    # needs mpmath
             137/60
-            sage: harmonic_number(3, 3)                                                 # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: harmonic_number(x, 0)
+            x
+            sage: harmonic_number(x, 1)
+            harmonic_number(x)
+            sage: harmonic_number(3, 3)
             251/216
-            sage: harmonic_number(3, 3).n()  # this goes from rational to float         # needs sage.symbolic
+            sage: harmonic_number(3, 3).n()  # this goes from rational to float
             1.16203703703704
-            sage: harmonic_number(3, 3.)  # the following uses zeta functions           # needs sage.symbolic
+            sage: harmonic_number(3, 3.)  # the following uses zeta functions
             1.16203703703704
-            sage: harmonic_number(3., 3)                                                # needs sage.symbolic
+            sage: harmonic_number(3., 3)
             zeta(3) - 0.0400198661225573
-            sage: harmonic_number(0.1, 5)                                               # needs sage.symbolic
+            sage: harmonic_number(0.1, 5)
             zeta(5) - 0.650300133161038
-            sage: harmonic_number(0.1, 5).n()                                           # needs sage.symbolic
+            sage: harmonic_number(0.1, 5).n()
             0.386627621982332
-            sage: harmonic_number(3, 5/2)                                               # needs sage.symbolic
+            sage: harmonic_number(3, 5/2)
             1/27*sqrt(3) + 1/8*sqrt(2) + 1
 
         TESTS::
@@ -1368,7 +1372,7 @@ class Function_harmonic_number(BuiltinFunction):
             3.59773965714368191148376906...
             sage: harmonic_number(20.)  # this computes the integral with mpmath
             3.59773965714368
-            sage: harmonic_number(1.0*I)
+            sage: harmonic_number(1.0*I)                                                # needs sage.symbolic
             0.671865985524010 + 1.07667404746858*I
         """
         return _mpmath_call(_mpmath_harmonic, z, parent=parent)

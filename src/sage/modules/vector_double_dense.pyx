@@ -473,10 +473,10 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         # p = 0 returns integer *count* of non-zero entries
         return RDF(n)
 
-
     #############################
     # statistics
     #############################
+
     def mean(self):
         """
         Calculate the arithmetic mean of the vector.

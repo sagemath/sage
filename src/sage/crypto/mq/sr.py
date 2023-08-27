@@ -2070,7 +2070,7 @@ class SR_generic(MPolynomialSystemGenerator):
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: F.subs(s).groebner_basis() # long time
+            sage: F.subs(s).groebner_basis()    # long time                             # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 1248 Polynomials in 1248 Variables
         """
         plaintext = P
