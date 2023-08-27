@@ -10,7 +10,7 @@ ridiculously large integer, see :trac:`15363`::
     ....:     2^(2^63-3)
     ....: except (OverflowError, RuntimeError, FloatingPointError):
     ....:     print ('Overflow error')
-    Overflow error
+    ...Overflow error
 
 AUTHORS:
 
