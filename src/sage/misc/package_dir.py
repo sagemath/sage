@@ -459,8 +459,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser(description="Maintenance tool for distribution packages of the Sage library",
-                            epilog=("Example usage:\n\n  grep '^sage/' pkgs/sagemath-ntl/sagemath_ntl.egg-info/SOURCES.txt "
-                                    "| (cd src && xargs ../sage -fixdistributions --set sagemath-ntl)"""))
+                            epilog="By default, 'sage -fixdistributions' shows the distribution of each file.")
     parser.add_argument('--add', metavar='distribution', type=str, default=None,
                         help=("add a 'sage_setup: distribution' directive to FILES; "
                               "do not change files that already have a nonempty directive"))
