@@ -51,10 +51,11 @@ for PKG_BASE in $SPKGS; do
     # macro and if --enable-system-site-packages was NOT passed
     # to ./configure (or if ./configure has not yet been run).
     SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/${PKG_BASE}/spkg-configure.m4"
-    if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}" 2>/dev/null; then
-	if [ -z "${ENABLE_SYSTEM_SITE_PACKAGES}" ]; then
-	    continue;
-	fi
+    if [ -z "${ENABLE_SYSTEM_SITE_PACKAGES}" ]; then
+        if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}" 2>/dev/null;
+        then
+            continue;
+        fi
     fi
 
     for NAME in $SYSTEM_PACKAGES_FILE_NAMES; do
