@@ -474,7 +474,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    distribution = args.set or args.add
+    distribution = args.set or args.add or ''
 
     if args.from_egg_info:
         from sage.env import SAGE_ROOT
@@ -513,17 +513,20 @@ if __name__ == '__main__':
         path = os.path.join(root, file)
         if args.set is not None:
             update_distribution(path, args.set, verbose=True)
-        elif args.add is not None and not read_distribution(path):
-            update_distribution(path, args.add, verbose=True)
+            file_distribution = distribution
+        elif args.add is not None:
+            if not (file_distribution := read_distribution(path)):
+                update_distribution(path, args.add, verbose=True)
+                file_distribution = distribution
         else:
-            distribution = read_distribution(path)
-            print(f'{path}: file in distribution {distribution!r}')
-        package_distributions_per_directives[root].add(distribution)
+            file_distribution = read_distribution(path)
+            print(f'{path}: file in distribution {file_distribution!r}')
+        package_distributions_per_directives[root].add(file_distribution)
         if file.startswith('__init__.'):
             ordinary_packages.add(root)
         elif (distribution_per_all_filename := _distribution_from_all_filename(file)) is not False:
-            if distribution_per_all_filename != distribution:
-                print(f'{path}: file should go in distribution {distribution_per_all_filename!r}, not {distribution!r}')
+            if distribution_per_all_filename != file_distribution:
+                print(f'{path}: file should go in distribution {distribution_per_all_filename!r}, not {file_distribution!r}')
             package_distributions_per_all_files[root].add(distribution_per_all_filename)
 
     for path in args.filename:
@@ -545,7 +548,7 @@ if __name__ == '__main__':
                             continue
                         handle_file(root, file)
         else:
-            handle_file(path)
+            handle_file(*os.path.split(path))
 
     for package in ordinary_packages:
         if len(package_distributions_per_directives[package]) > 1:
