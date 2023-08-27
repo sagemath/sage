@@ -469,8 +469,13 @@ AC_ARG_ENABLE(
     dnl their system python packages and who may not be paying close
     dnl attention to their ./configure output.
     with_system_python3="force"
+
+    dnl This is substituted in to build/bin/sage-build-env-config.in for use
+    dnl by build/bin/sage-get-system-packages
+    ENABLE_SYSTEM_SITE_PACKAGES=yes
   ])
 ])
+AC_SUBST([ENABLE_SYSTEM_SITE_PACKAGES])
 AC_SUBST([SAGE_PIP_INSTALL_FLAGS])
 AC_SUBST([SAGE_VENV_FLAGS])
 
