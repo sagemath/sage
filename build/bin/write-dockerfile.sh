@@ -18,9 +18,8 @@ CONFIGURE_ARGS="--enable-option-checking "
 for SPKG in $(sage-package list $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
     SYSTEM_PACKAGE=$(sage-get-system-packages $SYSTEM $SPKG)
     if [ -n "${SYSTEM_PACKAGE}" ]; then
-	# SYSTEM_PACKAGE can be empty if, for example, it corresponds
-	# to a python package and --enable-system-site-packages was
-	# not passed to ./configure.
+	# SYSTEM_PACKAGE can be empty if, for example, the environment
+	# variable ENABLE_SYSTEM_SITE_PACKAGES is empty.
 	SYSTEM_PACKAGES+=" ${SYSTEM_PACKAGE}"
 	CONFIGURE_ARGS+="--with-system-${SPKG}=${WITH_SYSTEM_SPKG} "
     fi
