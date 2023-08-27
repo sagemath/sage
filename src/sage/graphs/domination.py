@@ -349,8 +349,8 @@ def dominating_sets(g, k=1, independent=False, total=False,
     The method is robust to vertices with incomparable labels::
 
         sage: G = Graph([(1, 'A'), ('A', 2), (2, 3), (3, 1)])
-        sage: L = list(G.dominating_sets())
-        sage: len(L)
+        sage: L = list(G.dominating_sets())                                             # needs sage.numerical.mip
+        sage: len(L)                                                                    # needs sage.numerical.mip
         6
     """
     g._scream_if_not_simple(allow_multiple_edges=True, allow_loops=not total)
