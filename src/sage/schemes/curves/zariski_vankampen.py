@@ -1168,7 +1168,7 @@ def braid_monodromy(f, arrangement=()):
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
         ([], {})
-        sage: braid_monodromy(x * y^2 -1)
+        sage: braid_monodromy(x * y^2 - 1)
         ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0})
     """
     global roots_interval_cache
