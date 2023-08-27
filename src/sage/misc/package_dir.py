@@ -225,7 +225,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
             src_lines.insert(0, f'# {directive}\n')
             any_change = True
             if verbose:
-                print(f"{src_file}: Added 'sage_setup: "
+                print(f"{src_file}: added 'sage_setup: "
                       f"distribution = {distribution}' directive")
     if not any_change:
         return
