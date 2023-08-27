@@ -857,6 +857,9 @@ class CohomologyRing(CombinatorialFreeModule):
         vertices = moment_angle_complex._simplicial_complex.vertices()
         n = len(vertices)
         self._graded_indices = {}
+
+        # Will be used for storing information about the subcomplexes
+        #from which we compute the cohomology
         self._gens = {}
         indices = []
         for deg in range(moment_angle_complex.dimension() + 1):
@@ -868,9 +871,10 @@ class CohomologyRing(CombinatorialFreeModule):
                     # Because of the empty combination
                     if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, generators=True), list):
                         if len(S.cohomology(deg-i-1, generators=True)) > 0:
+
                             self._gens[deg].append([set(x), deg-i-1, S.cohomology(deg-i-1, generators=True)[0]])
+
                         num_of_gens += len(S.cohomology(deg-i-1, generators=True))
-                        print("{}, {}: {} - {}".format(deg, i, x, S.cohomology(deg-i-1, generators=True)))
                     elif len(S.vertices()) == 0 and deg == 0:
                         num_of_gens = 1
 
@@ -909,7 +913,6 @@ class CohomologyRing(CombinatorialFreeModule):
 
     @cached_method
     def _to_cycle_on_basis(self, i):
-        self._gens[i[0]][i[1]]
         subcomplex = self._complex.simplicial_complex().generated_subcomplex(self._gens[i[0]][i[1]][0], is_mutable=False)
         cochains = subcomplex.n_chains(self._gens[i[0]][i[1]][1], base_ring=self._base_ring, cochains=True)
         cochain = self._gens[i[0]][i[1]][2][1]
@@ -924,11 +927,15 @@ class CohomologyRing(CombinatorialFreeModule):
         try:
             left = self._gens[li[0]][li[1]]
             right = self._gens[ri[0]][ri[1]]
+            print(left)
+            print(right)
             set_left = left[0]
             set_right = right[0]
             # be careful when having multiple generators here
             subcomplex_left = left[2][1].leading_item()[0].set()
+            print(left[2][1].leading_item())
             subcomplex_right = right[2][1].leading_item()[0].set()
+            print(right[2][1].leading_item())
             if not set_left.isdisjoint(set_right):
                 return self.zero()
 
@@ -936,19 +943,18 @@ class CohomologyRing(CombinatorialFreeModule):
             res_union = subcomplex_left.union(subcomplex_right)
             subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
             deg = left[1] + right[1]+ 1
+            res_cochain = dict(subcomplex_union.n_chains(deg, cochains=True).basis()).get(Simplex(res_union), 0)
 
-            if subcomplex_union.n_chains(deg, cochains=True).has_key(Simplex(res_union)):
-                res_cochain = dict(subcomplex_union.n_chains(deg, cochains=True).basis()).get(Simplex(res_union), 0)
-                phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
-                coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
-                res = self.zero()
-                for i in range(len(coeff_vec)+1):
-                    res += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
-            else:
-                return self.zero()
+            phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
+            coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
+            res = self.zero()
+            for i in range(len(coeff_vec)):
+                res += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
 
+            return res
         except IndexError:
             pass
+        return self.zero()
 
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
@@ -965,5 +971,5 @@ class CohomologyRing(CombinatorialFreeModule):
 # used for computing coeffeicients when multiplying in cohomology
 def eps(element, simplicial_complex):
     if element not in simplicial_complex._vertex_to_index:
-        raise ValueError("element is not a vertex of simplicial_complex")
+        raise ValueError("`element` is not a vertex of simplicial_complex")
     return (-1) ** simplicial_complex._vertex_to_index[element]
