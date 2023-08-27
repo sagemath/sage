@@ -15,7 +15,7 @@ SAGE_ROOT=.
 export PATH="$SAGE_ROOT"/build/bin:$PATH
 SYSTEM_PACKAGES=$EXTRA_SYSTEM_PACKAGES
 CONFIGURE_ARGS="--enable-option-checking "
-for SPKG in $(sage-package list $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
+for SPKG in $(sage-package list --has-file=spkg-configure.m4 $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
     SYSTEM_PACKAGE=$(sage-get-system-packages $SYSTEM $SPKG)
     if [ -n "${SYSTEM_PACKAGE}" ]; then
 	# SYSTEM_PACKAGE can be empty if, for example, the environment
