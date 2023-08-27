@@ -12,11 +12,6 @@ if [ -z "$SAGE_ROOT" ]; then
     SAGE_ROOT=`pwd`
 fi
 
-# We source sage-build-env-config because we need to know if
-# --enable-system-site-packages was passed to ./configure.
-# (If not, we want to hide those packages.)
-. "${SAGE_ROOT}/build/bin/sage-build-env-config"
-
 case "$SYSTEM" in
     install-requires)
         # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
@@ -54,7 +49,7 @@ for PKG_BASE in $SPKGS; do
 
     # Skip this package if it uses the SAGE_PYTHON_PACKAGE_CHECK
     # macro and if --enable-system-site-packages was NOT passed
-    # to ./configure.
+    # to ./configure (or if ./configure has not yet been run).
     SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/${PKG_BASE}/spkg-configure.m4"
     if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}" 2>/dev/null; then
 	if [ -z "${ENABLE_SYSTEM_SITE_PACKAGES}" ]; then
