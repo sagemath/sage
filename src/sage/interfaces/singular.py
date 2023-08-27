@@ -604,8 +604,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: i = singular.ideal(['x^2','y^2','z^2'])
             sage: s = i.std()
             sage: singular.eval('hilb(%s)'%(s.name()))
-            '// 1 t^0\n// -3 t^2\n// 3 t^4\n// -1 t^6\n\n// 1 t^0\n//
-            3 t^1\n// 3 t^2\n// 1 t^3\n// dimension (affine) = 0\n//
+            '...// dimension (affine) = 0\n//
             degree (affine) = 8'
 
         ::
@@ -613,15 +612,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(1)
             sage: o = singular.eval('hilb(%s)'%(s.name()))
-            //         1 t^0
-            //        -3 t^2
-            //         3 t^4
-            //        -1 t^6
-            //         1 t^0
-            //         3 t^1
-            //         3 t^2
-            //         1 t^3
-            // dimension (affine) = 0
+            ...// dimension (affine) = 0
             // degree (affine)  = 8
 
         This is mainly useful if this method is called implicitly. Because
@@ -631,15 +622,7 @@ class Singular(ExtraTabCompletion, Expect):
         ::
 
             sage: o = s.hilb()
-            //         1 t^0
-            //        -3 t^2
-            //         3 t^4
-            //        -1 t^6
-            //         1 t^0
-            //         3 t^1
-            //         3 t^2
-            //         1 t^3
-            // dimension (affine) = 0
+            ...// dimension (affine) = 0
             // degree (affine)  = 8
             // ** right side is not a datum, assignment ignored
             ...

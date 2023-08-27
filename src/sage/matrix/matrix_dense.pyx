@@ -74,6 +74,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
         Check :trac:`27629`::
 
+            sage: # needs sage.symbolic
             sage: var('x')
             x
             sage: assume(x, 'real')
@@ -270,8 +271,8 @@ cdef class Matrix_dense(matrix.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [x^i for i in range(4)])
-            sage: m._derivative(x)
+            sage: m = matrix(2, [x^i for i in range(4)])                                # needs sage.symbolic
+            sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
         """

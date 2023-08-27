@@ -1998,10 +1998,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         return self * self.denominator()
 
-
-#########################################################
-# Some things are so much easier to compute
-#########################################################
+    #########################################################
+    # Some things are so much easier to compute
+    #########################################################
 
     def trace(self):
         """
