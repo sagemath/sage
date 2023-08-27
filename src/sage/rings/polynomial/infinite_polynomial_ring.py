@@ -1364,7 +1364,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         EXAMPLES::
 
             sage: R.<x> = InfinitePolynomialRing(GF(2))
-            sage: R.key_basis()                                                         # needs sage.combinat
+            sage: R.key_basis()                                                         # needs sage.combinat sage.modules
             Key polynomial basis over Finite Field of size 2
         """
         from sage.combinat.key_polynomial import KeyPolynomialBasis
