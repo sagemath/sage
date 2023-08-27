@@ -1,0 +1,16 @@
+div.jupyter_container {
+  margin: .5em 0;
+}
+
+div.jupyter_container + div.jupyter_container {
+  margin: 0 0 0.5em 0;
+}
+
+div.jupyter_container div.cell_input pre {
+  margin: .5em;
+}
+
+div.jupyter_container div.cell_output div.output {
+  margin: .5em;
+}
+

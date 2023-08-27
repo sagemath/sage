@@ -1,0 +1,75 @@
+From 4d6c87f4144110d7f361f11ead41f1b6f602b20d Mon Sep 17 00:00:00 2001
+From: Kwankyu Lee <ekwankyu@gmail.com>
+Date: Mon, 28 Aug 2023 00:18:59 +0900
+Subject: [PATCH] Patch for sage live doc
+
+---
+ jupyter_sphinx/__init__.py |  8 +++++---
+ jupyter_sphinx/execute.py  | 11 +++++++++++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/jupyter_sphinx/__init__.py b/jupyter_sphinx/__init__.py
+index 34af884..f5a7f44 100644
+--- a/jupyter_sphinx/__init__.py
++++ b/jupyter_sphinx/__init__.py
+@@ -2,6 +2,7 @@
+ 
+ from pathlib import Path
+ 
++import os
+ import docutils
+ import ipywidgets
+ from IPython.lib.lexers import IPython3Lexer, IPythonTracebackLexer
+@@ -31,7 +32,7 @@ from .thebelab import ThebeButton, ThebeButtonNode, ThebeOutputNode, ThebeSource
+ REQUIRE_URL_DEFAULT = (
+     "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"
+ )
+-THEBELAB_URL_DEFAULT = "https://unpkg.com/thebelab@^0.4.0"
++THEBELAB_URL_DEFAULT = "https://unpkg.com/thebe@latest/lib/index.js"
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -186,7 +187,7 @@ def setup(app):
+     app.add_config_value("jupyter_sphinx_embed_url", None, "html")
+ 
+     # thebelab config, can be either a filename or a dict
+-    app.add_config_value("jupyter_sphinx_thebelab_config", None, "html")
++    app.add_config_value("jupyter_sphinx_thebelab_config", None, "env")
+     app.add_config_value("jupyter_sphinx_thebelab_url", THEBELAB_URL_DEFAULT, "html")
+ 
+     # linenos config
+@@ -290,7 +291,8 @@ def setup(app):
+     app.add_lexer("ipythontb", IPythonTracebackLexer)
+     app.add_lexer("ipython3", IPython3Lexer)
+ 
+-    app.connect("builder-inited", builder_inited)
++    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
++        app.connect("builder-inited", builder_inited)
+     app.connect("build-finished", build_finished)
+ 
+     # add jupyter-sphinx and thebelab js and css
+diff --git a/jupyter_sphinx/execute.py b/jupyter_sphinx/execute.py
+index 558a26b..bebb000 100644
+--- a/jupyter_sphinx/execute.py
++++ b/jupyter_sphinx/execute.py
+@@ -152,6 +152,17 @@ class ExecuteJupyterCells(SphinxTransform):
+                 kernel_name = default_kernel
+                 file_name = next(default_names)
+ 
++            # save time when jupyter notebook execution is not necessary
++            if not any(not "execute" in node or node["execute"] for node in nodes):
++                # mimics empty cell output for each node
++                for node in nodes:
++                    source = node.children[0]
++                    source.attributes["classes"].append("code_cell")
++                    node.attributes["cm_language"] = 'sage'
++                    node += CellOutputNode(classes=["cell_output"])
++                    apply_styling(node, thebe_config)
++                continue
++
+             # Add empty placeholder cells for non-executed nodes so nodes
+             # and cells can be zipped and the provided input/output
+             # can be inserted later
+-- 
+2.40.1
+
