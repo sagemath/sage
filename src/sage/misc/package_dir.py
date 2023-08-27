@@ -460,7 +460,7 @@ if __name__ == '__main__':
 
     parser = ArgumentParser(prog="sage --fixdistributions",
                             description="Maintenance tool for distribution packages of the Sage library",
-                            epilog="By default, 'sage -fixdistributions' shows the distribution of each file.")
+                            epilog="By default, '%(prog)s' shows the distribution of each file.")
     parser.add_argument('--add', metavar='DISTRIBUTION', type=str, default=None,
                         help=("add a 'sage_setup: DISTRIBUTION' directive to FILES; "
                               "do not change files that already have a nonempty directive"))
