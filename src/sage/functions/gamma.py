@@ -140,7 +140,7 @@ class Function_gamma(GinacFunction):
             NaN
             sage: CC(-1).gamma()                                                        # needs sage.libs.pari sage.rings.real_mpfr
             Infinity
-            sage: RDF(-1).gamma()
+            sage: RDF(-1).gamma()                                                       # needs sage.rings.real_mpfr
             NaN
             sage: CDF(-1).gamma()                                                       # needs sage.rings.complex_double
             Infinity

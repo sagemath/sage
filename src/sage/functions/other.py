@@ -903,9 +903,9 @@ class Function_real_nth_root(BuiltinFunction):
             sage: real_nth_root(x, 3)                                                   # needs sage.symbolic
             real_nth_root(x, 3)
 
-            sage: real_nth_root(RIF(2), 3)
+            sage: real_nth_root(RIF(2), 3)                                              # needs sage.rings.real_interval_field
             1.259921049894873?
-            sage: real_nth_root(RBF(2), 3)
+            sage: real_nth_root(RBF(2), 3)                                              # needs sage.libs.flint
             [1.259921049894873 +/- 3.92e-16]
         """
         if not isinstance(base, Expression) and not isinstance(exp, Expression):
@@ -1059,9 +1059,9 @@ class Function_arg(BuiltinFunction):
             0.00000000000000000000000000
             sage: arg(3.00000000000000000000000000).prec()                              # needs sage.rings.complex_double
             90
-            sage: arg(ComplexIntervalField(90)(3)).prec()
+            sage: arg(ComplexIntervalField(90)(3)).prec()                               # needs sage.rings.complex_interval_field
             90
-            sage: arg(ComplexIntervalField(90)(3)).parent()
+            sage: arg(ComplexIntervalField(90)(3)).parent()                             # needs sage.rings.complex_interval_field
             Real Interval Field with 90 bits of precision
             sage: arg(3.0r)                                                             # needs sage.rings.real_mpfr
             0.0
