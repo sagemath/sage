@@ -458,17 +458,19 @@ if __name__ == '__main__':
 
     from argparse import ArgumentParser
 
-    parser = ArgumentParser(description="Maintenance tool for distribution packages of the Sage library",
+    parser = ArgumentParser(prog="sage --fixdistributions",
+                            description="Maintenance tool for distribution packages of the Sage library",
                             epilog="By default, 'sage -fixdistributions' shows the distribution of each file.")
-    parser.add_argument('--add', metavar='distribution', type=str, default=None,
-                        help=("add a 'sage_setup: distribution' directive to FILES; "
+    parser.add_argument('--add', metavar='DISTRIBUTION', type=str, default=None,
+                        help=("add a 'sage_setup: DISTRIBUTION' directive to FILES; "
                               "do not change files that already have a nonempty directive"))
-    parser.add_argument('--set', metavar='distribution', type=str, default=None,
-                        help="add or update the 'sage_setup: distribution' directive in FILES")
+    parser.add_argument('--set', metavar='DISTRIBUTION', type=str, default=None,
+                        help="add or update the 'sage_setup: DISTRIBUTION' directive in FILES")
     parser.add_argument('--from-egg-info', action="store_true", default=False,
                         help="take FILES from pkgs/DISTRIBUTION/DISTRIBUTION.egg-info/SOURCES.txt")
-    parser.add_argument("filename", nargs='*', type=str,
-                        help="source files or directories (default: all files from SAGE_SRC)")
+    parser.add_argument("filename", metavar='FILES', nargs='*', type=str,
+                        help=("source files or directories (default: all files from SAGE_SRC, "
+                              "unless --from-egg-info, --add, or --set are used)"))
 
     args = parser.parse_args()
 
