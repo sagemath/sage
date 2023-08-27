@@ -1610,7 +1610,8 @@ def sage_getargspec(obj):
 
     The following was fixed in :trac:`16309`::
 
-        sage: cython(                                                                   # needs sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython(
         ....: '''
         ....: class Foo:
         ....:     @staticmethod
