@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat
+# sage.doctest: needs sage.combinat sage.graphs sage.groups
 r"""
 This file contains doctests for the Chapter "k-Schur function primer"
 for the book "k-Schur functions and affine Schubert calculus"
