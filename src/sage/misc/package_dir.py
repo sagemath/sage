@@ -476,22 +476,25 @@ if __name__ == '__main__':
 
     distribution = args.set or args.add or ''
 
+    if distribution == 'all':
+        distributions = ["sagemath-symbolics",
+                         "sagemath-schemes",
+                         "sagemath-glpk",
+                         "sagemath-polyhedra",
+                         "sagemath-graphs",
+                         "sagemath-combinat",
+                         "sagemath-modules",
+                         "sagemath-categories",
+                         "sagemath-repl",
+                         "sagemath-objects"]
+    else:
+        distributions = [distribution]
+
     if args.from_egg_info:
-        from sage.env import SAGE_ROOT
         if not distribution:
             print("Switch '--from-egg-info' must be used with either "
                   "'--add DISTRIBUTION' or '--set DISTRIBUTION'")
             sys.exit(1)
-        if (not SAGE_ROOT
-                or not os.path.exists(os.path.join(SAGE_ROOT, 'pkgs', distribution))):
-            print(f'{SAGE_ROOT=} does not seem to contain a copy of the Sage source root')
-            sys.exit(1)
-        distribution_underscore = distribution.replace('-', '_')
-        with open(os.path.join(SAGE_ROOT, 'pkgs', distribution,
-                               f'{distribution_underscore}.egg-info', 'SOURCES.txt'), "r") as f:
-            args.filename.extend(os.path.join(SAGE_ROOT, 'src', line.strip())
-                                 for line in f
-                                 if line.startswith('sage/'))
     elif not args.filename:
         if distribution:
             print("Switches '--add' and '--set' require the switch '--from-egg-info' "
@@ -503,7 +506,7 @@ if __name__ == '__main__':
                 or not os.path.exists(os.path.join(SAGE_SRC, 'conftest_test.py'))):
             print(f'{SAGE_SRC=} does not seem to contain a copy of the Sage source tree')
             sys.exit(1)
-        args.filename = [os.path.relpath(os.path.join(SAGE_SRC, 'sage'))]
+        args.filename = [os.path.join(SAGE_SRC, 'sage')]
 
     ordinary_packages = set()
     package_distributions_per_directives = defaultdict(set)     # path -> set of strings (distributions)
@@ -512,11 +515,11 @@ if __name__ == '__main__':
     def handle_file(root, file):
         path = os.path.join(root, file)
         if args.set is not None:
-            update_distribution(path, args.set, verbose=True)
+            update_distribution(path, distribution, verbose=True)
             file_distribution = distribution
         elif args.add is not None:
             if not (file_distribution := read_distribution(path)):
-                update_distribution(path, args.add, verbose=True)
+                update_distribution(path, distribution, verbose=True)
                 file_distribution = distribution
         else:
             file_distribution = read_distribution(path)
@@ -540,26 +543,61 @@ if __name__ == '__main__':
                 print(f'{path}: file should go in distribution {distribution_per_all_filename!r}, not {file_distribution!r}')
             package_distributions_per_all_files[root].add(distribution_per_all_filename)
 
-    for path in args.filename:
-        if os.path.isdir(path):
-            if not is_package_or_sage_namespace_package_dir(path):
-                print(f'{path}: non-package directory')
+    for distribution in distributions:
+
+        paths = list(args.filename)
+
+        if args.from_egg_info:
+            from sage.env import SAGE_ROOT
+            if not distribution:
+                print("Switch '--from-egg-info' must be used with either "
+                      "'--add DISTRIBUTION' or '--set DISTRIBUTION'")
+                sys.exit(1)
+            if (not SAGE_ROOT
+                    or not os.path.exists(os.path.join(SAGE_ROOT, 'pkgs', distribution))):
+                print(f'{SAGE_ROOT=} does not seem to contain a copy of the Sage source root')
+                sys.exit(1)
+            distribution_underscore = distribution.replace('-', '_')
+            try:
+                with open(os.path.join(SAGE_ROOT, 'pkgs', distribution,
+                                       f'{distribution_underscore}.egg-info', 'SOURCES.txt'), "r") as f:
+                    paths.extend(os.path.join(SAGE_ROOT, 'src', line.strip())
+                                 for line in f
+                                 if line.startswith('sage/'))
+                print(f"sage --fixdistributions: found egg-info of distribution {distribution!r}")
+            except FileNotFoundError:
+                if len(distributions) > 1:
+                    print(f"sage --fixdistributions: distribution {distribution!r} does not have egg-info, skipping it; "
+                          f"run 'make {distribution_underscore}-sdist' or 'make {distribution_underscore}' to create it")
+                    continue
+                else:
+                    print(f"sage --fixdistributions: distribution {distribution!r} does not have egg-info; "
+                          f"run 'make {distribution_underscore}-sdist' or 'make {distribution_underscore}' to create it")
+                    sys.exit(1)
+
+        for path in paths:
+            path = os.path.relpath(path)
+            if os.path.isdir(path):
+                if not is_package_or_sage_namespace_package_dir(path):
+                    print(f'{path}: non-package directory')
+                else:
+                    for root, dirs, files in os.walk(path):
+                        for dir in sorted(dirs):
+                            path = os.path.join(root, dir)
+                            if any(dir.startswith(prefix) for prefix in ['.', 'build', 'dist', '__pycache__']):
+                                # Silently skip
+                                dirs.remove(dir)
+                            elif not is_package_or_sage_namespace_package_dir(path):
+                                print(f'{path}: non-package directory')
+                                dirs.remove(dir)
+                        for file in sorted(files):
+                            if any(file.endswith(ext) for ext in [".pyc", ".pyo", ".bak", ".so", "~"]):
+                                continue
+                            handle_file(root, file)
             else:
-                for root, dirs, files in os.walk(path):
-                    for dir in sorted(dirs):
-                        path = os.path.join(root, dir)
-                        if any(dir.startswith(prefix) for prefix in ['.', 'build', 'dist', '__pycache__']):
-                            # Silently skip
-                            dirs.remove(dir)
-                        elif not is_package_or_sage_namespace_package_dir(path):
-                            print(f'{path}: non-package directory')
-                            dirs.remove(dir)
-                    for file in sorted(files):
-                        if any(file.endswith(ext) for ext in [".pyc", ".pyo", ".bak", ".so", "~"]):
-                            continue
-                        handle_file(root, file)
-        else:
-            handle_file(*os.path.split(path))
+                handle_file(*os.path.split(path))
+
+    print(f"sage --fixdistributions: checking consistency")
 
     for package in ordinary_packages:
         if len(package_distributions_per_directives[package]) > 1:
@@ -567,11 +605,11 @@ if __name__ == '__main__':
                   + ', '.join(f'{dist!r}'
                               for dist in sorted(package_distributions_per_directives[package])) + ')')
 
-    for package, distributions in package_distributions_per_directives.items():
+    for package, distributions_per_directives in package_distributions_per_directives.items():
         if package in ordinary_packages:
             pass
-        elif ((missing_all_files := distributions - package_distributions_per_all_files[package])
-                and not(missing_all_files == set(['']) and len(distributions) < 2)):
+        elif ((missing_all_files := distributions_per_directives - package_distributions_per_all_files[package])
+                and not(missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
             s = '' if len(missing_all_files) == 1 else 's'
             print(f'{package}: missing file{s} ' + ', '.join(_all_filename(distribution)
                                                              for distribution in missing_all_files))
