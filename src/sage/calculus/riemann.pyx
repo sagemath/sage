@@ -1412,7 +1412,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
     """
     cdef FLOAT_T i
     cdef FLOAT_T result = t
-    for i from 1 <= i < n+1:
+    for i in range(1, n + 1):
         result += (2*(-1)**i/i)*(epsilon**i/(1+epsilon**(2*i)))*sin(2*i*t)
     return result
 
