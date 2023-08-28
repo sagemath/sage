@@ -269,10 +269,11 @@ class HyperplaneArrangementLibrary():
 
             sage: # needs sage.combinat
             sage: hyperplane_arrangements.Coxeter(4)
-            Arrangement of 12 hyperplanes of dimension 4 and rank 3
+            Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: hyperplane_arrangements.Shi("B4")
-            Arrangement of 12 hyperplanes of dimension 4 and rank 3
+            Arrangement of 32 hyperplanes of dimension 4 and rank 4
             sage: hyperplane_arrangements.Shi("A3", m=2)
+            Arrangement of 24 hyperplanes of dimension 4 and rank 3
 
         If the Cartan type is not crystallographic, the Coxeter arrangement
         is not implemented yet::
@@ -287,7 +288,7 @@ class HyperplaneArrangementLibrary():
 
             sage: # needs sage.combinat
             sage: hyperplane_arrangements.Coxeter("A3").characteristic_polynomial()
-            x^4 - 12*x^3 + 48*x^2 - 64*x
+            x^3 - 6*x^2 + 11*x - 6
         """
         from sage.combinat.root_system.weyl_group import WeylGroup
         if data in NN:
