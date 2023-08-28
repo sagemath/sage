@@ -1168,7 +1168,7 @@ def braid_monodromy(f, arrangement=()):
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
         ([], {})
-        sage: braid_monodromy(x * y^2 -1)
+        sage: braid_monodromy(x * y^2 - 1)  # optional - sirocco
         ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0})
     """
     global roots_interval_cache
@@ -1514,12 +1514,12 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: f = x^2 + y^3
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
-        sage: fundamental_group(f, simplified=False) # optional - sirocco
-        Finitely presented group < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-1*x1^-1, x0*x1*x0^-1*x2^-1 >
+        sage: fundamental_group(f, simplified=False).sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x0*x1, x2^-1*x0*x1*x0^-1, x1^-1*x0^-1*x1^-1*x0*x1*x0 >
         sage: fundamental_group(f, projective=True) # optional - sirocco
         Finitely presented group < x0 | x0^3 >
-        sage: fundamental_group(f) # optional - sirocco
-        Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
+        sage: fundamental_group(f).sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1 | x1^-1*x0^-1*x1^-1*x0*x1*x0 >
 
     ::
 
@@ -1549,12 +1549,13 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
-        sage: g = fundamental_group(f, puiseux=True); print (g) # optional - sirocco
-        Finitely presented group < x0, x1, x2, x3 | x3*x2^-1*x1^-1*x2, x3*x2^-1*x1^-1*x0^-1*x1*x2^-1*x1^-1*x0*x1*x2, x0^-1*x2, x1*x2*x1*x2^-1*x1^-1*x0^-1 >
-        sage: g.simplified() # optional - sirocco
-        Finitely presented group < x0, x1 | x0^-1*x1^2*x0^-1, (x1^-1*x0)^3 >
-        sage: g = fundamental_group(f, puiseux=True, projective=True); print (g.order(), g.abelian_invariants()) # optional - sirocco
-        12 (4,)
+        sage: g = fundamental_group(f, puiseux=True); g.sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1, x2, x3 | x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
+                                                    x3^-1*x2^-1*x1*x2, x2^-1*x1^-1*x0^-1*x1*x2*x1, x2^-1*x0 >
+        sage: g.simplified().sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1 | x1^-2*x0^2, (x1^-1*x0)^3 >
+        sage: g = fundamental_group(f, puiseux=True, projective=True); g.order(), g.abelian_invariants() # optional - sirocco
+        (12, (4,))
         sage: fundamental_group(y * (y - 1)) # optional - sirocco
         Finitely presented group < x0, x1 |  >
     """
@@ -1618,22 +1619,26 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
         sage: g, dic = fundamental_group_arrangement(flist) # optional - sirocco
-        sage: g # optional - sirocco
-        Finitely presented group < x0, x1, x2 | x2*x1*x2^-1*x1^-1, x1*x0*x1^-1*x0^-1, x2*x0*x2*x0^-1*x2^-1*x0^-1 >
+        sage: g.sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x2^-1*x0^-1*x2^-1*x0*x2*x0, x1^-1*x0^-1*x1*x0 >
         sage: dic # optional - sirocco
         {0: [x0, x2, x0], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
-        sage: fundamental_group_arrangement(flist, simplified=False) # optional - sirocco
-        (Finitely presented group < x0, x1, x2, x3 | x0*x1*x0*x1^-1*x0^-2,
-         x0*x1*x2*x3*x2*x3^-1*x2^-1*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-2, 1, x0*x1*x0^-1*x1^-1, 1,
-         x0*x1*x0^-1*x1^-1, x1*x2*x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-2, 1, x1^-1*x0*x1*x2*x3*x2^-1*x1^-1*x0^-1*x1*x2^-1,
-         1, 1, 1, x1^-1*x0*x1*x3^-1, 1, x2^-1*x1*x2*x3*x2^-1*x1^-1*x2*x3^-1 >,
+        sage: g, dic = fundamental_group_arrangement(flist, simplified=False)  # optional - sirocco
+        sage: g.sorted_presentation(), dic  # optional - sirocco
+        (Finitely presented group < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1, x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
+                                                     x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x3*x2,
+                                                     x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
+                                                     x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2, x3^-1*x1^-1*x0*x1,
+                                                     x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0,
+                                                     x1^-1*x0^-1*x1*x0 >,
          {0: [x0, x2, x3], 1: [x1], 2: [x3^-1*x2^-1*x1^-1*x0^-1]})
         sage: fundamental_group_arrangement(flist, projective=True) # optional - sirocco
         (Finitely presented group < x |  >, {0: [x0, x0, x0], 1: [x0^-3]})
         sage: fundamental_group_arrangement([]) # optional - sirocco
         (Finitely presented group <  |  >, {})
-        sage: fundamental_group_arrangement([x * y]) # optional - sirocco
-        (Finitely presented group < x0, x1 | x1*x0*x1^-1*x0^-1 >,
+        sage: g, dic = fundamental_group_arrangement([x * y]) # optional - sirocco
+        sage: g.sorted_presentation(), dic # optional - sirocco
+        (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >,
         {0: [x0, x1], 1: [x1^-1*x0^-1]})
         sage: fundamental_group_arrangement([y + x^2], projective=True) # optional - sirocco
         (Finitely presented group < x | x^2 >, {0: [x0, x0]})
