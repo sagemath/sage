@@ -182,6 +182,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
         sage: C = Curve([x^2 - z, z - 8*x], A); C
         Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
     """
+
     def __init__(self, A, X):
         r"""
         Initialize.
@@ -273,6 +274,7 @@ class AffinePlaneCurve(AffineCurve):
     """
     Affine plane curves.
     """
+
     def __init__(self, A, f):
         r"""
         Initialize.
@@ -468,8 +470,8 @@ class AffinePlaneCurve(AffineCurve):
             sage: C.plot()                                                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        I = self.defining_ideal()
-        return I.plot(*args, **kwds)
+        Id = self.defining_ideal()
+        return Id.plot(*args, **kwds)
 
     def is_transverse(self, C, P):
         r"""
@@ -696,7 +698,7 @@ class AffinePlaneCurve(AffineCurve):
                     fact.extend([vars[1] - roots[i][0]*vars[0] for i in range(len(roots))])
             return [ff(coords) for ff in fact]
         else:
-            return [l[0](coords) for l in T.factor()]
+            return [ll[0](coords) for ll in T.factor()]
 
     def is_ordinary_singularity(self, P):
         r"""
@@ -1016,10 +1018,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             removecoords.pop(indices[i])
         J = self.defining_ideal().elimination_ideal(removecoords)
         K = Hom(AA.coordinate_ring(), AA2.coordinate_ring())
-        l = [0]*(n)
+        ll = [0]*(n)
         for i in range(len(indices)):
-            l[indices[i]] = AA2.gens()[i]
-        phi = K(l)
+            ll[indices[i]] = AA2.gens()[i]
+        phi = K(ll)
         G = [phi(f) for f in J.gens()]
         try:
             C = AA2.curve(G)
@@ -1529,6 +1531,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             working over a number field use extend=True
         """
         # helper function for extending the base field (in the case of working over a number field)
+
         def extension(self):
             F = self.base_ring()
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
@@ -1730,11 +1733,11 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         from sage.schemes.curves.constructor import Curve
 
         # translate to p
-        I = []
+        I0 = []
         for poly in Tp.defining_polynomials():
-            I.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
+            I0.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
 
-        return Curve(I, A)
+        return Curve(I0, A)
 
 
 class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
@@ -1743,10 +1746,32 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def fundamental_group(self):
+    @cached_method
+    def fundamental_group(self, simplified=True, puiseux=False):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
+
+        INPUT:
+
+        - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
+
+        - ``puiseux`` -- (default: ``False``) boolean to decide if the
+          presentation is constructed in the classical way or using Puiseux
+          shortcut. If ``True``, ``simplified`` is set to ``False``.
+
+
+        OUTPUT:
+
+        A presentation with generators `x_1, \dots, x_d` and relations. If ``puiseux``
+        is ``False`` the relations are `(x_j\cdot \tau)\cdot x_j^{-1}` for `1\leq j<d`
+        and `tau` a braid in the braid monodromy; finally the presentation
+        is simplified. If ``puiseux`` is ``True``, each
+        `tau` is decomposed as `\alpha^{-1}\cdot\beta\cdot\alpha`, where `\beta` is
+        a positive braid; the relations are `((x_j\cdot \beta)\cdot x_j^{-1})\cdot \alpha`
+        where `j` is an integer of the ``Tietze`` word of `\beta`. This presentation
+        is not simplified by default since it represents the homotopy type of
+        the complement of the curve.
 
         .. NOTE::
 
@@ -1758,6 +1783,12 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
             sage: C.fundamental_group()             # optional - sirocco
+            Finitely presented group < x0 |  >
+            sage: bm = C.braid_monodromy() # optional - sirocco
+            sage: g = C.fundamental_group(puiseux=True) # optional - sirocco
+            sage: g.sorted_presentation() # optional - sirocco
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
+            sage: g.simplified() # optional - sirocco
             Finitely presented group < x0 |  >
 
         In the case of number fields, they need to have an embedding
@@ -1777,15 +1808,10 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.schemes.curves.zariski_vankampen import fundamental_group
-        F = self.base_ring()
-        from sage.rings.qqbar import QQbar
-        if QQbar.coerce_map_from(F) is None:
-            raise NotImplementedError("the base field must have an embedding"
-                                      " to the algebraic field")
-        f = self.defining_polynomial()
-        return fundamental_group(f, projective=False)
+        from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
+        return fundamental_group_from_braid_mon(self.braid_monodromy(), simplified=simplified, puiseux=puiseux)
 
+    @cached_method
     def braid_monodromy(self):
         r"""
         Compute the braid monodromy of a projection of the curve.
@@ -1794,7 +1820,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         A list of braids. The braids correspond to paths based in the same point;
         each of this paths is the conjugated of a loop around one of the points
-        in the discriminant of the projection of `self`.
+        in the discriminant of the projection of ``self``.
 
         NOTE:
 
@@ -1819,7 +1845,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return braid_monodromy(f)
+        return braid_monodromy(f)[0]
 
     def riemann_surface(self, **kwargs):
         r"""
@@ -2156,18 +2182,18 @@ class IntegralAffineCurve(AffineCurve_field):
         from sage.rings.function_field.constructor import FunctionField
 
         k = self.base_ring()
-        I = self.defining_ideal()
+        I0 = self.defining_ideal()
 
         # invlex is the lex order with x < y < z for R = k[x,y,z] for instance
-        R = I.parent().ring().change_ring(order='invlex')
-        I = I.change_ring(R)
+        R = I0.parent().ring().change_ring(order='invlex')
+        I0 = I0.change_ring(R)
         n = R.ngens()
 
         names = R.variable_names()
 
-        gbasis = I.groebner_basis()
+        gbasis = I0.groebner_basis()
 
-        if not I.is_prime():
+        if not I0.is_prime():
             raise TypeError("the curve is not integral")
 
         # Suppose the generators of the defining ideal I of the curve is
@@ -2237,7 +2263,7 @@ class IntegralAffineCurve(AffineCurve_field):
         lift_to_function_field = hom(R, M, coordinate_functions)
 
         # sanity check
-        assert all(lift_to_function_field(f).is_zero() for f in I.gens())
+        assert all(lift_to_function_field(f).is_zero() for f in I0.gens())
 
         return M, lift_to_function_field
 

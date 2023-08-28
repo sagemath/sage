@@ -196,12 +196,14 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
     ::
 
-        sage: K.<u> = CyclotomicField(11)                                               # needs sage.rings.number_field
-        sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                       # needs sage.rings.number_field
-        sage: C = Curve([y*w - u*z^2 - x^2, x*w - 3*u^2*z*w], P); C                     # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<u> = CyclotomicField(11)
+        sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
+        sage: C = Curve([y*w - u*z^2 - x^2, x*w - 3*u^2*z*w], P); C
         Projective Curve over Cyclotomic Field of order 11 and degree 10 defined
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
+
     def __init__(self, A, X):
         """
         Initialize.
@@ -592,19 +594,22 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
     A projective plane curve defined over an algebraic closure of `\QQ`::
 
-        sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                     # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
         sage: set_verbose(-1)  # suppress warnings for slow computation
-        sage: C = Curve([y*z - x^2 - QQbar.gen()*z^2], P); C                            # needs sage.rings.number_field
+        sage: C = Curve([y*z - x^2 - QQbar.gen()*z^2], P); C
         Projective Plane Curve over Algebraic Field
          defined by -x^2 + y*z + (-I)*z^2
 
     A projective plane curve defined over a finite field::
 
-        sage: P.<x,y,z> = ProjectiveSpace(GF(5^2, 'v'), 2)                              # needs sage.rings.finite_rings
-        sage: C = Curve([y^2*z - x*z^2 - z^3], P); C                                    # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: P.<x,y,z> = ProjectiveSpace(GF(5^2, 'v'), 2)
+        sage: C = Curve([y^2*z - x*z^2 - z^3], P); C
         Projective Plane Curve over Finite Field in v of size 5^2
          defined by y^2*z - x*z^2 - z^3
     """
+
     def __init__(self, A, f):
         """
         Initialize.
@@ -654,10 +659,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: C = Curve(f)
             sage: K = FractionField(R)
             sage: r = 1/x
-            sage: C.divisor_of_function(r)      # not implemented
+            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!
             [[-1, (0, 0, 1)]]
             sage: r = 1/x^3
-            sage: C.divisor_of_function(r)      # not implemented
+            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!
             [[-3, (0, 0, 1)]]
         """
         F = self.base_ring()
@@ -697,7 +702,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: x, y, z = P2.coordinate_ring().gens()
             sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
             sage: pt = C([2,3,1])
-            sage: C.local_coordinates(pt,9)     # not implemented
+            sage: C.local_coordinates(pt,9)     # todo: not implemented  !!!!
             [2 + t,
              3 + 3*t^2 + t^3 + 3*t^4 + 3*t^6 + 3*t^7 + t^8 + 2*t^9 + 3*t^11 + 3*t^12]
         """
@@ -1443,6 +1448,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                       + (-3/16*a - 1/4)*y*z^3 + (1/16*a + 3/32)*z^4)
         """
         # helper function for extending the base field
+
         def extension(self):
             F = self.base_ring()
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
@@ -1747,13 +1753,18 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
         TESTS::
 
+            sage: F.<x0, x1> = FreeGroup()
+            sage: G = F / [x1^-1*(x1^-1*x0^-1*x1*x0^-1)^2, (x1^-1*x0^-1)^2*x1^-1*(x0*x1)^2*x0]
+            sage: G.order()
+            320
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: C.fundamental_group()                         # optional - sirocco
-            Finitely presented group < x1, x3 | (x3^-1*x1^-1*x3*x1^-1)^2*x3^-1,
-                                                x3*(x1^-1*x3^-1)^2*x1^-1*(x3*x1)^2 >
+            sage: G0 = C.fundamental_group()                 # optional - sirocco
+            sage: G.is_isomorphic(G0)                        # optional - sirocco
+            #I  Forcing finiteness test
+            True
 
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group
@@ -2180,10 +2191,11 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         ::
 
-            sage: F = GF(2^6,'a')                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(2^6,'a')
             sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
-            sage: C = Curve(X^5 + 11*X*Y*Z^3 + X^2*Y^3 - 13*Y^2*Z^3)                    # needs sage.rings.finite_rings
-            sage: len(C.rational_points())                                              # needs sage.rings.finite_rings
+            sage: C = Curve(X^5 + 11*X*Y*Z^3 + X^2*Y^3 - 13*Y^2*Z^3)
+            sage: len(C.rational_points())
             104
 
         ::
@@ -2263,9 +2275,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # needs sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # needs sage.rings.finite_rings
-            sage: C.function_field()                                                    # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: C.function_field()
             Function field in z defined by z^5 + y*z^3 + y^5 + 1
         """
         return self._function_field
@@ -2777,6 +2790,7 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: A.<x,y> = AffineSpace(GF(3), 2)
             sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
             sage: Cbar = C.projective_closure()
