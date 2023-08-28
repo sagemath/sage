@@ -1549,12 +1549,13 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
-        sage: g = fundamental_group(f, puiseux=True); print (g) # optional - sirocco
-        Finitely presented group < x0, x1, x2, x3 | x3*x2^-1*x1^-1*x2, x3*x2^-1*x1^-1*x0^-1*x1*x2^-1*x1^-1*x0*x1*x2, x0^-1*x2, x1*x2*x1*x2^-1*x1^-1*x0^-1 >
-        sage: g.simplified() # optional - sirocco
-        Finitely presented group < x0, x1 | x0^-1*x1^2*x0^-1, (x1^-1*x0)^3 >
-        sage: g = fundamental_group(f, puiseux=True, projective=True); print (g.order(), g.abelian_invariants()) # optional - sirocco
-        12 (4,)
+        sage: g = fundamental_group(f, puiseux=True); g.sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1, x2, x3 | x2^-1*x1^-1*x0^-1*x1*x2^-1*x1^-1*x0*x1*x2*x3,
+                                                    x2^-1*x1^-1*x0^-1*x1*x2*x1, x2^-1*x1^-1*x2*x3, x0^-1*x2 >
+        sage: g.simplified().sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1 | (x1^-1*x0)^3, x0^-2*x1^2 >
+        sage: g = fundamental_group(f, puiseux=True, projective=True); g.order(), g.abelian_invariants() # optional - sirocco
+        (12, (4,))
         sage: fundamental_group(y * (y - 1)) # optional - sirocco
         Finitely presented group < x0, x1 |  >
     """
