@@ -65,6 +65,7 @@ exclude sage/combinat/free_module.py
 exclude sage/combinat/cartesian_product.py
 exclude sage/combinat/family.py
 exclude sage/algebras/algebra.py
+exclude sage/algebras/catalog.py
 prune sage/algebras/finite_dimensional_algebras
 exclude sage/algebras/group_algebra.py
 exclude sage/algebras/orlik_solomon.p*
