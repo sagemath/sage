@@ -259,6 +259,7 @@ from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.colored_permutations import SignedPermutation, SignedPermutations
 from sage.combinat.plane_partition import PlanePartition
 from sage.combinat.decorated_permutation import DecoratedPermutation, DecoratedPermutations
+from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 
 ######################################################################
 # the FindStat URLs
@@ -1556,11 +1557,12 @@ class FindStatFunction(SageObject):
 
         Check that new statistics and maps cannot be reset::
 
-            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])   # optional -- internet
-            sage: q.set_description("Random values on Dyck paths.")             # optional -- internet
-            sage: print(q.description())                                        # optional -- internet
+            sage: # optional - internet
+            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])
+            sage: q.set_description("Random values on Dyck paths.")
+            sage: print(q.description())
             Random values on Dyck paths.
-            sage: q.reset()                                                     # optional -- internet
+            sage: q.reset()
             Traceback (most recent call last):
             ...
             ValueError: cannot reset values of St000000: a new statistic on Dyck paths
@@ -3280,14 +3282,15 @@ class FindStatMap(Element,
 
         EXAMPLES::
 
-            sage: from sage.databases.findstat import FindStatMap               # optional -- internet
-            sage: FindStatMap(61).set_properties_raw('surjective')             # optional -- internet
-            sage: FindStatMap(61).properties_raw()                              # optional -- internet
+            sage: # optional - internet
+            sage: from sage.databases.findstat import FindStatMap
+            sage: FindStatMap(61).set_properties_raw('surjective')
+            sage: FindStatMap(61).properties_raw()
             'surjective'
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61)
             Mp00061(modified): to increasing tree
-            sage: FindStatMap(61).reset()                                       # optional -- internet
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61).reset()
+            sage: FindStatMap(61)
             Mp00061: to increasing tree
         """
         if value != self.properties_raw():
@@ -4283,13 +4286,14 @@ class FindStatCollection(Element,
 
         EXAMPLES::
 
+            sage: # optional - internet
             sage: from sage.databases.findstat import FindStatCollection
-            sage: c = FindStatCollection("GelfandTsetlinPatterns")              # optional -- internet
-            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))              # optional -- internet
+            sage: c = FindStatCollection("GelfandTsetlinPatterns")
+            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))
             False
 
         TESTS::
@@ -4670,7 +4674,13 @@ _SupportedFindStatCollections = {
                                                            for i, v in enumerate(x, 1))) + "]",
                                  DecoratedPermutations,
                                  lambda x: x.size(),
-                                 lambda x: isinstance(x, DecoratedPermutation))}
+                                 lambda x: isinstance(x, DecoratedPermutation)),
+    "OrderedSetPartitions":
+    _SupportedFindStatCollection(lambda x: OrderedSetPartition(literal_eval(x.replace('{','[').replace('}',']'))),
+                                 str,
+                                 OrderedSetPartitions,
+                                 lambda x: x.size(),
+                                 lambda x: isinstance(x, OrderedSetPartition))}
 
 
 class FindStatCollections(UniqueRepresentation, Parent):
