@@ -21,13 +21,13 @@ EXAMPLES::
     [0 0 1]
     sage: is_MatrixMorphism(m)
     True
-    sage: m.charpoly('x')
+    sage: m.charpoly('x')                                                               # needs sage.libs.pari
     x^3 - 3*x^2 + 3*x - 1
     sage: m.base_ring()
     Rational Field
     sage: m.det()
     1
-    sage: m.fcp('x')
+    sage: m.fcp('x')                                                                    # needs sage.libs.pari
     (x - 1)^3
     sage: m.matrix()
     [1 0 0]
@@ -523,10 +523,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         Composite maps can be formed with matrix morphisms::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 + 23)                                         # optional - sage.rings.number_field
-            sage: V, VtoK, KtoV = K.vector_space()                                      # optional - sage.rings.number_field
-            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f                             # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + 23)
+            sage: V, VtoK, KtoV = K.vector_space()
+            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f
             Composite map:
             From: Number Field in a with defining polynomial x^2 + 23
             To:   Vector space of dimension 2 over Rational Field
@@ -836,7 +837,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES::
 
             sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.decomposition()
+            sage: phi.decomposition()                                                   # needs sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -846,7 +847,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [ 1 -1]
             ]
             sage: phi2 = V.hom(phi.matrix(), side="right")
-            sage: phi2.decomposition()
+            sage: phi2.decomposition()                                                  # needs sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -905,10 +906,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.fcp()
+            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+            sage: phi.fcp()                                                             # needs sage.libs.pari
             (x - 2) * (x - 1)
-            sage: phi.fcp('T')
+            sage: phi.fcp('T')                                                          # needs sage.libs.pari
             (T - 2) * (T - 1)
         """
         return self.charpoly(var).factor()
@@ -1741,7 +1742,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         An example over a PID that is not `\ZZ`.  ::
 
-            sage: R = PolynomialRing(QQ, 'x')
+            sage: R.<x> = PolynomialRing(QQ)
             sage: A = R^2
             sage: B = R^2
             sage: H = A.hom([B([x^2-1, 1]), B([x^2, 1])])
