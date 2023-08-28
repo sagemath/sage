@@ -1,4 +1,4 @@
-From 4d6c87f4144110d7f361f11ead41f1b6f602b20d Mon Sep 17 00:00:00 2001
+From f95c7a7a393f0eef9989dddffc70a09ac0a14c35 Mon Sep 17 00:00:00 2001
 From: Kwankyu Lee <ekwankyu@gmail.com>
 Date: Mon, 28 Aug 2023 00:18:59 +0900
 Subject: [PATCH] Patch for sage live doc
@@ -49,20 +49,20 @@ index 34af884..f5a7f44 100644
  
      # add jupyter-sphinx and thebelab js and css
 diff --git a/jupyter_sphinx/execute.py b/jupyter_sphinx/execute.py
-index 558a26b..bebb000 100644
+index 558a26b..de44455 100644
 --- a/jupyter_sphinx/execute.py
 +++ b/jupyter_sphinx/execute.py
 @@ -152,6 +152,17 @@ class ExecuteJupyterCells(SphinxTransform):
                  kernel_name = default_kernel
                  file_name = next(default_names)
  
-+            # save time when jupyter notebook execution is not necessary
++            # Save time when jupyter notebook execution is not necessary
 +            if not any(not "execute" in node or node["execute"] for node in nodes):
 +                # mimics empty cell output for each node
 +                for node in nodes:
 +                    source = node.children[0]
 +                    source.attributes["classes"].append("code_cell")
-+                    node.attributes["cm_language"] = 'sage'
++                    node.attributes["cm_language"] = kernel_name
 +                    node += CellOutputNode(classes=["cell_output"])
 +                    apply_styling(node, thebe_config)
 +                continue
