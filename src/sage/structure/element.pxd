@@ -34,16 +34,16 @@ cpdef inline parent(x):
         sage: parent(b)
         Rational Field
         sage: c = 42.0
-        sage: parent(c)
+        sage: parent(c)                                                                 # needs sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
     Some more complicated examples::
 
-        sage: x = Partition([3,2,1,1,1])
-        sage: parent(x)
+        sage: x = Partition([3,2,1,1,1])                                                # needs sage.combinat
+        sage: parent(x)                                                                 # needs sage.combinat
         Partitions
-        sage: v = vector(RDF, [1,2,3])
-        sage: parent(v)
+        sage: v = vector(RDF, [1,2,3])                                                  # needs sage.modules
+        sage: parent(v)                                                                 # needs sage.modules
         Vector space of dimension 3 over Real Double Field
 
     The following are not considered to be elements, so the type is
@@ -126,18 +126,18 @@ cpdef inline bint have_same_parent(left, right):
         True
         sage: have_same_parent(1, 1/2)
         False
-        sage: have_same_parent(gap(1), gap(1/2))
+        sage: have_same_parent(gap(1), gap(1/2))                                        # needs sage.libs.gap
         True
 
     These have different types but the same parent::
 
         sage: a = RLF(2)
-        sage: b = exp(a)                                                                # optional - sage.symbolic
-        sage: type(a)                                                                   # optional - sage.symbolic
+        sage: b = exp(a)
+        sage: type(a)
         <... 'sage.rings.real_lazy.LazyWrapper'>
-        sage: type(b)                                                                   # optional - sage.symbolic
+        sage: type(b)
         <... 'sage.rings.real_lazy.LazyNamedUnop'>
-        sage: have_same_parent(a, b)                                                    # optional - sage.symbolic
+        sage: have_same_parent(a, b)
         True
     """
     return HAVE_SAME_PARENT(classify_elements(left, right))

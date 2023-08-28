@@ -52,7 +52,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
-        sage: print(gen_rest_table_index([graphs.PetersenGraph]))
+        sage: print(gen_rest_table_index([graphs.PetersenGraph]))                       # needs sage.graphs
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -77,7 +77,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
     The table of a class::
 
-        sage: print(gen_rest_table_index(Graph))
+        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -103,6 +103,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
     The inherited methods do not show up::
 
+        sage: # needs sage.graphs
         sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75
         True
         sage: from sage.graphs.generic_graph import GenericGraph
@@ -141,9 +142,9 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     A function that is imported into a class under a different name is listed
     under its 'new' name::
 
-        sage: 'cliques_maximum' in gen_rest_table_index(Graph)
+        sage: 'cliques_maximum' in gen_rest_table_index(Graph)                          # needs sage.graphs
         True
-        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)
+        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # needs sage.graphs
         False
     """
     if names is None:
@@ -223,17 +224,17 @@ def list_of_subfunctions(root, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]
-        sage: Graph.bipartite_color in l
+        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
+        sage: Graph.bipartite_color in l                                                # needs sage.graphs
         True
 
     TESTS:
 
     A ``staticmethod`` is not callable. We must handle them correctly, however::
 
-        sage: class A:
+        sage: class A:                                                                  # needs sage.graphs
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)
+        sage: list_of_subfunctions(A)                                                   # needs sage.graphs
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
 
@@ -255,12 +256,21 @@ def list_of_subfunctions(root, only_local_functions=True):
         else:
             return inspect.isclass(root) or not (f is gen_rest_table_index)
 
-    functions = {getattr(root,name):name for name,f in root.__dict__.items() if
-                  (not name.startswith('_')          and # private functions
-                   not hasattr(f,'issue_number')      and # deprecated functions
-                   not inspect.isclass(f)            and # classes
-                   callable(getattr(f,'__func__',f)) and # e.g. GenericGraph.graphics_array_defaults
-                   local_filter(f,name))                 # possibly filter imported functions
+    def can_import(f):
+        # poke it to provoke a lazy import to resolve
+        try:
+            hasattr(f, 'xyz')
+        except ImportError:
+            return False
+        return True
+
+    functions = {getattr(root, name): name for name, f in root.__dict__.items() if
+                  (not name.startswith('_')            and  # private functions
+                   can_import(f)                       and  # unresolved lazy imports
+                   not hasattr(f, 'issue_number')      and  # deprecated functions
+                   not inspect.isclass(f)              and  # classes
+                   callable(getattr(f, '__func__', f)) and  # e.g. GenericGraph.graphics_array_defaults
+                   local_filter(f, name))                   # possibly filter imported functions
                   }
 
     return list(functions.keys()), functions
@@ -286,8 +296,8 @@ def gen_thematic_rest_table_index(root,additional_categories=None,only_local_fun
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_thematic_rest_table_index, list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]
-        sage: Graph.bipartite_color in l
+        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
+        sage: Graph.bipartite_color in l                                                # needs sage.graphs
         True
     """
     from collections import defaultdict

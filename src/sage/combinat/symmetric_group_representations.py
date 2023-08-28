@@ -576,7 +576,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         # construct a dictionary pairing vertices with tableau
         t = StandardTableaux(self._partition).last()
         tableau_dict = {self._yang_baxter_graph.root(): t}
-        for (u, w, (i, beta)) in self._yang_baxter_graph._edges_in_bfs():
+        for u, w, (i, _) in self._yang_baxter_graph._edges_in_bfs():
             # TODO: improve the following
             si = PermutationConstructor((i, i + 1))
             tableau_dict[w] = Tableau([[si(b) for b in row]
