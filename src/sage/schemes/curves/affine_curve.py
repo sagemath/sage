@@ -1777,7 +1777,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: bm = C.braid_monodromy() # optional - sirocco
             sage: g = C.fundamental_group(puiseux=True) # optional - sirocco
             sage: g.sorted_presentation() # optional - sirocco
-            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x0^-1*x1 >
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
             sage: g.simplified() # optional - sirocco
             Finitely presented group < x0 |  >
 

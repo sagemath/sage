@@ -1440,7 +1440,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: G = FreeGroup(2) / [(1, 2, -1, -2), ()]; G
             Finitely presented group < x0, x1 | x0*x1*x0^-1*x1^-1, 1 >
             sage: G.sorted_presentation()
-            Finitely presented group < x0, x1 | 1, x1^-1*x0*x1*x0^-1 >
+            Finitely presented group < x0, x1 | 1, x1^-1*x0^-1*x1*x0 >
         """
         F = FreeGroup(self.ngens())
         L0 = [r.Tietze() for r in self.relations()]
@@ -1449,6 +1449,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             C = [rel]
             for j in range(len(rel) - 1):
                 C.append(rel[j + 1:] + rel[:j + 1])
+            C1 = [tuple(-j for j in reversed(l)) for l in C]
+            C += C1
             C.sort()
             L1.append(C[0])
         L1.sort()
