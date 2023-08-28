@@ -447,7 +447,7 @@ def _all_filename(distribution):
 
 
 def _distribution_from_all_filename(filename):
-    if m := re.match('all(__(.*?))?[.]py', file):
+    if m := re.match('all(__(.*?))?[.]py', filename):
         if distribution_per_all_filename := m.group(2):
             return distribution_per_all_filename.replace('_', '-')
         return ''
@@ -524,7 +524,18 @@ if __name__ == '__main__':
         package_distributions_per_directives[root].add(file_distribution)
         if file.startswith('__init__.'):
             ordinary_packages.add(root)
-        elif (distribution_per_all_filename := _distribution_from_all_filename(file)) is not False:
+        elif (distribution_per_all_filename := _distribution_from_all_filename(file)) is False:
+            # Not an all*.py file.
+            pass
+        elif not distribution_per_all_filename:
+            # An all.py file.
+            if file_distribution:
+                # The all.py is declared to belong to a named distribution, that's OK
+                package_distributions_per_all_files[root].add(file_distribution)
+            else:
+                pass
+        else:
+            # An all__*.py file
             if distribution_per_all_filename != file_distribution:
                 print(f'{path}: file should go in distribution {distribution_per_all_filename!r}, not {file_distribution!r}')
             package_distributions_per_all_files[root].add(distribution_per_all_filename)
