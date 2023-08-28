@@ -13,9 +13,9 @@ The Sage command line has a prompt "``sage:``". You do not have to add it.
     sage: 3 + 5
     8
 
-If you use Sage on the Jupyter notebook, then put
-everything after the ``sage:`` prompt in an input cell, and press shift-enter
-to compute the corresponding output.
+If you use Sage on the Jupyter notebook, then put everything after the
+``sage:`` prompt in an input cell, and press shift-enter to compute the
+corresponding output.
 
 
 
@@ -59,7 +59,7 @@ The result is a list of equalities.
     sage: S[0].rhs()  # right hand side of the equation
     -1/2*sqrt(4*a + 1) - 1/2
 
-Naturally, Sage can plot various useful functions.
+Sage can plot various useful functions, of course.
 
 ::
 
@@ -68,15 +68,14 @@ Naturally, Sage can plot various useful functions.
 .. image:: sin_plot.*
 
 
-Sage is very powerful. To experience it, first we create a
-:math:`500 \times 500` matrix of random numbers.
+Sage is powerful. To experience it, first we create a :math:`500 \times 500`
+matrix of random numbers.
 
 ::
 
     sage: m = random_matrix(RDF, 500)
 
-It takes Sage a few seconds to compute the eigenvalues of the
-matrix and plot them.
+It takes Sage a second to compute the eigenvalues of the matrix and plot them.
 
 .. link
 
@@ -89,15 +88,19 @@ matrix and plot them.
 .. image:: eigen_plot.*
 
 
-Thanks to the GNU Multiprecision Library (GMP), Sage can handle
-very large numbers, even numbers with millions or billions of
+Sage can handle very large numbers, even numbers with millions or billions of
 digits.
 
 ::
 
     sage: factorial(100)
     93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+
+::
+
     sage: n = factorial(1000000)  # about 1 second
+    sage: len(n.digits())
+    5565709
 
 This computes at least 100 digits of :math:`\pi`.
 
@@ -128,8 +131,8 @@ This asks Sage to factor a polynomial in two variables.
     sage: F.expand()
     x^99 + y^99
 
-Sage takes just under 5 seconds to compute the numbers of ways to
-partition one hundred million as a sum of positive integers.
+Sage takes less than 1 second to compute the numbers of ways to partition one
+hundred million as a sum of positive integers.
 
 ::
 
@@ -137,5 +140,5 @@ partition one hundred million as a sum of positive integers.
     sage: z
     1760517045946249141360373894679135204009...
 
-Whenever you use Sage, you are accessing the world's most advanced open source computational
-algorithms.
+Whenever you use Sage, you are accessing the world's most advanced open source
+computational algorithms.
