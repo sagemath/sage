@@ -67,6 +67,7 @@ def Mwrank(options="", server=None, server_tmpdir=None):
     instances[options] = weakref.ref(X)
     return X
 
+
 import re
 # regex matching '[a1,a2,a3,a4,a6]', no spaces, each ai a possibly signed integer
 AINVS_LIST_RE = re.compile(r'\[[+-]?(\d+)(,[+-]?\d+){4}]')

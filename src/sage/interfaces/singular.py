@@ -2420,6 +2420,7 @@ def get_docstring(name):
 
 ##################################
 
+
 singular = Singular()
 
 def reduce_load_Singular():

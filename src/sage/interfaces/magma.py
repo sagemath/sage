@@ -2753,6 +2753,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
 ###########################################################################
 
+
 magma = Magma()
 
 

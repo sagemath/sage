@@ -1767,6 +1767,7 @@ def intmod_gap_to_sage(x):
 
 #############
 
+
 gap = Gap()
 
 def reduce_load_GAP():
