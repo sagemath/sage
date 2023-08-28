@@ -2723,6 +2723,7 @@ class TopologicalManifold(ManifoldSubset):
 ##############################################################################
 ## Constructor function
 
+
 _manifold_id = Integer(0)
 
 

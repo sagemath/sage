@@ -291,6 +291,7 @@ class FreeModuleFactory(UniqueFactory):
 
         return FreeModule_ambient(base_ring, rank, sparse=sparse)
 
+
 FreeModuleFactory_with_standard_basis = FreeModuleFactory("FreeModule")
 
 def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
@@ -7665,6 +7666,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
         """
         return False
 
+
 FreeModule_generic_pid._submodule_class = FreeModule_submodule_pid
 
 
@@ -8141,6 +8143,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
             True
         """
         return False
+
 
 FreeModule_generic_field._submodule_class = FreeModule_submodule_field
 

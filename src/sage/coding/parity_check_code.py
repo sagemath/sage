@@ -351,5 +351,6 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
 
 ####################### registration ###############################
 
+
 ParityCheckCode._registered_encoders["ParityCheckCodeGeneratorMatrixEncoder"] = ParityCheckCodeGeneratorMatrixEncoder
 ParityCheckCode._registered_encoders["ParityCheckCodeStraightforwardEncoder"] = ParityCheckCodeStraightforwardEncoder

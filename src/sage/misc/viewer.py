@@ -301,6 +301,7 @@ class Viewer(SageObject):
         elif x.startswith('pdf'):
             return self.pdf_viewer()
 
+
 viewer = Viewer()
 
 def browser():

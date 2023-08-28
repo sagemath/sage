@@ -895,4 +895,5 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
 ####################### registration ###############################
 
+
 LinearRankMetricCode._registered_encoders["GeneratorMatrix"] = LinearCodeGeneratorMatrixEncoder

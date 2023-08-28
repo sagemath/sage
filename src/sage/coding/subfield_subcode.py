@@ -421,5 +421,6 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
 ####################### registration ###############################
 
+
 SubfieldSubcode._registered_decoders["OriginalCode"] = SubfieldSubcodeOriginalCodeDecoder
 SubfieldSubcodeOriginalCodeDecoder._decoder_type = {"dynamic"}

@@ -149,4 +149,5 @@ class FilteredPartitionModule(CombinatorialFreeModule):
         """
         return 'P' + t._repr_()
 
+
 Example = FilteredPartitionModule

@@ -711,6 +711,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
 ####################### registration ###############################
 
+
 PuncturedCode._registered_encoders["PuncturedMatrix"] = PuncturedCodePuncturedMatrixEncoder
 PuncturedCode._registered_decoders["OriginalCode"] = PuncturedCodeOriginalCodeDecoder
 PuncturedCodeOriginalCodeDecoder._decoder_type = {"dynamic"}
