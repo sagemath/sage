@@ -943,7 +943,7 @@ from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
 
 class SagecodeTransform(SphinxTransform):
     """
-    Transform code blocks to live code blocks enabled by jupter-sphinx.
+    Transform a code block to a live code block enabled by jupyter-sphinx.
 
     Effectively a code block like::
 
