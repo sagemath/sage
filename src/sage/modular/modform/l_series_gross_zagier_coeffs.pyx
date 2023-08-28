@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 

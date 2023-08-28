@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.padics
 #
 # All these methods are imported in EllipticCurve_rational_field,

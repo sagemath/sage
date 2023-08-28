@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # -*- coding: utf-8 -*-
 #########################################################################
 #       Copyright (C) 2011 Cameron Franc and Marc Masdeu

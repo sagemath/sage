@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from .matrix0 cimport Matrix as Matrix0
 
 cdef class Matrix(Matrix0):

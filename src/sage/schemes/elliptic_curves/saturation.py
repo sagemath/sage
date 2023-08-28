@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.finite_rings sage.rings.number_field
 r"""
 Saturation of Mordell-Weil groups of elliptic curves over number fields

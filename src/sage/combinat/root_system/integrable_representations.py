@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs sage.modules
 """
 Integrable Representations of Affine Lie Algebras

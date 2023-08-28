@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # -*- coding: utf-8 -*-
 r"""
 Modular symbols attached to elliptic curves over `\QQ`

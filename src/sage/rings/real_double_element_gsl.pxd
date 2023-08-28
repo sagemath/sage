@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from .real_double cimport RealDoubleElement
 
 

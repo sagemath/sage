@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # -*- coding: utf-8 -*-
 r"""
 Various small graphs

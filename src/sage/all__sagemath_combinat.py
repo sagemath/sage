@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 try:  # extra
     from sage.all__sagemath_modules import *
 except ImportError:

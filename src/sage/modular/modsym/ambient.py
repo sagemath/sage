@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # -*- coding: utf-8 -*-
 r"""
 Ambient spaces of modular symbols

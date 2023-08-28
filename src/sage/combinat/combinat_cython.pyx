@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # cython: binding=True
 """
 Fast computation of combinatorial functions (Cython + mpz)

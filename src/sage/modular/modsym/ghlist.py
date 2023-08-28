@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 List of coset representatives for `\Gamma_H(N)` in `\SL_2(\ZZ)`
 """

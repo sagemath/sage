@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Arithmetic subgroups defined by permutations of cosets
 

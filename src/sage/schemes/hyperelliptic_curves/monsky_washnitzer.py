@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Computation of Frobenius matrix on Monsky-Washnitzer cohomology
 

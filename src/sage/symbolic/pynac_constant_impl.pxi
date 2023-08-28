@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Wrapper around Pynac's constants
 """

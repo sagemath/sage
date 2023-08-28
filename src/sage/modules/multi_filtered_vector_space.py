@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Multiple `\ZZ`-graded filtrations of a single vector space
 

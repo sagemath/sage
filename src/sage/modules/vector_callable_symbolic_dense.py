@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Vectors over callable symbolic rings
 

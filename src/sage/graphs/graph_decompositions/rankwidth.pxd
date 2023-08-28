@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 cdef extern from "rw.h":
     ctypedef int uint_fast8_t
     ctypedef int uint_fast32_t

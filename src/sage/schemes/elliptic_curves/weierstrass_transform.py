@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Morphism to bring a genus-one curve into Weierstrass form
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 cdef struct binary_tree_node:
     int key
     binary_tree_node *left

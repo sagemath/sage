@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Affine `n` space over a ring
 """

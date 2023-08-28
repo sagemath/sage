@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 cpdef bint is_Expression(x)
 cpdef _repr_Expression(x)
 cpdef _latex_Expression(x)

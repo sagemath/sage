@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 cimport cython
 from sage.structure.sage_object cimport SageObject
 from .list_of_faces             cimport ListOfFaces

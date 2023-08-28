@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # NOT ready to be used -- possibly should be deleted.
 
 from .power_series_ring_element cimport PowerSeries

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from .all__sagemath_categories import *
 
 try:  # extra

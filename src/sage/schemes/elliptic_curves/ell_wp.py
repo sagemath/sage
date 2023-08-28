@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # -*- coding: utf-8 -*-
 r"""
 Weierstrass `\wp`-function for elliptic curves

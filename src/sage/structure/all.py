@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from .factorization import Factorization
 
 from .sequence import Sequence, seq

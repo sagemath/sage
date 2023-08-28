@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 A single element of an ambient space of modular symbols
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Elements of graded rings of modular forms for Hecke triangle groups
 

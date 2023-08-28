@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Spaces of homomorphisms between modular abelian varieties
 

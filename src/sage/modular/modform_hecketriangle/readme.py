@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Overview of Hecke triangle groups and modular forms for Hecke triangle groups
 

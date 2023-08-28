@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 `L`-series of modular abelian varieties
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: optional - gap_package_quagroup, needs sage.combinat sage.libs.gap sage.modules
 """
 Quantum Groups Using GAP's QuaGroup Package

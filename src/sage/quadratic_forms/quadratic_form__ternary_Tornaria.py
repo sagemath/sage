@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Tornaria methods for computing with quadratic forms
 """

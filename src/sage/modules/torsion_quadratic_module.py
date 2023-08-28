@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Finite `\ZZ`-modules with bilinear and quadratic forms
 

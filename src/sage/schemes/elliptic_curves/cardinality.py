@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.finite_rings
 """
 Specific algorithms to compute cardinality of elliptic curves over a finite field

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Congruence arithmetic subgroups of `\SL_2(\ZZ)`
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 This module contains Cython code for a backtracking algorithm to solve Sudoku puzzles.
 

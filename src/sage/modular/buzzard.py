@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Conjectural slopes of Hecke polynomials
 

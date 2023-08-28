@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Testing modular symbols spaces
 

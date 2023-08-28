@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Calculate symplectic bases for matrices over fields and the integers.
 

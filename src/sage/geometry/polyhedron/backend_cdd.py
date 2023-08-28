@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # -*- coding: utf-8 -*-
 r"""
 The cdd backend for polyhedral computations

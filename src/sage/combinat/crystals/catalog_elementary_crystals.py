@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 Catalog Of Elementary Crystals
 

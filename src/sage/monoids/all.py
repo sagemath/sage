@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 
 from .free_monoid import FreeMonoid
 from .string_monoid import (BinaryStrings, OctalStrings, HexadecimalStrings,

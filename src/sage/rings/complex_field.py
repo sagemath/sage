@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Deprecated in favor of :mod:`sage.rings.complex_mpfr`
 

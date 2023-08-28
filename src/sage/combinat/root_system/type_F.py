@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # -*- coding: utf-8 -*-
 """
 Root system data for type F

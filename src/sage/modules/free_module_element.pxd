@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.structure.element cimport Vector
 
 cdef class FreeModuleElement(Vector):

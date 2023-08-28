@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Non-commutative symmetric functions and quasi-symmetric functions
 

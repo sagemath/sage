@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Hermite form computation for function fields
 

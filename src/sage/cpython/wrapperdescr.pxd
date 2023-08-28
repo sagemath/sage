@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from cpython.object cimport PyObject, PyTypeObject
 
 cdef extern from *:

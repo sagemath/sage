@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from .matroid cimport Matroid
 
 cdef class CircuitClosuresMatroid(Matroid):

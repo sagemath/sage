@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 from .generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):

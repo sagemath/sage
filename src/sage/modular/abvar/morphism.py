@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Hecke operators and morphisms between modular abelian varieties
 

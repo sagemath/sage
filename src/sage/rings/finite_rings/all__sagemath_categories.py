@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from .finite_field_constructor import FiniteField
 
 GF = FiniteField

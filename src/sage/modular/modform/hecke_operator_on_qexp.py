@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Hecke operators on `q`-expansions
 """

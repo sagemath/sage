@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Alternating forms on free modules
 

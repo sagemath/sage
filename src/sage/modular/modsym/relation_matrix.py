@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Relation matrices for ambient modular symbols spaces
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.riemannian_manifolds.parametrized_surface3d',
             'ParametrizedSurface3D')

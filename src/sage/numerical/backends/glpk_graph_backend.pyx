@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-glpk
 """
 GLPK Backend for access to GLPK graph functions
 

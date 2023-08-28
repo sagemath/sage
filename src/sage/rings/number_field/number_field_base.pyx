@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.number_field
 """
 Base class for all number fields

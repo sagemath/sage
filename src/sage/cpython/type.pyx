@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Type internals
 """

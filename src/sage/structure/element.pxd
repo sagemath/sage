@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from .sage_object cimport SageObject
 from .parent cimport Parent
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass

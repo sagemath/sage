@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Sparse action of Hecke operators
 """

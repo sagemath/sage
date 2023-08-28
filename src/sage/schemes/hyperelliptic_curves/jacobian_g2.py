@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Jacobian of a hyperelliptic curve of genus 2
 """

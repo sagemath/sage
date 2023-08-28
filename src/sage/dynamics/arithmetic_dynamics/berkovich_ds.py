@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Dynamical systems on Berkovich space over `\CC_p`.
 

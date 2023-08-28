@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 AUTHOR: Martin Albrecht <martinralbrecht@googlemail.com>
 """

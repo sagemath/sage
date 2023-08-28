@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Modular forms over a non-minimal base ring
 """

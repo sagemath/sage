@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 import pytest
 
 from sage.numerical.backends.generic_backend_test import GenericBackendTests

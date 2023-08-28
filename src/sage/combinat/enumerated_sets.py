@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 Enumerated sets and combinatorial objects
 

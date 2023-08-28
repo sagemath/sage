@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # -*- coding: utf-8 -*-
 """
 Lie Algebra Elements

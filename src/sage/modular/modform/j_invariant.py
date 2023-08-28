@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 `q`-expansion of `j`-invariant
 """

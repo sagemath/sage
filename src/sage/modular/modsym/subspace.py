@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Subspace of ambient spaces of modular symbols
 """

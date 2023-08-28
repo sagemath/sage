@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Torsion subgroups of modular abelian varieties
 

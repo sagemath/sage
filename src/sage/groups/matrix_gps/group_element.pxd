@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-gap
+# sage_setup: distribution = sagemath-modules
 from sage.structure.element cimport MultiplicativeGroupElement, Element, MonoidElement, Matrix
 
 cpdef is_MatrixGroupElement(x)

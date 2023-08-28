@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.data_structures.bitset cimport bitset_t
 from .matroid cimport Matroid
 from .basis_exchange_matroid cimport BasisExchangeMatroid

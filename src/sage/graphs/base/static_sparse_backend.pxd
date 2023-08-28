@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from .c_graph cimport CGraph, CGraphBackend
 from .static_sparse_graph cimport short_digraph, ushort
 from libc.stdint cimport uint64_t, uint32_t, INT32_MAX, UINT32_MAX

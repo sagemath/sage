@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 """

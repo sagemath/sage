@@ -1,4 +1,4 @@
-// sage_setup: distribution = sagemath-tdlib
+// sage_setup: distribution = sagemath-graphs
 
 #include <boost/tuple/tuple.hpp>
 #include <map>

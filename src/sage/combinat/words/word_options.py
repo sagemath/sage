@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 User-customizable options for words
 """

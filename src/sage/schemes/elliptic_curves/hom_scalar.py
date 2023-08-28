@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Scalar-multiplication morphisms of elliptic curves
 

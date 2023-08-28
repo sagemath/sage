@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Module of supersingular points
 

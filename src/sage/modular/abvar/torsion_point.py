@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Torsion points on modular abelian varieties
 

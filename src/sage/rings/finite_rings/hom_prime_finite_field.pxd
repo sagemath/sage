@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from .hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
     FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field)
 

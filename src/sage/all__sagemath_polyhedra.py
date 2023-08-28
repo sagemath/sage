@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 from .all__sagemath_modules import *
 
 try:  # extra

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # -*- coding: utf-8 -*-
 """
 Coercion Maps Between Hyperbolic Plane Models

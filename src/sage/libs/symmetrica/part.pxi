@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 cdef extern from 'symmetrica/def.h':
     INT strict_to_odd_part(OP s, OP o)
     INT odd_to_strict_part(OP o, OP s)

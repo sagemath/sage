@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # distutils: language = c++
 r"""
 Fast compiled graphs

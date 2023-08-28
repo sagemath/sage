@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # Ring base classes
 from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
     DedekindDomain, PrincipalIdealDomain, EuclideanDomain)

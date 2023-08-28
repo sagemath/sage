@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # -*- coding: utf-8 -*-
 r"""
 Finite dimensional algebras with basis

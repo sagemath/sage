@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from .ring cimport CommutativeRing, Field
 
 cdef class RealField(Field):

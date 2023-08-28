@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 #*****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #

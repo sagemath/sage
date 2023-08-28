@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.modular
 """
 This file contains a bunch of tests extracted from the published book

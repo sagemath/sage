@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Subspaces of modular forms for Hecke triangle groups
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from .set import Set
 from .integer_range import IntegerRange
 from .non_negative_integers import NonNegativeIntegers

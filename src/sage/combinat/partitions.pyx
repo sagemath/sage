@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 Iterators over the partitions of an integer
 

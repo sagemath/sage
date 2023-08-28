@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Atkin/Hecke series for overconvergent modular forms
 

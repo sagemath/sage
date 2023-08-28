@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.finite_rings       (because all doctests use finite fields)
 """
 Places of function fields: rational

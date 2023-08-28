@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Univariate Polynomials over domains and fields
 

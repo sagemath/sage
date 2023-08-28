@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 from .weightspace import WeightSpace_constructor as pAdicWeightSpace
 
 from .genus0 import OverconvergentModularForms

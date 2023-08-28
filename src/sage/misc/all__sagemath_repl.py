@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 from .all__sagemath_objects import *
 
 from .sage_eval import sage_eval, sageobj

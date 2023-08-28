@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Library interface to Embeddable Common Lisp (ECL)
 """

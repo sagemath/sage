@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Series constructor for modular forms for Hecke triangle groups
 

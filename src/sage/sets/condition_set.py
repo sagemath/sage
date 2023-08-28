@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Subsets of a Universe Defined by Predicates
 """

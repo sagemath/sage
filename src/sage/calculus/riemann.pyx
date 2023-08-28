@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs numpy sage.symbolic
 """
 Riemann Mapping

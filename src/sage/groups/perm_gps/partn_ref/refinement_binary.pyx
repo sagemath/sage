@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-gap
+# sage_setup: distribution = sagemath-modules
 """
 Partition backtrack functions for binary codes
 

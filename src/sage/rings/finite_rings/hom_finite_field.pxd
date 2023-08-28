@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.rings.morphism cimport RingHomomorphism_im_gens, FrobeniusEndomorphism_generic
 from sage.structure.element cimport Element
 from sage.categories.map cimport Section

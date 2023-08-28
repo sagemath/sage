@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from .free_module_element cimport FreeModuleElement
 cimport numpy
 

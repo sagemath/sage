@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 cdef class lazy_list_generic():
     cdef list cache                  # the cache
     cdef lazy_list_generic master   # a reference if self is a slice
