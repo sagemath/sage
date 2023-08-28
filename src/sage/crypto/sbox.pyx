@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 S-Boxes and Their Algebraic Representations
 """
@@ -39,7 +40,7 @@ cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg):
 
         sage: from sage.crypto.sbox import SBox
         sage: S = SBox(7,6,0,4,2,5,1,3)
-        sage: F = S.polynomials(degree=3) # indirect doctest
+        sage: F = S.polynomials(degree=3)  # indirect doctest                           # needs sage.libs.singular
     """
     cdef Py_ssize_t total = 1
     cdef Py_ssize_t divisor = 1
@@ -58,9 +59,9 @@ cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg):
 cdef class SBox(SageObject):
     r"""
     A substitution box or S-box is one of the basic components of
-    symmetric key cryptography. In general, an S-box takes ``m`` input
-    bits and transforms them into ``n`` output bits. This is called an
-    ``mxn`` S-box and is often implemented as a lookup table. These
+    symmetric key cryptography. In general, an S-box takes `m` input
+    bits and transforms them into `n` output bits. This is called an
+    `m \times n` S-box and is often implemented as a lookup table. These
     S-boxes are carefully chosen to resist linear and differential
     cryptanalysis [He2002]_.
 
@@ -590,7 +591,7 @@ cdef class SBox(SageObject):
             ...
             IndexError: list index out of range
             sage: from sage.crypto.sboxes import PRESENT
-            sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()
+            sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()             # needs sage.rings.polynomial.pbori
             True
         """
         from sage.structure.element import is_Vector
@@ -839,7 +840,8 @@ cdef class SBox(SageObject):
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox(7,6,0,4,2,5,1,3)
             sage: S.ring()
-            Multivariate Polynomial Ring in x0, x1, x2, y0, y1, y2 over Finite Field of size 2
+            Multivariate Polynomial Ring in x0, x1, x2, y0, y1, y2 over
+             Finite Field of size 2
         """
         return self._ring
 
@@ -857,9 +859,9 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([7,6,0,4,2,5,1,3])
-            sage: F = S.polynomials()
+            sage: F = S.polynomials()                                                   # needs sage.libs.singular
             sage: s = S.solutions()
-            sage: any(f.subs(_s) for f in F for _s in s)
+            sage: any(f.subs(_s) for f in F for _s in s)                                # needs sage.libs.singular
             False
         """
         if X is None and Y is None:
@@ -907,7 +909,7 @@ cdef class SBox(SageObject):
 
         By default, this method returns an indirect representation::
 
-            sage: S.polynomials()
+            sage: S.polynomials()                                                       # needs sage.libs.singular
             [x0*x2 + x1 + y1 + 1,
              x0*x1 + x1 + x2 + y0 + y1 + y2 + 1,
              x0*y1 + x0 + x2 + y0 + y2,
@@ -929,7 +931,7 @@ cdef class SBox(SageObject):
         bits are greater than the input bits::
 
             sage: P.<y0,y1,y2,x0,x1,x2> = PolynomialRing(GF(2),6,order='lex')
-            sage: S.polynomials([x0,x1,x2],[y0,y1,y2], groebner=True)
+            sage: S.polynomials([x0,x1,x2],[y0,y1,y2], groebner=True)                   # needs sage.libs.singular
             [y0 + x0*x1 + x0*x2 + x0 + x1*x2 + x1 + 1,
              y1 + x0*x2 + x1 + 1,
              y2 + x0 + x1*x2 + x1 + x2 + 1]
@@ -1270,11 +1272,11 @@ cdef class SBox(SageObject):
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([7,6,0,4,2,5,1,3])
             sage: f3 = S.component_function(3)
-            sage: f3.algebraic_normal_form()
+            sage: f3.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
             x0*x1 + x0*x2 + x0 + x2
 
             sage: f5 = S.component_function([1, 0, 1])
-            sage: f5.algebraic_normal_form()
+            sage: f5.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
             x0*x2 + x0 + x1*x2
         """
         cdef Py_ssize_t m = self.m
@@ -1449,7 +1451,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox(7,6,0,4,2,5,1,3)
-            sage: S.autocorrelation_table()
+            sage: S.autocorrelation_table()                                             # needs sage.combinat
             [ 8  8  8  8  8  8  8  8]
             [ 8  0  0  0  0  0  0 -8]
             [ 8  0 -8  0  0  0  0  0]
@@ -1573,7 +1575,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([0,1,3,6,7,4,5,2])
-            sage: S.linear_structures()
+            sage: S.linear_structures()                                                 # needs sage.combinat
             [(1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1),
              (5, 5, 1), (6, 6, 1), (7, 7, 1)]
         """
@@ -1651,7 +1653,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
-            sage: S.max_degree()
+            sage: S.max_degree()                                                        # needs sage.rings.polynomial.pbori
             3
         """
         ret = ZZ.zero()
@@ -1671,7 +1673,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
-            sage: S.min_degree()
+            sage: S.min_degree()                                                        # needs sage.rings.polynomial.pbori
             2
         """
         ret = ZZ(self.m)
