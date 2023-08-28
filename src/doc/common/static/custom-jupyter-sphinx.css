@@ -14,14 +14,19 @@ div.jupyter_container div.cell_output div.output {
   margin: .5em;
 }
 
+.thebelab-button {
+    margin: 0.5rem 0 0.5rem 0.5rem;
+}
+
 #thebelab-activate-button {
     position: fixed;
     right: -100px;
-    top: 50%;
+    top: 45%;
     border-radius: 30px;
     transition-property: right;
     transition-duration: 300ms;
     transition-timing-function: ease-out;
+    z-index: 100;
 }
 
 #thebelab-activate-button:hover {

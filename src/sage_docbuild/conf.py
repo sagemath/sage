@@ -69,7 +69,7 @@ if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
                 'kernelName': "sagemath",
                 'path': ".",
             },
-            'selector': "div.live-code"
+            'selector': "div.live-doc"
         }
     else:  # local jupyter server
         SAGE_JUPYTER_SERVER_TOKEN = os.environ.get('SAGE_JUPYTER_SERVER_TOKEN', 'secret')
@@ -84,6 +84,7 @@ if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
                     'token': SAGE_JUPYTER_SERVER_TOKEN
                 },
             },
+            'selector': "div.live-doc"
         }
     jupyter_sphinx_thebelab_config.update({
         'codeMirrorConfig': {
@@ -992,7 +993,7 @@ class SagecodeTransform(SphinxTransform):
                                 stderr=True,
                                 code_below=False,
                                 classes=["jupyter_cell"])
-                    cell_input = CellInputNode(classes=['cell_input','live-code'])
+                    cell_input = CellInputNode(classes=['cell_input','live-doc'])
                     cell_input += nodes.literal_block(
                         text='\n'.join(lines),
                         linenos=False,
