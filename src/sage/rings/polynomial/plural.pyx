@@ -964,10 +964,9 @@ cdef class NCPolynomialRing_plural(Ring):
 #        W = self._list_to_ring(L)
 #        return new_NRing(W, self.base_ring())
 
-
-    ### The following methods are handy for implementing Groebner
-    ### basis algorithms. They do only superficial type/sanity checks
-    ### and should be called carefully.
+    # The following methods are handy for implementing Groebner
+    # basis algorithms. They do only superficial type/sanity checks
+    # and should be called carefully.
 
     def monomial_quotient(self, NCPolynomial_plural f, NCPolynomial_plural g, coeff=False):
         r"""
