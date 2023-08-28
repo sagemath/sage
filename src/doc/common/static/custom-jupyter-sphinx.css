@@ -3,7 +3,7 @@ div.jupyter_container {
 }
 
 div.jupyter_container + div.jupyter_container {
-  margin: 0 0 0.5em 0;
+  margin: 0 0 .5em 0;
 }
 
 div.jupyter_container div.cell_input pre {
@@ -15,21 +15,27 @@ div.jupyter_container div.cell_output div.output {
 }
 
 .thebelab-button {
-    margin: 0.5rem 0 0.5rem 0.5rem;
+  margin: .5rem 0 .5rem .5rem;
+}
+
+.thebelab-busy {
+  margin-left: .5rem;
 }
 
 #thebelab-activate-button {
-    position: fixed;
-    right: -100px;
-    top: 45%;
-    border-radius: 30px;
-    transition-property: right;
-    transition-duration: 300ms;
-    transition-timing-function: ease-out;
-    z-index: 100;
+  position: fixed;
+  right: -100px;
+  top: 45%;
+  border-radius: 30px;
+  transition-property: right;
+  transition-duration: 300ms;
+  transition-timing-function: ease-out;
+  z-index: 100;
 }
 
 #thebelab-activate-button:hover {
-    right: 5px;
+  right: 5px;
 }
+
+
 
