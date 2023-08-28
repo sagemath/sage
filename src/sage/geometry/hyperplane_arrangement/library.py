@@ -284,7 +284,7 @@ class HyperplaneArrangementLibrary():
             NotImplementedError: Coxeter arrangements are not implemented for non crystallographic Cartan types
 
         The characteristic polynomial is pre-computed using the results
-        of Terao, see []_::
+        of Terao, see [Ath2000]_::
 
             sage: # needs sage.combinat
             sage: hyperplane_arrangements.Coxeter("A3").characteristic_polynomial()
