@@ -27,54 +27,58 @@ available.
 
 EXAMPLES::
 
-    sage: k = GF(2)                                                                     # optional - sage.rings.finite_rings
-    sage: P.<x,y,z> = ProjectiveSpace(k, 2)                                             # optional - sage.rings.finite_rings
-    sage: C = Curve(x^2*z - y^3, P)                                                     # optional - sage.rings.finite_rings
-    sage: C.genus()                                                                     # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: k = GF(2)
+    sage: P.<x,y,z> = ProjectiveSpace(k, 2)
+    sage: C = Curve(x^2*z - y^3, P)
+    sage: C.genus()
     0
-    sage: C.function_field()                                                            # optional - sage.rings.finite_rings
+    sage: C.function_field()
     Function field in z defined by z + y^3
 
 Closed points of arbitrary degree can be computed::
 
-    sage: C.closed_points()                                                             # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: C.closed_points()
     [Point (x, y), Point (y, z), Point (x + z, y + z)]
-    sage: C.closed_points(2)                                                            # optional - sage.rings.finite_rings
+    sage: C.closed_points(2)
     [Point (y^2 + y*z + z^2, x + z)]
-    sage: C.closed_points(3)                                                            # optional - sage.rings.finite_rings
+    sage: C.closed_points(3)
     [Point (y^3 + y^2*z + z^3, x + y + z),
      Point (x^2 + y*z + z^2, x*y + x*z + y*z, y^2 + x*z + y*z + z^2)]
 
 All singular closed points can be found::
 
-    sage: C.singular_closed_points()                                                    # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: C.singular_closed_points()
     [Point (x, y)]
-    sage: p = _[0]                                                                      # optional - sage.rings.finite_rings
-    sage: p.places()  # a unibranch singularity, that is, a cusp                        # optional - sage.rings.finite_rings
+    sage: p = _[0]
+    sage: p.places()  # a unibranch singularity, that is, a cusp
     [Place (1/y)]
-    sage: pls = _[0]                                                                    # optional - sage.rings.finite_rings
-    sage: C.place_to_closed_point(pls)                                                  # optional - sage.rings.finite_rings
+    sage: pls = _[0]
+    sage: C.place_to_closed_point(pls)
     Point (x, y)
 
 It is easy to transit to and from the function field of the curve::
 
-    sage: fx = C(x/z)                                                                   # optional - sage.rings.finite_rings
-    sage: fy = C(y/z)                                                                   # optional - sage.rings.finite_rings
-    sage: fx^2 - fy^3                                                                   # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: fx = C(x/z)
+    sage: fy = C(y/z)
+    sage: fx^2 - fy^3
     0
-    sage: fx.divisor()                                                                  # optional - sage.rings.finite_rings
+    sage: fx.divisor()
     3*Place (1/y)
      - 3*Place (y)
-    sage: p, = fx.poles()                                                               # optional - sage.rings.finite_rings
-    sage: p                                                                             # optional - sage.rings.finite_rings
+    sage: p, = fx.poles()
+    sage: p
     Place (y)
-    sage: C.place_to_closed_point(p)                                                    # optional - sage.rings.finite_rings
+    sage: C.place_to_closed_point(p)
     Point (y, z)
-    sage: _.rational_point()                                                            # optional - sage.rings.finite_rings
+    sage: _.rational_point()
     (1 : 0 : 0)
-    sage: _.closed_point()                                                              # optional - sage.rings.finite_rings
+    sage: _.closed_point()
     Point (y, z)
-    sage: _.place()                                                                     # optional - sage.rings.finite_rings
+    sage: _.place()
     Place (y)
 
 Integral projective curves over `\QQ`
@@ -188,16 +192,18 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
     EXAMPLES::
 
-        sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)                                 # optional - sage.rings.finite_rings
-        sage: C = Curve([y*u^2 - x^3, z*u^2 - x^3, w*u^2 - x^3, y^3 - x^3], P); C       # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)
+        sage: C = Curve([y*u^2 - x^3, z*u^2 - x^3, w*u^2 - x^3, y^3 - x^3], P); C
         Projective Curve over Finite Field of size 7 defined
          by -x^3 + y*u^2, -x^3 + z*u^2, -x^3 + w*u^2, -x^3 + y^3
 
     ::
 
-        sage: K.<u> = CyclotomicField(11)                                               # optional - sage.rings.number_field
-        sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                       # optional - sage.rings.number_field
-        sage: C = Curve([y*w - u*z^2 - x^2, x*w - 3*u^2*z*w], P); C                     # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<u> = CyclotomicField(11)
+        sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
+        sage: C = Curve([y*w - u*z^2 - x^2, x*w - 3*u^2*z*w], P); C
         Projective Curve over Cyclotomic Field of order 11 and degree 10 defined
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
@@ -300,12 +306,13 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         EXAMPLES::
 
-            sage: K.<a> = CyclotomicField(3)                                            # optional - sage.rings.number_field
-            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)                                   # optional - sage.rings.number_field
-            sage: C = Curve([y*w - x^2, z*w^2 - a*x^3], P)                              # optional - sage.rings.number_field
-            sage: L.<a,b,c> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: proj1 = C.projection(PS=L)                                            # optional - sage.rings.number_field
-            sage: proj1                                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = CyclotomicField(3)
+            sage: P.<x,y,z,w> = ProjectiveSpace(K, 3)
+            sage: C = Curve([y*w - x^2, z*w^2 - a*x^3], P)
+            sage: L.<a,b,c> = ProjectiveSpace(K, 2)
+            sage: proj1 = C.projection(PS=L)
+            sage: proj1
             (Scheme morphism:
                From: Projective Curve over Cyclotomic Field of order 3 and degree 2
                      defined by -x^2 + y*w, (-a)*x^3 + z*w^2
@@ -339,20 +346,22 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         ::
 
-            sage: P.<x,y,z,w> = ProjectiveSpace(GF(2), 3)                               # optional - sage.rings.finite_rings
-            sage: C = P.curve([(x - y)*(x - z)*(x - w)*(y - z)*(y - w),                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z,w> = ProjectiveSpace(GF(2), 3)
+            sage: C = P.curve([(x - y)*(x - z)*(x - w)*(y - z)*(y - w),
             ....:              x*y*z*w*(x + y + z + w)])
-            sage: C.projection()                                                        # optional - sage.rings.finite_rings
+            sage: C.projection()
             Traceback (most recent call last):
             ...
             NotImplementedError: this curve contains all points of its ambient space
 
         ::
 
-            sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)                             # optional - sage.rings.finite_rings
-            sage: C = P.curve([x^3 - y*z*u, w^2 - u^2 + 2*x*z, 3*x*w - y^2])            # optional - sage.rings.finite_rings
-            sage: L.<a,b,c,d> = ProjectiveSpace(GF(7), 3)                               # optional - sage.rings.finite_rings
-            sage: C.projection(PS=L)                                                    # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)
+            sage: C = P.curve([x^3 - y*z*u, w^2 - u^2 + 2*x*z, 3*x*w - y^2])
+            sage: L.<a,b,c,d> = ProjectiveSpace(GF(7), 3)
+            sage: C.projection(PS=L)
             (Scheme morphism:
                From: Projective Curve over Finite Field of size 7
                      defined by x^3 - y*z*u, 2*x*z + w^2 - u^2, -y^2 + 3*x*w
@@ -361,8 +370,8 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
                      (x : y : z : w),
              Projective Curve over Finite Field of size 7 defined by b^2 - 3*a*d,
               a^5*b + a*b*c^3*d - 3*b*c^2*d^3, a^6 + a^2*c^3*d - 3*a*c^2*d^3)
-            sage: Q.<a,b,c> = ProjectiveSpace(GF(7), 2)                                 # optional - sage.rings.finite_rings
-            sage: C.projection(PS=Q)                                                    # optional - sage.rings.finite_rings
+            sage: Q.<a,b,c> = ProjectiveSpace(GF(7), 2)
+            sage: C.projection(PS=Q)
             Traceback (most recent call last):
             ...
             TypeError: (=Projective Space of dimension 2 over Finite Field of
@@ -534,9 +543,10 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         ::
 
-            sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)                             # optional - sage.rings.finite_rings
-            sage: C = P.curve([x^2 - 6*y^2, w*z*u - y^3 + 4*y^2*z, u^2 - x^2])          # optional - sage.rings.finite_rings
-            sage: C.plane_projection()                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z,w,u> = ProjectiveSpace(GF(7), 4)
+            sage: C = P.curve([x^2 - 6*y^2, w*z*u - y^3 + 4*y^2*z, u^2 - x^2])
+            sage: C.plane_projection()
             (Scheme morphism:
                From: Projective Curve over Finite Field of size 7
                      defined by x^2 + y^2, -y^3 - 3*y^2*z + z*w*u, -x^2 + u^2
@@ -549,9 +559,10 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = P.curve(x^2 - y*z - z^2)                                          # optional - sage.rings.finite_rings
-            sage: C.plane_projection()                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = P.curve(x^2 - y*z - z^2)
+            sage: C.plane_projection()
             Traceback (most recent call last):
             ...
             TypeError: this curve is already a plane curve
@@ -591,16 +602,18 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
     A projective plane curve defined over an algebraic closure of `\QQ`::
 
-        sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                     # optional - sage.rings.number_field
-        sage: set_verbose(-1)  # suppress warnings for slow computation                 # optional - sage.rings.number_field
-        sage: C = Curve([y*z - x^2 - QQbar.gen()*z^2], P); C                            # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
+        sage: set_verbose(-1)  # suppress warnings for slow computation
+        sage: C = Curve([y*z - x^2 - QQbar.gen()*z^2], P); C
         Projective Plane Curve over Algebraic Field
          defined by -x^2 + y*z + (-I)*z^2
 
     A projective plane curve defined over a finite field::
 
-        sage: P.<x,y,z> = ProjectiveSpace(GF(5^2, 'v'), 2)                              # optional - sage.rings.finite_rings
-        sage: C = Curve([y^2*z - x*z^2 - z^3], P); C                                    # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: P.<x,y,z> = ProjectiveSpace(GF(5^2, 'v'), 2)
+        sage: C = Curve([y^2*z - x*z^2 - z^3], P); C
         Projective Plane Curve over Finite Field in v of size 5^2
          defined by y^2*z - x*z^2 - z^3
     """
@@ -646,18 +659,19 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         EXAMPLES::
 
-            sage: FF = FiniteField(5)                                                   # optional - sage.rings.finite_rings
-            sage: P2 = ProjectiveSpace(2, FF, names=['x','y','z'])                      # optional - sage.rings.finite_rings
-            sage: R = P2.coordinate_ring()                                              # optional - sage.rings.finite_rings
-            sage: x, y, z = R.gens()                                                    # optional - sage.rings.finite_rings
-            sage: f = y^2*z^7 - x^9 - x*z^8                                             # optional - sage.rings.finite_rings
-            sage: C = Curve(f)                                                          # optional - sage.rings.finite_rings
-            sage: K = FractionField(R)                                                  # optional - sage.rings.finite_rings
-            sage: r = 1/x                                                               # optional - sage.rings.finite_rings
-            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: FF = FiniteField(5)
+            sage: P2 = ProjectiveSpace(2, FF, names=['x','y','z'])
+            sage: R = P2.coordinate_ring()
+            sage: x, y, z = R.gens()
+            sage: f = y^2*z^7 - x^9 - x*z^8
+            sage: C = Curve(f)
+            sage: K = FractionField(R)
+            sage: r = 1/x
+            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!
             [[-1, (0, 0, 1)]]
-            sage: r = 1/x^3                                                             # optional - sage.rings.finite_rings
-            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!            # optional - sage.rings.finite_rings
+            sage: r = 1/x^3
+            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!
             [[-3, (0, 0, 1)]]
         """
         F = self.base_ring()
@@ -692,12 +706,13 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         EXAMPLES::
 
-            sage: FF = FiniteField(5)                                                   # optional - sage.rings.finite_rings
-            sage: P2 = ProjectiveSpace(2, FF, names=['x','y','z'])                      # optional - sage.rings.finite_rings
-            sage: x, y, z = P2.coordinate_ring().gens()                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: pt = C([2,3,1])                                                       # optional - sage.rings.finite_rings
-            sage: C.local_coordinates(pt,9)     # todo: not implemented  !!!!           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: FF = FiniteField(5)
+            sage: P2 = ProjectiveSpace(2, FF, names=['x','y','z'])
+            sage: x, y, z = P2.coordinate_ring().gens()
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: pt = C([2,3,1])
+            sage: C.local_coordinates(pt,9)     # todo: not implemented  !!!!
             [2 + t,
              3 + 3*t^2 + t^3 + 3*t^4 + 3*t^6 + 3*t^7 + t^8 + 2*t^9 + 3*t^11 + 3*t^12]
         """
@@ -840,19 +855,20 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         Over a finite field::
 
-            sage: F = GF(19)                                                            # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X^3 + Y^3 + Z^3)                                            # optional - sage.rings.finite_rings
-            sage: C.is_singular()                                                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(19)
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X^3 + Y^3 + Z^3)
+            sage: C.is_singular()
             False
-            sage: D = Curve(X^4 - X*Z^3)                                                # optional - sage.rings.finite_rings
-            sage: D.is_singular()                                                       # optional - sage.rings.finite_rings
+            sage: D = Curve(X^4 - X*Z^3)
+            sage: D.is_singular()
             True
-            sage: E = Curve(X^5 + 19*Y^5 + Z^5)                                         # optional - sage.rings.finite_rings
-            sage: E.is_singular()                                                       # optional - sage.rings.finite_rings
+            sage: E = Curve(X^5 + 19*Y^5 + Z^5)
+            sage: E.is_singular()
             True
-            sage: E = Curve(X^5 + 9*Y^5 + Z^5)                                          # optional - sage.rings.finite_rings
-            sage: E.is_singular()                                                       # optional - sage.rings.finite_rings
+            sage: E = Curve(X^5 + 9*Y^5 + Z^5)
+            sage: E.is_singular()
             False
 
         Over `\CC`::
@@ -871,9 +887,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         Showing that :trac:`12187` is fixed::
 
-            sage: F.<X,Y,Z> = GF(2)[]                                                   # optional - sage.rings.finite_rings
-            sage: G = Curve(X^2 + Y*Z)                                                  # optional - sage.rings.finite_rings
-            sage: G.is_singular()                                                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<X,Y,Z> = GF(2)[]
+            sage: G = Curve(X^2 + Y*Z)
+            sage: G.is_singular()
             False
 
         ::
@@ -1072,9 +1089,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = P.curve([y^7*z^2 - 16*x^9 + x*y*z^7 + 2*z^9])                     # optional - sage.rings.finite_rings
-            sage: C.quadratic_transform()                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = P.curve([y^7*z^2 - 16*x^9 + x*y*z^7 + 2*z^9])
+            sage: C.quadratic_transform()
             Scheme morphism:
               From: Projective Plane Curve over Finite Field of size 17
                     defined by x^9 + y^7*z^2 + x*y*z^7 + 2*z^9
@@ -1536,12 +1554,13 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         ::
 
-            sage: K = QuadraticField(-1)                                                # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: C = Curve([y^2*z - K.0*x^3], P)                                       # optional - sage.rings.number_field
-            sage: D = Curve([z*x + y^2], P)                                             # optional - sage.rings.number_field
-            sage: Q = P([0,0,1])                                                        # optional - sage.rings.number_field
-            sage: C.is_transverse(D, Q)                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = QuadraticField(-1)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: C = Curve([y^2*z - K.0*x^3], P)
+            sage: D = Curve([z*x + y^2], P)
+            sage: Q = P([0,0,1])
+            sage: C.is_transverse(D, Q)
             False
 
         ::
@@ -1601,9 +1620,10 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
 
         ::
 
-            sage: P.<x,y,z,w,t> = ProjectiveSpace(GF(7), 4)                             # optional - sage.rings.finite_rings
-            sage: C = P.curve([t^3 - x*y*w, x^3 + y^3 + z^3, z - w])                    # optional - sage.rings.finite_rings
-            sage: C.arithmetic_genus()                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z,w,t> = ProjectiveSpace(GF(7), 4)
+            sage: C = P.curve([t^3 - x*y*w, x^3 + y^3 + z^3, z - w])
+            sage: C.arithmetic_genus()
             10
         """
         if not self.is_irreducible():
@@ -1683,13 +1703,14 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: x,y,z = PolynomialRing(GF(5), 3, 'xyz').gens()                        # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8); C                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: x,y,z = PolynomialRing(GF(5), 3, 'xyz').gens()
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8); C
             Projective Plane Curve over Finite Field of size 5
              defined by -x^9 + y^2*z^7 - x*z^8
-            sage: C.arithmetic_genus()                                                  # optional - sage.rings.finite_rings
+            sage: C.arithmetic_genus()
             28
-            sage: C.genus()                                                             # optional - sage.rings.finite_rings
+            sage: C.genus()
             4
 
         ::
@@ -1724,15 +1745,16 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         In the case of number fields, they need to have an embedding
         into the algebraic field::
 
-            sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]                                 # optional - sage.rings.number_field
-            sage: a                                                                     # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
+            sage: a
             -2.236067977499790?*I
-            sage: F = NumberField(a.minpoly(), 'a', embedding=a)                        # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.number_field
-            sage: F.inject_variables()                                                  # optional - sage.rings.number_field
+            sage: F = NumberField(a.minpoly(), 'a', embedding=a)
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)
+            sage: F.inject_variables()
             Defining a
-            sage: C = P.curve(x^2 + a * y^2)                                            # optional - sage.rings.number_field
-            sage: C.fundamental_group()                         # optional - sirocco    # optional - sage.rings.number_field
+            sage: C = P.curve(x^2 + a * y^2)
+            sage: C.fundamental_group()                         # optional - sirocco
             Finitely presented group < x0 |  >
 
         .. WARNING::
@@ -1741,13 +1763,18 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
         TESTS::
 
+            sage: F.<x0, x1> = FreeGroup()
+            sage: G = F / [x1^-1*(x1^-1*x0^-1*x1*x0^-1)^2, (x1^-1*x0^-1)^2*x1^-1*(x0*x1)^2*x0]
+            sage: G.order()
+            320
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: C.fundamental_group().sorted_presentation()                 # optional - sirocco
-            Finitely presented group < x0, x1 | x1^-1*(x1^-1*x0^-1*x1*x0^-1)^2,
-                                                (x1^-1*x0^-1)^2*x1^-1*(x0*x1)^2*x0 >
+            sage: G0 = C.fundamental_group()                 # optional - sirocco
+            sage: G.is_isomorphic(G0)                        # optional - sirocco
+            #I  Forcing finiteness test
+            True
 
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group
@@ -1865,62 +1892,65 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: F = GF(37)                                                            # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X^7 + Y*X*Z^5*55 + Y^7*12)                                  # optional - sage.rings.finite_rings
-            sage: len(list(C.rational_points_iterator()))                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(37)
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X^7 + Y*X*Z^5*55 + Y^7*12)
+            sage: len(list(C.rational_points_iterator()))
             37
 
         ::
 
-            sage: F = GF(2)                                                             # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X*Y*Z)                                                      # optional - sage.rings.finite_rings
-            sage: a = C.rational_points_iterator()                                      # optional - sage.rings.finite_rings
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(2)
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X*Y*Z)
+            sage: a = C.rational_points_iterator()
+            sage: next(a)
             (1 : 0 : 0)
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: next(a)
             (0 : 1 : 0)
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: next(a)
             (1 : 1 : 0)
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: next(a)
             (0 : 0 : 1)
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: next(a)
             (1 : 0 : 1)
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: next(a)
             (0 : 1 : 1)
-            sage: next(a)                                                               # optional - sage.rings.finite_rings
+            sage: next(a)
             Traceback (most recent call last):
             ...
             StopIteration
 
         ::
 
-            sage: F = GF(3^2,'a')                                                       # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X^3 + 5*Y^2*Z - 33*X*Y*X)                                   # optional - sage.rings.finite_rings
-            sage: b = C.rational_points_iterator()                                      # optional - sage.rings.finite_rings
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(3^2,'a')
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X^3 + 5*Y^2*Z - 33*X*Y*X)
+            sage: b = C.rational_points_iterator()
+            sage: next(b)
             (0 : 1 : 0)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (0 : 0 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (2*a + 2 : a : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (2 : a + 1 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (a + 1 : 2*a + 1 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (1 : 2 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (2*a + 2 : 2*a : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (2 : 2*a + 2 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (a + 1 : a + 2 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             (1 : 1 : 1)
-            sage: next(b)                                                               # optional - sage.rings.finite_rings
+            sage: next(b)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1975,15 +2005,16 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: x, y, z = PolynomialRing(GF(5), 3, 'xyz').gens()                      # optional - sage.rings.finite_rings
-            sage: f = y^2*z^7 - x^9 - x*z^8                                             # optional - sage.rings.finite_rings
-            sage: C = Curve(f); C                                                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: x, y, z = PolynomialRing(GF(5), 3, 'xyz').gens()
+            sage: f = y^2*z^7 - x^9 - x*z^8
+            sage: C = Curve(f); C
             Projective Plane Curve over Finite Field of size 5 defined by
             -x^9 + y^2*z^7 - x*z^8
-            sage: C._points_via_singular()                                              # optional - sage.rings.finite_rings
+            sage: C._points_via_singular()
             [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1),
              (3 : 1 : 1), (3 : 4 : 1)]
-            sage: C._points_via_singular(sort=False)     # random                       # optional - sage.rings.finite_rings
+            sage: C._points_via_singular(sort=False)     # random
             [(0 : 1 : 0), (3 : 1 : 1), (3 : 4 : 1), (2 : 2 : 1),
              (0 : 0 : 1), (2 : 3 : 1)]
 
@@ -2045,20 +2076,22 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = GF(2)[]                                                   # optional - sage.rings.finite_rings
-            sage: f = x^3*y + y^3*z + x*z^3                                             # optional - sage.rings.finite_rings
-            sage: C = Curve(f); pts = C.rational_points()                               # optional - sage.rings.finite_rings
-            sage: D = C.divisor([ (4, pts[0]), (4, pts[2]) ])                           # optional - sage.rings.finite_rings
-            sage: C.riemann_roch_basis(D)                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(2)[]
+            sage: f = x^3*y + y^3*z + x*z^3
+            sage: C = Curve(f); pts = C.rational_points()
+            sage: D = C.divisor([ (4, pts[0]), (4, pts[2]) ])
+            sage: C.riemann_roch_basis(D)
             [x/y, 1, z/y, z^2/y^2, z/x, z^2/(x*y)]
 
         ::
 
-            sage: R.<x,y,z> = GF(5)[]                                                   # optional - sage.rings.finite_rings
-            sage: f = x^7 + y^7 + z^7                                                   # optional - sage.rings.finite_rings
-            sage: C = Curve(f); pts = C.rational_points()                               # optional - sage.rings.finite_rings
-            sage: D = C.divisor([ (3, pts[0]), (-1,pts[1]), (10, pts[5]) ])             # optional - sage.rings.finite_rings
-            sage: C.riemann_roch_basis(D)                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(5)[]
+            sage: f = x^7 + y^7 + z^7
+            sage: C = Curve(f); pts = C.rational_points()
+            sage: D = C.divisor([ (3, pts[0]), (-1,pts[1]), (10, pts[5]) ])
+            sage: C.riemann_roch_basis(D)
             [(-2*x + y)/(x + y), (-x + z)/(x + y)]
 
         .. NOTE::
@@ -2136,55 +2169,60 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: x, y, z = PolynomialRing(GF(5), 3, 'xyz').gens()                      # optional - sage.rings.finite_rings
-            sage: f = y^2*z^7 - x^9 - x*z^8                                             # optional - sage.rings.finite_rings
-            sage: C = Curve(f); C                                                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: x, y, z = PolynomialRing(GF(5), 3, 'xyz').gens()
+            sage: f = y^2*z^7 - x^9 - x*z^8
+            sage: C = Curve(f); C
             Projective Plane Curve over Finite Field of size 5
              defined by -x^9 + y^2*z^7 - x*z^8
-            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: C.rational_points()
             [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1),
              (3 : 1 : 1), (3 : 4 : 1)]
-            sage: C = Curve(x - y + z)                                                  # optional - sage.rings.finite_rings
-            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: C = Curve(x - y + z)
+            sage: C.rational_points()
             [(0 : 1 : 1), (1 : 1 : 0), (1 : 2 : 1), (2 : 3 : 1),
              (3 : 4 : 1), (4 : 0 : 1)]
-            sage: C = Curve(x*z + z^2)                                                  # optional - sage.rings.finite_rings
-            sage: C.rational_points('all')                                              # optional - sage.rings.finite_rings
+            sage: C = Curve(x*z + z^2)
+            sage: C.rational_points('all')
             [(0 : 1 : 0), (1 : 0 : 0), (1 : 1 : 0), (2 : 1 : 0),
              (3 : 1 : 0), (4 : 0 : 1), (4 : 1 : 0), (4 : 1 : 1),
              (4 : 2 : 1), (4 : 3 : 1), (4 : 4 : 1)]
 
         ::
 
-            sage: F = GF(7)                                                             # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X^3 + Y^3 - Z^3)                                            # optional - sage.rings.finite_rings
-            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(7)
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X^3 + Y^3 - Z^3)
+            sage: C.rational_points()
             [(0 : 1 : 1), (0 : 2 : 1), (0 : 4 : 1), (1 : 0 : 1), (2 : 0 : 1),
             (3 : 1 : 0), (4 : 0 : 1), (5 : 1 : 0), (6 : 1 : 0)]
 
         ::
 
-            sage: F = GF(1237)                                                          # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X^7 + 7*Y^6*Z + Z^4*X^2*Y*89)                               # optional - sage.rings.finite_rings
-            sage: len(C.rational_points())                                              # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(1237)
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X^7 + 7*Y^6*Z + Z^4*X^2*Y*89)
+            sage: len(C.rational_points())
             1237
 
         ::
 
-            sage: F = GF(2^6,'a')                                                       # optional - sage.rings.finite_rings
-            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve(X^5 + 11*X*Y*Z^3 + X^2*Y^3 - 13*Y^2*Z^3)                    # optional - sage.rings.finite_rings
-            sage: len(C.rational_points())                                              # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(2^6,'a')
+            sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
+            sage: C = Curve(X^5 + 11*X*Y*Z^3 + X^2*Y^3 - 13*Y^2*Z^3)
+            sage: len(C.rational_points())
             104
 
         ::
 
-            sage: R.<x,y,z> = GF(2)[]                                                   # optional - sage.rings.finite_rings
-            sage: f = x^3*y + y^3*z + x*z^3                                             # optional - sage.rings.finite_rings
-            sage: C = Curve(f); pts = C.rational_points()                               # optional - sage.rings.finite_rings
-            sage: pts                                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = GF(2)[]
+            sage: f = x^3*y + y^3*z + x*z^3
+            sage: C = Curve(f); pts = C.rational_points()
+            sage: pts
             [(0 : 0 : 1), (0 : 1 : 0), (1 : 0 : 0)]
 
         """
@@ -2226,9 +2264,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         TESTS::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: loads(dumps(C)) == C                                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: loads(dumps(C)) == C
             True
         """
         super().__init__(A, f)
@@ -2256,9 +2295,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # optional - sage.rings.finite_rings
-            sage: C.function_field()                                                    # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: C.function_field()
             Function field in z defined by z^5 + y*z^3 + y^5 + 1
         """
         return self._function_field
@@ -2283,13 +2323,14 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # optional - sage.rings.finite_rings
-            sage: C(1,1,1)                                                              # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: C(1,1,1)
             (1 : 1 : 1)
-            sage: C(y/z)                                                                # optional - sage.rings.finite_rings
+            sage: C(y/z)
             (y/(y^5 + 1))*z^4 + (y^2/(y^5 + 1))*z^2
-            sage: C(GF(4^2))                                                            # optional - sage.rings.finite_rings
+            sage: C(GF(4^2))
             Set of rational points of Closed subscheme of Projective Space of
              dimension 2 over Finite Field in z4 of size 2^4 defined by:
               x^5 + y^5 + x*y*z^3 + z^5
@@ -2308,11 +2349,12 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # optional - sage.rings.finite_rings
-            sage: f = C.function(x/y); f                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: f = C.function(x/y); f
             1/y
-            sage: f.divisor()                                                           # optional - sage.rings.finite_rings
+            sage: f.divisor()
             Place (1/y, 1/y^2*z^2 + z2/y*z + 1)
              + Place (1/y, 1/y^2*z^2 + ((z2 + 1)/y)*z + 1)
              + Place (1/y, 1/y*z + 1)
@@ -2337,11 +2379,12 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # optional - sage.rings.finite_rings
-            sage: C.coordinate_functions(0)                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: C.coordinate_functions(0)
             (y, z)
-            sage: C.coordinate_functions(1)                                             # optional - sage.rings.finite_rings
+            sage: C.coordinate_functions(1)
             (1/y, 1/y*z)
         """
         coords = self._coordinate_functions
@@ -2357,9 +2400,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         TESTS::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: C._function_field                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: C._function_field
             Function field in z defined by z^8 + 4*y^2*z^7 + 1
         """
         return self._open_affine._function_field
@@ -2371,9 +2415,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         TESTS::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: C._lift_to_function_field                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: C._lift_to_function_field
             Ring morphism:
               From: Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
               To:   Function field in z defined by z^8 + 4*y^2*z^7 + 1
@@ -2392,9 +2437,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         TESTS::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: C._coordinate_functions                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: C._coordinate_functions
             (1, y, z)
         """
         # homogeneous coordinate functions
@@ -2409,12 +2455,13 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         TESTS::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: C._singularities                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: C._singularities
             [(Point (x, z), [Place (1/y, 1/y*z^5 + 4*y*z^4 + 1/y^2*z)])]
-            sage: D = Curve(x)                                                          # optional - sage.rings.finite_rings
-            sage: D._singularities                                                      # optional - sage.rings.finite_rings
+            sage: D = Curve(x)
+            sage: D._singularities
             []
 
         """
@@ -2469,9 +2516,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: C.singular_closed_points()                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: C.singular_closed_points()
             [Point (x, z)]
         """
         return [p[0] for p in self._singularities]
@@ -2487,13 +2535,14 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                      # optional - sage.rings.finite_rings
-            sage: pls = C.places()                                                      # optional - sage.rings.finite_rings
-            sage: C.place_to_closed_point(pls[-1])                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: pls = C.places()
+            sage: C.place_to_closed_point(pls[-1])
             Point (x - 2*z, y - 2*z)
-            sage: pls2 = C.places(2)                                                    # optional - sage.rings.finite_rings
-            sage: C.place_to_closed_point(pls2[0])                                      # optional - sage.rings.finite_rings
+            sage: pls2 = C.places(2)
+            sage: C.place_to_closed_point(pls2[0])
             Point (y^2 + y*z + z^2, x + y)
         """
         F = self.function_field()
@@ -2587,9 +2636,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2*z - y^3)                                                # optional - sage.rings.finite_rings
-            sage: [C.places_on(p) for p in C.closed_points()]                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(x^2*z - y^3)
+            sage: [C.places_on(p) for p in C.closed_points()]
             [[Place (1/y)],
              [Place (y)],
              [Place (y + 1)],
@@ -2629,11 +2679,12 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
     EXAMPLES::
 
-        sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                     # optional - sage.rings.finite_rings
-        sage: C = Curve(y^2*z^7 - x^9 - x*z^8)                                          # optional - sage.rings.finite_rings
-        sage: C.function_field()                                                        # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+        sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+        sage: C.function_field()
         Function field in z defined by z^8 + 4*y^2*z^7 + 1
-        sage: C.closed_points()                                                         # optional - sage.rings.finite_rings
+        sage: C.closed_points()
         [Point (x, z),
          Point (x, y),
          Point (x - 2*z, y + 2*z),
@@ -2653,16 +2704,17 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                 # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2*z - y^3)                                                # optional - sage.rings.finite_rings
-            sage: C.places()                                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(x^2*z - y^3)
+            sage: C.places()
             [Place (1/y),
              Place (y),
              Place (y + 1),
              Place (y + 2),
              Place (y + 3),
              Place (y + 4)]
-            sage: C.places(2)                                                           # optional - sage.rings.finite_rings
+            sage: C.places(2)
             [Place (y^2 + 2),
              Place (y^2 + 3),
              Place (y^2 + y + 1),
@@ -2687,10 +2739,11 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(9),2)                                        # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x-2)                            # optional - sage.rings.finite_rings
-            sage: Cp = C.projective_closure()                                           # optional - sage.rings.finite_rings
-            sage: Cp.closed_points()                                                    # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(9),2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x-2)
+            sage: Cp = C.projective_closure()
+            sage: Cp.closed_points()
             [Point (x0, x1),
              Point (x0 + (-z2 - 1)*x2, x1),
              Point (x0 + (z2 + 1)*x2, x1),
@@ -2734,10 +2787,11 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(3), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)                          # optional - sage.rings.finite_rings
-            sage: Cbar = C.projective_closure()                                         # optional - sage.rings.finite_rings
-            sage: Cbar.L_polynomial()                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(3), 2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
+            sage: Cbar = C.projective_closure()
+            sage: Cbar.L_polynomial()
             9*t^4 - 3*t^3 + t^2 - t + 1
 
         """
@@ -2766,15 +2820,16 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(3), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)                          # optional - sage.rings.finite_rings
-            sage: Cbar = C.projective_closure()                                         # optional - sage.rings.finite_rings
-            sage: Cbar.number_of_rational_points(3)                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(3), 2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
+            sage: Cbar = C.projective_closure()
+            sage: Cbar.number_of_rational_points(3)
             21
-            sage: D = Cbar.change_ring(Cbar.base_ring().extension(3))                   # optional - sage.rings.finite_rings
-            sage: D.base_ring()                                                         # optional - sage.rings.finite_rings
+            sage: D = Cbar.change_ring(Cbar.base_ring().extension(3))
+            sage: D.base_ring()
             Finite Field in z3 of size 3^3
-            sage: len(D.closed_points())                                                # optional - sage.rings.finite_rings
+            sage: len(D.closed_points())
             21
 
         """
@@ -2809,12 +2864,13 @@ class IntegralProjectivePlaneCurve_finite_field(IntegralProjectiveCurve_finite_f
 
     EXAMPLES::
 
-        sage: A.<x,y> = AffineSpace(GF(9), 2)                                           # optional - sage.rings.finite_rings
-        sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)                              # optional - sage.rings.finite_rings
-        sage: Cb = C.projective_closure()                                               # optional - sage.rings.finite_rings
-        sage: Cb.singular_closed_points()                                               # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: A.<x,y> = AffineSpace(GF(9), 2)
+        sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
+        sage: Cb = C.projective_closure()
+        sage: Cb.singular_closed_points()
         [Point (x0, x1)]
-        sage: Cb.function_field()                                                       # optional - sage.rings.finite_rings
+        sage: Cb.function_field()
         Function field in y defined by y^2 + 2*x^5 + 2*x^4 + x^3 + x + 1
     """
     _point = IntegralProjectivePlaneCurvePoint_finite_field
