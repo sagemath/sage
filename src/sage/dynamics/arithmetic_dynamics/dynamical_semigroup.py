@@ -982,7 +982,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT: :class:`DynamicalSemigroup`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem(x^2, A)
