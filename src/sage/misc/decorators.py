@@ -67,7 +67,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         ....:     return x
         sage: g(2)
         4
-        sage: g(x)
+        sage: g(x)                                                                      # needs sage.symbolic
         x^2
         sage: g.__doc__
         'My little function'
@@ -104,7 +104,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: I = P*[x,y]
         sage: sage_getfile(I.interreduced_basis)       # known bug
         '.../sage/rings/polynomial/multi_polynomial_ideal.py'
-        sage: sage_getsourcelines(I.interreduced_basis)
+        sage: sage_getsourcelines(I.interreduced_basis)                                 # needs sage.libs.singular
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
@@ -151,7 +151,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         ....:     return new_f
         sage: f = lambda x:x^2
         sage: g = square(f)
-        sage: g(3) # this line used to fail for some people if these command were manually entered on the sage prompt
+        sage: g(3)  # this line used to fail for some people if these command were manually entered on the sage prompt
         81
 
     """
@@ -192,13 +192,14 @@ class infix_operator():
         ....: def dot(a, b):
         ....:     '''Dot product.'''
         ....:     return a.dot_product(b)
-        sage: u = vector([1, 2, 3])
-        sage: v = vector([5, 4, 3])
-        sage: u *dot* v
+        sage: u = vector([1, 2, 3])                                                     # needs sage.modules
+        sage: v = vector([5, 4, 3])                                                     # needs sage.modules
+        sage: u *dot* v                                                                 # needs sage.modules
         22
 
     An infix element-wise addition operator::
 
+        sage: # needs sage.modules
         sage: @infix_operator('add')
         ....: def eadd(a, b):
         ....:   return a.parent([i + j for i, j in zip(a, b)])
@@ -214,7 +215,7 @@ class infix_operator():
         sage: @infix_operator('or')
         ....: def thendo(a, b):
         ....:     return b(a)
-        sage: x |thendo| cos |thendo| (lambda x: x^2)
+        sage: x |thendo| cos |thendo| (lambda x: x^2)                                   # needs sage.symbolic
         cos(x)^2
     """
 

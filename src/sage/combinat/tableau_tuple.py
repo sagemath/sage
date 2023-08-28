@@ -2661,11 +2661,11 @@ class TableauTuples_level_size(TableauTuples):
         """
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
-        else:
-            tab = [[[m for m in range(1, self.size() + 1)]]]
-            for s in range(self.level() - 1):
-                tab.append([])
-            return self.element_class(self, tab)
+
+        tab = [[[m for m in range(1, self.size() + 1)]]]
+        for _ in range(self.level() - 1):
+            tab.append([])
+        return self.element_class(self, tab)
 
 
 # -------------------------------------------------

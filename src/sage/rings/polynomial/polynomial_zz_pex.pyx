@@ -12,7 +12,10 @@ AUTHOR:
 
 - Yann Laigle-Chapuy (2010-01) initial implementation
 - Lorenz Panny (2023-01): :meth:`minpoly_mod`
+- Giacomo Pope (2023-08): :meth:`reverse`, :meth:`inverse_series_trunc`
 """
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
@@ -483,3 +486,129 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             x^4 + x^3 + x
         """
         return self.shift(-n)
+
+    def reverse(self, degree=None):
+        r"""
+        Return the polynomial obtained by reversing the coefficients
+        of this polynomial.  If degree is set then this function behaves
+        as if this polynomial has degree ``degree``.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101^2)[]
+            sage: f = x^13 + 11*x^10 + 32*x^6 + 4
+            sage: f.reverse()
+            4*x^13 + 32*x^7 + 11*x^3 + 1
+            sage: f.reverse(degree=15)
+            4*x^15 + 32*x^9 + 11*x^5 + x^2
+            sage: f.reverse(degree=2)
+            4*x^2
+
+        TESTS::
+
+            sage: R.<x> = GF(163^2)[]
+            sage: f = R([p for p in primes(20)])
+            sage: f.reverse()
+            2*x^7 + 3*x^6 + 5*x^5 + 7*x^4 + 11*x^3 + 13*x^2 + 17*x + 19
+            sage: f.reverse(degree=200)
+            2*x^200 + 3*x^199 + 5*x^198 + 7*x^197 + 11*x^196 + 13*x^195 + 17*x^194 + 19*x^193
+            sage: f.reverse(degree=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: degree argument must be a non-negative integer, got 0
+            sage: f.reverse(degree=-5)
+            Traceback (most recent call last):
+            ...
+            ValueError: degree argument must be a non-negative integer, got -5
+        """
+        self._parent._modulus.restore()
+
+        # Construct output polynomial
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        # When a degree has been supplied, ensure it is a valid input
+        cdef unsigned long d
+        if degree is not None:
+            if degree <= 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+            try:
+                d = degree
+            except ValueError:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+            ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
+        else:
+            ZZ_pEX_reverse(r.x, (<Polynomial_ZZ_pEX> self).x)
+        return r
+
+    def inverse_series_trunc(self, prec):
+        r"""
+        Compute and return the inverse of self modulo `x^prec`.
+        
+        The constant term of self must be invertible.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101^2)[]
+            sage: z2 =  R.base_ring().gen()
+            sage: f = (3*z2 + 57)*x^3 + (13*z2 + 94)*x^2 + (7*z2 + 2)*x + 66*z2 + 15
+            sage: f.inverse_series_trunc(1)
+            51*z2 + 92
+            sage: f.inverse_series_trunc(2)
+            (30*z2 + 30)*x + 51*z2 + 92
+            sage: f.inverse_series_trunc(3)
+            (42*z2 + 94)*x^2 + (30*z2 + 30)*x + 51*z2 + 92
+            sage: f.inverse_series_trunc(4)
+            (99*z2 + 96)*x^3 + (42*z2 + 94)*x^2 + (30*z2 + 30)*x + 51*z2 + 92
+
+        TESTS::
+
+            sage: R.<x> = GF(163^2)[]
+            sage: f = R([p for p in primes(20)])
+            sage: f.inverse_series_trunc(1)
+            82
+            sage: f.inverse_series_trunc(2)
+            40*x + 82
+            sage: f.inverse_series_trunc(3)
+            61*x^2 + 40*x + 82
+            sage: f.inverse_series_trunc(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the precision must be positive, got 0
+            sage: f.inverse_series_trunc(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the precision must be positive, got -1
+            sage: f = x + x^2 + x^3
+            sage: f.inverse_series_trunc(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: constant term 0 is not a unit
+        """
+        self._parent._modulus.restore()
+
+        # Ensure precision is non-negative
+        if prec <= 0:
+            raise ValueError("the precision must be positive, got {}".format(prec))
+
+        # Ensure we can invert the constant term
+        const_term = self.get_coeff_c(0)
+        if not const_term.is_unit():
+            raise ValueError("constant term {} is not a unit".format(const_term))
+
+        # Construct output polynomial
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        # Call to NTL for the inverse truncation
+        if prec > 0:
+            sig_on()
+            ZZ_pEX_InvTrunc(r.x, self.x, prec)
+            sig_off()
+        return r
