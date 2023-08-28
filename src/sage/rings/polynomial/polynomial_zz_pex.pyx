@@ -547,7 +547,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
     def inverse_series_trunc(self, prec):
         r"""
         Compute and return the inverse of self modulo `x^prec`.
-        
+
         The constant term of self must be invertible.
 
         EXAMPLES::
