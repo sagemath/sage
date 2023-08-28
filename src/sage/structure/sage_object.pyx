@@ -160,6 +160,9 @@ cdef class SageObject:
             sage: P.rename('A polynomial ring')
             sage: P.get_custom_name()
             'A polynomial ring'
+            sage: P.reset_name()
+            sage: P.get_custom_name() is None
+            True
         """
         try:
             return self._SageObject__custom_name

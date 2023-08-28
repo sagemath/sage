@@ -267,7 +267,7 @@ class ClusterComplex(SubwordComplex):
             sage: ClusterComplex(['A', 2])._repr_()
             "Cluster complex of type ['A', 2] with 5 vertices and 5 facets"
         """
-        if k == 1:
+        if self._k == 1:
             name = 'Cluster complex'
         else:
             name = 'Multi-cluster complex'
