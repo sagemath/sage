@@ -135,7 +135,7 @@ cdef class Spline:
         if i < len(self.v):
             self.v[i] = xy
         else:
-            for j from len(self.v) <= j <= i:
+            for j in range(len(self.v), i + 1):
                 self.v.append((0, 0))
             self.v[i] = xy
         self.stop_interp()
@@ -262,7 +262,7 @@ cdef class Spline:
             raise MemoryError
 
         cdef int i
-        for i from 0 <= i < n:
+        for i in range(n):
             self.x[i] = v[i][0]
             self.y[i] = v[i][1]
 
