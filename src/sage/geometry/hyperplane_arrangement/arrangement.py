@@ -755,6 +755,7 @@ class HyperplaneArrangementElement(Element):
             sage: # needs sage.combinat
             sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
             sage: H.<x,y,z> = OrderedHyperplaneArrangements(QQ)
+            sage: a1 = H(a)
             sage: b = a.cone()
             sage: b1 = a1.cone()
             sage: a.characteristic_polynomial().factor()
@@ -776,7 +777,7 @@ class HyperplaneArrangementElement(Element):
              Hyperplane t + 0*x + y - z + 0,
              Hyperplane t + x - y + 0*z + 0,
              Hyperplane t + x + 0*y - z + 0)
-            sage: [b1.hyperplanes().index(h) for h in b.hyperplanes()]                  # optional - sage.combinat
+            sage: [b1.hyperplanes().index(h) for h in b.hyperplanes()]
             [0, 2, 4, 6, 1, 3, 5]
         """
         hyperplanes = []
