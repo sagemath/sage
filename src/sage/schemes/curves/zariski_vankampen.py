@@ -1514,12 +1514,12 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: f = x^2 + y^3
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
-        sage: fundamental_group(f, simplified=False) # optional - sirocco
-        Finitely presented group < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-2, x0*x1*x0*x1^-1*x0^-1*x1^-1, x0*x1*x0^-1*x2^-1 >
+        sage: fundamental_group(f, simplified=False).sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1, x2 | x2^-1*x0*x1*x0^-1, x1^-1*x0^-1*x1^-1*x0*x1*x0, x1^-1*x0^-1*x1*x2 >
         sage: fundamental_group(f, projective=True) # optional - sirocco
         Finitely presented group < x0 | x0^3 >
-        sage: fundamental_group(f) # optional - sirocco
-        Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
+        sage: fundamental_group(f).sorted_presentation() # optional - sirocco
+        Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0*x1*x0^-1 >
 
     ::
 
