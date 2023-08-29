@@ -1,7 +1,6 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 r"""
 Genus
-
 
 AUTHORS:
 
@@ -20,6 +19,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy, deepcopy
+
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -27,10 +28,9 @@ from sage.arith.functions import lcm as LCM
 from sage.arith.misc import fundamental_discriminant
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import IntegerRing, ZZ
-from sage.rings.rational_field import RationalField, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
-from copy import copy, deepcopy
 from sage.misc.verbose import verbose
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
 lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
@@ -81,7 +81,6 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     """
     from sage.misc.mrange import mrange_iter
     # input checks
-    ZZ = IntegerRing()
     determinant = ZZ(determinant)
     sig_pair = (ZZ(sig_pair[0]), ZZ(sig_pair[1]))
     even = bool(even)
@@ -440,7 +439,7 @@ def is_GlobalGenus(G):
         sym = loc._symbol
         v = sum([ss[0] * ss[1] for ss in sym])
         a = D // (p**v)
-        b = Integer(prod([ss[2] for ss in sym]))
+        b = ZZ.prod(ss[2] for ss in sym)
         if p == 2:
             if not is_2_adic_genus(sym):
                 verbose(mesg="False in is_2_adic_genus(sym)", level=2)
@@ -906,10 +905,10 @@ def p_adic_symbol(A, p, val):
 
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-    m0 = min([ c.valuation(p) for c in A.list() ])
+    m0 = min(c.valuation(p) for c in A.list())
     q = p**m0
     n = A.nrows()
-    A = MatrixSpace(IntegerRing(), n, n)([ c // q for c in A.list() ])
+    A = MatrixSpace(ZZ, n, n)([ c // q for c in A.list() ])
     A_p = MatrixSpace(FiniteField(p), n, n)(A)
     B_p = A_p.kernel().echelonized_basis_matrix()
     if B_p.nrows() == 0:
@@ -922,16 +921,16 @@ def p_adic_symbol(A, p, val):
         n0 = C_p.nrows()
         sym = [ [0, n0, e0] ]
     r = B_p.nrows()
-    B = MatrixSpace(IntegerRing(), r, n)(B_p)
-    C = MatrixSpace(IntegerRing(), n - r, n)(C_p)
+    B = MatrixSpace(ZZ, r, n)(B_p)
+    C = MatrixSpace(ZZ, n - r, n)(C_p)
     # Construct the blocks for the Jordan decomposition [F,X;X,A_new]
-    F = MatrixSpace(RationalField(), n - r, n - r)(C * A * C.transpose())
+    F = MatrixSpace(QQ, n - r, n - r)(C * A * C.transpose())
     U = F**-1
     d = LCM([ c.denominator() for c in U.list() ])
-    R = IntegerRing().quotient_ring(Integer(p)**(val + 3))
+    R = ZZ.quotient_ring(Integer(p)**(val + 3))
     u = R(d)**-1
     MatR = MatrixSpace(R, n - r , n - r)
-    MatZ = MatrixSpace(IntegerRing(), n - r, n - r)
+    MatZ = MatrixSpace(ZZ, n - r, n - r)
     U = MatZ(MatR(MatZ(U * d)) * u)
     # X = C*A*B.transpose()
     # A = B*A*B.transpose() - X.transpose()*U*X
@@ -1017,7 +1016,7 @@ def split_odd(A):
     """
     n0 = A.nrows()
     if n0 == 1:
-        return A[0, 0], MatrixSpace(IntegerRing(), 0, A.ncols())([])
+        return A[0, 0], MatrixSpace(ZZ, 0, A.ncols())([])
     even, i = is_even_matrix(A)
     R = A.parent().base_ring()
     C = MatrixSpace(R, n0 - 1, n0)(0)
@@ -1098,7 +1097,7 @@ def trace_diag_mod_8(A):
     while A.nrows():
         u, A = split_odd(A)
         tr += u
-    return IntegerRing()(tr)
+    return ZZ(tr)
 
 
 def two_adic_symbol(A, val):
@@ -1141,7 +1140,6 @@ def two_adic_symbol(A, val):
     m0 = min([ c.valuation(2) for c in A.list() ])
     q = 2**m0
     A = A.parent()([ c // q for c in A.list() ])
-    ZZ = IntegerRing()
     A_2 = MatrixSpace(FiniteField(2), n, n)(A)
     K_2 = A_2.kernel()
     R_8 = ZZ.quotient_ring(Integer(8))
@@ -1156,7 +1154,7 @@ def two_adic_symbol(A, val):
             print("A:")
             print(A)
             assert False
-        even, i = is_even_matrix(A_2)    # Determine whether the matrix is even or odd.
+        even, _ = is_even_matrix(A_2)    # Determine whether the matrix is even or odd.
         if even:
             return [[m0, n0, d0, 0, 0]]
         else:
@@ -1178,7 +1176,7 @@ def two_adic_symbol(A, val):
             print("A:")
             print(A_new)
             assert False
-        even, i = is_even_matrix(A_new)
+        even, _ = is_even_matrix(A_new)
         if even:
             sym = [[0, n0, d0, 0, 0]]
         else:
@@ -1186,14 +1184,14 @@ def two_adic_symbol(A, val):
             sym = [[0, n0, d0, 1, tr8]]
     r = B_2.nrows()
     B = MatrixSpace(ZZ,r,n)(B_2)
-    C = MatrixSpace(IntegerRing(), n - r, n)(C_2)
-    F = MatrixSpace(RationalField(), n - r, n - r)(C * A * C.transpose())
+    C = MatrixSpace(ZZ, n - r, n)(C_2)
+    F = MatrixSpace(QQ, n - r, n - r)(C * A * C.transpose())
     U = F**-1
     d = LCM([ c.denominator() for c in U.list() ])
-    R = IntegerRing().quotient_ring(Integer(2)**(val + 3))
+    R = ZZ.quotient_ring(Integer(2)**(val + 3))
     u = R(d)**-1
     MatR = MatrixSpace(R, n - r, n - r)
-    MatZ = MatrixSpace(IntegerRing(), n - r, n - r)
+    MatZ = MatrixSpace(ZZ, n - r, n - r)
     U = MatZ(MatR(MatZ(U * d)) * u)
     X = C * A
     A = B * (A - X.transpose()*U*X) * B.transpose()
@@ -2757,10 +2755,11 @@ class GenusSymbol_global_ring():
 
     def determinant(self):
         r"""
-        Return the determinant of this genus, where the determinant
-        is the Hessian determinant of the quadratic form whose Gram
-        matrix is the Gram matrix giving rise to this global genus
-        symbol.
+        Return the determinant of this genus.
+
+        The determinant is the Hessian determinant of the quadratic
+        form whose Gram matrix is the Gram matrix giving rise to this
+        global genus symbol.
 
         OUTPUT: an integer
 
@@ -2771,8 +2770,8 @@ class GenusSymbol_global_ring():
             sage: GS.determinant()
             -24
         """
-        p, n = self.signature_pair()
-        return (-1)**n*prod([ G.determinant() for G in self._local_symbols ])
+        _, n = self.signature_pair()
+        return (-1)**n * ZZ.prod(G.determinant() for G in self._local_symbols)
 
     det = determinant
 
@@ -3162,7 +3161,7 @@ class GenusSymbol_global_ring():
 
             sage: A = matrix.diagonal(ZZ, [1, 1, 1, 1])
             sage: GS = Genus(A)
-            sage: GS._standard_mass()                                                   # optional - sage.symbolic
+            sage: GS._standard_mass()                                                   # needs sage.symbolic
             1/48
 
         """
@@ -3215,7 +3214,7 @@ class GenusSymbol_global_ring():
 
             sage: from sage.quadratic_forms.genera.genus import genera
             sage: G = genera((8,0), 1, even=True)[0]
-            sage: G.mass()                                                              # optional - sage.symbolic
+            sage: G.mass()                                                              # needs sage.symbolic
             1/696729600
             sage: G.mass(backend='magma')  # optional - magma
             1/696729600

@@ -1108,10 +1108,11 @@ class SkewTableau(ClonableList,
 
         if algorithm == 'jdt':
             rect = self
-            for i in range(mu_size):
+            for _ in range(mu_size):
                 rect = rect.slide()
         elif algorithm == 'schensted':
-            w = [x for row in reversed(self) for x in row if x is not None]
+            w = [x for row in reversed(self) for x in row
+                 if x is not None]
             rect = Tableau([]).insert_word(w)
         else:
             raise ValueError("algorithm must be 'jdt', 'schensted', or None")

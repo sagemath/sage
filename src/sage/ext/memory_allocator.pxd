@@ -56,7 +56,7 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython(                                                   # optional - sage.misc.cython
+            sage: cython(                                                               # needs sage.misc.cython
             ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: cdef MemoryAllocator mem = MemoryAllocator()
@@ -87,7 +87,7 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython(                                                   # optional - sage.misc.cython
+            sage: cython(                                                               # needs sage.misc.cython
             ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: def foo():
@@ -97,7 +97,7 @@ cdef class MemoryAllocator:
             ....:         ptr = mem.aligned_calloc(2**i, i, 2**i)
             ....:         assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
-            sage: foo()                                                     # optional - sage.misc.cython
+            sage: foo()                                                                 # needs sage.misc.cython
             doctest:...: DeprecationWarning: this class is deprecated;
             use the class from the python package `memory_allocator`
             See https://github.com/sagemath/sage/issues/31591 for details.
@@ -124,7 +124,7 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython(                                                   # optional - sage.misc.cython
+            sage: cython(                                                               # needs sage.misc.cython
             ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: def foo():
@@ -134,8 +134,8 @@ cdef class MemoryAllocator:
             ....:         ptr = mem.aligned_allocarray(2**i, i, 2**i)
             ....:         assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
-            sage: foo()  # random  # might raise deprecation warning        # optional - sage.misc.cython
-            sage: foo()                                                     # optional - sage.misc.cython
+            sage: foo()  # random  # might raise deprecation warning                    # needs sage.misc.cython
+            sage: foo()                                                                 # needs sage.misc.cython
         """
         # Find extra such that (nmemb + extra) * size >= nmemb * size + alignment - 1
         # ⇔ extra * size >= alignment - 1
