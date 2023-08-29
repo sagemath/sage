@@ -849,6 +849,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 #
 ####
 # maybe just create a method instead of a classs?
+
+# _CartesianProduct
 class CohomologyRing(CombinatorialFreeModule):
     def __init__(self, base_ring, moment_angle_complex):
         self._complex = moment_angle_complex
@@ -859,7 +861,7 @@ class CohomologyRing(CombinatorialFreeModule):
         self._graded_indices = {}
 
         # Will be used for storing information about the subcomplexes
-        #from which we compute the cohomology
+        # from which we compute the cohomology
         self._gens = {}
         indices = []
         for deg in range(moment_angle_complex.dimension() + 1):
@@ -870,20 +872,16 @@ class CohomologyRing(CombinatorialFreeModule):
                     S = moment_angle_complex._simplicial_complex.generated_subcomplex(x, is_mutable=False)
                     # Because of the empty combination
                     if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, generators=True), list):
-                        if len(S.cohomology(deg-i-1, generators=True)) > 0:
-
-                            self._gens[deg].append([set(x), deg-i-1, S.cohomology(deg-i-1, generators=True)[0]])
-
-                        num_of_gens += len(S.cohomology(deg-i-1, generators=True))
+                        chmlgy = S.cohomology(deg-i-1, generators=True)
+                        for y in chmlgy:
+                            self._gens[deg].append((set(x), deg-i-1, y))
+                        num_of_gens += len(chmlgy)
                     elif len(S.vertices()) == 0 and deg == 0:
                         num_of_gens = 1
 
             indices.extend([(deg, k) for k in range(num_of_gens)])
             self._graded_indices[deg] = range(num_of_gens)
 
-        print(self._gens)
-        # ALGRbras/ union/ cartesian_product of modules with basis
-        # have to implement my own multiplication
         cat = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         CombinatorialFreeModule.__init__(self, base_ring, indices, category=cat)
 
@@ -895,18 +893,19 @@ class CohomologyRing(CombinatorialFreeModule):
             return Family(indices, self.monomial)
 
     def degree_on_basis(self, i):
+        # call self._CartesianProduct....
         return i[0]
 
     def _repr_(self):
         return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
 
     def _repr_term(self, i):
-        sym = '^'
-        return 'h{}{{{},{}}}'.format(sym, i[0], i[1])
+        return 'h^{{{},{}}}'.format(i[0], i[1])
 
     _latex_term = _repr_term
 
     def one(self):
+        # look at PR#36095
         one = self._base_ring.one()
         d = {(0,i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
@@ -916,7 +915,7 @@ class CohomologyRing(CombinatorialFreeModule):
         subcomplex = self._complex.simplicial_complex().generated_subcomplex(self._gens[i[0]][i[1]][0], is_mutable=False)
         cochains = subcomplex.n_chains(self._gens[i[0]][i[1]][1], base_ring=self._base_ring, cochains=True)
         cochain = self._gens[i[0]][i[1]][2][1]
-        return (subcomplex, cochains.from_vector(cochain.to_vector()))
+        return cochains.from_vector(cochain.to_vector())
 
     # @cached_method
     def product_on_basis(self, li, ri):
@@ -924,46 +923,46 @@ class CohomologyRing(CombinatorialFreeModule):
         from sage.topology.simplicial_complex import Simplex
         from sage.homology.chain_homotopy import ChainContraction
 
-        try:
-            left = self._gens[li[0]][li[1]]
-            right = self._gens[ri[0]][ri[1]]
-            print(left)
-            print(right)
-            set_left = left[0]
-            set_right = right[0]
-            # be careful when having multiple generators here
-            subcomplex_left = left[2][1].leading_item()[0].set()
-            print(left[2][1].leading_item())
-            subcomplex_right = right[2][1].leading_item()[0].set()
-            print(right[2][1].leading_item())
-            if not set_left.isdisjoint(set_right):
-                return self.zero()
+        left = self._gens[li[0]][li[1]]
+        right = self._gens[ri[0]][ri[1]]
+        set_left = left[0]
+        set_right = right[0]
 
-            union = set_left.union(set_right)
-            res_union = subcomplex_left.union(subcomplex_right)
-            subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
-            deg = left[1] + right[1]+ 1
-            res_cochain = dict(subcomplex_union.n_chains(deg, cochains=True).basis()).get(Simplex(res_union), 0)
+        if not set_left.isdisjoint(set_right):
+            return self.zero()
 
-            phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
-            coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
-            res = self.zero()
-            for i in range(len(coeff_vec)):
-                res += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
+        # here we should loop over monomials
+        left_cocycles = left[2][1].monomials()
+        right_cocycles = right[2][1].monomials()
 
-            return res
-        except IndexError:
-            pass
-        return self.zero()
+        res = self.zero()
+        for left_cocycle in left_cocycles:
+            for right_cocycle in right_cocycles:
+                subcomplex_left = left_cocycle.leading_support().set()
+                subcomplex_right = right_cocycle.leading_support().set()
+                union = set_left.union(set_right)
+                res_union = subcomplex_left.union(subcomplex_right)
+                subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
+                deg = left[1] + right[1]+ 1
+                cochains_basis = subcomplex_union.n_chains(deg, cochains=True).basis()
+                if cochains_basis.has_key(Simplex(res_union)):
+                    res_cochain = cochains_basis[Simplex(res_union)]
+                    phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
+                    coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
+                    for i in range(len(coeff_vec)):
+                        res += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
+
+        return res
 
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
             if not self.is_homogeneous():
                 raise ValueError("only defined for homogeneous elements")
-            ind = self.leading_item()[0]
-            first = self.parent()._gens[ind[0]][ind[1]][0]
-            second = sum(c * self.parent()._to_cycle_on_basis(i)[1] for i,c in self)
-            return (self.parent()._complex.simplicial_complex().generated_subcomplex(first), second)
+            return sum(c * self.parent()._to_cycle_on_basis(i) for i,c in self)
+
+        def get_simplicial_complex(self, is_mutable=True):
+            vertex_set = self.parent()._gens[self.leading_support()[0]][self.leading_support()[1]][0]
+            print(self.parent()._complex.simplicial_complex().generated_subcomplex(vertex_set, is_mutable=is_mutable))
 
         def cup_product(self, other):
             return self * other
@@ -971,5 +970,5 @@ class CohomologyRing(CombinatorialFreeModule):
 # used for computing coeffeicients when multiplying in cohomology
 def eps(element, simplicial_complex):
     if element not in simplicial_complex._vertex_to_index:
-        raise ValueError("`element` is not a vertex of simplicial_complex")
+        raise ValueError("{} is not a vertex of this simplicial complex".format(element))
     return (-1) ** simplicial_complex._vertex_to_index[element]
