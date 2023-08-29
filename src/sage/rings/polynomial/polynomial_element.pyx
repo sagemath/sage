@@ -9833,13 +9833,13 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
-            sage: (2*x).is_squarefree()                                                 # needs sage.libs.pari
+            sage: (2*x).is_squarefree()
             True
-            sage: (4*x).is_squarefree()                                                 # needs sage.libs.pari
+            sage: (4*x).is_squarefree()
             False
-            sage: (2*x^2).is_squarefree()                                               # needs sage.libs.pari
+            sage: (2*x^2).is_squarefree()
             False
-            sage: R(0).is_squarefree()                                                  # needs sage.libs.pari
+            sage: R(0).is_squarefree()
             False
 
             sage: S.<y> = QQ[]

@@ -220,7 +220,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQbar, 2)                                    # needs sage.rings.number_field
             sage: f = R.hom([y, x], R)                                                  # needs sage.rings.number_field
-            sage: f(x^2 + 3*y^5) # indirect doctest                                     # needs sage.rings.number_field
+            sage: f(x^2 + 3*y^5)  # indirect doctest                                    # needs sage.rings.number_field
             3*x^5 + y^2
 
         You can specify a map on the base ring::

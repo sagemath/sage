@@ -91,13 +91,13 @@ A similar statement is true for lazy symmetric functions::
 We can change the base ring::
 
     sage: h = g.change_ring(QQ)
-    sage: h.parent()
+    sage: h.parent()                                                                    # needs sage.combinat
     Lazy Laurent Series Ring in z over Rational Field
-    sage: h
+    sage: h                                                                             # needs sage.combinat
     4*z + 6*z^2 + 8*z^3 + 19*z^4 + 38*z^5 + 71*z^6 + 130*z^7 + O(z^8)
-    sage: hinv = h^-1; hinv
+    sage: hinv = h^-1; hinv                                                             # needs sage.combinat
     1/4*z^-1 - 3/8 + 1/16*z - 17/32*z^2 + 5/64*z^3 - 29/128*z^4 + 165/256*z^5 + O(z^6)
-    sage: hinv.valuation()
+    sage: hinv.valuation()                                                              # needs sage.combinat
     -1
 
 TESTS:
@@ -171,30 +171,30 @@ components are in the correct ring::
     ....:         yield n
     ....:         n += 1
 
-    sage: L.<z> = LazyLaurentSeriesRing(GF(2))                                          # needs sage.rings.finite_rings
-    sage: check(L, lambda n: n, valuation=-5)                                           # needs sage.rings.finite_rings
-    sage: check(L, gen(), valuation=-5)                                                 # needs sage.rings.finite_rings
+    sage: L.<z> = LazyLaurentSeriesRing(GF(2))
+    sage: check(L, lambda n: n, valuation=-5)
+    sage: check(L, gen(), valuation=-5)
 
     sage: L = LazyDirichletSeriesRing(QQbar, "s")                                       # needs sage.rings.number_field
     sage: check(L, lambda n: n, valuation=2)                                            # needs sage.rings.number_field
-    sage: check(L, gen(), valuation=2)                                                  # needs sage.rings.number_field
+    sage: check(L, gen(), valuation=2)
 
-    sage: L.<z> = LazyPowerSeriesRing(GF(2))                                            # needs sage.rings.finite_rings
-    sage: check(L, lambda n: n, valuation=0)                                            # needs sage.rings.finite_rings
-    sage: check(L, gen(), valuation=0)                                                  # needs sage.rings.finite_rings
+    sage: L.<z> = LazyPowerSeriesRing(GF(2))
+    sage: check(L, lambda n: n, valuation=0)
+    sage: check(L, gen(), valuation=0)
 
-    sage: L.<x,y> = LazyPowerSeriesRing(GF(2))                                          # needs sage.rings.finite_rings
+    sage: L.<x,y> = LazyPowerSeriesRing(GF(2))
     sage: check(L, lambda n: (x + y)^n, valuation=None)                                 # needs sage.rings.finite_rings
-    sage: def gen():                                                                    # needs sage.rings.finite_rings
+    sage: def gen():
     ....:     n = 0
     ....:     while True:
     ....:         yield (x+y)^n
     ....:         n += 1
     sage: check(L, gen(), valuation=None)                                               # needs sage.rings.finite_rings
 
-    sage: s = SymmetricFunctions(GF(2)).s()                                             # needs sage.combinat sage.rings.finite_rings
-    sage: L = LazySymmetricFunctions(s)                                                 # needs sage.combinat sage.rings.finite_rings
-    sage: check(L, lambda n: sum(k*s(la) for k, la in enumerate(Partitions(n))),        # needs sage.combinat sage.rings.finite_rings
+    sage: s = SymmetricFunctions(GF(2)).s()                                             # needs sage.combinat
+    sage: L = LazySymmetricFunctions(s)                                                 # needs sage.combinat
+    sage: check(L, lambda n: sum(k*s(la) for k, la in enumerate(Partitions(n))),        # needs sage.combinat
     ....:       valuation=0)
 """
 
@@ -436,9 +436,9 @@ class LazyModuleElement(Element):
             sage: f.coefficients()
             lazy list [1, 1, -1/6, ...]
 
-            sage: L.<x> = LazyPowerSeriesRing(GF(2))                                    # needs sage.rings.finite_rings
-            sage: f = L(lambda n: n)                                                    # needs sage.rings.finite_rings
-            sage: f.coefficients(5)                                                     # needs sage.rings.finite_rings
+            sage: L.<x> = LazyPowerSeriesRing(GF(2))
+            sage: f = L(lambda n: n)
+            sage: f.coefficients(5)
             [1, 1, 1, 1, 1]
         """
         coeff_stream = self._coeff_stream
@@ -498,7 +498,7 @@ class LazyModuleElement(Element):
             sage: s = L(lambda n: n-1)
             sage: s                                                                     # needs sage.symbolic
             1/(2^z) + 2/3^z + 3/4^z + 4/5^z + 5/6^z + 6/7^z + O(1/(8^z))
-            sage: ms = s.map_coefficients(lambda c: c + 1)
+            sage: ms = s.map_coefficients(lambda c: c + 1)                              # needs sage.symbolic
             sage: ms                                                                    # needs sage.symbolic
             2/2^z + 3/3^z + 4/4^z + 5/5^z + 6/6^z + 7/7^z + 8/8^z + O(1/(9^z))
 
@@ -1117,7 +1117,7 @@ class LazyModuleElement(Element):
             sage: C.define(1 + z*C^2)
             sage: C
             1 + z + 2*z^2 + 5*z^3 + 14*z^4 + 42*z^5 + 132*z^6 + O(z^7)
-            sage: binomial(2000, 1000) / C[1000]
+            sage: binomial(2000, 1000) / C[1000]                                        # needs sage.symbolic
             1001
 
         The Catalan numbers but with a valuation 1::
@@ -1336,7 +1336,7 @@ class LazyModuleElement(Element):
             sage: L = LazySymmetricFunctions(s)
             sage: f = L.undefined()
             sage: f.define(1+(s[1]*f).revert())
-            sage: f
+            sage: f                                                                     # needs lrcalc_python
             s[] + s[1] + (-s[1,1]-s[2])
                 + (3*s[1,1,1]+6*s[2,1]+3*s[3])
                 + (-13*s[1,1,1,1]-39*s[2,1,1]-26*s[2,2]-39*s[3,1]-13*s[4])
@@ -1344,7 +1344,7 @@ class LazyModuleElement(Element):
                 + (-419*s[1,1,1,1,1,1]-2095*s[2,1,1,1,1]-3771*s[2,2,1,1]-2095*s[2,2,2]-4190*s[3,1,1,1]-6704*s[3,2,1]-2095*s[3,3]-4190*s[4,1,1]-3771*s[4,2]-2095*s[5,1]-419*s[6])
                 + O^7
 
-            sage: (f*s[1]).revert() + 1 - f                                             # needs sage.combinat
+            sage: (f*s[1]).revert() + 1 - f                                             # needs lrcalc_python sage.combinat
             O^7
 
         """
@@ -1615,30 +1615,28 @@ class LazyModuleElement(Element):
 
         Similarly for Dirichlet series::
 
+            sage: # needs sage.symbolic
             sage: L = LazyDirichletSeriesRing(ZZ, "z")
             sage: s = L(lambda n: n)
-            sage: s                                                                     # needs sage.symbolic
+            sage: s
             1 + 2/2^z + 3/3^z + 4/4^z + 5/5^z + 6/6^z + 7/7^z + O(1/(8^z))
             sage: t = L(constant=1)
-            sage: t                                                                     # needs sage.symbolic
+            sage: t
             1 + 1/(2^z) + 1/(3^z) + O(1/(4^z))
             sage: st = s + t
-            sage: st                                                                    # needs sage.symbolic
+            sage: st
             2 + 3/2^z + 4/3^z + 5/4^z + 6/5^z + 7/6^z + 8/7^z + O(1/(8^z))
-
             sage: r = L(constant=-1)
             sage: rt = r + t
-            sage: rt                                                                    # needs sage.symbolic
+            sage: rt
             0
-
             sage: r = L([1,2,3])
             sage: rt = r + t
-            sage: rt                                                                    # needs sage.symbolic
+            sage: rt
             2 + 3/2^z + 4/3^z + 1/(4^z) + 1/(5^z) + 1/(6^z) + O(1/(7^z))
-
             sage: r = L([1,2,3], constant=-1)
             sage: rt = r + t
-            sage: rt                                                                    # needs sage.symbolic
+            sage: rt
             2 + 3/2^z + 4/3^z
         """
         P = self.parent()
@@ -1831,20 +1829,20 @@ class LazyModuleElement(Element):
 
         Similarly for Dirichlet series::
 
+            sage: # needs sage.symbolic
             sage: L = LazyDirichletSeriesRing(ZZ, "z")
             sage: g = L([0,1])
-            sage: 2 * g                                                                 # needs sage.symbolic
+            sage: 2 * g
             2/2^z
-            sage: -1 * g                                                                # needs sage.symbolic
+            sage: -1 * g
             -1/(2^z)
-            sage: 0*g                                                                   # needs sage.symbolic
+            sage: 0*g
             0
             sage: M = L(lambda n: n)
-            sage: M                                                                     # needs sage.symbolic
+            sage: M
             1 + 2/2^z + 3/3^z + 4/4^z + 5/5^z + 6/6^z + 7/7^z + O(1/(8^z))
-            sage: 3 * M                                                                 # needs sage.symbolic
+            sage: 3 * M
             3 + 6/2^z + 9/3^z + 12/4^z + 15/5^z + 18/6^z + 21/7^z + O(1/(8^z))
-
             sage: 1 * M is M
             True
 
@@ -2012,7 +2010,7 @@ class LazyModuleElement(Element):
 
         TESTS::
 
-            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")
+            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")                       # needs sage.symbolic
             sage: sin(z)[0:6] == sin(x).series(x, 6).coefficients(sparse=False)
             True
         """
@@ -2177,17 +2175,17 @@ class LazyModuleElement(Element):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(RR)
-            sage: arccos(z)
+            sage: arccos(z)                                                             # needs sage.symbolic
             1.57079632679490 - 1.00000000000000*z + 0.000000000000000*z^2
              - 0.166666666666667*z^3 + 0.000000000000000*z^4
              - 0.0750000000000000*z^5 + O(1.00000000000000*z^7)
 
-            sage: L.<z> = LazyLaurentSeriesRing(SR)
-            sage: arccos(z/(1-z))
+            sage: L.<z> = LazyLaurentSeriesRing(SR)                                     # needs sage.symbolic
+            sage: arccos(z/(1-z))                                                       # needs sage.symbolic
             1/2*pi - z - z^2 - 7/6*z^3 - 3/2*z^4 - 83/40*z^5 - 73/24*z^6 + O(z^7)
 
-            sage: L.<x,y> = LazyPowerSeriesRing(SR)
-            sage: arccos(x/(1-y))
+            sage: L.<x,y> = LazyPowerSeriesRing(SR)                                     # needs sage.symbolic
+            sage: arccos(x/(1-y))                                                       # needs sage.symbolic
             1/2*pi + (-x) + (-x*y) + ((-1/6)*x^3-x*y^2) + ((-1/2)*x^3*y-x*y^3)
              + ((-3/40)*x^5-x^3*y^2-x*y^4) + ((-3/8)*x^5*y+(-5/3)*x^3*y^3-x*y^5) + O(x,y)^7
 
@@ -2240,17 +2238,17 @@ class LazyModuleElement(Element):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(RR)
-            sage: arccot(z)
+            sage: arccot(z)                                                             # needs sage.symbolic
             1.57079632679490 - 1.00000000000000*z + 0.000000000000000*z^2
              + 0.333333333333333*z^3 + 0.000000000000000*z^4
              - 0.200000000000000*z^5 + O(1.00000000000000*z^7)
 
-            sage: L.<z> = LazyLaurentSeriesRing(SR)
-            sage: arccot(z/(1-z))
+            sage: L.<z> = LazyLaurentSeriesRing(SR)                                     # needs sage.symbolic
+            sage: arccot(z/(1-z))                                                       # needs sage.symbolic
             1/2*pi - z - z^2 - 2/3*z^3 + 4/5*z^5 + 4/3*z^6 + O(z^7)
 
-            sage: L.<x,y> = LazyPowerSeriesRing(SR)
-            sage: acot(x/(1-y))
+            sage: L.<x,y> = LazyPowerSeriesRing(SR)                                     # needs sage.symbolic
+            sage: acot(x/(1-y))                                                         # needs sage.symbolic
             1/2*pi + (-x) + (-x*y) + (1/3*x^3-x*y^2) + (x^3*y-x*y^3)
              + ((-1/5)*x^5+2*x^3*y^2-x*y^4) + (-x^5*y+10/3*x^3*y^3-x*y^5) + O(x,y)^7
 
@@ -2327,11 +2325,11 @@ class LazyModuleElement(Element):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: tanh(z)
+            sage: tanh(z)                                                               # needs sage.libs.flint
             z - 1/3*z^3 + 2/15*z^5 - 17/315*z^7 + O(z^8)
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
-            sage: tanh(x/(1-y))
+            sage: tanh(x/(1-y))                                                         # needs sage.libs.flint
             x + x*y + (-1/3*x^3+x*y^2) + (-x^3*y+x*y^3) + (2/15*x^5-2*x^3*y^2+x*y^4)
              + (2/3*x^5*y-10/3*x^3*y^3+x*y^5) + (-17/315*x^7+2*x^5*y^2-5*x^3*y^4+x*y^6) + O(x,y)^8
 
@@ -2360,10 +2358,10 @@ class LazyModuleElement(Element):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: coth(z)
+            sage: coth(z)                                                               # needs sage.libs.flint
             z^-1 + 1/3*z - 1/45*z^3 + 2/945*z^5 + O(z^6)
 
-            sage: coth(z + z^2)
+            sage: coth(z + z^2)                                                         # needs sage.libs.flint
             z^-1 - 1 + 4/3*z - 2/3*z^2 + 44/45*z^3 - 16/15*z^4 + 884/945*z^5 + O(z^6)
 
         TESTS::
@@ -2390,11 +2388,11 @@ class LazyModuleElement(Element):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: sech(z)
+            sage: sech(z)                                                               # needs sage.libs.flint
             1 - 1/2*z^2 + 5/24*z^4 - 61/720*z^6 + O(z^7)
 
             sage: L.<x, y> = LazyPowerSeriesRing(QQ)
-            sage: sech(x/(1-y))
+            sage: sech(x/(1-y))                                                         # needs sage.libs.flint
             1 + (-1/2*x^2) + (-x^2*y) + (5/24*x^4-3/2*x^2*y^2) + (5/6*x^4*y-2*x^2*y^3)
              + (-61/720*x^6+25/12*x^4*y^2-5/2*x^2*y^4) + O(x,y)^7
 
@@ -2422,11 +2420,11 @@ class LazyModuleElement(Element):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: csch(z)
+            sage: csch(z)                                                               # needs sage.libs.flint
             z^-1 - 1/6*z + 7/360*z^3 - 31/15120*z^5 + O(z^6)
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: csch(z/(1-z))
+            sage: csch(z/(1-z))                                                         # needs sage.libs.flint
             z^-1 - 1 - 1/6*z - 1/6*z^2 - 53/360*z^3 - 13/120*z^4 - 787/15120*z^5 + O(z^6)
 
         TESTS::
@@ -2632,16 +2630,17 @@ class LazyModuleElement(Element):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: D = LazyDirichletSeriesRing(QQ, 's')
             sage: Z = D(constant=1)
-            sage: Z^2                                                                   # needs sage.symbolic
+            sage: Z^2
             1 + 2/2^s + 2/3^s + 3/4^s + 2/5^s + 4/6^s + 2/7^s + O(1/(8^s))
             sage: f = Z^(1/3)
-            sage: f                                                                     # needs sage.symbolic
+            sage: f
             1 + 1/3/2^s + 1/3/3^s + 2/9/4^s + 1/3/5^s + 1/9/6^s + 1/3/7^s + O(1/(8^s))
-            sage: f^2                                                                   # needs sage.symbolic
+            sage: f^2
             1 + 2/3/2^s + 2/3/3^s + 5/9/4^s + 2/3/5^s + 4/9/6^s + 2/3/7^s + O(1/(8^s))
-            sage: f^3 - Z                                                               # needs sage.symbolic
+            sage: f^3 - Z
             O(1/(8^s))
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
@@ -2822,10 +2821,10 @@ class LazyCauchyProductSeries(LazyModuleElement):
 
         Check products with exact series::
 
-            sage: L([1], constant=3)^2                                                  # needs sage.symbolic
+            sage: L([1], constant=3)^2
             1 + 6*z + 15*z^2 + 24*z^3 + 33*z^4 + 42*z^5 + 51*z^6 + O(z^7)
 
-            sage: (1+z) * L([1,0,1], constant=1)                                        # needs sage.symbolic
+            sage: (1+z) * L([1,0,1], constant=1)
             1 + z + z^2 + 2*z^3 + 2*z^4 + 2*z^5 + O(z^6)
         """
         P = self.parent()
@@ -3138,7 +3137,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: 1 / (1 - y)
             1 + y + y^2 + y^3 + y^4 + y^5 + y^6 + O(x,y)^7
 
-            sage: (x + y) / (1 - y)
+            sage: (x + y) / (1 - y)                                                     # needs sage.libs.singular
             (x+y) + (x*y+y^2) + (x*y^2+y^3) + (x*y^3+y^4) + (x*y^4+y^5) + (x*y^5+y^6) + (x*y^6+y^7) + O(x,y)^8
 
         TESTS::
@@ -3314,7 +3313,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             1 + z + 1/2*z^2 + 1/6*z^3 + 1/24*z^4 + 1/120*z^5 + 1/720*z^6 + O(z^7)
             sage: exp(z + z^2)
             1 + z + 3/2*z^2 + 7/6*z^3 + 25/24*z^4 + 27/40*z^5 + 331/720*z^6 + O(z^7)
-            sage: exp(0)
+            sage: exp(0)                                                                # needs sage.symbolic
             1
             sage: exp(1 + z)
             Traceback (most recent call last):
@@ -3329,7 +3328,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
 
         TESTS::
 
-            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")
+            sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")                       # needs sage.symbolic
             sage: exp(z)[0:6] == exp(x).series(x, 6).coefficients(sparse=False)
             True
 
@@ -3385,7 +3384,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: log(1+z)[0:6] == log(1+x).series(x, 6).coefficients(sparse=False)     # needs sage.symbolic
             True
 
-            sage: log(z)                                                                # needs sage.symbolic
+            sage: log(z)
             Traceback (most recent call last):
             ...
             ValueError: can only compose with a positive valuation series
@@ -3513,17 +3512,17 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: Z.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: R.<t> = LazyLaurentSeriesRing(K)                                      # needs sage.rings.number_field
-            sage: f = R(lambda n: i^n, valuation=-2); f                                 # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<t> = LazyLaurentSeriesRing(K)
+            sage: f = R(lambda n: i^n, valuation=-2); f
             -t^-2 - i*t^-1 + 1 + i*t - t^2 - i*t^3 + t^4 + O(t^5)
-            sage: f._im_gens_(R, [t + t^2])                                             # needs sage.rings.number_field
+            sage: f._im_gens_(R, [t + t^2])
             -t^-2 + (-i + 2)*t^-1 + (i - 2) + 4*t + (2*i - 6)*t^2
              + (-2*i + 4)*t^3 + (-2*i - 7)*t^4 + O(t^5)
-
-            sage: cc = K.hom([-i])                                                      # needs sage.rings.number_field
-            sage: f._im_gens_(R, [t + t^2], base_map=cc)                                # needs sage.rings.number_field
+            sage: cc = K.hom([-i])
+            sage: f._im_gens_(R, [t + t^2], base_map=cc)
             -t^-2 + (i + 2)*t^-1 + (-i - 2) + 4*t + (-2*i - 6)*t^2
              + (2*i + 4)*t^3 + (2*i - 7)*t^4 + O(t^5)
         """
@@ -3783,7 +3782,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             ValueError: can only compose with a positive valuation series
 
             sage: e5 = L(e, degree=5)
-            sage: e5                                                                    # needs sage.symbolic
+            sage: e5
             1 + z + 1/2*z^2 + 1/6*z^3 + 1/24*z^4
             sage: e5(g)                                                                 # needs sage.symbolic
             1 + 1/(2^s) + 3/2/4^s + 1/(5^s) + 2/6^s + O(1/(8^s))
@@ -4557,9 +4556,10 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         We perform the composition with a lazy Dirichlet series::
 
+            sage: # needs sage.symbolic
             sage: D = LazyDirichletSeriesRing(QQ, "s")
             sage: g = D(constant=1)-1
-            sage: g                                                                     # needs sage.symbolic
+            sage: g
             1/(2^s) + 1/(3^s) + 1/(4^s) + O(1/(5^s))
             sage: f = 1 / (1 - x - y*z); f
             1 + x + (x^2+y*z) + (x^3+2*x*y*z) + (x^4+3*x^2*y*z+y^2*z^2)
@@ -4567,12 +4567,12 @@ class LazyPowerSeries(LazyCauchyProductSeries):
              + (x^6+5*x^4*y*z+6*x^2*y^2*z^2+y^3*z^3)
              + O(x,y,z)^7
             sage: fog = f(g, g, g)
-            sage: fog                                                                   # needs sage.symbolic
+            sage: fog
             1 + 1/(2^s) + 1/(3^s) + 3/4^s + 1/(5^s) + 5/6^s + O(1/(7^s))
             sage: fg = 1 / (1 - g - g*g)
-            sage: fg                                                                    # needs sage.symbolic
+            sage: fg
             1 + 1/(2^s) + 1/(3^s) + 3/4^s + 1/(5^s) + 5/6^s + 1/(7^s) + O(1/(8^s))
-            sage: fog - fg                                                              # needs sage.symbolic
+            sage: fog - fg
             O(1/(8^s))
 
             sage: f = 1 / (1 - 2*a)
@@ -5217,11 +5217,11 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: g = x^2 + y*x
             sage: x // g
             0
-            sage: g = (x^2 + y*x) / (1 - x + x*y)
+            sage: g = (x^2 + y*x) / (1 - x + x*y)                                       # needs sage.libs.singular
             sage: x // g
             0
-            sage: f = (x + y) / (1 - x - y + x*y)
-            sage: f // g
+            sage: f = (x + y) / (1 - x - y + x*y)                                       # needs sage.libs.singular
+            sage: f // g                                                                # needs sage.libs.singular
             0
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
@@ -5466,22 +5466,18 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: m = SymmetricFunctions(ZZ).m()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
-
-            sage: L(2*m[1]).is_unit()                                                   # needs sage.modules
+            sage: # needs sage.modules
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: L(2*m[1]).is_unit()
             False
-
-            sage: L(-1 + 2*m[1]).is_unit()                                              # needs sage.modules
+            sage: L(-1 + 2*m[1]).is_unit()
             True
-
-            sage: L(2 + m[1]).is_unit()                                                 # needs sage.modules
+            sage: L(2 + m[1]).is_unit()
             False
-
-            sage: m = SymmetricFunctions(QQ).m()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
-
-            sage: L(2 + 3*m[1]).is_unit()                                               # needs sage.modules
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: L(2 + 3*m[1]).is_unit()
             True
         """
         if self.is_zero(): # now 0 != 1
@@ -5524,25 +5520,23 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: P.<q> = QQ[]
-            sage: s = SymmetricFunctions(P).s()                                         # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: f = s[2]                                                              # needs sage.modules
-            sage: g = s[3]                                                              # needs sage.modules
-            sage: L(f)(L(g)) - L(f(g))                                                  # needs sage.modules
+            sage: s = SymmetricFunctions(P).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: f = s[2]
+            sage: g = s[3]
+            sage: L(f)(L(g)) - L(f(g))
             0
-
-            sage: f = s[2] + s[2,1]                                                     # needs sage.modules
-            sage: g = s[1] + s[2,2]                                                     # needs sage.modules
-            sage: L(f)(L(g)) - L(f(g))                                                  # needs sage.modules
+            sage: f = s[2] + s[2,1]
+            sage: g = s[1] + s[2,2]
+            sage: L(f)(L(g)) - L(f(g))
             0
-
-            sage: L(f)(g) - L(f(g))                                                     # needs sage.modules
+            sage: L(f)(g) - L(f(g))
             0
-
-            sage: f = s[2] + s[2,1]                                                     # needs sage.modules
-            sage: g = s[1] + s[2,2]                                                     # needs sage.modules
-            sage: L(f)(L(q*g)) - L(f(q*g))                                              # needs sage.modules
+            sage: f = s[2] + s[2,1]
+            sage: g = s[1] + s[2,2]
+            sage: L(f)(L(q*g)) - L(f(q*g))
             0
 
         The Frobenius character of the permutation action on set
@@ -5567,11 +5561,11 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: S2 = LazySymmetricFunctions(tensor([s, s]))
             sage: A = S(s[1,1,1])
             sage: B = S2(X+Y)
-            sage: A(B)
+            sage: A(B)                                                                  # needs lrcalc_python
             (s[]#s[1,1,1]+s[1]#s[1,1]+s[1,1]#s[1]+s[1,1,1]#s[])
 
             sage: H = S(lambda n: s[n])                                                 # needs sage.modules
-            sage: H(S2(X*Y))                                                            # needs sage.modules
+            sage: H(S2(X*Y))                                                            # needs lrcalc_python sage.modules
             (s[]#s[]) + (s[1]#s[1]) + (s[1,1]#s[1,1]+s[2]#s[2])
              + (s[1,1,1]#s[1,1,1]+s[2,1]#s[2,1]+s[3]#s[3]) + O^7
             sage: H(S2(X+Y))                                                            # needs sage.modules
@@ -5588,19 +5582,19 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: s = SymmetricFunctions(QQ).s()
             sage: S = LazySymmetricFunctions(s)
             sage: f = 1 / (1 - S(s[2]))
-            sage: g = f(s[2]); g
+            sage: g = f(s[2]); g                                                        # needs lrcalc_python
             s[] + (s[2,2]+s[4]) + O^7
-            sage: S(sum(f[i](s[2]) for i in range(5))).truncate(10) == g.truncate(10)
+            sage: S(sum(f[i](s[2]) for i in range(5))).truncate(10) == g.truncate(10)   # needs lrcalc_python
             True
             sage: f = 1 / (1 - S(s[2]))
             sage: g = S(s[1]) / (1 - S(s[1]))
-            sage: f(g)
+            sage: f(g)                                                                  # needs lrcalc_python
             s[] + s[2] + (s[1,1,1]+2*s[2,1]+s[3])
              + (2*s[1,1,1,1]+4*s[2,1,1]+5*s[2,2]+5*s[3,1]+3*s[4])
              + (2*s[1,1,1,1,1]+10*s[2,1,1,1]+14*s[2,2,1]+18*s[3,1,1]+16*s[3,2]+14*s[4,1]+4*s[5])
              + (3*s[1,1,1,1,1,1]+22*s[2,1,1,1,1]+38*s[2,2,1,1]+28*s[2,2,2]+48*s[3,1,1,1]+82*s[3,2,1]+25*s[3,3]+51*s[4,1,1]+56*s[4,2]+31*s[5,1]+9*s[6])
              + O^7
-            sage: f(0)
+            sage: f(0)                                                                  # needs lrcalc_python
             1
             sage: f(s(1))
             Traceback (most recent call last):
@@ -5736,18 +5730,15 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: f = L(a + b*p[1])
             sage: f.revert()
             (((-a)/b)*p[]) + 1/b*p[1]
-
-            sage: f = L(2*p[1])                                                         # needs sage.modules
-            sage: f.revert()                                                            # needs sage.modules
+            sage: f = L(2*p[1])
+            sage: f.revert()
             1/2*p[1]
-
-            sage: f = L(2*p[1] + p[1,1])                                                # needs sage.modules
-            sage: f.revert()                                                            # needs sage.modules
+            sage: f = L(2*p[1] + p[1,1])
+            sage: f.revert()
             1/2*p[1] + (-1/8*p[1,1]) + (1/16*p[1,1,1]) + (-5/128*p[1,1,1,1])
                      + (7/256*p[1,1,1,1,1]) + (-21/1024*p[1,1,1,1,1,1])
                      + (33/2048*p[1,1,1,1,1,1,1]) + O^8
-
-            sage: f.revert()(f)                                                         # needs sage.modules
+            sage: f.revert()(f)
             p[1] + O^8
 
         ALGORITHM:
@@ -5855,7 +5846,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: C = T(lambda n: (sum(euler_phi(k)*p([k])**(n//k)
             ....:                      for k in divisors(n))/n if n > 0 else 0))
             sage: L = T(lambda n: p([1]*n))
-            sage: L - C.derivative_with_respect_to_p1()
+            sage: L - C.derivative_with_respect_to_p1()                                 # needs sage.libs.pari
             O^6
 
         TESTS::
@@ -5923,13 +5914,14 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         \mathfrak{p}_{2}`, where `\mathfrak{p}` is the
         :class:`~sage.combinat.species.subset_species.SubsetSpecies`.::
 
+            sage: # needs sage.modules
             sage: R.<q> = QQ[]
-            sage: h = SymmetricFunctions(R).h()                                         # needs sage.modules
-            sage: m = SymmetricFunctions(R).m()                                         # needs sage.modules
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
-            sage: P = L(lambda n: sum(q^k*h[n-k]*h[k] for k in range(n+1)))             # needs sage.modules
-            sage: P2 = L(lambda n: h[2]*h[n-2], valuation=2)                            # needs sage.modules
-            sage: P.functorial_composition(P2)[:4]                                      # needs sage.modules
+            sage: h = SymmetricFunctions(R).h()
+            sage: m = SymmetricFunctions(R).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: P = L(lambda n: sum(q^k*h[n-k]*h[k] for k in range(n+1)))
+            sage: P2 = L(lambda n: h[2]*h[n-2], valuation=2)
+            sage: P.functorial_composition(P2)[:4]                                      # needs sage.libs.pari
             [m[],
              m[1],
              (q+1)*m[1, 1] + (q+1)*m[2],
@@ -5937,12 +5929,12 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         For example, there are::
 
-            sage: P.functorial_composition(P2)[4].coefficient([4])[3]                   # needs sage.modules
+            sage: P.functorial_composition(P2)[4].coefficient([4])[3]                   # needs sage.libs.pari sage.modules
             3
 
         unlabelled graphs on 4 vertices and 3 edges, and::
 
-            sage: P.functorial_composition(P2)[4].coefficient([2,2])[3]                 # needs sage.modules
+            sage: P.functorial_composition(P2)[4].coefficient([2,2])[3]                 # needs sage.libs.pari sage.modules
             8
 
         labellings of their vertices with two 1's and two 2's.
@@ -5959,7 +5951,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: Ep = p[1]*E.derivative_with_respect_to_p1(); Ep
             h[1] + (h[1,1]) + (h[2,1]) + (h[3,1]) + (h[4,1]) + (h[5,1]) + O^7
             sage: f = L(lambda n: h[n-n//2, n//2])
-            sage: f - Ep.functorial_composition(f)
+            sage: f - Ep.functorial_composition(f)                                      # needs sage.libs.pari
             O^7
 
         The functorial composition distributes over the sum::
@@ -5978,7 +5970,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             sage: h = SymmetricFunctions(QQ).h()                                        # needs sage.modules
             sage: L = LazySymmetricFunctions(h)                                         # needs sage.modules
-            sage: L(h[2,1]).functorial_composition(3*h[0])                              # needs sage.modules
+            sage: L(h[2,1]).functorial_composition(3*h[0])                              # needs sage.libs.pari sage.modules
             3*h[] + O^7
 
         Check an instance of a non-group action::
@@ -5989,7 +5981,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(p)
             sage: f = L(lambda n: s[n])
             sage: g = 2*s[2, 1, 1] + s[2, 2] + 3*s[4]
-            sage: r = f.functorial_composition(g); r[4]
+            sage: r = f.functorial_composition(g); r[4]                                 # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: the argument is not the Frobenius character of a permutation representation
@@ -6146,7 +6138,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: C = species.CycleSpecies().cycle_index_series()
             sage: c = L(lambda n: C[n])
             sage: Lplus = L(lambda n: p([1]*n), valuation=1)
-            sage: r = c.arithmetic_product(Lplus); r
+            sage: r = c.arithmetic_product(Lplus); r                                    # needs sage.libs.pari
             m[1] + (3*m[1,1]+2*m[2])
              + (8*m[1,1,1]+4*m[2,1]+2*m[3])
              + (42*m[1,1,1,1]+21*m[2,1,1]+12*m[2,2]+7*m[3,1]+3*m[4])
@@ -6156,7 +6148,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         In particular, the number of regular octopuses is::
 
-            sage: [r[n].coefficient([1]*n) for n in range(8)]                           # needs sage.modules
+            sage: [r[n].coefficient([1]*n) for n in range(8)]                           # needs sage.libs.pari sage.modules
             [0, 1, 3, 8, 42, 144, 1440, 5760]
 
         It is shown in [MM2008]_ that the exponential generating
@@ -6194,7 +6186,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3] + 2*s[4, 1, 1]
 
             sage: f = 1/(1-L(s[1]))                                                     # needs sage.modules
-            sage: f.arithmetic_product(s[1]) - f                                        # needs sage.modules
+            sage: f.arithmetic_product(s[1]) - f                                        # needs lrcalc_python sage.modules
             O^7
 
         Check that the arithmetic product of symmetric functions with
@@ -6323,7 +6315,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: elt.symmetric_function()
             s[2]
             sage: f = 1 / (1 - elt)
-            sage: f
+            sage: f                                                                     # needs lrcalc_python
             s[] + s[2] + (s[2,2]+s[3,1]+s[4]) + (s[2,2,2]+2*s[3,2,1]+s[3,3]+s[4,1,1]+3*s[4,2]+2*s[5,1]+s[6]) + O^7
             sage: f.symmetric_function()
             Traceback (most recent call last):
@@ -6331,15 +6323,15 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             ValueError: not a symmetric function
 
             sage: # needs sage.modules
-            sage: f4 = f.truncate(5); f4
+            sage: f4 = f.truncate(5); f4                                                # needs lrcalc_python
             s[] + s[2] + (s[2,2]+s[3,1]+s[4])
-            sage: f4.symmetric_function()
+            sage: f4.symmetric_function()                                               # needs lrcalc_python
             s[] + s[2] + s[2, 2] + s[3, 1] + s[4]
-            sage: f4.symmetric_function() == f.symmetric_function(4)
+            sage: f4.symmetric_function() == f.symmetric_function(4)                    # needs lrcalc_python
             True
             sage: S.zero().symmetric_function()
             0
-            sage: f4.symmetric_function(0)
+            sage: f4.symmetric_function(0)                                              # needs lrcalc_python
             s[]
 
         """
@@ -6422,9 +6414,9 @@ class LazyDirichletSeries(LazyModuleElement):
             sage: (mu - mu).valuation()                                                 # needs sage.libs.pari
             +Infinity
             sage: g = L(constant=1, valuation=2)
-            sage: g.valuation()
+            sage: g.valuation()                                                         # needs sage.symbolic
             log(2)
-            sage: (g*g).valuation()
+            sage: (g*g).valuation()                                                     # needs sage.symbolic
             2*log(2)
         """
         if isinstance(self._coeff_stream, Stream_zero):
@@ -6448,7 +6440,7 @@ class LazyDirichletSeries(LazyModuleElement):
             1 + 1/(2^s) + 1/(3^s) + O(1/(4^s))
             sage: zeta * zeta                                                           # needs sage.symbolic
             1 + 2/2^s + 2/3^s + 3/4^s + 2/5^s + 4/6^s + 2/7^s + O(1/(8^s))
-            sage: [number_of_divisors(n) for n in range(1, 8)]
+            sage: [number_of_divisors(n) for n in range(1, 8)]                          # needs sage.libs.pari
             [1, 2, 2, 3, 2, 4, 2]
 
             sage: mu = D(moebius)
@@ -6521,10 +6513,10 @@ class LazyDirichletSeries(LazyModuleElement):
         TESTS::
 
             sage: L = LazyDirichletSeriesRing(ZZ, "z", sparse=False)
-            sage: ~L(constant=1) - L(moebius)
+            sage: ~L(constant=1) - L(moebius)                                           # needs sage.libs.pari
             O(1/(8^z))
             sage: L = LazyDirichletSeriesRing(ZZ, "z", sparse=True)
-            sage: ~L(constant=1) - L(moebius)
+            sage: ~L(constant=1) - L(moebius)                                           # needs sage.libs.pari
             O(1/(8^z))
 
         Trying to invert a non-invertible 'exact' series raises a
@@ -6571,12 +6563,13 @@ class LazyDirichletSeries(LazyModuleElement):
             sage: Z = D(constant=1)
             sage: from sage.arith.misc import dedekind_psi
             sage: Psi = D(dedekind_psi)
-            sage: Z(s)*Z(s-1)/Z(2*s) - Psi
+            sage: Z(s)*Z(s-1)/Z(2*s) - Psi                                              # needs sage.symbolic
             O(1/(8^s))
 
-            sage: Z(s)*Z(s-1)/Z(2*s-2) - (1/Psi).map_coefficients(abs)
+            sage: Z(s)*Z(s-1)/Z(2*s-2) - (1/Psi).map_coefficients(abs)                  # needs sage.symbolic
             O(1/(8^s))
 
+            sage: # needs sage.symbolic
             sage: Z(5)
             zeta(5)
             sage: Z(1+I)
@@ -6605,11 +6598,11 @@ class LazyDirichletSeries(LazyModuleElement):
             5
 
             sage: f = D([1,2,-3,-4], constant=2)
-            sage: bool(f(2) == -1 + -5/3^2 + -6/4^2 + 2*zeta(2))
+            sage: bool(f(2) == -1 + -5/3^2 + -6/4^2 + 2*zeta(2))                        # needs sage.symbolic
             True
-            sage: f(0)
+            sage: f(0)                                                                  # needs sage.symbolic
             -13
-            sage: f(1)
+            sage: f(1)                                                                  # needs sage.symbolic
             Infinity
         """
         P = self.parent()
@@ -6655,24 +6648,22 @@ class LazyDirichletSeries(LazyModuleElement):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: L = LazyDirichletSeriesRing(QQ, "s")
             sage: f = L(constant=1)
-            sage: f._format_series(repr)                                                # needs sage.symbolic
+            sage: f._format_series(repr)
             '1 + 1/(2^s) + 1/(3^s) + O(1/(4^s))'
-            sage: f._format_series(unicode_art)                                         # needs sage.symbolic
+            sage: f._format_series(unicode_art)
                  -s    -s
             1 + 2   + 3   + O(1/(4^s))
-
-            sage: L([1,-1,1])._format_series(repr)                                      # needs sage.symbolic
+            sage: L([1,-1,1])._format_series(repr)
             '1 - 1/(2^s) + 1/(3^s)'
-
-            sage: L([1,-1,1])._format_series(ascii_art)                                 # needs sage.symbolic
+            sage: L([1,-1,1])._format_series(ascii_art)
                   -s    -s
             1 + -2   + 3
-
             sage: R.<x> = QQ[]
             sage: L = LazyDirichletSeriesRing(R, "s")
-            sage: L([1,-1 + x,1/3])._format_series(ascii_art)                           # needs sage.symbolic
+            sage: L([1,-1 + x,1/3])._format_series(ascii_art)
                                   ( -s)
                                   (3  )
                   ( -s        )   (---)

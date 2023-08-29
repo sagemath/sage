@@ -150,7 +150,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # needs sage.rings.function_field
+            sage: L.<w> = K.extension(x - y^2)  # indirect doctest                      # needs sage.rings.function_field
 
         TESTS:
 
@@ -182,9 +182,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # needs sage.rings.function_field
+            sage: L.<w> = K.extension(x - y^2)  # indirect doctest                      # needs sage.rings.function_field
             sage: y2 = y*1
-            sage: M.<w> = K.extension(x - y2^2) # indirect doctest                      # needs sage.rings.function_field
+            sage: M.<w> = K.extension(x - y2^2)  # indirect doctest                     # needs sage.rings.function_field
             sage: L is M                                                                # needs sage.rings.function_field
             True
         """

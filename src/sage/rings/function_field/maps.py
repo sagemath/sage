@@ -221,7 +221,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
             sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: f(x*V.0 + (1/x^3)*V.1) # indirect doctest                                         # needs sage.modules sage.rings.function_field
+            sage: f(x*V.0 + (1/x^3)*V.1)  # indirect doctest                            # needs sage.modules sage.rings.function_field
             1/x^3*y + x
 
         TESTS:

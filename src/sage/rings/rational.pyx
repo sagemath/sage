@@ -302,21 +302,23 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
 
         sage: rational_power_parts(-1, -1/3)
         (1, -1)
-        sage: (-1)^(-1/3)                                                               # needs sage.symbolic
-        -(-1)^(2/3)
-        sage: 1 / ((-1)^(1/3))                                                          # needs sage.symbolic
-        -(-1)^(2/3)
         sage: rational_power_parts(-1, 2/3)
         (1, -1)
-        sage: (-1)^(2/3)                                                                # needs sage.symbolic
-        (-1)^(2/3)
         sage: all(rational_power_parts(-1, i/77) == (1,-1) for i in range(1,9))
         True
-        sage: (-1)^(1/3)*(-1)^(1/5)                                                     # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: (-1)^(-1/3)
+        -(-1)^(2/3)
+        sage: 1 / ((-1)^(1/3))
+        -(-1)^(2/3)
+        sage: (-1)^(2/3)
+        (-1)^(2/3)
+        sage: (-1)^(1/3)*(-1)^(1/5)
         (-1)^(8/15)
-        sage: bool((-1)^(2/3) == -1/2 + sqrt(3)/2*I)                                    # needs sage.symbolic
+        sage: bool((-1)^(2/3) == -1/2 + sqrt(3)/2*I)
         True
-        sage: all((-1)^(p/q) == cos(p*pi/q) + I * sin(p*pi/q)                           # needs sage.symbolic
+        sage: all((-1)^(p/q) == cos(p*pi/q) + I * sin(p*pi/q)
         ....:     for p in srange(1, 6) for q in srange(1, 6))
         True
 
@@ -972,12 +974,13 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: n = 1/2; n._sympy_()                                                  # needs sympy
+            sage: # needs sympy
+            sage: n = 1/2; n._sympy_()
             1/2
-            sage: n = -1/5; n._sympy_()                                                 # needs sympy
+            sage: n = -1/5; n._sympy_()
             -1/5
-            sage: from sympy import Symbol                                              # needs sympy
-            sage: QQ(1) + Symbol('x')*QQ(2)                                             # needs sympy
+            sage: from sympy import Symbol
+            sage: QQ(1) + Symbol('x')*QQ(2)
             2*x + 1
         """
         import sympy
@@ -1045,16 +1048,15 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: import numpy                                                          # needs numpy
-            sage: numpy.array([1, 2, 3/1])                                              # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: numpy.array([1, 2, 3/1])
             array([1, 2, 3])
-
-            sage: numpy.array(QQ(2**40)).dtype                                          # needs numpy
+            sage: numpy.array(QQ(2**40)).dtype
             dtype('int64')
-            sage: numpy.array(QQ(2**400)).dtype                                         # needs numpy
+            sage: numpy.array(QQ(2**400)).dtype
             dtype('O')
-
-            sage: numpy.array([1, 1/2, 3/4])                                            # needs numpy
+            sage: numpy.array([1, 1/2, 3/4])
             array([1.  , 0.5 , 0.75])
         """
         if mpz_cmp_ui(mpq_denref(self.value), 1) == 0:
@@ -1350,16 +1352,17 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: a = QQ(6/25)
-            sage: a.global_height_arch() + a.global_height_non_arch()                   # needs sage.rings.real_mpfr
+            sage: a.global_height_arch() + a.global_height_non_arch()
             3.21887582486820
-            sage: a.global_height()                                                     # needs sage.rings.real_mpfr
+            sage: a.global_height()
             3.21887582486820
-            sage: (1/a).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: (1/a).global_height()
             3.21887582486820
-            sage: QQ(0).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: QQ(0).global_height()
             0.000000000000000
-            sage: QQ(1).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: QQ(1).global_height()
             0.000000000000000
         """
         from sage.rings.real_mpfr import RealField
@@ -1418,17 +1421,18 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
-            sage: K = NumberField(x^2 - 2, 'beta')                                      # needs sage.rings.number_field
-            sage: (1/7).is_norm(K)                                                      # needs sage.rings.number_field
+            sage: K = NumberField(x^2 - 2, 'beta')
+            sage: (1/7).is_norm(K)
             True
-            sage: (1/10).is_norm(K)                                                     # needs sage.rings.number_field
+            sage: (1/10).is_norm(K)
             False
-            sage: 0.is_norm(K)                                                          # needs sage.rings.number_field
+            sage: 0.is_norm(K)
             True
-            sage: (1/7).is_norm(K, element=True)                                        # needs sage.rings.number_field
+            sage: (1/7).is_norm(K, element=True)
             (True, 1/7*beta + 3/7)
-            sage: (1/10).is_norm(K, element=True)                                       # needs sage.rings.number_field
+            sage: (1/10).is_norm(K, element=True)
             (False, None)
             sage: (1/691).is_norm(QQ, element=True)
             (True, 1/691)
@@ -1444,18 +1448,18 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         A non-Galois number field::
 
-            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: B, e = (3/5).is_norm(K, element=True); B                              # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: B, e = (3/5).is_norm(K, element=True); B
             True
-            sage: e.norm()                                                              # needs sage.rings.number_field
+            sage: e.norm()
             3/5
-
-            sage: 7.is_norm(K)                                                          # needs sage.rings.number_field
+            sage: 7.is_norm(K)
             Traceback (most recent call last):
             ...
             NotImplementedError: is_norm is not implemented unconditionally
              for norms from non-Galois number fields
-            sage: 7.is_norm(K, proof=False)                                             # needs sage.rings.number_field
+            sage: 7.is_norm(K, proof=False)
             False
 
         AUTHORS:

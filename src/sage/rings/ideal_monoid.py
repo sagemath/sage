@@ -55,7 +55,7 @@ class IdealMonoid_c(Parent):
 
             sage: R = QuadraticField(-23, 'a')                                          # needs sage.rings.number_field
             sage: from sage.rings.ideal_monoid import IdealMonoid
-            sage: M = IdealMonoid(R); M # indirect doctest                              # needs sage.rings.number_field
+            sage: M = IdealMonoid(R); M  # indirect doctest                             # needs sage.rings.number_field
             Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
              with a = 4.795831523312720?*I
 

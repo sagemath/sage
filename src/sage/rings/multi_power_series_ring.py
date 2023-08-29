@@ -160,19 +160,19 @@ Coercion from polynomial ring in subset of variables::
 
 Coercion from symbolic ring::
 
-    sage: x,y = var('x,y')                                                              # needs sage.symbolic
+    sage: # needs sage.symbolic
+    sage: x,y = var('x,y')
     sage: S = PowerSeriesRing(GF(11),2,'x,y'); S
     Multivariate Power Series Ring in x, y over Finite Field of size 11
-    sage: type(x)                                                                       # needs sage.symbolic
+    sage: type(x)
     <class 'sage.symbolic.expression.Expression'>
-    sage: type(S(x))                                                                    # needs sage.rings.finite_rings sage.symbolic
+    sage: type(S(x))
     <class 'sage.rings.multi_power_series_ring.MPowerSeriesRing_generic_with_category.element_class'>
-
-    sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f                                   # needs sage.rings.finite_rings sage.symbolic
+    sage: f = S(2/7 -100*x^2 + 1/3*x*y + y^2).O(3); f
     5 - x^2 + 4*x*y + y^2 + O(x, y)^3
-    sage: f.parent()                                                                    # needs sage.rings.finite_rings sage.symbolic
+    sage: f.parent()
     Multivariate Power Series Ring in x, y over Finite Field of size 11
-    sage: f.parent() == S                                                               # needs sage.rings.finite_rings sage.symbolic
+    sage: f.parent() == S
     True
 
 The implementation of the multivariate power series ring uses a combination
@@ -391,7 +391,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = PowerSeriesRing(GF(17))
             sage: R  #indirect doctest
             Multivariate Power Series Ring in x, y over Finite Field of size 17
@@ -710,14 +709,15 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         You must either give a base map or there must be a coercion
         from the base ring to the codomain::
 
+            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)                                          # needs sage.rings.number_field
-            sage: Q8.<z> = CyclotomicField(8)                                           # needs sage.rings.number_field
-            sage: X.<x> = PowerSeriesRing(Q8)                                           # needs sage.rings.number_field
-            sage: M.<a,b,c> = PowerSeriesRing(K)                                        # needs sage.rings.number_field
-            sage: M._is_valid_homomorphism_(X, [x,x,x+x^2]) # no coercion               # needs sage.rings.number_field
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: Q8.<z> = CyclotomicField(8)
+            sage: X.<x> = PowerSeriesRing(Q8)
+            sage: M.<a,b,c> = PowerSeriesRing(K)
+            sage: M._is_valid_homomorphism_(X, [x,x,x+x^2])  # no coercion
             False
-            sage: M._is_valid_homomorphism_(X, [x,x,x+x^2], base_map=K.hom([z^2]))      # needs sage.rings.number_field
+            sage: M._is_valid_homomorphism_(X, [x,x,x+x^2], base_map=K.hom([z^2]))
             True
         """
         try:

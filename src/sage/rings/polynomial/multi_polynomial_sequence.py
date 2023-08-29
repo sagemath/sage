@@ -229,7 +229,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     If a list of tuples is provided, those form the parts::
 
-        sage: F = Sequence([I.gens(),I.gens()], I.ring()); F # indirect doctest         # needs sage.libs.singular
+        sage: F = Sequence([I.gens(),I.gens()], I.ring()); F  # indirect doctest        # needs sage.libs.singular
         [a + 2*b + 2*c + 2*d - 1,
          a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
          2*a*b + 2*b*c + 2*c*d - b,
@@ -396,7 +396,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
 
-            sage: Sequence([I.gens()], I.ring()) # indirect doctest                     # needs sage.rings.finite_rings
+            sage: Sequence([I.gens()], I.ring())  # indirect doctest                    # needs sage.rings.finite_rings
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
 
@@ -1276,13 +1276,14 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         If the input system is detected to be inconsistent then ``[1]`` is returned,
         and the list of reductors is empty::
 
-            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
-            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs sage.rings.polynomial.pbori
-            sage: S.eliminate_linear_variables()                                        # needs sage.rings.polynomial.pbori
+            sage: # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing()
+            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])
+            sage: S.eliminate_linear_variables()
             [1]
-            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
-            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs sage.rings.polynomial.pbori
-            sage: S.eliminate_linear_variables(return_reductors=True)                   # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing()
+            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])
+            sage: S.eliminate_linear_variables(return_reductors=True)
             ([1], [])
 
 
@@ -1306,13 +1307,14 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         We test a case which would increase the degree with ``polybori=True``::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
-            sage: f = a*d + a + b*d + c*d + 1                                           # needs sage.rings.polynomial.pbori
-            sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables()         # needs sage.rings.polynomial.pbori
+            sage: # needs sage.rings.polynomial.pbori
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()
+            sage: f = a*d + a + b*d + c*d + 1
+            sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables()
             [a*d + a + b*d + c*d + 1, a + b*c + c + d + 1]
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
-            sage: f = a*d + a + b*d + c*d + 1                                           # needs sage.rings.polynomial.pbori
-            sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables(use_polybori=True)    # needs sage.rings.polynomial.pbori
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()
+            sage: f = a*d + a + b*d + c*d + 1
+            sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables(use_polybori=True)
             [b*c*d + b*c + b*d + c + d]
 
         .. NOTE::

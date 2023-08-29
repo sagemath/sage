@@ -650,22 +650,23 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         TESTS::
 
+            sage: # needs numpy
             sage: R.<x> = RDF[]
-            sage: RDF._factor_univariate_polynomial(x)                                  # needs numpy
+            sage: RDF._factor_univariate_polynomial(x)
             x
-            sage: RDF._factor_univariate_polynomial(2*x)                                # needs numpy
+            sage: RDF._factor_univariate_polynomial(2*x)
             (2.0) * x
-            sage: RDF._factor_univariate_polynomial(x^2)                                # needs numpy
+            sage: RDF._factor_univariate_polynomial(x^2)
             x^2
-            sage: RDF._factor_univariate_polynomial(x^2 + 1)                            # needs numpy
+            sage: RDF._factor_univariate_polynomial(x^2 + 1)
             x^2 + 1.0
-            sage: RDF._factor_univariate_polynomial(x^2 - 1)                            # needs numpy
+            sage: RDF._factor_univariate_polynomial(x^2 - 1)
             (x - 1.0) * (x + 1.0)
 
         The implementation relies on the ``roots()`` method which often reports
         roots not to be real even though they are::
 
-            sage: f = (x-1)^3
+            sage: f = (x-1)^3                                                           # needs numpy
             sage: f.roots(ring=CDF)  # abs tol 2e-5                                     # needs numpy
             [(1.0000065719436413, 1),
              (0.9999967140281792 - 5.691454546815028e-06*I, 1),
@@ -815,14 +816,16 @@ cdef class RealDoubleElement(FieldElement):
         can only happen if the input number is (up to sign) exactly a
         power of 2::
 
-            sage: a - a.ulp()/3 == a                                                    # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a - a.ulp()/3 == a
             True
-            sage: a + a.ulp()/3 == a                                                    # needs sage.symbolic
+            sage: a + a.ulp()/3 == a
             True
-            sage: b - b.ulp()/3 == b                                                    # needs sage.symbolic
+            sage: b - b.ulp()/3 == b
             True
-            sage: b + b.ulp()/3 == b                                                    # needs sage.symbolic
+            sage: b + b.ulp()/3 == b
             True
+
             sage: c = RDF(1)
             sage: c - c.ulp()/3 == c
             False
@@ -1271,8 +1274,8 @@ cdef class RealDoubleElement(FieldElement):
             sage: # needs sage.symbolic
             sage: a = RDF(exp(1.0)); a
             2.718281828459045
-            sage: sign,mantissa,exponent = RDF(exp(1.0)).sign_mantissa_exponent()
-            sage: sign,mantissa,exponent
+            sage: sign, mantissa, exponent = RDF(exp(1.0)).sign_mantissa_exponent()
+            sage: sign, mantissa, exponent
             (1, 6121026514868073, -51)
             sage: sign*mantissa*(2**exponent) == a
             True
@@ -1676,7 +1679,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: CDF(RDF(1/3)) # indirect doctest                                      # needs sage.rings.complex_double
+            sage: CDF(RDF(1/3))  # indirect doctest                                     # needs sage.rings.complex_double
             0.3333333333333333
         """
         return CDF(self._value)

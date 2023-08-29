@@ -1438,12 +1438,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: import numpy                                                          # needs numpy
-            sage: numpy.arange(10.0)                                                    # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: numpy.arange(10.0)
             array([0., 1., 2., 3., 4., 5., 6., 7., 8., 9.])
-            sage: numpy.array([1.0, 1.1, 1.2]).dtype                                    # needs numpy
+            sage: numpy.array([1.0, 1.1, 1.2]).dtype
             dtype('float64')
-            sage: numpy.array([1.000000000000000000000000000000000000]).dtype           # needs numpy
+            sage: numpy.array([1.000000000000000000000000000000000000]).dtype
             dtype('O')
         """
         if (<RealField_class>self._parent).__prec <= 53:

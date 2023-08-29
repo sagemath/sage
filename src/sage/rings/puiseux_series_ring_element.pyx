@@ -218,13 +218,14 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PuiseuxSeriesRing(ZZ)
             sage: p = x^(1/3) + x**3
-            sage: t = p._im_gens_(QQbar, [2])                                           # needs sage.rings.number_field
-            sage: t in QQbar                                                            # needs sage.rings.number_field
+            sage: t = p._im_gens_(QQbar, [2])
+            sage: t in QQbar
             True
-            sage: f = R.hom([QQbar(2)], check=False)                                    # needs sage.rings.number_field
-            sage: t == f(p)                                                             # needs sage.rings.number_field
+            sage: f = R.hom([QQbar(2)], check=False)
+            sage: t == f(p)
             True
         """
         return self(codomain(im_gens[0]))
@@ -871,7 +872,6 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: P.<y> = PolynomialRing(GF(5))
             sage: R.<x> = PuiseuxSeriesRing(P)
             sage: p = 3*y*x**(-2/3) + 2*y**2*x**(1/5); p
@@ -945,7 +945,6 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = PuiseuxSeriesRing(GF(3))
             sage: p = (x**(-1/3) + 2*x**3)**2; p
             x^(-2/3) + x^(8/3) + x^6

@@ -2942,16 +2942,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         EXAMPLES::
 
             sage: K.<a> = QuadraticField(2)
-            sage: SR(a) # indirect doctest                                              # needs sage.symbolic
+            sage: SR(a)  # indirect doctest                                             # needs sage.symbolic
             sqrt(2)
-            sage: SR(3*a-5) # indirect doctest                                          # needs sage.symbolic
+            sage: SR(3*a-5)  # indirect doctest                                         # needs sage.symbolic
             3*sqrt(2) - 5
             sage: K.<a> = QuadraticField(2, embedding=-1.4)
-            sage: SR(a) # indirect doctest                                              # needs sage.symbolic
+            sage: SR(a)  # indirect doctest                                             # needs sage.symbolic
             -sqrt(2)
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
-            sage: SR(a) # indirect doctest                                              # needs sage.symbolic
+            sage: SR(a)  # indirect doctest                                             # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: an embedding into RR or CC must be specified
@@ -2959,7 +2959,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Now a more complicated example::
 
             sage: K.<a> = NumberField(x^3 + x - 1, embedding=0.68)
-            sage: b = SR(a); b # indirect doctest                                       # needs sage.symbolic
+            sage: b = SR(a); b  # indirect doctest                                      # needs sage.symbolic
             (1/18*sqrt(31)*sqrt(3) + 1/2)^(1/3) - 1/3/(1/18*sqrt(31)*sqrt(3) + 1/2)^(1/3)
             sage: (b^3 + b - 1).canonicalize_radical()                                  # needs sage.symbolic
             0
@@ -2974,7 +2974,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Special case for cyclotomic fields::
 
             sage: K.<zeta> = CyclotomicField(19)
-            sage: SR(zeta) # indirect doctest                                           # needs sage.symbolic
+            sage: SR(zeta)  # indirect doctest                                          # needs sage.symbolic
             e^(2/19*I*pi)
             sage: CC(zeta)
             0.945817241700635 + 0.324699469204683*I

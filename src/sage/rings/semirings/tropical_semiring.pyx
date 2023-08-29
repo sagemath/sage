@@ -555,32 +555,34 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: TR = TropicalSemiring(RR)                                             # needs sage.rings.real_mpfr
-            sage: T60 = TropicalSemiring(RealField(60))                                 # needs sage.rings.real_mpfr
-            sage: TR.has_coerce_map_from(T60)                                           # needs sage.rings.real_mpfr
-            True
             sage: TQ = TropicalSemiring(QQ)
-            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
-            True
-            sage: TR.has_coerce_map_from(TR)                                            # needs sage.rings.real_mpfr
-            True
             sage: TQ.has_coerce_map_from(TQ)
             True
-            sage: TR.has_coerce_map_from(TQ)                                            # needs sage.rings.real_mpfr
+            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
             True
-            sage: TR.has_coerce_map_from(float)                                         # needs sage.rings.real_mpfr
+
+            sage: # needs sage.rings.real_mpfr
+            sage: TR = TropicalSemiring(RR)
+            sage: T60 = TropicalSemiring(RealField(60))
+            sage: TR.has_coerce_map_from(T60)
+            True
+            sage: TR.has_coerce_map_from(TR)
+            True
+            sage: TR.has_coerce_map_from(TQ)
+            True
+            sage: TR.has_coerce_map_from(float)
             False
-            sage: TR.has_coerce_map_from(RR)                                            # needs sage.rings.real_mpfr
+            sage: TR.has_coerce_map_from(RR)
             False
-            sage: TR.has_coerce_map_from(QQ)                                            # needs sage.rings.real_mpfr
+            sage: TR.has_coerce_map_from(QQ)
             False
-            sage: TR.coerce_map_from(T60)(T60(2))                                       # needs sage.rings.real_mpfr
+            sage: TR.coerce_map_from(T60)(T60(2))
             2.00000000000000
-            sage: TR.coerce(T60(3.4))                                                   # needs sage.rings.real_mpfr
+            sage: TR.coerce(T60(3.4))
             3.40000000000000
-            sage: TR.coerce(T60.infinity())                                             # needs sage.rings.real_mpfr
+            sage: TR.coerce(T60.infinity())
             +infinity
-            sage: TQ.coerce(TR(3.4))                                                    # needs sage.rings.real_mpfr
+            sage: TQ.coerce(TR(3.4))
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Tropical semiring over

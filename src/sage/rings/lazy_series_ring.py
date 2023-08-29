@@ -155,10 +155,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         If ``x`` can be converted into an element of the underlying
         Laurent polynomial ring, we do this::
 
-            sage: L = LazyLaurentSeriesRing(GF(2), 'z')                                 # needs sage.rings.finite_rings
-            sage: L(2)                                                                  # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(2), 'z')
+            sage: L(2)
             0
-            sage: L(3)                                                                  # needs sage.rings.finite_rings
+            sage: L(3)
             1
 
         In particular, ``x`` can be a Laurent polynomial::
@@ -256,13 +256,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
             sage: D = LazyDirichletSeriesRing(QQ, "s")
             sage: L.<z> = LazyLaurentSeriesRing(D)
-            sage: L(lambda n: 1/factorial(n), valuation=0)
+            sage: L(lambda n: 1/factorial(n), valuation=0)                              # needs sage.symbolic
             (1 + 1/2/2^s + 1/6/3^s + 1/24/4^s + 1/120/5^s + 1/720/6^s + 1/5040/7^s + O(1/(8^s)))
 
         We can also specify that the given function should be
         interpreted as the coefficients of the Laurent series::
 
-            sage: L(coefficients=lambda n: 1/factorial(n), valuation=0)
+            sage: L(coefficients=lambda n: 1/factorial(n), valuation=0)                 # needs sage.symbolic
             1 + z + 1/2*z^2 + 1/6*z^3 + 1/24*z^4 + 1/120*z^5 + 1/720*z^6 + O(z^7)
 
         When the argument ``x`` is callable and not convertible into
@@ -272,14 +272,14 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
             sage: R.<q> = QQ[]
             sage: D = LazyDirichletSeriesRing(ZZ, 't')
-            sage: D(1+2*q)
+            sage: D(1+2*q)                                                              # needs sage.symbolic
             3 + 5/2^t + 7/3^t + 9/4^t + 11/5^t + 13/6^t + 15/7^t + O(1/(8^t))
 
         In this example, the Dirichlet series ``m`` is considered as an
         element in the base ring::
 
             sage: m = D(moebius)
-            sage: s = L(m, valuation=0)
+            sage: s = L(m, valuation=0)                                                 # needs sage.symbolic
             sage: s[0]
             1 - 1/(2^s) - 1/(3^s) - 1/(5^s) + 1/(6^s) - 1/(7^s) + O(1/(8^s))
             sage: s[1]
@@ -401,7 +401,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
             sage: D = LazyDirichletSeriesRing(ZZ, "s")
             sage: E = LazyDirichletSeriesRing(QQ, "t")
-            sage: D(E([1,2,3]))
+            sage: D(E([1,2,3]))                                                         # needs sage.symbolic
             1 + 2/2^s + 3/3^s
 
         This gives zero::
@@ -760,14 +760,14 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.characteristic()
             0
 
-            sage: R.<w> = LazyLaurentSeriesRing(GF(11)); R                              # needs sage.rings.finite_rings
+            sage: R.<w> = LazyLaurentSeriesRing(GF(11)); R
             Lazy Laurent Series Ring in w over Finite Field of size 11
-            sage: R.characteristic()                                                    # needs sage.rings.finite_rings
+            sage: R.characteristic()
             11
 
-            sage: R.<x, y> = LazyPowerSeriesRing(GF(7)); R                              # needs sage.rings.finite_rings
+            sage: R.<x, y> = LazyPowerSeriesRing(GF(7)); R
             Multivariate Lazy Taylor Series Ring in x, y over Finite Field of size 7
-            sage: R.characteristic()                                                    # needs sage.rings.finite_rings
+            sage: R.characteristic()
             7
 
             sage: L = LazyDirichletSeriesRing(ZZ, "s")
@@ -782,13 +782,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: L = LazyLaurentSeriesRing(GF(2), 'z')                                 # needs sage.rings.finite_rings
-            sage: L.has_coerce_map_from(ZZ)                                             # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(2), 'z')
+            sage: L.has_coerce_map_from(ZZ)
             True
-            sage: L.has_coerce_map_from(GF(2))                                          # needs sage.rings.finite_rings
+            sage: L.has_coerce_map_from(GF(2))
             True
             sage: R = LazyPowerSeriesRing(ZZ, 'z')
-            sage: L.has_coerce_map_from(R)                                              # needs sage.rings.finite_rings
+            sage: L.has_coerce_map_from(R)
             True
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
@@ -802,10 +802,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.has_coerce_map_from(R)
             False
 
-            sage: L = LazyPowerSeriesRing(GF(2), 'z')                                   # needs sage.rings.finite_rings
-            sage: L.has_coerce_map_from(ZZ)                                             # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(2), 'z')
+            sage: L.has_coerce_map_from(ZZ)
             True
-            sage: L.has_coerce_map_from(GF(2))                                          # needs sage.rings.finite_rings
+            sage: L.has_coerce_map_from(GF(2))
             True
 
             sage: # needs sage.modules sage.rings.finite_rings
@@ -1207,13 +1207,13 @@ class LazyLaurentSeriesRing(LazySeriesRing):
               (euclidean domains and infinite enumerated sets and metric spaces)
               and infinite sets)
 
-            sage: L = LazyLaurentSeriesRing(GF(5), 't')                                 # needs sage.rings.finite_rings
-            sage: TestSuite(L).run()                                                    # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(5), 't')
+            sage: TestSuite(L).run()
 
-            sage: L = LazyLaurentSeriesRing(GF(5)['x'], 't')                            # needs sage.rings.finite_rings
-            sage: TestSuite(L).run()                                                    # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(5)['x'], 't')
+            sage: TestSuite(L).run()
 
-            sage: L = LazyLaurentSeriesRing(GF(5)['x, y'], 't')                         # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(5)['x, y'], 't')
             sage: TestSuite(L).run()                                                    # needs sage.rings.finite_rings
 
             sage: L = LazyLaurentSeriesRing(Zmod(6), 't')
@@ -1257,7 +1257,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: LazyLaurentSeriesRing(GF(2), 'z')                                     # needs sage.rings.finite_rings
+            sage: LazyLaurentSeriesRing(GF(2), 'z')
             Lazy Laurent Series Ring in z over Finite Field of size 2
         """
         return "Lazy Laurent Series Ring in {} over {}".format(self.variable_name(), self.base_ring())
@@ -1268,8 +1268,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: L = LazyLaurentSeriesRing(GF(2), 'z')                                 # needs sage.rings.finite_rings
-            sage: latex(L)                                                              # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(2), 'z')
+            sage: latex(L)
             \Bold{F}_{2} (\!(z)\!)
         """
         from sage.misc.latex import latex
@@ -1354,16 +1354,16 @@ class LazyLaurentSeriesRing(LazySeriesRing):
              -2*z^-3 - 2*z^-2 + 4*z^-1 + 11 - z - 34*z^2 - 31*z^3 + O(z^4),
              4*z^-2 + z^-1 + z + 4*z^2 + 9*z^3 + 16*z^4 + O(z^5)]
 
-            sage: L = LazyLaurentSeriesRing(GF(2), 'z')                                 # needs sage.rings.finite_rings
-            sage: L.some_elements()[:7]                                                 # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(2), 'z')
+            sage: L.some_elements()[:7]
             [0, 1, z,
              z^-4 + z^-3 + z^2 + z^3,
              z^-2,
              1 + z + z^3 + z^4 + z^6 + O(z^7),
              z^-1 + z + z^3 + O(z^5)]
 
-            sage: L = LazyLaurentSeriesRing(GF(3), 'z')                                 # needs sage.rings.finite_rings
-            sage: L.some_elements()[:7]                                                 # needs sage.rings.finite_rings
+            sage: L = LazyLaurentSeriesRing(GF(3), 'z')
+            sage: L.some_elements()[:7]
             [0, 1, z,
              z^-3 + z^-1 + 2 + z + z^2 + z^3,
              z^-2,
@@ -1562,7 +1562,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: R = ZZ['q'].fraction_field()
             sage: q = R.gen()
             sage: L.<z> = LazyLaurentSeriesRing(LazyDirichletSeriesRing(R, "s"))
-            sage: z.q_pochhammer(q)
+            sage: z.q_pochhammer(q)                                                     # needs sage.symbolic
             1 + ((1/(q-1)))*z + ((q/(q^3-q^2-q+1)))*z^2 + ... + O(z^7)
 
         REFERENCES:
@@ -1612,7 +1612,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         TESTS::
 
             sage: L.<q> = LazyLaurentSeriesRing(LazyDirichletSeriesRing(QQ, "s"))
-            sage: q.euler()
+            sage: q.euler()                                                             # needs sage.symbolic
             1 - q - q^2 + q^5 + O(q^7)
 
         REFERENCES:
@@ -1671,11 +1671,11 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L = LazyPowerSeriesRing(QQ, 's, t')
             sage: TestSuite(L).run(skip="_test_fraction_field")
 
-            sage: L = LazyPowerSeriesRing(GF(5), 't')                                   # needs sage.rings.finite_rings
-            sage: TestSuite(L).run()                                                    # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(5), 't')
+            sage: TestSuite(L).run()
 
-            sage: L = LazyPowerSeriesRing(GF(5), 's, t')                                # needs sage.rings.finite_rings
-            sage: TestSuite(L).run(skip=['_test_fraction_field'])                       # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(5), 's, t')
+            sage: TestSuite(L).run(skip=['_test_fraction_field'])
 
             sage: L = LazyPowerSeriesRing(Zmod(6), 't')
             sage: TestSuite(L).run(skip=['_test_revert'])
@@ -1757,7 +1757,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: LazyPowerSeriesRing(GF(2), 'z')                                       # needs sage.rings.finite_rings
+            sage: LazyPowerSeriesRing(GF(2), 'z')
             Lazy Taylor Series Ring in z over Finite Field of size 2
         """
         BR = self.base_ring()
@@ -1772,8 +1772,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: L = LazyPowerSeriesRing(GF(2), 'z')                                   # needs sage.rings.finite_rings
-            sage: latex(L)                                                              # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(2), 'z')
+            sage: latex(L)
             \Bold{F}_{2} [\![z]\!]
         """
         from sage.misc.latex import latex
@@ -1871,10 +1871,10 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: L = LazyPowerSeriesRing(GF(2), 'z')                                   # needs sage.rings.finite_rings
-            sage: L(2)                                                                  # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(2), 'z')
+            sage: L(2)
             0
-            sage: L(3)                                                                  # needs sage.rings.finite_rings
+            sage: L(3)
             1
 
             sage: L = LazyPowerSeriesRing(ZZ, 'z')
@@ -2193,15 +2193,15 @@ class LazyPowerSeriesRing(LazySeriesRing):
              1 + z - 2*z^2 - 7*z^3 - z^4 + 20*z^5 + 23*z^6 + O(z^7),
              z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + O(z^7)]
 
-            sage: L = LazyPowerSeriesRing(GF(3)["q"], 'z')                              # needs sage.rings.finite_rings
-            sage: L.some_elements()[:6]                                                 # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(3)["q"], 'z')
+            sage: L.some_elements()[:6]
             [0, 1, z + q*z^2 + q*z^3 + q*z^4 + O(z^5),
              z + z^2 + z^3,
              1 + z + z^2 + 2*z^3 + 2*z^4 + 2*z^5 + O(z^6),
              z + z^2 + z^4 + z^5 + O(z^7)]
 
-            sage: L = LazyPowerSeriesRing(GF(3), 'q, t')                                # needs sage.rings.finite_rings
-            sage: L.some_elements()[:6]                                                 # needs sage.rings.finite_rings
+            sage: L = LazyPowerSeriesRing(GF(3), 'q, t')
+            sage: L.some_elements()[:6]
             [0, 1, q,
              q + q^2 + q^3,
              1 + q + q^2 + (-q^3) + (-q^4) + (-q^5) + (-q^6) + O(q,t)^7,
@@ -2277,21 +2277,21 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.modules
             sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: TestSuite(L).run()                                                    # needs sage.modules
+            sage: TestSuite(L).run()                                                    # needs lrcalc_python sage.modules
 
-            sage: p = SymmetricFunctions(GF(5)).p()                                     # needs sage.modules sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(p)                                         # needs sage.modules sage.rings.finite_rings
-            sage: TestSuite(L).run()                                                    # needs sage.modules sage.rings.finite_rings
+            sage: p = SymmetricFunctions(GF(5)).p()                                     # needs sage.modules
+            sage: L = LazySymmetricFunctions(p)                                         # needs sage.modules
+            sage: TestSuite(L).run()                                                    # needs sage.modules
 
         Reversion will only work when the base ring is a field::
 
             sage: s = SymmetricFunctions(ZZ).s()                                        # needs sage.modules
             sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs sage.modules
+            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python sage.modules
 
             sage: s = SymmetricFunctions(QQ["q"]).s()                                   # needs sage.modules
             sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs sage.modules
+            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python sage.modules
 
         Options are remembered across doctests::
 
@@ -2347,8 +2347,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(GF(2)).s()                                     # needs sage.modules sage.rings.finite_rings
-            sage: LazySymmetricFunctions(s)                                             # needs sage.modules sage.rings.finite_rings
+            sage: s = SymmetricFunctions(GF(2)).s()                                     # needs sage.modules
+            sage: LazySymmetricFunctions(s)                                             # needs sage.modules
             Lazy completion of Symmetric Functions over Finite Field of size 2 in the Schur basis
         """
         return "Lazy completion of {}".format(self._laurent_poly_ring)
@@ -2359,9 +2359,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(GF(2)).s()                                     # needs sage.modules sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules sage.rings.finite_rings
-            sage: latex(L)                                                              # needs sage.modules sage.rings.finite_rings
+            sage: s = SymmetricFunctions(GF(2)).s()                                     # needs sage.modules
+            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
+            sage: latex(L)                                                              # needs sage.modules
             \text{\texttt{Symmetric{ }Functions{ }over{ }Finite{ }Field{ }of{ }size{ }2{ }in{ }the{ }Schur{ }basis}}
         """
         from sage.misc.latex import latex
@@ -2589,9 +2589,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: m = SymmetricFunctions(GF(5)).m()                                     # needs sage.modules sage.rings.finite_rings
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules sage.rings.finite_rings
-            sage: L.some_elements()[:5]                                                 # needs sage.modules sage.rings.finite_rings
+            sage: m = SymmetricFunctions(GF(5)).m()                                     # needs sage.modules
+            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
+            sage: L.some_elements()[:5]                                                 # needs sage.modules
             [0, m[], 2*m[] + 2*m[1] + 3*m[2], 2*m[1] + 3*m[2],
              3*m[] + 2*m[1] + (m[1,1]+m[2])
                    + (2*m[1,1,1]+m[3])
@@ -2846,7 +2846,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             sage: X = L(constant=5, degree=3)
             sage: X                                                                     # needs sage.symbolic
             5/3^z + 5/4^z + 5/5^z + O(1/(6^z))
-            sage: X.valuation()
+            sage: X.valuation()                                                         # needs sage.symbolic
             log(3)
             sage: e = L(moebius)
             sage: e                                                                     # needs sage.symbolic
@@ -2880,14 +2880,14 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
         TESTS::
 
-            sage: L = LazyDirichletSeriesRing(GF(2), 'z')                               # needs sage.rings.finite_rings
+            sage: L = LazyDirichletSeriesRing(GF(2), 'z')
             Traceback (most recent call last):
             ...
             ValueError: positive characteristic not allowed for Dirichlet series
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
             sage: D = LazyDirichletSeriesRing(QQ, 't')
-            sage: d = D(L.one())
+            sage: d = D(L.one())                                                        # needs sage.symbolic
             sage: d                                                                     # needs sage.symbolic
             1 + 1/(2^t) + 1/(3^t) + 1/(4^t) + 1/(5^t) + 1/(6^t) + 1/(7^t) + O(1/(8^t))
 
@@ -2898,7 +2898,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             2 + 6/2^t + 12/3^t + 20/4^t + 30/5^t + 42/6^t + 56/7^t + O(1/(8^t))
 
             sage: s = D(lambda n: n)
-            sage: d2 = D(s, valuation=2)
+            sage: d2 = D(s, valuation=2)                                                # needs sage.symbolic
             sage: d2                                                                    # needs sage.symbolic
             1/(2^t) + 2/3^t + 3/4^t + 4/5^t + 5/6^t + 6/7^t + 7/8^t + O(1/(9^t))
 
@@ -2907,8 +2907,8 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             sage: m                                                                     # needs sage.symbolic
             -1/(2^s) - 1/(3^s) - 1/(5^s) + 1/(6^s) - 1/(7^s) + O(1/(9^s))
             sage: D = LazyDirichletSeriesRing(QQ, 't')
-            sage: dm = D(m)
-            sage: dm                                                                    # needs sage.symbolic
+            sage: dm = D(m)                                                             # needs sage.libs.pari
+            sage: dm                                                                    # needs sage.libs.pari sage.symbolic
             -1/(2^t) - 1/(3^t) - 1/(5^t) + 1/(6^t) - 1/(7^t) + O(1/(9^t))
         """
         if isinstance(x, (list, tuple)):
