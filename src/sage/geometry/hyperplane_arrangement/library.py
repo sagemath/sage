@@ -233,7 +233,7 @@ class HyperplaneArrangementLibrary():
         x = H.gens()
         return H(x)
 
-    def Coxeter(self, data, K=QQ, names=None, m=1):
+    def Coxeter(self, data, K=QQ, names=None):
         r"""
         Return the Coxeter arrangement.
 
@@ -270,10 +270,10 @@ class HyperplaneArrangementLibrary():
             sage: # needs sage.combinat
             sage: hyperplane_arrangements.Coxeter(4)
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
-            sage: hyperplane_arrangements.Shi("B4")
-            Arrangement of 32 hyperplanes of dimension 4 and rank 4
-            sage: hyperplane_arrangements.Shi("A3", m=2)
-            Arrangement of 24 hyperplanes of dimension 4 and rank 3
+            sage: hyperplane_arrangements.Coxeter("B4")
+            Arrangement of 16 hyperplanes of dimension 4 and rank 4
+            sage: hyperplane_arrangements.Coxeter("A3")
+            Arrangement of 6 hyperplanes of dimension 4 and rank 3
 
         If the Cartan type is not crystallographic, the Coxeter arrangement
         is not implemented yet::
