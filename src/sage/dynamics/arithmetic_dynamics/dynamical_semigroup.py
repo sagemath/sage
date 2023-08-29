@@ -961,7 +961,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: left dynamical semigroup's domain must equal right dynamical semigroup's codomain
         """
-        if not isinstance(other_dynamical_semigroup, DynamicalSemigroup):
+        if type(self) is not type(other_dynamical_semigroup):
             raise TypeError("can only multiply dynamical semigroups with other dynamical semigroups of the same type")
         if self.domain() != other_dynamical_semigroup.codomain():
             raise ValueError("left dynamical semigroup's domain must equal right dynamical semigroup's codomain")
