@@ -2967,7 +2967,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Make sure we got the right one::
 
-            sage: CC(a)
+            sage: CC(a)                                                                 # needs sage.symbolic
             0.682327803828019
             sage: CC(b)                                                                 # needs sage.symbolic
             0.682327803828019

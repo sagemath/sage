@@ -1915,24 +1915,27 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n = 2/3
             sage: n.sqrt()                                                              # needs sage.symbolic
             sqrt(2/3)
-            sage: n.sqrt(prec=10)                                                       # needs sage.rings.real_mpfr
+
+            sage: # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=10)
             0.82
-            sage: n.sqrt(prec=100)                                                      # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=100)
             0.81649658092772603273242802490
-            sage: n.sqrt(prec=100)^2                                                    # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=100)^2
             0.66666666666666666666666666667
-            sage: n.sqrt(prec=53, all=True)                                             # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=53, all=True)
             [0.816496580927726, -0.816496580927726]
+            sage: sqrt(-2/3, prec=53)
+            0.816496580927726*I
+            sage: sqrt(-2/3, prec=53, all=True)
+            [0.816496580927726*I, -0.816496580927726*I]
+
             sage: n.sqrt(extend=False, all=True)
             Traceback (most recent call last):
             ...
             ValueError: square root of 2/3 not a rational number
             sage: sqrt(-2/3, all=True)                                                  # needs sage.symbolic
             [sqrt(-2/3), -sqrt(-2/3)]
-            sage: sqrt(-2/3, prec=53)                                                   # needs sage.rings.real_mpfr
-            0.816496580927726*I
-            sage: sqrt(-2/3, prec=53, all=True)                                         # needs sage.rings.real_mpfr
-            [0.816496580927726*I, -0.816496580927726*I]
 
         AUTHORS:
 

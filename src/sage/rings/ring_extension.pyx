@@ -2174,25 +2174,27 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: F = GF(5)
-            sage: K = GF(5^2).over(F)                                                   # needs sage.rings.finite_rings
-            sage: L = GF(5^4).over(K)                                                   # needs sage.rings.finite_rings
-            sage: L._print_option_base(F) is F                                          # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over(F)
+            sage: L = GF(5^4).over(K)
+            sage: L._print_option_base(F) is F
             True
-            sage: L._print_option_base(K) is K                                          # needs sage.rings.finite_rings
+            sage: L._print_option_base(K) is K
             True
-            sage: L._print_option_base(GF(5^2)) is K                                    # needs sage.rings.finite_rings
+            sage: L._print_option_base(GF(5^2)) is K
             True
-            sage: L._print_option_base(None) is K                                       # needs sage.rings.finite_rings
+            sage: L._print_option_base(None) is K
             True
-            sage: L._print_option_base(L)                                               # needs sage.rings.finite_rings
+            sage: L._print_option_base(L)
             Traceback (most recent call last):
             ...
             ValueError: base must be strict
-            sage: K._print_option_base(L)                                               # needs sage.rings.finite_rings
+            sage: K._print_option_base(L)
             Traceback (most recent call last):
             ...
-            ValueError: not (explicitly) defined over Field in z4 with defining polynomial x^2 + (3 - z2)*x + z2 over its base
+            ValueError: not (explicitly) defined over Field in z4
+            with defining polynomial x^2 + (3 - z2)*x + z2 over its base
 
         """
         if 'print_elements_as' in self._print_options:

@@ -3297,12 +3297,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: R = RealField(100)
-            sage: R(pi)                                                                 # needs sage.symbolic
+            sage: R(pi)
             3.1415926535897932384626433833
-            sage: axiom(R(pi))                  # optional - axiom                      # needs sage.symbolic
+            sage: axiom(R(pi))  # indirect doctest      # optional - axiom
             3.1415926535 8979323846 26433833
-            sage: fricas(R(pi))                 # optional - fricas                     # needs sage.symbolic
+            sage: fricas(R(pi))                         # optional - fricas
             3.1415926535_8979323846_26433833
 
         """
@@ -3791,14 +3792,17 @@ cdef class RealNumber(sage.structure.element.RingElement):
             -333/1000
             sage: RR(3/4).nearby_rational(max_denominator=2)
             1
-            sage: RR(pi).nearby_rational(max_denominator=120)                           # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=120)
             355/113
-            sage: RR(pi).nearby_rational(max_denominator=10000)                         # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=10000)
             355/113
-            sage: RR(pi).nearby_rational(max_denominator=100000)                        # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=100000)
             312689/99532
-            sage: RR(pi).nearby_rational(max_denominator=1)                             # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=1)
             3
+
             sage: RR(-3.5).nearby_rational(max_denominator=1)
             -3
 

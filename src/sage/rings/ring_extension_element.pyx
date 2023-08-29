@@ -788,15 +788,16 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
-            sage: A.<a> = ZZ.extension(x^2 - 2)                                         # needs sage.rings.number_field
-            sage: OK = A.over()  # over ZZ                                              # needs sage.rings.number_field
-            sage: K = OK.fraction_field(); K                                            # needs sage.rings.number_field
+            sage: A.<a> = ZZ.extension(x^2 - 2)
+            sage: OK = A.over()  # over ZZ
+            sage: K = OK.fraction_field(); K
             Fraction Field of Order in Number Field in a
              with defining polynomial x^2 - 2 over its base
-            sage: x = K(1/a); x                                                         # needs sage.rings.number_field
+            sage: x = K(1/a); x
             a/2
-            sage: denom = x.denominator(); denom                                        # needs sage.rings.number_field
+            sage: denom = x.denominator(); denom
             2
 
         The denominator is an element of the ring which was used

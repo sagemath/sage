@@ -728,7 +728,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         Test that there also is a lift for rings that are no
         instances of :class:`~sage.rings.ring.Ring` (see :trac:`11068`)::
 
-            sage: # needs sage.modules sage.rings.finite_rings
+            sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)
             sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS
             sage: Q = MS.quo(I)
@@ -1085,7 +1085,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = R.quotient_ring(x^2 + y^2)
-            sage: S.has_coerce_map_from(R) # indirect doctest
+            sage: S.has_coerce_map_from(R)  # indirect doctest
             True
             sage: S.has_coerce_map_from(QQ)
             True
