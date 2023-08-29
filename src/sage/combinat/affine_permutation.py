@@ -706,7 +706,7 @@ class AffinePermutationTypeA(AffinePermutation):
             y = self.clone().apply_simple_reflection(i,side)
             T = [i]
             j = i
-            for count in range(1, self.k):
+            for _ in range(1, self.k):
                 if (typ[0],side[0]) == ('d', 'r'):
                     j=(j+1)%(k+1)
                 if (typ[0],side[0]) == ('i', 'r'):

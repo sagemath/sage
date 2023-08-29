@@ -73,7 +73,7 @@ cdef OP_string(OrbitPartition *OP):
     """
     cdef i,j
     s = ""
-    for i from 0 <= i < OP.degree:
+    for i in range(OP.degree):
         s += " "
         j = OP_find(OP, i)
         s += "%d -> %d"%(i, j)
@@ -133,7 +133,7 @@ def OP_represent(int n, merges, perm):
     print("Allocation passed.")
     print("Checking that each element reports itself as its root.")
     good = True
-    for i from 0 <= i < n:
+    for i in range(n):
         if not OP_find(OP, i) == i:
             print("Failed at i = %d!" % i)
             good = False
@@ -145,7 +145,7 @@ def OP_represent(int n, merges, perm):
         print("Merged %d and %d." % (i, j))
     print("Done merging.")
     print("Finding:")
-    for i from 0 <= i < n:
+    for i in range(n):
         j = OP_find(OP, i)
         s = "%d -> %d"%(i, j)
         if i == j:
@@ -159,13 +159,13 @@ def OP_represent(int n, merges, perm):
         OP_dealloc(OP)
         return
     print("Allocation passed.")
-    for i from 0 <= i < n:
+    for i in range(n):
         gamma[i] = perm[i]
     print("Merging permutation: %s" % perm)
     OP_merge_list_perm(OP, gamma)
     print("Done merging.")
     print("Finding:")
-    for i from 0 <= i < n:
+    for i in range(n):
         j = OP_find(OP, i)
         s = "%d -> %d"%(i, j)
         if i == j:
@@ -207,7 +207,7 @@ cdef void PS_unit_partition(PartitionStack *PS):
     """
     cdef int i, n = PS.degree
     PS.depth = 0
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         PS.entries[i] = i
         PS.levels[i] = n
     PS.entries[n-1] = n-1
@@ -243,14 +243,14 @@ cdef PartitionStack *PS_from_list(list L):
     null pointer in the case of an allocation failure.
     """
     cdef int cell, i, num_cells = len(L), cur_start = 0, cur_len, n = 0
-    for cell from 0 <= cell < num_cells:
+    for cell in range(num_cells):
         n += len(L[cell])
     cdef PartitionStack *PS = PS_new(n, 0)
     if PS is NULL:
         return NULL
-    for cell from 0 <= cell < num_cells:
+    for cell in range(num_cells):
         cur_len = len(L[cell])
-        for i from 0 <= i < cur_len:
+        for i in range(cur_len):
             PS.entries[cur_start + i] = L[cell][i]
             PS.levels[cur_start + i] = n
         PS_move_min_to_front(PS, cur_start, cur_start+cur_len-1)
@@ -267,7 +267,7 @@ cdef PS_print(PartitionStack *PS):
     Print a visual representation of PS.
     """
     cdef int i
-    for i from 0 <= i <= PS.depth:
+    for i in range(PS.depth + 1):
         PS_print_partition(PS, i)
 
 cdef PS_print_partition(PartitionStack *PS, int k):
@@ -275,7 +275,7 @@ cdef PS_print_partition(PartitionStack *PS, int k):
     Print the partition at depth k.
     """
     s = '('
-    for i from 0 <= i < PS.degree:
+    for i in range(PS.degree):
         s += str(PS.entries[i])
         if PS.levels[i] <= k:
             s += '|'
@@ -340,7 +340,7 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
         if end != n:
             if PS.levels[end] == PS.depth:
                 bitset_zero(scratch)
-                for i from beg <= i <= end:
+                for i in range(beg, end + 1):
                     bitset_set(scratch, PS.entries[i])
                 count +=1
                 nonsingletons = <bitset_t*> sig_realloc(nonsingletons, count * sizeof(bitset_t))
@@ -368,7 +368,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
     """
     cdef int i, location, n = PS.degree
     bitset_zero(b)
-    for i from 0 <= i < n:
+    for i in range(n):
         if PS.entries[i] == x:
             location = i
             break
@@ -472,7 +472,7 @@ def PS_represent(partition, splits):
     PS_print(PS)
     print("Checking that entries are in order and correct level.")
     good = True
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         if not (PS.entries[i] == i and PS.levels[i] == n):
             print("Failed at i = %d!" % i)
             print(PS.entries[i], PS.levels[i], i, n)
@@ -487,11 +487,11 @@ def PS_represent(partition, splits):
         print("Everything seems in order, deallocating.")
     PS_dealloc(PS)
     print("Deallocated.")
-    print("Creating PartitionStack from partition %s."%partition)
+    print("Creating PartitionStack from partition %s." % partition)
     PS = PS_from_list(partition)
     print("PartitionStack's data:")
-    print("entries -> %s"%[PS.entries[i] for i from 0 <= i < n])
-    print("levels -> %s"%[PS.levels[i] for i from 0 <= i < n])
+    print("entries -> %s"%[PS.entries[i] for i in range(n)])
+    print("levels -> %s"%[PS.levels[i] for i in range(n)])
     print("depth = %d, degree = %d" % (PS.depth,PS.degree))
     PS_print(PS)
     print("Checking PS_is_discrete:")
@@ -499,7 +499,7 @@ def PS_represent(partition, splits):
     print("Checking PS_num_cells:")
     print(PS_num_cells(PS))
     print("Checking PS_is_mcr, min cell reps are:")
-    L = [PS.entries[i] for i from 0 <= i < n if PS_is_mcr(PS, i)]
+    L = [PS.entries[i] for i in range(n) if PS_is_mcr(PS, i)]
     print(L)
     print("Checking PS_is_fixed, fixed elements are:")
     print([PS.entries[l] for l in L if PS_is_fixed(PS, l)])
@@ -508,7 +508,7 @@ def PS_represent(partition, splits):
     PS_print(PS2)
     print("Checking for consistency.")
     good = True
-    for i from 0 <= i < n:
+    for i in range(n):
         if PS.entries[i] != PS2.entries[i] or PS.levels[i] != PS2.levels[i]:
             print("Failed at i = %d!"%i)
             good = False
@@ -527,7 +527,7 @@ def PS_represent(partition, splits):
     print("Getting permutation from PS2->PS:")
     gamma = <int *> sig_malloc(n * sizeof(int))
     PS_get_perm_from(PS, PS2, gamma)
-    print([gamma[i] for i from 0 <= i < n])
+    print([gamma[i] for i in range(n)])
     sig_free(gamma)
     print("Finding first smallest:")
     bitset_init(b, n)
@@ -609,7 +609,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
     SC.base_orbits  = int_ptrs + 2*n
     SC.parents      = int_ptrs + 3*n
     SC.labels       = int_ptrs + 4*n
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.base_orbits[i] = int_array
         SC.parents[i]     = int_array +   n
         SC.labels[i]      = int_array + 2*n
@@ -617,7 +617,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
 
     # second level allocations
     if init_gens:
-        for i from 0 <= i < n:
+        for i in range(n):
             SC.array_size[i] = default_num_gens
             SC.generators[i]   = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
             SC.gen_inverses[i] = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
@@ -654,7 +654,7 @@ cdef inline void SC_dealloc(StabilizerChain *SC):
     if SC is not NULL:
         n =  SC.degree
         if SC.generators is not NULL:
-            for i from 0 <= i < n:
+            for i in range(n):
                 sig_free(SC.generators[i])
                 sig_free(SC.gen_inverses[i])
         sig_free(SC.generators) # frees int_ptrs
@@ -675,29 +675,29 @@ cdef StabilizerChain *SC_symmetric_group(int n):
     if SC is NULL:
         return NULL
     SC.base_size = n-1
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         SC.array_size[i] = n-i-1
     SC.array_size[n-1] = default_num_gens
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.generators[i]   = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         SC.gen_inverses[i] = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         if SC.generators[i] is NULL or SC.gen_inverses[i] is NULL:
             SC_dealloc(SC)
             return NULL
     cdef int *id_perm = SC.perm_scratch
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         b = i
         SC.orbit_sizes[i] = n-i
         SC.num_gens[i] = n-i-1
-        for j from 0 <= j < i:
+        for j in range(i):
             SC.parents[i][j] = -1
-        for j from 0 <= j < n-i:
+        for j in range(n - i):
             SC.base_orbits[i][j] = i+j
             SC.parents[i][i+j] = b
             SC.labels[i][i+j] = j
-        for j from 0 <= j < n-i-1:
+        for j in range(n - i - 1):
             #j-th generator sends i+j+1 to b
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
@@ -716,31 +716,31 @@ cdef StabilizerChain *SC_alternating_group(int n):
     if SC is NULL:
         return NULL
     SC.base_size = n-2
-    for i from 0 <= i < n-2:
+    for i in range(n - 2):
         SC.array_size[i] = n-i-1
     SC.array_size[n-2] = default_num_gens
     SC.array_size[n-1] = default_num_gens
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.generators[i]   = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         SC.gen_inverses[i] = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         if SC.generators[i] is NULL or SC.gen_inverses[i] is NULL:
             SC_dealloc(SC)
             return NULL
     cdef int *id_perm = SC.perm_scratch
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
-    for i from 0 <= i < n-2:
+    for i in range(n - 2):
         b = i
         SC.orbit_sizes[i] = n-i
         SC.num_gens[i] = n-i-2
-        for j from 0 <= j < i:
+        for j in range(i):
             SC.parents[i][j] = -1
-        for j from 0 <= j < n-i:
+        for j in range(n - i):
             SC.base_orbits[i][j] = i+j
             SC.parents[i][i+j] = b
             SC.labels[i][i+j] = j
         SC.labels[i][n-1] = -(n-i-2)
-        for j from 0 <= j < n-i-2:
+        for j in range(n - i - 2):
             #j-th generator sends i+j+1 to b, i+j+2 to i+j+1, and b to i+j+2
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
@@ -795,14 +795,14 @@ cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level):
     if SCC is NULL:
         return NULL
     level = min(level, SC.base_size)
-    for i from 0 <= i < level:
+    for i in range(level):
         SCC.generators[i]   = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         SCC.gen_inverses[i] = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         if SCC.generators[i] is NULL or SCC.gen_inverses[i] is NULL:
             SC_dealloc(SCC)
             return NULL
         SCC.array_size[i] = SC.array_size[i]
-    for i from level <= i < n:
+    for i in range(level, n):
         SCC.generators[i]   = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
         SCC.gen_inverses[i] = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
         if SCC.generators[i] is NULL or SCC.gen_inverses[i] is NULL:
@@ -818,11 +818,11 @@ cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int lev
     SC_dest.base_size = level
     memcpy(SC_dest.orbit_sizes, SC.orbit_sizes, 2*n * sizeof(int) ) # copies orbit_sizes, num_gens
     memcpy(SC_dest.base_orbits[0], SC.base_orbits[0], 3*n*n * sizeof(int) ) # copies base_orbits, parents, labels
-    for i from 0 <= i < level:
+    for i in range(level):
         if SC.num_gens[i] > SC_dest.array_size[i]:
             if SC_realloc_gens(SC_dest, i, max(SC.num_gens[i], 2*SC_dest.array_size[i])):
                 return 1
-        memcpy(SC_dest.generators[i],   SC.generators[i],   SC.num_gens[i]*n * sizeof(int) )
+        memcpy(SC_dest.generators[i], SC.generators[i], SC.num_gens[i]*n * sizeof(int) )
         memcpy(SC_dest.gen_inverses[i], SC.gen_inverses[i], SC.num_gens[i]*n * sizeof(int) )
     return 0
 
@@ -830,12 +830,17 @@ cdef SC_print_level(StabilizerChain *SC, int level):
     cdef int i, j, n = SC.degree
     if level < SC.base_size:
         print('/ level {}'.format(level))
-        print('| orbit   {}'.format([SC.base_orbits[level][i] for i from 0 <= i < SC.orbit_sizes[level]]))
-        print('| parents {}'.format([SC.parents       [level][i] for i from 0 <= i < n]))
-        print('| labels  {}'.format([SC.labels        [level][i] for i from 0 <= i < n]))
+        print('| orbit   {}'.format([SC.base_orbits[level][i]
+                                     for i in range(SC.orbit_sizes[level])]))
+        print('| parents {}'.format([SC.parents[level][i] for i in range(n)]))
+        print('| labels  {}'.format([SC.labels[level][i] for i in range(n)]))
         print('|')
-        print('| generators  {}'.format([[SC.generators  [level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
-        print(r'\ inverses    {}'.format([[SC.gen_inverses[level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
+        print('| generators  {}'.format([[SC.generators[level][n*i + j]
+                                          for j in range(n)]
+                                         for i in range(SC.num_gens[level])]))
+        print(r'\ inverses    {}'.format([[SC.gen_inverses[level][n*i + j]
+                                           for j in range(n)]
+                                          for i in range(SC.num_gens[level])]))
     else:
         print('/ level {}'.format(level))
         print('|')
@@ -863,7 +868,7 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
 cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len):
     cdef int i, n = SC.degree
     SC_dest.base_size = 0
-    for i from 0 <= i < base_len:
+    for i in range(base_len):
         SC_add_base_point(SC_dest, base[i])
     if SC_update(SC_dest, SC, 0):
         SC_dealloc(SC_dest)
@@ -887,14 +892,14 @@ cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level):
                 break
             i += 1
         else:
-            for b from 0 <= b < dest.degree:
+            for b in range(dest.degree):
                 if perm[b] != b:
                     break
             else:
                 continue
             SC_add_base_point(dest, b)
         first_moved = i
-        for i from level <= i <= first_moved:
+        for i in range(level, first_moved + 1):
             if SC_insert_and_sift(dest, i, perm, 1, 0): # don't sift!
                 mpz_clear(dst_order)
                 mpz_clear(src_order)
@@ -922,7 +927,7 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
     if NEW is NULL:
         return NULL
     SC_add_base_point(NEW, p)
-    for i from level <= i < SC.base_size:
+    for i in range(level, SC.base_size):
         b = SC.base_orbits[i][0]
         if b != p:
             SC_add_base_point(NEW, b)
@@ -935,7 +940,7 @@ cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain
     cdef int i, b, n = SC.degree
     SC_copy_nomalloc(SC_dest, SC, level)
     SC_add_base_point(SC_dest, p)
-    for i from level <= i < SC.base_size:
+    for i in range(level, SC.base_size):
         b = SC.base_orbits[i][0]
         if b != p:
             SC_add_base_point(SC_dest, b)
@@ -957,7 +962,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
     if SC.array_size[level] == SC.num_gens[level]:
         if SC_realloc_gens(SC, level, 2*SC.array_size[level]):
             return 1
-    cdef int *new_gen     = SC.generators  [level] + n*SC.num_gens[level]
+    cdef int *new_gen = SC.generators[level] + n*SC.num_gens[level]
     cdef int *new_gen_inv = SC.gen_inverses[level] + n*SC.num_gens[level]
 
     # new generator is perm^(-1) * (path from x to base) (left to right composition)
@@ -968,7 +973,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
 
     # now that we have our generators, regenerate the tree, breadth-first
     b = SC.base_orbits[level][0]
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.parents[level][i] = -1
     SC.parents[level][b] = b
     i = 0
@@ -979,7 +984,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
             gen_inv = SC.gen_inverses[level] + n*gen_index
             SC_scan(SC, level, x, gen_index, gen_inv, 1)
         for gen_index from 0 <= gen_index < SC.num_gens[level]:
-            gen     = SC.generators  [level] + n*gen_index
+            gen = SC.generators[level] + n*gen_index
             SC_scan(SC, level, x, gen_index, gen, -1)
         i += 1
     return 0
