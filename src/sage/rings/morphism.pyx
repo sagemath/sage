@@ -109,26 +109,25 @@ A map from a multivariate polynomial ring to itself::
 
 An endomorphism of a quotient of a multi-variate polynomial ring::
 
-    sage; # needs sage.libs.singular
+    sage: # needs sage.libs.singular
     sage: R.<x,y> = PolynomialRing(QQ)
-    sage: S.<a,b> = quo(R, ideal(1 + y^2))                                              # needs sage.libs.singular
-    sage: phi = S.hom([a^2, -b])                                                        # needs sage.libs.singular
-    sage: phi                                                                           # needs sage.libs.singular
+    sage: S.<a,b> = quo(R, ideal(1 + y^2))
+    sage: phi = S.hom([a^2, -b])
+    sage: phi
     Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
      over Rational Field by the ideal (y^2 + 1)
       Defn: a |--> a^2
             b |--> -b
-    sage: phi(b)                                                                        # needs sage.libs.singular
+    sage: phi(b)
     -b
-    sage: phi(a^2 + b^2)                                                                # needs sage.libs.singular
+    sage: phi(a^2 + b^2)
     a^4 - 1
 
 The reduction map from the integers to the integers modulo 8, viewed as
 a quotient ring::
 
     sage: R = ZZ.quo(8*ZZ)
-    sage: pi = R.cover()
-    sage: pi
+    sage: pi = R.cover(); pi
     Ring morphism:
       From: Integer Ring
       To:   Ring of integers modulo 8
@@ -239,7 +238,6 @@ Endomorphism of power series ring::
 
 Frobenius on a power series ring over a finite field::
 
-    sage: # needs sage.rings.finite_rings
     sage: R.<t> = PowerSeriesRing(GF(5))
     sage: f = R.hom([t^5]); f
     Ring endomorphism of Power Series Ring in t over Finite Field of size 5
@@ -323,7 +321,7 @@ Embedding a number field into the reals::
 
 An example from Jim Carlson::
 
-    sage: K = QQ # by the way :-)
+    sage: K = QQ  # by the way :-)
     sage: R.<a,b,c,d> = K[]; R
     Multivariate Polynomial Ring in a, b, c, d over Rational Field
     sage: S.<u> = K[]; S
@@ -336,9 +334,9 @@ An example from Jim Carlson::
             b |--> 0
             c |--> 0
             d |--> u
-    sage: f(a+b+c+d)
+    sage: f(a + b + c + d)
     u
-    sage: f( (a+b+c+d)^2 )
+    sage: f((a+b+c+d)^2)
     u^2
 
 TESTS::
@@ -369,8 +367,6 @@ compare equal::
     sage: R.<x> = k[]
     sage: F4.<a> = R.quo(x^2+x+1)
     sage: H = End(F4)
-
-    sage: # needs sage.rings.finite_rings
     sage: from sage.rings.morphism import *
     sage: phi1 = H.identity(); phi1
     Identity endomorphism of Univariate Quotient Polynomial Ring in a

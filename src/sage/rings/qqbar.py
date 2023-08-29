@@ -2582,29 +2582,29 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         [(361/29286*a^5 - 19/3254*a^4 - 14359/29286*a^3 + 401/29286*a^2 + 18183/1627*a + 15930/1627, 1),
          (49/117144*a^5 - 179/39048*a^4 - 3247/117144*a^3 + 22553/117144*a^2 + 1744/4881*a - 17195/6508, 1),
          (-1493/117144*a^5 + 407/39048*a^4 + 60683/117144*a^3 - 24157/117144*a^2 - 56293/4881*a - 53033/6508, 1)]
-        sage: rt2 = AA(sqrt(2)); rt2                                                    # needs sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: rt2 = AA(sqrt(2)); rt2
         1.414213562373095?
-        sage: rt3 = AA(sqrt(3)); rt3                                                    # needs sage.symbolic
+        sage: rt3 = AA(sqrt(3)); rt3
         1.732050807568878?
-        sage: rt3a = QQbar(sqrt(3)); rt3a                                               # needs sage.symbolic
+        sage: rt3a = QQbar(sqrt(3)); rt3a
         1.732050807568878?
         sage: qqI = QQbar.zeta(4); qqI
         I
         sage: z3 = QQbar.zeta(3); z3
         -0.500000000000000? + 0.866025403784439?*I
-        sage: rt2b = rt3 + rt2 - rt3; rt2b                                              # needs sage.symbolic
+        sage: rt2b = rt3 + rt2 - rt3; rt2b
         1.414213562373095?
-        sage: rt2c = z3 + rt2 - z3; rt2c                                                # needs sage.symbolic
+        sage: rt2c = z3 + rt2 - z3; rt2c
         1.414213562373095? + 0.?e-19*I
-
-        sage: number_field_elements_from_algebraics(rt2)                                # needs sage.symbolic
+        sage: number_field_elements_from_algebraics(rt2)
         (Number Field in a with defining polynomial y^2 - 2, a,
          Ring morphism:
            From: Number Field in a with defining polynomial y^2 - 2
            To:   Algebraic Real Field
            Defn: a |--> 1.414213562373095?)
-
-        sage: number_field_elements_from_algebraics((rt2,rt3))                          # needs sage.symbolic
+        sage: number_field_elements_from_algebraics((rt2,rt3))
         (Number Field in a with defining polynomial y^4 - 4*y^2 + 1, [-a^3 + 3*a, a^2 - 2],
          Ring morphism:
             From: Number Field in a with defining polynomial y^4 - 4*y^2 + 1
@@ -2725,7 +2725,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         [a^10 - 5*a^5 + 2, -a^8 + 4*a^3]
         sage: hom
         Ring morphism:
-          From: Number Field in a with defining polynomial y^15 - 9*y^10 + 21*y^5 - 3 with a = 0.6866813218928813?
+          From: Number Field in a with defining polynomial y^15 - 9*y^10 + 21*y^5 - 3
+                with a = 0.6866813218928813?
           To:   Algebraic Real Field
           Defn: a |--> 0.6866813218928813?
 

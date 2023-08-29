@@ -898,11 +898,11 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         EXAMPLES::
 
             sage: R.<x,y> = QQ[]
-            sage: R.quo(x^2 - y).is_integral_domain()                                   # needs sage.singular
+            sage: R.quo(x^2 - y).is_integral_domain()                                   # needs sage.libs.singular
             True
-            sage: R.quo(x^2 - y^2).is_integral_domain()                                 # needs sage.singular
+            sage: R.quo(x^2 - y^2).is_integral_domain()                                 # needs sage.libs.singular
             False
-            sage: R.quo(x^2 - y^2).is_integral_domain(proof=False)                      # needs sage.singular
+            sage: R.quo(x^2 - y^2).is_integral_domain(proof=False)                      # needs sage.libs.singular
             False
             sage: R.<a,b,c> = ZZ[]
             sage: Q = R.quotient_ring([a, b])
@@ -1102,15 +1102,17 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: I = R.ideal(x^2 + y^2)
             sage: J = R.ideal(x^2 + y^2, x^3 - y)
-            sage: I < J                                                                 # needs sage.libs.singular
-            True
             sage: S = R.quotient(I)
             sage: T = R.quotient(J)
-            sage: T.has_coerce_map_from(S)                                              # needs sage.libs.singular
+
+            sage: # needs sage.libs.singular
+            sage: I < J
             True
-            sage: S.quotient_ring(x^4 - x*y + 1).has_coerce_map_from(S)                 # needs sage.libs.singular
+            sage: T.has_coerce_map_from(S)
             True
-            sage: S.has_coerce_map_from(T)                                              # needs sage.libs.singular
+            sage: S.quotient_ring(x^4 - x*y + 1).has_coerce_map_from(S)
+            True
+            sage: S.has_coerce_map_from(T)
             False
 
         We also allow coercions with the cover rings::
@@ -1318,7 +1320,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
             sage: P.<x,y> = PolynomialRing(GF(2))
             sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))
-            sage: magma(Q)                      # optional - magma
+            sage: magma(Q)  # indirect doctest                      # optional - magma
             Affine Algebra of rank 2 over GF(2)
             Graded Reverse Lexicographical Order
             Variables: x, y
