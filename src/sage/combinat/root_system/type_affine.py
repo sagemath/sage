@@ -327,8 +327,8 @@ class AmbientSpace(CombinatorialFreeModule):
 
         Here is a twisted affine example::
 
-            sage: B31ᵛ = RootSystem(CartanType(["B",3,1]).dual())
-            sage: B31ᵛ.ambient_space().simple_roots()                                   # needs sage.graphs
+            sage: B31v = RootSystem(CartanType(["B",3,1]).dual())
+            sage: B31v.ambient_space().simple_roots()                                   # needs sage.graphs
             Finite family {0: -e[0] - e[1] + e['delta'], 1: e[0] - e[1],
                            2: e[1] - e[2], 3: 2*e[2]}
 
