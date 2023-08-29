@@ -39,7 +39,11 @@ from sage.misc.lazy_import import lazy_import
 from .all__sagemath_combinat import *
 from .all__sagemath_flint import *
 from .all__sagemath_modules import *
-from .all__sagemath_symbolics import *
+
+try:
+    from .all__sagemath_symbolics import *
+except ImportError:
+    pass
 
 # Finite fields
 from .finite_rings.all import *

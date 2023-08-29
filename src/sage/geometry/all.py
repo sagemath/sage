@@ -1,2 +1,6 @@
 from .all__sagemath_polyhedra import *
-from .all__sagemath_symbolics import *
+
+try:
+    from .all__sagemath_symbolics import *
+except ImportError:
+    pass

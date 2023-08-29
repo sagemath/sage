@@ -21,7 +21,11 @@ from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
 from .all__sagemath_schemes import *
-from .all__sagemath_symbolics import *
+
+try:
+    from .all__sagemath_symbolics import *
+except ImportError:
+    pass
 
 from sage.misc.lazy_import import lazy_import
 

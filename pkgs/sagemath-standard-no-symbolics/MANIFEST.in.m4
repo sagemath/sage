@@ -1,8 +1,9 @@
 dnl MANIFEST.in is generated from this file by SAGE_ROOT/bootstrap via m4.
 
 dnl Include all from sagemath-categories (via m4 include)
-include(`../sagelib/src/MANIFEST.in')
+include(`../../../src/MANIFEST.in')
 
+prune .tox
 exclude *.m4
 include requirements.txt
 
@@ -71,7 +72,7 @@ exclude sage/interfaces/tides.p*
 ## prune sage/libs/lrcalc
 ## prune sage/libs/mpc
 ## prune sage/libs/mpfr
-## prune sage/libs/mpmath
+prune sage/libs/mpmath
 ## prune sage/libs/ntl
 ## include sage/libs/ntl/*.px*                     # FIXME
 ## prune sage/libs/pari

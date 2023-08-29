@@ -62,59 +62,19 @@ dnl Packages with important upper version bounds
     SPKG_INSTALL_REQUIRES_ptyprocess
 
 scripts =
-    # The sage script
-    bin/sage
-    # Other scripts that should be in the path also for OS packaging of sage:
-    bin/sage-eval
-    # Included because it is useful for doctesting/coverage testing user scripts too:
-    bin/sage-runtests
-    bin/sage-fixdoctests
-    bin/sage-coverage
     bin/sage-cython
-    # Helper scripts invoked by sage script
-    # (they would actually belong to something like libexec)
-    bin/sage-cachegrind
-    bin/sage-callgrind
-    bin/sage-massif
-    bin/sage-omega
-    bin/sage-valgrind
-    bin/sage-venv-config
-    bin/sage-version.sh
-    bin/sage-cleaner
     # Only makes sense in sage-the-distribution. TODO: Move to another installation script.
     bin/sage-list-packages
     # Uncategorized scripts in alphabetical order
-    bin/sage-env
-    # sage-env-config -- installed by sage_conf
-    # sage-env-config.in -- not to be installed
     bin/sage-grep
     bin/sage-grepdoc
-    bin/sage-inline-fortran
-    bin/sage-ipynb2rst
-    bin/sage-ipython
-    bin/sage-notebook
-    bin/sage-num-threads.py
-    bin/sage-preparse
-    bin/sage-python
     bin/sage-rebase.bat
     bin/sage-rebase.sh
     bin/sage-rebaseall.bat
     bin/sage-rebaseall.sh
-    bin/sage-run
-    bin/sage-run-cython
-    bin/sage-startuptime.py
     bin/sage-update-version
 
 [options.package_data]
-
-sage.libs.gap =
-    sage.gaprc
-
-sage.doctest =
-    tests/*
-
-sage.repl.rich_output =
-    example*
 
 sage =
     ext_data/*
