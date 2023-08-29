@@ -337,7 +337,13 @@ if PythonModule("furo").is_present():
     html_css_files = [
         'custom-furo.css',
         'custom-jupyter-sphinx.css',
+        'custom-codemirror-monokai.css',
     ]
+
+    html_js_files = [
+        'jupyter-sphinx-helper.js',
+    ]
+
     # A list of paths that contain extra templates (or templates that overwrite
     # builtin/theme-specific templates). Relative paths are taken as relative
     # to the configuration directory.
