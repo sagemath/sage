@@ -709,6 +709,30 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
                 raise TypeError("unable to coerce %s to an integer" % type(x))
 
+    cpdef _backslash_(self, B):
+        r"""
+        Used to compute `A \backslash B`, i.e., the backslash solver
+        operator.
+
+        EXAMPLES::
+
+            sage: A = 2
+            sage: B = 3
+            sage: C = A._backslash_(B); C
+            3/2
+            sage: A*C == B
+            True
+            sage: A._backslash_(B) == A \ B
+            True
+            sage: A._backslash_(B) == A.solve_right(B)
+            True
+        """
+        if mpz_sgn((<Integer>self).value) == 0:
+            raise ZeroDivisionError("rational division by zero")
+        x = <Rational> Rational.__new__(Rational)
+        mpq_div_zz(x.value, right.value, (<Integer>self).value)
+        return x
+
     def __reduce__(self):
         """
         This is used when pickling integers.
