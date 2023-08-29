@@ -23,12 +23,13 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy  # optional - sirocco
+    sage:  # optional - sirocco
+    sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
-    sage: braid_monodromy(f)                        # optional - sirocco
+    sage: braid_monodromy(f)
     ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0})
-    sage: fundamental_group(f)                      # optional - sirocco
+    sage: fundamental_group(f)
     Finitely presented group < x0 |  >
 """
 # ****************************************************************************
@@ -86,11 +87,12 @@ def braid_from_piecewise(strands):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import braid_from_piecewise  # optional - sirocco
+        sage:   # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import braid_from_piecewise
         sage: paths = [[(0, 0, 1), (0.2, -1, -0.5), (0.8, -1, 0), (1, 0, -1)],
         ....:          [(0, -1, 0), (0.5, 0, -1), (1, 1, 0)],
         ....:          [(0, 1, 0), (0.5, 1, 1), (1, 0, 1)]]
-        sage: braid_from_piecewise(paths)       # optional - sirocco
+        sage: braid_from_piecewise(paths)
         s0*s1
     """
     L = strands
@@ -165,15 +167,16 @@ def braid_from_piecewise(strands):
 
 def discrim(pols):
     r"""
-    Return the points in the discriminant of the product of the polynomials of a list or tuple ``pols``.
+    Return the points in the discriminant of the product of the polynomials
+    of a list or tuple ``pols``.
 
     The result is the set of values of the first variable for which
     two roots in the second variable coincide.
 
     INPUT:
 
-    - ``pols`` -- a list or tuple of polynomials in two variables with coefficients in a
-      number field with a fixed embedding in `\QQbar`
+    - ``pols`` -- a list or tuple of polynomials in two variables with
+      coefficients in a number field with a fixed embedding in `\QQbar`
 
     OUTPUT:
 
@@ -279,18 +282,19 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
     INPUT:
 
     - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
-        by a list of edges
+      by a list of edges
 
-    - ``convex`` -- boolean (default -- `False`), if set to ``True`` a simpler computation is made
+    - ``convex`` -- boolean (default: `False`), if set to ``True`` a simpler
+      computation is made
 
-    -  ``precision`` -- bits of precision (default -- 53)
+    -  ``precision`` -- bits of precision (default: 53)
 
-    - ``verbose`` -- boolean (default -- ``False``) for testing purposes
+    - ``verbose`` -- boolean (default: ``False``) for testing purposes
 
     OUTPUT:
 
-    The same circuit if it goes counterclockwise, and its reversed otherwise, given as
-    the ordered list of vertices with identic extremities.
+    The same circuit if it goes counterclockwise, and its reversed otherwise,
+    given as the ordered list of vertices with identic extremities.
 
     EXAMPLES::
 
@@ -369,8 +373,8 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
 
 def voronoi_cells(V):
     r"""
-    Compute the graph, the boundary graph, a base point, a positive orientation of the boundary graph,
-    and the dual graph of a corrected Voronoi diagram.
+    Compute the graph, the boundary graph, a base point, a positive orientation
+    of the boundary graph, and the dual graph of a corrected Voronoi diagram.
 
     INPUT:
 
@@ -381,8 +385,8 @@ def voronoi_cells(V):
     - ``G`` -- the graph of the 1-skeleton of ``V``
     - ``E`` -- the subgraph of the boundary
     - ``p`` -- a vertex in ``E``
-    - ``EC`` -- a list of vertices (representing a counterclockwise orientation  of ``E``) with identical
-      first and last elements)
+    - ``EC`` -- a list of vertices (representing a counterclockwise orientation
+      of ``E``) with identical first and last elements)
     - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
       by the compact regions of ``V`` and the edges by their dual edges.
 
@@ -488,18 +492,19 @@ def followstrand(f, factors, x0, x1, y0a, prec=53):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import followstrand  # optional - sirocco
+        sage: # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import followstrand
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: x0 = CC(1, 0)
         sage: x1 = CC(1, 0.5)
-        sage: followstrand(f, [], x0, x1, -1.0)             # abs tol 1e-15   # optional - sirocco
+        sage: followstrand(f, [], x0, x1, -1.0)             # abs tol 1e-15
         [(0.0, -1.0, 0.0),
          (0.7500000000000001, -1.015090921153253, -0.24752813818386948),
          (1.0, -1.026166099551513, -0.32768940253604323)]
         sage: fup = f.subs({y: y - 1/10})
         sage: fdown = f.subs({y: y + 1/10})
-        sage: followstrand(f, [fup, fdown], x0, x1, -1.0)   # abs tol 1e-15   # optional - sirocco
+        sage: followstrand(f, [fup, fdown], x0, x1, -1.0)   # abs tol 1e-15
         [(0.0, -1.0, 0.0),
          (0.5303300858899107, -1.0076747107983448, -0.17588022709184917),
          (0.7651655429449553, -1.015686131039112, -0.25243563967299404),
@@ -798,8 +803,8 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     - ``glist`` -- a tuple of polynomials in two variables
     - ``x0`` -- a Gauss rational
     - ``x1`` -- a Gauss rational
-    - ``precision`` -- a dictionary (default `dict()`) which assigns a number precision bits
-      to each element of ``glist``
+    - ``precision`` -- a dictionary (default: `dict()`) which assigns a number
+      precision bits to each element of ``glist``
 
     OUTPUT:
 
@@ -807,6 +812,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
 
     EXAMPLES::
 
+        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment, fieldI
         sage: R.<x, y> = QQ[]
         sage: K = fieldI(QQ)
@@ -814,7 +820,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
         sage: f = f.change_ring(K)
         sage: x0 = 1
         sage: x1 = 1 + I / 2
-        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1)  # optional - sirocco
+        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1)
         s1
 
     TESTS:
@@ -827,10 +833,10 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
         sage: R.<x, y> = Kw[]
         sage: z = -wp - 1
         sage: f = y * (y + z) * x * (x - 1) * (x - y) * (x + z * y - 1) * (x + z * y + wp)
-        sage: from sage.schemes.curves import zariski_vankampen as zvk  # optional - sirocco
-        sage: Kw1 = zvk.fieldI(Kw)                                      # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import fieldI, braid_in_segment
+        sage: Kw1 = fieldI(Kw)
         sage: g = f.subs({x: x + 2 * y})
-        sage: g = g.change_ring(Kw1)                                    # optional - sirocco
+        sage: g = g.change_ring(Kw1)
         sage: p1 = QQbar(sqrt(-1/3))
         sage: p1a = CC(p1)
         sage: p1b = QQ(p1a.real()) + I*QQ(p1a.imag())
@@ -838,7 +844,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
         sage: p2a = CC(p2)
         sage: p2b = QQ(p2a.real()) + I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
-        sage: B = zvk.braid_in_segment(glist, p1b, p2b); B              # optional - sirocco
+        sage: B = braid_in_segment(glist, p1b, p2b); B              # optional - sirocco
         s5*s3^-1
     """
     precision1 = {_: precision[_] for _ in precision.keys()}
@@ -908,10 +914,10 @@ def geometric_basis(G, E, EC0, p, dual_graph):
 
     INPUT:
 
-    - ``G`` -- a graph which correspond to the bounded edgess of a Voronoi Diagram
+    - ``G`` -- a graph with the bounded edges of a Voronoi Diagram
 
-    - ``E`` -- a subgraph of ``G`` which is a cycle; it corresponds to the bounded edges touching
-      an unbounded region of a Voronoi Diagram
+    - ``E`` -- a subgraph of ``G`` which is a cycle containing the bounded
+      edges touching an unbounded region of a Voronoi Diagram
 
     - ``EC0`` -- A counterclockwise orientation of the vertices of ``E``
 
@@ -920,8 +926,8 @@ def geometric_basis(G, E, EC0, p, dual_graph):
     - ``dual_graph`` -- a dual graph for a plane embedding of ``G`` such that
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
-      by a tuple whose first element is the an integer for the position and the second one is the
-      cyclic ordered list of vertices in the region.
+      by a tuple whose first element is the an integer for the position and the
+      second one is the cyclic ordered list of vertices in the region.
 
     OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
     Each path is a list of vertices, that form a closed path in ``G``, based at
@@ -1088,7 +1094,9 @@ def strand_components(f, flist, p1):
     - ``f`` -- a  reduced polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``flist`` -- a  list of polynomials with two variables whose product equals ``f``
+    - ``flist`` -- a  list of polynomials with two variables whose
+      product equals ``f``
+
     - ``p1`` -- a Gauss rational
 
     OUTPUT:
@@ -1100,10 +1108,11 @@ def strand_components(f, flist, p1):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import strand_components  # optional - sirocco
+        sage: # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import strand_components
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
-        sage: strand_components(prod(flist), flist, 1)          # optional - sirocco
+        sage: strand_components(prod(flist), flist, 1)
         ([(-0.500000000000000? - 0.866025403784439?*I, 0),
           (-0.500000000000000? + 0.866025403784439?*I, 0),
           (1, 0), (1.333333333333334?, 1)], {0: 0, 1: 0, 2: 0, 3: 1})
@@ -1124,14 +1133,16 @@ def strand_components(f, flist, p1):
 
 def braid_monodromy(f, arrangement=()):
     r"""
-    Compute the braid monodromy of a projection of the curve defined by a polynomial.
+    Compute the braid monodromy of a projection of the curve defined by
+    a polynomial.
 
     INPUT:
 
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``.
+    - ``arrangement`` -- an optional tuple of polynomials whose product
+      equals ``f``.
 
 
     OUTPUT:
@@ -1144,33 +1155,35 @@ def braid_monodromy(f, arrangement=()):
 
     .. NOTE::
 
-        The projection over the `x` axis is used if there are no vertical asymptotes.
-        Otherwise, a linear change of variables is done to fall into the previous case.
+        The projection over the `x` axis is used if there are no vertical
+        asymptotes. Otherwise, a linear change of variables is done to fall
+        into the previous case.
 
     .. TODO::
 
-        Create a class ``arrangements_of_curves`` with a ``braid_monodromy`` method
-        it can be also a method for affine line arrangements.
+        Create a class ``arrangements_of_curves`` with a ``braid_monodromy``
+        method; it can be also a method for affine line arrangements.
 
     EXAMPLES::
 
+        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = (x^2 - y^3) * (x + 3*y - 5)
-        sage: bm = braid_monodromy(f); bm                               # optional - sirocco
+        sage: bm = braid_monodromy(f); bm
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
           s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0})
         sage: flist = (x^2 - y^3, x + 3*y - 5)
-        sage: bm1 = braid_monodromy(f, arrangement=flist)               # optional - sirocco
-        sage: bm1[0] == bm[0]                                           # optional - sirocco
+        sage: bm1 = braid_monodromy(f, arrangement=flist)
+        sage: bm1[0] == bm[0]
         True
-        sage: bm1[1]                                                    # optional - sirocco
+        sage: bm1[1]
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
         ([], {})
-        sage: braid_monodromy(x*y^2 - 1)                                # optional - sirocco
+        sage: braid_monodromy(x*y^2 - 1)
         ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0})
     """
     global roots_interval_cache
@@ -1245,7 +1258,8 @@ def braid_monodromy(f, arrangement=()):
 
 def conjugate_positive_form(braid):
     r"""
-    For a ``braid`` which is conjugate to a product of *disjoint* positive braids a list of such decompositions is given.
+    For a ``braid`` which is conjugate to a product of *disjoint* positive
+    braids a list of such decompositions is given.
 
     INPUT:
 
@@ -1253,9 +1267,12 @@ def conjugate_positive_form(braid):
 
     OUTPUT:
 
-    A list of `r` lists. Each such list is another list with two elements, a positive braid `\alpha_i` and a list of
-    permutation braids `\gamma_{1}^{i},\dots,\gamma_{r}^{n_i}` such that if `\gamma_i=\prod_{j=1}^{n_i} \gamma_j^i` then
-    the braids `\tau_i=\gamma_i\alpha_i\gamma_i^{-1}` pairwise commute and `\alpha=\prod_{i=1}^{r} \tau_i`.
+    A list of `r` lists. Each such list is another list with two elements, a
+    positive braid `\alpha_i` and a list of permutation braids
+    `\gamma_{1}^{i},\dots,\gamma_{r}^{n_i}` such that if
+    `\gamma_i=\prod_{j=1}^{n_i} \gamma_j^i` then the braids
+    `\tau_i=\gamma_i\alpha_i\gamma_i^{-1}` pairwise commute
+    and `\alpha=\prod_{i=1}^{r} \tau_i`.
 
     EXAMPLES::
 
@@ -1321,17 +1338,21 @@ def conjugate_positive_form_p(braid):
 
 def braid2rels(L):
     r"""
-    Return a minimal set of relations of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``
-    where ``F = FreeGroup(d)`` and ``b`` is a conjugate of a positive braid . One starts
-    from the non-trivial relations determined by the positive braid and transform them in relations determined by ``b``.
+    Return a minimal set of relations of the group
+    ``F / [(b * F([j])) / F([j]) for j in (1..d)]`` where ``F = FreeGroup(d)``
+    and ``b`` is a conjugate of a positive braid . One starts from the
+    non-trivial relations determined by the positive braid and transform
+    them in relations determined by ``b``.
 
     INPUT:
 
-    - ``L`` -- a tuple whose first element is a positive braid and the second element is a list of permutation braids.
+    - ``L`` -- a tuple whose first element is a positive braid and the second
+      element is a list of permutation braids.
 
     OUTPUT:
 
-    A list of Tietze words for a minimal set of relations of ``F / [(g * b) / g for g in F.gens()]``.
+    A list of Tietze words for a minimal set of relations of
+    ``F / [(g * b) / g for g in F.gens()]``.
 
     EXAMPLES::
 
@@ -1387,13 +1408,15 @@ def relation(x, b):
 
 def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
     r"""
-    Return a presentation of the fundamental group computed from a braid monodromy.
+    Return a presentation of the fundamental group computed from
+    a braid monodromy.
 
     INPUT:
 
     - ``bm`` -- a list of braids
 
-    - ``degree`` -- integer (default: ``None``); only needed if the braid monodromy is an empty list.
+    - ``degree`` -- integer (default: ``None``); only needed if the braid
+      monodromy is an empty list.
 
     - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
       presentation will be simplified (see below)
@@ -1409,11 +1432,11 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
-    - ``vertical`` -- list of integers (default: ``[]``); the indices in ``[1..r]`` of the braids that
-      surround a vertical line
+    - ``vertical`` -- list of integers (default: ``[]``); the indices in
+      ``[1..r]`` of the braids that surround a vertical line
 
-    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
-    is returned.
+    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
+    ``True``, a Zariski-VanKampen presentation is returned.
 
     OUTPUT:
 
@@ -1435,7 +1458,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         sage: bm = [B2(3 * [1])]
         sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
         Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
-        ....:                                   x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
+                                                x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
         sage: fundamental_group_from_braid_mon([]) is None      # optional - sirocco
         True
         sage: fundamental_group_from_braid_mon([], degree=2)    # optional - sirocco
@@ -1501,11 +1524,11 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
     - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
       a presentation of the fundamental group with the homotopy type
-      of the complement of the affine curve is computed, ``simplified`` is ignored.
-      One relation is added if ``projective`` is set to ``True``.
+      of the complement of the affine curve is computed, ``simplified`` is
+      ignored. One relation is added if ``projective`` is set to ``True``.
 
-    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
-    is returned.
+    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
+    ``True``, a Zariski-VanKampen presentation is returned.
 
     OUTPUT:
 
@@ -1541,7 +1564,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\QQbar`::
 
-        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group   # optional - sirocco
+        sage  # optional - sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: zeta = QQbar['x']('x^2 + x+ 1').roots(multiplicities=False)[0]
         sage: zeta
         -0.50000000000000000? - 0.866025403784439?*I
@@ -1550,7 +1574,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         Defining zeta
         sage: R.<x, y> = F[]
         sage: f = y^3 + x^3 + zeta * x + 1
-        sage: fundamental_group(f)              # optional - sirocco
+        sage: fundamental_group(f)
         Finitely presented group < x0 |  >
 
     We compute the fundamental group of the complement of a quartic using the ``puiseux`` option::
@@ -1592,13 +1616,14 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False):
     r"""
     Compute the fundamental group of the complement of a curve
-    defined by a list of polynomials with the extra information about the correspondence of the generators
+    defined by a list of polynomials with the extra information
+    about the correspondence of the generators
     and meridians of the elements of the list.
 
     INPUT:
 
-    - ``flist`` -- a  tuple of polynomial with two variables, over a number field
-      with an embedding in the complex numbers
+    - ``flist`` -- a  tuple of polynomial with two variables, over a number
+      field with an embedding in the complex numbers
 
     - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
       presentation will be simplified (see below)
@@ -1620,9 +1645,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
       each of this paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
-    - A dictionary attaching a tuple ``(i,)`` (generator) to a number ``j`` (a polynomial in the list).
-      If ``simplified`` is set to ``True``, a longer key may appear for either the meridian of the line at infinity,
-      if ``projective`` is ``True``, or a simplified generator, if ``projective`` is ``False``
+    - A dictionary attaching a tuple ``(i,)`` (generator) to a number ``j``
+      (a polynomial in the list). If ``simplified`` is set to ``True``,
+      a longer key may appear for either the meridian of the line at infinity,
+      if ``projective`` is ``True``, or a simplified generator,
+      if ``projective`` is ``False``
 
     EXAMPLES::
 
@@ -1660,10 +1687,10 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
 
     .. TODO::
 
-        Create a class ``arrangements_of_curves`` with a ``fundamental_group`` method
-        it can be also a method for affine or projective line arrangements, even for
-        hyperplane arrangements defined over a number subfield of ``QQbar`` after
-        applying a generic line section.
+        Create a class ``arrangements_of_curves`` with a ``fundamental_group``
+        method it can be also a method for affine or projective line
+        arrangements, even for hyperplane arrangements defined over a number
+        subfield of ``QQbar`` after applying a generic line section.
     """
     if len(flist) > 0:
         f = prod(flist)

@@ -1780,15 +1780,16 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         EXAMPLES::
 
+            sage: # optional - sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
-            sage: C.fundamental_group()             # optional - sirocco
+            sage: C.fundamental_group()
             Finitely presented group < x0 |  >
-            sage: bm = C.braid_monodromy() # optional - sirocco
-            sage: g = C.fundamental_group(puiseux=True) # optional - sirocco
-            sage: g.sorted_presentation() # optional - sirocco
+            sage: bm = C.braid_monodromy()
+            sage: g = C.fundamental_group(puiseux=True)
+            sage: g.sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
-            sage: g.simplified() # optional - sirocco
+            sage: g.simplified()
             Finitely presented group < x0 |  >
 
         In the case of number fields, they need to have an embedding
