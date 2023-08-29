@@ -1564,8 +1564,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\QQbar`::
 
-        sage  # optional - sirocco
-        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
         sage: zeta = QQbar['x']('x^2 + x+ 1').roots(multiplicities=False)[0]
         sage: zeta
         -0.50000000000000000? - 0.866025403784439?*I
@@ -1574,7 +1573,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         Defining zeta
         sage: R.<x, y> = F[]
         sage: f = y^3 + x^3 + zeta * x + 1
-        sage: fundamental_group(f)
+        sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
 
     We compute the fundamental group of the complement of a quartic using the ``puiseux`` option::
