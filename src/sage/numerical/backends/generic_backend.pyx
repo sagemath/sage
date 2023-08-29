@@ -1288,8 +1288,8 @@ cdef class GenericBackend:
         del cp
         self._do_test_problem_data(tester, cpcp)
 
-
     # TODO: We should have a more systematic way of generating MIPs for testing.
+
     @classmethod
     def _test_copy_some_mips(cls, tester=None, **options):
         p = cls()                         # fresh instance of the backend

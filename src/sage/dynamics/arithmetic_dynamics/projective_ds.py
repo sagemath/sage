@@ -6482,6 +6482,309 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 next_point = f(next_point)
         return post_critical_list
 
+    def is_chebyshev(self):
+        r"""
+        Check if ``self`` is a Chebyshev polynomial.
+
+        OUTPUT: True if ``self`` is Chebyshev, False otherwise.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
+            sage: F.is_chebyshev()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^2 + y^2, y^2])
+            sage: F.is_chebyshev()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([2*x^2 - y^2, y^2])
+            sage: F.is_chebyshev()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^3, 4*y^3 - 3*x^2*y])
+            sage: F.is_chebyshev()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([2*x^2 - y^2, y^2])
+            sage: L.<i> = CyclotomicField(4)
+            sage: M = Matrix([[0,i],[-i,0]])
+            sage: F.conjugate(M)
+            Dynamical System of Projective Space of dimension 1 over Cyclotomic Field of order 4 and degree 2
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((-i)*x^2 : (-i)*x^2 + (2*i)*y^2)
+            sage: F.is_chebyshev()
+            True
+
+        REFERENCES:
+
+        - [Mil2006]_
+        """
+        # We need `F` to be defined over a number field for
+        # the function `is_postcrtically_finite` to work
+        if self.base_ring() not in NumberFields():
+            raise NotImplementedError("Base ring must be a number field")
+
+        if self.domain().dimension() != 1:
+            return False
+
+        # All Chebyshev polynomials are postcritically finite
+        if not self.is_postcritically_finite():
+            return False
+
+        # Get field of definition for critical points and change base field
+        critical_field, phi = self.field_of_definition_critical(return_embedding=True)
+        F_crit = self.change_ring(phi)
+
+        # Get the critical points and post-critical set
+        crit_set = set(F_crit.critical_points())
+        post_crit_set = set()
+        images_needed = copy(crit_set)
+        while len(images_needed) != 0:
+            Q = images_needed.pop()
+            Q2 = F_crit(Q)
+            if Q2 not in post_crit_set:
+                post_crit_set.add(Q2)
+                images_needed.add(Q2)
+
+        crit_fixed_pts = set()
+        for crit in crit_set:
+            if F_crit.nth_iterate(crit, 1) == crit:
+                crit_fixed_pts.add(crit)
+
+        # All Chebyshev maps have 3 post-critical values
+        if (len(post_crit_set) != 3) or (len(crit_fixed_pts) != 1):
+            return False
+
+        f = F_crit.dehomogenize(1)[0]
+        x = f.parent().gen()
+        ram_points = {}
+        for crit in crit_set:
+            g = f
+            new_crit = crit
+
+            # Check if critical point is infinity
+            if crit[1] == 0:
+                g = g.subs(x=1/x)
+                new_crit = F_crit.domain()([0, 1])
+
+            # Check if output is infinity
+            if F_crit.nth_iterate(crit, 1)[1] == 0:
+                g = 1/g
+
+            new_crit = new_crit.dehomogenize(1)[0]
+            e = 1
+            g = g.derivative(x)
+
+            while g(new_crit) == 0:
+                e += 1
+                g = g.derivative(x)
+
+            ram_points[crit] = e
+
+        r = {}
+
+        # Set r value to 0 to represent infinity
+        r[crit_fixed_pts.pop()] = 0
+
+        # Get non-fixed tail points in the post-critical portrait
+        crit_tails = crit_set.difference(post_crit_set)
+        for crit in crit_tails:
+            # Each critical tail point has r value 1
+            r[crit] = 1
+            point = crit
+
+            # Assign r values to every point in the orbit of crit.
+            # If we find a point in the orbit which already has an r value assigned,
+            # check that we get a consistent r value.
+            while F_crit.nth_iterate(point, 1) not in r.keys():
+                if point not in ram_points.keys():
+                    r[F_crit.nth_iterate(point,1)] = r[point]
+                else:
+                    r[F_crit.nth_iterate(point,1)] = r[point] * ram_points[point]
+
+                point = F_crit.nth_iterate(point,1)
+
+            # Once we get here, the image of point has an assigned r value
+            # We check that this value is consistent
+            if point not in ram_points.keys():
+                if r[F_crit.nth_iterate(point,1)] != r[point]:
+                    return False
+            elif r[F_crit.nth_iterate(point,1)] != r[point] * ram_points[point]:
+                return False
+
+        # The non-one r values must be one of the following in order for F to be Chebyshev
+        r_vals = sorted([val for val in r.values() if val != 1])
+        return r_vals == [0, 2, 2]
+
+    def is_Lattes(self):
+        r"""
+        Check if ``self`` is a Lattes map
+
+        OUTPUT: True if ``self`` is Lattes, False otherwise
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^3, y^3])
+            sage: F.is_Lattes()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^2 - 2*y^2, y^2])
+            sage: F.is_Lattes()
+            False
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: F = DynamicalSystem_projective([x^2 + y^2 + z^2, y^2, z^2])
+            sage: F.is_Lattes()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([(x + y)*(x - y)^3, y*(2*x + y)^3])
+            sage: F.is_Lattes()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([(x + y)^4, 16*x*y*(x - y)^2])
+            sage: F.is_Lattes()
+            True
+
+        ::
+
+            sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 0, 2]),2)
+            sage: f.is_Lattes()
+            True
+
+        ::
+
+            sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 0, 2]), 2)
+            sage: L.<i> = CyclotomicField(4)
+            sage: M = Matrix([[i, 0], [0, -i]])
+            sage: f.conjugate(M)
+            Dynamical System of Projective Space of dimension 1 over Cyclotomic Field of order 4 and degree 2
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((-1/4*i)*x^4 + (-4*i)*x*y^3 : (-i)*x^3*y + (2*i)*y^4)
+            sage: f.is_Lattes()
+            True
+
+        REFERENCES:
+
+        - [Mil2006]_
+        """
+        # We need `f` to be defined over a number field for
+        # the function `is_postcrtically_finite` to work
+        if self.base_ring() not in NumberFields():
+            raise NotImplementedError("Base ring must be a number field")
+
+        if self.domain().dimension() != 1:
+            return False
+
+        # All Lattes maps are postcritically finite
+        if not self.is_postcritically_finite():
+            return False
+
+        # Get field of definition for critical points and change basefield
+        critical_field, phi = self.field_of_definition_critical(return_embedding=True)
+        F_crit = self.change_ring(phi)
+
+        # Get the critical points and post-critical set
+        crit = F_crit.critical_points()
+        post_crit = set()
+        images_needed = copy(crit)
+        while len(images_needed) != 0:
+            Q = images_needed.pop()
+            Q2 = F_crit(Q)
+            if Q2 not in post_crit:
+                post_crit.add(Q2)
+                images_needed.append(Q2)
+
+        (crit_set, post_crit_set) = crit, list(post_crit)
+
+        # All Lattes maps have 3 or 4 post critical values
+        if not len(post_crit_set) in [3, 4]:
+            return False
+
+        f = F_crit.dehomogenize(1)[0]
+        x = f.parent().gen()
+        ram_points = {}
+        for crit in crit_set:
+            g = f
+            new_crit = crit
+
+            # Check if critical point is infinity
+            if crit[1] == 0:
+                g = g.subs(x=1/x)
+                new_crit = F_crit.domain()([0, 1])
+
+            # Check if output is infinity
+            if F_crit.nth_iterate(crit, 1)[1] == 0:
+                g = 1/g
+
+            new_crit = new_crit.dehomogenize(1)[0]
+
+            e = 1
+            g = g.derivative(x)
+            while g(new_crit) == 0:
+                e += 1
+                g = g.derivative(x)
+            ram_points[crit] = e
+
+        r = {}
+
+        # Get tail points in the post-critical portrait
+        crit_tails = set(crit_set).difference(set(post_crit_set))
+        for crit in crit_tails:
+            # Each critical tail point has r value 1
+            r[crit] = 1
+            point = crit
+
+            # Assign r values to every point in the orbit of crit
+            # If we find a point in the orbit which already has an r value assigned,
+            # check that we get a consistent r value
+            while F_crit.nth_iterate(point, 1) not in r.keys():
+                if point not in ram_points.keys():
+                    r[F_crit.nth_iterate(point, 1)] = r[point]
+                else:
+                    r[F_crit.nth_iterate(point, 1)] = r[point] * ram_points[point]
+
+                point = F_crit.nth_iterate(point,1)
+
+            # Once we get here the image of point has an assigned r value
+            # We check that this value is consistent.
+            if point not in ram_points.keys():
+                if r[F_crit.nth_iterate(point, 1)] != r[point]:
+                    return False
+            else:
+                if r[F_crit.nth_iterate(point, 1)] != r[point] * ram_points[point]:
+                    return False
+
+        # The non-one r values must be one of the following in order for F to be Lattes
+        r_lattes_cases = [[2, 2, 2, 2], [3, 3, 3], [2, 4, 4], [2, 3, 6]]
+        r_vals = sorted([val for val in r.values() if val != 1])
+        return r_vals in r_lattes_cases
+
 
 class DynamicalSystem_projective_field(DynamicalSystem_projective,
                                        SchemeMorphism_polynomial_projective_space_field):
