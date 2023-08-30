@@ -242,7 +242,9 @@ PYTHON = python3_venv
 endif
 inst_python3_venv = $(SAGE_VENV)/$(SPKG_INST_RELDIR)/python3_venv-$(subst /,-,$(PYTHON_FOR_VENV))$(findstring --system-site-packages,$(SAGE_VENV_FLAGS))
 
-$(inst_python3_venv):
+$(SAGE_VENV)/$(SPKG_INST_RELDIR):
+	mkdir -p $@
+$(inst_python3_venv): $(SAGE_VENV)/$(SPKG_INST_RELDIR)
 	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv $(SAGE_VENV_FLAGS) "$(SAGE_VENV)"
 	touch $@
 endif
