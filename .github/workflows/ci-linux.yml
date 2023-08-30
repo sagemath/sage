@@ -63,6 +63,26 @@ jobs:
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
+  standard-sitepackages:
+    if: ${{ success() || failure() }}
+    needs: [standard-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      from_docker_tag: "$(echo $BUILD_TAG | sed s/-sitepackages//)"
+      docker_targets: "with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets: build doc-html
+      targets_optional: ptest
+      tox_packages_factors: >-
+          ["standard-sitepackages"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 10
+
   minimal-pre:
     if: ${{ success() || failure() }}
     # It does not really "need" it.
