@@ -4,7 +4,7 @@
 Welcome to Sage
 ===============
 
-This is a short tour of Sage as a calculator, a very powerful one.
+This is a short tour of Sage as a calculator.
 
 The Sage command line has a prompt "``sage:``". You do not have to add it.
 
@@ -68,7 +68,7 @@ Sage can plot various useful functions, of course.
 .. image:: sin_plot.*
 
 
-Sage is powerful. To experience it, first we create a :math:`500 \times 500`
+Sage is a very powerful calculator. To experience it, first we create a :math:`500 \times 500`
 matrix of random numbers.
 
 ::
@@ -140,5 +140,4 @@ hundred million as a sum of positive integers.
     sage: z
     1760517045946249141360373894679135204009...
 
-Whenever you use Sage, you are accessing the world's most advanced open source
-computational algorithms.
+Sage is the world's most advanced open source math software.
