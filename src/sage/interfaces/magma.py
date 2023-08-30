@@ -2751,8 +2751,6 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         return self.parent().bar_call(self, 'ideal', gens, nvals=1)
 
-###########################################################################
-
 
 magma = Magma()
 

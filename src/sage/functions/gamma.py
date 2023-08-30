@@ -488,7 +488,7 @@ class Function_gamma_inc(BuiltinFunction):
             return C(v)
 
 
-# synonym.
+# shorter alias
 gamma_inc = Function_gamma_inc()
 
 
@@ -652,7 +652,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
         return "Gamma[%s,0,%s]" % (x, z)
 
 
-# synonym.
+# shorter alias
 gamma_inc_lower = Function_gamma_inc_lower()
 
 

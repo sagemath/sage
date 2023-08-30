@@ -891,9 +891,9 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
             sage: D.decoding_radius()
             1
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
+
 
 ####################### registration ###############################
-
 
 LinearRankMetricCode._registered_encoders["GeneratorMatrix"] = LinearCodeGeneratorMatrixEncoder
