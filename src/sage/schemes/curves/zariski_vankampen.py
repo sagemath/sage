@@ -563,6 +563,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53):
                 points = contpath_mp(deg, coefs, yr, yi, prec)
         return points
     except Exception:
+        print("augmented precisionp= ", rec)
         return followstrand(f, factors, x0, x1, y0a, 2 * prec)
 
 
@@ -789,7 +790,7 @@ def populate_roots_interval_cache(inputs):
             for r in result:
                 roots_interval_cache[r[0][0]] = r[1]
             problem_par = False
-        except: # TypeError:
+        except (TypeError, AttributeError):
             e = sys.exc_info()[0]
             print(e, 'populate_roots_interval_cache')
             pass
