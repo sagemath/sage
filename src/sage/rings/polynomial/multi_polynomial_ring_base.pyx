@@ -135,9 +135,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: g2@p2
             x^2 + z^2 + w + z
         """
-
         from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
-        if isinstance(G, MatrixGroup_generic) and self.base_ring().has_coerce_map_from(G.base_ring()) and op==matmul and not self_on_left:
+        if isinstance(G, MatrixGroup_generic) and self.base_ring().has_coerce_map_from(G.base_ring()) and op == matmul and not self_on_left:
             return MatrixPolynomialAction(G, self)
         return super(MPolynomialRing_base, self)._get_action_(G, op, self_on_left)
 
