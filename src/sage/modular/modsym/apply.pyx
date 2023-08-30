@@ -103,7 +103,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
 
     cdef Integer res
     v = []
-    for k from 0 <= k <= j:
+    for k in range(j + 1):
         res = <Integer>PY_NEW(Integer)
         fmpz_poly_get_coeff_mpz(res.value, pr, k)
         v.append(int(res))

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.misc.cython
+# sage.doctest: needs sage.misc.cython
 
 from cysignals.memory cimport *
 from sage.misc.superseded import deprecation
