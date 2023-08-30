@@ -609,6 +609,21 @@ AC_CONFIG_COMMANDS(links, [
     eval SAGE_VENV="$SAGE_VENV"dnl eval so as to evaluate the embedded ${SAGE_LOCAL}
 ])
 
+AC_CONFIG_COMMANDS([pyenv.cfg],[
+    dnl Erase the venv configuration so that it will be recreated,
+    dnl in case SAGE_VENV_FLAGS has changed. In particular we need
+    dnl to be able to toggle --enable-system-site-packages and have
+    dnl it actually take effect.
+    AC_MSG_NOTICE([Removing ${SAGE_VENV}/pyvenv.cfg in case SAGE_VENV_FLAGS have changed])
+    rm -f "${SAGE_VENV}/pyvenv.cfg"
+],[
+    dnl Set $SAGE_LOCAL which does not happen automatically in
+    dnl in AC_CONFIG_COMMANDS actions.
+    SAGE_LOCAL="$SAGE_LOCAL"
+    dnl Evaluate the ${SAGE_LOCAL} often embedded in SAGE_VENV
+    eval SAGE_VENV="$SAGE_VENV"
+])
+
 AC_OUTPUT()
 
 SAGE_SYSTEM_PACKAGE_NOTICE()
