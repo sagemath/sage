@@ -1201,9 +1201,8 @@ Here ``-p false`` means using already pulled Docker images, and ``-r`` means do 
 after a successful run which used them. This, and many more details, can be found by running ``gh act -h``, as well
 as reading ``act``'s documentation.
 
-.. TODO::
-
-   Add more Sage-specfic details for using ``act``. PRs welcome!
+.. This sectuion is a stub. 
+   More Sage-specfic details for using ``act`` should be added. PRs welcome!
 
 Using our pre-built Docker images for development in VS Code
 ============================================================
