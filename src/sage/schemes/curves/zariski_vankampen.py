@@ -66,7 +66,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-import sys
 # from sage.sets.set import Set
 
 roots_interval_cache = dict()
@@ -563,7 +562,6 @@ def followstrand(f, factors, x0, x1, y0a, prec=53):
                 points = contpath_mp(deg, coefs, yr, yi, prec)
         return points
     except Exception:
-        print("augmented precisionp= ", rec)
         return followstrand(f, factors, x0, x1, y0a, 2 * prec)
 
 
@@ -790,9 +788,7 @@ def populate_roots_interval_cache(inputs):
             for r in result:
                 roots_interval_cache[r[0][0]] = r[1]
             problem_par = False
-        except (TypeError, AttributeError):
-            e = sys.exc_info()[0]
-            print(e, 'populate_roots_interval_cache')
+        except TypeError:
             pass
 
 
@@ -1246,9 +1242,7 @@ def braid_monodromy(f, arrangement=()):
                 segsbraids[(beginseg, endseg)] = b
                 segsbraids[(endseg, beginseg)] = b.inverse()
             end_braid_computation = True
-        except: # ChildProcessError:  # hack to deal with random fails first time
-            e = sys.exc_info()[0]
-            print(e, 'populate_roots_interval_cache')
+        except ChildProcessError:  # ChildProcessError:  # hack to deal with random fails first time
             pass
     B = BraidGroup(d)
     result = []
