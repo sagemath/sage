@@ -1,1 +1,1 @@
-python-tzlocal
+python3-tzlocal

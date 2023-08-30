@@ -1,1 +1,1 @@
-python-igraph
+python3-igraph
