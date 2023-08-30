@@ -3259,15 +3259,15 @@ class Stream_derivative(Stream_inexact):
         """
         return self._series.is_nonzero()
 
-class Stream_infinite_product(Stream):
-    r"""
-    Stream defined by an infinite product.
 
-    The ``iterator`` returns elements either `1 + p_i` to compute the
-    product `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i` is weakly
-    increasing as we iterate over `I` and there are only finitely many
-    terms with any fixed valuation. In particular, this *assumes* the
-    product is nonzero.
+class Stream_infinite_operator(Stream):
+    r"""
+    Stream defined by applying an operator an infinite number of times.
+
+    The ``iterator`` returns elements `s_i` to compute an infinite operator.
+    The valuation of `s_i` is weakly increasing as we iterate over `I` and
+    there are only finitely many terms with any fixed valuation with
+    `s_i \neq 0`. In particular, this *assumes* the result is nonzero.
 
     .. WARNING::
 
@@ -3276,20 +3276,18 @@ class Stream_infinite_product(Stream):
     INPUT:
 
     - ``iterator`` -- the iterator for the factors
-    - ``constant_order`` -- the order corresponding to the constant term
     """
-    def __init__(self, iterator, constant_order):
+    def __init__(self, iterator):
         """
         Initialize ``self``.
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
-        self._prod_iter = iterator
+        self._op_iter = iterator
         self._cur = None
         self._cur_order = -infinity
-        self._constant_order = constant_order
         super().__init__(False)
 
     @lazy_attribute
@@ -3315,24 +3313,27 @@ class Stream_infinite_product(Stream):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
         if self._cur is None:
-            temp = next(self._prod_iter)
-            self._cur = temp
+            temp = next(self._op_iter)
+            self.initial(temp)
             self._cur_order = temp._coeff_stream._approximate_order
         order = self._cur_order
         while order == self._cur_order:
             try:
-                next_factor = next(self._prod_iter)
+                next_factor = next(self._op_iter)
             except StopIteration:
                 self._cur_order = infinity
                 return
-            self._cur *= next_factor
+            coeff_stream = next_factor._coeff_stream
+            while coeff_stream._approximate_order < order:
+                # This check also updates the next_factor._approximate_order
+                if coeff_stream[coeff_stream._approximate_order]:
+                    order = coeff_stream._approximate_order
+                    raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
+            self.apply_operator(next_factor)
             # nonzero checks are safer than equality checks (i.e. in lazy series)
-            if order == self._constant_order and not (next_factor._coeff_stream[order] - 1):
-                order += 1
-                break
             while not next_factor._coeff_stream[order]:
                 order += 1
         self._cur_order = order
@@ -3343,7 +3344,7 @@ class Stream_infinite_product(Stream):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
         while n >= self._cur_order:
             self._advance()
@@ -3356,7 +3357,7 @@ class Stream_infinite_product(Stream):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
         return self._approximate_order
 
@@ -3366,9 +3367,9 @@ class Stream_infinite_product(Stream):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
-        return hash((type(self), self._ring, self._prod_iter))
+        return hash((type(self), self._ring, self._op_iter))
 
     def __ne__(self, other):
         """
@@ -3380,7 +3381,7 @@ class Stream_infinite_product(Stream):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
         if not (isinstance(other, type(self)) and other._ring == self._ring):
             return True
@@ -3396,6 +3397,54 @@ class Stream_infinite_product(Stream):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: from sage.data_structures.stream import Stream_infinite_sum
         """
         return True
+
+class Stream_infinite_sum(Stream_infinite_operator):
+    r"""
+    Stream defined by an infinite sum.
+
+    The ``iterator`` returns elements `s_i` to compute the product
+    `\sum_{i \in I} s_i`. See :class:`Stream_infinite_operator`
+    for restrictions on the `s_i`.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def initial(self, obj):
+        """
+        Set the initial data.
+        """
+        self._cur = obj
+
+    def apply_operator(self, next_obj):
+        """
+        Apply the operator to ``next_obj``.
+        """
+        self._cur += next_obj
+
+class Stream_infinite_product(Stream_infinite_operator):
+    r"""
+    Stream defined by an infinite product.
+
+    The ``iterator`` returns elements `p_i` to compute the product
+    `\prod_{i \in I} (1 + p_i)`. See :class:`Stream_infinite_operator`
+    for restrictions on the `p_i`.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def initial(self, obj):
+        """
+        Set the initial data.
+        """
+        self._cur = obj + 1
+
+    def apply_operator(self, next_obj):
+        """
+        Apply the operator to ``next_obj``.
+        """
+        self._cur = self._cur + self._cur * next_obj

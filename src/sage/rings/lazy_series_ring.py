@@ -55,6 +55,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.lazy_series import (LazyModuleElement,
@@ -890,28 +891,40 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         """
         return self.base_ring().is_exact()
 
-    def prod(self, args, index_set=None):
+    def prod(self, f, a=None, b=infinity, add_one=False):
         r"""
         The product of elements of ``self``.
 
         INPUT:
 
-        - ``args`` -- a list (or iterable) of elements of ``self`` or when
-          ``index_set`` is given, a function that returns elements of ``self``
-        - ``index_set`` -- (optional) an indexing set for the product or
-          or ``True``
+        - ``f`` -- a list (or iterable) of elements of ``self``
+        - ``a``, ``b`` -- optional arguments
+        - ``add_one`` -- (default: ``False``); if ``True``, then converts a
+          lazy series `p_i` from ``args`` into `1 + p_i` for the product
 
-        If ``index_set`` is an iterable, then ``args`` should be a function
-        that takes in an index and returns an element `1 + p_i` of ``self`` to
-        compute the product `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i`
-        is weakly increasing as we iterate over `I` and there are only
-        finitely many terms with any fixed valuation. If ``index_set=True``,
-        then this will treat ``args`` as an iterator for a potentially
-        infinite product. In particular, this assumes the product is nonzero.
+        If ``a`` and ``b`` are both integers, then this returns the product
+        `\prod_{i=a}^b f(i)`, where `f(i) = p_i` if ``add_one=False`` or
+        `f(i) = 1 + p_i` otherwise. If ``b`` is not specified, then we consider
+        `b = \infty`. Note this corresponds to the Python `range(a, b+1)`.
+
+        If `a` is any other iterable, then this returns the product
+        `\prod_{i \in a} f(i)`, where `f(i) = p_i` if ``add_one=False`` or
+        `f(i) = 1 + p_i`.
+
+        .. NOTE::
+
+            For infinite products, it is faster to use ``add_one=True`` since
+            the implementation is based on `p_i` in `\prod_i (1 + p_i)`.
 
         .. WARNING::
 
-            If invalid input is given, this may loop forever.
+            When ``f`` is an infinite generator, then the first argument
+            ``a`` must be ``True``. Otherwise this will loop forever.
+
+        .. WARNING::
+
+            For an *infinite* product of the form `\prod_i (1 + p_i)`,
+            if `p_i = 0`, then this will loop forever.
 
         EXAMPLES::
 
@@ -923,30 +936,135 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + O(t^7)
             sage: euler - L.euler()
             O(t^7)
-
-            sage: L.prod((1 - t^n for n in PositiveIntegers()), index_set=True)
+            sage: L.prod(lambda n: -t^n, 1, add_one=True)
             1 - t - t^2 + t^5 + O(t^7)
 
-            sage: L.prod((1 + t^(n-3) for n in PositiveIntegers()), index_set=True)
+            sage: L.prod((1 - t^n for n in PositiveIntegers()), True)
+            1 - t - t^2 + t^5 + O(t^7)
+            sage: L.prod((-t^n for n in PositiveIntegers()), True, add_one=True)
+            1 - t - t^2 + t^5 + O(t^7)
+
+            sage: L.prod((1 + t^(n-3) for n in PositiveIntegers()), True)
             2*t^-3 + 4*t^-2 + 4*t^-1 + 4 + 6*t + 10*t^2 + 16*t^3 + O(t^4)
 
+            sage: L.prod(lambda n: 2 + t^n, -3, 5)
+            96*t^-6 + 240*t^-5 + 336*t^-4 + 840*t^-3 + 984*t^-2 + 1248*t^-1
+             + 1980 + 1668*t + 1824*t^2 + 1872*t^3 + 1782*t^4 + 1710*t^5
+             + 1314*t^6 + 1122*t^7 + 858*t^8 + 711*t^9 + 438*t^10 + 282*t^11
+             + 210*t^12 + 84*t^13 + 60*t^14 + 24*t^15
+            sage: L.prod(lambda n: t^n / (1 + abs(n)), -2, 2, add_one=True)
+            1/3*t^-3 + 5/6*t^-2 + 13/9*t^-1 + 25/9 + 13/9*t + 5/6*t^2 + 1/3*t^3
+            sage: L.prod(lambda n: t^-2 + t^n / n, -4, -2)
+            1/24*t^-9 - 1/8*t^-8 - 1/6*t^-7 + 1/2*t^-6
+
             sage: D = LazyDirichletSeriesRing(QQ, "s")
-            sage: ret = D.prod(lambda p: (1+D(1, valuation=p)).inverse(), index_set=Primes())
-            sage: ret
+            sage: D.prod(lambda p: (1+D(1, valuation=p)).inverse(), Primes())
             1 - 1/(2^s) - 1/(3^s) + 1/(4^s) - 1/(5^s) + 1/(6^s) - 1/(7^s) + O(1/(8^s))
+
+            sage: D.prod(lambda p: D(1, valuation=p), Primes(), add_one=True)
+            1 + 1/(2^s) + 1/(3^s) + 1/(5^s) + 1/(6^s) + 1/(7^s) + O(1/(8^s))
         """
-        if index_set is None:
-            return super().prod(args)
-        if index_set is True:
-            it = args
+        if a is None:
+            if add_one:
+                return super().prod(self.one() + g for g in f)
+            return super().prod(f)
+
+        if a is True:
+            it = f
+        elif a in ZZ:
+            if b != infinity:
+                if add_one:
+                    return super().prod(1 + f(i) for i in range(a, b+1))
+                return super().prod(f(i) for i in range(a, b+1))
+            from sage.sets.non_negative_integers import NonNegativeIntegers
+            it = (f(i+a) for i in NonNegativeIntegers())
         else:
-            it = (args(i) for i in index_set)
+            it = (f(i) for i in a)
+
+        # NOTE: We must have a new variable name for each new iterator
+        if not add_one:
+            data = (g - 1 for g in it)
+        else:
+            data = it
+
         from sage.data_structures.stream import Stream_infinite_product
-        if self._minimal_valuation is not None and self._minimal_valuation > 0:
-            # Only for Dirichlet series (currently)
-            coeff_stream = Stream_infinite_product(it, self._minimal_valuation)
+        coeff_stream = Stream_infinite_product(data)
+        return self.element_class(self, coeff_stream)
+
+    def sum(self, f, a=None, b=infinity):
+        r"""
+        The sum of elements of ``self``.
+
+        INPUT:
+
+        - ``f`` -- a list (or iterable or function) of elements of ``self``
+        - ``a``, ``b`` -- optional arguments
+
+        If ``a`` and ``b`` are both integers, then this returns the sum
+        `\sum_{i=a}^b f(i)`. If ``b`` is not specified, then we consider
+        `b = \infty`. Note this corresponds to the Python `range(a, b+1)`.
+
+        If `a` is any other iterable, then this returns the sum
+        `\sum{i \in a} f(i)`.
+
+        .. WARNING::
+
+            When ``f`` is an infinite generator, then the first argument
+            ``a`` must be ``True``. Otherwise this will loop forever.
+
+        .. WARNING::
+
+            For an *infinite* sum of the form `\sum_i s_i`,
+            if `s_i = 0`, then this will loop forever.
+
+        EXAMPLES::
+
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: L.sum(lambda n: t^n / (n+1), PositiveIntegers())
+            1/2*t + 1/3*t^2 + 1/4*t^3 + 1/5*t^4 + 1/6*t^5 + 1/7*t^6 + 1/8*t^7 + O(t^8)
+
+        We verify the Rogers-Ramanujan identities up to degree 100::
+
+            sage: L.<q> = LazyPowerSeriesRing(QQ)
+            sage: Gpi = L.prod(lambda k: -q^(1+5*k), 0, oo, add_one=True)
+            sage: Gpi *= L.prod(lambda k: -q^(4+5*k), 0, oo, add_one=True)
+            sage: Gp = 1 / Gpi
+            sage: G = L.sum(lambda n: q^(n^2) / prod(1 - q^(k+1) for k in range(n)), 0, oo)
+            sage: G - Gp
+            O(q^7)
+            sage: all(G[k] == Gp[k] for k in range(100))
+            True
+
+            sage: Hpi = L.prod(lambda k: -q^(2+5*k), 0, oo, add_one=True)
+            sage: Hpi *= L.prod(lambda k: -q^(3+5*k), 0, oo, add_one=True)
+            sage: Hp = 1 / Hpi
+            sage: H = L.sum(lambda n: q^(n^2+n) / prod(1 - q^(k+1) for k in range(n)), 0, oo)
+            sage: H - Hp
+            O(q^7)
+            sage: all(H[k] == Hp[k] for k in range(100))
+            True
+
+        ::
+
+            sage: D = LazyDirichletSeriesRing(QQ, "s")
+            sage: D.sum(lambda p: D(1, valuation=p), Primes())
+            1/(2^s) + 1/(3^s) + 1/(5^s) + 1/(7^s) + O(1/(9^s))
+        """
+        if a is None:
+            return super().sum(f)
+
+        if a is True:
+            it = f
+        elif a in ZZ:
+            if b != infinity:
+                return super().sum(f(i) for i in range(a, b+1))
+            from sage.sets.non_negative_integers import NonNegativeIntegers
+            it = (f(i+a) for i in NonNegativeIntegers())
         else:
-            coeff_stream = Stream_infinite_product(it, 0)
+            it = (f(i) for i in a)
+
+        from sage.data_structures.stream import Stream_infinite_sum
+        coeff_stream = Stream_infinite_sum(it)
         return self.element_class(self, coeff_stream)
 
     def _test_invert(self, **options):
