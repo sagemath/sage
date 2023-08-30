@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 """
 Utility Functions for Cryptography
 
@@ -23,11 +24,11 @@ AUTHORS:
 from sage.arith.functions import lcm
 from sage.arith.misc import is_prime, primes, random_prime
 from sage.misc.lazy_import import lazy_import
-from sage.monoids.string_monoid import BinaryStrings
 from sage.rings.finite_rings.integer_mod import Mod as mod
 from sage.rings.integer import Integer
 
 lazy_import('sage.arith.misc', ('carmichael_lambda'), deprecation=34719)
+lazy_import('sage.monoids.string_monoid', 'BinaryStrings')
 
 
 def ascii_integer(B):
@@ -297,14 +298,14 @@ def has_blum_prime(lbound, ubound):
 
         sage: from sage.crypto.util import has_blum_prime
         sage: from sage.crypto.util import is_blum_prime
-        sage: has_blum_prime(4, 100)
+        sage: has_blum_prime(4, 100)                                                    # needs sage.libs.pari
         True
         sage: for n in range(4, 100):
         ....:     if is_blum_prime(n):
         ....:         print(n)
         ....:         break
         7
-        sage: has_blum_prime(24, 28)
+        sage: has_blum_prime(24, 28)                                                    # needs sage.libs.pari
         False
 
     TESTS:
@@ -377,8 +378,8 @@ def is_blum_prime(n):
         False
         sage: is_blum_prime(7)
         True
-        sage: p = random_blum_prime(10**3, 10**5)
-        sage: is_blum_prime(p)
+        sage: p = random_blum_prime(10**3, 10**5)                                       # needs sage.libs.pari
+        sage: is_blum_prime(p)                                                          # needs sage.libs.pari
         True
     """
     if n < 0:
@@ -486,10 +487,10 @@ def random_blum_prime(lbound, ubound, ntries=100):
     Choose a random prime and check that it is a Blum prime::
 
         sage: from sage.crypto.util import random_blum_prime
-        sage: p = random_blum_prime(10**4, 10**5)
-        sage: is_prime(p)
+        sage: p = random_blum_prime(10**4, 10**5)                                       # needs sage.libs.pari
+        sage: is_prime(p)                                                               # needs sage.libs.pari
         True
-        sage: mod(p, 4) == 3
+        sage: mod(p, 4) == 3                                                            # needs sage.libs.pari
         True
 
     TESTS:
@@ -500,11 +501,11 @@ def random_blum_prime(lbound, ubound, ntries=100):
     is not a Blum prime. ::
 
         sage: from sage.crypto.util import random_blum_prime
-        sage: random_blum_prime(24, 30, ntries=10)
+        sage: random_blum_prime(24, 30, ntries=10)                                      # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: No Blum primes within the specified closed interval.
-        sage: random_blum_prime(24, 28)
+        sage: random_blum_prime(24, 28)                                                 # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         ValueError: No Blum primes within the specified closed interval.
