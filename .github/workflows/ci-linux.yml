@@ -73,7 +73,6 @@ jobs:
       free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
-      from_docker_tag: "$(echo $BUILD_TAG | sed s/-sitepackages//)"
       docker_targets: "with-targets with-targets-optional"
       # FIXME: duplicated from env.TARGETS
       targets: build doc-html
