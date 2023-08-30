@@ -946,11 +946,22 @@ class CohomologyRing(CombinatorialFreeModule):
                 deg = left[1] + right[1]+ 1
                 cochains_basis = subcomplex_union.n_chains(deg, cochains=True).basis()
                 if cochains_basis.has_key(Simplex(res_union)):
+                    res_part = self.zero()
                     res_cochain = cochains_basis[Simplex(res_union)]
                     phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
                     coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
                     for i in range(len(coeff_vec)):
-                        res += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
+                        res_part += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
+                    zeta = 1
+                    for k in set_left.difference(subcomplex_left):
+                        zeta *= eps({k}, set_right.union({k}).difference(subcomplex_right))
+                    epsilon = (eps(subcomplex_left, set_left)
+                               * eps(subcomplex_left, set_left)
+                               * eps(res_union, union)
+                               * zeta)
+                    if epsilon == -1:
+                        res_part = -res_part
+                    res += res_part
 
         return res
 
@@ -968,7 +979,15 @@ class CohomologyRing(CombinatorialFreeModule):
             return self * other
 
 # used for computing coeffeicients when multiplying in cohomology
-def eps(element, simplicial_complex):
-    if element not in simplicial_complex._vertex_to_index:
-        raise ValueError("{} is not a vertex of this simplicial complex".format(element))
-    return (-1) ** simplicial_complex._vertex_to_index[element]
+def eps(subcomplex, simplicial_complex):
+    def _eps(element, simplicial_complex):
+        if element not in simplicial_complex._vertex_to_index:
+            raise ValueError("{} is not a vertex of this simplicial complex".format(element))
+        return (-1) ** simplicial_complex._vertex_to_index[element]
+
+    subcomplex = SimplicialComplex([subcomplex])
+    simplicial_complex = SimplicialComplex([simplicial_complex])
+    res = 1
+    for element in subcomplex.vertices():
+        res *= _eps(element, simplicial_complex)
+    return res
