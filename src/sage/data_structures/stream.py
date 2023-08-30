@@ -3258,3 +3258,130 @@ class Stream_derivative(Stream_inexact):
             True
         """
         return self._series.is_nonzero()
+
+class Stream_infinite_product(Stream):
+    r"""
+    Stream defined by an infinite product.
+
+    The ``iterator`` returns elements `p_i` to compute the product
+    `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i` is weakly increasing
+    as we iterate over `I` and there are only finitely many terms with any
+    fixed valuation. In particular, this assumes the product is nonzero.
+
+    For the ``_approximate_order``, this assumes the ring is a
+    lazy series.    """
+    def __init__(self, iterator, ring):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: TestSuite(f2).run()
+        """
+        self._prod_iter = iterator
+        self._cur = None
+        self._cur_order = -infinity
+        self._ring = ring
+        super().__init__(False)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+        """
+        if self._cur is None:
+            self._advance()
+        while self._cur_order <= 0:
+            self._advance()
+        self._true_order = True
+        return self._cur._coeff_stream.order()
+
+    def _advance(self):
+        """
+        Advance the iterator so that the approximate order increases by one.
+        """
+        if self._cur is None:
+            temp = next(self._prod_iter)
+            self._cur = self._ring.one() + temp
+            self._cur_order = temp._coeff_stream._approximate_order
+        order = self._cur_order
+        while order == self._cur_order:
+            next_factor = next(self._prod_iter)
+            coeff_stream = next_factor._coeff_stream
+            while coeff_stream._approximate_order < order:
+                print(coeff_stream._approximate_order, coeff_stream[coeff_stream._approximate_order])
+                # This check also updates the next_factor._approximate_order
+                if coeff_stream[coeff_stream._approximate_order]:
+                    order = coeff_stream._approximate_order
+                    raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
+            self._cur *= self._ring.one() + next_factor
+            order = coeff_stream._approximate_order
+        self._cur_order = order
+
+    def __getitem__(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+        """
+        while n >= self._cur_order:
+            self._advance()
+        return self._cur[n]
+
+    def order(self):
+        r"""
+        Return the order of ``self``, which is the minimum index ``n`` such
+        that ``self[n]`` is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+        """
+        return self._approximate_order
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+        """
+        return hash((type(self), self._ring, self._prod_iter))
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+        """
+        if not (isinstance(other, type(self)) and other._ring == self._ring):
+            return True
+        ao = min(self._approximate_order, other._approximate_order)
+        if any(self[i] != other[i] for i in range(ao, min(self._cur_order, other._cur_order))):
+            return True
+        return False
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+        """
+        return True

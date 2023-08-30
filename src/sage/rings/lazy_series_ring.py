@@ -890,6 +890,45 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         """
         return self.base_ring().is_exact()
 
+    def prod(self, args, index_set=None):
+        r"""
+        The product of elements of ``self``.
+
+        INPUT:
+
+        - ``args`` -- a list (or iterable) of elements of ``self``
+        - ``index_set`` -- (optional) an indexing set for the product or
+          or a boolean
+
+        If ``index_set`` is an iterable, then ``args`` should be a function
+        that takes in an index and returns an element `p_i` of ``self`` to
+        compute the product `\prod_{i \in I} (1 + p_i)`. The valuation of `p_i`
+        is weakly increasing as we iterate over `I` and there are only
+        finitely many terms with any fixed valuation. If ``index=True``,
+        then this will treat ``args`` as an infinite product indexed by
+        `0, 1, \ldots`. In particular, this assumes the product is nonzero.
+
+        EXAMPLES::
+
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: euler = L.prod(lambda n: -t^n, PositiveIntegers())
+            sage: euler
+            1 - t - t^2 + t^5 + O(t^7)
+            sage: 1 / euler
+            1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + O(t^7)
+            sage: euler - L.euler()
+            O(t^7)
+        """
+        if index_set is None:
+            return super().prod(args)
+        if index_set is True:
+            it = args
+        else:
+            it = (args(i) for i in index_set)
+        from sage.data_structures.stream import Stream_infinite_product
+        coeff_stream = Stream_infinite_product(it, self)
+        return self.element_class(self, coeff_stream)
+
     def _test_invert(self, **options):
         """
         Test multiplicative inversion of elements of ``self``.
@@ -1506,7 +1545,9 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise TypeError("the base ring is not a field")
         return R
 
+
     # === special functions ===
+
 
     def q_pochhammer(self, q=None):
         r"""
@@ -1623,6 +1664,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
                 return ZZ.zero()
             return (-1) ** ((m + 1) // 6)
         return self(coefficients=coeff, valuation=0)
+
 
 ######################################################################
 
