@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 from .index_face_set cimport IndexFaceSet
 from .transform cimport point_c
 

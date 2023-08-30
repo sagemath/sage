@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.plot
 """
 Surfaces of revolution

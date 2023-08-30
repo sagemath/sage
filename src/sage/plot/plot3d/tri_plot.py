@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 r"""
 Adaptive refinement code for 3d surface plotting
 

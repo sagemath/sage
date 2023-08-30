@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 """
 Arcs of circles and ellipses
 """

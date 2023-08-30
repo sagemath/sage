@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 from .base cimport PrimitiveObject
 from .transform cimport point_c, face_c, color_c
 
