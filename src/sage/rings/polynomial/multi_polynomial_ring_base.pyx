@@ -27,8 +27,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix as MatrixConstructor
 from operator import matmul
 
-from . import (multi_polynomial_ideal,
-               polynomial_ring)
+from . import multi_polynomial_ideal, polynomial_ring
 from .term_order import TermOrder
 from .polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
