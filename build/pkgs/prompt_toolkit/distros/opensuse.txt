@@ -1,1 +1,1 @@
-python-importlib_resources
+python3${PYTHON_MINOR}-importlib_resources

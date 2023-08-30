@@ -1,1 +1,1 @@
-python-sphinxcontrib-devhelp
+python3${PYTHON_MINOR}-sphinxcontrib-devhelp

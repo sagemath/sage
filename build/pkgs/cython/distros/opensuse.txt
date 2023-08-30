@@ -1,1 +1,1 @@
-python-Cython
+python3${PYTHON_MINOR}-Cython

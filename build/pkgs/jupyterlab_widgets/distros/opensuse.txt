@@ -1,1 +1,1 @@
-python-jupyterlab-widgets
+python3${PYTHON_MINOR}-jupyterlab-widgets

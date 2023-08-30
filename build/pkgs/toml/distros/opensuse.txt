@@ -1,1 +1,1 @@
-python3-toml
+python3${PYTHON_MINOR}-toml
