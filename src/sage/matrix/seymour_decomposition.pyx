@@ -440,7 +440,31 @@ cdef class PlanarNode(BaseGraphicNode):
 
 cdef class SeriesParallelReductionNode(DecompositionNode):
 
-    pass
+    def core(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                                   [[1, 1, 1, 1, 1, 0], [1, 1, 1, 0,0, 0],
+            ....:                                 [1, 0, 1, 1, 0, 1] ,[1, 0,0, 1, 1, 0], 
+            ....:                                   [1, 1, 0, 0, 1, 0]]); M
+            [1 1 1 1 1 0]
+            [1 1 1 0 0 0]
+            [1 0 1 1 0 1]
+            [1 0 0 1 1 0]
+            [1 1 0 0 1 0]
+            sage: result, certificate = M.is_totally_unimodular(certificate = True); result
+            ....: , certificate
+            (True, SeriesParallelReductionNode (5×6))
+            sage: certificate.core()
+            [1 1 1 1 1]
+            [1 1 1 0 0]
+            [1 0 1 1 0]
+            [1 0 0 1 1]
+            [1 1 0 0 1]
+        """
+        return self._children()[0].matrix()
 
 
 cdef class SpecialLeafNode(DecompositionNode):
@@ -475,8 +499,17 @@ cdef class SpecialLeafNode(DecompositionNode):
         assert False, 'special leaf node with unknown type'
 
     def _repr_(self):
-        return f'Minor isomorphic to {self._matroid()}'
+        return f'Isomorphic to a minor of {self._matroid()}'
 
+    def rep_matrix(self):
+        r"""
+        WIP
+        """
+        assert NotImplementedError
+
+        cdef int representation_matrix
+        cdef CMR_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
+        return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
 cdef _class(CMR_DEC *dec):
     k = CMRdecIsSum(dec, NULL, NULL)

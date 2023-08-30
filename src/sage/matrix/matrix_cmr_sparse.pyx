@@ -465,10 +465,31 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
-        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with 'first_col_index1'
-        and 'first_col_index2' being the indices of the column vectors of the matrix, which are identical except for one row
-        having a 0 in one column and the other a non-zero entry in that row. The method assumes the nonzero entry is one. The same assumptions
-        are made for 'second_mat' and its input index variables.
+        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with ``first_col_index1``
+        and ``first_col_index2`` being the indices of the column vectors of the matrix, which are identical except for one row
+        having a 0 in one column and the other a non-zero entry in that row. The method assumes the nonzero entry is one. The same goes
+        are made for ``second_mat``, ``second_col_index1``, and  ``second_col_index2``.
+
+        The operation performed is effectively as in Schrijver:=
+        [first_submat  first_subcol  first_subcol]  ___|___   [second_submat  second_subcol  second_suncol]
+        [ first_row         0             1      ]     |   3  [ second_row          0              1      ]
+        -----  [         first_submat       first_subcol x second_row]
+        -----  [second_subcol x first_row          second_subcol     ]
+
+        INPUT:
+
+        - ``first_mat`` -- integer matrix having two collumns which are identical in every entry except for one row in 
+        which one is 0 and the other is 1
+        - ``second_mat`` -- integer matrix having two collumns which are identical in every entry except for one row in 
+        which one is 0 and the other is 1
+        - ``first_col_index1`` -- index of a column in ``first_mat`` identical to some other column in every entry except for one row in 
+        which one is 0 and the other is 1
+        - ``first_col_index2`` -- index of the other column which is identical to first_mat[first_col_index1] in every entry except for one 
+        row in which one is 0 and the other is 1
+        - ``second_col_index1`` -- index of a column in ``second_mat`` identical to some other column in every entry except for one row in 
+        which one is 0 and the other is 1
+        - ``first_col_index2`` -- index of the other column which is identical to second_mat[second_col_index1] in every entry except for one 
+        row in which one is 0 and the other is 1
 
         EXAMPLES::
 
