@@ -341,7 +341,7 @@ if PythonModule("furo").is_present():
     ]
 
     html_js_files = [
-        'jupyter-sphinx-helper.js',
+        'jupyter-sphinx-furo.js',
     ]
 
     # A list of paths that contain extra templates (or templates that overwrite

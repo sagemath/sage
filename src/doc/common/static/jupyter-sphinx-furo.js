@@ -1,7 +1,4 @@
-//
 // Change the editor theme of all CodeMirror cells according to the furo (dark) mode
-//
-
 function changeTheme(editor, theme) {
   if (theme === 'dark') {
     editor.setOption('theme', 'monokai'); // the same with pygments dark style in conf.py
@@ -11,6 +8,8 @@ function changeTheme(editor, theme) {
   }
 }
 
+// Uses the theme data of the document.body element set by setTheme function
+// defined in https://github.com/pradyunsg/furo/blob/main/src/furo/assets/scripts/furo.js
 const body = document.body;
 const observer1 = new MutationObserver((mutationsList) => {
   for (let mutation of mutationsList) {
@@ -22,10 +21,7 @@ const observer1 = new MutationObserver((mutationsList) => {
       }}}});
 observer1.observe(body, { attributes: true });
 
-//
 // Change the editor theme of a new CodeMirror cell.
-//
-
 const callback = function(mutationsList, observer) {
   for(const mutation of mutationsList) {
     if (mutation.type === 'childList') {
