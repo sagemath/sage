@@ -227,6 +227,7 @@ SAGE_I_TARGETS = sagelib doc
 	python3_venv _clean-broken-gcc
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
+SAGE_VENV_FLAGS = @SAGE_VENV_FLAGS@
 
 ifneq ($(PYTHON_FOR_VENV),)
 # Special rule for making the Python virtualenv from the system Python (Python
@@ -239,10 +240,11 @@ ifneq ($(PYTHON_FOR_VENV),)
 ifeq ($(PYTHON),python3)
 PYTHON = python3_venv
 endif
-inst_python3_venv = $(SAGE_VENV)/pyvenv.cfg
+inst_python3_venv = $(SAGE_VENV)/$(SPKG_INST_RELDIR)/python3_venv-$(subst /,-,$(PYTHON_FOR_VENV))$(findstring --system-site-packages,$(SAGE_VENV_FLAGS))
 
 $(inst_python3_venv):
-	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv @SAGE_VENV_FLAGS@ "$(SAGE_VENV)"
+	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv $(SAGE_VENV_FLAGS) "$(SAGE_VENV)"
+	touch $@
 endif
 
 # Build everything and start Sage.
