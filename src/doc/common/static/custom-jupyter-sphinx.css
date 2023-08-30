@@ -19,7 +19,7 @@ div.jupyter_container div.cell_output div.output {
 }
 
 .thebelab-cell .jp-OutputArea-output {
-  margin: .5rem 0;
+  margin: 0 0 .5rem 0;
   overflow-x: auto;
 }
 
@@ -33,9 +33,9 @@ div.jupyter_container div.cell_output div.output {
 
 #thebelab-activate-button {
   position: fixed;
-  right: -100px;
-  top: 45%;
-  border-radius: 30px;
+  right: -6.5rem;
+  top: calc(50% - 1.5em);
+  border-radius: 1em;
   transition-property: right;
   transition-duration: 300ms;
   transition-timing-function: ease-out;
