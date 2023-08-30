@@ -1564,7 +1564,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\QQbar`::
 
-        sage  # optional - sirocco
+        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: zeta = QQbar['x']('x^2 + x+ 1').roots(multiplicities=False)[0]
         sage: zeta
