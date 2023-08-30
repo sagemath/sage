@@ -112,9 +112,12 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return self.base_ring().is_integral_domain(proof)
 
     cpdef _get_action_(self, G, op, bint self_on_left):
-        """
+        r"""
+        Return the action of ``G``  by ``op`` on ``self``.
+
         EXAMPLES::
-            sage: G=groups.matrix.Sp(4,GF(2))
+
+            sage: G = groups.matrix.Sp(4,GF(2))
             sage: R.<w,x,y,z>=GF(2)[]
             sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
             sage: g=G.1
