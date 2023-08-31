@@ -9,19 +9,20 @@ Ariki-Koike algebras below for such an application.
 
 EXAMPLES::
 
+    sage: # needs sage.modules
     sage: LZ = Localization(ZZ, (5,11))
-    sage: m = matrix(LZ, [[5, 7], [0,11]])                                              # needs sage.modules
-    sage: m.parent()                                                                    # needs sage.modules
+    sage: m = matrix(LZ, [[5, 7], [0,11]])
+    sage: m.parent()
     Full MatrixSpace of 2 by 2 dense matrices over Integer Ring localized at (5, 11)
-    sage: ~m      # parent of inverse is different: see documentation of m.__invert__   # needs sage.modules
+    sage: ~m      # parent of inverse is different: see documentation of m.__invert__
     [  1/5 -7/55]
     [    0  1/11]
-    sage: _.parent()                                                                    # needs sage.modules
+    sage: _.parent()
     Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-    sage: mi = matrix(LZ, ~m)                                                           # needs sage.modules
-    sage: mi.parent()                                                                   # needs sage.modules
+    sage: mi = matrix(LZ, ~m)
+    sage: mi.parent()
     Full MatrixSpace of 2 by 2 dense matrices over Integer Ring localized at (5, 11)
-    sage: mi == ~m                                                                      # needs sage.modules
+    sage: mi == ~m
     True
 
 The next example defines the most general ring containing the coefficients of the irreducible
@@ -76,7 +77,6 @@ Check relations of the Ariki-Koike algebra::
 
 Obtain specializations in positive characteristic::
 
-    sage: # needs sage.rings.finite_rings
     sage: Fp = GF(17)
     sage: f = L.hom((3,5,7,11), codomain=Fp); f                                         # needs sage.libs.pari
     Ring morphism:
@@ -618,29 +618,30 @@ class Localization(IntegralDomain, UniqueRepresentation):
         ValueError: all given elements are invertible in
         7-adic Ring with capped relative precision 20
 
+        sage: # needs sage.libs.pari
         sage: R.<x> = ZZ[]
-        sage: L = R.localization(x**2 + 1)                                              # needs sage.libs.pari
+        sage: L = R.localization(x**2 + 1)
         sage: s = (x+5)/(x**2+1)
-        sage: s in L                                                                    # needs sage.libs.pari
+        sage: s in L
         True
         sage: t = (x+5)/(x**2+2)
         sage: t in L
         False
-        sage: L(t)                                                                      # needs sage.libs.pari
+        sage: L(t)
         Traceback (most recent call last):
         ...
         TypeError: fraction must have unit denominator
-        sage: L(s) in R                                                                 # needs sage.libs.pari
+        sage: L(s) in R
         False
-        sage: y = L(x)                                                                  # needs sage.libs.pari
-        sage: g = L(s)                                                                  # needs sage.libs.pari
-        sage: g.parent()                                                                # needs sage.libs.pari
+        sage: y = L(x)
+        sage: g = L(s)
+        sage: g.parent()
         Univariate Polynomial Ring in x over Integer Ring localized at (x^2 + 1,)
-        sage: f = (y+5)/(y**2+1); f                                                     # needs sage.libs.pari
+        sage: f = (y+5)/(y**2+1); f
         (x + 5)/(x^2 + 1)
-        sage: f == g                                                                    # needs sage.libs.pari
+        sage: f == g
         True
-        sage: (y+5)/(y**2+2)                                                            # needs sage.libs.pari
+        sage: (y+5)/(y**2+2)
         Traceback (most recent call last):
         ...
         ValueError: factor x^2 + 2 of denominator is not a unit
@@ -761,23 +762,22 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: phi = R.hom([5])
-            sage: L._is_valid_homomorphism_(ZZ, [3], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(ZZ, [3], base_map=phi)
             Traceback (most recent call last):
             ...
             ValueError: given base_map is not compatible with im_gens
-            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)
             Traceback (most recent call last):
             ...
             ValueError: images of some localized elements fail to be units
-
             sage: phi = R.hom([5], codomain=QQ)
-            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)
             Traceback (most recent call last):
             ...
             ValueError: codomain of base_map must be Integer Ring
-
-            sage: L._is_valid_homomorphism_(QQ, [5], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(QQ, [5], base_map=phi)
             True
         """
         B = self.base_ring()

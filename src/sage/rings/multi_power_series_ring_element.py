@@ -1081,7 +1081,7 @@ class MPowerSeries(PowerSeries):
             False
             sage: g in R.base_extend(Zmod(2))
             True
-            sage: g.polynomial() == f.polynomial() % 2                                              # needs sage.libs.singular
+            sage: g.polynomial() == f.polynomial() % 2                                  # needs sage.libs.singular
             True
         """
         if isinstance(other, (int, Integer)):

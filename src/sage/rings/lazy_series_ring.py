@@ -1214,7 +1214,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()
 
             sage: L = LazyLaurentSeriesRing(GF(5)['x, y'], 't')
-            sage: TestSuite(L).run()                                                    # needs sage.rings.finite_rings
+            sage: TestSuite(L).run()
 
             sage: L = LazyLaurentSeriesRing(Zmod(6), 't')
             sage: TestSuite(L).run(skip=['_test_revert'])
