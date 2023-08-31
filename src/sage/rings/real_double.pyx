@@ -189,7 +189,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: latex(RDF) # indirect doctest
+            sage: latex(RDF)  # indirect doctest
             \Bold{R}
         """
         return "\\Bold{R}"
@@ -215,7 +215,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: RealDoubleField() # indirect doctest
+            sage: RealDoubleField()  # indirect doctest
             Real Double Field
             sage: RDF
             Real Double Field
@@ -315,7 +315,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: RDF.coerce(5) # indirect doctest
+            sage: RDF.coerce(5)  # indirect doctest
             5.0
             sage: RDF.coerce(9499294r)
             9499294.0
@@ -389,7 +389,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         Magma handles precision in decimal digits, so we lose a bit::
 
-            sage: magma(RDF) # optional - magma # indirect doctest
+            sage: magma(RDF)        # indirect doctest  # optional - magma
             Real field of precision 15
             sage: 10^15 < 2^53 < 10^16
             True
@@ -397,7 +397,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         When we convert back from Magma, we convert to a generic real field
         that has 53 bits of precision::
 
-            sage: magma(RDF).sage() # optional - magma
+            sage: magma(RDF).sage()                     # optional - magma
             Real Field with 53 bits of precision
         """
         return "RealField(%s : Bits := true)" % self.prec()
@@ -408,7 +408,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: fricas(RDF)    # indirect doctest, optional - fricas
+            sage: fricas(RDF)       # indirect doctest  # optional - fricas
             DoubleFloat
         """
         return "DoubleFloat"
@@ -419,7 +419,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
         EXAMPLES::
 
-            sage: polymake(RDF)    #optional - jupymake # indirect doctest
+            sage: polymake(RDF)     # indirect doctest  # optional - jupymake
             Float
         """
         return '"Float"'
@@ -713,7 +713,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF(2.3) # indirect doctest
+            sage: RDF(2.3)  # indirect doctest
             2.3
         """
         (<Element>self)._parent = _RDF
@@ -747,7 +747,7 @@ cdef class RealDoubleElement(FieldElement):
 
             sage: RDF(10.5)
             10.5
-            sage: magma(RDF(10.5)) # optional - magma # indirect doctest
+            sage: magma(RDF(10.5))  # indirect doctest  # optional - magma
             10.5000000000000
         """
         return "%s!%s" % (self.parent()._magma_init_(magma), self)
@@ -933,7 +933,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: ZZ(RDF(237.0)) # indirect doctest
+            sage: ZZ(RDF(237.0))  # indirect doctest
             237
             sage: ZZ(RDF(0.0/0.0))
             Traceback (most recent call last):
@@ -1136,9 +1136,9 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: latex(RDF(3.4)) # indirect doctest
+            sage: latex(RDF(3.4))       # indirect doctest
             3.4
-            sage: latex(RDF(2e-100)) # indirect doctest
+            sage: latex(RDF(2e-100))    # indirect doctest
             2 \times 10^{-100}
         """
         s = self.str()
@@ -1339,7 +1339,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF('-1.5') + RDF('2.5') # indirect doctest
+            sage: RDF('-1.5') + RDF('2.5')  # indirect doctest
             1.0
         """
         cdef RealDoubleElement x = <RealDoubleElement>PY_NEW(RealDoubleElement)
@@ -1352,7 +1352,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF('-1.5') - RDF('2.5') # indirect doctest
+            sage: RDF('-1.5') - RDF('2.5')  # indirect doctest
             -4.0
         """
         cdef RealDoubleElement x = <RealDoubleElement>PY_NEW(RealDoubleElement)
@@ -1365,7 +1365,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF('-1.5') * RDF('2.5') # indirect doctest
+            sage: RDF('-1.5') * RDF('2.5')  # indirect doctest
             -3.75
         """
         cdef RealDoubleElement x = <RealDoubleElement>PY_NEW(RealDoubleElement)
@@ -1378,7 +1378,7 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF('-1.5') / RDF('2.5') # indirect doctest
+            sage: RDF('-1.5') / RDF('2.5')  # indirect doctest
             -0.6
             sage: RDF(1)/RDF(0)
             +infinity
@@ -2029,7 +2029,7 @@ cdef class ToRDF(Morphism):
         EXAMPLES::
 
             sage: f = RDF.coerce_map_from(float)
-            sage: f(3.5) # indirect doctest
+            sage: f(3.5)  # indirect doctest
             3.5
         """
         cdef RealDoubleElement r = <RealDoubleElement>PY_NEW(RealDoubleElement)
