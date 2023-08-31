@@ -1952,7 +1952,6 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(11)
             sage: A.<x> = F[]
             sage: K = Frac(F).over(F)
@@ -1969,7 +1968,6 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
             Ensure issue :trac:`34692` is fixed::
 
-            sage: # needs sage.rings.finite_rings
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
             sage: k = Frac(FqX)
