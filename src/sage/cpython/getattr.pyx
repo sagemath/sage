@@ -271,7 +271,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
     Caveat: lazy attributes work with extension types only
     if they allow attribute assignment or have a public attribute
-    ``__cached_methods`` of type ``<dict>``. This condition
+    ``_cached_methods`` of type ``<dict>``. This condition
     is satisfied, e.g., by any class that is derived from
     :class:`Parent`::
 
