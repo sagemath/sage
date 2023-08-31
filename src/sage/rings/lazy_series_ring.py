@@ -2240,13 +2240,12 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
     EXAMPLES::
 
-        sage: NCSF = NonCommutativeSymmetricFunctions(QQ)                               # needs sage.modules
-        sage: S = NCSF.Complete()                                                       # needs sage.modules
-        sage: L = S.formal_series_ring(); L                                             # needs sage.modules
+        sage: # needs sage.modules
+        sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+        sage: S = NCSF.Complete()
+        sage: L = S.formal_series_ring(); L
         Lazy completion of Non-Commutative Symmetric Functions
          over the Rational Field in the Complete basis
-
-        sage: # needs sage.modules
         sage: f = 1 / (1 - L(S[1])); f
         S[] + S[1] + (S[1,1]) + (S[1,1,1]) + (S[1,1,1,1]) + (S[1,1,1,1,1])
          + (S[1,1,1,1,1,1]) + O^7
@@ -2275,23 +2274,23 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: LazySymmetricFunctions.options.halting_precision(6)
 
-            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: TestSuite(L).run()                                                    # needs lrcalc_python sage.modules
-
-            sage: p = SymmetricFunctions(GF(5)).p()                                     # needs sage.modules
-            sage: L = LazySymmetricFunctions(p)                                         # needs sage.modules
-            sage: TestSuite(L).run()                                                    # needs sage.modules
+            sage: # needs sage.modules
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: TestSuite(L).run()                                                    # needs lrcalc_python
+            sage: p = SymmetricFunctions(GF(5)).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: TestSuite(L).run()
 
         Reversion will only work when the base ring is a field::
 
-            sage: s = SymmetricFunctions(ZZ).s()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python sage.modules
-
-            sage: s = SymmetricFunctions(QQ["q"]).s()                                   # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python sage.modules
+            sage: # needs sage.modules
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python
+            sage: s = SymmetricFunctions(QQ["q"]).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python
 
         Options are remembered across doctests::
 
@@ -2399,7 +2398,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.finite_rings
+            sage: # needs sage.modules
             sage: m = SymmetricFunctions(GF(2)).m()
             sage: L = LazySymmetricFunctions(m)
             sage: L(2)
@@ -2407,14 +2406,14 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L(3)
             m[]
 
-            sage: m = SymmetricFunctions(ZZ).m()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
-            sage: f = L(lambda i: m([i]), valuation=5, degree=10); f                    # needs sage.modules
+            sage: # needs sage.modules
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: f = L(lambda i: m([i]), valuation=5, degree=10); f
             m[5] + m[6] + m[7] + m[8] + m[9]
-
-            sage: f.coefficient(6)                                                      # needs sage.modules
+            sage: f.coefficient(6)
             m[6]
-            sage: f[20]                                                                 # needs sage.modules
+            sage: f[20]
             0
 
         Alternatively, ``x`` can be a list of elements of the base ring.
@@ -2442,22 +2441,20 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L(lambda n: 0)
             O^7
 
-            sage: L(lambda n: tensor([h[n], e([])]) + tensor([h([]), e[n]]), degree=3)  # needs sage.modules
+            sage: # needs sage.modules
+            sage: L(lambda n: tensor([h[n], e([])]) + tensor([h([]), e[n]]), degree=3)
             (2*h[]#e[]) + (h[]#e[1]+h[1]#e[]) + (h[]#e[2]+h[2]#e[])
-
-            sage: L(lambda n: n)[3];                                                    # needs sage.modules
+            sage: L(lambda n: n)[3];
             Traceback (most recent call last):
             ...
             ValueError: coefficient 3*h[] # e[] should be an element
             of homogeneous degree 3 but has degree 0
-
-            sage: L([1, 2, 3]);                                                         # needs sage.modules
+            sage: L([1, 2, 3]);
             Traceback (most recent call last):
             ...
             ValueError: coefficient 2*h[] # e[] should be an element
             of homogeneous degree 1 but has degree 0
-
-            sage: L(lambda n: n, degree=3);                                             # needs sage.modules
+            sage: L(lambda n: n, degree=3);
             Traceback (most recent call last):
             ...
             ValueError: coefficient h[] # e[] should be an element
