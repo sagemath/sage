@@ -226,13 +226,14 @@ def tetrahedron(center=(0, 0, 0), size=1, **kwds):
     A Dodecahedral complex of 5 tetrahedra (a more elaborate example
     from Peter Jipsen)::
 
-        sage: v=(sqrt(5.)/2-5/6, 5/6*sqrt(3.)-sqrt(15.)/2, sqrt(5.)/3)
-        sage: t=acos(sqrt(5.)/3)/2
-        sage: t1=tetrahedron(aspect_ratio=(1,1,1), opacity=0.5).rotateZ(t)
-        sage: t2=tetrahedron(color='red', opacity=0.5).rotateZ(t).rotate(v,2*pi/5)
-        sage: t3=tetrahedron(color='green', opacity=0.5).rotateZ(t).rotate(v,4*pi/5)
-        sage: t4=tetrahedron(color='yellow', opacity=0.5).rotateZ(t).rotate(v,6*pi/5)
-        sage: t5=tetrahedron(color='orange', opacity=0.5).rotateZ(t).rotate(v,8*pi/5)
+        sage: from math import pi
+        sage: v = (sqrt(5.)/2-5/6, 5/6*sqrt(3.)-sqrt(15.)/2, sqrt(5.)/3)
+        sage: t = acos(sqrt(5.)/3)/2
+        sage: t1 = tetrahedron(aspect_ratio=(1,1,1), opacity=0.5).rotateZ(t)
+        sage: t2 = tetrahedron(color='red', opacity=0.5).rotateZ(t).rotate(v,2*pi/5)
+        sage: t3 = tetrahedron(color='green', opacity=0.5).rotateZ(t).rotate(v,4*pi/5)
+        sage: t4 = tetrahedron(color='yellow', opacity=0.5).rotateZ(t).rotate(v,6*pi/5)
+        sage: t5 = tetrahedron(color='orange', opacity=0.5).rotateZ(t).rotate(v,8*pi/5)
         sage: show(t1+t2+t3+t4+t5, frame=False, zoom=1.3)
 
     .. PLOT::

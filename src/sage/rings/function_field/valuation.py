@@ -570,7 +570,7 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                         H_extensions = self.extensions(M)
 
                         from sage.rings.morphism import RingHomomorphism_im_gens
-                        if type(y_to_u) == RingHomomorphism_im_gens and type(u_to_y) == RingHomomorphism_im_gens:
+                        if isinstance(y_to_u, RingHomomorphism_im_gens) and isinstance(u_to_y, RingHomomorphism_im_gens):
                             return [L.valuation((w, L.hom([M(y_to_u(y_to_u.domain().gen()))]), M.hom([L(u_to_y(u_to_y.domain().gen()))]))) for w in H_extensions]
                         raise NotImplementedError
                     return [L.valuation(w) for w in self.mac_lane_approximants(L.polynomial(), require_incomparability=True)]

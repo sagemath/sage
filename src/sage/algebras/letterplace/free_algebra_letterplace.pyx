@@ -176,7 +176,6 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
         (Lexicographic term order of length 3,
          Lexicographic term order of length 3)
     """
-    n = base_ring.ngens()
     T0 = base_ring.term_order()
     T = T0
     cdef i
@@ -680,7 +679,6 @@ cdef class FreeAlgebra_letterplace(Algebra):
         C = self.current_ring()
         cdef FreeAlgebraElement_letterplace x
         ngens = self.__ngens
-        degbound = self._degbound
         cdef list G = [C(x._poly) for x in g]
         from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
         CG = CyclicPermutationGroup(C.ngens())

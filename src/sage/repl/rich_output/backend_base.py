@@ -459,6 +459,7 @@ class BackendBase(SageObject):
             sage: out.html.get_str()
             '<html>\\(\\displaystyle \\frac{1}{2}\\)</html>'
 
+            sage: # needs sage.symbolic
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=False)
             sage: out.html.get_str()
             '<html>\\(\\displaystyle \\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]\\)</html>'

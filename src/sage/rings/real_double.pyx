@@ -1511,7 +1511,6 @@ cdef class RealDoubleElement(FieldElement):
             return 1
         return -1
 
-
     ###################
     # Rounding etc
     ###################
@@ -1703,7 +1702,6 @@ cdef class RealDoubleElement(FieldElement):
             from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element
         return new_gen_from_real_double_element(self)
 
-
     ###########################################
     # Comparisons: ==, !=, <, <=, >, >=
     ###########################################
@@ -1809,7 +1807,6 @@ cdef class RealDoubleElement(FieldElement):
             return x > y
         else:
             return x >= y
-
 
     ############################
     # Special Functions

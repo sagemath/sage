@@ -20,9 +20,10 @@ in any example with more than 34 variables.
 #
 #*****************************************************************************
 
+import sage.interfaces.abc
+
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-from sage.interfaces.singular import Singular
 
 from cysignals.memory cimport sig_malloc
 from cpython.list cimport PyList_GET_ITEM
@@ -45,10 +46,12 @@ cdef class Node:
     cdef fmpz_poly_t LMult
     cdef fmpz_poly_t RMult
     cdef fmpz_poly_t LeftFHS
+
     def __cinit__(self):
         fmpz_poly_init(self.LMult)
         fmpz_poly_init(self.RMult)
         fmpz_poly_init(self.LeftFHS)
+
     def __dealloc__(self):
         fmpz_poly_clear(self.LMult)
         fmpz_poly_clear(self.RMult)
@@ -476,7 +479,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
     cdef Polynomial_integer_dense_flint fhs = Polynomial_integer_dense_flint.__new__(Polynomial_integer_dense_flint)
     fhs._parent = PR
     fhs._is_gen = 0
-    if isinstance(I.parent(), Singular):
+    if isinstance(I, sage.interfaces.abc.SingularElement):
         S = I._check_valid()
         # First, we need to deal with quotient rings, which also covers the case
         # of graded commutative rings that arise as cohomology rings in odd characteristic.

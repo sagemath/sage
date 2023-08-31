@@ -126,9 +126,9 @@ class BinaryRecurrenceSequence(SageObject):
         self.c = c
         self.u0 = u0
         self.u1 = u1
-        self._period_dict = {}    #dictionary to cache the period of a sequence for future lookup
-        self._PGoodness = {} #dictionary to cache primes that are "good" by some prime power
-        self._ell = 1 #variable that keeps track of the last prime power to be used as a goodness
+        self._period_dict = {}  # dictionary to cache the period of a sequence for future lookup
+        self._PGoodness = {}  # dictionary to cache primes that are "good" by some prime power
+        self._ell = 1  # variable that keeps track of the last prime power to be used as a goodness
 
     def __repr__(self):
         """
@@ -468,7 +468,7 @@ class BinaryRecurrenceSequence(SageObject):
                     #expand the list of prime factors so every factor is with multiplicity 1
 
                     for i0, i1 in Mfac:
-                        for j in range(i1):
+                        for _ in range(i1):
                             C.append(i0)
 
                     Mfac = C
@@ -646,10 +646,10 @@ class BinaryRecurrenceSequence(SageObject):
 
                 F = GF(ell)
                 a0 = F(self.u0)
-                a1 = F(self.u1) #a0 and a1 are variables for terms in sequence
+                a1 = F(self.u1)  # a0 and a1 are variables for terms in sequence
                 bf, cf = F(self.b), F(self.c)
 
-                for n in range(Bound): # n is the index of the a0
+                for n in range(Bound):  # n is the index of the a0
 
                     #Check whether a0 is a perfect power mod ell
                     if _is_p_power_mod(a0, p, ell):
