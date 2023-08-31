@@ -87,7 +87,8 @@ def validate_mwrank_input(s):
 
     OUTPUT:
 
-    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.  For invalid input a ValueError is raised.
+    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.
+    For invalid input a :class:`ValueError` is raised.
 
     EXAMPLES:
 

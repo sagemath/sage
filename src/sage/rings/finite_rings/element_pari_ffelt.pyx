@@ -1045,7 +1045,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         If ``extend`` is ``True``, a square root is chosen in an
         extension field if necessary.  If ``extend`` is ``False``, a
-        ValueError is raised if the element is not a square in the
+        :class:`ValueError` is raised if the element is not a square in the
         base field.
 
         .. WARNING::

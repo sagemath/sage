@@ -895,7 +895,7 @@ class GraphicMatroid(Matroid):
         OUTPUT:
 
         ``frozenset`` instance containing a subset of ``X``.
-        A ``ValueError`` is raised if the set contains no circuit.
+        A :class:`ValueError` is raised if the set contains no circuit.
 
         EXAMPLES::
 
