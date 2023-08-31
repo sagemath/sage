@@ -252,8 +252,6 @@ class MPowerSeries(PowerSeries):
         sage: g = 1 + s + t - s*t + S.O(5); g
         1 + s + t - s*t + O(s, t)^5
 
-
-        sage: # needs sage.rings.finite_rings
         sage: T = PowerSeriesRing(GF(3),5,'t'); T
         Multivariate Power Series Ring in t0, t1, t2, t3, t4
          over Finite Field of size 3
@@ -265,17 +263,17 @@ class MPowerSeries(PowerSeries):
         sage: w in T
         True
 
-        sage: w = t[0] - 2*t[0]*t[2] + 5*t[4]^3 - t[0]^3*t[2]^2 + T.O(6)                # needs sage.rings.finite_rings
-        sage: w                                                                         # needs sage.rings.finite_rings
+        sage: w = t[0] - 2*t[0]*t[2] + 5*t[4]^3 - t[0]^3*t[2]^2 + T.O(6)
+        sage: w
         t0 + t0*t2 - t4^3 - t0^3*t2^2 + O(t0, t1, t2, t3, t4)^6
 
 
     Get random elements::
 
-        sage: S.random_element(4) # random
+        sage: S.random_element(4)   # random
         -2*t + t^2 - 12*s^3 + O(s, t)^4
 
-        sage: T.random_element(10)  # random                                            # needs sage.rings.finite_rings
+        sage: T.random_element(10)  # random
         -t1^2*t3^2*t4^2 + t1^5*t3^3*t4 + O(t0, t1, t2, t3, t4)^10
 
 
@@ -515,9 +513,9 @@ class MPowerSeries(PowerSeries):
             z
 
             sage: f = -2/33*s*t^2 - 1/5*t^5 - s^5*t + s^2*t^4
-            sage: f(z,z) #indirect doctest
+            sage: f(z,z)  # indirect doctest
             -2/33*z^3 - 1/5*z^5
-            sage: f(z,1) #indirect doctest
+            sage: f(z,1)  # indirect doctest
             -1/5 - 2/33*z + z^2 - z^5
             sage: RF = RealField(10)                                                    # needs sage.rings.real_mpfr
             sage: f(z, RF(1))  # indirect doctest                                       # needs sage.rings.real_mpfr
@@ -540,7 +538,8 @@ class MPowerSeries(PowerSeries):
             sage: f(m,m)                                                                # needs sage.modules
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.matrix.matrix_rational_dense.Matrix_rational_dense' object has no attribute 'add_bigoh'
+            AttributeError: 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'
+            object has no attribute 'add_bigoh'
         """
         from sage.misc.misc_c import prod
 
