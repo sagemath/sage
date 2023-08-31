@@ -397,6 +397,7 @@ def monomial_function(n, e):
     X = R.gen()
     return SBox(X**e)
 
+
 # Bijective S-Boxes mapping 9 bits to 9
 # =====================================
 

@@ -280,6 +280,7 @@ def WithRealizations(self):
     """
     return WithRealizationsCategory.category_of(self)
 
+
 Category.WithRealizations = WithRealizations
 
 class WithRealizationsCategory(RegressiveCovariantConstructionCategory):

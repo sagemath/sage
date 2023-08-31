@@ -1607,6 +1607,7 @@ class Polynomial_generic_dense_cdvf(Polynomial_generic_dense_cdv, Polynomial_gen
 class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_generic_cdvf):
     pass
 
+
 ############################################################################
 # XXX:  Ensures that the generic polynomials implemented in Sage via PARI  #
 # until at least until 4.5.0 unpickle correctly as polynomials implemented #

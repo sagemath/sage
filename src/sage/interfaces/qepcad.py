@@ -662,6 +662,7 @@ def _qepcad_cmd(memcells=None):
         memcells_arg = ''
     return "env qe=%s qepcad %s"%(SAGE_LOCAL, memcells_arg)
 
+
 _command_info_cache = None
 
 
