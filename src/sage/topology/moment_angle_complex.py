@@ -821,34 +821,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
     def cohomology_ring(self, base_ring):
-         #return CohomologyRingFromProduct(base_ring=base_ring, moment_angle_complex=self)
          return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
-#################### ignore this one for now
-#class CohomologyRingFromProduct():
-    #def __init__(self, moment_angle_complex, base_ring):
-        #from sage.categories.cartesian_product import cartesian_product
-        #self._complex = moment_angle_complex
-        #self._base_ring = base_ring
-#
-        #vertices = moment_angle_complex.simplicial_complex().vertices()
-        #n = len(vertices)
-        #L = []
-#
-        #for x in moment_angle_complex.simplicial_complex().facets():
-            #subcomplex = moment_angle_complex.simplicial_complex().generated_subcomplex(x, is_mutable=False)
-            #L.append(subcomplex.cohomology_ring())
-#
-        #self._cohomology_ring = cartesian_product(L)
-#
-    #def cohomology_ring(self):
-        #return self._cohomology_ring
-#
-    #def _repr_(self):
-        #return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
-#
-####
-# maybe just create a method instead of a classs?
 
 # _CartesianProduct
 class CohomologyRing(CombinatorialFreeModule):
