@@ -23,7 +23,7 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage:  # optional - sirocco
+    sage: # optional - sirocco
     sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
@@ -87,7 +87,7 @@ def braid_from_piecewise(strands):
 
     EXAMPLES::
 
-        sage:   # optional - sirocco
+        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_from_piecewise
         sage: paths = [[(0, 0, 1), (0.2, -1, -0.5), (0.8, -1, 0), (1, 0, -1)],
         ....:          [(0, -1, 0), (0.5, 0, -1), (1, 1, 0)],
@@ -1143,7 +1143,6 @@ def braid_monodromy(f, arrangement=()):
 
     - ``arrangement`` -- an optional tuple of polynomials whose product
       equals ``f``.
-
 
     OUTPUT:
 

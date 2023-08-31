@@ -1760,7 +1760,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
           presentation is constructed in the classical way or using Puiseux
           shortcut. If ``True``, ``simplified`` is set to ``False``.
 
-
         OUTPUT:
 
         A presentation with generators `x_1, \dots, x_d` and relations. If ``puiseux``
