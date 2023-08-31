@@ -233,7 +233,7 @@ SAGE_VENV_FLAGS = @SAGE_VENV_FLAGS@
 ifneq ($(PYTHON_FOR_VENV),)
 # Special rule for making the Python virtualenv from the system Python (Python
 # 3 only).  $(PYTHON) is set in Makefile to python3_venv.
-# Thus $(inst_python3_venv) will be the dependency of every Python package.
+# Thus $(inst_python3_venv) will an (order-only) dependency of every Python package.
 #
 # TODO: If we reconfigure to build our own Python after having used the system
 # Python, files installed to create the virtualenv should be *removed*.  That
@@ -241,13 +241,15 @@ ifneq ($(PYTHON_FOR_VENV),)
 ifeq ($(PYTHON),python3)
 PYTHON = python3_venv
 endif
-inst_python3_venv = $(SAGE_VENV)/$(SPKG_INST_RELDIR)/python3_venv-$(subst /,-,$(PYTHON_FOR_VENV))$(findstring --system-site-packages,$(SAGE_VENV_FLAGS))
+inst_python3_venv = $(SAGE_VENV)/$(SPKG_INST_RELDIR)/python3_venv-3.$(PYTHON_MINOR)-$(subst /,-,$(PYTHON_FOR_VENV))$(findstring --system-site-packages,$(SAGE_VENV_FLAGS))
 
 $(SAGE_VENV)/$(SPKG_INST_RELDIR):
-	mkdir -p $@
-$(inst_python3_venv): $(SAGE_VENV)/$(SPKG_INST_RELDIR)
+	mkdir -p "$@"
+
+$(inst_python3_venv): | $(SAGE_VENV)/$(SPKG_INST_RELDIR)
 	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv $(SAGE_VENV_FLAGS) "$(SAGE_VENV)"
-	touch $@
+	rm -f "$(SAGE_VENV)/$(SPKG_INST_RELDIR)"/python3_venv-*
+	touch "$@"
 endif
 
 # Build everything and start Sage.
