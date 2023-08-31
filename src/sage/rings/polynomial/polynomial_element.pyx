@@ -605,6 +605,14 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
+        One test for a simple evaluation::
+
+            sage: x, y = polygens(ZZ, 'x,y')
+            sage: t = polygen(x.parent(), 't')
+            sage: F = x*y*t
+            sage: F(y=1)
+            x*t
+
         The following shows that :trac:`2360` is indeed fixed. ::
 
             sage: R.<x,y> = ZZ[]
@@ -783,14 +791,20 @@ cdef class Polynomial(CommutativePolynomial):
         -  Francis Clarke (2012-08-26): fix keyword substitution in the
            leading coefficient.
         """
-        cdef long i, j
+        cdef long i, j, d, deg
         cdef Polynomial pol = self
-        cdef long d
         cdef ETuple etup
         cdef list cs
         cdef dict coeff_sparse, coeff_dict
 
-        cst = self._parent._base.zero() if self.degree() < 0 else self.get_unsafe(0)
+        deg = self.degree()
+        if deg < 0:
+            top = self._parent._base.one()
+            cst = self._parent._base.zero()
+        else:
+            top = self.get_unsafe(deg)
+            cst = self.get_unsafe(0)
+
         a = args[0] if len(args) == 1 else None
         if kwds or not (isinstance(a, Element) or PyNumber_Check(a)):
             # slow path
@@ -816,18 +830,22 @@ cdef class Polynomial(CommutativePolynomial):
                 try:
                     # Note that we may be calling a different implementation that
                     # is more permissive about its arguments than we are.
-                    cst = cst(*args, **kwds)
-                    eval_coeffs = True
+                    top = top(*args, **kwds)
                 except TypeError:
                     if args: # bwd compat: nonsense *keyword* arguments are okay
                         raise TypeError("Wrong number of arguments")
+                else:
+                    eval_coeffs = True
 
             # Evaluate the coefficients, then fall through to evaluate the
             # resulting univariate polynomial
 
             if eval_coeffs:
+                new_base = parent(top)
+                # tentative common parent of the evaluated coefficients
                 pol = pol.map_coefficients(lambda c: c(*args, **kwds),
-                                            new_base_ring=parent(cst))
+                                           new_base_ring=new_base)
+                cst = cst(*args, **kwds)
 
         R = parent(a)
 
@@ -840,8 +858,6 @@ cdef class Polynomial(CommutativePolynomial):
             if isinstance(a, Polynomial) and a.base_ring() is pol._parent._base:
                 if (<Polynomial> a).is_gen():
                     return R(pol)
-                if (<Polynomial> a).is_zero():
-                    return R(cst)
                 d = (<Polynomial> a).degree()
                 if d < 0:  # f(0)
                     return R(cst)
@@ -10210,7 +10226,7 @@ cdef class Polynomial(CommutativePolynomial):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R({k: f(v) for (k,v) in self.dict().items()})
+        return R({k: f(v) for k, v in self.dict().items()})
 
     def is_cyclotomic(self, certificate=False, algorithm="pari"):
         r"""
