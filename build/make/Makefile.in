@@ -227,6 +227,7 @@ SAGE_I_TARGETS = sagelib doc
 	python3_venv _clean-broken-gcc
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
+PYTHON_MINOR = @PYTHON_MINOR@
 SAGE_VENV_FLAGS = @SAGE_VENV_FLAGS@
 
 ifneq ($(PYTHON_FOR_VENV),)
