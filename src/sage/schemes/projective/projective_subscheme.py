@@ -1404,3 +1404,101 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         rel2 = rel + [CF]
         assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
         return alp(CF)
+
+    def global_height(self, prec=None):
+        """
+        Return the (projective) global height of the subscheme.
+
+        INPUT:
+
+        - ``prec`` -- desired floating point precision (default:
+          default ``RealField`` precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: NF.<a> = NumberField(x^2 - 5)
+            sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
+            sage: X = P.subscheme([x^2 + y*z, 2*y*z, 3*x*y])
+            sage: X.global_height()
+            0.000000000000000
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
+            sage: X.global_height() # long time
+            4.61512051684126
+        """
+        return self.Chow_form().global_height(prec)
+
+    def local_height(self, v, prec=None):
+        """
+        Return the (projective) local height of the subscheme.
+
+        INPUT:
+
+        - ``v`` -- a prime or prime ideal of the base ring.
+
+        - ``prec`` -- desired floating point precision (default:
+          default ``RealField`` precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: NF.<a> = NumberField(x^2 - 5)
+            sage: I = NF.ideal(3)
+            sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
+            sage: X = P.subscheme([3*x*y - 5*x*z, y^2])
+            sage: X.local_height(I)
+            0.000000000000000
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
+            sage: X.local_height(2)
+            0.000000000000000
+        """
+        return self.Chow_form().local_height(v, prec)
+
+    def local_height_arch(self, i, prec=None):
+        """
+        Return the local height at the ``i``-th infinite place of the subscheme.
+
+        INPUT:
+
+        - ``i`` -- an integer.
+
+        - ``prec`` -- desired floating point precision (default:
+          default ``RealField`` precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: NF.<a> = NumberField(x^2 - 5)
+            sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
+            sage: X = P.subscheme([x^2 + y*z, 3*x*y])
+            sage: X.local_height_arch(1)
+            0.0000000000000000000000000000000
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
+            sage: X.local_height_arch(1)
+            4.61512051684126
+        """
+        return self.Chow_form().local_height_arch(i, prec)

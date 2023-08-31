@@ -354,9 +354,9 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
-        sage: P = MyParent(category=Rings())                                    # optional - sage.misc.cython
-        sage: P.element_class    # indirect doctest                             # optional - sage.misc.cython
+        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: P = MyParent(category=Rings())                                            # needs sage.misc.cython
+        sage: P.element_class    # indirect doctest                                     # needs sage.misc.cython
         <class '...MyElement'>
 
     .. rubric:: About descriptor specifications

@@ -9,7 +9,7 @@ include(`setup_cfg_metadata.m4')dnl'
 
 [options]
 include(`sage_spkg_versions.m4')dnl'
-python_requires = >=3.8, <3.12
+python_requires = >=3.9, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_gmpy2
     SPKG_INSTALL_REQUIRES_cysignals

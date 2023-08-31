@@ -46,7 +46,7 @@ We make a large zero vector::
 We multiply a vector by a matrix::
 
     sage: a = (GF(97)^5)(range(5))
-    sage: m = matrix(GF(97),5,range(25))
+    sage: m = matrix(GF(97), 5, range(25))
     sage: a*m
     (53, 63, 73, 83, 93)
 
@@ -58,20 +58,20 @@ TESTS::
     sage: v = vector(Integers(389), [1,2,3,4,5])
     sage: loads(dumps(v)) == v
     True
-    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])
+    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])                          # needs sage.libs.pari
     sage: loads(dumps(v)) == v
     True
 
-    sage: K = GF(previous_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(previous_prime(2^31))                                                  # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     2096353084
 
-    sage: K = GF(next_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(next_prime(2^31))                                                      # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     1482786336
 
     sage: w = vector(GF(11), [-1,0,0,0])
@@ -81,6 +81,7 @@ TESTS::
 
 Test that :trac:`28042` is fixed::
 
+    sage: # needs sage.rings.finite_rings
     sage: p = 193379
     sage: K = GF(p)
     sage: a = K(1)
@@ -88,7 +89,7 @@ Test that :trac:`28042` is fixed::
     sage: c = K(109320)
     sage: d = K(167667)
     sage: e = 103937
-    sage: a*c+b*d-e
+    sage: a*c + b*d - e
     102041
     sage: vector([a,b]) * vector([c,d]) - e
     102041
