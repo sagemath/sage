@@ -53,7 +53,7 @@ class Algebras(AlgebrasCategory):
 
                 sage: A = RootSystem(["A",2,1]).ambient_space().algebra(QQ)
                 sage: A.some_elements()
-                [B[2*e[0] + 2*e[1] + 3*e[2]]]
+                [B[2*e[0] + 2*e[1] + 3*e[2]]...]
                 sage: A.some_elements()                                                 # needs sage.graphs
                 [B[2*e[0] + 2*e[1] + 3*e[2]],
                  B[-e[0] + e[2] + e['delta']],
@@ -65,7 +65,13 @@ class Algebras(AlgebrasCategory):
 
                 sage: A = RootSystem(["B",2]).weight_space().algebra(QQ)
                 sage: A.some_elements()
-                [B[2*Lambda[1] + 2*Lambda[2]], B[Lambda[1]], B[Lambda[2]]]
+                [B[2*Lambda[1] + 2*Lambda[2]], ... B[Lambda[1]], B[Lambda[2]]]
+                sage: A.some_elements()                                                 # needs sage.graphs
+                [B[2*Lambda[1] + 2*Lambda[2]],
+                 B[2*Lambda[1] - 2*Lambda[2]],
+                 B[-Lambda[1] + 2*Lambda[2]],
+                 B[Lambda[1]],
+                 B[Lambda[2]]]
             """
             return [self.monomial(weight) for weight in self.basis().keys().some_elements()]
 
@@ -264,7 +270,7 @@ class Algebras(AlgebrasCategory):
 
             We check systematically that these operators satisfy the Iwahori-Hecke algebra relations::
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time 12s
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:     L = RootSystem(cartan_type).weight_lattice()
                 ....:     KL = L.algebra(QQ)
                 ....:     T = KL.demazure_operators()
@@ -695,14 +701,14 @@ class Algebras(AlgebrasCategory):
             Note that there is no translation part, and in particular
             1 is an eigenvector for all `T_i`'s::
 
-                sage: T[0](KL0.one())                                                   # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: T[0](KL0.one())
                 q1*B[(0, 0)]
                 sage: T[1](KL0.one())                                                   # needs sage.graphs
                 q1*B[(0, 0)]
-
-                sage: Y = T.Y()                                                         # needs sage.graphs
-                sage: alphacheck = Y.keys().simple_roots()                              # needs sage.graphs
-                sage: Y[alphacheck[0]](KL0.one())                                       # needs sage.graphs
+                sage: Y = T.Y()
+                sage: alphacheck = Y.keys().simple_roots()
+                sage: Y[alphacheck[0]](KL0.one())
                 ((-q2)/(q*q1))*B[(0, 0)]
 
             Matching with Ion Bogdan's hand calculations from 3/15/2013::
@@ -714,31 +720,31 @@ class Algebras(AlgebrasCategory):
                 sage: KL0 = KL.classical()
                 sage: L0 = KL0.basis().keys()
                 sage: omega = L0.fundamental_weights()
-                sage: T = KL.demazure_lusztig_operators_on_classical(q, u, -1/u,        # needs sage.graphs
+
+                sage: # needs sage.graphs
+                sage: T = KL.demazure_lusztig_operators_on_classical(q, u, -1/u,
                 ....:                                                convention="dominant")
-                sage: Y = T.Y()                                                         # needs sage.graphs
-                sage: alphacheck = Y.keys().simple_roots()                              # needs sage.graphs
-                sage: Ydelta = Y[Y.keys().null_root()]                                  # needs sage.graphs
-                sage: Ydelta.word, Ydelta.signs, Ydelta.scalar                          # needs sage.graphs
+                sage: Y = T.Y()
+                sage: alphacheck = Y.keys().simple_roots()
+                sage: Ydelta = Y[Y.keys().null_root()]
+                sage: Ydelta.word, Ydelta.signs, Ydelta.scalar
                 ((), (), 1/q)
-
-                sage: Y1 = Y[alphacheck[1]]                                             # needs sage.graphs
-                sage: Y1.word, Y1.signs, Y1.scalar # This is T_0 T_1 (T_1 acts first, then T_0); Ion gets T_1 T_0       # needs sage.graphs
+                sage: Y1 = Y[alphacheck[1]]
+                sage: Y1.word, Y1.signs, Y1.scalar  # This is T_0 T_1 (T_1 acts first, then T_0); Ion gets T_1 T_0
                 ((1, 0), (1, 1), 1)
-
-                sage: Y0 = Y[alphacheck[0]]                                             # needs sage.graphs
-                sage: Y0.word, Y0.signs, Y0.scalar # This is 1/q T_1^-1 T_0^-1          # needs sage.graphs
+                sage: Y0 = Y[alphacheck[0]]
+                sage: Y0.word, Y0.signs, Y0.scalar  # This is 1/q T_1^-1 T_0^-1
                 ((0, 1), (-1, -1), 1/q)
 
             Note that the following computations use the "dominant" convention::
 
-                sage: T0 = T.Tw(0)                                                      # needs sage.graphs
-                sage: T0(KL0.monomial(omega[1]))                                        # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: T0 = T.Tw(0)
+                sage: T0(KL0.monomial(omega[1]))
                 q*u*B[-Lambda[1]] + ((u^2-1)/u)*B[Lambda[1]]
                 sage: T0(KL0.monomial(2*omega[1]))                                      # needs sage.graphs
                 ((q*u^2-q)/u)*B[0] + q^2*u*B[-2*Lambda[1]] + ((u^2-1)/u)*B[2*Lambda[1]]
-
-                sage: T0(KL0.monomial(-omega[1]))                                       # needs sage.graphs
+                sage: T0(KL0.monomial(-omega[1]))
                 1/(q*u)*B[Lambda[1]]
                 sage: T0(KL0.monomial(-2*omega[1]))                                     # needs sage.graphs
                 ((-u^2+1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]

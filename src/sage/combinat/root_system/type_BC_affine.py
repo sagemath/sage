@@ -82,7 +82,7 @@ class CartanType(CartanType_standard_affine):
             sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-            sage: c = CartanType(["A", 6, 2]).dynkin_diagram() # should be the same as above; did fail at some point!   # needs sage.graphs
+            sage: c = CartanType(["A", 6, 2]).dynkin_diagram()  # should be the same as above; did fail at some point!  # needs sage.graphs
             sage: c                                                                     # needs sage.graphs
             O=<=O---O=<=O
             0   1   2   3

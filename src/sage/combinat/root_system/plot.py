@@ -504,14 +504,15 @@ index set, ...), the easiest is to create an option object using
 :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot_parse_options`,
 and pass it down to each piece. We use this to plot our two walks::
 
+    sage: # long time
     sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,6]])
     sage: w2 = [2,1,2,0,2,0,2,1,2,0,1,2,1,2,1,0,1,2,0,2,0,1,2,0,2]
-    sage: p = L.plot_alcoves(plot_options=plot_options)                 # long time
-    sage: p += L.plot_alcove_walk(w1, color="green",                    # long time
+    sage: p = L.plot_alcoves(plot_options=plot_options)
+    sage: p += L.plot_alcove_walk(w1, color="green",
     ....:                         plot_options=plot_options)
-    sage: p += L.plot_alcove_walk(w2, color="orange",                   # long time
+    sage: p += L.plot_alcove_walk(w2, color="orange",
     ....:                         plot_options=plot_options)
-    sage: p                                                             # long time
+    sage: p
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::
@@ -553,19 +554,20 @@ And another with some foldings::
 Here we show a weight at level `0` and the reduced word implementing
 the translation by this weight::
 
+    sage: # long time
     sage: L = RootSystem(["A",2,1]).ambient_space()
     sage: P = RootSystem(["A",2,1]).weight_space(extended=True)
     sage: Lambda = P.fundamental_weights()
     sage: t = 6*Lambda[1] - 2*Lambda[2] - 4*Lambda[0]
     sage: walk = L.reduced_word_of_translation(L(t))
     sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,5]])
-    sage: p = L.plot(plot_options=plot_options)                         # long time
-    sage: p += L.plot_alcove_walk(walk, color="green",                  # long time
+    sage: p = L.plot(plot_options=plot_options)
+    sage: p += L.plot_alcove_walk(walk, color="green",
     ....:                         plot_options=plot_options)
-    sage: p += plot_options.family_of_vectors({t: L(t)})                # long time
-    sage: plot_options.finalize(p)                                      # long time
+    sage: p += plot_options.family_of_vectors({t: L(t)})
+    sage: plot_options.finalize(p)
     Graphics object consisting of ... graphics primitives
-    sage: p                                                             # long time
+    sage: p
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::
@@ -649,7 +651,7 @@ Now you can create your own customized color Coxeter graph paper::
     sage: L = RootSystem(["C",2,1]).ambient_space()
     sage: p = L.plot(bounding_box=[[-8,9],[-5,7]],      # long time (10 s)
     ....:            coroots="simple")
-    sage: p                                     # long time
+    sage: p                                             # long time
     Graphics object consisting of ... graphics primitives
 
 .. PLOT::

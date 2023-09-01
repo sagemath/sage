@@ -271,6 +271,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: fct = CartanType(['C', 4, 1]).as_folding()
             sage: fct.scaling_factors()                                                 # needs sage.graphs
             Finite family {0: 2, 1: 1, 2: 1, 3: 1, 4: 2}

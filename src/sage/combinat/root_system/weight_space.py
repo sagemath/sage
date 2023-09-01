@@ -134,7 +134,7 @@ class WeightSpace(CombinatorialFreeModule):
     TESTS::
 
         sage: for ct in (CartanType.samples(crystallographic=True)                      # needs sage.graphs
-        ....:             + [CartanType(["A",2], ["C",5,1])]:
+        ....:             + [CartanType(["A",2], ["C",5,1])]):
         ....:     TestSuite(ct.root_system().weight_lattice()).run()
         ....:     TestSuite(ct.root_system().weight_space()).run()
         sage: for ct in CartanType.samples(affine=True):                                # needs sage.graphs

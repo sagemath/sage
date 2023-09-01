@@ -387,7 +387,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         TESTS::
 
-            sage: C = CartanMatrix(['A',1,1])                                           # needs sage.graphs
+            sage: C = CartanMatrix(['A',1,1])  # indirect doctest                       # needs sage.graphs
             sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])        # needs sage.graphs
         """
         self._index_set = index_set
@@ -673,6 +673,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: ct = CartanType(['C',3])
             sage: M = CartanMatrix(ct); M                                               # needs sage.graphs
             [ 2 -1  0]
@@ -937,8 +938,9 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])                      # needs sage.graphs
-            sage: cm.coxeter_matrix()                                                   # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
+            sage: cm.coxeter_matrix()
             [ 1 -1  2]
             [-1  1  3]
             [ 2  3  1]
@@ -974,8 +976,9 @@ class CartanMatrix(Base, CartanType_abstract,
 
         EXAMPLES::
 
-            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])                      # needs sage.graphs
-            sage: G = cm.coxeter_diagram(); G                                           # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
+            sage: G = cm.coxeter_diagram(); G
             Graph on 3 vertices
             sage: G.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, +Infinity), (1, 2, 3)]

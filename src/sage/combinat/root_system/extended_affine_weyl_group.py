@@ -57,7 +57,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     - ``cartan_type`` -- An affine or finite Cartan type (a finite Cartan type is an
       abbreviation for its untwisted affinization)
-    - ``general_linear`` -- (default: None) If True and ``cartan_type`` indicates
+    - ``general_linear`` -- (default: ``None``) If ``True`` and ``cartan_type`` indicates
       untwisted type A, returns the universal central extension
     - ``print_options`` -- Special instructions for printing elements (see below)
 
@@ -77,8 +77,8 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     Recognized arguments for ``print_options`` are:
 
-    - ``print_tuple`` -- True or False (default: False) If True, elements are printed
-      `(a,b)`, otherwise as `a * b`
+    - ``print_tuple`` -- ``True`` or ``False`` (default: ``False``)
+      If ``True``, elements are printed `(a,b)`, otherwise as `a * b`
     - ``affine`` -- Prefix for simple reflections in the affine Weyl group
     - ``classical`` -- Prefix for simple reflections in the classical Weyl group
     - ``translation`` -- Prefix for the translation elements
@@ -1127,13 +1127,13 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1]); PW0=E.PW0()
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1]); PW0 = E.PW0()
                     sage: b = E.lattice_basis(); b
                     Finite family {1: Lambdacheck[1], 2: Lambdacheck[2]}
-                    sage: x = PW0.from_translation(2*b[1]-b[2]); x
+                    sage: x = PW0.from_translation(2*b[1] - b[2]); x
                     t[2*Lambdacheck[1] - Lambdacheck[2]]
                     sage: FW = E.FW()
-                    sage: y = FW.from_translation(2*b[1]-b[2]); y
+                    sage: y = FW.from_translation(2*b[1] - b[2]); y
                     S0*S2*S0*S1
                     sage: FW(x) == y
                     True
@@ -1160,10 +1160,10 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                     sage: E = ExtendedAffineWeylGroup(['A',2,1]); PvW0 = E.PvW0()
                     sage: bv = E.dual_lattice_basis(); bv
                     Finite family {1: Lambda[1], 2: Lambda[2]}
-                    sage: x = PvW0.from_dual_translation(2*bv[1]-bv[2]); x
+                    sage: x = PvW0.from_dual_translation(2*bv[1] - bv[2]); x
                     t[2*Lambda[1] - Lambda[2]]
                     sage: FW = E.FW()
-                    sage: y = FW.from_dual_translation(2*bv[1]-bv[2]); y
+                    sage: y = FW.from_dual_translation(2*bv[1] - bv[2]); y
                     S0*S2*S0*S1
                     sage: FW(x) == y
                     True
@@ -1204,7 +1204,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- a realization of the extended affine Weyl group
-                - `i` -- An affine Dynkin node
+                - ``i`` -- An affine Dynkin node
 
                 EXAMPLES::
 
@@ -1289,7 +1289,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0=E.PW0()
+                    sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0 = E.PW0()
                     sage: W = E.affine_weyl()
                     sage: w = W.from_reduced_word([2,1,3,0])
                     sage: x = PW0.from_affine_weyl(w); x
@@ -1333,15 +1333,15 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 OPTIONAL:
 
-                - ``side`` -- 'right' or 'left' (default: 'right')
-                - ``positive`` -- True or False (default: False)
+                - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
+                - ``positive`` -- ``True`` or ``False`` (default: ``False``)
 
-                If ``side``='left' then the reflection acts
-                on the left. If ``positive`` = True then the inequality is reversed.
+                If ``side='left'``, then the reflection acts
+                on the left. If ``positive=True``, then the inequality is reversed.
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',3,1]); WF=E.WF()
+                    sage: E = ExtendedAffineWeylGroup(['A',3,1]); WF = E.WF()
                     sage: F = E.fundamental_group()
                     sage: x = WF.an_element(); x
                     S0*S1*S2*S3 * pi[3]
@@ -1365,11 +1365,11 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``side`` -- 'left' or 'right' (default: 'right')
-                - ``positive`` -- True or False (default: False)
+                - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+                - ``positive`` -- ``True`` or ``False`` (default: ``False``)
                 - ``index_set`` -- an optional subset of Dynkin nodes
 
-                If ``index_set`` is not None, then the descent must be in the ``index_set``.
+                If ``index_set`` is not ``None``, then the descent must be in the ``index_set``.
 
                 EXAMPLES::
 
@@ -1419,8 +1419,11 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 - ``self`` -- an element of the extended affine Weyl group
                 - `i` -- a Dynkin node (index of a simple reflection `s_i`)
-                - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) according to which side of ``self`` the reflection `s_i` should be multiplied
-                - ``length_increasing`` -- ``True`` or ``False`` (default ``True``). If ``False``, do the above with the word "greater" replaced by "less".
+                - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
+                  according to which side of ``self`` the reflection `s_i`
+                  should be multiplied
+                - ``length_increasing`` -- ``True`` or ``False`` (default ``True``).
+                  If ``False``, do the above with the word "greater" replaced by "less".
 
                 EXAMPLES::
 
@@ -1496,7 +1499,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0 = E.PW0()
                     sage: b = E.lattice_basis()
-                    sage: [(x,PW0.from_translation(x).to_affine_weyl_left()) for x in b]
+                    sage: [(x, PW0.from_translation(x).to_affine_weyl_left()) for x in b]
                     [(Lambdacheck[1], S0*S3*S2),
                      (Lambdacheck[2], S0*S3*S1*S0),
                      (Lambdacheck[3], S0*S1*S2)]
@@ -1515,9 +1518,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0=E.PW0()
+                    sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0 = E.PW0()
                     sage: b = E.lattice_basis()
-                    sage: [(x,PW0.from_translation(x).to_affine_weyl_right()) for x in b]
+                    sage: [(x, PW0.from_translation(x).to_affine_weyl_right()) for x in b]
                     [(Lambdacheck[1], S3*S2*S1),
                      (Lambdacheck[2], S2*S3*S1*S2),
                      (Lambdacheck[3], S1*S2*S3)]
@@ -1603,7 +1606,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0=E.PW0()
+                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0 = E.PW0()
                      sage: I0 = E.cartan_type().classical().index_set()
                      sage: [PW0.from_translation(E.lattice_basis()[i]).length() for i in I0]
                      [3, 4, 3]
@@ -1619,7 +1622,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 - ``self`` -- an element of the extended affine Weyl group
                 - ``index_set`` -- a subset of the set of Dynkin nodes
-                - ``side`` -- 'right' or 'left' (default: 'right') the side on which the subgroup acts
+                - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
+                  the side on which the subgroup acts
 
                 EXAMPLES::
 
@@ -1642,7 +1646,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0=E.PW0()
+                     sage: E = ExtendedAffineWeylGroup(['A',3,1]); PW0 = E.PW0()
                      sage: x = PW0.from_translation(E.lattice_basis()[1]); x
                      t[Lambdacheck[1]]
                      sage: I = E.cartan_type().index_set()
@@ -1674,7 +1678,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1]); PW0=E.PW0()
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1]); PW0 = E.PW0()
                     sage: F = E.fundamental_group()
                     sage: [(x,PW0.from_fundamental(x).is_affine_grassmannian()) for x in F]
                     [(pi[0], True), (pi[1], True), (pi[2], True)]
@@ -1696,7 +1700,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1], print_tuple=True); WF=E.WF()
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1], print_tuple=True); WF = E.WF()
                     sage: W = E.affine_weyl()
                     sage: v = W.from_reduced_word([2,1,0])
                     sage: w = W.from_reduced_word([2,0,1,0])
@@ -1728,7 +1732,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1]); FW=E.FW()
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1]); FW = E.FW()
                     sage: F = E.fundamental_group()
                     sage: FW.from_affine_weyl(E.affine_weyl().from_reduced_word([1,2,1,0])).is_translation()
                     True
@@ -1747,7 +1751,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- an element of the extended affine Weyl group
-                - ``la`` -- an element of the translation lattice of the extended affine Weyl group, the lattice denoted by the mnemonic "P" in the documentation for :meth:`ExtendedAffineWeylGroup`.
+                - ``la`` -- an element of the translation lattice of the extended
+                  affine Weyl group, the lattice denoted by the mnemonic "P" in the
+                  documentation for :meth:`ExtendedAffineWeylGroup`.
 
                 EXAMPLES::
 
@@ -1777,7 +1783,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- an element of the extended affine Weyl group
-                - ``la`` -- an element of the dual translation lattice of the extended affine Weyl group, the lattice denoted by the mnemonic "Pv" in the documentation for :meth:`ExtendedAffineWeylGroup`.
+                - ``la`` -- an element of the dual translation lattice of the extended
+                  affine Weyl group, the lattice denoted by the mnemonic "Pv" in
+                  the documentation for :meth:`ExtendedAffineWeylGroup`.
 
                 EXAMPLES::
 
@@ -1829,7 +1837,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- An element of the extended affine Weyl group
-                - `i` -- an affine Dynkin node
+                - ``i`` -- an affine Dynkin node
 
                 OUTPUT:
 
@@ -1917,7 +1925,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` -- an affine Dynkin node
+            - ``i`` -- an affine Dynkin node
 
             OPTIONAL:
 
@@ -1959,7 +1967,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1]); PW0=E.PW0()
+                sage: E = ExtendedAffineWeylGroup(['A',2,1]); PW0 = E.PW0()
                 sage: x = PW0.an_element(); x
                 t[2*Lambdacheck[1] + 2*Lambdacheck[2]] * s1*s2
                 sage: la = E.lattice().an_element(); la
@@ -2006,7 +2014,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `E` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
@@ -2127,7 +2135,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` -- an index.
+            - ``i`` -- an index.
 
             OPTIONAL:
 
@@ -2306,7 +2314,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` -- an affine Dynkin index
+            - ``i`` -- an affine Dynkin index
 
             OPTIONAL:
 
@@ -2362,7 +2370,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s",
-                ....:                             print_tuple=True); WF=E.WF()
+                ....:                             print_tuple=True); WF = E.WF()
                 sage: r = E.affine_weyl().from_reduced_word
                 sage: v = r([1,0])
                 sage: w = r([1,2,0])
@@ -2434,7 +2442,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['C',2,1],print_tuple=True)
+                sage: E = ExtendedAffineWeylGroup(['C',2,1], print_tuple=True)
                 sage: E.WF().from_affine_weyl(E.affine_weyl().from_reduced_word([1,2,1,0]))
                 (S1*S2*S1*S0, pi[0])
             """
@@ -2447,7 +2455,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: ExtendedAffineWeylGroup(["A",3,1],affine="r").WF().simple_reflections()
+                sage: ExtendedAffineWeylGroup(["A",3,1], affine="r").WF().simple_reflections()
                 Finite family {0: r0, 1: r1, 2: r2, 3: r3}
             """
             E = self.realization_of()
@@ -2535,7 +2543,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1],affine="s")
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s")
                 sage: x = E.FW().an_element(); x
                 pi[2] * s0*s1*s2
                 sage: v = RootSystem(['A',2,1]).root_lattice().an_element(); v
@@ -2610,7 +2618,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1],print_tuple=True)
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], print_tuple=True)
                 sage: E.FW().from_affine_weyl(E.affine_weyl().from_reduced_word([0,2,1]))
                 (pi[0], S0*S2*S1)
             """
@@ -2623,7 +2631,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1],print_tuple=True)
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], print_tuple=True)
                 sage: E.FW().from_fundamental(E.fundamental_group()(2))
                 (pi[2], 1)
             """
@@ -2640,12 +2648,12 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` - an affine Dynkin index
+            - ``i`` - an affine Dynkin index
 
             OPTIONAL:
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``positive`` -- True or False (default: False)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
 
             EXAMPLES::
 
@@ -2799,8 +2807,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',3,1],print_tuple=True)
-                sage: E.PvW0().from_dual_classical_weyl(E.dual_classical_weyl().from_reduced_word([1,2]))
+                sage: E = ExtendedAffineWeylGroup(['A',3,1], print_tuple=True)
+                sage: E.PvW0().from_dual_classical_weyl(
+                ....:     E.dual_classical_weyl().from_reduced_word([1,2]))
                 (t[0], s1*s2)
             """
             return self((self.cartesian_factors()[0].one(),w))
