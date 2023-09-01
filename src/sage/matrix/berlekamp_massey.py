@@ -89,6 +89,6 @@ def berlekamp_massey(a):
     f0, f1 = R(a), x**(2 * M)
     s0, s1 = 1, 0
     while f1.degree() >= M:
-        f0, (qj, f1) = f1, f0.quo_rem(f1)
-        s0, s1 = s1, s0 - qj * s1
+        f0, (q, f1) = f1, f0.quo_rem(f1)
+        s0, s1 = s1, s0 - q * s1
     return s1.reverse().monic()
