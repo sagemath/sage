@@ -1214,31 +1214,34 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(b, 5^5 - 1, operation='*')
         781
 
-        sage: # needs sage.rings.number_field sage.schemes
-        sage: E = EllipticCurve(k, [2,4])                                               # needs sage.rings.finite_rings
-        sage: P = E(3*a^4 + 3*a, 2*a + 1)                                               # needs sage.rings.finite_rings
-        sage: M = E.cardinality(); M                                                    # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.schemes
+        sage: E = EllipticCurve(k, [2,4])
+        sage: P = E(3*a^4 + 3*a, 2*a + 1)
+        sage: M = E.cardinality(); M
         3227
         sage: F = M.factor()
-        sage: order_from_multiple(P, M, factorization=F, operation='+')                 # needs sage.rings.finite_rings
+        sage: order_from_multiple(P, M, factorization=F, operation='+')
         3227
-        sage: Q = E(0,2)                                                                # needs sage.rings.finite_rings
-        sage: order_from_multiple(Q, M, factorization=F, operation='+')                 # needs sage.rings.finite_rings
+        sage: Q = E(0,2)
+        sage: order_from_multiple(Q, M, factorization=F, operation='+')
         7
 
-        sage: K.<z> = CyclotomicField(230)                                              # needs sage.rings.number_field
-        sage: w = z^50                                                                  # needs sage.rings.number_field
-        sage: order_from_multiple(w, 230, operation='*')                                # needs sage.rings.finite_rings sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<z> = CyclotomicField(230)
+        sage: w = z^50
+        sage: order_from_multiple(w, 230, operation='*')                                # needs sage.rings.finite_rings
         23
 
-        sage: F = GF(2^1279,'a')                                                        # needs sage.rings.finite_rings
-        sage: n = F.cardinality() - 1  # Mersenne prime                                 # needs sage.rings.finite_rings
-        sage: order_from_multiple(F.random_element(), n,                                # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: F = GF(2^1279,'a')
+        sage: n = F.cardinality() - 1  # Mersenne prime
+        sage: order_from_multiple(F.random_element(), n,
         ....:                     factorization=[(n,1)], operation='*') == n
         True
 
-        sage: K.<a> = GF(3^60)                                                          # needs sage.rings.finite_rings
-        sage: order_from_multiple(a, 3^60 - 1, operation='*', check=False)              # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: K.<a> = GF(3^60)
+        sage: order_from_multiple(a, 3^60 - 1, operation='*', check=False)
         42391158275216203514294433200
     """
     Z = integer_ring.ZZ

@@ -304,7 +304,10 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         ....:        if bde.has_arc(i,j):
         ....:            bdg.add_edge(i,j)
         sage: a, b.graph6_string()
-        ([[0, 19, 3, 2, 6, 5, 4, 17, 18, 11, 10, 9, 13, 12, 16, 15, 14, 7, 8, 1], [0, 1, 8, 9, 13, 14, 7, 6, 2, 3, 19, 18, 17, 4, 5, 15, 16, 12, 11, 10], [1, 8, 9, 10, 11, 12, 13, 14, 7, 6, 2, 3, 4, 5, 15, 16, 17, 18, 19, 0]], 'S?[PG__OQ@?_?_?P?CO?_?AE?EC?Ac?@O')
+        ([[0, 19, 3, 2, 6, 5, 4, 17, 18, 11, 10, 9, 13, 12, 16, 15, 14, 7, 8, 1],
+          [0, 1, 8, 9, 13, 14, 7, 6, 2, 3, 19, 18, 17, 4, 5, 15, 16, 12, 11, 10],
+          [1, 8, 9, 10, 11, 12, 13, 14, 7, 6, 2, 3, 4, 5, 15, 16, 17, 18, 19, 0]],
+         'S?[PG__OQ@?_?_?P?CO?_?AE?EC?Ac?@O')
         sage: a == asp
         True
         sage: a == ade
@@ -903,14 +906,15 @@ def orbit_partition(gamma, list_perm=False):
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import orbit_partition
         sage: G = graphs.PetersenGraph()
-        sage: S = SymmetricGroup(10)                                                    # needs sage.groups
-        sage: gamma = S('(10,1,2,3,4)(5,6,7)(8,9)')                                     # needs sage.groups
-        sage: orbit_partition(gamma)                                                    # needs sage.groups
+        sage: S = SymmetricGroup(10)
+        sage: gamma = S('(10,1,2,3,4)(5,6,7)(8,9)')
+        sage: orbit_partition(gamma)
         [[1, 2, 3, 4, 0], [5, 6, 7], [8, 9]]
-        sage: gamma = S('(10,5)(1,6)(2,7)(3,8)(4,9)')                                   # needs sage.groups
-        sage: orbit_partition(gamma)                                                    # needs sage.groups
+        sage: gamma = S('(10,5)(1,6)(2,7)(3,8)(4,9)')
+        sage: orbit_partition(gamma)
         [[1, 6], [2, 7], [3, 8], [4, 9], [5, 0]]
     """
     if list_perm:
@@ -1294,7 +1298,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         34
         156
         1044
-        sage: generate_dense_graphs_edge_addition(8,0) # long time - about 14 seconds at 2.4 GHz
+        sage: generate_dense_graphs_edge_addition(8,0)  # long time (about 14 seconds at 2.4 GHz)
         12346
 
     """
@@ -1563,7 +1567,7 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
         53
         209
         1253
-        sage: generate_dense_graphs_vert_addition(8) # long time
+        sage: generate_dense_graphs_vert_addition(8)  # long time
         13599
 
     TESTS::

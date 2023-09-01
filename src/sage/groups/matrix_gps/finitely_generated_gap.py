@@ -212,14 +212,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: F = GF(3); MS = MatrixSpace(F,4,4)
             sage: M = MS(0)
-            sage: M[0,1]=1;M[1,2]=1;M[2,3]=1;M[3,0]=1
+            sage: M[0,1]=1; M[1,2]=1; M[2,3]=1; M[3,0]=1
             sage: G = MatrixGroup([M])                                                  # needs sage.libs.pari
             sage: G.module_composition_factors()                                        # needs sage.libs.pari
             [(Finite Field of size 3, 1, True),
              (Finite Field of size 3, 1, True),
              (Finite Field of size 3, 2, True)]
             sage: F = GF(7); MS = MatrixSpace(F,2,2)
-            sage: gens = [MS([[0,1],[-1,0]]),MS([[1,1],[2,3]])]
+            sage: gens = [MS([[0,1],[-1,0]]), MS([[1,1],[2,3]])]
             sage: G = MatrixGroup(gens)
             sage: G.module_composition_factors()
             [(Finite Field of size 7, 2, True)]
@@ -280,8 +280,9 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: q = 4; a = 2
             sage: MS = MatrixSpace(QQ, 2, 2)
-            sage: gen1 = [[1/a,(q-1)/a],[1/a, -1/a]]; gen2 = [[1,0],[0,-1]]; gen3 = [[-1,0],[0,1]]
-            sage: G = MatrixGroup([MS(gen1),MS(gen2),MS(gen3)])
+            sage: gen1 = [[1/a, (q-1)/a], [1/a, -1/a]]
+            sage: gen2 = [[1,0], [0,-1]]; gen3 = [[-1,0], [0,1]]
+            sage: G = MatrixGroup([MS(gen1), MS(gen2), MS(gen3)])
             sage: G.cardinality()
             12
             sage: G.invariant_generators()
@@ -484,7 +485,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: # needs sage.rings.number_field
             sage: K.<v> = CyclotomicField(8)
-            sage: a = v-v^3  #sqrt(2)
+            sage: a = v - v^3  # sqrt(2)
             sage: i = v^2
             sage: Octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],          # needs sage.symbolic
             ....:                    [(1+i)/a, 0,  0, (1-i)/a])
@@ -500,7 +501,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: a = 2*z5^3 + 2*z5^2 + 1  #sqrt(5)
             sage: Ico = MatrixGroup([[z5^3,0, 0,z5^2],
             ....:                    [0,1, -1,0],
-            ....:                    [(z5^4-z5)/a, (z5^2-z5^3)/a, (z5^2-z5^3)/a, -(z5^4-z5)/a]])
+            ....:                    [(z5^4-z5)/a, (z5^2-z5^3)/a,
+            ....:                     (z5^2-z5^3)/a, -(z5^4-z5)/a]])
             sage: Ico.molien_series(prec=40)
             1 + t^12 + t^20 + t^24 + t^30 + t^32 + t^36 + O(t^40)
 
@@ -516,7 +518,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: K = GF(5)
             sage: S = MatrixGroup(SymmetricGroup(4))
-            sage: G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])             # needs sage.libs.pari
+            sage: G = MatrixGroup([matrix(K, 4, 4,                                      # needs sage.libs.pari
+            ....:                         [K(y) for u in m.list() for y in u])
             ....:                  for m in S.gens()])
             sage: G.molien_series(return_series=False)
             1/(t^10 - t^9 - t^8 + 2*t^5 - t^2 - t + 1)
