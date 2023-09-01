@@ -1409,7 +1409,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         EXAMPLES::
 
-            sage: hash(RIF(e)) == hash(RIF(e)) # indirect doctest                       # needs sage.symbolic
+            sage: hash(RIF(e)) == hash(RIF(e))  # indirect doctest                      # needs sage.symbolic
             True
         """
         return hash(self.str(16))
@@ -2402,7 +2402,9 @@ cdef class RealIntervalFieldElement(RingElement):
             1.00000000000000
             sage: RIF(1, 2).relative_diameter()
             0.666666666666667
-            sage: RIF(pi).diameter()                                                    # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: RIF(pi).diameter()
             1.41357985842823e-16
             sage: RIF(pi).absolute_diameter()                                           # needs sage.symbolic
             4.44089209850063e-16
@@ -2434,17 +2436,19 @@ cdef class RealIntervalFieldElement(RingElement):
 
         EXAMPLES::
 
-            sage: RIF(pi).fp_rank_diameter()                                            # needs sage.symbolic
-            1
             sage: RIF(12345).fp_rank_diameter()
             0
-            sage: RIF(-sqrt(2)).fp_rank_diameter()                                      # needs sage.symbolic
-            1
             sage: RIF(5/8).fp_rank_diameter()
             0
             sage: RIF(5/7).fp_rank_diameter()
             1
-            sage: a = RIF(pi)^12345; a                                                  # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: RIF(pi).fp_rank_diameter()
+            1
+            sage: RIF(-sqrt(2)).fp_rank_diameter()
+            1
+            sage: a = RIF(pi)^12345; a
             2.06622879260?e6137
             sage: a.fp_rank_diameter()                                                  # needs sage.symbolic
             30524

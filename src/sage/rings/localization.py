@@ -10,19 +10,20 @@ Ariki-Koike algebras below for such an application.
 
 EXAMPLES::
 
+    sage: # needs sage.modules
     sage: LZ = Localization(ZZ, (5,11))
-    sage: m = matrix(LZ, [[5, 7], [0,11]])                                              # needs sage.modules
-    sage: m.parent()                                                                    # needs sage.modules
+    sage: m = matrix(LZ, [[5, 7], [0,11]])
+    sage: m.parent()
     Full MatrixSpace of 2 by 2 dense matrices over Integer Ring localized at (5, 11)
-    sage: ~m      # parent of inverse is different: see documentation of m.__invert__   # needs sage.modules
+    sage: ~m      # parent of inverse is different: see documentation of m.__invert__
     [  1/5 -7/55]
     [    0  1/11]
-    sage: _.parent()                                                                    # needs sage.modules
+    sage: _.parent()
     Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-    sage: mi = matrix(LZ, ~m)                                                           # needs sage.modules
-    sage: mi.parent()                                                                   # needs sage.modules
+    sage: mi = matrix(LZ, ~m)
+    sage: mi.parent()
     Full MatrixSpace of 2 by 2 dense matrices over Integer Ring localized at (5, 11)
-    sage: mi == ~m                                                                      # needs sage.modules
+    sage: mi == ~m
     True
 
 The next example defines the most general ring containing the coefficients of the irreducible
@@ -77,9 +78,9 @@ Check relations of the Ariki-Koike algebra::
 
 Obtain specializations in positive characteristic::
 
-    sage: # needs sage.rings.finite_rings
+    sage: # needs sage.libs.pari sage.modules
     sage: Fp = GF(17)
-    sage: f = L.hom((3,5,7,11), codomain=Fp); f                                         # needs sage.libs.pari
+    sage: f = L.hom((3,5,7,11), codomain=Fp); f
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
             (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
@@ -89,17 +90,17 @@ Obtain specializations in positive characteristic::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mFp1 = matrix({k: f(v) for k, v in m1.dict().items()}); mFp1                  # needs sage.libs.pari sage.modules
+    sage: mFp1 = matrix({k: f(v) for k, v in m1.dict().items()}); mFp1
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mFp1.base_ring()                                                              # needs sage.libs.pari sage.modules
+    sage: mFp1.base_ring()
     Finite Field of size 17
-    sage: mFp2 = matrix({k: f(v) for k, v in m2.dict().items()}); mFp2                  # needs sage.libs.pari sage.modules
+    sage: mFp2 = matrix({k: f(v) for k, v in m2.dict().items()}); mFp2
     [ 2  3  0]
     [ 9  8  0]
     [ 0  0 16]
-    sage: mFp3 = matrix({k: f(v) for k, v in m3.dict().items()}); mFp3                  # needs sage.libs.pari sage.modules
+    sage: mFp3 = matrix({k: f(v) for k, v in m3.dict().items()}); mFp3
     [16  0  0]
     [ 0  4  5]
     [ 0  7  6]
@@ -117,25 +118,28 @@ Obtain specializations in characteristic 0::
             u1 |--> 5
             u2 |--> 7
             q |--> 11
-    sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1                   # needs sage.modules sage.rings.finite_rings
+
+    sage: # needs sage.libs.pari sage.modules sage.rings.finite_rings
+    sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1
     [5 0 0]
     [0 3 0]
     [0 0 3]
-    sage: mQ1.base_ring()                                                               # needs sage.modules sage.rings.finite_rings
+    sage: mQ1.base_ring()
     Rational Field
-    sage: mQ2 = matrix({k: fQ(v) for k, v in m2.dict().items()}); mQ2                   # needs sage.modules sage.rings.finite_rings
+    sage: mQ2 = matrix({k: fQ(v) for k, v in m2.dict().items()}); mQ2
     [-15 -14   0]
     [ 26  25   0]
     [  0   0  -1]
-    sage: mQ3 = matrix({k: fQ(v) for k, v in m3.dict().items()}); mQ3                   # needs sage.modules sage.rings.finite_rings
+    sage: mQ3 = matrix({k: fQ(v) for k, v in m3.dict().items()}); mQ3
     [    -1      0      0]
     [     0 -15/26  11/26]
     [     0 301/26 275/26]
 
+    sage: # needs sage.libs.pari sage.libs.singular
     sage: S.<x, y, z, t> = QQ[]
     sage: T = S.quo(x + y + z)
-    sage: F = T.fraction_field()                                                        # needs sage.libs.pari sage.libs.singular
-    sage: fF = L.hom((x, y, z, t), codomain=F); fF                                      # needs sage.libs.pari sage.libs.singular
+    sage: F = T.fraction_field()
+    sage: fF = L.hom((x, y, z, t), codomain=F); fF
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
             localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
@@ -146,11 +150,11 @@ Obtain specializations in characteristic 0::
             u1 |--> ybar
             u2 |--> zbar
             q |--> tbar
-    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1                   # needs sage.libs.pari sage.libs.singular sage.modules
+    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1                   # needs sage.modules
     [        ybar            0            0]
     [           0 -ybar - zbar            0]
     [           0            0 -ybar - zbar]
-    sage: mF1.base_ring() == F                                                          # needs sage.libs.pari sage.libs.singular sage.modules
+    sage: mF1.base_ring() == F                                                          # needs sage.modules
     True
 
 TESTS::
@@ -212,15 +216,16 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         ....:                       [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])
         [z, y, x]
 
+        sage: # needs sage.libs.singular
         sage: R.<x, y> = ZZ[]
-        sage: Q.<a, b> = R.quo(x**2 - 5)                                                # needs sage.libs.singular
-        sage: p = b**2 - 5                                                              # needs sage.libs.singular
-        sage: p == (b-a)*(b+a)                                                          # needs sage.libs.singular
+        sage: Q.<a, b> = R.quo(x**2 - 5)
+        sage: p = b**2 - 5
+        sage: p == (b-a)*(b+a)
         True
-        sage: normalize_extra_units(Q, [p])                                             # needs sage.libs.pari sage.libs.singular
+        sage: normalize_extra_units(Q, [p])                                             # needs sage.libs.pari
         doctest:...: UserWarning: Localization may not be represented uniquely
         [b^2 - 5]
-        sage: normalize_extra_units(Q, [p], warning=False)                              # needs sage.libs.pari sage.libs.singular
+        sage: normalize_extra_units(Q, [p], warning=False)                              # needs sage.libs.pari
         [b^2 - 5]
     """
     # convert to base ring
@@ -257,7 +262,7 @@ class LocalizationElement(IntegralDomainElement):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.libs.pari
         sage: from sage.rings.localization import LocalizationElement
         sage: P.<x,y,z> = GF(5)[]
         sage: L = P.localization((x, y*z - x))
@@ -619,29 +624,30 @@ class Localization(IntegralDomain, UniqueRepresentation):
         ValueError: all given elements are invertible in
         7-adic Ring with capped relative precision 20
 
+        sage: # needs sage.libs.pari
         sage: R.<x> = ZZ[]
-        sage: L = R.localization(x**2 + 1)                                              # needs sage.libs.pari
+        sage: L = R.localization(x**2 + 1)
         sage: s = (x+5)/(x**2+1)
-        sage: s in L                                                                    # needs sage.libs.pari
+        sage: s in L
         True
         sage: t = (x+5)/(x**2+2)
         sage: t in L
         False
-        sage: L(t)                                                                      # needs sage.libs.pari
+        sage: L(t)
         Traceback (most recent call last):
         ...
         TypeError: fraction must have unit denominator
-        sage: L(s) in R                                                                 # needs sage.libs.pari
+        sage: L(s) in R
         False
-        sage: y = L(x)                                                                  # needs sage.libs.pari
-        sage: g = L(s)                                                                  # needs sage.libs.pari
-        sage: g.parent()                                                                # needs sage.libs.pari
+        sage: y = L(x)
+        sage: g = L(s)
+        sage: g.parent()
         Univariate Polynomial Ring in x over Integer Ring localized at (x^2 + 1,)
-        sage: f = (y+5)/(y**2+1); f                                                     # needs sage.libs.pari
+        sage: f = (y+5)/(y**2+1); f
         (x + 5)/(x^2 + 1)
-        sage: f == g                                                                    # needs sage.libs.pari
+        sage: f == g
         True
-        sage: (y+5)/(y**2+2)                                                            # needs sage.libs.pari
+        sage: (y+5)/(y**2+2)
         Traceback (most recent call last):
         ...
         ValueError: factor x^2 + 2 of denominator is not a unit
@@ -716,7 +722,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<a> = GF(3)[]
-            sage: Localization(R, a**2 - 1)                                             # needs sage.rings.finite_rings
+            sage: Localization(R, a**2 - 1)                                             # needs sage.libs.pari
             Univariate Polynomial Ring in a over Finite Field of size 3
              localized at (a + 1, a + 2)
         """
@@ -762,23 +768,22 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: phi = R.hom([5])
-            sage: L._is_valid_homomorphism_(ZZ, [3], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(ZZ, [3], base_map=phi)
             Traceback (most recent call last):
             ...
             ValueError: given base_map is not compatible with im_gens
-            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)
             Traceback (most recent call last):
             ...
             ValueError: images of some localized elements fail to be units
-
             sage: phi = R.hom([5], codomain=QQ)
-            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(ZZ, [5], base_map=phi)
             Traceback (most recent call last):
             ...
             ValueError: codomain of base_map must be Integer Ring
-
-            sage: L._is_valid_homomorphism_(QQ, [5], base_map=phi)                      # needs sage.libs.pari
+            sage: L._is_valid_homomorphism_(QQ, [5], base_map=phi)
             True
         """
         B = self.base_ring()
@@ -968,7 +973,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.pari
             sage: R.<a> = GF(5)[]
             sage: L = Localization(R, (a**2 - 3, a))
             sage: L.fraction_field()
@@ -984,9 +989,10 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<a> = GF(5)[]
-            sage: L = R.localization((a**2 - 3, a))                                     # needs sage.rings.finite_rings
-            sage: L.characteristic()                                                    # needs sage.rings.finite_rings
+            sage: L = R.localization((a**2 - 3, a))
+            sage: L.characteristic()
             5
         """
         return self.base_ring().characteristic()

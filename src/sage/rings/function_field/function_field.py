@@ -782,7 +782,7 @@ class FunctionField(Field):
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
-            sage: K(L(x)) # indirect doctest                                            # needs sage.rings.function_field
+            sage: K(L(x))  # indirect doctest                                           # needs sage.rings.function_field
             x
         """
         try:

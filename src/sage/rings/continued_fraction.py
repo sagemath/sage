@@ -1338,13 +1338,13 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
 
         EXAMPLES::
 
-            sage: K.<sqrt3> = QuadraticField(3)                                         # needs sage.rings.number_field
-            sage: cf = continued_fraction(sqrt3); cf                                    # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<sqrt3> = QuadraticField(3)
+            sage: cf = continued_fraction(sqrt3); cf
             [1; (1, 2)*]
             sage: cf.period()                                                           # needs sage.rings.number_field
             (1, 2)
-
-            sage: for k in xsrange(2,40):                                               # needs sage.rings.number_field
+            sage: for k in xsrange(2,40):
             ....:     if not k.is_square():
             ....:         s = QuadraticField(k).gen()
             ....:         cf = continued_fraction(s)
@@ -1376,13 +1376,13 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
 
         EXAMPLES::
 
-            sage: K.<sqrt3> = QuadraticField(3)                                         # needs sage.rings.number_field
-            sage: cf = continued_fraction(sqrt3); cf                                    # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<sqrt3> = QuadraticField(3)
+            sage: cf = continued_fraction(sqrt3); cf
             [1; (1, 2)*]
             sage: cf.preperiod()                                                        # needs sage.rings.number_field
             (1,)
-
-            sage: cf = continued_fraction(sqrt3/7); cf                                  # needs sage.rings.number_field
+            sage: cf = continued_fraction(sqrt3/7); cf
             [0; 4, (24, 8)*]
             sage: cf.preperiod()                                                        # needs sage.rings.number_field
             (0, 4)
@@ -1886,7 +1886,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
 
         EXAMPLES::
 
-            sage: continued_fraction(pi) # indirect doctest                             # needs sage.symbolic
+            sage: continued_fraction(pi)  # indirect doctest                            # needs sage.symbolic
             [3; 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 2, 1, 1, 2, 2, 2, 2, ...]
         """
         return '[%d; ' % self.quotient(0) + ', '.join(str(self.quotient(i)) for i in range(1, 20)) + ", ...]"
@@ -2393,14 +2393,14 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
     Specifying ``bits`` or ``nterms`` modify the length of the output::
 
-        sage: continued_fraction_list(e, bits=20)                                       # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: continued_fraction_list(e, bits=20)
         [2, 1, 2, 1, 1, 4, 2]
-        sage: continued_fraction_list(sqrt(2)+sqrt(3), bits=30)                         # needs sage.symbolic
+        sage: continued_fraction_list(sqrt(2) + sqrt(3), bits=30)
         [3, 6, 1, 5, 7, 2]
         sage: continued_fraction_list(pi, bits=53)                                      # needs sage.symbolic
         [3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14]
-
-        sage: continued_fraction_list(log(3/2), nterms=15)                              # needs sage.symbolic
+        sage: continued_fraction_list(log(3/2), nterms=15)
         [0, 2, 2, 6, 1, 11, 2, 1, 2, 2, 1, 4, 3, 1, 1]
         sage: continued_fraction_list(tan(sqrt(pi)), nterms=20)                         # needs sage.symbolic
         [-5, 9, 4, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 2, 4, 3, 1, 63]

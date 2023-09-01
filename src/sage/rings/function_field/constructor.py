@@ -133,7 +133,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(QQ)
-        sage: R.<y>=K[]
+        sage: R.<y> = K[]
         sage: y2 = y*1
         sage: y2 is y
         False
@@ -151,20 +151,21 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # needs sage.rings.function_field
+            sage: L.<w> = K.extension(x - y^2)  # indirect doctest                      # needs sage.rings.function_field
 
         TESTS:
 
         Verify that :trac:`16530` has been resolved::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.function_field
-            sage: R.<z> = L[]                                                           # needs sage.rings.function_field
-            sage: M.<z> = L.extension(z - 1)                                            # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z - 1)
             sage: R.<z> = K[]
-            sage: N.<z> = K.extension(z - 1)                                            # needs sage.rings.function_field
-            sage: M is N                                                                # needs sage.rings.function_field
+            sage: N.<z> = K.extension(z - 1)
+            sage: M is N
             False
 
         """
@@ -183,9 +184,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # needs sage.rings.function_field
+            sage: L.<w> = K.extension(x - y^2)   # indirect doctest                     # needs sage.rings.function_field
             sage: y2 = y*1
-            sage: M.<w> = K.extension(x - y2^2) # indirect doctest                      # needs sage.rings.function_field
+            sage: M.<w> = K.extension(x - y2^2)  # indirect doctest                     # needs sage.rings.function_field
             sage: L is M                                                                # needs sage.rings.function_field
             True
         """

@@ -291,12 +291,13 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Exact and nearly exact points are still visible::
 
-            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))                   # needs sage.plot
+            sage: # needs sage.plot
+            sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
             Graphics object consisting of 6 graphics primitives
 
         A demonstration that `z \mapsto z^2` acts chaotically on `|z|=1`::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.plot sage.symbolic
             sage: z = CIF(0, 2*pi/1000).exp()
             sage: g = Graphics()                                                        # needs sage.plot
             sage: for i in range(40):                                                   # needs sage.plot
@@ -353,13 +354,13 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             (2.50000000000000, 3.00000000000000)
             (-4.50000000000000, -4.00000000000000)
 
-            sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))                            # needs sage.symbolic
-            sage: a, b, c, d = z.bisection()                                            # needs sage.symbolic
-            sage: a.intersection(b).intersection(c).intersection(d) == CIF(z.center())  # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))
+            sage: a, b, c, d = z.bisection()
+            sage: a.intersection(b).intersection(c).intersection(d) == CIF(z.center())
             True
-
-            sage: zz = a.union(b).union(c).union(c)                                     # needs sage.symbolic
-            sage: zz.real().endpoints() == z.real().endpoints()                         # needs sage.symbolic
+            sage: zz = a.union(b).union(c).union(c)
+            sage: zz.real().endpoints() == z.real().endpoints()
             True
             sage: zz.imag().endpoints() == z.imag().endpoints()                         # needs sage.symbolic
             True

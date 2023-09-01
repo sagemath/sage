@@ -265,12 +265,13 @@ class FractionField_generic(ring.Field):
         We demonstrate that :trac:`7958` is resolved in the case of
         number fields::
 
+            sage: # needs sage.rings.number_field
             sage: _.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)               # needs sage.rings.number_field
-            sage: R = K.ring_of_integers()                                              # needs sage.rings.number_field
-            sage: S.<y> = R[]                                                           # needs sage.rings.number_field
-            sage: F = FractionField(S)                                                  # needs sage.rings.number_field
-            sage: F(1/a)                                                                # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)
+            sage: R = K.ring_of_integers()
+            sage: S.<y> = R[]
+            sage: F = FractionField(S)
+            sage: F(1/a)
             (a^4 - 3*a^3 + 2424*a^2 + 2)/232
 
         Some corner cases have been known to fail in the past (:trac:`5917`)::
@@ -397,12 +398,13 @@ class FractionField_generic(ring.Field):
         We demonstrate that :trac:`7958` is resolved in the case of
         number fields::
 
+            sage: # needs sage.rings.number_field
             sage: _.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)               # needs sage.rings.number_field
-            sage: R = K.ring_of_integers()                                              # needs sage.rings.number_field
-            sage: S.<y> = R[]                                                           # needs sage.rings.number_field
-            sage: F = FractionField(S) # indirect doctest                               # needs sage.rings.number_field
-            sage: F(1/a)                                                                # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)
+            sage: R = K.ring_of_integers()
+            sage: S.<y> = R[]
+            sage: F = FractionField(S)  # indirect doctest
+            sage: F(1/a)
             (a^4 - 3*a^3 + 2424*a^2 + 2)/232
         """
         f = x.polynomial()   # Polynomial over QQ

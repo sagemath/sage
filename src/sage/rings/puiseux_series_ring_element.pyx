@@ -220,10 +220,11 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PuiseuxSeriesRing(ZZ)
             sage: p = x^(1/3) + x**3
-            sage: t = p._im_gens_(QQbar, [2])                                           # needs sage.rings.number_field
-            sage: t in QQbar                                                            # needs sage.rings.number_field
+            sage: t = p._im_gens_(QQbar, [2])
+            sage: t in QQbar
             True
             sage: f = R.hom([QQbar(2)], check=False)                                    # needs sage.rings.number_field
             sage: t == f(p)                                                             # needs sage.rings.number_field

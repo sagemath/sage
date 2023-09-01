@@ -316,7 +316,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             2.0 - 3.0*I
             sage: CDF(4.5) # indirect doctest
             4.5
-            sage: CDF(1+I) # indirect doctest                                           # needs sage.symbolic
+            sage: CDF(1+I)  # indirect doctest                                          # needs sage.symbolic
             1.0 + 1.0*I
             sage: CDF(pari(1))                                                          # needs sage.libs.pari
             1.0
@@ -896,9 +896,9 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: # optional - magma
             sage: CDF((1.2, 0.3))._magma_init_(magma)
             'ComplexField(53 : Bits := true)![1.2, 0.3]'
-            sage: magma(CDF(1.2, 0.3))
+            sage: magma(CDF(1.2, 0.3))                  # indirect doctest
             1.20000000000000 + 0.300000000000000*$.1
-            sage: s = magma(CDF(1.2, 0.3)).sage(); s
+            sage: s = magma(CDF(1.2, 0.3)).sage(); s    # indirect doctest
             1.20000000000000 + 0.300000000000000*I
             sage: s.parent()
             Complex Field with 53 bits of precision
@@ -2550,7 +2550,7 @@ cdef class FloatToCDF(Morphism):
             1.0 + 2.0*I
             sage: CDF('i') # indirect doctest
             1.0*I
-            sage: CDF(2+i) # indirect doctest                                           # needs sage.symbolic
+            sage: CDF(2+i)  # indirect doctest                                          # needs sage.symbolic
             2.0 + 1.0*I
         """
         cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)

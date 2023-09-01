@@ -525,7 +525,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         commutative ring, but also a complete discrete valuation ring (CDVR).
         The appropriate (sub)category is automatically set in this case::
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(11)
             sage: R.<x> = k[[]]
             sage: R.category()
@@ -625,7 +624,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R = GF(17)[['y']]
             sage: R
             Power Series Ring in y over Finite Field of size 17
@@ -672,7 +670,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R = GF(17)[['y']]
             sage: latex(R)  # indirect doctest
             \Bold{F}_{17}[[y]]
@@ -691,7 +688,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(17)[['x']]
             sage: A.has_coerce_map_from(ZZ)  # indirect doctest
             True

@@ -1729,7 +1729,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         EXAMPLES::
 
             sage: import sympy                                                          # needs sympy
-            sage: bool(oo == sympy.oo) # indirect doctest                               # needs sympy
+            sage: bool(oo == sympy.oo)  # indirect doctest                              # needs sympy
             True
             sage: bool(SR(oo) == sympy.oo)                                              # needs sympy sage.symbolic
             True

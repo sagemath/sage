@@ -1645,7 +1645,7 @@ cdef class LazyAlgebraic(LazyFieldElement):
             sage: a = LazyAlgebraic(CLF, QQ['x'].cyclotomic_polynomial(7), 0.6+0.8*CC.0)
             sage: a
             0.6234898018587335? + 0.7818314824680299?*I
-            sage: ComplexField(150)(a) # indirect doctest                               # needs sage.rings.number_field
+            sage: ComplexField(150)(a)  # indirect doctest                              # needs sage.rings.number_field
             0.62348980185873353052500488400423981063227473 + 0.78183148246802980870844452667405775023233452*I
 
             sage: a = LazyAlgebraic(CLF, QQ['x'].0^2-7, -2.0)

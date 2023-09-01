@@ -477,16 +477,17 @@ class QuotientRingElement(RingElement):
         Ring homomorphisms whose domain is the fraction field of a
         quotient ring work correctly (see :trac:`16135`)::
 
+            sage: # needs sage.libs.singular
             sage: R.<x, y> = QQ[]
-            sage: K = R.quotient(x^2 - y^3).fraction_field()                            # needs sage.libs.singular
+            sage: K = R.quotient(x^2 - y^3).fraction_field()
             sage: L.<t> = FunctionField(QQ)
-            sage: f = K.hom((t^3, t^2))                                                 # needs sage.libs.singular
-            sage: list(map(f, K.gens()))                                                # needs sage.libs.singular
+            sage: f = K.hom((t^3, t^2))
+            sage: list(map(f, K.gens()))
             [t^3, t^2]
-            sage: xbar, ybar = K.gens()                                                 # needs sage.libs.singular
-            sage: f(1/ybar)                                                             # needs sage.libs.singular
+            sage: xbar, ybar = K.gens()
+            sage: f(1/ybar)
             1/t^2
-            sage: f(xbar/ybar)                                                          # needs sage.libs.singular
+            sage: f(xbar/ybar)
             t
         """
         return self.lift()._im_gens_(codomain, im_gens, base_map=base_map)

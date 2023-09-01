@@ -462,24 +462,25 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         Various conversions from PARI (see also :trac:`2508`)::
 
+            sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
-            sage: L(pari('1/x'))                                                                    # needs sage.libs.pari
+            sage: L(pari('1/x'))
             q^-1
-            sage: L(pari('polchebyshev(5)'))                                                        # needs sage.libs.pari
+            sage: L(pari('polchebyshev(5)'))
             5*q - 20*q^3 + 16*q^5
-            sage: L(pari('polchebyshev(5) - 1/x^4'))                                                # needs sage.libs.pari
+            sage: L(pari('polchebyshev(5) - 1/x^4'))
             -q^-4 + 5*q - 20*q^3 + 16*q^5
-            sage: L(pari('1/polchebyshev(5)'))                                                      # needs sage.libs.pari
+            sage: L(pari('1/polchebyshev(5)'))
             1/5*q^-1 + 4/5*q + 64/25*q^3 + 192/25*q^5 + 2816/125*q^7 + O(q^9)
-            sage: L(pari('polchebyshev(5) + O(x^40)'))                                              # needs sage.libs.pari
+            sage: L(pari('polchebyshev(5) + O(x^40)'))
             5*q - 20*q^3 + 16*q^5 + O(q^40)
-            sage: L(pari('polchebyshev(5) - 1/x^4 + O(x^40)'))                                      # needs sage.libs.pari
+            sage: L(pari('polchebyshev(5) - 1/x^4 + O(x^40)'))
             -q^-4 + 5*q - 20*q^3 + 16*q^5 + O(q^40)
-            sage: L(pari('1/polchebyshev(5) + O(x^10)'))                                            # needs sage.libs.pari
+            sage: L(pari('1/polchebyshev(5) + O(x^10)'))
             1/5*q^-1 + 4/5*q + 64/25*q^3 + 192/25*q^5 + 2816/125*q^7 + 8192/125*q^9 + O(q^10)
-            sage: L(pari('1/polchebyshev(5) + O(x^10)'), -10)  # Multiply by q^-10                  # needs sage.libs.pari
+            sage: L(pari('1/polchebyshev(5) + O(x^10)'), -10)  # Multiply by q^-10
             1/5*q^-11 + 4/5*q^-9 + 64/25*q^-7 + 192/25*q^-5 + 2816/125*q^-3 + 8192/125*q^-1 + O(1)
-            sage: L(pari('O(x^-10)'))                                                               # needs sage.libs.pari
+            sage: L(pari('O(x^-10)'))
             O(q^-10)
 
         Check that :trac:`30073` is fixed::

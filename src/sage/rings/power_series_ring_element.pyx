@@ -484,7 +484,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<t> = PowerSeriesRing(GF(5))
             sage: x = t + t^2 + O(t^5)
             sage: x.lift_to_precision(10)
@@ -847,7 +846,7 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.complex_double
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<m> = CDF[[]]
             sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16       # needs sage.symbolic
             9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
@@ -1199,11 +1198,11 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = exp(x) + O(x^7); f                                                # needs sage.symbolic
+            sage: f = exp(x) + O(x^7); f
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
-            sage: f << 2                                                                # needs sage.symbolic
+            sage: f << 2
             x^2 + x^3 + 1/2*x^4 + 1/6*x^5 + 1/24*x^6 + 1/120*x^7 + 1/720*x^8 + O(x^9)
-            sage: (f << 99) >> 99                                                       # needs sage.symbolic
+            sage: (f << 99) >> 99
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
         """
         return self.shift(n)
@@ -1218,14 +1217,14 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = exp(x) + O(x^7)                                                   # needs sage.symbolic
-            sage: f >> 3                                                                # needs sage.symbolic
+            sage: f = exp(x) + O(x^7)
+            sage: f >> 3
             1/6 + 1/24*x + 1/120*x^2 + 1/720*x^3 + O(x^4)
-            sage: f >> 7                                                                # needs sage.symbolic
+            sage: f >> 7
             O(x^0)
-            sage: f >> 99                                                               # needs sage.symbolic
+            sage: f >> 99
             O(x^0)
-            sage: (f >> 99) << 99                                                       # needs sage.symbolic
+            sage: (f >> 99) << 99
             O(x^99)
         """
         return self.shift(-n)
@@ -1302,9 +1301,9 @@ cdef class PowerSeries(AlgebraElement):
 
         Tests other implementations::
 
-            sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')                # needs sage.rings.finite_rings
-            sage: f = q - q^3 + O(q^10)                                                 # needs sage.rings.finite_rings
-            sage: f.map_coefficients(lambda c: c - 2)                                   # needs sage.rings.finite_rings
+            sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')
+            sage: f = q - q^3 + O(q^10)
+            sage: f.map_coefficients(lambda c: c - 2)
             10*q + 8*q^3 + O(q^10)
         """
         pol = self.polynomial()
@@ -1769,7 +1768,6 @@ cdef class PowerSeries(AlgebraElement):
 
         Positive characteristic::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<u> = GF(3)[[]]
             sage: p = 1 + 2 * u^2
             sage: p.nth_root(4)
@@ -2793,12 +2791,12 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: k.<w> = QQ[[]]
             sage: f = 1 + 17*w + 15*w^3 + O(w^5)
-            sage: pari(f) # indirect doctest                                            # needs sage.libs.pari
+            sage: pari(f)  # indirect doctest                                           # needs sage.libs.pari
             1 + 17*w + 15*w^3 + O(w^5)
-            sage: pari(1 - 19*w + w^5) # indirect doctest                               # needs sage.libs.pari
+            sage: pari(1 - 19*w + w^5)  # indirect doctest                              # needs sage.libs.pari
             w^5 - 19*w + 1
             sage: R.<x> = Zmod(6)[[]]
-            sage: pari(1 + x + 8*x^3 + O(x^8)) # indirect doctest                       # needs sage.libs.pari
+            sage: pari(1 + x + 8*x^3 + O(x^8))  # indirect doctest                      # needs sage.libs.pari
             Mod(1, 6) + Mod(1, 6)*x + Mod(2, 6)*x^3 + O(x^8)
 
         TESTS::

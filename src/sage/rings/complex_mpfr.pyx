@@ -841,19 +841,20 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: k = ComplexField(100)
             sage: R.<x> = k[]
-            sage: k._factor_univariate_polynomial( x )                                  # needs sage.libs.pari
+            sage: k._factor_univariate_polynomial(x)
             x
-            sage: k._factor_univariate_polynomial( 2*x )                                # needs sage.libs.pari
+            sage: k._factor_univariate_polynomial(2*x)
             (2.0000000000000000000000000000) * x
-            sage: k._factor_univariate_polynomial( x^2 )                                # needs sage.libs.pari
+            sage: k._factor_univariate_polynomial(x^2)
             x^2
-            sage: k._factor_univariate_polynomial( x^2 + 3 )                            # needs sage.libs.pari
+            sage: k._factor_univariate_polynomial(x^2 + 3)
             (x - 1.7320508075688772935274463415*I) * (x + 1.7320508075688772935274463415*I)
-            sage: k._factor_univariate_polynomial( x^2 + 1 )                            # needs sage.libs.pari
+            sage: k._factor_univariate_polynomial(x^2 + 1)
             (x - I) * (x + I)
-            sage: k._factor_univariate_polynomial( k(I) * (x^2 + 1) )                   # needs sage.libs.pari
+            sage: k._factor_univariate_polynomial(k(I) * (x^2 + 1))
             (1.0000000000000000000000000000*I) * (x - I) * (x + I)
 
         """
@@ -1259,20 +1260,22 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: a = CC(pi + I*e); a                                                   # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a = CC(pi + I*e); a
             3.14159265358979 + 2.71828182845905*I
-            sage: a.str(truncate=True)                                                  # needs sage.symbolic
+            sage: a.str(truncate=True)
             '3.14159265358979 + 2.71828182845905*I'
-            sage: a.str()                                                               # needs sage.symbolic
+            sage: a.str()
             '3.1415926535897931 + 2.7182818284590451*I'
-            sage: a.str(base=2)                                                         # needs sage.symbolic
+            sage: a.str(base=2)
             '11.001001000011111101101010100010001000010110100011000 + 10.101101111110000101010001011000101000101011101101001*I'
-            sage: CC(0.5 + 0.625*I).str(base=2)                                         # needs sage.symbolic
+            sage: CC(0.5 + 0.625*I).str(base=2)
             '0.10000000000000000000000000000000000000000000000000000 + 0.10100000000000000000000000000000000000000000000000000*I'
-            sage: a.str(base=16)                                                        # needs sage.symbolic
+            sage: a.str(base=16)
             '3.243f6a8885a30 + 2.b7e151628aed2*I'
-            sage: a.str(base=36)                                                        # needs sage.symbolic
+            sage: a.str(base=36)
             '3.53i5ab8p5fc + 2.puw5nggjf8f*I'
+
             sage: CC(0)
             0.000000000000000
             sage: CC.0.str(istr='%i')
@@ -1383,24 +1386,25 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Coerce the object using the ``pari`` function::
 
+            sage: # needs sage.libs.pari
             sage: a = ComplexNumber(2,1)
-            sage: pari(a)                                                               # needs sage.libs.pari
+            sage: pari(a)
             2.00000000000000 + 1.00000000000000*I
-            sage: pari(a).type()                                                        # needs sage.libs.pari
+            sage: pari(a).type()
             't_COMPLEX'
-            sage: type(pari(a))                                                         # needs sage.libs.pari
+            sage: type(pari(a))
             <class 'cypari2.gen.Gen'>
-            sage: a.__pari__()                                                          # needs sage.libs.pari
+            sage: a.__pari__()
             2.00000000000000 + 1.00000000000000*I
-            sage: type(a.__pari__())                                                    # needs sage.libs.pari
+            sage: type(a.__pari__())
             <class 'cypari2.gen.Gen'>
             sage: a = CC(pi)                                                            # needs sage.symbolic
-            sage: pari(a)                                                               # needs sage.libs.pari sage.symbolic
+            sage: pari(a)                                                               # needs sage.symbolic
             3.14159265358979
-            sage: pari(a).type()                                                        # needs sage.libs.pari sage.symbolic
+            sage: pari(a).type()                                                        # needs sage.symbolic
             't_REAL'
             sage: a = CC(-2).sqrt()
-            sage: pari(a)                                                               # needs sage.libs.pari
+            sage: pari(a)
             1.41421356237310*I
         """
         if self.is_real():
@@ -2890,6 +2894,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: C, i = ComplexField(30).objgen()
             sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10                             # needs sage.libs.pari
             0.0020969149 - 0.059981914*I

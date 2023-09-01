@@ -283,7 +283,7 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: FreeAlgebra(QQ, 3, 'x').category() # todo: use a ring which is not an algebra!    # needs sage.combinat sage.modules
+            sage: FreeAlgebra(QQ, 3, 'x').category()  # todo: use a ring which is not an algebra!   # needs sage.combinat sage.modules
             Category of algebras with basis over Rational Field
 
         Since a quotient of the integers is its own base ring, and during
@@ -971,18 +971,21 @@ cdef class Ring(ParentWithGens):
             zeta3
             sage: CyclotomicField(3).zeta(3).multiplicative_order()                     # needs sage.rings.number_field
             3
-            sage: a = GF(7).zeta(); a                                                   # needs sage.rings.finite_rings
+
+            sage: # needs sage.rings.finite_rings
+            sage: a = GF(7).zeta(); a
             3
-            sage: a.multiplicative_order()                                              # needs sage.rings.finite_rings
+            sage: a.multiplicative_order()
             6
-            sage: a = GF(49,'z').zeta(); a                                              # needs sage.rings.finite_rings
+            sage: a = GF(49,'z').zeta(); a
             z
-            sage: a.multiplicative_order()                                              # needs sage.rings.finite_rings
+            sage: a.multiplicative_order()
             48
-            sage: a = GF(49,'z').zeta(2); a                                             # needs sage.rings.finite_rings
+            sage: a = GF(49,'z').zeta(2); a
             6
-            sage: a.multiplicative_order()                                              # needs sage.rings.finite_rings
+            sage: a.multiplicative_order()
             2
+
             sage: QQ.zeta(3)
             Traceback (most recent call last):
             ...
@@ -1513,18 +1516,19 @@ cdef class CommutativeRing(Ring):
 
         Elements in `M` acts as derivations at `(0,1,2)`::
 
-            sage: Dx = M.gen(0); Dx                                                     # needs sage.modules
+            sage: # needs sage.modules
+            sage: Dx = M.gen(0); Dx
             d/dx
-            sage: Dy = M.gen(1); Dy                                                     # needs sage.modules
+            sage: Dy = M.gen(1); Dy
             d/dy
-            sage: Dz = M.gen(2); Dz                                                     # needs sage.modules
+            sage: Dz = M.gen(2); Dz
             d/dz
             sage: f = x^2 + y^2 + z^2
-            sage: Dx(f)  # = 2*x evaluated at (0,1,2)                                   # needs sage.modules
+            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
             0
-            sage: Dy(f)  # = 2*y evaluated at (0,1,2)                                   # needs sage.modules
+            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
             2
-            sage: Dz(f)  # = 2*z evaluated at (0,1,2)                                   # needs sage.modules
+            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
             4
 
         An example with a twisting homomorphism::
@@ -1992,23 +1996,24 @@ cdef class PrincipalIdealDomain(IntegralDomain):
         over an extension ring. Note that ``gcd`` requires x and y to be
         coercible::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = NumberField(x^2 - 2, 'a')                                     # needs sage.rings.number_field
-            sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)                            # needs sage.rings.number_field
-            sage: print(f); print(g)                                                    # needs sage.rings.number_field
+            sage: S.<a> = NumberField(x^2 - 2, 'a')
+            sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)
+            sage: print(f); print(g)
             x^2 - 2
             x^3 - a*x^2 - 2*x + 2*a
-            sage: f in R                                                                # needs sage.rings.number_field
+            sage: f in R
             True
-            sage: g in R                                                                # needs sage.rings.number_field
+            sage: g in R
             False
-            sage: R.gcd(f, g)                                                           # needs sage.rings.number_field
+            sage: R.gcd(f, g)
             Traceback (most recent call last):
             ...
             TypeError: Unable to coerce 2*a to a rational
-            sage: R.base_extend(S).gcd(f,g)                                             # needs sage.rings.number_field
+            sage: R.base_extend(S).gcd(f,g)
             x^2 - 2
-            sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))                            # needs sage.rings.number_field
+            sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))
             x - a
         """
         if coerce:
@@ -2360,16 +2365,17 @@ cdef class Algebra(Ring):
 
         EXAMPLES::
 
-            sage: B = QuaternionAlgebra(2)                                              # needs sage.combinat sage.modules
-            sage: B.has_standard_involution()                                           # needs sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: B = QuaternionAlgebra(2)
+            sage: B.has_standard_involution()
             True
             sage: R.<x> = PolynomialRing(QQ)
             sage: K.<u> = NumberField(x**2 - 2)                                         # needs sage.rings.number_field
-            sage: A = QuaternionAlgebra(K, -2, 5)                                       # needs sage.combinat sage.modules sage.rings.number_field
-            sage: A.has_standard_involution()                                           # needs sage.combinat sage.modules sage.rings.number_field
+            sage: A = QuaternionAlgebra(K, -2, 5)                                       # needs sage.rings.number_field
+            sage: A.has_standard_involution()                                           # needs sage.rings.number_field
             True
-            sage: L.<a,b> = FreeAlgebra(QQ, 2)                                          # needs sage.combinat sage.modules
-            sage: L.has_standard_involution()                                           # needs sage.combinat sage.modules
+            sage: L.<a,b> = FreeAlgebra(QQ, 2)
+            sage: L.has_standard_involution()
             Traceback (most recent call last):
             ...
             NotImplementedError: has_standard_involution is not implemented for this algebra

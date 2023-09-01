@@ -10,17 +10,19 @@ EXAMPLES::
     sage: K.hom(1/x)
     Function Field endomorphism of Rational function field in x over Rational Field
       Defn: x |--> 1/x
-    sage: L.<y> = K.extension(y^2 - x)                                                  # needs sage.rings.function_field
-    sage: K.hom(y)                                                                      # needs sage.rings.function_field
+
+    sage: # needs sage.rings.function_field
+    sage: L.<y> = K.extension(y^2 - x)
+    sage: K.hom(y)
     Function Field morphism:
       From: Rational function field in x over Rational Field
       To:   Function field in y defined by y^2 - x
       Defn: x |--> y
-    sage: L.hom([y,x])                                                                  # needs sage.rings.function_field
+    sage: L.hom([y,x])
     Function Field endomorphism of Function field in y defined by y^2 - x
       Defn: y |--> y
             x |--> x
-    sage: L.hom([x,y])                                                                  # needs sage.rings.function_field
+    sage: L.hom([x,y])
     Traceback (most recent call last):
     ...
     ValueError: invalid morphism
@@ -72,10 +74,11 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
     EXAMPLES::
 
+        sage: # needs sage.modules sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                                # needs sage.rings.function_field
-        sage: V, f, t = L.vector_space()                                                            # needs sage.modules sage.rings.function_field
-        sage: isinstance(f, sage.rings.function_field.maps.FunctionFieldVectorSpaceIsomorphism)     # needs sage.modules sage.rings.function_field
+        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+        sage: V, f, t = L.vector_space()
+        sage: isinstance(f, sage.rings.function_field.maps.FunctionFieldVectorSpaceIsomorphism)
         True
     """
     def _repr_(self) -> str:
@@ -84,14 +87,15 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: f                                                                                 # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: f
             Isomorphism:
               From: Vector space of dimension 2 over Rational function field in x over Rational Field
               To:   Function field in y defined by y^2 - x*y + 4*x^3
-            sage: t                                                                                 # needs sage.modules sage.rings.function_field
+            sage: t
             Isomorphism:
               From: Function field in y defined by y^2 - x*y + 4*x^3
               To:   Vector space of dimension 2 over Rational function field in x over Rational Field
@@ -107,10 +111,11 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                            # needs sage.modules sage.rings.function_field
-            sage: f.is_injective()                                                      # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: f.is_injective()
             True
         """
         return True
@@ -121,10 +126,11 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                            # needs sage.modules sage.rings.function_field
-            sage: f.is_surjective()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: f.is_surjective()
             True
         """
         return True
@@ -144,15 +150,15 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
             sage: K = QQ['x'].fraction_field()
             sage: L = K.function_field()
             sage: f = K.coerce_map_from(L)
-
-            sage: K = QQbar['x'].fraction_field()                                       # needs sage.rings.number_field
-            sage: L = K.function_field()
-            sage: g = K.coerce_map_from(L)
-
-            sage: f == g                                                                # needs sage.rings.number_field
-            False
             sage: f == f
             True
+
+            sage: # needs sage.rings.number_field
+            sage: K = QQbar['x'].fraction_field()
+            sage: L = K.function_field()
+            sage: g = K.coerce_map_from(L)
+            sage: f == g
+            False
 
         """
         if type(self) is not type(other):
@@ -187,9 +193,10 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
     EXAMPLES::
 
+        sage: # needs sage.modules sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                                # needs sage.rings.function_field
-        sage: V, f, t = L.vector_space(); f                                                         # needs sage.modules sage.rings.function_field
+        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+        sage: V, f, t = L.vector_space(); f
         Isomorphism:
           From: Vector space of dimension 2 over Rational function field in x over Rational Field
           To:   Function field in y defined by y^2 - x*y + 4*x^3
@@ -198,9 +205,10 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
         """
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space(); type(f)                                               # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space(); type(f)
             <class 'sage.rings.function_field.maps.MapVectorSpaceToFunctionField'>
         """
         self._V = V
@@ -218,20 +226,22 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: f(x*V.0 + (1/x^3)*V.1) # indirect doctest                                         # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: f(x*V.0 + (1/x^3)*V.1)  # indirect doctest
             1/x^3*y + x
 
         TESTS:
 
         Test that this map is a bijection for some random inputs::
 
-            sage: R.<z> = L[]                                                                       # needs sage.rings.function_field
-            sage: M.<z> = L.extension(z^3 - y - x)                                                  # needs sage.rings.function_field
-            sage: for F in [K, L, M]:                                                               # needs sage.modules sage.rings.function_field
+            sage: # needs sage.modules sage.rings.function_field
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - y - x)
+            sage: for F in [K, L, M]:
             ....:     for base in F._intermediate_fields(K):
             ....:         V, f, t = F.vector_space(base)
             ....:         for i in range(100):
@@ -262,10 +272,11 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: f.domain()                                                                        # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: f.domain()
             Vector space of dimension 2 over Rational function field in x over Rational Field
         """
         return self._V
@@ -276,10 +287,11 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: f.codomain()                                                                      # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: f.codomain()
             Function field in y defined by y^2 - x*y + 4*x^3
         """
         return self._K
@@ -291,9 +303,10 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
     EXAMPLES::
 
+        sage: # needs sage.modules sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                                # needs sage.rings.function_field
-        sage: V, f, t = L.vector_space(); t                                                         # needs sage.modules sage.rings.function_field
+        sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+        sage: V, f, t = L.vector_space(); t
         Isomorphism:
           From: Function field in y defined by y^2 - x*y + 4*x^3
           To:   Vector space of dimension 2 over Rational function field in x over Rational Field
@@ -310,10 +323,11 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: TestSuite(t).run(skip="_test_category")                                           # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: TestSuite(t).run(skip="_test_category")
         """
         self._V = V
         self._K = K
@@ -327,19 +341,21 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # needs sage.rings.function_field
-            sage: V, f, t = L.vector_space()                                                        # needs sage.modules sage.rings.function_field
-            sage: t(x + (1/x^3)*y)  # indirect doctest                                              # needs sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: V, f, t = L.vector_space()
+            sage: t(x + (1/x^3)*y)  # indirect doctest
             (x, 1/x^3)
 
         TESTS:
 
         Test that this map is a bijection for some random inputs::
 
-            sage: R.<z> = L[]                                                                       # needs sage.rings.function_field
-            sage: M.<z> = L.extension(z^3 - y - x)                                                  # needs sage.rings.function_field
-            sage: for F in [K, L, M]:                                                               # needs sage.modules sage.rings.function_field
+            sage: # needs sage.modules sage.rings.function_field
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - y - x)
+            sage: for F in [K, L, M]:
             ....:     for base in F._intermediate_fields(K):
             ....:         V, f, t = F.vector_space(base)
             ....:         for i in range(100):
@@ -392,11 +408,11 @@ class FunctionFieldMorphism(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # needs sage.rings.function_field
-            sage: f = L.hom(y*2)                                                                    # needs sage.rings.function_field
-            sage: f._repr_type()                                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
+            sage: f = L.hom(y*2)
+            sage: f._repr_type()
             'Function Field'
         """
         return "Function Field"
@@ -407,11 +423,11 @@ class FunctionFieldMorphism(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # needs sage.rings.function_field
-            sage: f = L.hom(y*2)                                                                    # needs sage.rings.function_field
-            sage: f._repr_defn()                                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
+            sage: f = L.hom(y*2)
+            sage: f._repr_defn()
             'y |--> 2*y'
         """
         a = '%s |--> %s' % (self.domain().variable_name(), self._im_gen)
@@ -426,15 +442,15 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.rings.function_field
         sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-        sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                                  # needs sage.rings.function_field
-        sage: f = L.hom(y*2); f                                                                     # needs sage.rings.function_field
+        sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
+        sage: f = L.hom(y*2); f
         Function Field endomorphism of Function field in y defined by y^3 + 6*x^3 + x
           Defn: y |--> 2*y
-        sage: factor(L.polynomial())                                                                # needs sage.rings.function_field
+        sage: factor(L.polynomial())
         y^3 + 6*x^3 + x
-        sage: f(y).charpoly('y')                                                                    # needs sage.rings.function_field
+        sage: f(y).charpoly('y')
         y^3 + 6*x^3 + x
     """
     def __init__(self, parent, im_gen, base_morphism):
@@ -443,11 +459,11 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)                                              # needs sage.rings.function_field
-            sage: f = L.hom(y*2)                                                                    # needs sage.rings.function_field
-            sage: TestSuite(f).run(skip="_test_category")                                           # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
+            sage: f = L.hom(y*2)
+            sage: TestSuite(f).run(skip="_test_category")
         """
         FunctionFieldMorphism.__init__(self, parent, im_gen, base_morphism)
         # Verify that the morphism is valid:
@@ -463,12 +479,12 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 + 6*x^3 + x); f = L.hom(y*2)                              # needs sage.rings.function_field
-            sage: f(y/x + x^2/(x+1))            # indirect doctest                                  # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^3 + 6*x^3 + x); f = L.hom(y*2)
+            sage: f(y/x + x^2/(x+1))            # indirect doctest
             2/x*y + x^2/(x + 1)
-            sage: f(y)                                                                              # needs sage.rings.function_field
+            sage: f(y)
             2*y
         """
         v = x.list()
@@ -504,7 +520,7 @@ class FunctionFieldMorphism_rational(FunctionFieldMorphism):
             sage: f = K.hom(1/x); f
             Function Field endomorphism of Rational function field in x over Finite Field of size 7
               Defn: x |--> 1/x
-            sage: f(x+1)                          # indirect doctest
+            sage: f(x + 1)                        # indirect doctest
             (x + 1)/x
             sage: 1/x + 1
             (x + 1)/x
@@ -570,7 +586,7 @@ class FunctionFieldConversionToConstantBaseField(Map):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: QQ.convert_map_from(K) # indirect doctest
+            sage: QQ.convert_map_from(K)  # indirect doctest
             Conversion map:
               From: Rational function field in x over Rational Field
               To:   Rational Field
@@ -725,23 +741,23 @@ class FunctionFieldCompletion(Map):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.rings.function_field
         sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-        sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                                # needs sage.rings.function_field
-        sage: p = L.places_finite()[0]                                                              # needs sage.rings.function_field
-        sage: m = L.completion(p)                                                                   # needs sage.rings.function_field
-        sage: m                                                                                     # needs sage.rings.function_field
+        sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+        sage: p = L.places_finite()[0]
+        sage: m = L.completion(p)
+        sage: m
         Completion map:
           From: Function field in y defined by y^2 + y + (x^2 + 1)/x
           To:   Laurent Series Ring in s over Finite Field of size 2
-        sage: m(x)                                                                                  # needs sage.rings.function_field
+        sage: m(x)
         s^2 + s^3 + s^4 + s^5 + s^7 + s^8 + s^9 + s^10 + s^12 + s^13
         + s^15 + s^16 + s^17 + s^19 + O(s^22)
-        sage: m(y)                                                                                  # needs sage.rings.function_field
+        sage: m(y)
         s^-1 + 1 + s^3 + s^5 + s^7 + s^9 + s^13 + s^15 + s^17 + O(s^19)
-        sage: m(x*y) == m(x) * m(y)                                                                 # needs sage.rings.function_field
+        sage: m(x*y) == m(x) * m(y)
         True
-        sage: m(x+y) == m(x) + m(y)                                                                 # needs sage.rings.function_field
+        sage: m(x+y) == m(x) + m(y)
         True
 
     The variable name of the series can be supplied. If the place is not
@@ -765,12 +781,12 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p)                                                               # needs sage.rings.function_field
-            sage: m                                                                                 # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p)
+            sage: m
             Completion map:
               From: Function field in y defined by y^2 + y + (x^2 + 1)/x
               To:   Laurent Series Ring in s over Finite Field of size 2
@@ -804,12 +820,12 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p)                                                               # needs sage.rings.function_field
-            sage: m  # indirect doctest                                                             # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p)
+            sage: m  # indirect doctest
             Completion map:
               From: Function field in y defined by y^2 + y + (x^2 + 1)/x
               To:   Laurent Series Ring in s over Finite Field of size 2
@@ -822,12 +838,12 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p)                                                               # needs sage.rings.function_field
-            sage: m(y)                                                                              # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p)
+            sage: m(y)
             s^-1 + 1 + s^3 + s^5 + s^7 + s^9 + s^13 + s^15 + s^17 + O(s^19)
         """
         if self._precision == infinity:
@@ -841,12 +857,12 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p)                                                               # needs sage.rings.function_field
-            sage: m(x+y, 10)  # indirect doctest                                                    # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p)
+            sage: m(x+y, 10)  # indirect doctest
             s^-1 + 1 + s^2 + s^4 + s^8 + O(s^9)
         """
         if self._precision == infinity:
@@ -866,12 +882,12 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p)                                                               # needs sage.rings.function_field
-            sage: m(x, prec=20)  # indirect doctest                                                 # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p)
+            sage: m(x, prec=20)  # indirect doctest
             s^2 + s^3 + s^4 + s^5 + s^7 + s^8 + s^9 + s^10 + s^12 + s^13 + s^15
             + s^16 + s^17 + s^19 + O(s^22)
         """
@@ -901,16 +917,16 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p, prec=infinity)                                                # needs sage.rings.function_field
-            sage: e = m(x); e                                                                       # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p, prec=infinity)
+            sage: e = m(x); e
             s^2 + s^3 + s^4 + s^5 + s^7 + s^8 + ...
-            sage: e.coefficient(99)  # indirect doctest                                             # needs sage.rings.function_field
+            sage: e.coefficient(99)  # indirect doctest
             0
-            sage: e.coefficient(100)                                                                # needs sage.rings.function_field
+            sage: e.coefficient(100)
             1
         """
         place = self._place
@@ -934,12 +950,12 @@ class FunctionFieldCompletion(Map):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: m = L.completion(p)                                                               # needs sage.rings.function_field
-            sage: m.default_precision()                                                             # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: m = L.completion(p)
+            sage: m.default_precision()
             20
         """
         return self._precision
@@ -955,15 +971,15 @@ class FunctionFieldRingMorphism(SetMorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                            # needs sage.rings.function_field
-            sage: p = L.places_finite()[0]                                                          # needs sage.rings.function_field
-            sage: R = p.valuation_ring()                                                            # needs sage.rings.function_field
-            sage: k, fr_k, to_k = R.residue_field()                                                 # needs sage.rings.function_field
-            sage: k                                                                                 # needs sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p = L.places_finite()[0]
+            sage: R = p.valuation_ring()
+            sage: k, fr_k, to_k = R.residue_field()
+            sage: k
             Finite Field of size 2
-            sage: fr_k                                                                              # needs sage.rings.function_field
+            sage: fr_k
             Ring morphism:
               From: Finite Field of size 2
               To:   Valuation ring at Place (x, x*y)
@@ -984,14 +1000,14 @@ class FunctionFieldLinearMap(SetMorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2-x^3-1)                                                    # needs sage.rings.function_field
-            sage: O = F.maximal_order()                                                             # needs sage.rings.function_field
-            sage: I = O.ideal(x - 2)                                                                # needs sage.rings.function_field
-            sage: D = I.divisor()                                                                   # needs sage.rings.function_field
-            sage: V, from_V, to_V = D.function_space()                                              # needs sage.rings.function_field
-            sage: from_V                                                                            # needs sage.rings.function_field
+            sage: F.<y> = K.extension(t^2-x^3-1)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x - 2)
+            sage: D = I.divisor()
+            sage: V, from_V, to_V = D.function_space()
+            sage: from_V
             Linear map:
               From: Vector space of dimension 2 over Finite Field of size 5
               To:   Function field in y defined by y^2 + 4*x^3 + 4
@@ -1012,14 +1028,14 @@ class FunctionFieldLinearMapSection(SetMorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)                                                # needs sage.rings.function_field
-            sage: O = F.maximal_order()                                                             # needs sage.rings.function_field
-            sage: I = O.ideal(x - 2)                                                                # needs sage.rings.function_field
-            sage: D = I.divisor()                                                                   # needs sage.rings.function_field
-            sage: V, from_V, to_V = D.function_space()                                              # needs sage.rings.function_field
-            sage: to_V                                                                              # needs sage.rings.function_field
+            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x - 2)
+            sage: D = I.divisor()
+            sage: V, from_V, to_V = D.function_space()
+            sage: to_V
             Section of linear map:
               From: Function field in y defined by y^2 + 4*x^3 + 4
               To:   Vector space of dimension 2 over Finite Field of size 5

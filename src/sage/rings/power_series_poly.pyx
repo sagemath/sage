@@ -164,7 +164,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(11)[[]]
             sage: bool(1 + t + O(t^18))
             True
@@ -274,7 +273,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         Arguments beyond the first can refer to the base ring::
 
-            sage: # needs sage.rings.finite_rings
             sage: P.<x> = GF(5)[]
             sage: Q.<y> = P[[]]
             sage: h = (1 - x*y)^-1 + O(y^7); h
@@ -284,9 +282,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
         These secondary values can also be specified using keywords::
 
-            sage: h(y=y^2, x=3)                                                         # needs sage.rings.finite_rings
+            sage: h(y=y^2, x=3)
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
-            sage: h(y^2, x=3)                                                           # needs sage.rings.finite_rings
+            sage: h(y^2, x=3)
             1 + 3*y^2 + 4*y^4 + 2*y^6 + y^8 + 3*y^10 + 4*y^12 + O(y^14)
         """
         P = self.parent()
@@ -382,29 +380,27 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(7)[[]]
             sage: f = 3 + 6*t^3 + O(t^5)
             sage: f._unsafe_mutate(0, 5)
             sage: f
             5 + 6*t^3 + O(t^5)
-            sage: f._unsafe_mutate(2, 1) ; f
+            sage: f._unsafe_mutate(2, 1); f
             5 + t^2 + 6*t^3 + O(t^5)
 
         - Mutating can even bump up the precision::
 
-            sage: # needs sage.rings.finite_rings
-            sage: f._unsafe_mutate(6, 1) ; f
+            sage: f._unsafe_mutate(6, 1); f
             5 + t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(0, 0) ; f
+            sage: f._unsafe_mutate(0, 0); f
             t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(1, 0) ; f
+            sage: f._unsafe_mutate(1, 0); f
             t^2 + 6*t^3 + t^6 + O(t^7)
-            sage: f._unsafe_mutate(11,0) ; f
+            sage: f._unsafe_mutate(11,0); f
             t^2 + 6*t^3 + t^6 + O(t^12)
 
-            sage: g = t + O(t^7)                                                        # needs sage.rings.finite_rings
-            sage: g._unsafe_mutate(1,0) ; g                                             # needs sage.rings.finite_rings
+            sage: g = t + O(t^7)
+            sage: g._unsafe_mutate(1,0); g
             O(t^7)
         """
         self.__f._unsafe_mutate(i, value)
@@ -444,7 +440,7 @@ cdef class PowerSeries_poly(PowerSeries):
             32 - 80*t + 80*t^2 - 40*t^3 + 10*t^4 - t^5
             sage: f[:4]
             32 - 80*t + 80*t^2 - 40*t^3
-            sage: f = 1 + t^3 - 4*t^4 + O(t^7) ; f
+            sage: f = 1 + t^3 - 4*t^4 + O(t^7); f
             1 + t^3 - 4*t^4 + O(t^7)
             sage: f[:4]
             1 + t^3 + O(t^7)
@@ -901,7 +897,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: t = PowerSeriesRing(QQ,'t').gen()
             sage: f = t + 5*t^2 + 21*t^3
-            sage: g = f.integral() ; g
+            sage: g = f.integral(); g
             1/2*t^2 + 5/3*t^3 + 21/4*t^4
             sage: g.parent()
             Power Series Ring in t over Rational Field
@@ -1201,20 +1197,21 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: R.<x> = PowerSeriesRing(QQ)
             sage: s = R([1,2,3,4,5], prec=10); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + O(x^10)
-            sage: SR(s)                                                                 # needs sage.symbolic
+            sage: SR(s)
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + Order(x^10)
-            sage: SR(s).is_terminating_series()                                         # needs sage.symbolic
+            sage: SR(s).is_terminating_series()
             False
-            sage: SR(s).variables()                                                     # needs sage.symbolic
+            sage: SR(s).variables()
             (x,)
             sage: s = R([1,2,3,4,5]); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
-            sage: SR(s)                                                                 # needs sage.symbolic
+            sage: SR(s)
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
-            sage: _.is_terminating_series()                                             # needs sage.symbolic
+            sage: _.is_terminating_series()
             True
 
         TESTS:

@@ -243,7 +243,7 @@ class SymmetricIdeal(Ideal_generic):
             sage: I                                                                     # needs sage.combinat
             Symmetric Ideal (x_1^2 + x_1, x_2 - x_1) of
              Infinite polynomial ring in x over Rational Field
-            sage: x[2]^2 + x[3] in I # indirect doctest                                 # needs sage.combinat
+            sage: x[2]^2 + x[3] in I  # indirect doctest                                # needs sage.combinat
             True
         """
         try:

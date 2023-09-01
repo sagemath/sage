@@ -281,18 +281,19 @@ cdef class LaurentSeries(AlgebraElement):
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of this series under the map that sends the generators of
-        the parent to im_gens.
+        the parent to ``im_gens``.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: R.<t> = LaurentSeriesRing(K)                                          # needs sage.rings.number_field
-            sage: z = t^-1 + i*t                                                        # needs sage.rings.number_field
-            sage: z._im_gens_(R, [t^2])                                                 # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<t> = LaurentSeriesRing(K)
+            sage: z = t^-1 + i*t
+            sage: z._im_gens_(R, [t^2])
             t^-2 + i*t^2
 
-        The argument base_map is not yet supported, because it isn't over power series::
+        The argument ``base_map`` is not yet supported, because it isn't over power series::
 
             sage: cc = K.hom([i])                                                       # needs sage.rings.number_field
             sage: z._im_gens_(R, [t^2], base_map=cc)                                    # needs sage.rings.number_field

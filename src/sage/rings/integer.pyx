@@ -532,33 +532,34 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Test conversion from PARI (:trac:`11685`)::
 
-            sage: ZZ(pari(-3))                                                          # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: ZZ(pari(-3))
             -3
-            sage: ZZ(pari("-3.0"))                                                      # needs sage.libs.pari
+            sage: ZZ(pari("-3.0"))
             -3
-            sage: ZZ(pari("-3.5"))                                                      # needs sage.libs.pari
+            sage: ZZ(pari("-3.5"))
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral real number to an Integer
-            sage: ZZ(pari("1e100"))                                                     # needs sage.libs.pari
+            sage: ZZ(pari("1e100"))
             Traceback (most recent call last):
             ...
             PariError: precision too low in truncr (precision loss in truncation)
-            sage: ZZ(pari("10^50"))                                                     # needs sage.libs.pari
+            sage: ZZ(pari("10^50"))
             100000000000000000000000000000000000000000000000000
-            sage: ZZ(pari("Pol(3)"))                                                    # needs sage.libs.pari
+            sage: ZZ(pari("Pol(3)"))
             3
             sage: ZZ(GF(3^20,'t')(1))                                                   # needs sage.rings.finite_rings
             1
-            sage: ZZ(pari(GF(3^20,'t')(1)))                                             # needs sage.libs.pari sage.rings.finite_rings
+            sage: ZZ(pari(GF(3^20,'t')(1)))                                             # needs sage.rings.finite_rings
             1
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^2 + 3)                                          # needs sage.rings.number_field
             sage: ZZ(a^2)                                                               # needs sage.rings.number_field
             -3
-            sage: ZZ(pari(a)^2)                                                         # needs sage.libs.pari sage.rings.number_field
+            sage: ZZ(pari(a)^2)                                                         # needs sage.rings.number_field
             -3
-            sage: ZZ(pari("Mod(x, x^3+x+1)"))   # Note error message refers to lifted element       # needs sage.libs.pari
+            sage: ZZ(pari("Mod(x, x^3+x+1)"))   # Note error message refers to lifted element
             Traceback (most recent call last):
             ...
             TypeError: Unable to coerce PARI x to an Integer
@@ -2902,7 +2903,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: y = Integer(145^145)
             sage: y.exp()                                                               # needs sage.symbolic
             e^25024207011349079210459585279553675697932183658421565260323592409432707306554163224876110094014450895759296242775250476115682350821522931225499163750010280453185147546962559031653355159703678703793369785727108337766011928747055351280379806937944746847277089168867282654496776717056860661614337004721164703369140625
-            sage: y.exp(prec=53) # default RealField precision                          # needs sage.symbolic
+            sage: y.exp(prec=53)  # default RealField precision                         # needs sage.symbolic
             +infinity
         """
         from sage.functions.all import exp
@@ -3445,9 +3446,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
-            sage: import sage.libs.mpmath                                               # needs mpmath
-            sage: sage.libs.mpmath.all.mp.prec = 1000                                   # needs mpmath
-            sage: root = sage.libs.mpmath.all.findroot(lambda x: x^2 - 3, 2)            # needs mpmath
+
+            sage: import mpmath                                                         # needs mpmath
+            sage: mpmath.mp.prec = 1000                                                 # needs mpmath
+            sage: root = mpmath.findroot(lambda x: x^2 - 3, 2)                          # needs mpmath
             sage: len(str(root))                                                        # needs mpmath
             301
         """
@@ -5455,18 +5457,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: x = 10^200 + 357
-            sage: x.is_pseudoprime()                                                    # needs sage.libs.pari
+            sage: x.is_pseudoprime()
             True
-            sage: (x^12).is_pseudoprime_power()                                         # needs sage.libs.pari
+            sage: (x^12).is_pseudoprime_power()
             True
-            sage: (x^12).is_pseudoprime_power(get_data=True)                            # needs sage.libs.pari
+            sage: (x^12).is_pseudoprime_power(get_data=True)
             (1000...000357, 12)
-            sage: (997^100).is_pseudoprime_power()                                      # needs sage.libs.pari
+            sage: (997^100).is_pseudoprime_power()
             True
-            sage: (998^100).is_pseudoprime_power()                                      # needs sage.libs.pari
+            sage: (998^100).is_pseudoprime_power()
             False
-            sage: ((10^1000 + 453)^2).is_pseudoprime_power()                            # needs sage.libs.pari
+            sage: ((10^1000 + 453)^2).is_pseudoprime_power()
             True
 
         TESTS::
@@ -5542,26 +5545,27 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: x = polygen(ZZ, 'x')
-            sage: K = NumberField(x^2 - 2, 'beta')                                      # needs sage.rings.number_field
-            sage: n = 4
-            sage: n.is_norm(K)                                                          # needs sage.rings.number_field
-            True
-            sage: 5.is_norm(K)                                                          # needs sage.rings.number_field
-            False
-            sage: 7.is_norm(QQ)
-            True
-            sage: n.is_norm(K, element=True)                                            # needs sage.rings.number_field
-            (True, -4*beta + 6)
-            sage: n.is_norm(K, element=True)[1].norm()                                  # needs sage.rings.number_field
-            4
-            sage: n = 5
-            sage: n.is_norm(K, element=True)                                            # needs sage.rings.number_field
-            (False, None)
             sage: n = 7
+            sage: n.is_norm(QQ)
+            True
             sage: n.is_norm(QQ, element=True)
             (True, 7)
 
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^2 - 2, 'beta')
+            sage: n = 4
+            sage: n.is_norm(K)
+            True
+            sage: 5.is_norm(K)
+            False
+            sage: n.is_norm(K, element=True)
+            (True, -4*beta + 6)
+            sage: n.is_norm(K, element=True)[1].norm()
+            4
+            sage: n = 5
+            sage: n.is_norm(K, element=True)
+            (False, None)
         """
         from sage.rings.rational_field import QQ
         return QQ(self).is_norm(K, element=element, proof=proof)
@@ -6218,19 +6222,18 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: import numpy                                                          # needs numpy
-            sage: numpy.array([1, 2, 3])                                                # needs numpy
+            sage: # needs numpy
+            sage: import numpy
+            sage: numpy.array([1, 2, 3])
             array([1, 2, 3])
-            sage: numpy.array([1, 2, 3]).dtype                                          # needs numpy
+            sage: numpy.array([1, 2, 3]).dtype
             dtype('int32')                         # 32-bit
             dtype('int64')                         # 64-bit
-
-            sage: numpy.array(2**40).dtype                                              # needs numpy
+            sage: numpy.array(2**40).dtype
             dtype('int64')
-            sage: numpy.array(2**400).dtype                                             # needs numpy
+            sage: numpy.array(2**400).dtype
             dtype('O')
-
-            sage: numpy.array([1,2,3,0.1]).dtype                                        # needs numpy
+            sage: numpy.array([1,2,3,0.1]).dtype
             dtype('float64')
         """
         if mpz_fits_slong_p(self.value):

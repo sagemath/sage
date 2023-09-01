@@ -912,7 +912,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
         TESTS::
 
-            sage: RBF.gamma(RLF(pi)) # abs tol 1e-13                                    # needs sage.symbolic
+            sage: RBF.gamma(RLF(pi))  # abs tol 1e-13                                   # needs sage.symbolic
             [2.28803779534003 +/- 4.12e-15]
         """
         cdef RealBall res
@@ -3580,7 +3580,7 @@ cdef class RealBall(RingElement):
 
         TESTS::
 
-            sage: RBF(Si(1)) # abs tol 1e-15                                            # needs sage.symbolic
+            sage: RBF(Si(1))  # abs tol 1e-15                                           # needs sage.symbolic
             [0.946083070367183 +/- 9.22e-16]
         """
         cdef RealBall res = self._new()

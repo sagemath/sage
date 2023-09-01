@@ -1534,7 +1534,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: gap(QQ) # indirect doctest                                            # needs sage.libs.gap
+            sage: gap(QQ)  # indirect doctest                                           # needs sage.libs.gap
             Rationals
         """
         return 'Rationals'
@@ -1647,21 +1647,22 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
-            sage: QQ._factor_univariate_polynomial(x)                                   # needs sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(x)
             x
-            sage: QQ._factor_univariate_polynomial(2*x)                                 # needs sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(2*x)
             (2) * x
-            sage: QQ._factor_univariate_polynomial((x^2 - 1/4)^4)                       # needs sage.libs.pari
+            sage: QQ._factor_univariate_polynomial((x^2 - 1/4)^4)
             (x - 1/2)^4 * (x + 1/2)^4
-            sage: QQ._factor_univariate_polynomial((2*x + 1) * (3*x^2 - 5)^2)           # needs sage.libs.pari
+            sage: QQ._factor_univariate_polynomial((2*x + 1) * (3*x^2 - 5)^2)
             (18) * (x + 1/2) * (x^2 - 5/3)^2
-            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))                     # needs sage.libs.pari
-            sage: QQ._factor_univariate_polynomial(f)                                   # needs sage.libs.pari
+            sage: f = prod((k^2*x^k + k)^(k-1) for k in primes(10))
+            sage: QQ._factor_univariate_polynomial(f)
             (1751787911376562500) * (x^2 + 1/2) * (x^3 + 1/3)^2 * (x^5 + 1/5)^4 * (x^7 + 1/7)^6
-            sage: QQ._factor_univariate_polynomial(10*x^5 - 1)                          # needs sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(10*x^5 - 1)
             (10) * (x^5 - 1/10)
-            sage: QQ._factor_univariate_polynomial(10*x^5 - 10)                         # needs sage.libs.pari
+            sage: QQ._factor_univariate_polynomial(10*x^5 - 10)
             (10) * (x - 1) * (x^4 + x^3 + x^2 + x + 1)
 
         """
