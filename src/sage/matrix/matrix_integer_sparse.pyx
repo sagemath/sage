@@ -869,10 +869,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
-        fmpz_poly_fit_length(g.__poly, p.size())
+        fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g.__poly, i, p[0][i].get_mpz_const())
-        _fmpz_poly_set_length(g.__poly, p.size())
+            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+        _fmpz_poly_set_length(g._poly, p.size())
 
         del M
         del p
@@ -968,10 +968,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
-        fmpz_poly_fit_length(g.__poly, p.size())
+        fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g.__poly, i, p[0][i].get_mpz_const())
-        _fmpz_poly_set_length(g.__poly, p.size())
+            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+        _fmpz_poly_set_length(g._poly, p.size())
 
         del M
         del p

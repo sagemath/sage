@@ -15,7 +15,8 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 
 import sage.misc.misc as misc
-import sage.rings.all as rings
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.big_oh import O
 
 
@@ -159,7 +160,7 @@ class EllipticCurveFormalGroup(SageObject):
             R = w.parent()
         except AttributeError:
             # No cached version available
-            R = rings.PowerSeriesRing(k, "t")
+            R = PowerSeriesRing(k, "t")
             w = R([k(0), k(0), k(0), k(1)], 4)
             cached_prec = 4
             self.__w = w
@@ -526,7 +527,7 @@ class EllipticCurveFormalGroup(SageObject):
         if prec <= 0:
             raise ValueError("The precision must be positive.")
 
-        R = rings.PowerSeriesRing(self.curve().base_ring(), 2, 't1,t2')
+        R = PowerSeriesRing(self.curve().base_ring(), 2, 't1,t2')
         t1, t2 = R.gens()
 
         if prec == 1:
@@ -666,7 +667,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         # Now the general case, not necessarily over a field.
 
-        R = rings.PowerSeriesRing(self.curve().base_ring(), "t")
+        R = PowerSeriesRing(self.curve().base_ring(), "t")
         t = R.gen()
 
         if n == 1:
@@ -744,7 +745,7 @@ class EllipticCurveFormalGroup(SageObject):
         fl = self.log(prec)
         F = fl.reverse()
 
-        S = rings.LaurentSeriesRing(k,'z')
+        S = LaurentSeriesRing(k,'z')
         z = S.gen()
         F = F(z + O(z**prec))
         wp = self.x()(F) + (a1**2 + 4*a2)/12
@@ -752,7 +753,7 @@ class EllipticCurveFormalGroup(SageObject):
         h = g.integral().integral()
         sigma_of_z = z.power_series() * h.exp()
 
-        T = rings.PowerSeriesRing(k,'t')
+        T = PowerSeriesRing(k,'t')
         fl = fl(T.gen()+O(T.gen()**prec))
         sigma_of_t = sigma_of_z(fl)
         return sigma_of_t

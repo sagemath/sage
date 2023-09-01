@@ -108,6 +108,7 @@ def apply_map(phi):
 class Vector_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
     pass
 
+
 # Add elementwise methods.
 for method in ['simplify', 'simplify_factorial',
                'simplify_log', 'simplify_rational',

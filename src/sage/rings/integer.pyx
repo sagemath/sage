@@ -2852,12 +2852,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         except (ValueError, TypeError):
             pass
 
-        if type(m) == Integer and type(self) == Integer:
+        if isinstance(m, Integer):
             elog = self.exact_log(m)
             if elog == -sage.rings.infinity.infinity or m**elog == self:
                 return elog
 
-        if (type(m) == Rational and type(self) == Integer
+        if (isinstance(m, Rational)
                 and m.numer() == 1):
             elog = -self.exact_log(m.denom())
             if m**elog == self:
