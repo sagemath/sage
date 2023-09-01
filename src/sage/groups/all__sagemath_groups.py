@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 from .all__sagemath_gap import *
 
 from sage.misc.lazy_import import lazy_import

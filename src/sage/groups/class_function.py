@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 # sage.doctest: needs sage.rings.number_field
 r"""
 Class functions of groups.

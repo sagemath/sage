@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Elements of a semimonomial transformation group
 

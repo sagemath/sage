@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 """
 Type ``groups.presentation.<tab>`` to access examples
 of groups implemented as finite presentations (quotients of

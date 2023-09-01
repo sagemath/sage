@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 # -*- coding: utf-8 -*-
 r"""
 Right-Angled Artin Groups
