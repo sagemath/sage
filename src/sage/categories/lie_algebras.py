@@ -697,6 +697,20 @@ class LieAlgebras(Category_over_base_ring):
                 Lie group G of Heisenberg algebra of rank 1 over Rational Field
             """
 
+        def trivial_representation(self):
+            """
+            Return the trivial representation of ``self``.
+
+            EXAMPLES::
+
+                sage: L = lie_algebras.strictly_upper_triangular_matrices(QQ, 4)
+                sage: L.trivial_representation()
+                Trivial representation of Lie algebra of 4-dimensional
+                 strictly upper triangular matrices over Rational Field
+            """
+            from sage.algebras.lie_algebras.representation import TrivialRepresentation
+            return TrivialRepresentation(self)
+
         def _test_jacobi_identity(self, **options):
             """
             Test that the Jacobi identity is satisfied on (not
