@@ -135,8 +135,8 @@ include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/3
 
 # root_system; could also instead go to sagemath-polyhedra (which has hyperplane arrangements)
 graft sage/combinat/root_system
-exclude sage/combinat/root_system/reflection_group_c.p*                 # cimports PermutationGroupElement
-exclude sage/combinat/root_system/reflection_group_element.p*
+exclude sage/combinat/root_system/reflection_group*.p*                 # cimports PermutationGroupElement, depends on gap3
+exclude sage/combinat/root_system/weyl_group*.p*  # gap
 
 include sage/algebras/algebra.py
 include sage/algebras/catalog.py

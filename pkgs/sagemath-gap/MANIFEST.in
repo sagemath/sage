@@ -5,6 +5,7 @@ prune sage
 graft             sage/coding/codecan
 include           sage/combinat/enumeration_mod_permgroup.p*
 include           sage/combinat/root_system/reflection_group*.p*
+include           sage/combinat/root_system/weyl_group.p*
 graft             sage/data_structures                                  # FIXME
 graft             sage/ext_data/gap
 recursive-include sage/graphs *.pxd                                     # FIXME
