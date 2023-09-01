@@ -1531,6 +1531,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         is a monomial.
 
         EXAMPLES::
+
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: f = y / x + x^2 / y + 3 * x^4 * y^-2
             sage: f.polynomial_construction()

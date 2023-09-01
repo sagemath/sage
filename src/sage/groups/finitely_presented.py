@@ -165,7 +165,6 @@ class GroupMorphismWithGensImages(SetMorphism):
         Defn: x0 |--> ()
               x1 |--> ()
               x2 |--> ()
-
     """
 
     def _repr_defn(self):
@@ -476,7 +475,6 @@ class RewritingSystem():
 
     - Miguel Angel Marco Buzunariz (2013-12-16)
     """
-
     def __init__(self, G):
         """
         Initialize ``self``.
@@ -1355,14 +1353,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         invariants = self.gap().AbelianInvariants()
         return tuple(i.sage() for i in invariants)
 
-
     def abelianization_map(self):
         r"""
         Return the abelianization map of ``self``.
 
         OUTPUT:
 
-        The abelianization  map of ``self`` as a homomorphism of finitely presented groups.
+        The abelianization map of ``self`` as a homomorphism of finitely presented groups.
 
        EXAMPLES::
 
@@ -1373,11 +1370,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             Group morphism:
                 From: Finitely presented group  < g0, g1, g2, g3 | g1^2, g2*g1*g2^-1*g1^-1, g1*g3^-2, g0^4 >
                 To:   Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4, f3^-1*f4^-1*f3*f4, f2^4, f3^4 >
-            sage: g=FreeGroup(0)/[]
+            sage: g = FreeGroup(0) / []
             sage: g.abelianization_map()
             Group endomorphism of Finitely presented group  <  |  >
         """
-        if len(self.generators()) == 0:
+        if not self.generators():
             return self.hom(codomain=self, im_gens=[])
         hom_ab_libgap = libgap(self).MaximalAbelianQuotient()
         ab_libgap = hom_ab_libgap.Range()
@@ -1408,12 +1405,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
           with a minimal number `n` of generators.
-
         -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``.
-
         - ``ideal`` -- a list of generators of an ideal ``I`` in ``R`` such that ``R/I``
           is the group algebra of the abelianization over ``ring``
-
         - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
 
         EXAMPLES::
@@ -1427,11 +1421,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                                                       f3^-1*f4^-1*f3*f4, f2^4, f3^4 >,
              Multivariate Laurent Polynomial Ring in f2, f3, f4 over Rational Field,
              [f2^4 - 1, f3^4 - 1], [f2^-1*f3^-2, f3^-2, f4, f3])
-            sage: g=FreeGroup(0)/[]
+            sage: g=FreeGroup(0) / []
             sage: g.abelianization_to_algebra()
             (Finitely presented group  <  |  >, Rational Field, [], [])
         """
-        if len(self.generators()) == 0:
+        if not self.generators():
             return self, ring, [], []
         hom_ab = self.abelianization_map()
         ab = hom_ab.codomain()
@@ -1657,37 +1651,34 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         OUTPUT:
 
         - ``A`` -- a matrix with coefficients in ``R``
-
-        - ``R`` -- a ring of Laurent polynomials over ``ring``
-
-        - ``ideal`` -- an list of generators of an ideal ``I`` of ``R`` such that ``R/I`` is
+        - ``ideal`` -- an list of generators of an ideal ``I`` of ``R = A.base_ring()`` such that ``R/I`` is
           the group algebra of the abelianization of ``self``
 
         EXAMPLES::
 
             sage: G.<a,b,c> = FreeGroup()
             sage: H = G.quotient([a*b/a/b, a*c/a/c, c*b/c/b])
-            sage: A, R, ideal = H.abelian_alexander_matrix()
+            sage: A, ideal = H.abelian_alexander_matrix()
             sage: A
             [-f2 + 1  f1 - 1       0]
             [-f3 + 1       0  f1 - 1]
             [      0  f3 - 1 -f2 + 1]
-            sage: R
+            sage: A.base_ring()
             Multivariate Laurent Polynomial Ring in f1, f2, f3 over Rational Field
             sage: ideal
             []
             sage: abel = H.abelianization_to_algebra()
-            sage: (A, R, ideal) == H.abelian_alexander_matrix(abelianized=abel)
+            sage: (A, ideal) == H.abelian_alexander_matrix(abelianized=abel)
             True
-            sage: G=FreeGroup(3)/[(2,1,1), (1,2,2,3,3)]
-            sage: A, R, ideal = G.abelian_alexander_matrix(simplified=True); A
+            sage: G = FreeGroup(3)/[(2, 1, 1), (1, 2, 2, 3, 3)]
+            sage: A, ideal = G.abelian_alexander_matrix(simplified=True); A
             [-f3^2 - f3^4 - f3^6         f3^3 + f3^6]
-            sage: g=FreeGroup(1)/[]
+            sage: g = FreeGroup(1) / []
             sage: g.abelian_alexander_matrix()
-            ([], Integer Ring, [])
-            sage: g=FreeGroup(0)/[]
+            ([], [])
+            sage: g = FreeGroup(0) / []
             sage: g.abelian_alexander_matrix()
-            ([], Integer Ring, [])
+            ([], [])
         """
         if abelianized is None:
             ab, R, ideal, images = self.abelianization_to_algebra(ring=ring)
@@ -1696,9 +1687,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         A = self.alexander_matrix(im_gens=images)
         if simplified:
             n, m = A.dimensions()
-            R = A.base_ring()
-            if 0 in (n, m):
-                return A, R, ideal
+            if n == 0 or m == 0:
+                return A, ideal
             simpli = True
             while simpli:
                 i = 0
@@ -1721,9 +1711,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                             i += 1
                             j = 0
                 simpli = unidad
-        return A, R, ideal
+        return A, ideal
 
-    def char_var(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
+    def characteristic_varieties(self, ring=QQ, matrix_ideal=None, abelianized=None, groebner=False):
         r"""
         Return the characteristic varieties of the group ``self``.
 
@@ -1736,7 +1726,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
             V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}.
 
-        These varieties are defined by ideals in `\Lambda`
+        These varieties are defined by ideals in `\Lambda`.
 
         INPUT:
 
@@ -1757,7 +1747,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
             sage: L = [2*(i, j) + 2* (-i, -j) for i, j in ((1, 2), (2, 3), (3, 1))]
             sage: G = FreeGroup(3) / L
-            sage: G.char_var(groebner=True)
+            sage: G.characteristic_varieties(groebner=True)
             [[(f1 - 1, f2 - 1, f3 - 1),
              (f1 + 1, f2 - 1, f3 - 1),
              (f1 - 1, f2 - 1, f3 + 1),
@@ -1770,25 +1760,25 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
              (f2*f3 + 1, f1 - f2),
              (f2*f3 + 1, f1 - f3),
              (f1*f3 + 1, f2 - f3)]]
-            sage: A, R, I = G.abelian_alexander_matrix()
-            sage: G.char_var(groebner=True) == G.char_var(groebner=True, matrix_ideal=(A, I))
+            sage: A, I = G.abelian_alexander_matrix()
+            sage: G.characteristic_varieties(groebner=True) == G.characteristic_varieties(groebner=True, matrix_ideal=(A, I))
             True
             sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
-            sage: G.char_var()
+            sage: G.characteristic_varieties()
             [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field]
-            sage: G.char_var(ring=ZZ)
+            sage: G.characteristic_varieties(ring=ZZ)
             [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring]
             sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
-            sage: G.char_var()
+            sage: G.characteristic_varieties()
             [Ideal (1 - f2 + f2^2, -1 + f2 - f2^2) of Univariate Laurent Polynomial Ring in f2 over Rational Field]
-            sage: G.char_var(groebner=True)
+            sage: G.characteristic_varieties(groebner=True)
             [[1 - f2 + f2^2]]
         """
         if matrix_ideal is None:
-            A, R, ideal = self.abelian_alexander_matrix(ring=ring, abelianized=abelianized, simplified=True)
+            A, ideal = self.abelian_alexander_matrix(ring=ring, abelianized=abelianized, simplified=True)
         else:
             A, ideal = matrix_ideal
-            R = A.base_ring()
+        R = A.base_ring()
         res = []
         S = R.polynomial_ring()
         ideal = [S(elt) for elt in ideal]
@@ -1806,7 +1796,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                     res1.append([R(0)])
                 else:
                     fct = [q[0] for q in R(p).factor()]
-                    if len(fct) > 0:
+                    if fct:
                         res1.append(fct)
             return res1
         res1 = []
