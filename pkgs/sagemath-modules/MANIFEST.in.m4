@@ -176,6 +176,7 @@ exclude sage/quadratic_forms/special_values.p*
 
 graft sage/groups/affine_gps
 include sage/groups/matrix_gps/all.p*
+include sage/groups/matrix_gps/catalog.p*
 include sage/groups/matrix_gps/finitely_generated.p*
 include sage/groups/matrix_gps/group_element.p*
 include sage/groups/matrix_gps/linear.p*
@@ -184,6 +185,7 @@ include sage/groups/matrix_gps/named_group.p*
 include sage/groups/matrix_gps/orthogonal.p*
 include sage/groups/matrix_gps/symplectic.p*
 include sage/groups/matrix_gps/unitary.p*
+include sage/groups/matrix_gps/coxeter_group.p*
 
 include sage/groups/perm_gps/partn_ref/refinement_matrices.p*
 include sage/groups/perm_gps/partn_ref/refinement_binary.p*

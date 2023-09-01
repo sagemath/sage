@@ -19,6 +19,10 @@ include           sage/groups/abelian_gps/abelian_aut.p*
 include           sage/groups/abelian_gps/abelian_group_morphism.p*
 include           sage/groups/matrix_gps/group_element.pxd              # FIXME
 include           sage/groups/matrix_gps/*_gap.*
+include           sage/groups/matrix_gps/heisenberg.p*
+include           sage/groups/matrix_gps/isometries.p*
+include           sage/groups/matrix_gps/binary_dihedral.p*
+
 include           sage/groups/semimonomial_transformations/all.py       # FIXME
 recursive-include sage/groups/semimonomial_transformations *.pxd        # FIXME
 include           sage/interfaces/gap*.p*

@@ -16,6 +16,7 @@ exclude sage/groups/generic.p*
 exclude sage/groups/groups_catalog.p*
 # exclude what is in sagemath-modules
 prune sage/groups/abelian_gps
+include sage/groups/abelian_gps/all.p*
 prune sage/groups/additive_abelian
 prune sage/groups/affine_gps
 prune sage/groups/matrix_gps
