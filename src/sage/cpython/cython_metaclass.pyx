@@ -19,13 +19,16 @@ file if you are using one).
 
 In the extension type (a.k.a. ``cdef class``) for which you want to
 define a metaclass, define a method ``__getmetaclass__`` with a single
-unused argument. This method should return a type to be used as
+unused argument, and turn off the Cython directive
+``always_allow_keywords``. This method should return a type to be used as
 metaclass:
 
 .. code-block:: cython
 
+    cimport cython
     cimport sage.cpython.cython_metaclass
     cdef class MyCustomType():
+        @cython.always_allow_keywords(False)
         def __getmetaclass__(_):
             from foo import MyMetaclass
             return MyMetaclass
@@ -63,8 +66,10 @@ EXAMPLES::
 
     sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
+    ....: cimport cython
     ....: cimport sage.cpython.cython_metaclass
     ....: cdef class MyCustomType():
+    ....:     @cython.always_allow_keywords(False)
     ....:     def __getmetaclass__(_):
     ....:         class MyMetaclass(type):
     ....:             def __init__(*args):
@@ -101,8 +106,10 @@ returns a non-type::
 
     sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
+    ....: cimport cython
     ....: cimport sage.cpython.cython_metaclass
     ....: cdef class MyCustomType():
+    ....:     @cython.always_allow_keywords(False)
     ....:     def __getmetaclass__(_):
     ....:         return 2
     ....: ''')

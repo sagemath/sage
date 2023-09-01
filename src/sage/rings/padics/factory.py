@@ -815,6 +815,7 @@ class Qp_class(UniqueFactory):
         else:
             raise ValueError("unexpected type")
 
+
 Qp = Qp_class("Qp")
 
 
@@ -2026,6 +2027,7 @@ class Zp_class(UniqueFactory):
                                                        'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label)
         else:
             raise ValueError("unexpected type")
+
 
 Zp = Zp_class("Zp")
 
@@ -3431,7 +3433,9 @@ class pAdicExtension_class(UniqueFactory):
                   'max_ram_terms': print_max_ram_terms, 'max_unram_terms': print_max_unram_terms, 'max_terse_terms': print_max_terse_terms, 'show_prec': show_prec},
                  shift_seed, names, implementation)
 
+
 ExtensionFactory = pAdicExtension = pAdicExtension_class("pAdicExtension")
+
 
 ######################################################
 # Helper functions for the Extension Factory

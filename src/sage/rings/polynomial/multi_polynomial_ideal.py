@@ -303,9 +303,11 @@ class RequireField(MethodDecorator):
             raise ValueError("Coefficient ring must be a field for function '%s'."%(self.f.__name__))
         return self.f(self._instance, *args, **kwds)
 
+
 require_field = RequireField
 
-def is_MPolynomialIdeal(x):
+
+def is_MPolynomialIdeal(x) -> bool:
     """
     Return ``True`` if the provided argument ``x`` is an ideal in a
     multivariate polynomial ring.
@@ -334,6 +336,7 @@ def is_MPolynomialIdeal(x):
         True
     """
     return isinstance(x, MPolynomialIdeal)
+
 
 class MPolynomialIdeal_magma_repr:
     def _magma_init_(self, magma):

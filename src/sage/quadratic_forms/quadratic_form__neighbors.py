@@ -131,6 +131,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
         if a in ZZ and (a % p == 0):
             return w
 
+
 def find_p_neighbor_from_vec(self, p, y):
     r"""
     Return the `p`-neighbor of ``self`` defined by ``y``.
@@ -173,7 +174,7 @@ def find_p_neighbor_from_vec(self, p, y):
     """
     p = ZZ(p)
     if not p.divides(self(y)):
-        raise ValueError("y=%s must be of square divisible by p=%s"%(y,p))
+        raise ValueError("y=%s must be of square divisible by p=%s" % (y, p))
     if self.base_ring() not in [ZZ, QQ]:
         raise NotImplementedError("the base ring of this form must be the integers or the rationals")
 
@@ -197,14 +198,14 @@ def find_p_neighbor_from_vec(self, p, y):
                 z = (ZZ**n).gen(k)
                 break
         else:
-            raise ValueError("either y is not primitive or self is not maximal at %s"%p)
+            raise ValueError("either y is not primitive or self is not maximal at %s" % p)
         z *= (2*y*G*z).inverse_mod(p)
         y = y - b*z
         # assert y*G*y % p^2 == 0
     if p == 2:
         val = b.valuation(p)
         if val <= 1:
-            raise ValueError("y=%s must be of square divisible by 2"%y)
+            raise ValueError("y=%s must be of square divisible by 2" % y)
         if val == 2 and not odd:
             # modify it to have square 4
             for k in range(n):
@@ -348,13 +349,14 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
                     break
 
     if len(isom_classes) >= max_classes:
-        warn("reached the maximum number of isometry classes=%s. Increase the optional argument max_classes to obtain more." %max_classes)
+        warn("reached the maximum number of isometry classes=%s. Increase the optional argument max_classes to obtain more." % max_classes)
 
     if mass is not None:
         assert mass_count <= mass
         if mass_count < mass:
             print("Warning: not all classes in the genus were found")
     return isom_classes
+
 
 def orbits_lines_mod_p(self, p):
     r"""

@@ -4516,6 +4516,7 @@ class FindStatCollection(Element,
             return self._data["NamePlural"]
         raise ValueError("argument 'style' (=%s) must be 'singular' or 'plural'" % style)
 
+
 from collections import namedtuple
 _SupportedFindStatCollection = namedtuple("SupportedFindStatCollection",
                                           ["string_to_element",

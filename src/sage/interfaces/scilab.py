@@ -511,6 +511,7 @@ class ScilabElement(ExpectElement):
         z = P(x)
         P.eval('%s(%s,%s) = %s'%(self.name(), i, j, z.name()))
 
+
 # An instance
 scilab = Scilab()
 

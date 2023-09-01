@@ -97,4 +97,5 @@ class FreeAlgebra(CombinatorialFreeModule):
         # for the specifying the order of the elements in the family
         #return Family(self._alphabet, lambda a: self.term(self.basis().keys()(a)))
 
+
 Example = FreeAlgebra

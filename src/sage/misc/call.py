@@ -181,5 +181,6 @@ def call_method(obj, name, *args, **kwds):
     """
     return getattr(obj, name)(*args, **kwds)
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.misc.misc", "call_method", call_method)

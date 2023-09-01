@@ -117,8 +117,8 @@ def nodes_uncached(degree, prec):
         raise ValueError("degree=%s not supported (degree must be 3 or even)" % degree)
     R = RealField(int(prec*3/2))
     Rout = RealField(prec)
-    mpfr_init2(u,R.__prec)
-    mpfr_init2(v,R.__prec)
+    mpfr_init2(u,R._prec)
+    mpfr_init2(v,R._prec)
     ZERO = R.zero()
     ONE = R.one()
     HALF = ONE/2

@@ -18,6 +18,7 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
 from sage.categories.magmatic_algebras import MagmaticAlgebras
+from sage.categories.cartesian_product import CartesianProductsCategory
 
 
 class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
@@ -25,7 +26,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
     The category of non-associative algebras over a given base ring.
 
     A non-associative algebra over a ring `R` is a module over `R`
-    which s also a unital magma.
+    which is also a unital magma.
 
     .. WARNING::
 
@@ -382,3 +383,55 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     3*B[word: ]
                 """
                 return self.term(self.one_basis(), r)
+
+    class CartesianProducts(CartesianProductsCategory):
+        r"""
+        The category of unital algebras constructed as Cartesian products
+        of unital algebras.
+
+        This construction gives the direct product of algebras. See
+        discussion on:
+
+         - http://groups.google.fr/group/sage-devel/browse_thread/thread/35a72b1d0a2fc77a/348f42ae77a66d16#348f42ae77a66d16
+         - :wikipedia:`Direct_product`
+        """
+        def extra_super_categories(self):
+            """
+            A Cartesian product of algebras is endowed with a natural
+            unital algebra structure.
+
+            EXAMPLES::
+
+                sage: from sage.categories.unital_algebras import UnitalAlgebras
+                sage: C = UnitalAlgebras(QQ).CartesianProducts()
+                sage: C.extra_super_categories()
+                [Category of unital algebras over Rational Field]
+                sage: sorted(C.super_categories(), key=str)
+                [Category of Cartesian products of distributive magmas and additive magmas,
+                 Category of Cartesian products of unital magmas,
+                 Category of Cartesian products of vector spaces over Rational Field,
+                 Category of unital algebras over Rational Field]
+            """
+            return [self.base_category()]
+
+        class ParentMethods:
+            @cached_method
+            def one(self):
+                r"""
+                Return the multiplicative unit element.
+
+                EXAMPLES::
+
+                    sage: S2 = simplicial_complexes.Sphere(2)
+                    sage: H = S2.cohomology_ring(QQ)
+                    sage: C = cartesian_product([H, H])
+                    sage: one = C.one()
+                    sage: one
+                    B[(0, (0, 0))] + B[(1, (0, 0))]
+                    sage: one == one * one
+                    True
+                    sage: all(b == b * one for b in C.basis())
+                    True
+                """
+                data = enumerate(self.cartesian_factors())
+                return self._cartesian_product_of_elements([C.one() for i, C in data])

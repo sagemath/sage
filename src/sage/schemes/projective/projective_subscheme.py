@@ -1001,7 +1001,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         for i in range(n + 1):
             J = J + S.ideal(z[-1] * f_S.derivative(z[i]) - z[i + n + 1])
 
-        sat = ff.elim__lib.sat
+        try:
+            sat = ff.elim__lib.sat_with_exp
+        except NameError:
+            sat = ff.elim__lib.sat
 
         max_ideal = S.ideal(z[n + 1: 2 * n + 2])
         J_sat_gens = sat(J, max_ideal)[0]
