@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.rings.padics
 r"""
 Elements of Berkovich space.
 
@@ -65,13 +66,13 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
     EXAMPLES::
 
-        sage: B = Berkovich_Cp_Affine(3)                                                # needs sage.rings.padics
-        sage: B(2)                                                                      # needs sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(3)
+        sage: B(2)
         Type I point centered at 2 + O(3^20)
 
     ::
 
-        sage: B(0, 1)                                                                   # needs sage.rings.padics
+        sage: B(0, 1)
         Type II point centered at 0 of radius 3^0
     """
 
@@ -81,8 +82,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(5)                                            # needs sage.rings.padics
-            sage: B(4)                                                                  # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(5)
+            sage: B(4)
             Type I point centered at 4 + O(5^20)
         """
         from sage.rings.function_field.element import is_FunctionFieldElement
@@ -429,7 +430,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(Qp(3))
             sage: Q1 = B(9)
             sage: Q1._custom_abs(Q1.center())
@@ -454,7 +454,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(5)
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
@@ -483,7 +482,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(5)
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
@@ -512,14 +510,14 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(Qp(3))                                        # needs sage.rings.padics
-            sage: d = B([2, 2, 2], [1.761, 1.123, 1.112])                               # needs sage.rings.padics
-            sage: d.precision()                                                         # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(Qp(3))
+            sage: d = B([2, 2, 2], [1.761, 1.123, 1.112])
+            sage: d.precision()
             3
 
         TESTS::
 
-            sage: d.precision == d.prec                                                 # needs sage.rings.padics
+            sage: d.precision == d.prec
             True
         """
         if self._type in [1, 2, 3]:
@@ -543,8 +541,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
             ::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: B(0).ideal()                                                          # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: B(0).ideal()
 
         """
         return self.parent().ideal()
@@ -563,15 +561,15 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: Q1 = B(1, 9)                                                          # needs sage.rings.padics
-            sage: Q1.power()                                                            # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: Q1 = B(1, 9)
+            sage: Q1.power()
             2
 
         ::
 
-            sage: Q2 = B(1, 4)                                                          # needs sage.rings.padics
-            sage: Q2.power()                                                            # needs sage.rings.padics
+            sage: Q2 = B(1, 4)
+            sage: Q2.power()
             1.26185950714291
         """
         if self._type in [1, 4]:
@@ -589,15 +587,15 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: Q1 = B(1, 2/5)                                                        # needs sage.rings.padics
-            sage: Q1.radius()                                                           # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: Q1 = B(1, 2/5)
+            sage: Q1.radius()
             0.400000000000000
 
         ::
 
-            sage: d = B([2, 2, 2], [1.761, 1.123, 1.112])                               # needs sage.rings.padics
-            sage: d.radius()                                                            # needs sage.rings.padics
+            sage: d = B([2, 2, 2], [1.761, 1.123, 1.112])
+            sage: d.radius()
             [1.76100000000000, 1.12300000000000, 1.11200000000000]
         """
         if self._type == 4:
@@ -624,20 +622,19 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: Q1 = B(3)                                                             # needs sage.rings.padics
-            sage: Q1.diameter()                                                         # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: Q1 = B(3)
+            sage: Q1.diameter()
             0
 
         ::
 
-            sage: Q2 = B(1/2, 9)                                                        # needs sage.rings.padics
-            sage: Q2.diameter()                                                         # needs sage.rings.padics
+            sage: Q2 = B(1/2, 9)
+            sage: Q2.diameter()
             9.00000000000000
 
         The diameter of a type IV point is the limit of the radii::
 
-            sage: # needs sage.rings.padics
             sage: R.<x> = PolynomialRing(Qp(3))
             sage: f = R(2)
             sage: S.<y> = PolynomialRing(RR)
@@ -648,7 +645,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1/81, 1)
             sage: Q2 = B(1/3)
@@ -657,7 +653,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: Q2.diameter(Q2)                                                       # needs sage.rings.padics
+            sage: Q2.diameter(Q2)
             +infinity
         """
         if basepoint == Infinity:
@@ -701,7 +697,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1/4, 4)
             sage: Q2 = B(1/4, 6)
@@ -710,13 +705,13 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: Q3 = B(1)                                                             # needs sage.rings.padics
-            sage: Q3.path_distance_metric(Q1)                                           # needs sage.rings.padics
+            sage: Q3 = B(1)
+            sage: Q3.path_distance_metric(Q1)
             +infinity
 
         ::
 
-            sage: Q3.path_distance_metric(Q3)                                           # needs sage.rings.padics
+            sage: Q3.path_distance_metric(Q3)
             0
         """
         if not isinstance(other, type(self)):
@@ -753,7 +748,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 9)
             sage: Q2 = B(1/27, 1/27)
@@ -763,7 +757,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 9)
             sage: Q2 = B(1/2)
@@ -801,7 +794,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1/4, 4)
             sage: Q2 = B(1/4, 6)
@@ -865,7 +857,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(27, 1)
             sage: Q2 = B(1/3, 2)
@@ -875,7 +866,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(27, 1)
             sage: Q2 = B(1/3, 2)
@@ -909,7 +899,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 2)
             sage: Q2 = B(1/9, 1)
@@ -918,8 +907,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         ::
 
-            sage: Q3 = B(2)                                                             # needs sage.rings.padics
-            sage: Q3.spherical_kernel(Q3)                                               # needs sage.rings.padics
+            sage: Q3 = B(2)
+            sage: Q3.spherical_kernel(Q3)
             0
         """
         if not isinstance(other, type(self)):
@@ -948,7 +937,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(Qp(3))
             sage: Q1 = B(1/4, 4)
             sage: Q2 = B(1/4, 6)
@@ -978,14 +966,14 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: B(3, 1).center()                                                      # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: B(3, 1).center()
             3 + O(3^21)
 
         ::
 
-            sage: C = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: C(3, 1).center()                                                      # needs sage.rings.padics
+            sage: C = Berkovich_Cp_Projective(3)
+            sage: C(3, 1).center()
             (3 + O(3^21) : 1 + O(3^20))
 
         ::
@@ -1010,13 +998,13 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: B(1).type_of_point()                                                  # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: B(1).type_of_point()
             1
 
         ::
 
-            sage: B(0, 1).type_of_point()                                               # needs sage.rings.padics
+            sage: B(0, 1).type_of_point()
             2
         """
         return ZZ(self._type)
@@ -1029,8 +1017,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: B(1).prime()                                                          # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: B(1).prime()
             3
         """
         return ZZ(self._p)
@@ -1041,7 +1029,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics sage.symbolic
+            sage: # needs sage.symbolic
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(3, 3**(1/2))
             sage: Q2 = B(3, RR(3**(1/2)))
@@ -1056,8 +1044,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: B(2, 1)                                                               # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: B(2, 1)
             Type II point centered at (2 + O(3^20) : 1 + O(3^20)) of radius 3^0
         """
         if self._type == 1:
@@ -1086,8 +1074,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: latex(B(2, 1))                                                        # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: latex(B(2, 1))
             \text{type 2 Point of } \text{Projective Berkovich line over }
             \Bold{C}_{3} \text{equivalent to the disk centered at
             (2 + O(3^20) : 1 + O(3^20)) of radius 1.00000000000000 in } \Bold{C}_3
@@ -1151,46 +1139,45 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
     Type I points can be created by specifying the corresponding point of ``Cp``::
 
-        sage: B = Berkovich_Cp_Affine(Qp(3))                                            # needs sage.rings.padics
-        sage: B(4)                                                                      # needs sage.rings.padics
+        sage: B = Berkovich_Cp_Affine(Qp(3))
+        sage: B(4)
         Type I point centered at 1 + 3 + O(3^20)
 
     The center of a point can be an element of a finite extension of ``Qp``::
 
-        sage: A.<t> = Qq(27)                                                            # needs sage.rings.padics
-        sage: B(1 + t)                                                                  # needs sage.rings.padics
+        sage: A.<t> = Qq(27)
+        sage: B(1 + t)
         Type I point centered at (t + 1) + O(3^20)
 
     Type II and III points can be created by specifying a center and a radius::
 
-        sage: B(2, 3**(1/2))                                                            # needs sage.rings.padics sage.symbolic
+        sage: B(2, 3**(1/2))                                                            # needs sage.symbolic
         Type II point centered at 2 + O(3^20) of radius 3^1/2
 
     ::
 
-        sage: B(2, 1.6)                                                                 # needs sage.rings.padics
+        sage: B(2, 1.6)
         Type III point centered at 2 + O(3^20) of radius 1.60000000000000
 
     Some type II points may be mistaken for type III points::
 
-        sage: B(3, 3**0.5)                      # not tested                            # needs sage.rings.padics
+        sage: B(3, 3**0.5)                      # not tested
         Type III point centered at 3 + O(3^21) of radius 1.73205080756888
 
     To avoid these errors, specify the power instead of the radius::
 
-        sage: B(3, power=RR(1/100000))                                                  # needs sage.rings.padics
+        sage: B(3, power=RR(1/100000))
         Type II point centered at 3 + O(3^21) of radius 3^1/100000
 
     Type IV points can be constructed in a number of ways, the first being
     from a list of centers and radii used to approximate the point::
 
-        sage: B([Qp(3)(2), Qp(3)(2), Qp(3)(2)], [1.761, 1.123, 1.112])                  # needs sage.rings.padics
+        sage: B([Qp(3)(2), Qp(3)(2), Qp(3)(2)], [1.761, 1.123, 1.112])
         Type IV point of precision 3, approximated by disks centered at
         [2 + O(3^20), 2 + O(3^20)] ... with radii [1.76100000000000, 1.12300000000000] ...
 
     Type IV points can be constructed from univariate functions, with arbitrary precision::
 
-        sage: # needs sage.rings.padics
         sage: A.<t> = Qq(27)
         sage: R.<x> = PolynomialRing(A)
         sage: f = (1 + t)^2*x
@@ -1204,7 +1191,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
     For increased performance, ``error_check`` can be set to ``False``. WARNING: with error check set
     to ``False``, any error in the input will lead to incorrect results::
 
-        sage: B(f, g, prec=100, error_check=False)                                      # needs sage.rings.padics
+        sage: B(f, g, prec=100, error_check=False)
         Type IV point of precision 100 with centers given by
         ((t^2 + 2*t + 1) + O(3^20))*x and radii given by (y + 1.00000000000000)/y
 
@@ -1225,7 +1212,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
     TESTS::
 
-        sage: # needs sage.rings.padics
         sage: A = Berkovich_Cp_Affine(3)
         sage: Q1 = A(3, 1); Q1
         Type II point centered at 3 + O(3^21) of radius 3^0
@@ -1252,7 +1238,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         sage: Q5 == Q6                                                                  # needs sage.symbolic
         True
 
-        sage: # needs sage.rings.padics
         sage: k = Qp(5)
         sage: R.<x> = k[]
         sage: l.<w> = k.extension(x^2 - 5)
@@ -1260,7 +1245,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         sage: B(w, power=1)
         Type II point centered at w + O(w^41) of radius 5^1
 
-        sage: TestSuite(Q5).run()                                                       # needs sage.rings.padics
+        sage: TestSuite(Q5).run()
     """
 
     def __init__(self, parent, center, radius=None, power=None, prec=20, error_check=True):
@@ -1269,8 +1254,8 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: A = Berkovich_Cp_Affine(17)                                           # needs sage.rings.padics
-            sage: A(5, 1)                                                               # needs sage.rings.padics
+            sage: A = Berkovich_Cp_Affine(17)
+            sage: A(5, 1)
             Type II point centered at 5 + O(17^20) of radius 17^0
         """
         # we call Berkovich_Element_Cp constructor which is shared with projective Berkovich space
@@ -1296,18 +1281,17 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Affine(5)                                            # needs sage.rings.padics
-            sage: B(5).as_projective_point()                                            # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(5)
+            sage: B(5).as_projective_point()
             Type I point centered at (5 + O(5^21) : 1 + O(5^20))
 
         ::
 
-            sage: B(0, 1).as_projective_point()                                         # needs sage.rings.padics
+            sage: B(0, 1).as_projective_point()
             Type II point centered at (0 : 1 + O(5^20)) of radius 5^0
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: L.<t> = PolynomialRing(Qp(5))
             sage: T = FractionField(L)
             sage: f = T(1/t)
@@ -1343,7 +1327,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(1, RR(3**(1/2)))                                               # needs sage.symbolic
             sage: Q2 = B(1, 3**(1/2))                                                   # needs sage.symbolic
@@ -1352,20 +1335,20 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q3 = B(1)                                                             # needs sage.rings.padics
-            sage: Q4 = B(4)                                                             # needs sage.rings.padics
-            sage: Q3 == Q4                                                              # needs sage.rings.padics
+            sage: Q3 = B(1)
+            sage: Q4 = B(4)
+            sage: Q3 == Q4
             False
 
         ::
 
-            sage: Q5 = B(1, 4)                                                          # needs sage.rings.padics
-            sage: Q1 == Q5                                                              # needs sage.rings.padics sage.symbolic
+            sage: Q5 = B(1, 4)
+            sage: Q1 == Q5                                                              # needs sage.symbolic
             False
 
         ::
 
-            sage: Q1 == Q3                                                              # needs sage.rings.padics sage.symbolic
+            sage: Q1 == Q3                                                              # needs sage.symbolic
             False
         """
         if other is self:
@@ -1394,7 +1377,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(1, RR(3**(1/2)))                                               # needs sage.symbolic
             sage: Q2 = B(1, 3**(1/2))                                                   # needs sage.symbolic
@@ -1442,7 +1424,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(5, 0.5)
             sage: Q2 = B(5, 1)
@@ -1451,32 +1432,32 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q3 = B(1)                                                             # needs sage.rings.padics
-            sage: Q1.lt(Q3)                                                             # needs sage.rings.padics
+            sage: Q3 = B(1)
+            sage: Q1.lt(Q3)
             False
 
         TESTS::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: Q1 = B(5)                                                             # needs sage.rings.padics
-            sage: Q1.lt(Q1)                                                             # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: Q1 = B(5)
+            sage: Q1.lt(Q1)
             False
 
         ::
 
-            sage: Q2 = B([4, 1/3], [5, 1])                                              # needs sage.rings.padics
-            sage: Q1.lt(Q2)                                                             # needs sage.rings.padics
+            sage: Q2 = B([4, 1/3], [5, 1])
+            sage: Q1.lt(Q2)
             False
 
         ::
 
-            sage: Q4 = B(0, 1)                                                          # needs sage.rings.padics
-            sage: Q1.lt(Q4)                                                             # needs sage.rings.padics
+            sage: Q4 = B(0, 1)
+            sage: Q1.lt(Q4)
             True
 
         ::
 
-            sage: Q2.lt(Q4)                                                             # needs sage.rings.padics
+            sage: Q2.lt(Q4)
             False
         """
         if not isinstance(other, Berkovich_Element_Cp_Affine):
@@ -1587,7 +1568,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Affine(3)
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 2)
@@ -1596,32 +1576,32 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q3 = B(5)                                                             # needs sage.rings.padics
-            sage: Q3.join(Q1)                                                           # needs sage.rings.padics
+            sage: Q3 = B(5)
+            sage: Q3.join(Q1)
             Type II point centered at 2 + 3 + O(3^20) of radius 3^0
 
         ::
 
-            sage: Q3.join(Q1, basepoint=Q2)                                             # needs sage.rings.padics
+            sage: Q3.join(Q1, basepoint=Q2)
             Type II point centered at 2 + O(3^20) of radius 3^0
 
         TESTS::
 
-            sage: Q4 = B(1/3**8 + 2, 1)                                                 # needs sage.rings.padics
-            sage: Q2.join(Q4, basepoint=Q1)                                             # needs sage.rings.padics
+            sage: Q4 = B(1/3**8 + 2, 1)
+            sage: Q2.join(Q4, basepoint=Q1)
             Type III point centered at 2 + O(3^20) of radius 2.00000000000000
 
         ::
 
-            sage: Q5 = B(2, 1/9)                                                        # needs sage.rings.padics
-            sage: Q6 = B(1, 1/27)                                                       # needs sage.rings.padics
-            sage: Q4.join(Q5, basepoint=Q6)                                             # needs sage.rings.padics
+            sage: Q5 = B(2, 1/9)
+            sage: Q6 = B(1, 1/27)
+            sage: Q4.join(Q5, basepoint=Q6)
             Type II point centered at 1 + O(3^20) of radius 3^0
 
         ::
 
-            sage: Q7 = B(1/27, 1/27)                                                    # needs sage.rings.padics
-            sage: Q1.join(Q7, Q2)                                                       # needs sage.rings.padics
+            sage: Q7 = B(1/27, 1/27)
+            sage: Q1.join(Q7, Q2)
             Type III point centered at 2 + O(3^20) of radius 2.00000000000000
         """
         # we error check and then pass to projective space to do the join
@@ -1667,46 +1647,46 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         The involution map is 1/z on type I points::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: Q1 = B(1/2)                                                           # needs sage.rings.padics
-            sage: Q1.involution_map()                                                   # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: Q1 = B(1/2)
+            sage: Q1.involution_map()
             Type I point centered at 2 + O(3^20)
 
         ::
 
-            sage: Q2 = B(0, 1/3)                                                        # needs sage.rings.padics
-            sage: Q2.involution_map()                                                   # needs sage.rings.padics
+            sage: Q2 = B(0, 1/3)
+            sage: Q2.involution_map()
             Type II point centered at 0 of radius 3^1
 
         ::
 
-            sage: Q3 = B(1/3, 1/3)                                                      # needs sage.rings.padics
-            sage: Q3.involution_map()                                                   # needs sage.rings.padics
+            sage: Q3 = B(1/3, 1/3)
+            sage: Q3.involution_map()
             Type II point centered at 3 + O(3^21) of radius 3^-3
 
         TESTS::
 
-            sage: B = Berkovich_Cp_Affine(3)                                            # needs sage.rings.padics
-            sage: B(0).involution_map()                                                 # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Affine(3)
+            sage: B(0).involution_map()
             Traceback (most recent call last):
             ...
             ValueError: involution map not defined on affine type I point centered at 0
 
         ::
 
-            sage: B(1/81, 1.5).involution_map()                                         # needs sage.rings.padics
+            sage: B(1/81, 1.5).involution_map()
             Type III point centered at 3^4 + O(3^24) of radius 0.000228623685413809
 
         ::
 
-            sage: B([1, 2], [3, 1]).involution_map()                                    # needs sage.rings.padics
+            sage: B([1, 2], [3, 1]).involution_map()
             Traceback (most recent call last):
             ...
             ValueError: precision of type IV is not high enough to define image
 
         ::
 
-            sage: B([1/81, 10/81], [10, 9]).involution_map()                            # needs sage.rings.padics
+            sage: B([1/81, 10/81], [10, 9]).involution_map()
             Type IV point of precision 2, approximated by disks centered at [3^4 + O(3^24),
             3^4 + 2*3^6 + 2*3^7 + 2*3^10 + 2*3^11 + 2*3^14 + 2*3^15 + 2*3^18 + 2*3^19 + 2*3^22
             + 2*3^23 + O(3^24)] ... with radii [0.00152415790275873, 0.00137174211248285] ...
@@ -1760,7 +1740,6 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective((3))
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 4)
@@ -1770,8 +1749,8 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q4 = B(1/81, 1)                                                       # needs sage.rings.padics
-            sage: Q2.contained_in_interval(Q1, Q4.join(Q1))                             # needs sage.rings.padics
+            sage: Q4 = B(1/81, 1)
+            sage: Q2.contained_in_interval(Q1, Q4.join(Q1))
             True
         """
         if not isinstance(start, Berkovich_Element_Cp_Affine):
@@ -1841,34 +1820,33 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
     Type I points can be created by specifying the corresponding point of `P^1(\CC_p)`::
 
-        sage: S = ProjectiveSpace(Qp(5), 1)                                             # needs sage.rings.padics
-        sage: P = Berkovich_Cp_Projective(S); P                                         # needs sage.rings.padics
+        sage: S = ProjectiveSpace(Qp(5), 1)
+        sage: P = Berkovich_Cp_Projective(S); P
         Projective Berkovich line over Cp(5) of precision 20
 
     ::
 
-        sage: a = S(0, 1)                                                               # needs sage.rings.padics
-        sage: Q1 = P(a); Q1                                                             # needs sage.rings.padics
+        sage: a = S(0, 1)
+        sage: Q1 = P(a); Q1
         Type I point centered at (0 : 1 + O(5^20))
 
     ::
 
-        sage: Q2 = P((1,0)); Q2                                                         # needs sage.rings.padics
+        sage: Q2 = P((1,0)); Q2
         Type I point centered at (1 + O(5^20) : 0)
 
     Type II and III points can be created by specifying a center and a radius::
 
-        sage: Q3 = P((0,5), 5**(3/2)); Q3                                               # needs sage.rings.padics sage.symbolic
+        sage: Q3 = P((0,5), 5**(3/2)); Q3                                               # needs sage.symbolic
         Type II point centered at (0 : 1 + O(5^20)) of radius 5^3/2
 
     ::
 
-        sage: Q4 = P(0, 3**(3/2)); Q4                                                   # needs sage.rings.padics sage.symbolic
+        sage: Q4 = P(0, 3**(3/2)); Q4                                                   # needs sage.symbolic
         Type III point centered at (0 : 1 + O(5^20)) of radius 5.19615242270663
 
     Type IV points can be created from lists of centers and radii::
 
-        sage: # needs sage.rings.padics
         sage: b = S((3,2))  # create centers
         sage: c = S((4,3))
         sage: d = S((2,3))
@@ -1886,7 +1864,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
     the sequence of disks can not be the point at infinity in `P^1(\CC_p)`, only functions
     into `\CC_p` are supported::
 
-        sage: # needs sage.rings.padics
         sage: L.<t> = PolynomialRing(Qp(5))
         sage: T = FractionField(L)
         sage: f = T(1/t)
@@ -1899,14 +1876,14 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
     TESTS::
 
-        sage: P((1,0), 3)                                                               # needs sage.rings.padics
+        sage: P((1,0), 3)
         Traceback (most recent call last):
         ...
         ValueError: type II and III points can not be centered at infinity
 
-        sage: B = Berkovich_Cp_Projective(3)                                            # needs sage.rings.padics
-        sage: Q1 = B(3)                                                                 # needs sage.rings.padics
-        sage: TestSuite(Q1).run()                                                       # needs sage.rings.padics
+        sage: B = Berkovich_Cp_Projective(3)
+        sage: Q1 = B(3)
+        sage: TestSuite(Q1).run()
     """
 
     def __init__(self, parent, center, radius=None, power=None, prec=20, error_check=True):
@@ -1915,9 +1892,9 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: S = ProjectiveSpace(Qp(7), 1)                                         # needs sage.rings.padics
-            sage: P = Berkovich_Cp_Projective(S)                                        # needs sage.rings.padics
-            sage: P(0,1)                                                                # needs sage.rings.padics
+            sage: S = ProjectiveSpace(Qp(7), 1)
+            sage: P = Berkovich_Cp_Projective(S)
+            sage: P(0,1)
             Type II point centered at (0 : 1 + O(7^20)) of radius 7^0
         """
         # if we are given a point of Affine Berkovich Space, we do the conversion
@@ -1943,27 +1920,27 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: B = Berkovich_Cp_Projective(5)                                        # needs sage.rings.padics
-            sage: B(5).as_affine_point()                                                # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(5)
+            sage: B(5).as_affine_point()
             Type I point centered at 5 + O(5^21)
 
         ::
 
-            sage: Q = B(0, 1).as_affine_point(); Q                                      # needs sage.rings.padics
+            sage: Q = B(0, 1).as_affine_point(); Q
             Type II point centered at 0 of radius 5^0
-            sage: Q.parent()                                                            # needs sage.rings.padics
+            sage: Q.parent()
             Affine Berkovich line over Cp(5) of precision 20
 
         ::
 
-            sage: L.<t> = PolynomialRing(Qp(5))                                         # needs sage.rings.padics
-            sage: T = FractionField(L)                                                  # needs sage.rings.padics
-            sage: f = T(1/t)                                                            # needs sage.rings.padics
+            sage: L.<t> = PolynomialRing(Qp(5))
+            sage: T = FractionField(L)
+            sage: f = T(1/t)
             sage: R.<x> = RR[]
             sage: Y = FractionField(R)
-            sage: g = (40*pi)/x                                                         # needs sage.rings.padics sage.symbolic
-            sage: Q2 = B(f, g)                                                          # needs sage.rings.padics sage.symbolic
-            sage: Q2.as_affine_point()                                                  # needs sage.rings.padics sage.symbolic
+            sage: g = (40*pi)/x                                                         # needs sage.symbolic
+            sage: Q2 = B(f, g)                                                          # needs sage.symbolic
+            sage: Q2.as_affine_point()                                                  # needs sage.symbolic
             Type IV point of precision 20 with centers given by (1 + O(5^20))/((1 + O(5^20))*t)
             and radii given by 40.0000000000000*pi/x
         """
@@ -1995,7 +1972,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B([2, 2], RR(3**(1/2)))                                          # needs sage.symbolic
             sage: Q2 = B([1, 1], 3**(1/2))                                              # needs sage.symbolic
@@ -2004,20 +1980,20 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q3 = B(1)                                                             # needs sage.rings.padics
-            sage: Q4 = B(4)                                                             # needs sage.rings.padics
-            sage: Q3 == Q4                                                              # needs sage.rings.padics
+            sage: Q3 = B(1)
+            sage: Q4 = B(4)
+            sage: Q3 == Q4
             False
 
         ::
 
-            sage: Q5 = B(1, 4)                                                          # needs sage.rings.padics
-            sage: Q1 == Q5                                                              # needs sage.rings.padics sage.symbolic
+            sage: Q5 = B(1, 4)
+            sage: Q1 == Q5                                                              # needs sage.symbolic
             False
 
         ::
 
-            sage: Q1 == Q3                                                              # needs sage.rings.padics sage.symbolic
+            sage: Q1 == Q3                                                              # needs sage.symbolic
             False
         """
         if other is self:
@@ -2048,7 +2024,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: P = ProjectiveSpace(B.base_ring(), 1)
             sage: Q1 = B(P.point([2, 2], False), RR(3**(1/2)))                          # needs sage.symbolic
@@ -2097,7 +2072,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(5, 0.5)
             sage: Q2 = B(5, 1)
@@ -2106,43 +2080,43 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q3 = B(1)                                                             # needs sage.rings.padics
-            sage: Q1.lt(Q3)                                                             # needs sage.rings.padics
+            sage: Q3 = B(1)
+            sage: Q1.lt(Q3)
             False
 
         TESTS::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: Q1 = B(5)                                                             # needs sage.rings.padics
-            sage: Q1.lt(Q1)                                                             # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: Q1 = B(5)
+            sage: Q1.lt(Q1)
             False
 
         ::
 
-            sage: Q2 = B([4, 1/3], [5, 1])                                              # needs sage.rings.padics
-            sage: Q1.lt(Q2)                                                             # needs sage.rings.padics
+            sage: Q2 = B([4, 1/3], [5, 1])
+            sage: Q1.lt(Q2)
             False
 
         ::
 
-            sage: Q3 = B((1,0))                                                         # needs sage.rings.padics
-            sage: Q4 = B(0, 1)                                                          # needs sage.rings.padics
-            sage: Q3.lt(Q4)                                                             # needs sage.rings.padics
+            sage: Q3 = B((1,0))
+            sage: Q4 = B(0, 1)
+            sage: Q3.lt(Q4)
             False
 
         ::
 
-            sage: Q4.lt(Q3)                                                             # needs sage.rings.padics
+            sage: Q4.lt(Q3)
             True
 
         ::
 
-            sage: Q1.lt(Q4)                                                             # needs sage.rings.padics
+            sage: Q1.lt(Q4)
             True
 
         ::
 
-            sage: Q2.lt(Q4)                                                             # needs sage.rings.padics
+            sage: Q2.lt(Q4)
             False
         """
         if not isinstance(other, Berkovich_Element_Cp_Projective):
@@ -2277,7 +2251,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 2)
@@ -2286,18 +2259,17 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q3 = B(5)                                                             # needs sage.rings.padics
-            sage: Q3.join(Q1)                                                           # needs sage.rings.padics
+            sage: Q3 = B(5)
+            sage: Q3.join(Q1)
             Type II point centered at (2 + 3 + O(3^20) : 1 + O(3^20)) of radius 3^0
 
         ::
 
-            sage: Q3.join(Q1, basepoint=Q2)                                             # needs sage.rings.padics
+            sage: Q3.join(Q1, basepoint=Q2)
             Type II point centered at (2 + O(3^20) : 1 + O(3^20)) of radius 3^0
 
         TESTS::
 
-            sage: # needs sage.rings.padics
             sage: Q4 = B(1/3**8 + 2, 1)
             sage: Q2.join(Q4, basepoint=Q1)
             Type III point centered at (2 + O(3^20) : 1 + O(3^20)) of radius 2.00000000000000
@@ -2321,7 +2293,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
             sage: ideal = A.prime_above(3)
             sage: C = Berkovich_Cp_Projective(A, ideal)
             sage: Q10 = C(a, 1/9)
-            sage: Q10.join(Q9)                                                          # needs sage.rings.padics
+            sage: Q10.join(Q9)
             Traceback (most recent call last):
             ...
             ValueError: other must be a point of the same projective Berkovich line
@@ -2439,49 +2411,49 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         The involution map is 1/z on type I points::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: Q1 = B(1/2)                                                           # needs sage.rings.padics
-            sage: Q1.involution_map()                                                   # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: Q1 = B(1/2)
+            sage: Q1.involution_map()
             Type I point centered at (2 + O(3^20) : 1 + O(3^20))
 
         ::
 
-            sage: Q2 = B(0, 1/3)                                                        # needs sage.rings.padics
-            sage: Q2.involution_map()                                                   # needs sage.rings.padics
+            sage: Q2 = B(0, 1/3)
+            sage: Q2.involution_map()
             Type II point centered at (0 : 1 + O(3^20)) of radius 3^1
 
         ::
 
-            sage: Q3 = B(1/3, 1/3)                                                      # needs sage.rings.padics
-            sage: Q3.involution_map()                                                   # needs sage.rings.padics
+            sage: Q3 = B(1/3, 1/3)
+            sage: Q3.involution_map()
             Type II point centered at (3 + O(3^21) : 1 + O(3^20)) of radius 3^-3
 
         TESTS::
 
-            sage: B = Berkovich_Cp_Projective(3)                                        # needs sage.rings.padics
-            sage: B((1,0)).involution_map()                                             # needs sage.rings.padics
+            sage: B = Berkovich_Cp_Projective(3)
+            sage: B((1,0)).involution_map()
             Type I point centered at (0 : 1 + O(3^20))
 
         ::
 
-            sage: B(0).involution_map()                                                 # needs sage.rings.padics
+            sage: B(0).involution_map()
             Type I point centered at (1 + O(3^20) : 0)
 
         ::
 
-            sage: B(1/81, 1.5).involution_map()                                         # needs sage.rings.padics
+            sage: B(1/81, 1.5).involution_map()
             Type III point centered at (3^4 + O(3^24) : 1 + O(3^20)) of radius 0.000228623685413809
 
         ::
 
-            sage: B([1, 2], [3, 1]).involution_map()                                    # needs sage.rings.padics
+            sage: B([1, 2], [3, 1]).involution_map()
             Traceback (most recent call last):
             ...
             ValueError: precision of type IV is not high enough to define image
 
         ::
 
-            sage: B([1/81, 10/81], [10, 9]).involution_map()                            # needs sage.rings.padics
+            sage: B([1/81, 10/81], [10, 9]).involution_map()
             Type IV point of precision 2, approximated by disks centered at
             [(3^4 + O(3^24) : 1 + O(3^20)), (3^4 + 2*3^6 + 2*3^7 + 2*3^10 + 2*3^11 +
             2*3^14 + 2*3^15 + 2*3^18 + 2*3^19 + 2*3^22 + 2*3^23 + O(3^24) : 1 + O(3^20))]
@@ -2538,7 +2510,6 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: Q1 = B(2, 1)
             sage: Q2 = B(2, 4)
@@ -2548,13 +2519,12 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q4 = B(1/81, 1)                                                       # needs sage.rings.padics
-            sage: Q2.contained_in_interval(Q1, Q4.join(Q1))                             # needs sage.rings.padics
+            sage: Q4 = B(1/81, 1)
+            sage: Q2.contained_in_interval(Q1, Q4.join(Q1))
             True
 
         TESTS::
 
-            sage: # needs sage.rings.padics
             sage: B = Berkovich_Cp_Projective(3)
             sage: infty = B((1, 0))
             sage: zero = B(0)
@@ -2564,24 +2534,24 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
         ::
 
-            sage: Q1 = B(1, 3)                                                          # needs sage.rings.padics
-            sage: infty.contained_in_interval(gauss, Q1)                                # needs sage.rings.padics
+            sage: Q1 = B(1, 3)
+            sage: infty.contained_in_interval(gauss, Q1)
             False
 
         ::
 
-            sage: zero.contained_in_interval(infty, gauss)                              # needs sage.rings.padics
+            sage: zero.contained_in_interval(infty, gauss)
             False
 
         ::
 
-            sage: gauss.contained_in_interval(zero, infty)                              # needs sage.rings.padics
+            sage: gauss.contained_in_interval(zero, infty)
             True
 
         ::
 
-            sage: Q2 = B(81, 1/3)                                                       # needs sage.rings.padics
-            sage: gauss.contained_in_interval(infty, Q2)                                # needs sage.rings.padics
+            sage: Q2 = B(81, 1/3)
+            sage: gauss.contained_in_interval(infty, Q2)
             True
         """
         if not isinstance(start, Berkovich_Element_Cp_Projective):

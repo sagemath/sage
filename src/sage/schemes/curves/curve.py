@@ -218,7 +218,6 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         Examples of projective curves. ::
 
-            sage: # needs sage.rings.finite_rings
             sage: P2 = ProjectiveSpace(2, GF(5), names=['x','y','z'])
             sage: x, y, z = P2.coordinate_ring().gens()
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
@@ -233,7 +232,6 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         Examples of affine curves. ::
 
-            sage: # needs sage.rings.finite_rings
             sage: x, y = PolynomialRing(GF(5), 2, 'xy').gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
             sage: C.geometric_genus()
@@ -327,13 +325,14 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^8 - a^4 + 1)                                    # needs sage.rings.number_field
+            sage: K.<b> = NumberField(a^8 - a^4 + 1)
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: C = Curve([359/12*x*y^2*z^2 + 2*y*z^4 + 187/12*y^3*z^2 + x*z^4        # needs sage.rings.number_field
+            sage: C = Curve([359/12*x*y^2*z^2 + 2*y*z^4 + 187/12*y^3*z^2 + x*z^4
             ....:            + 67/3*x^2*y*z^2 + 117/4*y^5 + 9*x^5 + 6*x^3*z^2
             ....:            + 393/4*x*y^4 + 145*x^2*y^3 + 115*x^3*y^2 + 49*x^4*y], P)
-            sage: sorted(C.singular_points(K), key=str)                                 # needs sage.rings.number_field
+            sage: sorted(C.singular_points(K), key=str)
             [(-1/2*b^5 - 1/2*b^3 + 1/2*b - 1 : 1 : 0),
              (-2/3*b^4 + 1/3 : 0 : 1),
              (-b^6 : b^6 : 1),
@@ -377,7 +376,6 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = A.curve([y^3 - z^5, x^5 - y + 1])
             sage: Q = A([7,0,0])
@@ -411,7 +409,6 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<x,y> = AffineSpace(GF(13), 2)
             sage: C = Curve([y + 12*x^5 + 3*x^3 + 7], A)
             sage: D = Curve([y^2 + 7*x^2 + 8], A)
@@ -457,18 +454,18 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^2 + a + 1)                                      # needs sage.rings.number_field
+            sage: K.<b> = NumberField(a^2 + a + 1)
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: C = Curve([y^2 - w*z, w^3 - y^3], P)                                  # needs sage.rings.number_field
-            sage: D = Curve([x*y - w*z, z^3 - y^3], P)                                  # needs sage.rings.number_field
-            sage: C.intersection_points(D, F=K)                                         # needs sage.rings.number_field
+            sage: C = Curve([y^2 - w*z, w^3 - y^3], P)
+            sage: D = Curve([x*y - w*z, z^3 - y^3], P)
+            sage: C.intersection_points(D, F=K)
             [(-b - 1 : -b - 1 : b : 1), (b : b : -b - 1 : 1),
              (1 : 0 : 0 : 0), (1 : 1 : 1 : 1)]
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<x,y> = AffineSpace(GF(7), 2)
             sage: C = Curve([y^3 - x^3], A)
             sage: D = Curve([-x*y^3 + y^4 - 2*x^3 + 2*x^2*y], A)
@@ -519,13 +516,14 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^3 + a^2 - 1)                                    # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # needs sage.rings.number_field
-            sage: C = Curve([K.0*x^2 - x + y^3 - 11], A)                                # needs sage.rings.number_field
-            sage: L = K.embeddings(QQbar)                                               # needs sage.rings.number_field
+            sage: K.<b> = NumberField(a^3 + a^2 - 1)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: C = Curve([K.0*x^2 - x + y^3 - 11], A)
+            sage: L = K.embeddings(QQbar)
             sage: set_verbose(-1)  # suppress warnings for slow computation
-            sage: C.change_ring(L[0])                                                   # needs sage.rings.number_field
+            sage: C.change_ring(L[0])
             Affine Plane Curve over Algebraic Field defined
              by y^3 + (-0.8774388331233464? - 0.744861766619745?*I)*x^2 - x - 11
 
@@ -533,7 +531,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve([y*x - 18*x^2 + 17*z^2])
-            sage: C.change_ring(GF(17))                                                 # needs sage.rings.finite_rings
+            sage: C.change_ring(GF(17))
             Projective Plane Curve over Finite Field of size 17 defined by -x^2 + x*y
         """
         new_AS = self.ambient_space().change_ring(R)

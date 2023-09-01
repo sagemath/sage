@@ -97,6 +97,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: A.<x,y> = AffineSpace(2, QQ)
             sage: A.subscheme([]).dimension()                                           # needs sage.libs.singular
             2
@@ -362,16 +363,17 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^6 - 3*a^5 + 5*a^4 - 5*a^3 + 5*a^2 - 3*a + 1)    # needs sage.rings.number_field
-            sage: A.<x,y,z,w> = AffineSpace(K, 4)                                       # needs sage.rings.number_field
-            sage: X = A.subscheme([x*y, y*z + 7, w^3 - x^3])                            # needs sage.rings.number_field
-            sage: Y = A.subscheme([x - z^3 + z + 1])                                    # needs sage.rings.number_field
-            sage: Q = A([0,                                                             # needs sage.rings.number_field
+            sage: K.<b> = NumberField(a^6 - 3*a^5 + 5*a^4 - 5*a^3 + 5*a^2 - 3*a + 1)
+            sage: A.<x,y,z,w> = AffineSpace(K, 4)
+            sage: X = A.subscheme([x*y, y*z + 7, w^3 - x^3])
+            sage: Y = A.subscheme([x - z^3 + z + 1])
+            sage: Q = A([0,
             ....:        -7*b^5 + 21*b^4 - 28*b^3 + 21*b^2 - 21*b + 14,
             ....:        -b^5 + 2*b^4 - 3*b^3 + 2*b^2 - 2*b,
             ....:        0])
-            sage: X.intersection_multiplicity(Y, Q)                                     # needs sage.rings.number_field
+            sage: X.intersection_multiplicity(Y, Q)
             3
 
         ::

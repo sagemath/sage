@@ -14,15 +14,16 @@ The following example would take quite literally forever with the
 straightforward :class:`EllipticCurveIsogeny` implementation, but
 decomposing into prime steps is exponentially faster::
 
+    sage: # needs sage.rings.finite_rings
     sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
     sage: p = 3 * 2^143 - 1
-    sage: GF(p^2).inject_variables()                                                    # needs sage.rings.finite_rings
+    sage: GF(p^2).inject_variables()
     Defining z2
-    sage: E = EllipticCurve(GF(p^2), [1,0])                                             # needs sage.rings.finite_rings
-    sage: P = E.lift_x(31415926535897932384626433832795028841971 - z2)                  # needs sage.rings.finite_rings
-    sage: P.order().factor()                                                            # needs sage.rings.finite_rings
+    sage: E = EllipticCurve(GF(p^2), [1,0])
+    sage: P = E.lift_x(31415926535897932384626433832795028841971 - z2)
+    sage: P.order().factor()
     2^143
-    sage: EllipticCurveHom_composite(E, P)                                              # needs sage.rings.finite_rings
+    sage: EllipticCurveHom_composite(E, P)
     Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143:
       From: Elliptic Curve defined by y^2 = x^3 + x
             over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
@@ -320,7 +321,6 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(19), [1,0])
             sage: P = E.random_point()
             sage: psi = EllipticCurveHom_composite(E, P)
@@ -331,7 +331,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         ::
 
-            sage: EllipticCurveHom_composite(E, E.lift_x(3), codomain=E)                # needs sage.rings.finite_rings
+            sage: EllipticCurveHom_composite(E, E.lift_x(3), codomain=E)
             Composite morphism of degree 20 = 2^2*5:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
@@ -917,15 +917,15 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: phi = EllipticCurveHom_composite(E, E(0,0))
             sage: phi.is_injective()
             False
-            sage: E = EllipticCurve_from_j(GF(3).algebraic_closure()(0))                # needs sage.rings.finite_rings
-            sage: nu = EllipticCurveHom_composite.from_factors(E.automorphisms())       # needs sage.rings.finite_rings
-            sage: nu                                                                    # needs sage.rings.finite_rings
+            sage: E = EllipticCurve_from_j(GF(3).algebraic_closure()(0))
+            sage: nu = EllipticCurveHom_composite.from_factors(E.automorphisms())
+            sage: nu
             Composite morphism of degree 1 = 1^12:
               From: Elliptic Curve defined by y^2 = x^3 + x
                     over Algebraic closure of Finite Field of size 3
               To:   Elliptic Curve defined by y^2 = x^3 + x
                     over Algebraic closure of Finite Field of size 3
-            sage: nu.is_injective()                                                     # needs sage.rings.finite_rings
+            sage: nu.is_injective()
             True
         """
         return all(phi.is_injective() for phi in self._phis)

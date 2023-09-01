@@ -92,7 +92,6 @@ def weierstrass_p(E, prec=20, algorithm=None):
         sage: E.weierstrass_p(prec=8, algorithm='quadratic')
         z^-2 + 31/15*z^2 + 2501/756*z^4 + 961/675*z^6 + O(z^8)
 
-        sage: # needs sage.rings.finite_rings
         sage: k = GF(11)
         sage: E = EllipticCurve(k, [1,1])
         sage: E.weierstrass_p(prec=6, algorithm='fast')
@@ -128,7 +127,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     TESTS::
 
-        sage: E.weierstrass_p(prec=4, algorithm='foo')                                  # needs sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=4, algorithm='foo')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm for computing the Weierstrass p-function
@@ -226,13 +225,13 @@ def compute_wp_quadratic(k, A, B, prec):
         sage: E.weierstrass_p(prec=10, algorithm='quadratic')
         z^-2 - 7/5*z^2 + 49/75*z^6 + O(z^10)
 
-        sage: E = EllipticCurve(GF(103), [1,2])                                         # needs sage.rings.finite_rings
-        sage: E.weierstrass_p(algorithm='quadratic')                                    # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(103), [1,2])
+        sage: E.weierstrass_p(algorithm='quadratic')
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + 55*z^10 + 73*z^12
          + 11*z^14 + 17*z^16 + 50*z^18 + O(z^20)
 
         sage: from sage.schemes.elliptic_curves.ell_wp import compute_wp_quadratic
-        sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)              # needs sage.rings.finite_rings
+        sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + O(z^10)
     """
     m = (prec + 1)//2

@@ -210,13 +210,14 @@ def enum_product_projective_number_field(X, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 2, 'v')                                             # needs sage.rings.number_field
-        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)                         # needs sage.rings.number_field
-        sage: X = PP.subscheme([x^2 + 2*y^2])                                           # needs sage.rings.number_field
+        sage: K = NumberField(u^2 + 2, 'v')
+        sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)
+        sage: X = PP.subscheme([x^2 + 2*y^2])
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_number_field
-        sage: enum_product_projective_number_field(X, bound=1.5)                        # needs sage.rings.number_field
+        sage: enum_product_projective_number_field(X, bound=1.5)
         [(-v : 1 , -1 : 1), (-v : 1 , -v : 1), (-v : 1 , -1/2*v : 1),
          (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1), (-v : 1 , v : 1),
          (-v : 1 , 1 : 0), (-v : 1 , 1 : 1), (v : 1 , -1 : 1),

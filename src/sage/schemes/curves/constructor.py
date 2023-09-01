@@ -15,7 +15,7 @@ EXAMPLES::
 ::
 
     sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
-    sage: Curve(y^2*z^7 - x^9 - x*z^8)                                                  # needs sage.rings.finite_rings
+    sage: Curve(y^2*z^7 - x^9 - x*z^8)
     Projective Plane Curve over Finite Field of size 5
      defined by -x^9 + y^2*z^7 - x*z^8
 
@@ -129,9 +129,9 @@ def Curve(F, A=None):
     Affine plane curves.  ::
 
         sage: x,y = GF(7)['x,y'].gens()
-        sage: C = Curve(y^2 + x^3 + x^10); C                                            # needs sage.rings.finite_rings
+        sage: C = Curve(y^2 + x^3 + x^10); C
         Affine Plane Curve over Finite Field of size 7 defined by x^10 + x^3 + y^2
-        sage: C.genus()                                                                 # needs sage.rings.finite_rings
+        sage: C.genus()
         0
         sage: x, y = QQ['x,y'].gens()
         sage: Curve(x^3 + y^3 + 1)
@@ -209,7 +209,6 @@ def Curve(F, A=None):
     The defining polynomial must be nonzero unless the ambient space itself is
     of dimension 1. ::
 
-        sage: # needs sage.rings.finite_rings
         sage: P1.<x,y> = ProjectiveSpace(1, GF(5))
         sage: S = P1.coordinate_ring()
         sage: Curve(S(0), P1)

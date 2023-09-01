@@ -481,6 +481,7 @@ for function field of characteristic 2.")
 
         Different solubility certificates give different points::
 
+            sage: # needs sage.rings.number_field
             sage: K.<t> = PolynomialRing(QQ, 't')
             sage: C = Conic(K, [t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: supp = [[t^2 - 2], [t], [t^3 + 13/2*t^2 + t - 9]]

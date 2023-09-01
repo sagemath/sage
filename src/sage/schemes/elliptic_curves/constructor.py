@@ -391,7 +391,8 @@ class EllipticCurveFactory(UniqueFactory):
 
         TESTS::
 
-            sage: var('x', 'y', 'v', 'w')                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('x', 'y', 'v', 'w')
             (x, y, v, w)
             sage: EllipticCurve(y^2 + y > x^3 + x - 9)                                  # needs sage.symbolic
             Traceback (most recent call last):
@@ -1021,7 +1022,6 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     An example over a finite field, using a flex::
 
-        sage: # needs sage.rings.finite_rings
         sage: K = GF(17)
         sage: R.<x,y,z> = K[]
         sage: cubic = 2*x^3 + 3*y^3 + 4*z^3
@@ -1035,7 +1035,6 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     An example in characteristic 3::
 
-        sage: # needs sage.rings.finite_rings
         sage: K = GF(3)
         sage: R.<x,y,z> = K[]
         sage: cubic = x^3 + y^3 + z^3 + x*y*z

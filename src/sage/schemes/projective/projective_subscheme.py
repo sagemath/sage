@@ -169,6 +169,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = ProjectiveSpace(2, QQ)
             sage: P2.subscheme([]).dimension()                                          # needs sage.libs.singular
             2
@@ -222,10 +223,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: PP = ProjectiveSpace(2, QQ, names='X,Y,Z')
             sage: X,Y,Z = PP.gens()
             sage: C = PP.subscheme(X^3*Y + Y^3*Z + Z^3*X)
-            sage: U = C.affine_patch(0); U                                              # needs sage.libs.singular
+            sage: U = C.affine_patch(0); U
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               Y^3*Z + Z^3 + Y
             sage: U.embedding_morphism()                                                # needs sage.libs.singular
@@ -410,6 +412,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = ProjectiveSpace(2, QQ)
             sage: cuspidal_curve = P2.subscheme([y^2*z - x^3])
             sage: cuspidal_curve
@@ -426,7 +429,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         TESTS::
 
-            sage: H = P2.subscheme(x)
+            sage: H = P2.subscheme(x)                                                   # needs sage.libs.singular
             sage: H.is_smooth()  # one of the few cases where the cone over the subvariety is smooth                    # needs sage.libs.singular
             True
         """
@@ -658,12 +661,13 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.rings.padics
             sage: set_verbose(-1)
-            sage: PS.<x,y,z> = ProjectiveSpace(Qp(3), 2)                                # needs sage.rings.padics
+            sage: PS.<x,y,z> = ProjectiveSpace(Qp(3), 2)
             sage: H = End(PS)
             sage: f = H([x^2, 2*y^2, z^2])
             sage: X = PS.subscheme([2*x - y, z])
-            sage: f(X)                                                                  # needs sage.libs.singular sage.rings.padics
+            sage: f(X)                                                                  # needs sage.libs.singular
             Closed subscheme of Projective Space of dimension 2 over 3-adic Field
              with capped relative precision 20 defined by:
               z,
@@ -1030,7 +1034,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z,w> = ProjectiveSpace(GF(13), 3)
             sage: X = P.subscheme([y^3 - w^3, x + 7*z])
-            sage: X.degree()                                                            # needs sage.libs.singular sage.rings.finite_rings
+            sage: X.degree()                                                            # needs sage.libs.singular
             3
 
             sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
@@ -1302,7 +1306,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
             sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)
             sage: X = P.subscheme([x3 + x1, x2 - x0, x2 - x3])
-            sage: X.Chow_form()                                                         # needs sage.libs.singular sage.rings.finite_rings
+            sage: X.Chow_form()                                                         # needs sage.libs.singular
             t0 - t1 + t2 + t3
 
         ::
@@ -1314,6 +1318,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: P.<x0,x1,x2,x3> = ProjectiveSpace(QQ, 3)
             sage: X = P.subscheme([x0*x2 - x1^2, x0*x3 - x1*x2, x1*x3 - x2^2])
             sage: Ch = X.Chow_form(); Ch                                                # needs sage.libs.singular

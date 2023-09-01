@@ -83,9 +83,9 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     An example over a finite field::
 
-        sage: H = HyperellipticCurve_from_invariants([GF(13)(1), 3, 7, 5]); H           # needs sage.rings.finite_rings
+        sage: H = HyperellipticCurve_from_invariants([GF(13)(1), 3, 7, 5]); H
         Hyperelliptic Curve over Finite Field of size 13 defined by ...
-        sage: H.igusa_clebsch_invariants()                                              # needs sage.rings.finite_rings
+        sage: H.igusa_clebsch_invariants()
         (4, 9, 6, 11)
 
     An example over a number field::
@@ -124,13 +124,13 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     different from 2, 3, and 5, so another algorithm will be needed for fields
     of those characteristics. See also :trac:`12200`::
 
-        sage: P.<x> = GF(3)[]                                                           # needs sage.rings.finite_rings
-        sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()                # needs sage.rings.finite_rings
+        sage: P.<x> = GF(3)[]
+        sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()
         Traceback (most recent call last):
         ...
         NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
         not implemented in characteristics 2, 3, and 5
-        sage: HyperellipticCurve_from_invariants([GF(5)(1), 1, 0, 1])                   # needs sage.rings.finite_rings
+        sage: HyperellipticCurve_from_invariants([GF(5)(1), 1, 0, 1])
         Traceback (most recent call last):
         ...
         ZeroDivisionError: inverse of Mod(0, 5) does not exist
@@ -260,7 +260,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     And over finite fields::
 
-        sage: Mestre_conic([GF(7)(10), GF(7)(1), GF(7)(2), GF(7)(3)])                   # needs sage.rings.finite_rings
+        sage: Mestre_conic([GF(7)(10), GF(7)(1), GF(7)(2), GF(7)(3)])
         Projective Conic Curve over Finite Field of size 7
         defined by -2*u*v - v^2 - 2*u*w + 2*v*w - 3*w^2
 

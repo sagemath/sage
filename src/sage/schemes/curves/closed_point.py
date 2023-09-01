@@ -10,7 +10,6 @@ ideals of the coordinate ring of the ambient space.
 
 EXAMPLES::
 
-    sage: # needs sage.rings.finite_rings
     sage: F.<a> = GF(2)
     sage: P.<x,y> = AffineSpace(F, 2)
     sage: C = Curve(y^2 + y - x^3)
@@ -27,7 +26,6 @@ EXAMPLES::
 Closed points of projective curves are represented by homogeneous maximal
 ideals::
 
-    sage: # needs sage.rings.finite_rings
     sage: F.<a> = GF(2)
     sage: P.<x,y,z> = ProjectiveSpace(F, 2)
     sage: C = Curve(x^3*y + y^3*z + x*z^3)
@@ -47,7 +45,6 @@ ideals::
 Rational points are easily converted to closed points and vice versa if the
 closed point is of degree one::
 
-    sage: # needs sage.rings.finite_rings
     sage: F.<a> = GF(2)
     sage: P.<x,y,z> = ProjectiveSpace(F, 2)
     sage: C = Curve(x^3*y + y^3*z + x*z^3)
@@ -319,7 +316,6 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(2)
             sage: A.<x,y> = AffineSpace(F, 2)
             sage: C = Curve(y^2 + y - x^3, A)
@@ -401,7 +397,6 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(2)
             sage: P.<x,y,z> = ProjectiveSpace(F, 2)
             sage: C = Curve(x^3*y + y^3*z + x*z^3)

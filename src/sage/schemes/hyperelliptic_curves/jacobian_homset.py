@@ -23,7 +23,6 @@ EXAMPLES::
 
 ::
 
-    sage: # needs sage.rings.finite_rings
     sage: F.<a> = GF(3)
     sage: R.<x> = F[]
     sage: f = x^5 - 1
@@ -100,7 +99,6 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(3)
             sage: R.<x> = F[]
             sage: f = x^5 - 1

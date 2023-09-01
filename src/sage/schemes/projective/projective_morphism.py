@@ -618,12 +618,13 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([1/3*x^2 + 1/2*y^2, y^2])
-            sage: matrix([[i,0], [0,i]]) * f                                            # needs sage.modules sage.rings.number_field
+            sage: matrix([[i,0], [0,i]]) * f                                            # needs sage.modules
             Scheme endomorphism of Projective Space of dimension 1 over
              Number Field in i with defining polynomial x^2 + 1
               Defn: Defined on coordinates by sending (x : y) to
@@ -662,12 +663,13 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = Hom(P, P)
             sage: f = H([1/3*x^2 + 1/2*y^2, y^2])
-            sage: f * matrix([[i,0], [0,i]])                                            # needs sage.modules sage.rings.number_field
+            sage: f * matrix([[i,0], [0,i]])                                            # needs sage.modules
             Scheme endomorphism of Projective Space of dimension 1 over
              Number Field in i with defining polynomial x^2 + 1
               Defn: Defined on coordinates by sending (x : y) to
@@ -714,7 +716,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<x,y> = ProjectiveSpace(GF(5), 1)
             sage: H = End(P)
             sage: f = H([x^2, y^2])
-            sage: type(f.as_dynamical_system())                                         # needs sage.rings.finite_rings sage.schemes
+            sage: type(f.as_dynamical_system())                                         # needs sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective_finite_field'>
 
         ::
@@ -926,6 +928,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         Check that #35797 is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(3*x^2 + 1)                                        # needs sage.rings.number_field
             sage: P.<z,w> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
@@ -2001,6 +2004,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f = H([x^2 + y^2, x*z, x^2 + y^2])
             sage: f.indeterminacy_points()                                              # needs sage.libs.singular
             [(0 : 0 : 1)]
+
             sage: R.<t> = QQ[]
             sage: K.<a> = NumberField(t^2 + 1)                                          # needs sage.rings.number_field
             sage: f.indeterminacy_points(F=K)                                           # needs sage.libs.singular sage.rings.number_field

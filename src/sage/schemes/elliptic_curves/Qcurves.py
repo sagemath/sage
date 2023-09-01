@@ -509,32 +509,33 @@ def conjugacy_test(jlist, verbose=False):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.elliptic_curves.Qcurves import conjugacy_test
         sage: conjugacy_test([3])
         [x - 3]
-        sage: K.<a> = QuadraticField(2)                                                 # needs sage.rings.number_field
-        sage: conjugacy_test([K(3), a])                                                 # needs sage.rings.number_field
+        sage: K.<a> = QuadraticField(2)
+        sage: conjugacy_test([K(3), a])
         [x - 3]
-        sage: conjugacy_test([K(3), 3 + a])                                             # needs sage.rings.number_field
+        sage: conjugacy_test([K(3), 3 + a])
         [x - 3]
-        sage: conjugacy_test([3 + a])                                                   # needs sage.rings.number_field
+        sage: conjugacy_test([3 + a])
         []
-        sage: conjugacy_test([3 + a, 3 - a])                                            # needs sage.rings.number_field
+        sage: conjugacy_test([3 + a, 3 - a])
         [x^2 - 6*x + 7]
         sage: x = polygen(QQ)
         sage: f = x^3 - 3
-        sage: K.<a> = f.splitting_field()                                               # needs sage.rings.number_field
-        sage: js = f.roots(K, multiplicities=False)                                     # needs sage.rings.number_field
-        sage: conjugacy_test(js)                                                        # needs sage.rings.number_field
+        sage: K.<a> = f.splitting_field()
+        sage: js = f.roots(K, multiplicities=False)
+        sage: conjugacy_test(js)
         []
         sage: f = x^4 - 3
-        sage: K.<a> = NumberField(f)                                                    # needs sage.rings.number_field
-        sage: js = f.roots(K, multiplicities=False)                                     # needs sage.rings.number_field
-        sage: conjugacy_test(js)                                                        # needs sage.rings.number_field
+        sage: K.<a> = NumberField(f)
+        sage: js = f.roots(K, multiplicities=False)
+        sage: conjugacy_test(js)
         []
-        sage: K.<a> = f.splitting_field()                                               # needs sage.rings.number_field
-        sage: js = f.roots(K, multiplicities=False)                                     # needs sage.rings.number_field
-        sage: conjugacy_test(js)                                                        # needs sage.rings.number_field
+        sage: K.<a> = f.splitting_field()
+        sage: js = f.roots(K, multiplicities=False)
+        sage: conjugacy_test(js)
         [x^4 - 3]
     """
     from sage.sets.set import Set

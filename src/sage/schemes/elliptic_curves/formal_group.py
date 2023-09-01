@@ -489,7 +489,6 @@ class EllipticCurveFormalGroup(SageObject):
             sage: ehat.group_law(5)
             t1 + t2 - t1*t2 - 2*t1^3*t2 - 3*t1^2*t2^2 - 2*t1*t2^3 + O(t1, t2)^5
 
-            sage: # needs sage.rings.finite_rings
             sage: e = EllipticCurve(GF(7), [3, 4])
             sage: ehat = e.formal()
             sage: ehat.group_law(3)
@@ -499,7 +498,6 @@ class EllipticCurveFormalGroup(SageObject):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y,z> = GF(7)[[]]
             sage: F(x, ehat.inverse()(x))
             0 + O(x, y, z)^7
@@ -510,7 +508,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         Let's ensure caching with changed precision is working::
 
-            sage: e.formal_group().group_law(4)                                         # needs sage.rings.finite_rings
+            sage: e.formal_group().group_law(4)
             t1 + t2 + O(t1, t2)^4
 
         Test for :trac:`9646`::
@@ -629,7 +627,7 @@ class EllipticCurveFormalGroup(SageObject):
         TESTS::
 
             sage: F = EllipticCurve(GF(17), [1, 1]).formal_group()
-            sage: F.mult_by_n(10, 50)           # long time                             # needs sage.rings.finite_rings
+            sage: F.mult_by_n(10, 50)           # long time
             10*t + 5*t^5 + 7*t^7 + 13*t^9 + t^11 + 16*t^13 + 13*t^15 + 9*t^17 + 16*t^19 + 15*t^23 + 15*t^25 + 2*t^27 + 10*t^29 + 8*t^31 + 15*t^33 + 6*t^35 + 7*t^37 + 9*t^39 + 10*t^41 + 5*t^43 + 4*t^45 + 6*t^47 + 13*t^49 + O(t^50)
 
             sage: F = EllipticCurve(GF(101), [1, 1]).formal_group()

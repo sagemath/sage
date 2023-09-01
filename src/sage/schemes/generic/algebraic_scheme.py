@@ -1766,11 +1766,12 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         Enumerate over a projective scheme over a number field::
 
+            sage: # needs sage.rings.number_field
             sage: u = QQ['u'].0
-            sage: K.<v> = NumberField(u^2 + 3)                                          # needs sage.rings.number_field
-            sage: A.<x,y> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: X = A.subscheme(x^2 - y^2)                                            # needs sage.rings.number_field
-            sage: X.rational_points(bound=3)                                            # needs sage.rings.number_field
+            sage: K.<v> = NumberField(u^2 + 3)
+            sage: A.<x,y> = ProjectiveSpace(K, 1)
+            sage: X = A.subscheme(x^2 - y^2)
+            sage: X.rational_points(bound=3)
             [(-1 : 1), (1 : 1)]
 
         One can enumerate points up to a given bound on a projective scheme
@@ -1785,8 +1786,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         For a small finite field, the complete set of points can be
         enumerated. ::
 
-            sage: Etilde = E.base_extend(GF(3))                                         # needs sage.rings.finite_rings sage.schemes
-            sage: Etilde.rational_points()                                              # needs sage.rings.finite_rings sage.schemes
+            sage: Etilde = E.base_extend(GF(3))                                         # needs sage.schemes
+            sage: Etilde.rational_points()                                              # needs sage.schemes
             [(0 : 0 : 1), (0 : 1 : 0), (0 : 2 : 1), (1 : 0 : 1),
              (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
@@ -1795,8 +1796,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: FF = FiniteField(7)
             sage: P.<x> = PolynomialRing(FiniteField(7))
-            sage: C = HyperellipticCurve(x^8 + x + 1)                                   # needs sage.rings.finite_rings sage.schemes
-            sage: C.rational_points()                                                   # needs sage.rings.finite_rings sage.schemes
+            sage: C = HyperellipticCurve(x^8 + x + 1)                                   # needs sage.schemes
+            sage: C.rational_points()                                                   # needs sage.schemes
             [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),
              (4 : 0 : 1), (6 : 1 : 1), (6 : 6 : 1)]
 
@@ -1948,13 +1949,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: f = x^6 - 2
-            sage: L.<b> = NumberField(f, embedding=f.roots(CC)[2][0])                   # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(L, 2)                                           # needs sage.rings.number_field
-            sage: H = Hom(A, A)                                                         # needs sage.rings.number_field
-            sage: X = A.subscheme([b*x^2, y^2])                                         # needs sage.libs.singular sage.rings.number_field
-            sage: X.change_ring(CC)                                                     # needs sage.libs.singular sage.rings.number_field
+            sage: L.<b> = NumberField(f, embedding=f.roots(CC)[2][0])
+            sage: A.<x,y> = AffineSpace(L, 2)
+            sage: H = Hom(A, A)
+            sage: X = A.subscheme([b*x^2, y^2])                                         # needs sage.libs.singular
+            sage: X.change_ring(CC)                                                     # needs sage.libs.singular
             Closed subscheme of Affine Space of dimension 2
              over Complex Field with 53 bits of precision defined by:
               (-0.561231024154687 - 0.972080648619833*I)*x^2,
@@ -2000,18 +2002,19 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: L.<v> = K.extension(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(L, 2)                                           # needs sage.rings.number_field
-            sage: X = A.subscheme([y^2 - L(w)*x^3 - v])                                 # needs sage.libs.singular sage.rings.number_field
-            sage: X.weil_restriction()                                                  # needs sage.libs.singular sage.rings.number_field
+            sage: K.<w> = NumberField(x^5 - 2)
+            sage: R.<x> = K[]
+            sage: L.<v> = K.extension(x^2 + 1)
+            sage: A.<x,y> = AffineSpace(L, 2)
+            sage: X = A.subscheme([y^2 - L(w)*x^3 - v])                                 # needs sage.libs.singular
+            sage: X.weil_restriction()                                                  # needs sage.libs.singular
             Closed subscheme of Affine Space of dimension 4
              over Number Field in w with defining polynomial x^5 - 2 defined by:
               (-w)*z0^3 + (3*w)*z0*z1^2 + z2^2 - z3^2,
               (-3*w)*z0^2*z1 + w*z1^3 + 2*z2*z3 - 1
-            sage: X.weil_restriction().ambient_space() is A.weil_restriction()          # needs sage.libs.singular sage.rings.number_field
+            sage: X.weil_restriction().ambient_space() is A.weil_restriction()          # needs sage.libs.singular
             True
 
         ::

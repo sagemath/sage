@@ -4160,22 +4160,22 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.reduction(2)                                                        # needs sage.rings.finite_rings
+            sage: E.reduction(2)
             Elliptic Curve defined by y^2 + y = x^3 + x^2 over Finite Field of size 2
-            sage: E.reduction(3)                                                        # needs sage.rings.finite_rings
+            sage: E.reduction(3)
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 3
-            sage: E.reduction(5)                                                        # needs sage.rings.finite_rings
+            sage: E.reduction(5)
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + 3*x over Finite Field of size 5
-            sage: E.reduction(38)                                                       # needs sage.rings.finite_rings
+            sage: E.reduction(38)
             Traceback (most recent call last):
             ...
             AttributeError: p must be prime.
-            sage: E.reduction(389)                                                      # needs sage.rings.finite_rings
+            sage: E.reduction(389)
             Traceback (most recent call last):
             ...
             AttributeError: The curve must have good reduction at p.
             sage: E = EllipticCurve([5^4, 5^6])
-            sage: E.reduction(5)                                                        # needs sage.rings.finite_rings
+            sage: E.reduction(5)
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
         """
         p = Integer(p)
@@ -4541,7 +4541,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         An error is raised if a field is given which is not an
         extension of `\QQ`, i.e., not of characteristic `0`::
 
-            sage: E.has_rational_cm(GF(2))                                              # needs sage.rings.finite_rings
+            sage: E.has_rational_cm(GF(2))
             Traceback (most recent call last):
             ...
             ValueError: Error in has_rational_cm: Finite Field of size 2
