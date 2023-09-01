@@ -1,3 +1,4 @@
+# sage.doctest: optional - gap3
 r"""
 Finite real reflection groups
 -------------------------------
