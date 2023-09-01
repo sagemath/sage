@@ -83,6 +83,7 @@ jobs:
         run: |
           set -ex
           export SAGE_USE_CDNS=yes
+          export SAGE_LIVE_DOC=yes
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
