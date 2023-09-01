@@ -593,7 +593,7 @@ if __name__ == '__main__':
                     for root, dirs, files in os.walk(path):
                         for dir in sorted(dirs):
                             path = os.path.join(root, dir)
-                            if any(dir.startswith(prefix) for prefix in ['.', 'build', 'dist', '__pycache__']):
+                            if any(dir.startswith(prefix) for prefix in ['.', 'build', 'dist', '__pycache__', '_vendor', '.tox']):
                                 # Silently skip
                                 dirs.remove(dir)
                             elif not is_package_or_sage_namespace_package_dir(path):
