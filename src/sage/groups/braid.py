@@ -1724,8 +1724,8 @@ class Braid(FiniteTypeArtinGroupElement):
             True
             sage: d1 * a / d1 == c
             False
-            sage: l = sage.groups.braid.conjugatingbraid(a,c)
-            sage: d1 == B._element_from_libbraiding(l)
+            sage: l = sage.groups.braid.conjugatingbraid(a,c)                           # needs sage.groups
+            sage: d1 == B._element_from_libbraiding(l)                                  # needs sage.groups
             True
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
@@ -1738,9 +1738,9 @@ class Braid(FiniteTypeArtinGroupElement):
             False
             sage: d1
             s1^2*s0^2*s1^2*s0
-            sage: l = sage.groups.braid.conjugatingbraid(a,c)
-            sage: d2 = B._element_from_libbraiding(l)
-            sage: len(d2.Tietze())
+            sage: l = sage.groups.braid.conjugatingbraid(a,c)                           # needs sage.groups
+            sage: d2 = B._element_from_libbraiding(l)                                   # needs sage.groups
+            sage: len(d2.Tietze())                                                      # needs sage.groups
             13
             sage: c.conjugating_braid(b) is None
             True
@@ -2984,7 +2984,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         The direct sum of endomorphism spaces of these vector spaces make up
         the entire Temperley--Lieb algebra::
 
-            sage: import sage.combinat.diagram_algebras as da
+            sage: import sage.combinat.diagram_algebras as da                           # needs sage.combinat
             sage: B = BraidGroup(6)
             sage: dimensions = [B.dimension_of_TL_space(d)**2 for d in [0, 2, 4, 6]]
             sage: total_dim = sum(dimensions)
@@ -3451,7 +3451,7 @@ def BraidGroup(n=None, names='s'):
     vertices than the one associated to the free group (which is a tree)::
 
         sage: F = FreeGroup(3)
-        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF
+        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF         # needs sage.combinat
         Digraph on 40 vertices
 
     TESTS::

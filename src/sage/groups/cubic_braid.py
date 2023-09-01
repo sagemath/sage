@@ -421,8 +421,8 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [    1     0     0]
             sage: BuMa.base_ring()
             Finite Field in t of size 2^2
-            sage: F4.<r64> = GF(4)
-            sage: BuMa = ele.burau_matrix(root_bur=r64); BuMa
+            sage: F4.<r64> = GF(4)                                                      # needs sage.libs.pari
+            sage: BuMa = ele.burau_matrix(root_bur=r64); BuMa                           # needs sage.libs.pari
             [r64 + 1       1 r64 + 1]
             [r64 + 1     r64       0]
             [      1       0       0]

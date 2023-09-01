@@ -146,9 +146,9 @@ def GL(n, R, var='a'):
 
         sage: groups.matrix.GL(2, 3)                                                    # needs sage.groups sage.rings.finite_rings
         General Linear Group of degree 2 over Finite Field of size 3
-        sage: groups.matrix.GL(1, ZZ).category()                                        # needs sage.groups
+        sage: groups.matrix.GL(1, ZZ).category()                                        # needs sage.groups sage.modules
         Category of groups
-        sage: groups.matrix.GL(1, QQ).category()                                        # needs sage.groups
+        sage: groups.matrix.GL(1, QQ).category()                                        # needs sage.groups sage.modules
         Category of infinite groups
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
@@ -241,7 +241,7 @@ def SL(n, R, var='a'):
 
     TESTS::
 
-        sage: groups.matrix.SL(2, 3)                                                    # needs sage.rings.finite_rings
+        sage: groups.matrix.SL(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
         Special Linear Group of degree 2 over Finite Field of size 3
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')

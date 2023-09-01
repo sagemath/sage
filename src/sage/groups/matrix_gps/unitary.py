@@ -216,7 +216,7 @@ def GU(n, R, var='a', invariant_form=None):
 
     Using the ``invariant_form`` option::
 
-        sage: # needs sage.rings.number_field
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: UCF = UniversalCyclotomicField(); e5 = UCF.gen(5)
         sage: m = matrix(UCF, 3, 3, [[1,e5,0], [e5.conjugate(),2,0], [0,0,1]])
         sage: G  = GU(3, UCF)
@@ -257,7 +257,7 @@ def GU(n, R, var='a', invariant_form=None):
 
     TESTS::
 
-        sage: TestSuite(G).run()                                                        # needs sage.rings.number_field
+        sage: TestSuite(G).run()                                                        # needs sage.libs.gap sage.rings.number_field
         sage: groups.matrix.GU(2, 3)                                                    # needs sage.groups sage.rings.finite_rings
         General Unitary Group of degree 2 over Finite Field in a of size 3^2
     """
@@ -352,7 +352,7 @@ def SU(n, R, var='a', invariant_form=None):
     TESTS::
 
         sage: TestSuite(Gm).run()                                                       # needs sage.rings.number_field
-        sage: groups.matrix.SU(2, 3)                                                    # needs sage.rings.finite_rings
+        sage: groups.matrix.SU(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
         Special Unitary Group of degree 2 over Finite Field in a of size 3^2
     """
     return _UG(n, R, True, var=var, invariant_form=invariant_form)

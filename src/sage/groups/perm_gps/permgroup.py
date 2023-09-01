@@ -335,10 +335,10 @@ def PermutationGroup(gens=None, *args, **kwds):
     We can create a permutation group from a group action::
 
         sage: a = lambda x: (2*x) % 7
-        sage: H = PermutationGroup(action=a, domain=range(7))
-        sage: H.orbits()
+        sage: H = PermutationGroup(action=a, domain=range(7))                           # needs sage.combinat
+        sage: H.orbits()                                                                # needs sage.libs.pari
         ((0,), (1, 2, 4), (3, 6, 5))
-        sage: H.gens()
+        sage: H.gens()                                                                  # needs sage.libs.pari
         ((1,2,4), (3,6,5))
 
     Note that we provide generators for the acting group.  The
@@ -362,7 +362,7 @@ def PermutationGroup(gens=None, *args, **kwds):
     i.e., in bijection with integer partitions::
 
         sage: a = lambda g, x: g*x*g^-1
-        sage: [len(PermutationGroup(SymmetricGroup(n).gens(), action=a,
+        sage: [len(PermutationGroup(SymmetricGroup(n).gens(), action=a,                 # needs sage.combinat
         ....:                       domain=SymmetricGroup(n)).orbits())
         ....:  for n in range(1, 8)]
         [1, 2, 3, 5, 7, 11, 15]
@@ -669,6 +669,7 @@ class PermutationGroup_generic(FiniteGroup):
         the following test shows, that support for the ``self._libgap``
         attribute is needed in the constructor of the class::
 
+            sage: # needs sage.libs.pari
             sage: PG = PGU(6,2)
             sage: g, h = PG.gens()
             sage: p1 = h^-3*(h^-1*g^-1)^2*h*g*h^2*g^-1*h^2*g*h^-5*g^-1
@@ -927,6 +928,7 @@ class PermutationGroup_generic(FiniteGroup):
         If this permutation group has been constructed via ``as_permutation_group``
         method (from finite matrix groups)::
 
+           sage: # needs sage.libs.pari
            sage: MG = GU(3,2).as_matrix_group()
            sage: PG = MG.as_permutation_group()
            sage: f = PG._coerce_map_from_(MG)
@@ -2944,6 +2946,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: G = PGU(3,2); G
             The projective general unitary group of degree 3 over Finite Field of size 2
             sage: g1, g2 = G.gens()
@@ -3372,7 +3375,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
             sage: G.order()
             12
-            sage: G.character_table()
+            sage: G.character_table()                                                   # needs sage.rings.number_field
             [         1          1          1          1]
             [         1 -zeta3 - 1      zeta3          1]
             [         1      zeta3 -zeta3 - 1          1]
@@ -3387,7 +3390,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
             sage: G.order()
             8
-            sage: G.character_table()
+            sage: G.character_table()                                                   # needs sage.rings.number_field
             [ 1  1  1  1  1]
             [ 1 -1 -1  1  1]
             [ 1 -1  1 -1  1]
@@ -3399,6 +3402,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: SymmetricGroup(2).character_table()
             [ 1 -1]
             [ 1  1]
@@ -3461,8 +3465,8 @@ class PermutationGroup_generic(FiniteGroup):
 
         EXAMPLES::
 
-            sage: irr = SymmetricGroup(3).irreducible_characters()
-            sage: [x.values() for x in irr]
+            sage: irr = SymmetricGroup(3).irreducible_characters()                      # needs sage.rings.number_field
+            sage: [x.values() for x in irr]                                             # needs sage.rings.number_field
             [[1, -1, 1], [2, 0, -1], [1, 1, 1]]
         """
         return [ClassFunction_libgap(self, irr) for irr in self._libgap_().Irr()]
@@ -3473,7 +3477,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         EXAMPLES::
 
-            sage: SymmetricGroup(3).trivial_character()
+            sage: SymmetricGroup(3).trivial_character()                                 # needs sage.rings.number_field
             Character of Symmetric group of order 3! as a permutation group
         """
         values = [1]*self._libgap_().NrConjugacyClasses().sage()
@@ -3489,7 +3493,7 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: G = AlternatingGroup(4)
             sage: n = len(G.conjugacy_classes_representatives())
-            sage: G.character([1]*n)
+            sage: G.character([1]*n)                                                    # needs sage.rings.number_field
             Character of Alternating group of order 4!/2 as a permutation group
         """
         return ClassFunction_libgap(self, values)
@@ -3512,13 +3516,13 @@ class PermutationGroup_generic(FiniteGroup):
         ::
 
             sage: G = SymmetricGroup(5)
-            sage: G.conjugacy_classes_representatives()
+            sage: G.conjugacy_classes_representatives()                                 # needs sage.combinat
             [(), (1,2), (1,2)(3,4), (1,2,3), (1,2,3)(4,5), (1,2,3,4), (1,2,3,4,5)]
 
         ::
 
             sage: S = SymmetricGroup(['a','b','c'])
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [(), ('a','b'), ('a','b','c')]
 
         AUTHORS:
@@ -5166,9 +5170,9 @@ class PermutationGroup_action(PermutationGroup_generic):
 
         sage: n = 3
         sage: a = lambda x: SetPartition([[e % n + 1 for e in b] for b in x])
-        sage: S = SetPartitions(n)
-        sage: G = PermutationGroup(action=a, domain=S)
-        sage: G.orbits()
+        sage: S = SetPartitions(n)                                                      # needs sage.combinat
+        sage: G = PermutationGroup(action=a, domain=S)                                  # needs sage.combinat
+        sage: G.orbits()                                                                # needs sage.combinat
         (({{1}, {2}, {3}},),
          ({{1, 2}, {3}}, {{1}, {2, 3}}, {{1, 3}, {2}}),
          ({{1, 2, 3}},))
@@ -5177,13 +5181,13 @@ class PermutationGroup_action(PermutationGroup_generic):
 
         sage: a = lambda g, x: g*x*g^-1
         sage: S = SymmetricGroup(3)
-        sage: G = PermutationGroup(S.gens(), action=a, domain=S)
-        sage: G.orbits()
+        sage: G = PermutationGroup(S.gens(), action=a, domain=S)                        # needs sage.combinat
+        sage: G.orbits()                                                                # needs sage.combinat
         (((),), ((1,3,2), (1,2,3)), ((2,3), (1,3), (1,2)))
 
     The trivial action of the symmetric group::
 
-        sage: PermutationGroup(SymmetricGroup(3).gens(),
+        sage: PermutationGroup(SymmetricGroup(3).gens(),                                # needs sage.combinat
         ....:                  action=lambda g, x: x, domain=[1])
         Permutation Group with generators [()]
     """
@@ -5214,8 +5218,8 @@ class PermutationGroup_action(PermutationGroup_generic):
         EXAMPLES::
 
             sage: a = lambda x: (2*x) % 7
-            sage: G = PermutationGroup(action=a, domain=range(7))
-            sage: G.orbits()
+            sage: G = PermutationGroup(action=a, domain=range(7))                       # needs sage.combinat
+            sage: G.orbits()                                                            # needs sage.combinat
             ((0,), (1, 2, 4), (3, 6, 5))
 
         """
@@ -5255,8 +5259,8 @@ class PermutationGroup_action(PermutationGroup_generic):
         EXAMPLES::
 
             sage: a = lambda x: (2*x) % 7
-            sage: G = PermutationGroup(action=a, domain=range(7))
-            sage: G.orbits()
+            sage: G = PermutationGroup(action=a, domain=range(7))                       # needs sage.combinat
+            sage: G.orbits()                                                            # needs sage.combinat
             ((0,), (1, 2, 4), (3, 6, 5))
         """
         return self._orbits

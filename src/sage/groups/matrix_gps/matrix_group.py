@@ -191,7 +191,7 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.libs.gap sage.rings.number_field
             sage: UCF = UniversalCyclotomicField()
             sage: G  = GL(3, UCF)
             sage: e3 = UCF.gen(3); e5 = UCF.gen(5)
@@ -316,8 +316,8 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: SO3 = groups.matrix.SO(3, QQ)                                         # needs sage.groups
-            sage: SO3._repr_option('element_ascii_art')                                 # needs sage.groups
+            sage: SO3 = groups.matrix.SO(3, QQ)                                         # needs sage.groups sage.modules
+            sage: SO3._repr_option('element_ascii_art')                                 # needs sage.groups sage.modules
             True
         """
         if key == 'element_ascii_art':

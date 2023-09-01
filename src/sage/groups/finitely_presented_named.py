@@ -548,7 +548,7 @@ def BinaryDihedralPresentation(n):
 
     TESTS::
 
-        sage: for n in range(3, 9):
+        sage: for n in range(3, 9):                                                     # needs sage.modules
         ....:     P = groups.presentation.BinaryDihedral(n)
         ....:     M = groups.matrix.BinaryDihedral(n)
         ....:     assert P.is_isomorphic(M)
@@ -574,7 +574,7 @@ def CactusPresentation(n):
 
     EXAMPLES::
 
-        sage: J3 = groups.presentation.Cactus(3); J3
+        sage: J3 = groups.presentation.Cactus(3); J3                                    # needs sage.graphs
         Finitely presented group < s12, s13, s23 |
          s12^2, s13^2, s23^2, s13*s12*s13^-1*s23^-1, s13*s23*s13^-1*s12^-1 >
     """

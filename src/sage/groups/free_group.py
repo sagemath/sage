@@ -89,11 +89,11 @@ def is_FreeGroup(x):
     EXAMPLES::
 
         sage: from sage.groups.free_group import is_FreeGroup
-        sage: is_FreeGroup('a string')
+        sage: is_FreeGroup('a string')                                                  # needs sage.combinat
         False
         sage: is_FreeGroup(FreeGroup(0))
         True
-        sage: is_FreeGroup(FreeGroup(index_set=ZZ))
+        sage: is_FreeGroup(FreeGroup(index_set=ZZ))                                     # needs sage.combinat
         True
     """
     if isinstance(x, FreeGroup_class):
@@ -645,9 +645,9 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
     We give two examples using the ``index_set`` option::
 
-        sage: FreeGroup(index_set=ZZ)
+        sage: FreeGroup(index_set=ZZ)                                                   # needs sage.combinat
         Free group indexed by Integer Ring
-        sage: FreeGroup(index_set=ZZ, abelian=True)
+        sage: FreeGroup(index_set=ZZ, abelian=True)                                     # needs sage.combinat
         Free abelian group indexed by Integer Ring
 
     TESTS::

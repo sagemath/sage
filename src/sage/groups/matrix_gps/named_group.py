@@ -293,7 +293,7 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
             True
 
             sage: # needs sage.rings.finite_rings
-            sage: G = groups.matrix.GL(4,2)
+            sage: G = groups.matrix.GL(4,2)                                             # needs sage.modules
             sage: H = MatrixGroup(G.gens())
             sage: G == H
             True

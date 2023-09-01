@@ -29,7 +29,7 @@ Some examples in the multiplicative group of a finite field:
     sage: K = GF(3^6,'b')
     sage: b = K.gen()
     sage: a = b^210
-    sage: discrete_log(a, b, K.order()-1)
+    sage: discrete_log(a, b, K.order() - 1)
     210
 
 - Linear relation finder::
@@ -60,7 +60,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 - Discrete logs::
 
-    sage: # needs sage.rings.finite_rings
+    sage: # needs sage.libs.gap sage.rings.finite_rings sage.schemes
     sage: F = GF(37^2,'a')
     sage: E = EllipticCurve(F,[1,1])
     sage: F.<a> = GF(37^2,'a')
@@ -75,7 +75,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 - Linear relation finder::
 
-    sage: # needs sage.rings.finite_rings
+    sage: # needs sage.libs.gap sage.rings.finite_rings sage.schemes
     sage: F.<a> = GF(3^6,'a')
     sage: E = EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])
     sage: P = E(a^5 + a^4 + a^3 + a^2 + a + 2 , 0)
@@ -87,18 +87,18 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 - Orders of elements::
 
-    sage: # needs sage.rings.finite_rings
+    sage: # needs sage.libs.gap sage.rings.finite_rings sage.schemes
     sage: from sage.groups.generic import order_from_multiple, order_from_bounds
     sage: k.<a> = GF(5^5)
     sage: E = EllipticCurve(k,[2,4])
     sage: P = E(3*a^4 + 3*a , 2*a + 1 )
-    sage: M = E.cardinality(); M
+    sage: M = E.cardinality(); M                                                        # needs sage.rings.number_field
     3227
-    sage: plist = M.prime_factors()
-    sage: order_from_multiple(P, M, plist, operation='+')
+    sage: plist = M.prime_factors()                                                     # needs sage.rings.number_field
+    sage: order_from_multiple(P, M, plist, operation='+')                               # needs sage.rings.number_field
     3227
     sage: Q = E(0,2)
-    sage: order_from_multiple(Q, M, plist, operation='+')
+    sage: order_from_multiple(Q, M, plist, operation='+')                               # needs sage.rings.number_field
     7
     sage: order_from_bounds(Q, Hasse_bounds(5^5), operation='+')
     7
@@ -162,7 +162,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
 
     Idempotence is detected, making the following fast::
 
-        sage: multiple(1,10^1000)
+        sage: multiple(1, 10^1000)
         1
 
         sage: # needs sage.schemes
@@ -433,13 +433,13 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     An additive example in an elliptic curve group::
 
         sage: F.<a> = GF(37^5)                                                          # needs sage.rings.finite_rings
-        sage: E = EllipticCurve(F, [1,1])                                               # needs sage.rings.finite_rings
-        sage: P = E.lift_x(a); P                                                        # needs sage.rings.finite_rings
+        sage: E = EllipticCurve(F, [1,1])                                               # needs sage.rings.finite_rings sage.schemes
+        sage: P = E.lift_x(a); P                                                        # needs sage.rings.finite_rings sage.schemes
         (a : 28*a^4 + 15*a^3 + 14*a^2 + 7 : 1)
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P, P.parent()(0), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings
+        sage: bsgs(P, P.parent()(0), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
         69327408
 
     AUTHOR:
@@ -763,7 +763,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     an upper bound here::
 
         sage: # needs sage.rings.number_field
-        sage: K.<a> = QuadraticField(23)
+        sage: K.<a> = QuadraticField(23)                                                # needs sage.libs.flint
         sage: eps = 5*a - 24        # a fundamental unit
         sage: eps.multiplicative_order()
         +Infinity
@@ -786,7 +786,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     An additive example: elliptic curve DLOG::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.libs.gap sage.rings.finite_rings sage.schemes
         sage: F = GF(37^2,'a')
         sage: E = EllipticCurve(F, [1,1])
         sage: F.<a> = GF(37^2,'a')
@@ -835,7 +835,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ...
         ValueError: no discrete log of 2 found to base 1
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.libs.gap sage.rings.finite_rings sage.schemes
         sage: F = GF(37^2,'a')
         sage: E = EllipticCurve(F, [1,1])
         sage: F.<a> = GF(37^2,'a')
@@ -1214,16 +1214,16 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(b, 5^5 - 1, operation='*')
         781
 
-        sage: # needs sage.rings.finite_rings sage.schemes
-        sage: E = EllipticCurve(k, [2,4])
-        sage: P = E(3*a^4 + 3*a, 2*a + 1)
+        sage: # needs sage.rings.number_field sage.schemes
+        sage: E = EllipticCurve(k, [2,4])                                               # needs sage.rings.finite_rings
+        sage: P = E(3*a^4 + 3*a, 2*a + 1)                                               # needs sage.rings.finite_rings
         sage: M = E.cardinality(); M
         3227
         sage: F = M.factor()
-        sage: order_from_multiple(P, M, factorization=F, operation='+')
+        sage: order_from_multiple(P, M, factorization=F, operation='+')                 # needs sage.rings.finite_rings
         3227
         sage: Q = E(0,2)
-        sage: order_from_multiple(Q, M, factorization=F, operation='+')
+        sage: order_from_multiple(Q, M, factorization=F, operation='+')                 # needs sage.rings.finite_rings
         7
 
         sage: K.<z> = CyclotomicField(230)                                              # needs sage.rings.number_field
@@ -1440,7 +1440,7 @@ def merge_points(P1, P2, operation='+',
         sage: od == lcm(ob, oc)
         True
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.libs.gap sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])
         sage: P = E(2*a^5 + 2*a^4 + a^3 + 2, a^4 + a^3 + a^2 + 2*a + 2)
         sage: P.order()

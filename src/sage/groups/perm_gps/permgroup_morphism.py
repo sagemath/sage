@@ -119,8 +119,8 @@ class PermutationGroupMorphism(Morphism):
 
             sage: R.<x> = QQ[]
             sage: f = x^4 + x^2 - 3
-            sage: L.<a> = f.splitting_field()
-            sage: G = L.galois_group()
+            sage: L.<a> = f.splitting_field()                                           # needs sage.rings.number_field
+            sage: G = L.galois_group()                                                  # needs sage.rings.number_field
             sage: D4 = DihedralGroup(4)
             sage: h = D4.isomorphism_to(G)
             sage: h.image(D4).is_isomorphic(G)

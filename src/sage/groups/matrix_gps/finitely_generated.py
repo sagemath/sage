@@ -176,7 +176,7 @@ def QuaternionMatrixGroupGF3():
 
     TESTS::
 
-        sage: groups.matrix.QuaternionGF3()                                             # needs sage.rings.finite_rings
+        sage: groups.matrix.QuaternionGF3()                                             # needs sage.modules sage.rings.finite_rings
         Matrix group over Finite Field of size 3 with 2 generators (
         [1 1]  [2 1]
         [1 2], [1 1]
@@ -186,8 +186,8 @@ def QuaternionMatrixGroupGF3():
         sage: QP = Q.as_permutation_group()                                             # needs sage.rings.finite_rings
         sage: QP.is_isomorphic(QuaternionGroup())                                       # needs sage.rings.finite_rings
         True
-        sage: H = DihedralGroup(4)                                                      # needs sage.groups sage.rings.finite_rings
-        sage: H.order()                                                                 # needs sage.groups sage.rings.finite_rings
+        sage: H = DihedralGroup(4)                                                      # needs sage.groups
+        sage: H.order()                                                                 # needs sage.groups
         8
         sage: QP.is_abelian(), H.is_abelian()                                           # needs sage.groups sage.rings.finite_rings
         (False, False)

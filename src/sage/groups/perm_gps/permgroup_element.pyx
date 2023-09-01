@@ -367,11 +367,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: S = SymmetricGroup(5)
             sage: S(Permutation([5,1,4,3,2]))
             (1,5,2)(3,4)
-            sage: S(gp.Vecsmall([5,1,4,3,2]))
+            sage: S(gp.Vecsmall([5,1,4,3,2]))                                           # needs sage.libs.pari
             (1,5,2)(3,4)
             sage: S(gap.PermList([5,1,4,3,2]))
             (1,5,2)(3,4)
-            sage: S(pari.Vecsmall([5,1,4,3,2]))
+            sage: S(pari.Vecsmall([5,1,4,3,2]))                                         # needs sage.libs.pari
             (1,5,2)(3,4)
             sage: S(libgap.PermList([5,1,4,3,2]))
             (1,5,2)(3,4)
@@ -853,14 +853,14 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: S(p_libgap) == p
             True
 
-            sage: P = PGU(8,2)
-            sage: p, q = P.gens()
+            sage: P = PGU(8,2)                                                          # needs sage.libs.pari
+            sage: p, q = P.gens()                                                       # needs sage.libs.pari
             sage: p_libgap  = p.gap()
 
         TESTS::
 
-            sage: P = PGU(8,2)
-            sage: p, q = P.gens()
+            sage: P = PGU(8,2)                                                          # needs sage.libs.pari
+            sage: p, q = P.gens()                                                       # needs sage.libs.pari
             sage: p_pexpect = gap(p)
             sage: p_libgap == p_pexpect
             True
@@ -1557,6 +1557,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: prod(primes(150))
             1492182350939279320058875736615841068547583863326864530410
             sage: L = [tuple(range(sum(primes(p))+1, sum(primes(p))+1+p)) for p in primes(150)]
@@ -1842,6 +1843,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: G = DihedralGroup(3)
             sage: [g.cycle_type() for g in G]
             [[1, 1, 1], [3], [3], [2, 1], [2, 1], [2, 1]]
@@ -1890,13 +1892,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             False
             sage: s = S.simple_reflections()
             sage: x = s[1]*s[2]
-            sage: x.has_descent(1, side = "right")
+            sage: x.has_descent(1, side="right")
             False
-            sage: x.has_descent(2, side = "right")
+            sage: x.has_descent(2, side="right")
             True
-            sage: x.has_descent(1, side = "left")
+            sage: x.has_descent(1, side="left")
             True
-            sage: x.has_descent(2, side = "left")
+            sage: x.has_descent(2, side="left")
             False
             sage: S._test_has_descent()
 
@@ -2063,7 +2065,7 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
         EXAMPLES::
 
             sage: S = SymmetricGroup(3)
-            sage: [x.absolute_length() for x in S]
+            sage: [x.absolute_length() for x in S]                                      # needs sage.combinat
             [0, 2, 2, 1, 1, 1]
         """
         from sage.combinat.permutation import Permutation

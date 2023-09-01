@@ -244,8 +244,8 @@ class ParentLibGAP(SageObject):
 
         Checking that :trac:`19270` is fixed::
 
-            sage: gens = [w.matrix() for w in WeylGroup(['B', 3])]
-            sage: G = MatrixGroup(gens)
+            sage: gens = [w.matrix() for w in WeylGroup(['B', 3])]                      # needs sage.rings.number_field
+            sage: G = MatrixGroup(gens)                                                 # needs sage.rings.number_field
             sage: import itertools
             sage: diagonals = itertools.product((1,-1), repeat=3)
             sage: subgroup_gens = [diagonal_matrix(L) for L in diagonals]
@@ -256,7 +256,7 @@ class ParentLibGAP(SageObject):
 
         Check that :trac:`19010` is fixed::
 
-            sage: G = WeylGroup(['B',3])
+            sage: G = WeylGroup(['B',3])                                                # needs sage.rings.number_field
             sage: H = G.subgroup([G[14], G[17]])
             sage: all(g*h in G and h*g in G for g in G for h in H)
             True

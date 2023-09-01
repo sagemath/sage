@@ -133,7 +133,7 @@ class AffineGroup(UniqueRepresentation, Group):
         Affine Space of dimension 2 over Finite Field in a of size 2^2
         sage: G = AffineGroup(A); G                                                     # needs sage.rings.finite_rings
         Affine Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is AffineGroup(2,4) # shorthand                                         # needs sage.rings.finite_rings
+        sage: G is AffineGroup(2,4)  # shorthand                                        # needs sage.rings.finite_rings
         True
 
         sage: V = ZZ^3;  V

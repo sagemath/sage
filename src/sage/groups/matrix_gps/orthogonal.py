@@ -324,7 +324,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
     TESTS::
 
         sage: TestSuite(GO3).run()
-        sage: groups.matrix.GO(2, 3, e=-1)                                              # needs sage.rings.finite_rings
+        sage: groups.matrix.GO(2, 3, e=-1)                                              # needs sage.modules sage.rings.finite_rings
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
     """
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)
@@ -434,7 +434,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
     TESTS::
 
         sage: TestSuite(SO3m).run()                                                     # needs sage.rings.number_field
-        sage: groups.matrix.SO(2, 3, e=1)                                               # needs sage.rings.number_field
+        sage: groups.matrix.SO(2, 3, e=1)                                               # needs sage.modules sage.rings.number_field
         Special Orthogonal Group of degree 2 and form parameter 1 over Finite Field of size 3
     """
     return _OG(n, R, True, e=e, var=var, invariant_form=invariant_form)

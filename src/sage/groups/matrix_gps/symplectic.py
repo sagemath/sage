@@ -135,7 +135,7 @@ def Sp(n, R, var='a', invariant_form=None):
 
         sage: TestSuite(Sp4).run()
         sage: TestSuite(Sp4m).run()
-        sage: groups.matrix.Sp(2, 3)                                                    # needs sage.rings.finite_rings
+        sage: groups.matrix.Sp(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
         Symplectic Group of degree 2 over Finite Field of size 3
 
         sage: G = Sp(4,5)

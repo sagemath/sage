@@ -81,9 +81,9 @@ class ImaginaryElement(AdditiveGroupElement):
 
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)
-            sage: J(I).imag()
+            sage: J(I).imag()                                                           # needs sage.symbolic
             1
-            sage: imag_part(J(I))  # indirect doctest
+            sage: imag_part(J(I))  # indirect doctest                                   # needs sage.symbolic
             1
         """
         return self._imag_
@@ -96,9 +96,9 @@ class ImaginaryElement(AdditiveGroupElement):
 
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)
-            sage: J(I).real()
+            sage: J(I).real()                                                           # needs sage.symbolic
             0
-            sage: real_part(J(I))  # indirect doctest
+            sage: real_part(J(I))  # indirect doctest                                   # needs sage.symbolic
             0
         """
         return self.parent().base().zero()
@@ -111,7 +111,7 @@ class ImaginaryElement(AdditiveGroupElement):
 
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)
-            sage: hash(J(I))  # indirect doctest, random
+            sage: hash(J(I))  # indirect doctest, random                                # needs sage.symbolic
             42
         """
         return hash((self.parent(), self._imag_))
@@ -247,9 +247,9 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
         0
         sage: J(imag=100)
         100*I
-        sage: J(3*I)
+        sage: J(3*I)                                                                    # needs sage.symbolic
         3*I
-        sage: J(1+2*I)
+        sage: J(1+2*I)                                                                  # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: 2*I + 1 is not in
@@ -393,36 +393,36 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             sage: J(imag=100)
             100*I
 
-            sage: J(3*I)
+            sage: J(3*I)                                                                # needs sage.symbolic
             3*I
-            sage: J(1+2*I)
+            sage: J(1+2*I)                                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: 2*I + 1 is not in
             Imaginary Group over Integer Ring
             because it is not purely imaginary
-            sage: i = CC(I)
-            sage: J(3*i)
+            sage: i = CC(I)                                                             # needs sage.symbolic
+            sage: J(3*i)                                                                # needs sage.symbolic
             3*I
-            sage: J(1+2*i)
+            sage: J(1+2*i)                                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: 1.00000000000000 + 2.00000000000000*I is not in
             Imaginary Group over Integer Ring
             because it is not purely imaginary
             sage: i = CBF(I)
-            sage: J(3*i)
+            sage: J(3*i)                                                                # needs sage.symbolic
             3*I
-            sage: J(1+2*i)
+            sage: J(1+2*i)                                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: 1.000000000000000 + 2.000000000000000*I is not in
             Imaginary Group over Integer Ring
             because it is not purely imaginary
             sage: i = CIF(I)
-            sage: J(3*i)
+            sage: J(3*i)                                                                # needs sage.symbolic
             3*I
-            sage: J(1+2*i)
+            sage: J(1+2*i)                                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: 1 + 2*I is not in

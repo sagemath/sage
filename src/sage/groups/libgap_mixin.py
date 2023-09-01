@@ -250,8 +250,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = SU(3,GF(2))
-            sage: len(G.conjugacy_classes_representatives())
+            sage: G = SU(3,GF(2))                                                       # needs sage.libs.pari
+            sage: len(G.conjugacy_classes_representatives())                            # needs sage.libs.pari
             16
 
             sage: G = GL(2,GF(3))
@@ -261,7 +261,7 @@ class GroupMixinLibGAP():
             [0 1], [1 1], [0 2], [1 2], [1 0], [1 2], [1 1], [0 1]
             )
 
-            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())
+            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())                  # needs sage.libs.pari
             36
 
         ::
@@ -356,8 +356,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = SU(3, GF(2))
-            sage: G.center()
+            sage: G = SU(3, GF(2))                                                      # needs sage.libs.pari
+            sage: G.center()                                                            # needs sage.libs.pari
             Subgroup with 1 generators (
             [a 0 0]
             [0 a 0]
@@ -374,7 +374,7 @@ class GroupMixinLibGAP():
             [0 2 0]
             [0 0 2]
             ) of General Linear Group of degree 3 over Finite Field of size 3
-            sage: GU(3, GF(2)).center()
+            sage: GU(3, GF(2)).center()                                                 # needs sage.libs.pari
             Subgroup with 1 generators (
             [a + 1     0     0]
             [    0 a + 1     0]
@@ -394,8 +394,8 @@ class GroupMixinLibGAP():
             [0 0 1], [0 1 1]
             )
 
-            sage: GL = groups.matrix.GL(3, ZZ)
-            sage: GL.center()
+            sage: GL = groups.matrix.GL(3, ZZ)                                          # needs sage.modules
+            sage: GL.center()                                                           # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
@@ -414,6 +414,7 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: G = groups.matrix.GL(2, 3)
             sage: g = G([[1,1], [1,0]])
             sage: C = G.centralizer(g); C
@@ -424,12 +425,12 @@ class GroupMixinLibGAP():
             sage: C.order()
             8
 
-            sage: S = G.subgroup([G([[2,0],[0,2]]), G([[0,1],[2,0]])]); S
+            sage: S = G.subgroup([G([[2,0],[0,2]]), G([[0,1],[2,0]])]); S               # needs sage.modules
             Subgroup with 2 generators (
             [2 0]  [0 1]
             [0 2], [2 0]
             ) of General Linear Group of degree 2 over Finite Field of size 3
-            sage: G.centralizer(S)
+            sage: G.centralizer(S)                                                      # needs sage.modules
             Subgroup with 3 generators (
             [2 0]  [0 1]  [2 2]
             [0 2], [2 0], [1 2]
@@ -438,8 +439,8 @@ class GroupMixinLibGAP():
             sage: all(G.order() == G.centralizer(x).order() * G.conjugacy_class(x).cardinality()
             ....:     for x in G)
             True
-            sage: H = groups.matrix.Heisenberg(2)
-            sage: H.centralizer(H.an_element())
+            sage: H = groups.matrix.Heisenberg(2)                                       # needs sage.modules
+            sage: H.centralizer(H.an_element())                                         # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
@@ -475,8 +476,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = groups.matrix.GL(2, 2)
-            sage: G.subgroups()
+            sage: G = groups.matrix.GL(2, 2)                                            # needs sage.modules
+            sage: G.subgroups()                                                         # needs sage.modules
             [Subgroup with 0 generators () of General Linear Group of degree 2 over Finite Field of size 2,
              Subgroup with 1 generators (
              [0 1]
@@ -499,8 +500,8 @@ class GroupMixinLibGAP():
              [1 1], [0 1]
              ) of General Linear Group of degree 2 over Finite Field of size 2]
 
-            sage: H = groups.matrix.Heisenberg(2)
-            sage: H.subgroups()
+            sage: H = groups.matrix.Heisenberg(2)                                       # needs sage.modules
+            sage: H.subgroups()                                                         # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
@@ -520,8 +521,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = groups.matrix.GL(2,2)
-            sage: G.conjugacy_classes_subgroups()
+            sage: G = groups.matrix.GL(2,2)                                             # needs sage.modules
+            sage: G.conjugacy_classes_subgroups()                                       # needs sage.modules
             [Subgroup with 0 generators () of General Linear Group of degree 2 over Finite Field of size 2,
              Subgroup with 1 generators (
              [1 1]
@@ -536,8 +537,8 @@ class GroupMixinLibGAP():
              [1 1], [0 1]
              ) of General Linear Group of degree 2 over Finite Field of size 2]
 
-            sage: H = groups.matrix.Heisenberg(2)
-            sage: H.conjugacy_classes_subgroups()
+            sage: H = groups.matrix.Heisenberg(2)                                       # needs sage.modules
+            sage: H.conjugacy_classes_subgroups()                                       # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
@@ -561,6 +562,7 @@ class GroupMixinLibGAP():
             sage: SymmetricGroup(4).group_id()
             [24, 12]
 
+            sage: # needs sage.modules
             sage: G = groups.matrix.GL(2, 2)
             sage: G.group_id()
             [6, 1]
@@ -568,8 +570,8 @@ class GroupMixinLibGAP():
             sage: G.id()
             [48, 29]
 
-            sage: G = groups.matrix.GL(2, ZZ)
-            sage: G.group_id()
+            sage: G = groups.matrix.GL(2, ZZ)                                           # needs sage.modules
+            sage: G.group_id()                                                          # needs sage.modules
             Traceback (most recent call last):
             ...
             GAPError: Error, the group identification for groups of size infinity is not available
@@ -589,12 +591,12 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = groups.matrix.GL(2, 3)
-            sage: G.exponent()
+            sage: G = groups.matrix.GL(2, 3)                                            # needs sage.modules
+            sage: G.exponent()                                                          # needs sage.modules
             24
 
-            sage: H = groups.matrix.Heisenberg(2)
-            sage: H.exponent()
+            sage: H = groups.matrix.Heisenberg(2)                                       # needs sage.modules
+            sage: H.exponent()                                                          # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
