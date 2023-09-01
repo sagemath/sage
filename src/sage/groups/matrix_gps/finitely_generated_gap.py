@@ -36,10 +36,8 @@ from sage.misc.functional import cyclotomic_polynomial
 from sage.modules.free_module_element import vector
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.qqbar import QQbar
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 
 
@@ -556,6 +554,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             w = F.roots(ring=R.algebraic_closure(), multiplicities=False)[0]
             # don't need to extend further in this case since the order of
             # the roots of unity in the character divide the order of the group
+            from sage.rings.number_field.number_field import CyclotomicField
             L = CyclotomicField(N, 'v')
             v = L.gen()
             # construct Molien series
@@ -740,6 +739,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         C = FractionField(self.base_ring())
         if chi is None:  # then this is the trivial character
             if R.characteristic() == 0:
+                from sage.rings.qqbar import QQbar
                 # non-modular case
                 if C == QQbar or R == QQbar:
                     L = QQbar
@@ -772,6 +772,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         # non-trivial character case
         K = chi.values()[0].parent()
         if R.characteristic() == 0:
+            from sage.rings.qqbar import QQbar
             # extend base_ring to compositum
             if C == QQbar or K == QQbar or R == QQbar:
                 L = QQbar
