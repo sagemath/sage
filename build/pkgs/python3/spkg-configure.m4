@@ -133,7 +133,7 @@ To build Sage with a different system python, use ./configure --with-python=/pat
     AS_IF([test -n "$PYTHON_FOR_VENV"],
           [PYTHON_VERSION=$("$PYTHON_FOR_VENV" -c "import sysconfig; print(sysconfig.get_python_version())")],
           [PYTHON_VERSION=$(echo $(cat build/pkgs/python3/package-version.txt))])
-    AC_SUBST([PYTHON_MINOR], [$(echo $PYTHON_VERSION | sed -E 's/[[0-9]]*\.([[0-9]]*).*/\1/')])
+    AC_SUBST([PYTHON_MINOR], [$(echo $PYTHON_VERSION | cut -d. -f2)])
     export PYTHON_MINOR  # for sage-get-system-packages
 
     AS_VAR_IF([SAGE_VENV], [auto], [SAGE_VENV=$SAGE_VENV_AUTO])
