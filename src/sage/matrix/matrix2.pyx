@@ -2143,10 +2143,15 @@ cdef class Matrix(Matrix1):
             # word, use PARI.
             ch = R.characteristic()
             if ch.is_prime() and ch < (2*sys.maxsize):
-                d = R(self.__pari__().matdet())
-            else:
-                # Lift to ZZ and compute there.
-                d = R(self.apply_map(lambda x : x.lift_centered()).det())
+                try:
+                    d = R(self.__pari__().matdet())
+                except ImportError:
+                    pass
+                else:
+                    self.cache('det', d)
+                    return d
+            # Lift to ZZ and compute there.
+            d = R(self.apply_map(lambda x: x.lift_centered()).det())
             self.cache('det', d)
             return d
 
