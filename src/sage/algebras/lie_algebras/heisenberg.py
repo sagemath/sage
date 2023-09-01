@@ -122,6 +122,21 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
         """
         return m
 
+    def _ascii_art_term(self, m):
+        r"""
+        Return a string representation of the term indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: H = lie_algebras.Heisenberg(QQ, 3)
+            sage: H._ascii_art_term('p1')
+            p1
+            sage: H._ascii_art_term('z')
+            z
+        """
+        from sage.typeset.ascii_art import ascii_art
+        return ascii_art(m)
+
     def _latex_term(self, m):
         r"""
         Return a string representation of the term indexed by ``m``.
