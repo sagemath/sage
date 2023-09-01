@@ -372,7 +372,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         r"""
         Return an element of ``self``.
 
-        This may raise ``NotImplementedError``.
+        This may raise :class:`NotImplementedError`.
 
         TESTS::
 

@@ -816,6 +816,7 @@ class OctaveElement(ExpectElement):
         else:
             raise NotImplementedError('octave type is not recognized')
 
+
 # An instance
 octave = Octave()
 

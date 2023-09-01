@@ -564,7 +564,7 @@ cdef class Matroid(SageObject):
         OUTPUT:
 
         ``frozenset`` instance containing a subset of the groundset.
-        A ``ValueError`` is raised if the set contains no circuit.
+        A :class:`ValueError` is raised if the set contains no circuit.
 
         EXAMPLES::
 
@@ -709,7 +709,7 @@ cdef class Matroid(SageObject):
         OUTPUT:
 
         ``frozenset`` instance containing a subset of the groundset.
-        A ``ValueError`` is raised if the set contains no cocircuit.
+        A :class:`ValueError` is raised if the set contains no cocircuit.
 
         EXAMPLES::
 
@@ -1308,7 +1308,7 @@ cdef class Matroid(SageObject):
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
         # Call corresponding Cython method
-        return self.__subset(X)
+        return self._subset_internal(X)
 
     def _subset_all(self, X):
         """
@@ -1375,7 +1375,7 @@ cdef class Matroid(SageObject):
         """
         if X is None:
             return self.full_rank()
-        return self._rank(self.__subset(X))
+        return self._rank(self._subset_internal(X))
 
     cpdef full_rank(self):
         r"""
@@ -1454,7 +1454,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: ['x'] is not a subset of the groundset
         """
-        return self._max_independent(self.__subset(X))
+        return self._max_independent(self._subset_internal(X))
 
     cpdef circuit(self, X=None):
         """
@@ -1559,7 +1559,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: ['x'] is not a subset of the groundset
         """
-        return self._closure(self.__subset(X))
+        return self._closure(self._subset_internal(X))
 
     cpdef k_closure(self, X, k):
         r"""
@@ -1598,7 +1598,7 @@ cdef class Matroid(SageObject):
             sage: sorted(M.k_closure({0,1}, 4))
             [0, 1, 4]
         """
-        X = self.__subset(X)
+        X = self._subset_internal(X)
         cdef int cur
         cdef frozenset S, cl
         cur = 0
@@ -1645,7 +1645,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: ['x'] is not a subset of the groundset
         """
-        X = self.__subset(X)
+        X = self._subset_internal(X)
         Y = self.__subset_all(Y)
         return self._augment(X, Y.difference(X))
 
@@ -1782,7 +1782,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: ['x'] is not a subset of the groundset
         """
-        return self._max_coindependent(self.__subset(X))
+        return self._max_coindependent(self._subset_internal(X))
 
     cpdef coclosure(self, X):
         """
@@ -1814,7 +1814,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: ['x'] is not a subset of the groundset
         """
-        return self._coclosure(self.__subset(X))
+        return self._coclosure(self._subset_internal(X))
 
     cpdef cocircuit(self, X=None):
         """
@@ -1948,7 +1948,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return self._is_independent(self.__subset(X))
+        return self._is_independent(self._subset_internal(X))
 
     cpdef is_dependent(self, X):
         r"""
@@ -1974,7 +1974,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return not self._is_independent(self.__subset(X))
+        return not self._is_independent(self._subset_internal(X))
 
     cpdef is_basis(self, X):
         r"""
@@ -2000,7 +2000,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        X = self.__subset(X)
+        X = self._subset_internal(X)
         if len(X) != self.full_rank():
             return False
         return self._is_basis(X)
@@ -2036,7 +2036,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return self._is_closed(self.__subset(X))
+        return self._is_closed(self._subset_internal(X))
 
     cpdef is_subset_k_closed(self, X, int k):
         r"""
@@ -2119,7 +2119,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return self._is_circuit(self.__subset(X))
+        return self._is_circuit(self._subset_internal(X))
 
     cpdef coloops(self):
         r"""
@@ -2179,7 +2179,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return self._is_coindependent(self.__subset(X))
+        return self._is_coindependent(self._subset_internal(X))
 
     cpdef is_codependent(self, X):
         r"""
@@ -2212,7 +2212,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return not self._is_coindependent(self.__subset(X))
+        return not self._is_coindependent(self._subset_internal(X))
 
     cpdef is_cobasis(self, X):
         r"""
@@ -2246,7 +2246,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        X = self.__subset(X)
+        X = self._subset_internal(X)
         if len(X) != self.full_corank():
             return False
         return self._is_cobasis(X)
@@ -2283,7 +2283,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return self._is_cocircuit(self.__subset(X))
+        return self._is_cocircuit(self._subset_internal(X))
 
     cpdef is_coclosed(self, X):
         r"""
@@ -2316,7 +2316,7 @@ cdef class Matroid(SageObject):
             ...
             ValueError: 'abcx' is not a subset of the groundset
         """
-        return self._is_coclosed(self.__subset(X))
+        return self._is_coclosed(self._subset_internal(X))
 
     # verification
 
@@ -4869,10 +4869,10 @@ cdef class Matroid(SageObject):
             sage: M.connectivity('ab', 'cd')
             2
         """
-        S = self.__subset(S)
+        S = self._subset_internal(S)
         if T is None:
             return self._rank(S) + self._rank(self.groundset()-S) - self.full_rank()
-        T = self.__subset(T)
+        T = self._subset_internal(T)
         if S.intersection(T):
             raise ValueError("S and T are not disjoint")
         return len(self._link(S, T)[0]) - self.full_rank() + self._rank(S) + self._rank(T)
@@ -4957,8 +4957,8 @@ cdef class Matroid(SageObject):
             sage: N.connectivity(S)
             2
         """
-        S = self.__subset(S)
-        T = self.__subset(T)
+        S = self._subset_internal(S)
+        T = self._subset_internal(T)
         if not S.isdisjoint(T):
             raise ValueError("S and T are not disjoint")
         return self._link(S, T)

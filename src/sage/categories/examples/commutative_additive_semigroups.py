@@ -195,4 +195,5 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
             """
             return hash(tuple(self.value.items()))
 
+
 Example = FreeCommutativeAdditiveSemigroup

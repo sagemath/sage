@@ -298,7 +298,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: el
         bla
         sage: el.__dict__
-        {'__custom_name': 'bla', 'value': 42}
+        {'_SageObject__custom_name': 'bla', 'value': 42}
 
     Lots of Sage objects are not Python objects but compiled Cython
     objects. Python sees them as builtin objects and you do not have

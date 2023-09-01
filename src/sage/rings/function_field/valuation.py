@@ -454,6 +454,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
 
         raise NotImplementedError("valuation on %r from %r on %r" % (domain, valuation, valuation.domain()))
 
+
 FunctionFieldValuation = FunctionFieldValuationFactory("sage.rings.function_field.valuation.FunctionFieldValuation")
 
 

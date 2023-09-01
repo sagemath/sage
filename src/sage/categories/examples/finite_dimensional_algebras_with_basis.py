@@ -144,4 +144,5 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
         """
         return str(p)
 
+
 Example = KroneckerQuiverPathAlgebra

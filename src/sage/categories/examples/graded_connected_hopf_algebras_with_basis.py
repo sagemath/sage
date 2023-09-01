@@ -163,4 +163,5 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             for j in range(i+1)
         )
 
+
 Example = GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator

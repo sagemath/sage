@@ -170,6 +170,7 @@ class XYPairsFactory(SetFactory):
         """
         return "Factory for XY pairs"
 
+
 XYPairs = XYPairsFactory()
 XYPairs.__doc__ = XYPairsFactory.__call__.__doc__
 

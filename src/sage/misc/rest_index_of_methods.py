@@ -350,4 +350,5 @@ def doc_index(name):
         return f
     return hey
 
+
 __doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index([gen_rest_table_index]))

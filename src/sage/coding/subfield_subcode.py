@@ -420,6 +420,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         """
         return self.original_decoder().decoding_radius(**kwargs)
 
+
 ####################### registration ###############################
 
 SubfieldSubcode._registered_decoders["OriginalCode"] = SubfieldSubcodeOriginalCodeDecoder

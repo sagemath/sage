@@ -188,4 +188,5 @@ class LeftRegularBand(UniqueRepresentation, Parent):
         wrapped_class = str
         __lt__ = ElementWrapper._lt_by_value
 
+
 Example = LeftRegularBand

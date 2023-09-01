@@ -306,6 +306,7 @@ def max_to_string(s):
     """
     return maxprint(s).python()[1:-1]
 
+
 my_mread=ecl_eval("""
 (defun my-mread (cmd)
   (caddr (mread (make-string-input-stream cmd))))
@@ -1279,6 +1280,7 @@ def sage_rat(x,y):
     """
     return x/y
 
+
 mplus=EclObject("MPLUS")
 mtimes=EclObject("MTIMES")
 rat=EclObject("RAT")
@@ -1683,6 +1685,7 @@ def sr_to_max(expr):
             return pyobject_to_max(expr.pyobject())
         except TypeError:
             return maxima(expr).ecl()
+
 
 # This goes from EclObject to SR
 from sage.symbolic.expression import symbol_table

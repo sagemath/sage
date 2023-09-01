@@ -373,6 +373,7 @@ def external_software():
     """
     return sorted(f.name for f in external_features())
 
+
 external_software = external_software()
 
 

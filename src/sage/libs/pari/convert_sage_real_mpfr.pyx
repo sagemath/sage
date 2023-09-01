@@ -21,8 +21,8 @@ cpdef Gen new_gen_from_real_mpfr_element(RealNumber self):
     # wordsize for PARI
     cdef unsigned long wordsize = sizeof(long)*8
 
-    cdef mpfr_prec_t prec
-    prec = (<RealField_class>self._parent).__prec
+        cdef mpfr_prec_t prec
+        prec = (<RealField_class>self._parent)._prec
 
     # We round up the precision to the nearest multiple of wordsize.
     cdef int rounded_prec

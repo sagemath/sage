@@ -220,7 +220,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                     raise ValueError("basis has wrong cardinality.")
                 if not b.issubset(self._groundset):
                     raise ValueError("basis is not a subset of the groundset")
-                self.__pack(self._b, b)
+                self._pack(self._b, b)
                 i = set_to_index(self._b)
                 if not bitset_in(self._bb, i):
                     self._bcount += 1
@@ -235,7 +235,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                         raise ValueError("nonbasis has wrong cardinality")
                     if not b.issubset(self._groundset):
                         raise ValueError("nonbasis is not a subset of the groundset")
-                    self.__pack(self._b, b)
+                    self._pack(self._b, b)
                     i = set_to_index(self._b)
                     if bitset_in(self._bb, i):
                         self._bcount -= 1
@@ -264,7 +264,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     # support for parent BasisExchangeMatroid
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:      # test if current_basis-x + y is a basis
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:      # test if current_basis-x + y is a basis
         """
         Test if `B-e + f` is a basis of the current matroid.
 
@@ -327,7 +327,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M._is_basis(set(['a', 'b', 'c', 'd']))
             False
         """
-        self.__pack(self._b, X)
+        self._pack(self._b, X)
         return bitset_in(self._bb, set_to_index(self._b))
 
     # dual and minors
@@ -558,7 +558,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         """
         M = BasisMatroid(M=self)
-        M.__relabel(l)
+        M._relabel(l)
         return M
 
     # enumeration
@@ -1178,7 +1178,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         """
         N = BasisMatroid(M=self)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo=None):
@@ -1202,7 +1202,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if memo is None:
             memo = {}
         N = BasisMatroid(M=self)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __reduce__(self):
@@ -1231,7 +1231,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         """
         import sage.matroids.unpickling
         BB = bitset_pickle(self._bb)
-        data = (self._E, self._matroid_rank, getattr(self, '__custom_name'), BB)
+        data = (self._E, self._matroid_rank, self.get_custom_name(), BB)
         version = 0
         return sage.matroids.unpickling.unpickle_basis_matroid, (version, data)
 

@@ -51,4 +51,5 @@ class UniqueFactoryTester(UniqueFactory):
         print("Making object", key)
         return A()
 
+
 test_factory = UniqueFactoryTester('sage.structure.test_factory.test_factory')

@@ -199,4 +199,5 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
             cur = cur * self.monomial(self._indices.gen(a))
         return cur
 
+
 Example = PBWBasisCrossProduct

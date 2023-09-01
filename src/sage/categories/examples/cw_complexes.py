@@ -159,4 +159,5 @@ class Surface(UniqueRepresentation, Parent):
             """
             return self._dim
 
+
 Example = Surface

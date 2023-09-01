@@ -147,4 +147,5 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
     class Element (ElementWrapper):
         wrapped_class = Integer
 
+
 Example = IntegerModMonoid

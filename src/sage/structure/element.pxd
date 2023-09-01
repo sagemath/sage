@@ -177,7 +177,7 @@ cdef class Element(SageObject):
 
 
 cdef class ElementWithCachedMethod(Element):
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
 cdef class ModuleElement(Element)       # forward declaration
 

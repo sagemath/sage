@@ -112,7 +112,9 @@ class FunctionFieldFactory(UniqueFactory):
             from .function_field_rational import RationalFunctionField
             return RationalFunctionField(key[0], names=key[1])
 
+
 FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
+
 
 class FunctionFieldExtensionFactory(UniqueFactory):
     """
@@ -211,6 +213,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
                 else:
                     return function_field_polymod.FunctionField_char_zero(f, names)
         return function_field_polymod.FunctionField_polymod(f, names)
+
 
 FunctionFieldExtension = FunctionFieldExtensionFactory(
     "sage.rings.function_field.constructor.FunctionFieldExtension")

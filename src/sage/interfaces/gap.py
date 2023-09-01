@@ -222,10 +222,11 @@ if platform.processor() == 'ia64' and os.path.exists('/usr/bin/prctl'):
     # suppress unaligned access to 0x..., ip=0x... warnings
     gap_cmd = 'prctl --unaligned=silent ' + gap_cmd
 
+
 def gap_command(use_workspace_cache=True, local=True):
     if use_workspace_cache:
         if local:
-            return "%s -L %s"%(gap_cmd, WORKSPACE), False
+            return "%s -L %s" % (gap_cmd, WORKSPACE), False
         else:
             # TO DO: Use remote workspace
             return gap_cmd, False
@@ -1037,7 +1038,6 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         entries = [[R(self[r,c]) for c in range(1,m+1)] for r in range(1,n+1)]
         return M(entries)
 
-############
 
 class Gap(Gap_generic):
     r"""
@@ -1465,8 +1465,6 @@ class Gap(Gap_generic):
         return [n for n in names if n[0] in string.ascii_letters]
 
 
-############
-
 def gap_reset_workspace(max_workspace_size=None, verbose=False):
     r"""
     Call this to completely reset the GAP workspace, which is used by
@@ -1765,9 +1763,9 @@ def intmod_gap_to_sage(x):
         return Mod(Integer(m.group(1)), Integer(m.group(2)))
     raise ValueError("Unable to convert Gap element '%s'" % s)
 
-#############
 
 gap = Gap()
+
 
 def reduce_load_GAP():
     """

@@ -644,6 +644,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         """
         return mupad.nops(self)
 
+
 # An instance
 mupad = Mupad()
 

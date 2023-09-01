@@ -2,8 +2,7 @@
 from sage.structure.sage_object cimport SageObject
 
 cdef class Matroid(SageObject):
-    cdef public __custom_name
-    cdef public _custom_name
+    cdef public _SageObject__custom_name
     cdef public _cached_info
     cdef int _stored_full_rank
     cdef int _stored_size
@@ -38,7 +37,7 @@ cdef class Matroid(SageObject):
     cpdef _line_length(self, F)
     cpdef _extension(self, element, hyperplanes)
 
-    cdef inline __subset(self, X):
+    cdef inline _subset_internal(self, X):
         """
         Convert ``X`` to a ``frozenset`` and check that it is a subset
         of the groundset.

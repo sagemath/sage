@@ -405,4 +405,5 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             """
             return self.value.monomial_coefficients(copy)
 
+
 Example = AbelianLieAlgebra

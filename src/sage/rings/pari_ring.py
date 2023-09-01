@@ -230,4 +230,5 @@ class PariRing(Singleton, ring.Ring):
         """
         return self(-1)
 
+
 _inst = PariRing()

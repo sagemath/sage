@@ -36,7 +36,9 @@ def _monomials(gens, R, n, i):
             z *= gens[i]
         return v
 
+
 from sage.structure.sequence import Sequence
+
 
 def monomials(v, n):
     """

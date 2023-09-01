@@ -334,6 +334,7 @@ class TateAlgebraFactory(UniqueFactory):
         (base, prec, log_radii, names, order) = key
         return TateAlgebra_generic(base, prec, log_radii, names, order)
 
+
 TateAlgebra = TateAlgebraFactory("TateAlgebra")
 
 

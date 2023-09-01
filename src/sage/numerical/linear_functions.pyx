@@ -1580,7 +1580,10 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         while True:
             yield (lhs, rhs)
             lhs = rhs
-            rhs = next(term_iter)
+            try:
+                rhs = next(term_iter)
+            except StopIteration:
+                return
 
     def inequalities(self):
         """
@@ -1613,7 +1616,10 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         while True:
             yield (lhs, rhs)
             lhs = rhs
-            rhs = next(term_iter)
+            try:
+                rhs = next(term_iter)
+            except StopIteration:
+                return
 
     def _repr_(self):
         r"""
