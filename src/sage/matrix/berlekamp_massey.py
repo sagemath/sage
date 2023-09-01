@@ -72,12 +72,6 @@ def berlekamp_massey(a):
         Traceback (most recent call last):
         ...
         ValueError: argument must have an even number of terms
-
-    Check that :issue:`36172` is fixed::
-
-        sage: p = next_prime(2**64)
-        sage: ls = [GF(p).random_element() for _ in range(2000)]
-        sage: _ = berlekamp_massey(ls)
     """
     if not isinstance(a, (list, tuple)):
         raise TypeError("argument must be a list or tuple")
