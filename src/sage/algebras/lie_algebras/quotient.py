@@ -172,7 +172,6 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         2
         sage: TestSuite(K).run()
     """
-
     @staticmethod
     def __classcall_private__(cls, I, ambient=None, names=None,
                               index_set=None, category=None):
@@ -263,8 +262,8 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
                 brkt = I.reduce(L.bracket(SB[i], SB[j]))
                 brktvec = sm.coordinate_vector(brkt.to_vector())
                 s_coeff[(ind_i, ind_j)] = dict(zip(index_set, brktvec))
-        s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
-            s_coeff, index_set)
+        from sage.algebras.lie_algebras.superliealgebra import _standardize_s_coeff
+        s_coeff = _standardize_s_coeff(s_coeff, index_set, (0,)*len(index_set))
 
         self._ambient = L
         self._I = I
