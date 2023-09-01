@@ -200,7 +200,7 @@ Classes and Methods
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 from cpython.float cimport PyFloat_AS_DOUBLE
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from libc.stdlib cimport abort
 
@@ -1385,7 +1385,7 @@ cdef class RealBall(RingElement):
         elif isinstance(mid, RealBall):
             arb_set(self.value, (<RealBall> mid).value) # no rounding!
         elif is_small_python_int(mid):
-            arb_set_si(self.value, PyInt_AS_LONG(mid)) # no rounding!
+            arb_set_si(self.value, PyLong_AsLong(mid)) # no rounding!
         elif isinstance(mid, Integer):
             if _do_sig(prec(self)): sig_on()
             fmpz_init(tmpz)
@@ -2617,7 +2617,7 @@ cdef class RealBall(RingElement):
             if isinstance(other, RealBall):
                 res = arb_contains(self.value, (<RealBall> other).value)
             elif is_small_python_int(other):
-                res = arb_contains_si(self.value, PyInt_AS_LONG(other))
+                res = arb_contains_si(self.value, PyLong_AsLong(other))
             elif isinstance(other, Integer):
                 fmpz_init(tmpz)
                 fmpz_set_mpz(tmpz, (<Integer> other).value)
@@ -2907,7 +2907,7 @@ cdef class RealBall(RingElement):
         cdef RealBall res = self._new()
         if is_small_python_int(expo) and expo > 0:
             if _do_sig(prec(self)): sig_on()
-            arb_pow_ui(res.value, self.value, PyInt_AS_LONG(expo), prec(self))
+            arb_pow_ui(res.value, self.value, PyLong_AsLong(expo), prec(self))
             if _do_sig(prec(self)): sig_off()
         elif isinstance(expo, Integer):
             if _do_sig(prec(self)): sig_on()
@@ -3074,7 +3074,7 @@ cdef class RealBall(RingElement):
         cdef RealBall self = val
         cdef RealBall res = self._new()
         if is_small_python_int(shift):
-            arb_mul_2exp_si(res.value, self.value, PyInt_AS_LONG(shift))
+            arb_mul_2exp_si(res.value, self.value, PyLong_AsLong(shift))
         elif isinstance(shift, Integer):
             sig_on()
             fmpz_init(tmpz)

@@ -163,7 +163,7 @@ from sage.arith.long cimport (integer_check_long,
 
 from cpython.list cimport *
 from cpython.number cimport *
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.object cimport *
 from libc.stdint cimport uint64_t
 cimport sage.structure.element
@@ -3451,7 +3451,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef long d, res
 
         if is_small_python_int(other):
-            d = PyInt_AS_LONG(other)
+            d = PyLong_AsLong(other)
             if d > 0:
                 mpz_fdiv_qr_ui(q.value, r.value, self.value, d)
             elif d == 0:
@@ -6664,7 +6664,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         if type(y) is int:
             # For a Python int, we can just use the Python/C API.
-            n = PyInt_AS_LONG(y)
+            n = PyLong_AsLong(y)
         else:
             # If it's not already an Integer, try to convert it.
             if not isinstance(y, Integer):
@@ -7407,7 +7407,7 @@ cdef class int_to_Z(Morphism):
         if type(a) is not int:
             raise TypeError("must be a Python int object")
 
-        return smallInteger(PyInt_AS_LONG(a))
+        return smallInteger(PyLong_AsLong(a))
 
     def _repr_type(self):
         """
@@ -7680,7 +7680,8 @@ cdef Integer zero = the_integer_ring._zero_element
 cdef Integer one = the_integer_ring._one_element
 
 # pool of small integer for fast sign computation
-# Use the same defaults as Python, documented at https://docs.python.org/2/c-api/int.html#PyInt_FromLong
+# Use the same defaults as Python3 documented at
+# https://docs.python.org/3/c-api/long.html#c.PyLong_FromLong
 DEF small_pool_min = -5
 DEF small_pool_max = 256
 # we could use the above zero and one here
