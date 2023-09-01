@@ -133,6 +133,8 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
             p1
             sage: H._ascii_art_term('z')
             z
+            sage: ascii_art(sum(i * b for i, b in enumerate(H.basis())))
+            p2 + 2*p3 + 3*q1 + 4*q2 + 5*q3 + 6*z
         """
         from sage.typeset.ascii_art import ascii_art
         return ascii_art(m)
