@@ -109,8 +109,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: MS = MatrixSpace(GF(2), 5, 5)
             sage: A = MS([[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[1,0,0,0,0]])
-            sage: G = MatrixGroup([A])                                                  # needs sage.libs.pari
-            sage: G.as_permutation_group().order()                                      # needs sage.libs.pari
+            sage: G = MatrixGroup([A])
+            sage: G.as_permutation_group().order()
             2
 
         A finite subgroup of `GL(12,\ZZ)` as a permutation group::
@@ -165,7 +165,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         The above example in `GL(12,\ZZ)`, reduced modulo 7::
 
             sage: MS = MatrixSpace(GF(7), 12, 12)
-            sage: G = MatrixGroup([MS(g) for g in GG.GeneratorsOfGroup()])              # needs sage.libs.pari
+            sage: G = MatrixGroup([MS(g) for g in GG.GeneratorsOfGroup()])
             sage: G.cardinality()
             21499084800
             sage: P = G.as_permutation_group()
@@ -213,8 +213,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: F = GF(3); MS = MatrixSpace(F,4,4)
             sage: M = MS(0)
             sage: M[0,1]=1; M[1,2]=1; M[2,3]=1; M[3,0]=1
-            sage: G = MatrixGroup([M])                                                  # needs sage.libs.pari
-            sage: G.module_composition_factors()                                        # needs sage.libs.pari
+            sage: G = MatrixGroup([M])
+            sage: G.module_composition_factors()
             [(Finite Field of size 3, 1, True),
              (Finite Field of size 3, 1, True),
              (Finite Field of size 3, 2, True)]
@@ -518,7 +518,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: K = GF(5)
             sage: S = MatrixGroup(SymmetricGroup(4))
-            sage: G = MatrixGroup([matrix(K, 4, 4,                                      # needs sage.libs.pari
+            sage: G = MatrixGroup([matrix(K, 4, 4,
             ....:                         [K(y) for u in m.list() for y in u])
             ....:                  for m in S.gens()])
             sage: G.molien_series(return_series=False)

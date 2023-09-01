@@ -15,9 +15,9 @@ class LinearMatrixGroup_gap(NamedMatrixGroup_gap, LinearMatrixGroup_generic, Fin
 
     Check that :trac:`20867` is fixed::
 
-        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap                # needs sage.rings.number_field
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = GL(3,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)                           # needs sage.rings.number_field
+        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
         True
     """
     pass

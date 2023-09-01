@@ -16,15 +16,15 @@ EXAMPLES::
     Special Linear Group of degree 2 over Integer Ring
     sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
-    sage: G.is_finite()                                                                 # needs sage.rings.finite_rings
+    sage: G.is_finite()
     True
-    sage: G.conjugacy_classes_representatives()                                         # needs sage.rings.finite_rings
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
     )
     sage: G = SL(6, GF(5))
-    sage: G.gens()                                                                      # needs sage.rings.finite_rings
+    sage: G.gens()
     (
     [2 0 0 0 0 0]  [4 0 0 0 0 1]
     [0 3 0 0 0 0]  [4 0 0 0 0 0]
@@ -94,13 +94,13 @@ def GL(n, R, var='a'):
     EXAMPLES::
 
         sage: G = GL(6, GF(5))
-        sage: G.order()                                                                 # needs sage.rings.finite_rings
+        sage: G.order()
         11064475422000000000000000
         sage: G.base_ring()
         Finite Field of size 5
         sage: G.category()
         Category of finite groups
-        sage: TestSuite(G).run()                                                        # needs sage.rings.finite_rings
+        sage: TestSuite(G).run()
 
         sage: G = GL(6, QQ)
         sage: G.category()
@@ -123,20 +123,20 @@ def GL(n, R, var='a'):
         sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
         sage: gens = [MS([[2,0], [0,1]]), MS([[2,1], [2,0]])]
         sage: G = MatrixGroup(gens)
-        sage: G.order()                                                                 # needs sage.rings.finite_rings
+        sage: G.order()
         48
-        sage: G.cardinality()                                                           # needs sage.rings.finite_rings
+        sage: G.cardinality()
         48
         sage: H = GL(2,F)
-        sage: H.order()                                                                 # needs sage.rings.finite_rings
+        sage: H.order()
         48
-        sage: H == G                                                                    # needs sage.rings.finite_rings
+        sage: H == G
         True
-        sage: H.gens() == G.gens()                                                      # needs sage.rings.finite_rings
+        sage: H.gens() == G.gens()
         True
-        sage: H.as_matrix_group() == H                                                  # needs sage.rings.finite_rings
+        sage: H.as_matrix_group() == H
         True
-        sage: H.gens()                                                                  # needs sage.rings.finite_rings
+        sage: H.gens()
         (
         [2 0]  [2 1]
         [0 1], [2 0]
@@ -213,15 +213,15 @@ def SL(n, R, var='a'):
         Special Linear Group of degree 15 over Finite Field of size 7
         sage: G.category()
         Category of finite groups
-        sage: G.order()                                                                 # needs sage.rings.finite_rings
+        sage: G.order()
         1956712595698146962015219062429586341124018007182049478916067369638713066737882363393519966343657677430907011270206265834819092046250232049187967718149558134226774650845658791865745408000000
-        sage: len(G.gens())                                                             # needs sage.rings.finite_rings
+        sage: len(G.gens())
         2
         sage: G = SL(2, ZZ); G
         Special Linear Group of degree 2 over Integer Ring
         sage: G.category()
         Category of infinite groups
-        sage: G.gens()                                                                  # needs sage.libs.gap
+        sage: G.gens()
         (
         [ 0  1]  [1 1]
         [-1  0], [0 1]
@@ -231,7 +231,7 @@ def SL(n, R, var='a'):
 
         sage: G = SL(3, ZZ); G
         Special Linear Group of degree 3 over Integer Ring
-        sage: G.gens()                                                                  # needs sage.libs.gap
+        sage: G.gens()
         (
         [0 1 0]  [ 0  1  0]  [1 1 0]
         [0 0 1]  [-1  0  0]  [0 1 0]

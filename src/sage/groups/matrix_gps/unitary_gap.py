@@ -29,7 +29,7 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
 
     Check that :trac:`20867` is fixed::
 
-        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap                # needs sage.rings.number_field
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = GU(3,3)                                                               # needs sage.libs.pari
         sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)                           # needs sage.libs.pari sage.rings.number_field
         True

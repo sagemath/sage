@@ -7,16 +7,16 @@ Loading, saving, ... works::
 
     sage: G = GL(2,5); G
     General Linear Group of degree 2 over Finite Field of size 5
-    sage: TestSuite(G).run()                                                            # needs sage.rings.finite_rings
+    sage: TestSuite(G).run()
 
-    sage: g = G.1; g                                                                    # needs sage.rings.finite_rings
+    sage: g = G.1; g
     [4 1]
     [4 0]
-    sage: TestSuite(g).run()                                                            # needs sage.rings.finite_rings
+    sage: TestSuite(g).run()
 
 We test that :trac:`9437` is fixed::
 
-    sage: len(list(SL(2, Zmod(4))))                                                     # needs sage.libs.gap
+    sage: len(list(SL(2, Zmod(4))))
     48
 
 AUTHORS:
@@ -168,7 +168,7 @@ class MatrixGroup_base(Group):
             )
 
             sage: G = GO(3,GF(5))
-            sage: G.as_matrix_group()                                                   # needs sage.rings.finite_rings
+            sage: G.as_matrix_group()
             Matrix group over Finite Field of size 5 with 2 generators (
             [2 0 0]  [0 1 0]
             [0 3 0]  [1 4 4]
@@ -480,10 +480,10 @@ class MatrixGroup_generic(MatrixGroup_base):
         EXAMPLES::
 
             sage: G = GL(2,3)
-            sage: H = MatrixGroup(G.gens())                                             # needs sage.rings.finite_rings
-            sage: H == G                                                                # needs sage.rings.finite_rings
+            sage: H = MatrixGroup(G.gens())
+            sage: H == G
             True
-            sage: G == H                                                                # needs sage.rings.finite_rings
+            sage: G == H
             True
 
             sage: MS = MatrixSpace(QQ, 2, 2)

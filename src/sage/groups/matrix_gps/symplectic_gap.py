@@ -37,9 +37,9 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
 
     Check that :trac:`20867` is fixed::
 
-        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap                # needs sage.rings.number_field
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = Sp(4,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)                           # needs sage.rings.number_field
+        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
         True
     """
 

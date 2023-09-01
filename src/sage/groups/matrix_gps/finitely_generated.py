@@ -9,7 +9,7 @@ EXAMPLES::
     sage: F = GF(3)
     sage: gens = [matrix(F, 2, [1,0, -1,1]), matrix(F, 2, [1,1,0,1])]
     sage: G = MatrixGroup(gens)
-    sage: G.conjugacy_classes_representatives()                                         # needs sage.rings.finite_rings
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -19,8 +19,8 @@ The finitely generated matrix groups can also be constructed as
 subgroups of matrix groups::
 
     sage: SL2Z = SL(2, ZZ)
-    sage: S, T = SL2Z.gens()                                                            # needs sage.libs.gap
-    sage: SL2Z.subgroup([T^2])                                                          # needs sage.libs.gap
+    sage: S, T = SL2Z.gens()
+    sage: SL2Z.subgroup([T^2])
     Subgroup with 1 generators (
     [1 2]
     [0 1]
@@ -162,7 +162,7 @@ def QuaternionMatrixGroupGF3():
 
         sage: from sage.groups.matrix_gps.finitely_generated import QuaternionMatrixGroupGF3
         sage: Q = QuaternionMatrixGroupGF3()
-        sage: Q.order()                                                                 # needs sage.rings.finite_rings
+        sage: Q.order()
         8
         sage: aye = Q.gens()[0]; aye
         [1 1]
@@ -183,15 +183,15 @@ def QuaternionMatrixGroupGF3():
         )
 
         sage: Q = QuaternionMatrixGroupGF3()
-        sage: QP = Q.as_permutation_group()                                             # needs sage.rings.finite_rings
-        sage: QP.is_isomorphic(QuaternionGroup())                                       # needs sage.rings.finite_rings
+        sage: QP = Q.as_permutation_group()
+        sage: QP.is_isomorphic(QuaternionGroup())
         True
         sage: H = DihedralGroup(4)                                                      # needs sage.groups
         sage: H.order()                                                                 # needs sage.groups
         8
-        sage: QP.is_abelian(), H.is_abelian()                                           # needs sage.groups sage.rings.finite_rings
+        sage: QP.is_abelian(), H.is_abelian()                                           # needs sage.groups
         (False, False)
-        sage: QP.is_isomorphic(H)                                                       # needs sage.groups sage.rings.finite_rings
+        sage: QP.is_isomorphic(H)                                                       # needs sage.groups
         False
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -341,8 +341,8 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         False
 
         sage: G = GL(2, GF(3))
-        sage: H = G.as_matrix_group()                                                   # needs sage.rings.finite_rings
-        sage: H == G, G == H                                                            # needs sage.rings.finite_rings
+        sage: H = G.as_matrix_group()
+        sage: H == G, G == H
         (True, True)
     """
 
@@ -417,11 +417,11 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
             sage: H = GL(2, GF(3))
             sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
-            sage: G = H.subgroup([h1, h2])                                              # needs sage.rings.finite_rings
-            sage: G.gen(0)                                                              # needs sage.rings.finite_rings
+            sage: G = H.subgroup([h1, h2])
+            sage: G.gen(0)
             [1 0]
             [2 1]
-            sage: G.gen(0).matrix() == h1.matrix()                                      # needs sage.rings.finite_rings
+            sage: G.gen(0).matrix() == h1.matrix()
             True
         """
         return self.gens()[i]
@@ -438,8 +438,8 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
             sage: H = GL(2, GF(3))
             sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
-            sage: G = H.subgroup([h1, h2])                                              # needs sage.rings.finite_rings
-            sage: G.ngens()                                                             # needs sage.rings.finite_rings
+            sage: G = H.subgroup([h1, h2])
+            sage: G.ngens()
             2
         """
         return len(self._gens_matrix)

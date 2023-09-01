@@ -39,7 +39,7 @@ EXAMPLES::
     sage: G = SO(4, GF(7), 1); G
     Special Orthogonal Group of degree 4 and form parameter 1
      over Finite Field of size 7
-    sage: G.random_element()   # random                                                 # needs sage.rings.finite_rings
+    sage: G.random_element()   # random
     [4 3 5 2]
     [6 6 4 0]
     [0 4 6 0]
@@ -270,9 +270,9 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
         sage: GO(3, GF(7))
         General Orthogonal Group of degree 3 over Finite Field of size 7
-        sage: GO(3, GF(7)).order()                                                      # needs sage.rings.finite_rings
+        sage: GO(3, GF(7)).order()
         672
-        sage: GO(3, GF(7)).gens()                                                       # needs sage.rings.finite_rings
+        sage: GO(3, GF(7)).gens()
         (
         [3 0 0]  [0 1 0]
         [0 5 0]  [1 6 6]
@@ -380,14 +380,14 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         Special Orthogonal Group of degree 3 over Finite Field of size 5
 
         sage: G = SO(3,GF(5))
-        sage: G.gens()                                                                  # needs sage.rings.finite_rings
+        sage: G.gens()
         (
         [2 0 0]  [3 2 3]  [1 4 4]
         [0 3 0]  [0 2 0]  [4 0 0]
         [0 0 1], [0 3 1], [2 0 4]
         )
         sage: G = SO(3,GF(5))
-        sage: G.as_matrix_group()                                                       # needs sage.rings.finite_rings
+        sage: G.as_matrix_group()
         Matrix group over Finite Field of size 5 with 3 generators (
         [2 0 0]  [3 2 3]  [1 4 4]
         [0 3 0]  [0 2 0]  [4 0 0]
@@ -483,10 +483,10 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: GO(2,3,+1).invariant_bilinear_form()                                  # needs sage.rings.finite_rings
+            sage: GO(2,3,+1).invariant_bilinear_form()
             [0 1]
             [1 0]
-            sage: GO(2,3,-1).invariant_bilinear_form()                                  # needs sage.rings.finite_rings
+            sage: GO(2,3,-1).invariant_bilinear_form()
             [2 1]
             [1 1]
             sage: G = GO(4, QQ)
