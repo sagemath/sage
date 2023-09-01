@@ -147,7 +147,7 @@ class GroupSemidirectProduct(CartesianProduct):
     - ``prefix0`` -- (default: ``None``) optional string
     - ``prefix1`` -- (default: ``None``) optional string
     - ``print_tuple`` -- ``True`` or ``False`` (default: ``False``)
-    - ``category`` -- A category (default: Groups())
+    - ``category`` -- A category (default: ``Groups()``)
 
     A semidirect product of groups `G` and `H` is a group structure on
     the Cartesian product `G \times H` whose product agrees with that
@@ -213,10 +213,10 @@ class GroupSemidirectProduct(CartesianProduct):
 
         sage: G = GL(2,QQ)
         sage: V = QQ^2
-        sage: EV = GroupExp()(V) # make a multiplicative version of V
+        sage: EV = GroupExp()(V)  # make a multiplicative version of V
         sage: def twist(g,v):
         ....:     return EV(g*v.value)
-        sage: H = GroupSemidirectProduct(G, EV, twist=twist, prefix1 = 't'); H
+        sage: H = GroupSemidirectProduct(G, EV, twist=twist, prefix1='t'); H
         Semidirect product of General Linear Group of degree 2
         over Rational Field acting on Multiplicative form of Vector space
         of dimension 2 over Rational Field
@@ -230,7 +230,7 @@ class GroupSemidirectProduct(CartesianProduct):
         sage: W = WeylGroup(cartan_type, prefix="s")
         sage: def twist(w,v):
         ....:     return w*v*(~w)
-        sage: WW = GroupSemidirectProduct(W,W, twist=twist, print_tuple=True)
+        sage: WW = GroupSemidirectProduct(W, W, twist=twist, print_tuple=True)
         sage: s = Family(cartan_type.index_set(), lambda i: W.simple_reflection(i))
         sage: y = WW((s[1],s[2])); y
         (s1, s2)
@@ -298,7 +298,7 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),                                                                                         # needs sage.rings.number_field
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),                 # needs sage.rings.number_field
             ....:                        WeylGroup(['A',3],prefix="t"), twist).act_to_right()
             True
         """
