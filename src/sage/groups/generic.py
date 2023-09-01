@@ -1217,12 +1217,12 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: # needs sage.rings.number_field sage.schemes
         sage: E = EllipticCurve(k, [2,4])                                               # needs sage.rings.finite_rings
         sage: P = E(3*a^4 + 3*a, 2*a + 1)                                               # needs sage.rings.finite_rings
-        sage: M = E.cardinality(); M
+        sage: M = E.cardinality(); M                                                    # needs sage.rings.finite_rings
         3227
         sage: F = M.factor()
         sage: order_from_multiple(P, M, factorization=F, operation='+')                 # needs sage.rings.finite_rings
         3227
-        sage: Q = E(0,2)
+        sage: Q = E(0,2)                                                                # needs sage.rings.finite_rings
         sage: order_from_multiple(Q, M, factorization=F, operation='+')                 # needs sage.rings.finite_rings
         7
 
