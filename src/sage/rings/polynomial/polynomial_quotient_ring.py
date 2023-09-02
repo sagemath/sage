@@ -53,11 +53,13 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.quotient_ring import QuotientRing_generic
 
 from sage.structure.category_object import normalize_names
+from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
 
 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
 
 from sage.structure.richcmp import richcmp
+
 
 class PolynomialQuotientRingFactory(UniqueFactory):
     r"""
@@ -2167,7 +2169,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             tester.assertIn(y, ring)
             tester.assertEqual(from_isomorphic_ring(y), x)
 
-from sage.structure.coerce_maps import DefaultConvertMap_unique
+
 class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
     r"""
     A coercion map from a :class:`PolynomialQuotientRing` to a

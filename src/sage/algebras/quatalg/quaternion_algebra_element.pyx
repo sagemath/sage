@@ -1700,15 +1700,15 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             x, y, z, w = v
         cdef NumberFieldElement a = <NumberFieldElement>(parent._base(parent._a))
         cdef NumberFieldElement b = <NumberFieldElement>(parent._base(parent._b))
-        fmpz_poly_set_ZZX(self.x, (<NumberFieldElement>x).__numerator)
-        fmpz_poly_set_ZZX(self.y, (<NumberFieldElement>y).__numerator)
-        fmpz_poly_set_ZZX(self.z, (<NumberFieldElement>z).__numerator)
-        fmpz_poly_set_ZZX(self.w, (<NumberFieldElement>w).__numerator)
+        fmpz_poly_set_ZZX(self.x, (<NumberFieldElement>x)._numerator)
+        fmpz_poly_set_ZZX(self.y, (<NumberFieldElement>y)._numerator)
+        fmpz_poly_set_ZZX(self.z, (<NumberFieldElement>z)._numerator)
+        fmpz_poly_set_ZZX(self.w, (<NumberFieldElement>w)._numerator)
 
-        ZZ_to_mpz(T1, &(<NumberFieldElement>x).__denominator)
-        ZZ_to_mpz(T2, &(<NumberFieldElement>y).__denominator)
-        ZZ_to_mpz(t3, &(<NumberFieldElement>z).__denominator)
-        ZZ_to_mpz(t4, &(<NumberFieldElement>w).__denominator)
+        ZZ_to_mpz(T1, &(<NumberFieldElement>x)._denominator)
+        ZZ_to_mpz(T2, &(<NumberFieldElement>y)._denominator)
+        ZZ_to_mpz(t3, &(<NumberFieldElement>z)._denominator)
+        ZZ_to_mpz(t4, &(<NumberFieldElement>w)._denominator)
 
         mpz_lcm(self.d, T1, T2)
         mpz_lcm(self.d, self.d, t3)
@@ -1724,10 +1724,10 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_scalar_mul_mpz(self.z, self.z, t3)
         fmpz_poly_scalar_mul_mpz(self.w, self.w, t4)
 
-        fmpz_poly_set_ZZX(self.a, a.__numerator)     # we will assume that the denominator of a and b are 1
-        fmpz_poly_set_ZZX(self.b, b.__numerator)
+        fmpz_poly_set_ZZX(self.a, a._numerator)     # we will assume that the denominator of a and b are 1
+        fmpz_poly_set_ZZX(self.b, b._numerator)
 
-        fmpz_poly_set_ZZX(self.modulus, (<NumberFieldElement>x).__fld_numerator.x)  # and same for the modulus
+        fmpz_poly_set_ZZX(self.modulus, (<NumberFieldElement>x)._fld_numerator.x)  # and same for the modulus
 
     def __getitem__(self, int i):
         """
@@ -1756,17 +1756,17 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         cdef NumberFieldElement item = el._new()
 
         if i == 0:
-            fmpz_poly_get_ZZX(item.__numerator, self.x)
+            fmpz_poly_get_ZZX(item._numerator, self.x)
         elif i == 1:
-            fmpz_poly_get_ZZX(item.__numerator, self.y)
+            fmpz_poly_get_ZZX(item._numerator, self.y)
         elif i == 2:
-            fmpz_poly_get_ZZX(item.__numerator, self.z)
+            fmpz_poly_get_ZZX(item._numerator, self.z)
         elif i == 3:
-            fmpz_poly_get_ZZX(item.__numerator, self.w)
+            fmpz_poly_get_ZZX(item._numerator, self.w)
         else:
             raise IndexError("quaternion element index out of range")
 
-        mpz_to_ZZ(&item.__denominator, self.d)
+        mpz_to_ZZ(&item._denominator, self.d)
 
         return item
 

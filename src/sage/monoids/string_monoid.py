@@ -247,6 +247,7 @@ class BinaryStringMonoid(StringMonoid_class):
     #     """
     #     return 2
 
+
 BinaryStrings = BinaryStringMonoid
 
 
@@ -308,6 +309,7 @@ class OctalStringMonoid(StringMonoid_class):
             return StringMonoidElement(self, x, check)
         else:
             raise TypeError("Argument x (= %s) is of the wrong type." % x)
+
 
 OctalStrings = OctalStringMonoid
 
@@ -421,6 +423,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
             hex_string.extend(hex_chars)
         return self(hex_string)
 
+
 HexadecimalStrings = HexadecimalStringMonoid
 
 
@@ -486,6 +489,7 @@ class Radix64StringMonoid(StringMonoid_class):
             return StringMonoidElement(self, x, check)
         else:
             raise TypeError("Argument x (= %s) is of the wrong type." % x)
+
 
 Radix64Strings = Radix64StringMonoid
 
@@ -797,5 +801,6 @@ class AlphabeticStringMonoid(StringMonoid_class):
             'THECATINTHEHAT'
         """
         return self(strip_encoding(S))
+
 
 AlphabeticStrings = AlphabeticStringMonoid

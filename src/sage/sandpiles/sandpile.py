@@ -2493,9 +2493,15 @@ class Sandpile(DiGraph):
             sage: '_ideal' in S.__dict__
             True
         """
+        from sage.libs.singular.function_factory import ff
+        try:
+            sat = ff.elim__lib.sat_with_exp
+        except NameError:
+            sat = ff.elim__lib.sat
         R = self.ring()
-        I = self._unsaturated_ideal._singular_()
-        self._ideal = R.ideal(I.sat(prod(R.gens())._singular_())[1])
+        I = self._unsaturated_ideal
+        I_sat_gens = sat(I, prod(R.gens()))[0]
+        self._ideal = R.ideal(I_sat_gens)
 
     def unsaturated_ideal(self):
         r"""

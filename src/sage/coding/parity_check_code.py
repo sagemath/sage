@@ -349,6 +349,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
         """
         return VectorSpace(self.code().base_field(), self.code().dimension())
 
+
 ####################### registration ###############################
 
 ParityCheckCode._registered_encoders["ParityCheckCodeGeneratorMatrixEncoder"] = ParityCheckCodeGeneratorMatrixEncoder

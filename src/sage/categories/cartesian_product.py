@@ -271,6 +271,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
         """
         return self.base_category().base_ring()
 
+
 # Moved to avoid circular imports
 lazy_import('sage.categories.sets_cat', 'cartesian_product')
 """

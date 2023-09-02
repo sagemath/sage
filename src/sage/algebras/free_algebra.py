@@ -331,6 +331,7 @@ class FreeAlgebraFactory(UniqueFactory):
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
         return FreeAlgebra_generic(key[0], len(key[1]), key[1])
 
+
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
 
 

@@ -2524,6 +2524,7 @@ class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_rin
 class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):#, Category_singleton, FastHashable_class):
     pass
 
+
 """
 The following workaround is needed until any :class:`CategoryWithAxiom` of a
 :class:`Category_over_base_ring` becomes automatically a
