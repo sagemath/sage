@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
 """
 Subsets of the Real Line
 
@@ -1043,15 +1043,14 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     Constructing real sets as manifolds or manifold subsets by passing
     ``structure='differentiable'``::
 
-        sage: RealSet(-oo, oo, structure='differentiable')                              # needs sage.symbolic
+        sage: # needs sage.symbolic
+        sage: RealSet(-oo, oo, structure='differentiable')
         Real number line ℝ
-
-        sage: RealSet([0, 1], structure='differentiable')                               # needs sage.symbolic
+        sage: RealSet([0, 1], structure='differentiable')
         Subset [0, 1] of the Real number line ℝ
-        sage: _.category()                                                              # needs sage.symbolic
+        sage: _.category()
         Category of subobjects of sets
-
-        sage: RealSet.open_closed(0, 5, structure='differentiable')                     # needs sage.symbolic
+        sage: RealSet.open_closed(0, 5, structure='differentiable')
         Subset (0, 5] of the Real number line ℝ
 
     This is implied when a coordinate name is given using the keywords ``coordinate``
@@ -1086,12 +1085,11 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         Chart ((0, 1), (ξ,))
         sage: R_xi.subset_family()
         Set {(0, +oo), (0, 1), ℝ} of open subsets of the Real number line ℝ
-
         sage: F = RealSet.point(0).union(RealSet.point(1)).union(RealSet.point(2)); F
         {0} ∪ {1} ∪ {2}
-        sage: F_tau = RealSet(F, names="τ"); F_tau                                      # needs sage.symbolic
+        sage: F_tau = RealSet(F, names="τ"); F_tau
         Subset {0} ∪ {1} ∪ {2} of the Real number line ℝ
-        sage: F_tau.manifold().canonical_chart()                                        # needs sage.symbolic
+        sage: F_tau.manifold().canonical_chart()
         Chart (ℝ, (τ,))
 
     TESTS::
@@ -1648,9 +1646,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         TESTS::
 
-            sage: RealSet(6,6)._sympy_condition_(x)                                     # needs sage.symbolic
+            sage: RealSet(6,6)._sympy_condition_(x)                                     # needs sympy sage.symbolic
             False
-            sage: RealSet([6,6])._sympy_condition_(x)                                   # needs sage.symbolic
+            sage: RealSet([6,6])._sympy_condition_(x)                                   # needs sympy sage.symbolic
             Eq(x, 6)
         """
         x = variable
