@@ -2071,6 +2071,7 @@ def curves_with_j_0_char3(K):
 
 # dict to hold precomputed coefficient vectors of supersingular j values (excluding 0, 1728):
 
+
 supersingular_j_polynomials = {}
 
 def fill_ss_j_dict():

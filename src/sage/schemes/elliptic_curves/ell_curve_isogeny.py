@@ -171,6 +171,7 @@ def _isogeny_determine_algorithm(E, kernel):
 
     raise ValueError("invalid parameters to EllipticCurveIsogeny constructor")
 
+
 from sage.misc.superseded import deprecated_function_alias
 isogeny_determine_algorithm = deprecated_function_alias(33619, _isogeny_determine_algorithm)
 
@@ -3431,6 +3432,7 @@ def compute_isogeny_stark(E1, E2, ell):
     qn = q[n]
     qn /= qn.leading_coefficient()
     return qn
+
 
 from sage.misc.superseded import deprecated_function_alias
 compute_isogeny_starks = deprecated_function_alias(34871, compute_isogeny_stark)
