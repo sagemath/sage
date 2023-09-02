@@ -110,12 +110,12 @@ def GL(n, R, var='a'):
     Here is the Cayley graph of (relatively small) finite General Linear Group::
 
         sage: g = GL(2,3)
-        sage: d = g.cayley_graph(); d                                                   # needs sage.graphs sage.rings.finite_rings
+        sage: d = g.cayley_graph(); d                                                   # needs sage.graphs
         Digraph on 48 vertices
-        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.graphs sage.plot sage.rings.finite_rings
+        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.graphs sage.plot
         ....:        vertex_labels=False)
         Graphics object consisting of 144 graphics primitives
-        sage: d.plot3d(color_by_label=True)     # long time                             # needs sage.graphs sage.plot sage.rings.finite_rings
+        sage: d.plot3d(color_by_label=True)                     # long time             # needs sage.graphs sage.plot
         Graphics3d Object
 
     ::
@@ -144,11 +144,11 @@ def GL(n, R, var='a'):
 
     TESTS::
 
-        sage: groups.matrix.GL(2, 3)                                                    # needs sage.groups sage.rings.finite_rings
+        sage: groups.matrix.GL(2, 3)
         General Linear Group of degree 2 over Finite Field of size 3
-        sage: groups.matrix.GL(1, ZZ).category()                                        # needs sage.groups sage.modules
+        sage: groups.matrix.GL(1, ZZ).category()
         Category of groups
-        sage: groups.matrix.GL(1, QQ).category()                                        # needs sage.groups sage.modules
+        sage: groups.matrix.GL(1, QQ).category()
         Category of infinite groups
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
@@ -241,7 +241,7 @@ def SL(n, R, var='a'):
 
     TESTS::
 
-        sage: groups.matrix.SL(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
+        sage: groups.matrix.SL(2, 3)
         Special Linear Group of degree 2 over Finite Field of size 3
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
