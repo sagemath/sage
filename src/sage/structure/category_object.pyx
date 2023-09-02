@@ -113,7 +113,7 @@ cdef class CategoryObject(SageObject):
             self._init_category_(category)
 
     def __cinit__(self):
-        self.__cached_methods = {}
+        self._cached_methods = {}
         self._hash_value = -1
 
     def _init_category_(self, category):
@@ -491,7 +491,7 @@ cdef class CategoryObject(SageObject):
         """
         return self.variable_names()[0]
 
-    def __temporarily_change_names(self, names, latex_names):
+    def _temporarily_change_names(self, names, latex_names):
         """
         This is used by the variable names context manager.
 
@@ -844,7 +844,7 @@ cdef class CategoryObject(SageObject):
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         try:
-            return self.__cached_methods[name]
+            return self._cached_methods[name]
         except KeyError:
             if self._category is None:
                 # Usually, this will just raise AttributeError in
@@ -854,7 +854,7 @@ cdef class CategoryObject(SageObject):
                 cls = self._category.parent_class
 
             attr = getattr_from_other_class(self, cls, name)
-            self.__cached_methods[name] = attr
+            self._cached_methods[name] = attr
             return attr
 
     def __dir__(self):

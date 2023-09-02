@@ -1201,7 +1201,12 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: eps2 = DirichletGroup(5,QQ)([-1])
             sage: eps1.conrey_number() == eps2.conrey_number()
             True
+            sage: chi = DirichletGroup(1)[0]
+            sage: chi.conrey_number()
+            1
         """
+        if self.modulus() == 1:
+            return 1
         G, v = self._pari_init_()
         return pari.znconreyexp(G, v).sage()
 

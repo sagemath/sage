@@ -11,12 +11,12 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 
 
 cdef class NumberFieldElement(NumberFieldElement_base):
-    cdef ZZX_c __numerator
-    cdef ZZ_c __denominator
+    cdef ZZX_c _numerator
+    cdef ZZ_c _denominator
     # Pointers to the defining polynomial (with numerator) for the field.
     # I keep these as pointers for arithmetic speed.
-    cdef ntl_ZZX __fld_numerator
-    cdef ntl_ZZ __fld_denominator
+    cdef ntl_ZZX _fld_numerator
+    cdef ntl_ZZ _fld_denominator
     cdef object __multiplicative_order
     cdef object __pari
     cdef object __matrix

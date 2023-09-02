@@ -398,6 +398,7 @@ def ReflexivePolytope(dim, n):
     else:
         raise NotImplementedError("only 2- and 3-dimensional reflexive polytopes are available!")
 
+
 # Sequences of reflexive polytopes
 _rp = [None] * 4
 
@@ -5544,6 +5545,7 @@ def all_polars(polytopes):
         p._read_equations(result)
     result.close()
     os.remove(result_name)
+
 
 # Synonym for the above function
 all_facet_equations = all_polars

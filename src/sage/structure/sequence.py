@@ -889,6 +889,8 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             return self.__hash
         else:
             raise AttributeError("'Sequence_generic' object has no attribute '%s'"%name)
+
+
 seq = Sequence
 
 from sage.misc.persist import register_unpickle_override

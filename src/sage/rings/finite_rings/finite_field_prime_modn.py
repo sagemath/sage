@@ -340,6 +340,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         """
         return Integer(1)
 
+
 register_unpickle_override(
     'sage.rings.finite_field_prime_modn', 'FiniteField_prime_modn',
     FiniteField_prime_modn)
