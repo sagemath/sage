@@ -1803,6 +1803,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: C = A.curve(y^2 - a*x^3 - x^2)
             sage: C.fundamental_group()         # optional - sirocco
             Finitely presented group < x0 |  >
+            sage: C = A.curve(x * (x - 1))
+            sage: C.fundamental_group()         # optional - sirocco
+            Finitely presented group < x0, x1 |  >
 
         .. WARNING::
 

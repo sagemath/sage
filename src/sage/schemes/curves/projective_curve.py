@@ -1765,7 +1765,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: G.is_isomorphic(G0)                        # optional - sirocco
             #I  Forcing finiteness test
             True
-
+            sage: C = P.curve(z)
+            sage: C.fundamental_group()
+            Finitely presented group <  |  >
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group
         F = self.base_ring()
@@ -1773,7 +1775,11 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         if QQbar.coerce_map_from(F) is None:
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
-        f = self.affine_patch(2).defining_polynomial()
+        g = self.defining_polynomial()
+        ring = self.ambient_space().affine_patch(2).coordinate_ring()
+        if g.degree() == 1:
+            return fundamental_group(ring(1))
+        f = ring(self.affine_patch(2).defining_polynomial())
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
         else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
