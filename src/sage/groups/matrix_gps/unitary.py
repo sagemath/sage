@@ -245,7 +245,7 @@ def GU(n, R, var='a', invariant_form=None):
         [E(5)^4      2      0]
         [     0      0      1]
 
-        sage: GU(3, 3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])                      # needs sage.rings.number_field
+        sage: GU(3, 3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])                      # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
