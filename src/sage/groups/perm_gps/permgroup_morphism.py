@@ -43,11 +43,11 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 
 
 class PermutationGroupMorphism(Morphism):
-    """
+    r"""
     A set-theoretic map between PermutationGroups.
     """
     def _repr_type(self):
-        """
+        r"""
         Return the type of this morphism.
 
         This is used for printing the morphism.
@@ -62,7 +62,7 @@ class PermutationGroupMorphism(Morphism):
         return "Permutation group"
 
     def kernel(self):
-        """
+        r"""
         Return the kernel of this homomorphism as a permutation group.
 
         EXAMPLES::
@@ -87,9 +87,10 @@ class PermutationGroupMorphism(Morphism):
         return self.domain().subgroup(gap_group=self._gap_().Kernel())
 
     def image(self, J):
-        """
-        `J` must be a subgroup of the domain `G`. Computes the subgroup of the codomain `H`
-        which is the image of `J`.
+        r"""
+        Compute the subgroup of the codomain `H` which is the image of `J`.
+
+        `J` must be a subgroup of the domain `G`.
 
         EXAMPLES::
 
@@ -139,9 +140,9 @@ class PermutationGroupMorphism(Morphism):
             return H.subgroup(gap_group=G)
 
     def __call__(self, g):
-        """
+        r"""
         Some python code for wrapping GAP's ``Images`` function but only for
-        permutation groups. This returns an error if g is not in G.
+        permutation groups. This raises an error if g is not in G.
 
         EXAMPLES::
 
@@ -162,7 +163,7 @@ class PermutationGroupMorphism_id(PermutationGroupMorphism):
 
 class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
     def __init__(self, G, H, gap_hom):
-        """
+        r"""
         This is a Python trick to allow Sage programmers to create a group
         homomorphism using GAP using very general constructions. An example
         of its usage is in the direct_product instance method of the
@@ -193,7 +194,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
         self._gap_hom = gap_hom
 
     def _repr_defn(self):
-        """
+        r"""
         Return the definition of this morphism.
 
         This is used when printing the morphism.
@@ -210,7 +211,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
         return str(self._gap_hom).replace('\n', '')
 
     def _gap_(self, gap=None):
-        """
+        r"""
         Return a GAP version of this morphism.
 
         EXAMPLES::
@@ -225,7 +226,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
         return self._gap_hom
 
     def __call__(self, g):
-        """
+        r"""
         Some python code for wrapping GAP's Images function but only for
         permutation groups. This returns an error if g is not in G.
 
@@ -243,7 +244,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
 
 class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
     def __init__(self, G, H, gens=None):
-        """
+        r"""
         Some python code for wrapping GAP's ``GroupHomomorphismByImages``
         function but only for permutation groups. Can be expensive if G is
         large. This returns "fail" if gens does not generate self or if the map
@@ -279,7 +280,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         self._images = [H(img) for img in gens]
 
     def _repr_defn(self):
-        """
+        r"""
         Return the definition of this morphism.
 
         This is used when printing the morphism.
@@ -295,7 +296,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         return "%s -> %s" % (list(self.domain().gens()), self._images)
 
     def _gap_(self):
-        """
+        r"""
         Return a GAP representation of this morphism.
 
         EXAMPLES::
@@ -311,7 +312,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
 
 
 def is_PermutationGroupMorphism(f) -> bool:
-    """
+    r"""
     Return ``True`` if the argument ``f`` is a :class:`PermutationGroupMorphism`.
 
     EXAMPLES::
