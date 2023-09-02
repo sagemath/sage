@@ -1126,7 +1126,7 @@ class sage__sat(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.sat',
-                             [PythonModule('sage.sat.expression')],
+                             [PythonModule('sage.sat.solvers.satsolver')],
                              spkg='sagemath_combinat', type='standard')
 
 
