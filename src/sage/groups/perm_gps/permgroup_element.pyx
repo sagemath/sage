@@ -153,7 +153,7 @@ cdef int etuple_index_cmp(const void * a, const void * b) nogil:
     return ((<int *> a)[0] > (<int *> b)[0]) - ((<int *> a)[0] < (<int *> b)[0])
 
 def make_permgroup_element(G, x):
-    """
+    r"""
     Return a :class:`PermutationGroupElement` given the permutation group
     ``G`` and the permutation ``x`` in list notation.
 
@@ -173,7 +173,7 @@ def make_permgroup_element(G, x):
     return make_permgroup_element_v2(G, x, domain)
 
 def make_permgroup_element_v2(G, x, domain):
-    """
+    r"""
     Return a :class:`PermutationGroupElement` given the permutation group
     ``G``, the permutation ``x`` in list notation, and the domain
     ``domain`` of the permutation group.
@@ -200,7 +200,7 @@ def make_permgroup_element_v2(G, x, domain):
     return G.element_class(x, G, check=False)
 
 def is_PermutationGroupElement(x):
-    """
+    r"""
     Return ``True`` if ``x`` is a :class:`PermutationGroupElement`.
 
     EXAMPLES::
@@ -213,7 +213,7 @@ def is_PermutationGroupElement(x):
     return isinstance(x, PermutationGroupElement)
 
 cdef class PermutationGroupElement(MultiplicativeGroupElement):
-    """
+    r"""
     An element of a permutation group.
 
     EXAMPLES::
@@ -263,7 +263,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         There are several ways to define a permutation group element:
 
         -  Define a permutation group `G`, then use
-           ``G.gens()`` and multiplication \* to construct
+           ``G.gens()`` and multiplication ``*`` to construct
            elements.
 
         -  Define a permutation group `G`, then use, e.g.,
@@ -793,7 +793,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
 
     def __reduce__(self):
-        """
+        r"""
         Returns a function and its arguments needed to create this
         permutation group element.  This is used in pickling.
 
@@ -827,7 +827,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return other
 
     def _gap_(self, gap=None):
-        """
+        r"""
         TESTS::
 
             sage: g = PermutationGroupElement([(1,2,3),(4,5)]); g
@@ -900,7 +900,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
     gap = _libgap_
 
     def _gap_init_(self):
-        """
+        r"""
         Returns a GAP string representation for this
         PermutationGroupElement.
 
@@ -912,9 +912,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         return 'PermList(%s)' % self._gap_list()
 
-
     def _repr_(self):
-        """
+        r"""
         Return string representation of this permutation.
 
         EXAMPLES:
@@ -957,8 +956,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                        for cycle in self.cycle_tuples())
 
     def __getitem__(self, i):
-        """
-        Return the ith permutation cycle in the disjoint cycle
+        r"""
+        Return the ``i``-th permutation cycle in the disjoint cycle
         representation of self.
 
         INPUT:
@@ -979,7 +978,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return self.cycles()[i]
 
     cpdef _richcmp_(self, other, int op):
-        """
+        r"""
         Compare group elements ``self`` and ``other``.
 
         EXAMPLES::
@@ -1025,7 +1024,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return rich_to_bool(op, 0)
 
     def __call__(self, i):
-        """
+        r"""
         Returns the image of the integer i under this permutation.
         Alternately, if i is a list, tuple or string, returns the result of
         self acting on i.
@@ -1088,7 +1087,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 return from_gap[i]
 
     cpdef list _act_on_list_on_position(self, list x):
-        """
+        r"""
         Returns the right action of ``self`` on the list ``x``. This is the
         action on positions.
 
@@ -1116,7 +1115,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return [ x[self.perm[i]] for i in range(self.n) ]
 
     cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x):
-        """
+        r"""
         Returns the right action of ``self`` on the ClonableIntArray
         ``x``. This is the action on positions.
 
@@ -1300,7 +1299,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return coercion_model.bin_op(left, right, operator.mul)
 
     cpdef _mul_(left, _right):
-        """
+        r"""
         EXAMPLES::
 
             sage: S = SymmetricGroup(['a', 'b'])
@@ -1317,7 +1316,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return prod
 
     cpdef PermutationGroupElement _generate_new(self, list v):
-        """
+        r"""
         Generate a new permutation group element with the same parent
         as ``self`` from ``v``.
 
@@ -1335,7 +1334,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return new
 
     cpdef PermutationGroupElement _generate_new_GAP(self, lst_in):
-        """
+        r"""
         Generate a new permutation group element with the same parent
         as ``self`` from the GAP list ``lst_in``.
 
@@ -1368,7 +1367,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return new
 
     def __invert__(self):
-        """
+        r"""
         Return the inverse of this permutation.
 
         EXAMPLES::
@@ -1386,7 +1385,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return inv
 
     cpdef _gap_list(self):
-        """
+        r"""
         Returns this permutation in list notation compatible with the
         GAP numbering.
 
@@ -1410,7 +1409,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return [self.perm[i]+1 for i from 0 <= i < self.n]
 
     def _gap_cycle_string(self):
-        """
+        r"""
         Returns a cycle string for this permutation compatible with
         the GAP numbering.
 
@@ -1434,7 +1433,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return Permutation(self._gap_list()).cycle_string()
 
     cpdef domain(self):
-        """
+        r"""
         Return the domain of ``self``.
 
         EXAMPLES::
@@ -1467,7 +1466,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return [from_gap[self.perm[i]+1] for i from 0 <= i < self.n]
 
     def __hash__(self):
-        """
+        r"""
         Return a hash for this permutation.
 
         EXAMPLES::
@@ -1496,7 +1495,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return ans
 
     def tuple(self):
-        """
+        r"""
         Return tuple of images of the domain under ``self``.
 
         EXAMPLES::
@@ -1518,7 +1517,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return tuple([from_gap[self.perm[i]+1] for i in range(self.n)])
 
     def dict(self):
-        """
+        r"""
         Return a dictionary associating each element of the domain with its
         image.
 
@@ -1542,7 +1541,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return {e:from_gap[self.perm[i-1]+1] for e,i in to_gap.iteritems()}
 
     def multiplicative_order(self):
-        """
+        r"""
         Return the order of this group element, which is the smallest
         positive integer `n` for which `g^n = 1`.
 
@@ -1663,7 +1662,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
 
     def orbit(self, n, bint sorted=True):
-        """
+        r"""
         Return the orbit of the integer `n` under this group
         element, as a sorted list.
 
@@ -1707,7 +1706,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             return from_gap[n]
 
     def cycles(self):
-        """
+        r"""
         Return ``self`` as a list of disjoint cycles.
 
         EXAMPLES::
@@ -1742,7 +1741,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return L
 
     def cycle_tuples(self, singletons=False):
-        """
+        r"""
         Return ``self`` as a list of disjoint cycles, represented as tuples
         rather than permutation group elements.
 
@@ -1801,7 +1800,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return L
 
     def cycle_string(self, singletons=False):
-        """
+        r"""
         Return string representation of this permutation.
 
         EXAMPLES::
@@ -1927,7 +1926,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return (to_gap[self(i)] > to_gap[self(i1)]) is not positive
 
     def matrix(self):
-        """
+        r"""
         Return a deg `\times` deg permutation matrix associated to the permutation
         ``self``.
 
@@ -1951,7 +1950,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return M(entries)
 
     def word_problem(self, words, display=True, as_list=False):
-        """
+        r"""
         Try to solve the word problem for ``self``.
 
         INPUT:
@@ -2049,11 +2048,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
 
 cdef class SymmetricGroupElement(PermutationGroupElement):
-    """
+    r"""
     An element of the symmetric group.
     """
     def absolute_length(self):
-        """
+        r"""
         Return the absolute length of ``self``.
 
         The absolute length is the size minus the number of its disjoint
@@ -2074,7 +2073,7 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
         return Permutation(self).absolute_length()
 
     def has_left_descent(self, i):
-        """
+        r"""
         Return whether `i` is a left descent of ``self``.
 
         EXAMPLES::
@@ -2088,7 +2087,7 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
 
 
 cdef bint is_valid_permutation(int* perm, int n):
-    """
+    r"""
     This is used in the __init__ method.
 
     Returns True iff the first n elements of perm are literally a
