@@ -9,8 +9,6 @@ tox is a generic virtualenv management and test command line tool
 License
 -------
 
-MIT
-
 Upstream Contact
 ----------------
 

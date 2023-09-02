@@ -1,5 +1,5 @@
-filelock: A platform independent file lock
-==========================================
+filelock: A platform independent file lock.
+===========================================
 
 Description
 -----------
@@ -8,8 +8,6 @@ A platform independent file lock.
 
 License
 -------
-
-Public Domain <http://unlicense.org>
 
 Upstream Contact
 ----------------

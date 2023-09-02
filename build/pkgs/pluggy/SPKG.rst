@@ -9,7 +9,7 @@ plugin and hook calling mechanisms for python
 License
 -------
 
-MIT license
+MIT
 
 Upstream Contact
 ----------------
