@@ -61,7 +61,7 @@ exclude sage/rings/number_field/totallyreal*.p*                 # cimports cypar
 include           sage/rings/number_field/number_field_element_quadratic.p*   #### this is entangled with NTL
 include sage/rings/monomials.p*
 include sage/rings/qqbar.p*
-include sage/rings/universal_cyclotomic_field.p*
+# include sage/rings/universal_cyclotomic_field.p*       --> sagemath-gap
 
 include sage/rings/imaginary_unit.p*
 

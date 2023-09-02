@@ -34,6 +34,7 @@ recursive-include sage/modules *.pxd                                    # FIXME
 include           sage/modules/all.py                                   # FIXME
 recursive-include sage/rings *.pxd                                      # FIXME
 include           sage/rings/polynomial/all.py                          # FIXME
+include           sage/rings/universal_cyclotomic_field.p*
 
 global-exclude *.c
 global-exclude *.cpp
