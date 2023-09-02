@@ -199,7 +199,7 @@ def is_NumberFieldHomsetCodomain(codomain):
     Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
     not accepted as number field homset codomains::
 
-        sage: is_NumberFieldHomsetCodomain(gap.Rationals)
+        sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
     from sage.categories.fields import Fields
@@ -400,7 +400,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)
+        sage: L = Qp(5)                                                                 # needs sage.rings.padics
         sage: f = polygen(L)^3 - 2
         sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
         sage: a + L(1)
@@ -781,7 +781,7 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
 
     The Galois group is a product of 3 groups of order 2::
 
-        sage: k.absolute_field(names='c').galois_group()
+        sage: k.absolute_field(names='c').galois_group()                                # needs sage.groups
         Galois group 8T3 (2[x]2[x]2) with order 8 of x^8 + 36*x^6 + 302*x^4 + 564*x^2 + 121
 
     Repeatedly calling base_field allows us to descend the internally
@@ -1237,7 +1237,7 @@ class CyclotomicFieldFactory(UniqueFactory):
 
         TESTS::
 
-            sage: CyclotomicField.create_object(None, (0, None, True))
+            sage: CyclotomicField.create_object(None, (0, None, True))                  # needs sage.libs.gap
             Universal Cyclotomic Field
         """
         n, names, embedding = key
@@ -1396,7 +1396,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     This example was suggested on sage-nt; see :trac:`18942`::
 
-        sage: G = DirichletGroup(80)
+        sage: G = DirichletGroup(80)                                                    # needs sage.modular
         sage: for chi in G:             # long time
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
