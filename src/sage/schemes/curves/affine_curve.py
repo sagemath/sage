@@ -1809,7 +1809,16 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             This functionality requires the sirocco package to be installed.
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
-        return fundamental_group_from_braid_mon(self.braid_monodromy(), simplified=simplified, puiseux=puiseux)
+        bm = self.braid_monodromy()
+        if bm == []:
+            f = self.defining_polynomial()
+            x, y = f.parent().gens()
+            d0 = f.degree(y)
+            f0 = f.coefficient({y: d0})
+            d = d0 + f0.degree(x)
+        else:
+            d = bm[0].parent().strands()
+        return fundamental_group_from_braid_mon(self.braid_monodromy(), degree=d, simplified=simplified, puiseux=puiseux)
 
     @cached_method
     def braid_monodromy(self):
