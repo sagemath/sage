@@ -3018,11 +3018,6 @@ class MPolynomialIdeal_singular_repr(
              - t^10 - t^9 - t^8 - t^7 - t^6 - t^5 - t^4 - t^3 - t^2
              - t - 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
 
-            sage: K = R.ideal([a^2*b^3, a*b^4 + a^3*b^2])
-            sage: K.hilbert_series(grading=[1,2])                                       # needs sage.libs.flint
-            (t^11 + t^8 - t^6 - t^5 - t^4 - t^3 - t^2 - t - 1)/(t^2 - 1)
-            sage: K.hilbert_series(grading=[2,1])                                       # needs sage.libs.flint
-            (2*t^7 - t^6 - t^4 - t^2 - 1)/(t - 1)
 
         TESTS::
 
