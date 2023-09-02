@@ -324,7 +324,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
     TESTS::
 
         sage: TestSuite(GO3).run()
-        sage: groups.matrix.GO(2, 3, e=-1)                                              # needs sage.modules sage.rings.finite_rings
+        sage: groups.matrix.GO(2, 3, e=-1)
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
     """
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)
@@ -375,8 +375,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
 
     EXAMPLES::
 
-        sage: G = SO(3,GF(5))
-        sage: G
+        sage: G = SO(3,GF(5)); G
         Special Orthogonal Group of degree 3 over Finite Field of size 5
 
         sage: G = SO(3,GF(5))
@@ -396,27 +395,28 @@ def SO(n, R, e=None, var='a', invariant_form=None):
 
     Using the ``invariant_form`` option::
 
-        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()                                  # needs sage.rings.number_field
-        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3,2,0], [0,0,1]])                      # needs sage.rings.number_field
-        sage: SO3  = SO(3, CF3)                                                         # needs sage.rings.number_field
-        sage: SO3m = SO(3, CF3, invariant_form=m)                                       # needs sage.rings.number_field
-        sage: SO3 == SO3m                                                               # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
+        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3,2,0], [0,0,1]])
+        sage: SO3  = SO(3, CF3)
+        sage: SO3m = SO(3, CF3, invariant_form=m)
+        sage: SO3 == SO3m
         False
-        sage: SO3.invariant_form()                                                      # needs sage.rings.number_field
+        sage: SO3.invariant_form()
         [1 0 0]
         [0 1 0]
         [0 0 1]
-        sage: SO3m.invariant_form()                                                     # needs sage.rings.number_field
+        sage: SO3m.invariant_form()
         [    1 zeta3     0]
         [zeta3     2     0]
         [    0     0     1]
         sage: pm = Permutation([2,3,1]).to_matrix()
-        sage: g = SO3(pm); g in SO3; g                                                  # needs sage.combinat sage.rings.number_field
+        sage: g = SO3(pm); g in SO3; g
         True
         [0 0 1]
         [1 0 0]
         [0 1 0]
-        sage: SO3m(pm)                                                                  # needs sage.combinat sage.rings.number_field
+        sage: SO3m(pm)
         Traceback (most recent call last):
         ...
         TypeError: matrix must be orthogonal with respect to the symmetric form
@@ -434,7 +434,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
     TESTS::
 
         sage: TestSuite(SO3m).run()                                                     # needs sage.rings.number_field
-        sage: groups.matrix.SO(2, 3, e=1)                                               # needs sage.modules sage.rings.number_field
+        sage: groups.matrix.SO(2, 3, e=1)
         Special Orthogonal Group of degree 2 and form parameter 1 over Finite Field of size 3
     """
     return _OG(n, R, True, e=e, var=var, invariant_form=invariant_form)
