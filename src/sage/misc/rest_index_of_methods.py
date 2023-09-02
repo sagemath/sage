@@ -35,17 +35,19 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
       precedence over the automatically computed name for the functions. Only
       used when ``list_of_entries`` is a list.
 
-    - ``sort`` (boolean; ``True``) -- whether to sort the list of methods
-      lexicographically.
+    - ``sort`` -- boolean (default: ``True``); whether to sort the list of
+      methods lexicographically.
 
-    - ``only_local_functions`` (boolean; ``True``) -- if ``list_of_entries`` is
-      a module, ``only_local_functions = True`` means that imported functions
-      will be filtered out. This can be useful to disable for making indexes of
-      e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
+    - ``only_local_functions`` -- boolean (default: ``True``); if
+      ``list_of_entries`` is a module, ``only_local_functions = True`` means
+      that imported functions will be filtered out. This can be useful to
+      disable for making indexes of e.g. catalog modules such as
+      :mod:`sage.coding.codes_catalog`.
 
-    - ``root`` -- (default: ``None``); the module, or class, whose elements are
-      to be listed. This is needed to recover the class when this method is
-      called from :meth:`gen_thematic_rest_table_index`.
+    - ``root`` -- module or class (default: ``None``); the module, or class,
+      whose elements are to be listed. This is needed to recover the class when
+      this method is called from :meth:`gen_thematic_rest_table_index` (see
+      :trac:`36178`).
 
     .. WARNING::
 
@@ -75,7 +77,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions.
            :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
-           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
+           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
 
@@ -128,7 +130,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions.
            :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
-           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
+           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
         sage: print(gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=False))
@@ -139,7 +141,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
-           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
+           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
 
@@ -150,6 +152,13 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
         True
         sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # needs sage.graphs
         False
+
+    Check that :trac:`36178` is fixed::
+
+        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
+        ...
+           :meth:`~sage.graphs.graph.Graph.independent_set` @ Return a maximum independent set.
+        ...
     """
     if names is None:
         names = {}
@@ -218,15 +227,15 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
 
 def list_of_subfunctions(root, only_local_functions=True):
     r"""
-    Returns the functions (resp. methods) of a given module (resp. class) with their names.
+    Return the functions (resp. methods) of a given module (resp. class) with their names.
 
     INPUT:
 
     - ``root`` -- the module, or class, whose elements are to be listed.
 
-    - ``only_local_functions`` (boolean; ``True``) -- if ``root`` is a module,
-      ``only_local_functions = True`` means that imported functions will be
-      filtered out. This can be useful to disable for making indexes of
+    - ``only_local_functions`` -- boolean (default: ``True``); if ``root`` is a
+      module, ``only_local_functions = True`` means that imported functions will
+      be filtered out. This can be useful to disable for making indexes of
       e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
 
     OUTPUT:
@@ -290,21 +299,22 @@ def list_of_subfunctions(root, only_local_functions=True):
     return list(functions.keys()), functions
 
 
-def gen_thematic_rest_table_index(root,additional_categories=None,only_local_functions=True):
+def gen_thematic_rest_table_index(root, additional_categories=None, only_local_functions=True):
     r"""
-    Return a ReST string of thematically sorted function (or methods) of a module (or class).
+    Return a ReST string of thematically sorted function (or methods) of a
+    module (or class).
 
     INPUT:
 
     - ``root`` -- the module, or class, whose elements are to be listed.
 
-    - ``additional_categories`` -- a dictionary associating a category (given as
-      a string) to a function's name. Can be used when the decorator
-      :func:`doc_index` does not work on a function.
+    - ``additional_categories`` -- dictionary (default: ``None``); a dictionary
+      associating a category (given as a string) to a function's name. Can be
+      used when the decorator :func:`doc_index` does not work on a function.
 
-    - ``only_local_functions`` (boolean; ``True``) -- if ``root`` is a module,
-      ``only_local_functions = True`` means that imported functions will be
-      filtered out. This can be useful to disable for making indexes of
+    - ``only_local_functions`` -- boolean (default: ``True``); if ``root`` is a
+      module, ``only_local_functions = True`` means that imported functions will
+      be filtered out. This can be useful to disable for making indexes of
       e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
 
     EXAMPLES::
@@ -359,7 +369,7 @@ def doc_index(name):
         'Wouhouuuuu'
     """
     def hey(f):
-        setattr(f,"doc_index",name)
+        setattr(f, "doc_index", name)
         return f
     return hey
 
