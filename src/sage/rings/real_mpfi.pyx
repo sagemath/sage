@@ -526,7 +526,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         if prec < MPFR_PREC_MIN or prec > MPFR_PREC_MAX:
             raise ValueError("prec (=%s) must be >= %s and <= %s." % (
                 prec, MPFR_PREC_MIN, MPFR_PREC_MAX))
-        self.__prec = prec
+        self._prec = prec
         self.sci_not = sci_not
         self.__lower_field = RealField(prec, sci_not, "RNDD")
         self.__middle_field = RealField(prec, sci_not, "RNDN")
@@ -598,7 +598,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         elif rnd == "RNDU":
             return self.upper_field()
         else:
-            return RealField(self.__prec, self.sci_not, rnd)
+            return RealField(self._prec, self.sci_not, rnd)
 
     def _repr_(self):
         """
@@ -611,7 +611,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             sage: RealIntervalField(200) # indirect doctest
             Real Interval Field with 200 bits of precision
         """
-        s = "Real Interval Field with %s bits of precision"%self.__prec
+        s = "Real Interval Field with %s bits of precision"%self._prec
         return s
 
     def _latex_(self):
@@ -802,7 +802,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             sage: RIF.has_coerce_map_from(float)
             False
         """
-        prec = self.__prec
+        prec = self._prec
 
         # Direct and efficient conversions
         if S is ZZ or S is QQ:
@@ -810,7 +810,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         if S is int or S is long:
             return True
         if isinstance(S, RealIntervalField_class):
-            return (<RealIntervalField_class>S).__prec >= prec
+            return (<RealIntervalField_class>S)._prec >= prec
         if isinstance(S, sage.rings.abc.NumberField_quadratic):
             return S.discriminant() > 0
 
@@ -844,7 +844,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         cdef RealIntervalField_class right
         left = self
         right = other  # to access C structure
-        return richcmp(left.__prec, right.__prec, op)
+        return richcmp(left._prec, right._prec, op)
 
     def __reduce__(self):
         """
@@ -856,7 +856,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             sage: loads(dumps(R)) == R
             True
         """
-        return __create__RealIntervalField_version0, (self.__prec, self.sci_not)
+        return __create__RealIntervalField_version0, (self._prec, self.sci_not)
 
     def random_element(self, *args, **kwds):
         """
@@ -997,7 +997,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             sage: RealIntervalField(200).name()
             'IntervalRealIntervalField200'
         """
-        return "IntervalRealIntervalField%s"%(self.__prec)
+        return "IntervalRealIntervalField%s"%(self._prec)
 
     def __hash__(self):
         """
@@ -1023,7 +1023,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             sage: RealIntervalField(200).precision()
             200
         """
-        return self.__prec
+        return self._prec
 
     prec = precision
 
@@ -1187,7 +1187,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: TestSuite(x).run(skip=["_test_eq", "_test_pickling"])
         """
         cdef RealIntervalField_class p = <RealIntervalField_class?>parent
-        mpfi_init2(self.value, p.__prec)
+        mpfi_init2(self.value, p._prec)
         self._parent = p
 
     def __init__(self, parent, x, int base=10):
@@ -1864,7 +1864,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         cdef mp_exp_t self_exp
         cdef mpz_t self_zz
-        cdef mpfr_prec_t prec = (<RealIntervalField_class>self._parent).__prec
+        cdef mpfr_prec_t prec = (<RealIntervalField_class>self._parent)._prec
         cdef char *zz_str
         cdef size_t zz_str_maxlen
 
@@ -2977,7 +2977,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RealIntervalField(200)(2.1).precision()
             200
         """
-        return (<RealIntervalField_class>self._parent).__prec
+        return (<RealIntervalField_class>self._parent)._prec
 
     prec = precision
 

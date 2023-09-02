@@ -804,8 +804,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             \phi
             sage: phi.reset_name()
         """
-        if hasattr(self, '__custom_name'):
-            return latex_variable_name(getattr(self, '__custom_name'))
+        if self.get_custom_name() is not None:
+            return latex_variable_name(self.get_custom_name())
         else:
             return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
                    f'{latex(self._gen)}'

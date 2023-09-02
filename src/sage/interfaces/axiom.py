@@ -916,6 +916,7 @@ class PanAxiomFunctionElement(FunctionElement):
             name = name[:-2] + "!"
         FunctionElement.__init__(self, object, name)
 
+
 AxiomFunctionElement = PanAxiomFunctionElement
 
 
@@ -935,6 +936,7 @@ class PanAxiomExpectFunction(ExpectFunction):
         elif name.endswith("_e"):
             name = name[:-2] + "!"
         ExpectFunction.__init__(self, parent, name)
+
 
 AxiomExpectFunction = PanAxiomExpectFunction
 

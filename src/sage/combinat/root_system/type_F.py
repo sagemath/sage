@@ -37,7 +37,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         TESTS::
 
-            sage: TestSuite(e).run()
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
         """
         ambient_space.AmbientSpace.__init__(self, root_system, base_ring)
         v = ZZ(1)/ZZ(2)
@@ -275,12 +275,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: f = CartanType(['F',4]).dynkin_diagram()
-            sage: f
+            sage: f = CartanType(['F',4]).dynkin_diagram(); f                           # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: f.edges(sort=True)
+            sage: f.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """
@@ -355,11 +354,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: F4.dual()
             ['F', 4] relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
 
-            sage: F4.dynkin_diagram()
+            sage: F4.dynkin_diagram()                                                   # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: F4.dual().dynkin_diagram()
+            sage: F4.dual().dynkin_diagram()                                            # needs sage.graphs
             O---O=>=O---O
             4   3   2   1
             F4 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
