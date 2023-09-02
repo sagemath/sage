@@ -1,3 +1,4 @@
+# sage.doctests: needs sage.rings.number_field
 # distutils: libraries = NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR

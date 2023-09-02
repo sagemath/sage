@@ -528,9 +528,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: (a**2 - a + 1)._gap_init_()
+            sage: (a**2 - a + 1)._gap_init_()                                           # needs sage.libs.gap
             '\\$sage4^2 - \\$sage4 + 1'
-            sage: gap(_)
+            sage: gap(_)                                                                # needs sage.libs.gap
             a^2-a+1
 
             sage: F = CyclotomicField(8)
@@ -1662,12 +1662,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L.<b> = NumberField(X^4 + a + 2)
             sage: (a/4).is_norm(L)
             True
-            sage: (a/2).is_norm(L)
+            sage: (a/2).is_norm(L)                                                      # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: is_norm is not implemented unconditionally
             for norms from non-Galois number fields
-            sage: (a/2).is_norm(L, proof=False)
+            sage: (a/2).is_norm(L, proof=False)                                         # needs sage.groups
             False
 
             sage: K.<a> = NumberField(x^3 + x + 1)
@@ -3093,13 +3093,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: c = a.galois_conjugates(K); c
             [a]
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: c = a.galois_conjugates(K.galois_closure('a1')); c
+            sage: c = a.galois_conjugates(K.galois_closure('a1')); c                    # needs sage.groups
             [1/18*a1^4, -1/36*a1^4 + 1/2*a1, -1/36*a1^4 - 1/2*a1]
             sage: c[0]^3
             2
             sage: parent(c[0])
             Number Field in a1 with defining polynomial x^6 + 108
-            sage: parent(c[0]).is_galois()
+            sage: parent(c[0]).is_galois()                                              # needs sage.groups
             True
 
         There is only one Galois conjugate of `\sqrt[3]{2}` in
@@ -4513,7 +4513,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L.<b> = K.extension(x^2 + 1)
             sage: K(7).residue_symbol(K.ideal(11),2)
             -1
-            sage: K(7).residue_symbol(L.ideal(11),2)
+            sage: K(7).residue_symbol(L.ideal(11),2)                                    # needs sage.libs.gap
             1
 
         Cubic Residue::

@@ -579,7 +579,7 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
-            sage: K.galois_closure('c')
+            sage: K.galois_closure('c')                                                 # needs sage.groups
             Number Field in c with defining polynomial x^16 + 16*x^14 + 28*x^12
              + 784*x^10 + 19846*x^8 - 595280*x^6 + 2744476*x^4 + 3212848*x^2 + 29953729
         """
@@ -1234,7 +1234,7 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: y = polygen(K); L.<b> = K.extension(y^2 - a)
-            sage: L.is_galois_absolute()
+            sage: L.is_galois_absolute()                                                # needs sage.groups
             False
 
         """
@@ -1255,12 +1255,12 @@ class NumberField_relative(NumberField_generic):
             sage: R.<z> = PolynomialRing(K)
             sage: m1 = 3*z9^4 - 4*z9^3 - 4*z9^2 + 3*z9 - 8
             sage: L1 = K.extension(z^2 - m1, 'b1')
-            sage: G = K.galois_group(); gamma = G.gen()
-            sage: m2 = (gamma^2)(m1)
-            sage: L2 = K.extension(z^2 - m2, 'b2')
-            sage: L1.is_isomorphic_relative(L2)
+            sage: G = K.galois_group(); gamma = G.gen()                                 # needs sage.groups
+            sage: m2 = (gamma^2)(m1)                                                    # needs sage.groups
+            sage: L2 = K.extension(z^2 - m2, 'b2')                                      # needs sage.groups
+            sage: L1.is_isomorphic_relative(L2)                                         # needs sage.groups
             False
-            sage: L1.is_isomorphic(L2)
+            sage: L1.is_isomorphic(L2)                                                  # needs sage.groups
             True
             sage: L3 = K.extension(z^4 - m1, 'b3')
             sage: L1.is_isomorphic_relative(L3)
@@ -1276,12 +1276,12 @@ class NumberField_relative(NumberField_generic):
             sage: L1cyc = Kcyc.extension(zcyc^2 - m1cyc, 'b1cyc')
             sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi1)
             True
-            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi1)
+            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi1)                      # needs sage.groups
             False
-            sage: phi2 = K.hom([phi1((gamma^(-2))(z9))])
-            sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi2)
+            sage: phi2 = K.hom([phi1((gamma^(-2))(z9))])                                # needs sage.groups
+            sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi2)                      # needs sage.groups
             False
-            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi2)
+            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi2)                      # needs sage.groups
             True
 
         Omitting ``base_isom`` raises a :class:`ValueError` when the base fields are not identical::
@@ -1296,7 +1296,7 @@ class NumberField_relative(NumberField_generic):
         The parameter ``base_isom`` can also be used to check if the relative extensions are
         Galois conjugate::
 
-            sage: for g in G:
+            sage: for g in G:                                                           # needs sage.groups
             ....:   if L1.is_isomorphic_relative(L2, g.as_hom()):
             ....:       print(g.as_hom())
             Ring endomorphism of Number Field in z9 with defining polynomial x^6 + x^3 + 1
