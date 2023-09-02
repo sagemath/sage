@@ -853,14 +853,16 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: S(p_libgap) == p
             True
 
-            sage: P = PGU(8,2)                                                          # needs sage.rings.finite_rings
-            sage: p, q = P.gens()                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P = PGU(8,2)
+            sage: p, q = P.gens()
             sage: p_libgap  = p.gap()
 
         TESTS::
 
-            sage: P = PGU(8,2)                                                          # needs sage.rings.finite_rings
-            sage: p, q = P.gens()                                                       # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P = PGU(8,2)
+            sage: p, q = P.gens()
             sage: p_pexpect = gap(p)
             sage: p_libgap == p_pexpect
             True
