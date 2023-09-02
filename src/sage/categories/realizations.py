@@ -102,6 +102,7 @@ def Realizations(self):
     else:
         return getattr(self.__class__, "Realizations")(self)
 
+
 Category.Realizations = Realizations
 
 class Category_realization_of_parent(Category_over_base, BindableClass):

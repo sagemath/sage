@@ -100,6 +100,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
             I = UEA._indices
             return UEA.sum_of_terms((I.gen(t), c) for t, c in self)
 
+
 Example = AbelianLieAlgebra
 
 ##############

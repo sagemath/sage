@@ -16,7 +16,7 @@ AUTHORS:
 - Tyler Gaona (2015-11-14): added the `solve` method
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander
 #       Copyright (C) 2014 Jeroen Demeyer
 #
@@ -24,8 +24,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -79,6 +79,7 @@ def qfsolve(G):
     if ret.type() == 't_COL':
         return vector(QQ, ret)
     return ZZ(ret)
+
 
 def qfparam(G, sol):
     r"""
@@ -220,8 +221,8 @@ def solve(self, c=0):
     N = Matrix(self.base_ring(), d+1, d+1)
     for i in range(d):
         for j in range(d):
-            N[i,j] = M[i,j]
-    N[d,d] = -c
+            N[i, j] = M[i, j]
+    N[d, d] = -c
 
     # Find a solution x to Q(x) = 0, using qfsolve()
     x = qfsolve(N)

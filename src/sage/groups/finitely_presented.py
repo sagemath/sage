@@ -131,6 +131,7 @@ AUTHOR:
 from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
 from sage.functions.generalized import sign
+from sage.groups.free_group import FreeGroup
 from sage.groups.free_group import FreeGroupElement
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
@@ -143,7 +144,6 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.unique_representation import UniqueRepresentation
-
 
 class GroupMorphismWithGensImages(SetMorphism):
     r"""
@@ -1527,6 +1527,35 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
+
+    def sorted_presentation(self):
+        """
+        Return the same presentation with the relations sorted to ensure equality.
+
+        OUTPUT:
+
+        A new finitely presented group with the relations sorted.
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(2) / [(1, 2, -1, -2), ()]; G
+            Finitely presented group < x0, x1 | x0*x1*x0^-1*x1^-1, 1 >
+            sage: G.sorted_presentation()
+            Finitely presented group < x0, x1 | 1, x1^-1*x0^-1*x1*x0 >
+        """
+        F = FreeGroup(self.ngens())
+        L0 = [r.Tietze() for r in self.relations()]
+        L1 = []
+        for rel in L0:
+            C = [rel]
+            for j in range(len(rel) - 1):
+                C.append(rel[j + 1:] + rel[:j + 1])
+            C1 = [tuple(-j for j in reversed(l)) for l in C]
+            C += C1
+            C.sort()
+            L1.append(C[0])
+        L1.sort()
+        return F/L1
 
     def epimorphisms(self, H):
         r"""

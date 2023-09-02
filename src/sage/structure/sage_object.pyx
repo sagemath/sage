@@ -69,6 +69,8 @@ cdef class SageObject:
         r"""
         Change self so it prints as x, where x is a string.
 
+        If x is ``None``, the existing custom name is removed.
+
         .. NOTE::
 
            This is *only* supported for Python classes that derive
@@ -91,6 +93,9 @@ cdef class SageObject:
             sage: h.rename('x^300 + ...')
             sage: h
             x^300 + ...
+            sage: g.rename(None)
+            sage: g
+            x^3 + x - 5
 
         Real numbers are not Python classes, so rename is not supported::
 
@@ -110,15 +115,16 @@ cdef class SageObject:
            a lot of memory.
 
            To support them for a specific class, add a
-           ``cdef public __custom_name`` attribute.
+           ``cdef public _SageObject__custom_name`` attribute.
         """
         if x is None:
-            #if hasattr(self, '__custom_name'):
-            # that's tested in reset_name anyway...
             self.reset_name()
         else:
             try:
-                self.__custom_name = str(x)
+                # TODO: after dropping support for Cython < 3.0.0, all
+                # the self._SageObject__custom_name in this class can be
+                # changed to self.__custom_name
+                self._SageObject__custom_name = str(x)
             except AttributeError:
                 raise NotImplementedError("object does not support renaming: %s" % self)
 
@@ -138,8 +144,30 @@ cdef class SageObject:
             sage: P
             Univariate Polynomial Ring in x over Rational Field
         """
-        if hasattr(self, '__custom_name'):
-            del self.__custom_name
+        if hasattr(self, '_SageObject__custom_name'):
+            del self._SageObject__custom_name
+
+    def get_custom_name(self):
+        """
+        Return the custom name of this object, or ``None`` if it is not
+        renamed.
+
+        EXAMPLES::
+
+            sage: P.<x> = QQ[]
+            sage: P.get_custom_name() is None
+            True
+            sage: P.rename('A polynomial ring')
+            sage: P.get_custom_name()
+            'A polynomial ring'
+            sage: P.reset_name()
+            sage: P.get_custom_name() is None
+            True
+        """
+        try:
+            return self._SageObject__custom_name
+        except AttributeError:
+            return None
 
     def __repr__(self):
         """
@@ -181,7 +209,7 @@ cdef class SageObject:
             <sage.structure.sage_object.SageObject object at ...>
         """
         try:
-            name = self.__custom_name
+            name = self._SageObject__custom_name
             if name is not None:
                 return name
         except AttributeError:

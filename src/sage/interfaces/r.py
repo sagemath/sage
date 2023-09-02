@@ -2030,6 +2030,7 @@ def is_RElement(x):
 
     return isinstance(x, RElement)
 
+
 # An instance of R
 r = R()
 
@@ -2044,6 +2045,7 @@ def reduce_load_R():
         R Interpreter
     """
     return r
+
 
 import os
 def r_console():

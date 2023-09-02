@@ -294,6 +294,7 @@ def explain_pickle_string(pickle, in_current_sage=False,
     else:
         return ans
 
+
 valid_name_re = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*$')
 def name_is_valid(name):
     r"""
@@ -312,6 +313,7 @@ def name_is_valid(name):
     """
     # Technically, we also need to reject keywords...
     return bool(valid_name_re.match(name))
+
 
 # The pickle interpreter can push and pop "marks" on the stack.
 # This string is used as the representation of a mark.
@@ -3050,6 +3052,7 @@ class TestGlobalFunnyName():
             'TestGlobalFunnyName'
         """
         return "TestGlobalFunnyName"
+
 
 TestGlobalFunnyName.__name__ = "funny$name"
 #This crashed Sphinx. Instead, we manually execute this just before the test.
