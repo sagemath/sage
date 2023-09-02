@@ -378,7 +378,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)                                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
             sage: G = K.galois_group(gc_numbering=False)                                # needs sage.rings.number_field
             sage: G._gens                                                               # needs sage.rings.number_field
             [(1,2,3,5), (1,4,3,2,5)]
@@ -420,13 +420,14 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)                                            # needs sage.rings.number_field
-            sage: G = K.galois_group(gc_numbering=False); G                             # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 2)
+            sage: G = K.galois_group(gc_numbering=False); G
             Galois group 5T3 (5:4) with order 20 of x^5 - 2
-            sage: G._deg                                                                # needs sage.rings.number_field
+            sage: G._deg
             5
-            sage: G = K.galois_group(gc_numbering=True); G._deg                         # needs sage.rings.number_field
+            sage: G = K.galois_group(gc_numbering=True); G._deg
             20
         """
         if self._gc_numbering:
@@ -464,7 +465,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)                                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
             sage: G = K.galois_group(gc_numbering=False)                                # needs sage.rings.number_field
             sage: G._domain_to_gap[5]                                                   # needs sage.rings.number_field
             5
@@ -479,7 +480,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)                                            # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^5 - 2)                                          # needs sage.rings.number_field
             sage: G = K.galois_group(gc_numbering=True)                                 # needs sage.rings.number_field
             sage: G._domain_from_gap[20]                                                # needs sage.rings.number_field
             20
@@ -545,7 +546,8 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
         r"""
         Return a permutation group giving the action on the roots of a defining polynomial.
 
-        This is the regular representation for the abelian group, which is not necessarily the smallest degree permutation representation.
+        This is the regular representation for the abelian group, which is
+        not necessarily the smallest degree permutation representation.
 
         EXAMPLES::
 
