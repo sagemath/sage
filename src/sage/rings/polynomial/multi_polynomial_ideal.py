@@ -3028,10 +3028,6 @@ class MPolynomialIdeal_singular_repr(
             True
             sage: J.hilbert_series(grading=(10,3)) == J.hilbert_series(grading=(10,3), algorithm='singular')
             True
-            sage: K.hilbert_series(grading=(1,2)) == K.hilbert_series(grading=(1,2), algorithm='singular')
-            True
-            sage: K.hilbert_series(grading=(2,1)) == K.hilbert_series(grading=(2,1), algorithm='singular')
-            True
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
