@@ -391,13 +391,13 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return characteristic(self._A)
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
         return self._A.is_nonzero(self._prow[x], self._prow[y])
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         """
         Put element indexed by ``x`` into basis, taking out element ``y``.
         Assumptions are that this is a valid basis exchange.
@@ -420,9 +420,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         self._A.set_unsafe(px, py, pivi)
         self._prow[y] = px
         self._prow[x] = py
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -605,7 +605,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     self._representation = self._basic_representation(B)
                 A = self._representation
             else:
-                B = self.__subset(B)
+                B = self._subset_internal(B)
                 A = self._basic_representation(B)
             A = A.matrix_from_rows_and_columns(range(A.nrows()), order_idx)
             if lift_map is None:
@@ -622,7 +622,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if B is None:
                 B = frozenset(self.basis())
             else:
-                B = self.__subset(B)
+                B = self._subset_internal(B)
             A = self._reduced_representation(B)
             R, C = self._current_rows_cols()
             Ri = []
@@ -1493,7 +1493,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M._exchange_value(1, 3)
             4
         """
-        return self.__exchange_value(self._idx[e], self._idx[f])
+        return self._exchange_value_internal(self._idx[e], self._idx[f])
 
     cpdef fundamental_cycle(self, B, e):
         """
@@ -2909,7 +2909,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             rows, cols = self._current_rows_cols()
             N = LinearMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo):
@@ -2930,7 +2930,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             rows, cols = self._current_rows_cols()
             N = LinearMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -2979,7 +2979,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             rows, cols = self._current_rows_cols()
             gs = rows + cols
             reduced = True
-        data = (A, gs, reduced, getattr(self, '__custom_name'))
+        data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_linear_matroid, (version, data)
 
 # Binary matroid
@@ -3152,20 +3152,20 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         return 2
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
         return (<BinaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
         cdef long p = self._prow[x]
         self._A.pivot(p, y)   # Not a Sage matrix operation
         self._prow[y] = p
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
@@ -3173,18 +3173,18 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         bitset_copy(C, (<BinaryMatrix>self._A)._M[self._prow[x]])
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
-        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        This function overrides the internal function BasisExchangeMatroid._coclosure_internal() of the parent class.
         The implementation should be more efficient for BinaryMatroid, due to the fact that in this class,
         __fundamental_cocircuit is much faster than __fundamental_circuit.
         """
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
 
         bitset_copy(R, F)
         bitset_difference(self._inside, self._current_basis, F)
@@ -3196,7 +3196,7 @@ cdef class BinaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -3964,7 +3964,7 @@ cdef class BinaryMatroid(LinearMatroid):
             for e in self.basis():
                 basis[self._prow[self._idx[e]]] = e
             N = BinaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo):
@@ -3989,7 +3989,7 @@ cdef class BinaryMatroid(LinearMatroid):
             for e in self.basis():
                 basis[self._prow[self._idx[e]]] = e
             N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -4047,7 +4047,7 @@ cdef class BinaryMatroid(LinearMatroid):
             A = self._A
             # current basis ordered so matrix cols form identity matrix:
             basis = self._current_rows_cols()[0]
-        data = (A, gs, basis, getattr(self, '__custom_name'))
+        data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_binary_matroid, (version, data)
 
 cdef class TernaryMatroid(LinearMatroid):
@@ -4220,20 +4220,20 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         return 3
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
         return (<TernaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
         cdef long p = self._prow[x]
         self._A.pivot(p, y)   # Not a Sage matrix operation
         self._prow[y] = p
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
@@ -4241,18 +4241,18 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         bitset_copy(C, (<TernaryMatrix>self._A)._M0[self._prow[x]])
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
-        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        This function overrides the internal function BasisExchangeMatroid._coclosure_internal() of the parent class.
         The implementation should be more efficient for TernaryMatroid, due to the fact that in this class,
         __fundamental_cocircuit is much faster than __fundamental_circuit.
         """
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
 
         bitset_copy(R, F)
         bitset_difference(self._inside, self._current_basis, F)
@@ -4264,7 +4264,7 @@ cdef class TernaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -4858,7 +4858,7 @@ cdef class TernaryMatroid(LinearMatroid):
             for e in self.basis():
                 basis[self._prow[self._idx[e]]] = e
             N = TernaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo):
@@ -4883,7 +4883,7 @@ cdef class TernaryMatroid(LinearMatroid):
             for e in self.basis():
                 basis[self._prow[self._idx[e]]] = e
             N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -4945,7 +4945,7 @@ cdef class TernaryMatroid(LinearMatroid):
             A = self._A
             # current basis ordered so matrix cols form identity matrix:
             basis = self._current_rows_cols()[0]
-        data = (A, gs, basis, getattr(self, '__custom_name'))
+        data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_ternary_matroid, (version, data)
 
 # Quaternary Matroids
@@ -5122,20 +5122,20 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         return 2
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
         return (<QuaternaryMatrix>self._A).is_nonzero(self._prow[x], y)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``. Internal method, does no checks.
         """
         cdef long p = self._prow[x]
         self._A.pivot(p, y)   # Not a Sage matrix operation
         self._prow[y] = p
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
@@ -5143,18 +5143,18 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         bitset_union(C, (<QuaternaryMatrix>self._A)._M0[self._prow[x]], (<QuaternaryMatrix>self._A)._M1[self._prow[x]])
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
-        This function overrides the internal function BasisExchangeMatroid.__coclosure() of the parent class.
+        This function overrides the internal function BasisExchangeMatroid._coclosure_internal() of the parent class.
         The implementation should be more efficient for QuaternaryMatroid, due to the fact that in this class,
         __fundamental_cocircuit is much faster than __fundamental_circuit.
         """
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
 
         bitset_copy(R, F)
         bitset_difference(self._inside, self._current_basis, F)
@@ -5166,7 +5166,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -5589,7 +5589,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             for e in self.basis():
                 basis[self._prow[self._idx[e]]] = e
             N = QuaternaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo):
@@ -5614,7 +5614,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             for e in self.basis():
                 basis[self._prow[self._idx[e]]] = e
             N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -5672,7 +5672,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             A = self._A
             # current basis ordered so matrix cols form identity matrix:
             basis = self._current_rows_cols()[0]
-        data = (A, gs, basis, getattr(self, '__custom_name'))
+        data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_quaternary_matroid, (version, data)
 
 # Regular Matroids
@@ -5838,13 +5838,13 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return 0
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check if ``self.basis() - x + y`` is again a basis. Internal method.
         """
         return (<PlusMinusOneMatrix>self._A).is_nonzero(self._prow[x], self._prow[y])
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         """
         Put element indexed by ``x`` into basis, taking out element ``y``. Assumptions are that this is a valid basis exchange.
 
@@ -5867,9 +5867,9 @@ cdef class RegularMatroid(LinearMatroid):
         (<PlusMinusOneMatrix>self._A).set(px, py, pivi)   # Not a Sage matrix operation
         self._prow[y] = px
         self._prow[x] = py
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __exchange_value(self, long x, long y):
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
 
@@ -6524,7 +6524,7 @@ cdef class RegularMatroid(LinearMatroid):
         else:
             rows, cols = self._current_rows_cols()
             N = RegularMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo):
@@ -6544,7 +6544,7 @@ cdef class RegularMatroid(LinearMatroid):
         else:
             rows, cols = self._current_rows_cols()
             N = RegularMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -6593,5 +6593,5 @@ cdef class RegularMatroid(LinearMatroid):
             rows, cols = self._current_rows_cols()
             gs = rows + cols
             reduced = True
-        data = (A, gs, reduced, getattr(self, '__custom_name'))
+        data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_regular_matroid, (version, data)

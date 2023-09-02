@@ -457,6 +457,7 @@ class Genus2reduction(SageObject):
     def __reduce__(self):
         return _reduce_load_genus2reduction, tuple([])
 
+
 # An instance
 genus2reduction = Genus2reduction()
 

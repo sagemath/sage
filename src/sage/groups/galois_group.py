@@ -622,5 +622,6 @@ class GaloisSubgroup_ab(AbelianGroup_subgroup, _SubGaloisMixin):
     """
     pass
 
+
 GaloisGroup_perm.Subgroup = GaloisSubgroup_perm
 GaloisGroup_ab.Subgroup = GaloisSubgroup_ab

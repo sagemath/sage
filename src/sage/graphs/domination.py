@@ -219,7 +219,7 @@ def private_neighbors(G, vertex, dom):
 # Computation of minimum dominating sets
 # ==============================================================================
 
-def dominating_sets(g, k=1, independent=False, total=False,
+def dominating_sets(g, k=1, independent=False, total=False, connected=False,
                     solver=None, verbose=0, *, integrality_tolerance=1e-3):
     r"""
     Return an iterator over the minimum distance-`k` dominating sets
@@ -260,6 +260,9 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
     - ``total`` -- boolean (default: ``False``); when ``True``, computes total
       dominating sets (see the See the :wikipedia:`Dominating_set`)
+
+    - ``connected`` -- boolean (default: ``False``); when ``True``, computes
+      connected dominating sets (see :wikipedia:`Connected_dominating_set`)
 
     - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
@@ -338,6 +341,37 @@ def dominating_sets(g, k=1, independent=False, total=False,
         sage: next(g.dominating_sets())
         [1]
 
+    Minimum connected dominating sets of the Peterson graph::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.dominating_set(total=True, value_only=True)
+        4
+        sage: sorted(G.dominating_sets(k=1, connected=True))
+        [[0, 1, 2, 6],
+         [0, 1, 4, 5],
+         [0, 3, 4, 9],
+         [0, 5, 7, 8],
+         [1, 2, 3, 7],
+         [1, 6, 8, 9],
+         [2, 3, 4, 8],
+         [2, 5, 7, 9],
+         [3, 5, 6, 8],
+         [4, 6, 7, 9]]
+
+    Subgraph induced by the dominating set is connected::
+
+        sage: G = graphs.PetersenGraph()
+        sage: all(G.subgraph(vertices=dom).is_connected() for dom in G.dominating_set(k=1, connected=True))
+        True
+
+    Minimum distance-k connected dominating sets of the Tietze graph::
+
+        sage: G = graphs.TietzeGraph()
+        sage: sorted(G.dominating_sets(k=2, connected=True))
+        [[0, 9], [1, 0], [2, 3], [4, 3], [5, 6], [7, 6], [8, 0], [10, 3], [11, 6]]
+        sage: sorted(G.dominating_sets(k=3, connected=True))
+        [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11]]
+
     TESTS::
 
         sage: g = Graph([(0, 1)])
@@ -395,6 +429,32 @@ def dominating_sets(g, k=1, independent=False, total=False,
         for u, v in g.edge_iterator(labels=None):
             p.add_constraint(b[u] + b[v], max=1)
 
+    if connected:
+        E = set(frozenset(e) for e in g.edge_iterator(labels=False))
+        # edges used in the spanning tree
+        edge = p.new_variable(binary=True, name='e')
+        # relaxed edges to test for acyclicity
+        r_edge = p.new_variable(nonnegative=True, name='re')
+
+        # 1. We want a tree
+        p.add_constraint(p.sum(edge[fe] for fe in E)
+                         == p.sum(b[u] for u in g) - 1)
+
+        # 2. An edge can be in the tree if its end vertices are selected
+        for fe in E:
+            u, v = fe
+            p.add_constraint(edge[fe] <= b[u])
+            p.add_constraint(edge[fe] <= b[v])
+
+        # 3. Subtour elimination constraints
+        for fe in E:
+            u, v = fe
+            p.add_constraint(edge[fe] <= r_edge[u, v] + r_edge[v, u])
+
+        eps = 1 / (5 * Integer(g.order()))
+        for v in g:
+            p.add_constraint(p.sum(r_edge[u, v] for u in g.neighbor_iterator(v)), max=1 - eps)
+
     # Minimizes the number of vertices used
     p.set_objective(p.sum(b[v] for v in g))
 
@@ -415,8 +475,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
         # Prevent finding twice a solution
         p.add_constraint(p.sum(b[u] for u in dom) <= best - 1)
 
-
-def dominating_set(g, k=1, independent=False, total=False, value_only=False,
+def dominating_set(g, k=1, independent=False, total=False, connected=False, value_only=False,
                    solver=None, verbose=0, *, integrality_tolerance=1e-3):
     r"""
     Return a minimum distance-`k` dominating set of the graph.
@@ -452,6 +511,9 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
 
     - ``total`` -- boolean (default: ``False``); when ``True``, computes a total
       dominating set (see the See the :wikipedia:`Dominating_set`)
+
+    - ``connected`` -- boolean (default: ``False``); when ``True``, computes a
+      connected dominating set (see :wikipedia:`Connected_dominating_set`)
 
     - ``value_only`` -- boolean (default: ``False``); whether to only return the
       cardinality of the computed dominating set, or to return its list of
@@ -517,7 +579,7 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
         [5, 2, 1]
     """
     dom = next(dominating_sets(g, k=k, independent=independent, total=total,
-                               solver=solver, verbose=verbose,
+                               connected=connected, solver=solver, verbose=verbose,
                                integrality_tolerance=integrality_tolerance))
     return Integer(len(dom)) if value_only else dom
 
