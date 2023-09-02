@@ -238,9 +238,9 @@ class Set_base():
             True
             sage: GF(3)(2) in X
             True
-            sage: GF(5)(2) in X                                                         # needs sage.rings.finite_rings
+            sage: GF(5)(2) in X
             False
-            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)                              # needs sage.rings.finite_rings
+            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)
             [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
         """
         if isinstance(X, (Set_generic, Set_base)):
@@ -418,7 +418,7 @@ class Set_add_sub_operators:
              Set-theoretic union of
               Set of elements of Real Field with 53 bits of precision and
               Set of elements of Vector space of dimension 5 over Rational Field
-            sage: Set(GF(3)) + Set(GF(2))                                               # needs sage.rings.finite_rings
+            sage: Set(GF(3)) + Set(GF(2))
             {0, 1, 2, 0, 1}
             sage: Set(GF(2)) + Set(GF(4,'a'))                                           # needs sage.rings.finite_rings
             {0, 1, a, a + 1}
@@ -632,9 +632,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             False
             sage: 5/3 in GF(7)
             False
-            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)                         # needs sage.rings.finite_rings
+            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)
             [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6]
-            sage: Set(GF(7)).intersection(Set(GF(5)))                                   # needs sage.rings.finite_rings
+            sage: Set(GF(7)).intersection(Set(GF(5)))
             {}
         """
         return x in self.__object
@@ -803,10 +803,10 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         EXAMPLES::
 
             sage: X = Set([1,2,3])
-            sage: X.subsets_lattice()                                                   # needs sage.combinat sage.graphs sage.modules
+            sage: X.subsets_lattice()                                                   # needs sage.graphs
             Finite lattice containing 8 elements
             sage: Y = Set()
-            sage: Y.subsets_lattice()                                                   # needs sage.combinat sage.graphs sage.modules
+            sage: Y.subsets_lattice()                                                   # needs sage.graphs
             Finite lattice containing 1 elements
 
         """
@@ -1466,7 +1466,7 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: [x for x in Set(GF(3)).union(Set(GF(2)))]                             # needs sage.rings.finite_rings
+            sage: [x for x in Set(GF(3)).union(Set(GF(2)))]
             [0, 1, 2, 0, 1]
         """
         for x in self._X:
@@ -1499,10 +1499,10 @@ class Set_object_union(Set_object_binary):
 
         EXAMPLES::
 
-            sage: X = Set(GF(3)).union(Set(GF(2)))                                      # needs sage.rings.finite_rings
-            sage: X                                                                     # needs sage.rings.finite_rings
+            sage: X = Set(GF(3)).union(Set(GF(2)))
+            sage: X
             {0, 1, 2, 0, 1}
-            sage: X.cardinality()                                                       # needs sage.rings.finite_rings
+            sage: X.cardinality()
             5
 
             sage: X = Set(GF(3)).union(Set(ZZ))
@@ -1852,7 +1852,7 @@ class Set_object_difference(Set_object_binary):
             False
             sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is a numerical approx
+            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is a numerical approx           # needs sage.rings.real_interval_field
             True
             sage: 5/2 in X
             True
@@ -2025,7 +2025,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             False
             sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X # since sqrt(RR(2)) is currently approximated
+            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is currently approximated       # needs sage.rings.real_interval_field
             True
             sage: pi in X                                                               # needs sage.symbolic
             False
