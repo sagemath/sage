@@ -146,7 +146,7 @@ class EuclideanGroup(AffineGroup):
         True
         sage: G = EuclideanGroup(2, GF(5)); G
         Euclidean Group of degree 2 over Finite Field of size 5
-        sage: TestSuite(G).run()                                                        # needs sage.rings.finite_rings
+        sage: TestSuite(G).run()
 
     REFERENCES:
 
