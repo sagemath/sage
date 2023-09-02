@@ -1834,6 +1834,16 @@ def unpickle_MPolynomialRing_generic(base_ring, n, names, order):
 
 class MatrixPolynomialAction(Action):
     def __init__(self, MS, PR):
+        """
+        EXAMPLES ::
+        sage: G = groups.matrix.Sp(4,GF(2))
+        sage: R.<w,x,y,z>=GF(2)[]
+        sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
+        sage: g=G.1
+        sage: from operator import matmul
+        sage: A = p.parent()._get_action_(g.parent(), matmul, False)
+        sage: TestSuite(A).run()
+        """
         self._poly_vars = PR.gens()
         self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
         super().__init__(MS, PR, op=matmul)
