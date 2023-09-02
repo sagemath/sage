@@ -1,4 +1,14 @@
 # sage_setup: distribution = sagemath-graphs
+r"""
+Top level of the distribution package sagemath-graphs
+
+This distribution makes the following feature available::
+
+    sage: from sage.features.sagemath import *
+    sage: sage__graphs().is_present()
+    FeatureTestResult('sage.graphs', True)
+"""
+
 from .all__sagemath_categories import *
 
 try:  # extra

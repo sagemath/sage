@@ -1,4 +1,16 @@
 # sage_setup: distribution = sagemath-polyhedra
+r"""
+Top level of the distribution package sagemath-polyhedra
+
+This distribution makes the following features available::
+
+    sage: from sage.features.sagemath import *
+    sage: sage__geometry__polyhedron().is_present()
+    FeatureTestResult('sage.geometry.polyhedron', True)
+    sage: sage__numerical__mip().is_present()
+    FeatureTestResult('sage.numerical.mip', True)
+"""
+
 from .all__sagemath_modules import *
 
 try:  # extra

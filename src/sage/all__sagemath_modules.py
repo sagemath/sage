@@ -1,4 +1,18 @@
 # sage_setup: distribution = sagemath-modules
+r"""
+Top level of the distribution package sagemath-modules
+
+This distribution makes the following features available::
+
+    sage: from sage.features.sagemath import *
+    sage: sage__modules().is_present()
+    FeatureTestResult('sage.modules', True)
+    sage: sage__rings__real_mpfr().is_present()
+    FeatureTestResult('sage.rings.real_mpfr', True)
+    sage: sage__rings__complex_double().is_present()
+    FeatureTestResult('sage.rings.complex_double', True)
+"""
+
 from .all__sagemath_categories import *
 
 try:  # extra

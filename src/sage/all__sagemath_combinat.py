@@ -1,4 +1,16 @@
 # sage_setup: distribution = sagemath-combinat
+r"""
+Top level of the distribution package sagemath-combinat
+
+This distribution makes the following features available::
+
+    sage: from sage.features.sagemath import *
+    sage: sage__combinat().is_present()
+    FeatureTestResult('sage.combinat', True)
+    sage: sage__sat().is_present()
+    FeatureTestResult('sage.sat', True)
+"""
+
 try:  # extra
     from sage.all__sagemath_modules import *
 except ImportError:
