@@ -21,4 +21,5 @@ def base(x):
     x = x * 7
     return x
 
+
 test_func = partial(base, 6)

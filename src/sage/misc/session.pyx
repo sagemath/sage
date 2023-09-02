@@ -80,6 +80,8 @@ from sage.misc.persist import load, save, loads, dumps
 
 state_at_init = None
 
+CythonFunctionType = type(lambda: None)
+
 def init(state=None):
     """
     Initialize some dictionaries needed by the :func:`show_identifiers`,
@@ -311,7 +313,7 @@ def save_session(name='sage_session', verbose=False):
     for k in show_identifiers(hidden = True):
         try:
             x = state[k]
-            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, type)):
+            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, CythonFunctionType, type)):
                 raise TypeError('{} is a function, method, class or type'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to

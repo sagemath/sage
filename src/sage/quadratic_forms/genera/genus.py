@@ -1,7 +1,6 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 r"""
 Genus
-
 
 AUTHORS:
 
@@ -20,6 +19,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy, deepcopy
+
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -27,10 +28,9 @@ from sage.arith.functions import lcm as LCM
 from sage.arith.misc import fundamental_discriminant
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import IntegerRing, ZZ
-from sage.rings.rational_field import RationalField, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
-from copy import copy, deepcopy
 from sage.misc.verbose import verbose
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
 lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
@@ -81,7 +81,6 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     """
     from sage.misc.mrange import mrange_iter
     # input checks
-    ZZ = IntegerRing()
     determinant = ZZ(determinant)
     sig_pair = (ZZ(sig_pair[0]), ZZ(sig_pair[1]))
     even = bool(even)
@@ -175,8 +174,8 @@ def _local_genera(p, rank, det_val, max_scale, even):
     """
     from sage.misc.mrange import cantor_product
     from sage.combinat.integer_lists.invlex import IntegerListsLex
-    scales_rks = [] # contains possibilities for scales and ranks
-    for rkseq in IntegerListsLex(rank, length=max_scale+1):   # rank sequences
+    scales_rks = []  # contains possibilities for scales and ranks
+    for rkseq in IntegerListsLex(rank, length=max_scale + 1):  # rank sequences
         # sum(rkseq) = rank
         # len(rkseq) = max_scale + 1
         # now assure that we get the right determinant
@@ -279,7 +278,7 @@ def _blocks(b, even_only=False):
         # odd case
         if not even_only:
             # format (det, oddity)
-            for s in [(1,2), (5,6), (1,6), (5,2), (7,0), (3,4)]:
+            for s in [(1, 2), (5, 6), (1, 6), (5, 2), (7, 0), (3, 4)]:
                 b1 = copy(b)
                 b1[2] = s[0]
                 b1[3] = 1
@@ -290,20 +289,20 @@ def _blocks(b, even_only=False):
         b1 = copy(b)
         b1[3] = 0
         b1[4] = 0
-        d = (-1)**(rk//2) % 8
+        d = (-1)**(rk // 2) % 8
         for det in [d, d * (-3) % 8]:
             b1 = copy(b1)
             b1[2] = det
             blocks.append(b1)
         # odd case
         if not even_only:
-            for s in [(1,2), (5,6), (1,6), (5,2), (7,0), (3,4)]:
+            for s in [(1, 2), (5, 6), (1, 6), (5, 2), (7, 0), (3, 4)]:
                 b1 = copy(b)
                 b1[2] = s[0]*(-1)**(rk//2 -1) % 8
                 b1[3] = 1
                 b1[4] = s[1]
                 blocks.append(b1)
-            for s in [(1,4), (5,0)]:
+            for s in [(1, 4), (5, 0)]:
                 b1 = copy(b)
                 b1[2] = s[0]*(-1)**(rk//2 - 2) % 8
                 b1[3] = 1
@@ -440,18 +439,20 @@ def is_GlobalGenus(G):
         sym = loc._symbol
         v = sum([ss[0] * ss[1] for ss in sym])
         a = D // (p**v)
-        b = Integer(prod([ss[2] for ss in sym]))
+        b = ZZ.prod(ss[2] for ss in sym)
         if p == 2:
             if not is_2_adic_genus(sym):
                 verbose(mesg="False in is_2_adic_genus(sym)", level=2)
                 return False
             if (a*b).kronecker(p) != 1:
-                verbose(mesg="False in (%s*%s).kronecker(%s)"%(a,b,p), level=2)
+                verbose(mesg="False in (%s*%s).kronecker(%s)" % (a, b, p),
+                        level=2)
                 return False
             oddity -= loc.excess()
         else:
             if a.kronecker(p) != b:
-                verbose(mesg="False in %s.kronecker(%s) != *%s"%(a,p,b), level=2)
+                verbose(mesg="False in %s.kronecker(%s) != *%s" % (a, p, b),
+                        level=2)
                 return False
             oddity += loc.excess()
     if oddity % 8 != 0:
@@ -587,6 +588,7 @@ def canonical_2_adic_compartments(genus_symbol_quintuple_list):
             i += 1
     return compartments
 
+
 def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
     r"""
     Given a `2`-adic local symbol (as the underlying list of quintuples)
@@ -659,7 +661,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
     # avoid a special case for the end of symbol
     # if a jordan component has rank zero it is considered even.
     symbol = genus_symbol_quintuple_list
-    symbol.append([symbol[-1][0]+1, 0, 1, 0, 0]) #We have just modified the input globally!
+    symbol.append([symbol[-1][0]+1, 0, 1, 0, 0])  # We have just modified the input globally!
     # Hence, we have to remove the last entry of symbol at the end.
     try:
 
@@ -685,8 +687,9 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
         trains.append(new_train)
         return trains
     finally:
-        #revert the input list to its original state
+        # revert the input list to its original state
         symbol.pop()
+
 
 def canonical_2_adic_reduction(genus_symbol_quintuple_list):
     r"""
@@ -750,14 +753,14 @@ def canonical_2_adic_reduction(genus_symbol_quintuple_list):
     # Canonical determinants:
     for i in range(len(genus_symbol_quintuple_list)):
         d = genus_symbol_quintuple_list[i][2]
-        if d in (1,7):
+        if d in (1, 7):
             canonical_symbol[i][2] = 1
         else:
             canonical_symbol[i][2] = -1
     # Oddity fusion:
     compartments = canonical_2_adic_compartments(genus_symbol_quintuple_list)
     for compart in compartments:
-        oddity = sum([ genus_symbol_quintuple_list[i][4] for i in compart ]) % 8
+        oddity = sum([genus_symbol_quintuple_list[i][4] for i in compart]) % 8
         for i in compart:
             genus_symbol_quintuple_list[i][4] = 0
         genus_symbol_quintuple_list[compart[0]][4] = oddity
@@ -906,10 +909,10 @@ def p_adic_symbol(A, p, val):
 
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-    m0 = min([ c.valuation(p) for c in A.list() ])
+    m0 = min(c.valuation(p) for c in A.list())
     q = p**m0
     n = A.nrows()
-    A = MatrixSpace(IntegerRing(), n, n)([ c // q for c in A.list() ])
+    A = MatrixSpace(ZZ, n, n)([ c // q for c in A.list() ])
     A_p = MatrixSpace(FiniteField(p), n, n)(A)
     B_p = A_p.kernel().echelonized_basis_matrix()
     if B_p.nrows() == 0:
@@ -922,16 +925,16 @@ def p_adic_symbol(A, p, val):
         n0 = C_p.nrows()
         sym = [ [0, n0, e0] ]
     r = B_p.nrows()
-    B = MatrixSpace(IntegerRing(), r, n)(B_p)
-    C = MatrixSpace(IntegerRing(), n - r, n)(C_p)
+    B = MatrixSpace(ZZ, r, n)(B_p)
+    C = MatrixSpace(ZZ, n - r, n)(C_p)
     # Construct the blocks for the Jordan decomposition [F,X;X,A_new]
-    F = MatrixSpace(RationalField(), n - r, n - r)(C * A * C.transpose())
+    F = MatrixSpace(QQ, n - r, n - r)(C * A * C.transpose())
     U = F**-1
     d = LCM([ c.denominator() for c in U.list() ])
-    R = IntegerRing().quotient_ring(Integer(p)**(val + 3))
+    R = ZZ.quotient_ring(Integer(p)**(val + 3))
     u = R(d)**-1
     MatR = MatrixSpace(R, n - r , n - r)
-    MatZ = MatrixSpace(IntegerRing(), n - r, n - r)
+    MatZ = MatrixSpace(ZZ, n - r, n - r)
     U = MatZ(MatR(MatZ(U * d)) * u)
     # X = C*A*B.transpose()
     # A = B*A*B.transpose() - X.transpose()*U*X
@@ -1017,7 +1020,7 @@ def split_odd(A):
     """
     n0 = A.nrows()
     if n0 == 1:
-        return A[0, 0], MatrixSpace(IntegerRing(), 0, A.ncols())([])
+        return A[0, 0], MatrixSpace(ZZ, 0, A.ncols())([])
     even, i = is_even_matrix(A)
     R = A.parent().base_ring()
     C = MatrixSpace(R, n0 - 1, n0)(0)
@@ -1098,7 +1101,7 @@ def trace_diag_mod_8(A):
     while A.nrows():
         u, A = split_odd(A)
         tr += u
-    return IntegerRing()(tr)
+    return ZZ(tr)
 
 
 def two_adic_symbol(A, val):
@@ -1141,7 +1144,6 @@ def two_adic_symbol(A, val):
     m0 = min([ c.valuation(2) for c in A.list() ])
     q = 2**m0
     A = A.parent()([ c // q for c in A.list() ])
-    ZZ = IntegerRing()
     A_2 = MatrixSpace(FiniteField(2), n, n)(A)
     K_2 = A_2.kernel()
     R_8 = ZZ.quotient_ring(Integer(8))
@@ -1156,7 +1158,7 @@ def two_adic_symbol(A, val):
             print("A:")
             print(A)
             assert False
-        even, i = is_even_matrix(A_2)    # Determine whether the matrix is even or odd.
+        even, _ = is_even_matrix(A_2)    # Determine whether the matrix is even or odd.
         if even:
             return [[m0, n0, d0, 0, 0]]
         else:
@@ -1178,7 +1180,7 @@ def two_adic_symbol(A, val):
             print("A:")
             print(A_new)
             assert False
-        even, i = is_even_matrix(A_new)
+        even, _ = is_even_matrix(A_new)
         if even:
             sym = [[0, n0, d0, 0, 0]]
         else:
@@ -1186,14 +1188,14 @@ def two_adic_symbol(A, val):
             sym = [[0, n0, d0, 1, tr8]]
     r = B_2.nrows()
     B = MatrixSpace(ZZ,r,n)(B_2)
-    C = MatrixSpace(IntegerRing(), n - r, n)(C_2)
-    F = MatrixSpace(RationalField(), n - r, n - r)(C * A * C.transpose())
+    C = MatrixSpace(ZZ, n - r, n)(C_2)
+    F = MatrixSpace(QQ, n - r, n - r)(C * A * C.transpose())
     U = F**-1
     d = LCM([ c.denominator() for c in U.list() ])
-    R = IntegerRing().quotient_ring(Integer(2)**(val + 3))
+    R = ZZ.quotient_ring(Integer(2)**(val + 3))
     u = R(d)**-1
     MatR = MatrixSpace(R, n - r, n - r)
-    MatZ = MatrixSpace(IntegerRing(), n - r, n - r)
+    MatZ = MatrixSpace(ZZ, n - r, n - r)
     U = MatZ(MatR(MatZ(U * d)) * u)
     X = C * A
     A = B * (A - X.transpose()*U*X) * B.transpose()
@@ -2757,10 +2759,11 @@ class GenusSymbol_global_ring():
 
     def determinant(self):
         r"""
-        Return the determinant of this genus, where the determinant
-        is the Hessian determinant of the quadratic form whose Gram
-        matrix is the Gram matrix giving rise to this global genus
-        symbol.
+        Return the determinant of this genus.
+
+        The determinant is the Hessian determinant of the quadratic
+        form whose Gram matrix is the Gram matrix giving rise to this
+        global genus symbol.
 
         OUTPUT: an integer
 
@@ -2771,8 +2774,8 @@ class GenusSymbol_global_ring():
             sage: GS.determinant()
             -24
         """
-        p, n = self.signature_pair()
-        return (-1)**n*prod([ G.determinant() for G in self._local_symbols ])
+        _, n = self.signature_pair()
+        return (-1)**n * ZZ.prod(G.determinant() for G in self._local_symbols)
 
     det = determinant
 
@@ -3162,7 +3165,7 @@ class GenusSymbol_global_ring():
 
             sage: A = matrix.diagonal(ZZ, [1, 1, 1, 1])
             sage: GS = Genus(A)
-            sage: GS._standard_mass()                                                   # optional - sage.symbolic
+            sage: GS._standard_mass()                                                   # needs sage.symbolic
             1/48
 
         """
@@ -3215,7 +3218,7 @@ class GenusSymbol_global_ring():
 
             sage: from sage.quadratic_forms.genera.genus import genera
             sage: G = genera((8,0), 1, even=True)[0]
-            sage: G.mass()                                                              # optional - sage.symbolic
+            sage: G.mass()                                                              # needs sage.symbolic
             1/696729600
             sage: G.mass(backend='magma')  # optional - magma
             1/696729600
@@ -3426,15 +3429,16 @@ def _gram_from_jordan_block(p, block, discr_form=False):
         d = 2**(rk % 2)
         if Integer(d).kronecker(p) != det:
             u = ZZ(_min_nonsquare(p))
-            q[0,0] = u
+            q[0, 0] = u
         q = q * (2 / p**level)
     if p != 2 and not discr_form:
         q = matrix.identity(QQ, rk)
         if det != 1:
             u = ZZ(_min_nonsquare(p))
-            q[0,0] = u
+            q[0, 0] = u
         q = q * p**level
     return q
+
 
 # Helper functions for mass computations
 

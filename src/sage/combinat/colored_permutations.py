@@ -7,6 +7,7 @@ Colored Permutations
     generalized to `G \wr S_n`
 """
 import itertools
+from random import choice
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent
@@ -313,13 +314,13 @@ class ColoredPermutation(MultiplicativeGroupElement):
             [False, True, False, True]
         """
         if self.parent()._m == 1:
-            return self._perm[i-1] > self._perm[i]
+            return self._perm[i - 1] > self._perm[i]
 
         if i == self.parent()._n:
             return self._colors[-1] != 0
-        if self._colors[i-1] != 0:
-            return self._colors[i] == 0 or self._perm[i-1] < self._perm[i]
-        return self._colors[i] == 0 and self._perm[i-1] > self._perm[i]
+        if self._colors[i - 1] != 0:
+            return self._colors[i] == 0 or self._perm[i - 1] < self._perm[i]
+        return self._colors[i] == 0 and self._perm[i - 1] > self._perm[i]
 
     def reduced_word(self):
         r"""
@@ -563,7 +564,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         """
         from sage.combinat.root_system.cartan_type import CartanType
         if self._m == 1:
-            return CartanType(['A', self._n-1]).coxeter_matrix()
+            return CartanType(['A', self._n - 1]).coxeter_matrix()
         return CartanType(['B', self._n]).coxeter_matrix()
 
     @cached_method
@@ -579,6 +580,23 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         """
         return self.element_class(self, [self._C.zero()] * self._n,
                                   self._P.identity())
+
+    def random_element(self):
+        """
+        Return an element drawn uniformly at random.
+
+        EXAMPLES::
+
+            sage: C = ColoredPermutations(4, 3)
+            sage: s = C.random_element(); s # random
+            [[0, 2, 1], [2, 1, 3]]
+            sage: s in C
+            True
+        """
+        return self.element_class(self,
+                                  [self._C.random_element()
+                                   for _ in range(self._n)],
+                                  self._P.random_element())
 
     def simple_reflection(self, i):
         r"""
@@ -883,7 +901,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             True
         """
         # Special case for the usual symmetric group
-        last = self._n-1 if self._m == 1 else self._n
+        last = self._n - 1 if self._m == 1 else self._n
         return tuple(self._m * i for i in reversed(range(last)))
 
     def number_of_reflection_hyperplanes(self):
@@ -979,8 +997,9 @@ class ColoredPermutations(Parent, UniqueRepresentation):
 
     Element = ColoredPermutation
 
+
 #####################################################################
-## Signed permutations
+#  Signed permutations
 
 
 class SignedPermutation(ColoredPermutation,
@@ -1122,11 +1141,11 @@ class SignedPermutation(ColoredPermutation,
         if i in ZZ and 1 <= abs(i) <= len(self):
             i = ZZ(i)
             if i < 0:
-                return -self._colors[-i-1] * self._perm[-i-1]
-            return self._colors[i-1] * self._perm[i-1]
-        else:
-            raise TypeError("i (= %s) must equal +/- an integer between %s and %s"
-                            % (i,1,len(self)))
+                return -self._colors[-i - 1] * self._perm[-i - 1]
+            return self._colors[i - 1] * self._perm[i - 1]
+
+        raise TypeError("i (= %s) must equal +/- an integer between %s and %s"
+                        % (i, 1, len(self)))
 
     def to_matrix(self):
         """
@@ -1218,8 +1237,8 @@ class SignedPermutation(ColoredPermutation,
             s = self._colors[i]
             while next_val != cycle_first:
                 cycle.append(s * next_val)
-                s *= self._colors[next_val-1]
-                l[next_val-1], next_val = False, l[next_val-1]
+                s *= self._colors[next_val - 1]
+                l[next_val - 1], next_val = False, l[next_val - 1]
             if s != 1:
                 cycle.extend([-e for e in cycle])
 
@@ -1335,6 +1354,23 @@ class SignedPermutations(ColoredPermutations):
         """
         return self.element_class(self, [ZZ.one()] * self._n,
                                   self._P.identity())
+
+    def random_element(self):
+        """
+        Return an element drawn uniformly at random.
+
+        EXAMPLES::
+
+            sage: C = SignedPermutations(7)
+            sage: s = C.random_element(); s # random
+            [7, 6, -4, -5, 2, 3, -1]
+            sage: s in C
+            True
+        """
+        return self.element_class(self,
+                                  [choice([ZZ.one(), -ZZ.one()])
+                                   for _ in range(self._n)],
+                                  self._P.random_element())
 
     def simple_reflection(self, i):
         r"""
@@ -1454,7 +1490,7 @@ class SignedPermutations(ColoredPermutations):
             False
         """
         if isinstance(C, Permutations) and C.n == self._n:
-            return lambda P, x: P.element_class(P, [1]*P._n, x)
+            return lambda P, x: P.element_class(P, [1] * P._n, x)
         if isinstance(C, ColoredPermutations) and C._n == self._n and C._m == 2:
             return lambda P, x: P.element_class(P,
                                                 [1 if v == 0 else -1
@@ -1496,7 +1532,7 @@ class SignedPermutations(ColoredPermutations):
     Element = SignedPermutation
 
 # TODO: Make this a subgroup
-#class EvenSignedPermutations(SignedPermutations):
+# class EvenSignedPermutations(SignedPermutations):
 #    """
 #    Group of even signed permutations.
 #    """

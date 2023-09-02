@@ -1579,7 +1579,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
             sage: T = tensor([V,V])
             sage: S = T.highest_weight_decomposition()[0]
             sage: latex(S)
-            \begin{tikzpicture}
+            \begin{tikzpicture}...
             ...
             \end{tikzpicture}
         """

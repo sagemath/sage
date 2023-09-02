@@ -67,6 +67,7 @@ def Mwrank(options="", server=None, server_tmpdir=None):
     instances[options] = weakref.ref(X)
     return X
 
+
 import re
 # regex matching '[a1,a2,a3,a4,a6]', no spaces, each ai a possibly signed integer
 AINVS_LIST_RE = re.compile(r'\[[+-]?(\d+)(,[+-]?\d+){4}]')
@@ -87,7 +88,8 @@ def validate_mwrank_input(s):
 
     OUTPUT:
 
-    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.  For invalid input a ValueError is raised.
+    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.
+    For invalid input a :class:`ValueError` is raised.
 
     EXAMPLES:
 

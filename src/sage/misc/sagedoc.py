@@ -20,7 +20,7 @@ see :trac:`12849`::
 
     sage: from sage.env import SAGE_DOC
     sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')
-    sage: with open(docfilename) as fobj:  # optional - sagemath_doc_html
+    sage: with open(docfilename) as fobj:                                               # needs sagemath_doc_html
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
     ....:             print(line)
@@ -653,10 +653,10 @@ def format(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[191:263]
+        sage: identity_matrix(2).rook_vector.__doc__[191:263]                           # needs sage.modules
         'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
 
-        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])
+        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])                   # needs sage.modules
         'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but
@@ -671,16 +671,16 @@ def format(s, embedded=False):
         '<<<identity_matrix\n'
         sage: format('identity_matrix>>>')
         'identity_matrix>>>\n'
-        sage: format('<<<identity_matrix>>>')
+        sage: format('<<<identity_matrix>>>')                                           # needs sage.modules
         '...Definition: identity_matrix(...'
-        sage: format('<<<identity_matrix>>>')[:28]                            # optional - sphinx
+        sage: format('<<<identity_matrix>>>')[:28]                                      # needs sphinx
         'Definition: identity_matrix('
 
     TESTS:
 
     We check that the todo Sphinx extension is correctly activated::
 
-        sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)   # optional - sphinx
+        sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)             # needs sphinx
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
@@ -694,9 +694,9 @@ def format(s, embedded=False):
         ....: "    `x \\geq y`",
         ....: "    '''",
         ....: "    return -x"]
-        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
+        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print(sage_getdoc(testfunc))                                      # optional - sage.misc.cython
+        sage: print(sage_getdoc(testfunc))                                              # needs sage.misc.cython
         <BLANKLINE>
             This is a doc string with raw latex
         <BLANKLINE>
@@ -724,7 +724,7 @@ def format(s, embedded=False):
 
     Check that backslashes are preserved in code blocks (:trac:`29140`)::
 
-        sage: format('::\n'                                                   # optional - sphinx
+        sage: format('::\n'                                                             # needs sphinx
         ....:        '\n'
         ....:        r'    sage: print(r"\\\\.")' '\n'
         ....:        r'    \\\\.')
@@ -821,7 +821,7 @@ def format_src(s):
         sage: from sage.misc.sagedoc import format_src
         sage: format_src('unladen swallow')
         'unladen swallow'
-        sage: format_src('<<<Sq>>>')[5:15]
+        sage: format_src('<<<Sq>>>')[5:15]                                              # needs sage.combinat sage.modules
         'Sq(*nums):'
     """
     if not isinstance(s, str):
@@ -907,7 +907,7 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
         sage: from sage.misc.sagedoc import _search_src_or_doc
         sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1
         True
-        sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # optional - sagemath_doc_html, long time (4s on sage.math, 2012)
+        sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # long time (4s on sage.math, 2012), needs sagemath_doc_html
         True
         sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)
         True
@@ -1098,20 +1098,21 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     You can search for "matrix" by typing ``search_src("matrix")``.
     This particular search will produce many results::
 
-        sage: len(search_src("matrix", interact=False).splitlines()) # random # long time
+        sage: len(search_src("matrix", interact=False).splitlines())  # random # long time
         9522
 
     You can restrict to the Sage calculus code with
     ``search_src("matrix", module="sage.calculus")``, and this
     produces many fewer results::
 
-        sage: len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
+        sage: len(search_src("matrix", module="sage.calculus", interact=False).splitlines())  # random
         26
 
     Note that you can do tab completion on the ``module`` string.
     Another way to accomplish a similar search::
 
-        sage: len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
+        sage: len(search_src("matrix", path_re="calc",                                  # needs sage.modules
+        ....:                interact=False).splitlines()) > 15
         True
 
     The following produces an error because the string 'fetch(' is a
@@ -1124,11 +1125,11 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     To fix this, *escape* the parenthesis with a backslash::
 
-        sage: print(search_src(r" fetch\(", "def", interact=False)) # random # long time
+        sage: print(search_src(r" fetch\(", "def", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
         matrix/matrix0.pxd:    cdef fetch(self, key)
 
-        sage: print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
+        sage: print(search_src(r" fetch\(", "def", "pyx", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
 
     As noted above, the search is case-insensitive, but you can make it
@@ -1162,22 +1163,22 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     ::
 
-        sage: print(search_src(r'^ *sage[:] .*search_src\(', interact=False)) # long time
-        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) # random # long time
-        misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
-        misc/sagedoc.py:... len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))
-        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False)) # random # long time
-        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
-        misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
-        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
-        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=False); s.find('x') > 0
-        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 40
-        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 70
-        misc/sagedoc.py:... print(search_src(r'^ *sage[:] .*search_src\(', interact=False)) # long time
-        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) > 9000 # long time
-        misc/sagedoc.py:... print(search_src('matrix', 'column', 'row', 'sub', 'start', 'index', interact=False)) # random # long time
-        misc/sagedoc.py:... sage: results = search_src('format_search_as_html', # long time
+        sage: print(search_src(r'^ *sage[:] .*search_src\(', interact=False))  # long time
+        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines())...
+        misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines())...
+        misc/sagedoc.py:... len(search_src("matrix", path_re="calc"...
+        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))...
+        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False))...
+        misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False))...
+        misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0...
+        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0...
+        misc/sagedoc.py:... s = search_src('MatRiX', path_re='matrix',...
+        misc/sagedoc.py:... len(search_src('log', 'derivative', interact=False).splitlines()) < 40...
+        misc/sagedoc.py:... len(search_src('log', 'derivative'...
+        misc/sagedoc.py:... print(search_src(r'^ *sage[:] .*search_src\(', interact=False))...
+        misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) > 9000...
+        misc/sagedoc.py:... print(search_src('matrix', 'column', 'row', 'sub',...
+        misc/sagedoc.py:... sage: results = search_src('format_search_as_html',...
 
     TESTS:
 
@@ -1230,13 +1231,14 @@ def search_doc(string, extra1='', extra2='', extra3='', extra4='',
     counting the length of ``search_doc('tree',
     interact=False).splitlines()`` gives the number of matches. ::
 
-        sage: N = len(search_doc('tree', interact=False).splitlines())  # optional - sagemath_doc_html, long time
-        sage: L = search_doc('tree', whole_word=True, interact=False).splitlines()  # optional - sagemath_doc_html, long time
-        sage: len(L) < N  # optional - sagemath_doc_html, long time
+        sage: # long time, needs sagemath_doc_html
+        sage: N = len(search_doc('tree', interact=False).splitlines())
+        sage: L = search_doc('tree', whole_word=True, interact=False).splitlines()
+        sage: len(L) < N
         True
         sage: import re
         sage: tree_re = re.compile(r'(^|\W)tree(\W|$)', re.I)
-        sage: all(tree_re.search(l) for l in L) # optional - sagemath_doc_html, long time
+        sage: all(tree_re.search(l) for l in L)
         True
     """
     return _search_src_or_doc('doc', string, extra1=extra1, extra2=extra2,
@@ -1265,11 +1267,11 @@ def search_def(name, extra1='', extra2='', extra3='', extra4='',
 
     See the documentation for :func:`search_src` for more examples. ::
 
-        sage: print(search_def("fetch", interact=False)) # random # long time
+        sage: print(search_def("fetch", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
         matrix/matrix0.pxd:    cdef fetch(self, key)
 
-        sage: print(search_def("fetch", path_re="pyx", interact=False)) # random # long time
+        sage: print(search_def("fetch", path_re="pyx", interact=False))  # random # long time
         matrix/matrix0.pyx:    cdef fetch(self, key):
     """
     # since we convert name to a regular expression, we need to do the
@@ -1396,8 +1398,8 @@ def my_getsource(obj, oname=''):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import my_getsource
-        sage: s = my_getsource(identity_matrix)
-        sage: s[15:34]
+        sage: s = my_getsource(identity_matrix)                                         # needs sage.modules
+        sage: s[15:34]                                                                  # needs sage.modules
         'def identity_matrix'
     """
     try:
@@ -1433,9 +1435,9 @@ class _sage_doc:
 
     EXAMPLES::
 
-        sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html, indirect doctest
+        sage: browse_sage_doc._open("reference", testing=True)[0]                       # needs sagemath_doc_html
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]
+        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]                         # needs sage.modules
         'Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring'
     """
     def __init__(self):
@@ -1463,19 +1465,19 @@ class _sage_doc:
 
         EXAMPLES::
 
-            sage: browse_sage_doc(identity_matrix, 'rst')
+            sage: browse_sage_doc(identity_matrix, 'rst')                               # needs sage.modules
             "...**File:**...**Type:**...**Definition:** identity_matrix..."
-            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')
+            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')    # needs sage.modules
             True
-            sage: browse_sage_doc(identity_matrix, 'html', False)             # optional - sphinx sagemath_doc_html
+            sage: browse_sage_doc(identity_matrix, 'html', False)                       # needs sagemath_doc_html sphinx
             '...div...File:...Type:...Definition:...identity_matrix...'
 
         In the 'text' version, double colons have been replaced with
         single ones (among other things)::
 
-            sage: '::' in browse_sage_doc(identity_matrix, 'rst')
+            sage: '::' in browse_sage_doc(identity_matrix, 'rst')                       # needs sage.modules
             True
-            sage: '::' in browse_sage_doc(identity_matrix, 'text')            # optional - sphinx
+            sage: '::' in browse_sage_doc(identity_matrix, 'text')                      # needs sphinx
             False
         """
         if output != 'html' and view:
@@ -1605,9 +1607,9 @@ class _sage_doc:
 
         EXAMPLES::
 
-            sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html
+            sage: browse_sage_doc._open("reference", testing=True)[0]                   # needs sagemath_doc_html
             'http://localhost:8000/doc/live/reference/index.html'
-            sage: browse_sage_doc._open("tutorial", testing=True)[1]  # optional - sagemath_doc_html
+            sage: browse_sage_doc._open("tutorial", testing=True)[1]                    # needs sagemath_doc_html
             '.../html/en/tutorial/index.html'
         """
         url = self._base_url + os.path.join(name, "index.html")
@@ -1637,8 +1639,8 @@ with 'sage -docbuild {0} html' and try again.""".format(name))
 
         EXAMPLES::
 
-            sage: reference() # indirect doctest, not tested
-            sage: manual() # indirect doctest, not tested
+            sage: reference()  # indirect doctest, not tested
+            sage: manual()  # indirect doctest, not tested
         """
         self._open("reference")
 
