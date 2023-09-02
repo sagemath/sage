@@ -216,6 +216,7 @@ class sage__geometry__polyhedron(JoinFeature):
                               PythonModule('sage.geometry.polyhedron'),             # representative
                               PythonModule('sage.schemes.toric'),                   # namespace package
                               PythonModule('sage.schemes.toric.variety'),           # representative
+                              sage__modules(),
                              ],
                              spkg='sagemath_polyhedra', type="standard")
 
@@ -428,7 +429,8 @@ class sage__libs__gap(JoinFeature):
                               PythonModule('sage.groups.matrix_gps.orthogonal_gap'),
                               PythonModule('sage.groups.matrix_gps.symplectic_gap'),
                               PythonModule('sage.groups.matrix_gps.unitary_gap'),
-                              PythonModule('sage.matrix.matrix_gap')])
+                              PythonModule('sage.matrix.matrix_gap'),
+                              PythonModule('sage.rings.universal_cyclotomic_field')])
 
 
 class sage__libs__linbox(JoinFeature):
@@ -857,7 +859,8 @@ class sage__rings__finite_rings(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.finite_rings',
                              [PythonModule('sage.rings.finite_rings.element_pari_ffelt'),
-                              PythonModule('sage.rings.algebraic_closure_finite_field')],
+                              PythonModule('sage.rings.algebraic_closure_finite_field'),
+                              sage__libs__pari()],
                              type='standard')
 
 
@@ -933,8 +936,8 @@ class sage__rings__number_field(JoinFeature):
         sage: CC(zeta)
         0.913545457642601 + 0.406736643075800*I
 
-    Doctests that make use of the algebraic field ``QQbar``, the algebraic real field ``AA``,
-    or the universal cyclotomic field should be marked likewise::
+    Doctests that make use of the algebraic field ``QQbar`` or the algebraic real field ``AA``
+    should be marked likewise::
 
         sage: # needs sage.rings.number_field
         sage: AA(-1)^(1/3)
@@ -942,7 +945,10 @@ class sage__rings__number_field(JoinFeature):
         sage: QQbar(-1)^(1/3)
         0.500000000000000? + 0.866025403784439?*I
 
-        sage: # needs sage.rings.number_field
+    On the other hand, use of the universal cyclotomic field should be marked
+    ``# needs sage.libs.gap``.
+
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: UCF = UniversalCyclotomicField(); UCF
         Universal Cyclotomic Field
         sage: E = UCF.gen
@@ -967,8 +973,9 @@ class sage__rings__number_field(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.number_field',
                              [PythonModule('sage.rings.number_field.number_field_element'),
-                              PythonModule('sage.rings.universal_cyclotomic_field'),
-                              PythonModule('sage.rings.qqbar')],
+                              PythonModule('sage.rings.number_field.number_field_element_quadratic'),
+                              PythonModule('sage.rings.qqbar'),
+                              sage__libs__flint()],
                              type='standard')
 
 
@@ -1142,7 +1149,8 @@ class sage__schemes(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.schemes',
-                             [PythonModule('sage.schemes.elliptic_curves.ell_generic')],
+                             [PythonModule('sage.schemes.elliptic_curves.ell_generic'),
+                              sage__modules()],
                              spkg="sagemath_schemes", type='standard')
 
 
