@@ -216,14 +216,14 @@ def matching_polynomial(G, complement=True, name=None):
 
     cdef int i, j, d
     cdef fmpz_poly_t pol
-    cdef nverts = G.num_verts()
+    cdef int nverts = G.num_verts()
 
     # Using Godsil's duality theorem when the graph is dense
 
     if complement and G.density() > 0.5:  # this cutoff could probably be tuned
         f_comp = matching_polynomial(G.complement()).list()
         f = x.parent().zero()
-        for i from 0 <= i <= nverts / 2:  # implicit floor
+        for i in range(nverts // 2 + 1):
             j = nverts - 2 * i
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f

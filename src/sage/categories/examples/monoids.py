@@ -141,4 +141,5 @@ class FreeMonoid(FreeSemigroup):
     class Element (ElementWrapper):
         wrapped_class = str
 
+
 Example = FreeMonoid

@@ -17,8 +17,8 @@ Classical symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.rational_field import RationalField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.combinat.partition import _Partitions
 
 
@@ -28,9 +28,6 @@ from . import llt
 from . import macdonald
 from . import jack
 from . import orthotriang
-
-ZZ = IntegerRing()
-QQ = RationalField()
 
 translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM', 'elementary':'ELMSYM', 'Schur':'SCHUR'}
 

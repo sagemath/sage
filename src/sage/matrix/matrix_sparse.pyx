@@ -641,7 +641,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             [3 4 0]
             [1 2 3]
             sage: m.apply_morphism(phi).parent()
-            Full MatrixSpace of 3 by 3 sparse matrices over Finite Field of size 5
+            Full MatrixSpace of 3 by 3 sparse matrices
+             over Finite Field of size 5
         """
         R = phi.codomain()
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
@@ -670,22 +671,26 @@ cdef class Matrix_sparse(matrix.Matrix):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
+
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: f = lambda x: k(x)
             sage: n = m.apply_map(f)
             sage: n.parent()
-            Full MatrixSpace of 10000 by 10000 sparse matrices over Finite Field in a of size 3^2
-            sage: n[1,2]
+            Full MatrixSpace of 10000 by 10000 sparse matrices
+             over Finite Field in a of size 3^2
+            sage: n[1, 2]
             2
 
         An example where the codomain is explicitly specified.
 
         ::
 
-            sage: n = m.apply_map(lambda x:x%3, GF(3))
+            sage: n = m.apply_map(lambda x: x%3, GF(3))
             sage: n.parent()
-            Full MatrixSpace of 10000 by 10000 sparse matrices over Finite Field of size 3
-            sage: n[1,2]
+            Full MatrixSpace of 10000 by 10000 sparse matrices
+             over Finite Field of size 3
+            sage: n[1, 2]
             2
 
         If we did not specify the codomain, the resulting matrix in the
@@ -694,7 +699,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: n = m.apply_map(lambda x:x%3)
             sage: n.parent()
             Full MatrixSpace of 10000 by 10000 sparse matrices over Integer Ring
-            sage: n[1,2]
+            sage: n[1, 2]
             2
 
         If self is subdivided, the result will be as well::
@@ -805,8 +810,8 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [x^i for i in range(4)], sparse=True)
-            sage: m._derivative(x)
+            sage: m = matrix(2, [x^i for i in range(4)], sparse=True)                   # needs sage.symbolic
+            sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
         """
@@ -1174,8 +1179,9 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         Check that the bug in :trac:`13854` has been fixed::
 
+            sage: # needs sage.combinat
             sage: A.<x,y> = FreeAlgebra(QQ, 2)
-            sage: P.<x,y> = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
+            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
             sage: M = Matrix([[x]], sparse=True)
             sage: w = vector([y])
             doctest:...: UserWarning: You are constructing a free module
