@@ -33,7 +33,7 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),         # indirect doctest  # needs sage.rings.number_field
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),         # indirect doctest
             ....:                        WeylGroup(['A',3],prefix="t"), twist)
             Semidirect product of Weyl Group of type ['A', 2]
             (as a matrix group acting on the ambient space) acting on
@@ -255,9 +255,9 @@ class GroupSemidirectProduct(CartesianProduct):
             ....:     return y
             sage: import __main__
             sage: __main__.twist = twist
-            sage: G = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),             # needs sage.rings.number_field
+            sage: G = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
             ....:                            WeylGroup(['A',3],prefix="t"), twist)
-            sage: TestSuite(G).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(G).run()
 
         The ``__main__`` business is a trick to pass the pickling test.
         """
@@ -298,7 +298,7 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),                 # needs sage.rings.number_field
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
             ....:                        WeylGroup(['A',3],prefix="t"), twist).act_to_right()
             True
         """
@@ -312,7 +312,7 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),         # indirect doctest  # needs sage.rings.number_field
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),         # indirect doctest
             ....:                        WeylGroup(['A',3],prefix="t"), twist)
             Semidirect product of Weyl Group of type ['A', 2] (as a matrix
             group acting on the ambient space) acting on Weyl Group
@@ -335,9 +335,9 @@ class GroupSemidirectProduct(CartesianProduct):
             ....:     return y
             sage: import __main__
             sage: __main__.twist = twist
-            sage: g = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),             # needs sage.rings.number_field
+            sage: g = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
             ....:                            WeylGroup(['A',3],prefix="t"), twist).an_element()
-            sage: TestSuite(g).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(g).run()
         """
         def type_error():
             raise TypeError(f"{x} cannot be converted into an element of {self}")
@@ -492,9 +492,9 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: H = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),             # needs sage.rings.number_field
+            sage: H = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
             ....:                            WeylGroup(['A',3],prefix="t"), twist)
-            sage: H.construction()                                                      # needs sage.rings.number_field
+            sage: H.construction()
         """
         return None
 

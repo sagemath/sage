@@ -71,8 +71,8 @@ class GroupExp(Functor):
 
         sage: L = RootSystem(['A',2]).ambient_space()
         sage: EL = E(L)
-        sage: W = L.weyl_group(prefix="s")                                              # needs sage.rings.number_field
-        sage: s2 = W.simple_reflection(2)                                               # needs sage.rings.number_field
+        sage: W = L.weyl_group(prefix="s")
+        sage: s2 = W.simple_reflection(2)
         sage: def my_action(mu):
         ....:     return s2.action(mu)
         sage: from sage.categories.morphism import SetMorphism
@@ -82,9 +82,9 @@ class GroupExp(Functor):
         Generic endomorphism of Multiplicative form of Ambient space of the Root system of type ['A', 2]
         sage: v = L.an_element(); v
         (2, 2, 3)
-        sage: y = F(EL(v)); y                                                           # needs sage.rings.number_field
+        sage: y = F(EL(v)); y
         (2, 3, 2)
-        sage: y.parent()                                                                # needs sage.rings.number_field
+        sage: y.parent()
         Multiplicative form of Ambient space of the Root system of type ['A', 2]
 
     """

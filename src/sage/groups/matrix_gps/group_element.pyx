@@ -19,7 +19,7 @@ You cannot add two matrices, since this is not a group operation.
 You can coerce matrices back to the matrix space and add them
 there::
 
-    sage: g + h                                                                         # needs sage.rings.finite_rings
+    sage: g + h
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for +:
@@ -32,14 +32,14 @@ there::
     [0 1], [0 1]
     )'
 
-    sage: g.matrix() + h.matrix()                                                       # needs sage.rings.finite_rings
+    sage: g.matrix() + h.matrix()
     [2 0]
     [0 2]
 
 Similarly, you cannot multiply group elements by scalars but you can
 do it with the underlying matrices::
 
-    sage: 2*g                                                                           # needs sage.rings.finite_rings
+    sage: 2*g
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for *: 'Integer Ring'
