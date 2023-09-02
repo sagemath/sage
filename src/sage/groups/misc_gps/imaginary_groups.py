@@ -249,7 +249,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
         100*I
         sage: J(3*I)                                                                    # needs sage.symbolic
         3*I
-        sage: J(1+2*I)                                                                  # needs sage.symbolic
+        sage: J(1 + 2*I)                                                                # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: 2*I + 1 is not in
@@ -393,36 +393,37 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             sage: J(imag=100)
             100*I
 
-            sage: J(3*I)                                                                # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: J(3*I)
             3*I
-            sage: J(1+2*I)                                                              # needs sage.symbolic
+            sage: J(1+2*I)
             Traceback (most recent call last):
             ...
             ValueError: 2*I + 1 is not in
             Imaginary Group over Integer Ring
             because it is not purely imaginary
-            sage: i = CC(I)                                                             # needs sage.symbolic
-            sage: J(3*i)                                                                # needs sage.symbolic
+            sage: i = CC(I)
+            sage: J(3*i)
             3*I
-            sage: J(1+2*i)                                                              # needs sage.symbolic
+            sage: J(1+2*i)
             Traceback (most recent call last):
             ...
             ValueError: 1.00000000000000 + 2.00000000000000*I is not in
             Imaginary Group over Integer Ring
             because it is not purely imaginary
             sage: i = CBF(I)
-            sage: J(3*i)                                                                # needs sage.symbolic
+            sage: J(3*i)
             3*I
-            sage: J(1+2*i)                                                              # needs sage.symbolic
+            sage: J(1+2*i)
             Traceback (most recent call last):
             ...
             ValueError: 1.000000000000000 + 2.000000000000000*I is not in
             Imaginary Group over Integer Ring
             because it is not purely imaginary
             sage: i = CIF(I)
-            sage: J(3*i)                                                                # needs sage.symbolic
+            sage: J(3*i)
             3*I
-            sage: J(1+2*i)                                                              # needs sage.symbolic
+            sage: J(1+2*i)
             Traceback (most recent call last):
             ...
             ValueError: 1 + 2*I is not in
