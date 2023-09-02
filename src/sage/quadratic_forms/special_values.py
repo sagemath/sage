@@ -91,6 +91,7 @@ def gamma__exact(n):
 
     raise TypeError("you must give an integer or half-integer argument")
 
+
 # ------------- The Riemann Zeta Function  --------------
 
 def zeta__exact(n):
@@ -158,6 +159,7 @@ def zeta__exact(n):
         return infinity
     elif n == 0:
         return QQ((-1, 2))
+
 
 # ---------- Dirichlet L-functions with quadratic characters ----------
 
@@ -232,7 +234,7 @@ def quadratic_L_function__exact(n, d):
     - [Was1997]_
     """
     if n <= 0:
-        return QuadraticBernoulliNumber(1-n,d)/(n-1)
+        return QuadraticBernoulliNumber(1-n, d)/(n-1)
     elif n >= 1:
         # Compute the kind of critical values (p10)
         if kronecker_symbol(fundamental_discriminant(d), -1) == 1:
@@ -255,7 +257,7 @@ def quadratic_L_function__exact(n, d):
             ans *= (2*pi/f)**n
             ans *= GS     # Evaluate the Gauss sum here! =0
             ans *= QQ.one()/(2 * I**delta)
-            ans *= QuadraticBernoulliNumber(n,d)/factorial(n)
+            ans *= QuadraticBernoulliNumber(n, d)/factorial(n)
             return ans
         else:
             if delta == 0:
@@ -314,6 +316,6 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
 
     d1 = fundamental_discriminant(d)
     ans = R.zero()
-    for i in range(1,num_terms):
-        ans += R(kronecker_symbol(d1,i) / R(i)**n)
+    for i in range(1, num_terms):
+        ans += R(kronecker_symbol(d1, i) / R(i)**n)
     return ans

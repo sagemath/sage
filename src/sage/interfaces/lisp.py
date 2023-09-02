@@ -537,6 +537,7 @@ def is_LispElement(x):
 
     return isinstance(x, LispElement)
 
+
 # An instance
 lisp = Lisp()
 
@@ -549,6 +550,7 @@ def reduce_load_Lisp():
         Lisp Interpreter
     """
     return lisp
+
 
 import os
 def lisp_console():

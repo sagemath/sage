@@ -183,6 +183,7 @@ class Function_gamma(GinacFunction):
                                             'fricas':'Gamma',
                                             'giac':'Gamma'})
 
+
 gamma1 = Function_gamma()
 
 
@@ -486,7 +487,8 @@ class Function_gamma_inc(BuiltinFunction):
         else:
             return C(v)
 
-# synonym.
+
+# shorter alias
 gamma_inc = Function_gamma_inc()
 
 
@@ -649,7 +651,8 @@ class Function_gamma_inc_lower(BuiltinFunction):
         x, z = args_mathematica
         return "Gamma[%s,0,%s]" % (x, z)
 
-# synonym.
+
+# shorter alias
 gamma_inc_lower = Function_gamma_inc_lower()
 
 
@@ -749,6 +752,7 @@ def _mathematica_gamma3(*args):
     """
     assert len(args) == 3
     return gamma_inc(args[0], args[1]) - gamma_inc(args[0], args[2])
+
 
 register_symbol(_mathematica_gamma3, dict(mathematica='Gamma'), 3)
 
@@ -893,6 +897,7 @@ class Function_psi2(GinacFunction):
         n, x = args_maxima
         return "psi[%s](%s)" % (n, x)
 
+
 psi1 = Function_psi1()
 psi2 = Function_psi2()
 
@@ -945,6 +950,7 @@ def psi(x, *args, **kwds):
         raise TypeError("Symbolic function psi takes at most 2 arguments (%s given)" % (len(args) + 1))
     return psi2(x, args[0], **kwds)
 
+
 # We have to add the wrapper function manually to the symbol_table when we have
 # two functions with different number of arguments and the same name
 symbol_table['functions']['psi'] = psi
@@ -952,6 +958,7 @@ symbol_table['functions']['psi'] = psi
 
 def _swap_psi(a, b):
     return psi(b, a)
+
 
 register_symbol(_swap_psi, {'giac': 'Psi'}, 2)
 
@@ -1074,5 +1081,6 @@ class Function_beta(GinacFunction):
             [7.407662 +/- 6.17e-7]
         """
         return [x, y]
+
 
 beta = Function_beta()

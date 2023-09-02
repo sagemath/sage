@@ -59,7 +59,7 @@ cdef class PowComputer_flint(PowComputer_class):
         finally:
             sig_off()
 
-        self.__allocated = 4
+        self._allocated = 4
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
@@ -87,7 +87,7 @@ cdef class PowComputer_flint(PowComputer_class):
             sage: A = PowComputer_flint(5, 20, 20, 20, False)
             sage: del A
         """
-        if self.__allocated >= 4:
+        if self._allocated >= 4:
             fmpz_clear(self.fprime)
             fmpz_clear(self.half_prime)
             fmpz_clear(self._fpow_variable)
@@ -208,7 +208,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
 
         """
         cdef Polynomial_integer_dense_flint poly = _poly
-        cdef long length = fmpz_poly_length(poly.__poly)
+        cdef long length = fmpz_poly_length(poly._poly)
 
         cdef Py_ssize_t i
 
@@ -251,7 +251,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         finally:
             sig_off()
 
-        self.__allocated = 8
+        self._allocated = 8
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, _poly, shift_seed=None):
         """
@@ -268,10 +268,10 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         PowComputer_flint.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, _poly, shift_seed)
 
         cdef Polynomial_integer_dense_flint poly = _poly
-        cdef long length = fmpz_poly_length(poly.__poly)
+        cdef long length = fmpz_poly_length(poly._poly)
         self.deg = length - 1
 
-        fmpz_poly_set(self.modulus, poly.__poly)
+        fmpz_poly_set(self.modulus, poly._poly)
 
         cdef Py_ssize_t i
         cdef fmpz* coeffs = self.modulus.coeffs
@@ -296,7 +296,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         """
         cdef Py_ssize_t i
 
-        if self.__allocated >= 8:
+        if self._allocated >= 8:
             fmpz_clear(self.q)
             fmpz_poly_clear(self.modulus)
             fmpz_poly_clear(self.powhelper_oneunit)
@@ -427,9 +427,9 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
         if _n is None:
-            fmpz_poly_set(ans.__poly, self.modulus)
+            fmpz_poly_set(ans._poly, self.modulus)
         else:
-            fmpz_poly_set(ans.__poly, self.get_modulus(_n)[0])
+            fmpz_poly_set(ans._poly, self.get_modulus(_n)[0])
         return ans
 
     cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x'):
@@ -440,7 +440,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         R = ZZ[var]
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
-        fmpz_poly_set(ans.__poly, value)
+        fmpz_poly_set(ans._poly, value)
         return ans
 
 cdef class PowComputer_flint_unram(PowComputer_flint_1step):
@@ -501,7 +501,7 @@ cdef class PowComputer_flint_unram(PowComputer_flint_1step):
         mpz_init(self.mpz_matmod)
         sig_off()
 
-        self.__allocated = 16
+        self._allocated = 16
 
     def __dealloc__(self):
         """
@@ -515,7 +515,7 @@ cdef class PowComputer_flint_unram(PowComputer_flint_1step):
             sage: del A
 
         """
-        if self.__allocated >= 16:
+        if self._allocated >= 16:
             fmpz_clear(self.fmpz_ccmp)
             fmpz_clear(self.fmpz_cval)
             fmpz_clear(self.fmpz_cinv)

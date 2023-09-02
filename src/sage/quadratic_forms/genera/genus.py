@@ -174,8 +174,8 @@ def _local_genera(p, rank, det_val, max_scale, even):
     """
     from sage.misc.mrange import cantor_product
     from sage.combinat.integer_lists.invlex import IntegerListsLex
-    scales_rks = [] # contains possibilities for scales and ranks
-    for rkseq in IntegerListsLex(rank, length=max_scale+1):   # rank sequences
+    scales_rks = []  # contains possibilities for scales and ranks
+    for rkseq in IntegerListsLex(rank, length=max_scale + 1):  # rank sequences
         # sum(rkseq) = rank
         # len(rkseq) = max_scale + 1
         # now assure that we get the right determinant
@@ -278,7 +278,7 @@ def _blocks(b, even_only=False):
         # odd case
         if not even_only:
             # format (det, oddity)
-            for s in [(1,2), (5,6), (1,6), (5,2), (7,0), (3,4)]:
+            for s in [(1, 2), (5, 6), (1, 6), (5, 2), (7, 0), (3, 4)]:
                 b1 = copy(b)
                 b1[2] = s[0]
                 b1[3] = 1
@@ -289,20 +289,20 @@ def _blocks(b, even_only=False):
         b1 = copy(b)
         b1[3] = 0
         b1[4] = 0
-        d = (-1)**(rk//2) % 8
+        d = (-1)**(rk // 2) % 8
         for det in [d, d * (-3) % 8]:
             b1 = copy(b1)
             b1[2] = det
             blocks.append(b1)
         # odd case
         if not even_only:
-            for s in [(1,2), (5,6), (1,6), (5,2), (7,0), (3,4)]:
+            for s in [(1, 2), (5, 6), (1, 6), (5, 2), (7, 0), (3, 4)]:
                 b1 = copy(b)
                 b1[2] = s[0]*(-1)**(rk//2 -1) % 8
                 b1[3] = 1
                 b1[4] = s[1]
                 blocks.append(b1)
-            for s in [(1,4), (5,0)]:
+            for s in [(1, 4), (5, 0)]:
                 b1 = copy(b)
                 b1[2] = s[0]*(-1)**(rk//2 - 2) % 8
                 b1[3] = 1
@@ -445,12 +445,14 @@ def is_GlobalGenus(G):
                 verbose(mesg="False in is_2_adic_genus(sym)", level=2)
                 return False
             if (a*b).kronecker(p) != 1:
-                verbose(mesg="False in (%s*%s).kronecker(%s)"%(a,b,p), level=2)
+                verbose(mesg="False in (%s*%s).kronecker(%s)" % (a, b, p),
+                        level=2)
                 return False
             oddity -= loc.excess()
         else:
             if a.kronecker(p) != b:
-                verbose(mesg="False in %s.kronecker(%s) != *%s"%(a,p,b), level=2)
+                verbose(mesg="False in %s.kronecker(%s) != *%s" % (a, p, b),
+                        level=2)
                 return False
             oddity += loc.excess()
     if oddity % 8 != 0:
@@ -586,6 +588,7 @@ def canonical_2_adic_compartments(genus_symbol_quintuple_list):
             i += 1
     return compartments
 
+
 def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
     r"""
     Given a `2`-adic local symbol (as the underlying list of quintuples)
@@ -658,7 +661,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
     # avoid a special case for the end of symbol
     # if a jordan component has rank zero it is considered even.
     symbol = genus_symbol_quintuple_list
-    symbol.append([symbol[-1][0]+1, 0, 1, 0, 0]) #We have just modified the input globally!
+    symbol.append([symbol[-1][0]+1, 0, 1, 0, 0])  # We have just modified the input globally!
     # Hence, we have to remove the last entry of symbol at the end.
     try:
 
@@ -684,8 +687,9 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
         trains.append(new_train)
         return trains
     finally:
-        #revert the input list to its original state
+        # revert the input list to its original state
         symbol.pop()
+
 
 def canonical_2_adic_reduction(genus_symbol_quintuple_list):
     r"""
@@ -749,14 +753,14 @@ def canonical_2_adic_reduction(genus_symbol_quintuple_list):
     # Canonical determinants:
     for i in range(len(genus_symbol_quintuple_list)):
         d = genus_symbol_quintuple_list[i][2]
-        if d in (1,7):
+        if d in (1, 7):
             canonical_symbol[i][2] = 1
         else:
             canonical_symbol[i][2] = -1
     # Oddity fusion:
     compartments = canonical_2_adic_compartments(genus_symbol_quintuple_list)
     for compart in compartments:
-        oddity = sum([ genus_symbol_quintuple_list[i][4] for i in compart ]) % 8
+        oddity = sum([genus_symbol_quintuple_list[i][4] for i in compart]) % 8
         for i in compart:
             genus_symbol_quintuple_list[i][4] = 0
         genus_symbol_quintuple_list[compart[0]][4] = oddity
@@ -3425,15 +3429,16 @@ def _gram_from_jordan_block(p, block, discr_form=False):
         d = 2**(rk % 2)
         if Integer(d).kronecker(p) != det:
             u = ZZ(_min_nonsquare(p))
-            q[0,0] = u
+            q[0, 0] = u
         q = q * (2 / p**level)
     if p != 2 and not discr_form:
         q = matrix.identity(QQ, rk)
         if det != 1:
             u = ZZ(_min_nonsquare(p))
-            q[0,0] = u
+            q[0, 0] = u
         q = q * p**level
     return q
+
 
 # Helper functions for mass computations
 

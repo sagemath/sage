@@ -357,4 +357,5 @@ class GroupExp_Class(UniqueRepresentation, Parent):
             raise AttributeError("Additive group has no method 'gens'")
         return tuple([self(x) for x in additive_generators])
 
+
 GroupExp_Class.Element = GroupExpElement
