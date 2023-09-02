@@ -1658,28 +1658,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(right_nm)
         return x
 
-    def __rtruediv__(self, left):
-        r"""
-        Return the quotient of left with ``self``, that is:
-
-        ``left/self``
-
-        as a complex number.
-
-        INPUT:
-
-        - ``left`` -- a complex number to divide by ``self``
-
-        EXAMPLES::
-
-            sage: a = ComplexNumber(2,0)
-            sage: a.__rtruediv__(CC(1))
-            0.500000000000000
-            sage: CC(1)/a
-            0.500000000000000
-        """
-        return ComplexNumber(self._parent, left)/self
-
     def __pow__(self, right, modulus):
         r"""
         Raise ``self`` to the ``right`` exponent.

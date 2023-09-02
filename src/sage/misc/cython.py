@@ -646,9 +646,9 @@ def compile_and_load(code, **kwds):
         ....:     cdef Polynomial_rational_flint res = f._new()
         ....:     cdef unsigned long k
         ....:     cdef Rational z = Rational(0)
-        ....:     for k in range(fmpq_poly_length(f.__poly)):
-        ....:         fmpq_poly_get_coeff_mpq(z.value, f.__poly, k)
-        ....:         fmpq_poly_set_coeff_mpq(res.__poly, n*k, z.value)
+        ....:     for k in range(fmpq_poly_length(f._poly)):
+        ....:         fmpq_poly_get_coeff_mpq(z.value, f._poly, k)
+        ....:         fmpq_poly_set_coeff_mpq(res._poly, n*k, z.value)
         ....:     return res
         ....: '''
         sage: module = compile_and_load(code)  # long time

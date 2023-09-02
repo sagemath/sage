@@ -3154,5 +3154,6 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 return "{} in the realization {}".format(self.realization_of(), self._realization_name())
 
+
 # Moved from sage.categories.cartesian_product to avoid circular import errors
 cartesian_product = CartesianProductFunctor()

@@ -2731,4 +2731,5 @@ def NumberField_relative_v1(base_field, poly, name, latex_name, canonical_embedd
     return NumberField(poly.change_ring(base_field), name, check=False,
                        embedding=canonical_embedding, latex_name=latex_name)
 
+
 NumberField_extension_v1 = NumberField_relative_v1  # historical reasons only

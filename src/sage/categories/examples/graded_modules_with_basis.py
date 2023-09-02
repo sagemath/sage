@@ -163,4 +163,5 @@ class GradedPartitionModule(CombinatorialFreeModule):
         """
         return 'P' + t._repr_()
 
+
 Example = GradedPartitionModule

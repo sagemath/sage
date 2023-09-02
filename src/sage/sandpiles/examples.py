@@ -246,4 +246,5 @@ class SandpileExamples():
         """
         return Sandpile(graphs.WheelGraph(n),0)
 
+
 sandpiles = SandpileExamples()

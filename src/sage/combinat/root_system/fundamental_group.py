@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Fundamental Group of an Extended Affine Weyl Group
 

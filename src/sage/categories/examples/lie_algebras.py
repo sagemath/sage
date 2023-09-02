@@ -332,4 +332,5 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
             """
             return self.__class__(self.parent(), self.value * rhs.value - rhs.value * self.value)
 
+
 Example = LieAlgebraFromAssociative
