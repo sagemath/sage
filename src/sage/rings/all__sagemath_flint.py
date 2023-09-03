@@ -16,7 +16,6 @@ from .qqbar import (AlgebraicRealField, AA,
                    AlgebraicField, QQbar,
                    AlgebraicNumber,
                    number_field_elements_from_algebraics)
-from .universal_cyclotomic_field import UniversalCyclotomicField, E
 
 # Intervals
 from .real_mpfi import (RealIntervalField,
