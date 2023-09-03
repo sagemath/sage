@@ -662,10 +662,10 @@ class DocTestController(SageObject):
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: 'BipartiteGraph' in DC.load_environment().__dict__
+            sage: 'BipartiteGraph' in DC.load_environment().__dict__                    # needs sage.graphs
             True
             sage: DC = DocTestController(DocTestDefaults(environment='sage.doctest.all'), [])
-            sage: 'BipartiteGraph' in  DC.load_environment().__dict__
+            sage: 'BipartiteGraph' in  DC.load_environment().__dict__                   # needs sage.graphs
             False
             sage: 'run_doctests' in DC.load_environment().__dict__
             True

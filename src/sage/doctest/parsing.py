@@ -66,6 +66,7 @@ def RIFtol(*args):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_interval_field
         sage: from sage.doctest.parsing import RIFtol
         sage: RIFtol(-1, 1)
         0.?
@@ -573,7 +574,7 @@ def parse_tolerance(source, want):
         0
         sage: marked.rel_tol
         0
-        sage: marked.abs_tol
+        sage: marked.abs_tol                                                            # needs sage.rings.real_mpfr
         0.010000000000000000000...?
     """
     # regular expressions
@@ -676,9 +677,9 @@ class MarkedOutput(str):
         sage: s = MarkedOutput("abc")
         sage: s.rel_tol
         0
-        sage: s.update(rel_tol = .05)
+        sage: s.update(rel_tol=.05)
         'abc'
-        sage: s.rel_tol
+        sage: s.rel_tol                                                                 # needs sage.rings.real_mpfr
         0.0500000000000000
 
         sage: MarkedOutput("56 µs")
@@ -695,11 +696,11 @@ class MarkedOutput(str):
 
             sage: from sage.doctest.parsing import MarkedOutput
             sage: s = MarkedOutput("0.0007401")
-            sage: s.update(abs_tol = .0000001)
+            sage: s.update(abs_tol=.0000001)
             '0.0007401'
             sage: s.rel_tol
             0
-            sage: s.abs_tol
+            sage: s.abs_tol                                                             # needs sage.rings.real_mpfr
             1.00000000000000e-7
         """
         self.__dict__.update(kwds)
@@ -713,12 +714,12 @@ class MarkedOutput(str):
 
             sage: from sage.doctest.parsing import MarkedOutput
             sage: s = MarkedOutput("0.0007401")
-            sage: s.update(abs_tol = .0000001)
+            sage: s.update(abs_tol=.0000001)
             '0.0007401'
             sage: t = loads(dumps(s)) # indirect doctest
             sage: t == s
             True
-            sage: t.abs_tol
+            sage: t.abs_tol                                                             # needs sage.rings.real_mpfr
             1.00000000000000e-7
         """
         return make_marked_output, (str(self), self.__dict__)
@@ -957,7 +958,7 @@ class SageDocTestParser(doctest.DocTestParser):
             '0.893515349287690\n'
             sage: type(ex.want)
             <class 'sage.doctest.parsing.MarkedOutput'>
-            sage: ex.want.tol
+            sage: ex.want.tol                                                           # needs sage.rings.real_interval_field
             2.000000000000000000...?e-11
 
         You can use continuation lines::
@@ -1283,6 +1284,8 @@ class SageOutputChecker(doctest.OutputChecker):
         '0.893515349287690\n'
         sage: type(ex.want)
         <class 'sage.doctest.parsing.MarkedOutput'>
+
+        sage: # needs sage.rings.real_interval_field
         sage: ex.want.tol
         2.000000000000000000...?e-11
         sage: OC.check_output(ex.want, '0.893515349287690', optflag)
@@ -1343,11 +1346,13 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: want_tol = MarkedOutput().update(tol=0.0001)
             sage: want_abs = MarkedOutput().update(abs_tol=0.0001)
             sage: want_rel = MarkedOutput().update(rel_tol=0.0001)
-            sage: OC.add_tolerance(RIF(pi.n(64)), want_tol).endpoints()                 # needs sage.symbolic
+
+            sage: # needs sage.rings.real_interval_field sage.symbolic
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_tol).endpoints()
             (3.14127849432443, 3.14190681285516)
-            sage: OC.add_tolerance(RIF(pi.n(64)), want_abs).endpoints()                 # needs sage.symbolic
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_abs).endpoints()
             (3.14149265358979, 3.14169265358980)
-            sage: OC.add_tolerance(RIF(pi.n(64)), want_rel).endpoints()                 # needs sage.symbolic
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_rel).endpoints()
             (3.14127849432443, 3.14190681285516)
             sage: OC.add_tolerance(RIF(1e1000), want_tol)
             1.000?e1000
@@ -1522,7 +1527,10 @@ class SageOutputChecker(doctest.OutputChecker):
                 got_values = [RIFtol(g) for g in got_str]
                 # The doctest is not successful if one of the "want" and "got"
                 # intervals have an empty intersection
-                if not all(a.overlaps(b) for a, b in zip(want_intervals, got_values)):
+                try:
+                    if not all(a.overlaps(b) for a, b in zip(want_intervals, got_values)):
+                        return False
+                except AttributeError:
                     return False
 
                 # Then check the part of the doctests without the numbers

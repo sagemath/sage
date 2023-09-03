@@ -517,6 +517,7 @@ cdef class CoercionModel:
 
     Check that :trac:`8426` is fixed (see also :trac:`18076`)::
 
+        sage: # needs sage.rings.real_mpfr
         sage: import numpy                                                              # needs numpy
         sage: x = polygen(RR)
         sage: numpy.float32('1.5') * x                                                  # needs numpy

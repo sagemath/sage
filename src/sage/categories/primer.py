@@ -1026,7 +1026,7 @@ permutation groups (no surprise)::
 
     sage: P = PermutationGroup([[(1,2,3)]]); P                                          # needs sage.groups
     Permutation Group with generators [(1,2,3)]
-    sage: P.category()
+    sage: P.category()                                                                  # needs sage.groups
     Category of finite enumerated permutation groups
 
 In this case, the group is commutative, so we can specify this::
@@ -1034,7 +1034,7 @@ In this case, the group is commutative, so we can specify this::
     sage: P = PermutationGroup([[(1,2,3)]],                                             # needs sage.groups
     ....:                      category=PermutationGroups().Finite().Commutative()); P
     Permutation Group with generators [(1,2,3)]
-    sage: P.category()
+    sage: P.category()                                                                  # needs sage.groups
     Category of finite enumerated commutative permutation groups
 
 This feature can even be used, typically in experimental code, to add
@@ -1049,8 +1049,8 @@ for the parents or the elements, without touching the code base::
     ....:     class ElementMethods:
     ....:         def bar(self): print("bar")
 
-    sage: # needs sage.combinat
-    sage: P = PermutationGroup([[(1,2,3)]], category=Foos())                            # needs sage.groups
+    sage: # needs sage.groups
+    sage: P = PermutationGroup([[(1,2,3)]], category=Foos())
     sage: P.foo()
     foo
     sage: p = P.an_element()
@@ -1061,7 +1061,7 @@ In the long run, it would be thinkable to use this idiom to implement
 forgetful functors; for example the above group could be constructed
 as a plain set with::
 
-    sage: P = PermutationGroup([[(1,2,3)]], category=Sets())    # not implemented, needs sage.combinat
+    sage: P = PermutationGroup([[(1,2,3)]], category=Sets())    # not implemented, needs sage.groups
 
 At this stage though, this is still to be explored for robustness
 and practicality. For now, most parents that accept a category argument
