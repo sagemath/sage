@@ -2067,9 +2067,11 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             Sparse Univariate Polynomial Ring in x over Rational Field
             sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
-            sage: R = PRing(CC, 'x'); R                                                 # needs sage.rings.real_mpfr
+
+            sage: # needs sage.rings.real_mpfr
+            sage: R = PRing(CC, 'x'); R
             Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
-            sage: type(R.gen())                                                         # needs sage.rings.real_mpfr
+            sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
 
         Demonstrate that :trac:`8762` is fixed::

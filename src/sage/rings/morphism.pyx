@@ -3249,13 +3249,14 @@ def _tensor_product_ring(B, A):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.singular
         sage: from sage.rings.morphism import _tensor_product_ring
         sage: R.<x,y> = QQ[]
-        sage: S.<u,v> = R.quotient(x^2 + y^2)                                           # needs sage.libs.singular
-        sage: Q = _tensor_product_ring(S, R); Q                                         # needs sage.libs.singular
+        sage: S.<u,v> = R.quotient(x^2 + y^2)
+        sage: Q = _tensor_product_ring(S, R); Q
         Quotient of Multivariate Polynomial Ring in u, v, x, y over
         Rational Field by the ideal (u^2 + v^2)
-        sage: Q.term_order()                                                            # needs sage.libs.singular
+        sage: Q.term_order()
         Block term order with blocks:
         (Degree reverse lexicographic term order of length 2,
          Degree reverse lexicographic term order of length 2)

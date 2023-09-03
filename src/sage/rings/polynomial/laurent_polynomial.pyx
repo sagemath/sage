@@ -182,9 +182,10 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Check that :trac:`22277` is fixed::
 
-            sage: R.<x, y> = LaurentPolynomialRing(QQ)                                  # needs sage.modules
-            sage: a = 2*x^2 + 3*x^3 + 4*x^-1                                            # needs sage.modules
-            sage: a.change_ring(GF(3))                                                  # needs sage.modules
+            sage: # needs sage.modules
+            sage: R.<x, y> = LaurentPolynomialRing(QQ)
+            sage: a = 2*x^2 + 3*x^3 + 4*x^-1
+            sage: a.change_ring(GF(3))
             -x^2 + x^-1
         """
         return self._parent.change_ring(R)(self)

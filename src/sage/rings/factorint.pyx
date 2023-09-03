@@ -51,7 +51,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
 
         sage: from sage.rings.factorint import aurifeuillian
 
-        sage: # needs sage.rings.real_interval_field
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: aurifeuillian(2, 2)
         [5, 13]
         sage: aurifeuillian(2, 2^5)
@@ -61,6 +61,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         sage: aurifeuillian(15, 1)
         [19231, 142111]
 
+        sage: # needs sage.libs.pari
         sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...

@@ -8779,8 +8779,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: x = polygen(RR)                                                       # needs sage.rings.real_mpfr
-            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: x = polygen(RR)
+            sage: (x^3 - 1).complex_roots()[0].parent()
             Complex Field with 53 bits of precision
 
             sage: x = polygen(RDF)
@@ -10094,9 +10095,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x> = RR[]                                                          # needs sage.rings.real_mpfr
-            sage: f = x^6 + x^2 + -x^4 -x^3                                             # needs sage.rings.real_mpfr
-            sage: f.norm(int(2))                                                        # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R.<x> = RR[]
+            sage: f = x^6 + x^2 + -x^4 -x^3
+            sage: f.norm(int(2))
             2.00000000000000
 
         Check that :trac:`18600` is fixed::

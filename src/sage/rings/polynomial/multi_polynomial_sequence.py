@@ -637,6 +637,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, x*y])
             sage: I = S.algebraic_dependence(); I
@@ -644,22 +645,26 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I
-            Ideal (16 + 32*T2 - 8*T0^2 + 24*T2^2 - 8*T0^2*T2 + 8*T2^3 + 9*T0^4 - 2*T0^2*T2^2 + T2^4 - T0^4*T1 + 8*T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8) of Multivariate Polynomial Ring in T0, T1, T2 over Rational Field
+            Ideal (16 + 32*T2 - 8*T0^2 + 24*T2^2 - 8*T0^2*T2 + 8*T2^3 + 9*T0^4 - 2*T0^2*T2^2
+                    + T2^4 - T0^4*T1 + 8*T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8)
+             of Multivariate Polynomial Ring in T0, T1, T2 over Rational Field
             sage: [F(S) for F in I.gens()]
             [0]
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7))
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
-            sage: I = S.algebraic_dependence(); I                                       # needs sage.rings.finite_rings
+            sage: I = S.algebraic_dependence(); I
             Ideal (2 - 3*T2 - T0^2 + 3*T2^2 - T0^2*T2 + T2^3 + 2*T0^4 - 2*T0^2*T2^2
                    + T2^4 - T0^4*T1 + T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8)
              of Multivariate Polynomial Ring in T0, T1, T2 over Finite Field of size 7
-            sage: [F(S) for F in I.gens()]                                              # needs sage.rings.finite_rings
+            sage: [F(S) for F in I.gens()]
             [0]
 
         .. NOTE::
@@ -1187,6 +1192,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
             sage: I = sage.rings.ideal.Cyclic(R, 4)
             sage: I.basis.is_groebner()

@@ -1549,7 +1549,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # needs sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.polynomial(y).discriminant()
+            sage: f.polynomial(y).discriminant()                                        # needs sage.libs.pari
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
             sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()             # needs sage.libs.singular
             False
@@ -1790,10 +1790,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<a,b,c> = RR[]                                                      # needs sage.rings.real_mpfr
-            sage: f = a + b + RR('0.3'); f                                              # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R.<a,b,c> = RR[]
+            sage: f = a + b + RR('0.3'); f
             a + b + 0.300000000000000
-            sage: f.denominator()                                                       # needs sage.rings.real_mpfr
+            sage: f.denominator()
             1.00000000000000
 
         Check that the denominator is an element over the base whenever the base
