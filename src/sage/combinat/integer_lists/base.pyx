@@ -61,7 +61,7 @@ cdef class IntegerListsBackend():
 
             sage: from sage.combinat.integer_lists.base import IntegerListsBackend
             sage: C = IntegerListsBackend(2, length=3)
-            sage: C = IntegerListsBackend(min_sum=1.4)
+            sage: C = IntegerListsBackend(min_sum=1.4)                                  # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer
