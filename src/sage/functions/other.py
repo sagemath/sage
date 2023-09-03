@@ -1073,8 +1073,6 @@ class Function_arg(BuiltinFunction):
             0.00000000000000000000000000
             sage: arg(3.00000000000000000000000000).prec()
             90
-<<<<<<< HEAD
-=======
             sage: arg(RDF(3))
             0.0
             sage: arg(RDF(3)).parent()
@@ -1082,7 +1080,6 @@ class Function_arg(BuiltinFunction):
             sage: arg(-2.5)
             3.14159265358979
 
->>>>>>> upstream/develop
             sage: arg(ComplexIntervalField(90)(3)).prec()                               # needs sage.rings.complex_interval_field
             90
             sage: arg(ComplexIntervalField(90)(3)).parent()                             # needs sage.rings.complex_interval_field
