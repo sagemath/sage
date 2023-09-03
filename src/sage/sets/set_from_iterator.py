@@ -511,12 +511,13 @@ class Decorator():
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: from sage.misc.sageinspect import sage_getsourcelines
             sage: from sage.sets.set_from_iterator import Decorator
             sage: d = Decorator()
-            sage: d.f = MathieuGroup.order                                              # needs sage.groups
-            sage: S = sage_getsourcelines(d)   # indirect doctest                       # needs sage.groups
-            sage: S[0][2]                                                               # needs sage.groups
+            sage: d.f = MathieuGroup.order
+            sage: S = sage_getsourcelines(d)   # indirect doctest
+            sage: S[0][2]
             '        Return the number of elements of this group.\n'
             sage: S[0][25]                                                              # needs sage.groups
             '        if not gens:\n'
@@ -530,6 +531,7 @@ class Decorator():
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: from sage.sets.set_from_iterator import Decorator
             sage: d = Decorator()
