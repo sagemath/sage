@@ -96,12 +96,11 @@ fi
 
 if [ "$1" = '-distribution' -o "$1" = '--distribution' ]; then
     distribution=$(echo "$2" | cut -f1 -d'[' | tr _ -)
-    extras=$(echo "$2" | cut -f2 -d'[')
+    case "$2" in
+        *[*]) extras_suffix=-$(echo "$2" | cut -f2 -d'[' | sed 's/,/--/;');;
+        *)    extras_suffix=
+    esac
     shift 2
-    extras_suffix=
-    if [ -n "$extras" ]; then
-        extras_suffix=-$(echo $extras | sed 's/,/--/;s/]//;')
-    fi
     exec "$SAGE_ROOT"/pkgs/$distribution/.tox/sagepython-sagewheels-nopypi-norequirements$extras_suffix/bin/sage "$@"
 fi
 
