@@ -134,7 +134,7 @@ cdef class Ring(ParentWithGens):
         running ._test_zero_divisors() . . . pass
         sage: TestSuite(QQ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
         sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
-        sage: TestSuite(ZZ['x','y']['t']).run()                                         # needs sage.libs.singular
+        sage: TestSuite(ZZ['x','y']['t']).run()
 
     Test against another bug fixed in :trac:`9944`::
 

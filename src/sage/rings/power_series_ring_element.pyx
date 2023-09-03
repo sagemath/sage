@@ -1339,8 +1339,8 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
-            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)                 # needs sage.rings.complex_double
-            sage: s.jacobi_continued_fraction()                                         # needs sage.rings.complex_double
+            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
+            sage: s.jacobi_continued_fraction()
             ((-1, -1), (-3, -4), (-5, -9), (-7, -16), (-9, -25))
 
         Another example::
