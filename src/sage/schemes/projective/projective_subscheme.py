@@ -1433,6 +1433,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
@@ -1444,7 +1445,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.global_height() # long time
+            sage: X.global_height()  # long time
             4.61512051684126
         """
         return self.Chow_form().global_height(prec)
@@ -1466,19 +1467,20 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: I = NF.ideal(3)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([3*x*y - 5*x*z, y^2])
-            sage: X.local_height(I)
+            sage: X.local_height(I)                                                     # needs sage.libs.singular
             0.000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.local_height(2)
+            sage: X.local_height(2)                                                     # needs sage.libs.singular
             0.000000000000000
         """
         return self.Chow_form().local_height(v, prec)
@@ -1500,18 +1502,19 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([x^2 + y*z, 3*x*y])
-            sage: X.local_height_arch(1)
+            sage: X.local_height_arch(1)                                                # needs sage.libs.singular
             0.0000000000000000000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.local_height_arch(1)
+            sage: X.local_height_arch(1)                                                # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().local_height_arch(i, prec)

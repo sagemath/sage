@@ -1080,6 +1080,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_mpfr
         sage: P = ProjectiveSpace(3, RR)
         sage: P(2, 3, 4, 5)
         (0.400000000000000 : 0.600000000000000 : 0.800000000000000 : 1.00000000000000)
