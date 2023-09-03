@@ -816,7 +816,7 @@ class sage__rings__complex_double(PythonModule):
                               spkg='sagemath_modules', type='standard')
 
 
-class sage__rings__complex_interval_field(PythonModule):
+class sage__rings__complex_interval_field(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.complex_interval_field`.
 
@@ -834,8 +834,10 @@ class sage__rings__complex_interval_field(PythonModule):
             sage: isinstance(sage__rings__complex_interval_field(), sage__rings__complex_interval_field)
             True
         """
-        PythonModule.__init__(self, 'sage.rings.complex_interval_field',
-                              spkg='sagemath_modules', type='standard')
+        JoinFeature.__init__(self, 'sage.rings.complex_interval_field',
+                             [PythonModule('sage.rings.complex_interval_field'),
+                              PythonModule('sage.rings.cif')],
+                             spkg='sagemath_modules', type='standard')
 
 
 class sage__rings__finite_rings(JoinFeature):
