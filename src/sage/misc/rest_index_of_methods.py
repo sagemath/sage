@@ -47,7 +47,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
     - ``root`` -- module or class (default: ``None``); the module, or class,
       whose elements are to be listed. This is needed to recover the class when
       this method is called from :meth:`gen_thematic_rest_table_index` (see
-      :trac:`36178`).
+      :issue:`36178`).
 
     .. WARNING::
 
@@ -76,7 +76,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions.
-           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
+           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted functions (or methods) of a module (or class).
            :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
@@ -129,7 +129,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions.
-           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
+           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted functions (or methods) of a module (or class).
            :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
@@ -140,7 +140,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
            :delim: @
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
-           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
+           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted functions (or methods) of a module (or class).
            :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
@@ -153,7 +153,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
         sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # needs sage.graphs
         False
 
-    Check that :trac:`36178` is fixed::
+    Check that :issue:`36178` is fixed::
 
         sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
         ...
@@ -301,7 +301,7 @@ def list_of_subfunctions(root, only_local_functions=True):
 
 def gen_thematic_rest_table_index(root, additional_categories=None, only_local_functions=True):
     r"""
-    Return a ReST string of thematically sorted function (or methods) of a
+    Return a ReST string of thematically sorted functions (or methods) of a
     module (or class).
 
     INPUT:
@@ -374,4 +374,5 @@ def doc_index(name):
     return hey
 
 
-__doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index([gen_rest_table_index]))
+__doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index([gen_rest_table_index,
+                                                                  gen_thematic_rest_table_index]))

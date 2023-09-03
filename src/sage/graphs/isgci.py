@@ -135,8 +135,8 @@ Predefined classes
 
    * - Apex
 
-     - :meth:`~sage.graphs.graph.Graph.is_apex()`,
-       :meth:`~sage.graphs.graph.Graph.apex_vertices()`
+     - :meth:`~sage.graphs.graph.Graph.is_apex`,
+       :meth:`~sage.graphs.graph.Graph.apex_vertices`
 
    * - AT_free
 
