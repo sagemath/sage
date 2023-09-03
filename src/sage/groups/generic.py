@@ -1208,8 +1208,9 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.groups.generic import order_from_multiple
+
+        sage: # needs sage.rings.finite_rings
         sage: k.<a> = GF(5^5)
         sage: b = a^4
         sage: order_from_multiple(b, 5^5 - 1, operation='*')
@@ -1353,8 +1354,9 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.groups.generic import order_from_bounds
+
+        sage: # needs sage.rings.finite_rings
         sage: k.<a> = GF(5^5)
         sage: b = a^4
         sage: order_from_bounds(b, (5^4, 5^5), operation='*')
