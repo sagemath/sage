@@ -1293,7 +1293,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(2)[]; P = R.ideal(t^7 + t^6 + t^5 + t^4 + 1)
             sage: k = P.residue_field(); f = k.coerce_map_from(R)
-            sage: f(t^10)
+            sage: f(t^10)                                                               # needs sage.modules
             tbar^6 + tbar^3 + tbar^2
         """
         self._K = K
@@ -1482,7 +1482,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             sage: k.<a> = P.residue_field(); f = k.coerce_map_from(R)
             sage: f.lift(a^2 + 5*a + 1)
             t^2 + 5*t + 1
-            sage: f(f.lift(a^2 + 5*a + 1)) == a^2 + 5*a + 1
+            sage: f(f.lift(a^2 + 5*a + 1)) == a^2 + 5*a + 1                             # needs sage.modules
             True
         """
         if self.domain() is ZZ:
@@ -1780,12 +1780,11 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.modules sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^3 - 7)
             sage: P = K.ideal(29).factor()[1][0]
-            sage: k = ResidueField(P)
-            sage: k
+            sage: k = ResidueField(P); k
             Residue field of Fractional ideal (-a^2 - 2*a - 2)
             sage: OK = K.maximal_order()
             sage: c = OK(a)
@@ -1799,7 +1798,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             sage: k(v)  # indirect doctest
             3
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: R.<t> = GF(2)[]; P = R.ideal(t + 1); k.<a> = P.residue_field()
             sage: V = k.vector_space(map=False); v = V([1])
             sage: k(v)

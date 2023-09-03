@@ -260,9 +260,9 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             sage: f = x*a + a
             sage: f.map_coefficients(lambda a: a + 1)
             (a + 1) + (a + 1)*x
-            sage: R.<x,y> = LaurentPolynomialRing(k, 2)
-            sage: f = x*a + 2*x^3*y*a + a
-            sage: f.map_coefficients(lambda a: a + 1)
+            sage: R.<x,y> = LaurentPolynomialRing(k, 2)                                 # needs sage.modules
+            sage: f = x*a + 2*x^3*y*a + a                                               # needs sage.modules
+            sage: f.map_coefficients(lambda a: a + 1)                                   # needs sage.modules
             (2*a + 1)*x^3*y + (a + 1)*x + a + 1
 
         Examples with different base ring::

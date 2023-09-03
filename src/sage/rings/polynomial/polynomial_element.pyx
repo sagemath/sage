@@ -6881,9 +6881,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x, y> = QQ[]
             sage: S.<a> = R[]
             sage: f = x^2 + a; g = y^3 + a
-            sage: h = f.resultant(g); h                                                 # needs sage.libs.pari
+            sage: h = f.resultant(g); h                                                 # needs sage.libs.pari sage.modules
             y^3 - x^2
-            sage: h.parent() is R                                                       # needs sage.libs.pari
+            sage: h.parent() is R                                                       # needs sage.libs.pari sage.modules
             True
 
         Check that :trac:`13672` is fixed::
@@ -7342,9 +7342,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.libs.pari sage.libs.singular
             sage: f = cyclotomic_polynomial(30)
-            sage: f.adams_operator(7)==f
+            sage: f.adams_operator(7) == f
             True
             sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2
             True
@@ -7505,7 +7505,7 @@ cdef class Polynomial(CommutativePolynomial):
             -31
             sage: d.parent() is QQ                                                      # needs sage.libs.pari
             True
-            sage: EllipticCurve([1, 1]).discriminant()/16                               # needs sage.libs.pari
+            sage: EllipticCurve([1, 1]).discriminant()/16                               # needs sage.libs.pari sage.schemes
             -31
 
         ::
@@ -7733,7 +7733,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^3 - 1
             sage: f.roots()
             [(1, 1)]
-            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc
+            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc     # needs sage.rings.real_mpfr
             [(1.00000000000000, 1),
              (-0.500000000000000 - 0.86602540378443...*I, 1),
              (-0.500000000000000 + 0.86602540378443...*I, 1)]
@@ -8274,9 +8274,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: K.<zeta> = CyclotomicField(2)                                         # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: factor(x^3 - 1)                                                       # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<zeta> = CyclotomicField(2)
+            sage: R.<x> = K[]
+            sage: factor(x^3 - 1)
             (x - 1) * (x^2 + x + 1)
 
         This shows that the issue from :trac:`6237` is fixed::
@@ -10834,7 +10835,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Some random tests::
 
-            sage: for R in [QQ['x'], GF(4)['x']]:                                       # needs sage.rings.finite_rings
+            sage: for R in [QQ['x'], GF(4)['x']]:                                       # needs sage.modules sage.rings.finite_rings
             ....:     for _ in range(30):
             ....:         p = R.random_element(degree=randint(10,20))
             ....:         n = ZZ.random_element(2,20)

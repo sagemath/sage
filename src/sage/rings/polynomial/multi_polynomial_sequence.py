@@ -394,22 +394,22 @@ class PolynomialSequence_generic(Sequence_generic):
         EXAMPLES::
 
             sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
 
-            sage: Sequence([I.gens()], I.ring())  # indirect doctest                    # needs sage.rings.finite_rings
+            sage: Sequence([I.gens()], I.ring())  # indirect doctest                    # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
 
         If an ideal is provided, the generators are used.::
 
-            sage: Sequence(I)                                                           # needs sage.rings.finite_rings
+            sage: Sequence(I)                                                           # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
 
         If a list of polynomials is provided, the system has only one
         part.::
 
-            sage: Sequence(I.gens(), I.ring())                                          # needs sage.rings.finite_rings
+            sage: Sequence(I.gens(), I.ring())                                          # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
         """
