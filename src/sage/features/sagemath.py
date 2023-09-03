@@ -124,10 +124,10 @@ class sage__combinat(JoinFeature):
 
     Doctests that use Python modules from :mod:`sage.combinat` that involve trees,
     graphs, hypergraphs, posets, quivers, combinatorial designs,
-    finite state machines etc. should be marked ``# needs sage.combinat sage.graphs``::
+    finite state machines etc. should be marked ``# needs sage.graphs`` instead::
 
-        sage: L = Poset({0: [1], 1: [2], 2:[3], 3:[4]})                                 # needs sage.combinat sage.graphs
-        sage: L.is_chain()                                                              # needs sage.combinat sage.graphs
+        sage: L = Poset({0: [1], 1: [2], 2:[3], 3:[4]})                                 # needs sage.graphs
+        sage: L.is_chain()                                                              # needs sage.graphs
         True
 
     Doctests that use combinatorial modules/algebras, or root systems should use the tag
@@ -143,10 +143,10 @@ class sage__combinat(JoinFeature):
         Positive imaginary roots of type ['A', 3, 1]
 
     Doctests that use lattices, semilattices, or Dynkin diagrams should use the tag
-    ``# needs sage.combinat sage.graphs sage.modules``::
+    ``# needs sage.graphs sage.modules``::
 
-        sage: L = LatticePoset({0: [1,2], 1: [3], 2: [3,4], 3: [5], 4: [5]})            # needs sage.combinat sage.graphs sage.modules
-        sage: L.meet_irreducibles()                                                     # needs sage.combinat sage.graphs sage.modules
+        sage: L = LatticePoset({0: [1,2], 1: [3], 2: [3,4], 3: [5], 4: [5]})            # needs sage.graphs sage.modules
+        sage: L.meet_irreducibles()                                                     # needs sage.graphs sage.modules
         [1, 3, 4]
 
     TESTS::
