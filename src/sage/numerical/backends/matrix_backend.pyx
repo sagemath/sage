@@ -477,7 +477,7 @@ cdef class MatrixBackend(GenericBackend):
         """
         for i in range(len(coeff)):
             self.objective_coefficients[0, i] = coeff[i]
-        obj_constant_term = d
+        self.obj_constant_term = d
 
     cpdef set_verbosity(self, int level):
         """

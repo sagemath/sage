@@ -88,7 +88,7 @@ cdef class CVXPYBackend(MatrixBackend):
         0.0
     """
 
-    def __cinit__(self, maximization=True, base_ring=None, cvxpy_solver=None, cvxpy_solver_args=None):
+    def __cinit__(self, maximization=True, base_ring=None, implementation = None, cvxpy_solver=None, cvxpy_solver_args=None):
         """
         Cython constructor
 
@@ -110,8 +110,9 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
         """
-        super().__init__(maximization, base_ring)
-        self.init_cvxpy_problem(maximization, cvxpy_solver, cvxpy_solver_args)
+        super().__init__(maximization, base_ring, implementation)
+        self._cvxpy_solver = cvxpy_solver
+        self._cvxpy_solver_args = cvxpy_solver_args
     
     def _init_base_ring(self, base_ring=None):
         if base_ring != RDF and base_ring is not None:
@@ -238,35 +239,38 @@ cdef class CVXPYBackend(MatrixBackend):
 
         super(CVXPYBackend, self).add_variable(lower_bound, upper_bound, binary, continuous, integer, obj, name)
 
-        if name is None:
-            name = f'x_{self.ncols()}'
-
-        if binary:
-            variable = cvxpy.Variable(name=name, boolean=True)
-        elif integer:
-            variable = cvxpy.Variable(name=name, integer=True)
-        else:
-            variable = cvxpy.Variable(name=name)
-
-        self.variables.append(variable)
         index = self.ncols() - 1
-
-        if coefficients is not None:
-            constraints = list(self.problem.constraints)
-            for i, v in coefficients:
-                if not isinstance(constraints[i], Equality):
-                    raise NotImplementedError('adding coefficients to inequalities is ambiguous '
-                                              'because cvxpy rewrites all inequalities as <=')
-                constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
-                                                      constraints[i].args[1])
-            self.problem = cvxpy.Problem(self.problem.objective, constraints)
-
         self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
 
-        if obj:
-            objective = type(self.problem.objective)(self.problem.objective.args[0]
-                                                     + obj * variable)
-            self.problem = cvxpy.Problem(objective, self.problem.constraints)
+        if self.problem is None:
+            pass
+        else:
+            if name is None:
+                name = f'x_{self.ncols()}'
+
+            if binary:
+                variable = cvxpy.Variable(name=name, boolean=True)
+            elif integer:
+                variable = cvxpy.Variable(name=name, integer=True)
+            else:
+                variable = cvxpy.Variable(name=name)
+
+            self.variables.append(variable)
+
+            if coefficients is not None:
+                constraints = list(self.problem.constraints)
+                for i, v in coefficients:
+                    if not isinstance(constraints[i], Equality):
+                        raise NotImplementedError('adding coefficients to inequalities is ambiguous '
+                                                'because cvxpy rewrites all inequalities as <=')
+                    constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
+                                                        constraints[i].args[1])
+                self.problem = cvxpy.Problem(self.problem.objective, constraints)
+
+            if obj:
+                objective = type(self.problem.objective)(self.problem.objective.args[0]
+                                                        + obj * variable)
+                self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
         return index
 
@@ -324,20 +328,23 @@ cdef class CVXPYBackend(MatrixBackend):
         """
         super(CVXPYBackend, self).add_linear_constraint(coefficients, lower_bound, upper_bound, name)
 
-        terms = [v * self.variables[i] for i, v in coefficients]
-        if terms:
-            expr = AddExpression(terms)
+        if self.problem is None:
+            pass
         else:
-            expr = Constant(0)
-        constraints = list(self.problem.constraints)
-        if lower_bound is not None and lower_bound == upper_bound:
-            constraints.append(expr == upper_bound)
-        elif lower_bound is not None:
-            constraints.append(lower_bound <= expr)
-        elif upper_bound is not None:
-            constraints.append(expr <= upper_bound)
-        self.constraint_names.append(name)
-        self.problem = cvxpy.Problem(self.problem.objective, constraints)
+            terms = [v * self.variables[i] for i, v in coefficients]
+            if terms:
+                expr = AddExpression(terms)
+            else:
+                expr = Constant(0)
+            constraints = list(self.problem.constraints)
+            if lower_bound is not None and lower_bound == upper_bound:
+                constraints.append(expr == upper_bound)
+            elif lower_bound is not None:
+                constraints.append(lower_bound <= expr)
+            elif upper_bound is not None:
+                constraints.append(expr <= upper_bound)
+            self.constraint_names.append(name)
+            self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
     cpdef add_col(self, indices, coeffs):
         """
@@ -400,14 +407,20 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0, 1.0, 2.0, 1.0, 3.0]
         """
+        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)
+        super(CVXPYBackend, self).set_objective(coeff, d)
+
         if self.variables:
             expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
-            super(CVXPYBackend, self).set_objective(coeff, d)
         else:
             expr = Constant(0)
-        objective = type(self.problem.objective)(expr)
-        constraints = list(self.problem.constraints)
-        self.problem = cvxpy.Problem(objective, constraints)
+
+        if self.problem is None:
+            pass
+        else:
+            objective = type(self.problem.objective)(expr)
+            constraints = list(self.problem.constraints)
+            self.problem = cvxpy.Problem(objective, constraints)
 
     cpdef set_sense(self, int sense):
         """
@@ -430,14 +443,17 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.is_maximization()
             False
         """
-        expr = self.problem.objective.args[0]
-        if sense == 1:
-            objective = cvxpy.Maximize(expr)
-            self.is_maximize = 1
+        super(CVXPYBackend, self).set_sense(sense)
+    
+        if self.problem is None:
+            pass
         else:
-            objective = cvxpy.Minimize(expr)
-            self.is_maximize = 0
-        self.problem = cvxpy.Problem(objective, self.problem.constraints)
+            expr = self.problem.objective.args[0]
+            if sense == 1:
+                objective = cvxpy.Maximize(expr)
+            else:
+                objective = cvxpy.Minimize(expr)
+            self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
@@ -464,10 +480,13 @@ cdef class CVXPYBackend(MatrixBackend):
         """
         if coeff is not None:
             super(CVXPYBackend, self).objective_coefficient(variable, coeff)
-            expr = self.problem.objective.args[0] + coeff * self.variables[variable]
-            objective = type(self.problem.objective)(expr)
-            constraints = list(self.problem.constraints)
-            self.problem = cvxpy.Problem(objective, constraints)
+            if self.problem is None:
+                pass
+            else:
+                expr = self.problem.objective.args[0] + coeff * self.variables[variable]
+                objective = type(self.problem.objective)(expr)
+                constraints = list(self.problem.constraints)
+                self.problem = cvxpy.Problem(objective, constraints)
         else:
             return super(CVXPYBackend, self).objective_coefficient(variable, coeff)
 
@@ -498,6 +517,8 @@ cdef class CVXPYBackend(MatrixBackend):
             ...
             MIPSolverException: ...
         """
+        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)
+
         try:
             self.problem.solve(solver=self._cvxpy_solver, **self._cvxpy_solver_args)
         except Exception as e:
@@ -536,6 +557,7 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.get_variable_value(1)  # abs tol 1e-7
             1.5
         """
+        print(self.problem.value, self.obj_constant_term)
         return self.problem.value + self.obj_constant_term
 
     cpdef get_variable_value(self, int variable):
