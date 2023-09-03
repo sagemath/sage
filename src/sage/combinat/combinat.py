@@ -553,7 +553,7 @@ def euler_number(n, algorithm='flint') -> Integer:
         sage: [euler_number(i) for i in range(10)]                                      # needs sage.libs.flint
         [1, 0, -1, 0, 5, 0, -61, 0, 1385, 0]
         sage: x = PowerSeriesRing(QQ, 'x').gen().O(10)
-        sage: 2/(exp(x)+exp(-x))                                                        # needs sage.symbolic
+        sage: 2/(exp(x)+exp(-x))
         1 - 1/2*x^2 + 5/24*x^4 - 61/720*x^6 + 277/8064*x^8 + O(x^10)
         sage: [euler_number(i)/factorial(i) for i in range(11)]                         # needs sage.libs.flint
         [1, 0, -1/2, 0, 5/24, 0, -61/720, 0, 277/8064, 0, -50521/3628800]
@@ -986,13 +986,13 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
         1900842429486
         sage: type(n)
         <class 'sage.rings.integer.Integer'>
-        sage: n = stirling_number2(20, 11, algorithm='gap'); n                          # needs sage.libs.gap
+        sage: n_gap = stirling_number2(20, 11, algorithm='gap'); n_gap                  # needs sage.libs.gap
         1900842429486
-        sage: type(n)                                                                   # needs sage.libs.gap
+        sage: type(n_gap)                                                               # needs sage.libs.gap
         <class 'sage.rings.integer.Integer'>
-        sage: n = stirling_number2(20, 11, algorithm='flint'); n                        # needs sage.libs.flint
+        sage: n_flint = stirling_number2(20, 11, algorithm='flint'); n_flint            # needs sage.libs.flint
         1900842429486
-        sage: type(n)                                                                   # needs sage.libs.flint
+        sage: type(n_flint)                                                             # needs sage.libs.flint
         <class 'sage.rings.integer.Integer'>
 
     Sage's implementation splitting the computation of the Stirling
@@ -1097,7 +1097,7 @@ def polygonal_number(s, n):
 
     A non-integer input returns an error::
 
-        sage: polygonal_number(3.5, 1)
+        sage: polygonal_number(3.5, 1)                                                  # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
