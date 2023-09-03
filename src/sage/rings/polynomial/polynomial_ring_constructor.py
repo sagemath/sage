@@ -611,11 +611,11 @@ def PolynomialRing(base_ring, *args, **kwds):
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
         sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)             # needs sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
-        sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
+        sage: P.<y,z> = PolynomialRing(RealIntervalField(2))                            # needs sage.rings.real_interval_field
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: Q.<x> = PolynomialRing(P)
         sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])
-        sage: R.<x,y> = PolynomialRing(RIF,2)
+        sage: R.<x,y> = PolynomialRing(RIF,2)                                           # needs sage.rings.real_interval_field
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
     if not ring.is_Ring(base_ring):

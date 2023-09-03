@@ -1364,15 +1364,15 @@ cdef class Polynomial(CommutativePolynomial):
             0.2
             sage: RR(a)
             0.200000000000000
-            sage: CC(a)
+            sage: CC(a)                                                                 # needs sage.rings.real_mpfr
             0.200000000000000
             sage: RBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
             sage: CBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
-            sage: RIF(a)
+            sage: RIF(a)                                                                # needs sage.rings.real_interval_field
             0.2000000000000000?
-            sage: CIF(a)
+            sage: CIF(a)                                                                # needs sage.rings.complex_interval_field
             0.2000000000000000?
             sage: float(a)
             0.2
@@ -4531,14 +4531,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P.<a,b,c> = PolynomialRing(ZZ)
             sage: R.<x> = PolynomialRing(FractionField(P))
             sage: p = (x - a) * (b*x + c) * (a*b*x + a*c) / (a + 2)
-            sage: factor(p)
+            sage: factor(p)                                                             # needs sage.libs.singular
             (a/(a + 2)) * (x - a) * (b*x + c)^2
 
         Check that :trac:`24973` is fixed::
 
             sage: x1 = ZZ['x'].gen()
             sage: x2 = ZZ['x']['x'].gen()
-            sage: (x1 - x2).factor()
+            sage: (x1 - x2).factor()                                                    # needs sage.libs.singular
             -x + x
 
         Check that :trac:`26421' is fixed::
@@ -4546,16 +4546,16 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
             sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
-            sage: p.factor()
+            sage: p.factor()                                                            # needs sage.libs.singular
             (x - 5) * (x - 2*t) * (x^2 - 2)
 
         Check that :trac:`29266` is fixed:
 
             sage: f = t*x + t
-            sage: f.is_irreducible()
+            sage: f.is_irreducible()                                                    # needs sage.libs.singular
             True
             sage: f = 2*x + 4
-            sage: f.is_irreducible()
+            sage: f.is_irreducible()                                                    # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -7790,7 +7790,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: x = CC['x'].0
+            sage: x = CC['x'].0                                                         # needs sage.rings.real_mpfr
             sage: f = x^3 - 2
             sage: f.roots()                                                             # needs numpy
             [(1.25992104989487, 1),
@@ -8333,7 +8333,7 @@ cdef class Polynomial(CommutativePolynomial):
         Spurious crash with pari-2.5.5, see :trac:`16165`::
 
             sage: f = (1+x+x^2)^3
-            sage: f.roots(ring=CC)
+            sage: f.roots(ring=CC)                                                      # needs sage.rings.real_mpfr
             [(-0.500000000000000 - 0.866025403784439*I, 3),
              (-0.500000000000000 + 0.866025403784439*I, 3)]
 
@@ -8341,7 +8341,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: polRing.<x> = PolynomialRing(ZZ)
             sage: j = (x+1)^2 * (x-1)^7 * (x^2-x+1)^5
-            sage: j.roots(CC)
+            sage: j.roots(CC)                                                           # needs sage.rings.real_mpfr
             [(-1.00000000000000, 2),
              (1.00000000000000, 7),
              (0.500000000000000 - 0.866025403784439*I, 5),
@@ -8364,7 +8364,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
             sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
-            sage: p.roots()
+            sage: p.roots()                                                             # needs sage.libs.singular
             [(5, 1), (2*t, 1)]
 
         Check that :trac:`31040` is fixed::
@@ -9196,7 +9196,7 @@ cdef class Polynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
-            sage: Q.<y> = CC[]
+            sage: Q.<y> = CC[]                                                          # needs sage.rings.real_mpfr
             sage: q = y^2
             sage: q.is_lorentzian()
             Traceback (most recent call last):

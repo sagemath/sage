@@ -1468,10 +1468,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ::
 
             sage: n=3^100000
-            sage: n.digits(base=10)[-1]  # slightly slower than str
+            sage: n.digits(base=10)[-1]  # slightly slower than str                     # needs sage.rings.real_interval_field
             1
             sage: n=10^10000
-            sage: n.digits(base=10)[-1]  # slightly faster than str
+            sage: n.digits(base=10)[-1]  # slightly faster than str                     # needs sage.rings.real_interval_field
             1
 
         AUTHORS:
@@ -1710,13 +1710,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.ndigits(2)
             4
             sage: n = 1000**1000000+1
-            sage: n.ndigits()
+            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
             3000001
             sage: n = 1000**1000000-1
-            sage: n.ndigits()
+            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
             3000000
             sage: n = 10**10000000-10**9999990
-            sage: n.ndigits()
+            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
             10000000
         """
         cdef Integer temp
@@ -2524,9 +2524,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: Integer(125)._exact_log_mpfi_log(3)
+            sage: Integer(125)._exact_log_mpfi_log(3)                                   # needs sage.rings.real_interval_field
             4
-            sage: Integer(5^150)._exact_log_mpfi_log(5)
+            sage: Integer(5^150)._exact_log_mpfi_log(5)                                 # needs sage.rings.real_interval_field
             150
         """
         cdef int i
@@ -2636,7 +2636,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: Integer(178^1700+1).exact_log(178)
             1700
             sage: # we need to exercise the large base code path too
-            sage: Integer(1780^1700-1).exact_log(1780)
+            sage: Integer(1780^1700-1).exact_log(1780)                                  # needs sage.rings.real_interval_field
             1699
 
             sage: # The following are very very fast.
@@ -2783,7 +2783,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         For extremely large numbers, this works::
 
             sage: x = 3^100000
-            sage: log(x, 3)
+            sage: log(x, 3)                                                             # needs sage.rings.real_interval_field
             100000
 
         Also ``log(x)``, giving a symbolic output,

@@ -1857,7 +1857,7 @@ def test_signed_infinity(pos_inf):
         sage: from sage.rings.infinity import test_signed_infinity
         sage: test_signed_infinity(oo)
         sage: test_signed_infinity(float('+inf'))
-        sage: test_signed_infinity(RLF(oo))
+        sage: test_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """

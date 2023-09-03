@@ -1125,7 +1125,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: Sequence([2*x,y]).reduced()
             [x, y]
 
-            sage: P.<x,y> = CC[]
+            sage: P.<x,y> = CC[]                                                        # needs sage.rings.real_mpfr
             sage: Sequence([2*x,y]).reduced()
             [x, y]
 

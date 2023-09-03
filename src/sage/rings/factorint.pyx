@@ -50,6 +50,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     EXAMPLES::
 
         sage: from sage.rings.factorint import aurifeuillian
+
+        sage: # needs sage.rings.real_interval_field
         sage: aurifeuillian(2, 2)
         [5, 13]
         sage: aurifeuillian(2, 2^5)
@@ -58,6 +60,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         [1471, 2851]
         sage: aurifeuillian(15, 1)
         [19231, 142111]
+
         sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...
@@ -76,8 +79,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
     """
-    from sage.arith.misc import euler_phi
-    from sage.rings.real_mpfi import RealIntervalField
     if check:
         if not n.is_squarefree():
             raise ValueError("n has to be square-free")
@@ -85,6 +86,10 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
             raise ValueError("n has to be greater than 1")
         if m < 1:
             raise ValueError("m has to be positive")
+
+    from sage.arith.misc import euler_phi
+    from sage.rings.real_mpfi import RealIntervalField
+
     x = m**2*n
     cdef Py_ssize_t y = euler_phi(2*n)//2
     if F is None:

@@ -80,7 +80,7 @@ From smaller to bigger doesn't make sense::
 
 From bigger to small does::
 
-    sage: f = RR.hom( RealField(15) )                                                   # needs sage.rings.real_mpfr
+    sage: f = RR.hom(RealField(15))                                                     # needs sage.rings.real_mpfr
     sage: f(2.5)
     2.500
     sage: f(RR.pi())
@@ -88,6 +88,7 @@ From bigger to small does::
 
 Inclusion map from the reals to the complexes::
 
+    sage: # needs sage.rings.real_mpfr
     sage: i = RR.hom([CC(1)]); i
     Ring morphism:
       From: Real Field with 53 bits of precision
@@ -98,7 +99,7 @@ Inclusion map from the reals to the complexes::
 
 A map from a multivariate polynomial ring to itself::
 
-    sage: R.<x,y,z> = PolynomialRing(QQ,3)
+    sage: R.<x,y,z> = PolynomialRing(QQ, 3)
     sage: phi = R.hom([y, z, x^2]); phi
     Ring endomorphism of Multivariate Polynomial Ring in x, y, z over Rational Field
       Defn: x |--> y
@@ -347,8 +348,9 @@ TESTS::
 
 ::
 
-    sage: K.<zeta7> = CyclotomicField(7)                                                # needs sage.rings.number_field
-    sage: c = K.hom([1/zeta7])                                                          # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<zeta7> = CyclotomicField(7)
+    sage: c = K.hom([1/zeta7])
     sage: c == loads(dumps(c))
     True
 
@@ -365,7 +367,7 @@ compare equal::
     sage: # needs sage.rings.finite_rings
     sage: k = GF(2)
     sage: R.<x> = k[]
-    sage: F4.<a> = R.quo(x^2+x+1)
+    sage: F4.<a> = R.quo(x^2 + x + 1)
     sage: H = End(F4)
     sage: from sage.rings.morphism import *
     sage: phi1 = H.identity(); phi1
@@ -1588,7 +1590,7 @@ cdef class RingHomomorphism(RingMap):
         ::
 
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: R.hom([y, x], R).inverse()
+            sage: R.hom([y, x], R).inverse()                                            # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -2023,7 +2025,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         A multivariate quotient over a finite field::
 
             sage: R.<x,y> = GF(7)[]
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])                      # needs sage.libs.singular
             sage: f1 = R.hom([a, b])
             sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
             sage: f1 == f2

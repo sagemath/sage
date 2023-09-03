@@ -2086,7 +2086,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: r = x*y*z*t + 1
             sage: p = r * (x - y + z - t + 1)
             sage: q = r * (x*z - y*t)
-            sage: gcd(p, q)
+            sage: gcd(p, q)                                                             # needs sage.libs.singular
             z*t*x*y + 1
             sage: _.parent()
             Multivariate Polynomial Ring in x, y over
@@ -2726,7 +2726,7 @@ cdef class MPolynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
-            sage: Q.<z,w> = CC[]
+            sage: Q.<z,w> = CC[]                                                        # needs sage.rings.real_mpfr
             sage: q = z^2 + w^2
             sage: q.is_lorentzian()
             Traceback (most recent call last):
