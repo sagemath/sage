@@ -1910,7 +1910,7 @@ class MPowerSeries(PowerSeries):
         are not yet implemented and therefore such cases raise an error::
 
             sage: g = 2 + f
-            sage: exp(g)
+            sage: exp(g)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Symbolic Ring' and
@@ -1920,7 +1920,7 @@ class MPowerSeries(PowerSeries):
         Another workaround for this limitation is to change base ring
         to one which is closed under exponentiation, such as `\RR` or `\CC`::
 
-            sage: exp(g.change_ring(RDF))
+            sage: exp(g.change_ring(RDF))                                               # needs sage.symbolic
             7.38905609... + 7.38905609...*a + 7.38905609...*b + 3.69452804...*a^2 +
             14.7781121...*a*b + 3.69452804...*b^2 + O(a, b)^3
 
@@ -2003,7 +2003,7 @@ class MPowerSeries(PowerSeries):
         are not yet implemented and therefore such cases raise an error::
 
             sage: g = 2 + f
-            sage: log(g)
+            sage: log(g)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for -: 'Symbolic Ring' and 'Power
@@ -2012,7 +2012,7 @@ class MPowerSeries(PowerSeries):
         Another workaround for this limitation is to change base ring
         to one which is closed under exponentiation, such as `\RR` or `\CC`::
 
-            sage: log(g.change_ring(RDF))
+            sage: log(g.change_ring(RDF))                                               # needs sage.symbolic
             1.09861228... + 0.333333333...*a + 0.333333333...*b - 0.0555555555...*a^2
             + 0.222222222...*a*b - 0.0555555555...*b^2 + 0.0123456790...*a^3
             - 0.0740740740...*a^2*b - 0.0740740740...*a*b^2 + 0.0123456790...*b^3
@@ -2039,11 +2039,14 @@ class MPowerSeries(PowerSeries):
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
-        from sage.functions.log import log
         c = self.constant_coefficient()
         if c.is_zero():
             raise ValueError('Can only take formal power series for non-zero constant term.')
-        log_c = log(c)
+        if c.is_one():
+            log_c = self.base_ring().zero()
+        else:
+            from sage.functions.log import log
+            log_c = log(c)
         x = 1 - self._bg_value/c
         if x.is_zero():
             return log_c
