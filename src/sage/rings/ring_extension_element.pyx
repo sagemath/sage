@@ -111,7 +111,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: K.<a> = A.over()  # over QQ
             sage: hasattr(a, 'continued_fraction')
             True
-            sage: a.continued_fraction()                                                # needs sage.rings.number_field
+            sage: a.continued_fraction()
             [1; (2)*]
         """
         try:
@@ -399,7 +399,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: y = K.random_element()
             sage: (x+y).parent() is K
             True
-            sage: x + y == y + x                                                        # needs sage.rings.finite_rings
+            sage: x + y == y + x
             True
         """
         cdef RingExtensionElement ans = PY_NEW(type(self))
@@ -419,7 +419,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: y = -x
             sage: y.parent() is K
             True
-            sage: x + y == 0                                                            # needs sage.rings.finite_rings
+            sage: x + y == 0
             True
         """
         cdef RingExtensionElement ans = PY_NEW(type(self))
@@ -439,7 +439,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: y = K.random_element()
             sage: (x - y).parent() is K
             True
-            sage: x - y == x + (-y)                                                     # needs sage.rings.finite_rings
+            sage: x - y == x + (-y)
             True
         """
         cdef RingExtensionElement ans = PY_NEW(type(self))
@@ -459,7 +459,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: y = K.random_element()
             sage: (x*y).parent() is K
             True
-            sage: x * y == y * x                                                        # needs sage.rings.finite_rings
+            sage: x * y == y * x
             True
         """
         cdef RingExtensionElement ans = PY_NEW(type(self))
@@ -581,12 +581,12 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: K.<a> = GF(5^3).over()
             sage: a.is_square()
             False
-            sage: a.is_square(root=True)                                                # needs sage.rings.finite_rings
+            sage: a.is_square(root=True)
             (False, None)
             sage: b = a + 1
             sage: b.is_square()
             True
-            sage: b.is_square(root=True)                                                # needs sage.rings.finite_rings
+            sage: b.is_square(root=True)
             (True, 2 + 3*a + a^2)
         """
         is_sq = self._backend.is_square()
@@ -761,7 +761,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
              with defining polynomial x^2 - 2 over its base
             sage: x = K(1/a); x
             a/2
-            sage: num = x.numerator(); num                                              # needs sage.rings.number_field
+            sage: num = x.numerator(); num
             a
 
         The numerator is an element of the ring which was used
@@ -798,7 +798,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
              with defining polynomial x^2 - 2 over its base
             sage: x = K(1/a); x
             a/2
-            sage: denom = x.denominator(); denom                                        # needs sage.rings.number_field
+            sage: denom = x.denominator(); denom
             2
 
         The denominator is an element of the ring which was used
@@ -868,7 +868,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u = 1/(a+b)
             sage: u._repr_extension(base=K)
             '(2 + 2*a) + (-1 + a - a^2)*b + (2 + 3*a + 3*a^2)*b^2'
-            sage: u._repr_extension(base=GF(5))                                         # needs sage.rings.finite_rings
+            sage: u._repr_extension(base=GF(5))
             '2 + 2*a - b + a*b - a^2*b + 2*b^2 + 3*a*b^2 + 3*a^2*b^2'
         """
         cdef RingExtensionWithBasis parent = self._parent
@@ -946,7 +946,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u = 1/(a+b)
             sage: u._latex_extension(base=K)
             \left( 2 + 2 a \right) + \left( -1 + a - a^{2} \right) b + \left( 2 + 3 a + 3 a^{2} \right) b^{2}
-            sage: u._latex_extension(base=GF(5))                                        # needs sage.rings.finite_rings
+            sage: u._latex_extension(base=GF(5))
             2 + 2 a - b + ab - a^{2}b + 2 b^{2} + 3 ab^{2} + 3 a^{2}b^{2}
         """
         cdef RingExtensionWithBasis parent = self._parent
@@ -1078,9 +1078,9 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             (2 + (-1 - a)*b) + ((2 + 3*a) + (1 - a)*b)*c + ((-1 - a) - a*b)*c^2
             sage: P = u.polynomial(K); P
             ((-1 - a) - a*b)*x^2 + ((2 + 3*a) + (1 - a)*b)*x + 2 + (-1 - a)*b
-            sage: P.base_ring() is K                                                    # needs sage.rings.finite_rings
+            sage: P.base_ring() is K
             True
-            sage: P(c) == u                                                             # needs sage.rings.finite_rings
+            sage: P(c) == u
             True
 
         When the base is `F`, we obtain a bivariate polynomial::
@@ -1165,9 +1165,9 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u = a/(1+b)
             sage: u
             (2 + a + 3*a^2) + (3 + 3*a + a^2)*b
-            sage: b*u                                                                   # needs sage.rings.finite_rings
+            sage: b*u
             (3 + 2*a^2) + (2 + 2*a - a^2)*b
-            sage: u.matrix(K)                                                           # needs sage.rings.finite_rings
+            sage: u.matrix(K)
             [2 + a + 3*a^2 3 + 3*a + a^2]
             [    3 + 2*a^2 2 + 2*a - a^2]
             sage: u.matrix(GF(5))

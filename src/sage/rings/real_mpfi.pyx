@@ -2406,15 +2406,15 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: # needs sage.symbolic
             sage: RIF(pi).diameter()
             1.41357985842823e-16
-            sage: RIF(pi).absolute_diameter()                                           # needs sage.symbolic
+            sage: RIF(pi).absolute_diameter()
             4.44089209850063e-16
-            sage: RIF(pi).relative_diameter()                                           # needs sage.symbolic
+            sage: RIF(pi).relative_diameter()
             1.41357985842823e-16
-            sage: (RIF(pi) - RIF(3, 22/7)).diameter()                                   # needs sage.symbolic
+            sage: (RIF(pi) - RIF(3, 22/7)).diameter()
             0.142857142857144
-            sage: (RIF(pi) - RIF(3, 22/7)).absolute_diameter()                          # needs sage.symbolic
+            sage: (RIF(pi) - RIF(3, 22/7)).absolute_diameter()
             0.142857142857144
-            sage: (RIF(pi) - RIF(3, 22/7)).relative_diameter()                          # needs sage.symbolic
+            sage: (RIF(pi) - RIF(3, 22/7)).relative_diameter()
             2.03604377705518
         """
         cdef RealNumber x
@@ -2450,9 +2450,9 @@ cdef class RealIntervalFieldElement(RingElement):
             1
             sage: a = RIF(pi)^12345; a
             2.06622879260?e6137
-            sage: a.fp_rank_diameter()                                                  # needs sage.symbolic
+            sage: a.fp_rank_diameter()
             30524
-            sage: (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()                      # needs sage.symbolic
+            sage: (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()
             9671406088542672151117826            # 32-bit
             41538374868278620559869609387229186  # 64-bit
 

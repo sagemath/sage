@@ -81,7 +81,7 @@ From smaller to bigger doesn't make sense::
 
 From bigger to small does::
 
-    sage: f = RR.hom( RealField(15) )                                                   # needs sage.rings.real_mpfr
+    sage: f = RR.hom(RealField(15))                                                     # needs sage.rings.real_mpfr
     sage: f(2.5)
     2.500
     sage: f(RR.pi())
@@ -89,6 +89,7 @@ From bigger to small does::
 
 Inclusion map from the reals to the complexes::
 
+    sage: # needs sage.rings.real_mpfr
     sage: i = RR.hom([CC(1)]); i
     Ring morphism:
       From: Real Field with 53 bits of precision
@@ -99,7 +100,7 @@ Inclusion map from the reals to the complexes::
 
 A map from a multivariate polynomial ring to itself::
 
-    sage: R.<x,y,z> = PolynomialRing(QQ,3)
+    sage: R.<x,y,z> = PolynomialRing(QQ, 3)
     sage: phi = R.hom([y, z, x^2]); phi
     Ring endomorphism of Multivariate Polynomial Ring in x, y, z over Rational Field
       Defn: x |--> y
@@ -112,16 +113,16 @@ An endomorphism of a quotient of a multi-variate polynomial ring::
 
     sage: # needs sage.libs.singular
     sage: R.<x,y> = PolynomialRing(QQ)
-    sage: S.<a,b> = quo(R, ideal(1 + y^2))                                              # needs sage.libs.singular
-    sage: phi = S.hom([a^2, -b])                                                        # needs sage.libs.singular
-    sage: phi                                                                           # needs sage.libs.singular
+    sage: S.<a,b> = quo(R, ideal(1 + y^2))
+    sage: phi = S.hom([a^2, -b])
+    sage: phi
     Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
      over Rational Field by the ideal (y^2 + 1)
       Defn: a |--> a^2
             b |--> -b
-    sage: phi(b)                                                                        # needs sage.libs.singular
+    sage: phi(b)
     -b
-    sage: phi(a^2 + b^2)                                                                # needs sage.libs.singular
+    sage: phi(a^2 + b^2)
     a^4 - 1
 
 The reduction map from the integers to the integers modulo 8, viewed as
@@ -206,13 +207,13 @@ An automorphism of a quotient of a univariate polynomial ring::
 
     sage: # needs sage.libs.pari
     sage: R.<x> = PolynomialRing(QQ)
-    sage: S.<sqrt2> = R.quo(x^2 - 2)                                                    # needs sage.libs.pari
-    sage: sqrt2^2                                                                       # needs sage.libs.pari
+    sage: S.<sqrt2> = R.quo(x^2 - 2)
+    sage: sqrt2^2
     2
-    sage: (3+sqrt2)^10                                                                  # needs sage.libs.pari
+    sage: (3+sqrt2)^10
     993054*sqrt2 + 1404491
-    sage: c = S.hom([-sqrt2])                                                           # needs sage.libs.pari
-    sage: c(1+sqrt2)                                                                    # needs sage.libs.pari
+    sage: c = S.hom([-sqrt2])
+    sage: c(1+sqrt2)
     -sqrt2 + 1
 
 Note that Sage verifies that the morphism is valid::
@@ -305,19 +306,19 @@ Embedding a number field into the reals::
 
     sage: # needs sage.rings.number_field
     sage: R.<x> = PolynomialRing(QQ)
-    sage: K.<beta> = NumberField(x^3 - 2)                                               # needs sage.rings.number_field
+    sage: K.<beta> = NumberField(x^3 - 2)
     sage: alpha = RR(2)^(1/3); alpha
     1.25992104989487
-    sage: i = K.hom([alpha],check=False); i                                             # needs sage.rings.number_field
+    sage: i = K.hom([alpha],check=False); i
     Ring morphism:
       From: Number Field in beta with defining polynomial x^3 - 2
       To:   Real Field with 53 bits of precision
       Defn: beta |--> 1.25992104989487
-    sage: i(beta)                                                                       # needs sage.rings.number_field
+    sage: i(beta)
     1.25992104989487
-    sage: i(beta^3)                                                                     # needs sage.rings.number_field
+    sage: i(beta^3)
     2.00000000000000
-    sage: i(beta^2 + 1)                                                                 # needs sage.rings.number_field
+    sage: i(beta^2 + 1)
     2.58740105196820
 
 An example from Jim Carlson::
@@ -348,8 +349,9 @@ TESTS::
 
 ::
 
-    sage: K.<zeta7> = CyclotomicField(7)                                                # needs sage.rings.number_field
-    sage: c = K.hom([1/zeta7])                                                          # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<zeta7> = CyclotomicField(7)
+    sage: c = K.hom([1/zeta7])
     sage: c == loads(dumps(c))
     True
 
@@ -366,7 +368,7 @@ compare equal::
     sage: # needs sage.rings.finite_rings
     sage: k = GF(2)
     sage: R.<x> = k[]
-    sage: F4.<a> = R.quo(x^2+x+1)
+    sage: F4.<a> = R.quo(x^2 + x + 1)
     sage: H = End(F4)
     sage: from sage.rings.morphism import *
     sage: phi1 = H.identity(); phi1
@@ -1546,7 +1548,7 @@ cdef class RingHomomorphism(RingMap):
             ...
             ZeroDivisionError: ring homomorphism not injective
             sage: T.<z> = QQ[]
-            sage: R.hom([2*z, 3*z], T).inverse()                                        # needs sage.libs.singular
+            sage: R.hom([2*z, 3*z], T).inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not injective
@@ -1593,7 +1595,7 @@ cdef class RingHomomorphism(RingMap):
         ::
 
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: R.hom([y, x], R).inverse()
+            sage: R.hom([y, x], R).inverse()                                            # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -2028,7 +2030,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         A multivariate quotient over a finite field::
 
             sage: R.<x,y> = GF(7)[]
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])                      # needs sage.libs.singular
             sage: f1 = R.hom([a, b])
             sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
             sage: f1 == f2

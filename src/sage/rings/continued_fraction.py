@@ -1342,7 +1342,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             sage: K.<sqrt3> = QuadraticField(3)
             sage: cf = continued_fraction(sqrt3); cf
             [1; (1, 2)*]
-            sage: cf.period()                                                           # needs sage.rings.number_field
+            sage: cf.period()
             (1, 2)
             sage: for k in xsrange(2,40):
             ....:     if not k.is_square():
@@ -1380,11 +1380,11 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             sage: K.<sqrt3> = QuadraticField(3)
             sage: cf = continued_fraction(sqrt3); cf
             [1; (1, 2)*]
-            sage: cf.preperiod()                                                        # needs sage.rings.number_field
+            sage: cf.preperiod()
             (1,)
             sage: cf = continued_fraction(sqrt3/7); cf
             [0; 4, (24, 8)*]
-            sage: cf.preperiod()                                                        # needs sage.rings.number_field
+            sage: cf.preperiod()
             (0, 4)
         """
         return self._x1
@@ -2398,11 +2398,11 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
         [2, 1, 2, 1, 1, 4, 2]
         sage: continued_fraction_list(sqrt(2) + sqrt(3), bits=30)
         [3, 6, 1, 5, 7, 2]
-        sage: continued_fraction_list(pi, bits=53)                                      # needs sage.symbolic
+        sage: continued_fraction_list(pi, bits=53)
         [3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14]
         sage: continued_fraction_list(log(3/2), nterms=15)
         [0, 2, 2, 6, 1, 11, 2, 1, 2, 2, 1, 4, 3, 1, 1]
-        sage: continued_fraction_list(tan(sqrt(pi)), nterms=20)                         # needs sage.symbolic
+        sage: continued_fraction_list(tan(sqrt(pi)), nterms=20)
         [-5, 9, 4, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 2, 4, 3, 1, 63]
 
     When the continued fraction is infinite (ie ``x`` is an irrational number)

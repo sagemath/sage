@@ -653,15 +653,15 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
 
             sage: # needs numpy
             sage: R.<x> = RDF[]
-            sage: RDF._factor_univariate_polynomial(x)                                  # needs numpy
+            sage: RDF._factor_univariate_polynomial(x)
             x
-            sage: RDF._factor_univariate_polynomial(2*x)                                # needs numpy
+            sage: RDF._factor_univariate_polynomial(2*x)
             (2.0) * x
-            sage: RDF._factor_univariate_polynomial(x^2)                                # needs numpy
+            sage: RDF._factor_univariate_polynomial(x^2)
             x^2
-            sage: RDF._factor_univariate_polynomial(x^2 + 1)                            # needs numpy
+            sage: RDF._factor_univariate_polynomial(x^2 + 1)
             x^2 + 1.0
-            sage: RDF._factor_univariate_polynomial(x^2 - 1)                            # needs numpy
+            sage: RDF._factor_univariate_polynomial(x^2 - 1)
             (x - 1.0) * (x + 1.0)
 
         The implementation relies on the ``roots()`` method which often reports

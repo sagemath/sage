@@ -848,21 +848,21 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<m> = CDF[[]]
-            sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16       # needs sage.symbolic
+            sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16
             9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
-            sage: f[-5]                                                                 # needs sage.symbolic
+            sage: f[-5]
             0.0
-            sage: f[0]                                                                  # needs sage.symbolic
+            sage: f[0]
             9.869604401089358
-            sage: f[4]   # abs tol 5e-16                                                # needs sage.symbolic
+            sage: f[4]   # abs tol 5e-16
             2.718281828459045
-            sage: f[9]                                                                  # needs sage.symbolic
+            sage: f[9]
             0.0
-            sage: f[10]                                                                 # needs sage.symbolic
+            sage: f[10]
             Traceback (most recent call last):
             ...
             IndexError: coefficient not known
-            sage: f[1000]                                                               # needs sage.symbolic
+            sage: f[1000]
             Traceback (most recent call last):
             ...
             IndexError: coefficient not known

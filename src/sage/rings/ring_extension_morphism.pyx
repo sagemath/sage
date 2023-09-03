@@ -339,7 +339,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             sage: FrobL = L.hom([b^5], base_map=FrobK)
             sage: FrobK^2 == End(K).identity()
             True
-            sage: FrobL^6 == End(L).identity()                                          # needs sage.rings.finite_rings
+            sage: FrobL^6 == End(L).identity()
             True
         """
         eq = are_equal_morphisms(self._backend, backend_morphism(other))
@@ -372,7 +372,7 @@ cdef class RingExtensionHomomorphism(RingMap):
               From: Field in a with defining polynomial x^2 + 4*x + 2 over its base
               To:   Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: a |--> a
-            sage: iota.is_identity()                                                    # needs sage.rings.finite_rings
+            sage: iota.is_identity()
             False
         """
         if self.domain() is not self.codomain():
@@ -393,7 +393,7 @@ cdef class RingExtensionHomomorphism(RingMap):
               To:   Field in z10 with defining polynomial
                     x^2 + (2*z5^3 + 2*z5^2 + 4*z5 + 4)*x + z5 over its base
               Defn: z5 |--> z5
-            sage: iota.is_injective()                                                   # needs sage.rings.finite_rings
+            sage: iota.is_injective()
             True
 
             sage: K = GF(7).over(ZZ)
@@ -421,7 +421,7 @@ cdef class RingExtensionHomomorphism(RingMap):
               To:   Field in z10 with defining polynomial
                     x^2 + (2*z5^3 + 2*z5^2 + 4*z5 + 4)*x + z5 over its base
               Defn: z5 |--> z5
-            sage: iota.is_surjective()                                                  # needs sage.rings.finite_rings
+            sage: iota.is_surjective()
             False
 
             sage: K = GF(7).over(ZZ)
@@ -507,7 +507,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             sage: g = copy(f)    # indirect doctest
             sage: f == g
             True
-            sage: f is g                                                                # needs sage.rings.finite_rings
+            sage: f is g
             False
         """
         self._backend = _slots['_backend']

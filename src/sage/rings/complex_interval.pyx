@@ -299,12 +299,12 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
             sage: # needs sage.plot sage.symbolic
             sage: z = CIF(0, 2*pi/1000).exp()
-            sage: g = Graphics()                                                        # needs sage.plot
-            sage: for i in range(40):                                                   # needs sage.plot
+            sage: g = Graphics()
+            sage: for i in range(40):
             ....:     z = z^2
             ....:     g += z.plot(color=(1./(40-i), 0, 1))
             ...
-            sage: g                                                                     # needs sage.plot
+            sage: g
             Graphics object consisting of 80 graphics primitives
         """
         from sage.plot.polygon import polygon2d
@@ -362,7 +362,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: zz = a.union(b).union(c).union(c)
             sage: zz.real().endpoints() == z.real().endpoints()
             True
-            sage: zz.imag().endpoints() == z.imag().endpoints()                         # needs sage.symbolic
+            sage: zz.imag().endpoints() == z.imag().endpoints()
             True
         """
         a00 = self._new()

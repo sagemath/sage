@@ -1382,15 +1382,15 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: # needs sage.rings.real_mpfr
             sage: a = QQ(6/25)
-            sage: a.global_height_arch() + a.global_height_non_arch()                   # needs sage.rings.real_mpfr
+            sage: a.global_height_arch() + a.global_height_non_arch()
             3.21887582486820
-            sage: a.global_height()                                                     # needs sage.rings.real_mpfr
+            sage: a.global_height()
             3.21887582486820
-            sage: (1/a).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: (1/a).global_height()
             3.21887582486820
-            sage: QQ(0).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: QQ(0).global_height()
             0.000000000000000
-            sage: QQ(1).global_height()                                                 # needs sage.rings.real_mpfr
+            sage: QQ(1).global_height()
             0.000000000000000
         """
         from sage.rings.real_mpfr import RealField
@@ -1947,15 +1947,15 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: # needs sage.rings.real_mpfr
             sage: n.sqrt(prec=10)
             0.82
-            sage: n.sqrt(prec=100)                                                      # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=100)
             0.81649658092772603273242802490
-            sage: n.sqrt(prec=100)^2                                                    # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=100)^2
             0.66666666666666666666666666667
-            sage: n.sqrt(prec=53, all=True)                                             # needs sage.rings.real_mpfr
+            sage: n.sqrt(prec=53, all=True)
             [0.816496580927726, -0.816496580927726]
             sage: sqrt(-2/3, prec=53)
             0.816496580927726*I
-            sage: sqrt(-2/3, prec=53, all=True)                                         # needs sage.rings.real_mpfr
+            sage: sqrt(-2/3, prec=53, all=True)
             [0.816496580927726*I, -0.816496580927726*I]
 
             sage: n.sqrt(extend=False, all=True)

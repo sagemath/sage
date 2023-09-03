@@ -2874,13 +2874,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: # needs sage.libs.pari
             sage: C, i = ComplexField(30).objgen()
-            sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10                             # needs sage.libs.pari
+            sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10
             0.0020969149 - 0.059981914*I
-            sage: (1+i).gamma_inc(5)                                                    # needs sage.libs.pari
+            sage: (1+i).gamma_inc(5)
             -0.0013781309 + 0.0065198200*I
-            sage: C(2).gamma_inc(1 + i)                                                 # needs sage.libs.pari
+            sage: C(2).gamma_inc(1 + i)
             0.70709210 - 0.42035364*I
-            sage: CC(2).gamma_inc(5)                                                    # needs sage.libs.pari
+            sage: CC(2).gamma_inc(5)
             0.0404276819945128
 
         TESTS:

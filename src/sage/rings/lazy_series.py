@@ -5594,11 +5594,11 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             sage: # needs sage.modules
             sage: P.<q> = QQ[]
-            sage: s = SymmetricFunctions(P).s()                                         # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: f = s[2]                                                              # needs sage.modules
-            sage: g = s[3]                                                              # needs sage.modules
-            sage: L(f)(L(g)) - L(f(g))                                                  # needs sage.modules
+            sage: s = SymmetricFunctions(P).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: f = s[2]
+            sage: g = s[3]
+            sage: L(f)(L(g)) - L(f(g))
             0
             sage: f = s[2] + s[2,1]
             sage: g = s[1] + s[2,2]

@@ -112,21 +112,21 @@ We can convert from symbolic expressions::
     sage: # needs sage.symbolic
     sage: QQbar(sqrt(-5))
     2.236067977499790?*I
-    sage: AA(sqrt(2) + sqrt(3))                                                         # needs sage.symbolic
+    sage: AA(sqrt(2) + sqrt(3))
     3.146264369941973?
     sage: QQbar(I)
     I
-    sage: QQbar(I * golden_ratio)                                                       # needs sage.symbolic
+    sage: QQbar(I * golden_ratio)
     1.618033988749895?*I
-    sage: AA(golden_ratio)^2 - AA(golden_ratio)                                         # needs sage.symbolic
+    sage: AA(golden_ratio)^2 - AA(golden_ratio)
     1
-    sage: QQbar((-8)^(1/3))                                                             # needs sage.symbolic
+    sage: QQbar((-8)^(1/3))
     1.000000000000000? + 1.732050807568878?*I
-    sage: AA((-8)^(1/3))                                                                # needs sage.symbolic
+    sage: AA((-8)^(1/3))
     -2
-    sage: QQbar((-4)^(1/4))                                                             # needs sage.symbolic
+    sage: QQbar((-4)^(1/4))
     1 + 1*I
-    sage: AA((-4)^(1/4))                                                                # needs sage.symbolic
+    sage: AA((-4)^(1/4))
     Traceback (most recent call last):
     ...
     ValueError: Cannot coerce algebraic number with non-zero imaginary part to algebraic real
@@ -390,19 +390,19 @@ We can pickle and unpickle algebraic numbers::
     sage: # needs sage.symbolic
     sage: t = QQbar(sqrt(2)); type(t._descr)
     <class 'sage.rings.qqbar.ANRoot'>
-    sage: loads(dumps(t)) == QQbar(sqrt(2))                                             # needs sage.symbolic
+    sage: loads(dumps(t)) == QQbar(sqrt(2))
     True
     sage: t.exactify(); type(t._descr)
     <class 'sage.rings.qqbar.ANExtensionElement'>
-    sage: loads(dumps(t)) == QQbar(sqrt(2))                                             # needs sage.symbolic
+    sage: loads(dumps(t)) == QQbar(sqrt(2))
     True
     sage: t = ~QQbar(sqrt(2)); type(t._descr)
     <class 'sage.rings.qqbar.ANUnaryExpr'>
-    sage: loads(dumps(t)) == 1/QQbar(sqrt(2))                                           # needs sage.symbolic
+    sage: loads(dumps(t)) == 1/QQbar(sqrt(2))
     True
     sage: t = QQbar(sqrt(2)) + QQbar(sqrt(3)); type(t._descr)
     <class 'sage.rings.qqbar.ANBinaryExpr'>
-    sage: loads(dumps(t)) == QQbar(sqrt(2)) + QQbar(sqrt(3))                            # needs sage.symbolic
+    sage: loads(dumps(t)) == QQbar(sqrt(2)) + QQbar(sqrt(3))
     True
 
 We can convert elements of ``QQbar`` and ``AA`` into the following
@@ -2591,17 +2591,17 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         sage: # needs sage.symbolic
         sage: rt2 = AA(sqrt(2)); rt2
         1.414213562373095?
-        sage: rt3 = AA(sqrt(3)); rt3                                                    # needs sage.symbolic
+        sage: rt3 = AA(sqrt(3)); rt3
         1.732050807568878?
-        sage: rt3a = QQbar(sqrt(3)); rt3a                                               # needs sage.symbolic
+        sage: rt3a = QQbar(sqrt(3)); rt3a
         1.732050807568878?
         sage: qqI = QQbar.zeta(4); qqI
         I
         sage: z3 = QQbar.zeta(3); z3
         -0.500000000000000? + 0.866025403784439?*I
-        sage: rt2b = rt3 + rt2 - rt3; rt2b                                              # needs sage.symbolic
+        sage: rt2b = rt3 + rt2 - rt3; rt2b
         1.414213562373095?
-        sage: rt2c = z3 + rt2 - z3; rt2c                                                # needs sage.symbolic
+        sage: rt2c = z3 + rt2 - z3; rt2c
         1.414213562373095? + 0.?e-19*I
         sage: number_field_elements_from_algebraics(rt2)
         (Number Field in a with defining polynomial y^2 - 2, a,
@@ -3515,11 +3515,11 @@ class ANDescr(SageObject):
             sage: rt2.exactify()
             sage: rt2._descr.is_simple()
             True
-            sage: rt2b.exactify()                                                       # needs sage.symbolic
-            sage: rt2b._descr.is_simple()                                               # needs sage.symbolic
+            sage: rt2b.exactify()
+            sage: rt2b._descr.is_simple()
             False
-            sage: rt2b.simplify()                                                       # needs sage.symbolic
-            sage: rt2b._descr.is_simple()                                               # needs sage.symbolic
+            sage: rt2b.simplify()
+            sage: rt2b._descr.is_simple()
             True
         """
         return False
@@ -4070,7 +4070,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: e = (a + b + c) * (a + b - c) * (a - b) * (a - b - c) / d
             sage: bool(e)
             True
-            sage: bool(e.abs() < 2**-500)                                               # needs sage.symbolic
+            sage: bool(e.abs() < 2**-500)
             True
 
         An identity between roots of unity::
@@ -5005,19 +5005,19 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: # needs sage.symbolic
             sage: a = AA(2**(1/2) - 2**(1/3))
             sage: b = 808620184/5240825825
-            sage: a < b                                                                 # needs sage.symbolic
+            sage: a < b
             True
-            sage: a < b                                                                 # needs sage.symbolic
+            sage: a < b
             True
             sage: a = AA(2^(1/3))
             sage: r = 3085094589/2448641198
-            sage: a < r                                                                 # needs sage.symbolic
+            sage: a < r
             False
-            sage: a > r                                                                 # needs sage.symbolic
+            sage: a > r
             True
-            sage: a < r                                                                 # needs sage.symbolic
+            sage: a < r
             False
-            sage: a > r                                                                 # needs sage.symbolic
+            sage: a > r
             True
         """
         if self is other:
@@ -5163,11 +5163,11 @@ class AlgebraicNumber(AlgebraicNumber_base):
             Traceback (most recent call last):
             ...
             ValueError: Cannot coerce non-integral Algebraic Real 4.123105625617660? to Integer
-            sage: QQbar(sqrt(16))._integer_()                                           # needs sage.symbolic
+            sage: QQbar(sqrt(16))._integer_()
             4
-            sage: v = QQbar(1 + I*sqrt(3))^5 + QQbar(16*sqrt(3)*I); v                   # needs sage.symbolic
+            sage: v = QQbar(1 + I*sqrt(3))^5 + QQbar(16*sqrt(3)*I); v
             16.00000000000000? + 0.?e-17*I
-            sage: v._integer_()                                                         # needs sage.symbolic
+            sage: v._integer_()
             16
         """
         return AA(self)._integer_(ZZ)
@@ -5192,11 +5192,11 @@ class AlgebraicNumber(AlgebraicNumber_base):
             Traceback (most recent call last):
             ...
             ValueError: Cannot coerce irrational Algebraic Real 1.414213562373095? to Rational
-            sage: v1 = QQbar(1/3 + I*sqrt(5))^7                                         # needs sage.symbolic
-            sage: v2 = QQbar((100336/729*golden_ratio - 50168/729)*I)                   # needs sage.symbolic
-            sage: v = v1 + v2; v                                                        # needs sage.symbolic
+            sage: v1 = QQbar(1/3 + I*sqrt(5))^7
+            sage: v2 = QQbar((100336/729*golden_ratio - 50168/729)*I)
+            sage: v = v1 + v2; v
             -259.6909007773206? + 0.?e-15*I
-            sage: v._rational_()                                                        # needs sage.symbolic
+            sage: v._rational_()
             -567944/2187
         """
         return AA(self)._rational_()

@@ -1058,7 +1058,7 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<ZZZ> = RealIntervalField()[]; R
+            sage: R.<ZZZ> = RealIntervalField()[]; R                                    # needs sage.rings.real_interval_field
             Univariate Polynomial Ring in ZZZ over
              Real Interval Field with 53 bits of precision
             sage: R.change_ring(GF(19^2, 'b'))                                          # needs sage.rings.finite_rings
@@ -1161,7 +1161,7 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<ZZZ> = RealIntervalField()[]; R
+            sage: R.<ZZZ> = RealIntervalField()[]; R                                    # needs sage.rings.real_interval_field
             Univariate Polynomial Ring in ZZZ over Real Interval Field with 53 bits of precision
             sage: R.characteristic()
             0

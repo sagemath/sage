@@ -2414,7 +2414,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             m[5] + m[6] + m[7] + m[8] + m[9]
             sage: f.coefficient(6)
             m[6]
-            sage: f[20]                                                                 # needs sage.modules
+            sage: f[20]
             0
 
         Alternatively, ``x`` can be a list of elements of the base ring.

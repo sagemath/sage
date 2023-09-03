@@ -226,8 +226,8 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: t = p._im_gens_(QQbar, [2])
             sage: t in QQbar
             True
-            sage: f = R.hom([QQbar(2)], check=False)                                    # needs sage.rings.number_field
-            sage: t == f(p)                                                             # needs sage.rings.number_field
+            sage: f = R.hom([QQbar(2)], check=False)
+            sage: t == f(p)
             True
         """
         return self(codomain(im_gens[0]))

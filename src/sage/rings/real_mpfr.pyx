@@ -3257,7 +3257,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: # needs sage.symbolic
             sage: R = RealField(100)
-            sage: R(pi)                                                                 # needs sage.symbolic
+            sage: R(pi)
             3.1415926535897932384626433833
             sage: axiom(R(pi))  # indirect doctest      # optional - axiom
             3.1415926535 8979323846 26433833
@@ -3712,11 +3712,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: # needs sage.symbolic
             sage: RR(pi).nearby_rational(max_denominator=120)
             355/113
-            sage: RR(pi).nearby_rational(max_denominator=10000)                         # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=10000)
             355/113
-            sage: RR(pi).nearby_rational(max_denominator=100000)                        # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=100000)
             312689/99532
-            sage: RR(pi).nearby_rational(max_denominator=1)                             # needs sage.symbolic
+            sage: RR(pi).nearby_rational(max_denominator=1)
             3
 
             sage: RR(-3.5).nearby_rational(max_denominator=1)
