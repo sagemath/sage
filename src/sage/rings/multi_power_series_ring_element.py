@@ -1944,9 +1944,12 @@ class MPowerSeries(PowerSeries):
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
-        from sage.functions.log import exp
         c = self.constant_coefficient()
-        exp_c = exp(c)
+        if not c:
+            exp_c = self.base_ring().one()
+        else:
+            from sage.functions.log import exp
+            exp_c = exp(c)
         x = self._bg_value - c
         if x.is_zero():
             return exp_c
