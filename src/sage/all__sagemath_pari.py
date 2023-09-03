@@ -14,3 +14,8 @@ This distribution makes the following features available::
 from .all__sagemath_categories import *
 
 from sage.libs.all__sagemath_pari import *
+
+# Relink imported lazy_import objects to point to the appropriate namespace
+from sage.misc.lazy_import import clean_namespace
+clean_namespace()
+del clean_namespace
