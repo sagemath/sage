@@ -25,6 +25,12 @@ div.jupyter_container div.cell_output div.output {
 
 .thebelab-button {
   margin: .5rem 0 .5rem .5rem;
+  padding: 0 .5rem;
+  min-width: 2rem;
+}
+
+.thebelab-button:active {
+  color: #0f0fff;
 }
 
 .thebelab-busy {
@@ -33,9 +39,10 @@ div.jupyter_container div.cell_output div.output {
 
 #thebelab-activate-button {
   position: fixed;
-  right: -6.5rem;
-  top: calc(50% - 1.5em);
-  border-radius: 1em;
+  right: -5rem;
+  top: calc(50% - 1.5rem);
+  width: 6rem;
+  border-radius: 1rem;
   transition-property: right;
   transition-duration: 300ms;
   transition-timing-function: ease-out;
@@ -43,7 +50,11 @@ div.jupyter_container div.cell_output div.output {
 }
 
 #thebelab-activate-button:hover {
-  right: 5px;
+  right: .5rem;
+}
+
+#thebelab-activate-button:active {
+  color: #0f0fff;
 }
 
 body[data-theme="dark"] {
@@ -57,9 +68,16 @@ body[data-theme="dark"] {
     background-color: #383838;
   }
 
+  .thebelab-button:active {
+    color: #368ce2;
+  }
+
   #thebelab-activate-button {
-    color: #d0d0d0;
     background-color: #383838;
+  }
+
+  #thebelab-activate-button:active {
+    color: #368ce2;
   }
 
   .thebelab-cell .jp-OutputArea-output {
