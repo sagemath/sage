@@ -8336,7 +8336,7 @@ cdef class Polynomial(CommutativePolynomial):
         Spurious crash with pari-2.5.5, see :trac:`16165`::
 
             sage: f = (1+x+x^2)^3
-            sage: f.roots(ring=CC)                                                      # needs sage.rings.real_mpfr
+            sage: f.roots(ring=CC)                                                      # needs sage.libs.pari sage.rings.real_mpfr
             [(-0.500000000000000 - 0.866025403784439*I, 3),
              (-0.500000000000000 + 0.866025403784439*I, 3)]
 
@@ -8344,7 +8344,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: polRing.<x> = PolynomialRing(ZZ)
             sage: j = (x+1)^2 * (x-1)^7 * (x^2-x+1)^5
-            sage: j.roots(CC)                                                           # needs sage.rings.real_mpfr
+            sage: j.roots(CC)                                                           # needs sage.libs.pari sage.rings.real_mpfr
             [(-1.00000000000000, 2),
              (1.00000000000000, 7),
              (0.500000000000000 - 0.866025403784439*I, 5),
@@ -8740,20 +8740,20 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
-            sage: (x^2 - x - 1).real_roots()                                            # needs sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()                                            # needs sage.libs.pari sage.rings.real_mpfr
             [-0.618033988749895, 1.61803398874989]
 
         TESTS::
 
-            sage: x = polygen(RealField(100))                                           # needs sage.rings.real_mpfr
-            sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs sage.rings.real_mpfr
+            sage: x = polygen(RealField(100))                                           # needs sage.libs.pari sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs sage.libs.pari sage.rings.real_mpfr
                 Real Field with 100 bits of precision
             sage: x = polygen(RDF)
             sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs numpy
             Real Double Field
 
-            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # needs sage.rings.real_mpfr
-            sage: v[0].parent() is RR                                                   # needs sage.rings.real_mpfr
+            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # needs sage.libs.pari sage.rings.real_mpfr
+            sage: v[0].parent() is RR                                                   # needs sage.libs.pari sage.rings.real_mpfr
             True
         """
         K = self.base_ring()
@@ -8775,15 +8775,16 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
             sage: x = polygen(ZZ)
-            sage: (x^3 - 1).complex_roots()   # note: low order bits slightly different on ppc.     # needs sage.rings.real_mpfr
+            sage: (x^3 - 1).complex_roots()   # note: low order bits slightly different on ppc.
             [1.00000000000000,
              -0.500000000000000 - 0.86602540378443...*I,
              -0.500000000000000 + 0.86602540378443...*I]
 
         TESTS::
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
             sage: x = polygen(RR)
             sage: (x^3 - 1).complex_roots()[0].parent()
             Complex Field with 53 bits of precision
