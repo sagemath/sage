@@ -213,8 +213,8 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.groups
-            sage: G.an_element()                                                        # needs sage.groups
+            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.modules
+            sage: G.an_element()                                                        # needs sage.modules
             f0*f1*f2*f3
         """
         return self.prod(self.gens())
