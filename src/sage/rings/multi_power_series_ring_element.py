@@ -1932,7 +1932,7 @@ class MPowerSeries(PowerSeries):
             sage: exp(a)
             1 + a + 1/2*a^2 + 1/6*a^3 + 1/24*a^4 + 1/120*a^5 + 1/720*a^6 + 1/5040*a^7 +
             1/40320*a^8 + 1/362880*a^9 + 1/3628800*a^10 + 1/39916800*a^11 + O(a, b)^12
-            sage: a.exp(prec=5)                                                         # needs sage.symbolic
+            sage: a.exp(prec=5)
             1 + a + 1/2*a^2 + 1/6*a^3 + 1/24*a^4 + O(a, b)^5
             sage: exp(a + T.O(5))
             1 + a + 1/2*a^2 + 1/6*a^3 + 1/24*a^4 + O(a, b)^5
@@ -1945,9 +1945,12 @@ class MPowerSeries(PowerSeries):
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
-        from sage.functions.log import exp
         c = self.constant_coefficient()
-        exp_c = exp(c)
+        if not c:
+            exp_c = self.base_ring().one()
+        else:
+            from sage.functions.log import exp
+            exp_c = exp(c)
         x = self._bg_value - c
         if x.is_zero():
             return exp_c
