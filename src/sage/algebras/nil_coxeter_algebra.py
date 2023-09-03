@@ -110,16 +110,18 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
             0
             sage: U.homogeneous_generator_noncommutative_variables(0)
             1
-
         """
-        assert (len(self._cartan_type) == 2 and self._cartan_type[0] in ['A','B']) or (len(self._cartan_type) == 3 and self._cartan_type[2] == 1), "Analogue of symmetric functions in noncommutative variables is not defined in type %s" % (self._cartan_type)
+        ct = self._cartan_type
+        msg = f"Analogue of symmetric functions in noncommutative variables is not defined in type {ct}"
+        assert (len(ct) == 2 and ct[0] in ['A', 'B']) or (len(ct) == 3 and ct[2] == 1), msg
         if r >= self._n:
             return self.zero()
         return self.sum_of_monomials(w for w in self._W.pieri_factors() if w.length() == r)
 
-    def homogeneous_noncommutative_variables(self,la):
+    def homogeneous_noncommutative_variables(self, la):
         r"""
         Give the homogeneous function indexed by `la`, viewed inside the Nil-Coxeter algebra.
+
         This is only defined in finite type `A`, `B` and affine types `A^{(1)}`, `B^{(1)}`, `C^{(1)}`, `D^{(1)}`.
 
         INPUT:
