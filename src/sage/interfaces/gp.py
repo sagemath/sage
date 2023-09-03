@@ -793,26 +793,27 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: pi_def = gp(pi); pi_def                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: pi_def = gp(pi); pi_def
             3.141592653589793238462643383                  # 32-bit
             3.1415926535897932384626433832795028842        # 64-bit
-            sage: pi_def.precision()                                                    # needs sage.symbolic
+            sage: pi_def.precision()
             28                                             # 32-bit
             38                                             # 64-bit
-            sage: pi_150 = gp.new_with_bits_prec(pi, 150)                               # needs sage.symbolic
-            sage: new_prec = pi_150.precision(); new_prec                               # needs sage.symbolic
+            sage: pi_150 = gp.new_with_bits_prec(pi, 150)
+            sage: new_prec = pi_150.precision(); new_prec
             48                                             # 32-bit
             57                                             # 64-bit
-            sage: old_prec = gp.set_precision(new_prec); old_prec                       # needs sage.symbolic
+            sage: old_prec = gp.set_precision(new_prec); old_prec
             28                                             # 32-bit
             38                                             # 64-bit
-            sage: pi_150                                                                # needs sage.symbolic
+            sage: pi_150
             3.14159265358979323846264338327950288419716939938  # 32-bit
             3.14159265358979323846264338327950288419716939937510582098  # 64-bit
-            sage: gp.set_precision(old_prec)                                            # needs sage.symbolic
+            sage: gp.set_precision(old_prec)
             48                                             # 32-bit
             57                                             # 64-bit
-            sage: gp.get_precision()                                                    # needs sage.symbolic
+            sage: gp.get_precision()
             28                                             # 32-bit
             38                                             # 64-bit
         """
@@ -961,11 +962,12 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: z = gp(SR(1+15*I)); z                                                 # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: z = gp(SR(1+15*I)); z
             1 + 15*I
-            sage: z._complex_mpfr_field_(CC)                                            # needs sage.symbolic
+            sage: z._complex_mpfr_field_(CC)
             1.00000000000000 + 15.0000000000000*I
-            sage: CC(z) # CC(gp(1+15*I))                                                # needs sage.symbolic
+            sage: CC(z) # CC(gp(1+15*I))
             1.00000000000000 + 15.0000000000000*I
             sage: CC(gp(11243.9812+15*I))
             11243.9812000000 + 15.0000000000000*I
