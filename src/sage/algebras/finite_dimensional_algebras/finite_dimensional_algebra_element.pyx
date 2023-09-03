@@ -375,7 +375,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             True
             sage: A(2) == 3
             False
-            sage: A(2) == GF(5)(2)                                                      # needs sage.rings.finite_rings
+            sage: A(2) == GF(5)(2)
             False
 
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
