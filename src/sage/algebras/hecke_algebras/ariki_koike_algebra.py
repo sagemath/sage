@@ -235,6 +235,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
     We construct an Ariki-Koike algebra with `u = (1, \zeta_3, \zeta_3^2)`,
     where `\zeta_3` is a primitive third root of unity::
 
+        sage: # needs sage.rings.number_field
         sage: F = CyclotomicField(3)
         sage: zeta3 = F.gen()
         sage: R.<q> = LaurentPolynomialRing(F)
@@ -249,6 +250,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
     Next, we additionally take `q = 1` to obtain the group algebra
     of `G(r, 1, n)`::
 
+        sage: # needs sage.rings.number_field
         sage: F = CyclotomicField(3)
         sage: zeta3 = F.gen()
         sage: H = algebras.ArikiKoike(3, 4, q=1, u=[1, zeta3, zeta3^2], R=F)

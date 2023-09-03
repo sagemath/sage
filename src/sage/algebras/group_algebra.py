@@ -182,11 +182,11 @@ class GroupAlgebra_class(CombinatorialFreeModule):
               To:   Algebra of Dihedral group of order 6 as a permutation group over Rational Field
 
             sage: H = PermutationGroup([ [(1,2), (3,4)], [(5,6,7),(12,14,18)] ])
-            sage: kH = H.algebra(GF(2))                                                 # needs sage.rings.finite_rings
-            sage: [a, b] = kH.gens()                                                    # needs sage.rings.finite_rings
-            sage: x = kH(a) + kH(b) + kH.one(); print(x)                                # needs sage.rings.finite_rings
+            sage: kH = H.algebra(GF(2))
+            sage: [a, b] = kH.gens()
+            sage: x = kH(a) + kH(b) + kH.one(); print(x)
             () + (5,6,7)(12,14,18) + (1,2)(3,4)
-            sage: x*x  #checks :trac:34292                                              # needs sage.rings.finite_rings
+            sage: x*x  #checks :trac:34292
             (5,7,6)(12,18,14)
 
         As expected, there is no coercion when restricting the

@@ -53,15 +53,15 @@ def normalized_laurent_polynomial(R, p):
     the base ring. This function is a hack to recover from this. This occurs
     somewhat haphazardly with Laurent polynomial rings::
 
-        sage: R.<q>=LaurentPolynomialRing(ZZ)
+        sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: [type(c) for c in (q**-1).coefficients()]
         [<class 'sage.rings.integer.Integer'>]
 
     It also happens in any ring when dividing by units::
 
-        sage: type ( 3/1 )
+        sage: type(3/1)
         <class 'sage.rings.rational.Rational'>
-        sage: type ( -1/-1 )
+        sage: type(-1/-1)
         <class 'sage.rings.rational.Rational'>
 
     This function is a variation on a suggested workaround of Nils Bruin.
@@ -69,19 +69,19 @@ def normalized_laurent_polynomial(R, p):
     EXAMPLES::
 
         sage: from sage.algebras.iwahori_hecke_algebra import normalized_laurent_polynomial
-        sage: type ( normalized_laurent_polynomial(ZZ, 3/1) )
+        sage: type(normalized_laurent_polynomial(ZZ, 3/1))
         <class 'sage.rings.integer.Integer'>
-        sage: R.<q>=LaurentPolynomialRing(ZZ)
+        sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: [type(c) for c in normalized_laurent_polynomial(R, q**-1).coefficients()]
         [<class 'sage.rings.integer.Integer'>]
-        sage: R.<u,v>=LaurentPolynomialRing(ZZ,2)
-        sage: p=normalized_laurent_polynomial(R, 2*u**-1*v**-1+u*v)
-        sage: ui=normalized_laurent_polynomial(R, u^-1)
-        sage: vi=normalized_laurent_polynomial(R, v^-1)
-        sage: p(ui,vi)
+        sage: R.<u,v> = LaurentPolynomialRing(ZZ,2)
+        sage: p = normalized_laurent_polynomial(R, 2*u**-1*v**-1 + u*v)
+        sage: ui = normalized_laurent_polynomial(R, u^-1)
+        sage: vi = normalized_laurent_polynomial(R, v^-1)
+        sage: p(ui, vi)
         2*u*v + u^-1*v^-1
-        sage: q= u+v+ui
-        sage: q(ui,vi)
+        sage: q = u+v+ui
+        sage: q(ui, vi)
         u + v^-1 + u^-1
     """
     try:
@@ -209,8 +209,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
     The Kazhdan-Lusztig bases are implemented inside `H` whenever `-q_1 q_2`
     has a square root::
 
-        sage: H = IwahoriHeckeAlgebra('A3', u^2,-v^2)
-        sage: T=H.T(); Cp= H.Cp(); C=H.C()
+        sage: H = IwahoriHeckeAlgebra('A3', u^2, -v^2)
+        sage: T = H.T(); Cp = H.Cp(); C = H.C()
         sage: T(Cp[1])
         (u^-1*v^-1)*T[1] + (u^-1*v)
         sage: T(C[1])

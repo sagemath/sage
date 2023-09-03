@@ -211,7 +211,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             True
             sage: A.has_coerce_map_from(GF(3))
             True
-            sage: A.has_coerce_map_from(GF(5))                                          # needs sage.rings.finite_rings
+            sage: A.has_coerce_map_from(GF(5))
             False
             sage: A.has_coerce_map_from(QQ)
             False
