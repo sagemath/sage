@@ -17,6 +17,8 @@ EXAMPLES::
     Special Linear Group of degree 2 over Integer Ring
     sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
+
+    sage: # needs sage.libs.gap
     sage: G.is_finite()
     True
     sage: G.conjugacy_classes_representatives()
@@ -95,17 +97,21 @@ def GL(n, R, var='a'):
     EXAMPLES::
 
         sage: G = GL(6, GF(5))
-        sage: G.order()
-        11064475422000000000000000
         sage: G.base_ring()
         Finite Field of size 5
         sage: G.category()
         Category of finite groups
+
+        sage: # needs sage.libs.gap
+        sage: G.order()
+        11064475422000000000000000
         sage: TestSuite(G).run()
 
         sage: G = GL(6, QQ)
         sage: G.category()
         Category of infinite groups
+
+        sage: # needs sage.libs.gap
         sage: TestSuite(G).run()
 
     Here is the Cayley graph of (relatively small) finite General Linear Group::
@@ -121,6 +127,7 @@ def GL(n, R, var='a'):
 
     ::
 
+        sage: # needs sage.libs.gap
         sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
         sage: gens = [MS([[2,0], [0,1]]), MS([[2,1], [2,0]])]
         sage: G = MatrixGroup(gens)
@@ -214,10 +221,13 @@ def SL(n, R, var='a'):
         Special Linear Group of degree 15 over Finite Field of size 7
         sage: G.category()
         Category of finite groups
+
+        sage: # needs sage.libs.gap
         sage: G.order()
         1956712595698146962015219062429586341124018007182049478916067369638713066737882363393519966343657677430907011270206265834819092046250232049187967718149558134226774650845658791865745408000000
         sage: len(G.gens())
         2
+
         sage: G = SL(2, ZZ); G
         Special Linear Group of degree 2 over Integer Ring
         sage: G.category()
@@ -232,7 +242,9 @@ def SL(n, R, var='a'):
 
         sage: G = SL(3, ZZ); G
         Special Linear Group of degree 3 over Integer Ring
-        sage: G.gens()                                                                  # needs sage.libs.gap
+
+        sage: # needs sage.libs.gap
+        sage: G.gens()
         (
         [0 1 0]  [ 0  1  0]  [1 1 0]
         [0 0 1]  [-1  0  0]  [0 1 0]

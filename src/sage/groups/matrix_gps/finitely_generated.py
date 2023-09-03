@@ -10,7 +10,7 @@ EXAMPLES::
     sage: F = GF(3)
     sage: gens = [matrix(F, 2, [1,0, -1,1]), matrix(F, 2, [1,1,0,1])]
     sage: G = MatrixGroup(gens)
-    sage: G.conjugacy_classes_representatives()
+    sage: G.conjugacy_classes_representatives()                                         # needs sage.libs.gap
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -161,6 +161,7 @@ def QuaternionMatrixGroupGF3():
     elements commonly called `I` and `J`, while `K`
     is the product of `I` and `J`. ::
 
+        sage: # needs sage.libs.gap
         sage: from sage.groups.matrix_gps.finitely_generated import QuaternionMatrixGroupGF3
         sage: Q = QuaternionMatrixGroupGF3()
         sage: Q.order()
@@ -183,16 +184,17 @@ def QuaternionMatrixGroupGF3():
         [1 2], [1 1]
         )
 
+        sage: # needs sage.groups
         sage: Q = QuaternionMatrixGroupGF3()
         sage: QP = Q.as_permutation_group()
         sage: QP.is_isomorphic(QuaternionGroup())
         True
-        sage: H = DihedralGroup(4)                                                      # needs sage.groups
-        sage: H.order()                                                                 # needs sage.groups
+        sage: H = DihedralGroup(4)
+        sage: H.order()
         8
-        sage: QP.is_abelian(), H.is_abelian()                                           # needs sage.groups
+        sage: QP.is_abelian(), H.is_abelian()
         (False, False)
-        sage: QP.is_isomorphic(H)                                                       # needs sage.groups
+        sage: QP.is_isomorphic(H)
         False
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -341,6 +343,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
         False
 
+        sage: # needs sage.libs.gap
         sage: G = GL(2, GF(3))
         sage: H = G.as_matrix_group()
         sage: H == G, G == H
@@ -416,6 +419,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: H = GL(2, GF(3))
             sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
             sage: G = H.subgroup([h1, h2])
@@ -437,6 +441,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: H = GL(2, GF(3))
             sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
             sage: G = H.subgroup([h1, h2])

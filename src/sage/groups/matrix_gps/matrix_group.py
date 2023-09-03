@@ -6,10 +6,10 @@ TESTS:
 
 Loading, saving, ... works::
 
+    sage: # needs sage.libs,gap
     sage: G = GL(2,5); G
     General Linear Group of degree 2 over Finite Field of size 5
     sage: TestSuite(G).run()
-
     sage: g = G.1; g
     [4 1]
     [4 0]
@@ -168,7 +168,8 @@ class MatrixGroup_base(Group):
             [      0       0       0     3*a], [      0 3*a + 1       0       0]
             )
 
-            sage: G = GO(3,GF(5))
+            sage: # needs sage.libs.gap
+            sage: G = GO(3, GF(5))
             sage: G.as_matrix_group()
             Matrix group over Finite Field of size 5 with 2 generators (
             [2 0 0]  [0 1 0]
@@ -317,8 +318,8 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: SO3 = groups.matrix.SO(3, QQ)                                         # needs sage.groups sage.modules
-            sage: SO3._repr_option('element_ascii_art')                                 # needs sage.groups sage.modules
+            sage: SO3 = groups.matrix.SO(3, QQ)
+            sage: SO3._repr_option('element_ascii_art')
             True
         """
         if key == 'element_ascii_art':
@@ -480,6 +481,7 @@ class MatrixGroup_generic(MatrixGroup_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = GL(2,3)
             sage: H = MatrixGroup(G.gens())
             sage: H == G
@@ -487,6 +489,7 @@ class MatrixGroup_generic(MatrixGroup_base):
             sage: G == H
             True
 
+            sage: # needs sage.libs.gap
             sage: MS = MatrixSpace(QQ, 2, 2)
             sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])
             sage: G == G

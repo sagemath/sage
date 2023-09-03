@@ -40,6 +40,8 @@ EXAMPLES::
     sage: G = SO(4, GF(7), 1); G
     Special Orthogonal Group of degree 4 and form parameter 1
      over Finite Field of size 7
+
+    sage: # needs sage.libs.gap
     sage: G.random_element()   # random
     [4 3 5 2]
     [6 6 4 0]
@@ -271,6 +273,8 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
         sage: GO(3, GF(7))
         General Orthogonal Group of degree 3 over Finite Field of size 7
+
+        sage: # needs sage.libs.gap
         sage: GO(3, GF(7)).order()
         672
         sage: GO(3, GF(7)).gens()
@@ -324,6 +328,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
     TESTS::
 
+        sage: # needs sage.libs.gap
         sage: TestSuite(GO3).run()
         sage: groups.matrix.GO(2, 3, e=-1)                                              # needs sage.rings.finite_rings
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
@@ -379,6 +384,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         sage: G = SO(3,GF(5)); G
         Special Orthogonal Group of degree 3 over Finite Field of size 5
 
+        sage: # needs sage.libs.gap
         sage: G = SO(3,GF(5))
         sage: G.gens()
         (
@@ -386,7 +392,6 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         [0 3 0]  [0 2 0]  [4 0 0]
         [0 0 1], [0 3 1], [2 0 4]
         )
-        sage: G = SO(3,GF(5))
         sage: G.as_matrix_group()
         Matrix group over Finite Field of size 5 with 3 generators (
         [2 0 0]  [3 2 3]  [1 4 4]
@@ -484,6 +489,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: GO(2,3,+1).invariant_bilinear_form()
             [0 1]
             [1 0]
@@ -504,7 +510,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         TESTS::
 
-            sage: GO3m.invariant_form()
+            sage: GO3m.invariant_form()                                                 # needs sage.libs.gap
             [1 0 0]
             [0 2 0]
             [0 0 3]

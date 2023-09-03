@@ -205,7 +205,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
             sage: G = AffineGroup(2, GF(5)); G
             Affine Group of degree 2 over Finite Field of size 5
+
+            sage: # needs sage.libs.gap (for gens)
             sage: TestSuite(G).run()
+
             sage: G.category()
             Category of finite groups
 
@@ -290,8 +293,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: AffineGroup(6, GF(5)).cardinality()
             172882428468750000000000000000
+
             sage: AffineGroup(6, ZZ).cardinality()
             +Infinity
         """
@@ -465,6 +470,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = AffineGroup(4, GF(3))
             sage: G.random_element()  # random
                   [2 0 1 2]     [1]
@@ -499,6 +505,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = AffineGroup(4,5)
             sage: G.some_elements()
             [      [2 0 0 0]     [1]
