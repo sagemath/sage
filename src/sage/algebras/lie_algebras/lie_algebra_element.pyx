@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 """
 Lie Algebra Elements
 
