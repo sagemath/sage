@@ -454,7 +454,11 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
         file_optional_tags = set(parse_file_optional_tags(enumerate(src_in_lines)))
 
         for block in blocks:
-            process_block(block, src_in_lines, file_optional_tags, venv_explainer=explainer)
+            try:
+                process_block(block, src_in_lines, file_optional_tags, venv_explainer=explainer)
+            except Exception:
+                print('sage-fixdoctests: Failure to process block')
+                print(block)
 
         # Now source line numbers do not matter any more, and lines can be real lines again
         src_in_lines = list(itertools.chain.from_iterable(
