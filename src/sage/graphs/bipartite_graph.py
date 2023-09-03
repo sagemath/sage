@@ -1536,6 +1536,7 @@ class BipartiteGraph(Graph):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: g = BipartiteGraph(matrix.ones(4, 3))
             sage: g.matching_polynomial()                                               # needs sage.libs.flint
             x^7 - 12*x^5 + 36*x^3 - 24*x
