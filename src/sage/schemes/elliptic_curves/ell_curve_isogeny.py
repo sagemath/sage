@@ -171,10 +171,7 @@ def _isogeny_determine_algorithm(E, kernel):
 
     raise ValueError("invalid parameters to EllipticCurveIsogeny constructor")
 
-from sage.misc.superseded import deprecated_function_alias
-isogeny_determine_algorithm = deprecated_function_alias(33619, _isogeny_determine_algorithm)
-
-def isogeny_codomain_from_kernel(E, kernel, degree=None):
+def isogeny_codomain_from_kernel(E, kernel):
     r"""
     Compute the isogeny codomain given a kernel.
 
@@ -214,23 +211,7 @@ def isogeny_codomain_from_kernel(E, kernel, degree=None):
         sage: isogeny_codomain_from_kernel(E, kernel_list)                              # optional - sage.rings.finite_rings
         Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 15
          over Finite Field of size 19
-
-    TESTS:
-
-    Test deprecation warning for obsolete argument::
-
-        sage: isogeny_codomain_from_kernel(E, kernel_list, degree=4)                    # optional - sage.rings.finite_rings
-        doctest:warning
-        ...
-        DeprecationWarning: The "degree" argument to isogeny_codomain_from_kernel() does nothing and will be removed.
-        ...
-        Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 15
-         over Finite Field of size 19
     """
-    if degree is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(33619, 'The "degree" argument to isogeny_codomain_from_kernel() does nothing and will be removed.')
-
     algorithm = _isogeny_determine_algorithm(E, kernel)
 
     if algorithm == 'velu':
@@ -3434,46 +3415,6 @@ def compute_isogeny_stark(E1, E2, ell):
 
 from sage.misc.superseded import deprecated_function_alias
 compute_isogeny_starks = deprecated_function_alias(34871, compute_isogeny_stark)
-
-def split_kernel_polynomial(poly):
-    r"""
-    Obsolete internal helper function formerly used by
-    :func:`compute_isogeny_kernel_polynomial`.
-
-    Use
-    :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.radical`
-    instead.
-
-    INPUT:
-
-    - ``poly`` -- a nonzero univariate polynomial
-
-    OUTPUT:
-
-    The maximum separable divisor of ``poly``.  If the input is a full
-    kernel polynomial where the roots which are `x`-coordinates of
-    points of order greater than 2 have multiplicity 1, the output
-    will be a polynomial with the same roots, all of multiplicity 1.
-
-    EXAMPLES:
-
-    Check that this behaves identically to ``.radical()``::
-
-        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import split_kernel_polynomial
-        sage: q = next_prime(randrange(3,10^3))                                         # optional - sage.rings.finite_rings
-        sage: e = randrange(1,5)                                                        # optional - sage.rings.finite_rings
-        sage: R = GF(q^e,'a')['x']                                                      # optional - sage.rings.finite_rings
-        sage: f = R.random_element(randrange(10,100)).monic()                           # optional - sage.rings.finite_rings
-        sage: split_kernel_polynomial(f) == f.radical()                                 # optional - sage.rings.finite_rings
-        doctest:warning ...
-        DeprecationWarning: ...
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33619, 'The split_kernel_polynomial() function is obsolete. '
-                       'Use .radical() instead.')
-    from sage.misc.misc_c import prod
-    return prod([p for p,e in poly.squarefree_decomposition()])
 
 def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="stark"):
     r"""

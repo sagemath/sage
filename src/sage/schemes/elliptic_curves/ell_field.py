@@ -1257,7 +1257,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         except AttributeError as e:
             raise RuntimeError("Unable to construct isogeny: %s" % e)
 
-    def isogeny_codomain(self, kernel, degree=None):
+    def isogeny_codomain(self, kernel):
         r"""
         Return the codomain of the isogeny from ``self`` with given kernel.
 
@@ -1288,21 +1288,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E2 = E.isogeny_codomain(E.lift_x(77347718128277853096420969229987528666))         # optional - sage.rings.finite_rings
             sage: E2._order                                                                         # optional - sage.rings.finite_rings
             170141183460469231746191640949390434666
-
-        Test deprecation warning for obsolete argument::
-
-            sage: E.isogeny_codomain(E.lift_x(77347718128277853096420969229987528666), degree=11)   # optional - sage.rings.finite_rings
-            doctest:warning
-            ...
-            DeprecationWarning: The "degree" argument to .isogeny_codomain() does nothing and will be removed.
-            ...
-            Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 20731788786372791581385345584850817122*x + 125200507378516567345719286707201096361
-             over Finite Field of size 170141183460469231731687303715884105727
         """
-        if degree is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33619, 'The "degree" argument to .isogeny_codomain() does nothing and will be removed.')
-
         E = isogeny_codomain_from_kernel(self, kernel)
         if self.base_field().is_finite():
             E._fetch_cached_order(self)
