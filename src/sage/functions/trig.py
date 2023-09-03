@@ -211,6 +211,7 @@ class Function_tan(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: tan(3.1415)
             -0.0000926535900581913
             sage: tan(3.1415/4)
@@ -521,7 +522,7 @@ class Function_arcsin(GinacFunction):
 
         EXAMPLES::
 
-            sage: arcsin(0.5)
+            sage: arcsin(0.5)                                                           # needs sage.rings.real_mpfr
             0.523598775598299
             sage: arcsin(1/2)                                                           # needs sage.symbolic
             1/6*pi
@@ -585,7 +586,7 @@ class Function_arccos(GinacFunction):
 
         EXAMPLES::
 
-            sage: arccos(0.5)
+            sage: arccos(0.5)                                                           # needs sage.rings.real_mpfr
             1.04719755119660
             sage: arccos(1/2)                                                           # needs sage.symbolic
             1/3*pi

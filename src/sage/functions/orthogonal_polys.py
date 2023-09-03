@@ -782,7 +782,7 @@ class Func_chebyshev_T(ChebyshevFunction):
             ...
             NoConvergence: Hypergeometric series converges too slowly.
             Try increasing maxterms.
-            sage: chebyshev_T(10^6, 0.1)
+            sage: chebyshev_T(10^6, 0.1)                                                # needs sage.rings.real_mpfr
             0.636384327171504
         """
         try:
@@ -1680,7 +1680,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
         -sqrt(-x^2 + 1)
         sage: gen_legendre_P(1, 1, 0.5)  # abs tol 1e-14                                # needs mpmath
         -0.866025403784439
-        sage: gen_legendre_P.eval_gen_poly(1, 1, 0.5)  # abs tol 1e-14
+        sage: gen_legendre_P.eval_gen_poly(1, 1, 0.5)  # abs tol 1e-14                  # needs sage.rings.real_mpfr
         -0.866025403784439
         sage: gen_legendre_P._evalf_(1, 1, 0.5)  # abs tol 1e-14                        # needs mpmath
         -0.866025403784439
@@ -2149,9 +2149,9 @@ class Func_jacobi_P(OrthogonalFunction):
     EXAMPLES::
 
         sage: x = PolynomialRing(QQ, 'x').gen()
-        sage: jacobi_P(2, 0, 0, x)
+        sage: jacobi_P(2, 0, 0, x)                                                      # needs sage.libs.flint sage.symbolic
         3/2*x^2 - 1/2
-        sage: jacobi_P(2, 1, 2, 1.2)
+        sage: jacobi_P(2, 1, 2, 1.2)                                                    # needs sage.libs.flint
         5.01000000000000
     """
     def __init__(self):
@@ -2209,18 +2209,18 @@ class Func_jacobi_P(OrthogonalFunction):
         Check that :trac:`17192` is fixed::
 
             sage: x = PolynomialRing(QQ, 'x').gen()
-            sage: jacobi_P(0, 0, 0, x)
+            sage: jacobi_P(0, 0, 0, x)                                                  # needs sage.libs.flint sage.symbolic
             1
-            sage: jacobi_P(-1, 0, 0, x)
+            sage: jacobi_P(-1, 0, 0, x)                                                 # needs sage.libs.flint sage.symbolic
             1
-            sage: jacobi_P(-1, 1, 1, x)
+            sage: jacobi_P(-1, 1, 1, x)                                                 # needs sage.libs.flint sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: n must be greater than -1, got n = -1
 
-            sage: jacobi_P(-7, 0, 0, x)
+            sage: jacobi_P(-7, 0, 0, x)                                                 # needs sage.libs.flint sage.symbolic
             231/16*x^6 - 315/16*x^4 + 105/16*x^2 - 5/16
-            sage: jacobi_P(-7, 0, 2, x)
+            sage: jacobi_P(-7, 0, 2, x)                                                 # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: n must be greater than -1, got n = -7
