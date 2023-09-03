@@ -174,7 +174,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     These do not work but fail gracefully::
 
-        sage: ceil(Infinity)
+        sage: ceil(Infinity)                                                            # needs sage.rings.real_interval_field
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN

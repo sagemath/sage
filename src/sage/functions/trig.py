@@ -324,20 +324,20 @@ class Function_cot(GinacFunction):
 
         TESTS::
 
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
-
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>

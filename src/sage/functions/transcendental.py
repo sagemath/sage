@@ -266,11 +266,11 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hurwitz_zeta(11/10, 1/2).n()                                          # needs sage.symbolic
+            sage: hurwitz_zeta(11/10, 1/2).n()                                          # needs mpmath sage.symbolic
             12.1038134956837
-            sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs sage.symbolic
+            sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs mpmath sage.symbolic
             12.103813495683755105709077413
-            sage: hurwitz_zeta(11/10, 1 + 1j).n()
+            sage: hurwitz_zeta(11/10, 1 + 1j).n()                                       # needs mpmath sage.rings.real_mpfr
             9.85014164287853 - 1.06139499403981*I
         """
         return _mpmath_call(_mpmath_zeta, s, x, parent=parent)
@@ -584,13 +584,14 @@ class DickmanRho(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: f = dickman_rho.power_series(2, 20); f
             -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8
              - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4
              - 0.0097336*x^3 + 0.045224*x^2 - 0.11891*x + 0.13032
             sage: f(-1), f(0), f(1)
             (0.30685, 0.13032, 0.048608)
-            sage: dickman_rho(2), dickman_rho(2.5), dickman_rho(3)                      # needs sage.symbolic
+            sage: dickman_rho(2), dickman_rho(2.5), dickman_rho(3)
             (0.306852819440055, 0.130319561832251, 0.0486083882911316)
         """
         return self._compute_power_series(n, abs_prec, cache_ring=None)
@@ -614,6 +615,7 @@ class DickmanRho(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: f = dickman_rho.power_series(2, 20); f
             -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8
              - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4
