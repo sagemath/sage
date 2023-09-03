@@ -2082,18 +2082,18 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H2 = Hom(P, P2)
             sage: H3 = Hom(P2, P)
             sage: f = H([x^2 + (2*t^3 + 2*t^2 + 1)*y^2, y^2])
-            sage: f.reduce_base_field()
+            sage: f.reduce_base_field()                                                 # needs sage.modules
             Scheme endomorphism of Projective Space of dimension 1
              over Finite Field in t2 of size 3^2
               Defn: Defined on coordinates by sending (x : y) to (x^2 + t2*y^2 : y^2)
             sage: f2 = H2([x^2 + 5*y^2, y^2, 2*x*y])
-            sage: f2.reduce_base_field()
+            sage: f2.reduce_base_field()                                                # needs sage.modules
             Scheme morphism:
               From: Projective Space of dimension 1 over Finite Field of size 3
               To:   Projective Space of dimension 2 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y) to (x^2 - y^2 : y^2 : -x*y)
             sage: f3 = H3([a^2 + t*b^2, c^2])
-            sage: f3.reduce_base_field()
+            sage: f3.reduce_base_field()                                                # needs sage.modules
             Scheme morphism:
               From: Projective Space of dimension 2 over Finite Field in t of size 3^4
               To:   Projective Space of dimension 1 over Finite Field in t of size 3^4
