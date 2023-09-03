@@ -605,20 +605,12 @@ connection to a server running Maple; for hints, type
 
             sage: # optional - maple
             sage: t = maple.cputime()
-<<<<<<< HEAD
             sage: t                   # random
-=======
-            sage: t
->>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             0.02
             sage: x = maple('x')
             sage: maple.diff(x^2, x)
             2*x
-<<<<<<< HEAD
             sage: maple.cputime(t)    # random
-=======
-            sage: maple.cputime(t)
->>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             0.0
         """
         if t is None:
@@ -818,11 +810,7 @@ connection to a server running Maple; for hints, type
         ::
 
             sage: # optional - maple
-<<<<<<< HEAD
             sage: maple.quit()   # reset maple
-=======
-            sage: maple.quit()
->>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             sage: maple('partition(10)')
             partition(10)
             sage: maple('bell(10)')
@@ -959,11 +947,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
             sage: # optional - maple
             sage: m = maple('x^2+y^2')
-<<<<<<< HEAD
             sage: m.__hash__()          # random
-=======
-            sage: m.__hash__()
->>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             188724254834261060184983038723355865733
             sage: hash(m)               # random
             5035731711831192733

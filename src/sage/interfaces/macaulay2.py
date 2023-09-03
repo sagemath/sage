@@ -496,11 +496,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
             sage: 0 in a, 2 in a, 3 in a
             (True, True, False)
             sage: b = macaulay2('hashTable {"x" => 1, "y" => 2}')
-<<<<<<< HEAD
             sage: 'x' in b, '"x"' in b    # indirect doctest
-=======
-            sage: 'x' in b, '"x"' in b
->>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             (False, True)
         """
         return self.eval("%s#?%s" % (v2, v1)) == self._true_symbol()
@@ -649,11 +645,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
             sage: R = macaulay2("QQ[x,y]")
             sage: x,y = R.gens()
             sage: a = (x+y+1)^20
-<<<<<<< HEAD
             sage: macaulay2.cputime()       # random
-=======
-            sage: macaulay2.cputime()
->>>>>>> a24a77aaaa1 (src/sage/interfaces: sage -fixdoctests --only-tags)
             0.48393700000000001
         """
         _t = float(self.cpuTime()._sage_())
