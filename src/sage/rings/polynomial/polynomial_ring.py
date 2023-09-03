@@ -1160,7 +1160,8 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<ZZZ> = RealIntervalField()[]; R                                    # needs sage.rings.real_interval_field
+            sage: # needs sage.rings.real_interval_field
+            sage: R.<ZZZ> = RealIntervalField()[]; R
             Univariate Polynomial Ring in ZZZ over Real Interval Field with 53 bits of precision
             sage: R.characteristic()
             0
@@ -1797,6 +1798,7 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x> = QQ[]
             sage: S.<y> = R[]
             sage: p = y^3 + (-x^2 - 3)*y^2 + (2*x^3 - x^2 + 3)*y - x^4 + 2*x^2 - 1
@@ -2165,6 +2167,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         Only return the divided-difference coefficients `F_{i,i}`.
         This example is taken from Example 1, page 121 of [BF2005]_::
 
+            sage: # needs sage.rings.real_mpfr
             sage: points = [(1.0, 0.7651977), (1.3, 0.6200860), (1.6, 0.4554022),
             ....:           (1.9, 0.2818186), (2.2, 0.1103623)]
             sage: R = PolynomialRing(RR, "x")
@@ -2177,6 +2180,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
         Now return the full divided-difference table::
 
+            sage: # needs sage.rings.real_mpfr
             sage: points = [(1.0, 0.7651977), (1.3, 0.6200860), (1.6, 0.4554022),
             ....:           (1.9, 0.2818186), (2.2, 0.1103623)]
             sage: R = PolynomialRing(RR, "x")

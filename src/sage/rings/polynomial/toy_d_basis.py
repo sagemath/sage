@@ -35,10 +35,10 @@ To look at the singularities of the arithmetic surface, we need to do
 the corresponding computation over `\ZZ`::
 
     sage: I = A.ideal([f, fx, fy])
-    sage: gb = d_basis(I); gb
+    sage: gb = d_basis(I); gb                                                           # needs sage.libs.singular
     [x - 2020, y - 11313, 22627]
 
-    sage: gb[-1].factor()
+    sage: gb[-1].factor()                                                               # needs sage.libs.singular
     11^3 * 17
 
 This Groebner Basis gives a lot of information.  First, the only
@@ -212,7 +212,7 @@ def d_basis(F, strat=True):
         sage: fx = f.derivative(x)
         sage: fy = f.derivative(y)
         sage: I = A.ideal([f,fx,fy])
-        sage: gb = d_basis(I); gb
+        sage: gb = d_basis(I); gb                                                       # needs sage.libs.singular
         [x - 2020, y - 11313, 22627]
     """
     R = F.ring()

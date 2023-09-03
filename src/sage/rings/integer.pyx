@@ -14,7 +14,7 @@ Add 2 integers::
 
 Add an integer and a real number::
 
-    sage: a + 4.0
+    sage: a + 4.0                                                                       # needs sage.rings.real_mpfr
     7.00000000000000
 
 Add an integer and a rational number::
@@ -24,7 +24,8 @@ Add an integer and a rational number::
 
 Add an integer and a complex number::
 
-    sage: b = ComplexField().0 + 1.5                                                    # needs sage.rings.real_mpfr
+    sage: # needs sage.rings.real_mpfr
+    sage: b = ComplexField().0 + 1.5
     sage: loads((a + b).dumps()) == a + b
     True
 
@@ -2139,7 +2140,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: 2^x                # symbolic x                                       # needs sage.symbolic
             2^x
-            sage: 2^1.5              # real number
+            sage: 2^1.5              # real number                                      # needs sage.rings.real_mpfr
             2.82842712474619
             sage: 2^float(1.5)       # python float  abs tol 3e-16
             2.8284271247461903
@@ -6732,7 +6733,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             128
             sage: int(32) << 2
             128
-            sage: 1 << 2.5
+            sage: 1 << 2.5                                                              # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for <<: 1, 2.5000...
@@ -6765,7 +6766,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             8
             sage: int(32) >> 2
             8
-            sage: 1 >> 2.5
+            sage: 1 >> 2.5                                                              # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for >>: 1, 2.5000...

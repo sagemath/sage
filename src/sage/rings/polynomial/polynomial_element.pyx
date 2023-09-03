@@ -1362,7 +1362,7 @@ cdef class Polynomial(CommutativePolynomial):
             0.2
             sage: CDF(a)                                                                # needs sage.rings.complex_double
             0.2
-            sage: RR(a)
+            sage: RR(a)                                                                 # needs sage.rings.real_mpfr
             0.200000000000000
             sage: CC(a)                                                                 # needs sage.rings.real_mpfr
             0.200000000000000
@@ -1383,11 +1383,11 @@ cdef class Polynomial(CommutativePolynomial):
             sage: b = AA['x'](AA(2/3).sqrt())
             sage: AA(b)
             0.8164965809277260?
-            sage: RR(b)
+            sage: RR(b)                                                                 # needs sage.rings.real_mpfr
             0.816496580927726
             sage: RBF(b)                                                                # needs sage.libs.flint
             [0.816496580927726 +/- 2.44e-16]
-            sage: RIF(b)
+            sage: RIF(b)                                                                # needs sage.rings.real_interval_field
             0.8164965809277260?
             sage: float(b)
             0.816496580927726
@@ -1398,11 +1398,11 @@ cdef class Polynomial(CommutativePolynomial):
             0.6324555320336758?*I
             sage: CDF(c)
             0.6324555320336758*I
-            sage: CC(c)
+            sage: CC(c)                                                                 # needs sage.rings.real_mpfr
             0.632455532033676*I
             sage: CBF(c)  # abs tol 1e-16                                               # needs sage.libs.flint
             [0.6324555320336759 +/- 3.38e-17]*I
-            sage: CIF(c)
+            sage: CIF(c)                                                                # needs sage.rings.complex_interval_field
             0.6324555320336758?*I
             sage: complex(c)
             0.6324555320336758j
@@ -3117,6 +3117,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: S.<y> = PolynomialRing(RR)
             sage: f = y^10 - 1.393493*y + 0.3
             sage: f._mul_karatsuba(f,0)
@@ -3642,6 +3643,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = RR[]
             sage: f = x + RR('0.3'); f
             x + 0.300000000000000
@@ -3730,6 +3732,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = RR[]
             sage: f = x + RR('0.3'); f
             x + 0.300000000000000
@@ -8386,6 +8389,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`33979` is fixed::
 
+            sage: # needs sage.libs.pari
             sage: n = randint(2, 10^6)
             sage: K = Integers(n)
             sage: R.<x> = PolynomialRing(K)
@@ -9436,6 +9440,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Over `\RR[z]`::
 
+            sage: # needs sage.rings.real_mpfr
             sage: z = PowerSeriesRing(RR, 'z').gen()
             sage: P = PolynomialRing(RR, 'x')
             sage: x = P.gen()

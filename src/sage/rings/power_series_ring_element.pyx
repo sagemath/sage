@@ -1300,6 +1300,7 @@ cdef class PowerSeries(AlgebraElement):
 
         Tests other implementations::
 
+            sage: # needs sage.libs.pari
             sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')
             sage: f = q - q^3 + O(q^10)
             sage: f.map_coefficients(lambda c: c - 2)
@@ -1504,26 +1505,26 @@ cdef class PowerSeries(AlgebraElement):
 
     def sqrt(self, prec=None, extend=False, all=False, name=None):
         r"""
-        Return a square root of self.
+        Return a square root of ``self``.
 
         INPUT:
 
-          - ``prec`` - integer (default: None): if not None and the series
+          - ``prec`` -- integer (default: ``None``): if not ``None`` and the series
             has infinite precision, truncates series at precision
-            prec.
+            ``prec``.
 
-          - ``extend`` - bool (default: False); if True, return a square
+          - ``extend`` -- bool (default: ``False``); if ``True``, return a square
             root in an extension ring, if necessary. Otherwise, raise
-            a ValueError if the square root is not in the base power series
-            ring. For example, if ``extend`` is True the square root of a
+            a :class:`ValueError` if the square root is not in the base power series
+            ring. For example, if ``extend`` is ``True``, the square root of a
             power series with odd degree leading coefficient is
             defined as an element of a formal extension ring.
 
-          - ``name`` - string; if ``extend`` is True, you must also specify the print
+          - ``name`` -- string; if ``extend`` is True, you must also specify the print
             name of the formal square root.
 
-          - ``all`` - bool (default: False); if True, return all square
-            roots of self, instead of just one.
+          - ``all`` -- bool (default: ``False``); if ``True``, return all square
+            roots of ``self``, instead of just one.
 
         ALGORITHM: Newton's method
 
@@ -1536,20 +1537,22 @@ cdef class PowerSeries(AlgebraElement):
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
             sage: sqrt(t^2)
             t
-            sage: sqrt(1+t)
+            sage: sqrt(1 + t)
             1 + 1/2*t - 1/8*t^2 + 1/16*t^3 - 5/128*t^4 + O(t^5)
-            sage: sqrt(4+t)
+            sage: sqrt(4 + t)
             2 + 1/4*t - 1/64*t^2 + 1/512*t^3 - 5/16384*t^4 + O(t^5)
-            sage: u = sqrt(2+t, prec=2, extend=True, name = 'alpha'); u
+            sage: u = sqrt(2 + t, prec=2, extend=True, name = 'alpha'); u
             alpha
             sage: u^2
             2 + t
             sage: u.parent()
-            Univariate Quotient Polynomial Ring in alpha over Power Series Ring in t over Rational Field with modulus x^2 - 2 - t
+            Univariate Quotient Polynomial Ring in alpha
+             over Power Series Ring in t over Rational Field
+             with modulus x^2 - 2 - t
             sage: K.<t> = PowerSeriesRing(QQ, 't', 50)
-            sage: sqrt(1+2*t+t^2)
+            sage: sqrt(1 + 2*t + t^2)
             1 + t
-            sage: sqrt(t^2 +2*t^4 + t^6)
+            sage: sqrt(t^2 + 2*t^4 + t^6)
             t + t^3
             sage: sqrt(1 + t + t^2 + 7*t^3)^2
             1 + t + t^2 + 7*t^3 + O(t^50)
@@ -1560,7 +1563,8 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: K.<t> = PowerSeriesRing(CDF, 5)                                       # needs sage.rings.complex_double
+            sage: # needs sage.rings.complex_double
+            sage: K.<t> = PowerSeriesRing(CDF, 5)
             sage: v = sqrt(-1 + t + t^3, all=True); v
             [1.0*I - 0.5*I*t - 0.125*I*t^2 - 0.5625*I*t^3 - 0.2890625*I*t^4 + O(t^5),
              -1.0*I + 0.5*I*t + 0.125*I*t^2 + 0.5625*I*t^3 + 0.2890625*I*t^4 + O(t^5)]
@@ -1576,7 +1580,9 @@ cdef class PowerSeries(AlgebraElement):
             sage: s^2
             2*t + t^3 + O(t^4)
             sage: parent(s)
-            Univariate Quotient Polynomial Ring in sqrtf over Power Series Ring in t over Rational Field with modulus x^2 - 2*t - t^3 + O(t^4)
+            Univariate Quotient Polynomial Ring in sqrtf
+             over Power Series Ring in t over Rational Field
+             with modulus x^2 - 2*t - t^3 + O(t^4)
 
         TESTS::
 
@@ -1685,7 +1691,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def square_root(self):
         """
-        Return the square root of self in this ring. If this cannot be done
+        Return the square root of ``self`` in this ring. If this cannot be done,
         then an error will be raised.
 
         This function succeeds if and only if
@@ -1694,14 +1700,15 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
-            sage: (1+t).square_root()
+            sage: (1 + t).square_root()
             1 + 1/2*t - 1/8*t^2 + 1/16*t^3 - 5/128*t^4 + O(t^5)
-            sage: (2+t).square_root()
+            sage: (2 + t).square_root()
             Traceback (most recent call last):
             ...
             ValueError: Square root does not live in this ring.
-            sage: (2+t.change_ring(RR)).square_root()
-            1.41421356237309 + 0.353553390593274*t - 0.0441941738241592*t^2 + 0.0110485434560398*t^3 - 0.00345266983001244*t^4 + O(t^5)
+            sage: (2 + t.change_ring(RR)).square_root()                                 # needs sage.rings.real_mpfr
+            1.41421356237309 + 0.353553390593274*t - 0.0441941738241592*t^2
+             + 0.0110485434560398*t^3 - 0.00345266983001244*t^4 + O(t^5)
             sage: t.square_root()
             Traceback (most recent call last):
             ...
@@ -1710,7 +1717,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f = (1+t)^20
             sage: f.square_root()
             1 + 10*t + 45*t^2 + 120*t^3 + 210*t^4 + O(t^5)
-            sage: f = 1+t
+            sage: f = 1 + t
             sage: f.square_root()
             Traceback (most recent call last):
             ...
@@ -2476,7 +2483,8 @@ cdef class PowerSeries(AlgebraElement):
         Check that `\exp(t)` is, well, `\exp(t)`::
 
             sage: (t + O(t^10)).exp()
-            1 + t + 1/2*t^2 + 1/6*t^3 + 1/24*t^4 + 1/120*t^5 + 1/720*t^6 + 1/5040*t^7 + 1/40320*t^8 + 1/362880*t^9 + O(t^10)
+            1 + t + 1/2*t^2 + 1/6*t^3 + 1/24*t^4 + 1/120*t^5 + 1/720*t^6
+              + 1/5040*t^7 + 1/40320*t^8 + 1/362880*t^9 + O(t^10)
 
         Check that `\exp(\log(1+t))` is `1+t`::
 
@@ -2486,7 +2494,8 @@ cdef class PowerSeries(AlgebraElement):
         Check that `\exp(2t + t^2 - t^5)` is whatever it is::
 
             sage: (2*t + t^2 - t^5 + O(t^10)).exp()
-            1 + 2*t + 3*t^2 + 10/3*t^3 + 19/6*t^4 + 8/5*t^5 - 7/90*t^6 - 538/315*t^7 - 425/168*t^8 - 30629/11340*t^9 + O(t^10)
+            1 + 2*t + 3*t^2 + 10/3*t^3 + 19/6*t^4 + 8/5*t^5 - 7/90*t^6
+              - 538/315*t^7 - 425/168*t^8 - 30629/11340*t^9 + O(t^10)
 
         Check requesting lower precision::
 
@@ -2507,6 +2516,7 @@ cdef class PowerSeries(AlgebraElement):
 
         Handle nonzero constant term (fixes :trac:`4477`)::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = PowerSeriesRing(RR)
             sage: (1 + x + x^2 + O(x^3)).exp()
             2.71828182845905 + 2.71828182845905*x + 4.07742274268857*x^2 + O(x^3)
@@ -2517,7 +2527,8 @@ cdef class PowerSeries(AlgebraElement):
             sage: (1 + x + O(x^2)).exp()                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
-            ArithmeticError: exponential of constant term does not belong to coefficient ring (consider working in a larger ring)
+            ArithmeticError: exponential of constant term does not belong
+            to coefficient ring (consider working in a larger ring)
 
         ::
 
@@ -2567,7 +2578,8 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: R.<t> = PowerSeriesRing(QQ, default_prec=10)
             sage: (1 + t + O(t^10)).log()
-            t - 1/2*t^2 + 1/3*t^3 - 1/4*t^4 + 1/5*t^5 - 1/6*t^6 + 1/7*t^7 - 1/8*t^8 + 1/9*t^9 + O(t^10)
+            t - 1/2*t^2 + 1/3*t^3 - 1/4*t^4 + 1/5*t^5 - 1/6*t^6 + 1/7*t^7
+              - 1/8*t^8 + 1/9*t^9 + O(t^10)
 
             sage: t.exp().log()
             t + O(t^10)
@@ -2580,8 +2592,9 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ArithmeticError: constant term of power series is not 1
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<t> = PowerSeriesRing(RR)
-            sage: (2+t).log().exp()
+            sage: (2 + t).log().exp()
             2.00000000000000 + 1.00000000000000*t + O(t^20)
         """
         if prec is None:

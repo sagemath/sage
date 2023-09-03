@@ -777,7 +777,7 @@ class Polynomial_generic_sparse(Polynomial):
             x^1267650600228229401496703205386 - 5*x^10
             sage: p.shift(-10)
             x^1267650600228229401496703205366
-            sage: p.shift(1.5)
+            sage: p.shift(1.5)                                                          # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer

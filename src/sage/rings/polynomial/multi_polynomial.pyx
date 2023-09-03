@@ -142,7 +142,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: ZZ(RR['x,y'](0))  # indirect doctest
             0
-            sage: ZZ(RR['x,y'](0.5))
+            sage: ZZ(RR['x,y'](0.5))                                                    # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer

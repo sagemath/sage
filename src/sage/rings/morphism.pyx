@@ -45,8 +45,7 @@ Reduction to finite field::
 Map from single variable polynomial ring::
 
     sage: R.<x> = ZZ[]
-    sage: phi = R.hom([2], GF(5))
-    sage: phi
+    sage: phi = R.hom([2], GF(5)); phi
     Ring morphism:
       From: Univariate Polynomial Ring in x over Integer Ring
       To:   Finite Field of size 5
@@ -56,12 +55,13 @@ Map from single variable polynomial ring::
 
 Identity map on the real numbers::
 
+    sage: # needs sage.rings.real_mpfr
     sage: f = RR.hom([RR(1)]); f
     Ring endomorphism of Real Field with 53 bits of precision
       Defn: 1.00000000000000 |--> 1.00000000000000
     sage: f(2.5)
     2.50000000000000
-    sage: f = RR.hom( [2.0] )
+    sage: f = RR.hom([2.0])
     Traceback (most recent call last):
     ...
     ValueError: relations do not all (canonically) map to 0
@@ -113,8 +113,7 @@ An endomorphism of a quotient of a multi-variate polynomial ring::
     sage: # needs sage.libs.singular
     sage: R.<x,y> = PolynomialRing(QQ)
     sage: S.<a,b> = quo(R, ideal(1 + y^2))
-    sage: phi = S.hom([a^2, -b])
-    sage: phi
+    sage: phi = S.hom([a^2, -b]); phi
     Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
      over Rational Field by the ideal (y^2 + 1)
       Defn: a |--> a^2
@@ -166,13 +165,11 @@ We next compose the inclusion with reduction from the integers to
 ``GF(2)``::
 
     sage: # needs sage.rings.finite_rings
-    sage: pi = ZZ.hom(k)
-    sage: pi
+    sage: pi = ZZ.hom(k); pi
     Natural morphism:
       From: Integer Ring
       To:   Finite Field of size 2
-    sage: f = i * pi
-    sage: f
+    sage: f = i * pi; f
     Composite map:
       From: Integer Ring
       To:   Finite Field in a of size 2^2
@@ -1447,7 +1444,7 @@ cdef class RingHomomorphism(RingMap):
              x1^3 + 3*x1*x2 + x3,
              x1^4 + 6*x1^2*x2 + 3*x2^2 + 4*x1*x3 + x4,
              x1^5 + 10*x1^3*x2 + 15*x1*x2^2 + 10*x1^2*x3 + 10*x2*x3 + 5*x1*x4 + x5]
-            sage: all(p.is_homogeneous() for p in phi.im_gens())
+            sage: all(p.is_homogeneous() for p in phi.im_gens())                        # needs sage.libs.singular
             True
             sage: phi.inverse().im_gens()[:5]                                           # needs sage.libs.singular
             [x1,
@@ -2024,8 +2021,9 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         A multivariate quotient over a finite field::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = GF(7)[]
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])                      # needs sage.libs.singular
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
             sage: f1 = R.hom([a, b])
             sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
             sage: f1 == f2
@@ -3268,7 +3266,7 @@ def _tensor_product_ring(B, A):
     Local orderings are not supported::
 
         sage: R = PolynomialRing(QQ, 'x,y', order='negdeglex')
-        sage: _tensor_product_ring(R, R)
+        sage: _tensor_product_ring(R, R)                                                # needs sage.libs.singular
         Traceback (most recent call last):
         ...
         ValueError: term ordering must be global
