@@ -202,22 +202,22 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: F = FiniteField(2^3, 'a', impl='pari_ffelt')
         sage: a = F.multiplicative_generator(); a
         a
-        sage: b = gap(a^3); b
+        sage: b = gap(a^3); b                                                           # needs sage.libs.gap
         Z(2^3)^3
         sage: F(b)
         a + 1
         sage: a^3
         a + 1
 
-        sage: a = GF(13)(gap('0*Z(13)')); a
+        sage: a = GF(13)(gap('0*Z(13)')); a                                             # needs sage.libs.gap
         0
         sage: a.parent()
         Finite Field of size 13
 
         sage: F = FiniteField(2^4, 'a', impl='pari_ffelt')
-        sage: F(gap('Z(16)^3'))
+        sage: F(gap('Z(16)^3'))                                                         # needs sage.libs.gap
         a^3
-        sage: F(gap('Z(16)^2'))
+        sage: F(gap('Z(16)^2'))                                                         # needs sage.libs.gap
         a^2
 
     You can also call a finite extension field with a string
