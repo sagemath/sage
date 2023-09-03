@@ -288,14 +288,14 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         for i in range(self._n):
             r = list(zero)  # Make a copy
             r[i] = 1
-            d['psi%s' % i] = self.monomial( (self._psi(r), one) )
+            d['psi%s' % i] = self.monomial((self._psi(r), one))
             r[i] = -1
-            d['psid%s' % i] = self.monomial( (self._psi(r), one) )
+            d['psid%s' % i] = self.monomial((self._psi(r), one))
         zero = self._psi(zero)
         for i in range(self._n):
             temp = list(zero)  # Make a copy
             temp[i] = 1
-            d['w%s' % i] = self.monomial( (zero, tuple(temp)) )
+            d['w%s' % i] = self.monomial((zero, tuple(temp)))
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
