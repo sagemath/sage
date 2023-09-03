@@ -160,7 +160,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
             myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
-            if key in sc.keys() and sorted(sc[key]) != sorted(myvals):
+            if key in sc and sorted(sc[key]) != sorted(myvals):
                 raise ValueError("two distinct values given for one "
                                  "and the same bracket, skew-symmetry"
                                  "is not satisfied?")
@@ -182,18 +182,18 @@ class LieConformalAlgebraWithStructureCoefficients(
                     if k+j in v.keys():
                         for i in v[k+j]:
                             if (i[0] not in ce) or (
-                                i[0] in ce and i[1] + j == 0):
-                                kth_product[(i[0],i[1]+j)] = \
-                                        kth_product.get((i[0], i[1]+j), 0)
-                                kth_product[(i[0],i[1]+j)] += parsgn *\
-                                v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j,j)
-                kth_product = {k:v for k,v in kth_product.items() if v}
+                                    i[0] in ce and i[1] + j == 0):
+                                kth_product[(i[0], i[1] + j)] = \
+                                    kth_product.get((i[0], i[1] + j), 0)
+                                kth_product[(i[0], i[1] + j)] += parsgn *\
+                                    v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j,j)
+                kth_product = {k: v for k, v in kth_product.items() if v}
                 if kth_product:
                     vals[k] = kth_product
 
             myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
-            if key in sc.keys() and sorted(sc[key]) != sorted(myvals):
+            if key in sc and sorted(sc[key]) != sorted(myvals):
                 raise ValueError("two distinct values given for one "
                                  "and the same bracket. "
                                  "Skew-symmetry is not satisfied?")
