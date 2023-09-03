@@ -507,6 +507,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         In the past this could die with EXC_BAD_ACCESS (:trac:`8029`)::
 
+            sage: # needs sage.rings.real_mpfr
             sage: A.<x> = RR['x']
             sage: B.<t> = PowerSeriesRing(A)
             sage: 1. + O(t)
@@ -1146,7 +1147,7 @@ cdef class PowerSeries_poly(PowerSeries):
             (-z - 2)/(z - 2)
             sage: z.exp().pade(3, 3)
             (-z^3 - 12*z^2 - 60*z - 120)/(z^3 - 12*z^2 + 60*z - 120)
-            sage: (1-z).log().pade(4, 4)
+            sage: (1 - z).log().pade(4, 4)
             (25/6*z^4 - 130/3*z^3 + 105*z^2 - 70*z)/(z^4 - 20*z^3 + 90*z^2
             - 140*z + 70)
             sage: (1 + z).sqrt().pade(3, 2)
@@ -1158,13 +1159,15 @@ cdef class PowerSeries_poly(PowerSeries):
 
         With real coefficients::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<z> = RR[[]]
             sage: f = (2*z).exp()
-            sage: f.pade(3, 3) # abs tol 1e-10
+            sage: f.pade(3, 3)  # abs tol 1e-10
             (-z^3 - 6.0*z^2 - 15.0*z - 15.0)/(z^3 - 6.0*z^2 + 15.0*z - 15.0)
 
         When precision is too low::
 
+            sage: # needs sage.rings.real_mpfr
             sage: f = z + O(z**6)
             sage: f.pade(4, 4)
             Traceback (most recent call last):
@@ -1174,13 +1177,13 @@ cdef class PowerSeries_poly(PowerSeries):
         Check that :trac:`21212` is fixed::
 
             sage: QQx.<x> = QQ[[]]
-            sage: (1+x+O(x^100)).pade(2,2)
+            sage: (1 + x + O(x^100)).pade(2,2)
             x + 1
 
         Check for correct precision::
 
             sage: QQx.<x> = QQ[[]]
-            sage: (1+x+O(x^2)).pade(0,1)
+            sage: (1 + x + O(x^2)).pade(0,1)
             -1/(x - 1)
         """
         if self.precision_absolute() < n + m + 1:
