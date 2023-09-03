@@ -34,7 +34,8 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"),twist) # indirect doctest
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),         # indirect doctest
+            ....:                        WeylGroup(['A',3],prefix="t"), twist)
             Semidirect product of Weyl Group of type ['A', 2]
             (as a matrix group acting on the ambient space) acting on
             Weyl Group of type ['A', 3]
@@ -68,6 +69,7 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: L = RootSystem(['A',2]).root_lattice()
             sage: from sage.groups.group_exp import GroupExp
             sage: EL = GroupExp()(L)
@@ -96,6 +98,7 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: L = RootSystem(['A',2]).root_lattice(); L
             Root lattice of the Root system of type ['A', 2]
             sage: from sage.groups.group_exp import GroupExp
@@ -118,7 +121,10 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
             sage: g.to_opposite()
             t[-2*alpha[1]] * s1*s2
             sage: g.to_opposite().parent()
-            Semidirect product of Multiplicative form of Root lattice of the Root system of type ['A', 2] acted upon by Weyl Group of type ['A', 2] (as a matrix group acting on the root lattice)
+            Semidirect product of
+             Multiplicative form of Root lattice of the Root system of type ['A', 2]
+             acted upon by Weyl Group of type ['A', 2]
+              (as a matrix group acting on the root lattice)
         """
         par = self.parent()
         Gop = par.opposite_semidirect_product()
@@ -142,7 +148,7 @@ class GroupSemidirectProduct(CartesianProduct):
     - ``prefix0`` -- (default: ``None``) optional string
     - ``prefix1`` -- (default: ``None``) optional string
     - ``print_tuple`` -- ``True`` or ``False`` (default: ``False``)
-    - ``category`` -- A category (default: Groups())
+    - ``category`` -- A category (default: ``Groups()``)
 
     A semidirect product of groups `G` and `H` is a group structure on
     the Cartesian product `G \times H` whose product agrees with that
@@ -208,10 +214,10 @@ class GroupSemidirectProduct(CartesianProduct):
 
         sage: G = GL(2,QQ)
         sage: V = QQ^2
-        sage: EV = GroupExp()(V) # make a multiplicative version of V
+        sage: EV = GroupExp()(V)  # make a multiplicative version of V
         sage: def twist(g,v):
         ....:     return EV(g*v.value)
-        sage: H = GroupSemidirectProduct(G, EV, twist=twist, prefix1 = 't'); H
+        sage: H = GroupSemidirectProduct(G, EV, twist=twist, prefix1='t'); H
         Semidirect product of General Linear Group of degree 2
         over Rational Field acting on Multiplicative form of Vector space
         of dimension 2 over Rational Field
@@ -219,11 +225,13 @@ class GroupSemidirectProduct(CartesianProduct):
         t[(1, 0)]
         sage: x^2
         t[(2, 0)]
+
+        sage: # needs sage.rings.number_field
         sage: cartan_type = CartanType(['A',2])
         sage: W = WeylGroup(cartan_type, prefix="s")
         sage: def twist(w,v):
         ....:     return w*v*(~w)
-        sage: WW = GroupSemidirectProduct(W,W, twist=twist, print_tuple=True)
+        sage: WW = GroupSemidirectProduct(W, W, twist=twist, print_tuple=True)
         sage: s = Family(cartan_type.index_set(), lambda i: W.simple_reflection(i))
         sage: y = WW((s[1],s[2])); y
         (s1, s2)
@@ -248,7 +256,8 @@ class GroupSemidirectProduct(CartesianProduct):
             ....:     return y
             sage: import __main__
             sage: __main__.twist = twist
-            sage: G = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"),twist)
+            sage: G = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
+            ....:                            WeylGroup(['A',3],prefix="t"), twist)
             sage: TestSuite(G).run()
 
         The ``__main__`` business is a trick to pass the pickling test.
@@ -290,7 +299,8 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"),twist).act_to_right()
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
+            ....:                        WeylGroup(['A',3],prefix="t"), twist).act_to_right()
             True
         """
         return self._act_to_right
@@ -303,7 +313,8 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"),twist) # indirect doctest
+            sage: GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),         # indirect doctest
+            ....:                        WeylGroup(['A',3],prefix="t"), twist)
             Semidirect product of Weyl Group of type ['A', 2] (as a matrix
             group acting on the ambient space) acting on Weyl Group
             of type ['A', 3] (as a matrix group acting on the ambient space)
@@ -325,7 +336,8 @@ class GroupSemidirectProduct(CartesianProduct):
             ....:     return y
             sage: import __main__
             sage: __main__.twist = twist
-            sage: g = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"),twist).an_element()
+            sage: g = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
+            ....:                            WeylGroup(['A',3],prefix="t"), twist).an_element()
             sage: TestSuite(g).run()
         """
         def type_error():
@@ -355,10 +367,10 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: G = GL(2,QQ)
             sage: V = QQ^2
-            sage: EV = GroupExp()(V) # make a multiplicative version of V
+            sage: EV = GroupExp()(V)  # make a multiplicative version of V
             sage: def twist(g,v):
             ....:     return EV(g*v.value)
-            sage: one = GroupSemidirectProduct(G, EV, twist=twist, prefix1 = 't').one(); one
+            sage: one = GroupSemidirectProduct(G, EV, twist=twist, prefix1='t').one(); one
             1
             sage: one.cartesian_projection(0)
             [1 0]
@@ -379,7 +391,7 @@ class GroupSemidirectProduct(CartesianProduct):
             sage: import __main__
             sage: __main__.twist = twist
             sage: EZ = GroupExp()(ZZ)
-            sage: GroupSemidirectProduct(EZ,EZ,twist,print_tuple=True).group_generators()
+            sage: GroupSemidirectProduct(EZ, EZ, twist, print_tuple=True).group_generators()
             ((1, 0), (0, 1))
         """
         def has_gens(G):
@@ -405,10 +417,10 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: G = GL(2,QQ)
             sage: V = QQ^2
-            sage: EV = GroupExp()(V) # make a multiplicative version of V
+            sage: EV = GroupExp()(V)  # make a multiplicative version of V
             sage: def twist(g,v):
             ....:     return EV(g*v.value)
-            sage: S = GroupSemidirectProduct(G, EV, twist=twist, prefix1 = 't')
+            sage: S = GroupSemidirectProduct(G, EV, twist=twist, prefix1='t')
             sage: g = G([[2,1],[3,1]]); g
             [2 1]
             [3 1]
@@ -443,7 +455,8 @@ class GroupSemidirectProduct(CartesianProduct):
             sage: G = GL(2,QQ)
             sage: L = QQ^2
             sage: EL = GroupExp()(L)
-            sage: H = GroupSemidirectProduct(G, EL, twist = lambda g,v: EL(g*v.value), prefix1 = 't'); H
+            sage: H = GroupSemidirectProduct(G, EL, prefix1='t',
+            ....:                            twist=lambda g,v: EL(g*v.value)); H
             Semidirect product of General Linear Group of degree 2
             over Rational Field acting on Multiplicative form of Vector space
             of dimension 2 over Rational Field
@@ -480,7 +493,8 @@ class GroupSemidirectProduct(CartesianProduct):
 
             sage: def twist(x,y):
             ....:     return y
-            sage: H = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"), twist)
+            sage: H = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"),
+            ....:                            WeylGroup(['A',3],prefix="t"), twist)
             sage: H.construction()
         """
         return None

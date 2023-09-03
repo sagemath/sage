@@ -254,9 +254,9 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         TESTS::
 
-            sage: TestSuite(SymmetricGroup(0)).run()
-            sage: TestSuite(SymmetricGroup(1)).run()
-            sage: TestSuite(SymmetricGroup(3)).run()
+            sage: TestSuite(SymmetricGroup(0)).run()                                    # needs sage.rings.number_field
+            sage: TestSuite(SymmetricGroup(1)).run()                                    # needs sage.rings.number_field
+            sage: TestSuite(SymmetricGroup(3)).run()                                    # needs sage.rings.number_field
         """
         from sage.categories.finite_weyl_groups import FiniteWeylGroups
         from sage.categories.finite_permutation_groups import FinitePermutationGroups
@@ -342,14 +342,14 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         EXAMPLES::
 
-            sage: J3 = groups.misc.Cactus(3)
+            sage: J3 = groups.misc.Cactus(3)                                            # needs sage.rings.number_field
             sage: S5 = SymmetricGroup(5)
-            sage: S5.coerce_map_from(J3)
+            sage: S5.coerce_map_from(J3)                                                # needs sage.rings.number_field
             Conversion via _from_cactus_group_element map:
               From: Cactus Group with 3 fruit
               To:   Symmetric group of order 5! as a permutation group
             sage: S2 = SymmetricGroup(2)
-            sage: S2._coerce_map_from_(J3) is None
+            sage: S2._coerce_map_from_(J3) is None                                      # needs sage.rings.number_field
             True
         """
         if isinstance(G, CactusGroup) and G._n <= self._deg:
@@ -362,6 +362,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: J3 = groups.misc.Cactus(3)
             sage: s12,s13,s23 = J3.gens()
             sage: elt = s12*s23*s13
@@ -394,7 +395,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         EXAMPLES::
 
-            sage: A = SymmetricGroup([2,3,7,'a']); A.coxeter_matrix()
+            sage: A = SymmetricGroup([2,3,7,'a']); A.coxeter_matrix()                   # needs sage.graphs
             [1 3 2]
             [3 1 3]
             [2 3 1]
@@ -487,10 +488,10 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: S4 = SymmetricGroup(4)
-            sage: S4.major_index()
+            sage: S4.major_index()                                                      # needs sage.combinat
             q^6 + 3*q^5 + 5*q^4 + 6*q^3 + 5*q^2 + 3*q + 1
             sage: K.<t> = QQ[]
-            sage: S4.major_index(t)
+            sage: S4.major_index(t)                                                     # needs sage.combinat
             t^6 + 3*t^5 + 5*t^4 + 6*t^3 + 5*t^2 + 3*t + 1
         """
         from sage.combinat.q_analogues import q_factorial
@@ -509,14 +510,14 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: G.conjugacy_classes_representatives()
+            sage: G.conjugacy_classes_representatives()                                 # needs sage.combinat
             [(), (1,2), (1,2)(3,4), (1,2,3), (1,2,3)(4,5),
              (1,2,3,4), (1,2,3,4,5)]
 
         ::
 
             sage: S = SymmetricGroup(['a','b','c'])
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [(), ('a','b'), ('a','b','c')]
 
         TESTS:
@@ -524,10 +525,10 @@ class SymmetricGroup(PermutationGroup_symalt):
         Check some border cases::
 
             sage: S = SymmetricGroup(0)
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [()]
             sage: S = SymmetricGroup(1)
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [()]
         """
         from sage.combinat.partition import Partitions_n
@@ -543,7 +544,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()
+            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # needs sage.combinat
             True
         """
         from sage.combinat.partition import Partitions_n
@@ -559,7 +560,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: G.conjugacy_classes()
+            sage: G.conjugacy_classes()                                                 # needs sage.combinat
             [Conjugacy class of cycle type [1, 1, 1, 1, 1] in
                  Symmetric group of order 5! as a permutation group,
              Conjugacy class of cycle type [2, 1, 1, 1] in
@@ -594,7 +595,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
             sage: G = SymmetricGroup(5)
             sage: g = G((1,2,3,4))
-            sage: G.conjugacy_class(g)
+            sage: G.conjugacy_class(g)                                                  # needs sage.combinat
             Conjugacy class of cycle type [4, 1] in
              Symmetric group of order 5! as a permutation group
         """
@@ -618,37 +619,37 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: S4 = SymmetricGroup(4)
-            sage: S4.algebra(QQ)
+            sage: S4.algebra(QQ)                                                        # needs sage.combinat
             Symmetric group algebra of order 4 over Rational Field
 
             sage: S3 = SymmetricGroup([1,2,3])
-            sage: A = S3.algebra(QQ); A
+            sage: A = S3.algebra(QQ); A                                                 # needs sage.combinat
             Symmetric group algebra of order 3 over Rational Field
             sage: a = S3.an_element(); a
             (2,3)
-            sage: A(a)
+            sage: A(a)                                                                  # needs sage.combinat
             (2,3)
 
         We illustrate the choice of the category::
 
-            sage: A.category()
+            sage: A.category()                                                          # needs sage.combinat
             Join of Category of coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras with basis
                      over Rational Field
-            sage: A = S3.algebra(QQ, category=Semigroups())
-            sage: A.category()
+            sage: A = S3.algebra(QQ, category=Semigroups())                             # needs sage.combinat
+            sage: A.category()                                                          # needs sage.combinat
             Category of finite dimensional unital cellular semigroup algebras
              over Rational Field
 
         In the following case, a usual group algebra is returned::
 
             sage: S = SymmetricGroup([2,3,5])
-            sage: S.algebra(QQ)
+            sage: S.algebra(QQ)                                                         # needs sage.combinat
             Algebra of Symmetric group of order 3! as a permutation group over Rational Field
             sage: a = S.an_element(); a
             (3,5)
-            sage: S.algebra(QQ)(a)
+            sage: S.algebra(QQ)(a)                                                      # needs sage.combinat
             (3,5)
         """
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
@@ -2652,7 +2653,7 @@ class PGL(PermutationGroup_plg):
             sage: G.order()
             24
 
-            sage: G = PGL(2, 9, 'b'); G
+            sage: G = PGL(2, 9, 'b'); G                                                 # needs sage.rings.finite_rings
             Permutation Group with generators [(3,10,9,8,4,7,6,5), (1,2,4)(5,6,8)(7,9,10)]
             sage: G.base_ring()
             Finite Field in b of size 3^2
@@ -2716,11 +2717,11 @@ class PSL(PermutationGroup_plg):
 
         We create two groups over nontrivial finite fields::
 
-            sage: G = PSL(2, 4, 'b'); G
+            sage: G = PSL(2, 4, 'b'); G                                                 # needs sage.rings.finite_rings
             Permutation Group with generators [(3,4,5), (1,2,3)]
             sage: G.base_ring()
             Finite Field in b of size 2^2
-            sage: G = PSL(2, 8); G
+            sage: G = PSL(2, 8); G                                                      # needs sage.rings.finite_rings
             Permutation Group with generators [(3,8,6,4,9,7,5), (1,2,3)(4,7,5)(6,9,8)]
             sage: G.base_ring()
             Finite Field in a of size 2^3
@@ -2900,7 +2901,7 @@ class PSp(PermutationGroup_plg):
             sage: G.base_ring()
             Finite Field of size 3
 
-            sage: G = PSp(2, 8, name='alpha'); G
+            sage: G = PSp(2, 8, name='alpha'); G                                        # needs sage.rings.finite_rings
             Permutation Group with generators [(3,8,6,4,9,7,5), (1,2,3)(4,7,5)(6,9,8)]
             sage: G.base_ring()
             Finite Field in alpha of size 2^3
@@ -2938,7 +2939,7 @@ class PermutationGroup_pug(PermutationGroup_plg):
         """
         EXAMPLES::
 
-            sage: PSU(2,3).field_of_definition()
+            sage: PSU(2,3).field_of_definition()                                        # needs sage.rings.finite_rings
             Finite Field in a of size 3^2
         """
         return self._field_of_definition
@@ -2965,17 +2966,17 @@ class PSU(PermutationGroup_pug):
 
         EXAMPLES::
 
-            sage: PSU(2,3)
+            sage: PSU(2,3)                                                              # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field of size 3
 
-            sage: G = PSU(2, 8, name='alpha'); G
+            sage: G = PSU(2, 8, name='alpha'); G                                        # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field in alpha of size 2^3
-            sage: G.base_ring()
+            sage: G.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in alpha of size 2^3
 
         TESTS::
 
-            sage: groups.permutation.PSU(2, 3)
+            sage: groups.permutation.PSU(2, 3)                                          # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field of size 3
         """
         id = 'PSU(%s,%s)' % (n, q)
@@ -2989,7 +2990,7 @@ class PSU(PermutationGroup_pug):
         """
         EXAMPLES::
 
-            sage: PSU(2,3)
+            sage: PSU(2,3)                                                              # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field of size 3
 
         """
@@ -3017,18 +3018,18 @@ class PGU(PermutationGroup_pug):
 
         EXAMPLES::
 
-            sage: PGU(2,3)
+            sage: PGU(2,3)                                                              # needs sage.rings.finite_rings
             The projective general unitary group of degree 2 over Finite Field of size 3
 
-            sage: G = PGU(2, 8, name='alpha'); G
+            sage: G = PGU(2, 8, name='alpha'); G                                        # needs sage.rings.finite_rings
             The projective general unitary group of degree 2
              over Finite Field in alpha of size 2^3
-            sage: G.base_ring()
+            sage: G.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in alpha of size 2^3
 
         TESTS::
 
-            sage: groups.permutation.PGU(2, 3)
+            sage: groups.permutation.PGU(2, 3)                                          # needs sage.rings.finite_rings
             The projective general unitary group of degree 2 over Finite Field of size 3
         """
         id = 'PGU(%s,%s)' % (n, q)
@@ -3042,7 +3043,7 @@ class PGU(PermutationGroup_pug):
         """
         EXAMPLES::
 
-            sage: PGU(2,3)
+            sage: PGU(2,3)                                                              # needs sage.rings.finite_rings
             The projective general unitary group of degree 2 over Finite Field of size 3
 
         """
@@ -3075,12 +3076,13 @@ class SuzukiGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: SuzukiGroup(8)
+            sage: SuzukiGroup(8)                                                        # needs sage.rings.finite_rings
             Permutation Group with generators [(1,2)(3,10)(4,42)(5,18)(6,50)(7,26)(8,58)(9,34)(12,28)(13,45)(14,44)(15,23)(16,31)(17,21)(19,39)(20,38)(22,25)(24,61)(27,60)(29,65)(30,55)(32,33)(35,52)(36,49)(37,59)(40,54)(41,62)(43,53)(46,48)(47,56)(51,63)(57,64),
             (1,28,10,44)(3,50,11,42)(4,43,53,64)(5,9,39,52)(6,36,63,13)(7,51,60,57)(8,33,37,16)(12,24,55,29)(14,30,48,47)(15,19,61,54)(17,59,22,62)(18,23,34,31)(20,38,49,25)(21,26,45,58)(27,32,41,65)(35,46,40,56)]
-            sage: print(SuzukiGroup(8))
+            sage: print(SuzukiGroup(8))                                                 # needs sage.rings.finite_rings
             The Suzuki group over Finite Field in a of size 2^3
 
+            sage: # needs sage.rings.finite_rings
             sage: G = SuzukiGroup(32, name='alpha')
             sage: G.order()
             32537600
@@ -3091,7 +3093,7 @@ class SuzukiGroup(PermutationGroup_unique):
 
         TESTS::
 
-            sage: groups.permutation.Suzuki(8)
+            sage: groups.permutation.Suzuki(8)                                          # needs sage.rings.finite_rings
             Permutation Group with generators [(1,2)(3,10)(4,42)(5,18)(6,50)(7,26)(8,58)(9,34)(12,28)(13,45)(14,44)(15,23)(16,31)(17,21)(19,39)(20,38)(22,25)(24,61)(27,60)(29,65)(30,55)(32,33)(35,52)(36,49)(37,59)(40,54)(41,62)(43,53)(46,48)(47,56)(51,63)(57,64),
             (1,28,10,44)(3,50,11,42)(4,43,53,64)(5,9,39,52)(6,36,63,13)(7,51,60,57)(8,33,37,16)(12,24,55,29)(14,30,48,47)(15,19,61,54)(17,59,22,62)(18,23,34,31)(20,38,49,25)(21,26,45,58)(27,32,41,65)(35,46,40,56)]
 
@@ -3112,8 +3114,8 @@ class SuzukiGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = SuzukiGroup(32, name='alpha')
-            sage: G.base_ring()
+            sage: G = SuzukiGroup(32, name='alpha')                                     # needs sage.rings.finite_rings
+            sage: G.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in alpha of size 2^5
         """
         return self._base_ring
@@ -3122,8 +3124,8 @@ class SuzukiGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = SuzukiGroup(32, name='alpha')
-            sage: print(G)
+            sage: G = SuzukiGroup(32, name='alpha')                                     # needs sage.rings.finite_rings
+            sage: print(G)                                                              # needs sage.rings.finite_rings
             The Suzuki group over Finite Field in alpha of size 2^5
 
         """
@@ -3481,7 +3483,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         ((1,2)(3,5)(4,10)(6,8)(7,12)(9,11),
          (1,3)(2,5)(4,7)(6,9)(8,11)(10,12),
          (1,4,8)(2,6,10)(3,7,11)(5,9,12))
-        sage: G.character_table()
+        sage: G.character_table()                                                       # needs sage.rings.number_field
         [ 1  1  1  1  1  1]
         [ 1 -1 -1  1  1 -1]
         [ 1 -1  1  1 -1  1]

@@ -25,7 +25,7 @@ We create a toy example based on the Mordell-Weil group of an elliptic curve ove
     (0 : 1 : 0)
     sage: 3000000000000001 * M.0
     (4 : -7 : 1)
-    sage: M == loads(dumps(M))                  # known bug
+    sage: M == loads(dumps(M))  # known bug (https://github.com/sagemath/sage/issues/11599#comment:7)
     True
 
 TESTS:
@@ -352,9 +352,9 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         ::
 
             sage: x = polygen(ZZ, 'x')
-            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))     # needs sage.rings.finite_rings
-            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)      # needs sage.rings.finite_rings
-            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])             # needs sage.rings.finite_rings
+            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))     # needs sage.rings.finite_rings sage.schemes
+            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)      # needs sage.rings.finite_rings sage.schemes
+            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])             # needs sage.rings.finite_rings sage.schemes
             (123, 777)
 
         ::
@@ -446,10 +446,9 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.schemes
             sage: E = EllipticCurve(GF(487^2), [311,205])
-            sage: T = E.abelian_group().torsion_subgroup(42)
-            sage: T
+            sage: T = E.abelian_group().torsion_subgroup(42); T
             Additive abelian group isomorphic to Z/42 + Z/6 embedded in
              Abelian group of points on Elliptic Curve
               defined by y^2 = x^3 + 311*x + 205 over Finite Field in z2 of size 487^2
@@ -577,7 +576,7 @@ def _discrete_log_pgroup(p, vals, aa, b):
 
     Check for :trac:`34716`::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(GF(487^2), [311,205])
         sage: G = E.abelian_group().torsion_subgroup(42)
         sage: G.invariants()

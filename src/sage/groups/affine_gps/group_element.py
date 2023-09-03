@@ -80,10 +80,10 @@ class AffineGroupElement(MultiplicativeGroupElement):
     EXAMPLES::
 
         sage: G = AffineGroup(2, GF(3))
-        sage: g = G.random_element()                                                    # needs sage.rings.finite_rings
-        sage: type(g)                                                                   # needs sage.rings.finite_rings
+        sage: g = G.random_element()
+        sage: type(g)
         <class 'sage.groups.affine_gps.affine_group.AffineGroup_with_category.element_class'>
-        sage: G(g.matrix()) == g                                                        # needs sage.rings.finite_rings
+        sage: G(g.matrix()) == g
         True
         sage: G(2)
               [2 0]     [0]
@@ -110,8 +110,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
         TESTS::
 
             sage: G = AffineGroup(4, GF(5))
-            sage: g = G.random_element()                                                # needs sage.rings.finite_rings
-            sage: TestSuite(g).run()                                                    # needs sage.rings.finite_rings
+            sage: g = G.random_element()
+            sage: TestSuite(g).run()
         """
         try:
             A = A.matrix()
@@ -202,9 +202,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
         Composition of affine group elements equals multiplication of
         the matrices::
 
-            sage: g1 = G.random_element()                                               # needs sage.rings.finite_rings
-            sage: g2 = G.random_element()                                               # needs sage.rings.finite_rings
-            sage: g1.matrix() * g2.matrix() == (g1*g2).matrix()                         # needs sage.rings.finite_rings
+            sage: g1 = G.random_element()
+            sage: g2 = G.random_element()
+            sage: g1.matrix() * g2.matrix() == (g1*g2).matrix()
             True
         """
         A = self._A

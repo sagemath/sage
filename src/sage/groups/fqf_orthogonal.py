@@ -8,19 +8,20 @@ the torsion quadratic form.
 
 EXAMPLES::
 
-    sage: L = IntegralLattice("A2").twist(2)
-    sage: T = L.discriminant_group()
-    sage: Oq = T.orthogonal_group()
+    sage: L = IntegralLattice("A2").twist(2)                                            # needs sage.graphs
+    sage: T = L.discriminant_group()                                                    # needs sage.graphs
+    sage: Oq = T.orthogonal_group()                                                     # needs sage.graphs
 
 The isometries act on elements of their domain::
 
-    sage: g = Oq(matrix(ZZ, 2, [0, 3, 1, 2]))
-    sage: T.gen(0) * g
+    sage: g = Oq(matrix(ZZ, 2, [0, 3, 1, 2]))                                           # needs sage.graphs
+    sage: T.gen(0) * g                                                                  # needs sage.graphs
     (0, 3)
 
 Isometries are represented with respect to
 the Smith form generators of `T`::
 
+    sage: # needs sage.graphs
     sage: L = IntegralLattice("A2").twist(2).direct_sum(IntegralLattice('U'))
     sage: T = L.discriminant_group().normal_form()
     sage: OT = T.orthogonal_group()
@@ -216,6 +217,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: L = IntegralLattice("A2").twist(2).direct_sum(IntegralLattice("A2"))
             sage: q = L.discriminant_group()
             sage: OL = L.orthogonal_group()
@@ -230,18 +232,19 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
         Note that the following does not work since it may lead to ambiguities, see :trac:`30669`::
 
-            sage: Oq(f.matrix())
+            sage: Oq(f.matrix())                                                        # needs sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: ...
 
         But a matrix in the covering works::
 
-            sage: fbar == Oq(fbar.matrix())
+            sage: fbar == Oq(fbar.matrix())                                             # needs sage.graphs
             True
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: all(x*f==x*fbar for x in q.gens())
             True
             sage: L = IntegralLattice("A2").twist(3)

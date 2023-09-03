@@ -6,15 +6,15 @@ EXAMPLES::
 
     sage: G = Sp(4, GF(7));  G
     Symplectic Group of degree 4 over Finite Field of size 7
-    sage: g = prod(G.gens());  g                                                        # needs sage.rings.finite_rings
+    sage: g = prod(G.gens());  g
     [3 0 3 0]
     [1 0 0 0]
     [0 1 0 1]
     [0 2 0 0]
-    sage: m = g.matrix()                                                                # needs sage.rings.finite_rings
-    sage: m * G.invariant_form() * m.transpose() == G.invariant_form()                  # needs sage.rings.finite_rings
+    sage: m = g.matrix()
+    sage: m * G.invariant_form() * m.transpose() == G.invariant_form()
     True
-    sage: G.order()                                                                     # needs sage.rings.finite_rings
+    sage: G.order()
     276595200
 
 AUTHORS:
@@ -136,11 +136,11 @@ def Sp(n, R, var='a', invariant_form=None):
 
         sage: TestSuite(Sp4).run()
         sage: TestSuite(Sp4m).run()
-        sage: groups.matrix.Sp(2, 3)                                                    # needs sage.rings.finite_rings
+        sage: groups.matrix.Sp(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
         Symplectic Group of degree 2 over Finite Field of size 3
 
         sage: G = Sp(4,5)
-        sage: TestSuite(G).run()                                                        # needs sage.rings.finite_rings
+        sage: TestSuite(G).run()
     """
     degree, ring = normalize_args_vectorspace(n, R, var=var)
     if degree % 2:

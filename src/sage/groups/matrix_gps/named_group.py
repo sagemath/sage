@@ -11,15 +11,15 @@ EXAMPLES::
     Special Linear Group of degree 2 over Integer Ring
     sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
-    sage: G.is_finite()                                                                 # needs sage.rings.finite_rings
+    sage: G.is_finite()
     True
-    sage: G.conjugacy_classes_representatives()                                         # needs sage.rings.finite_rings
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
     )
     sage: G = SL(6, GF(5))
-    sage: G.gens()                                                                      # needs sage.rings.finite_rings
+    sage: G.gens()
     (
     [2 0 0 0 0 0]  [4 0 0 0 0 1]
     [0 3 0 0 0 0]  [4 0 0 0 0 0]
@@ -290,11 +290,11 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
         EXAMPLES::
 
             sage: G = GL(2,3)
-            sage: G == MatrixGroup(G.gens())                                            # needs sage.rings.finite_rings
+            sage: G == MatrixGroup(G.gens())
             True
 
             sage: # needs sage.rings.finite_rings
-            sage: G = groups.matrix.GL(4,2)
+            sage: G = groups.matrix.GL(4,2)                                             # needs sage.modules
             sage: H = MatrixGroup(G.gens())
             sage: G == H
             True

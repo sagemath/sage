@@ -4,7 +4,6 @@ Matrix Group Elements
 
 EXAMPLES::
 
-    sage: # needs sage.rings.finite_rings
     sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
     sage: gens = [MS([[1,0], [0,1]]), MS([[1,1], [0,1]])]
     sage: G = MatrixGroup(gens); G
@@ -21,7 +20,7 @@ You cannot add two matrices, since this is not a group operation.
 You can coerce matrices back to the matrix space and add them
 there::
 
-    sage: g + h                                                                         # needs sage.rings.finite_rings
+    sage: g + h
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for +:
@@ -34,14 +33,14 @@ there::
     [0 1], [0 1]
     )'
 
-    sage: g.matrix() + h.matrix()                                                       # needs sage.rings.finite_rings
+    sage: g.matrix() + h.matrix()
     [2 0]
     [0 2]
 
 Similarly, you cannot multiply group elements by scalars but you can
 do it with the underlying matrices::
 
-    sage: 2*g                                                                           # needs sage.rings.finite_rings
+    sage: 2*g
     Traceback (most recent call last):
     ...
     TypeError: unsupported operand parent(s) for *: 'Integer Ring'
@@ -139,8 +138,8 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     EXAMPLES::
 
-        sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                                   # needs sage.combinat sage.libs.gap
-        sage: g = W.an_element(); g                                                     # needs sage.combinat sage.libs.gap
+        sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                                   # needs sage.graphs
+        sage: g = W.an_element(); g                                                     # needs sage.graphs
         [ 0  0 -1]
         [ 1  0 -1]
         [ 0  1 -1]
@@ -151,9 +150,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
         TESTS::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.combinat sage.libs.gap
-            sage: g = W.an_element()                                                    # needs sage.combinat sage.libs.gap
-            sage: TestSuite(g).run()                                                    # needs sage.combinat sage.libs.gap
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
+            sage: g = W.an_element()                                                    # needs sage.graphs
+            sage: TestSuite(g).run()                                                    # needs sage.graphs
         """
         if convert:
             M = parent.matrix_space()(M)
@@ -174,9 +173,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         r"""
         TESTS::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.combinat sage.libs.gap
-            sage: g = W.an_element()                                                    # needs sage.combinat sage.libs.gap
-            sage: hash(g)                                                               # needs sage.combinat sage.libs.gap
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
+            sage: g = W.an_element()                                                    # needs sage.graphs
+            sage: hash(g)                                                               # needs sage.graphs
             660522311176098153  # 64-bit
             -606138007          # 32-bit
         """
@@ -188,9 +187,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
         TESTS::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.combinat sage.libs.gap
-            sage: g = W.an_element()                                                    # needs sage.combinat sage.libs.gap
-            sage: loads(g.dumps()) == g                                                 # needs sage.combinat sage.libs.gap
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
+            sage: g = W.an_element()                                                    # needs sage.graphs
+            sage: loads(g.dumps()) == g                                                 # needs sage.graphs
             True
         """
         return (_unpickle_generic_element, (self.parent(), self._matrix,))
@@ -201,8 +200,8 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.combinat sage.libs.gap
-            sage: W.an_element()                                                        # needs sage.combinat sage.libs.gap
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
+            sage: W.an_element()                                                        # needs sage.graphs
             [ 0  0 -1]
             [ 1  0 -1]
             [ 0  1 -1]
@@ -213,9 +212,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         r"""
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.combinat sage.libs.gap
-            sage: g = W.an_element()                                                    # needs sage.combinat sage.libs.gap
-            sage: latex(g)                                                              # needs sage.combinat sage.libs.gap
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
+            sage: g = W.an_element()                                                    # needs sage.graphs
+            sage: latex(g)                                                              # needs sage.graphs
             \left(\begin{array}{rrr}
             0 & 0 & -1 \\
             1 & 0 & -1 \\
@@ -320,9 +319,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3], base_ring=ZZ)                              # needs sage.combinat sage.libs.gap
-            sage: g = W.gen(0)                                                          # needs sage.combinat sage.libs.gap
-            sage: matrix(RDF, g)                                                        # needs sage.combinat sage.libs.gap
+            sage: W = CoxeterGroup(['A', 3], base_ring=ZZ)                              # needs sage.graphs
+            sage: g = W.gen(0)                                                          # needs sage.graphs
+            sage: matrix(RDF, g)                                                        # needs sage.graphs
             [-1.0  1.0  0.0]
             [ 0.0  1.0  0.0]
             [ 0.0  0.0  1.0]
@@ -358,14 +357,14 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A',3])                                             # needs sage.combinat sage.libs.gap
-            sage: g = W.gen(0)                                                          # needs sage.combinat sage.libs.gap
-            sage: g.is_one()                                                            # needs sage.combinat sage.libs.gap
+            sage: # needs sage.graphs
+            sage: W = CoxeterGroup(['A',3])
+            sage: g = W.gen(0)
+            sage: g.is_one()
             False
-
-            sage: W.an_element().is_one()                                               # needs sage.combinat sage.libs.gap
+            sage: W.an_element().is_one()
             False
-            sage: W.one().is_one()                                                      # needs sage.combinat sage.libs.gap
+            sage: W.one().is_one()
             True
         """
         return self._matrix.is_one()

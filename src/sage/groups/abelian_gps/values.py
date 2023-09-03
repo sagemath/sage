@@ -421,7 +421,7 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
         EXAMPLES::
 
-            sage: F = AbelianGroupWithValues([1,2,3,4,5], 5,[],names='a')
+            sage: F = AbelianGroupWithValues([1,2,3,4,5], 5, [], names='a')
             sage: F.0
             a0
             sage: F.0.value()

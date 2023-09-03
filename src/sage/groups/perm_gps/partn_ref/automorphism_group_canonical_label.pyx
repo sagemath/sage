@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.groups
 r"""
 Automorphism groups and canonical labels
 

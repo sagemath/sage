@@ -192,13 +192,13 @@ class AbstractArgument(MultiplicativeGroupElement):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(I) == C(I)
+            sage: C(I) == C(I)                                                          # needs sage.symbolic
             True
 
         As we do not have normalization in :class:`ArgumentByElement`,
         then following, although equal, is not equal::
 
-            sage: C(I) == C(2*I)
+            sage: C(I) == C(2*I)                                                        # needs sage.symbolic
             False
         """
         return self._element_ == other._element_
@@ -257,12 +257,12 @@ class AbstractArgument(MultiplicativeGroupElement):
         ::
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
-            sage: C = ArgumentByElementGroup(SR)
-            sage: C(-1) * 4
+            sage: C = ArgumentByElementGroup(SR)                                        # needs sage.symbolic
+            sage: C(-1) * 4                                                             # needs sage.symbolic
             -4
             sage: _.parent()
             Symbolic Ring
-            sage: 4 * C(-1)
+            sage: 4 * C(-1)                                                             # needs sage.symbolic
             -4
             sage: _.parent()
             Symbolic Ring
@@ -705,10 +705,10 @@ class UnitCircleGroup(AbstractArgumentGroup):
             sage: U(exponent=1/3)
             zeta3
 
-            sage: C.<z> = CyclotomicField(6)
-            sage: z, U(z)
+            sage: C.<z> = CyclotomicField(6)                                            # needs sage.rings.number_field
+            sage: z, U(z)                                                               # needs sage.rings.number_field
             (z, zeta6)
-            sage: z^2, U(z^2)
+            sage: z^2, U(z^2)                                                           # needs sage.rings.number_field
             (z - 1, zeta3)
 
             sage: U(ZZ(-1))
@@ -806,12 +806,12 @@ class UnitCircleGroup(AbstractArgumentGroup):
             sage: from sage.groups.misc_gps.argument_groups import UnitCircleGroup, RootsOfUnityGroup
 
             sage: C = UnitCircleGroup(QQ)
-            sage: C._create_element_in_extension_(2.12).parent()
+            sage: C._create_element_in_extension_(2.12).parent()                        # needs sage.rings.number_field
             Unit Circle Group with Exponents in
             Real Field with 53 bits of precision modulo ZZ
 
             sage: U = RootsOfUnityGroup()
-            sage: U._create_element_in_extension_(2.12).parent()
+            sage: U._create_element_in_extension_(2.12).parent()                        # needs sage.rings.number_field
             Unit Circle Group with Exponents in
             Real Field with 53 bits of precision modulo ZZ
         """
@@ -1071,7 +1071,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(1+2*I)  # indirect doctest
+            sage: C(1+2*I)  # indirect doctest                                          # needs sage.symbolic
             e^(I*arg(1.00000000000000 + 2.00000000000000*I))
         """
         super().__init__(parent, element, normalize=normalize)
@@ -1109,7 +1109,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(2+3*I)  # indirect doctest
+            sage: C(2+3*I)  # indirect doctest                                          # needs sage.symbolic
             e^(I*arg(2.00000000000000 + 3.00000000000000*I))
         """
         return 'e^(I*arg({}))'.format(self._element_)
@@ -1132,7 +1132,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(ZZ)
-            sage: C(-2)._symbolic_()
+            sage: C(-2)._symbolic_()                                                    # needs sage.symbolic
             -1
             sage: _.parent()
             Symbolic Ring
@@ -1154,7 +1154,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(I) * C(1 + I)  # indirect doctest
+            sage: C(I) * C(1 + I)  # indirect doctest                                   # needs sage.symbolic
             e^(I*arg(-1.00000000000000 + 1.00000000000000*I))
         """
         P = self.parent()
@@ -1169,12 +1169,12 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(I)^5  # indirect doctest
+            sage: C(I)^5  # indirect doctest                                            # needs sage.symbolic
             e^(I*arg(1.00000000000000*I))
             sage: _.parent()
             Unit Circle Group with Argument of Elements in
             Complex Field with 53 bits of precision
-            sage: C(1+I)^3  # indirect doctest
+            sage: C(1+I)^3  # indirect doctest                                          # needs sage.symbolic
             e^(I*arg(-2.00000000000000 + 2.00000000000000*I))
             sage: _.parent()
             Unit Circle Group with Argument of Elements in
@@ -1209,7 +1209,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: ~C(I)  # indirect doctest
+            sage: ~C(I)  # indirect doctest                                             # needs sage.symbolic
             e^(I*arg(-1.00000000000000*I))
         """
         P = self.parent()
@@ -1234,7 +1234,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
         sage: C = ArgumentByElementGroup(CC); C
         Unit Circle Group with Argument of Elements in
         Complex Field with 53 bits of precision
-        sage: C(1 + 2*I)
+        sage: C(1 + 2*I)                                                                # needs sage.symbolic
         e^(I*arg(1.00000000000000 + 2.00000000000000*I))
     """
 
@@ -1284,7 +1284,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(1 + 2*I)  # indirect doctest
+            sage: C(1 + 2*I)  # indirect doctest                                        # needs sage.symbolic
             e^(I*arg(1.00000000000000 + 2.00000000000000*I))
             sage: C(1)
             e^(I*arg(1.00000000000000))
@@ -1546,7 +1546,7 @@ class Sign(AbstractArgument):
             -4.00000000000000
             sage: _.parent()
             Complex Field with 53 bits of precision
-            sage: S(-1) * SR.var('x')
+            sage: S(-1) * SR.var('x')                                                   # needs sage.symbolic
             -x
             sage: _.parent()
             Symbolic Ring
@@ -1761,9 +1761,10 @@ class ArgumentGroupFactory(UniqueFactory):
 
         sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup
 
-        sage: ArgumentGroup('UU')
+        sage: ArgumentGroup('UU')                                                       # needs sage.rings.number_field
         Group of Roots of Unity
 
+        sage: # needs sage.rings.number_field
         sage: ArgumentGroup(ZZ)
         Sign Group
         sage: ArgumentGroup(QQ)
@@ -1773,19 +1774,19 @@ class ArgumentGroupFactory(UniqueFactory):
         sage: ArgumentGroup(AA)
         Sign Group
 
-        sage: ArgumentGroup(RR)
+        sage: ArgumentGroup(RR)                                                         # needs sage.rings.number_field
         Sign Group
-        sage: ArgumentGroup('Arg_RR')
+        sage: ArgumentGroup('Arg_RR')                                                   # needs sage.rings.number_field
         Sign Group
-        sage: ArgumentGroup(RIF)
+        sage: ArgumentGroup(RIF)                                                        # needs sage.rings.real_interval_field
         Sign Group
         sage: ArgumentGroup(RBF)
         Sign Group
 
-        sage: ArgumentGroup(CC)
+        sage: ArgumentGroup(CC)                                                         # needs sage.rings.number_field
         Unit Circle Group with Exponents in
         Real Field with 53 bits of precision modulo ZZ
-        sage: ArgumentGroup('Arg_CC')
+        sage: ArgumentGroup('Arg_CC')                                                   # needs sage.rings.number_field
         Unit Circle Group with Exponents in
         Real Field with 53 bits of precision modulo ZZ
         sage: ArgumentGroup(CIF)
@@ -1795,7 +1796,7 @@ class ArgumentGroupFactory(UniqueFactory):
         Unit Circle Group with Exponents in
         Real ball field with 53 bits of precision modulo ZZ
 
-        sage: ArgumentGroup(CyclotomicField(3))
+        sage: ArgumentGroup(CyclotomicField(3))                                         # needs sage.rings.number_field
         Unit Circle Group with Argument of Elements in
         Cyclotomic Field of order 3 and degree 2
     """
@@ -1814,6 +1815,7 @@ class ArgumentGroupFactory(UniqueFactory):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup
 
+            sage: # needs sage.rings.number_field
             sage: ArgumentGroup(specification='UU')
             Group of Roots of Unity
             sage: ArgumentGroup('UU') is ArgumentGroup(exponents=QQ)  # indirect doctest
@@ -1888,7 +1890,7 @@ class ArgumentGroupFactory(UniqueFactory):
         TESTS::
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup
-            sage: ArgumentGroup('UU')  # indirect doctest
+            sage: ArgumentGroup('UU')  # indirect doctest                               # needs sage.rings.number_field
             Group of Roots of Unity
         """
         cls, args = key

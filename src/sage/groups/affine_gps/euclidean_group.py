@@ -126,7 +126,7 @@ class EuclideanGroup(AffineGroup):
         Affine Space of dimension 2 over Finite Field in a of size 2^2
         sage: G = EuclideanGroup(A); G                                                  # needs sage.rings.finite_rings
         Euclidean Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is EuclideanGroup(2,4) # shorthand                                      # needs sage.rings.finite_rings
+        sage: G is EuclideanGroup(2,4)  # shorthand                                     # needs sage.rings.finite_rings
         True
 
         sage: V = ZZ^3;  V
@@ -147,7 +147,7 @@ class EuclideanGroup(AffineGroup):
         True
         sage: G = EuclideanGroup(2, GF(5)); G
         Euclidean Group of degree 2 over Finite Field of size 5
-        sage: TestSuite(G).run()                                                        # needs sage.rings.finite_rings
+        sage: TestSuite(G).run()
 
     REFERENCES:
 
