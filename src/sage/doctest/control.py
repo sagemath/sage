@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-repl
+# sage.doctest: needs sage.all
 """
 Classes involved in doctesting
 
@@ -481,6 +482,8 @@ class DocTestController(SageObject):
                     from sage.misc.package import list_packages
                     for pkg in list_packages('optional', local=True).values():
                         if pkg.name in options.hide:
+                            continue
+                        if pkg.name in ['mpmath']:
                             continue
                         if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
                             options.optional.add(pkg.name)
