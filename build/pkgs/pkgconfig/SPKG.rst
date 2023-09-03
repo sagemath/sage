@@ -1,19 +1,18 @@
-pkgconfig: Python interface to pkg-config
-=========================================
+pkgconfig: Interface Python with pkg-config
+===========================================
 
 Description
 -----------
 
-Pkgconfig is a Python module to interface with the pkg-config command
-line tool.
+Interface Python with pkg-config
 
 License
 -------
 
-MIT License
-
+MIT
 
 Upstream Contact
 ----------------
 
-https://github.com/matze/pkgconfig
+https://pypi.org/project/pkgconfig/
+
