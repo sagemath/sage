@@ -1719,7 +1719,26 @@ def default_mip_solver(solver=None):
     else:
         raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
-cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
+
+def _base_ring_RDF_only(base_ring=None):
+    r"""
+    Raise an error when base_ring is something other than ``RDF`` or ``None``.
+
+    EXAMPLES::
+
+        sage: from sage.numerical.backends.generic_backend import _base_ring_RDF_only
+        sage: _base_ring_RDF_only(RDF)
+        sage: _base_ring_RDF_only(None)
+        sage: _base_ring_RDF_only(RR)
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
+    """
+    if base_ring is not None and not isinstance(base_ring, sage.rings.abc.RealDoubleField):
+        raise ValueError('Solver only supports RDF as a base ring')
+
+
+cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
     """
     Return a solver according to the given preferences
 
@@ -1858,10 +1877,12 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
     if solver == "Coin":
         from sage_numerical_backends_coin.coin_backend import CoinBackend
+        _base_ring_RDF_only(base_ring)
         return CoinBackend()
 
     elif solver == "Glpk":
         from sage.numerical.backends.glpk_backend import GLPKBackend
+        _base_ring_RDF_only(base_ring)
         return GLPKBackend()
 
     elif solver == "Glpk/exact":
@@ -1870,14 +1891,17 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
     elif solver == "Cplex":
         from sage_numerical_backends_cplex.cplex_backend import CPLEXBackend
+        _base_ring_RDF_only(base_ring)
         return CPLEXBackend()
 
     elif solver == "Cvxopt":
         from sage.numerical.backends.cvxopt_backend import CVXOPTBackend
+        _base_ring_RDF_only(base_ring)
         return CVXOPTBackend()
 
     elif solver == "Gurobi":
         from sage_numerical_backends_gurobi.gurobi_backend import GurobiBackend
+        _base_ring_RDF_only(base_ring)
         return GurobiBackend()
 
     elif solver == "Ppl":
@@ -1891,12 +1915,13 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
     elif solver.startswith("Cvxpy"):
         from sage.numerical.backends.cvxpy_backend import CVXPYBackend
         if solver == "Cvxpy":
-            return CVXPYBackend()
+            return CVXPYBackend(base_ring=base_ring)
         if solver.startswith("Cvxpy/"):
-            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/"):])
+            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/"):], base_ring=base_ring)
 
     elif solver == "Scip":
         from sage.numerical.backends.scip_backend import SCIPBackend
+        _base_ring_RDF_only(base_ring)
         return SCIPBackend()
 
     elif solver == "Matrix":
