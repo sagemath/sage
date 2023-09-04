@@ -820,13 +820,27 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
-    def cohomology_ring(self, base_ring):
-         return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
+    def cohomology_ring(self, base_ring=QQ):
+        return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
 
-# _CartesianProduct
+# _CartesianProduct?
 class CohomologyRing(CombinatorialFreeModule):
+    """
+    Cohomology ring of a moment-angle complex.
+
+    EXAMPLES::
+
+    <lots_of_examples>
+    """
     def __init__(self, base_ring, moment_angle_complex):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+        <lots_of_examples>
+        """
         self._complex = moment_angle_complex
         self._base_ring = base_ring
 
@@ -860,6 +874,17 @@ class CohomologyRing(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, indices, category=cat)
 
     def basis(self, d=None):
+        """
+        Return (the degree ``d`` homogeneous component of) the basis of ``self``.
+
+        INPUT:
+
+        - ``d`` -- (optional) the degree
+
+        EXAMPLES::
+
+        <lots_of_examples>
+        """
         if d is None:
             return Family(self._indices, self.monomial)
         else:
@@ -867,33 +892,84 @@ class CohomologyRing(CombinatorialFreeModule):
             return Family(indices, self.monomial)
 
     def degree_on_basis(self, i):
-        # call self._CartesianProduct....
+        """
+        Return the degree of the basis element indexed by ``i``.
+
+        EXAMPLES::
+
+        <lots_of_examples>
+        """
         return i[0]
 
     def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        TESTS::
+
+        <lots_of_examples>
+        """
         return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
 
     def _repr_term(self, i):
+        """
+        Return ``'h^{i[0],i[1]}'``, for the basis element indexed by ``i``.
+
+        EXAMPLES::
+
+        <lots_of_examples>
+        """
         return 'h^{{{},{}}}'.format(i[0], i[1])
 
     _latex_term = _repr_term
 
     def one(self):
+        """
+        Return the multiplicative identity element.
+
+        EXAMPLES::
+
+        <lots_of_examples>
+        """
         # look at PR#36095
         one = self._base_ring.one()
-        d = {(0,i): one for i in self._graded_indices[0]}
+        d = {(0, i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
 
     @cached_method
     def _to_cycle_on_basis(self, i):
+        """
+        Return the cocycle representative of the basis element
+        indexed by ``i``.
+
+        EXAMPLES::
+
+        <lots_of_examples>
+        """
         subcomplex = self._complex.simplicial_complex().generated_subcomplex(self._gens[i[0]][i[1]][0], is_mutable=False)
         cochains = subcomplex.n_chains(self._gens[i[0]][i[1]][1], base_ring=self._base_ring, cochains=True)
         cochain = self._gens[i[0]][i[1]][2][1]
         return cochains.from_vector(cochain.to_vector())
 
-    # @cached_method
+    @cached_method
     def product_on_basis(self, li, ri):
-        # TODO def eps
+        """
+        Return the cup product of the basis elements indexed by
+        ``li`` and ``ri`` in ``self``.
+
+        INPUT:
+
+        - ``li``, ``ri`` -- index of a cohomology class
+
+        .. SEEALSO::
+
+            See :meth:`CohomologyRing.Element.cup_product`
+            documentation, which describes the algorithm.
+
+        EXAMPLES::
+
+        <lots_of_examples>
+        """
         from sage.topology.simplicial_complex import Simplex
         from sage.homology.chain_homotopy import ChainContraction
 
@@ -905,7 +981,6 @@ class CohomologyRing(CombinatorialFreeModule):
         if not set_left.isdisjoint(set_right):
             return self.zero()
 
-        # here we should loop over monomials
         left_cocycles = left[2][1].monomials()
         right_cocycles = right[2][1].monomials()
 
@@ -917,7 +992,7 @@ class CohomologyRing(CombinatorialFreeModule):
                 union = set_left.union(set_right)
                 res_union = subcomplex_left.union(subcomplex_right)
                 subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
-                deg = left[1] + right[1]+ 1
+                deg = left[1] + right[1] + 1
                 cochains_basis = subcomplex_union.n_chains(deg, cochains=True).basis()
                 if cochains_basis.has_key(Simplex(res_union)):
                     res_part = self.zero()
@@ -941,19 +1016,63 @@ class CohomologyRing(CombinatorialFreeModule):
 
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
+            """
+            Return the cocycle representative of ``self``.
+
+            EXAMPLES::
+
+            <lots_of_examples>
+            """
+
             if not self.is_homogeneous():
                 raise ValueError("only defined for homogeneous elements")
-            return sum(c * self.parent()._to_cycle_on_basis(i) for i,c in self)
+            return sum(c * self.parent()._to_cycle_on_basis(i) for i, c in self)
 
         def get_simplicial_complex(self, is_mutable=True):
+            """
+            Return the simplicial complex from which ``self`` originates.
+
+            EXAMPLES::
+
+            <lots_of_examples>
+            """
             vertex_set = self.parent()._gens[self.leading_support()[0]][self.leading_support()[1]][0]
             print(self.parent()._complex.simplicial_complex().generated_subcomplex(vertex_set, is_mutable=is_mutable))
 
+        # add reference to the docstring
         def cup_product(self, other):
+            """
+            Return the cup product of ``self`` and ``other``.
+
+            ALGORITHM:
+
+            This algorithm is adopted from ...
+
+            First we acquire the cocycle representatives of ``self`` and ``other``
+            (which are generators of cohomology groups of all full subcomplexes
+            of the simplicial complex associated with the moment-angle complex;
+            these are stored during initialization), as well as their corresponding
+            simplicial complexes. We then multiply them, as described in ... and
+            extract the cohomology class using chain contractions of the appropriate
+            simplicial complex.
+
+            EXAMPLES::
+
+            <lots_of_examples>
+            """
             return self * other
+
 
 # used for computing coeffeicients when multiplying in cohomology
 def eps(subcomplex, simplicial_complex):
+    r"""
+    Return the coefficient `\eps`, used when computing
+    the cup product of cohomology classes.
+
+    EXAMPLES::
+
+    <lots_of_examples>
+    """
     def _eps(element, simplicial_complex):
         if element not in simplicial_complex._vertex_to_index:
             raise ValueError("{} is not a vertex of this simplicial complex".format(element))
