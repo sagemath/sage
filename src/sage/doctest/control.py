@@ -483,7 +483,8 @@ class DocTestController(SageObject):
                     for pkg in list_packages('optional', local=True).values():
                         if pkg.name in options.hide:
                             continue
-                        if pkg.name in ['mpmath']:
+                        # Skip features for which we have a more specific runtime feature test.
+                        if pkg.name in ['bliss', 'mcqd', 'meataxe', 'mpmath', 'sirocco', 'tdlib']:
                             continue
                         if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
                             options.optional.add(pkg.name)
