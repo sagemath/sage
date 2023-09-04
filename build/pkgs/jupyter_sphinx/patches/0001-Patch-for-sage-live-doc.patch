@@ -1,26 +1,18 @@
-From f95c7a7a393f0eef9989dddffc70a09ac0a14c35 Mon Sep 17 00:00:00 2001
+From fa6e7b31ebd7f6dbf02e1e4c1056e4ef1389884e Mon Sep 17 00:00:00 2001
 From: Kwankyu Lee <ekwankyu@gmail.com>
 Date: Mon, 28 Aug 2023 00:18:59 +0900
 Subject: [PATCH] Patch for sage live doc
 
 ---
- jupyter_sphinx/__init__.py |  8 +++++---
+ jupyter_sphinx/__init__.py |  2 +-
  jupyter_sphinx/execute.py  | 11 +++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/jupyter_sphinx/__init__.py b/jupyter_sphinx/__init__.py
-index 34af884..f5a7f44 100644
+index 34af884..f2e17e0 100644
 --- a/jupyter_sphinx/__init__.py
 +++ b/jupyter_sphinx/__init__.py
-@@ -2,6 +2,7 @@
- 
- from pathlib import Path
- 
-+import os
- import docutils
- import ipywidgets
- from IPython.lib.lexers import IPython3Lexer, IPythonTracebackLexer
-@@ -31,7 +32,7 @@ from .thebelab import ThebeButton, ThebeButtonNode, ThebeOutputNode, ThebeSource
+@@ -31,7 +31,7 @@ from .thebelab import ThebeButton, ThebeButtonNode, ThebeOutputNode, ThebeSource
  REQUIRE_URL_DEFAULT = (
      "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"
  )
@@ -29,25 +21,6 @@ index 34af884..f5a7f44 100644
  
  logger = logging.getLogger(__name__)
  
-@@ -186,7 +187,7 @@ def setup(app):
-     app.add_config_value("jupyter_sphinx_embed_url", None, "html")
- 
-     # thebelab config, can be either a filename or a dict
--    app.add_config_value("jupyter_sphinx_thebelab_config", None, "html")
-+    app.add_config_value("jupyter_sphinx_thebelab_config", None, "env")
-     app.add_config_value("jupyter_sphinx_thebelab_url", THEBELAB_URL_DEFAULT, "html")
- 
-     # linenos config
-@@ -290,7 +291,8 @@ def setup(app):
-     app.add_lexer("ipythontb", IPythonTracebackLexer)
-     app.add_lexer("ipython3", IPython3Lexer)
- 
--    app.connect("builder-inited", builder_inited)
-+    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
-+        app.connect("builder-inited", builder_inited)
-     app.connect("build-finished", build_finished)
- 
-     # add jupyter-sphinx and thebelab js and css
 diff --git a/jupyter_sphinx/execute.py b/jupyter_sphinx/execute.py
 index 558a26b..de44455 100644
 --- a/jupyter_sphinx/execute.py
