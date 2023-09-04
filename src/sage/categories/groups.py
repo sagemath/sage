@@ -273,7 +273,7 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: M = SL(2, 2)                                                      # needs sage.modules
-                sage: M.cayley_table()                                                  # needs sage.modules
+                sage: M.cayley_table()                                                  # needs sage.libs.gap sage.modules
                 *  a b c d e f
                  +------------
                 a| a b c d e f

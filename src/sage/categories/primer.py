@@ -79,7 +79,7 @@ Some challenges
       sage: Permutations(5).cardinality()
       120
 
-      sage: GL(2,2).cardinality()                                                       # needs sage.modules
+      sage: GL(2,2).cardinality()                                                       # needs sage.libs.gap sage.modules
       6
 
       sage: A = random_matrix(ZZ, 6, 3, x=7)                                            # needs sage.modules
