@@ -1719,32 +1719,42 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
         sage: from sage.numerical.backends.generic_backend import get_solver
         sage: p = get_solver()
+
+    Passing various base rings::
+
         sage: p = get_solver(base_ring=RDF)
         sage: p.base_ring()
         Real Double Field
+
         sage: p = get_solver(base_ring=QQ); p
         <...sage.numerical.backends.ppl_backend.PPLBackend...>
         sage: p = get_solver(base_ring=ZZ); p
         <...sage.numerical.backends.ppl_backend.PPLBackend...>
         sage: p.base_ring()
         Rational Field
-        sage: p = get_solver(base_ring=AA); p                                         # optional - sage.rings.number_field
+
+        sage: # needs sage.rings.number_field
+        sage: p = get_solver(base_ring=AA); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        sage: p.base_ring()
         Algebraic Real Field
-        sage: d = polytopes.dodecahedron()                                            # optional - sage.rings.number_field
-        sage: p = get_solver(base_ring=d.base_ring()); p                              # optional - sage.rings.number_field
+        sage: d = polytopes.dodecahedron()
+        sage: p = get_solver(base_ring=d.base_ring()); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        sage: p.base_ring()
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p                 # optional - sage.rings.number_field
+
+    Passing a solver and a base ring::
+
+        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        sage: p.base_ring()
         Rational Field
-        sage: p = get_solver(solver='Matrix', base_ring=GF(3)); p                 # optional - sage.rings.number_field
+
+        sage: p = get_solver(solver='Matrix', base_ring=AA); p                          # needs sage.rings.number_field
         <...sage.numerical.backends.matrix_backend.MatrixBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
-        Finite Field of size 3
+        sage: p.base_ring()                                                             # needs sage.rings.number_field
+        Algebraic Real Field
 
     Passing a callable as the 'solver'::
 
