@@ -31,6 +31,7 @@ AUTHORS::
 # ****************************************************************************
 
 import itertools
+import json
 import os
 import re
 import shlex
@@ -73,11 +74,13 @@ parser.add_argument("--overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; overwrite the source files")
 parser.add_argument("--no-overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; output goes to files named INPUT.fixed")
+parser.add_argument("--update-known-test-failures", default=False, action="store_true",
+                    help="update the file pkgs/DISTRIBUTION/known-test-failures.json")
 parser.add_argument("--verbose", default=False, action="store_true",
                     help="show details of all changes; implies --no-diff")
 parser.add_argument("--no-diff", default=False, action="store_true",
                     help="don't show the 'git diff' of the modified files")
-parser.add_argument("filename", nargs='+', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
+parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
                     type=str)
 
 runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
@@ -572,6 +575,9 @@ if __name__ == "__main__":
     elif not args.distribution:
         args.distribution = ['']
 
+    if not args.filename and not args.update_known_test_failures:
+        print("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
+
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
               "this is deprecated. To pass two input filenames, use the option --overwrite.")
@@ -616,6 +622,36 @@ if __name__ == "__main__":
 
         if args.fixed_point:
             print(f"sage-fixdoctests: Fixed point reached")
+
+        if args.update_known_test_failures:
+            if args.distribution == ['']:
+                print("sage-fixdoctests: Ignoring switch --update-known-test-failures because no --distribution was given")
+            else:
+                for distribution in args.distribution:
+                    if distribution == '':
+                        continue
+                    plain_distribution, extras = plain_distribution_and_extras(distribution)
+                    default_venv, _ = default_venv_environment_from_distribution(distribution)
+                    venv = args.venv or default_venv
+                    try:
+                        stats_filename = os.path.join(default_venv, '.sage/timings2.json')
+                        with open(stats_filename, 'r') as stats_file:
+                            stats = json.load(stats_file)
+                    except FileNotFoundError:
+                        print(f"sage-fixdoctests: {os.path.relpath(stats_filename, SAGE_ROOT)} "
+                              "does not exist (ignoring)")
+                    else:
+                        for d in stats.values():
+                            del d['walltime']
+                        if extras:
+                            extras_suffix = '--' + '--'.join(extras.split(','))
+                        else:
+                            extras_suffix = ''
+                        failures_file = os.path.join(SAGE_ROOT, 'pkgs', plain_distribution,
+                                                     f'known-test-failures{extras_suffix}.json')
+                        with open(failures_file, 'w') as f:
+                            json.dump(stats, f, sort_keys=True, indent=4)
+                        print(f"sage-fixdoctests: Updated {os.path.relpath(failures_file, SAGE_ROOT)}")
 
     except Exception:
         print(f"sage-fixdoctests: Internal error")
