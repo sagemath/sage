@@ -2060,7 +2060,7 @@ def point_of_order(E, l):
 
         sage: from sage.schemes.elliptic_curves.ell_field import point_of_order
         sage: E = EllipticCurve(QQ, [7,7])
-        sage: P = point_of_order(E, 3); P
+        sage: P = point_of_order(E, 3); P  # random
         (x : -Y : 1)
         sage: P.base_ring()
         Number Field in Y with defining polynomial Y^2 - x^3 - 7*x - 7 over its base field
