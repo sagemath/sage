@@ -25,3 +25,14 @@ cdef class MatrixBackend(GenericBackend):
     cdef list is_continuous
 
     cdef object _base_ring
+
+    cpdef int add_variable(self,
+                           lower_bound=*,
+                           upper_bound=*,
+                           binary=*,
+                           continuous=*,
+                           integer=*,
+                           obj=*,
+                           name=*,
+                           coefficients=*) \
+                           except -1

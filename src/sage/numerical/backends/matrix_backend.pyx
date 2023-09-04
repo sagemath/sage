@@ -161,7 +161,7 @@ cdef class MatrixBackend(GenericBackend):
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
                            binary=False, continuous=True, integer=False,
-                           obj=None, name=None) except -1:
+                           obj=None, name=None, coefficients=None) except -1:
         """
         Add a variable.
 
@@ -289,7 +289,12 @@ cdef class MatrixBackend(GenericBackend):
         if obj is None:
             obj = self._base_ring.zero()
 
-        self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.nrows(), 1))
+        column = matrix(self._base_ring, self.nrows(), 1)
+        if coefficients:
+            for ind, coeff in coefficients:
+                column[ind] = coeff
+
+        self.Matrix = self.Matrix.augment(column)
 
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
@@ -572,24 +577,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()
             5
         """
-        column = matrix(self.nrows(), 1)
-
-        for ind, coeff in zip(indices, coeffs):
-            column[ind] = coeff
-
-        if self.ncols() == 0:
-            self.Matrix = column
-        else:
-            self.Matrix = self.Matrix.augment(column)
-
-        self.col_lower_bound_indicator.append(None)
-        self.col_lower_bound = self.col_lower_bound.augment(matrix([self._base_ring.zero()]))
-
-        self.col_upper_bound_indicator.append(None)
-        self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
-
-        self.objective_coefficients = self.objective_coefficients.augment(matrix([self._base_ring.zero()]))
-        self.col_name_var.append(None)
+        self.add_variable(coefficients=zip(indices, coeffs))
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """

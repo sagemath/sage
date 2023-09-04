@@ -20,15 +20,4 @@ cdef class CVXPYBackend(MatrixBackend):
     cdef object _cvxpy_solver
     cdef object _cvxpy_solver_args
 
-    cpdef int add_variable(self,
-                           lower_bound=*,
-                           upper_bound=*,
-                           binary=*,
-                           continuous=*,
-                           integer=*,
-                           obj=*,
-                           name=*,
-                           coefficients=*) \
-                           except -1
-
     cpdef cvxpy_problem(self)
