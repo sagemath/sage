@@ -1854,6 +1854,7 @@ def is_Macaulay2Element(x):
 
     return isinstance(x, Macaulay2Element)
 
+
 # An instance
 macaulay2 = Macaulay2()
 

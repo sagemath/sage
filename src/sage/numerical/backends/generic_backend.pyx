@@ -423,7 +423,7 @@ cdef class GenericBackend:
             sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6) # optional - Nonexistent_LP_solver
             sage: p.remove_constraints([0, 1])                       # optional - Nonexistent_LP_solver
         """
-        if type(constraints) == int: self.remove_constraint(constraints)
+        if isinstance(constraints, int): self.remove_constraint(constraints)
 
         cdef int last = self.nrows() + 1
 
@@ -1288,8 +1288,8 @@ cdef class GenericBackend:
         del cp
         self._do_test_problem_data(tester, cpcp)
 
-
     # TODO: We should have a more systematic way of generating MIPs for testing.
+
     @classmethod
     def _test_copy_some_mips(cls, tester=None, **options):
         p = cls()                         # fresh instance of the backend

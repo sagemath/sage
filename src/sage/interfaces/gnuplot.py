@@ -159,7 +159,7 @@ class Gnuplot(SageObject):
 
         EXAMPLES::
 
-            sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot  (not tested, since something pops up).
+            sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot, not tested (since something pops up)
         """
         if title is None:
             title = str(f)
@@ -186,6 +186,7 @@ class Gnuplot(SageObject):
 
     def console(self):
         gnuplot_console()
+
 
 # An instance
 gnuplot = Gnuplot()

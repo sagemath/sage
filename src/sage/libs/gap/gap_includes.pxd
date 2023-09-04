@@ -24,14 +24,6 @@ cdef extern from "gap/system.h" nogil:
 
 cdef extern from "gap/calls.h" nogil:
     bint IS_FUNC(Obj)
-    Obj CALL_0ARGS(Obj f)              # 0 arguments
-    Obj CALL_1ARGS(Obj f, Obj a1)      # 1 argument
-    Obj CALL_2ARGS(Obj f, Obj a1, Obj a2)
-    Obj CALL_3ARGS(Obj f, Obj a1, Obj a2, Obj a3)
-    Obj CALL_4ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4)
-    Obj CALL_5ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4, Obj a5)
-    Obj CALL_6ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4, Obj a5, Obj a6)
-    Obj CALL_XARGS(Obj f, Obj args)   # more than 6 arguments
 
 
 cdef extern from "gap/libgap-api.h" nogil:
@@ -68,6 +60,13 @@ cdef extern from "gap/libgap-api.h" nogil:
     cdef Obj GAP_True
     cdef Obj GAP_False
 
+    Obj GAP_CallFuncList(Obj func, Obj args);
+    Obj GAP_CallFuncArray(Obj func, UInt narg, Obj * args);
+    Obj GAP_CallFunc0Args(Obj func);
+    Obj GAP_CallFunc1Args(Obj func, Obj a1);
+    Obj GAP_CallFunc2Args(Obj func, Obj a1, Obj a2);
+    Obj GAP_CallFunc3Args(Obj func, Obj a1, Obj a2, Obj a3);
+
     bint GAP_IsMacFloat(Obj obj)
     double GAP_ValueMacFloat(Obj obj)
 
@@ -97,10 +96,6 @@ cdef extern from "gap/lists.h" nogil:
     Obj ELM_LIST(Obj lst, int pos)
 
 
-cdef extern from "gap/listfunc.h" nogil:
-    void AddList(Obj list, Obj obj)
-
-
 cdef extern from "gap/objects.h" nogil:
     bint IS_MUTABLE_OBJ(Obj obj)
     Obj SHALLOW_COPY_OBJ(Obj obj)
@@ -116,7 +111,6 @@ cdef extern from "gap/objects.h" nogil:
         T_PERM2
         T_PERM4
         T_BOOL
-        T_CHAR
         T_FUNCTION
         T_COMOBJ
         T_POSOBJ
@@ -150,3 +144,18 @@ cdef extern from "gap/stringobj.h" nogil:
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
+
+
+cdef extern from "<structmember.h>" nogil:
+    """
+    /* Hack: Cython 3.0 automatically includes <structmember.h>, which
+     * defines several macros that collides with enum definitions in
+     * gap/objects.h. We need to include the header explicitly and
+     * undefine these macros.
+     */
+    #undef T_INT
+    #undef T_STRING
+    #undef T_CHAR
+    #undef T_BOOL
+    """
+    pass

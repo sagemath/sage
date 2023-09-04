@@ -302,7 +302,7 @@ cdef class LaurentSeries(AlgebraElement):
         x = im_gens[0]
         return codomain(self.__u._im_gens_(codomain, im_gens, base_map=base_map) * x**self.__n)
 
-    cdef __normalize(self):
+    cdef _normalize(self):
         r"""
         A Laurent series is a pair (u(t), n), where either u=0 (to some
         precision) or u is a unit. This pair corresponds to
@@ -725,7 +725,7 @@ cdef class LaurentSeries(AlgebraElement):
                 R = self._parent.base_ring()
                 coeffs = [value] + [R(0) for _ in range(1,-j)] + self.__u.list()
                 self.__u = self.__u._parent(coeffs)
-        self.__normalize()
+        self._normalize()
 
     cpdef _add_(self, right_m):
         """
@@ -751,6 +751,14 @@ cdef class LaurentSeries(AlgebraElement):
             t^-3 + t^3 + O(t^9)
 
         ALGORITHM: Shift the unit parts to align them, then add.
+
+        TESTS:
+
+        Verify that :trac:`35860` is fixed::
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: sqrt(t^2) + t^-1
+            t^-1 + t
         """
         cdef LaurentSeries right = <LaurentSeries>right_m
         cdef long m

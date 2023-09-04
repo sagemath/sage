@@ -5,7 +5,7 @@ AUTHORS:
 
 - Stepan Starosta (2012): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Stepan Starosta <stepan.starosta@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -254,9 +254,9 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
                 elements.append(x)
                 seen.add(x)
         return super(FiniteEnumeratedSet, cls).__classcall__(
-                cls,
-                tuple(elements),
-                facade)
+            cls,
+            tuple(elements),
+            facade)
 
     def __init__(self, elements, facade=True):
         """
@@ -269,13 +269,13 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
             sage: TestSuite(TotallyOrderedFiniteSet([1,3,2],facade=False)).run()
             sage: TestSuite(TotallyOrderedFiniteSet([])).run()
         """
-        Parent.__init__(self, facade=facade, category=(Posets(),FiniteEnumeratedSets()))
+        Parent.__init__(self, facade=facade, category=(Posets(), FiniteEnumeratedSets()))
         self._elements = elements
         if facade:
             self._facade_elements = None
         else:
             self._facade_elements = self._elements
-            self._elements = [self.element_class(self,x) for x in elements]
+            self._elements = [self.element_class(self, x) for x in elements]
 
     def _element_constructor_(self, data):
         r"""
@@ -306,7 +306,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         try:
             i = self._facade_elements.index(data)
         except ValueError:
-            raise ValueError("%s not in %s"%(data, self))
+            raise ValueError("%s not in %s" % (data, self))
 
         return self._elements[i]
 

@@ -1,7 +1,5 @@
 prune sage
 
-global-include all__sagemath_environment.py
-
 include sage/env.py
 include sage/version.py
 include sage/misc/package.py
@@ -12,4 +10,14 @@ graft sage/features
 
 include VERSION.txt
 
+global-exclude all__*.py
+global-include all__sagemath_environment.py
+
+global-exclude __pycache__
 global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

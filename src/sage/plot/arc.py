@@ -45,6 +45,7 @@ class Arc(GraphicPrimitive):
 
     Note that the construction should be done using ``arc``::
 
+        sage: from math import pi
         sage: from sage.plot.arc import Arc
         sage: print(Arc(0,0,1,1,pi/4,pi/4,pi/2,{}))
         Arc with center (0.0,0.0) radii (1.0,1.0) angle 0.78539816339... inside the sector (0.78539816339...,1.5707963267...)
@@ -115,6 +116,7 @@ class Arc(GraphicPrimitive):
 
         The same example with a rotation of angle `\pi/2`::
 
+            sage: from math import pi
             sage: p = arc((-2, 3), 1, 2, pi/2)
             sage: d = p.get_minmax_data()
             sage: d['xmin']
@@ -293,6 +295,7 @@ class Arc(GraphicPrimitive):
             sage: Arc(2,3,2.2,2.2,0,2,3,op).bezier_path()
             Graphics object consisting of 1 graphics primitive
 
+            sage: from math import pi
             sage: a = arc((0,0),2,1,0,(pi/5,pi/2+pi/12), linestyle="--", color="red")
             sage: b = a[0].bezier_path()
             sage: b[0]
@@ -348,6 +351,7 @@ class Arc(GraphicPrimitive):
         """
         TESTS::
 
+            sage: from math import pi
             sage: A = arc((1,1),3,4,pi/4,(pi,4*pi/3)); A
             Graphics object consisting of 1 graphics primitive
         """
@@ -421,6 +425,7 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
     Plot an arc of circle centered at (0,0) with radius 1 in the sector
     `(\pi/4,3*\pi/4)`::
 
+        sage: from math import pi
         sage: arc((0,0), 1, sector=(pi/4,3*pi/4))
         Graphics object consisting of 1 graphics primitive
 

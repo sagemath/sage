@@ -235,6 +235,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_tmp(self.relprec),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo

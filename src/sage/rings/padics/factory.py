@@ -815,6 +815,7 @@ class Qp_class(UniqueFactory):
         else:
             raise ValueError("unexpected type")
 
+
 Qp = Qp_class("Qp")
 
 
@@ -975,10 +976,10 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     2. The modulus can also be given as a **symbolic expression**. ::
 
-        sage: x = var('x')
-        sage: X.<a> = Qq(27, modulus = x^3 + 2*x + 1); X.modulus()
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: X.<a> = Qq(27, modulus = x^3 + 2*x + 1); X.modulus()                      # needs sage.symbolic
         (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
-        sage: X == R
+        sage: X == R                                                                    # needs sage.symbolic
         True
 
       By default, the polynomial chosen is the standard lift of the
@@ -2027,6 +2028,7 @@ class Zp_class(UniqueFactory):
         else:
             raise ValueError("unexpected type")
 
+
 Zp = Zp_class("Zp")
 
 
@@ -2225,10 +2227,10 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     2. The modulus can also be given as a **symbolic expression**. ::
 
-        sage: x = var('x')
-        sage: X.<a> = Zq(27, modulus = x^3 + 2*x + 1); X.modulus()
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: X.<a> = Zq(27, modulus = x^3 + 2*x + 1); X.modulus()                      # needs sage.symbolic
         (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
-        sage: X == R
+        sage: X == R                                                                    # needs sage.symbolic
         True
 
       By default, the polynomial chosen is the standard lift of the
@@ -3431,7 +3433,9 @@ class pAdicExtension_class(UniqueFactory):
                   'max_ram_terms': print_max_ram_terms, 'max_unram_terms': print_max_unram_terms, 'max_terse_terms': print_max_terse_terms, 'show_prec': show_prec},
                  shift_seed, names, implementation)
 
+
 ExtensionFactory = pAdicExtension = pAdicExtension_class("pAdicExtension")
+
 
 ######################################################
 # Helper functions for the Extension Factory

@@ -97,7 +97,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f == loads(dumps(f)) # indirect doctest
             True
         """
-        return self.__class__, (self._parent, self.__f, self._prec, self.__is_gen)
+        return self.__class__, (self._parent, self.__f, self._prec, self._is_gen)
 
     def polynomial(self):
         """
@@ -1121,11 +1121,6 @@ cdef class PowerSeries_poly(PowerSeries):
         OUTPUT:
 
         a ratio of two polynomials
-
-        .. WARNING::
-
-            The current implementation uses a very slow algorithm and is not
-            suitable for high orders.
 
         ALGORITHM:
 

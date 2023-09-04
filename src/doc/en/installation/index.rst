@@ -25,7 +25,7 @@ macOS
 
     Obtain the SageMath sources via ``git`` as described in `The Sage
     Developer's Guide
-    <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+    <https://doc.sagemath.org/html/en/developer/walkthrough.html#chapter-walkthrough>`_.
 
     - Then build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
@@ -93,7 +93,7 @@ Linux
 
     Obtain the SageMath sources via ``git`` as described in `The Sage
     Developer's Guide
-    <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+    <https://doc.sagemath.org/html/en/developer/walkthrough.html#chapter-walkthrough>`_.
 
     - Then build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
