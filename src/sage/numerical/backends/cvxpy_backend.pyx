@@ -153,13 +153,32 @@ cdef class CVXPYBackend(MatrixBackend):
 
         self.set_verbosity(0)
 
-        self.variables = []
-
-        if maximization:
-            objective = cvxpy.Maximize(0)
+        if self.variables:
+            expr = AddExpression([c * x for c, x in zip(self.objective_coefficients[0], self.variables)])
         else:
-            objective = cvxpy.Minimize(0)
-        self.problem = cvxpy.Problem(objective, ())
+            expr = Constant(0)
+        if maximization:
+            objective = cvxpy.Maximize(expr)
+        else:
+            objective = cvxpy.Minimize(expr)
+
+        self.variables = []
+        for j in range(self.ncols()):
+            lower_bound, upper_bound = self.col_bounds(j)
+            binary = self.is_binary[j]
+            continuous = self.is_continuous[j]
+            integer = self.is_integer[j]
+            name = self.col_name(j)
+            self.variables.append(self._cvxpy_variable(lower_bound, upper_bound,
+                                                       binary, continuous, integer, name))
+
+        constraints = []
+        for i in range(self.nrows()):
+            constraints.extend(self._cvxpy_constraints(zip(*self.row(i)), *self.row_bounds(i)))
+
+        self.problem = cvxpy.Problem(objective, constraints)
+
+        ## FIXME: This needs to set up objective and constraints from the stored data.
 
     cpdef __copy__(self):
         """
@@ -195,6 +214,15 @@ cdef class CVXPYBackend(MatrixBackend):
         Return a list of the :class:`cvxpy.Variable` objects.
         """
         return self.variables
+
+    def _cvxpy_variable(self, lower_bound, upper_bound, binary, continuous, integer, name):
+        if binary:
+            variable = cvxpy.Variable(name=name, boolean=True)
+        elif integer:
+            variable = cvxpy.Variable(name=name, integer=True)
+        else:
+            variable = cvxpy.Variable(name=name)
+        return variable
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
                            binary=False, continuous=True, integer=False,
@@ -258,23 +286,14 @@ cdef class CVXPYBackend(MatrixBackend):
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
 
-        super(CVXPYBackend, self).add_variable(lower_bound, upper_bound, binary, continuous, integer, obj, name, coefficients)
-
-        index = self.ncols() - 1
-        self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
-
+        index = super(CVXPYBackend, self).add_variable(lower_bound, upper_bound,
+                                                       binary, continuous, integer,
+                                                       obj, name, coefficients)
         if self.problem is None:
             pass
         else:
             name = self.col_name(index)
-
-            if binary:
-                variable = cvxpy.Variable(name=name, boolean=True)
-            elif integer:
-                variable = cvxpy.Variable(name=name, integer=True)
-            else:
-                variable = cvxpy.Variable(name=name)
-
+            variable = self._cvxpy_variable(lower_bound, upper_bound, binary, continuous, integer, name)
             constraints = self.problem.constraints
 
             if coefficients is not None:
@@ -285,6 +304,7 @@ cdef class CVXPYBackend(MatrixBackend):
                         # because cvxpy rewrites all inequalities as <=
                         # - so just re-create the problem on next 'solve'
                         self.problem = self.variables = None
+                        self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
                         return index
 
                     constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
@@ -296,6 +316,7 @@ cdef class CVXPYBackend(MatrixBackend):
             self.problem = cvxpy.Problem(objective, constraints)
             self.variables.append(variable)
 
+        self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
         return index
 
     cpdef set_verbosity(self, int level):
@@ -315,6 +336,38 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.set_verbosity(2)
         """
         pass
+
+    def _cvxpy_constraints(self, coefficients, lower_bound, upper_bound):
+        r"""
+        Return a list of :class:`cvxpy.Constraint` objects that express
+        ``lower_bound <= coefficients * variables <= upper_bound``.
+
+        INPUT:
+
+        - ``coefficients`` -- an iterable of pairs ``(i, v)``. In each
+          pair, ``i`` is a variable index (integer) and ``v`` is a
+          value (element of :meth:`base_ring`).
+
+        - ``lower_bound`` -- element of :meth:`base_ring` or
+          ``None``. The lower bound.
+
+        - ``upper_bound`` -- element of :meth:`base_ring` or
+          ``None``. The upper bound.
+        """
+        constraints = []
+        terms = [v * self.variables[i] for i, v in coefficients]
+        if terms:
+            expr = AddExpression(terms)
+        else:
+            expr = Constant(0)
+        if lower_bound is not None and lower_bound == upper_bound:
+            constraints.append(expr == upper_bound)
+        else:
+            if lower_bound is not None:
+                constraints.append(lower_bound <= expr)
+            if upper_bound is not None:
+                constraints.append(expr <= upper_bound)
+        return constraints
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
@@ -355,18 +408,7 @@ cdef class CVXPYBackend(MatrixBackend):
         if self.problem is None:
             pass
         else:
-            terms = [v * self.variables[i] for i, v in coefficients]
-            if terms:
-                expr = AddExpression(terms)
-            else:
-                expr = Constant(0)
-            constraints = list(self.problem.constraints)
-            if lower_bound is not None and lower_bound == upper_bound:
-                constraints.append(expr == upper_bound)
-            elif lower_bound is not None:
-                constraints.append(lower_bound <= expr)
-            elif upper_bound is not None:
-                constraints.append(expr <= upper_bound)
+            constraints = self.problem.constraints + self._cvxpy_constraints(coefficients, lower_bound, upper_bound)
             self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
     cpdef set_objective(self, list coeff, d=0.0):

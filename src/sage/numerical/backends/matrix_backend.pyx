@@ -316,7 +316,7 @@ cdef class MatrixBackend(GenericBackend):
         self.is_continuous.append(continuous)
         self.is_integer.append(integer)
 
-        return self.objective_coefficients.dimensions()[1] - 1
+        return self.ncols() - 1
 
     cpdef set_variable_type(self, int variable, int vtype):
         """
