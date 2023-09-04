@@ -86,7 +86,7 @@ class FunctionFieldFactory(UniqueFactory):
             sage: K.<x> = FunctionField(QQ) # indirect doctest
         """
         if not isinstance(names, tuple):
-            names=(names,)
+            names = (names,)
         return (F, names)
 
     def create_object(self, version, key,**extra_args):
@@ -112,7 +112,7 @@ class FunctionFieldFactory(UniqueFactory):
             return RationalFunctionField(key[0], names=key[1])
 
 
-FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
+FunctionField = FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
 
 
 class FunctionFieldExtensionFactory(UniqueFactory):
@@ -170,9 +170,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
         """
         if names is None:
-            names=polynomial.variable_name()
+            names = polynomial.variable_name()
         if not isinstance(names,tuple):
-            names=(names,)
+            names = (names,)
         return (polynomial,names,polynomial.base_ring())
 
     def create_object(self,version,key,**extra_args):

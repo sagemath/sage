@@ -624,7 +624,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: R                                                                     # optional - sage.rings.finite_rings
             my power series ring
         """
-        s = "Power Series Ring in %s over %s"%(self.variable_name(), self.base_ring())
+        s = "Power Series Ring in %s over %s" % (self.variable_name(), self.base_ring())
         if self.is_sparse():
             s = 'Sparse ' + s
         return s
@@ -668,7 +668,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: latex(R)                                                              # optional - sage.rings.finite_rings
             \Bold{F}_{17}[[y_{12}]]
         """
-        return "%s[[%s]]"%(latex.latex(self.base_ring()), self.latex_variable_names()[0])
+        return "%s[[%s]]" % (latex.latex(self.base_ring()), self.latex_variable_names()[0])
 
     def _coerce_map_from_(self, S):
         """
@@ -693,7 +693,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         if self.base_ring().has_coerce_map_from(S):
             return True
         if (is_PolynomialRing(S) or is_PowerSeriesRing(S)) and self.base_ring().has_coerce_map_from(S.base_ring()) \
-           and self.variable_names()==S.variable_names():
+           and self.variable_names() == S.variable_names():
             return True
 
     def _element_constructor_(self, f, prec=infinity, check=True):

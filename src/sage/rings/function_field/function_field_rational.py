@@ -220,7 +220,7 @@ class RationalFunctionField(FunctionField):
             sage: K._repr_()
             'Rational function field in t over Rational Field'
         """
-        return "Rational function field in %s over %s"%(
+        return "Rational function field in %s over %s" % (
             self.variable_name(), self._constant_field)
 
     def _element_constructor_(self, x):
@@ -304,7 +304,7 @@ class RationalFunctionField(FunctionField):
             # When K is not exact, f.denominator() might not be an exact 1, so
             # we need to divide explicitly to get the correct precision
             return K(f.numerator()) / K(f.denominator())
-        raise ValueError("only constants can be converted into the constant base field but %r is not a constant"%(f,))
+        raise ValueError("only constants can be converted into the constant base field but %r is not a constant" % (f,))
 
     def _to_polynomial(self, f):
         """
@@ -349,7 +349,7 @@ class RationalFunctionField(FunctionField):
         v = f.list()
         denom = lcm([a.denominator() for a in v])
         S = denom.parent()
-        x,t = S.base_ring()['%s,%s'%(f.parent().variable_name(),self.variable_name())].gens()
+        x,t = S.base_ring()['%s,%s' % (f.parent().variable_name(),self.variable_name())].gens()
         phi = S.hom([t])
         return sum([phi((denom * v[i]).numerator()) * x**i for i in range(len(v))]), denom
 

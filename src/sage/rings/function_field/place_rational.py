@@ -128,7 +128,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
                 d = f.denominator()
 
                 n_deg = n.degree()
-                d_deg =d.degree()
+                d_deg = d.degree()
 
                 if n_deg < d_deg:
                     return K(0)

@@ -593,7 +593,7 @@ class MPowerSeries(PowerSeries):
         if self._prec == infinity:
             return "%s" % self._value()
         return "%(val)s + O(%(gens)s)^%(prec)s" \
-               %{'val':self._value(),
+               % {'val':self._value(),
                  'gens':', '.join(str(g) for g in self.parent().gens()),
                  'prec':self._prec}
 
@@ -628,7 +628,7 @@ class MPowerSeries(PowerSeries):
         if self._prec == infinity:
             return "%s" % self._value()._latex_()
         return "%(val)s + O(%(gens)s)^{%(prec)s}" \
-               %{'val':self._value()._latex_(),
+               % {'val':self._value()._latex_(),
                  'gens':', '.join(g._latex_() for g in self.parent().gens()),
                  'prec':self._prec}
 
@@ -1220,7 +1220,7 @@ class MPowerSeries(PowerSeries):
         tmp = {}
         for j in self._bg_value.coefficients():
             for m in j.monomials():
-                tmp[self.parent(m)]=j.monomial_coefficient(self.parent()._poly_ring(m))
+                tmp[self.parent(m)] = j.monomial_coefficient(self.parent()._poly_ring(m))
         return tmp
 
     def constant_coefficient(self):

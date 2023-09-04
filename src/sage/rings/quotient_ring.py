@@ -462,7 +462,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         """
         if R not in _Rings:
-            raise TypeError("The first argument must be a ring, but %s is not"%R)
+            raise TypeError("The first argument must be a ring, but %s is not" % R)
         # workaround to silence warning from #34806
         from sage.rings.number_field.order import Order
         if isinstance(R, Order):
@@ -470,7 +470,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         else:
             M = R.ideal_monoid()
         if I not in M:
-            raise TypeError("The second argument must be an ideal of the given ring, but %s is not"%I)
+            raise TypeError("The second argument must be an ideal of the given ring, but %s is not" % I)
         self.__R = R
         self.__I = I
         #sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
@@ -549,7 +549,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: R.quotient_ring(I)._repr_()
             'Quotient of Univariate Polynomial Ring in x over Integer Ring by the ideal (x^2 + 3*x + 4, x^2 + 1)'
         """
-        return "Quotient of %s by the ideal %s"%(self.cover_ring(), self.defining_ideal()._repr_short())
+        return "Quotient of %s by the ideal %s" % (self.cover_ring(), self.defining_ideal()._repr_short())
 
     def _latex_(self):
         """
@@ -562,7 +562,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: R.quotient_ring(I)._latex_()
             '\\Bold{Z}[x]/\\left(x^{2} + 3x + 4, x^{2} + 1\\right)\\Bold{Z}[x]'
         """
-        return "%s/%s"%(latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
+        return "%s/%s" % (latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
 
     def is_commutative(self):
         """
@@ -1276,7 +1276,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if singular is None:
             from sage.interfaces.singular import singular
         self.__R._singular_().set_ring()
-        self.__singular = singular("%s"%self.__I._singular_().name(),"qring")
+        self.__singular = singular("%s" % self.__I._singular_().name(),"qring")
         return self.__singular
 
     def _magma_init_(self, magma):
@@ -1304,7 +1304,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         R = magma(self.__R)
         I = magma(self.__I.gens())
-        return "quo<%s|%s>"%(R.name(), I._ref())
+        return "quo<%s|%s>" % (R.name(), I._ref())
 
     def term_order(self):
         """

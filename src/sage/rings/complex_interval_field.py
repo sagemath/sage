@@ -558,7 +558,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             sage: ComplexIntervalField(100) # indirect doctest
             Complex Interval Field with 100 bits of precision
         """
-        return "Complex Interval Field with %s bits of precision"%self._prec
+        return "Complex Interval Field with %s bits of precision" % self._prec
 
     def _latex_(self):
         r"""

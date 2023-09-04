@@ -238,7 +238,7 @@ class NumberFieldHomset(RingHomset_generic):
             v = [D.hom([r], codomain=C, check=False) for r in roots]
         else:
             v = []
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=v != [])
 
     def __getitem__(self, n):
         r"""
@@ -519,7 +519,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
         C = self.codomain()
         D_abs = D.absolute_field('a')
         v = [self(f, check=False) for f in D_abs.Hom(C).list()]
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=v != [])
 
 
 class CyclotomicFieldHomset(NumberFieldHomset):
@@ -615,11 +615,11 @@ class CyclotomicFieldHomset(NumberFieldHomset):
         z = D.gen()
         n = z.multiplicative_order()
         if not n.divides(C.zeta_order()):
-            v =[]
+            v = []
         else:
             if D == C:
                 w = z
             else:
                 w = C.zeta(n)
             v = [self([w**k], check=False) for k in Zmod(n) if k.is_unit()]
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=v != [])
