@@ -1746,22 +1746,22 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
     - ``solver`` -- one of the following:
 
-        - a string indicating one of the available solvers
-          (see :class:`MixedIntegerLinearProgram`);
+      - a string indicating one of the available solvers
+        (see :class:`MixedIntegerLinearProgram`);
 
-        - ``None`` (default), in which case the default solver is used
-          (see :func:`default_mip_solver`);
+      - ``None`` (default), in which case the default solver is used
+        (see :func:`default_mip_solver`);
 
-        - or a callable (such as a class), in which case it is called,
-          and its result is returned.
+      - or a callable (such as a class), in which case it is called,
+        and its result is returned.
 
     - ``base_ring`` -- If not ``None``, request a solver that works over this
-        (ordered) field.  If ``base_ring`` is not a field, its fraction field
-        is used.
+      (ordered) field.  If ``base_ring`` is not a field, its fraction field
+      is used.
 
-        For example, is ``base_ring=ZZ`` is provided, the solver will work over
-        the rational numbers.  This is unrelated to whether variables are
-        constrained to be integers or not.
+      For example, is ``base_ring=ZZ`` is provided, the solver will work over
+      the rational numbers.  This is unrelated to whether variables are
+      constrained to be integers or not.
 
     - ``constraint_generation`` -- Only used when ``solver=None``.
 
