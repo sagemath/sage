@@ -154,7 +154,8 @@ cpdef factor_aurifeuillian(n, check=True):
 
     TESTS::
 
-        sage: for n in [2,3,5,6,30,31,33]:                                              # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
+        sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s

@@ -268,6 +268,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F,t = GF(random_prime(99)^randrange(2,99), 't').objgen()
             sage: a = F.random_element()
             sage: all(a[i] == a.polynomial()[i] for i in range(F.degree()))
@@ -290,7 +291,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         EXAMPLES::
 
             sage: x = polygen(GF(71))
-            sage: F.<u> = GF(71^7, modulus=x^7+x+1)
+            sage: F.<u> = GF(71^7, modulus=x^7 + x + 1)
             sage: a = 3 + u + 3*u^2 + 3*u^3 + 7*u^4
             sage: a.list()
             [3, 1, 3, 3, 7, 0, 0]
@@ -308,6 +309,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: R.<x> = GF(17)[]
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
@@ -351,6 +353,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
             sage: list(a) == a.list()  # implicit doctest
@@ -358,6 +361,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
+            sage: # needs sage.modules
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
@@ -365,7 +369,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
-            sage: F.<t> = GF((2^127-1)^10, 't')
+            sage: # needs sage.modules
+            sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
             True
@@ -431,6 +436,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: k.<a> = GF(2^4)
             sage: b = k.random_element()
             sage: vector(a*b) == a.matrix() * vector(b)
@@ -557,18 +563,18 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def charpoly(self, var='x', algorithm='pari'):
         """
-        Return the characteristic polynomial of self as a polynomial with given variable.
+        Return the characteristic polynomial of ``self`` as a polynomial with given variable.
 
         INPUT:
 
         - ``var`` -- string (default: 'x')
 
-        - ``algorithm`` -- string (default: 'pari')
+        - ``algorithm`` -- string (default: ``'pari'``)
 
-          - 'pari' -- use pari's charpoly
+          - ``'pari'`` -- use pari's charpoly
 
-          - 'matrix' -- return the charpoly computed from the matrix of
-            left multiplication by self
+          - ``'matrix'`` -- return the charpoly computed from the matrix of
+            left multiplication by ``self``
 
         The result is not cached.
 
@@ -578,10 +584,10 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: k.<a> = FiniteField(19^2)
             sage: parent(a)
             Finite Field in a of size 19^2
-            sage: b=a**20
-            sage: p=FinitePolyExtElement.charpoly(b,"x", algorithm="pari")
-            sage: q=FinitePolyExtElement.charpoly(b,"x", algorithm="matrix")
-            sage: q == p
+            sage: b = a**20
+            sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm="pari")
+            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm="matrix")   # needs sage.modules
+            sage: q == p                                                          # needs sage.modules
             True
             sage: p
             x^2 + 15*x + 4

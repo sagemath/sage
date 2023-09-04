@@ -6908,7 +6908,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: y.resultant(y + x)                                                    # needs sage.libs.pari
+            sage: y.resultant(y + x)                                                    # needs sage.libs.pari sage.modules
             x
 
             sage: # needs sage.libs.singular
@@ -7793,7 +7793,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: x = CC['x'].0                                                         # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: x = CC['x'].0
             sage: f = x^3 - 2
             sage: f.roots()                                                             # needs numpy
             [(1.25992104989487, 1),

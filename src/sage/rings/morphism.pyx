@@ -81,9 +81,9 @@ From smaller to bigger doesn't make sense::
 From bigger to small does::
 
     sage: f = RR.hom(RealField(15))                                                     # needs sage.rings.real_mpfr
-    sage: f(2.5)
+    sage: f(2.5)                                                                        # needs sage.rings.real_mpfr
     2.500
-    sage: f(RR.pi())
+    sage: f(RR.pi())                                                                    # needs sage.rings.real_mpfr
     3.142
 
 Inclusion map from the reals to the complexes::
@@ -1516,7 +1516,7 @@ cdef class RingHomomorphism(RingMap):
             sage: A.<t> = GF(7^3)
             sage: R = A.polynomial_ring().quotient(A.polynomial())
             sage: g = A.hom(R.gens(), R)
-            sage: (g.inverse() * g).is_identity()
+            sage: (g.inverse() * g).is_identity()                                       # needs sage.libs.singular
             True
             sage: B.<T>, f = A.extension(3, map=True)
             sage: f.inverse()
@@ -2039,7 +2039,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         TESTS::
 
-            sage: loads(dumps(f2)) == f2                                                # needs sage.rings.finite_rings
+            sage: loads(dumps(f2)) == f2                                                # needs sage.libs.pari
             True
 
         This was fixed in :trac:`24277`::
@@ -2946,7 +2946,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
             sage: phi = S.hom([b, c, a])
