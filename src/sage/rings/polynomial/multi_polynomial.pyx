@@ -1549,9 +1549,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # needs sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.polynomial(y).discriminant()                                        # needs sage.libs.pari
+            sage: f.polynomial(y).discriminant()                                        # needs sage.libs.pari sage.modules
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()             # needs sage.libs.singular
+            sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()             # needs sage.libs.singular sage.modules
             False
 
         TESTS:
@@ -1561,7 +1561,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
-            sage: f.discriminant(y)
+            sage: f.discriminant(y)                                                     # needs sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
 
         AUTHOR: Miguel Marco

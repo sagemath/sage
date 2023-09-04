@@ -873,6 +873,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(13^64, impl='pari_ffelt'); F
             Finite Field in a of size 13^64
             sage: x = F.random_element()
@@ -885,6 +886,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: x.pth_power(-1)**13 == x
             True
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(127^16, impl='pari_ffelt'); F
             Finite Field in a of size 127^16
             sage: x = F.random_element()
@@ -1386,6 +1388,7 @@ def unpickle_FiniteFieldElement_pari_ffelt(parent, elem):
     """
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: k.<a> = GF(2^20, impl='pari_ffelt')
         sage: e = k.random_element()
         sage: f = loads(dumps(e)) # indirect doctest

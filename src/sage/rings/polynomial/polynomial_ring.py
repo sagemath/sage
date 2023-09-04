@@ -1057,10 +1057,11 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
-            sage: R.<ZZZ> = RealIntervalField()[]; R                                    # needs sage.rings.real_interval_field
+            sage: # needs sage.rings.finite_rings sage.rings.real_interval_field
+            sage: R.<ZZZ> = RealIntervalField()[]; R
             Univariate Polynomial Ring in ZZZ over
              Real Interval Field with 53 bits of precision
-            sage: R.change_ring(GF(19^2, 'b'))                                          # needs sage.rings.finite_rings
+            sage: R.change_ring(GF(19^2, 'b'))
             Univariate Polynomial Ring in ZZZ over Finite Field in b of size 19^2
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -2591,7 +2592,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: f = GF(5^3, 'a')['x'].irreducible_element(2)
             sage: f.degree()
             2

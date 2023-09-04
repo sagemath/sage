@@ -656,7 +656,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.libs.pari sage.modules
             sage: r = Integers(125)
             sage: b = r.multiplicative_generator()^3
             sage: a = b^17
@@ -825,10 +825,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
+
             sage: m = Mod(3, 1568)
-            sage: v = m.generalised_log(); v                                            # needs sage.libs.pari
+            sage: v = m.generalised_log(); v                                            # needs sage.libs.pari sage.modules
             [1, 3, 1]
-            sage: prod([Zmod(1568).unit_gens()[i] ** v[i] for i in [0..2]])             # needs sage.libs.pari
+            sage: prod([Zmod(1568).unit_gens()[i] ** v[i] for i in [0..2]])             # needs sage.libs.pari sage.modules
             3
 
         .. SEEALSO::
@@ -924,7 +925,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             1
             sage: a.polynomial()
             1
-            sage: type(a.polynomial())                                                  # needs sage.rings.finite_rings
+            sage: type(a.polynomial())                                                  # needs sage.libs.flint
             <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
         """
         R = self.parent()[var]

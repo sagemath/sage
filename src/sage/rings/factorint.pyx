@@ -135,7 +135,7 @@ cpdef factor_aurifeuillian(n, check=True):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
         sage: fa(2^6 + 1)
         [5, 13]

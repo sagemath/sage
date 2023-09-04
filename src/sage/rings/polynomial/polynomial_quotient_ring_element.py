@@ -592,7 +592,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quo(x^3 -389*x^2 + 2*x - 5)
-            sage: a.charpoly('X')
+            sage: a.charpoly('X')                                                       # needs sage.modules
             X^3 - 389*X^2 + 2*X - 5
         """
         return self.matrix().charpoly(var)
@@ -606,9 +606,9 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 -389*x^2 + 2*x - 5)
-            sage: a.fcp('x')
+            sage: a.fcp('x')                                                            # needs sage.modules
             x^3 - 389*x^2 + 2*x - 5
-            sage: S(1).fcp('y')
+            sage: S(1).fcp('y')                                                         # needs sage.modules
             (y - 1)^3
         """
         return self.charpoly(var).factor()
@@ -621,7 +621,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3-2)
+            sage: S.<a> = R.quotient(x^3 - 2)
             sage: b = a^2 - 3
             sage: b
             a^2 - 3
@@ -661,7 +661,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 + 2*x - 5)
-            sage: a.matrix()
+            sage: a.matrix()                                                            # needs sage.modules
             [ 0  1  0]
             [ 0  0  1]
             [ 5 -2  0]
@@ -699,9 +699,9 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 + 2*x - 5)
-            sage: (a + 123).minpoly()
+            sage: (a + 123).minpoly()                                                   # needs sage.modules
             x^3 - 369*x^2 + 45389*x - 1861118
-            sage: (a + 123).matrix().minpoly()
+            sage: (a + 123).matrix().minpoly()                                          # needs sage.modules
             x^3 - 369*x^2 + 45389*x - 1861118
 
         One useful application of this function is to compute a minimal
@@ -711,10 +711,10 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: # needs sage.rings.finite_rings
             sage: F2.<i> = GF((431,2), modulus=[1,0,1])
             sage: F6.<u> = F2.extension(3)
-            sage: (u + 1).minpoly()
+            sage: (u + 1).minpoly()                                                     # needs sage.modules
             x^6 + 425*x^5 + 19*x^4 + 125*x^3 + 189*x^2 + 239*x + 302
             sage: ext = F6.over(F2)
-            sage: ext(u + 1).minpoly()  # indirect doctest
+            sage: ext(u + 1).minpoly()  # indirect doctest                              # needs sage.modules
             x^3 + (396*i + 428)*x^2 + (80*i + 39)*x + 9*i + 178
 
         TESTS:
@@ -750,7 +750,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 - 389*x^2 + 2*x - 5)
-            sage: a.norm()
+            sage: a.norm()                                                              # needs sage.modules
             5
         """
         return self.matrix().determinant()
@@ -763,7 +763,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3 -389*x^2 + 2*x - 5)
+            sage: S.<a> = R.quotient(x^3 - 389*x^2 + 2*x - 5)
             sage: a.trace()
             389
         """

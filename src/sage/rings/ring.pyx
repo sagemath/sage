@@ -533,10 +533,10 @@ cdef class Ring(ParentWithGens):
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
             sage: S._ideal_class_(2)
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
-            sage: T.<z> = S[]                                                           # needs sage.rings.finite_rings
-            sage: T._ideal_class_(5)                                                    # needs sage.rings.finite_rings
+            sage: T.<z> = S[]                                                           # needs sage.libs.singular
+            sage: T._ideal_class_(5)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_generic'>
-            sage: T._ideal_class_(1)                                                    # needs sage.rings.finite_rings
+            sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_principal'>
 
         Since :trac:`7797`, non-commutative rings have ideals as well::

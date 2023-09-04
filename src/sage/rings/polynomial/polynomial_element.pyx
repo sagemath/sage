@@ -2980,8 +2980,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: D = d0 + d1*y + d2*y^2 + d3*y^3 + d4*y^4 + d5*y^5 + d6*y^6 + d7*y^7
             sage: F = D.subs({y: B})
             sage: G = A.subs({y: F}) + C
-            sage: g = G.mod(y^8 + y)
-            sage: g.degree(y)
+            sage: g = G.mod(y^8 + y)                                                    # needs sage.libs.singular
+            sage: g.degree(y)                                                           # needs sage.libs.singular
             7
         """
         return self % other

@@ -1424,7 +1424,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QS2gens                                                               # needs sage.rings.number_field
             [-1]
 
-            sage: all(QQ.selmer_space([], p)[0].dimension() == 0                        # needs sage.libs.pari
+            sage: all(QQ.selmer_space([], p)[0].dimension() == 0                        # needs sage.libs.pari sage.rings.number_field
             ....:     for p in primes(3, 10))
             True
 
