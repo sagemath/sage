@@ -222,58 +222,6 @@ class BinaryQF(SageObject):
             raise ValueError('discriminant must be congruent to 0 or 1 modulo 4')
         return BinaryQF([1, D4, (D4-D)//4])
 
-    @staticmethod
-    def random(D):
-        r"""
-        Return a somewhat random primitive binary quadratic form of the
-        given discriminant.
-
-        (In the case `D < 0`, only positive definite forms are returned.)
-
-        .. NOTE::
-
-            No guarantees are being made about the distribution of forms
-            sampled by this function.
-
-        EXAMPLES::
-
-            sage: BinaryQF.random(5)    # random
-            448219*x^2 - 597179*x*y + 198911*y^2
-            sage: BinaryQF.random(-7)   # random
-            10007*x^2 + 10107*x*y + 2552*y^2
-
-        TESTS::
-
-            sage: D = choice((-4,+4)) * randrange(9999) + randrange(2) or 1
-            sage: Q = BinaryQF.random(D)
-            sage: Q.discriminant() == D
-            True
-            sage: Q.is_primitive()
-            True
-            sage: Q.is_indefinite() or Q.is_positive_definite()
-            True
-        """
-        D = ZZ(D)
-        D4 = D % 4
-        if D4 not in (0,1):
-            raise ValueError('discriminant must be congruent to 0 or 1 modulo 4')
-
-        from sage.misc.prandom import randrange
-        from sage.misc.misc_c import prod
-        from sage.matrix.special import random_matrix
-        B = (D.abs() or 1) * 99  # kind of arbitrary
-        while True:
-            b = randrange(D4, B, 2)
-            ac = (b**2 - D) // 4
-            if ac:
-                break
-        a = prod(l**randrange(e+1) for l,e in ac.factor())
-        a = a.prime_to_m_part(gcd([a, b, ac//a]))
-        c = ac // a
-        M = random_matrix(ZZ, 2, 2, 'unimodular')
-        M.rescale_row(0, (-1)**randrange(2))
-        return BinaryQF([a, b, c]) * M
-
     def __mul__(self, right):
         """
         Gauss composition or right action by a 2x2 integer matrix.

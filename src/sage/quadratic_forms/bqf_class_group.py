@@ -85,6 +85,8 @@ from sage.structure.element import AdditiveGroupElement
 
 from sage.misc.prandom import randrange
 from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.integer_mod import Mod
+from sage.arith.misc import random_prime
 from sage.groups.generic import order_from_multiple, multiple
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 from sage.quadratic_forms.binary_qf import BinaryQF
@@ -181,13 +183,17 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         r"""
         Return a somewhat random element of this form class group.
 
-        ALGORITHM: :meth:`BinaryQF.random`
+        ALGORITHM:
+
+        Sample random odd primes `a` until `b^2 = D \pmod{4a}` has a
+        solution `b \in \ZZ` and set `c = (b^2-D)/(4a)`. Flip a coin
+        to choose the sign of `b`. Then return the class of `[a,b,c]`.
 
         .. NOTE::
 
-            No guarantees are being made about the distribution of classes
-            sampled by this function. Heuristically, however, it should be
-            fairly close to uniform.
+            No strict guarantees are being made about the distribution of
+            classes sampled by this function. Heuristically, however, it
+            should be fairly close to uniform.
 
         EXAMPLES::
 
@@ -198,7 +204,16 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             sage: cl.form().discriminant()
             -999
         """
-        return self(BinaryQF.random(self._disc))
+        B = self._disc.abs() * 100 + 9999
+        while True:
+            a = random_prime(B, proof=False, lbound=3)
+            if self._disc.kronecker(a) == 1:
+                break
+        b = ZZ(Mod(self._disc, 4*a).sqrt())
+        c = (b**2 - self._disc) // (4*a)
+        if randrange(2):
+            b = -b
+        return self(BinaryQF([a,b,c]))
 
     def __hash__(self):
         r"""
