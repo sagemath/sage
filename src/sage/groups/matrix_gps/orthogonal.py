@@ -157,7 +157,7 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
     Check that :trac:`26028` is fixed::
 
-        sage: GO(3,25).order()  # indirect doctest                                      # needs sage.rings.finite_rings
+        sage: GO(3,25).order()  # indirect doctest                                      # needs sage.libs.gap sage.rings.finite_rings
         31200
 
     Check that :trac:`28054` is fixed::
