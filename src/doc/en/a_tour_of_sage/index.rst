@@ -38,7 +38,7 @@ Here we integrate a simple function.
 
 ::
 
-    sage: var('x')   # create a symbolic variable
+    sage: x = var('x')   # create a symbolic variable
     sage: integrate(sqrt(x) * sqrt(1 + x), x)
     1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1) - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
 
@@ -46,7 +46,7 @@ This asks Sage to solve a quadratic equation. The symbol ``==`` represents equal
 
 ::
 
-    sage: var('a')
+    sage: a = var('a')
     sage: S = solve(x^2 + x == a, x); S
     [x == -1/2*sqrt(4*a + 1) - 1/2, x == 1/2*sqrt(4*a + 1) - 1/2]
 
@@ -125,8 +125,6 @@ This asks Sage to factor a polynomial in two variables.
      x^51*y^9 - x^48*y^12 + x^42*y^18 + x^39*y^21 - x^33*y^27 -
      x^30*y^30 - x^27*y^33 + x^21*y^39 + x^18*y^42 - x^12*y^48 -
      x^9*y^51 + x^3*y^57 + y^60)
-
-::
 
     sage: F.expand()
     x^99 + y^99
