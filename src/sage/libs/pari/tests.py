@@ -30,7 +30,7 @@ Now it takes much less than a second::
     PARI stack size set to 200000 bytes, maximum size set to ...
     sage: x = polygen(ZpFM(3,10))                                                       # needs sage.rings.padics
     sage: pol = ((x-1)^50 + x)                                                          # needs sage.rings.padics
-    sage: pari(pol).poldisc()
+    sage: pari(pol).poldisc()                                                           # needs sage.rings.padics
     2*3 + 3^4 + 2*3^6 + 3^7 + 2*3^8 + 2*3^9 + O(3^10)
 
 This used to give the wrong answer before :trac:`23259`::
@@ -59,56 +59,58 @@ from the lowest degree term.  This includes trailing zeros::
 
 Number fields::
 
+    sage: # needs sage.rings.number_field
     sage: x = polygen(QQ)
-    sage: K.<a> = NumberField(x^4 - 4*x^2 + 1)                                          # needs sage.rings.number_field
-    sage: pari(K).nf_get_pol()                                                          # needs sage.rings.number_field
+    sage: K.<a> = NumberField(x^4 - 4*x^2 + 1)
+    sage: pari(K).nf_get_pol()
     y^4 - 4*y^2 + 1
-    sage: L.<b> = K.extension(x^2 - 5)                                                  # needs sage.rings.number_field
-    sage: pari(L).nf_get_pol()        # Absolute
+    sage: L.<b> = K.extension(x^2 - 5)
+    sage: pari(L).nf_get_pol()              # Absolute
     y^8 - 28*y^6 + 208*y^4 - 408*y^2 + 36
-    sage: L.pari_rnf().nf_get_pol()   # Relative
+    sage: L.pari_rnf().nf_get_pol()         # Relative
     x^2 - 5
-
-    sage: K.pari_nf().nf_get_pol()                                                      # needs sage.rings.number_field
+    sage: K.pari_nf().nf_get_pol()
     y^4 - 4*y^2 + 1
-    sage: K.pari_bnf().nf_get_pol()                                                     # needs sage.rings.number_field
+    sage: K.pari_bnf().nf_get_pol()
     y^4 - 4*y^2 + 1
 
-    sage: K.<a> = QuadraticField(-65)                                                   # needs sage.rings.number_field
-    sage: G = K.pari_bnf().bnf_get_gen(); G                                             # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<a> = QuadraticField(-65)
+    sage: G = K.pari_bnf().bnf_get_gen(); G
     [[3, 2; 0, 1], [2, 1; 0, 1]]
-    sage: [K.ideal(J) for J in G]                                                       # needs sage.rings.number_field
+    sage: [K.ideal(J) for J in G]
     [Fractional ideal (3, a + 2), Fractional ideal (2, a + 1)]
 
 Conversions::
 
-    sage: K.<i> = QuadraticField(-1)                                                    # needs sage.rings.number_field
-    sage: F = pari(K).idealfactor(K.ideal(5)); F                                        # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<i> = QuadraticField(-1)
+    sage: F = pari(K).idealfactor(K.ideal(5)); F
     [[5, [-2, 1]~, 1, 1, [2, -1; 1, 2]], 1; [5, [2, 1]~, 1, 1, [-2, -1; 1, -2]], 1]
     sage: F[0,0].pr_get_p()
     5
-
-    sage: K.<i> = QuadraticField(-1)                                                    # needs sage.rings.number_field
-    sage: J = pari(K).idealstar(K.ideal(4*i + 2))                                       # needs sage.rings.number_field
+    sage: J = pari(K).idealstar(K.ideal(4*i + 2))
     sage: J.bid_get_cyc()
     [4, 2]
 
-    sage: int(pari(RealField(63)(2^63-1)))                                              # needs sage.rings.real_mpfr
+    sage: int(pari(RealField(63)(2^63 - 1)))                                            # needs sage.rings.real_mpfr
     9223372036854775807   # 32-bit
     9223372036854775807   # 64-bit
-    sage: int(pari(RealField(63)(2^63+2)))                                              # needs sage.rings.real_mpfr
+    sage: int(pari(RealField(63)(2^63 + 2)))                                            # needs sage.rings.real_mpfr
     9223372036854775810
 
-    sage: K = Qp(11,5)                                                                  # needs sage.rings.padics
-    sage: x = K(11^-10 + 5*11^-7 + 11^-6)                                               # needs sage.rings.number_field
+    sage: # needs sage.rings.padics
+    sage: K = Qp(11,5)
+    sage: x = K(11^-10 + 5*11^-7 + 11^-6)
     sage: y = pari(x)
     sage: y.padicprime()
     11
     sage: y.padicprime().type()
     't_INT'
 
+    sage: # needs sage.rings.finite_rings
     sage: x = polygen(GF(3))
-    sage: k.<a> = GF(9, modulus=x^2+1)
+    sage: k.<a> = GF(9, modulus=x^2 + 1)
     sage: b = pari(a).ffprimroot()
     sage: b  # random
     a + 1
@@ -497,13 +499,15 @@ Basic functions::
     sage: pari([[1.1,2.2],[3.3,4.4]]).floor()
     [[1, 2], [3, 4]]
 
-    sage: x = SR.symbol('x')                                                            # needs sage.symbolic
-    sage: pari(x).floor()                                                               # needs sage.symbolic
+    sage: # needs sage.symbolic
+    sage: x = SR.symbol('x')
+    sage: pari(x).floor()
     x
-    sage: pari((x^2+x+1)/x).floor()                                                     # needs sage.symbolic
+    sage: pari((x^2+x+1)/x).floor()
     x + 1
-    sage: pari(x^2+5*x+2.5).floor()                                                     # needs sage.symbolic
+    sage: pari(x^2+5*x+2.5).floor()
     x^2 + 5*x + 2.50000000000000
+
     sage: pari('"hello world"').floor()
     Traceback (most recent call last):
     ...
@@ -767,11 +771,13 @@ Transcendental functions::
     0.412710032209716
     sage: pari(2).besseli(3)
     2.24521244092995
-    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
-    sage: pari(2).besseli(3+i)                                                          # needs sage.rings.real_mpfr
+
+    sage: # needs sage.rings.real_mpfr
+    sage: C.<i> = ComplexField()
+    sage: pari(2).besseli(3+i)
     1.12539407613913 + 2.08313822670661*I
-    sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
-    sage: pari(2+i).bessely(3)                                                          # needs sage.rings.real_mpfr
+    sage: C.<i> = ComplexField()
+    sage: pari(2+i).bessely(3)
     -0.280775566958244 - 0.486708533223726*I
 
     sage: pari(1.5).cos()
