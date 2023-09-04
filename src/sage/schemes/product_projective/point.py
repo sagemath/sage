@@ -99,7 +99,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             N = parent.codomain().ambient_space().dimension_relative_components()
             if check:
                 parent.codomain()._check_satisfies_equations(polys)
-            splitpolys=self.codomain().ambient_space()._factors(polys)
+            splitpolys = self.codomain().ambient_space()._factors(polys)
             self._points = [parent.codomain().ambient_space()[i].point(splitpolys[i], check) for i in range(len(N))]
 
     def __getitem__(self, i):

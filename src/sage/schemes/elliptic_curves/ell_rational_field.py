@@ -3055,12 +3055,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__selmer_rank
         except AttributeError:
-            if algorithm=="pari":
+            if algorithm == "pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
                 tor = self.two_torsion_rank()
                 return upper + tor + s
-            elif algorithm=="mwrank":
+            elif algorithm == "mwrank":
                 C = self.mwrank_curve()
                 self.__selmer_rank = C.selmer_rank()
                 return self.__selmer_rank
@@ -3110,11 +3110,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__rank_bound
         except AttributeError:
-            if algorithm=="pari":
+            if algorithm == "pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
                 return upper
-            elif algorithm=="mwrank":
+            elif algorithm == "mwrank":
                 C = self.mwrank_curve()
                 self.__rank_bound = C.rank_bound()
                 return self.__rank_bound

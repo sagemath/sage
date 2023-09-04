@@ -113,7 +113,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         if v is infinity or\
           (isinstance(v, (list,tuple)) and len(v) == 1 and v[0] is infinity):
             if self.ambient_space().dimension_relative() > 1:
-                raise ValueError("%s not well defined in dimension > 1"%v)
+                raise ValueError("%s not well defined in dimension > 1" % v)
             v = [1, 0]
         # todo: update elliptic curve stuff to take point_homset as argument
         from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
@@ -259,7 +259,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         PP = self.ambient_space()
         n = PP.dimension_relative()
         if i < 0 or i > n:
-            raise ValueError("Argument i (= %s) must be between 0 and %s."%(i, n))
+            raise ValueError("Argument i (= %s) must be between 0 and %s." % (i, n))
         try:
             A = self.__affine_patches[i]
             #assume that if you've passed in a new ambient affine space
@@ -273,7 +273,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         if AA is None:
             AA = PP.affine_patch(i)
         elif AA.dimension_relative() != n:
-            raise ValueError("Affine Space must be of the dimension %s"%(n))
+            raise ValueError("Affine Space must be of the dimension %s" % (n))
         phi = AA.projective_embedding(i, PP)
         polys = self.defining_polynomials()
         xi = phi.defining_polynomials()
@@ -325,7 +325,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         i_max = 0
         p_max = abs_point[i_max]
         for i in range(1,len(point)):
-            if abs_point[i]>p_max:
+            if abs_point[i] > p_max:
                 i_max = i
                 p_max = abs_point[i_max]
         return i_max
@@ -1098,7 +1098,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         try:
             self.ambient_space()(P)
         except TypeError:
-            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)"%(P,X))
+            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)" % (P,X))
         # find an affine chart of the ambient space of this curve that contains P
         n = self.ambient_space().dimension_relative()
         for i in range(n + 1):
@@ -1393,7 +1393,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         # polynomial ring in just the plucker coordinates
         T2 = PolynomialRing(R.base_ring(), tvars)
-        alp = T.hom(tvars + (N*(d+1) +N)*[0], T2)
+        alp = T.hom(tvars + (N*(d+1) + N)*[0], T2)
         # get the degrees of the reduced generators of CH
         degs = [u.degree() for u in reduced]
         mind = max(degs)
