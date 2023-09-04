@@ -153,15 +153,6 @@ cdef class CVXPYBackend(MatrixBackend):
 
         self.set_verbosity(0)
 
-        if self.variables:
-            expr = AddExpression([c * x for c, x in zip(self.objective_coefficients[0], self.variables)])
-        else:
-            expr = Constant(0)
-        if maximization:
-            objective = cvxpy.Maximize(expr)
-        else:
-            objective = cvxpy.Minimize(expr)
-
         self.variables = []
         for j in range(self.ncols()):
             lower_bound, upper_bound = self.col_bounds(j)
@@ -171,6 +162,15 @@ cdef class CVXPYBackend(MatrixBackend):
             name = self.col_name(j)
             self.variables.append(self._cvxpy_variable(lower_bound, upper_bound,
                                                        binary, continuous, integer, name))
+
+        if self.variables:
+            expr = AddExpression([c * x for c, x in zip(self.objective_coefficients[0], self.variables)])
+        else:
+            expr = Constant(0)
+        if maximization:
+            objective = cvxpy.Maximize(expr)
+        else:
+            objective = cvxpy.Minimize(expr)
 
         constraints = []
         for i in range(self.nrows()):
