@@ -2146,7 +2146,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             EXAMPLES::
 
                 sage: L = RootSystem(["A",2,1]).ambient_space()
-                sage: options = L.plot_parse_options(); options                         # needs sage.symbolic
+                sage: options = L.plot_parse_options(); options                         # needs sage.geometry.polyhedron sage.symbolic
                 <sage.combinat.root_system.plot.PlotOptions object at ...>
 
             .. SEEALSO::

@@ -91,7 +91,7 @@ def WithRealizations(self):
     to `B'` is implemented by a canonical coercion between `P_B` and
     `P_{B'}`::
 
-        sage: # needs sage.combinat sage.modules
+        sage: # needs sage.modules
         sage: F = A.F(); In = A.In(); Out = A.Out()
         sage: i = In.an_element(); i
         In[{}] + 2*In[{1}] + 3*In[{2}] + In[{1, 2}]
@@ -104,7 +104,7 @@ def WithRealizations(self):
 
     allowing for mixed arithmetic::
 
-        sage: (1 + Out.from_set(1)) * In.from_set(2,3)                                  # needs sage.combinat sage.modules
+        sage: (1 + Out.from_set(1)) * In.from_set(2,3)                                  # needs sage.modules
         Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}]
         + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
 
@@ -118,7 +118,7 @@ def WithRealizations(self):
     Instead of manually defining the shorthands ``F``, ``In``, and
     ``Out``, as above one can just do::
 
-        sage: A.inject_shorthands()                                                     # needs sage.combinat sage.modules
+        sage: A.inject_shorthands()                                                     # needs sage.modules
         Defining F as shorthand for
          The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
         Defining In as shorthand for
@@ -303,7 +303,7 @@ class WithRealizationsCategory(RegressiveCovariantConstructionCategory):
 
         EXAMPLES::
 
-            sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C #indirect doctest
+            sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C  # indirect doctest
             Category of graded hopf algebras with basis over Rational Field with realizations
         """
         s = repr(self.base_category())

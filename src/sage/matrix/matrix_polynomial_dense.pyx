@@ -742,7 +742,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: pR.<x> = GF(7)[]
             sage: A = Matrix(pR, 3, 3,
             ....:            [[4*x+5,           5*x^2 + x + 1, 4*x^2 + 4],
@@ -755,18 +754,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: (B*A).truncate(4) == 1
             True
 
-            sage: A.inverse_series_trunc(0)                                             # needs sage.rings.finite_rings
+            sage: A.inverse_series_trunc(0)
             Traceback (most recent call last):
             ...
             ValueError: the precision must be positive
 
-            sage: A[:2,:].inverse_series_trunc(4)                                       # needs sage.rings.finite_rings
+            sage: A[:2,:].inverse_series_trunc(4)
             Traceback (most recent call last):
             ...
             ArithmeticError: the input matrix must be square
 
-            sage: A[0,:] = A[0,:] - A[0,:](0) + A[1,:](0) + A[2,:](0)                   # needs sage.rings.finite_rings
-            sage: A.inverse_series_trunc(4)                                             # needs sage.rings.finite_rings
+            sage: A[0,:] = A[0,:] - A[0,:](0) + A[1,:](0) + A[2,:](0)
+            sage: A.inverse_series_trunc(4)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: the constant matrix term self(0) must be invertible
@@ -988,7 +987,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: pR.<x> = GF(7)[]
             sage: A = Matrix(pR, 3, 3,
             ....:     [[4*x+5,           5*x^2 + x + 1, 4*x^2 + 4],
@@ -1001,7 +999,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             (2*x^3 + x^2, 5*x^3 + x^2 + 5*x + 6, 4*x^3 + 6*x^2 + 4*x)
             sage: B == A*X % x**4
             True
-
             sage: B = Matrix(pR, 3, 2,
             ....:            [[5*x^2 + 6*x + 3, 4*x^2 + 6*x + 4],
             ....:             [  x^2 + 4*x + 2,         5*x + 2],
@@ -1035,18 +1032,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Supports rectangular and rank-deficient cases::
 
-            sage: A[:2,:].solve_right_series_trunc(B[:2,:],4)                           # needs sage.rings.finite_rings
+            sage: A[:2,:].solve_right_series_trunc(B[:2,:],4)
             [    5*x^2 + 4*x           x + 4]
             [  x^2 + 3*x + 5 3*x^2 + 4*x + 4]
             [        5*x + 3         3*x + 2]
 
-            sage: V = Matrix([[2*x^2 + 5*x + 1], [3*x^2+4]])                            # needs sage.rings.finite_rings
-            sage: A[:,:2].solve_right_series_trunc(A[:,:2]*V, 4) == V                   # needs sage.rings.finite_rings
+            sage: V = Matrix([[2*x^2 + 5*x + 1], [3*x^2+4]])
+            sage: A[:,:2].solve_right_series_trunc(A[:,:2]*V, 4) == V
             True
 
-            sage: A[:,1] = (x+1) * A[:,0]; A[:,2] = (x+5) * A[:,0]                      # needs sage.rings.finite_rings
-            sage: B = (3*x^3+x^2+2)*A[:,0]                                              # needs sage.rings.finite_rings
-            sage: A.solve_right_series_trunc(B, 6)                                      # needs sage.rings.finite_rings
+            sage: A[:,1] = (x+1) * A[:,0]; A[:,2] = (x+5) * A[:,0]
+            sage: B = (3*x^3+x^2+2)*A[:,0]
+            sage: A.solve_right_series_trunc(B, 6)
             [4*x^2 + 6*x + 2]
             [      3*x^2 + x]
             [              0]
@@ -1321,7 +1318,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: pR.<x> = GF(7)[]
             sage: M = Matrix(pR, 0, 0)
             sage: M._is_empty_popov()
@@ -1329,7 +1325,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M._is_empty_popov(include_zero_vectors=False)
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: M = Matrix(pR, 0, 3)
             sage: M._is_empty_popov(include_zero_vectors=False)
             True
@@ -1912,7 +1907,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         columns) can be forbidden, and otherwise they should be at the bottom
         (resp. the right-hand side) of the matrix::
 
-            sage: # needs sage.rings.finite_rings
             sage: N[:,1:].is_hermite(lower_echelon=True)
             False
             sage: N[[1,2,0],1:].is_hermite(lower_echelon=True)
@@ -2479,7 +2473,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: pR.<x> = GF(3)[]
             sage: A = matrix(pR, 3, [x,   x^2, x^3,
             ....:                    x^2, x^1, 0,
@@ -2512,8 +2505,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         A zero matrix is already reduced::
 
-            sage: A = matrix(pR, 2, [0,0,0,0])                                          # needs sage.rings.finite_rings
-            sage: A.reduced_form()                                                      # needs sage.rings.finite_rings
+            sage: A = matrix(pR, 2, [0,0,0,0])
+            sage: A.reduced_form()
             [0 0]
             [0 0]
 
@@ -2590,7 +2583,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: M.<x> = GF(7)[]
             sage: A = matrix(M, 2, 3, [x, 1, 2*x, x, 1+x, 2])
             sage: A.hermite_form()
@@ -2653,7 +2645,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: pR.<x> = GF(7)[]
             sage: A = Matrix(pR, 3, 2,
             ....:            [[      3*x^3 + 3*x,         2*x^3 + 4],
@@ -2852,7 +2843,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         remainder, in which case this method will find it via normal form
         computation::
 
-            sage: # needs sage.rings.finite_rings
             sage: B = Matrix(pR, 1, 2, [[x, x]])
             sage: A = Matrix(pR, 1, 2, [[x, x+2]])
             sage: A.right_quo_rem(B)
@@ -3064,7 +3054,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         columns), even when there is a solution, this method might not find
         it::
 
-            sage: # needs sage.rings.finite_rings
             sage: B = Matrix(pR, 1, 2, [[x, x]])
             sage: A = Matrix(pR, 1, 2, [[x, x+2]])
             sage: A == 1*B + Matrix([[0,2]])    # a valid quo_rem
@@ -3678,7 +3667,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         This method supports any number of columns or rows, as well as
         arbitrary shifts and orders::
 
-            sage: # needs sage.rings.finite_rings
             sage: order = [4, 1, 2]; shifts = [-3, 4]
             sage: pmat = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5, 4],
             ....:                    [2*x^3 + 2*x^2 + 2*x + 3, 6, 6*x + 3]])
@@ -3689,7 +3677,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         The returned list is the shifted row degrees of ``appbas``::
 
-            sage: rdeg == appbas.row_degrees(shifts)                                    # needs sage.rings.finite_rings
+            sage: rdeg == appbas.row_degrees(shifts)
             True
 
         Approximant bases for the zero matrix are all constant unimodular

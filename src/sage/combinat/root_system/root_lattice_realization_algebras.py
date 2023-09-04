@@ -65,7 +65,7 @@ class Algebras(AlgebrasCategory):
 
                 sage: A = RootSystem(["B",2]).weight_space().algebra(QQ)
                 sage: A.some_elements()
-                [B[2*Lambda[1] + 2*Lambda[2]], ... B[Lambda[1]], B[Lambda[2]]]
+                [B[2*Lambda[1] + 2*Lambda[2]],... B[Lambda[1]], B[Lambda[2]]]
                 sage: A.some_elements()                                                 # needs sage.graphs
                 [B[2*Lambda[1] + 2*Lambda[2]],
                  B[2*Lambda[1] - 2*Lambda[2]],

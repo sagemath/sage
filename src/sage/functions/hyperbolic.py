@@ -198,7 +198,7 @@ class Function_coth(GinacFunction):
 
         EXAMPLES::
 
-            sage: coth(3.1415)
+            sage: coth(3.1415)                                                          # needs sage.rings.real_mpfr
             1.00374256795520
             sage: coth(complex(1, 2))  # abs tol 1e-15                                  # needs sage.rings.complex_double
             (0.8213297974938518+0.17138361290918508j)

@@ -1120,12 +1120,12 @@ vector spaces, the result is, as a vector space, the direct sum
 are monoids, `A \times B \times B` is naturally endowed with a monoid
 structure for pointwise multiplication::
 
-    sage: C in Monoids()                                                                # needs sage.modules
+    sage: C in Monoids()                                                                # needs sage.combinat sage.groups sage.modules
     True
 
 the unit being the Cartesian product of the units of the operands::
 
-    sage: C.one()                                                                       # needs sage.combinat sage.modules
+    sage: C.one()                                                                       # needs sage.combinat sage.groups sage.modules
     B[(0, word: )] + B[(1, ())] + B[(2, ())]
     sage: cartesian_product([A.one(), B.one(), B.one()])                                # needs sage.combinat sage.groups sage.modules
     B[(0, word: )] + B[(1, ())] + B[(2, ())]
@@ -1135,7 +1135,7 @@ The pointwise product can be implemented generically for all magmas
 constructed as Cartesian products. It's thus implemented in the
 :class:`Magmas` category::
 
-    sage: C.product.__module__                                                          # needs sage.modules
+    sage: C.product.__module__                                                          # needs sage.combinat sage.groups sage.modules
     'sage.categories.magmas'
 
 More specifically, keeping on using nested classes to structure the
@@ -1167,7 +1167,7 @@ code, the product method is put in the nested class
 
 Let us now look at the categories of ``C``::
 
-    sage: C.categories()                                                                # needs sage.combinat sage.modules
+    sage: C.categories()                                                                # needs sage.combinat sage.groups sage.modules
     [Category of finite dimensional Cartesian products of algebras with basis over Rational Field, ...
      Category of Cartesian products of algebras over Rational Field, ...
      Category of Cartesian products of semigroups, Category of semigroups, ...

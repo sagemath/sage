@@ -14822,7 +14822,7 @@ cdef class Matrix(Matrix1):
         return ``False``)::
 
             sage: rings = [ZZ, QQ, RDF]
-            sage: ring.append(CDF)                                                      # needs sage.rings.complex_double
+            sage: rings.append(CDF)                                                     # needs sage.rings.complex_double
             sage: rings.append(QuadraticField(-1, 'I'))                                 # needs sage.rings.number_field
             sage: from sage.misc.prandom import choice
             sage: ring = choice(rings)

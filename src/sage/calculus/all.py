@@ -52,6 +52,7 @@ def symbolic_expression(x):
 
     Note that equations exist in the symbolic ring::
 
+        sage: # needs sage.schemes
         sage: E = EllipticCurve('15a'); E
         Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
         sage: symbolic_expression(E)
