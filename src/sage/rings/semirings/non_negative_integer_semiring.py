@@ -101,4 +101,5 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         """
         return '\\Bold{N}'
 
+
 NN = NonNegativeIntegerSemiring()

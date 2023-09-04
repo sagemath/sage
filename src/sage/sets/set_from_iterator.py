@@ -214,12 +214,12 @@ class EnumeratedSetFromIterator(Parent):
             True
         """
         return (EnumeratedSetFromIterator,
-                (self._func,                            # func
-                 getattr(self, '_args', None),          # args
-                 getattr(self, '_kwds', None),          # kwds
-                 getattr(self, '__custom_name', None),  # name
-                 self.category(),                       # category
-                 hasattr(self, '_cache'))               # cache
+                (self._func,                    # func
+                 getattr(self, '_args', None),  # args
+                 getattr(self, '_kwds', None),  # kwds
+                 self.get_custom_name(),        # name
+                 self.category(),               # category
+                 hasattr(self, '_cache'))       # cache
                 )
 
     def _repr_(self):

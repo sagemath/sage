@@ -6007,7 +6007,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         This is useful as an input for the method :meth:`order_complex`.
 
         If there is either no top or no bottom element, this
-        raises a ``TypeError``.
+        raises a :class:`TypeError`.
 
         EXAMPLES::
 

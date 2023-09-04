@@ -29,6 +29,3 @@ cdef class CoxGroupElement:
     cdef CoxGroup _parent_group
     cdef CoxGroupElement _new(self)
     cpdef CoxGroup parent_group(self)
-
-cdef class CoxGraph:
-    cdef c_CoxGraph x

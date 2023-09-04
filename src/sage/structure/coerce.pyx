@@ -30,7 +30,7 @@ If there is a coercion (see below) from one of the parents to the other,
 the operation is always performed in the codomain of that coercion. Otherwise
 a reasonable attempt to create a new parent with coercion maps from both
 original parents is made. The results of these discoveries are cached.
-On failure, a TypeError is always raised.
+On failure, a :class:`TypeError` is always raised.
 
 Some arithmetic operations (such as multiplication) can indicate an action
 rather than arithmetic in a common parent. For example::

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.singular
 r"""
 Affine curves
 
@@ -27,49 +28,50 @@ available.
 
 EXAMPLES::
 
-    sage: k.<a> = GF(2)                                                                 # optional - sage.rings.finite_rings
-    sage: A.<x,y,z> = AffineSpace(k, 3)                                                 # optional - sage.rings.finite_rings
-    sage: C = Curve([x^2 + x - y^3, y^4 - y - z^3], A)                                  # optional - sage.rings.finite_rings
-    sage: C.genus()                                                                     # optional - sage.rings.finite_rings
+    sage: k.<a> = GF(2)
+    sage: A.<x,y,z> = AffineSpace(k, 3)
+    sage: C = Curve([x^2 + x - y^3, y^4 - y - z^3], A)
+    sage: C.genus()
     10
-    sage: C.function_field()                                                            # optional - sage.rings.finite_rings
+    sage: C.function_field()
     Function field in z defined by z^9 + x^8 + x^6 + x^5 + x^4 + x^3 + x
 
 Closed points of arbitrary degree can be computed::
 
-    sage: C.closed_points()                     # long time                             # optional - sage.rings.finite_rings
+    sage: # long time
+    sage: C.closed_points()
     [Point (x, y, z), Point (x + 1, y, z)]
-    sage: C.closed_points(2)                    # long time                             # optional - sage.rings.finite_rings
+    sage: C.closed_points(2)
     [Point (x^2 + x + 1, y + 1, z),
      Point (y^2 + y + 1, x + y, z),
      Point (y^2 + y + 1, x + y + 1, z)]
-    sage: p = _[0]                              # long time                             # optional - sage.rings.finite_rings
-    sage: p.places()                            # long time                             # optional - sage.rings.finite_rings
+    sage: p = _[0]
+    sage: p.places()
     [Place (x^2 + x + 1, (1/(x^4 + x^2 + 1))*z^7 + (1/(x^4 + x^2 + 1))*z^6 + 1)]
 
 The places at infinity correspond to the extra closed points of the curve's
 projective closure::
 
-    sage: C.places_at_infinity()                # long time                             # optional - sage.rings.finite_rings
+    sage: C.places_at_infinity()                # long time
     [Place (1/x, 1/x*z)]
 
 It is easy to transit to and from the function field of the curve::
 
-    sage: fx = C(x)                                                                     # optional - sage.rings.finite_rings
-    sage: fy = C(y)                                                                     # optional - sage.rings.finite_rings
-    sage: fx^2 + fx - fy^3                                                              # optional - sage.rings.finite_rings
+    sage: fx = C(x)
+    sage: fy = C(y)
+    sage: fx^2 + fx - fy^3
     0
-    sage: fx.divisor()                                                                  # optional - sage.rings.finite_rings
+    sage: fx.divisor()
     -9*Place (1/x, 1/x*z)
      + 9*Place (x, z)
-    sage: p, = fx.zeros()                                                               # optional - sage.rings.finite_rings
-    sage: C.place_to_closed_point(p)                                                    # optional - sage.rings.finite_rings
+    sage: p, = fx.zeros()
+    sage: C.place_to_closed_point(p)
     Point (x, y, z)
-    sage: _.rational_point()                                                            # optional - sage.rings.finite_rings
+    sage: _.rational_point()
     (0, 0, 0)
-    sage: _.closed_point()                                                              # optional - sage.rings.finite_rings
+    sage: _.closed_point()
     Point (x, y, z)
-    sage: _.place()                                                                     # optional - sage.rings.finite_rings
+    sage: _.place()
     Place (x, z)
 
 Integral affine curves over `\QQ`
@@ -95,10 +97,10 @@ EXAMPLES::
     s
     sage: sy = sy.polynomial(10); sy
     -7/256*s^10 - 5/128*s^8 - 1/16*s^6 - 1/8*s^4 - 1/2*s^2 + 1
-    sage: s = var('s')                                                                  # optional - sage.symbolic
-    sage: P1 = parametric_plot([sx, sy], (s, -1, 1), color='red')                       # optional - sage.plot sage.symbolic
-    sage: P2 = C.plot((x, -1, 1), (y, 0, 2))  # half circle                             # optional - sage.plot sage.symbolic
-    sage: P1 + P2                                                                       # optional - sage.plot sage.symbolic
+    sage: s = var('s')                                                                  # needs sage.symbolic
+    sage: P1 = parametric_plot([sx, sy], (s, -1, 1), color='red')                       # needs sage.plot sage.symbolic
+    sage: P2 = C.plot((x, -1, 1), (y, 0, 2))  # half circle                             # needs sage.plot sage.symbolic
+    sage: P1 + P2                                                                       # needs sage.plot sage.symbolic
     Graphics object consisting of 2 graphics primitives
 
 AUTHORS:
@@ -168,18 +170,19 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
     EXAMPLES::
 
         sage: R.<v> = QQ[]
-        sage: K.<u> = NumberField(v^2 + 3)                                              # optional - sage.rings.number_field
-        sage: A.<x,y,z> = AffineSpace(K, 3)                                             # optional - sage.rings.number_field
-        sage: C = Curve([z - u*x^2, y^2], A); C                                         # optional - sage.rings.number_field
+        sage: K.<u> = NumberField(v^2 + 3)                                              # needs sage.rings.number_field
+        sage: A.<x,y,z> = AffineSpace(K, 3)                                             # needs sage.rings.number_field
+        sage: C = Curve([z - u*x^2, y^2], A); C                                         # needs sage.rings.number_field
         Affine Curve over Number Field in u with defining polynomial v^2 + 3
         defined by (-u)*x^2 + z, y^2
 
     ::
 
-        sage: A.<x,y,z> = AffineSpace(GF(7), 3)                                         # optional - sage.rings.finite_rings
-        sage: C = Curve([x^2 - z, z - 8*x], A); C                                       # optional - sage.rings.finite_rings
+        sage: A.<x,y,z> = AffineSpace(GF(7), 3)
+        sage: C = Curve([x^2 - z, z - 8*x], A); C
         Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
     """
+
     def __init__(self, A, X):
         r"""
         Initialize.
@@ -187,16 +190,16 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
         EXAMPLES::
 
             sage: R.<v> = QQ[]
-            sage: K.<u> = NumberField(v^2 + 3)                                          # optional - sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # optional - sage.rings.number_field
-            sage: C = Curve([z - u*x^2, y^2], A); C                                     # optional - sage.rings.number_field
+            sage: K.<u> = NumberField(v^2 + 3)                                          # needs sage.rings.number_field
+            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # needs sage.rings.number_field
+            sage: C = Curve([z - u*x^2, y^2], A); C                                     # needs sage.rings.number_field
             Affine Curve over Number Field in u with defining polynomial v^2 + 3
             defined by (-u)*x^2 + z, y^2
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(7), 3)                                     # optional - sage.rings.finite_rings
-            sage: C = Curve([x^2 - z, z - 8*x], A); C                                   # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(7), 3)
+            sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
         if not is_AffineSpace(A):
@@ -271,6 +274,7 @@ class AffinePlaneCurve(AffineCurve):
     """
     Affine plane curves.
     """
+
     def __init__(self, A, f):
         r"""
         Initialize.
@@ -322,18 +326,18 @@ class AffinePlaneCurve(AffineCurve):
 
         EXAMPLES::
 
-            sage: F = GF(5)                                                             # optional - sage.rings.finite_rings
-            sage: P2 = AffineSpace(2, F, names='xy')                                    # optional - sage.rings.finite_rings
-            sage: R = P2.coordinate_ring()                                              # optional - sage.rings.finite_rings
-            sage: x, y = R.gens()                                                       # optional - sage.rings.finite_rings
-            sage: f = y^2 - x^9 - x                                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(f)                                                          # optional - sage.rings.finite_rings
-            sage: K = FractionField(R)                                                  # optional - sage.rings.finite_rings
-            sage: r = 1/x                                                               # optional - sage.rings.finite_rings
-            sage: C.divisor_of_function(r)     # todo: not implemented (broken)         # optional - sage.rings.finite_rings
+            sage: F = GF(5)
+            sage: P2 = AffineSpace(2, F, names='xy')
+            sage: R = P2.coordinate_ring()
+            sage: x, y = R.gens()
+            sage: f = y^2 - x^9 - x
+            sage: C = Curve(f)
+            sage: K = FractionField(R)
+            sage: r = 1/x
+            sage: C.divisor_of_function(r)      # not implemented (broken)
                   [[-1, (0, 0, 1)]]
-            sage: r = 1/x^3                                                             # optional - sage.rings.finite_rings
-            sage: C.divisor_of_function(r)     # todo: not implemented (broken)         # optional - sage.rings.finite_rings
+            sage: r = 1/x^3
+            sage: C.divisor_of_function(r)      # not implemented (broken)
                   [[-3, (0, 0, 1)]]
         """
         F = self.base_ring()
@@ -376,13 +380,13 @@ class AffinePlaneCurve(AffineCurve):
 
         EXAMPLES::
 
-            sage: F = GF(5)                                                             # optional - sage.rings.finite_rings
-            sage: pt = (2,3)                                                            # optional - sage.rings.finite_rings
-            sage: R = PolynomialRing(F, 2, names = ['x','y'])                           # optional - sage.rings.finite_rings
-            sage: x,y = R.gens()                                                        # optional - sage.rings.finite_rings
-            sage: f = y^2 - x^9 - x                                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(f)                                                          # optional - sage.rings.finite_rings
-            sage: C.local_coordinates(pt, 9)                                            # optional - sage.rings.finite_rings
+            sage: F = GF(5)
+            sage: pt = (2,3)
+            sage: R = PolynomialRing(F, 2, names = ['x','y'])
+            sage: x,y = R.gens()
+            sage: f = y^2 - x^9 - x
+            sage: C = Curve(f)
+            sage: C.local_coordinates(pt, 9)
             [t + 2, -2*t^12 - 2*t^11 + 2*t^9 + t^8 - 2*t^7 - 2*t^6 - 2*t^4 + t^3 - 2*t^2 - 2]
         """
         f = self.defining_polynomial()
@@ -447,26 +451,27 @@ class AffinePlaneCurve(AffineCurve):
 
             sage: R.<x, y> = QQ[]
             sage: C = Curve(x^3 - y^2)
-            sage: C.plot()
+            sage: C.plot()                                                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
 
             sage: R.<x, y> = ZZ[]
-            sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9 - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
-            sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)
+            sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9
+            ....:            - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
+            sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)                       # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A line over `\mathbf{RR}`::
 
             sage: R.<x, y> = RR[]
-            sage: C = Curve(R(y - sqrt(2)*x))
-            sage: C.plot()
+            sage: C = Curve(R(y - sqrt(2)*x))                                           # needs sage.symbolic
+            sage: C.plot()                                                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        I = self.defining_ideal()
-        return I.plot(*args, **kwds)
+        Id = self.defining_ideal()
+        return Id.plot(*args, **kwds)
 
     def is_transverse(self, C, P):
         r"""
@@ -494,13 +499,14 @@ class AffinePlaneCurve(AffineCurve):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^3 + 2)                                          # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: C = A.curve([x*y])                                                    # optional - sage.rings.number_field
-            sage: D = A.curve([y - b*x])                                                # optional - sage.rings.number_field
-            sage: Q = A([0,0])                                                          # optional - sage.rings.number_field
-            sage: C.is_transverse(D, Q)                                                 # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(a^3 + 2)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: C = A.curve([x*y])
+            sage: D = A.curve([y - b*x])
+            sage: Q = A([0,0])
+            sage: C.is_transverse(D, Q)
             False
 
         ::
@@ -551,12 +557,13 @@ class AffinePlaneCurve(AffineCurve):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(QQbar,2)                                        # optional - sage.rings.number_field
-            sage: C = Curve([-x^7 + (-7)*x^6 + y^6 + (-21)*x^5 + 12*y^5                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(QQbar,2)
+            sage: C = Curve([-x^7 + (-7)*x^6 + y^6 + (-21)*x^5 + 12*y^5
             ....:            + (-35)*x^4 + 60*y^4 + (-35)*x^3 + 160*y^3
             ....:            + (-21)*x^2 + 240*y^2 + (-7)*x + 192*y + 63], A)
-            sage: Q = A([-1,-2])                                                        # optional - sage.rings.number_field
-            sage: C.multiplicity(Q)                                                     # optional - sage.rings.number_field
+            sage: Q = A([-1,-2])
+            sage: C.multiplicity(Q)
             6
 
         ::
@@ -606,30 +613,32 @@ class AffinePlaneCurve(AffineCurve):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: set_verbose(-1)
-            sage: A.<x,y> = AffineSpace(QQbar, 2)                                       # optional - sage.rings.number_field
-            sage: C = Curve([x^5*y^3 + 2*x^4*y^4 + x^3*y^5 + 3*x^4*y^3                  # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(QQbar, 2)
+            sage: C = Curve([x^5*y^3 + 2*x^4*y^4 + x^3*y^5 + 3*x^4*y^3
             ....:            + 6*x^3*y^4 + 3*x^2*y^5 + 3*x^3*y^3
             ....:            + 6*x^2*y^4 + 3*x*y^5 + x^5 + 10*x^4*y
             ....:            + 40*x^3*y^2 + 81*x^2*y^3 + 82*x*y^4 + 33*y^5], A)
-            sage: Q = A([0,0])                                                          # optional - sage.rings.number_field
-            sage: C.tangents(Q)                                                         # optional - sage.rings.number_field
+            sage: Q = A([0,0])
+            sage: C.tangents(Q)
             [x + 3.425299577684700?*y,
              x + (1.949159013086856? + 1.179307909383728?*I)*y,
              x + (1.949159013086856? - 1.179307909383728?*I)*y,
              x + (1.338191198070795? + 0.2560234251008043?*I)*y,
              x + (1.338191198070795? - 0.2560234251008043?*I)*y]
-            sage: C.tangents(Q, factor=False)                                           # optional - sage.rings.number_field
+            sage: C.tangents(Q, factor=False)
             [120*x^5 + 1200*x^4*y + 4800*x^3*y^2 + 9720*x^2*y^3 + 9840*x*y^4 + 3960*y^5]
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^2 - 3)                                          # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: C = Curve([(x^2 + y^2 - 2*x)^2 - x^2 - y^2], A)                       # optional - sage.rings.number_field
-            sage: Q = A([0,0])                                                          # optional - sage.rings.number_field
-            sage: C.tangents(Q)                                                         # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(a^2 - 3)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: C = Curve([(x^2 + y^2 - 2*x)^2 - x^2 - y^2], A)
+            sage: Q = A([0,0])
+            sage: C.tangents(Q)
             [x + (-1/3*b)*y, x + (1/3*b)*y]
 
         ::
@@ -689,7 +698,7 @@ class AffinePlaneCurve(AffineCurve):
                     fact.extend([vars[1] - roots[i][0]*vars[0] for i in range(len(roots))])
             return [ff(coords) for ff in fact]
         else:
-            return [l[0](coords) for l in T.factor()]
+            return [ll[0](coords) for ll in T.factor()]
 
     def is_ordinary_singularity(self, P):
         r"""
@@ -720,12 +729,13 @@ class AffinePlaneCurve(AffineCurve):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^2 - 3)                                          # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: C = Curve([(x^2 + y^2 - 2*x)^2 - x^2 - y^2], A)                       # optional - sage.rings.number_field
-            sage: Q = A([0,0])                                                          # optional - sage.rings.number_field
-            sage: C.is_ordinary_singularity(Q)                                          # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(a^2 - 3)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: C = Curve([(x^2 + y^2 - 2*x)^2 - x^2 - y^2], A)
+            sage: Q = A([0,0])
+            sage: C.is_ordinary_singularity(Q)
             True
 
         ::
@@ -829,16 +839,16 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         EXAMPLES::
 
             sage: R.<v> = QQ[]
-            sage: K.<u> = NumberField(v^2 + 3)                                          # optional - sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # optional - sage.rings.number_field
-            sage: C = Curve([z - u*x^2, y^2], A); C                                     # optional - sage.rings.number_field
+            sage: K.<u> = NumberField(v^2 + 3)                                          # needs sage.rings.number_field
+            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # needs sage.rings.number_field
+            sage: C = Curve([z - u*x^2, y^2], A); C                                     # needs sage.rings.number_field
             Affine Curve over Number Field in u with defining polynomial v^2 + 3
             defined by (-u)*x^2 + z, y^2
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(7), 3)                                     # optional - sage.rings.number_field
-            sage: C = Curve([x^2 - z, z - 8*x], A); C                                   # optional - sage.rings.number_field
+            sage: A.<x,y,z> = AffineSpace(GF(7), 3)
+            sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
         super().__init__(A, X)
@@ -912,12 +922,11 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
-            sage: A.<x,y,z,w,u> = AffineSpace(GF(11), 5)                                # optional - sage.rings.finite_rings
-            sage: C = Curve([x^3 - 5*y*z + u^2, x - y^2 + 3*z^2,                        # optional - sage.rings.finite_rings
+            sage: A.<x,y,z,w,u> = AffineSpace(GF(11), 5)
+            sage: C = Curve([x^3 - 5*y*z + u^2, x - y^2 + 3*z^2,
             ....:            w^2 + 2*u^3*y, y - u^2 + z*x], A)
-            sage: B.<a,b,c> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: proj1 = C.projection([1,2,4], AS=B)                                   # optional - sage.rings.finite_rings
-            sage: proj1                                                                 # optional - sage.rings.finite_rings
+            sage: B.<a,b,c> = AffineSpace(GF(11), 3)
+            sage: proj1 = C.projection([1,2,4], AS=B); proj1
             (Scheme morphism:
                From: Affine Curve over Finite Field of size 11 defined by x^3 -
                      5*y*z + u^2, -y^2 + 3*z^2 + x, 2*y*u^3 + w^2, x*z - u^2 + y
@@ -930,12 +939,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             3*b*c^2 + 3*a*b, a^4*c^2 + 2*b^4*c^2 - a^5 - 2*a*b^4 + 5*b*c^4 + a*b*c^2
             - 5*a*b^2 + 4*b^3 + b*c^2 + 5*c^2 - 5*a, a^6 - 5*b^6 - 5*b^3*c^2 +
             5*a*b^3 + 2*c^4 - 4*a*c^2 + 2*a^2 - 5*a*b + c^2)
-            sage: proj1[1].ambient_space() is B                                         # optional - sage.rings.finite_rings
+            sage: proj1[1].ambient_space() is B
             True
-            sage: proj2 = C.projection([1,2,4])                                         # optional - sage.rings.finite_rings
-            sage: proj2[1].ambient_space() is B                                         # optional - sage.rings.finite_rings
+            sage: proj2 = C.projection([1,2,4])
+            sage: proj2[1].ambient_space() is B
             False
-            sage: C.projection([1,2,3,5], AS=B)                                         # optional - sage.rings.finite_rings
+            sage: C.projection([1,2,3,5], AS=B)
             Traceback (most recent call last):
             ...
             TypeError: (=Affine Space of dimension 3 over Finite Field of size 11)
@@ -1009,10 +1018,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             removecoords.pop(indices[i])
         J = self.defining_ideal().elimination_ideal(removecoords)
         K = Hom(AA.coordinate_ring(), AA2.coordinate_ring())
-        l = [0]*(n)
+        ll = [0]*(n)
         for i in range(len(indices)):
-            l[indices[i]] = AA2.gens()[i]
-        phi = K(l)
+            ll[indices[i]] = AA2.gens()[i]
+        phi = K(ll)
         G = [phi(f) for f in J.gens()]
         try:
             C = AA2.curve(G)
@@ -1053,13 +1062,14 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^2 + 2)                                          # optional - sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # optional - sage.rings.number_field
-            sage: C = A.curve([x - b, y - 2])                                           # optional - sage.rings.number_field
-            sage: B.<a,b> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: proj1 = C.plane_projection(AP=B)                                      # optional - sage.rings.number_field
-            sage: proj1                                                                 # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(a^2 + 2)
+            sage: A.<x,y,z> = AffineSpace(K, 3)
+            sage: C = A.curve([x - b, y - 2])
+            sage: B.<a,b> = AffineSpace(K, 2)
+            sage: proj1 = C.plane_projection(AP=B)
+            sage: proj1
             (Scheme morphism:
                From: Affine Curve over Number Field in b
                      with defining polynomial a^2 + 2 defined by x + (-b), y - 2
@@ -1069,10 +1079,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                      (x, z),
              Affine Plane Curve over Number Field in b
              with defining polynomial a^2 + 2 defined by a + (-b))
-            sage: proj1[1].ambient_space() is B                                         # optional - sage.rings.number_field
+            sage: proj1[1].ambient_space() is B
             True
-            sage: proj2 = C.plane_projection()                                          # optional - sage.rings.number_field
-            sage: proj2[1].ambient_space() is B                                         # optional - sage.rings.number_field
+            sage: proj2 = C.plane_projection()
+            sage: proj2[1].ambient_space() is B
             False
         """
         n = self.ambient_space().dimension_relative()
@@ -1141,18 +1151,19 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
-            sage: K.<a> = QuadraticField(2)                                             # optional - sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # optional - sage.rings.number_field
-            sage: C = Curve([y^2 - a*x^5, x - z], A)                                    # optional - sage.rings.number_field
-            sage: B = C.blowup()                                                        # optional - sage.rings.number_field
-            sage: B[0]                                                                  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(2)
+            sage: A.<x,y,z> = AffineSpace(K, 3)
+            sage: C = Curve([y^2 - a*x^5, x - z], A)
+            sage: B = C.blowup()
+            sage: B[0]
             (Affine Curve over Number Field in a with defining polynomial x^2 - 2
               with a = 1.414213562373095? defined by s2 - 1, 2*x^3 + (-a)*s1^2,
              Affine Curve over Number Field in a with defining polynomial x^2 - 2
               with a = 1.414213562373095? defined by s0 - s2, 2*y^3*s2^5 + (-a),
              Affine Curve over Number Field in a with defining polynomial x^2 - 2
               with a = 1.414213562373095? defined by s0 - 1, 2*z^3 + (-a)*s1^2)
-            sage: B[1][0][2]                                                            # optional - sage.rings.number_field
+            sage: B[1][0][2]
             Scheme morphism:
               From: Affine Curve over Number Field in a
                     with defining polynomial x^2 - 2 with a = 1.414213562373095?
@@ -1162,7 +1173,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                     defined by s0 - 1, 2*z^3 + (-a)*s1^2
               Defn: Defined on coordinates by sending (x, s1, s2) to
                     (x*s2, 1/s2, s1/s2)
-            sage: B[1][2][0]                                                            # optional - sage.rings.number_field
+            sage: B[1][2][0]
             Scheme morphism:
               From: Affine Curve over Number Field in a
                     with defining polynomial x^2 - 2 with a = 1.414213562373095?
@@ -1172,7 +1183,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                     defined by s2 - 1, 2*x^3 + (-a)*s1^2
               Defn: Defined on coordinates by sending (z, s0, s1) to
                     (z*s0, s1/s0, 1/s0)
-            sage: B[2]                                                                  # optional - sage.rings.number_field
+            sage: B[2]
             (Scheme morphism:
                From: Affine Curve over Number Field in a
                      with defining polynomial x^2 - 2 with a = 1.414213562373095?
@@ -1277,9 +1288,9 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(QuadraticField(-1), 2)                          # optional - sage.rings.number_field
-            sage: C = A.curve([y^2 + x^2])                                              # optional - sage.rings.number_field
-            sage: C.blowup()                                                            # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(QuadraticField(-1), 2)                          # needs sage.rings.number_field
+            sage: C = A.curve([y^2 + x^2])                                              # needs sage.rings.number_field
+            sage: C.blowup()                                                            # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: this curve must be irreducible
@@ -1451,11 +1462,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: set_verbose(-1)
-            sage: K.<a> = QuadraticField(3)                                             # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: C = A.curve(x^4 + 2*x^2 + a*y^3 + 1)                                  # optional - sage.rings.number_field
-            sage: C.resolution_of_singularities(extend=True)[0] # long time (2 s)       # optional - sage.rings.number_field
+            sage: K.<a> = QuadraticField(3)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: C = A.curve(x^4 + 2*x^2 + a*y^3 + 1)
+            sage: C.resolution_of_singularities(extend=True)[0]         # long time (2 s)
             (Affine Plane Curve over Number Field in a0
               with defining polynomial y^4 - 4*y^2 + 16
               defined by 24*x^2*ss1^3 + 24*ss1^3 + (a0^3 - 8*a0),
@@ -1468,10 +1480,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(5), 3)                                     # optional - sage.rings.finite_rings
-            sage: C = Curve([y - x^3, (z - 2)^2 - y^3 - x^3], A)                        # optional - sage.rings.finite_rings
-            sage: R = C.resolution_of_singularities()                                   # optional - sage.rings.finite_rings
-            sage: R[0]                                                                  # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(5), 3)
+            sage: C = Curve([y - x^3, (z - 2)^2 - y^3 - x^3], A)
+            sage: R = C.resolution_of_singularities()
+            sage: R[0]
             (Affine Curve over Finite Field of size 5
               defined by x^2 - s1, s1^4 - x*s2^2 + s1, x*s1^3 - s2^2 + x,
              Affine Curve over Finite Field of size 5
@@ -1519,6 +1531,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             working over a number field use extend=True
         """
         # helper function for extending the base field (in the case of working over a number field)
+
         def extension(self):
             F = self.base_ring()
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
@@ -1720,11 +1733,11 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         from sage.schemes.curves.constructor import Curve
 
         # translate to p
-        I = []
+        I0 = []
         for poly in Tp.defining_polynomials():
-            I.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
+            I0.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
 
-        return Curve(I, A)
+        return Curve(I0, A)
 
 
 class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
@@ -1733,10 +1746,31 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def fundamental_group(self):
+    @cached_method
+    def fundamental_group(self, simplified=True, puiseux=False):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
+
+        INPUT:
+
+        - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
+
+        - ``puiseux`` -- (default: ``False``) boolean to decide if the
+          presentation is constructed in the classical way or using Puiseux
+          shortcut. If ``True``, ``simplified`` is set to ``False``.
+
+        OUTPUT:
+
+        A presentation with generators `x_1, \dots, x_d` and relations. If ``puiseux``
+        is ``False`` the relations are `(x_j\cdot \tau)\cdot x_j^{-1}` for `1\leq j<d`
+        and `tau` a braid in the braid monodromy; finally the presentation
+        is simplified. If ``puiseux`` is ``True``, each
+        `tau` is decomposed as `\alpha^{-1}\cdot\beta\cdot\alpha`, where `\beta` is
+        a positive braid; the relations are `((x_j\cdot \beta)\cdot x_j^{-1})\cdot \alpha`
+        where `j` is an integer of the ``Tietze`` word of `\beta`. This presentation
+        is not simplified by default since it represents the homotopy type of
+        the complement of the curve.
 
         .. NOTE::
 
@@ -1745,36 +1779,39 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         EXAMPLES::
 
+            sage: # optional - sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
-            sage: C.fundamental_group()             # optional - sirocco
+            sage: C.fundamental_group()
+            Finitely presented group < x0 |  >
+            sage: bm = C.braid_monodromy()
+            sage: g = C.fundamental_group(puiseux=True)
+            sage: g.sorted_presentation()
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
+            sage: g.simplified()
             Finitely presented group < x0 |  >
 
         In the case of number fields, they need to have an embedding
         to the algebraic field::
 
-            sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]                                 # optional - sage.rings.number_field
-            sage: F = NumberField(a.minpoly(), 'a', embedding=a)                        # optional - sage.rings.number_field
-            sage: F.inject_variables()                                                  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
+            sage: F = NumberField(a.minpoly(), 'a', embedding=a)
+            sage: F.inject_variables()
             Defining a
-            sage: A.<x,y> = AffineSpace(F, 2)                                           # optional - sage.rings.number_field
-            sage: C = A.curve(y^2 - a*x^3 - x^2)                                        # optional - sage.rings.number_field
-            sage: C.fundamental_group()             # optional - sirocco                # optional - sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(F, 2)
+            sage: C = A.curve(y^2 - a*x^3 - x^2)
+            sage: C.fundamental_group()         # optional - sirocco
             Finitely presented group < x0 |  >
 
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.schemes.curves.zariski_vankampen import fundamental_group
-        F = self.base_ring()
-        from sage.rings.qqbar import QQbar
-        if QQbar.coerce_map_from(F) is None:
-            raise NotImplementedError("the base field must have an embedding"
-                                      " to the algebraic field")
-        f = self.defining_polynomial()
-        return fundamental_group(f, projective=False)
+        from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
+        return fundamental_group_from_braid_mon(self.braid_monodromy(), simplified=simplified, puiseux=puiseux)
 
+    @cached_method
     def braid_monodromy(self):
         r"""
         Compute the braid monodromy of a projection of the curve.
@@ -1783,7 +1820,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         A list of braids. The braids correspond to paths based in the same point;
         each of this paths is the conjugated of a loop around one of the points
-        in the discriminant of the projection of `self`.
+        in the discriminant of the projection of ``self``.
 
         NOTE:
 
@@ -1808,7 +1845,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return braid_monodromy(f)
+        return braid_monodromy(f)[0]
 
     def riemann_surface(self, **kwargs):
         r"""
@@ -1859,12 +1896,12 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: R = PolynomialRing(GF(5), 2, names=["x","y"])                         # optional - sage.rings.finite_rings
-            sage: x, y = R.gens()                                                       # optional - sage.rings.finite_rings
-            sage: f = y^2 - x^9 - x                                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(f)                                                          # optional - sage.rings.finite_rings
-            sage: D = [6,0,0,0,0,0]                                                     # optional - sage.rings.finite_rings
-            sage: C.riemann_roch_basis(D)                                               # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(5), 2, names=["x","y"])
+            sage: x, y = R.gens()
+            sage: f = y^2 - x^9 - x
+            sage: C = Curve(f)
+            sage: D = [6,0,0,0,0,0]
+            sage: C.riemann_roch_basis(D)
             [1, (-x*z^5 + y^2*z^4)/x^6, (-x*z^6 + y^2*z^5)/x^7, (-x*z^7 + y^2*z^6)/x^8]
         """
         F = self.base_ring()
@@ -1910,33 +1947,33 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
 
         EXAMPLES::
 
-            sage: x, y = (GF(5)['x,y']).gens()                                          # optional - sage.rings.finite_rings
-            sage: f = y^2 - x^9 - x                                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(f); C                                                       # optional - sage.rings.finite_rings
+            sage: x, y = (GF(5)['x,y']).gens()
+            sage: f = y^2 - x^9 - x
+            sage: C = Curve(f); C
             Affine Plane Curve over Finite Field of size 5 defined by -x^9 + y^2 - x
-            sage: C.rational_points(algorithm='bn')                                     # optional - sage.rings.finite_rings
+            sage: C.rational_points(algorithm='bn')
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
-            sage: C = Curve(x - y + 1)                                                  # optional - sage.rings.finite_rings
-            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: C = Curve(x - y + 1)
+            sage: C.rational_points()
             [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
 
         We compare Brill-Noether and enumeration::
 
-            sage: x, y = (GF(17)['x,y']).gens()                                         # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2 + y^5 + x*y - 19)                                       # optional - sage.rings.finite_rings
-            sage: v = C.rational_points(algorithm='bn')                                 # optional - sage.rings.finite_rings
-            sage: w = C.rational_points(algorithm='enum')                               # optional - sage.rings.finite_rings
-            sage: len(v)                                                                # optional - sage.rings.finite_rings
+            sage: x, y = (GF(17)['x,y']).gens()
+            sage: C = Curve(x^2 + y^5 + x*y - 19)
+            sage: v = C.rational_points(algorithm='bn')
+            sage: w = C.rational_points(algorithm='enum')
+            sage: len(v)
             20
-            sage: v == w                                                                # optional - sage.rings.finite_rings
+            sage: v == w
             True
 
-            sage: A.<x,y> = AffineSpace(2, GF(9,'a'))                                   # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2 + y^2 - 1)                                              # optional - sage.rings.finite_rings
-            sage: C                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(2, GF(9,'a'))
+            sage: C = Curve(x^2 + y^2 - 1); C
             Affine Plane Curve over Finite Field in a of size 3^2
              defined by x^2 + y^2 - 1
-            sage: C.rational_points()                                                   # optional - sage.rings.finite_rings
+            sage: C.rational_points()
             [(0, 1), (0, 2), (1, 0), (2, 0), (a + 1, a + 1),
              (a + 1, 2*a + 2), (2*a + 2, a + 1), (2*a + 2, 2*a + 2)]
         """
@@ -2003,9 +2040,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: C.function_field()                                                    # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # needs sage.rings.finite_rings
+            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # needs sage.rings.finite_rings
+            sage: C.function_field()                                                    # needs sage.rings.finite_rings
             Function field in y defined by y^5 + x*y + x^5 + 1
         """
         return self._function_field
@@ -2017,9 +2054,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(2), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: C.genus()   # indirect doctest                                        # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(2), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: C.genus()   # indirect doctest
             1
         """
         k = self.base_ring()
@@ -2039,25 +2076,26 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: C(1,1)                                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: C(1,1)
             (1, 1)
-            sage: C(x/y)                                                                # optional - sage.rings.finite_rings
+            sage: C(x/y)
             (x/(x^5 + 1))*y^4 + x^2/(x^5 + 1)
-            sage: C(GF(8^2))                                                            # optional - sage.rings.finite_rings
+            sage: C(GF(8^2))
             Set of rational points of Closed subscheme of Affine Space of dimension 2
             over Finite Field in z6 of size 2^6 defined by: x^5 + y^5 + x*y + 1
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C([0,0,0])                                                            # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C([0,0,0])
             (0, 0, 0)
-            sage: C(y)                                                                  # optional - sage.rings.finite_rings
+            sage: C(y)
             z^2
-            sage: C(A.coordinate_ring()(y))                                             # optional - sage.rings.finite_rings
+            sage: C(A.coordinate_ring()(y))
             z^2
         """
         try:
@@ -2079,14 +2117,15 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: f = C.function(x/y)                                                   # optional - sage.rings.finite_rings
-            sage: f                                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: f = C.function(x/y)
+            sage: f
             (x/(x^5 + 1))*y^4 + x^2/(x^5 + 1)
-            sage: df = f.differential(); df                                             # optional - sage.rings.finite_rings
+            sage: df = f.differential(); df
             ((1/(x^10 + 1))*y^4 + x^6/(x^10 + 1)) d(x)
-            sage: df.divisor()                  # long time                             # optional - sage.rings.finite_rings
+            sage: df.divisor()                  # long time
             2*Place (1/x, 1/x^4*y^4 + 1/x^3*y^3 + 1/x^2*y^2 + 1/x*y + 1)
              + 2*Place (1/x, 1/x*y + 1)
              - 2*Place (x + 1, y)
@@ -2107,10 +2146,11 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: x, y = C.coordinate_functions()                                       # optional - sage.rings.finite_rings
-            sage: x^5 + y^5 + x*y + 1                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: x, y = C.coordinate_functions()
+            sage: x^5 + y^5 + x*y + 1
             0
         """
         return self._coordinate_functions
@@ -2127,9 +2167,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C._nonsingular_model                                                  # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C._nonsingular_model
             (Function field in z defined by z^3 + 10*x,
              Ring morphism:
                From: Multivariate Polynomial Ring in x, y, z
@@ -2142,18 +2182,18 @@ class IntegralAffineCurve(AffineCurve_field):
         from sage.rings.function_field.constructor import FunctionField
 
         k = self.base_ring()
-        I = self.defining_ideal()
+        I0 = self.defining_ideal()
 
         # invlex is the lex order with x < y < z for R = k[x,y,z] for instance
-        R = I.parent().ring().change_ring(order='invlex')
-        I = I.change_ring(R)
+        R = I0.parent().ring().change_ring(order='invlex')
+        I0 = I0.change_ring(R)
         n = R.ngens()
 
         names = R.variable_names()
 
-        gbasis = I.groebner_basis()
+        gbasis = I0.groebner_basis()
 
-        if not I.is_prime():
+        if not I0.is_prime():
             raise TypeError("the curve is not integral")
 
         # Suppose the generators of the defining ideal I of the curve is
@@ -2223,7 +2263,7 @@ class IntegralAffineCurve(AffineCurve_field):
         lift_to_function_field = hom(R, M, coordinate_functions)
 
         # sanity check
-        assert all(lift_to_function_field(f).is_zero() for f in I.gens())
+        assert all(lift_to_function_field(f).is_zero() for f in I0.gens())
 
         return M, lift_to_function_field
 
@@ -2234,9 +2274,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C._function_field                                                     # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C._function_field
             Function field in z defined by z^3 + 10*x
         """
         return self._nonsingular_model[0]
@@ -2248,9 +2288,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C._lift_to_function_field                                             # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C._lift_to_function_field
             Ring morphism:
               From: Multivariate Polynomial Ring in x, y, z
                     over Finite Field of size 11
@@ -2268,9 +2308,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C._coordinate_functions                                               # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C._coordinate_functions
             [x, z^2, z]
         """
         return self._nonsingular_model[1].im_gens()
@@ -2282,9 +2322,9 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
-            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: C._singularities              # long time                             # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # needs sage.rings.finite_rings
+            sage: C = Curve(x^2 - x^4 - y^4)                                            # needs sage.rings.finite_rings
+            sage: C._singularities              # long time                             # needs sage.rings.finite_rings
             [(Point (x, y),
               [Place (x, 1/x*y^3 + 1/x*y^2 + 1), Place (x, 1/x*y^3 + 1/x*y^2 + 6)])]
         """
@@ -2324,16 +2364,16 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: C.singular_closed_points()                                            # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # needs sage.rings.finite_rings
+            sage: C = Curve(x^2 - x^4 - y^4)                                            # needs sage.rings.finite_rings
+            sage: C.singular_closed_points()                                            # needs sage.rings.finite_rings
             [Point (x, y)]
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C.singular_closed_points()                                            # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C.singular_closed_points()
             []
         """
         return [p for p, _ in self._singularities]
@@ -2349,13 +2389,14 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(4), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: F = C.function_field()                                                # optional - sage.rings.finite_rings
-            sage: pls = F.places(1)                                                     # optional - sage.rings.finite_rings
-            sage: C.place_to_closed_point(pls[-1])                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: F = C.function_field()
+            sage: pls = F.places(1)
+            sage: C.place_to_closed_point(pls[-1])
             Point (x + 1, y + 1)
-            sage: C.place_to_closed_point(pls[-2])                                      # optional - sage.rings.finite_rings
+            sage: C.place_to_closed_point(pls[-2])
             Point (x + 1, y + 1)
         """
         F = self.function_field()
@@ -2433,17 +2474,18 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: F = GF(9)                                                             # optional - sage.rings.finite_rings
-            sage: A2.<x,y> = AffineSpace(F, 2)                                          # optional - sage.rings.finite_rings
-            sage: C = A2.curve(y^3 + y - x^4)                                           # optional - sage.rings.finite_rings
-            sage: C.places_at_infinity()                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(9)
+            sage: A2.<x,y> = AffineSpace(F, 2)
+            sage: C = A2.curve(y^3 + y - x^4)
+            sage: C.places_at_infinity()
             [Place (1/x, 1/x^3*y^2)]
 
         ::
 
-            sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                    # optional - sage.rings.finite_rings
-            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)                           # optional - sage.rings.finite_rings
-            sage: C.places_at_infinity()                                                # optional - sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C.places_at_infinity()
             [Place (1/x, 1/x*z^2)]
         """
         return list(set(p for f in self._coordinate_functions if f for p in f.poles()))
@@ -2470,11 +2512,12 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: k.<a> = GF(9)                                                         # optional - sage.rings.finite_rings
-            sage: A.<x,y> = AffineSpace(k, 2)                                           # optional - sage.rings.finite_rings
-            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)                          # optional - sage.rings.finite_rings
-            sage: pts = C.closed_points()                                               # optional - sage.rings.finite_rings
-            sage: pts                                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(9)
+            sage: A.<x,y> = AffineSpace(k, 2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
+            sage: pts = C.closed_points()
+            sage: pts
             [Point (x, y + (a + 1)),
              Point (x, y + (-a - 1)),
              Point (x + (a + 1), y + (a - 1)),
@@ -2485,20 +2528,21 @@ class IntegralAffineCurve(AffineCurve_field):
              Point (x + (-a - 1), y + (-a)),
              Point (x + 1, y + 1),
              Point (x + 1, y - 1)]
-            sage: p1, p2, p3 = pts[:3]                                                  # optional - sage.rings.finite_rings
-            sage: C.places_on(p1)                                                       # optional - sage.rings.finite_rings
+            sage: p1, p2, p3 = pts[:3]
+            sage: C.places_on(p1)
             [Place (x, y + a + 1)]
-            sage: C.places_on(p2)                                                       # optional - sage.rings.finite_rings
+            sage: C.places_on(p2)
             [Place (x, y + 2*a + 2)]
-            sage: C.places_on(p3)                                                       # optional - sage.rings.finite_rings
+            sage: C.places_on(p3)
             [Place (x + a + 1, y + a + 2)]
 
         ::
 
-            sage: F.<a> = GF(8)                                                         # optional - sage.rings.finite_rings
-            sage: P.<x,y,z> = ProjectiveSpace(F, 2)                                     # optional - sage.rings.finite_rings
-            sage: Cp = Curve(x^3*y + y^3*z + x*z^3)                                     # optional - sage.rings.finite_rings
-            sage: C = Cp.affine_patch(0)                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(8)
+            sage: P.<x,y,z> = ProjectiveSpace(F, 2)
+            sage: Cp = Curve(x^3*y + y^3*z + x*z^3)
+            sage: C = Cp.affine_patch(0)
         """
         phi = self._lift_to_function_field
         gs = [phi(g) for g in point.prime_ideal().gens()]
@@ -2532,17 +2576,18 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: p, = C.singular_closed_points()                                       # optional - sage.rings.finite_rings
-            sage: b1, b2 = p.places()                                                   # optional - sage.rings.finite_rings
-            sage: xs, ys = C.parametric_representation(b1)                              # optional - sage.rings.finite_rings
-            sage: f = xs^2 - xs^4 - ys^4                                                # optional - sage.rings.finite_rings
-            sage: [f.coefficient(i) for i in range(5)]                                  # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7^2), 2)
+            sage: C = Curve(x^2 - x^4 - y^4)
+            sage: p, = C.singular_closed_points()
+            sage: b1, b2 = p.places()
+            sage: xs, ys = C.parametric_representation(b1)
+            sage: f = xs^2 - xs^4 - ys^4
+            sage: [f.coefficient(i) for i in range(5)]
             [0, 0, 0, 0, 0]
-            sage: xs, ys = C.parametric_representation(b2)                              # optional - sage.rings.finite_rings
-            sage: f = xs^2 - xs^4 - ys^4                                                # optional - sage.rings.finite_rings
-            sage: [f.coefficient(i) for i in range(5)]                                  # optional - sage.rings.finite_rings
+            sage: xs, ys = C.parametric_representation(b2)
+            sage: f = xs^2 - xs^4 - ys^4
+            sage: [f.coefficient(i) for i in range(5)]
             [0, 0, 0, 0, 0]
         """
         F = place.function_field()
@@ -2563,11 +2608,11 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
     EXAMPLES::
 
-        sage: A.<x,y,z> = AffineSpace(GF(11), 3)                                        # optional - sage.rings.finite_rings
-        sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A); C                            # optional - sage.rings.finite_rings
+        sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+        sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A); C
         Affine Curve over Finite Field of size 11
          defined by -y^2 + x*z, -z^2 + y, -y*z + x
-        sage: C.function_field()                                                        # optional - sage.rings.finite_rings
+        sage: C.function_field()
         Function field in z defined by z^3 + 10*x
     """
     _point = IntegralAffineCurvePoint_finite_field
@@ -2582,10 +2627,11 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         EXAMPLES::
 
-            sage: F = GF(9)                                                             # optional - sage.rings.finite_rings
-            sage: A2.<x,y> = AffineSpace(F, 2)                                          # optional - sage.rings.finite_rings
-            sage: C = A2.curve(y^3 + y - x^4)                                           # optional - sage.rings.finite_rings
-            sage: C.places()                                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(9)
+            sage: A2.<x,y> = AffineSpace(F, 2)
+            sage: C = A2.curve(y^3 + y - x^4)
+            sage: C.places()
             [Place (1/x, 1/x^3*y^2),
              Place (x, y),
              Place (x, y + z2 + 1),
@@ -2629,9 +2675,9 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(7), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^2 - x^4 - y^4)                                            # optional - sage.rings.finite_rings
-            sage: C.closed_points()                                                     # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7), 2)
+            sage: C = Curve(x^2 - x^4 - y^4)
+            sage: C.closed_points()
             [Point (x, y),
              Point (x + 1, y),
              Point (x + 2, y + 2),
@@ -2674,11 +2720,11 @@ class IntegralAffinePlaneCurve_finite_field(AffinePlaneCurve_finite_field, Integ
 
     EXAMPLES::
 
-        sage: A.<x,y> = AffineSpace(GF(8), 2)                                           # optional - sage.rings.finite_rings
-        sage: C = Curve(x^5 + y^5 + x*y + 1); C                                         # optional - sage.rings.finite_rings
+        sage: A.<x,y> = AffineSpace(GF(8), 2)                                           # needs sage.rings.finite_rings
+        sage: C = Curve(x^5 + y^5 + x*y + 1); C                                         # needs sage.rings.finite_rings
         Affine Plane Curve over Finite Field in z3 of size 2^3
          defined by x^5 + y^5 + x*y + 1
-        sage: C.function_field()                                                        # optional - sage.rings.finite_rings
+        sage: C.function_field()                                                        # needs sage.rings.finite_rings
         Function field in y defined by y^5 + x*y + x^5 + 1
     """
     _point = IntegralAffinePlaneCurvePoint_finite_field

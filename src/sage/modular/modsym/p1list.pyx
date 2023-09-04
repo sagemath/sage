@@ -723,10 +723,10 @@ cdef class P1List():
         self.__N = N
         if N <= 46340:
             self.__list = p1list_int(N)
-            self.__normalize = c_p1_normalize_int
+            self._normalize = c_p1_normalize_int
         elif N <= 2147483647:
             self.__list = p1list_llong(N)
-            self.__normalize = c_p1_normalize_llong
+            self._normalize = c_p1_normalize_llong
         else:
             raise OverflowError("p1list not defined for such large N.")
         self.__list.sort()
@@ -921,7 +921,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -954,7 +954,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -987,7 +987,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -1153,7 +1153,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 0)
         return (uu,vv)
 
     def normalize_with_scalar(self, int u, int v):
@@ -1186,7 +1186,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 1)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 1)
         return (uu, vv, ss)
 
     def N(self):
