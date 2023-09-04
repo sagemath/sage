@@ -178,8 +178,6 @@ cdef class CVXPYBackend(MatrixBackend):
 
         self.problem = cvxpy.Problem(objective, constraints)
 
-        ## FIXME: This needs to set up objective and constraints from the stored data.
-
     cpdef __copy__(self):
         """
         Return a copy of ``self``.
@@ -197,8 +195,7 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: cp.get_objective_value()  # abs tol 1e-7
             6.0
         """
-        super(CVXPYBackend, self).__copy__()
-        cdef CVXPYBackend cp = type(self)(base_ring=self.base_ring())
+        cdef CVXPYBackend cp = super(CVXPYBackend, self).__copy__()
         cp.problem = self.problem                   # it's considered immutable; so no need to copy.
         cp.variables = copy(self.variables)
         return cp
