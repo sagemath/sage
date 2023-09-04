@@ -573,7 +573,6 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.get_variable_value(1)  # abs tol 1e-7
             1.5
         """
-        print(self.problem.value, self.obj_constant_term)
         return self.problem.value + self.obj_constant_term
 
     cpdef get_variable_value(self, int variable):
