@@ -552,6 +552,7 @@ if __name__ == "__main__":
         args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
                              'sagemath-categories',
                              'sagemath-modules',
+                             'sagemath-pari',
                              'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
                              'sagemath-groups',
                              'sagemath-combinat', 'sagemath-combinat[graphs]', 'sagemath-combinat[modules]',
