@@ -5,10 +5,9 @@ It stores the problem data in Sage matrices. It allows users to specify a base r
 
 The class does not provide a solver method. It can be used as a base class for
 other classes implementing solvers.
-
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #                     2023 Alexandre Maranhão
 #                     2023 Zhongling Xu
@@ -18,18 +17,18 @@ other classes implementing solvers.
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.matrix.constructor import Matrix as matrix
-from .generic_backend cimport GenericBackend
 from copy import copy
-import numpy
+
 
 cdef class MatrixBackend(GenericBackend):
-    """
-    Cython constructor
+    r"""
+    MIP Backend that stores problem data in Sage matrices.
 
-    There is no support for integer variables.
+    There is no solver; calling the :meth:`solve` method raises a
+    runtime error.
 
     EXAMPLES::
 
@@ -42,15 +41,23 @@ cdef class MatrixBackend(GenericBackend):
         sage: p
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
-    def __cinit__(self, maximization = True, base_ring=None, implementation = None, **kwds):
-        """
+
+    def __cinit__(self, maximization=True, base_ring=None, sparse=None, implementation=None, **kwds):
+        r"""
         Cython constructor
+
+        INPUT:
+
+        - ``sparse`` -- passed on to :func:`matrix` constructor
+
+        - ``implementation`` -- passed on to :func:`matrix` constructor
+
+        - ``**kwds`` -- ignored
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
-
+            sage: p = get_solver(solver="Matrix")
         """
 
         self.prob_name = ''
@@ -59,11 +66,14 @@ cdef class MatrixBackend(GenericBackend):
 
         self._init_base_ring(base_ring=base_ring)
 
-        if implementation == "numpy":
-            kwds = dict(implementation = "numpy")
-        else:
-            kwds = {}
+        kwds = {}
+        if implementation is not None:
+            kwds['implementation'] = implementation
+        if sparse is not None:
+            kwds['sparse'] = sparse
 
+        # Instead of vectors, we use 1-row matrices so that
+        # an "implementation" keyword can be passed consistently
         self.objective_coefficients = matrix(self._base_ring, 1, [], **kwds)
         self.Matrix = matrix(self._base_ring, [], **kwds)
         self.row_lower_bound = matrix(self._base_ring, 1, [], **kwds)
@@ -87,6 +97,19 @@ cdef class MatrixBackend(GenericBackend):
             self.set_sense(-1)
 
     def _init_base_ring(self, base_ring=None):
+        r"""
+        Handle a ``base_ring`` parameter passed to the constructor.
+
+        This method can be overridden to implement a different defaulting behavior.
+
+        This implementation use ``QQ`` as the default base ring.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.matrix_backend import MatrixBackend
+            sage: MatrixBackend(base_ring=None).base_ring()  # indirect doctest
+            Rational Field
+        """
         if base_ring is None:
             from sage.rings.rational_field import QQ
             base_ring = QQ
@@ -108,13 +131,12 @@ cdef class MatrixBackend(GenericBackend):
             Real Double Field
             sage: MatrixBackend(base_ring=RealField(100)).base_ring()
             Real Field with 100 bits of precision
-
         """
         return self._base_ring
 
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Returns a copy of ``self``.
 
         EXAMPLES::
 
@@ -126,7 +148,6 @@ cdef class MatrixBackend(GenericBackend):
             sage: mat = copy(p.get_backend())
             sage: mat.ncols()
             2
-
         """
         cdef MatrixBackend mat = type(self)(base_ring=self.base_ring())
         mat.Matrix = copy(self.Matrix)
@@ -138,36 +159,37 @@ cdef class MatrixBackend(GenericBackend):
         mat.obj_constant_term = self.obj_constant_term
         return mat
 
-
-    cpdef int add_variable(self, lower_bound=0, upper_bound=None, binary=False, continuous=True, integer=False, obj=None, name=None) except -1:
+    cpdef int add_variable(self, lower_bound=0, upper_bound=None,
+                           binary=False, continuous=True, integer=False,
+                           obj=None, name=None) except -1:
         """
         Add a variable.
 
         This amounts to adding a new column to the matrix. By default,
-        the variable is both positive and real.
+        the variable is both nonnegative and real.
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` - ``True`` if the variable is integer (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integer (default: ``False``)
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional, default: 0) coefficient of this variable in the objective function
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
         OUTPUT: The index of the newly created variable
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -176,11 +198,11 @@ cdef class MatrixBackend(GenericBackend):
             1
             sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2.0)
+            sage: p.add_variable(lower_bound=-2.0)      # converted into base ring (QQ)
             2
             sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1.0)
+            sage: p.add_variable(name='x', obj=1.0)     # converted into base ring (QQ)
             4
             sage: p.col_name(3)
             'x_3'
@@ -191,7 +213,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.objective_coefficient(4).parent()
             Rational Field
 
-            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -200,11 +222,11 @@ cdef class MatrixBackend(GenericBackend):
             1
             sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2)
+            sage: p.add_variable(lower_bound=-2)        # converted into base ring (AA)
             2
             sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1)
+            sage: p.add_variable(name='x', obj=1)       # converted into base ring (AA)
             4
             sage: p.col_name(3)
             'x_3'
@@ -215,7 +237,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.objective_coefficient(4).parent()
             Algebraic Real Field
 
-            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -224,11 +246,11 @@ cdef class MatrixBackend(GenericBackend):
             1
             sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2.0)
+            sage: p.add_variable(lower_bound=-2.0)      # converted into base ring (RDF)
             2
             sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1.0)
+            sage: p.add_variable(name='x', obj=1.0)     # converted into base ring (RDF)
             4
             sage: p.col_name(3)
             'x_3'
@@ -239,7 +261,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.objective_coefficient(4).parent()
             Real Double Field
 
-            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -248,11 +270,11 @@ cdef class MatrixBackend(GenericBackend):
             1
             sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2.0)
+            sage: p.add_variable(lower_bound=-2.0)      # converted into base ring (RealField(100))
             2
             sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1.0)
+            sage: p.add_variable(name='x', obj=1.0)     # converted into base ring (RealField(100))
             4
             sage: p.col_name(3)
             'x_3'
@@ -267,10 +289,7 @@ cdef class MatrixBackend(GenericBackend):
         if obj is None:
             obj = self._base_ring.zero()
 
-        #if self.nrows() == 0:
-        #    pass
-        #else:
-        self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.Matrix.dimensions()[0], 1))
+        self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.nrows(), 1))
 
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
@@ -300,18 +319,17 @@ cdef class MatrixBackend(GenericBackend):
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- (integer) the variable's id
 
-        - ``vtype`` (integer) :
-
-            *  1  Integer
-            *  0  Binary
-            *  -1  Continuous
+        - ``vtype`` -- (integer) one of
+          *  `1`  Integer
+          *  `0`  Binary
+          *  `-1`  Continuous
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -324,7 +342,7 @@ cdef class MatrixBackend(GenericBackend):
             ...
             IndexError: ...
         """
-        if variable >= len(self.is_continuous):
+        if not 0 <= variable < self.ncols():
             raise IndexError("Variable index out of bounds")
         self.is_binary[variable] = (vtype == 0)
         self.is_integer[variable] = (vtype == 1)
@@ -358,19 +376,18 @@ cdef class MatrixBackend(GenericBackend):
 
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
-        Set or get the coefficient of a variable in the objective
-        function
+        Set or get the coefficient of a variable in the objective function
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- (integer) the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- its coefficient
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variable()
             0
             sage: p.objective_coefficient(0)
@@ -378,7 +395,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.objective_coefficient(0,2)
             sage: p.objective_coefficient(0)
             2
-            sage: p = get_solver(solver = "Matrix", base_ring=AA)
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.add_variable()
             0
             sage: p.objective_coefficient(0)
@@ -388,7 +405,7 @@ cdef class MatrixBackend(GenericBackend):
             2
             sage: p.objective_coefficient(0).parent()
             Algebraic Real Field
-            sage: p = get_solver(solver = "Matrix", base_ring=RDF)
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.add_variable()
             0
             sage: p.objective_coefficient(0)
@@ -398,7 +415,7 @@ cdef class MatrixBackend(GenericBackend):
             2.0
             sage: p.objective_coefficient(0).parent()
             Real Double Field
-            sage: p = get_solver(solver = "Matrix", base_ring=RealField(100))
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.add_variable()
             0
             sage: p.objective_coefficient(0)
@@ -416,27 +433,28 @@ cdef class MatrixBackend(GenericBackend):
         else:
             return self.objective_coefficients[0, variable]
 
-    cpdef set_objective(self, list coeff, d = 0):
+    cpdef set_objective(self, list coeff, d=0):
         """
         Set the objective function.
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- a list of real values, whose `i`-th element is the
+          coefficient of the `i`-th variable in the objective function.
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- the constant term in the linear function (set to `0` by default)
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variables(5)
             4
             sage: p.set_objective([1, 1, 2, 1, 3])
             sage: [p.objective_coefficient(x) for x in range(5)]
             [1, 1, 2, 1, 3]
-            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.add_variables(5)
             4
             sage: p.set_objective([1, 1, 2, 1, 3])
@@ -444,11 +462,12 @@ cdef class MatrixBackend(GenericBackend):
             [1, 1, 2, 1, 3]
             sage: [p.objective_coefficient(x).parent() for x in range(5)]
             [Algebraic Real Field,
-            Algebraic Real Field,
-            Algebraic Real Field,
-            Algebraic Real Field,
-            Algebraic Real Field]
-            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+             Algebraic Real Field,
+             Algebraic Real Field,
+             Algebraic Real Field,
+             Algebraic Real Field]
+
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.add_variables(5)
             4
             sage: p.set_objective([1, 1, 2, 1, 3])
@@ -456,26 +475,27 @@ cdef class MatrixBackend(GenericBackend):
             [1.0, 1.0, 2.0, 1.0, 3.0]
             sage: [p.objective_coefficient(x).parent() for x in range(5)]
             [Real Double Field,
-            Real Double Field,
-            Real Double Field,
-            Real Double Field,
-            Real Double Field]
-            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+             Real Double Field,
+             Real Double Field,
+             Real Double Field,
+             Real Double Field]
+
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.add_variables(5)
             4
             sage: p.set_objective([1, 1, 2, 1, 3])
             sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0000000000000000000000000000,
-            1.0000000000000000000000000000,
-            2.0000000000000000000000000000,
-            1.0000000000000000000000000000,
-            3.0000000000000000000000000000]
+             1.0000000000000000000000000000,
+             2.0000000000000000000000000000,
+             1.0000000000000000000000000000,
+             3.0000000000000000000000000000]
             sage: [p.objective_coefficient(x).parent() for x in range(5)]
             [Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision]
+             Real Field with 100 bits of precision,
+             Real Field with 100 bits of precision,
+             Real Field with 100 bits of precision,
+             Real Field with 100 bits of precision]
 
         """
         for i in range(len(coeff)):
@@ -512,7 +532,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.nrows()
@@ -522,7 +542,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()
             5
 
-            sage: p = get_solver(solver = "Matrix", base_ring=AA)
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.ncols()
             0
             sage: p.nrows()
@@ -532,7 +552,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()
             5
 
-            sage: p = get_solver(solver = "Matrix", base_ring=RDF)
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.ncols()
             0
             sage: p.nrows()
@@ -542,7 +562,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.nrows()
             5
 
-            sage: p = get_solver(solver = "Matrix", base_ring=RealField(100))
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.ncols()
             0
             sage: p.nrows()
@@ -563,16 +583,10 @@ cdef class MatrixBackend(GenericBackend):
             self.Matrix = self.Matrix.augment(column)
 
         self.col_lower_bound_indicator.append(None)
-        if self.col_lower_bound.dimensions()[1] == 0:
-            self.col_lower_bound = matrix(1, [self._base_ring.zero()])
-        else:
-            self.col_lower_bound = self.col_lower_bound.augment(matrix([self._base_ring.zero()]))
+        self.col_lower_bound = self.col_lower_bound.augment(matrix([self._base_ring.zero()]))
 
         self.col_upper_bound_indicator.append(None)
-        if self.col_upper_bound.dimensions()[1] == 0:
-            self.col_upper_bound = matrix(1, [self._base_ring.zero()])
-        else:
-            self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
+        self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
 
         self.objective_coefficients = self.objective_coefficients.augment(matrix([self._base_ring.zero()]))
         self.col_name_var.append(None)
@@ -583,20 +597,19 @@ cdef class MatrixBackend(GenericBackend):
 
         INPUT:
 
-        - ``coefficients`` an iterable with ``(c,v)`` pairs where ``c``
-          is a variable index (integer) and ``v`` is a value (real
-          value).
+        - ``coefficients`` -- an iterable with ``(c,v)`` pairs where ``c``
+          is a variable index (integer) and ``v`` is a value (real value)
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variables(5)
             4
             sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)
@@ -604,7 +617,7 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)
             (2, 2)
-            sage: p.add_linear_constraint(((1,7),(3,10)), 2.0, 2.0)
+            sage: p.add_linear_constraint(((1,7), (3,10)), 2.0, 2.0)
             sage: p.row(1)
             ([1, 3], [7, 10])
             sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')
@@ -616,7 +629,7 @@ cdef class MatrixBackend(GenericBackend):
             while c[0] > self.ncols() - 1:
                 self.add_variable()
 
-        self.Matrix = self.Matrix.stack(matrix(1, self.ncols(), [self._base_ring.zero() for i in range(self.ncols())]))
+        self.Matrix = self.Matrix.stack(matrix(self.base_ring(), 1, self.ncols()))
 
         for c in coefficients:
             self.Matrix[-1, c[0]] = c[1]
@@ -644,7 +657,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.add_variables(2)
@@ -652,7 +665,6 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.ncols()
             2
         """
-
         return self.objective_coefficients.dimensions()[1]
 
     cpdef int nrows(self):
@@ -662,7 +674,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.nrows()
             0
             sage: p.add_variables(5)
@@ -673,7 +685,6 @@ cdef class MatrixBackend(GenericBackend):
         """
         return self.row_upper_bound.dimensions()[1]
 
-
     cpdef bint is_maximization(self):
         """
         Test whether the problem is a maximization
@@ -681,17 +692,14 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.is_maximization()
             True
             sage: p.set_sense(-1)
             sage: p.is_maximization()
             False
         """
-        if self.is_maximize == 1:
-            return 1
-        else:
-            return 0
+        return self.is_maximize == 1
 
     cpdef problem_name(self, name=None):
         """
@@ -705,7 +713,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.problem_name()
             ''
             sage: p.problem_name("There once was a french fry")
@@ -715,7 +723,6 @@ cdef class MatrixBackend(GenericBackend):
         if name is None:
             return self.prob_name
         self.prob_name = name
-
 
     cpdef row(self, int i):
         """
@@ -730,12 +737,12 @@ cdef class MatrixBackend(GenericBackend):
         A pair ``(indices, coeffs)`` where ``indices`` lists the
         entries whose coefficient is nonzero, and to which ``coeffs``
         associates their coefficient on the model of the
-        ``add_linear_constraint`` method.
+        :meth:`add_linear_constraint` method.
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variables(5)
             4
             sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
@@ -743,7 +750,8 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: p.row_bounds(0)
             (2, 2)
-            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.add_variables(5)
             4
             sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
@@ -751,14 +759,15 @@ cdef class MatrixBackend(GenericBackend):
             ([1, 2, 3, 4], [1, 2, 3, 4])
             sage: [i.parent() for i in p.row(0)[1]]
             [Algebraic Real Field,
-            Algebraic Real Field,
-            Algebraic Real Field,
-            Algebraic Real Field]
+             Algebraic Real Field,
+             Algebraic Real Field,
+             Algebraic Real Field]
             sage: p.row_bounds(0)
             (2, 2)
             sage: [i.parent() for i in p.row_bounds(0)]
             [Algebraic Real Field, Algebraic Real Field]
-            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.add_variables(5)
             4
             sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
@@ -770,21 +779,22 @@ cdef class MatrixBackend(GenericBackend):
             (2.0, 2.0)
             sage: [i.parent() for i in p.row_bounds(0)]
             [Real Double Field, Real Double Field]
-            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.add_variables(5)
             4
             sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
             sage: p.row(0)
             ([1, 2, 3, 4],
             [1.0000000000000000000000000000,
-            2.0000000000000000000000000000,
-            3.0000000000000000000000000000,
-            4.0000000000000000000000000000])
+             2.0000000000000000000000000000,
+             3.0000000000000000000000000000,
+             4.0000000000000000000000000000])
             sage: [i.parent() for i in p.row(0)[1]]
             [Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision,
-            Real Field with 100 bits of precision]
+             Real Field with 100 bits of precision,
+             Real Field with 100 bits of precision,
+             Real Field with 100 bits of precision]
             sage: p.row_bounds(0)
             (2.0000000000000000000000000000, 2.0000000000000000000000000000)
             sage: [i.parent() for i in p.row_bounds(0)]
@@ -801,7 +811,6 @@ cdef class MatrixBackend(GenericBackend):
                 coeff.append(num)
             index += 1
         return (idx, coeff)
-
 
     cpdef row_bounds(self, int index):
         """
@@ -820,7 +829,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variables(5)
             4
             sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
@@ -832,12 +841,12 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.row_bounds(1)
             (2, None)
         """
-        if self.row_lower_bound_indicator[index] == True:
+        if self.row_lower_bound_indicator[index]:
             lower = self.row_lower_bound[0, index]
         else:
             lower = None
 
-        if self.row_upper_bound_indicator[index] == True:
+        if self.row_upper_bound_indicator[index]:
             upper = self.row_upper_bound[0, index]
         else:
             upper = None
@@ -861,7 +870,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -869,7 +878,8 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.variable_upper_bound(0, 5)
             sage: p.col_bounds(0)
             (0, 5)
-            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -881,7 +891,8 @@ cdef class MatrixBackend(GenericBackend):
             (0, 5)
             sage: [i.parent() for i in p.col_bounds(0)]
             [Algebraic Real Field, Algebraic Real Field]
-            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -893,7 +904,8 @@ cdef class MatrixBackend(GenericBackend):
             (0.0, 5.0)
             sage: [i.parent() for i in p.col_bounds(0)]
             [Real Double Field, Real Double Field]
-            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -907,12 +919,12 @@ cdef class MatrixBackend(GenericBackend):
             [Real Field with 100 bits of precision, Real Field with 100 bits of precision]
 
         """
-        if self.col_lower_bound_indicator[index] == True:
+        if self.col_lower_bound_indicator[index]:
             lower = self.col_lower_bound[0, index]
         else:
             lower = None
 
-        if self.col_upper_bound_indicator[index] == True:
+        if self.col_upper_bound_indicator[index]:
             upper = self.col_upper_bound[0, index]
         else:
             upper = None
@@ -930,18 +942,18 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,0)
+            sage: p.set_variable_type(0, 0)
             sage: p.is_variable_binary(0)
             True
             sage: p.is_variable_binary(1)
             False
         """
-        if index < 0 or index >= len(self.is_binary):
+        if not 0 <= index < self.ncols():
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
             return False
@@ -959,20 +971,19 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,-1)
-            sage: p.set_variable_type(0,1)
+            sage: p.set_variable_type(0, -1)
+            sage: p.set_variable_type(0, 1)
             sage: p.is_variable_integer(0)
             True
             sage: p.is_variable_integer(1)
             False
         """
-
-        if index < 0 or index >= len(self.is_integer):
+        if not 0 <= index < self.ncols():
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
             return False
@@ -990,7 +1001,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -1007,8 +1018,7 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.is_variable_continuous(1)
             False
         """
-
-        if index < 0 or index >= len(self.is_continuous):
+        if not 0 <= index < self.ncols():
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
             return False
@@ -1017,7 +1027,7 @@ cdef class MatrixBackend(GenericBackend):
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name
 
         INPUT:
 
@@ -1026,7 +1036,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_linear_constraints(1, 2, None, names=["Empty constraint 1"])
             sage: p.row_name(0)
             'Empty constraint 1'
@@ -1037,7 +1047,7 @@ cdef class MatrixBackend(GenericBackend):
 
     cpdef col_name(self, int index):
         """
-        Return the ``index`` th col name
+        Return the ``index``-th col name
 
         INPUT:
 
@@ -1049,7 +1059,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variable(name="I am a variable")
             0
             sage: p.col_name(0)
@@ -1059,7 +1069,7 @@ cdef class MatrixBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1074,7 +1084,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -1091,7 +1101,7 @@ cdef class MatrixBackend(GenericBackend):
         else:
             return self.col_upper_bound[0, index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1106,7 +1116,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")
+            sage: p = get_solver(solver="Matrix")
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -1114,7 +1124,8 @@ cdef class MatrixBackend(GenericBackend):
             sage: p.variable_lower_bound(0, 5)
             sage: p.col_bounds(0)
             (5, None)
-            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+
+            sage: p = get_solver(solver="Matrix", base_ring=AA)
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -1126,7 +1137,8 @@ cdef class MatrixBackend(GenericBackend):
             (5, None)
             sage: p.col_bounds(0)[0].parent()
             Algebraic Real Field
-            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+
+            sage: p = get_solver(solver="Matrix", base_ring=RDF)
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -1138,7 +1150,8 @@ cdef class MatrixBackend(GenericBackend):
             (5.0, None)
             sage: p.col_bounds(0)[0].parent()
             Real Double Field
-            sage: p = get_solver(solver = "Matrix", base_ring = RealField(100))
+
+            sage: p = get_solver(solver="Matrix", base_ring=RealField(100))
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)

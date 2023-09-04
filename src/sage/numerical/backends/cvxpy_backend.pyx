@@ -90,7 +90,7 @@ cdef class CVXPYBackend(MatrixBackend):
         0.0
     """
 
-    def __cinit__(self, maximization=True, base_ring=None, implementation = None, cvxpy_solver=None, cvxpy_solver_args=None):
+    def __cinit__(self, maximization=True, base_ring=None, implementation=None, cvxpy_solver=None, cvxpy_solver_args=None):
         """
         Cython constructor
 
@@ -115,13 +115,13 @@ cdef class CVXPYBackend(MatrixBackend):
         super().__init__(maximization, base_ring, implementation)
         self._cvxpy_solver = cvxpy_solver
         self._cvxpy_solver_args = cvxpy_solver_args
-    
+
     def _init_base_ring(self, base_ring=None):
         if base_ring != RDF and base_ring is not None:
             raise ValueError('base_ring must be RDF')
-        
+
         self._base_ring = RDF
-    
+
     def init_cvxpy_problem(self, maximization, cvxpy_solver=None, cvxpy_solver_args=None):
         if cvxpy_solver_args is None:
             cvxpy_solver_args = {}
@@ -179,8 +179,8 @@ cdef class CVXPYBackend(MatrixBackend):
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
                            binary=False, continuous=True, integer=False,
                            obj=None, name=None, coefficients=None) except -1:
-        ## coefficients is an extension in this backend,
-        ## and a proposed addition to the interface, to unify this with add_col.
+        # coefficients is an extension in this backend,
+        # and a proposed addition to the interface, to unify this with add_col.
         """
         Add a variable.
 
@@ -232,7 +232,7 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.objective_coefficient(1).parent()
             Real Double Field
         """
-        
+
         cdef int vtype = int(binary) + int(continuous) + int(integer)
         if vtype == 0:
             continuous = True
@@ -264,14 +264,14 @@ cdef class CVXPYBackend(MatrixBackend):
                 for i, v in coefficients:
                     if not isinstance(constraints[i], Equality):
                         raise NotImplementedError('adding coefficients to inequalities is ambiguous '
-                                                'because cvxpy rewrites all inequalities as <=')
+                                                  'because cvxpy rewrites all inequalities as <=')
                     constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
-                                                        constraints[i].args[1])
+                                                          constraints[i].args[1])
                 self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
             if obj:
                 objective = type(self.problem.objective)(self.problem.objective.args[0]
-                                                        + obj * variable)
+                                                         + obj * variable)
                 self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
         return index
@@ -446,7 +446,7 @@ cdef class CVXPYBackend(MatrixBackend):
             False
         """
         super(CVXPYBackend, self).set_sense(sense)
-    
+
         if self.problem is None:
             pass
         else:
