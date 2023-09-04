@@ -466,7 +466,7 @@ class VectorField(MultivectorField):
             sage: v = M.vector_field(-y, x, name='v')
             sage: v.display()
             v = -y ∂/∂x + x ∂/∂y
-            sage: v.plot()
+            sage: v.plot()                                                              # needs sage.plot
             Graphics object consisting of 80 graphics primitives
 
         .. PLOT::
@@ -479,7 +479,7 @@ class VectorField(MultivectorField):
 
         Plot with various options::
 
-            sage: v.plot(scale=0.5, color='green', linestyle='--', width=1,
+            sage: v.plot(scale=0.5, color='green', linestyle='--', width=1,             # needs sage.plot
             ....:        arrowsize=6)
             Graphics object consisting of 80 graphics primitives
 
@@ -493,7 +493,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(max_range=4, number_values=5, scale=0.5)
+            sage: v.plot(max_range=4, number_values=5, scale=0.5)                       # needs sage.plot
             Graphics object consisting of 24 graphics primitives
 
         .. PLOT::
@@ -507,7 +507,7 @@ class VectorField(MultivectorField):
         Plot using parallel computation::
 
             sage: Parallelism().set(nproc=2)
-            sage: v.plot(scale=0.5,  number_values=10, linestyle='--', width=1,
+            sage: v.plot(scale=0.5,  number_values=10, linestyle='--', width=1,         # needs sage.plot
             ....:        arrowsize=6)
             Graphics object consisting of 100 graphics primitives
 
@@ -525,7 +525,7 @@ class VectorField(MultivectorField):
 
         Plots along a line of fixed coordinate::
 
-            sage: v.plot(fixed_coords={x: -2})
+            sage: v.plot(fixed_coords={x: -2})                                          # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         .. PLOT::
@@ -538,7 +538,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(fixed_coords={y: 1})
+            sage: v.plot(fixed_coords={y: 1})                                           # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         .. PLOT::
@@ -567,7 +567,7 @@ class VectorField(MultivectorField):
         Rather, we have to select some coordinates for the plot, via
         the argument ``ambient_coords``. For instance, for a 3D plot::
 
-            sage: v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},  # long time
+            sage: v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},         # long time, needs sage.plot
             ....:        number_values=4)
             Graphics3d Object
 
@@ -581,7 +581,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},  # long time
+            sage: v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},         # long time, needs sage.plot
             ....:        ranges={x: (-2,2), y: (-2,2), t: (-1, 4)},
             ....:        number_values=4)
             Graphics3d Object
@@ -597,7 +597,7 @@ class VectorField(MultivectorField):
 
         or, for a 2D plot::
 
-            sage: v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})  # long time
+            sage: v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})      # long time, needs sage.plot
             Graphics object consisting of 80 graphics primitives
 
         .. PLOT::
@@ -610,7 +610,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})  # long time
+            sage: v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})      # long time, needs sage.plot
             Graphics object consisting of 72 graphics primitives
 
         .. PLOT::
@@ -637,9 +637,9 @@ class VectorField(MultivectorField):
             sage: v = XS.frame()[1] ; v  # the coordinate vector ∂/∂phi
             Vector field ∂/∂ph on the Open subset U of the 2-dimensional
              differentiable manifold S^2
-            sage: graph_v = v.plot(chart=X3, mapping=F, label_axes=False)
-            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)
-            sage: graph_v + graph_S2
+            sage: graph_v = v.plot(chart=X3, mapping=F, label_axes=False)               # needs sage.plot
+            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)              # needs sage.plot
+            sage: graph_v + graph_S2                                                    # needs sage.plot
             Graphics3d Object
 
         .. PLOT::

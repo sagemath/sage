@@ -898,9 +898,10 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: M = Manifold(3, 'M')
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
-            sage: D = M.subset_digraph(); D                                             # needs sage.graphs
+            sage: D = M.subset_digraph(); D
             Digraph on 4 vertices
             sage: D.edges(sort=True, key=lambda e: (e[0]._name, e[1]._name))
             [(Set {U} of open subsets of the 3-dimensional differentiable manifold M,
@@ -912,20 +913,19 @@ class ManifoldSubset(UniqueRepresentation, Parent):
              (Set {W} of open subsets of the 3-dimensional differentiable manifold M,
               Set {M} of open subsets of the 3-dimensional differentiable manifold M,
               None)]
-            sage: D.plot(layout='acyclic')                                              # needs sage.graphs sage.plot
+            sage: D.plot(layout='acyclic')                                              # needs sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: def label(element):
             ....:     try:
             ....:         return element._name
             ....:     except AttributeError:
             ....:         return '[' + ', '.join(sorted(x._name for x in element)) + ']'
-            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.graphs sage.plot
+            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.plot
             Graphics object consisting of 8 graphics primitives
-
             sage: VW = V.union(W)
-            sage: D = M.subset_digraph(); D                                             # needs sage.graphs
+            sage: D = M.subset_digraph(); D
             Digraph on 5 vertices
-            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.graphs sage.plot
+            sage: D.relabel(label, inplace=False).plot(layout='acyclic')                # needs sage.plot
             Graphics object consisting of 12 graphics primitives
 
         If ``open_covers`` is ``True``, the digraph includes a special vertex for
@@ -1058,35 +1058,37 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: M = Manifold(3, 'M')
             sage: U = M.open_subset('U'); V = M.open_subset('V'); W = M.open_subset('W')
-            sage: P = M.subset_poset(); P                                               # needs sage.graphs
+            sage: P = M.subset_poset(); P
             Finite poset containing 4 elements
-            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.graphs sage.plot
+            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.plot
             Graphics object consisting of 8 graphics primitives
             sage: VW = V.union(W)
-            sage: P = M.subset_poset(); P                                               # needs sage.graphs
+            sage: P = M.subset_poset(); P
             Finite poset containing 5 elements
-            sage: P.maximal_elements()                                                  # needs sage.graphs
+            sage: P.maximal_elements()
             [Set {M} of open subsets of the 3-dimensional differentiable manifold M]
-            sage: sorted(P.minimal_elements(), key=lambda v: v._name)                   # needs sage.graphs
+            sage: sorted(P.minimal_elements(), key=lambda v: v._name)
              [Set {U} of open subsets of the 3-dimensional differentiable manifold M,
               Set {V} of open subsets of the 3-dimensional differentiable manifold M,
               Set {W} of open subsets of the 3-dimensional differentiable manifold M]
             sage: from sage.manifolds.subset import ManifoldSubsetFiniteFamily
-            sage: sorted(P.lower_covers(ManifoldSubsetFiniteFamily([M])), key=str)      # needs sage.graphs
+            sage: sorted(P.lower_covers(ManifoldSubsetFiniteFamily([M])), key=str)
              [Set {U} of open subsets of the 3-dimensional differentiable manifold M,
               Set {V_union_W} of open subsets of the 3-dimensional differentiable manifold M]
-            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.graphs sage.plot
+            sage: P.plot(element_labels={element: element._name for element in P})      # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         If ``open_covers`` is ``True``, the poset includes a special vertex for
         each nontrivial open cover of a subset::
 
-            sage: P = M.subset_poset(open_covers=True); P                               # needs sage.graphs
+            sage: # needs sage.graphs
+            sage: P = M.subset_poset(open_covers=True); P
             Finite poset containing 6 elements
             sage: from sage.manifolds.subset import ManifoldSubsetFiniteFamily
-            sage: sorted(P.upper_covers(ManifoldSubsetFiniteFamily([VW])), key=str)     # needs sage.graphs
+            sage: sorted(P.upper_covers(ManifoldSubsetFiniteFamily([VW])), key=str)
             [(Set {V} of open subsets of the 3-dimensional differentiable manifold M,
               Set {W} of open subsets of the 3-dimensional differentiable manifold M),
              Set {M} of open subsets of the 3-dimensional differentiable manifold M]
@@ -1095,7 +1097,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             ....:         return element._name
             ....:     except AttributeError:
             ....:         return '[' + ', '.join(sorted(x._name for x in element)) + ']'
-            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.graphs sage.plot
+            sage: P.plot(element_labels={element: label(element) for element in P})     # needs sage.plot
             Graphics object consisting of 12 graphics primitives
 
         .. PLOT::

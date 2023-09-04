@@ -1271,6 +1271,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: g = sphere()
         sage: g.all
         [Graphics3d Object]

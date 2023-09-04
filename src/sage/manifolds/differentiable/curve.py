@@ -95,7 +95,7 @@ class DifferentiableCurve(DiffMap):
 
     A graphical view of the curve is provided by the method :meth:`plot`::
 
-        sage: c.plot(aspect_ratio=1)
+        sage: c.plot(aspect_ratio=1)                                                    # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
