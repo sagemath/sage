@@ -407,7 +407,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         And any method that works on linear codes works for our new dummy code::
 
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             1
             sage: C.is_self_orthogonal()
             False
@@ -467,7 +467,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         depends on which packages are loaded, so we must re-seed GAP to ensure
         a consistent result for this example::
 
-            sage: libgap.set_seed(0)                                                    # needs sage.libs.gap
+            sage: # needs sage.libs.gap
+            sage: libgap.set_seed(0)
             0
             sage: C = codes.HammingCode(GF(4, 'z'), 3)
             sage: C.automorphism_group_gens()
@@ -653,9 +654,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
-            sage: C.binomial_moment(2)
+            sage: C.binomial_moment(2)                                                  # needs sage.libs.gap
             0
-            sage: C.binomial_moment(4)    # long time
+            sage: C.binomial_moment(4)    # long time                                   # needs sage.libs.gap
             35
 
         .. warning::
@@ -712,6 +713,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         depends on which packages are loaded, so we must re-seed GAP to ensure
         a consistent result for this example::
 
+            sage: # needs sage.libs.gap
             sage: libgap.set_seed(0)
             0
             sage: C = codes.HammingCode(GF(4, 'z'), 3)
@@ -720,12 +722,15 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C_iso == aut_group_can_label.get_canonical_form()
             True
             sage: aut_group_can_label.get_autom_gens()
-            [((1, 1, 1, z, z + 1, 1, 1, 1, 1, z + 1, z, z, z + 1, z + 1, z + 1, 1, z + 1, z, z, 1, z); (1,13,14,20)(2,21,8,18,7,16,19,15)(3,10,5,12,17,9,6,4), Ring endomorphism of Finite Field in z of size 2^2
-               Defn: z |--> z + 1),
-             ((z, 1, z, z, z, z + 1, z, z, z, z, z, z, z + 1, z, z, z, z, z + 1, z, z, z); (1,11,5,12,3,19)(2,8)(6,18,13)(7,17,15)(9,10,14,16,20,21), Ring endomorphism of Finite Field in z of size 2^2
-               Defn: z |--> z + 1),
-             ((z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z); (), Ring endomorphism of Finite Field in z of size 2^2
-               Defn: z |--> z)]
+            [((1, 1, 1, z, z + 1, 1, 1, 1, 1, z + 1, z, z, z + 1, z + 1, z + 1, 1, z + 1, z, z, 1, z); (1,13,14,20)(2,21,8,18,7,16,19,15)(3,10,5,12,17,9,6,4),
+              Ring endomorphism of Finite Field in z of size 2^2
+                Defn: z |--> z + 1),
+             ((z, 1, z, z, z, z + 1, z, z, z, z, z, z, z + 1, z, z, z, z, z + 1, z, z, z); (1,11,5,12,3,19)(2,8)(6,18,13)(7,17,15)(9,10,14,16,20,21),
+              Ring endomorphism of Finite Field in z of size 2^2
+                Defn: z |--> z + 1),
+             ((z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z); (),
+              Ring endomorphism of Finite Field in z of size 2^2
+                Defn: z |--> z)]
         """
         from sage.coding.codecan.autgroup_can_label import LinearCodeAutGroupCanLabel
         return LinearCodeAutGroupCanLabel(self, algorithm_type=equivalence)
@@ -760,27 +765,27 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: F.<z> = GF(4)
             sage: C = codes.HammingCode(F, 3)
-            sage: CanRep, transp = C.canonical_representative()
+            sage: CanRep, transp = C.canonical_representative()                         # needs sage.libs.gap
 
         Check that the transporter element is correct::
 
-            sage: LinearCode(transp*C.generator_matrix()) == CanRep
+            sage: LinearCode(transp*C.generator_matrix()) == CanRep                     # needs sage.libs.gap
             True
 
         Check if an equivalent code has the same canonical representative::
 
             sage: f = F.hom([z**2])
             sage: C_iso = LinearCode(C.generator_matrix().apply_map(f))
-            sage: CanRep_iso, _ = C_iso.canonical_representative()
-            sage: CanRep_iso == CanRep
+            sage: CanRep_iso, _ = C_iso.canonical_representative()                      # needs sage.libs.gap
+            sage: CanRep_iso == CanRep                                                  # needs sage.libs.gap
             True
 
         Since applying the Frobenius automorphism could be extended to an
         automorphism of `C`, the following must also yield ``True``::
 
-            sage: CanRep1, _ = C.canonical_representative("linear")
-            sage: CanRep2, _ = C_iso.canonical_representative("linear")
-            sage: CanRep2 == CanRep1
+            sage: CanRep1, _ = C.canonical_representative("linear")                     # needs sage.libs.gap
+            sage: CanRep2, _ = C_iso.canonical_representative("linear")                 # needs sage.libs.gap
+            sage: CanRep2 == CanRep1                                                    # needs sage.libs.gap
             True
 
         TESTS:
@@ -789,7 +794,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         (see :trac:`21651`)::
 
             sage: C = LinearCode(random_matrix(GF(47), 25, 35))
-            sage: alarm(0.5); C.canonical_representative()
+            sage: alarm(0.5); C.canonical_representative()                              # needs sage.libs.gap
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -975,7 +980,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C = codes.GolayCode(GF(2), False)
             sage: C.is_projective()
             True
-            sage: C.dual_code().minimum_distance()
+            sage: C.dual_code().minimum_distance()                                      # needs sage.libs.gap
             8
 
         A non-projective code::
@@ -1108,7 +1113,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             True
             sage: A.dimension() == C.dimension()*D.dimension()
             True
-            sage: A.minimum_distance() == C.minimum_distance()*D.minimum_distance()
+            sage: A.minimum_distance() == C.minimum_distance()*D.minimum_distance()     # needs sage.libs.gap
             True
 
         """
@@ -1140,18 +1145,18 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [15, 7] BCH Code over GF(2) with designed distance 5
             sage: C.is_subcode(D)
             True
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             7
-            sage: D.minimum_distance()
+            sage: D.minimum_distance()                                                  # needs sage.libs.gap
             5
             sage: aux = codes.HammingCode(GF(2),2)
             sage: aux = aux.dual_code()
-            sage: aux.minimum_distance()
+            sage: aux.minimum_distance()                                                # needs sage.libs.gap
             2
             sage: Cx = D.construction_x(C,aux)
             sage: Cx
             [18, 7] linear code over GF(2)
-            sage: Cx.minimum_distance()
+            sage: Cx.minimum_distance()                                                 # needs sage.libs.gap
             7
         """
         if not other.is_subcode(self):
@@ -1280,7 +1285,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [7, 4] Hamming Code over GF(2)
             sage: C1.is_permutation_equivalent(C2)
             True
-            sage: C1.is_permutation_equivalent(C2, algorithm="verbose")
+            sage: C1.is_permutation_equivalent(C2, algorithm="verbose")                 # needs sage.groups
             (True, (3,4)(5,7,6))
             sage: C1 = codes.random_linear_code(GF(2), 10, 5)
             sage: C2 = codes.random_linear_code(GF(3), 10, 5)
@@ -1366,7 +1371,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: MS = MatrixSpace(GF(3),4,7)
             sage: G = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             3
 
         If ``algorithm`` is provided, then the minimum distance will be
@@ -1445,14 +1450,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
-            sage: C._minimum_weight_codeword()
+            sage: C._minimum_weight_codeword()                                          # needs sage.libs.gap
             (0, 1, 0, 1, 0, 1, 0)
 
         TESTS:
 
         We check that :trac:`18480` is fixed::
 
-            sage: codes.HammingCode(GF(2), 2).minimum_distance()
+            sage: codes.HammingCode(GF(2), 2).minimum_distance()                        # needs sage.libs.gap
             3
 
         AUTHORS:
@@ -1506,7 +1511,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: G  = MS([[1,0,0,0,1,1,1,0], [0,1,1,1,0,0,0,0],
             ....:          [0,0,0,0,0,0,0,1], [0,0,0,0,0,1,0,0]])
             sage: C  = LinearCode(G)
-            sage: gp = C.permutation_automorphism_group()
+            sage: gp = C.permutation_automorphism_group()                               # needs sage.libs.gap
             sage: C.module_composition_factors(gp)                                      # needs sage.libs.gap
             [ rec(
                   IsIrreducible := true,
@@ -1838,7 +1843,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: F.<z> = GF(2^2,"z")
             sage: C = codes.HammingCode(F, 2); C
             [5, 3] Hamming Code over GF(4)
-            sage: C.weight_distribution()
+            sage: C.weight_distribution()                                               # needs sage.libs.gap
             [1, 0, 0, 30, 15, 18]
             sage: C = codes.HammingCode(GF(2), 3); C
             [7, 4] Hamming Code over GF(2)
@@ -2004,7 +2009,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
-            sage: C.zeta_polynomial()
+            sage: C.zeta_polynomial()                                           # needs sage.libs.gap
             2/5*T^2 + 2/5*T + 1/5
 
             sage: C = codes.databases.best_linear_code_in_guava(6, 3, GF(2))    # optional - gap_package_guava
@@ -2014,14 +2019,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             2/5*T^2 + 2/5*T + 1/5
 
             sage: C = codes.HammingCode(GF(2), 4)
-            sage: C.zeta_polynomial()
+            sage: C.zeta_polynomial()                                           # needs sage.libs.gap
             16/429*T^6 + 16/143*T^5 + 80/429*T^4 + 32/143*T^3 + 30/143*T^2 + 2/13*T + 1/13
 
             sage: F.<z> = GF(4,"z")
             sage: MS = MatrixSpace(F, 3, 6)
             sage: G = MS([[1,0,0,1,z,z],[0,1,0,z,1,z],[0,0,1,z,z,1]])
             sage: C = LinearCode(G)  # the "hexacode"
-            sage: C.zeta_polynomial()
+            sage: C.zeta_polynomial()                                           # needs sage.libs.gap
             1
 
         REFERENCES:
@@ -2072,7 +2077,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
-            sage: C.zeta_function()
+            sage: C.zeta_function()                                             # needs sage.libs.gap
             (1/5*T^2 + 1/5*T + 1/10)/(T^2 - 3/2*T + 1/2)
         """
         P = self.zeta_polynomial()
@@ -2092,6 +2097,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: C = codes.GolayCode(GF(3))
             sage: G = C.cosetGraph()
             sage: G.is_distance_regular()
@@ -2110,6 +2116,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: C = codes.KasamiCode(4,2)
             sage: C.cosetGraph()
             Hamming Graph with parameters 4,2: Graph on 16 vertices
@@ -2237,7 +2244,7 @@ class LinearCode(AbstractLinearCode):
         4
         sage: C.length()
         7
-        sage: C.minimum_distance()
+        sage: C.minimum_distance()                                                      # needs sage.libs.gap
         3
         sage: C.spectrum()
         [1, 0, 0, 7, 7, 0, 0, 1]
@@ -2295,7 +2302,7 @@ class LinearCode(AbstractLinearCode):
         optional parameter.::
 
             sage: C  = LinearCode(G, d=3)
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             3
 
         TESTS::
@@ -2321,7 +2328,7 @@ class LinearCode(AbstractLinearCode):
             (0, 1, 0, 0, a + 1, 0, 1),
             (0, 0, 1, a, a + 1, a, a + 1)
             ]
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             3
 
         We can construct a linear code directly from a vector space::
@@ -3077,7 +3084,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
             ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: D = codes.decoders.LinearCodeNearestNeighborDecoder(C)
-            sage: D.decoding_radius()
+            sage: D.decoding_radius()                                                   # needs sage.libs.gap
             1
         """
         return (self.code().minimum_distance()-1) // 2

@@ -900,6 +900,7 @@ cdef class BinaryCode:
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: M = Matrix(GF(2), [[1,1,1,1]])

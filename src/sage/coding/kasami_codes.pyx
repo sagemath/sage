@@ -99,7 +99,7 @@ class KasamiCode(AbstractLinearCode):
 
         sage: codes.KasamiCode(16,4)
         [16, 9] Extended (16, 4)-Kasami code
-        sage: _.minimum_distance()
+        sage: _.minimum_distance()                                                      # needs sage.libs.gap
         4
 
         sage: codes.KasamiCode(8, 2, extended=False)

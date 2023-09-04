@@ -314,7 +314,7 @@ def dimension_upper_bound(n, d, q, algorithm=None):
         6
         sage: codes.bounds.dimension_upper_bound(30,15,4)                               # needs sage.libs.pari
         13
-        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # needs sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # needs sage.libs.pari sage.numerical.mip
         12
 
     TESTS:
@@ -644,7 +644,7 @@ def entropy_inverse(x, q=2):
     EXAMPLES::
 
         sage: from sage.coding.code_bounds import entropy_inverse
-        sage: entropy_inverse(0.1)
+        sage: entropy_inverse(0.1)                                                      # needs scipy
         0.012986862055...
         sage: entropy_inverse(1)
         1/2

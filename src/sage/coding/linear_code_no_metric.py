@@ -904,6 +904,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: C = codes.HammingCode(GF(3), 3)
             sage: g = SymmetricGroup(13).random_element()
             sage: C.is_permutation_automorphism(g)
@@ -936,6 +937,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: C = codes.HammingCode(GF(2), 3)
             sage: G = C.permutation_automorphism_group(); G
             Permutation Group with generators
