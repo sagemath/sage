@@ -1,3 +1,5 @@
+# sage.doctest: needs sage.rings.real_mpfr
+
 from cypari2.stack cimport new_gen
 from cypari2.paridecl cimport *
 from cysignals.signals cimport sig_on, sig_off
