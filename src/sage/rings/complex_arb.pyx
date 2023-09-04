@@ -874,7 +874,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         cdef RealBall rb
         cdef ComplexBall cb
         acb_poly_init(rounded_poly)
-        cdef long deg = acb_poly_degree(poly.__poly)
+        cdef long deg = acb_poly_degree(poly._poly)
         if deg < 0:
             raise ArithmeticError("taking the roots of the zero polynomial")
         cdef acb_ptr roots = _acb_vec_init(deg)
@@ -883,7 +883,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             while ((isolated < deg or any(acb_rel_accuracy_bits(&roots[i]) < tgtprec
                                         for i in range(deg)))
                 and prec < maxprec):
-                acb_poly_set_round(rounded_poly, poly.__poly, prec)
+                acb_poly_set_round(rounded_poly, poly._poly, prec)
                 maxiter = min(max(deg, 32), prec)
                 if (prec == initial_prec):
                     isolated = acb_poly_find_roots(roots, rounded_poly, NULL, maxiter, prec)

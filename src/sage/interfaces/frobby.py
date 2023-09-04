@@ -466,5 +466,6 @@ class Frobby:
         strings = [str(exponents[var]) for var in range(len(exponents))]
         return ' '.join(strings) + '\n'
 
+
 # This singleton instance is what should be used outside this file.
 frobby = Frobby()

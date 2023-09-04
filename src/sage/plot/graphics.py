@@ -1104,8 +1104,8 @@ class Graphics(WithEqualityById, SageObject):
         Compute and return other + this graphics object.
 
         This only works when other is a Python int equal to 0. In all other
-        cases a TypeError is raised. The main reason for this function is
-        to make summing a list of graphics objects easier.
+        cases a :class:`TypeError` is raised. The main reason for this
+        function is to make summing a list of graphics objects easier.
 
         EXAMPLES::
 
