@@ -116,7 +116,7 @@ def read_distribution(src_file):
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
         'sagemath-tdlib'
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
-        ''
+        'sagemath-graphs'
     """
     from Cython.Utils import open_source_file
     with open_source_file(src_file, error_handling='ignore') as fh:
