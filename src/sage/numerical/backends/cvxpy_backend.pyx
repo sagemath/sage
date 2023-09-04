@@ -258,7 +258,7 @@ cdef class CVXPYBackend(MatrixBackend):
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
 
-        super(CVXPYBackend, self).add_variable(lower_bound, upper_bound, binary, continuous, integer, obj, name)
+        super(CVXPYBackend, self).add_variable(lower_bound, upper_bound, binary, continuous, integer, obj, name, coefficients)
 
         index = self.ncols() - 1
         self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
@@ -275,22 +275,26 @@ cdef class CVXPYBackend(MatrixBackend):
             else:
                 variable = cvxpy.Variable(name=name)
 
-            self.variables.append(variable)
+            constraints = self.problem.constraints
 
             if coefficients is not None:
-                constraints = list(self.problem.constraints)
+                constraints = list(constraints)
                 for i, v in coefficients:
                     if not isinstance(constraints[i], Equality):
-                        raise NotImplementedError('adding coefficients to inequalities is ambiguous '
-                                                  'because cvxpy rewrites all inequalities as <=')
+                        # adding coefficients to inequalities is ambiguous
+                        # because cvxpy rewrites all inequalities as <=
+                        # - so just re-create the problem on next 'solve'
+                        self.problem = self.variables = None
+                        return index
+
                     constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
                                                           constraints[i].args[1])
-                self.problem = cvxpy.Problem(self.problem.objective, constraints)
-
+            objective = self.problem.objective
             if obj:
-                objective = type(self.problem.objective)(self.problem.objective.args[0]
-                                                         + obj * variable)
-                self.problem = cvxpy.Problem(objective, self.problem.constraints)
+                objective = type(objective)(self.problem.objective.args[0] + obj * variable)
+
+            self.problem = cvxpy.Problem(objective, constraints)
+            self.variables.append(variable)
 
         return index
 
@@ -364,47 +368,6 @@ cdef class CVXPYBackend(MatrixBackend):
             elif upper_bound is not None:
                 constraints.append(expr <= upper_bound)
             self.problem = cvxpy.Problem(self.problem.objective, constraints)
-
-    cpdef add_col(self, indices, coeffs):
-        """
-        Add a column.
-
-        INPUT:
-
-        - ``indices`` (list of integers) -- this list contains the
-          indices of the constraints in which the variable's
-          coefficient is nonzero
-
-        - ``coeffs`` (list of real values) -- associates a coefficient
-          to the variable in each of the constraints in which it
-          appears. Namely, the i-th entry of ``coeffs`` corresponds to
-          the coefficient of the variable in the constraint
-          represented by the i-th entry in ``indices``.
-
-        .. NOTE::
-
-            ``indices`` and ``coeffs`` are expected to be of the same
-            length.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.ncols()
-            0
-            sage: p.nrows()
-            0
-            sage: p.add_linear_constraints(5, 0, None)
-            sage: p.add_col(list(range(5)), list(range(5)))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: adding coefficients to inequalities is ambiguous
-            because cvxpy rewrites all inequalities as <=
-            sage: p.nrows()
-            5
-        """
-        super(CVXPYBackend, self).add_col(indices, coeffs)
-        self.add_variable(coefficients=zip(indices, coeffs))
 
     cpdef set_objective(self, list coeff, d=0.0):
         """
@@ -524,10 +487,6 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_linear_constraints(5, 0, None)
             sage: p.add_col(list(range(5)), list(range(5)))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: adding coefficients to inequalities is ambiguous
-            because cvxpy rewrites all inequalities as <=
             sage: p.solve()
             0
             sage: p.objective_coefficient(0, 1)

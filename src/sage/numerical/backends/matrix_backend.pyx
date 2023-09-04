@@ -432,7 +432,6 @@ cdef class MatrixBackend(GenericBackend):
             Real Field with 100 bits of precision
 
         """
-
         if coeff is not None:
             self.objective_coefficients[0, variable] = coeff
         else:
