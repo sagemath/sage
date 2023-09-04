@@ -566,15 +566,17 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         f = R.hom([alpha], F, check=False)
 
-        import sage.rings.number_field.number_field_rel as number_field_rel
-        if number_field_rel.is_RelativeNumberField(F):
-
-            base_map = F.base_field().hom([R.base_ring().gen()])
-            g = F.Hom(R)(x, base_map)
-
+        try:
+            from sage.rings.number_field.number_field_rel import is_RelativeNumberField
+        except ImportError:
+            pass
         else:
-            g = F.hom([x], R, check=False)
+            if is_RelativeNumberField(F):
+                base_map = F.base_field().hom([R.base_ring().gen()])
+                g = F.Hom(R)(x, base_map)
+                return F, f, g
 
+        g = F.hom([x], R, check=False)
         return F, f, g
 
     def charpoly(self, var):
