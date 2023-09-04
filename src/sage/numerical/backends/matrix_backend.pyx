@@ -150,13 +150,24 @@ cdef class MatrixBackend(GenericBackend):
             2
         """
         cdef MatrixBackend mat = type(self)(base_ring=self.base_ring())
+        mat.obj_constant_term = self.obj_constant_term
+        mat.objective_coefficients = copy(self.objective_coefficients)
         mat.Matrix = copy(self.Matrix)
+        mat.prob_name = self.prob_name
+        mat.is_maximize = self.is_maximize
         mat.row_lower_bound = copy(self.row_lower_bound)
         mat.row_upper_bound = copy(self.row_upper_bound)
         mat.col_lower_bound = copy(self.col_lower_bound)
         mat.col_upper_bound = copy(self.col_upper_bound)
-        mat.objective_coefficients = copy(self.objective_coefficients)
-        mat.obj_constant_term = self.obj_constant_term
+        mat.row_lower_bound_indicator = copy(self.row_lower_bound_indicator)
+        mat.row_upper_bound_indicator = copy(self.row_upper_bound_indicator)
+        mat.col_lower_bound_indicator = copy(self.col_lower_bound_indicator)
+        mat.col_upper_bound_indicator = copy(self.col_upper_bound_indicator)
+        mat.row_name_var = copy(self.row_name_var)
+        mat.col_name_var = copy(self.col_name_var)
+        mat.is_integer = copy(self.is_integer)
+        mat.is_binary = copy(self.is_binary)
+        mat.is_continuous = copy(self.is_continuous)
         return mat
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
