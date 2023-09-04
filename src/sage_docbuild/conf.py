@@ -56,13 +56,16 @@ extensions = [
 jupyter_execute_default_kernel = 'sagemath'
 
 if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
-
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
-    if SAGE_JUPYTER_SERVER == 'binder':
+    if SAGE_JUPYTER_SERVER.startswith('binder'):
+        if SAGE_JUPYTER_SERVER == 'binder': # default binder repo
+            binder_repo = "sagemath/sage-binder-env"
+        else: # format "binder:sagemath/sage-binder-env"
+            binder_repo = SAGE_JUPYTER_SERVER[7:]
         jupyter_sphinx_thebelab_config = {
             'requestKernel': False,
             'binderOptions': {
-                'repo': "sagemath/sage-binder-env",
+                'repo': binder_repo,
             },
             'kernelOptions': {
                 'name': "sagemath",
