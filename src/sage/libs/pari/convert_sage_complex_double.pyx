@@ -24,7 +24,7 @@ cpdef ComplexDoubleElement pari_to_cdf(Gen g):
 
     Check that we handle PARI errors gracefully, see :trac:`17329`::
 
-        sage: CDF(-151.386325246 + 992.34771962*I).zeta()
+        sage: CDF(-151.386325246 + 992.34771962*I).zeta()                               # needs sage.symbolic
         Traceback (most recent call last):
         ...
         PariError: overflow in t_REAL->double conversion

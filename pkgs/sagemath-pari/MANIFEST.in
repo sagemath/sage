@@ -36,6 +36,18 @@ include sage/rings/padics/*.pxi                                 # FIXME?
 include sage/arith/rational_reconstruction.pxd                  # FIXME
 include sage/rings/morphism.pxd                                 # FIXME
 
+# Parts of quadratic_forms excluded form sagemath-modules;
+# lazy-imported and can only be tested with pari present
+graft sage/quadratic_forms/genera
+include sage/quadratic_forms/quadratic_form__automorphisms.p*
+include sage/quadratic_forms/quadratic_form__genus.p*
+include sage/quadratic_forms/quadratic_form__local_density_interfaces.p*
+include sage/quadratic_forms/quadratic_form__local_normal_form.p*
+include sage/quadratic_forms/quadratic_form__local_representation_conditions.p*
+include sage/quadratic_forms/quadratic_form__mass*.p*
+include sage/quadratic_forms/quadratic_form__siegel_product.p*
+include sage/quadratic_forms/qfsolve.p*
+include sage/quadratic_forms/special_values.p*
 
 global-exclude *.c
 global-exclude *.cpp
