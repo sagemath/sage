@@ -97,6 +97,7 @@ class SageSet(Set):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: W = WeylGroup(["A",1,1])
             sage: sW = W._sympy_(); sW
             SageSet(Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space))
@@ -112,6 +113,7 @@ class SageSet(Set):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: W = WeylGroup(["A",1,1])
             sage: sW = W._sympy_(); sW
             SageSet(Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space))
@@ -168,6 +170,7 @@ class SageSet(Set):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: sB3 = WeylGroup(["B", 3])._sympy_(); sB3
             SageSet(Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space))
             sage: len(sB3)
