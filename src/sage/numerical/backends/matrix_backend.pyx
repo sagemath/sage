@@ -9,6 +9,9 @@ other classes implementing solvers.
 """
 
 #*****************************************************************************
+#       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
+#                     2023 Alexandre Maranhão
+#                     2023 Zhongling Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +39,7 @@ cdef class MatrixBackend(GenericBackend):
 
     :trac:`20332`::
 
-        sage: p                                                     
+        sage: p
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
     def __cinit__(self, maximization = True, base_ring=None, implementation = None, **kwds):
@@ -46,7 +49,7 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
+            sage: p = get_solver(solver = "Matrix")
 
         """
 
@@ -82,7 +85,7 @@ cdef class MatrixBackend(GenericBackend):
             self.set_sense(+1)
         else:
             self.set_sense(-1)
-    
+
     def _init_base_ring(self, base_ring=None):
         if base_ring is None:
             from sage.rings.rational_field import QQ
@@ -108,7 +111,7 @@ cdef class MatrixBackend(GenericBackend):
 
         """
         return self._base_ring
-    
+
     cpdef __copy__(self):
         """
         Returns a copy of self.
@@ -164,74 +167,74 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
-            sage: p.ncols()                                         
+            sage: p.ncols()
             1
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2.0)                  
+            sage: p.add_variable(lower_bound=-2.0)
             2
-            sage: p.add_variable(continuous=True)                   
+            sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1.0)                  
+            sage: p.add_variable(name='x',obj=1.0)
             4
-            sage: p.col_name(3)                                     
+            sage: p.col_name(3)
             'x_3'
-            sage: p.col_name(4)                                     
+            sage: p.col_name(4)
             'x'
-            sage: p.objective_coefficient(4)                        
+            sage: p.objective_coefficient(4)
             1
             sage: p.objective_coefficient(4).parent()
             Rational Field
 
-            sage: p = get_solver(solver = "Matrix", base_ring = AA)                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix", base_ring = AA)
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
-            sage: p.ncols()                                         
+            sage: p.ncols()
             1
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2)                  
+            sage: p.add_variable(lower_bound=-2)
             2
-            sage: p.add_variable(continuous=True)                   
+            sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1)                  
+            sage: p.add_variable(name='x',obj=1)
             4
-            sage: p.col_name(3)                                     
+            sage: p.col_name(3)
             'x_3'
-            sage: p.col_name(4)                                     
+            sage: p.col_name(4)
             'x'
-            sage: p.objective_coefficient(4)                        
+            sage: p.objective_coefficient(4)
             1
             sage: p.objective_coefficient(4).parent()
             Algebraic Real Field
 
-            sage: p = get_solver(solver = "Matrix", base_ring = RDF)                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix", base_ring = RDF)
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
-            sage: p.ncols()                                         
+            sage: p.ncols()
             1
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             1
-            sage: p.add_variable(lower_bound=-2.0)                  
+            sage: p.add_variable(lower_bound=-2.0)
             2
-            sage: p.add_variable(continuous=True)                   
+            sage: p.add_variable(continuous=True)
             3
-            sage: p.add_variable(name='x',obj=1.0)                  
+            sage: p.add_variable(name='x',obj=1.0)
             4
-            sage: p.col_name(3)                                     
+            sage: p.col_name(3)
             'x_3'
-            sage: p.col_name(4)                                     
+            sage: p.col_name(4)
             'x'
-            sage: p.objective_coefficient(4)                        
+            sage: p.objective_coefficient(4)
             1.0
             sage: p.objective_coefficient(4).parent()
             Real Double Field
@@ -268,14 +271,14 @@ cdef class MatrixBackend(GenericBackend):
         #    pass
         #else:
         self.Matrix = self.Matrix.augment(matrix(self._base_ring, self.Matrix.dimensions()[0], 1))
-        
+
         if lower_bound is None:
             self.col_lower_bound_indicator.append(False)
             self.col_lower_bound = self.col_lower_bound.augment(matrix([self._base_ring.zero()]))
         else:
             self.col_lower_bound_indicator.append(True)
             self.col_lower_bound = self.col_lower_bound.augment(matrix([lower_bound]))
-        
+
         if upper_bound is None:
             self.col_upper_bound_indicator.append(False)
             self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
@@ -308,15 +311,15 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")   
-            sage: p.ncols()                                        
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,1)                          
-            sage: p.is_variable_integer(0)                          
+            sage: p.set_variable_type(0,1)
+            sage: p.is_variable_integer(0)
             True
-            sage: p.set_variable_type(1,1)                              
+            sage: p.set_variable_type(1,1)
             Traceback (most recent call last):
             ...
             IndexError: ...
@@ -341,11 +344,11 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.is_maximization()                               
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.is_maximization()
             True
-            sage: p.set_sense(-1)                                   
-            sage: p.is_maximization()                               
+            sage: p.set_sense(-1)
+            sage: p.is_maximization()
             False
         """
         if sense == 1:
@@ -367,13 +370,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variable()                                  
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variable()
             0
-            sage: p.objective_coefficient(0)                        
+            sage: p.objective_coefficient(0)
             0
-            sage: p.objective_coefficient(0,2)                      
-            sage: p.objective_coefficient(0)                        
+            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0)
             2
             sage: p = get_solver(solver = "Matrix", base_ring=AA)
             sage: p.add_variable()
@@ -426,12 +429,12 @@ cdef class MatrixBackend(GenericBackend):
 
         EXAMPLES::
 
-            sage: from sage.numerical.backends.generic_backend import get_solver    
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variables(5)                                
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variables(5)
             4
-            sage: p.set_objective([1, 1, 2, 1, 3])                  
-            sage: [p.objective_coefficient(x) for x in range(5)]    
+            sage: p.set_objective([1, 1, 2, 1, 3])
+            sage: [p.objective_coefficient(x) for x in range(5)]
             [1, 1, 2, 1, 3]
             sage: p = get_solver(solver = "Matrix", base_ring = AA)
             sage: p.add_variables(5)
@@ -509,14 +512,14 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.nrows()                                         
+            sage: p.nrows()
             0
-            sage: p.add_linear_constraints(5, 0, None)              
-            sage: p.add_col(range(5), range(5))                     
-            sage: p.nrows()                                         
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(range(5), range(5))
+            sage: p.nrows()
             5
 
             sage: p = get_solver(solver = "Matrix", base_ring=AA)
@@ -570,7 +573,7 @@ cdef class MatrixBackend(GenericBackend):
             self.col_upper_bound = matrix(1, [self._base_ring.zero()])
         else:
             self.col_upper_bound = self.col_upper_bound.augment(matrix([self._base_ring.zero()]))
-            
+
         self.objective_coefficients = self.objective_coefficients.augment(matrix([self._base_ring.zero()]))
         self.col_name_var.append(None)
 
@@ -593,19 +596,19 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variables(5)                                
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)                
-            sage: p.row(0)                                          
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)
+            sage: p.row(0)
             ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(0)                                   
+            sage: p.row_bounds(0)
             (2, 2)
             sage: p.add_linear_constraint(((1,7),(3,10)), 2.0, 2.0)
             sage: p.row(1)
             ([1, 3], [7, 10])
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')    
-            sage: p.row_name(-1)                                    
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 1.0, 1.0, name='foo')
+            sage: p.row_name(-1)
             'foo'
         """
         coefficients = list(coefficients)
@@ -624,7 +627,7 @@ cdef class MatrixBackend(GenericBackend):
         else:
             self.row_lower_bound_indicator.append(True)
             self.row_lower_bound = self.row_lower_bound.augment(matrix([lower_bound]))
-        
+
         if upper_bound is None:
             self.row_upper_bound_indicator.append(False)
             self.row_upper_bound = self.row_upper_bound.augment(matrix([self._base_ring.zero()]))
@@ -641,12 +644,12 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.add_variables(2)                                
+            sage: p.add_variables(2)
             1
-            sage: p.ncols()                                         
+            sage: p.ncols()
             2
         """
 
@@ -659,13 +662,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.nrows()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.nrows()
             0
-            sage: p.add_variables(5)                                
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraints(2, 2.0, None)            
-            sage: p.nrows()                                         
+            sage: p.add_linear_constraints(2, 2.0, None)
+            sage: p.nrows()
             2
         """
         return self.row_upper_bound.dimensions()[1]
@@ -678,11 +681,11 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.is_maximization()                               
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.is_maximization()
             True
-            sage: p.set_sense(-1)                                   
-            sage: p.is_maximization()                               
+            sage: p.set_sense(-1)
+            sage: p.is_maximization()
             False
         """
         if self.is_maximize == 1:
@@ -702,11 +705,11 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.problem_name()                                  
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.problem_name()
             ''
-            sage: p.problem_name("There once was a french fry")     
-            sage: print(p.problem_name())                           
+            sage: p.problem_name("There once was a french fry")
+            sage: print(p.problem_name())
             There once was a french fry
         """
         if name is None:
@@ -732,13 +735,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variables(5)                                
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)  
-            sage: p.row(0)                                          
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
+            sage: p.row(0)
             ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(0)                                   
+            sage: p.row_bounds(0)
             (2, 2)
             sage: p = get_solver(solver = "Matrix", base_ring = AA)
             sage: p.add_variables(5)
@@ -817,13 +820,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variables(5)                                
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)  
-            sage: p.row(0)                                          
+            sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, 2)
+            sage: p.row(0)
             ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(0)                                   
+            sage: p.row_bounds(0)
             (2, 2)
             sage: p.add_linear_constraint(list(zip(range(5), range(5))), 2, None)
             sage: p.row_bounds(1)
@@ -833,7 +836,7 @@ cdef class MatrixBackend(GenericBackend):
             lower = self.row_lower_bound[0, index]
         else:
             lower = None
-        
+
         if self.row_upper_bound_indicator[index] == True:
             upper = self.row_upper_bound[0, index]
         else:
@@ -858,13 +861,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variable()                                  
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variable()
             0
-            sage: p.col_bounds(0)                                   
+            sage: p.col_bounds(0)
             (0, None)
-            sage: p.variable_upper_bound(0, 5)                      
-            sage: p.col_bounds(0)                                   
+            sage: p.variable_upper_bound(0, 5)
+            sage: p.col_bounds(0)
             (0, 5)
             sage: p = get_solver(solver = "Matrix", base_ring = AA)
             sage: p.add_variable()
@@ -873,7 +876,7 @@ cdef class MatrixBackend(GenericBackend):
             (0, None)
             sage: p.col_bounds(0)[0].parent()
             Algebraic Real Field
-            sage: p.variable_upper_bound(0, 5)  
+            sage: p.variable_upper_bound(0, 5)
             sage: p.col_bounds(0)
             (0, 5)
             sage: [i.parent() for i in p.col_bounds(0)]
@@ -908,7 +911,7 @@ cdef class MatrixBackend(GenericBackend):
             lower = self.col_lower_bound[0, index]
         else:
             lower = None
-        
+
         if self.col_upper_bound_indicator[index] == True:
             upper = self.col_upper_bound[0, index]
         else:
@@ -927,22 +930,22 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
             sage: p.set_variable_type(0,0)
-            sage: p.is_variable_binary(0)                           
+            sage: p.is_variable_binary(0)
             True
-            sage: p.is_variable_binary(1)    
+            sage: p.is_variable_binary(1)
             False
         """
         if index < 0 or index >= len(self.is_binary):
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
             return False
-            
+
         return self.is_binary[index]
 
     cpdef bint is_variable_integer(self, int index):
@@ -956,24 +959,24 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,-1)                         
+            sage: p.set_variable_type(0,-1)
             sage: p.set_variable_type(0,1)
-            sage: p.is_variable_integer(0)                          
+            sage: p.is_variable_integer(0)
             True
-            sage: p.is_variable_integer(1)        
+            sage: p.is_variable_integer(1)
             False
         """
 
         if index < 0 or index >= len(self.is_integer):
             # This is how the other backends behave, and this method is
             # unable to raise a python exception as currently defined.
-            return False      
-        
+            return False
+
         return self.is_integer[index]
 
     cpdef bint is_variable_continuous(self, int index):
@@ -987,21 +990,21 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.ncols()                                         
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  
+            sage: p.add_variable()
             0
-            sage: p.is_variable_continuous(0)                       
+            sage: p.is_variable_continuous(0)
             True
-            sage: p.set_variable_type(0,1) 
-            sage: p.is_variable_continuous(0)                       
+            sage: p.set_variable_type(0,1)
+            sage: p.is_variable_continuous(0)
             False
-            sage: p.is_variable_binary(0)                       
+            sage: p.is_variable_binary(0)
             False
-            sage: p.is_variable_integer(0)                       
+            sage: p.is_variable_integer(0)
             True
-            sage: p.is_variable_continuous(1)        
+            sage: p.is_variable_continuous(1)
             False
         """
 
@@ -1023,9 +1026,9 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_linear_constraints(1, 2, None, names=["Empty constraint 1"])  
-            sage: p.row_name(0)                                     
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_linear_constraints(1, 2, None, names=["Empty constraint 1"])
+            sage: p.row_name(0)
             'Empty constraint 1'
         """
         if self.row_name_var[index] is not None:
@@ -1046,10 +1049,10 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variable(name="I am a variable")            
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variable(name="I am a variable")
             0
-            sage: p.col_name(0)                                     
+            sage: p.col_name(0)
             'I am a variable'
         """
         if self.col_name_var[index] is not None:
@@ -1071,13 +1074,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variable()                                  
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variable()
             0
-            sage: p.col_bounds(0)                                   
+            sage: p.col_bounds(0)
             (0, None)
-            sage: p.variable_upper_bound(0, 5)                      
-            sage: p.col_bounds(0)                                   
+            sage: p.variable_upper_bound(0, 5)
+            sage: p.col_bounds(0)
             (0, 5)
         """
         if value is None:
@@ -1103,13 +1106,13 @@ cdef class MatrixBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Matrix")                 
-            sage: p.add_variable()                                  
+            sage: p = get_solver(solver = "Matrix")
+            sage: p.add_variable()
             0
-            sage: p.col_bounds(0)                                   
+            sage: p.col_bounds(0)
             (0, None)
-            sage: p.variable_lower_bound(0, 5)                      
-            sage: p.col_bounds(0)                                   
+            sage: p.variable_lower_bound(0, 5)
+            sage: p.col_bounds(0)
             (5, None)
             sage: p = get_solver(solver = "Matrix", base_ring = AA)
             sage: p.add_variable()

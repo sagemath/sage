@@ -4,13 +4,15 @@ CVXPY Backend
 
 AUTHORS:
 
-- Nathann Cohen (2010-10)      : generic_backend template
-- Matthias Koeppe (2022-03)    : this backend
+- Nathann Cohen (2010-10):   generic_backend template
+- Matthias Koeppe (2022-03): this backend
+- Zhongling Xu (2023):       refactor through :class:`MatrixBackend`
 
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
-#       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2023 Zhongling Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
