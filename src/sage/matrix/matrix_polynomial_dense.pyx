@@ -998,7 +998,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             (2*x^3 + x^2, 5*x^3 + x^2 + 5*x + 6, 4*x^3 + 6*x^2 + 4*x)
             sage: B == A*X % x**4
             True
-
             sage: B = Matrix(pR, 3, 2,
             ....:            [[5*x^2 + 6*x + 3, 4*x^2 + 6*x + 4],
             ....:             [  x^2 + 4*x + 2,         5*x + 2],
