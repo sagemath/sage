@@ -1296,7 +1296,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             ....:         x*y*z^2 - x*y*z*w - z*w^2 + w^3,
             ....:         x^3*y*z*w - x*y^3*z - x^2*y*z*w - x^2*w^3 + y^2*w^2 + x*w^3
             ....:     ])
-            sage: X.is_irreducible()                                                    # needs sage.rings.finite_rings
+            sage: X.is_irreducible()                                                    # needs sage.libs.singular
             False
         """
         return self.defining_ideal().is_prime()
