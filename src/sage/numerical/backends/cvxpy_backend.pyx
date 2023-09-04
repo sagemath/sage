@@ -21,14 +21,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.numerical.mip import MIPSolverException
-from sage.rings.real_double import RDF
 from copy import copy
 import cvxpy
 from cvxpy.atoms.affine.add_expr import AddExpression
 from cvxpy.expressions.constants import Constant
 from cvxpy.constraints.zero import Equality
-from sage.numerical.backends.matrix_backend cimport MatrixBackend
+from sage.numerical.mip import MIPSolverException
+from sage.rings.real_double import RDF
 
 cdef class CVXPYBackend(MatrixBackend):
     """
@@ -138,7 +137,6 @@ cdef class CVXPYBackend(MatrixBackend):
         self.set_verbosity(0)
 
         self.variables = []
-        self.constraint_names = []
 
         if maximization:
             objective = cvxpy.Maximize(0)
@@ -167,7 +165,6 @@ cdef class CVXPYBackend(MatrixBackend):
         cdef CVXPYBackend cp = type(self)(base_ring=self.base_ring())
         cp.problem = self.problem                   # it's considered immutable; so no need to copy.
         cp.variables = copy(self.variables)
-        cp.constraint_names = copy(self.constraint_names)
         return cp
 
     cpdef cvxpy_problem(self):
@@ -345,7 +342,6 @@ cdef class CVXPYBackend(MatrixBackend):
                 constraints.append(lower_bound <= expr)
             elif upper_bound is not None:
                 constraints.append(expr <= upper_bound)
-            self.constraint_names.append(name)
             self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
     cpdef add_col(self, indices, coeffs):

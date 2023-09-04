@@ -10,15 +10,12 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.numerical.backends.generic_backend cimport GenericBackend
 from sage.numerical.backends.matrix_backend cimport MatrixBackend
-from sage.matrix.matrix2 cimport Matrix
 
 cdef class CVXPYBackend(MatrixBackend):
 
     cdef object variables
     cdef object problem
-    cdef object constraint_names
 
     cdef object _cvxpy_solver
     cdef object _cvxpy_solver_args
