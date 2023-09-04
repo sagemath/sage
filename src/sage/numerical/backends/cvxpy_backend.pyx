@@ -185,9 +185,15 @@ cdef class CVXPYBackend(MatrixBackend):
         return cp
 
     cpdef cvxpy_problem(self):
+        r"""
+        Return the :class:`cvxpy.Problem`.
+        """
         return self.problem
 
     def cvxpy_variables(self):
+        r"""
+        Return a list of the :class:`cvxpy.Variable` objects.
+        """
         return self.variables
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
@@ -260,8 +266,7 @@ cdef class CVXPYBackend(MatrixBackend):
         if self.problem is None:
             pass
         else:
-            if name is None:  # FIXME: This could be taken from .col_name()
-                name = f'x_{self.ncols()}'
+            name = self.col_name(index)
 
             if binary:
                 variable = cvxpy.Variable(name=name, boolean=True)
@@ -422,17 +427,15 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0, 1.0, 2.0, 1.0, 3.0]
         """
-        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)  # FIXME: This should not be called
         super(CVXPYBackend, self).set_objective(coeff, d)
-
-        if self.variables:  # FIXME: This should moved into the else: block below
-            expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
-        else:
-            expr = Constant(0)
 
         if self.problem is None:
             pass
         else:
+            if self.variables:
+                expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
+            else:
+                expr = Constant(0)
             objective = type(self.problem.objective)(expr)
             constraints = list(self.problem.constraints)
             self.problem = cvxpy.Problem(objective, constraints)
@@ -527,18 +530,20 @@ cdef class CVXPYBackend(MatrixBackend):
             because cvxpy rewrites all inequalities as <=
             sage: p.solve()
             0
-            sage: p.objective_coefficient(0,1)
+            sage: p.objective_coefficient(0, 1)
             sage: p.solve()
             Traceback (most recent call last):
             ...
             MIPSolverException: ...
         """
-        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)  # FIXME: Should not init when it already exists!
+        if not self.problem:
+            self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)
 
         try:
             self.problem.solve(solver=self._cvxpy_solver, **self._cvxpy_solver_args)
         except Exception as e:
             raise MIPSolverException(f"cvxpy.Problem.solve raised exception: {e}")
+
         status = self.problem.status
         if 'optimal' in status:
             return 0
