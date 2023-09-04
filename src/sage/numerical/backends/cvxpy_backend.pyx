@@ -89,21 +89,22 @@ cdef class CVXPYBackend(MatrixBackend):
         0.0
     """
 
-    def __cinit__(self, maximization=True, base_ring=None, implementation=None, cvxpy_solver=None, cvxpy_solver_args=None):
+    def __cinit__(self, maximization=True, base_ring=None, sparse=None, implementation=None,
+                  cvxpy_solver=None, cvxpy_solver_args=None):
         """
         Cython constructor
 
         INPUT:
 
-        - ``maximization`` (boolean, default: ``True``) -- Whether this is a
+        - ``maximization`` -- boolean (default: ``True``); whether this is a
           maximization or minimization problem.
 
-        - ``base_ring`` (optional): Must be ``RDF`` if provided.
+        - ``base_ring`` -- (optional); must be ``RDF`` if provided.
 
-        - ``cvxpy_solver (optional): Passed to :meth:`cvxpy.Problem.solve` as the
+        - ``cvxpy_solver -- (optional); passed to :meth:`cvxpy.Problem.solve` as the
           parameter ``solver``.
 
-        - ``cvxpy_solver_args`` (optional dict): Passed to :meth:`cvxpy.Problem.solve`
+        - ``cvxpy_solver_args`` -- dict (optional); passed to :meth:`cvxpy.Problem.solve`
           as additional keyword arguments.
 
         EXAMPLES::
@@ -111,17 +112,33 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
         """
-        super().__init__(maximization, base_ring, implementation)
         self._cvxpy_solver = cvxpy_solver
         self._cvxpy_solver_args = cvxpy_solver_args
 
     def _init_base_ring(self, base_ring=None):
+        r"""
+        Handle a ``base_ring`` parameter passed to the constructor.
+
+        This implementation only allows to pass ``RDF``.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver="CVXPY", base_ring=RDF)  # indirect doctest
+            sage: p = get_solver(solver="CVXPY", base_ring=QQ)
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+        """
         if base_ring != RDF and base_ring is not None:
             raise ValueError('base_ring must be RDF')
 
         self._base_ring = RDF
 
     def init_cvxpy_problem(self, maximization, cvxpy_solver=None, cvxpy_solver_args=None):
+        r"""
+        Create a :class:`cvxpy.Problem` from the stored data.
+        """
         if cvxpy_solver_args is None:
             cvxpy_solver_args = {}
 
@@ -146,7 +163,7 @@ cdef class CVXPYBackend(MatrixBackend):
 
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -220,7 +237,7 @@ cdef class CVXPYBackend(MatrixBackend):
             Traceback (most recent call last):
             ...
             ValueError: ...
-            sage: p.add_variable(name='x',obj=1)
+            sage: p.add_variable(name='x', obj=1)
             1
             sage: p.col_name(1)
             'x'
@@ -229,7 +246,6 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.objective_coefficient(1).parent()
             Real Double Field
         """
-
         cdef int vtype = int(binary) + int(continuous) + int(integer)
         if vtype == 0:
             continuous = True
@@ -244,7 +260,7 @@ cdef class CVXPYBackend(MatrixBackend):
         if self.problem is None:
             pass
         else:
-            if name is None:
+            if name is None:  # FIXME: This could be taken from .col_name()
                 name = f'x_{self.ncols()}'
 
             if binary:
@@ -377,7 +393,8 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.add_col(list(range(5)), list(range(5)))
             Traceback (most recent call last):
             ...
-            NotImplementedError: adding coefficients to inequalities is ambiguous because cvxpy rewrites all inequalities as <=
+            NotImplementedError: adding coefficients to inequalities is ambiguous
+            because cvxpy rewrites all inequalities as <=
             sage: p.nrows()
             5
         """
@@ -390,7 +407,7 @@ cdef class CVXPYBackend(MatrixBackend):
 
         INPUT:
 
-        - ``coeff`` - a list of real values, whose ith element is the
+        - ``coeff`` -- a list of real values, whose ith element is the
           coefficient of the ith variable in the objective function.
 
         - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
@@ -405,10 +422,10 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0, 1.0, 2.0, 1.0, 3.0]
         """
-        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)
+        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)  # FIXME: This should not be called
         super(CVXPYBackend, self).set_objective(coeff, d)
 
-        if self.variables:
+        if self.variables:  # FIXME: This should moved into the else: block below
             expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
         else:
             expr = Constant(0)
@@ -426,10 +443,10 @@ cdef class CVXPYBackend(MatrixBackend):
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` (integer):
 
-            * +1 => Maximization
-            * -1 => Minimization
+          * +1 => Maximization
+          * -1 => Minimization
 
         EXAMPLES::
 
@@ -481,7 +498,7 @@ cdef class CVXPYBackend(MatrixBackend):
             if self.problem is None:
                 pass
             else:
-                expr = self.problem.objective.args[0] + coeff * self.variables[variable]
+                expr = self.problem.objective.args[0] + coeff * self.variables[variable]  # FIXME: Wrong if variable already had a nonzero coeff
                 objective = type(self.problem.objective)(expr)
                 constraints = list(self.problem.constraints)
                 self.problem = cvxpy.Problem(objective, constraints)
@@ -506,7 +523,8 @@ cdef class CVXPYBackend(MatrixBackend):
             sage: p.add_col(list(range(5)), list(range(5)))
             Traceback (most recent call last):
             ...
-            NotImplementedError: adding coefficients to inequalities is ambiguous because cvxpy rewrites all inequalities as <=
+            NotImplementedError: adding coefficients to inequalities is ambiguous
+            because cvxpy rewrites all inequalities as <=
             sage: p.solve()
             0
             sage: p.objective_coefficient(0,1)
@@ -515,7 +533,7 @@ cdef class CVXPYBackend(MatrixBackend):
             ...
             MIPSolverException: ...
         """
-        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)
+        self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)  # FIXME: Should not init when it already exists!
 
         try:
             self.problem.solve(solver=self._cvxpy_solver, **self._cvxpy_solver_args)
