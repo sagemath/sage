@@ -15,6 +15,8 @@ This distribution makes the following features available::
     FeatureTestResult('sage.rings.real_interval_field', True)
 """
 
+from .all__sagemath_ntl import *
+
 from .rings.all__sagemath_flint import *
 
 from sage.rings.qqbar import _init_qqbar
