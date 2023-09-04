@@ -1089,7 +1089,7 @@ class DocTestController(SageObject):
 
             def sort_key(source):
                 basename = source.basename
-                return -self.stats.get(basename, default).get('walltime'), basename
+                return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
 
     def run_doctests(self):
