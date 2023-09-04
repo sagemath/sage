@@ -19,7 +19,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,9 +27,12 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from copy import copy
+
+import sage.rings.abc
+
 
 cdef class GenericBackend:
 
@@ -193,18 +196,18 @@ cdef class GenericBackend:
         ncols_before = p.ncols()
         add_variables_result = p.add_variables(ncols_added)
         ncols_after = p.ncols()
-        tester.assertEqual(ncols_after, ncols_before+ncols_added, "Added the wrong number of columns")
+        tester.assertEqual(ncols_after, ncols_before + ncols_added, "Added the wrong number of columns")
         # Test from CVXOPT interface, continued; edited to support InteractiveLPBackend
         ncols_before = p.ncols()
         try:
             col_bounds = (-2.0, None)
             add_variables_result = p.add_variables(2, lower_bound=col_bounds[0], upper_bound=col_bounds[1],
-                                                   obj=42.0, names=['a','b'])
+                                                   obj=42.0, names=['a', 'b'])
         except NotImplementedError:
             # The InteractiveLPBackend does not allow general variable bounds.
             col_bounds = (0.0, None)
             add_variables_result = p.add_variables(2, lower_bound=col_bounds[0], upper_bound=col_bounds[1],
-                                                   obj=42.0, names=['a','b'])
+                                                   obj=42.0, names=['a', 'b'])
         ncols_after = p.ncols()
         tester.assertAlmostEqual(p.col_bounds(ncols_before), col_bounds)
         tester.assertEqual(p.col_name(ncols_before), 'a')
@@ -335,7 +338,7 @@ cdef class GenericBackend:
         else:
             self.obj_constant_term = d
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
@@ -434,7 +437,8 @@ cdef class GenericBackend:
             sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6)
             sage: p.remove_constraints([0, 1])
         """
-        if isinstance(constraints, int): self.remove_constraint(constraints)
+        if isinstance(constraints, int):
+            self.remove_constraint(constraints)
 
         cdef int last = self.nrows() + 1
 
@@ -647,8 +651,8 @@ cdef class GenericBackend:
             (None, 2.0)
         """
         cdef int i
-        for 0<= i<number:
-            self.add_linear_constraint([],lower_bound, upper_bound, name = (names[i] if names else None))
+        for 0 <= i < number:
+            self.add_linear_constraint([], lower_bound, upper_bound, name=(names[i] if names else None))
 
     @classmethod
     def _test_add_linear_constraints(cls, tester=None, **options):
@@ -677,7 +681,7 @@ cdef class GenericBackend:
         p.add_linear_constraints(nrows_added, None, 2)
         nrows_after = p.nrows()
         # Test correct number of rows
-        tester.assertEqual(nrows_after, nrows_before+nrows_added, "Added the wrong number of rows")
+        tester.assertEqual(nrows_after, nrows_before + nrows_added, "Added the wrong number of rows")
         # Test contents of the new rows are correct (sparse zero)
         for i in range(nrows_before, nrows_after):
             tester.assertEqual(p.row(i), ([], []))
@@ -715,8 +719,8 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    ## Any test methods involving calls to 'solve' are set up as class methods,
-    ## which make a fresh instance of the backend.
+    # Any test methods involving calls to 'solve' are set up as class methods,
+    # which make a fresh instance of the backend.
     @classmethod
     def _test_solve(cls, tester=None, **options):
         """
@@ -738,9 +742,9 @@ cdef class GenericBackend:
         tester.assertIsNone(p.add_linear_constraints(5, 0, None))
         tester.assertIsNone(p.add_col(list(xrange(5)), list(xrange(5))))
         tester.assertEqual(p.solve(), 0)
-        tester.assertIsNone(p.objective_coefficient(0,1))
+        tester.assertIsNone(p.objective_coefficient(0, 1))
         from sage.numerical.mip import MIPSolverException
-        #with tester.assertRaisesRegexp(MIPSolverException, "unbounded") as cm:  ## --- too specific
+        # with tester.assertRaisesRegexp(MIPSolverException, "unbounded") as cm:  ## --- too specific
         with tester.assertRaises(MIPSolverException) as cm:   # unbounded
             p.solve()
 
@@ -806,7 +810,6 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-
     cpdef get_relative_objective_gap(self):
         r"""
         Return the relative objective gap of the best known solution.
@@ -841,7 +844,6 @@ cdef class GenericBackend:
             0.0
         """
         raise NotImplementedError()
-
 
     cpdef get_variable_value(self, int variable):
         """
@@ -1309,7 +1311,6 @@ cdef class GenericBackend:
         cp = copy(self)
         self._do_test_problem_data(tester, cp)
 
-
     def _test_copy_does_not_share_data(self, **options):
         """
         Test whether copy makes an independent copy of the backend.
@@ -1342,7 +1343,7 @@ cdef class GenericBackend:
         p._test_copy(**options)
         p._test_copy_does_not_share_data(**options)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1369,7 +1370,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1396,7 +1397,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter
 
@@ -1583,6 +1584,7 @@ cdef class GenericBackend:
         tester.assertAlmostEqual(p.get_variable_value(1), 0.333333333333)
 
 default_solver = None
+
 
 def default_mip_solver(solver=None):
     """
@@ -1848,7 +1850,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
     if callable(solver):
         kwds = {}
         if base_ring is not None:
-            kwds['base_ring']=base_ring
+            kwds['base_ring'] = base_ring
         return solver(**kwds)
 
     else:
