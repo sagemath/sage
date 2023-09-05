@@ -551,9 +551,10 @@ if __name__ == "__main__":
 
     args.ignore_bad_distributions = False  # This could also be a switch
 
+    args.update_failures_distribution = args.distribution
+
     if args.distribution == ['all']:
-        args.distribution = [# 'sagemath-repl',  -- skip because it knows too little and complains too much
-                             'sagemath-categories',
+        args.distribution = ['sagemath-categories',
                              'sagemath-modules',
                              'sagemath-pari',
                              'sagemath-graphs', 'sagemath-graphs[modules]', 'sagemath-graphs[modules,pari]',
@@ -563,6 +564,9 @@ if __name__ == "__main__":
                              'sagemath-schemes', 'sagemath-schemes[ntl]', 'sagemath-schemes[pari]',
                              'sagemath-symbolics',
                              '']  # monolithic distribution
+        args.update_failures_distribution = args.distribution + ['sagemath-repl',    # not included above because it knows too little and complains too much
+                                                                 'sagemath-standard-no-symbolics']
+
         args.ignore_bad_distributions = True
 
     if args.distribution or args.venv or args.environment:
@@ -624,10 +628,10 @@ if __name__ == "__main__":
             print(f"sage-fixdoctests: Fixed point reached")
 
         if args.update_known_test_failures:
-            if args.distribution == ['']:
+            if args.update_failures_distribution == ['']:
                 print("sage-fixdoctests: Ignoring switch --update-known-test-failures because no --distribution was given")
             else:
-                for distribution in args.distribution:
+                for distribution in sorted(args.update_failures_distribution):
                     if distribution == '':
                         continue
                     plain_distribution, extras = plain_distribution_and_extras(distribution)
