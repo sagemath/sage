@@ -836,6 +836,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: W = CoxeterGroup(['A',4], implementation="permutation")
             sage: s = W.simple_reflections()
             sage: w = s[2] * s[1] * s[3]

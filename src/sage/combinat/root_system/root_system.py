@@ -159,7 +159,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In finite type `A`, we recover the natural representation of the
     symmetric group as group of permutation matrices::
 
-        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
+        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -170,7 +170,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In type `B`, `C`, and `D`, we recover the natural representation
     of the Weyl group as groups of signed permutation matrices::
 
-        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
+        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap  sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],

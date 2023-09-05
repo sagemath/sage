@@ -3205,6 +3205,8 @@ cdef class BinaryCodeClassifier:
             ....:  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]])
             sage: B = BinaryCode(M)
             sage: gens, labeling, size, base = BC._aut_gp_and_can_label(B)
+
+            sage: # needs sage.groups
             sage: S = SymmetricGroup(M.ncols())
             sage: L = [S([x+1 for x in g]) for g in gens]
             sage: PermutationGroup(L).order()
@@ -3219,6 +3221,8 @@ cdef class BinaryCodeClassifier:
             ....:  [0,0,0,1,1,0,0,0,0,1,1,0,1,1,0,1,1]])
             sage: B = BinaryCode(M)
             sage: gens, labeling, size, base = BC._aut_gp_and_can_label(B)
+
+            sage: # needs sage.groups
             sage: S = SymmetricGroup(M.ncols())
             sage: L = [S([x+1 for x in g]) for g in gens]
             sage: PermutationGroup(L).order()
@@ -3226,7 +3230,7 @@ cdef class BinaryCodeClassifier:
             sage: size
             2304
 
-            sage: M=Matrix(GF(2),[
+            sage: M = Matrix(GF(2),[
             ....:  [1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0,0],
             ....:  [0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0],
             ....:  [0,0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0],
@@ -3237,6 +3241,8 @@ cdef class BinaryCodeClassifier:
             ....:  [0,0,0,0,0,0,0,1,0,0,1,1,1,1,0,0,1]])
             sage: B = BinaryCode(M)
             sage: gens, labeling, size, base = BC._aut_gp_and_can_label(B)
+
+            sage: # needs sage.groups
             sage: S = SymmetricGroup(M.ncols())
             sage: L = [S([x+1 for x in g]) for g in gens]
             sage: PermutationGroup(L).order()
@@ -3244,7 +3250,7 @@ cdef class BinaryCodeClassifier:
             sage: size
             136
 
-            sage: M=Matrix(GF(2),[
+            sage: M = Matrix(GF(2),[
             ....:  [0,1,0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,0,1],
             ....:  [1,0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,0,1,0],
             ....:  [0,1,1,1,0,0,0,1,0,0,1,1,0,0,0,1,1,1,0,1,0,0],
@@ -3258,6 +3264,8 @@ cdef class BinaryCodeClassifier:
             ....:  [0,0,1,0,1,1,1,0,0,0,1,1,0,0,1,0,0,0,1,1,1,0]])
             sage: B = BinaryCode(M)
             sage: gens, labeling, size, base = BC._aut_gp_and_can_label(B)
+
+            sage: # needs sage.groups
             sage: S = SymmetricGroup(M.ncols())
             sage: L = [S([x+1 for x in g]) for g in gens]
             sage: PermutationGroup(L).order()
@@ -3923,7 +3931,7 @@ cdef class BinaryCodeClassifier:
             sage: from sage.coding.binary_code import *
             sage: BC = BinaryCodeClassifier()
             sage: B = BinaryCode(Matrix(GF(2), [[1,1,1,1]]))
-            sage: BC.generate_children(B, 6, 4)
+            sage: BC.generate_children(B, 6, 4)                                         # needs sage.groups
             [
             [1 1 1 1 0 0]
             [0 1 0 1 1 1]

@@ -1439,7 +1439,7 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-            sage: CartanType(["A",4,1]).is_implemented()
+            sage: CartanType(["A",4,1]).is_implemented()                                # needs sage.graphs
             True
             sage: CartanType(['H',3]).is_implemented()
             True

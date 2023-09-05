@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-gap
+# sage.doctest: needs sage.libs.pari
 r"""
 Canonical forms and automorphisms for linear codes over finite fields
 
