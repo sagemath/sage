@@ -1683,9 +1683,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise TypeError("the base ring is not a field")
         return R
 
-
     # === special functions ===
-
 
     def q_pochhammer(self, q=None):
         r"""
@@ -1802,7 +1800,6 @@ class LazyLaurentSeriesRing(LazySeriesRing):
                 return ZZ.zero()
             return (-1) ** ((m + 1) // 6)
         return self(coefficients=coeff, valuation=0)
-
 
 ######################################################################
 
