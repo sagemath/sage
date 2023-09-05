@@ -52,3 +52,4 @@ sage.rings.polynomial =
 
 test =
      SPKG_INSTALL_REQUIRES_sagemath_repl
+     SPKG_INSTALL_REQUIRES_sagemath_modules
