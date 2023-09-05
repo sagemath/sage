@@ -463,7 +463,7 @@ class NumberField_relative(NumberField_generic):
             if to_K is not None:
                 to_K = RelativeNumberFieldHomomorphism_from_abs(self.Hom(K), to_K*to_abs)
             ans.append((K, from_K, to_K))
-        ans = Sequence(ans, immutable=True, cr=ans != [])
+        ans = Sequence(ans, immutable=True, cr=bool(ans))
         return ans
 
     def is_absolute(self):
@@ -2077,7 +2077,7 @@ class NumberField_relative(NumberField_generic):
         # then it is most natural, so we put it first.
         put_natural_embedding_first(v)
 
-        self.__embeddings[K] = Sequence(v, cr=v != [], immutable=True, check=False, universe=self.Hom(K))
+        self.__embeddings[K] = Sequence(v, cr=bool(v), immutable=True, check=False, universe=self.Hom(K))
         return self.__embeddings[K]
 
     def automorphisms(self):
@@ -2152,13 +2152,14 @@ class NumberField_relative(NumberField_generic):
 
         L = self.absolute_field('a')
         L_into_self, self_into_L = L.structure()
-        aas = L.automorphisms() # absolute automorphisms
+        aas = L.automorphisms()  # absolute automorphisms
 
         a = self_into_L(self.gen())
         abs_base_gens = [self_into_L(_) for _ in self.base_field().gens()]
-        v = sorted([ self.hom([ L_into_self(aa(a)) ]) for aa in aas if all(aa(g) == g for g in abs_base_gens) ])
+        v = sorted([self.hom([L_into_self(aa(a))]) for aa in aas
+                    if all(aa(g) == g for g in abs_base_gens)])
         put_natural_embedding_first(v)
-        self.__automorphisms = Sequence(v, cr=(v != []), immutable=True,
+        self.__automorphisms = Sequence(v, cr=bool(v), immutable=True,
                                         check=False, universe=self.Hom(self))
         return self.__automorphisms
 
