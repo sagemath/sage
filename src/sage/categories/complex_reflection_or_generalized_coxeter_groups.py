@@ -160,8 +160,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: W.index_set()
                 (1, 2)
 
-                sage: W = ColoredPermutations(1, 4)
-                sage: W.index_set()
+                sage: W = ColoredPermutations(1, 4)                                     # needs sage.combinat
+                sage: W.index_set()                                                     # needs sage.combinat
                 (1, 2, 3)
 
                 sage: # optional - gap3
@@ -237,8 +237,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             Here are the simple reflections for a colored symmetric
             group and a reflection group::
 
-                sage: W = ColoredPermutations(1,3)
-                sage: W.simple_reflections()
+                sage: W = ColoredPermutations(1,3)                                      # needs sage.combinat
+                sage: W.simple_reflections()                                            # needs sage.combinat
                 Finite family {1: [[0, 0, 0], [2, 1, 3]], 2: [[0, 0, 0], [1, 3, 2]]}
 
                 sage: W = ReflectionGroup((1,1,3), index_set=['a','b'])         # optional - gap3
@@ -257,6 +257,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: W = ColoredPermutations(1,3)
                 sage: W.number_of_simple_reflections()
                 2
@@ -266,6 +267,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: W = ColoredPermutations(4,3)
                 sage: W.number_of_simple_reflections()
                 3
+
                 sage: W = ReflectionGroup((4,2,3))                              # optional - gap3
                 sage: W.number_of_simple_reflections()                          # optional - gap3
                 4
@@ -295,8 +297,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: SymmetricGroup(5).group_generators()
                 Finite family {1: (1,2), 2: (2,3), 3: (3,4), 4: (4,5)}
 
-                sage: W = ColoredPermutations(3,2)
-                sage: W.group_generators()
+                sage: W = ColoredPermutations(3,2)                                      # needs sage.combinat
+                sage: W.group_generators()                                              # needs sage.combinat
                 Finite family {1: [[0, 0],
                                    [2, 1]],
                                2: [[0, 1],
@@ -327,16 +329,19 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['B',3])                                            # needs sage.rings.number_field
-                sage: W.simple_reflection_orders()                                      # needs sage.rings.number_field
+                sage: # needs sage.rings.number_field
+                sage: W = WeylGroup(['B',3])
+                sage: W.simple_reflection_orders()
                 [2, 2, 2]
-                sage: W = CoxeterGroup(['C',4])                                         # needs sage.rings.number_field
-                sage: W.simple_reflection_orders()                                      # needs sage.rings.number_field
+                sage: W = CoxeterGroup(['C',4])
+                sage: W.simple_reflection_orders()
                 [2, 2, 2, 2]
+
                 sage: SymmetricGroup(5).simple_reflection_orders()
                 [2, 2, 2, 2]
-                sage: C = ColoredPermutations(4, 3)
-                sage: C.simple_reflection_orders()
+
+                sage: C = ColoredPermutations(4, 3)                                     # needs sage.combinat
+                sage: C.simple_reflection_orders()                                      # needs sage.combinat
                 [2, 2, 4]
             """
             one = self.one()
@@ -395,8 +400,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 [0 0 0 1], [0 0 0 1], [0 0 1 0], [0 0 0 1], [0 0 1 0]
                 ]
 
-                sage: W = ColoredPermutations(1,4)
-                sage: W.some_elements()
+                sage: W = ColoredPermutations(1,4)                                      # needs sage.combinat
+                sage: W.some_elements()                                                 # needs sage.combinat
                 [[[0, 0, 0, 0], [2, 1, 3, 4]],
                  [[0, 0, 0, 0], [1, 3, 2, 4]],
                  [[0, 0, 0, 0], [1, 2, 4, 3]],
@@ -689,10 +694,10 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             We now experiment with the different values for
             ``word_type`` for the colored symmetric group::
 
+                sage: # needs sage.combinat
                 sage: W = ColoredPermutations(1,4)
                 sage: W.from_reduced_word([1,2,1,2,1,2])
                 [[0, 0, 0, 0], [1, 2, 3, 4]]
-
                 sage: W.from_reduced_word([1, 2, 3]).reduced_word()
                 [1, 2, 3]
 
@@ -749,6 +754,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.graphs
                 sage: W = ReflectionGroup([1,1,3], [3,1,3], 4); W       # optional - gap3
                 Reducible complex reflection group of rank 7 and type A2 x G(3,1,3) x ST4
                 sage: sorted(W.irreducible_component_index_sets())      # optional - gap3
@@ -778,6 +784,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.graphs
                 sage: W = ReflectionGroup([1,1,3], [3,1,3], 4)          # optional - gap3
                 sage: W.irreducible_components()                        # optional - gap3
                 [Irreducible real reflection group of rank 2 and type A2,
@@ -792,12 +799,11 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: SymmetricGroup(3).number_of_irreducible_components()              # needs sage.graphs
+                sage: # needs sage.graphs
+                sage: SymmetricGroup(3).number_of_irreducible_components()
                 1
-
-                sage: ColoredPermutations(1,3).number_of_irreducible_components()
+                sage: ColoredPermutations(1,3).number_of_irreducible_components()       # needs sage.combinat
                 1
-
                 sage: ReflectionGroup((1,1,3),(2,1,3)).number_of_irreducible_components()   # optional - gap3
                 2
 
@@ -814,11 +820,11 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3); W
+                sage: # needs sage.graphs
+                sage: W = ColoredPermutations(1,3); W                                   # needs sage.combinat
                 1-colored permutations of size 3
-                sage: W.is_irreducible()
+                sage: W.is_irreducible()                                                # needs sage.combinat
                 True
-
                 sage: W = ReflectionGroup((1,1,3),(2,1,3)); W           # optional - gap3
                 Reducible real reflection group of rank 5 and type A2 x B3
                 sage: W.is_irreducible()                                # optional - gap3
@@ -832,11 +838,11 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = ColoredPermutations(1,3); W
+                sage: # needs sage.graphs
+                sage: W = ColoredPermutations(1,3); W                                   # needs sage.combinat
                 1-colored permutations of size 3
-                sage: W.is_reducible()
+                sage: W.is_reducible()                                                  # needs sage.combinat
                 False
-
                 sage: W = ReflectionGroup((1,1,3), (2,1,3)); W          # optional - gap3
                 Reducible real reflection group of rank 5 and type A2 x B3
                 sage: W.is_reducible()                                  # optional - gap3
@@ -1236,8 +1242,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: W = ColoredPermutations(4, 3)
-                    sage: W.irreducible_components()
+                    sage: W = ColoredPermutations(4, 3)                                 # needs sage.combinat
+                    sage: W.irreducible_components()                                    # needs sage.combinat
                     [4-colored permutations of size 3]
                 """
                 return [self]

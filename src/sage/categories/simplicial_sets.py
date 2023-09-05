@@ -354,10 +354,10 @@ class SimplicialSets(Category_singleton):
 
                 TESTS::
 
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.groups
-                    sage: RP2._universal_cover_dict()                                   # needs sage.groups
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
+                    sage: RP2._universal_cover_dict()                                   # needs sage.graphs sage.groups
                     (Finitely presented group < e | e^2 >, {f: e})
-                    sage: RP2.nondegenerate_simplices()                                 # needs sage.groups
+                    sage: RP2.nondegenerate_simplices()                                 # needs sage.graphs sage.groups
                     [1, f, f * f]
                 """
                 from sage.groups.free_group import FreeGroup
@@ -400,14 +400,14 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.groups
-                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.groups
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
+                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.graphs sage.groups
                     Simplicial set morphism:
                       From: Simplicial set with 6 non-degenerate simplices
                       To:   RP^2
                       Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)]
                             --> [1, 1, f, f, f * f, f * f]
-                    sage: phi.domain().face_data()                                      # needs sage.groups
+                    sage: phi.domain().face_data()                                      # needs sage.graphs sage.groups
                         {(1, 1): None,
                          (1, e): None,
                          (f, 1): ((1, e), (1, 1)),
@@ -557,7 +557,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.graphs sage.groups
                     sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
                     sage: C = RP3.universal_cover(); C
                     Simplicial set with 8 non-degenerate simplices
