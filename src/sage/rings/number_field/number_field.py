@@ -127,7 +127,7 @@ from sage.rings.finite_rings.integer_mod import mod
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import is_odd, lift
-
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.categories.number_fields import NumberFields
@@ -161,6 +161,10 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
+
+lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
+
 
 _NumberFields = NumberFields()
 
@@ -11442,14 +11446,11 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 return NumberField_absolute._element_constructor_(self, x)
         elif isinstance(x, pari_gen):
             return NumberField_absolute._element_constructor_(self, x, check=check)
-        elif isinstance(x, (sage.libs.gap.element.GapElement, GapElement)):
+        elif isinstance(x, (LibGapElement, GapElement)):
             return self._coerce_from_gap(x)
         elif isinstance(x, str):
             return self._convert_from_str(x)
-
-        # late import because of speed
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicFieldElement
-        if isinstance(x, UniversalCyclotomicFieldElement):
+        elif isinstance(x, UniversalCyclotomicFieldElement):
             return x.to_cyclotomic_field(self)
         else:
             return self._convert_non_number_field_element(x)
