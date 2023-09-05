@@ -1,5 +1,5 @@
 r"""
-Representations of a Lie algebra
+Representations of Lie algebras
 
 AUTHORS:
 
@@ -23,7 +23,7 @@ from copy import copy
 
 
 class Representation_abstract:
-    """
+    r"""
     Mixin class for (left) representations of Lie algebras.
 
     INPUT:
@@ -31,7 +31,7 @@ class Representation_abstract:
     - ``lie_algebra`` -- a Lie algebra
     """
     def __init__(self, lie_algebra):
-        """
+        r"""
         Initialize ``self``.
 
         EXAMPLES::
@@ -43,7 +43,7 @@ class Representation_abstract:
         self._lie_algebra = lie_algebra
 
     def lie_algebra(self):
-        """
+        r"""
         Return the Lie algebra whose representation ``self`` is.
 
         EXAMPLES::
@@ -56,12 +56,12 @@ class Representation_abstract:
         return self._lie_algebra
 
     def side(self):
-        """
-        Return whether ``self`` is a left or right.
+        r"""
+        Return that ``self`` is a left representation.
 
         OUTPUT:
 
-        - the string ``"left"``, ``"right"``, or ``"twosided"``
+        - the string ``"left"``
 
         EXAMPLES::
 
@@ -73,9 +73,9 @@ class Representation_abstract:
         return 'left'
 
     def _test_representation(self, **options):
-        """
+        r"""
         Check (on some elements) that ``self`` is a representation of the
-        given Lie algebra.
+        given Lie algebra using the basis of the Lie algebra.
 
         EXAMPLES::
 
@@ -94,7 +94,7 @@ class Representation_abstract:
 
 
 class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract):
-    """
+    r"""
     Representation of a Lie algebra defined by a Lie algebra morphism.
 
     INPUT:
@@ -118,7 +118,7 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
     """
     @staticmethod
     def __classcall_private__(cls, lie_algebra, f, **kwargs):
-        """
+        r"""
         Normalize inpute to ensure a unique representation.
 
         EXAMPLES::
@@ -170,7 +170,7 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
         CombinatorialFreeModule.__init__(self, lie_algebra.base_ring(), I, prefix='R', category=category)
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -193,7 +193,7 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
-            """
+            r"""
             Return the action of ``scalar`` on ``self``.
 
             EXAMPLES::
@@ -232,7 +232,7 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
 
 
 class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
-    """
+    r"""
     The trivial representation of a Lie algebra.
 
     The trivial representation of a Lie algebra `L` over a commutative ring
@@ -248,7 +248,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
     - :wikipedia:`Trivial_representation`
     """
     def __init__(self, lie_algebra):
-        """
+        r"""
         Initialize ``self``.
 
         EXAMPLES::
@@ -263,7 +263,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
         CombinatorialFreeModule.__init__(self, R, ['v'], prefix='T', category=cat)
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -276,7 +276,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
-            """
+            r"""
             Return the action of ``scalar`` on ``self``.
 
             EXAMPLES::
