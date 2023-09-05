@@ -47,7 +47,6 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         sage: A((1, 2, -3, -2))
         s1*s2*s3^-1*s2^-1
     """
-
     def _latex_(self):
         r"""
         Return a LaTeX representation of ``self``.
@@ -158,7 +157,6 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
     """
     An element of a finite-type Artin group.
     """
-
     def _richcmp_(self, other, op):
         """
         Compare ``self`` and ``other``.
@@ -727,7 +725,6 @@ class FiniteTypeArtinGroup(ArtinGroup):
         sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF
         Digraph on 40 vertices
     """
-
     def delta(self):
         r"""
         Return the `\Delta` element of ``self``.

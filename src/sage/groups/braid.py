@@ -117,7 +117,6 @@ class Braid(FiniteTypeArtinGroupElement):
         sage: B((1, 2, -3, -2))
         s0*s1*s2^-1*s1^-1
     """
-
     def _richcmp_(self, other, op):
         """
         Compare ``self`` and ``other``
@@ -459,7 +458,9 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: c1 == b.permutation()
             True
 
-        From a permutation it is also possible to recover the permutation braid::
+        The canonical section from the symmetric group to the braid group
+        (sending a permutation to its associated permutation braid)
+        can be recovered.::
 
             sage: B(c0)
             s0*s1*s2*s1
@@ -2763,20 +2764,6 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         G = SymmetricGroup(self.strands())
         pl = G(p)
         return tuple(pl.reduced_word())
-        # if not p.length():
-        #     return ()
-        # pl = p
-        # l = []
-        # while pl.length():
-        #     i = 1
-        #     while i < max(pl):
-        #         if pl(i) > pl(i+1):
-        #             l.append(i)
-        #             pl = self._coxeter_group.simple_reflection(i) * pl
-        #             i = 1
-        #         else:
-        #             i += 1
-        # return tuple(l)
 
     @cached_method
     def _links_gould_representation(self, symbolics=False):
@@ -3427,7 +3414,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         - ``isomorphism`` -- boolean (default ``False``); if ``True``, then an isomorphism
           from ``self`` and the isomorphic group and its inverse is also returned
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: B = BraidGroup(3)
             sage: B.presentation_two_generators()
