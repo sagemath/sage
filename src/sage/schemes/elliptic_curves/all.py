@@ -40,4 +40,6 @@ from .kodaira_symbol import KodairaSymbol
 
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
 
+from .mod_poly import classical_modular_polynomial
+
 from .heegner import heegner_points, heegner_point
