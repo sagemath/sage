@@ -47,3 +47,8 @@ sage.rings.padics =
 sage.rings.polynomial =
     *_flint.pxd
     *_arb.pxd
+
+[options.extras_require]
+
+test =
+     SPKG_INSTALL_REQUIRES_sagemath_repl

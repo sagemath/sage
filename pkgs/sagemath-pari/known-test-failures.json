@@ -348,6 +348,7 @@
     "sage.env": {},
     "sage.ext.all__sagemath_categories": {},
     "sage.ext.all__sagemath_objects": {},
+    "sage.ext.all__sagemath_pari": {},
     "sage.ext.cplusplus": {},
     "sage.ext.fast_callable": {
         "failed": true
@@ -410,9 +411,7 @@
     "sage.functions.exp_integral": {},
     "sage.functions.gamma": {},
     "sage.functions.generalized": {},
-    "sage.functions.hyperbolic": {
-        "failed": true
-    },
+    "sage.functions.hyperbolic": {},
     "sage.functions.hypergeometric": {},
     "sage.functions.jacobi": {},
     "sage.functions.log": {},
@@ -618,6 +617,22 @@
     "sage.parallel.use_fork": {
         "failed": true
     },
+    "sage.quadratic_forms.all__sagemath_pari": {},
+    "sage.quadratic_forms.genera.all": {},
+    "sage.quadratic_forms.genera.genus": {},
+    "sage.quadratic_forms.genera.normal_form": {},
+    "sage.quadratic_forms.genera.spinor_genus": {},
+    "sage.quadratic_forms.qfsolve": {},
+    "sage.quadratic_forms.quadratic_form__automorphisms": {},
+    "sage.quadratic_forms.quadratic_form__genus": {},
+    "sage.quadratic_forms.quadratic_form__local_density_interfaces": {},
+    "sage.quadratic_forms.quadratic_form__local_normal_form": {},
+    "sage.quadratic_forms.quadratic_form__local_representation_conditions": {},
+    "sage.quadratic_forms.quadratic_form__mass": {},
+    "sage.quadratic_forms.quadratic_form__mass__Conway_Sloane_masses": {},
+    "sage.quadratic_forms.quadratic_form__mass__Siegel_densities": {},
+    "sage.quadratic_forms.quadratic_form__siegel_product": {},
+    "sage.quadratic_forms.special_values": {},
     "sage.repl": {},
     "sage.repl.all": {},
     "sage.repl.attach": {},
@@ -682,6 +697,7 @@
     },
     "sage.rings.all__sagemath_categories": {},
     "sage.rings.all__sagemath_objects": {},
+    "sage.rings.all__sagemath_pari": {},
     "sage.rings.big_oh": {},
     "sage.rings.continued_fraction": {},
     "sage.rings.continued_fraction_gosper": {},
@@ -691,6 +707,7 @@
     "sage.rings.factorint_pari": {},
     "sage.rings.fast_arith": {},
     "sage.rings.finite_rings.all__sagemath_categories": {},
+    "sage.rings.finite_rings.all__sagemath_pari": {},
     "sage.rings.finite_rings.conway_polynomials": {
         "failed": true
     },
@@ -721,12 +738,8 @@
         "failed": true
     },
     "sage.rings.finite_rings.integer_mod_ring": {},
-    "sage.rings.finite_rings.residue_field": {
-        "failed": true
-    },
-    "sage.rings.finite_rings.residue_field_pari_ffelt": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.residue_field": {},
+    "sage.rings.finite_rings.residue_field_pari_ffelt": {},
     "sage.rings.finite_rings.stdint": {},
     "sage.rings.fraction_field": {
         "failed": true
@@ -738,9 +751,7 @@
     "sage.rings.function_field.all__sagemath_categories": {},
     "sage.rings.function_field.constructor": {},
     "sage.rings.function_field.element": {},
-    "sage.rings.function_field.element_rational": {
-        "failed": true
-    },
+    "sage.rings.function_field.element_rational": {},
     "sage.rings.function_field.extensions": {},
     "sage.rings.function_field.function_field": {},
     "sage.rings.function_field.function_field_rational": {
@@ -779,10 +790,12 @@
     },
     "sage.rings.noncommutative_ideals": {},
     "sage.rings.number_field.all__sagemath_categories": {},
+    "sage.rings.number_field.all__sagemath_pari": {},
     "sage.rings.number_field.number_field_base": {},
     "sage.rings.number_field.number_field_element_base": {},
     "sage.rings.number_field.number_field_ideal": {},
     "sage.rings.padics.all__sagemath_categories": {},
+    "sage.rings.padics.all__sagemath_pari": {},
     "sage.rings.padics.common_conversion": {},
     "sage.rings.padics.local_generic": {},
     "sage.rings.padics.local_generic_element": {},
@@ -872,9 +885,7 @@
     "sage.rings.rational": {
         "failed": true
     },
-    "sage.rings.rational_field": {
-        "failed": true
-    },
+    "sage.rings.rational_field": {},
     "sage.rings.real_double": {
         "failed": true
     },
@@ -886,9 +897,7 @@
     "sage.rings.semirings.non_negative_integer_semiring": {},
     "sage.rings.semirings.tropical_semiring": {},
     "sage.rings.sum_of_squares": {},
-    "sage.rings.tests": {
-        "failed": true
-    },
+    "sage.rings.tests": {},
     "sage.schemes.affine.affine_homset": {},
     "sage.schemes.affine.affine_morphism": {
         "failed": true
@@ -914,9 +923,7 @@
         "failed": true
     },
     "sage.schemes.generic.point": {},
-    "sage.schemes.generic.scheme": {
-        "failed": true
-    },
+    "sage.schemes.generic.scheme": {},
     "sage.schemes.generic.spec": {},
     "sage.schemes.product_projective.all": {},
     "sage.schemes.product_projective.homset": {},
