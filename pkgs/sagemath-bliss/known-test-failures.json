@@ -1,0 +1,14 @@
+{
+    "sage.combinat.posets.posets": {
+        "failed": true
+    },
+    "sage.graphs.bipartite_graph": {
+        "failed": true
+    },
+    "sage.graphs.bliss": {
+        "failed": true
+    },
+    "sage.graphs.generic_graph": {
+        "failed": true
+    }
+}
