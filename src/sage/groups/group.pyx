@@ -36,9 +36,9 @@ def is_Group(x):
 
     EXAMPLES::
 
-        sage: F.<a,b> = FreeGroup()                                                     # needs sage.combinat
+        sage: F.<a,b> = FreeGroup()                                                     # needs sage.groups
         sage: from sage.groups.group import is_Group
-        sage: is_Group(F)                                                               # needs sage.combinat
+        sage: is_Group(F)                                                               # needs sage.groups
         True
         sage: is_Group("a string")
         False

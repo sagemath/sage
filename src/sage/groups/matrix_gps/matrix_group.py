@@ -160,7 +160,7 @@ class MatrixGroup_base(Group):
         EXAMPLES::
 
             sage: G = SU(4, GF(5))                                                      # needs sage.rings.finite_rings
-            sage: G.as_matrix_group()                                                   # needs sage.rings.finite_rings
+            sage: G.as_matrix_group()                                                   # needs sage.libs.gap sage.rings.finite_rings
             Matrix group over Finite Field in a of size 5^2 with 2 generators (
             [      a       0       0       0]  [      1       0 4*a + 3       0]
             [      0 2*a + 3       0       0]  [      1       0       0       0]
