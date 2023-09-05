@@ -339,7 +339,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr sage.symbolic
             sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], CC)
             sage: X = PP.subscheme([a^2 + b^2])
             sage: P = X([2, 2*i, -3, 6*i, 3 - 6*i])
