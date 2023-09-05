@@ -26,7 +26,7 @@ Points can be found using :meth:`has_rational_point`::
 
     sage: K.<t> = FractionField(QQ['t'])
     sage: C = Conic([1, -t, t])
-    sage: C.has_rational_point(point=True)
+    sage: C.has_rational_point(point=True)                                              # needs sage.libs.singular
     (True, (0 : 1 : 1))
 """
 
@@ -129,37 +129,37 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
 
             sage: K.<t> = FractionField(PolynomialRing(QQ, 't'))
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (-3 : (t + 1)/t : 1))
 
             sage: R.<t> = FiniteField(23)[]
             sage: C = Conic([2, t^2 + 1, t^2 + 5])
-            sage: C.has_rational_point()
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             True
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (5*t : 8 : 1))
 
             sage: # needs sage.rings.number_field
             sage: F.<i> = QuadraticField(-1)
             sage: R.<t> = F[]
             sage: C = Conic([1, i*t, -t^2 + 4])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (-t - 2*i : -2*i : 1))
 
         It works on non-diagonal conics as well::
 
             sage: K.<t> = QQ[]
             sage: C = Conic([4, -4, 8, 1, -4, t + 4])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (1/2 : 1 : 0))
 
         If no point exists output still depends on the argument ``point``::
 
             sage: K.<t> = QQ[]
             sage: C = Conic(K, [t^2, (t-1), -2*(t-1)])
-            sage: C.has_rational_point()
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             False
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (False, None)
 
         Due to limitations in Sage of algorithms we depend on, it is not
@@ -172,7 +172,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = 2*t2^2 + 2*t1*t2 - t1^2
             sage: c = -3*t2^4 - 4*t1*t2^3 + 8*t1^2*t2^2 + 16*t1^3 - t2 - 48*t1^4
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point()
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError: is_square() not implemented for elements of
@@ -205,7 +205,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: K.<t> = PolynomialRing(GF(7))
             sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
             ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
-            sage: C.has_rational_point()
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: self (=Scheme morphism:
@@ -238,7 +238,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = (1/2*t^2 + 1/3)/(-73*t^2 - 2*t + 11/4)
             sage: c = (6934/3*t^6 + 8798/3*t^5 - 947/18*t^4 + 3949/9*t^3 + 20983/18*t^2 + 28/3*t - 131/3)/(-2701/3*t^4 - 293/3*t^3 + 301/6*t^2 + 13/4*t - 11/16)
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (4*t + 4 : 2*t + 2 : 1))
 
         A long time test::
@@ -248,7 +248,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = (-3*t^3 + 8*t + 1/2)/(-1/3*t^3 + 3/2*t^2 + 1/12*t + 1/2)
             sage: c = (1232009/225*t^25 - 1015925057/8100*t^24 + 1035477411553/1458000*t^23 + 7901338091/30375*t^22 - 1421379260447/729000*t^21 + 266121260843/972000*t^20 + 80808723191/486000*t^19 - 516656082523/972000*t^18 + 21521589529/40500*t^17 + 4654758997/21600*t^16 - 20064038625227/9720000*t^15 - 173054270347/324000*t^14 + 536200870559/540000*t^13 - 12710739349/50625*t^12 - 197968226971/135000*t^11 - 134122025657/810000*t^10 + 22685316301/120000*t^9 - 2230847689/21600*t^8 - 70624099679/270000*t^7 - 4298763061/270000*t^6 - 41239/216000*t^5 - 13523/36000*t^4 + 493/36000*t^3 + 83/2400*t^2 + 1/300*t + 1/200)/(-27378/125*t^17 + 504387/500*t^16 - 97911/2000*t^15 + 1023531/4000*t^14 + 1874841/8000*t^13 + 865381/12000*t^12 + 15287/375*t^11 + 6039821/6000*t^10 + 599437/1500*t^9 + 18659/250*t^8 + 1218059/6000*t^7 + 2025127/3000*t^6 + 1222759/6000*t^5 + 38573/200*t^4 + 8323/125*t^3 + 15453/125*t^2 + 17031/500*t + 441/10)
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point(point = True) # long time (4 seconds)
+            sage: C.has_rational_point(point=True)  # long time (4 seconds)             # needs sage.libs.singular
             (True,
              ((-2/117*t^8 + 304/1053*t^7 + 40/117*t^6 - 1/27*t^5 - 110/351*t^4 - 2/195*t^3 + 11/351*t^2 + 1/117)/(t^4 + 2/39*t^3 + 4/117*t^2 + 2/39*t + 14/39) : -5/3*t^4 + 19*t^3 : 1))
         """
@@ -476,7 +476,7 @@ for function field of characteristic 2.")
 
             sage: K.<t> = FractionField(QQ['t'])
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
-            sage: C.has_rational_point(point=True) # indirect test
+            sage: C.has_rational_point(point=True)  # indirect test                     # needs sage.libs.singular
             (True, (-3 : (t + 1)/t : 1))
 
         Different solubility certificates give different points::
@@ -485,14 +485,14 @@ for function field of characteristic 2.")
             sage: K.<t> = PolynomialRing(QQ, 't')
             sage: C = Conic(K, [t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: supp = [[t^2 - 2], [t], [t^3 + 13/2*t^2 + t - 9]]
-            sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
-            sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
-            sage: tbar3 = QQ.extension(supp[2][0], 'tbar').gens()[0]                    # needs sage.rings.number_field
-            sage: roots = [[tbar1 + 1], [1/3*tbar2^0], [2/3*tbar3^2 + 11/3*tbar3 - 3]]  # needs sage.rings.number_field
-            sage: C.find_point(supp, roots, 1)                                          # needs sage.rings.number_field
+            sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]
+            sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]
+            sage: tbar3 = QQ.extension(supp[2][0], 'tbar').gens()[0]
+            sage: roots = [[tbar1 + 1], [1/3*tbar2^0], [2/3*tbar3^2 + 11/3*tbar3 - 3]]
+            sage: C.find_point(supp, roots, 1)
             (3 : t + 1 : 1)
-            sage: roots = [[-tbar1 - 1], [-1/3*tbar2^0], [-2/3*tbar3^2 - 11/3*tbar3 + 3]]           # needs sage.rings.number_field
-            sage: C.find_point(supp, roots, 1)                                          # needs sage.rings.number_field
+            sage: roots = [[-tbar1 - 1], [-1/3*tbar2^0], [-2/3*tbar3^2 - 11/3*tbar3 + 3]]
+            sage: C.find_point(supp, roots, 1)
             (3 : -t - 1 : 1)
         """
         Ft = self.base().base()

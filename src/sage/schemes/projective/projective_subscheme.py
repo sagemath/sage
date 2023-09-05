@@ -548,7 +548,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: f = DynamicalSystem_projective([y^2, z^2, x^2, w^2])                  # needs sage.schemes
-            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # needs sage.schemes
+            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # needs sage.libs.singular sage.schemes
             Closed subscheme of Projective Space of dimension 3 over Rational Field
              defined by:
               y - z,
@@ -559,7 +559,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])                       # needs sage.schemes
             sage: X = PS.subscheme([x - y])
-            sage: X.nth_iterate(f, -2)                                                  # needs sage.schemes
+            sage: X.nth_iterate(f, -2)                                                  # needs sage.libs.singular sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: must be a forward orbit
