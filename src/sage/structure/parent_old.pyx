@@ -52,7 +52,7 @@ cdef class Parent(parent.Parent):
         [(0, 0), (1, 0), (0, 1), (1, 1)]
         sage: MatrixSpace(GF(3), 1, 1).list()
         [[0], [1], [2]]
-        sage: DirichletGroup(3).list()                                                  # needs sage.modular
+        sage: DirichletGroup(3).list()                                                  # needs sage.libs.pari sage.modular
         [Dirichlet character modulo 3 of conductor 1 mapping 2 |--> 1,
          Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1]
 
