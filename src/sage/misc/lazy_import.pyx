@@ -1097,10 +1097,10 @@ def lazy_import(module, names, as_=None, *,
         sage: lazy_import('ppl', 'equation',
         ....:             feature=PythonModule('ppl', spkg='pplpy', type='standard'))
         sage: equation                                                                  # needs pplpy
-        <built-in function equation>
+        <cyfunction equation at ...>
         sage: lazy_import('PyNormaliz', 'NmzListConeProperties',
         ....:             feature=PythonModule('PyNormaliz', spkg='pynormaliz'))
-        sage: NmzListConeProperties                            # optional - pynormaliz
+        sage: NmzListConeProperties                             # optional - pynormaliz
         <built-in function NmzListConeProperties>
         sage: lazy_import('foo', 'not_there',
         ....:             feature=PythonModule('foo', spkg='non-existing-package'))

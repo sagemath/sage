@@ -778,7 +778,7 @@ cdef class MonoDict:
             sage: L[1] = None
             sage: L[2] = True
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: sorted(L.items())
             [(1, None), (2, True)]
         """
@@ -1453,7 +1453,7 @@ cdef class TripleDict:
             sage: L = TripleDict()
             sage: L[1,2,3] = None
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: list(L.items())
             [((1, 2, 3), None)]
         """

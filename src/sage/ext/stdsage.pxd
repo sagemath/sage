@@ -11,7 +11,7 @@ Standard C helper code for Cython modules
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython.object cimport Py_TYPE, PyTypeObject
+from cpython.object cimport Py_TYPE, PyTypeObject, PyObject
 
 
 cdef inline PY_NEW(type t):
@@ -20,7 +20,7 @@ cdef inline PY_NEW(type t):
     :class:`Integer` where we change ``tp_new`` at runtime (Cython
     optimizations assume that ``tp_new`` doesn't change).
     """
-    return (<PyTypeObject*>t).tp_new(t, <object>NULL, <object>NULL)
+    return (<PyTypeObject*>t).tp_new(t, <PyObject*>NULL, <PyObject*>NULL)
 
 
 cdef inline void PY_SET_TP_NEW(type dst, type src):
