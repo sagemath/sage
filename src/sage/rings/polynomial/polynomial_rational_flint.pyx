@@ -344,7 +344,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: P.<x> = PolynomialRing(QQ)
             sage: f = 3*x^2 + 2*x + 5
-            sage: singular(f)
+            sage: singular(f)                                                           # needs sage.libs.singular
             3*x^2+2*x+5
         """
         self._parent._singular_(singular).set_ring()  # Expensive!
@@ -486,7 +486,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             True
             sage: (t/3)(RealBallField(100)(1))
             [0.33333333333333333333333333333...]
-            sage: (t/3)(ComplexBallField(10)(1+i))
+            sage: (t/3)(ComplexBallField(10)(1+i))                                      # needs sage.symbolic
             [0.33...] + [0.33...]*I
         """
         cdef Polynomial_rational_flint f
@@ -2097,6 +2097,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(); G
@@ -2113,6 +2114,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
+            sage: # needs sage.libs.pari
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
@@ -2130,6 +2132,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.galois_group(algorithm='kash')   # optional - kash
             Transitive group number 5 of degree 4
 
+            sage: # needs sage.libs.gap
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 5 of degree 4
@@ -2139,6 +2142,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f = x^12 - 2*x^8 - x^7 + 2*x^6 + 4*x^4 - 2*x^3 - x^2 - x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 183 of degree 12
+
             sage: f.galois_group(algorithm='magma')  # optional - magma
             Transitive group number 5 of degree 4
 
@@ -2157,7 +2161,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         are supported (see :trac:`20631`)::
 
             sage: R.<zeta> = QQ[]
-            sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)
+            sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)                     # needs sage.libs.pari
             PARI group [2, -1, 1, "S2"] of degree 2
         """
         from sage.groups.pari_group import PariGroup
@@ -2287,6 +2291,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padic
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
@@ -2307,6 +2312,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         the same as first coercing to `\QQ_p` and then factoring
         (see also :trac:`15422`)::
 
+            sage: # needs sage.rings.padic
             sage: f = x^2 - 3^6
             sage: f.factor_padic(3, 5)
             ((1 + O(3^5))*x + 3^3 + O(3^5)) * ((1 + O(3^5))*x + 2*3^3 + 2*3^4 + O(3^5))
@@ -2319,12 +2325,13 @@ cdef class Polynomial_rational_flint(Polynomial):
         A more difficult example::
 
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
-            sage: f.factor_padic(5, 10)
+            sage: f.factor_padic(5, 10)                                                 # needs sage.rings.padic
             (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + 5^-1 + O(5^9))^2
             * ((1 + O(5^10))*x + 5 + O(5^10))^2
 
         Try some bogus inputs::
 
+            sage: # needs sage.rings.padic
             sage: f.factor_padic(3, -1)
             Traceback (most recent call last):
             ...
@@ -2469,7 +2476,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             -31
             sage: d.parent() is QQ
             True
-            sage: EllipticCurve([1, 1]).discriminant() / 16
+            sage: EllipticCurve([1, 1]).discriminant() / 16                             # needs sage.schemes
             -31
 
         ::

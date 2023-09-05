@@ -764,7 +764,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 - 389*x^2 + 2*x - 5)
-            sage: a.trace()
+            sage: a.trace()                                                             # needs sage.modules
             389
         """
         return self.matrix().trace()

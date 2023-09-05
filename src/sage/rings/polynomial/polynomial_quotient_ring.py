@@ -1089,6 +1089,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<z> = PolynomialRing(ZZ)
+
             sage: S = R.quotient(z^2 - z)
             sage: S.is_integral_domain()
             False
@@ -1098,12 +1099,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: U = R.quotient(-1)
             sage: U.is_integral_domain()
             False
+
+            sage: # needs sage.libs.singular
             sage: R2.<y> = PolynomialRing(R)
-            sage: S2 = R2.quotient(z^2 - y^3)                                           # needs sage.libs.singular
-            sage: S2.is_integral_domain()                                               # needs sage.libs.singular
+            sage: S2 = R2.quotient(z^2 - y^3)
+            sage: S2.is_integral_domain()
             True
             sage: S3 = R2.quotient(z^2 - 2*y*z + y^2)
-            sage: S3.is_integral_domain()                                               # needs sage.libs.singular
+            sage: S3.is_integral_domain()
             False
 
             sage: R.<z> = PolynomialRing(ZZ.quotient(4))

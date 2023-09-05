@@ -51,6 +51,7 @@ it is an `I_3` node.
 
 Another example. This one is from the Magma Handbook::
 
+    sage: # needs sage.libs.singular
     sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='lex')
     sage: I = ideal(x^2 - 1, y^2 - 1, 2*x*y - z)
     sage: I = Ideal(d_basis(I))
