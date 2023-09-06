@@ -632,9 +632,7 @@ class sage__libs__pari(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.pari',
                              [PythonModule('sage.interfaces.gp'),
-                              PythonModule('sage.libs.pari.convert_gmp'),
-                              PythonModule('sage.quadratic_forms.qfsolve'),
-                              PythonModule('sage.quadratic_forms.genera')],
+                              PythonModule('sage.libs.pari.convert_gmp')],
                              spkg='sagemath_pari', type='standard')
 
 
