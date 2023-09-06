@@ -565,6 +565,12 @@ if __name__ == "__main__":
                              'sagemath-symbolics',
                              '']  # monolithic distribution
         args.update_failures_distribution = args.distribution + ['sagemath-repl',    # not included above because it knows too little and complains too much
+                                                                 'sagemath-bliss',
+                                                                 'sagemath-coxeter3',
+                                                                 'sagemath-flint',
+                                                                 'sagemath-glpk',
+                                                                 'sagemath-mpmath',
+                                                                 'sagemath-plot',
                                                                  'sagemath-standard-no-symbolics']
 
         args.ignore_bad_distributions = True
