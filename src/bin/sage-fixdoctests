@@ -569,6 +569,7 @@ if __name__ == "__main__":
                                                                  'sagemath-coxeter3',
                                                                  'sagemath-flint',
                                                                  'sagemath-glpk',
+                                                                 'sagemath-linbox',
                                                                  'sagemath-mpmath',
                                                                  'sagemath-plot',
                                                                  'sagemath-standard-no-symbolics']
