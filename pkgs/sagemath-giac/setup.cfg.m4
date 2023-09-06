@@ -14,12 +14,8 @@ install_requires =
 
 packages =
     sage.libs.giac
-    sage.rings
 
 [options.package_data]
 
 sage.libs.giac =
-    *.pxd
-
-sage.rings =
     *.pxd

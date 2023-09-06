@@ -4,31 +4,18 @@ prune sage
 
 graft             sage/libs/arb
 graft             sage/libs/flint
-recursive-include sage/libs/gsl *.pxd                                           # FIXME
-include           sage/libs/gsl/__init__.p*                                     # FIXME
-include           sage/libs/gsl/all.p*                                          # FIXME
-include           sage/libs/gsl/complex/all.py                                  # FIXME
-recursive-include sage/libs/mpfr *.pxd                                          # FIXME
-include           sage/libs/mpfr/all.py                                         # FIXME
-recursive-include sage/libs/ntl *.pxd *.pxi *.h                                 # FIXME
-recursive-include sage/libs/pari *.pxd                                          # FIXME
-include           sage/libs/pari/all.py                                         # FIXME
 graft             sage/libs/linkages                                            # FIXME
-recursive-include sage/matrix *.pxd                                             # FIXME
+recursive-include sage/libs/ntl *.pxd *.pxi *.h                                 # FIXME
 include           sage/matrix/matrix_complex_ball_dense.p*
 include           sage/matrix/misc_flint.p*
-include           sage/misc/binary_tree.p*                                      # FIXME
-include           sage/misc/all.py                                              # FIXME
-recursive-include sage/rings *.pxd *.pxi                                        # FIXME
+include           sage/matrix/matrix_integer*.pxd
+include           sage/matrix/matrix_rational*.pxd
 include           sage/rings/*_arb.p*
 include           sage/rings/*_flint.p*
-include           sage/rings/finite_rings/*.pxd                                 # FIXME
-include           sage/rings/finite_rings/integer_mod_limits.h                  # FIXME
-include           sage/rings/finite_rings/all.py                                # FIXME
-include           sage/rings/integer_fake.h                                     # FIXME
 include           sage/rings/padics/*_flint_*.p*
 include           sage/rings/padics/*.pxd                                       # FIXME
 include           sage/rings/padics/*.pxi                                       # FIXME
+include           sage/rings/polynomial/polynomial_template*.pxi        # FIXME
 include           sage/rings/polynomial/*_flint.p*
 include           sage/rings/polynomial/*_arb.p*
 include           sage/rings/polynomial/hilbert.p*

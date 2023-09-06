@@ -3,6 +3,7 @@ prune sage
 include VERSION.txt
 include vendor.txt
 
+# these are currently shipped by sagemath-modules, which depends on sagemath-mpmath!
 include sage/libs/mpfr/*.pxd            # FIXME
 include sage/rings/real_mpfr.pxd        # FIXME
 include sage/rings/complex_mpfr.pxd        # FIXME

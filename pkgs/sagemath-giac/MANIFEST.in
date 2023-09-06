@@ -4,8 +4,6 @@ prune sage
 global-include    all__sagemath_giac.py
 
 graft             sage/libs/giac
-include           sage/rings/*.pxd                        # FIXME
-include           sage/rings/all.py                       # FIXME
 
 global-exclude *.c
 global-exclude *.cpp

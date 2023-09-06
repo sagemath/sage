@@ -10,27 +10,17 @@ include sage/rings/padics/padic_ext_element.p*
 include sage/rings/padics/pow_computer_ext.p*
 include sage/rings/polynomial/*_ntl.p*
 include sage/rings/polynomial/polynomial_zz_pex.p*
-include sage/rings/polynomial/polynomial_template.pxi
-include sage/rings/polynomial/polynomial_template_header.pxi
+include sage/rings/polynomial/polynomial_template*.pxi
 #include sage/rings/polynomial/polynomial_gf2x.p*               # inexplicably also needs m4ri; -> could go in a distribution 'sagemath-gf2x' with dep on sagemath-ntl, sagemath-m4ri
 
 include sage/rings/bernmm.p*            # dep of sage.rings.bernoulli_mod_p
 
-# pxd dependencies - FIXME
-include sage/ext/mod_int.pxd
-include sage/ext/mod_int.h
-include sage/ext/cplusplus.pxd
-include sage/libs/mpfi/*.pxd
-include sage/libs/mpfr/*.pxd
-include sage/matrix/*.pxd
-include sage/matrix/*.pxi
-include sage/rings/*.pxd
-include sage/rings/finite_rings/*.pxd
-include sage/rings/finite_rings/integer_mod_limits.h
+include sage/libs/mpfi/*.pxd            # FIXME - shipped by sagemath-flint
+include sage/rings/real_mpfi.pxd
+include sage/matrix/matrix_modn_*.pxd   # FIXME - shipped by sagemath-linbox
+include sage/matrix/matrix_modn_*.pxi
 include sage/rings/padics/*.pxd
 include sage/rings/padics/*.pxi                                       # FIXME
-include sage/rings/polynomial/*.pxd
-include sage/misc/binary_tree.pxd
 
 include sage/schemes/hyperelliptic_curves/hypellfrob.p*
 
