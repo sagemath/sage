@@ -27,4 +27,12 @@ ls -l "$wheel"
 
 if [ "$SAGE_CHECK" != no ]; then
     tox -r -v -e sagepython-sagewheels-nopypi-norequirements --installpkg $wheel
+    case $?:$SAGE_CHECK in
+        0:*)
+            echo "Passed the test suite for $PKG_NAME.";;
+        *:warn)
+            echo "Warning: Failures testing package $PKG_NAME (ignored)";;
+        *:yes)
+            echo "Error testing package $PKG_NAME";;
+    esac
 fi
