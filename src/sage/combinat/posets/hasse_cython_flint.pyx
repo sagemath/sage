@@ -1,5 +1,6 @@
 # sage_setup: distribution = sagemath-flint
 # cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs sage.modules
 r"""
 Some fast computations for finite posets using FLINT matrices
 """
@@ -37,15 +38,15 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
 
     EXAMPLES::
 
-        sage: from sage.combinat.posets.hasse_cython_flint import moebius_matrix_fast   # needs sage.graphs
+        sage: from sage.combinat.posets.hasse_cython_flint import moebius_matrix_fast
         sage: D = [{0,1},{1}]
-        sage: moebius_matrix_fast(D)                                                    # needs sage.graphs
+        sage: moebius_matrix_fast(D)
         [ 1 -1]
         [ 0  1]
         sage: P = posets.TamariLattice(5)
         sage: H = P._hasse_diagram
         sage: D = H._leq_storage
-        sage: moebius_matrix_fast(D)                                                    # needs sage.graphs
+        sage: moebius_matrix_fast(D)
         42 x 42 dense matrix over Integer Ring (...)
     """
     cdef Matrix_integer_dense A
@@ -96,15 +97,15 @@ cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
 
     EXAMPLES::
 
-        sage: from sage.combinat.posets.hasse_cython_flint import coxeter_matrix_fast   # needs sage.graphs
+        sage: from sage.combinat.posets.hasse_cython_flint import coxeter_matrix_fast
         sage: D = [{0,1},{1}]
-        sage: coxeter_matrix_fast(D)                                                    # needs sage.graphs
+        sage: coxeter_matrix_fast(D)
         [ 0 -1]
         [ 1 -1]
         sage: P = posets.TamariLattice(5)
         sage: H = P._hasse_diagram
         sage: D = H._leq_storage
-        sage: coxeter_matrix_fast(D)                                                    # needs sage.graphs
+        sage: coxeter_matrix_fast(D)
         42 x 42 dense matrix over Integer Ring (...)
     """
     cdef Matrix_integer_dense A
