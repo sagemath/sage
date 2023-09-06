@@ -837,6 +837,10 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
     def normal_form(self, algorithm="palp_native", permutation=False):
         r"""
+        Return the normal form of vertices of ``self`` if ``self`` is a lattice polytope,
+        i.e. all vertices have integer coordinates. For more more detail,
+        see also :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
+
         EXAMPLES:
 
         We compute the normal form of the "diamond"::
@@ -849,6 +853,12 @@ class Polyhedron_ZZ(Polyhedron_QQ):
              A vertex at (1, 0))
             sage: d.normal_form()
             [(1, 0), (0, 1), (0, -1), (-1, 0)]
+            sage: d.lattice_polytope().normal_form("palp_native")
+            M( 1,  0),
+            M( 0,  1),
+            M( 0, -1),
+            M(-1,  0)
+            in 2-d lattice M
 
         It is not possible to compute normal forms for polytopes which do not
         span the space::
