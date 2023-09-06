@@ -147,6 +147,7 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_pari				\
 	sagemath_gap				\
 	sagemath_homfly				\
+	sagemath_linbox				\
 	sagemath_ntl				\
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
