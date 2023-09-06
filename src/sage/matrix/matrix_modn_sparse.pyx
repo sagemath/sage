@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # -*- coding: utf-8 -*-
 r"""
 Sparse matrices over `\ZZ/n\ZZ` for `n` small
@@ -98,7 +99,7 @@ cimport sage.libs.linbox.linbox as linbox
 
 from sage.libs.linbox.conversion cimport *
 
-from .matrix2 cimport Matrix
+from sage.matrix.matrix2 cimport Matrix
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.matrix.matrix_dense as matrix_dense

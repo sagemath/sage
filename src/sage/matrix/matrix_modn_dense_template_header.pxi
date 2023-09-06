@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 """
 Dense Matrix Template for C/C++ Library Interfaces
 """

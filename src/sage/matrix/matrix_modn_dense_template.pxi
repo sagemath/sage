@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 """
 Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK)
 
