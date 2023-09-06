@@ -203,15 +203,19 @@ def cython_namespace_package_support():
 
     See https://github.com/cython/cython/issues/2918#issuecomment-991799049
     """
-    import Cython.Build.Dependencies
-    import Cython.Build.Cythonize
-    import Cython.Utils
-    orig_is_package_dir = Cython.Utils.is_package_dir
-    Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = Cython.Utils.cached_function(is_package_or_sage_namespace_package_dir)
-    try:
+    from Cython import __version__
+    if __version__[0] >= '3':
         yield
-    finally:
-        Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = orig_is_package_dir
+    else:
+        import Cython.Build.Dependencies
+        import Cython.Build.Cythonize
+        import Cython.Utils
+        orig_is_package_dir = Cython.Utils.is_package_dir
+        Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = Cython.Utils.cached_function(is_package_or_sage_namespace_package_dir)
+        try:
+            yield
+        finally:
+            Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = orig_is_package_dir
 
 
 def walk_packages(path=None, prefix='', onerror=None):
