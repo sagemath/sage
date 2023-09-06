@@ -11,7 +11,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
     cpdef _mul_(self, other)
 
 cdef class MPComplexField_class(sage.rings.ring.Field):
-    cdef readonly int __prec
+    cdef readonly int _prec
     cdef mpc_rnd_t __rnd
     cdef object __rnd_str
     cdef object __real_field

@@ -9,15 +9,15 @@ AUTHORS:
  - Dang Phan (August 6th, 2023): initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Dang Phan <dang8phan@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from collections.abc import Collection
 from sage.categories.fields import Fields
@@ -32,6 +32,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
+
 
 class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -959,16 +960,15 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             Traceback (most recent call last):
             ...
             ValueError: left dynamical semigroup's domain must equal right dynamical semigroup's codomain
-
         """
-        if type(self) != type(other_dynamical_semigroup):
+        if type(self) is not type(other_dynamical_semigroup):
             raise TypeError("can only multiply dynamical semigroups with other dynamical semigroups of the same type")
         if self.domain() != other_dynamical_semigroup.codomain():
             raise ValueError("left dynamical semigroup's domain must equal right dynamical semigroup's codomain")
         composite_systems = []
         for f in self.defining_systems():
             for g in other_dynamical_semigroup.defining_systems():
-                composite_systems.append(DynamicalSystem(f*g))
+                composite_systems.append(DynamicalSystem(f * g))
         return DynamicalSemigroup(composite_systems)
 
     def __pow__(self, n):
@@ -982,7 +982,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT: :class:`DynamicalSemigroup`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem(x^2, A)
@@ -1200,11 +1200,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         """
         if isinstance(other, DynamicalSemigroup):
             if any(ds.degree() == 1 for ds in self.defining_systems()) or \
-                any(ds.degree() == 1 for ds in other.defining_systems()):
+                    any(ds.degree() == 1 for ds in other.defining_systems()):
                 raise NotImplementedError("cannot compare dynamical semigroups with at least one generator of degree 1")
             return all(ds in other.defining_systems() for ds in self.defining_systems()) and \
                 all(ds in self.defining_systems() for ds in other.defining_systems())
         return False
+
 
 class DynamicalSemigroup_projective(DynamicalSemigroup):
     r"""
@@ -1248,7 +1249,7 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
                         raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem_projective' object")
         else:
             if isinstance(ds_data, DynamicalSystem_projective):
-                    systems.append(ds_data)
+                systems.append(ds_data)
             else:
                 try:
                     systems.append(DynamicalSystem_projective(ds_data))
@@ -1327,11 +1328,14 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             new_systems.append(new_system)
         return DynamicalSemigroup_affine(new_systems)
 
+
 class DynamicalSemigroup_projective_field(DynamicalSemigroup_projective):
     pass
 
+
 class DynamicalSemigroup_projective_finite_field(DynamicalSemigroup_projective_field):
     pass
+
 
 class DynamicalSemigroup_affine(DynamicalSemigroup):
     r"""
@@ -1374,7 +1378,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
                         raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem_affine' object")
         else:
             if isinstance(ds_data, DynamicalSystem_affine):
-                    systems.append(ds_data)
+                systems.append(ds_data)
             else:
                 try:
                     systems.append(DynamicalSystem_affine(ds_data))
@@ -1435,11 +1439,14 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
             new_systems.append(ds.homogenize(n))
         return DynamicalSemigroup_projective(new_systems)
 
+
 class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
     pass
 
+
 class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
     pass
+
 
 def _standardize_domains_of_(systems):
     r"""
@@ -1509,7 +1516,7 @@ def _standardize_domains_of_(systems):
 
     for i in range(len(systems)):
         if systems[i].base_ring() != biggest_ring:
-                systems[i] = systems[i].change_ring(biggest_ring)
+            systems[i] = systems[i].change_ring(biggest_ring)
 
     domain = systems[0].domain()
 

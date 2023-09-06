@@ -625,11 +625,22 @@ class LazyModuleElement(Element):
             sage: M = z + z^2 + z^3 + z^4
             sage: M.truncate(4)
             z + z^2 + z^3
+
+        TESTS:
+
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L([0,1,2])
+            sage: f.truncate(1)
+            0
         """
         P = self.parent()
         coeff_stream = self._coeff_stream
         v = coeff_stream._approximate_order
         initial_coefficients = [coeff_stream[i] for i in range(v, d)]
+        if not any(initial_coefficients):
+            return P.zero()
         return P.element_class(P, Stream_exact(initial_coefficients, order=v))
 
     def shift(self, n):
@@ -1838,6 +1849,14 @@ class LazyModuleElement(Element):
             sage: 1 * M is M
             True
 
+        TESTS:
+
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(Zmod(4))
+            sage: f = L(constant=2)
+            sage: 2*f
+            0
         """
         # With the current design, the coercion model does not have
         # enough information to detect a priori that this method only
@@ -1872,6 +1891,8 @@ class LazyModuleElement(Element):
             else:
                 c = scalar * coeff_stream._constant
                 initial_coefficients = [scalar * val for val in init_coeffs]
+            if not any(initial_coefficients) and not c:
+                return P.zero()
             return P.element_class(P, Stream_exact(initial_coefficients,
                                                    order=v,
                                                    constant=c,
@@ -2816,6 +2837,14 @@ class LazyCauchyProductSeries(LazyModuleElement):
 
             sage: (1+z) * L([1,0,1], constant=1)
             1 + z + z^2 + 2*z^3 + 2*z^4 + 2*z^5 + O(z^6)
+
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyLaurentSeriesRing(Zmod(4))
+            sage: f = L(constant=2, valuation=0)
+            sage: g = L([2])
+            sage: f * g
+            0
         """
         P = self.parent()
         left = self._coeff_stream
@@ -2874,6 +2903,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 c += left._constant * ir[-1]
             else:
                 c = left._constant  # this is zero
+            if not any(initial_coefficients) and not c:
+                return P.zero()
             coeff_stream = Stream_exact(initial_coefficients,
                                         order=lv + rv,
                                         constant=c)
@@ -2939,6 +2970,14 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: (1 + z)^(1 + z)
             1 + z + z^2 + 1/2*z^3 + 1/3*z^4 + 1/12*z^5 + 3/40*z^6 + O(z^7)
 
+        TESTS:
+
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyLaurentSeriesRing(Zmod(4))
+            sage: f = L([2])
+            sage: f^2
+            0
         """
         if n == 0:
             return self.parent().one()
@@ -2951,6 +2990,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
             # return P(self.finite_part() ** ZZ(n))
             P = self.parent()
             ret = cs._polynomial_part(P._internal_poly_ring) ** ZZ(n)
+            if not ret:
+                return P.zero()
             val = ret.valuation()
             deg = ret.degree() + 1
             initial_coefficients = [ret[i] for i in range(val, deg)]
@@ -2958,7 +2999,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                                    constant=cs._constant,
                                                    degree=deg,
                                                    order=val))
-
         return super().__pow__(n)
 
     def __invert__(self):
@@ -3806,6 +3846,17 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: g = L.undefined(valuation=0)
             sage: f(g) == f.polynomial()(g)
             True
+
+        TESTS:
+
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyLaurentSeriesRing(Zmod(4))
+            sage: f = L([0,2])
+            sage: g = L([2])
+            sage: f(g)
+            0
+
         """
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
@@ -3850,6 +3901,8 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                 except (ValueError, TypeError):  # the result is not a Laurent polynomial
                     ret = None
                 if ret is not None and ret.parent() is R:
+                    if not ret:
+                        return P.zero()
                     val = ret.valuation()
                     deg = ret.degree() + 1
                     initial_coefficients = [ret[i] for i in range(val, deg)]
@@ -4164,6 +4217,12 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: f.derivative(q)[3]
             3*q^2 - 2
 
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyLaurentSeriesRing(Zmod(4))
+            sage: f = L([0,0,2])
+            sage: f.derivative()
+            0
         """
         P = self.parent()
         R = P._laurent_poly_ring
@@ -4191,6 +4250,8 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                 coeffs = [prod(i-k for k in range(order)) * c
                           for i, c in enumerate(coeff_stream._initial_coefficients,
                                                 coeff_stream._approximate_order)]
+            if not any(coeffs):
+                return P.zero()
             coeff_stream = Stream_exact(coeffs,
                                         order=coeff_stream._approximate_order - order,
                                         constant=coeff_stream._constant)
@@ -4993,6 +5054,14 @@ class LazyPowerSeries(LazyCauchyProductSeries):
              + (6*q^5*x^6+(-30*q^4)*x^5*y+60*q^3*x^4*y^2+(-60*q^2)*x^3*y^3+30*q*x^2*y^4+(-6)*x*y^5)
              + O(x,y)^7
 
+        TESTS:
+
+        Check that :issue:`36154` is fixed::
+
+            sage: L.<z> = LazyPowerSeriesRing(Zmod(4))
+            sage: f = L([0,0,2])
+            sage: f.derivative()
+            0
         """
         P = self.parent()
         R = P._laurent_poly_ring
@@ -5038,6 +5107,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                 coeffs = [prod(i-k for k in range(order)) * c
                           for i, c in enumerate(coeff_stream._initial_coefficients,
                                                 coeff_stream._approximate_order)]
+            if not any(coeffs):
+                return P.zero()
             coeff_stream = Stream_exact(coeffs,
                                         order=coeff_stream._approximate_order - order,
                                         constant=coeff_stream._constant)
@@ -5930,11 +6001,16 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: h = SymmetricFunctions(QQ).h()
             sage: e = SymmetricFunctions(QQ).e()
             sage: L = LazySymmetricFunctions(h)
-            sage: E = L(lambda n: h[n])
-            sage: Ep = p[1]*E.derivative_with_respect_to_p1(); Ep
+            sage: H = L(lambda n: h[n])
+            sage: Ep = p[1]*H.derivative_with_respect_to_p1(); Ep
             h[1] + (h[1,1]) + (h[2,1]) + (h[3,1]) + (h[4,1]) + (h[5,1]) + O^7
             sage: f = L(lambda n: h[n-n//2, n//2])
             sage: f - Ep.functorial_composition(f)
+            O^7
+
+        The symmetric function `\sum_n h_n` is a left absorbing element::
+
+            sage: H.functorial_composition(f) - H
             O^7
 
         The functorial composition distributes over the sum::
@@ -5966,7 +6042,11 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             Traceback (most recent call last):
             ...
             ValueError: the argument is not the Frobenius character of a permutation representation
-
+            sage: g = -p[1, 1, 1]
+            sage: r = f.functorial_composition(g); r[3]
+            Traceback (most recent call last):
+            ...
+            ValueError: the argument is not the Frobenius character of a permutation representation
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
@@ -5999,21 +6079,24 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                     if g[0]:
                         return Partition([1]*ZZ(g[0].coefficient([])))
                     return Partition([])
+
+                g_n = g[n]
+                if not g_n:
+                    return Partition([])
+                if any(c < 0 for c in g_n.monomial_coefficients(copy=False).values()):
+                    raise ValueError("the argument is not the Frobenius character of a permutation representation")
                 res = []
-                # in the species case, k is at most
-                # factorial(n) * g[n].coefficient([1]*n)
-                for k in range(1, lcm(s) + 1):
+                # k is the length of a cycle in G[sigma], and
+                # n! g_n([1]*n) is the number of elements in G[n]
+                for k in range(1, 1 + min(lcm(s),
+                                          ZZ(factorial(n) * g_n.coefficient([1]*n)))):
                     e = 0
                     for d in divisors(k):
                         m = moebius(d)
                         if not m:
                             continue
                         u = s.power(k // d)
-                        # it could be, that we never need to compute
-                        # g[n], so we only do this here
-                        g_u = g[n]
-                        if g_u:
-                            e += m * u.aut() * g_u.coefficient(u)
+                        e += m * u.aut() * g_n.coefficient(u)
                     # e / k might not be an integer if g is not a
                     # group action, so it is good to check
                     res.extend([k] * ZZ(e / k))
