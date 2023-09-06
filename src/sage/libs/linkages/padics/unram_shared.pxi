@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 cimport cython
 
 @cython.binding(True)

@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-linbox
+# sage_setup: distribution = sagemath-ntl
 from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.modules.vector_modn_sparse cimport *
 

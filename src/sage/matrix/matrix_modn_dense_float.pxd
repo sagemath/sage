@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-linbox
+# sage_setup: distribution = sagemath-ntl
 ctypedef float celement
 
 include "matrix_modn_dense_template_header.pxi"

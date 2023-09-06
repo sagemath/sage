@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-linbox
+# sage_setup: distribution = sagemath-flint
 from sage.modules.vector_integer_sparse cimport mpz_vector
 from sage.ext.mod_int cimport mod_int
 from .matrix_sparse cimport Matrix_sparse

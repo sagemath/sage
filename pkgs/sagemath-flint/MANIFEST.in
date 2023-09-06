@@ -6,15 +6,14 @@ graft             sage/libs/arb
 graft             sage/libs/flint
 graft             sage/libs/linkages                                            # FIXME
 include           sage/libs/pari/convert_flint.pxd
-recursive-include sage/libs/ntl *.pxd *.pxi *.h                                 # FIXME
+recursive-include sage/libs/ntl *.pxi *.h                                       # FIXME
 include           sage/matrix/matrix_complex_ball_dense.p*
 include           sage/matrix/misc_flint.p*
 include           sage/matrix/matrix_integer*.pxd
 include           sage/matrix/matrix_rational*.pxd
 include           sage/rings/*_arb.p*
 include           sage/rings/*_flint.p*
-include           sage/rings/padics/*_flint_*.p*
-include           sage/rings/padics/*.pxd                                       # FIXME
+include           sage/rings/padics/*_flint*.p*
 include           sage/rings/padics/*.pxi                                       # FIXME
 include           sage/rings/polynomial/polynomial_template*.pxi        # FIXME
 include           sage/rings/polynomial/*_flint.p*

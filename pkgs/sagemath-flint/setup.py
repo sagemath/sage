@@ -51,10 +51,14 @@ if sdist:
     python_packages = []
     python_modules = []
     cython_modules = []
+    package_data = {}
 else:
     from sage_setup.find import find_python_sources
     python_packages, python_modules, cython_modules = find_python_sources(
         '.', ['sage'], distributions=['sagemath-flint'])
+    package_data = {}
+    package_data.update({'sage.libs.flint': ['*.h', '*.pxi']})
+    python_packages += list(package_data)
 
     log.warn('python_packages = {0}'.format(python_packages))
     log.warn('python_modules = {0}'.format(python_modules))
@@ -65,4 +69,5 @@ setup(
     packages = python_packages,
     py_modules  = python_modules,
     ext_modules = cython_modules,
+    package_data = package_data,
 )
