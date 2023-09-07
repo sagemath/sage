@@ -3,7 +3,6 @@ prune sage
 
 include VERSION.txt
 
-prune .tox
 exclude *.m4
 include requirements.txt
 
@@ -31,6 +30,11 @@ exclude sage/schemes/elliptic_curves/descent_two_isogeny.p*
 global-exclude all__sagemath_*.*
 global-include all__sagemath_schemes.py
 
+global-exclude __pycache__
 global-exclude *.py[co]
-global-exclude *.so
 global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist
