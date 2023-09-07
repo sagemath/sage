@@ -22,7 +22,7 @@ AUTHORS:
 from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
 
-from .rational_field import QQ
+from sage.rings.rational_field import QQ
 
 import sage.misc.latex as latex
 

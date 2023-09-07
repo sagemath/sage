@@ -96,7 +96,7 @@ With power series the behavior is the same.
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
-from .infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, is_Infinite
 
 from sage.rings.rational_field import QQ
 
@@ -104,7 +104,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
-from .integer import Integer
+from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 from sage.categories.fields import Fields
@@ -2957,7 +2957,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
 def make_powerseries_poly_v0(parent,  f, prec, is_gen):
     # This is only used to unpickle old pickles. The new pickling
     # works differently!
-    from . import power_series_poly
+    from sage.rings import power_series_poly
     return power_series_poly.PowerSeries_poly(parent, f, prec, 0, is_gen)
 
 

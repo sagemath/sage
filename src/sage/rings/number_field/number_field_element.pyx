@@ -353,7 +353,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
           quadratic field elements)
         """
         if check:
-            from .number_field import NumberField_cyclotomic
+            from sage.rings.number_field.number_field import NumberField_cyclotomic
             if not isinstance(self.number_field(), NumberField_cyclotomic) \
                or not isinstance(new_parent, NumberField_cyclotomic):
                 raise TypeError("The field and the new parent field must both be cyclotomic fields.")
@@ -523,7 +523,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             return str(self)
         p = self.polynomial()
         P = self.parent()
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         if isinstance(P, NumberField_cyclotomic):
             n = P._n()
             if n != 2 and n % 4 == 2:
@@ -564,7 +564,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ....:         t = K.random_element()
             ....:         assert K(libgap(t)) == t, "n = {}  t = {}".format(n,t)
         """
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         P = self.parent()
         if not isinstance(P, NumberField_cyclotomic):
             raise NotImplementedError("libgap conversion is only implemented for cyclotomic fields")
@@ -1991,7 +1991,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from .order import is_NumberFieldOrder
+        from sage.rings.number_field.order import is_NumberFieldOrder
         if is_NumberFieldOrder(K):
             K = K.number_field()
         fac = K.ideal(self).factor()
@@ -2097,7 +2097,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from .order import is_NumberFieldOrder
+        from sage.rings.number_field.order import is_NumberFieldOrder
         if not is_NumberFieldOrder(R) or not R.is_maximal():
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
@@ -2886,7 +2886,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ValueError("need a real or complex embedding to convert "
                              "a non rational element of a number field "
                              "into an algebraic number")
-        from .number_field import refine_embedding
+        from sage.rings.number_field.number_field import refine_embedding
         emb = refine_embedding(emb, infinity)
         return parent(emb(self))
 
@@ -2999,7 +2999,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if embedding is None:
             raise TypeError("an embedding into RR or CC must be specified")
 
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         if isinstance(K, NumberField_cyclotomic):
             # solution by radicals may be difficult, but we have a closed form
             from sage.functions.log import exp
@@ -3011,7 +3011,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             gen_image = exp(k*two_pi_i/K._n())
             return self.polynomial()(gen_image)
         else:
-            from .number_field import refine_embedding
+            from sage.rings.number_field.number_field import refine_embedding
             # Convert the embedding to an embedding into AA or QQbar
             embedding = refine_embedding(embedding, infinity)
             a = embedding(self).radical_expression()
@@ -3365,7 +3365,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             True
         """
         if self.__multiplicative_order is None:
-            from .number_field import NumberField_cyclotomic
+            from sage.rings.number_field.number_field import NumberField_cyclotomic
             if self.is_rational():
                 if self.is_one():
                     self.__multiplicative_order = ZZ.one()
@@ -3923,7 +3923,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ...
             ValueError: P must be prime
         """
-        from .number_field_ideal import is_NumberFieldIdeal
+        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
         if not is_NumberFieldIdeal(P):
             if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)

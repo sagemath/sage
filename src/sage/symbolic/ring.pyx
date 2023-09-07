@@ -213,7 +213,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             from sage.rings.real_lazy import RLF, CLF
             from sage.rings.finite_rings.finite_field_base import FiniteField
 
-            from .subring import GenericSymbolicSubring
+            from sage.symbolic.subring import GenericSymbolicSubring
 
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
@@ -1133,7 +1133,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if self is not SR:
             raise NotImplementedError('cannot create subring of %s' % (self,))
-        from .subring import SymbolicSubring
+        from sage.symbolic.subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
     def _fricas_init_(self):

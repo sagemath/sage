@@ -118,7 +118,7 @@ from sage.misc.derivative import multi_derivative
 from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
 
-from . import polynomial_fateman
+from sage.rings.polynomial import polynomial_fateman
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing

@@ -66,7 +66,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .infinity import infinity
+from sage.rings.infinity import infinity
 
 from sage.rings.rational_field import QQ
 import sage.misc.latex
