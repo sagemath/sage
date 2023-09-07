@@ -839,6 +839,13 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         r"""
         Return the normal form of vertices of the lattice polytope ``self``.
 
+        INPUT:
+
+        - ``algorithm`` -- must be ``"palp_native"``, the default.
+
+        - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
+          applied to vertices to obtain the normal form is returned as well.
+
         For more more detail,
         see :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
 
@@ -883,6 +890,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         See :issue:`15280` for proposed extensions to these cases.
         """
         from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
+
+        if algorithm != "palp_native":
+            raise ValueError("algorithm must be 'palp_native'")
 
         if self.dim() < self.ambient_dim():
             raise ValueError("normal form is not defined for lower-dimensional polyhedra, got %s" % self)
