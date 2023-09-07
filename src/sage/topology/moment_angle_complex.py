@@ -3,11 +3,11 @@ Moment-angle complexes
 
 AUTHORS:
 
-- Ognjen Petrov (2023-06-25)
+- Ognjen Petrov (2023-06-25): initial version
 """
 
 # ****************************************************************************
-#       Copyright (C) 2013 Ognjen Petrov <ognjenpetrov@yahoo.com>
+#       Copyright (C) 2023 Ognjen Petrov <ognjenpetrov@yahoo.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -91,8 +91,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         Y_{v_i} =
         \begin{cases}
-            D^2, &v_i \in \sigma\\
-            S^1, &v_i \notin \sigma
+            D^2, &v_i \in \sigma,\\
+            S^1, &v_i \notin \sigma.
         \end{cases}
 
     .. NOTE::
@@ -108,7 +108,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     .. NOTE::
 
         One of the more useful properties will be the
-        :meth:`bigraded Betti numbers<sage.topology.simplicial_complex.bigraded_betti_numbers>`,
+        :meth:`bigraded Betti numbers
+        <sage.topology.simplicial_complex.bigraded_betti_numbers>`,
         and the underlying theorem which makes this possible is Hochter's formula, which
         can be found on page 104 of [BP2014]_.
 
@@ -169,6 +170,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     @staticmethod
     def __classcall_private__(cls, simplicial_complex):
         """
+        Normalize input to ensure a unique representation.
+
         TESTS::
 
             sage: MomentAngleComplex([[0,2], [1,2,3]]) is MomentAngleComplex([[0,2], [1,2,3]])
@@ -202,10 +205,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         TESTS::
 
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3], [0, 3]])
-            sage: Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 3), (0, 1, 2), (1, 2, 3)}
-            sage: dim(Z)
-            7
             sage: TestSuite(Z).run()
         """
         # The underlying simplicial complex
@@ -245,7 +244,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z._moment_angle_complex
             Cubical complex with 64 vertices and 705 cubes
 
-        This method is used in the ``cubical_complex()`` method::
+        This is called by :meth:`cubical_complex()`::
 
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 705 cubes
@@ -275,9 +274,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0]])
             sage: Z._repr_()
             'Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
-            sage: repr(Z)  # indiredt doctest
+            sage: repr(Z)
             'Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
-            sage: Z  # indirect doctest
+            sage: Z
             Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z = MomentAngleComplex([[i for i in range(20)]])
             sage: Z._repr_()
@@ -287,7 +286,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
     def cubical_complex(self):
         """
-        Return the cubical complex which represents ``self``.
+        Return the cubical complex that represents ``self``.
 
         This method returns returns a cubical complex which is
         derived by explicitly computing products and unions in the
@@ -324,7 +323,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
     def simplicial_complex(self):
         """
-        The simplicial complex associated with ``self``.
+        Return the simplicial complex that defines ``self``.
 
         EXAMPLES::
 
@@ -345,7 +344,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         OUTPUT:
 
-        a dictonary, whose values are lists, representing spheres
+        A dictonary, whose values are lists, representing spheres
         and disks described in the construction of the moment-angle
         complex. ``The 2-simplex`` represents a 2-disk, and
         ``Minimal triangulation of the 1-sphere`` represents a 1-sphere.
@@ -365,7 +364,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         We interpret the output of this method by taking the product
         of all the elements in each list, and then taking the union
         of all products. From the previous example, we have
-        `\mathcal{Z} = S^1 \times D^2 \cup D^2 \times S^1 = \partial (D^2 \times D^2) = \partial D^4 = S^3`::
+        `\mathcal{Z} = S^1 \times D^2 \cup D^2 \times S^1
+        = \partial (D^2 \times D^2) = \partial D^4 = S^3`::
 
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,0]])
             sage: sorted(Z.components().items())
@@ -421,7 +421,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z = MomentAngleComplex([[0, 1, 2]])
             sage: Z.dimension()
             6
-            sage: dim(Z)  # indirect doctest
+            sage: dim(Z)
             6
 
         We can construct the cubical complex and compare whether
@@ -528,17 +528,18 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         .. MATH::
 
-            H_l(\mathcal{Z}_\mathcal{K}) \cong \bigoplus_{J \subseteq [m]} \widetilde{H}_{l-|J|-1}(\mathcal{K}_J)
+            H_l(\mathcal{Z}_\mathcal{K}) \cong
+            \bigoplus_{J \subseteq [m]} \widetilde{H}_{l-|J|-1}(\mathcal{K}_J),
 
         where `\mathcal{Z}_\mathcal{K}` denotes the moment-angle complex associated
         to a simplicial complex `\mathcal{K}`, on the set of vertices
-        `\{1, 2, 3, \dotso, m\} =: [m]`. `\mathcal{K}_J` denotes the full subcomplex of
+        `\{1, 2, 3, \ldots, m\} =: [m]`. `\mathcal{K}_J` denotes the full subcomplex of
         `\mathcal{K}`, generated by a set of vertices `J`. The same formula holds true for
         cohomology groups as well.
 
         .. SEEALSO::
 
-            :meth:`.cell_complex.GenericCellComplex.homology`.
+            :meth:`.cell_complex.GenericCellComplex.homology`
 
         EXAMPLES::
 
