@@ -213,6 +213,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: v = vector(CDF,[1,2,3,4])
             sage: w = v.fft()
             sage: max(v - w.inv_fft()) < 1e-12
@@ -234,6 +235,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: v = vector(CDF,[1+2*I,2,3*I,4])
             sage: v.fft()
             (7.0 + 5.0*I, 1.0 + 1.0*I, -5.0 + 5.0*I, 1.0 - 3.0*I)
@@ -247,6 +249,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             sage: v
             (7.0 + 5.0*I, 1.0 + 1.0*I, -5.0 + 5.0*I, 1.0 - 3.0*I)
 
+            sage: # needs scipy
             sage: v = vector(RDF,4,range(4)); v
             (0.0, 1.0, 2.0, 3.0)
             sage: v.fft()
