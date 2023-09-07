@@ -837,9 +837,10 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
     def normal_form(self, algorithm="palp_native", permutation=False):
         r"""
-        Return the normal form of vertices of ``self`` if ``self`` is a lattice polytope,
-        i.e. all vertices have integer coordinates. For more more detail,
-        see also :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
+        Return the normal form of vertices of the lattice polytope ``self``.
+
+        For more more detail,
+        see :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
 
         EXAMPLES:
 
@@ -867,12 +868,27 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             sage: p.normal_form()
             Traceback (most recent call last):
             ...
-            ValueError: normal form is not defined for A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+            ValueError: normal form is not defined for lower-dimensional polyhedra, got
+            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+
+        The normal form is also not defined for unbounded polyhedra::
+
+            sage: p = Polyhedron(vertices=[[1, 1]], rays=[[1, 0], [0, 1]], base_ring=ZZ)
+            sage: p.normal_form()
+            Traceback (most recent call last):
+            ...
+            ValueError: normal form is not defined for unbounded polyhedra, got
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays
+
+        See :issue:`15280` for proposed extensions to these cases.
         """
         from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
 
         if self.dim() < self.ambient_dim():
-            raise ValueError("normal form is not defined for %s" % self)
+            raise ValueError("normal form is not defined for lower-dimensional polyhedra, got %s" % self)
+
+        if not self.is_compact():
+            raise ValueError("normal form is not defined for unbounded polyhedra, got %s" % self)
 
         PM = self.slack_matrix().transpose()
         PM_max, permutations = _palp_PM_max(PM, check=True)
