@@ -2519,7 +2519,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0)
             in 2-d lattice M
 
-        But they are in the same `GL(Z^n)` orbit and have the same
+        But they are in the same `GL(\ZZ^n)` orbit and have the same
         normal form::
 
             sage: d.normal_form()                                                       # needs palp
@@ -2937,26 +2937,26 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Return the normal form of vertices of ``self``.
 
         Two full-dimensional lattice polytopes are in the same
-        ``GL(\ZZ)``-orbit if and only if their normal forms are the
+        `GL(\ZZ^n)`-orbit if and only if their normal forms are the
         same. Normal form is not defined and thus cannot be used for polytopes
         whose dimension is smaller than the dimension of the ambient space.
 
         The original algorithm was presented in [KS1998]_ and implemented
         in PALP. A modified version of the PALP algorithm is discussed in
-        [GK2013]_ and available here as "palp_modified".
+        [GK2013]_ and available here as ``"palp_modified"``.
 
         INPUT:
 
-        - ``algorithm`` -- (default: "palp") The algorithm which is used
+        - ``algorithm`` -- (default: ``"palp"``) The algorithm which is used
           to compute the normal form. Options are:
 
-          * "palp" -- Run external PALP code, usually the fastest option,
+          * ``"palp"`` -- Run external PALP code, usually the fastest option,
             but may fail in higher dimensions.
 
-          * "palp_native" -- The original PALP algorithm implemented
+          * ``"palp_native"`` -- The original PALP algorithm implemented
             in sage. Currently competitive with PALP in many cases.
 
-          * "palp_modified" -- A modified version of the PALP
+          * ``"palp_modified"`` -- A modified version of the PALP
             algorithm which determines the maximal vertex-facet
             pairing matrix first and then computes its
             automorphisms, while the PALP algorithm does both things
@@ -3040,42 +3040,40 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         ``"palp_native"`` is usually much faster than ``"palp_modified"``.
         But in some cases when the polytope has high symmetry, however, ``"palp_native"`` is slower::
 
+            sage: # not tested
             sage: o = lattice_polytope.cross_polytope(2)
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
             625 loops, best of 3: 3.07 ms per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
             625 loops, best of 3: 0.445 ms per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
             625 loops, best of 3: 5.01 ms per loop
-
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
             625 loops, best of 3: 3.22 ms per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
             625 loops, best of 3: 2.73 ms per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
             625 loops, best of 3: 20.7 ms per loop
-
             sage: o = lattice_polytope.cross_polytope(4)
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
             625 loops, best of 3: 4.84 ms per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
             625 loops, best of 3: 55.6 ms per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
             625 loops, best of 3: 129 ms per loop
-
             sage: o = lattice_polytope.cross_polytope(5)
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
             10 loops, best of 3: 0.0364 s per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
             10 loops, best of 3: 1.68 s per loop
-            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified") # not tested
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
             10 loops, best of 3: 0.858 s per loop
 
         Note that the default algorithm ``"palp"`` may crash for higher dimensions because of
         the overflow errors as mentioned in :issue:`13525#comment:9`.
         Then use ``"palp_native"`` instead, which is usually faster than ``"palp_modified"``.
-        Below is an example where ``"palp"`` fails, and
+        Below is an example where ``"palp"`` fails and
         ``"palp_native"`` is much faster than ``"palp_modified"``::
 
             sage: P = LatticePolytope([[-3, -3, -6, -6, -1], [3, 3, 6, 6, 1], [-3, -3, -6, -6, 1],
@@ -3091,7 +3089,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             ....:                      [0, 0, 3, 6, 1], [0, 0, 6, 6, 0], [0, 3, 0, 0, -1],
             ....:                      [3, 0, 3, 0, 0], [0, 3, 0, 0, 1], [0, 3, 3, 0, 0],
             ....:                      [0, 3, 3, 6, 0], [0, 3, 6, 6, 0], [3, 0,0, 0, -1], [3, 0, 0, 0, 1]])
-            sage: P.normal_form(algorithm="palp")
+            sage: P.normal_form(algorithm="palp")  # not tested
             Traceback (most recent call last):
             ...
             RuntimeError: Error executing ... for a polytope sequence!
@@ -3139,7 +3137,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 12, -1, -9, -6,  6),
             M( 12, -1, -6, -3,  3)
             in 5-d lattice M
-            sage: P.normal_form(algorithm="palp_modified")
+            sage: P.normal_form(algorithm="palp_modified")  # long time (22s)
             M(  6,  0,  0,  0,  0),
             M( -6,  0,  0,  0,  0),
             M(  0,  1,  0,  0,  0),
@@ -3181,9 +3179,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 12, -1, -9, -6,  6),
             M( 12, -1, -6, -3,  3)
             in 5-d lattice M
-            sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_native") # not tested
+            sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_native")    # not tested
             10 loops, best of 3: 0.137 s per loop
-            sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_modified") # not tested
+            sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_modified")  # not tested
             10 loops, best of 3:  22.2 s per loop
         """
         if self.dim() < self.lattice_dim():

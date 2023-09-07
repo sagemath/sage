@@ -43,8 +43,8 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
     INPUT:
 
     - ``check`` -- Boolean (default: ``False``), whether to return
-        the permutations leaving the maximal vertex-facet pairing
-        matrix invariant.
+      the permutations leaving the maximal vertex-facet pairing
+      matrix invariant.
 
     OUTPUT:
 
@@ -80,10 +80,10 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
          ((2,3), (2,3)),
          ((1,2), (1,2)),
          ((1,3), (1,3))]
-        sage: PMs = ( i._palp_PM_max(check=True)
-        ....:         for i in ReflexivePolytopes(2) )
-        sage: results = ( len(i) == len(j.automorphisms_of_rows_and_columns())
-        ....:             for j, i in PMs )
+        sage: PMs = (i._palp_PM_max(check=True)
+        ....:        for i in ReflexivePolytopes(2))
+        sage: results = (len(i) == len(j.automorphisms_of_rows_and_columns())
+        ....:            for j, i in PMs)
         sage: all(results)  # long time
         True
 
