@@ -323,7 +323,21 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
             Doesn't work on ambient spaces.
         """
         return wt.map_support(self.parent().action(self.value()))
+
     def __hash__(self):
+        r"""
+        Return the hash of ``self``.
+
+        TESTS:
+
+        Check that :issue:`36121` is fixed::
+
+            sage: W = ExtendedAffineWeylGroup('A4')
+            sage: fun = W.fundamental_group().an_element()
+            sage: w = W.FW().an_element()
+            sage: hash(w) == hash(w.value())
+            True
+        """
         return hash(self.value())
 
 
