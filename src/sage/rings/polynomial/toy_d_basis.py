@@ -62,6 +62,7 @@ Another example. This one is from the Magma Handbook::
 
 To compute modulo 4, we can add the generator 4 to our basis.::
 
+    sage: # needs sage.libs.singular
     sage: I = ideal(x^2 - 1, y^2 - 1, 2*x*y - z, 4)
     sage: gb = d_basis(I)
     sage: R = P.change_ring(IntegerModRing(4))

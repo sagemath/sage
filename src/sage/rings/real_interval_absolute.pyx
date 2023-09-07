@@ -173,7 +173,7 @@ cdef class RealIntervalAbsoluteField_class(Field):
             True
             sage: R.has_coerce_map_from(QQ)
             True
-            sage: R.has_coerce_map_from(Qp(5))
+            sage: R.has_coerce_map_from(Qp(5))                                          # needs sage.rings.padics
             False
 
             sage: R(1/2) + 100
