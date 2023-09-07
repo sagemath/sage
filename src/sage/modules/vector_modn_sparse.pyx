@@ -8,8 +8,6 @@
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.modules.vector_modn_sparse cimport c_vector_modint
-
 
 cdef int allocate_c_vector_modint(c_vector_modint* v, Py_ssize_t num_nonzero) except -1:
     """

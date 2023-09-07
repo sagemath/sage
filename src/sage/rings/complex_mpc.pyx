@@ -2563,4 +2563,3 @@ cdef class CCtoMPC(Map):
 
 # Support Python's numbers abstract base class
 # import numbers
-from sage.rings.complex_mpc import MPComplexNumber

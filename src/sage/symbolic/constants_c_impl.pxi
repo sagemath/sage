@@ -17,9 +17,6 @@ The constant `e`
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.symbolic.expression cimport Expression
-
-
 # keep exp(1) for fast access
 # this is initialized in the constructor of the class E below to prevent
 # circular imports while loading the library
