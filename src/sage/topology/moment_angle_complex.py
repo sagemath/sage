@@ -1099,7 +1099,6 @@ class CohomologyRing(CombinatorialFreeModule):
             vertex_set = self.parent()._gens[self.leading_support()[0]][self.leading_support()[1]][0]
             print(self.parent()._complex.simplicial_complex().generated_subcomplex(vertex_set, is_mutable=is_mutable))
 
-        # add reference to the docstring
         def cup_product(self, other):
             r"""
             Return the cup product of ``self`` and ``other``.
@@ -1171,8 +1170,14 @@ def eps(subcomplex, simplicial_complex):
             raise ValueError("{} is not a vertex of this simplicial complex".format(element))
         return (-1) ** simplicial_complex._vertex_to_index[element]
 
-    subcomplex = SimplicialComplex([subcomplex])
-    simplicial_complex = SimplicialComplex([simplicial_complex])
+    if not isinstance(subcomplex, SimplicialComplex):
+        # This may completely change the structure,
+        # but the ordering of the vertices will
+        # remain the same, and that's the only things
+        # that matters
+        subcomplex = SimplicialComplex([subcomplex])
+    if not isinstance(simplicial_complex, SimplicialComplex):
+        simplicial_complex = SimplicialComplex([simplicial_complex])
     res = 1
     for element in subcomplex.vertices():
         res *= _eps(element, simplicial_complex)
