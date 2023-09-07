@@ -974,7 +974,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         elif a in ZZ:
             if b != infinity:
                 if add_one:
-                    return super().prod(1 + f(i) for i in range(a, b+1))
+                    return super().prod(self.one() + f(i) for i in range(a, b+1))
                 return super().prod(f(i) for i in range(a, b+1))
             from sage.sets.non_negative_integers import NonNegativeIntegers
             it = (f(i+a) for i in NonNegativeIntegers())
@@ -983,7 +983,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         # NOTE: We must have a new variable name for each new iterator
         if not add_one:
-            data = (g - 1 for g in it)
+            data = (g - self.one() for g in it)
         else:
             data = it
 

@@ -3358,7 +3358,7 @@ class Stream_infinite_operator(Stream):
         """
         if self._cur is None:
             temp = next(self._op_iter)
-            if not temp:
+            if isinstance(temp._coeff_stream, Stream_zero):
                 self._advance()
                 return
             self.initial(temp)
@@ -3370,7 +3370,7 @@ class Stream_infinite_operator(Stream):
             except StopIteration:
                 self._cur_order = infinity
                 return
-            if not next_factor:
+            if isinstance(next_factor._coeff_stream, Stream_zero):
                 continue
             coeff_stream = next_factor._coeff_stream
             while coeff_stream._approximate_order < order:
