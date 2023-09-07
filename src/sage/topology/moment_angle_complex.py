@@ -824,10 +824,32 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
 
-# _CartesianProduct?
 class CohomologyRing(CombinatorialFreeModule):
-    """
+    r"""
     Cohomology ring of a moment-angle complex.
+
+    Here we don't explicitly compute the cohomology ring
+    of a moment-angle complex as a topological space, but
+    we use the following result to compute its cohomology
+    ring (Theorem 4.5.8 of [BP2014]_)::
+
+    .. MATH::
+
+        H^*(\mathcal{Z}_\mathcal{K}) \cong \bigoplus_{J \subseteq [m]} \widetilde{H}^*(\mathcal{K}_J),
+
+    where `\widetilde{H}^{-1}(\mathcal{K}_\emptyset)` is the
+    base ring over which we compute all of the cohomologies.
+
+    .. NOTE::
+
+        This is not intended to be created directly by the user, but instead via the
+        :meth:`sage.topology.moment_angle_complex.MomentAngleComplex.cohomology_ring` method.
+
+    INPUT:
+
+    - ``base_ring`` -- the base_ring over which we compute the cohomology
+    - ``moment_angle_complex`` -- the moment-angle complex whose homology we are
+      computing
 
     EXAMPLES::
 
@@ -931,7 +953,6 @@ class CohomologyRing(CombinatorialFreeModule):
 
         <lots_of_examples>
         """
-        # look at PR#36095
         one = self._base_ring.one()
         d = {(0, i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
@@ -970,42 +991,71 @@ class CohomologyRing(CombinatorialFreeModule):
 
         <lots_of_examples>
         """
+        # First we check whether either one of the elements
+        # represents a unit of this cohomology ring;
+        # This is necessary because the multiplicative identity
+        # is the only element whose corresponding cochain has degree -1
+        if li == (0, 0):
+            return self.basis()[ri]
+        elif ri == (0, 0):
+            return self.basis()[li]
+
         from sage.topology.simplicial_complex import Simplex
         from sage.homology.chain_homotopy import ChainContraction
 
         left = self._gens[li[0]][li[1]]
         right = self._gens[ri[0]][ri[1]]
+
+        # Sets of vertices of subcomplexes from which
+        # these cohomology classes originate
         set_left = left[0]
         set_right = right[0]
-
+        # Because of the definition of multiplication
         if not set_left.isdisjoint(set_right):
             return self.zero()
 
+        # We extract the cocycle monomials in
+        # order to loop over them
         left_cocycles = left[2][1].monomials()
         right_cocycles = right[2][1].monomials()
-
         res = self.zero()
         for left_cocycle in left_cocycles:
             for right_cocycle in right_cocycles:
-                subcomplex_left = left_cocycle.leading_support().set()
-                subcomplex_right = right_cocycle.leading_support().set()
+                # We acquire the set of vertices of cocyles,
+                # because of the union
+                left_cocycle_vertices = left_cocycle.leading_support().set()
+                right_cocycle_vertices = right_cocycle.leading_support().set()
                 union = set_left.union(set_right)
-                res_union = subcomplex_left.union(subcomplex_right)
+                res_union = left_cocycle_vertices.union(right_cocycle_vertices)
                 subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
+
+                # Because we special-cased the multiplicative identity
+                # at the beginning of the method, we know that both
+                # left[1] and right[1] are at least 0 (they represent
+                # the degree of the corresponding cochains). Therefore,
+                # deg is at least 1.
                 deg = left[1] + right[1] + 1
                 cochains_basis = subcomplex_union.n_chains(deg, cochains=True).basis()
+                # If the resulting cochain exists, then we
+                # add it to the result; otherwise, we add 0
                 if cochains_basis.has_key(Simplex(res_union)):
                     res_part = self.zero()
                     res_cochain = cochains_basis[Simplex(res_union)]
+                    # The algebraic_topological_model() works with unreduced cohomology,
+                    # but we require reduced cohomology here. This only causes problems
+                    # in dimension 0, but because of excluding the unit element at
+                    # the beginning of the method, we know that deg is at least 1
+                    # See comments at the beginning of the method and when defining deg
                     phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
                     coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
+                    # We compute the sign of the result
                     for i in range(len(coeff_vec)):
                         res_part += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
                     zeta = 1
-                    for k in set_left.difference(subcomplex_left):
-                        zeta *= eps({k}, set_right.union({k}).difference(subcomplex_right))
-                    epsilon = (eps(subcomplex_left, set_left)
-                               * eps(subcomplex_left, set_left)
+                    for k in set_left.difference(left_cocycle_vertices):
+                        zeta *= eps({k}, set_right.union({k}).difference(right_cocycle_vertices))
+                    epsilon = (eps(left_cocycle_vertices, set_left)
+                               * eps(left_cocycle_vertices, set_left)
                                * eps(res_union, union)
                                * zeta)
                     if epsilon == -1:
