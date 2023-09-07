@@ -2932,7 +2932,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         return len(self.facet_normals()) if self.dim() > 0 else 0
 
     @cached_method
-    def normal_form(self, algorithm="palp", permutation=False):
+    def normal_form(self, algorithm="palp_native", permutation=False):
         r"""
         Return the normal form of vertices of ``self``.
 
@@ -2947,11 +2947,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"palp"``) The algorithm which is used
+        - ``algorithm`` -- (default: ``"palp_native"``) The algorithm which is used
           to compute the normal form. Options are:
 
-          * ``"palp"`` -- Run external PALP code, usually the fastest option,
-            but may fail in higher dimensions.
+          * ``"palp"`` -- Run external PALP code, usually the fastest option
+            when it works; but reproducible crashes have been observed in dimension
+            5 and higher.
 
           * ``"palp_native"`` -- The original PALP algorithm implemented
             in sage. Currently competitive with PALP in many cases.
@@ -2962,7 +2963,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             automorphisms, while the PALP algorithm does both things
             concurrently.
 
-        - ``permutation`` -- (default: ``False``) If ``True`` the permutation
+        - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
           applied to vertices to obtain the normal form is returned as well.
           Note that the different algorithms may return different results
           that nevertheless lead to the same normal form.
@@ -2983,7 +2984,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0),
             M( 0, -1)
             in 2-d lattice M
-            sage: d.normal_form()                                                       # needs palp
+            sage: d.normal_form()
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3034,11 +3035,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0)
             in 2-d lattice M
 
-        The following examples demonstrate the speed improvement of ``"palp_native"``.
-        In low dimensions, ``"palp_native"`` is the fastest.
+        The following examples demonstrate the speed of the available algorithms.
+        In low dimensions, the default algorithm, ``"palp_native"``, is the fastest.
         As the dimension increases, ``"palp"`` is relatively faster than ``"palp_native"``.
         ``"palp_native"`` is usually much faster than ``"palp_modified"``.
-        But in some cases when the polytope has high symmetry, however, ``"palp_native"`` is slower::
+        In some cases when the polytope has high symmetry, however, ``"palp_native"`` is slower::
 
             sage: # not tested
             sage: o = lattice_polytope.cross_polytope(2)
@@ -3070,7 +3071,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
             10 loops, best of 3: 0.858 s per loop
 
-        Note that the default algorithm ``"palp"`` may crash for higher dimensions because of
+        Note that the algorithm ``"palp"`` may crash for higher dimensions because of
         the overflow errors as mentioned in :issue:`13525#comment:9`.
         Then use ``"palp_native"`` instead, which is usually faster than ``"palp_modified"``.
         Below is an example where ``"palp"`` fails and
@@ -3195,8 +3196,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         elif algorithm == "palp_modified":
             result = self._palp_modified_normal_form(permutation=permutation)
         else:
-            raise ValueError('Algorithm must be palp, ' +
-                             'palp_native, or palp_modified.')
+            raise ValueError("algorithm must be 'palp', 'palp_native', or 'palp_modified'")
         if permutation:
             vertices, perm = result
         else:
@@ -3219,7 +3219,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -   ``permutation`` -- a Boolean, whether to return the permutation of
+        -   ``permutation`` -- boolean (default: ``False``); whether to return the permutation of
             the order of the vertices that was applied to obtain this matrix.
 
         OUTPUT:
