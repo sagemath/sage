@@ -859,9 +859,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
              A vertex at (0, -1),
              A vertex at (0, 1),
              A vertex at (1, 0))
-            sage: d.normal_form()
+            sage: d.normal_form()                                                       # needs sage.groups
             [(1, 0), (0, 1), (0, -1), (-1, 0)]
-            sage: d.lattice_polytope().normal_form("palp_native")
+            sage: d.lattice_polytope().normal_form("palp_native")                       # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),

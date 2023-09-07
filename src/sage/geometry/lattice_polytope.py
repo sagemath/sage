@@ -2984,7 +2984,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0),
             M( 0, -1)
             in 2-d lattice M
-            sage: d.normal_form()
+            sage: d.normal_form()                                                       # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3096,7 +3096,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             RuntimeError: Error executing ... for a polytope sequence!
             Output:
             b'*** stack smashing detected ***: terminated\nAborted\n'
-            sage: P.normal_form(algorithm="palp_native")
+            sage: P.normal_form(algorithm="palp_native")                                # needs sage.groups
             M(  6,  0,  0,  0,  0),
             M( -6,  0,  0,  0,  0),
             M(  0,  1,  0,  0,  0),
@@ -3138,7 +3138,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 12, -1, -9, -6,  6),
             M( 12, -1, -6, -3,  3)
             in 5-d lattice M
-            sage: P.normal_form(algorithm="palp_modified")  # long time (22s)
+            sage: P.normal_form(algorithm="palp_modified")  # long time (22s)           # needs sage.groups
             M(  6,  0,  0,  0,  0),
             M( -6,  0,  0,  0,  0),
             M(  0,  1,  0,  0,  0),
