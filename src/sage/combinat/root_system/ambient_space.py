@@ -117,9 +117,13 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         tester = self._tester(**options)
         T = self.cartan_type()
-        D = T.symmetrizer()
-        alpha = self.simple_roots()
-        for C in T.dynkin_diagram().connected_components(sort=False):
+        try:
+            D = T.symmetrizer()
+            alpha = self.simple_roots()
+            DD = T.dynkin_diagram()
+        except ImportError:  # Dynkin diagrams need sage.graphs
+            return
+        for C in DD.connected_components(sort=False):
             tester.assertEqual(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
 
     # FIXME: attribute or method?

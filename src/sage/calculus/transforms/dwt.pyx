@@ -147,7 +147,7 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
             x_min = 0
         if xmax is None:
             x_max = self.n
-        for i from x_min <= i < x_max:
+        for i in range(x_min, x_max):
             x = self.data[i]
             if i > 0:
                 v.append(point([(i, x)], hue=(1, 1, 1), **args))

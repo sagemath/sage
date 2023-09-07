@@ -24,17 +24,17 @@ generally, all sage expression as an ASCII art object::
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
-    sage: shell.run_cell('integral(x^2/pi^x, x)')
+    sage: shell.run_cell('integral(x^2/pi^x, x)')                                       # needs sage.symbolic
        -x / 2    2                      \
     -pi  *\x *log (pi) + 2*x*log(pi) + 2/
     --------------------------------------
                      3
                    log (pi)
-    sage: shell.run_cell("i = var('i')")
-    sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
+    sage: shell.run_cell("i = var('i')")                                                # needs sage.symbolic
+    sage: shell.run_cell('sum(i*x^i, i, 0, 10)')                                        # needs sage.symbolic
         10      9      8      7      6      5      4      3      2
     10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
-    sage: shell.run_cell('StandardTableaux(4).list()')
+    sage: shell.run_cell('StandardTableaux(4).list()')                                  # needs sage.combinat
     [
     [                                                                  1  4    1  3
     [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -121,7 +121,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
         EXAMPLES::
 
-            sage: [identity_matrix(i) for i in range(3,7)]
+            sage: [identity_matrix(i) for i in range(3,7)]                              # needs sage.modules
             [
                                              [1 0 0 0 0 0]
                                 [1 0 0 0 0]  [0 1 0 0 0 0]
@@ -133,8 +133,8 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('%display ascii_art')   # indirect doctest
-            sage: shell.run_cell("i = var('i')")
-            sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
+            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
+            sage: shell.run_cell('sum(i*x^i, i, 0, 10)')                                # needs sage.symbolic
                 10      9      8      7      6      5      4      3      2
             10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
             sage: shell.run_cell('%display default')
@@ -229,11 +229,11 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell = get_test_shell()
             sage: shell.run_cell('%precision 4')
             '%.4f'
-            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # needs sage.modules
             4
             sage: shell.run_cell('%precision')
             '%r'
-            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # needs sage.modules
             None
         """
         from sage.matrix.constructor import options
@@ -305,8 +305,8 @@ class SagePlainTextFormatter(PlainTextFormatter):
             sage: fmt(2)
             ---- calling ipython formatter ----
             '2'
-            sage: a = identity_matrix(ZZ, 2)
-            sage: fmt([a, a])
+            sage: a = identity_matrix(ZZ, 2)                                            # needs sage.modules
+            sage: fmt([a, a])                                                           # needs sage.modules
             ---- calling ipython formatter ----
             '[\n[1 0]  [1 0]\n[0 1], [0 1]\n]'
         """

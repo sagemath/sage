@@ -1673,10 +1673,12 @@ class RationalField(Singleton, number_field_base.NumberField):
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self, p)
 
+
 QQ = RationalField()
 Q = QQ
 
-def is_RationalField(x):
+
+def is_RationalField(x) -> bool:
     """
     Check to see if ``x`` is the rational field.
 
@@ -1690,7 +1692,8 @@ def is_RationalField(x):
     """
     return isinstance(x, RationalField)
 
-def frac(n,d):
+
+def frac(n, d):
     """
     Return the fraction ``n/d``.
 

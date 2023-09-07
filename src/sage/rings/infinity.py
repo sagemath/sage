@@ -757,6 +757,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
         """
         return isinstance(R, Ring) or R in (int, float, complex)
 
+
 UnsignedInfinityRing = UnsignedInfinityRing_class()
 
 
@@ -966,10 +967,12 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
+
 unsigned_infinity = UnsignedInfinityRing.gen(0)
 less_than_infinity = UnsignedInfinityRing.less_than_infinity()
 
-def is_Infinite(x):
+
+def is_Infinite(x) -> bool:
     """
     This is a type check for infinity elements.
 
@@ -1082,7 +1085,7 @@ class InfinityRing_class(Singleton, Ring):
         """
         return [self.gen(0), self.gen(1)]
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         The Infinity Ring is not zero
 
@@ -1093,7 +1096,7 @@ class InfinityRing_class(Singleton, Ring):
         """
         return False
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         The Infinity Ring is commutative
 
@@ -1745,6 +1748,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
             infinity
         """
         return 'infinity'
+
 
 InfinityRing = InfinityRing_class()
 infinity = InfinityRing.gen(0)

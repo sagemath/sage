@@ -16,13 +16,12 @@ Dynkin diagrams (see :wikipedia:`Dynkin_diagram`).
 
 Let us consider, for example, the Cartan type `A_4`::
 
-    sage: T = CartanType(['A', 4])
-    sage: T
+    sage: T = CartanType(['A', 4]); T
     ['A', 4]
 
 It is the name of the following Dynkin diagram::
 
-    sage: DynkinDiagram(T)
+    sage: DynkinDiagram(T)                                                              # needs sage.graphs
     O---O---O---O
     1   2   3   4
     A4
@@ -31,15 +30,15 @@ It is the name of the following Dynkin diagram::
 
     For convenience, the following shortcuts are available::
 
-        sage: DynkinDiagram(['A',4])
+        sage: DynkinDiagram(['A',4])                                                    # needs sage.graphs
         O---O---O---O
         1   2   3   4
         A4
-        sage: DynkinDiagram('A4')
+        sage: DynkinDiagram('A4')                                                       # needs sage.graphs
         O---O---O---O
         1   2   3   4
         A4
-        sage: T.dynkin_diagram()
+        sage: T.dynkin_diagram()                                                        # needs sage.graphs
         O---O---O---O
         1   2   3   4
         A4
@@ -55,10 +54,9 @@ root system::
 
 The associated Weyl group of `A_n` is the symmetric group `S_{n+1}`::
 
-    sage: W = WeylGroup(T)
-    sage: W
+    sage: W = WeylGroup(T); W                                                           # needs sage.libs.gap
     Weyl Group of type ['A', 4] (as a matrix group acting on the ambient space)
-    sage: W.cardinality()
+    sage: W.cardinality()                                                               # needs sage.libs.gap
     120
 
 while the Lie algebra is `sl_{n+1}`, and the Lie group `SL_{n+1}`
@@ -67,22 +65,20 @@ while the Lie algebra is `sl_{n+1}`, and the Lie group `SL_{n+1}`
 One may also construct crystals associated to various Dynkin diagrams.
 For example::
 
-    sage: C = crystals.Letters(T)
-    sage: C
+    sage: C = crystals.Letters(T); C                                                    # needs sage.combinat
     The crystal of letters for type ['A', 4]
-    sage: C.list()
+    sage: C.list()                                                                      # needs sage.combinat
     [1, 2, 3, 4, 5]
 
-    sage: C = crystals.Tableaux(T, shape=[2])
-    sage: C
+    sage: C = crystals.Tableaux(T, shape=[2]); C                                        # needs sage.combinat
     The crystal of tableaux of type ['A', 4] and shape(s) [[2]]
-    sage: C.cardinality()
+    sage: C.cardinality()                                                               # needs sage.combinat
     15
 
 Here is a sample of all the finite irreducible crystallographic Cartan
 types::
 
-    sage: CartanType.samples(finite = True, crystallographic = True)
+    sage: CartanType.samples(finite=True, crystallographic=True)
     [['A', 1], ['A', 5], ['B', 1], ['B', 5], ['C', 1], ['C', 5], ['D', 2], ['D', 3], ['D', 5],
      ['E', 6], ['E', 7], ['E', 8], ['F', 4], ['G', 2]]
 
@@ -92,15 +88,17 @@ types and their corresponding Dynkin diagrams::
     sage: [latex(ct) for ct in CartanType.samples(crystallographic=True)]
     [A_{1}, A_{5}, B_{1}, B_{5}, C_{1}, C_{5}, D_{2}, D_{3}, D_{5},
      E_6, E_7, E_8, F_4, G_2,
-     A_{1}^{(1)}, A_{5}^{(1)}, B_{1}^{(1)}, B_{5}^{(1)}, C_{1}^{(1)}, C_{5}^{(1)}, D_{3}^{(1)}, D_{5}^{(1)},
+     A_{1}^{(1)}, A_{5}^{(1)}, B_{1}^{(1)}, B_{5}^{(1)},
+     C_{1}^{(1)}, C_{5}^{(1)}, D_{3}^{(1)}, D_{5}^{(1)},
      E_6^{(1)}, E_7^{(1)}, E_8^{(1)}, F_4^{(1)}, G_2^{(1)},
      BC_{1}^{(2)}, BC_{5}^{(2)},
-     B_{5}^{(1)\vee}, C_{4}^{(1)\vee}, F_4^{(1)\vee}, G_2^{(1)\vee}, BC_{1}^{(2)\vee}, BC_{5}^{(2)\vee}]
+     B_{5}^{(1)\vee}, C_{4}^{(1)\vee}, F_4^{(1)\vee},
+     G_2^{(1)\vee}, BC_{1}^{(2)\vee}, BC_{5}^{(2)\vee}]
     sage: view([DynkinDiagram(ct) for ct in CartanType.samples(crystallographic=True)]) # not tested
 
 Non-crystallographic Cartan types are also partially supported::
 
-    sage: CartanType.samples(finite = True, crystallographic = False)
+    sage: CartanType.samples(finite=True, crystallographic=False)
     [['I', 5], ['H', 3], ['H', 4]]
 
 In Sage, a Cartan type is used as a database of type-specific
@@ -118,7 +116,7 @@ conventions of Nicolas Bourbaki, Lie Groups and Lie Algebras: Chapter 4-6,
 Elements of Mathematics, Springer (2002). ISBN 978-3540426509. For example::
 
     sage: T = CartanType(['D', 4])
-    sage: DynkinDiagram(T)
+    sage: DynkinDiagram(T)                                                              # needs sage.graphs
         O 4
         |
         |
@@ -127,7 +125,7 @@ Elements of Mathematics, Springer (2002). ISBN 978-3540426509. For example::
     D4
 
     sage: E6 = CartanType(['E',6])
-    sage: DynkinDiagram(E6)
+    sage: DynkinDiagram(E6)                                                             # needs sage.graphs
             O 2
             |
             |
@@ -142,11 +140,11 @@ Elements of Mathematics, Springer (2002). ISBN 978-3540426509. For example::
 
     For example, in type `C_2`, we have::
 
-        sage: C2 = DynkinDiagram(['C',2]); C2
+        sage: C2 = DynkinDiagram(['C',2]); C2                                           # needs sage.graphs
         O=<=O
         1   2
         C2
-        sage: C2.cartan_matrix()
+        sage: C2.cartan_matrix()                                                        # needs sage.graphs
         [ 2 -2]
         [-1  2]
 
@@ -162,7 +160,7 @@ Elements of Mathematics, Springer (2002). ISBN 978-3540426509. For example::
 If desired, other node labelling conventions can be achieved. For
 example the Kac labelling for type `E_6` can be obtained via::
 
-    sage: E6.relabel({1:1,2:6,3:2,4:3,5:4,6:5}).dynkin_diagram()
+    sage: E6.relabel({1:1,2:6,3:2,4:3,5:4,6:5}).dynkin_diagram()                        # needs sage.graphs
             O 6
             |
             |
@@ -183,25 +181,25 @@ Here, we construct the hyperbolic example of Exercise 4.9 p. 57 of
 Kac, Infinite Dimensional Lie Algebras. We start with an empty Dynkin
 diagram, and add a couple nodes::
 
-    sage: g = DynkinDiagram()
-    sage: g.add_vertices([1,2,3])
+    sage: g = DynkinDiagram()                                                           # needs sage.graphs
+    sage: g.add_vertices([1,2,3])                                                       # needs sage.graphs
 
 Note that the diagonal of the Cartan matrix is already initialized::
 
-    sage: g.cartan_matrix()
+    sage: g.cartan_matrix()                                                             # needs sage.graphs
     [2 0 0]
     [0 2 0]
     [0 0 2]
 
 Then we add a couple edges::
 
-    sage: g.add_edge(1,2,2)
-    sage: g.add_edge(1,3)
-    sage: g.add_edge(2,3)
+    sage: g.add_edge(1,2,2)                                                             # needs sage.graphs
+    sage: g.add_edge(1,3)                                                               # needs sage.graphs
+    sage: g.add_edge(2,3)                                                               # needs sage.graphs
 
 and we get the desired Cartan matrix::
 
-    sage: g.cartan_matrix()
+    sage: g.cartan_matrix()                                                             # needs sage.graphs
     [2 0 0]
     [0 2 0]
     [0 0 2]
@@ -216,18 +214,18 @@ diagram should not be modified after having been used.
 
 Here, we can work around this by clearing the cache::
 
-    sage: delattr(g, 'cartan_matrix')
+    sage: delattr(g, 'cartan_matrix')                                                   # needs sage.graphs
 
 Now we get the desired Cartan matrix::
 
-    sage: g.cartan_matrix()
+    sage: g.cartan_matrix()                                                             # needs sage.graphs
     [ 2 -1 -1]
     [-2  2 -1]
     [-1 -1  2]
 
 Note that backward edges have been automatically added::
 
-    sage: g.edges(sort=True)
+    sage: g.edges(sort=True)                                                            # needs sage.graphs
     [(1, 2, 2), (1, 3, 1), (2, 1, 1), (2, 3, 1), (3, 1, 1), (3, 2, 1)]
 
 .. rubric:: Reducible Cartan types
@@ -284,7 +282,7 @@ For affine types, we use the usual conventions for affine Coxeter
 groups: each affine type is either untwisted (that is arise from the
 natural affinisation of a finite Cartan type)::
 
-    sage: CartanType(["A", 4, 1]).dynkin_diagram()
+    sage: CartanType(["A", 4, 1]).dynkin_diagram()                                      # needs sage.graphs
     0
     O-----------+
     |           |
@@ -292,7 +290,7 @@ natural affinisation of a finite Cartan type)::
     O---O---O---O
     1   2   3   4
     A4~
-    sage: CartanType(["B", 4, 1]).dynkin_diagram()
+    sage: CartanType(["B", 4, 1]).dynkin_diagram()                                      # needs sage.graphs
         O 0
         |
         |
@@ -302,7 +300,7 @@ natural affinisation of a finite Cartan type)::
 
 or dual thereof::
 
-    sage: CartanType(["B", 4, 1]).dual().dynkin_diagram()
+    sage: CartanType(["B", 4, 1]).dual().dynkin_diagram()                               # needs sage.graphs
         O 0
         |
         |
@@ -313,18 +311,18 @@ or dual thereof::
 or is of type `\widetilde{BC}_n` (which yields an irreducible, but
 nonreduced root system)::
 
-    sage: CartanType(["BC", 4, 2]).dynkin_diagram()
+    sage: CartanType(["BC", 4, 2]).dynkin_diagram()                                     # needs sage.graphs
     O=<=O---O---O=<=O
     0   1   2   3   4
     BC4~
 
 This includes the two degenerate cases::
 
-    sage: CartanType(["A", 1, 1]).dynkin_diagram()
+    sage: CartanType(["A", 1, 1]).dynkin_diagram()                                      # needs sage.graphs
     O<=>O
     0   1
     A1~
-    sage: CartanType(["BC", 1, 2]).dynkin_diagram()
+    sage: CartanType(["BC", 1, 2]).dynkin_diagram()                                     # needs sage.graphs
       4
     O=<=O
     0   1
@@ -333,6 +331,7 @@ This includes the two degenerate cases::
 For the user convenience, Kac's notations for twisted affine types are
 automatically translated into the previous ones::
 
+    sage: # needs sage.graphs
     sage: CartanType(["A", 9, 2])
     ['B', 5, 1]^*
     sage: CartanType(["A", 9, 2]).dynkin_diagram()
@@ -362,6 +361,7 @@ automatically translated into the previous ones::
 
 Additionally one can set the notation option to use Kac's notation::
 
+    sage: # needs sage.graphs
     sage: CartanType.options['notation'] = 'Kac'
     sage: CartanType(["A", 9, 2])
     ['A', 9, 2]
@@ -546,7 +546,7 @@ class CartanTypeFactory(SageObject):
             sage: CT = CartanType([['A',2]])
             sage: CT.is_irreducible()
             True
-            sage: CT.cartan_matrix()
+            sage: CT.cartan_matrix()                                                    # needs sage.graphs
             [ 2 -1]
             [-1  2]
             sage: CT = CartanType(['A2'])
@@ -898,7 +898,7 @@ class CartanTypeFactory(SageObject):
 
             sage: ct = CartanType(['D',5,2]); ct
             ['C', 4, 1]^*
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O=<=O---O---O=>=O
             0   1   2   3   4
             C4~*
@@ -907,7 +907,7 @@ class CartanTypeFactory(SageObject):
             sage: CartanType.options(dual_str='#', dual_latex='\\ast',)
             sage: ct
             ['C', 4, 1]^#
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O=<=O---O---O=>=O
             0   1   2   3   4
             C4~#
@@ -916,7 +916,7 @@ class CartanTypeFactory(SageObject):
             sage: CartanType.options(notation='kac', mark_special_node='both')
             sage: ct
             ['D', 5, 2]
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             @=<=O---O---O=>=O
             0   1   2   3   4
             D5^2
@@ -930,7 +930,7 @@ class CartanTypeFactory(SageObject):
             ['A', 8, 2]^+
             sage: latex(dct)
             A_{8}^{(2)\dagger}
-            sage: dct.dynkin_diagram()
+            sage: dct.dynkin_diagram()                                                  # needs sage.graphs
             @=>=O---O---O=>=O
             0   1   2   3   4
             A8^2+
@@ -1149,6 +1149,7 @@ class CartanType_abstract():
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: CartanType(['B',3]).coxeter_diagram()
             Graph on 3 vertices
             sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
@@ -1168,7 +1169,7 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-            sage: CartanType(['A', 4]).coxeter_matrix()
+            sage: CartanType(['A', 4]).coxeter_matrix()                                 # needs sage.graphs
             [1 3 2 2]
             [3 1 3 2]
             [2 3 1 3]
@@ -1228,7 +1229,7 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-           sage: CartanType(['F',4]).relabel({ 1:4, 2:3, 3:2, 4:1 }).dynkin_diagram()
+           sage: CartanType(['F',4]).relabel({ 1:4, 2:3, 3:2, 4:1 }).dynkin_diagram()   # needs sage.graphs
            O---O=>=O---O
            4   3   2   1
            F4 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
@@ -1246,11 +1247,11 @@ class CartanType_abstract():
         EXAMPLES::
 
             sage: ct = CartanType(['A',6,2])
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: ct.subtype([1,2,3])
+            sage: ct.subtype([1,2,3])                                                   # needs sage.graphs
             ['C', 3]
         """
         return self.cartan_matrix().subtype(index_set).cartan_type()
@@ -1265,7 +1266,7 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-            sage: CartanType(['F',4]).marked_nodes([1, 3]).dynkin_diagram()
+            sage: CartanType(['F',4]).marked_nodes([1, 3]).dynkin_diagram()             # needs sage.graphs
             X---O=>=X---O
             1   2   3   4
             F4 with nodes (1, 3) marked
@@ -1416,7 +1417,8 @@ class CartanType_abstract():
              [['C', 1], True], [['C', 5], False],
              [['D', 2], True], [['D', 3], True], [['D', 5], True],
              [['E', 6], True], [['E', 7], True], [['E', 8], True],
-             [['F', 4], False], [['G', 2], False], [['I', 5], False], [['H', 3], False], [['H', 4], False],
+             [['F', 4], False], [['G', 2], False], [['I', 5], False],
+             [['H', 3], False], [['H', 4], False],
              [['A', 1, 1], False], [['A', 5, 1], True],
              [['B', 1, 1], False], [['B', 5, 1], False],
              [['C', 1, 1], False], [['C', 5, 1], False],
@@ -1424,7 +1426,8 @@ class CartanType_abstract():
              [['E', 6, 1], True], [['E', 7, 1], True], [['E', 8, 1], True],
              [['F', 4, 1], False], [['G', 2, 1], False],
              [['BC', 1, 2], False], [['BC', 5, 2], False],
-             [['B', 5, 1]^*, False], [['C', 4, 1]^*, False], [['F', 4, 1]^*, False], [['G', 2, 1]^*, False],
+             [['B', 5, 1]^*, False], [['C', 4, 1]^*, False],
+             [['F', 4, 1]^*, False], [['G', 2, 1]^*, False],
              [['BC', 1, 2]^*, False], [['BC', 5, 2]^*, False]]
         """
         return False
@@ -1516,8 +1519,8 @@ class CartanType_abstract():
 
         EXAMPLES::
 
-            sage: D = CartanMatrix([[2, -3], [-2, 2]]).dynkin_diagram()
-            sage: D._default_folded_cartan_type()
+            sage: D = CartanMatrix([[2, -3], [-2, 2]]).dynkin_diagram()                 # needs sage.graphs
+            sage: D._default_folded_cartan_type()                                       # needs sage.graphs
             Dynkin diagram of rank 2 as a folding of  Dynkin diagram of rank 2
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
@@ -1558,9 +1561,9 @@ class CartanType_crystallographic(CartanType_abstract):
         The label option is useful to visualize various statistics on
         the nodes of the Dynkin diagram::
 
-            sage: a = cartan_type.col_annihilator(); a
+            sage: a = cartan_type.col_annihilator(); a                                  # needs sage.graphs
             Finite family {0: 1, 1: 1, 2: 2, 3: 2, 4: 2, 5: 2}
-            sage: print(CartanType(['B',5,1]).ascii_art(label=a.__getitem__))
+            sage: print(CartanType(['B',5,1]).ascii_art(label=a.__getitem__))           # needs sage.graphs
                 O 1
                 |
                 |
@@ -1588,7 +1591,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: latex(CartanType(['A',4]).dynkin_diagram()) # indirect doctest
+            sage: latex(CartanType(['A',4]).dynkin_diagram())  # indirect doctest       # needs sage.graphs
             \begin{tikzpicture}[scale=0.5]
             \draw (-1,0) node[anchor=east] {$A_{4}$};
             \draw (0 cm,0) -- (6 cm,0);
@@ -1606,7 +1609,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(['A',4]).dynkin_diagram()
+            sage: CartanType(['A',4]).dynkin_diagram()                                  # needs sage.graphs
             O---O---O---O
             1   2   3   4
             A4
@@ -1624,7 +1627,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(['A',4]).cartan_matrix()
+            sage: CartanType(['A',4]).cartan_matrix()                                   # needs sage.graphs
             [ 2 -1  0  0]
             [-1  2 -1  0]
             [ 0 -1  2 -1]
@@ -1643,6 +1646,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: CartanType(['A',3]).coxeter_diagram()
             Graph on 3 vertices
             sage: CartanType(['A',3]).coxeter_diagram().edges(sort=True)
@@ -1689,30 +1693,30 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(["B",5]).symmetrizer()
+            sage: CartanType(["B",5]).symmetrizer()                                     # needs sage.graphs
             Finite family {1: 2, 2: 2, 3: 2, 4: 2, 5: 1}
 
         Here is a neat trick to visualize it better::
 
             sage: T = CartanType(["B",5])
-            sage: print(T.ascii_art(T.symmetrizer().__getitem__))
+            sage: print(T.ascii_art(T.symmetrizer().__getitem__))                       # needs sage.graphs
             O---O---O---O=>=O
             2   2   2   2   1
 
             sage: T = CartanType(["BC",5, 2])
-            sage: print(T.ascii_art(T.symmetrizer().__getitem__))
+            sage: print(T.ascii_art(T.symmetrizer().__getitem__))                       # needs sage.graphs
             O=<=O---O---O---O=<=O
             1   2   2   2   2   4
 
        Here is the symmetrizer of some reducible Cartan types::
 
             sage: T = CartanType(["D", 2])
-            sage: print(T.ascii_art(T.symmetrizer().__getitem__))
+            sage: print(T.ascii_art(T.symmetrizer().__getitem__))                       # needs sage.graphs
             O   O
             1   1
 
             sage: T = CartanType(["B",5],["BC",5, 2])
-            sage: print(T.ascii_art(T.symmetrizer().__getitem__))
+            sage: print(T.ascii_art(T.symmetrizer().__getitem__))                       # needs sage.graphs
             O---O---O---O=>=O
             2   2   2   2   1
             O=<=O---O---O---O=<=O
@@ -1722,7 +1726,7 @@ class CartanType_crystallographic(CartanType_abstract):
         of the simple roots in the ambient space::
 
             sage: T = CartanType(["C",5])
-            sage: print(T.ascii_art(T.symmetrizer().__getitem__))
+            sage: print(T.ascii_art(T.symmetrizer().__getitem__))                       # needs sage.graphs
             O---O---O---O=<=O
             1   1   1   1   2
 
@@ -1766,10 +1770,10 @@ class CartanType_crystallographic(CartanType_abstract):
 
         EXAMPLES::
 
-            sage: CartanType(['A',5]).index_set_bipartition()
+            sage: CartanType(['A',5]).index_set_bipartition()                           # needs sage.graphs
             ({1, 3, 5}, {2, 4})
 
-            sage: CartanType(['A',2,1]).index_set_bipartition()
+            sage: CartanType(['A',2,1]).index_set_bipartition()                         # needs sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: the Dynkin diagram must be bipartite
@@ -1937,7 +1941,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
             sage: CartanType(['A', 3, 1]).is_untwisted_affine()
             True
-            sage: CartanType(['A', 3, 1]).dual().is_untwisted_affine() # this one is self dual!
+            sage: CartanType(['A', 3, 1]).dual().is_untwisted_affine()  # this one is self dual!
             True
             sage: CartanType(['B', 3, 1]).dual().is_untwisted_affine()
             False
@@ -1979,6 +1983,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.groups
             sage: CartanType(['A',3,1]).special_nodes()
             (0, 1, 2, 3)
             sage: CartanType(['C',2,1]).special_nodes()
@@ -2036,7 +2041,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         :meth:`sage.combinat.root_system.cartan_type.CartanType_crystallographic.dynkin_diagram`,
         and :meth:`special_node` are consistent::
 
-            sage: for ct in CartanType.samples(affine = True):
+            sage: for ct in CartanType.samples(affine=True):                            # needs sage.graphs
             ....:     g1 = ct.classical().dynkin_diagram()
             ....:     g2 = ct.dynkin_diagram()
             ....:     g2.delete_vertex(ct.special_node())
@@ -2096,6 +2101,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: RootSystem(['C',2,1]).cartan_type().acheck()
             Finite family {0: 1, 1: 1, 2: 1}
             sage: RootSystem(['D',4,1]).cartan_type().acheck()
@@ -2107,7 +2113,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         ``acheck`` is a shortcut for row_annihilator::
 
-            sage: RootSystem(['BC',4,2]).cartan_type().row_annihilator()
+            sage: RootSystem(['BC',4,2]).cartan_type().row_annihilator()                # needs sage.graphs
             Finite family {0: 1, 1: 2, 2: 2, 3: 2, 4: 2}
 
         FIXME:
@@ -2145,6 +2151,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: RootSystem(['C',2,1]).cartan_type().a()
             Finite family {0: 1, 1: 2, 2: 1}
             sage: RootSystem(['D',4,1]).cartan_type().a()
@@ -2156,7 +2163,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         ``a`` is a shortcut for col_annihilator::
 
-            sage: RootSystem(['BC',4,2]).cartan_type().col_annihilator()
+            sage: RootSystem(['BC',4,2]).cartan_type().col_annihilator()                # needs sage.graphs
             Finite family {0: 2, 1: 2, 2: 2, 3: 2, 4: 1}
         """
         return self.row_annihilator(self.cartan_matrix().transpose())
@@ -2174,6 +2181,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: RootSystem(['C',2,1]).cartan_type().c()
             Finite family {0: 1, 1: 2, 2: 1}
             sage: RootSystem(['D',4,1]).cartan_type().c()
@@ -2185,7 +2193,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         TESTS::
 
-            sage: CartanType(["B", 3, 1]).c().map(parent)
+            sage: CartanType(["B", 3, 1]).c().map(parent)                               # needs sage.graphs
             Finite family {0: Integer Ring, 1: Integer Ring, 2: Integer Ring, 3: Integer Ring}
 
         REFERENCES:
@@ -2230,6 +2238,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: CartanType(['C',2,1]).translation_factors()
             Finite family {0: 1, 1: 2, 2: 1}
             sage: CartanType(['C',2,1]).dual().translation_factors()
@@ -2244,6 +2253,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         We proceed with systematic tests taken from MuPAD-Combinat's
         testsuite::
 
+            sage: # needs sage.graphs
             sage: list(CartanType(["A", 1, 1]).translation_factors())
             [1, 1]
             sage: list(CartanType(["A", 5, 1]).translation_factors())
@@ -2288,37 +2298,37 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         along `\Lambda_0`::
 
             sage: R = RootSystem(["BC",2,2])
-            sage: alpha = R.weight_space().simple_roots()
+            sage: alpha = R.weight_space().simple_roots()                               # needs sage.graphs
             sage: alphacheck = R.coroot_space().simple_roots()
             sage: Lambda = R.weight_space().fundamental_weights()
 
         Here are the levels of the fundamental weights::
 
-            sage: Lambda[0].level(), Lambda[1].level(), Lambda[2].level()
+            sage: Lambda[0].level(), Lambda[1].level(), Lambda[2].level()               # needs sage.graphs
             (1, 2, 2)
 
         So the "center" of the fundamental polygon at level `1` is::
 
             sage: O = Lambda[0]
-            sage: O.level()
+            sage: O.level()                                                             # needs sage.graphs
             1
 
         We take the projection `\omega_1` at level `0` of `\Lambda_1`
         as unit vector on the `x`-axis, and the projection `\omega_2`
         at level 0 of `\Lambda_2` as unit vector of the `y`-axis::
 
-            sage: omega1 = Lambda[1]-2*Lambda[0]
-            sage: omega2 = Lambda[2]-2*Lambda[0]
-            sage: omega1.level(), omega2.level()
+            sage: omega1 = Lambda[1] - 2*Lambda[0]
+            sage: omega2 = Lambda[2] - 2*Lambda[0]
+            sage: omega1.level(), omega2.level()                                        # needs sage.graphs
             (0, 0)
 
         The projections of the simple roots can be read off::
 
-            sage: alpha[0]
+            sage: alpha[0]                                                              # needs sage.graphs
             2*Lambda[0] - Lambda[1]
-            sage: alpha[1]
+            sage: alpha[1]                                                              # needs sage.graphs
             -2*Lambda[0] + 2*Lambda[1] - Lambda[2]
-            sage: alpha[2]
+            sage: alpha[2]                                                              # needs sage.graphs
             -2*Lambda[1] + 2*Lambda[2]
 
         Namely `\alpha_0 = -\omega_1`, `\alpha_1 = 2\omega_1 -
@@ -2350,14 +2360,14 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         smallest with this property. Hence, the translation factors
         for affine type `BC` are `t_0=1, t_1=1, t_2=1/2`::
 
-            sage: CartanType(['BC',2,2]).translation_factors()
+            sage: CartanType(['BC',2,2]).translation_factors()                          # needs sage.graphs
             Finite family {0: 1, 1: 1, 2: 1/2}
 
         TESTS::
 
-            sage: CartanType(["B", 3, 1]).translation_factors().map(parent)
+            sage: CartanType(["B", 3, 1]).translation_factors().map(parent)             # needs sage.graphs
             Finite family {0: Integer Ring, 1: Integer Ring, 2: Integer Ring, 3: Integer Ring}
-            sage: CartanType(["BC", 3, 2]).translation_factors().map(parent)
+            sage: CartanType(["BC", 3, 2]).translation_factors().map(parent)            # needs sage.graphs
             Finite family {0: Integer Ring, 1: Integer Ring, 2: Integer Ring, 3: Rational Field}
 
         REFERENCES:
@@ -2625,7 +2635,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
 
     def type(self):
         """
-        Returns the type of ``self``.
+        Return the type of ``self``.
 
         EXAMPLES::
 
@@ -2639,7 +2649,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
     @cached_method
     def opposition_automorphism(self):
         r"""
-        Returns the opposition automorphism
+        Return the opposition automorphism
 
         The *opposition automorphism* is the automorphism
         `i \mapsto i^*` of the vertices Dynkin diagram such that,
@@ -2651,19 +2661,19 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
         EXAMPLES::
 
             sage: ct = CartanType(['A', 5])
-            sage: ct.opposition_automorphism()
+            sage: ct.opposition_automorphism()                                          # needs sage.libs.gap
             Finite family {1: 5, 2: 4, 3: 3, 4: 2, 5: 1}
 
             sage: ct = CartanType(['D', 4])
-            sage: ct.opposition_automorphism()
+            sage: ct.opposition_automorphism()                                          # needs sage.libs.gap
             Finite family {1: 1, 2: 2, 3: 3, 4: 4}
 
             sage: ct = CartanType(['D', 5])
-            sage: ct.opposition_automorphism()
+            sage: ct.opposition_automorphism()                                          # needs sage.libs.gap
             Finite family {1: 1, 2: 2, 3: 3, 4: 5, 5: 4}
 
             sage: ct = CartanType(['C', 4])
-            sage: ct.opposition_automorphism()
+            sage: ct.opposition_automorphism()                                          # needs sage.libs.gap
             Finite family {1: 1, 2: 2, 3: 3, 4: 4}
         """
         Q = self.root_system().root_lattice()
@@ -3083,7 +3093,7 @@ class CartanType_simple_finite():
 
             sage: si1
             ['A', 4]
-            sage: si1.dynkin_diagram()
+            sage: si1.dynkin_diagram()                                                  # needs sage.graphs
             O---O---O---O
             1   2   3   4
             A4

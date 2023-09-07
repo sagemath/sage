@@ -664,7 +664,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         Pol = polynomial_ring_constructor._single_variate(self.base_ring(), var)
         cdef Polynomial_complex_arb res = Polynomial_complex_arb(Pol)
         sig_on()
-        acb_mat_charpoly(res.__poly, self.value, prec(self))
+        acb_mat_charpoly(res._poly, self.value, prec(self))
         sig_off()
         return res
 
@@ -945,7 +945,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         EXAMPLES::
 
-            sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()
+            sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()                             # needs sage.symbolic
             [[-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             [                                                0 [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             sage: matrix(CBF, [[1/2, 1/3]]).exp()

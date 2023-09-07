@@ -535,11 +535,10 @@ cdef class Cylinder(ParametricSurface):
         name = render_params.unique_name('line')
         return ["""
 draw %s width %s {%s %s %s} {%s %s %s}\n%s
-""" % (name,
-       rad,
+""" % (name, rad,
        base[0], base[1], base[2],
-       top [0], top [1], top [2],
-       self.texture.jmol_str("$" + name)) ]
+       top[0], top[1], top[2],
+       self.texture.jmol_str("$" + name))]
 
     def get_endpoints(self, transform=None):
         """

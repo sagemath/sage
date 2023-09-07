@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron
 """
 Diamond cutting implementation
 

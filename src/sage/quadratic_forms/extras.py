@@ -151,7 +151,7 @@ def least_quadratic_nonresidue(p):
 
         sage: least_quadratic_nonresidue(5)
         2
-        sage: [least_quadratic_nonresidue(p) for p in prime_range(3, 100)]              # optional - sage.libs.pari
+        sage: [least_quadratic_nonresidue(p) for p in prime_range(3, 100)]              # needs sage.libs.pari
         [2, 2, 3, 2, 2, 3, 2, 5, 2, 3, 2, 3, 2, 5, 2, 2, 2, 2, 7, 5, 3, 2, 3, 5]
 
     TESTS:

@@ -91,6 +91,7 @@ class InlineFortran:
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: code = '''
             ....: C FILE: FIB1.F
             ....:       SUBROUTINE FIB(A,N)
