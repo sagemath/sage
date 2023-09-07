@@ -76,8 +76,8 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
 
-    sage: sage_getsource(sage.rings.rational.make_rational)[4:]
-    'make_rational(s):...'
+    sage: sage_getsource(sage.rings.rational.make_rational)
+    '@cython.binding(True)\ndef make_rational(s):...'
 
 Python functions::
 
