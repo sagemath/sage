@@ -19,9 +19,9 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gap.gap_includes cimport *
-from .libgap import libgap
+from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
-from .util import GAPError
+from sage.libs.gap.util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

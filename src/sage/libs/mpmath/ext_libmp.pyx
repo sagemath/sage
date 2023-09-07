@@ -5,7 +5,7 @@ from sage.libs.mpmath.ext_impl cimport *
 from sage.libs.gmp.all cimport *
 
 # the next line is used by mpmath
-from .ext_impl import exp_fixed, cos_sin_fixed, log_int_fixed
+from sage.libs.mpmath.ext_impl import exp_fixed, cos_sin_fixed, log_int_fixed
 
 # Note: not thread-safe
 cdef MPF tmp1
