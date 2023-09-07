@@ -154,7 +154,7 @@ def Mod(n, m, parent=None):
 
     # m is non-zero, so return n mod m
     if parent is None:
-        from .integer_mod_ring import IntegerModRing
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         parent = IntegerModRing(m)
     return IntegerMod(parent, n)
 
@@ -494,7 +494,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         if not isinstance(self, IntegerMod_abstract):
             # something % Mod(x,y) makes no sense
             return NotImplemented
-        from .integer_mod_ring import IntegerModRing
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         R = IntegerModRing(modulus)
         if (<Element>self)._parent._IntegerModRing_generic__order % R.order():
             raise ArithmeticError(f"reduction modulo {modulus!r} not defined")
@@ -1230,7 +1230,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 R = self.parent()['x']
                 modulus = R.gen()**2 - R(self)
                 if self._parent.is_field():
-                    from .finite_field_constructor import FiniteField
+                    from sage.rings.finite_rings.finite_field_constructor import FiniteField
                     Q = FiniteField(self._modulus.sageInteger**2, y, modulus)
                 else:
                     R = self.parent()['x']
@@ -1440,7 +1440,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ....:         if (y^41).nth_root(41*r)**(41*r) != y^41: raise RuntimeError
             ....:         if (y^307).nth_root(307*r)**(307*r) != y^307: raise RuntimeError
 
-            sage: for t in range(200):                                                  # needs sage.libs.pari
+            sage: for t in range(200):                                                  # needs sage.libs.pari sage.rings.padics
             ....:     n = randint(1,2^63)
             ....:     K = Integers(n)
             ....:     b = K.random_element()
@@ -2140,7 +2140,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
         modulus = self._modulus.sageInteger
         other_modulus = other._modulus.sageInteger
-        from .integer_mod_ring import IntegerModRing
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         lift = IntegerMod_gmp(IntegerModRing(modulus*other_modulus))
         try:
             if mpz_cmp(self.value, other.value) > 0:
@@ -2544,7 +2544,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         cdef IntegerMod_int lift
         cdef int_fast32_t x
 
-        from .integer_mod_ring import IntegerModRing
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         lift = IntegerMod_int(IntegerModRing(self._modulus.int32 * other._modulus.int32))
 
         try:
@@ -3380,7 +3380,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         cdef IntegerMod_int64 lift
         cdef int_fast64_t x
 
-        from .integer_mod_ring import IntegerModRing
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
         lift = IntegerMod_int64(IntegerModRing(self._modulus.int64 * other._modulus.int64))
 
         try:

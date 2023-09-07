@@ -729,9 +729,9 @@ cdef class RealField_class(sage.rings.abc.RealField):
             sage: R.get_action(ZZ)
             Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         """
-        from .integer_ring import ZZ
-        from .rational_field import QQ
-        from .real_double import RDF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
+        from sage.rings.real_double import RDF
 
         if S is ZZ:
             return ZZtoRR(ZZ, self)
@@ -1833,7 +1833,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RealField(100)(2).imag()
             0
         """
-        from .integer_ring import ZZ
+        from sage.rings.integer_ring import ZZ
 
         return ZZ(0)
 
@@ -2347,7 +2347,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if have_same_parent(left, right):
             return (<RealNumber> left)._add_(right)
         try:
-            from .real_mpfi import RealIntervalFieldElement
+            from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
@@ -2371,7 +2371,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if have_same_parent(left, right):
             return (<RealNumber> left)._sub_(right)
         try:
-            from .real_mpfi import RealIntervalFieldElement
+            from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
@@ -2395,7 +2395,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if have_same_parent(left, right):
             return (<RealNumber> left)._mul_(right)
         try:
-            from .real_mpfi import RealIntervalFieldElement
+            from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
@@ -2419,7 +2419,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if have_same_parent(left, right):
             return (<RealNumber> left)._div_(right)
         try:
-            from .real_mpfi import RealIntervalFieldElement
+            from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
         if type(right) is RealIntervalFieldElement:
@@ -3630,7 +3630,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if mpfr_zero_p(self.value):
             return Rational(0)
 
-        from .real_mpfi import RealIntervalField
+        from sage.rings.real_mpfi import RealIntervalField
 
         cdef mpfr_rnd_t rnd = (<RealField_class>self._parent).rnd
         cdef mpfr_prec_t prec = (<RealField_class>self._parent)._prec
@@ -3750,7 +3750,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             raise ValueError('Must specify exactly one of max_error or max_denominator in nearby_rational()')
 
         if max_error is not None:
-            from .real_mpfi import RealIntervalField
+            from sage.rings.real_mpfi import RealIntervalField
 
             intv_field = RealIntervalField(self.prec())
             intv = intv_field(self - max_error, self + max_error)
@@ -5579,7 +5579,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # If we got here, then we're not a perfect power of a boundary
         # point, so it's safe to use the interval arithmetic technique.
 
-        from .real_mpfi import RealIntervalField
+        from sage.rings.real_mpfi import RealIntervalField
 
         cdef mpfr_prec_t prec = fld._prec + 10
 

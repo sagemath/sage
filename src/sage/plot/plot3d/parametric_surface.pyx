@@ -123,7 +123,7 @@ from math import cos, sin
 from sage.rings.real_double import RDF
 
 from sage.plot.colors import check_color_data
-from .base import RenderParams
+from sage.plot.plot3d.base import RenderParams
 from sage.plot.plot3d.transform cimport point_c, face_c
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 

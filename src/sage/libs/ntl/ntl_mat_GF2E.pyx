@@ -39,7 +39,7 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.libs.ntl.ntl_GF2E cimport ntl_GF2E
-from .ntl_GF2EContext import ntl_GF2EContext
+from sage.libs.ntl.ntl_GF2EContext import ntl_GF2EContext
 from sage.libs.ntl.ntl_GF2EContext cimport ntl_GF2EContext_class
 from sage.rings.integer cimport Integer
 from sage.misc.randstate cimport randstate, current_randstate

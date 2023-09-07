@@ -119,12 +119,12 @@ from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_template
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_float
 from sage.matrix.matrix_modn_dense_double cimport Matrix_modn_dense_double
 
-from .matrix_mod2_dense import Matrix_mod2_dense
+from sage.matrix.matrix_mod2_dense import Matrix_mod2_dense
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.rings.finite_rings.finite_field_constructor import GF
 
 
-from .matrix2 import decomp_seq
+from sage.matrix.matrix2 import decomp_seq
 
 from sage.matrix.matrix cimport Matrix
 
@@ -1598,8 +1598,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return Matrix_mod2_dense(MS, self, True, True)
 
     cdef _mod_int_c(self, mod_int p):
-        from .matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
-        from .matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
+        from sage.matrix.matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
 
         cdef Py_ssize_t i, j
         cdef mpz_t* self_row
@@ -1633,8 +1633,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ValueError("p to big.")
 
     def _reduce(self, moduli):
-        from .matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
-        from .matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
+        from sage.matrix.matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
 
         if isinstance(moduli, (int, Integer)):
             return self._mod_int(moduli)
@@ -2058,7 +2058,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 if transformation:
                     U = U[:r]
         elif algorithm == "padic":
-            from . import matrix_integer_dense_hnf
+            from sage.matrix import matrix_integer_dense_hnf
             if transformation:
                 H_m, U = matrix_integer_dense_hnf.hnf_with_transformation(self, proof=proof)
                 if not include_zero_rows:
@@ -2105,7 +2105,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         H_m.set_immutable()
         if pivots is None:
-            from .matrix_integer_dense_hnf import pivots_of_hnf_matrix
+            from sage.matrix.matrix_integer_dense_hnf import pivots_of_hnf_matrix
             pivots = pivots_of_hnf_matrix(H_m)
         pivots = tuple(pivots)
         rank = len(pivots)
@@ -2243,7 +2243,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: S = A.saturation(max_dets=2)
         """
         proof = get_proof_flag(proof, "linear_algebra")
-        from .matrix_integer_dense_saturation import saturation
+        from sage.matrix.matrix_integer_dense_saturation import saturation
         return saturation(self, p=p, proof=proof, max_dets=max_dets)
 
     def index_in_saturation(self, proof=None):
@@ -2281,7 +2281,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [1 1 1]
         """
         proof = get_proof_flag(proof, "linear_algebra")
-        from .matrix_integer_dense_saturation import index_in_saturation
+        from sage.matrix.matrix_integer_dense_saturation import index_in_saturation
         return index_in_saturation(self, proof=proof)
 
     def pivots(self):
@@ -3448,7 +3448,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ZeroDivisionError: The modulus cannot be zero
         """
-        from .misc_flint import matrix_integer_dense_rational_reconstruction
+        from sage.matrix.misc_flint import matrix_integer_dense_rational_reconstruction
         return matrix_integer_dense_rational_reconstruction(self, N)
 
     def randomize(self, density=1, x=None, y=None, distribution=None,
@@ -3813,7 +3813,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             fmpz_clear(e)
             d = det
         elif algorithm == 'padic':
-            from . import matrix_integer_dense_hnf
+            from sage.matrix import matrix_integer_dense_hnf
             d = matrix_integer_dense_hnf.det_padic(self, proof=proof, stabilize=stabilize)
         elif algorithm == 'linbox':
             if proof:
@@ -4280,7 +4280,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         # in the non-full rank case.  In any case, we do this for now,
         # since rank is very fast and infinite loops are evil.
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if not self.is_square():
@@ -4727,7 +4727,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             d = Integer(1)
             return pivots, nonpivots, X, d
 
-        from .matrix_modn_dense_double import MAX_MODULUS
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS
         A = self
         # Step 1: Compute the rank
 
@@ -4926,7 +4926,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         cdef Py_ssize_t i, j, piv, n = self._nrows, m = self._ncols
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
 
         # 0. Base case
         if self.nrows() == 0:
@@ -5634,7 +5634,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 3.0  5.0]
         """
         if ring == RDF:
-            from .change_ring import integer_to_real_double_dense
+            from sage.matrix.change_ring import integer_to_real_double_dense
             return integer_to_real_double_dense(self)
         else:
             raise NotImplementedError

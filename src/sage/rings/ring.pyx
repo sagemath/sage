@@ -1449,7 +1449,7 @@ cdef class CommutativeRing(Ring):
             sage: f(1+u)
             1 + u^25
         """
-        from .morphism import FrobeniusEndomorphism_generic
+        from sage.rings.morphism import FrobeniusEndomorphism_generic
         return FrobeniusEndomorphism_generic(self, n)
 
     def derivation_module(self, codomain=None, twist=None):

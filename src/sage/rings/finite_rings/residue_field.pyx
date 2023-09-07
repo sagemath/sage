@@ -387,7 +387,7 @@ class ResidueFieldFactory(UniqueFactory):
                 q = characteristic**(f.degree())
                 if q < zech_log_bound and (impl is None or impl == 'givaro'):
                     try:
-                        from .residue_field_givaro import ResidueFiniteField_givaro
+                        from sage.rings.finite_rings.residue_field_givaro import ResidueFiniteField_givaro
                     except ImportError:
                         if impl is not None:
                             raise
@@ -395,7 +395,7 @@ class ResidueFieldFactory(UniqueFactory):
                         return ResidueFiniteField_givaro(p, q, names, f, None, None, None)
                 if q % 2 == 0 and (impl is None or impl == 'ntl'):
                     try:
-                        from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
+                        from sage.rings.finite_rings.residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                     except ImportError:
                         if impl is not None:
                             raise
@@ -403,7 +403,7 @@ class ResidueFieldFactory(UniqueFactory):
                         return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, None, None, None)
                 if impl is None or impl == 'pari':
                     try:
-                        from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
+                        from sage.rings.finite_rings.residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                     except ImportError:
                         if impl is not None:
                             raise
@@ -463,7 +463,7 @@ class ResidueFieldFactory(UniqueFactory):
             q = characteristic**(f.degree())
             if q < zech_log_bound and (impl is None or impl == 'givaro'):
                 try:
-                    from .residue_field_givaro import ResidueFiniteField_givaro
+                    from sage.rings.finite_rings.residue_field_givaro import ResidueFiniteField_givaro
                 except ImportError:
                     if impl is not None:
                         raise
@@ -471,7 +471,7 @@ class ResidueFieldFactory(UniqueFactory):
                     return ResidueFiniteField_givaro(p, q, names, f, to_vs, to_order, PB)
             elif q % 2 == 0 and (impl is None or impl == 'ntl'):
                 try:
-                    from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
+                    from sage.rings.finite_rings.residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                 except ImportError:
                     if impl is not None:
                         raise
@@ -479,7 +479,7 @@ class ResidueFieldFactory(UniqueFactory):
                     return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, to_vs, to_order, PB)
             if impl is None or impl == 'pari':
                 try:
-                    from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
+                    from sage.rings.finite_rings.residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                 except ImportError:
                     if impl is not None:
                         raise

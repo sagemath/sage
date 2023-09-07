@@ -68,8 +68,8 @@ from sage.rings.function_field.constructor import FunctionField
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 
-from .encoder import Encoder
-from .decoder import Decoder, DecodingError
+from sage.coding.encoder import Encoder
+from sage.coding.decoder import Decoder, DecodingError
 
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.matrix.matrix cimport Matrix

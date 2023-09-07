@@ -606,7 +606,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
         Column 1 contains 2 empty entries instead of the expected lambda.u=1.1=1
         False
     """
-    from .difference_family import group_law
+    from sage.combinat.designs.difference_family import group_law
 
     assert k>=2
     assert lmbda >=1

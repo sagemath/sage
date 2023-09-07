@@ -71,7 +71,7 @@ import sage.rings.real_double
 import sage.rings.complex_double
 
 from sage.structure.element cimport Vector
-from .constructor import matrix
+from sage.matrix.constructor import matrix
 cimport sage.structure.element
 
 cimport numpy as cnumpy

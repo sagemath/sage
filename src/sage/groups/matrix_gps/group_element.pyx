@@ -85,7 +85,7 @@ from sage.structure.richcmp cimport richcmp
 
 
 try:
-    from .group_element_gap import MatrixGroupElement_gap
+    from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 except ImportError:
     MatrixGroupElement_gap = ()
 

@@ -27,7 +27,7 @@ from cypari2.stack cimport new_gen, new_gen_noclear, clear_stack
 from cypari2.gen cimport Gen as pari_gen, objtogen
 
 from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
-from .integer_mod import IntegerMod_abstract
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 import sage.rings.integer
 from sage.rings.integer cimport Integer

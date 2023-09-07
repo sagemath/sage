@@ -288,7 +288,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
                 fft = scipy.fft
                 ifft = scipy.ifft
             V = CDF ** self._degree
-            from .vector_complex_double_dense import Vector_complex_double_dense
+            from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
             if direction == 'forward':
                 return Vector_complex_double_dense(V, fft(self._vector_numpy))
             else:

@@ -184,7 +184,7 @@ from sage.structure.element import coerce_binop
 
 from sage.structure.richcmp cimport rich_to_bool_sgn
 
-from . import integer_ring
+from sage.rings import integer_ring
 
 cimport gmpy2
 gmpy2.import_gmpy2()
@@ -2536,7 +2536,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef int pow_2
         cdef size_t upper,lower,middle
 
-        from .real_mpfi import RIF as R
+        from sage.rings.real_mpfi import RIF as R
 
         rif_self = R(self)
 
@@ -2723,7 +2723,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 # (suggested by David Harvey and Carl Witty)
                 # "for randomly distributed integers, the chance of this
                 # interval-based comparison failing is absurdly low"
-                from .real_mpfi import RIF
+                from sage.rings.real_mpfi import RIF
                 approx_compare = RIF(m)**guess
                 if self > approx_compare:
                     guess_filled = 1

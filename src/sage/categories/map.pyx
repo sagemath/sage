@@ -22,7 +22,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import homset
+from sage.categories import homset
 import weakref
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.arith.power cimport generic_power

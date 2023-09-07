@@ -120,10 +120,10 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_string cimport _LazyString
 from sage.sets.pythonclass cimport Set_PythonType_class
-from .category_object import CategoryObject
+from sage.structure.category_object import CategoryObject
 from sage.structure.coerce cimport coercion_model
 from sage.structure.coerce cimport parent_is_integers
-from .coerce_exceptions import CoercionException
+from sage.structure.coerce_exceptions import CoercionException
 from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
 from sage.structure.element cimport parent
@@ -2672,7 +2672,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 _register_pair(self, S, "action")  # avoid possible infinite loops
 
                 # detect actions defined by _rmul_, _lmul_, _act_on_, and _acted_upon_ methods
-                from .coerce_actions import detect_element_action
+                from sage.structure.coerce_actions import detect_element_action
                 action = detect_element_action(self, S, self_on_left, self_el, S_el)
                 if action is not None:
                     return action

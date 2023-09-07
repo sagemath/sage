@@ -241,7 +241,7 @@ cdef initialize():
         argv[11] = s1
         argv[4] = s1
 
-    from .saved_workspace import workspace
+    from sage.libs.gap.saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
     ws = str_to_bytes(workspace, FS_ENCODING, "surrogateescape")
     if workspace_is_up_to_date:

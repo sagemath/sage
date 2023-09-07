@@ -89,7 +89,7 @@ from sage.structure.richcmp cimport rich_to_bool, revop
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent_richcmp_element_without_coercion
 from sage.structure.element cimport bin_op_exception, parent, Element
-from .coerce_exceptions import CoercionException
+from sage.structure.coerce_exceptions import CoercionException
 from sage.rings.integer_fake cimport is_Integer
 from sage.categories.map cimport Map
 from sage.categories.morphism import IdentityMorphism
