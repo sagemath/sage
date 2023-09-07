@@ -842,6 +842,15 @@ class CohomologyRing(CombinatorialFreeModule):
 
     .. NOTE::
 
+        The given isomorphism does not rely on the default
+        ring structure given by the direct sum of cohomologies,
+        but rather it is a vector space isomorphism, where the ring
+        structure (multiplication on the right-hand side) is defined in a certain way. See
+        :meth:`sage.topology.moment_angle_complex.CohomologyRing.Element.cup_product`
+        for more information.
+
+    .. NOTE::
+
         This is not intended to be created directly by the user, but instead via the
         :meth:`sage.topology.moment_angle_complex.MomentAngleComplex.cohomology_ring` method.
 
@@ -881,8 +890,8 @@ class CohomologyRing(CombinatorialFreeModule):
                 for x in combinations(vertices, i):
                     S = moment_angle_complex._simplicial_complex.generated_subcomplex(x, is_mutable=False)
                     # Because of the empty combination
-                    if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, generators=True), list):
-                        chmlgy = S.cohomology(deg-i-1, generators=True)
+                    if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, base_ring, generators=True), list):
+                        chmlgy = S.cohomology(deg-i-1, base_ring, generators=True)
                         for y in chmlgy:
                             self._gens[deg].append((set(x), deg-i-1, y))
                         num_of_gens += len(chmlgy)
@@ -1073,7 +1082,6 @@ class CohomologyRing(CombinatorialFreeModule):
 
             <lots_of_examples>
             """
-
             if not self.is_homogeneous():
                 raise ValueError("only defined for homogeneous elements")
             return sum(c * self.parent()._to_cycle_on_basis(i) for i, c in self)
@@ -1086,25 +1094,60 @@ class CohomologyRing(CombinatorialFreeModule):
 
             <lots_of_examples>
             """
+            if not self.is_homogeneous():
+                raise ValueError("only defined for homogeneous elements")
             vertex_set = self.parent()._gens[self.leading_support()[0]][self.leading_support()[1]][0]
             print(self.parent()._complex.simplicial_complex().generated_subcomplex(vertex_set, is_mutable=is_mutable))
 
         # add reference to the docstring
         def cup_product(self, other):
-            """
+            r"""
             Return the cup product of ``self`` and ``other``.
+
+            We define the cup product on cochains in cochain complexes
+            of full subcomplexes of the simplicial complex associated
+            with the moment-angle complex of ``self`` (this is
+            possible because of the main cohomology ring isomorphism).
+            Given two cochains, `\chi_L` and `\chi_M`, from cochain
+            complexes of full subcomplexes `\mathcal{K}_I` and `\mathcal{K}_J`,
+            respectively, we define
+
+            .. MATH::
+
+                \chi_L \otimes \chi_M =
+                \begin{cases}
+                    c_{L \cup M} \chi_{L \cup M}, &\text{if } I\cap J = \emptyset\\
+                    0, &\text{otherwise}
+                \end{cases}
+
+            where
+
+            .. MATH::
+
+                c_{L \cup M} = \epsilon(L, I) \epsilon(M, J) \zeta \epsilon(L\cup M, I\cup J)
+
+            and
+
+            .. MATH::
+
+                \zeta = \prod_{k \in I \setminus L} \epsilon(k, k \cup J \setminus M).
 
             ALGORITHM:
 
-            This algorithm is adopted from ...
+            This algorithm is adopted from [Lin2019]_, p. 16.
 
-            First we acquire the cocycle representatives of ``self`` and ``other``
-            (which are generators of cohomology groups of all full subcomplexes
-            of the simplicial complex associated with the moment-angle complex;
-            these are stored during initialization), as well as their corresponding
-            simplicial complexes. We then multiply them, as described in ... and
+            First we lift the cohomology classes to their cocycle representatives
+            (which are generators of cohomology groups of all full subcomplexes of
+            the simplicial complex associated with the moment-angle complex;
+            these are stored during initialization), as well as acquire their corresponding
+            simplicial complexes. We then multiply them, as described above and
             extract the cohomology class using chain contractions of the appropriate
             simplicial complex.
+
+            .. SEEALSO:
+
+                For more information on the `\epsilon` function,
+                see :meth:`sage.topology.moment_angle_complex.eps`
 
             EXAMPLES::
 
