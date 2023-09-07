@@ -47,7 +47,7 @@ Functions
 """
 
 from sage.misc.cachefunc import cached_function
-from .orthogonal_arrays import orthogonal_array
+from sage.combinat.designs.orthogonal_arrays import orthogonal_array
 from sage.rings.integer cimport smallInteger
 from sage.arith.misc import prime_powers
 
@@ -153,7 +153,7 @@ cpdef find_product_decomposition(int k,int n) noexcept:
                   # faster to use that rather than calling the divisors function
             continue
         if is_available(k, n1) and is_available(k, n2):
-            from .orthogonal_arrays import wilson_construction
+            from sage.combinat.designs.orthogonal_arrays import wilson_construction
             return wilson_construction, (None,k,n1,n2,(),False)
     return False
 
@@ -203,7 +203,7 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n) noexcept:
             is_available(k  ,m+1) and
             is_available(k+1,r  ) and
             is_available(k  ,u  )):
-            from .orthogonal_arrays import wilson_construction
+            from sage.combinat.designs.orthogonal_arrays import wilson_construction
             return wilson_construction, (None,k,r,m,(u,),False)
 
     return False
@@ -266,7 +266,7 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n) noexcept:
                 r2 = r1_p_r2-r1
                 if is_available(k,r2):
                     assert n == r*m+r1+r2
-                    from .orthogonal_arrays import wilson_construction
+                    from sage.combinat.designs.orthogonal_arrays import wilson_construction
                     return wilson_construction, (None,k,r,m,(r1,r2),False)
     return False
 
@@ -306,7 +306,7 @@ cpdef find_construction_3_3(int k,int n) noexcept:
 
             if (is_available(k+i, nn  ) and
                 is_available(k  , mm+i)):
-                from .orthogonal_arrays_build_recursive import construction_3_3
+                from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_3
                 return construction_3_3, (k,nn,mm,i)
 
 cpdef find_construction_3_4(int k,int n) noexcept:
@@ -349,7 +349,7 @@ cpdef find_construction_3_4(int k,int n) noexcept:
                 if (is_available(k+r+1,nn) and
                     is_available(k    , s) and
                     (is_available(k,mm+r) or is_available(k,mm+r+1))):
-                    from .orthogonal_arrays_build_recursive import construction_3_4
+                    from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_4
                     return construction_3_4, (k,nn,mm,r,s)
 
 cpdef find_construction_3_5(int k,int n) noexcept:
@@ -399,7 +399,7 @@ cpdef find_construction_3_5(int k,int n) noexcept:
                         (r==0 or is_available(k,r)) and
                         (s==0 or is_available(k,s)) and
                         (t==0 or is_available(k,t))):
-                        from .orthogonal_arrays_build_recursive import construction_3_5
+                        from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_5
                         return construction_3_5, (k,nn,mm,r,s,t)
 
 cpdef find_construction_3_6(int k,int n) noexcept:
@@ -440,7 +440,7 @@ cpdef find_construction_3_6(int k,int n) noexcept:
 
             if (is_available(k+i,nn) and
                 smallInteger(nn).is_prime_power()):
-                from .orthogonal_arrays_build_recursive import construction_3_6
+                from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_6
                 return construction_3_6, (k,nn,mm,i)
 
 cpdef find_q_x(int k,int n) noexcept:
@@ -492,7 +492,7 @@ cpdef find_q_x(int k,int n) noexcept:
             # is_available(k+1,q) and
             is_available(k, x+2 )            and
             smallInteger(q).is_prime_power()):
-            from .orthogonal_arrays_build_recursive import construction_q_x
+            from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_q_x
             return construction_q_x, (k,q,x)
     return False
 
@@ -546,7 +546,7 @@ cpdef find_thwart_lemma_3_5(int k,int N) noexcept:
         sage: for k,n in kn:                                                     # not tested -- too long
         ....:     assert designs.orthogonal_array(k,n,existence=True) is True
     """
-    from .orthogonal_arrays_build_recursive import thwart_lemma_3_5
+    from sage.combinat.designs.orthogonal_arrays_build_recursive import thwart_lemma_3_5
     cdef int n,m,a,b,c,d,NN,na,nb,nc
 
     for n in prime_powers(k+2,N-2): # There must exist a OA(k+3,n) thus n>=k+2
@@ -661,7 +661,7 @@ cpdef find_thwart_lemma_4_1(int k,int n) noexcept:
                 not is_available(k,mm+4)):
                 continue
 
-            from .orthogonal_arrays_build_recursive import thwart_lemma_4_1
+            from sage.combinat.designs.orthogonal_arrays_build_recursive import thwart_lemma_4_1
             return thwart_lemma_4_1,(k,nn,mm)
 
     return False
@@ -706,7 +706,7 @@ cpdef find_three_factor_product(int k,int n) noexcept:
                 not is_available(k,n2) or
                 not is_available(k,n3)):
                 continue
-            from .orthogonal_arrays_build_recursive import three_factor_product
+            from sage.combinat.designs.orthogonal_arrays_build_recursive import three_factor_product
             return three_factor_product,(k-1,n1,n2,n3)
 
     return False
@@ -731,7 +731,7 @@ cpdef find_brouwer_separable_design(int k,int n) noexcept:
         sage: find_brouwer_separable_design(5,14)
         False
     """
-    from .orthogonal_arrays_build_recursive import brouwer_separable_design
+    from sage.combinat.designs.orthogonal_arrays_build_recursive import brouwer_separable_design
     cdef int q,x,baer_subplane_size, max_t, min_t, t,e1,e2,e3,e4
 
     for q in prime_powers(2,n):
@@ -945,7 +945,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n) noexcept:
 
             values = int_as_sum(remainder, available_multipliers, r)
             if values is not None:
-                from .orthogonal_arrays import wilson_construction
+                from sage.combinat.designs.orthogonal_arrays import wilson_construction
                 return (wilson_construction,
                         (None,k,r,m,[[(x,1) for x in values]]))
 
