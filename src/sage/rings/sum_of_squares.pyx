@@ -22,7 +22,7 @@ from libc.math cimport sqrt
 from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.rings.integer as integer
-from . import integer
+from sage.rings import integer
 
 cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     r"""

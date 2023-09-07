@@ -440,7 +440,7 @@ def easy_is_irreducible_py(f):
 cdef double eps_global
 eps_global = 10.**(-4)
 
-from .totallyreal_phc import __lagrange_bounds_phc
+from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
 
 cdef class tr_data:
     r"""

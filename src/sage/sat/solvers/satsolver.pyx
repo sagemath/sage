@@ -390,16 +390,16 @@ def SAT(solver=None, *args, **kwds):
         from sage.sat.solvers.picosat import PicoSAT
         return PicoSAT(*args, **kwds)
     elif solver == "LP":
-        from .sat_lp import SatLP
+        from sage.sat.solvers.sat_lp import SatLP
         return SatLP()
     elif solver == 'glucose':
-        from .dimacs import Glucose
+        from sage.sat.solvers.dimacs import Glucose
         return Glucose(*args, **kwds)
     elif solver == 'glucose-syrup':
-        from .dimacs import GlucoseSyrup
+        from sage.sat.solvers.dimacs import GlucoseSyrup
         return GlucoseSyrup(*args, **kwds)
     elif solver == 'kissat':
-        from .dimacs import Kissat
+        from sage.sat.solvers.dimacs import Kissat
         return Kissat(*args, **kwds)
     else:
         raise ValueError("Solver '{}' is not available".format(solver))

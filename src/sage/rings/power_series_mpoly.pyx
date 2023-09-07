@@ -2,9 +2,9 @@
 
 from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-from . import power_series_poly
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from sage.rings import power_series_poly
 
 
 cdef class PowerSeries_mpoly(PowerSeries):

@@ -22,9 +22,9 @@ from sage.arith.misc import binomial
 
 from sage.rings.integer_ring import ZZ
 
-from . import polynomial_ring
-from .term_order import TermOrder
-from .polynomial_ring_constructor import (PolynomialRing,
+from sage.rings.polynomial import polynomial_ring
+from sage.rings.polynomial.term_order import TermOrder
+from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
 
 
@@ -135,7 +135,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         base = self.base_ring()
         if is_MPolynomialRing(base) or polynomial_ring.is_PolynomialRing(base):
-            from .flatten import FlatteningMorphism
+            from sage.rings.polynomial.flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
             return IdentityMorphism(self)
@@ -157,7 +157,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             False
 
         """
-        from .polynomial_ring_constructor import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.categories.pushout import MultiPolynomialFunctor
         return MultiPolynomialFunctor(self.variable_names(), self.term_order()), self.base_ring()
 
@@ -323,7 +323,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             vars.remove(str(v))
         if len(vars) == 0:
             return self.base_ring()
-        from .polynomial_ring_constructor import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if order is None:
             try:
                 return PolynomialRing(self.base_ring(), vars,
@@ -614,7 +614,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         a dict with respect to ``self.variable_names()``.
         """
         # This is probably horribly inefficient
-        from .polydict import ETuple
+        from sage.rings.polynomial.polydict import ETuple
         other_vars = list(x.parent().variable_names())
         name_mapping = [(other_vars.index(var) if var in other_vars else -1) for var in self.variable_names()]
         K = self.base_ring()
@@ -705,7 +705,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return "%s[%s]" % (sage.misc.latex.latex(self.base_ring()), vars)
 
     def _ideal_class_(self, n=0):
-        from .multi_polynomial_ideal import MPolynomialIdeal
+        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
         return MPolynomialIdeal
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
@@ -915,7 +915,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         elif not set(my_vars).issubset(set(vars)):
             while my_vars[-1] in vars:
                 my_vars.pop()
-            from .polynomial_ring_constructor import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             return PolynomialRing(self.base_ring(), my_vars)
         else:
             try:
@@ -1357,7 +1357,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         if order is None:
             order = self.term_order()
 
-        from .polynomial_ring_constructor import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         return PolynomialRing(base_ring, self.ngens(), names, order=order)
 
     def monomial(self, *exponents):
@@ -1786,11 +1786,11 @@ cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
 # Leave *all* old versions!
 
 def unpickle_MPolynomialRing_generic_v1(base_ring, n, names, order):
-    from .polynomial_ring_constructor import PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     return PolynomialRing(base_ring, n, names=names, order=order)
 
 
 def unpickle_MPolynomialRing_generic(base_ring, n, names, order):
-    from .polynomial_ring_constructor import PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     return PolynomialRing(base_ring, n, names=names, order=order)
