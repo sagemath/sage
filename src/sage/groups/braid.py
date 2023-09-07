@@ -460,7 +460,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         The canonical section from the symmetric group to the braid group
         (sending a permutation to its associated permutation braid)
-        can be recovered.::
+        can be recovered::
 
             sage: B(c0)
             s0*s1*s2*s1
