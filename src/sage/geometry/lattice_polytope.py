@@ -2522,13 +2522,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         But they are in the same `GL(\ZZ^n)` orbit and have the same
         normal form::
 
-            sage: d.normal_form()                                                       # needs palp
+            sage: d.normal_form()                                                       # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
             M(-1,  0)
             in 2-d lattice M
-            sage: lattice_polytope.ReflexivePolytope(2,3).normal_form()
+            sage: lattice_polytope.ReflexivePolytope(2,3).normal_form()                 # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
