@@ -9,6 +9,8 @@ Virtual Python Environment builder
 License
 -------
 
+MIT
+
 Upstream Contact
 ----------------
 
