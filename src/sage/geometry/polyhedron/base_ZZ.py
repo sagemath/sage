@@ -3,7 +3,14 @@ Base class for polyhedra over `\ZZ`
 """
 
 # ****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2011-2013 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Nathann Cohen
+#                     2015      Vincent Delecroix
+#                     2017-2018 Frédéric Chapoton
+#                     2019      Sophia Elia
+#                     2019-2020 Jonathan Kliem
+#                     2023      Luze Xu
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
