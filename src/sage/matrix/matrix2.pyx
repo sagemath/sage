@@ -304,11 +304,11 @@ cdef class Matrix(Matrix1):
             [ 7.6  2.3  1.0]
             [ 1.0  2.0 -1.0]
             sage: b = vector(RDF,[1,2,3])
-            sage: x = A.solve_left(b); x.zero_at(2e-17) # fix noisy zeroes
+            sage: x = A.solve_left(b); x.zero_at(2e-17)  # fix noisy zeroes             # needs scipy
             (0.666666666..., 0.0, 0.333333333...)
-            sage: x.parent()
+            sage: x.parent()                                                            # needs scipy
             Vector space of dimension 3 over Real Double Field
-            sage: x*A  # tol 1e-14
+            sage: x*A  # tol 1e-14                                                      # needs scipy
             (0.9999999999999999, 1.9999999999999998, 3.0)
 
         Over the complex numbers::
@@ -319,18 +319,19 @@ cdef class Matrix(Matrix1):
             ....:                  [  2 + I,    1 - I,       -1,        5],
             ....:                  [    3*I,   -1 - I,   -1 + I,   -3 + I]])
             sage: b = vector(CDF, [2 -3*I, 3, -2 + 3*I, 8])
-            sage: x = A.solve_left(b); x
-            (-1.55765124... - 0.644483985...*I, 0.183274021... + 0.286476868...*I, 0.270818505... + 0.246619217...*I, -1.69003558... - 0.828113879...*I)
-            sage: x.parent()
+            sage: x = A.solve_left(b); x                                                # needs scipy
+            (-1.55765124... - 0.644483985...*I, 0.183274021... + 0.286476868...*I,
+             0.270818505... + 0.246619217...*I, -1.69003558... - 0.828113879...*I)
+            sage: x.parent()                                                            # needs scipy
             Vector space of dimension 4 over Complex Double Field
-            sage: abs(x*A - b) < 1e-14
+            sage: abs(x*A - b) < 1e-14                                                  # needs scipy
             True
 
         If ``b`` is given as a matrix, the result will be a matrix, as well::
 
             sage: A = matrix(RDF, 3, 3, [2, 5, 0, 7, 7, -2, -4.3, 0, 1])
             sage: b = matrix(RDF, 2, 3, [2, -4, -5, 1, 1, 0.1])
-            sage: A.solve_left(b) # tol 1e-14
+            sage: A.solve_left(b)  # tol 1e-14                                          # needs scipy
             [  -6.495454545454545    4.068181818181818   3.1363636363636354]
             [  0.5277272727272727  -0.2340909090909091 -0.36818181818181817]
 
@@ -340,16 +341,16 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 3, 2, [1, 3, 4, 2, 0, -3])
             sage: b = vector(RDF, [5, 6])
-            sage: x = A.solve_left(b)
-            sage: (x * A - b).norm() < 1e-14
+            sage: x = A.solve_left(b)                                                   # needs scipy
+            sage: (x * A - b).norm() < 1e-14                                            # needs scipy
             True
 
         For a wide matrix `A`, the error is usually not small::
 
             sage: A = matrix(RDF, 2, 3, [1, 3, 4, 2, 0, -3])
             sage: b = vector(RDF, [5, 6, 1])
-            sage: x = A.solve_left(b)
-            sage: (x * A - b).norm()  # tol 1e-14
+            sage: x = A.solve_left(b)                                                   # needs scipy
+            sage: (x * A - b).norm()  # tol 1e-14                                       # needs scipy
             0.9723055853282466
 
         TESTS::
@@ -389,7 +390,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 5, range(25))
             sage: b = vector(RDF, [1,2,3,4,5])
-            sage: A.solve_left(b)
+            sage: A.solve_left(b)                                                       # needs scipy
             Traceback (most recent call last):
             ...
             LinAlgError: Matrix is singular.
@@ -398,7 +399,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 5, range(25))
             sage: b = vector(RDF, [1,2,3,4])
-            sage: A.solve_left(b)
+            sage: A.solve_left(b)                                                       # needs scipy
             Traceback (most recent call last):
             ...
             ValueError: number of columns of self must equal degree of
@@ -420,10 +421,10 @@ cdef class Matrix(Matrix1):
             sage: # needs sage.rings.complex_double sage.symbolic
             sage: A = matrix(RDF, 2, range(4))
             sage: b = vector(CDF, [1+I, 2])
-            sage: A.solve_left(b)
+            sage: A.solve_left(b)                                                       # needs scipy
             (0.5 - 1.5*I, 0.5 + 0.5*I)
             sage: b = vector(QQ[I], [1+I, 2])
-            sage: x = A.solve_left(b)
+            sage: x = A.solve_left(b)                                                   # needs scipy
 
         Over the inexact ring ``SR``, we can still verify the solution
         if all of the elements involved were exact to begin with; if
@@ -674,7 +675,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 3, 2, [1, 3, 4, 2, 0, -3])
             sage: b = vector(RDF, [5, 6, 1])
-            sage: A.solve_right(b)  # tol 1e-14
+            sage: A.solve_right(b)  # tol 1e-14                                         # needs scipy
             (1.4782608695652177, 0.35177865612648235)
             sage: ~(A.T * A) * A.T * b  # closed form solution, tol 1e-14
             (1.4782608695652177, 0.35177865612648235)
@@ -685,12 +686,12 @@ cdef class Matrix(Matrix1):
             [ 1.0  2.0  5.0]
             [ 7.6  2.3  1.0]
             [ 1.0  2.0 -1.0]
-            sage: b = vector(RDF,[1,2,3])
-            sage: x = A.solve_right(b); x  # tol 1e-14
+            sage: b = vector(RDF, [1,2,3])
+            sage: x = A.solve_right(b); x  # tol 1e-14                                  # needs scipy
             (-0.1136950904392765, 1.3901808785529717, -0.33333333333333337)
-            sage: x.parent()
+            sage: x.parent()                                                            # needs scipy
             Vector space of dimension 3 over Real Double Field
-            sage: A*x  # tol 1e-14
+            sage: A*x  # tol 1e-14                                                      # needs scipy
             (1.0, 1.9999999999999996, 3.0000000000000004)
 
         Over the complex numbers::
@@ -700,19 +701,20 @@ cdef class Matrix(Matrix1):
             ....:                  [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
             ....:                  [  2 + I,    1 - I,       -1,        5],
             ....:                  [    3*I,   -1 - I,   -1 + I,   -3 + I]])
-            sage: b = vector(CDF, [2 -3*I, 3, -2 + 3*I, 8])
-            sage: x = A.solve_right(b); x
-            (1.96841637... - 1.07606761...*I, -0.614323843... + 1.68416370...*I, 0.0733985765... + 1.73487544...*I, -1.6018683... + 0.524021352...*I)
-            sage: x.parent()
+            sage: b = vector(CDF, [2 - 3*I, 3, -2 + 3*I, 8])
+            sage: x = A.solve_right(b); x                                               # needs scipy
+            (1.96841637... - 1.07606761...*I, -0.614323843... + 1.68416370...*I,
+             0.0733985765... + 1.73487544...*I, -1.6018683... + 0.524021352...*I)
+            sage: x.parent()                                                            # needs scipy
             Vector space of dimension 4 over Complex Double Field
-            sage: abs(A*x - b) < 1e-14
+            sage: abs(A*x - b) < 1e-14                                                  # needs scipy
             True
 
         If ``b`` is given as a matrix, the result will be a matrix, as well::
 
             sage: A = matrix(RDF, 3, 3, [1, 2, 2, 3, 4, 5, 2, 2, 2])
             sage: b = matrix(RDF, 3, 2, [3, 2, 3, 2, 3, 2])
-            sage: A.solve_right(b) # tol 1e-14
+            sage: A.solve_right(b)  # tol 1e-14                                         # needs scipy
             [ 0.0  0.0]
             [ 4.5  3.0]
             [-3.0 -2.0]
@@ -723,16 +725,16 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 2, 3, [1, 3, 4, 2, 0, -3])
             sage: b = vector(RDF, [5, 6])
-            sage: x = A.solve_right(b)
-            sage: (A * x - b).norm() < 1e-14
+            sage: x = A.solve_right(b)                                                  # needs scipy
+            sage: (A * x - b).norm() < 1e-14                                            # needs scipy
             True
 
         For a tall matrix `A`, the error is usually not small::
 
             sage: A = matrix(RDF, 3, 2, [1, 3, 4, 2, 0, -3])
             sage: b = vector(RDF, [5, 6, 1])
-            sage: x = A.solve_right(b)
-            sage: (A * x - b).norm()  # tol 1e-14
+            sage: x = A.solve_right(b)                                                  # needs scipy
+            sage: (A * x - b).norm()  # tol 1e-14                                       # needs scipy
             3.2692119900020438
 
         TESTS:
@@ -742,8 +744,9 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 2, [1, 2, 3, 4])
             sage: b = vector(RDF, [pi, e])                                              # needs sage.symbolic
-            sage: A.solve_right(b)  # tol 1e-15                                         # needs sage.symbolic
+            sage: A.solve_right(b)  # tol 1e-15                                         # needs scipy sage.symbolic
             (-3.564903478720541, 3.353248066155167)
+
             sage: R.<t> = ZZ[]
             sage: b = vector(R, [1, t])
             sage: x = A.solve_right(b); x
@@ -1572,8 +1575,8 @@ cdef class Matrix(Matrix1):
         Beware that the ``exact`` algorithm is not numerically stable,
         but the default ``numpy`` algorithm is::
 
-            sage: M = matrix.hilbert(12,ring=RR)
-            sage: (~M*M).norm()  # a considerable error
+            sage: M = matrix.hilbert(12, ring=RR)
+            sage: (~M * M).norm()  # a considerable error                               # needs scipy
             1.3...
             sage: Mx = M.pseudoinverse(algorithm="exact")
             sage: (Mx*M).norm()  # huge error
@@ -6361,6 +6364,7 @@ cdef class Matrix(Matrix1):
             NotImplementedError: eigenspaces cannot be computed reliably for inexact rings such as Real Field with 53 bits of precision,
             consult numerical or symbolic matrix classes for other options
 
+            sage: # needs scipy
             sage: em = A.change_ring(RDF).eigenmatrix_left()
             sage: eigenvalues = em[0]; eigenvalues.dense_matrix() # abs tol 1e-13
             [13.348469228349522                0.0                 0.0]
@@ -6642,6 +6646,7 @@ cdef class Matrix(Matrix1):
             for inexact rings such as Real Field with 53 bits of precision,
             consult numerical or symbolic matrix classes for other options
 
+            sage: # needs scipy
             sage: em = B.change_ring(RDF).eigenmatrix_right()
             sage: eigenvalues = em[0]; eigenvalues.dense_matrix()  # abs tol 1e-13
             [13.348469228349522                0.0                0.0]
@@ -7127,6 +7132,7 @@ cdef class Matrix(Matrix1):
 
         A generalized eigenvector decomposition::
 
+            sage: # needs scipy
             sage: A = matrix(RDF, [[1, -2], [3, 4]])
             sage: B = matrix(RDF, [[0, 7], [2, -3]])
             sage: D, P = A.eigenmatrix_left(B)
@@ -7135,7 +7141,7 @@ cdef class Matrix(Matrix1):
 
         The matrix `B` in a generalized eigenvalue problem may be singular::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
+            sage: # needs scipy sage.rings.complex_double sage.symbolic
             sage: A = matrix.identity(CDF, 2)
             sage: B = matrix(CDF, [[2, 1+I], [4, 2+2*I]])
             sage: D, P = A.eigenmatrix_left(B)
@@ -7145,7 +7151,7 @@ cdef class Matrix(Matrix1):
         In this case, we can still verify the eigenvector equation for the
         first eigenvalue and first eigenvector::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
+            sage: # needs scipy sage.rings.complex_double sage.symbolic
             sage: l = D[0, 0]
             sage: v = P[0, :]
             sage: (v * A - l * v * B).norm() < 1e-14
@@ -7353,6 +7359,7 @@ cdef class Matrix(Matrix1):
 
         A generalized eigenvector decomposition::
 
+            sage: # needs scipy
             sage: A = matrix(RDF, [[1, -2], [3, 4]])
             sage: B = matrix(RDF, [[0, 7], [2, -3]])
             sage: D, P = A.eigenmatrix_right(B)
@@ -7361,6 +7368,7 @@ cdef class Matrix(Matrix1):
 
         The matrix `B` in a generalized eigenvalue problem may be singular::
 
+            sage: # needs scipy
             sage: A = matrix.identity(RDF, 2)
             sage: B = matrix(RDF, [[3, 5], [6, 10]])
             sage: D, P = A.eigenmatrix_right(B); D   # tol 1e-14
@@ -10786,7 +10794,7 @@ cdef class Matrix(Matrix1):
 
         First, the inexact rings, ``CDF`` and ``RDF``.  ::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
+            sage: # needs scipy sage.rings.complex_double sage.symbolic
             sage: A = matrix(CDF, [[ 0.6454 + 0.7491*I, -0.8662 + 0.1489*I,  0.7656 - 0.00344*I],
             ....:                  [-0.2913 + 0.8057*I,  0.8321 + 0.8170*I, -0.6744 + 0.9248*I],
             ....:                  [ 0.2554 + 0.3517*I, -0.4454 - 0.1715*I,  0.8325 - 0.6282*I]])
@@ -12836,7 +12844,7 @@ cdef class Matrix(Matrix1):
             sage: L = A.cholesky(); L
             [ 1.000... 0.000...]
             [ 2.000... 1.414...]
-            sage: (L*L.transpose() - A).norm() < 1e-10
+            sage: (L*L.transpose() - A).norm() < 1e-10                                  # needs scipy
             True
 
         Even symbolic matrices can sometimes be factored::
@@ -14823,9 +14831,9 @@ cdef class Matrix(Matrix1):
             ....:         return True
             ....:     return ( A.is_hermitian() and
             ....:              all(v >= 0 for v in A.eigenvalues()) )
-            sage: expected = is_positive_semidefinite_naive(A)                          # needs numpy
+            sage: expected = is_positive_semidefinite_naive(A)                          # needs scipy
             sage: actual = A.is_positive_semidefinite()
-            sage: actual == expected                                                    # needs numpy
+            sage: actual == expected                                                    # needs scipy
             True
 
         We reject matrices whose base fields cannot be coerced to
@@ -15390,7 +15398,7 @@ cdef class Matrix(Matrix1):
         ::
 
             sage: Id = identity_matrix(12)
-            sage: Id.norm(2)
+            sage: Id.norm(2)                                                            # needs scipy
             1.0
 
             sage: # needs sage.rings.real_mpfr

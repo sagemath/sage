@@ -2500,10 +2500,13 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
         sage: tinv(GF(2), sparse=False)
         sage: tinv(SR, sparse=True)                                                     # needs sage.symbolic
         sage: tinv(SR, sparse=False)                                                    # needs sage.symbolic
+
+        sage: # needs scipy
         sage: tinv(RDF, sparse=True)
         sage: tinv(RDF, sparse=False)
         sage: tinv(CDF, sparse=True)
         sage: tinv(CDF, sparse=False)
+
         sage: tinv(CyclotomicField(7), sparse=True)                                     # needs sage.rings.number_field
         sage: tinv(CyclotomicField(7), sparse=False)                                    # needs sage.rings.number_field
         sage: tinv(QQ['x,y'], sparse=True)
