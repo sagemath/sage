@@ -23,8 +23,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.timing import walltime, cputime
-
+from sage.misc.timing import walltime
+from os import sysconf, times
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     """
@@ -104,6 +104,68 @@ class Timer:
         {}
         sage: TestSuite(Timer()).run()
     """
+
+    def _pid_cpu_seconds(self, pid):
+        r"""
+        Parse the ``/proc`` filesystem to get the cputime of the given
+        ``pid``.
+
+        This also includes the times for child processes **that have
+        been ``wait()``ed for and terminated**. Specifically, pexpect
+        processes DO NOT fall into that category.
+        """
+        with open(f"/proc/{pid}/stat", "r") as statfile:
+            stats = statfile.read().split()
+
+        # man 5 proc (linux)
+        cputicks = sum( float(s) for s in stats[13:17] )
+
+        hertz = sysconf("SC_CLK_TCK")
+        return (cputicks / hertz)
+
+    def _quick_cputime(self):
+        r"""
+        A fast and replacement for ``sage.misc.misc.cputime``.
+
+        This is a "reliable" replacement (on Linux/BSD) that takes
+        subprocesses (particularly pexpect interfaces) into
+        account. The ``cputime()`` function from the ``misc`` module
+        can be passed ``subprocesses=True``, but this has a few
+        faults; mainly that it relies on each pexpect interface to
+        implement its own ``cputime()`` function. And most of our
+        pexpect interfaces either don't implement one, or implement
+        one in a way that requires the subprocess (being pexpected) to
+        be in perfect working condition -- that will often not be the
+        case at the end of a doctest line.
+
+        OUTPUT:
+
+        A float measuring the cputime in seconds of the sage process
+        and all its subprocesses.
+        """
+        # Start by using os.times() to get the cputime for sage itself
+        # and any subprocesses that have been wait()ed for and that
+        # have terminated.
+        cputime = sum( times()[:4] )
+
+        # Now try to get the times for any pexpect interfaces, since
+        # they do not fall into the category above.
+        from sage.interfaces.quit import expect_objects
+        for s in expect_objects:
+            S = s()
+            if S and S.is_running():
+                try:
+                    cputime += self._pid_cpu_seconds(S.pid())
+                except (ArithmeticError, LookupError, OSError,
+                        TypeError, ValueError):
+                    # This will fail anywhere but linux/BSD, but
+                    # there's no good cross-platform way to get the
+                    # cputimes from pexpect interfaces without
+                    # totally mucking up the doctests.
+                    pass
+
+        return cputime
+
     def start(self):
         """
         Start the timer.
@@ -116,7 +178,7 @@ class Timer:
             sage: Timer().start()
             {'cputime': ..., 'walltime': ...}
         """
-        self.cputime = cputime()
+        self.cputime = self._quick_cputime()
         self.walltime = walltime()
         return self
 
@@ -134,7 +196,7 @@ class Timer:
             sage: timer.stop()
             {'cputime': ..., 'walltime': ...}
         """
-        self.cputime = cputime(self.cputime)
+        self.cputime = self._quick_cputime() - self.cputime
         self.walltime = walltime(self.walltime)
         return self
 
