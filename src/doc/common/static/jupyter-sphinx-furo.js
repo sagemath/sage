@@ -8,7 +8,7 @@ function changeTheme(editor, theme) {
   }
 }
 
-// Uses the theme data of the document.body element set by setTheme function
+// Use the theme data of the document.body element set by setTheme function
 // defined in https://github.com/pradyunsg/furo/blob/main/src/furo/assets/scripts/furo.js
 const body = document.body;
 const observer1 = new MutationObserver((mutationsList) => {
@@ -32,3 +32,14 @@ const callback = function(mutationsList, observer) {
         }}}}};
 const observer2 = new MutationObserver(callback);
 observer2.observe(document.getElementsByClassName("content")[0], { childList: true, subtree: true });
+
+
+// Run custom code once the kernel is ready
+// https://thebe.readthedocs.io/en/stable/events.html
+thebelab.on("status", function (evt, data) {
+  if (data.status === 'ready') {
+    const kernel = data.kernel;
+    kernel.requestExecute({code: "%display latex"});
+  }
+});
+
