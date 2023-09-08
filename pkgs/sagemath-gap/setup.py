@@ -20,8 +20,6 @@ try:
 except ImportError:
     pass
 
-# PEP 517 builds do not have . in sys.path
-sys.path.insert(0, os.path.dirname(__file__))
 
 from sage_setup.excepthook import excepthook
 sys.excepthook = excepthook

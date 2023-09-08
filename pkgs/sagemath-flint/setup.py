@@ -20,8 +20,6 @@ try:
 except ImportError:
     pass
 
-# PEP 517 builds do not have . in sys.path
-sys.path.insert(0, os.path.dirname(__file__))
 
 if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
     sdist = True
