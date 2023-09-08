@@ -1135,7 +1135,7 @@ class DocTestController(SageObject):
             sage: DC.run_doctests()
             Doctesting 1 file.
             sage -t .../sage/rings/homset.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1212,7 +1212,7 @@ class DocTestController(SageObject):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../rings/all.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1409,7 +1409,7 @@ class DocTestController(SageObject):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/sets/non_negative_integers.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1433,7 +1433,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [0 tests, ... s]
+                [0 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1459,7 +1459,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [4 tests, ... s]
+                [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1477,7 +1477,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [4 tests, ... s]
+                [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1602,7 +1602,7 @@ def run_doctests(module, options=None):
         Running doctests with ID ...
         Doctesting 1 file.
         sage -t .../sage/rings/all.py
-            [... tests, ... s]
+            [... tests, ...s wall]
         ----------------------------------------------------------------------
         All tests passed!
         ----------------------------------------------------------------------
