@@ -182,7 +182,7 @@ cpdef is_Polynomial(f) noexcept:
 
     return isinstance(f, Polynomial)
 
-from .polynomial_compiled cimport CompiledPolynomialFunction
+from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 from sage.rings.polynomial.polydict cimport ETuple
 

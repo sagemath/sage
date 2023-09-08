@@ -105,9 +105,9 @@ complex_double_element_gamma = None
 complex_double_element_gamma_inc = None
 complex_double_element_zeta = None
 
-from .complex_conversion cimport CCtoCDF
+from sage.rings.complex_conversion cimport CCtoCDF
 
-from .real_double cimport RealDoubleElement, double_repr
+from sage.rings.real_double cimport RealDoubleElement, double_repr
 from .real_double import RDF
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool

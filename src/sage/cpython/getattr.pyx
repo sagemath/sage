@@ -4,7 +4,7 @@ Variants of getattr()
 
 from cpython.object cimport PyObject, PyTypeObject, Py_TYPE, descrgetfunc
 
-from .string cimport bytes_to_str
+from sage.cpython.string cimport bytes_to_str
 
 cdef extern from "Python.h":
     r"""

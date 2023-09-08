@@ -74,12 +74,12 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.libs.pari.all import pari
 
-from .integer cimport Integer
-from .complex_mpfr cimport ComplexNumber
+from sage.rings.integer cimport Integer
+from sage.rings.complex_mpfr cimport ComplexNumber
 from .complex_mpfr import ComplexField_class
 
 from sage.misc.randstate cimport randstate, current_randstate
-from .real_mpfr cimport RealField_class, RealNumber
+from sage.rings.real_mpfr cimport RealField_class, RealNumber
 from .real_mpfr import mpfr_prec_min, mpfr_prec_max
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.categories.fields import Fields
