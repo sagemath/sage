@@ -68,8 +68,8 @@ Methods
 # ****************************************************************************
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
-from .matroid cimport Matroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
 from .utilities import setprint_s
 from cpython.object cimport Py_EQ, Py_NE
 

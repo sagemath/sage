@@ -93,7 +93,7 @@ AUTHOR:
 
 from sage.matrix.matrix_dense  cimport Matrix_dense
 
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython

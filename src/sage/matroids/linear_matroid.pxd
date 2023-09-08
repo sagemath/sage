@@ -1,9 +1,9 @@
 # sage_setup: distribution = sagemath-modules
 from sage.data_structures.bitset cimport bitset_t
 
-from .matroid cimport Matroid
-from .basis_exchange_matroid cimport BasisExchangeMatroid
-from .lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix
 
 
 cdef class LinearMatroid(BasisExchangeMatroid):

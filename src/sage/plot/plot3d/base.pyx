@@ -65,7 +65,7 @@ from sage.misc.fast_methods cimport hash_by_id
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
 from .texture import Texture
-from .transform cimport Transformation, point_c, face_c
+from sage.plot.plot3d.transform cimport Transformation, point_c, face_c
 include "point_c.pxi"
 
 from sage.interfaces.tachyon import tachyon_rt

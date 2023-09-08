@@ -344,8 +344,8 @@ from sage.structure.sage_object cimport SageObject
 
 MixedIntegerLinearProgram = LazyImport('sage.numerical.mip', 'MixedIntegerLinearProgram')
 
-from .lean_matrix cimport BinaryMatrix, TernaryMatrix
-from .set_system cimport SetSystem
+from sage.matroids.lean_matrix cimport BinaryMatrix, TernaryMatrix
+from sage.matroids.set_system cimport SetSystem
 from .utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
 
 

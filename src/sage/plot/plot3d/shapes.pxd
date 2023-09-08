@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-plot
-from .parametric_surface cimport ParametricSurface
+from sage.plot.plot3d.parametric_surface cimport ParametricSurface
 
 
 cdef class Cone(ParametricSurface):

@@ -75,9 +75,9 @@ Methods
 
 from sage.data_structures.bitset_base cimport *
 from sage.structure.richcmp cimport rich_to_bool
-from .matroid cimport Matroid
-from .basis_exchange_matroid cimport BasisExchangeMatroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.set_system cimport SetSystem
 from cpython.object cimport Py_EQ, Py_NE
 
 from itertools import combinations

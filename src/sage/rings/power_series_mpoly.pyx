@@ -1,7 +1,7 @@
 # sage_setup: distribution = sagemath-categories
 # NOT ready to be used -- possibly should be deleted.
 
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
 from .infinity import infinity
 from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing

@@ -44,7 +44,7 @@ from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
                                                    has_edge,
                                                    free_short_digraph,
                                                    edge_label)
-from .c_graph cimport CGraphBackend
+from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.data_structures.bitset cimport FrozenBitset
 from libc.stdint cimport uint32_t
 from sage.data_structures.bitset_base cimport *

@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-objects
-from .types cimport *
-from .random cimport *
-from .mpz cimport *
-from .mpq cimport *
-from .pylong cimport *
+from sage.libs.gmp.types cimport *
+from sage.libs.gmp.random cimport *
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
+from sage.libs.gmp.pylong cimport *

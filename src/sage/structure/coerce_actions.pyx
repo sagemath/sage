@@ -19,9 +19,9 @@ from cpython.int cimport *
 from cpython.number cimport *
 from cysignals.signals cimport sig_check
 
-from .coerce cimport coercion_model
-from .element cimport parent, Element, ModuleElement
-from .parent cimport Parent
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport parent, Element, ModuleElement
+from sage.structure.parent cimport Parent
 from .coerce_exceptions import CoercionException
 from sage.categories.action cimport InverseAction, PrecomposedAction
 from sage.arith.long cimport integer_check_long

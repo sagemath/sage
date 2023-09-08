@@ -146,12 +146,12 @@ import operator
 
 from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 
-from .integer cimport Integer
-from .rational cimport Rational
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
 
 from sage.categories.map cimport Map
 
-from .real_double cimport RealDoubleElement
+from sage.rings.real_double cimport RealDoubleElement
 
 import sage.rings.abc
 import sage.rings.rational_field

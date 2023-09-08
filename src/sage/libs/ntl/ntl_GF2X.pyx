@@ -31,7 +31,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
 
 from .ntl_ZZ import unpickle_class_value
-from .ntl_GF2 cimport ntl_GF2
+from sage.libs.ntl.ntl_GF2 cimport ntl_GF2
 
 
 ##############################################################################

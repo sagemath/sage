@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-from .real_double cimport RealDoubleElement
+from sage.rings.real_double cimport RealDoubleElement
 
 
 cdef class RealDoubleElement_gsl(RealDoubleElement):

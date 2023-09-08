@@ -41,7 +41,7 @@ from sage.libs.arb.acb cimport *
 from sage.libs.arb.acb_mat cimport *
 from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_get_ui
 from sage.matrix.constructor import matrix
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.complex_arb cimport (
     ComplexBall,

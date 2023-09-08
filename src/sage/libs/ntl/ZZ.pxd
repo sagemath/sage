@@ -1,7 +1,7 @@
 # sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 
-from .types cimport ZZ_c
+from sage.libs.ntl.types cimport ZZ_c
 
 
 cdef extern from "ntlwrap.h":

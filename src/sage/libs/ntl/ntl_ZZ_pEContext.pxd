@@ -1,8 +1,8 @@
 # sage_setup: distribution = sagemath-ntl
-from .types cimport ZZ_pContext_c, ZZ_pEContext_c
-from .ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from .ntl_ZZ_pX cimport ntl_ZZ_pX
-from .types cimport ZZ_pX_Modulus_c
+from sage.libs.ntl.types cimport ZZ_pContext_c, ZZ_pEContext_c
+from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
+from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
+from sage.libs.ntl.types cimport ZZ_pX_Modulus_c
 
 
 cdef struct ZZ_pEContext_ptrs:

@@ -24,7 +24,7 @@ conventions for conversion functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .types cimport mat_ZZ_p_c
+from sage.libs.ntl.types cimport mat_ZZ_p_c
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 

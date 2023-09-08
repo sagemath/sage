@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-from .matroid cimport Matroid
+from sage.matroids.matroid cimport Matroid
 
 cdef class CircuitClosuresMatroid(Matroid):
     cdef frozenset _groundset  # _E

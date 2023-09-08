@@ -22,7 +22,7 @@ other classes implementing solvers.
 #*****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from .generic_sdp_backend cimport GenericSDPBackend
+from sage.numerical.backends.generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):
 

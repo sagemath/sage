@@ -10,7 +10,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 
 
 # name of the three functions to customize

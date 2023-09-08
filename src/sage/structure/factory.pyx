@@ -57,7 +57,7 @@ AUTHORS:
 
 import types
 
-from .sage_object cimport SageObject
+from sage.structure.sage_object cimport SageObject
 
 cdef sage_version
 from sage.version import version as sage_version

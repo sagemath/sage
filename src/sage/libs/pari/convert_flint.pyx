@@ -28,7 +28,7 @@ from sage.libs.flint.fmpq_mat cimport fmpq_mat_nrows, fmpq_mat_ncols, fmpq_mat_e
 
 from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
-from .convert_gmp cimport _new_GEN_from_mpz_t
+from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
 
 
 cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value):

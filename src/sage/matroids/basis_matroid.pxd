@@ -1,8 +1,8 @@
 # sage_setup: distribution = sagemath-modules
 from sage.data_structures.bitset cimport bitset_t
-from .matroid cimport Matroid
-from .basis_exchange_matroid cimport BasisExchangeMatroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.set_system cimport SetSystem
 
 cdef class BasisMatroid(BasisExchangeMatroid):
     cdef bitset_t _bb

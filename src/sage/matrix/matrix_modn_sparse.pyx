@@ -111,7 +111,7 @@ from sage.rings.integer_ring import ZZ
 from sage.misc.verbose import verbose, get_verbose
 
 from sage.matrix.matrix2 import Matrix as Matrix2
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.arith.misc import is_prime
 
 cimport sage.structure.element
@@ -119,7 +119,7 @@ cimport sage.structure.element
 from sage.data_structures.binary_search cimport *
 from sage.modules.vector_integer_sparse cimport *
 
-from .matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 
 ################

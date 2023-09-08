@@ -21,8 +21,8 @@ EXAMPLES::
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport *
-from .double_coset cimport double_coset, int_cmp
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset, int_cmp
 
 
 def is_isomorphic(self, other):

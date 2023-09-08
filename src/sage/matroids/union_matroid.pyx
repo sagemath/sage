@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-modules
 
-from .matroid cimport Matroid
+from sage.matroids.matroid cimport Matroid
 
 
 cdef class MatroidUnion(Matroid):

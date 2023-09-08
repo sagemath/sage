@@ -58,7 +58,7 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .c_graph cimport CGraphBackend
+from sage.graphs.base.c_graph cimport CGraphBackend
 
 
 cdef class GenericGraphBackend(SageObject):

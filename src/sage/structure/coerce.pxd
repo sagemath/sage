@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-objects
-from .parent cimport Parent
-from .coerce_dict cimport TripleDict
+from sage.structure.parent cimport Parent
+from sage.structure.coerce_dict cimport TripleDict
 
 cpdef py_scalar_parent(py_type)
 cpdef py_scalar_to_element(py)

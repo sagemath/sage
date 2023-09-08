@@ -31,7 +31,7 @@ Methods
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from .basis_matroid cimport BasisMatroid
+from sage.matroids.basis_matroid cimport BasisMatroid
 
 
 cdef class CutNode:

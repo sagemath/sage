@@ -31,10 +31,10 @@ import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from .minor_matroid import MinorMatroid
 from .dual_matroid import DualMatroid
-from .circuit_closures_matroid cimport CircuitClosuresMatroid
-from .basis_matroid cimport BasisMatroid
-from .linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from .lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
+from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
+from sage.matroids.basis_matroid cimport BasisMatroid
+from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
 from .graphic_matroid import GraphicMatroid
 
 from sage.rings.rational cimport Rational

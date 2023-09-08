@@ -25,8 +25,8 @@ import os
 import warnings
 import sage.env
 
-from .gap_includes cimport *
-from .element cimport *
+from sage.libs.gap.gap_includes cimport *
+from sage.libs.gap.element cimport *
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.interfaces.gap_workspace import prepare_workspace_dir

@@ -114,7 +114,7 @@ REFERENCE:
 from libc.string cimport memcmp, memcpy
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 
 cdef inline int agcl_cmp(int a, int b):

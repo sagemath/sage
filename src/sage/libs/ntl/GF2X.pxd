@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-ntl
-from .types cimport GF2X_c, GF2_c, GF2XModulus_c, vec_GF2_c, ZZ_c
+from sage.libs.ntl.types cimport GF2X_c, GF2_c, GF2XModulus_c, vec_GF2_c, ZZ_c
 
 
 cdef extern from "ntlwrap.h":

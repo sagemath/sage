@@ -96,7 +96,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.m4ri cimport m4ri_word, mzd_copy
 from sage.libs.m4rie cimport *

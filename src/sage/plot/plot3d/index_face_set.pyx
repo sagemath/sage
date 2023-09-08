@@ -63,7 +63,7 @@ from sage.plot.colors import Color, float_to_integer
 from sage.plot.plot3d.base import Graphics3dGroup
 from sage.plot.plot3d.texture import Texture
 
-from .transform cimport Transformation
+from sage.plot.plot3d.transform cimport Transformation
 
 
 # --------------------------------------------------------------------

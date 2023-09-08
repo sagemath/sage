@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-from .free_module_element cimport FreeModuleElement
+from sage.modules.free_module_element cimport FreeModuleElement
 cimport numpy
 
 cdef class Vector_numpy_dense(FreeModuleElement):

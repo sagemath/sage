@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-flint
 from sage.libs.flint.types cimport fmpz_t, fmpq_mat_t
-from .matrix_dense cimport Matrix_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
 
 cdef class Matrix_rational_dense(Matrix_dense):
     cdef fmpq_mat_t _matrix

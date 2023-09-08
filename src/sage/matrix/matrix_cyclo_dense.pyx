@@ -56,12 +56,12 @@ from sage.libs.flint.fmpz cimport fmpz_init, fmpz_clear, fmpz_set_mpz, fmpz_one,
 from sage.libs.flint.fmpq cimport fmpq_is_zero, fmpq_set_mpq, fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
 
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 from .constructor import matrix
 from .matrix_space import MatrixSpace
-from .matrix cimport Matrix
+from sage.matrix.matrix cimport Matrix
 from . import matrix_dense
-from .matrix_integer_dense cimport _lift_crt
+from sage.matrix.matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
 from .misc_flint import matrix_integer_dense_rational_reconstruction
 

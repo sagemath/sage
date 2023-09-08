@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-plot
-from .base cimport PrimitiveObject
-from .transform cimport point_c, face_c, color_c
+from sage.plot.plot3d.base cimport PrimitiveObject
+from sage.plot.plot3d.transform cimport point_c, face_c, color_c
 
 cdef class IndexFaceSet(PrimitiveObject):
     cdef bint enclosed

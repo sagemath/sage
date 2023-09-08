@@ -14,7 +14,7 @@ Wrappers on GAP matrices
 
 from sage.libs.gap.libgap import libgap
 from sage.structure.element cimport Matrix
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 
 cdef class Matrix_gap(Matrix_dense):

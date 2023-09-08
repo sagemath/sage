@@ -1,2 +1,2 @@
 # sage_setup: distribution = sagemath-modules
-from .matrix2 cimport Matrix
+from sage.matrix.matrix2 cimport Matrix

@@ -21,12 +21,12 @@ REFERENCE:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
 from sage.graphs.base.sparse_graph cimport SparseGraph
 from sage.graphs.base.dense_graph cimport DenseGraph, copy_dense_graph
-from .double_coset cimport double_coset
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset
 
 
 def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=False):

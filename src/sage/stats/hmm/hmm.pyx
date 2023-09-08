@@ -42,7 +42,7 @@ from sage.matrix.constructor import matrix
 from sage.misc.randstate cimport current_randstate, randstate
 from cpython.object cimport PyObject_RichCompare
 
-from .util cimport HMM_Util
+from sage.stats.hmm.util cimport HMM_Util
 
 cdef HMM_Util util = HMM_Util()
 

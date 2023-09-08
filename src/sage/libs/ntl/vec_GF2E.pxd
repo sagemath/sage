@@ -1,2 +1,2 @@
 # sage_setup: distribution = sagemath-ntl
-from .types cimport vec_GF2E_c
+from sage.libs.ntl.types cimport vec_GF2E_c

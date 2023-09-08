@@ -28,8 +28,8 @@ from sage.structure.parent cimport Parent
 from sage.categories.sets_cat import Sets
 from sage.matrix.constructor import matrix
 
-from .functions cimport binomial
-from .triangulations cimport \
+from sage.geometry.triangulation.functions cimport binomial
+from sage.geometry.triangulation.triangulations cimport \
     triangulations_ptr, init_triangulations, next_triangulation, delete_triangulations
 
 

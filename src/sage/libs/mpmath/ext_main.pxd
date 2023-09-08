@@ -1,2 +1,2 @@
 # sage_setup: distribution = sagemath-mpmath
-from .ext_impl cimport *
+from sage.libs.mpmath.ext_impl cimport *

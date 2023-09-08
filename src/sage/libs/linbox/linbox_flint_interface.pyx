@@ -41,7 +41,7 @@ from sage.libs.flint.fmpz_poly cimport fmpz_poly_set_coeff_mpz, fmpz_poly_fit_le
 
 cimport sage.libs.linbox.givaro as givaro
 cimport sage.libs.linbox.linbox as linbox
-from .linbox cimport PolynomialRing_integer
+from sage.libs.linbox.linbox cimport PolynomialRing_integer
 
 
 cdef void fmpz_mat_get_linbox(linbox.DenseMatrix_integer& A, fmpz_mat_t m):

@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-categories
-from .ring cimport PrincipalIdealDomain
-from .integer cimport Integer
+from sage.rings.ring cimport PrincipalIdealDomain
+from sage.rings.integer cimport Integer
 from sage.libs.gmp.types cimport mpz_t
 
 cdef class IntegerRing_class(PrincipalIdealDomain):

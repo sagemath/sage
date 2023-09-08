@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-ntl
-from .types cimport zz_pContext_c
+from sage.libs.ntl.types cimport zz_pContext_c
 
 cdef class ntl_zz_pContext_class():
     cdef zz_pContext_c x

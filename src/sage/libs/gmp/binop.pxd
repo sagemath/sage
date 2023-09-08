@@ -3,9 +3,9 @@ r"""
 Fast binary operations for basic types
 """
 
-from .types cimport mpz_t, mpq_t
-from .mpz cimport mpz_set, mpz_add, mpz_mul
-from .mpq cimport mpq_canonicalize, mpq_numref, mpq_denref, mpq_add
+from sage.libs.gmp.types cimport mpz_t, mpq_t
+from sage.libs.gmp.mpz cimport mpz_set, mpz_add, mpz_mul
+from sage.libs.gmp.mpq cimport mpq_canonicalize, mpq_numref, mpq_denref, mpq_add
 
 cdef inline void mpq_add_z(mpq_t res, mpq_t op1, mpz_t op2):
     mpz_mul(mpq_numref(res), mpq_denref(op1), op2)

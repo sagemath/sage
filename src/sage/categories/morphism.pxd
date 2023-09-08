@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-objects
 from sage.structure.element cimport Element
-from .map cimport Map
+from sage.categories.map cimport Map
 
 
 cdef class Morphism(Map):

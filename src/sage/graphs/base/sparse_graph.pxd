@@ -9,7 +9,7 @@
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .c_graph cimport CGraph, CGraphBackend
+from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 cimport cython
 
 cdef struct SparseGraphLLNode:

@@ -2,10 +2,10 @@
 cimport cython
 from sage.data_structures.list_of_pairs cimport ListOfPairs
 from sage.structure.sage_object         cimport SageObject
-from .face_iterator                     cimport FaceIterator, CombinatorialFace
-from .list_of_faces                     cimport ListOfFaces
-from .face_data_structure               cimport face_t
-from .polyhedron_face_lattice           cimport PolyhedronFaceLattice
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator                     cimport FaceIterator, CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces                     cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure               cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice           cimport PolyhedronFaceLattice
 
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):

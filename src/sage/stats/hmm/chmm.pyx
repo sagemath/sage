@@ -29,9 +29,9 @@ from sage.structure.element import is_Matrix
 from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
 
-from .hmm cimport HiddenMarkovModel
-from .util cimport HMM_Util
-from .distributions cimport GaussianMixtureDistribution
+from sage.stats.hmm.hmm cimport HiddenMarkovModel
+from sage.stats.hmm.util cimport HMM_Util
+from sage.stats.hmm.distributions cimport GaussianMixtureDistribution
 
 cdef HMM_Util util = HMM_Util()
 

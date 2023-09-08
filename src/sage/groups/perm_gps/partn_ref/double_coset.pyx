@@ -97,7 +97,7 @@ REFERENCE:
 
 from cysignals.memory cimport sig_calloc
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 
 # Functions

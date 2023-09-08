@@ -15,7 +15,7 @@ General matrix Constructor and display options
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .args cimport MatrixArgs
+from sage.matrix.args cimport MatrixArgs
 from sage.structure.global_options import GlobalOptions
 
 

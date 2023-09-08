@@ -30,7 +30,7 @@ from cpython.object cimport Py_SIZE
 from cpython.int cimport PyInt_FromLong
 from cpython.long cimport PyLong_FromLong
 from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
-from .mpz cimport *
+from sage.libs.gmp.mpz cimport *
 
 cdef extern from *:
     """

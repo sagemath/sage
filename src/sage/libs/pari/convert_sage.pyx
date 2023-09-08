@@ -23,7 +23,7 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             lg, precp)
 from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
-from .convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
+from sage.libs.pari.convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
