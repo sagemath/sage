@@ -951,7 +951,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n) noexcept:
 
     return False
 
-from .designs_pyx cimport _OA_cache, _OA_cache_size
+from sage.combinat.designs.designs_pyx cimport _OA_cache, _OA_cache_size
 cdef int is_available(int k,int n) except -1:
     r"""
     Return whether Sage can build an OA(k,n)
