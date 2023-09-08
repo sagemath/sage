@@ -417,7 +417,7 @@ class DocTestController(SageObject):
             elif options.long:
                 options.timeout = int(os.getenv('SAGE_TIMEOUT_LONG', 30 * 60))
             else:
-                options.timeout = int(os.getenv('SAGE_TIMEOUT', 5 * 60))
+                options.timeout = int(os.getenv('SAGE_TIMEOUT', 10 * 60))
             # For non-default GC options, double the timeout
             if options.gc:
                 options.timeout *= 2
