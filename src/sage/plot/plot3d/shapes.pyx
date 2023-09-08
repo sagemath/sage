@@ -57,8 +57,8 @@ from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.misc.decorators import rename_keyword
 from .base import Graphics3dGroup
-from .index_face_set cimport IndexFaceSet, PrimitiveObject
-from .transform cimport point_c
+from sage.plot.plot3d.index_face_set cimport IndexFaceSet, PrimitiveObject
+from sage.plot.plot3d.transform cimport point_c
 
 
 # Helper function to check that Box input is right

@@ -64,11 +64,11 @@ from .conversions \
         import facets_tuple_to_bit_rep_of_facets, \
                facets_tuple_to_bit_rep_of_Vrep
 
-from .conversions cimport bit_rep_to_Vrep_list
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
 
-from .base                     cimport CombinatorialPolyhedron
-from .face_iterator            cimport FaceIterator
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.base                     cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator            cimport FaceIterator
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 
 cdef extern from "Python.h":

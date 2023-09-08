@@ -28,12 +28,12 @@ REFERENCE:
 
 from libc.string cimport memcmp
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
 from sage.matrix.constructor import Matrix
-from .refinement_binary cimport NonlinearBinaryCodeStruct, refine_by_bip_degree
-from .double_coset cimport double_coset
+from sage.groups.perm_gps.partn_ref.refinement_binary cimport NonlinearBinaryCodeStruct, refine_by_bip_degree
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset
 
 
 cdef class MatrixStruct:
