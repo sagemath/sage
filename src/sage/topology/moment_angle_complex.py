@@ -28,18 +28,8 @@ from .simplicial_complex import SimplicialComplex, copy
 from sage.topology import simplicial_complex_catalog as simplicial_complexes
 from itertools import combinations
 
-# Future TODO's:
-# - add latex_name parameter or something similar?
-# - different way of computing euler characteristic?
-# - bigraded betti numbers? (page 161 buchstaber panov)
-# - explicitly state the vertices for construction
-# - polyhedral products and real moment-angle complexes
-# - golod decomposition
-# - return for odd dimensional simplicial complexes in golod_decomposition?
 
-
-# maybe make hidden?
-def union(c1, c2):
+def _cubical_complex_union(c1, c2):
     """
     Return the union of cubical complexes.
 
@@ -59,7 +49,7 @@ def union(c1, c2):
 
     EXAMPLES::
 
-        sage: from sage.topology.moment_angle_complex import union
+        sage: from sage.topology.moment_angle_complex import _cubical_complex_union as union
         sage: C1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([1,1], [2,3])]); C1
         Cubical complex with 4 vertices and 8 cubes
         sage: C2 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([2,2], [2,3])]); C2
@@ -196,7 +186,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         else:
             immutable_complex = SimplicialComplex(is_mutable=False)
         return super().__classcall__(cls, immutable_complex)
-        # behaviour for MomentAngleComplex()? maybe allow for simplexes?
 
     def __init__(self, simplicial_complex):
         """
@@ -261,7 +250,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             for j in range(1, len(component)):
                 y = D[j] if component[j] == simplicial_complexes.Simplex(2) else S[j]
                 x = x.product(y)
-            moment_angle_complex = union(moment_angle_complex, x)
+            moment_angle_complex = _cubical_complex_union(moment_angle_complex, x)
 
         return moment_angle_complex
 
