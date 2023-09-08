@@ -84,6 +84,8 @@ jobs:
           set -ex
           export SAGE_USE_CDNS=yes
           export SAGE_LIVE_DOC=yes
+          # Remove the following line when the official sagemath/sage-binder-env repo is in good shape
+          export SAGE_JUPYTER_SERVER=binder:kwankyu/sage-binder-env
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
