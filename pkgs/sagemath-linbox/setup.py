@@ -30,7 +30,8 @@ from sage_setup.setenv import setenv
 setenv()
 
 import sage.env
-sage.env.default_required_modules = sage.env.default_optional_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox')
+sage.env.default_required_modules = sage.env.default_optional_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox',
+                                                                         'm4ri', 'gdlib', 'libpng', 'zlib')
 
 from sage_setup.command.sage_build_cython import sage_build_cython
 from sage_setup.command.sage_build_ext import sage_build_ext

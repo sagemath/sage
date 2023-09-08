@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Fixed modulus template for complete discrete valuation rings
 

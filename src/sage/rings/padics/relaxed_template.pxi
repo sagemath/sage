@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Template for relaxed `p`-adic rings and fields.
 

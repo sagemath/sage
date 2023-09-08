@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Capped relative template for complete discrete valuation rings and their fraction fields
 

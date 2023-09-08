@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Interface to FLINT's ``qsieve_factor()``. This used to interact
 with an external "QuadraticSieve" program, but its functionality has

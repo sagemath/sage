@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 This file provides the declaration for ``CRElement`` and the morphisms
 to and from the integers and rationals.

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 This file provides the declaration for the RelaxedElement class,
 which collects common functionality for the different relaxed p-adic

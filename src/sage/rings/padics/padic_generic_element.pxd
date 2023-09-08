@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from cpython cimport array
 
 cimport sage.structure.element

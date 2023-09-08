@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Capped absolute template for complete discrete valuation rings
 

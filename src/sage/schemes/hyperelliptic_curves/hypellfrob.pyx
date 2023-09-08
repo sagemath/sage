@@ -7,7 +7,7 @@
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
-# sage.doctest: needs sage.libs.ntl sage.modules sage.rings.padics
+# sage.doctest: needs sage.libs.linbox sage.libs.ntl sage.modules sage.rings.padics
 
 r"""
 Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve over a

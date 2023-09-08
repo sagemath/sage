@@ -4,6 +4,7 @@ include VERSION.txt
 
 include sage/libs/iml.p*
 graft   sage/libs/linbox
+recursive-include sage/libs/ntl *.pxd *.pxi *.h                                 # FIXME
 include sage/matrix/matrix_integer_dense*.p*
 include sage/matrix/matrix_integer_sparse.p*
 include sage/matrix/matrix_modn_dense_*.p*
@@ -11,6 +12,14 @@ include sage/matrix/matrix_modn_dense_.p*
 include sage/matrix/matrix_modn_sparse.p*
 include sage/matrix/matrix_rational_dense.p*
 include sage/rings/finite_rings/*_givaro*.p*
+
+# Depends on m4ri -- entangled via matrix_integer_dense
+include sage/libs/m4ri*.p*
+include sage/matrix/matrix_gf2e_dense.p*
+include sage/matrix/matrix_mod2_dense.p*
+include sage/modules/vector_mod2_dense.p*
+include sage/rings/polynomial/polynomial_gf2x.p*
+include sage/rings/polynomial/polynomial_template*.pxi                          # FIXME
 
 global-exclude *.c
 global-exclude *.cpp

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 """
 Floating point template for complete discrete valuation rings
 

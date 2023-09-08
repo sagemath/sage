@@ -11,7 +11,7 @@ include sage/rings/padics/pow_computer_ext.p*
 include sage/rings/polynomial/*_ntl.p*
 include sage/rings/polynomial/polynomial_zz_pex.p*
 include sage/rings/polynomial/polynomial_template*.pxi
-#include sage/rings/polynomial/polynomial_gf2x.p*               # inexplicably also needs m4ri; -> could go in a distribution 'sagemath-gf2x' with dep on sagemath-ntl, sagemath-m4ri
+#include sage/rings/polynomial/polynomial_gf2x.p*               # inexplicably also needs m4ri; -> sagemath-linbox (or could go in a distribution 'sagemath-gf2x' with dep on sagemath-ntl, sagemath-m4ri)
 
 include sage/rings/bernmm.p*            # dep of sage.rings.bernoulli_mod_p
 
@@ -21,6 +21,7 @@ include sage/matrix/matrix_modn_*.pxd   # FIXME - shipped by sagemath-linbox
 include sage/matrix/matrix_modn_*.pxi
 include sage/rings/padics/*.pxd
 include sage/rings/padics/*.pxi                                       # FIXME
+exclude sage/rings/padics/*flint*.p*
 
 include sage/schemes/hyperelliptic_curves/hypellfrob.p*
 

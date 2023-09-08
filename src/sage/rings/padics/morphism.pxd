@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.rings.morphism cimport RingHomomorphism
 from sage.structure.element cimport Element
 
