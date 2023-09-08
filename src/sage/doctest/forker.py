@@ -1758,9 +1758,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.timer = Timer().start()
             sage: DD.serial_dispatch()
             sage -t .../rings/homset.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage -t .../rings/ideal.py
-                [... tests, ... s]
+                [... tests, ...s wall]
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
@@ -1804,9 +1804,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.timer = Timer().start()
             sage: DD.parallel_dispatch()
             sage -t .../databases/cremona.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage -t .../rings/big_oh.py
-                [... tests, ... s]
+                [... tests, ...s wall]
 
         If the ``exitfirst=True`` option is given, the results for a failing
         module will be immediately printed and any other ongoing tests
@@ -1841,7 +1841,7 @@ class DocTestDispatcher(SageObject):
             **********************************************************************
             1 item had failures:
                1 of   1 in ...
-                [1 test, 1 failure, ... s]
+                [1 test, 1 failure, ...s wall]
             Killing test ...
         """
         opt = self.controller.options
@@ -2135,9 +2135,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.timer = Timer().start()
             sage: DD.dispatch()
             sage -t .../sage/modules/free_module_homspace.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage -t .../sage/rings/big_oh.py
-                [... tests, ... s]
+                [... tests, ...s wall]
         """
         if self.controller.options.serial:
             self.serial_dispatch()
@@ -2187,7 +2187,7 @@ class DocTestWorker(multiprocessing.Process):
         sage: W.join()  # Wait for worker to finish
         sage: result = W.result_queue.get()
         sage: reporter.report(FDS, False, W.exitcode, result, "")
-            [... tests, ... s]
+            [... tests, ...s wall]
     """
     def __init__(self, source, options, funclist=[], baseline=None):
         """
@@ -2199,7 +2199,7 @@ class DocTestWorker(multiprocessing.Process):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/rings/big_oh.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -2246,7 +2246,7 @@ class DocTestWorker(multiprocessing.Process):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/symbolic/units.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------

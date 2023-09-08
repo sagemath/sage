@@ -403,7 +403,7 @@ class DocTestReporter(SageObject):
             0
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Good tests")
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage: DTR.stats
             {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
 
@@ -414,7 +414,7 @@ class DocTestReporter(SageObject):
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Doctest output including the failure...")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
 
         If the user has requested that we report on skipped doctests,
         we do so::
@@ -433,7 +433,7 @@ class DocTestReporter(SageObject):
                 5 magma tests not run
                 2 not tested tests not run
                 0 tests not run because we ran out of time
-                [... tests, ... s]
+                [... tests, ...s wall]
 
         Test an internal error in the reporter::
 
@@ -466,7 +466,7 @@ class DocTestReporter(SageObject):
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Failed test")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
         """
         log = self.controller.log
         process_name = 'process (pid={0})'.format(pid) if pid else 'process'
@@ -625,7 +625,7 @@ class DocTestReporter(SageObject):
                     else:
                         total = count_noun(ntests, "test")
                     if not (self.controller.options.only_errors and not f):
-                        log("    [%s, %s%.2f s]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
+                        log("    [%s, %s%.2fs wall]" % (total, "%s, "%(count_noun(f, "failure")) if f else "", wall))
 
             self.sources_completed += 1
 
@@ -680,13 +680,13 @@ class DocTestReporter(SageObject):
             0
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Good tests")
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage: runner.failures = 1
             sage: runner.update_results(D)
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Doctest output including the failure...")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
 
         Now we can show the output of finalize::
 
