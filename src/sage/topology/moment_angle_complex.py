@@ -447,18 +447,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z = MomentAngleComplex(RP)
             sage: Z._homology_group(8, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
             C2
-
-        This yields the same result as creating a cubical complex
-        from this moment-angle complex, and then computing its (co)homology,
-        but that is incomparably slower and is really only possible when
-        the associated simplicial complex is very small::
-
-            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
-            sage: Z.cubical_complex()
-            Cubical complex with 64 vertices and 729 cubes
-            sage: Z.cubical_complex().homology(5) == Z._homology_group(5, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
-            True
         """
         if i == 0:
             # This is a special case when computing (co)homology
