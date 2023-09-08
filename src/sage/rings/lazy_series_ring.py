@@ -905,7 +905,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         If ``a`` and ``b`` are both integers, then this returns the product
         `\prod_{i=a}^b f(i)`, where `f(i) = p_i` if ``add_one=False`` or
         `f(i) = 1 + p_i` otherwise. If ``b`` is not specified, then we consider
-        `b = \infty`. Note this corresponds to the Python `range(a, b+1)`.
+        `b = \infty`. Note this corresponds to the Python ``range(a, b+1)``.
 
         If `a` is any other iterable, then this returns the product
         `\prod_{i \in a} f(i)`, where `f(i) = p_i` if ``add_one=False`` or
@@ -1002,7 +1002,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         If ``a`` and ``b`` are both integers, then this returns the sum
         `\sum_{i=a}^b f(i)`. If ``b`` is not specified, then we consider
-        `b = \infty`. Note this corresponds to the Python `range(a, b+1)`.
+        `b = \infty`. Note this corresponds to the Python ``range(a, b+1)``.
 
         If `a` is any other iterable, then this returns the sum
         `\sum{i \in a} f(i)`.
