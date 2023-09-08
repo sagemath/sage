@@ -71,7 +71,7 @@ from .infinity import infinity
 from sage.rings.rational_field import QQ
 import sage.misc.latex
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, AlgebraElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.misc.derivative import multi_derivative
