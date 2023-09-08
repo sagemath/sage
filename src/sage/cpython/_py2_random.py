@@ -281,9 +281,9 @@ class Random(_random.Random):
         population contains repeats, then each occurrence is a possible
         selection in the sample.
 
-        To choose a sample in a range of integers, use xrange as an argument.
+        To choose a sample in a range of integers, use range as an argument.
         This is especially fast and space efficient for sampling from a
-        large population:   sample(xrange(10000000), 60)
+        large population:   sample(range(10000000), 60)
         """
 
         # Sampling without replacement entails tracking either potential
