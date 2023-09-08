@@ -198,6 +198,19 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
             tempd.cleanup()
             return ans
         else:
+            tempd.cleanup()
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+            import re
+
+            indices_regex = re.compile(r'(?<=\[)(\d*)(?=\])')
+            indices = range(max(ZZ(index) for index in indices_regex.findall(ans)) + 1)
+            name = 'y'
+            
+            B = LaurentPolynomialRing(ZZ,
+                              tuple(name + str(k) for k in indices),
+                              len(indices))
+            return to_multivariate_generating_function(ans, B)
             raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
     else:
         if ans:  # Sometimes (when LattE's preproc does the work), no output appears on stdout.
@@ -214,6 +227,53 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         else:
             tempd.cleanup()
             return Integer(ans)
+
+
+def to_multivariate_generating_function(raw_output_str, B):
+    raw_output_list = raw_output_str[:-1].split('\n + ')
+    return tuple(_to_multivariate_generating_function_(a, B) for a in raw_output_list)
+
+
+def _to_multivariate_generating_function_(summand, B):
+    from sage.rings.integer_ring import ZZ
+    from sage.structure.factorization import Factorization
+    import re
+    
+    numerator_str, denominator_str = summand.split('/')
+    
+    # numerator = B(numerator_str.replace('[','').replace(']','').replace('x',name))
+    gen_regex = re.compile(r'(?<=\[)(\d*)(?=\])')
+    exponent_regex = re.compile(r'([\d|-]+)')
+    def str_to_laurent_monomial(monomial_str, B):
+        result = 1
+        for gen_str in monomial_str.split('*'):
+            gen_exponent = gen_str.split('^')
+            if len(gen_exponent) == 1:
+                result *= B.gens()[ZZ(gen_regex.findall(gen_exponent[0])[0])]
+            else:
+                result *= B.gens()[ZZ(gen_regex.findall(gen_exponent[0])[0])] ** ZZ(exponent_regex.findall(gen_exponent[1])[0])
+        return result
+    
+    def str_to_coef_times_laurent_monomial(monomial_str, B):
+        if not 'x' in monomial_str:
+            if '*' in monomial_str:
+                aa, bb = monomial_str.split('*')
+                return ZZ(aa.replace('(','').replace(')',''))*ZZ(bb.replace('(','').replace(')',''))
+            else:
+                return ZZ(monomial_str.replace('(','').replace(')',''))
+        elif 'x' in monomial_str.split('*',1)[0]:
+            return str_to_laurent_monomial(monomial_str, B)
+        else:
+            return ZZ(monomial_str.split('*',1)[0].replace('(','').replace(')',''))*str_to_laurent_monomial(monomial_str.split('*',1)[1],B)
+    
+    numerator = sum(str_to_coef_times_laurent_monomial(a, B) for a in numerator_str.split('+'))
+
+    term_regex = re.compile(r'(?<=1-)(.+?)(?=$|\)$|\)\*\()')
+    terms = (str_to_laurent_monomial(a, B) for a in term_regex.findall(denominator_str[1:-1]))
+    return Factorization([(numerator, 1)] +
+                         [(1-t, -1) for t in terms],
+                         sort=False,
+                         simplify=False)
 
 
 def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, verbose=False, **kwds):
