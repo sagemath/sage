@@ -56,7 +56,7 @@ class ReviewDecision(Enum):
     """
     changes_requested = 'CHANGES_REQUESTED'
     approved = 'APPROVED'
-    unclear = 'COMMENTED'
+    unclear = 'UNCLEAR'
 
 class Priority(Enum):
     r"""
@@ -319,12 +319,15 @@ class GhLabelSynchronizer:
             return None
 
         if self._review_decision is not None:
+            if self._review_decision == ReviewDecision.unclear:
+                return None
             return self._review_decision
 
         data = self.view('reviewDecision')
         if data:
             self._review_decision = ReviewDecision(data)
         else:
+            # To separate a not supplied value from not cached (see https://github.com/sagemath/sage/pull/36177#issuecomment-1704022893 ff)
             self._review_decision = ReviewDecision.unclear
         info('Review decision for %s: %s' % (self._issue, self._review_decision.value))
         return self._review_decision
@@ -349,9 +352,9 @@ class GhLabelSynchronizer:
             self.get_commits()
 
         date = self._commit_date
-        no_rev = ReviewDecision.unclear.value
+        unproper_rev = RevState.commented.value
         new_revs = [rev for rev in self._reviews if rev['submittedAt'] > date]
-        proper_new_revs = [rev for rev in new_revs if rev['state'] != no_rev]
+        proper_new_revs = [rev for rev in new_revs if rev['state'] != unproper_rev]
         info('Proper reviews after %s for %s: %s' % (date, self._issue, proper_new_revs))
         return proper_new_revs
 
@@ -463,11 +466,6 @@ class GhLabelSynchronizer:
         r"""
         Return if the actor has permission to approve this PR.
         """
-        revs = self.get_reviews(complete=True)
-        if not any(rev['authorAssociation'] in ('MEMBER', 'OWNER') for rev in revs):
-            info('PR %s can\'t be approved because of missing member review' % (self._issue))
-            return False
-
         revs = self.get_reviews()
         revs = [rev for rev in revs if rev['author']['login'] != self._actor]
         ch_req = ReviewDecision.changes_requested
