@@ -2044,7 +2044,7 @@ cdef class InstructionStream:
     An :class:`InstructionStream` takes a sequence of instructions (passed in by
     a series of method calls) and computes the data structures needed
     by the interpreter.  This is the stage where we switch from operating
-    on :classL`Expression` trees to a linear representation.  If we had a peephole
+    on :class:`Expression` trees to a linear representation.  If we had a peephole
     optimizer (we don't) it would go here.
 
     Currently, this class is not very general; it only works for
