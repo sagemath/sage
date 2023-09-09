@@ -477,7 +477,7 @@ class Groups(CategoryWithAxiom):
                 )
 
                 sage: G = SL(2, GF(2))                                                  # needs sage.modules
-                sage: g = G.gens()[0]                                                   # needs sage.modules
+                sage: g = G.gens()[0]                                                   # needs sage.groups sage.modules
                 sage: g.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
