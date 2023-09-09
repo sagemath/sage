@@ -139,6 +139,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
          Projective Space of dimension 1 over Complex Field with 53 bits of precision
           Defn: Defined on coordinates by sending (x : y) to
                 (1.00000000000000*I*x^2 : 0.800000000000000*y^2)
+
+        sage: # needs sage.rings.finite_rings
         sage: P.<x,y> = ProjectiveSpace(GF(5), 1)
         sage: K.<t> = GF(25)
         sage: DynamicalSystem([GF(5)(3)*x^2, K(t)*y^2])
@@ -364,6 +366,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         Note that the number of critical points is `2d-2`, but `(1:0)` has multiplicity 2 in this case::
 
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([1/3*x^3 + x*y^2, y^3], domain=P)
             sage: f.critical_points()
@@ -376,6 +379,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         ::
 
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem([z^4 + 2*z^2 + 2], domain=A)
             sage: K.<a> = f.field_of_definition_critical(); K
@@ -383,6 +387,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         ::
 
+            sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: G.<a> = GF(9)
             sage: R.<z> = G[]
             sage: R.irreducible_element(3, algorithm='first_lexicographic')
@@ -470,6 +475,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([x^2, y^2], domain=P)
             sage: f.periodic_points(3, minimal=False)
@@ -489,6 +495,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         ::
 
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem([(z^2 + 1)/(2*z + 1)], domain=A)
             sage: K.<a> = f.field_of_definition_periodic(2); K
@@ -498,6 +505,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: G.<a> = GF(4)
             sage: A.<x> = AffineSpace(G, 1)
             sage: f = DynamicalSystem([x^2 + (a+1)*x + 1], domain=A)
@@ -589,7 +597,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([1/3*x^2 + 2/3*x*y, x^2 - 2*y^2], domain=P)
-            sage: N.<a> = f.field_of_definition_preimage(P(1,1), 2, simplify_all=True); N
+            sage: N.<a> = f.field_of_definition_preimage(P(1,1), 2,                     # needs sage.rings.number_field
+            ....:                                        simplify_all=True); N
             Number Field in a with defining polynomial
              x^8 - 4*x^7 - 128*x^6 + 398*x^5 + 3913*x^4 - 8494*x^3 - 26250*x^2 + 30564*x - 2916
 
@@ -597,7 +606,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
             sage: A.<z> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem([z^2], domain=A)
-            sage: K.<a> = f.field_of_definition_preimage(A(1), 3); K
+            sage: K.<a> = f.field_of_definition_preimage(A(1), 3); K                    # needs sage.rings.number_field
             Number Field in a with defining polynomial z^4 + 1
 
         ::
@@ -605,7 +614,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             sage: G = GF(5)
             sage: P.<x,y> = ProjectiveSpace(G, 1)
             sage: f = DynamicalSystem([x^2 + 2*y^2, y^2], domain=P)
-            sage: f.field_of_definition_preimage(P(2,1), 2, return_embedding=True, names='a')
+            sage: f.field_of_definition_preimage(P(2,1), 2, return_embedding=True,      # needs sage.rings.number_field
+            ....:                                names='a')
             (Finite Field in a of size 5^2,
              Ring morphism:
                From: Finite Field of size 5
