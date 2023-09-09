@@ -2340,8 +2340,9 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         """
         EXAMPLES::
 
-            sage: # needs sage.libs.pari sage.schemes
             sage: R.<x,y,z> = QQ[]
+
+            sage: # needs sage.libs.pari sage.schemes
             sage: C = Curve(7*x^2 + 2*y*z + z^2)  # conic
             sage: f, g = C.parametrization()
             sage: f*g == C.identity_morphism()
