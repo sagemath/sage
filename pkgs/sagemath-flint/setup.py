@@ -55,7 +55,8 @@ else:
     python_packages, python_modules, cython_modules = find_python_sources(
         '.', ['sage'], distributions=['sagemath-flint'])
     package_data = {}
-    package_data.update({'sage.libs.flint': ['*.h', '*.pxi']})
+    package_data.update({'sage.libs.flint': ['*.h', '*.pxi'],
+                         'sage.libs.arb': ['*.h', '*.pxi']})
     python_packages += list(package_data)
 
     log.warn('python_packages = {0}'.format(python_packages))

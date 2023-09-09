@@ -840,6 +840,7 @@
     "sage.libs.all__sagemath_ntl": {},
     "sage.libs.all__sagemath_objects": {},
     "sage.libs.all__sagemath_pari": {},
+    "sage.libs.arb": {},
     "sage.libs.arb.acb.pxd": {},
     "sage.libs.arb.acb_calc.pxd": {},
     "sage.libs.arb.acb_elliptic.pxd": {},
@@ -850,13 +851,9 @@
     "sage.libs.arb.arb.pxd": {},
     "sage.libs.arb.arb_fmpz_poly.pxd": {},
     "sage.libs.arb.arb_hypgeom.pxd": {},
-    "sage.libs.arb.arb_version": {
-        "failed": true
-    },
+    "sage.libs.arb.arb_version": {},
     "sage.libs.arb.arf.pxd": {},
-    "sage.libs.arb.arith": {
-        "failed": true
-    },
+    "sage.libs.arb.arith": {},
     "sage.libs.arb.bernoulli.pxd": {},
     "sage.libs.arb.mag.pxd": {},
     "sage.libs.arb.types.pxd": {},
@@ -1086,6 +1083,7 @@
     "sage.libs.pari": {},
     "sage.libs.pari.all": {},
     "sage.libs.pari.all__sagemath_flint": {},
+    "sage.libs.pari.convert_flint": {},
     "sage.libs.pari.convert_flint.pxd": {},
     "sage.libs.pari.convert_gmp": {},
     "sage.libs.pari.convert_gmp.pxd": {},

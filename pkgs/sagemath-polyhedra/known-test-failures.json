@@ -892,15 +892,11 @@
     "sage.homology.free_resolution": {},
     "sage.homology.graded_resolution": {},
     "sage.homology.hochschild_complex": {},
-    "sage.homology.homology_group": {
-        "failed": true
-    },
+    "sage.homology.homology_group": {},
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},

@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-ntl ~= 10.0
+sagemath-linbox ~= 10.0
