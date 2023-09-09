@@ -275,9 +275,10 @@ class AlgebraicScheme(scheme.Scheme):
         projective spaces. This is why this method returns ``False``
         for toric varieties::
 
-            sage: PP.<x,y,z,w> = toric_varieties.P(3)                                   # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs
+            sage: PP.<x,y,z,w> = toric_varieties.P(3)
             sage: V = PP.subscheme(x^3 + y^3 + z^3 + w^3)
-            sage: V.is_projective()                                                     # needs sage.geometry.polyhedron
+            sage: V.is_projective()
             False
         """
         return self.ambient_space().is_projective()
@@ -383,9 +384,11 @@ class AlgebraicScheme(scheme.Scheme):
                     defined by: x^2 + y^2 - 1
               To:   Affine Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x, y) to (x, y)
-            sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()                             # needs sage.geometry.polyhedron
-            sage: P1 = P1xP1.subscheme(x - y)                                           # needs sage.geometry.polyhedron sage.libs.singular
-            sage: P1.embedding_morphism()                                               # needs sage.geometry.polyhedron sage.libs.singular
+
+i           sage: # needs sage.graphs sage.geometry.polyhedron sage.libs.singular
+            sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()
+            sage: P1 = P1xP1.subscheme(x - y)
+            sage: P1.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of 2-d CPR-Fano toric variety covered
                     by 4 affine patches defined by: x - y
@@ -424,18 +427,18 @@ class AlgebraicScheme(scheme.Scheme):
 
         A couple more examples::
 
-            sage: # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs sage.libs.singular
             sage: patch1 = P1xP1.affine_patch(1); patch1
             2-d affine toric variety
-            sage: patch1.embedding_morphism()                                           # needs sage.libs.singular
+            sage: patch1.embedding_morphism()
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
               Defn: Defined on coordinates by sending [y : u] to [1 : y : u : 1]
-            sage: subpatch = P1.affine_patch(1); subpatch                               # needs sage.libs.singular
+            sage: subpatch = P1.affine_patch(1); subpatch
             Closed subscheme of 2-d affine toric variety defined by:
               -y + 1
-            sage: subpatch.embedding_morphism()                                         # needs sage.libs.singular
+            sage: subpatch.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of 2-d affine toric variety defined by: -y + 1
               To:   Closed subscheme of 2-d CPR-Fano toric variety covered
@@ -540,7 +543,7 @@ class AlgebraicScheme(scheme.Scheme):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs
             sage: P1.<x,y> = toric_varieties.P1()
             sage: type(P1.Hom(P1))
             <class 'sage.schemes.toric.homset.SchemeHomset_toric_variety_with_category'>
@@ -550,9 +553,10 @@ class AlgebraicScheme(scheme.Scheme):
 
         ::
 
-            sage: P1xP1 = toric_varieties.P1xP1()                                       # needs sage.geometry.polyhedron
-            sage: P1 = toric_varieties.P1()                                             # needs sage.geometry.polyhedron
-            sage: P1xP1._homset(P1xP1, P1)                                              # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs
+            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: P1 = toric_varieties.P1()
+            sage: P1xP1._homset(P1xP1, P1)
             Set of morphisms
               From: 2-d CPR-Fano toric variety covered by 4 affine patches
               To:   1-d CPR-Fano toric variety covered by 2 affine patches
