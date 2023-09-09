@@ -50,9 +50,11 @@ def _cubical_complex_union(c1, c2):
     EXAMPLES::
 
         sage: from sage.topology.moment_angle_complex import _cubical_complex_union as union
-        sage: C1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([1,1], [2,3])]); C1
+        sage: C1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
+        ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); C1
         Cubical complex with 4 vertices and 8 cubes
-        sage: C2 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([2,2], [2,3])]); C2
+        sage: C2 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
+        ....:                      ([0,1], [2,2]), ([2,2], [2,3])]); C2
         Cubical complex with 6 vertices and 10 cubes
         sage: union(C1, C2)
         Cubical complex with 6 vertices and 11 cubes
@@ -72,11 +74,11 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     A moment-angle complex.
 
     Given a simplicial complex `K`, with a set of vertices
-    `V = \{v_1, v_2, \dotso, v_n\}`, a moment-angle complex over `K` is a
+    `V = \{v_1, v_2, \ldots, v_n\}`, a moment-angle complex over `K` is a
     topological space `Z`, which is a union of `X_{\sigma}`, where
-    `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \dotso \times Y_{v_n}`
-    and `Y_{v_i}` is a 2-disk (a 2-simplex) if `v_i \in \sigma`,
-    or a 1-sphere otherwise.
+    `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \ldots
+    \times Y_{v_n}` and `Y_{v_i}` is a 2-disk (a 2-simplex) if
+    `v_i \in \sigma` , or a 1-sphere otherwise.
 
     .. MATH::
 
@@ -114,14 +116,17 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     EXAMPLES::
 
         sage: MomentAngleComplex([[1,2,3], [2,4], [3,4]])
-        Moment-angle complex of Simplicial complex with vertex set (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
+        Moment-angle complex of Simplicial complex with vertex set
+        (1, 2, 3, 4) and facets {(2, 4), (3, 4), (1, 2, 3)}
         sage: X = SimplicialComplex([[0,1], [1,2], [1,3], [2,3]])
         sage: Z = MomentAngleComplex(X); Z
-        Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
+        Moment-angle complex of Simplicial complex with vertex set
+        (0, 1, 2, 3) and facets {(0, 1), (1, 2), (1, 3), (2, 3)}
         sage: M = MomentAngleComplex([[1], [2]]); M
         Moment-angle complex of Simplicial complex with vertex set (1, 2) and facets {(1,), (2,)}
 
-    We can perform a number of operations, such as find the dimension or compute the homology::
+    We can perform a number of operations, such as find the dimension or
+    compute the homology::
 
         sage: M.homology()
         {0: 0, 1: 0, 2: 0, 3: Z}
@@ -135,7 +140,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     complex dimension `n+1`::
 
         sage: Z = MomentAngleComplex([[0, 1, 2]]); Z
-        Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
+        Moment-angle complex of Simplicial complex with vertex set (0, 1, 2)
+        and facets {(0, 1, 2)}
 
     This can be seen by viewing the components used in the construction
     of this moment-angle complex by calling ``components()``::
@@ -230,7 +236,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         TESTS::
 
             sage: Z = MomentAngleComplex([[0], [1], [2]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0,), (1,), (2,)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2) and facets {(0,), (1,), (2,)}
             sage: Z._moment_angle_complex
             Cubical complex with 64 vertices and 705 cubes
 
@@ -263,11 +270,14 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0]])
             sage: Z._repr_()
-            'Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
+            'Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
             sage: repr(Z)
-            'Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
+            'Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}'
             sage: Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z = MomentAngleComplex([[i for i in range(20)]])
             sage: Z._repr_()
             'Moment-angle complex of Simplicial complex with 20 vertices and 1 facets'
@@ -290,13 +300,15 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: Z = MomentAngleComplex([[0,1,2], [1,3]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(1, 3), (0, 1, 2)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3) and facets {(1, 3), (0, 1, 2)}
             sage: Z.cubical_complex()
             Cubical complex with 256 vertices and 6409 cubes
             sage: dim(Z.cubical_complex()) == dim(Z)
             True
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,3]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 2), (1, 2), (1, 3)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3) and facets {(0, 1), (0, 2), (1, 2), (1, 3)}
             sage: Z.betti() == Z.cubical_complex().betti()  # long time
             True
 
@@ -342,11 +354,13 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: M = MomentAngleComplex([[0, 1, 2]]); M
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2) and facets {(0, 1, 2)}
             sage: M.components()
             {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
             sage: Z = MomentAngleComplex([[0], [1]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1) and facets {(0,), (1,)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1) and facets {(0,), (1,)}
             sage: sorted(Z.components().items())
             [((0,), [The 2-simplex, Minimal triangulation of the 1-sphere]),
              ((1,), [Minimal triangulation of the 1-sphere, The 2-simplex])]
@@ -380,9 +394,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                The 2-simplex,
                The 2-simplex])]
 
-        It is not that difficult to prove that the previous moment-angle complex
-        is homeomorphic to a product of two 3-spheres. We can look at the
-        cohomologies to try and validate whether this makes sense::
+        It is not that difficult to prove that the previous moment-angle
+        complex is homeomorphic to a product of two 3-spheres. We can look at
+        the cohomologies to try and validate whether this makes sense::
 
             sage: S3 = simplicial_complexes.Sphere(3)
             sage: product_of_spheres = S3.product(S3)
@@ -437,16 +451,20 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         TESTS::
 
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
-            sage: Z._homology_group(3, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
+            sage: Z._homology_group(3, base_ring=ZZ, cohomology=False,
+            ....:                   algorithm='pari', verbose=False, reduced=True)
             Z
-            sage: Z._homology_group(4, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
+            sage: Z._homology_group(4, base_ring=ZZ, cohomology=False,
+            ....:                   algorithm='pari', verbose=False, reduced=True)
             0
             sage: Z.homology()
             {0: 0, 1: 0, 2: 0, 3: Z, 4: 0, 5: 0, 6: 0, 7: 0}
             sage: RP = simplicial_complexes.RealProjectivePlane()
             sage: Z = MomentAngleComplex(RP)
-            sage: Z._homology_group(8, base_ring=ZZ, cohomology=False, algorithm='pari', verbose=False, reduced=True)
+            sage: Z._homology_group(8, base_ring=ZZ, cohomology=False,
+            ....:                   algorithm='pari', verbose=False, reduced=True)
             C2
         """
         if i == 0:
@@ -512,10 +530,10 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             \bigoplus_{J \subseteq [m]} \widetilde{H}_{l-|J|-1}(\mathcal{K}_J),
 
         where `\mathcal{Z}_\mathcal{K}` denotes the moment-angle complex
-        associated to a simplicial complex `\mathcal{K}`, on the set of vertices
-        `\{1, 2, 3, \ldots, m\} =: [m]`. `\mathcal{K}_J` denotes the full
-        subcomplex of `\mathcal{K}`, generated by a set of vertices `J`. The
-        same formula holds true for cohomology groups as well.
+        associated to a simplicial complex `\mathcal{K}`, on the set of
+        vertices `\{1, 2, 3, \ldots, m\} =: [m]`. `\mathcal{K}_J` denotes the
+        full subcomplex of `\mathcal{K}`, generated by a set of vertices `J`.
+        The same formula holds true for cohomology groups as well.
 
         .. SEEALSO::
 
@@ -524,7 +542,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3], [3,0]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 3), (0, 1, 2), (1, 2, 3)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3) and facets {(0, 3), (0, 1, 2), (1, 2, 3)}
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3], [3,0]])
             sage: Z.homology()
             {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: Z x Z, 6: Z, 7: 0}
@@ -548,7 +567,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         the associated simplicial complex is very small::
 
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0]]); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 729 cubes
             sage: Z.cubical_complex().homology() == Z.homology()
@@ -558,7 +578,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         and works well even with significantly larger underlying simplicial
         complexes::
 
-            sage: Z = MomentAngleComplex([[0,1,2,3,4,5], [0,1,2,3,4,6], [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
+            sage: Z = MomentAngleComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
+            ....:                         [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: Z.homology()
             {0: 0,
              1: 0,
@@ -670,7 +691,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6], [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
+            sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
+            ....:                        [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: M = MomentAngleComplex(X)
             sage: M.euler_characteristic()
             0
@@ -735,13 +757,15 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         The following is one of the 8 obstruction graphs::
 
-            sage: Z = MomentAngleComplex([[1, 2], [1, 4], [2, 3], [3, 5], [5, 6], [4, 5], [1, 6]])
+            sage: Z = MomentAngleComplex([[1, 2], [1, 4], [2, 3], [3, 5],
+            ....:                         [5, 6], [4, 5], [1, 6]])
             sage: Z.has_trivial_lowest_deg_massey_product()
             False
 
         A hexagon is not isomorphic to any of the 8 obstruction graphs::
 
-            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]])
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3],
+            ....:                         [3,4], [4,5], [5,0]])
             sage: Z.has_trivial_lowest_deg_massey_product()
             True
         """
