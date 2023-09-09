@@ -1366,7 +1366,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)
             sage: P2.<u,v,w> = ProjectiveSpace(QQbar, 2)
             sage: H = Hom(P, P2)
@@ -2082,18 +2082,18 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H2 = Hom(P, P2)
             sage: H3 = Hom(P2, P)
             sage: f = H([x^2 + (2*t^3 + 2*t^2 + 1)*y^2, y^2])
-            sage: f.reduce_base_field()                                                 # needs sage.modules
+            sage: f.reduce_base_field()                                                 # needs sage.libs.singular sage.modules
             Scheme endomorphism of Projective Space of dimension 1
              over Finite Field in t2 of size 3^2
               Defn: Defined on coordinates by sending (x : y) to (x^2 + t2*y^2 : y^2)
             sage: f2 = H2([x^2 + 5*y^2, y^2, 2*x*y])
-            sage: f2.reduce_base_field()                                                # needs sage.modules
+            sage: f2.reduce_base_field()                                                # needs sage.libs.singular sage.modules
             Scheme morphism:
               From: Projective Space of dimension 1 over Finite Field of size 3
               To:   Projective Space of dimension 2 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y) to (x^2 - y^2 : y^2 : -x*y)
             sage: f3 = H3([a^2 + t*b^2, c^2])
-            sage: f3.reduce_base_field()                                                # needs sage.modules
+            sage: f3.reduce_base_field()                                                # needs sage.libs.singular sage.modules
             Scheme morphism:
               From: Projective Space of dimension 2 over Finite Field in t of size 3^4
               To:   Projective Space of dimension 1 over Finite Field in t of size 3^4
@@ -2106,7 +2106,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: H = End(P)
             sage: f = H([x^2 + 2*y^2, y^2])
-            sage: f.reduce_base_field()
+            sage: f.reduce_base_field()                                                 # needs sage.libs.singular
             Scheme endomorphism of Projective Space of dimension 1 over Rational Field
               Defn: Defined on coordinates by sending (x : y) to (x^2 + 2*y^2 : y^2)
 
@@ -2118,13 +2118,13 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(L, 1)
             sage: H = End(P)
             sage: f = H([(L.gen(2))*x^2 + L.gen(4)*y^2, x*y])
-            sage: f.reduce_base_field()
+            sage: f.reduce_base_field()                                                 # needs sage.libs.singular
             Scheme endomorphism of Projective Space of dimension 1
              over Finite Field in z4 of size 5^4
               Defn: Defined on coordinates by sending (x : y) to
                     ((z4^3 + z4^2 + z4 - 2)*x^2 + z4*y^2 : x*y)
             sage: f = DynamicalSystem_projective([L.gen(3)*x^2 + L.gen(2)*y^2, x*y])
-            sage: f.reduce_base_field()
+            sage: f.reduce_base_field()                                                 # needs sage.libs.singular
             Dynamical System of Projective Space of dimension 1
              over Finite Field in z6 of size 5^6
               Defn: Defined on coordinates by sending (x : y) to
@@ -2138,7 +2138,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y> = ProjectiveSpace(F, 1)
             sage: H = Hom(P, P)
             sage: f = H([x^2 + y^2, y^2])
-            sage: f.reduce_base_field()
+            sage: f.reduce_base_field()                                                 # needs sage.libs.singular
             Scheme endomorphism of Projective Space of dimension 1 over Finite Field of size 3
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + y^2 : y^2)

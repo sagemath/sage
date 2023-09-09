@@ -852,6 +852,7 @@ class ToricVariety_field(AmbientSpace):
               Defn: Defined on coordinates by sending [s : t : x : y] to
                     [s : s : x : y]
 
+            sage: # needs sage.libs.singular
             sage: hom_set = P1.Hom(P1)
             sage: sbar, tbar, xbar, ybar = P1.coordinate_ring().gens()
             sage: hom_set([sbar,sbar,xbar,ybar])
@@ -1921,7 +1922,7 @@ class ToricVariety_field(AmbientSpace):
             Multivariate Polynomial Ring in x, u, y, v, z, w over Rational Field
             sage: X.variable_names()
             ('x', 'u', 'y', 'v', 'z', 'w')
-            sage: X.cohomology_ring().gens()
+            sage: X.cohomology_ring().gens()                                            # needs sage.libs.singular
             ([y + v - w], [-y + z + w], [y], [v], [z], [w])
 
         TESTS:
@@ -1960,6 +1961,7 @@ class ToricVariety_field(AmbientSpace):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: X = toric_varieties.dP8()
             sage: X.cohomology_basis()
             (([1],), ([z], [y]), ([y*z],))
@@ -2004,11 +2006,11 @@ class ToricVariety_field(AmbientSpace):
         EXAMPLES::
 
             sage: P2 = toric_varieties.P2()
-            sage: P2.volume_class()
+            sage: P2.volume_class()                                                     # needs sage.libs.singular
             [z^2]
 
             sage: A2_Z2 = toric_varieties.A2_Z2()
-            sage: A2_Z2.volume_class()
+            sage: A2_Z2.volume_class()                                                  # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: volume class does not exist
@@ -2032,11 +2034,11 @@ class ToricVariety_field(AmbientSpace):
             V(t)
             sage: Dy = P1xP1_Z2.divisor(3);  Dy
             V(y)
-            sage: P1xP1_Z2.volume_class()
+            sage: P1xP1_Z2.volume_class()                                               # needs sage.libs.singular
             [2*t*y]
 
             sage: HH = P1xP1_Z2.cohomology_ring()
-            sage: HH(Dt) * HH(Dy) == 1/2 * P1xP1_Z2.volume_class()
+            sage: HH(Dt) * HH(Dy) == 1/2 * P1xP1_Z2.volume_class()                      # needs sage.libs.singular
             True
 
         The fractional coefficients are also necessary to match the
