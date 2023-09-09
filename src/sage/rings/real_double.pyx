@@ -50,6 +50,7 @@ from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
 import math
 
+import sage.arith.misc
 import sage.rings.integer
 import sage.rings.rational
 
@@ -1955,7 +1956,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: r.algebraic_dependency(5)                                             # needs sage.libs.pari
             x^2 - 2
         """
-        return sage.arith.all.algdep(self,n)
+        return sage.arith.misc.algdep(self,n)
 
     algdep = algebraic_dependency
 
