@@ -255,7 +255,7 @@ def SL(n, R, var='a'):
 
     TESTS::
 
-        sage: groups.matrix.SL(2, 3)                                                    # needs sage.rings.finite_rings
+        sage: groups.matrix.SL(2, 3)
         Special Linear Group of degree 2 over Finite Field of size 3
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
