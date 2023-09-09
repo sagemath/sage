@@ -1695,7 +1695,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         n = H.order()
         for e in range(n - 2, -1, -1):
             t = 0
-            for uc in H.neighbors_out(e):
+            for uc in H.neighbor_out_iterator(e):
                 t = jn[t, uc]
                 if t == n - 1:
                     break
