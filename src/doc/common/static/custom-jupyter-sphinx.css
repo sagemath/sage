@@ -39,7 +39,7 @@ div.jupyter_container div.cell_output div.output {
 
 #thebelab-activate-button {
   position: fixed;
-  right: -5rem;
+  right: -5.1rem;
   top: calc(50% - 1.5rem);
   width: 6rem;
   border-radius: 1rem;
@@ -50,7 +50,7 @@ div.jupyter_container div.cell_output div.output {
 }
 
 #thebelab-activate-button:hover {
-  right: .5rem;
+  right: .4rem;
 }
 
 #thebelab-activate-button:active {
