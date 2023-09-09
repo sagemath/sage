@@ -1052,7 +1052,7 @@ cdef extern from "singular/polys/sbuckets.h":
     #assumes length <= 0 || pLength(p) == length
     void sBucketClearMerge(sBucket *bucket, poly **p, int *length)
 
-    #add contents of sBucket into polynomial an clear bucket
+    #add contents of sBucket into polynomial and clear bucket
     #(can handle repeated monomials)
     void sBucketClearAdd(sBucket *bucket, poly **p, int *length)
 

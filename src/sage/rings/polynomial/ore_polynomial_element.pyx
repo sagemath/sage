@@ -2196,7 +2196,7 @@ cdef void lmul_gen(list A, Morphism m, d):
     replace it by the list of coefficients of ``X*P`` (where ``X``
     is the variable in the Ore polynomial ring).
 
-    This is an helper function.
+    This is a helper function.
 
     INPUT:
 
@@ -2683,7 +2683,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         Return the list of coefficients of the product of this
         Ore polynomial by that whose coefficients are given by ``A``.
 
-        This is an helper function.
+        This is a helper function.
         """
         cdef list BA = [self.base_ring().zero()] * (len(self._coeffs) + len(A) - 1)
         cdef Morphism m = self._parent._morphism
@@ -2921,7 +2921,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             False
 
         This behavior ensures that the Hilbert shift by a fixed element
-        defines an homomorphism of rings::
+        defines a homomorphism of rings::
 
             sage: # needs sage.rings.finite_rings
             sage: U = S.random_element(degree=5)

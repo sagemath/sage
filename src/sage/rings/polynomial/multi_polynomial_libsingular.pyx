@@ -3197,7 +3197,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the
-          result as an list of ETuples, otherwise returns a list of tuples
+          result as a list of ETuples, otherwise returns a list of tuples
 
         EXAMPLES::
 

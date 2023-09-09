@@ -2552,7 +2552,7 @@ class Polytopes():
             sage: perm4.graph().is_isomorphic(graphs.BubbleSortGraph(4))                # needs sage.graphs
             True
 
-        As both Hrepresentation an Vrepresentation are known, the permutahedron can be set
+        As both Hrepresentation and Vrepresentation are known, the permutahedron can be set
         up with both using the backend ``field``. The following takes very very long time
         to recompute, e.g. with backend ``ppl``::
 

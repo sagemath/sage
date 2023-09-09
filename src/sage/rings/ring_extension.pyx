@@ -1781,7 +1781,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         r"""
         Return the defining morphism of the fraction field of this extension.
 
-        This is an helper function.
+        This is a helper function.
 
         INPUT:
 

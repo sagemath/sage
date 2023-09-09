@@ -3155,7 +3155,7 @@ class WordMorphism(SageObject):
             []
         """
         if not self.is_self_composable():
-            raise TypeError(f'self ({self}) is not an self-composable')
+            raise TypeError(f'self ({self}) is not a self-composable')
 
         forward = {}
         backward = {letter: set() for letter in self._morph}

@@ -1359,10 +1359,10 @@ class AbstractTree():
 
     def to_hexacode(self):
         r"""
-        Transform a tree into an hexadecimal string.
+        Transform a tree into a hexadecimal string.
 
         The definition of the hexacode is recursive. The first letter is
-        the valence of the root as an hexadecimal (up to 15), followed by
+        the valence of the root as a hexadecimal (up to 15), followed by
         the concatenation of the hexacodes of the subtrees.
 
         This method only works for trees where every vertex has
@@ -2461,11 +2461,11 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
 def from_hexacode(ch, parent=None, label='@'):
     r"""
-    Transform an hexadecimal string into a tree.
+    Transform a hexadecimal string into a tree.
 
     INPUT:
 
-    - ``ch`` -- an hexadecimal string
+    - ``ch`` -- a hexadecimal string
 
     - ``parent`` -- kind of trees to be produced. If ``None``, this will
       be ``LabelledOrderedTrees``
@@ -2511,11 +2511,11 @@ def from_hexacode(ch, parent=None, label='@'):
 
 def _from_hexacode_aux(ch, parent, label='@'):
     r"""
-    Transform an hexadecimal string into a tree and a remainder string.
+    Transform a hexadecimal string into a tree and a remainder string.
 
     INPUT:
 
-    - ``ch`` -- an hexadecimal string
+    - ``ch`` -- a hexadecimal string
 
     - ``parent`` -- kind of trees to be produced.
 

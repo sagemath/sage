@@ -70,7 +70,7 @@ class TopologicalSubmanifold(TopologicalManifold):
     a topological embedding `\phi` from `N` to `M` (i.e. `\phi` is an
     homeomorphism onto its image).
 
-    In the case where `\phi` is only an topological immersion (i.e. is only
+    In the case where `\phi` is only a topological immersion (i.e. is only
     locally an embedding), one says that `N` is an *immersed submanifold*.
 
     The map `\phi` can also depend on one or multiple parameters.

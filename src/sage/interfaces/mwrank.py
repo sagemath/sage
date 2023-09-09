@@ -24,7 +24,7 @@ from .expect import Expect
 instances = {}
 def Mwrank(options="", server=None, server_tmpdir=None):
     """
-    Create and return an mwrank interpreter, with given options.
+    Create and return a mwrank interpreter, with given options.
 
     INPUT:
 

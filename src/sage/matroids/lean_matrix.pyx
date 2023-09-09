@@ -2904,7 +2904,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     cdef LeanMatrix stack(self, LeanMatrix M):
         """
-        Warning: assumes ``M`` is an PlusMinusOneMatrix instance of right
+        Warning: assumes ``M`` is a PlusMinusOneMatrix instance of right
         dimensions!
         """
         cdef PlusMinusOneMatrix A
@@ -3361,7 +3361,7 @@ cdef class RationalMatrix(LeanMatrix):
 
     cdef LeanMatrix stack(self, LeanMatrix M):
         """
-        Warning: assumes ``M`` is an RationalMatrix instance of right
+        Warning: assumes ``M`` is a RationalMatrix instance of right
         dimensions!
         """
         cdef RationalMatrix A

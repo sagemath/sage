@@ -1183,7 +1183,7 @@ def check_prime(K, P):
         raise TypeError("%s is not a number field" % (K,))
 
     if is_NumberFieldFractionalIdeal(P) or P in K:
-        # if P is an ideal, making sure it is an fractional ideal of K
+        # if P is an ideal, making sure it is a fractional ideal of K
         P = K.fractional_ideal(P)
         if P.is_prime():
             return P

@@ -180,7 +180,7 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: ProjectiveSpace(5)
         Projective Space of dimension 5 over Integer Ring
 
-    There is also an projective space associated each polynomial ring.
+    There is also a projective space associated each polynomial ring.
 
     ::
 

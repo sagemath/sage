@@ -547,7 +547,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     else:
         delete = <bint*> mem.allocarray(max(facets.n_faces(), facets.n_atoms()), sizeof(bint))
 
-        # Set ``delete[i]`` to one if ``i`` is not an vertex of ``face``.
+        # Set ``delete[i]`` to one if ``i`` is not a vertex of ``face``.
         for i in range(Vrep.n_faces()):
             if face_issubset(face, Vrep.data.faces[i]):
                 delete[i] = 0

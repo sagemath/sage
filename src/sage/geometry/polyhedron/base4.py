@@ -70,7 +70,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         This function constructs a directed bipartite graph.
         The nodes of the graph correspond to the vertices of the polyhedron
-        and the facets of the polyhedron. There is an directed edge
+        and the facets of the polyhedron. There is a directed edge
         from a vertex to a face if and only if the vertex is incident to the face.
 
         INPUT:
@@ -406,7 +406,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: D.degree_polynomial()
             x^5 + x^4*y + x*y^4 + y^5 + 4*x^3*y + 8*x^2*y^2 + 4*x*y^3
 
-        Faces of an mutable polyhedron are not hashable. Hence those are not suitable as
+        Faces of a mutable polyhedron are not hashable. Hence those are not suitable as
         vertices of the hasse diagram. Use the combinatorial polyhedron instead::
 
             sage: # needs sage.rings.number_field

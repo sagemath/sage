@@ -1193,7 +1193,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             OUTPUT:
 
-            An growth element.
+            A growth element.
 
             .. NOTE::
 

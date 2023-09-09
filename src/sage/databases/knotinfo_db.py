@@ -223,7 +223,7 @@ class KnotInfoFilename(Enum):
     def num_knots(self, version):
         r"""
         Return the file name under which the number of knots is stored
-        in an sobj-file.
+        in a sobj-file.
 
         Examples::
 
@@ -730,7 +730,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         return self._num_knots
 
     # -------------------------------------------------------------------------------------------------------------
-    # read an sobj-file obtained from KnotInfo database
+    # read a sobj-file obtained from KnotInfo database
     # -------------------------------------------------------------------------------------------------------------
     @cached_method
     def read(self, column):

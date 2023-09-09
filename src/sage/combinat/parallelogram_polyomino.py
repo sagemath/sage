@@ -2088,7 +2088,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``k`` -- An non negative integer.
+        - ``k`` -- A non negative integer.
 
         EXAMPLES::
 

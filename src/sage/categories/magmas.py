@@ -438,7 +438,7 @@ class Magmas(Category_singleton):
             def extra_super_categories(self):
                 r"""
                 Implement the fact that a Cartesian product of commutative
-                additive magmas is still an commutative additive magmas.
+                additive magmas is still a commutative additive magmas.
 
                 EXAMPLES::
 

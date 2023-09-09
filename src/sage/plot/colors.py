@@ -361,7 +361,7 @@ to_mpl_color = rgbcolor
 class Color():
     def __init__(self, r='#0000ff', g=None, b=None, space='rgb'):
         """
-        An Red-Green-Blue (RGB) color model color object.  For most
+        A Red-Green-Blue (RGB) color model color object.  For most
         consumer-grade devices (e.g., CRTs, LCDs, and printers), as
         well as internet applications, this is a point in the sRGB
         absolute color space.  The Hue-Saturation-Lightness (HSL),

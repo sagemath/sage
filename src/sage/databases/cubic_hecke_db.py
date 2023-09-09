@@ -215,7 +215,7 @@ class CubicHeckeDataBase(SageObject):
         return self._demo
 
     # --------------------------------------------------------------------------
-    # read from an sobj-file obtained from Ivan Marin's database
+    # read from a sobj-file obtained from Ivan Marin's database
     # --------------------------------------------------------------------------
     def read(self, section, variables=None, nstrands=4):
         r"""
@@ -668,7 +668,7 @@ class CubicHeckeFileCache(SageObject):
         def filename(self, nstrands=None):
             r"""
             Return the file name under which the data of this file cache section
-            is stored as an sobj-file.
+            is stored as a sobj-file.
 
             INPUT:
 

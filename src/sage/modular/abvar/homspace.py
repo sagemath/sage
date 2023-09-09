@@ -955,7 +955,7 @@ class EndomorphismSubring(Homspace, Ring):
 
         OUTPUT:
 
-        - The image of the Hecke algebra as an subring of ``self``.
+        - The image of the Hecke algebra as a subring of ``self``.
 
         EXAMPLES::
 

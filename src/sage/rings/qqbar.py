@@ -2869,7 +2869,7 @@ def cmp_elements_with_same_minpoly(a, b, p):
     Compare the algebraic elements ``a`` and ``b`` knowing that they have the
     same minimal polynomial ``p``.
 
-    This is an helper function for comparison of algebraic elements (i.e. the
+    This is a helper function for comparison of algebraic elements (i.e. the
     methods :meth:`AlgebraicNumber._richcmp_` and
     :meth:`AlgebraicReal._richcmp_`).
 

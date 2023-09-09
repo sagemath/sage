@@ -408,7 +408,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
     def neighborhood(self, point):
         r"""
-        Return an toric algebraic scheme isomorphic to neighborhood of
+        Return a toric algebraic scheme isomorphic to neighborhood of
         the ``point``.
 
         INPUT:

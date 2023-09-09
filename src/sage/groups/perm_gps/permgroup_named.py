@@ -61,7 +61,7 @@ subgroups of index p
 -- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
                            the exceptional complex reflection group `G_m`
 
--- SmallPermutationGroup, a permutation realization of an group specified by its GAP id.
+-- SmallPermutationGroup, a permutation realization of a group specified by its GAP id.
 
 AUTHOR:
 

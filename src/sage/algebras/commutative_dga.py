@@ -3030,7 +3030,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         def cohomology_class(self):
             r"""
-            Return the cohomology class of an homogeneous cycle, as an element
+            Return the cohomology class of a homogeneous cycle, as an element
             of the corresponding cohomology group.
 
             EXAMPLES::
