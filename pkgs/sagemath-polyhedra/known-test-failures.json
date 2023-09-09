@@ -892,7 +892,9 @@
     "sage.homology.free_resolution": {},
     "sage.homology.graded_resolution": {},
     "sage.homology.hochschild_complex": {},
-    "sage.homology.homology_group": {},
+    "sage.homology.homology_group": {
+        "failed": true
+    },
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
@@ -1190,9 +1192,7 @@
     "sage.misc.map_threaded": {},
     "sage.misc.mathml": {},
     "sage.misc.method_decorator": {},
-    "sage.misc.misc": {
-        "failed": true
-    },
+    "sage.misc.misc": {},
     "sage.misc.misc_c": {},
     "sage.misc.misc_c.pxd": {},
     "sage.misc.mrange": {},

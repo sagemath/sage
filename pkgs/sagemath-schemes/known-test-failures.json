@@ -62,7 +62,9 @@
     "sage.calculus.interpolators": {
         "failed": true
     },
-    "sage.calculus.ode": {},
+    "sage.calculus.ode": {
+        "failed": true
+    },
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},

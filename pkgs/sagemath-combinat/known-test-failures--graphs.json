@@ -615,7 +615,9 @@
     "sage.combinat.regular_sequence": {},
     "sage.combinat.restricted_growth": {},
     "sage.combinat.ribbon": {},
-    "sage.combinat.ribbon_shaped_tableau": {},
+    "sage.combinat.ribbon_shaped_tableau": {
+        "failed": true
+    },
     "sage.combinat.ribbon_tableau": {},
     "sage.combinat.rigged_configurations.all": {},
     "sage.combinat.rigged_configurations.bij_abstract_class": {},
@@ -684,7 +686,9 @@
     "sage.combinat.skew_partition": {
         "failed": true
     },
-    "sage.combinat.skew_tableau": {},
+    "sage.combinat.skew_tableau": {
+        "failed": true
+    },
     "sage.combinat.sloane_functions": {},
     "sage.combinat.specht_module": {},
     "sage.combinat.species.all": {},

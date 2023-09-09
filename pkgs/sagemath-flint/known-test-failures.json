@@ -816,7 +816,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -838,7 +840,6 @@
     "sage.libs.all__sagemath_ntl": {},
     "sage.libs.all__sagemath_objects": {},
     "sage.libs.all__sagemath_pari": {},
-    "sage.libs.arb": {},
     "sage.libs.arb.acb.pxd": {},
     "sage.libs.arb.acb_calc.pxd": {},
     "sage.libs.arb.acb_elliptic.pxd": {},
@@ -849,9 +850,13 @@
     "sage.libs.arb.arb.pxd": {},
     "sage.libs.arb.arb_fmpz_poly.pxd": {},
     "sage.libs.arb.arb_hypgeom.pxd": {},
-    "sage.libs.arb.arb_version": {},
+    "sage.libs.arb.arb_version": {
+        "failed": true
+    },
     "sage.libs.arb.arf.pxd": {},
-    "sage.libs.arb.arith": {},
+    "sage.libs.arb.arith": {
+        "failed": true
+    },
     "sage.libs.arb.bernoulli.pxd": {},
     "sage.libs.arb.mag.pxd": {},
     "sage.libs.arb.types.pxd": {},
@@ -1297,9 +1302,7 @@
     "sage.misc.map_threaded": {},
     "sage.misc.mathml": {},
     "sage.misc.method_decorator": {},
-    "sage.misc.misc": {
-        "failed": true
-    },
+    "sage.misc.misc": {},
     "sage.misc.misc_c": {},
     "sage.misc.misc_c.pxd": {},
     "sage.misc.mrange": {},
@@ -1685,9 +1688,7 @@
     "sage.rings.finite_rings.homset": {
         "failed": true
     },
-    "sage.rings.finite_rings.integer_mod": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.integer_mod": {},
     "sage.rings.finite_rings.integer_mod.pxd": {},
     "sage.rings.finite_rings.integer_mod_ring": {},
     "sage.rings.finite_rings.maps_finite_field": {},
@@ -1876,6 +1877,9 @@
         "failed": true
     },
     "sage.rings.padics.pow_computer_ext.pxd": {},
+    "sage.rings.padics.pow_computer_flint": {
+        "failed": true
+    },
     "sage.rings.padics.pow_computer_flint.pxd": {},
     "sage.rings.padics.pow_computer_relative.pxd": {},
     "sage.rings.padics.precision_error": {},
@@ -2056,9 +2060,7 @@
     "sage.rings.quotient_ring_element": {},
     "sage.rings.rational": {},
     "sage.rings.rational.pxd": {},
-    "sage.rings.rational_field": {
-        "failed": true
-    },
+    "sage.rings.rational_field": {},
     "sage.rings.real_arb": {
         "failed": true
     },

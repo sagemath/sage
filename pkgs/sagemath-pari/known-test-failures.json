@@ -805,9 +805,7 @@
     "sage.rings.finite_rings.homset": {
         "failed": true
     },
-    "sage.rings.finite_rings.integer_mod": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.integer_mod": {},
     "sage.rings.finite_rings.integer_mod.pxd": {},
     "sage.rings.finite_rings.integer_mod_ring": {},
     "sage.rings.finite_rings.residue_field": {},

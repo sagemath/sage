@@ -1,10 +1,6 @@
 {
-    "sage.combinat.posets.posets": {
-        "failed": true
-    },
-    "sage.graphs.bipartite_graph": {
-        "failed": true
-    },
+    "sage.combinat.posets.posets": {},
+    "sage.graphs.bipartite_graph": {},
     "sage.graphs.bliss": {
         "failed": true
     },

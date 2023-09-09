@@ -3,13 +3,10 @@
         "failed": true
     },
     "sage.categories.coxeter_groups": {},
-    "sage.combinat.kazhdan_lusztig": {
-        "failed": true
-    },
+    "sage.combinat.kazhdan_lusztig": {},
     "sage.combinat.root_system.all": {},
-    "sage.combinat.root_system.ambient_space": {
-        "failed": true
-    },
+    "sage.combinat.root_system.all__sagemath_gap": {},
+    "sage.combinat.root_system.ambient_space": {},
     "sage.combinat.root_system.associahedron": {},
     "sage.combinat.root_system.braid_move_calculator": {},
     "sage.combinat.root_system.braid_orbit": {},
@@ -33,21 +30,16 @@
         "failed": true
     },
     "sage.combinat.root_system.hecke_algebra_representation": {},
-    "sage.combinat.root_system.integrable_representations": {
-        "failed": true
-    },
+    "sage.combinat.root_system.integrable_representations": {},
     "sage.combinat.root_system.non_symmetric_macdonald_polynomials": {
         "failed": true
     },
     "sage.combinat.root_system.pieri_factors": {},
     "sage.combinat.root_system.plot": {},
-    "sage.combinat.root_system.reflection_group_c": {
-        "failed": true
-    },
+    "sage.combinat.root_system.reflection_group_c": {},
     "sage.combinat.root_system.reflection_group_complex": {},
-    "sage.combinat.root_system.reflection_group_element": {
-        "failed": true
-    },
+    "sage.combinat.root_system.reflection_group_element": {},
+    "sage.combinat.root_system.reflection_group_element.pxd": {},
     "sage.combinat.root_system.reflection_group_real": {},
     "sage.combinat.root_system.root_lattice_realization_algebras": {
         "failed": true
@@ -80,9 +72,7 @@
     "sage.combinat.root_system.type_H": {},
     "sage.combinat.root_system.type_I": {},
     "sage.combinat.root_system.type_Q": {},
-    "sage.combinat.root_system.type_affine": {
-        "failed": true
-    },
+    "sage.combinat.root_system.type_affine": {},
     "sage.combinat.root_system.type_dual": {},
     "sage.combinat.root_system.type_folded": {},
     "sage.combinat.root_system.type_marked": {
@@ -93,19 +83,16 @@
         "failed": true
     },
     "sage.combinat.root_system.type_super_A": {},
-    "sage.combinat.root_system.weight_lattice_realizations": {
-        "failed": true
-    },
-    "sage.combinat.root_system.weight_space": {
-        "failed": true
-    },
+    "sage.combinat.root_system.weight_lattice_realizations": {},
+    "sage.combinat.root_system.weight_space": {},
     "sage.combinat.root_system.weyl_characters": {},
     "sage.combinat.root_system.weyl_group": {},
     "sage.libs.coxeter3": {},
     "sage.libs.coxeter3.all__sagemath_coxeter3": {},
     "sage.libs.coxeter3.coxeter": {},
+    "sage.libs.coxeter3.coxeter.pxd": {},
     "sage.libs.coxeter3.coxeter_group": {
         "failed": true
     },
-    "sage.libs.coxeter3.decl": {}
+    "sage.libs.coxeter3.decl.pxd": {}
 }

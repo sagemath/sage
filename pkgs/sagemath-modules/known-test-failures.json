@@ -1044,9 +1044,7 @@
     "sage.misc.map_threaded": {},
     "sage.misc.mathml": {},
     "sage.misc.method_decorator": {},
-    "sage.misc.misc": {
-        "failed": true
-    },
+    "sage.misc.misc": {},
     "sage.misc.misc_c": {},
     "sage.misc.misc_c.pxd": {},
     "sage.misc.mrange": {},

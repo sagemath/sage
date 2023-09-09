@@ -64,7 +64,9 @@
     "sage.calculus.interpolators": {
         "failed": true
     },
-    "sage.calculus.ode": {},
+    "sage.calculus.ode": {
+        "failed": true
+    },
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
@@ -971,6 +973,8 @@
     "sage.libs.gsl.zeta.pxd": {},
     "sage.libs.mpc.__init__.pxd": {},
     "sage.libs.mpc.types.pxd": {},
+    "sage.libs.mpfi.__init__.pxd": {},
+    "sage.libs.mpfi.types.pxd": {},
     "sage.libs.mpfr.__init__.pxd": {},
     "sage.libs.mpfr.types.pxd": {},
     "sage.libs.mpmath.all": {},
@@ -1115,6 +1119,7 @@
     "sage.matrix.action": {},
     "sage.matrix.action.pxd": {},
     "sage.matrix.all": {},
+    "sage.matrix.all__sagemath_ntl": {},
     "sage.matrix.args": {
         "failed": true
     },
@@ -1163,6 +1168,13 @@
     "sage.matrix.matrix_generic_sparse": {},
     "sage.matrix.matrix_generic_sparse.pxd": {},
     "sage.matrix.matrix_misc": {},
+    "sage.matrix.matrix_modn_dense_double.pxd": {},
+    "sage.matrix.matrix_modn_dense_float.pxd": {},
+    "sage.matrix.matrix_modn_dense_template.pxi": {
+        "failed": true
+    },
+    "sage.matrix.matrix_modn_dense_template_header.pxi": {},
+    "sage.matrix.matrix_modn_sparse.pxd": {},
     "sage.matrix.matrix_numpy_dense": {
         "failed": true
     },
@@ -1230,6 +1242,7 @@
     "sage.misc.all__sagemath_categories": {},
     "sage.misc.all__sagemath_environment": {},
     "sage.misc.all__sagemath_modules": {},
+    "sage.misc.all__sagemath_ntl": {},
     "sage.misc.all__sagemath_objects": {},
     "sage.misc.all__sagemath_repl": {},
     "sage.misc.allocator": {},
@@ -2049,9 +2062,7 @@
     "sage.rings.finite_rings.homset": {
         "failed": true
     },
-    "sage.rings.finite_rings.integer_mod": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.integer_mod": {},
     "sage.rings.finite_rings.integer_mod.pxd": {},
     "sage.rings.finite_rings.integer_mod_ring": {},
     "sage.rings.finite_rings.maps_finite_field": {},
@@ -2142,28 +2153,72 @@
     "sage.rings.number_field.number_field_element_base": {},
     "sage.rings.number_field.number_field_element_base.pxd": {},
     "sage.rings.number_field.number_field_ideal": {},
+    "sage.rings.padics.CA_template.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.CA_template_header.pxi": {},
+    "sage.rings.padics.CR_template.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.CR_template_header.pxi": {},
+    "sage.rings.padics.FM_template.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.FM_template_header.pxi": {},
+    "sage.rings.padics.FP_template.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.FP_template_header.pxi": {},
     "sage.rings.padics.all__sagemath_categories": {},
     "sage.rings.padics.all__sagemath_ntl": {},
     "sage.rings.padics.all__sagemath_pari": {},
     "sage.rings.padics.common_conversion": {},
+    "sage.rings.padics.common_conversion.pxd": {},
     "sage.rings.padics.local_generic": {},
     "sage.rings.padics.local_generic_element": {},
     "sage.rings.padics.local_generic_element.pxd": {},
     "sage.rings.padics.misc": {},
+    "sage.rings.padics.morphism.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_CA_element.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_CR_element.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_FM_element.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_element.pxd": {},
     "sage.rings.padics.padic_capped_absolute_element": {},
+    "sage.rings.padics.padic_capped_absolute_element.pxd": {},
     "sage.rings.padics.padic_capped_relative_element": {},
+    "sage.rings.padics.padic_capped_relative_element.pxd": {},
     "sage.rings.padics.padic_ext_element": {
         "failed": true
     },
     "sage.rings.padics.padic_ext_element.pxd": {},
     "sage.rings.padics.padic_fixed_mod_element": {},
+    "sage.rings.padics.padic_fixed_mod_element.pxd": {},
     "sage.rings.padics.padic_floating_point_element": {},
+    "sage.rings.padics.padic_floating_point_element.pxd": {},
     "sage.rings.padics.padic_generic": {},
+    "sage.rings.padics.padic_generic_element.pxd": {},
+    "sage.rings.padics.padic_printing.pxd": {},
+    "sage.rings.padics.padic_relaxed_element.pxd": {},
+    "sage.rings.padics.padic_relaxed_errors.pxd": {},
+    "sage.rings.padics.padic_template_element.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.padic_template_element_header.pxi": {},
+    "sage.rings.padics.pow_computer.pxd": {},
     "sage.rings.padics.pow_computer_ext": {
         "failed": true
     },
     "sage.rings.padics.pow_computer_ext.pxd": {},
+    "sage.rings.padics.pow_computer_relative.pxd": {},
     "sage.rings.padics.precision_error": {},
+    "sage.rings.padics.relative_ramified_CA.pxd": {},
+    "sage.rings.padics.relative_ramified_CR.pxd": {},
+    "sage.rings.padics.relative_ramified_FM.pxd": {},
+    "sage.rings.padics.relative_ramified_FP.pxd": {},
+    "sage.rings.padics.relaxed_template.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.relaxed_template_header.pxi": {},
     "sage.rings.polynomial.all__sagemath_categories": {},
     "sage.rings.polynomial.all__sagemath_modules": {},
     "sage.rings.polynomial.all__sagemath_ntl": {},
@@ -2250,6 +2305,7 @@
     "sage.rings.polynomial.polynomial_template.pxi": {
         "failed": true
     },
+    "sage.rings.polynomial.polynomial_template_header.pxi": {},
     "sage.rings.polynomial.polynomial_zz_pex": {
         "failed": true
     },
@@ -2306,6 +2362,7 @@
         "failed": true
     },
     "sage.rings.real_lazy.pxd": {},
+    "sage.rings.real_mpfi.pxd": {},
     "sage.rings.real_mpfr": {
         "failed": true
     },
@@ -2353,6 +2410,7 @@
     "sage.schemes.affine.affine_subscheme": {},
     "sage.schemes.all": {},
     "sage.schemes.all__sagemath_categories": {},
+    "sage.schemes.all__sagemath_ntl": {},
     "sage.schemes.berkovich.berkovich_cp_element": {},
     "sage.schemes.berkovich.berkovich_space": {},
     "sage.schemes.curves.affine_curve": {},
@@ -2520,12 +2578,11 @@
     },
     "sage.schemes.generic.spec": {},
     "sage.schemes.hyperelliptic_curves.all": {},
+    "sage.schemes.hyperelliptic_curves.all__sagemath_ntl": {},
     "sage.schemes.hyperelliptic_curves.constructor": {
         "failed": true
     },
-    "sage.schemes.hyperelliptic_curves.hypellfrob": {
-        "failed": true
-    },
+    "sage.schemes.hyperelliptic_curves.hypellfrob": {},
     "sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field": {
         "failed": true
     },

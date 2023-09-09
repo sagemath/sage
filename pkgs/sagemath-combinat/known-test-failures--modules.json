@@ -850,7 +850,9 @@
     "sage.combinat.parallelogram_polyomino": {
         "failed": true
     },
-    "sage.combinat.parking_functions": {},
+    "sage.combinat.parking_functions": {
+        "failed": true
+    },
     "sage.combinat.partition": {
         "failed": true
     },
@@ -1511,9 +1513,7 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1830,9 +1830,7 @@
     "sage.misc.map_threaded": {},
     "sage.misc.mathml": {},
     "sage.misc.method_decorator": {},
-    "sage.misc.misc": {
-        "failed": true
-    },
+    "sage.misc.misc": {},
     "sage.misc.misc_c": {},
     "sage.misc.misc_c.pxd": {},
     "sage.misc.mrange": {},

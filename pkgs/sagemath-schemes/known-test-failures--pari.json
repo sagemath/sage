@@ -63,7 +63,9 @@
     "sage.calculus.interpolators": {
         "failed": true
     },
-    "sage.calculus.ode": {},
+    "sage.calculus.ode": {
+        "failed": true
+    },
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
@@ -865,7 +867,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1921,9 +1925,7 @@
     "sage.rings.finite_rings.homset": {
         "failed": true
     },
-    "sage.rings.finite_rings.integer_mod": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.integer_mod": {},
     "sage.rings.finite_rings.integer_mod.pxd": {},
     "sage.rings.finite_rings.integer_mod_ring": {},
     "sage.rings.finite_rings.maps_finite_field": {},
