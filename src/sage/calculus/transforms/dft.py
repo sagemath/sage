@@ -303,6 +303,7 @@ class IndexedSequence(SageObject):
             Indexed sequence: [8, 2, 2]
              indexed by [(), (1,2), (1,2,3)]
 
+            sage: # needs sage.rings.number_field
             sage: J = AbelianGroup(2, [2,3], names='ab')
             sage: s = IndexedSequence([1,2,3,4,5,6], J)
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.

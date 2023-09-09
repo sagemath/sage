@@ -58,6 +58,7 @@ def polygon_spline(pts):
 
     Polygon approximation of an circle::
 
+        sage: # needs sage.symbolic
         sage: pts = [e^(I*t / 25) for t in range(25)]
         sage: ps = polygon_spline(pts)
         sage: ps.derivative(2)
