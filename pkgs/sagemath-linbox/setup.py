@@ -48,7 +48,7 @@ extra_files = find_extra_files(
 package_data = {"": [f
                      for pkg, files in extra_files.items()
                      for f in files ]}
-#package_data.update({'sage.libs.ntl': ['*.h']})
+package_data.update({'sage.libs.linbox': ['*.h']})
 python_packages += list(package_data)
 
 log.warn('python_packages = {0}'.format(python_packages))
