@@ -153,8 +153,6 @@ from cysignals.signals cimport sig_on, sig_off, sig_check, sig_occurred
 
 import operator
 
-import sage.arith.misc
-
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
@@ -4078,7 +4076,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if self.is_zero():
             raise ArithmeticError("support of 0 not defined")
-        return sage.arith.misc.prime_factors(self)
+        from sage.arith.misc import prime_factors
+
+        return prime_factors(self)
 
     def coprime_integers(self, m):
         """
