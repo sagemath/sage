@@ -64,8 +64,8 @@ def construction_3_3(k,n,m,i,explain_construction=False):
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import find_construction_3_3
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_3
         sage: from sage.combinat.designs.orthogonal_arrays import is_orthogonal_array
-        sage: k=11;n=177
-        sage: is_orthogonal_array(construction_3_3(*find_construction_3_3(k,n)[1]),k,n,2)
+        sage: k = 11; n = 177
+        sage: is_orthogonal_array(construction_3_3(*find_construction_3_3(k,n)[1]),k,n,2)           # needs sage.schemes
         True
 
         sage: print(designs.orthogonal_arrays.explain_construction(9,91))
