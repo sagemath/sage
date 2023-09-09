@@ -512,12 +512,6 @@ AC_ARG_ENABLE([notebook],
     done
   ])
 
-AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
-    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
-      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
-    done
-  ])
-
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
@@ -545,6 +539,22 @@ AC_ARG_ENABLE([sagelib],
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
+
+
+dnl Handle combinations of --disable-foo flags that may enable us to
+dnl prune even more dependencies.
+AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+AS_IF([test "$SAGE_ENABLE_r" = no -a "$SAGE_ENABLE_sage_docbuild" = no], [
+  dnl pytz is needed only by rpy2 and babel, and babel is already
+  dnl disabled by --disable-doc.
+  for pkg in pytz; do
+    AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+  done
+])
 
 dnl Packages that require a special override to use the SPKG
 dnl when the system package is not usable.
