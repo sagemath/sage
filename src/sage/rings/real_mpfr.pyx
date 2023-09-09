@@ -119,19 +119,26 @@ Make sure we don't have a new field for every new literal::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-import math # for log
-import sys
+import math  # for log
+import operator
 import re
+import sys
 
 from cpython.object cimport Py_NE, Py_EQ
 from cysignals.signals cimport sig_on, sig_off
 
+import sage.arith.misc
+import sage.misc.weak_dict
+import sage.rings.abc
+import sage.rings.infinity
+import sage.rings.rational_field
+
+from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.ext.stdsage cimport PY_NEW
-from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.mpfr cimport *
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.misc.superseded import deprecation_cython as deprecation
 
 from sage.structure.element cimport Element
@@ -139,10 +146,6 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
-
-import sage.misc.weak_dict
-
-import operator
 
 from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 
@@ -152,11 +155,6 @@ from sage.rings.rational cimport Rational
 from sage.categories.map cimport Map
 
 from sage.rings.real_double cimport RealDoubleElement
-
-import sage.rings.abc
-import sage.rings.rational_field
-
-import sage.rings.infinity
 
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.arith.numerical_approx cimport digits_to_bits
@@ -5328,7 +5326,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: r.algebraic_dependency(5)
             x^2 - 2
         """
-        return sage.arith.all.algdep(self,n)
+        return sage.arith.misc.algdep(self,n)
 
     algdep = algebraic_dependency
 

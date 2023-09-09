@@ -42,6 +42,7 @@ TESTS::
 from . import polynomial_element
 import sage.rings.rational_field
 
+from sage.arith.misc import crt
 from sage.rings.ring import Field, IntegralDomain, CommutativeRing
 
 from sage.misc.cachefunc import cached_method
@@ -1548,7 +1549,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 for ideal_gen in clgp_gen.gens():
                     rel_ideal_gen = back_to_rel(phi(ideal_gen))
                     prod_ideal_gen = [0]*i + [rel_ideal_gen.lift()] + [0]*(n - i - 1)
-                    poly_ideal_gen = self(sage.arith.all.crt(prod_ideal_gen, moduli))
+                    poly_ideal_gen = self(crt(prod_ideal_gen, moduli))
                     ideal_gens.append(poly_ideal_gen)
                 clgp_gens.append((tuple(ideal_gens), gen_order))
 
@@ -1764,7 +1765,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 mul_order = unit.multiplicative_order()
                 rel_unit = back_to_rel(phi(unit))
                 prod_unit = [1]*i + [rel_unit.lift()] + [1]*(n - i - 1)
-                poly_unit = self(sage.arith.all.crt(prod_unit, moduli))
+                poly_unit = self(crt(prod_unit, moduli))
                 units.append((poly_unit, mul_order))
 
         return units
@@ -1906,7 +1907,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             for gen in component_selmer_groups[isos[i][1]]:
                 rel_gen = back_to_rel(phi(gen))
                 prod_gen = [1]*i + [rel_gen.lift()] + [1]*(n - i - 1)
-                poly_gen = self(sage.arith.all.crt(prod_gen, moduli))
+                poly_gen = self(crt(prod_gen, moduli))
                 gens.append(poly_gen)
 
         return gens
