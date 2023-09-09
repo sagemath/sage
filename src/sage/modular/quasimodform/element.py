@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Elements of quasimodular forms rings
 

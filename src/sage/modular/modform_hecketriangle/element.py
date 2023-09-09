@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of Hecke modular forms spaces
 
@@ -30,10 +31,10 @@ class FormsElement(FormsRingElement):
 
         INPUT:
 
-        - ``parent``     -- a modular form space
+        - ``parent`` -- a modular form space
 
-        - ``rat``        -- a rational function which corresponds to a
-                            modular form in the modular form space
+        - ``rat`` -- a rational function which corresponds to a
+          modular form in the modular form space
 
         OUTPUT:
 
@@ -188,14 +189,14 @@ class FormsElement(FormsRingElement):
 
         INPUT:
 
-        - ``num_prec``           -- An integer denoting the to-be-used numerical precision.
-                                    If integer ``num_prec=None`` (default) the default
-                                    numerical precision of the parent of ``self`` is used.
+        - ``num_prec`` -- An integer denoting the to-be-used numerical precision.
+          If integer ``num_prec=None`` (default) the default
+          numerical precision of the parent of ``self`` is used.
 
         - ``max_imaginary_part`` -- A real number (default: 0), indicating up to which
-                                    imaginary part the L-series is going to be studied.
+          imaginary part the L-series is going to be studied.
 
-        - ``max_asymp_coeffs``   -- An integer (default: 40).
+        - ``max_asymp_coeffs`` -- An integer (default: 40).
 
         OUTPUT:
 

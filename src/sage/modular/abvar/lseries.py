@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 `L`-series of modular abelian varieties
 

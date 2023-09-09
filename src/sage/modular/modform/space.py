@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Generic spaces of modular forms
 
@@ -732,6 +733,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], QQ)._compute_q_expansion_basis(5)
             Traceback (most recent call last):
             ...
@@ -1617,10 +1619,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
          EXAMPLES::
 
-             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_submodule()
-             Traceback (most recent call last):
-             ...
-             NotImplementedError: computation of new submodule not yet implemented
+            sage: # needs sage.rings.number_field
+            sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_submodule()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computation of new submodule not yet implemented
          """
         raise NotImplementedError("computation of new submodule not yet implemented")
 
@@ -1630,6 +1633,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_subspace()
             Traceback (most recent call last):
             ...
