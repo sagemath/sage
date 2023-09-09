@@ -470,10 +470,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,                 # needs sage.schemes
+            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,
             ....:                                 (x-2*w)^2, x^2])
-            sage: f.orbit(P.subscheme([x]), 5)                                          # needs sage.schemes
+            sage: f.orbit(P.subscheme([x]), 5)
             [Closed subscheme of Projective Space of dimension 3 over Rational Field
               defined by: x,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
@@ -1040,9 +1041,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.degree()                                                            # needs sage.libs.singular
             3
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
-            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])            # needs sage.schemes
-            sage: C.degree()                                                            # needs sage.libs.singular sage.schemes
+            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])
+            sage: C.degree()
             63
         """
         P = self.defining_ideal().hilbert_polynomial()
@@ -1158,10 +1160,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)
-            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # needs sage.schemes
+            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)
             sage: Q = P([3,0,0,1])
-            sage: C.multiplicity(Q)                                                     # needs sage.libs.singular sage.schemes
+            sage: C.multiplicity(Q)
             8
         """
         if self.base_ring() not in Fields():
