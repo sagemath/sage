@@ -193,7 +193,7 @@ def find_local_maximum(f, a, b, tol=1.48e-08, maxfun=500):
         (0.561096338191..., 0.8603335890...)
         sage: find_local_maximum(f, 0, 5, tol=0.1, maxfun=10)
         (0.561090323458..., 0.857926501456...)
-        sage: find_local_maximum(8*e^(-x)*sin(x) - 1, 0, 7)
+        sage: find_local_maximum(8*e^(-x)*sin(x) - 1, 0, 7)                             # needs sage.symbolic
         (1.579175535558..., 0.7853981...)
     """
     try:
@@ -250,12 +250,14 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
 
     ::
 
+        sage: # needs sage.symbolic
         sage: f(x) = -x*sin(x^2)
         sage: find_local_minimum(f, -2.5, -1)
         (-2.182769784677722, -2.1945027498534686)
 
     Enlarging the interval returns a larger minimum::
 
+        sage: # needs sage.symbolic
         sage: find_local_minimum(f, -2.5, 2)
         (-1.3076194129914434, 1.3552111405712108)
 
@@ -264,9 +266,10 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     numerics (observe the small number of decimal places that we
     actually test)::
 
-        sage: plot(f, (x, -2.5, -1)).ymin()                                             # needs sage.plot
+        sage: # needs sage.plot sage.symbolic
+        sage: plot(f, (x, -2.5, -1)).ymin()
         -2.182...
-        sage: plot(f, (x, -2.5, 2)).ymin()                                              # needs sage.plot
+        sage: plot(f, (x, -2.5, 2)).ymin()
         -2.182...
 
     ALGORITHM:
@@ -750,6 +753,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
 
     We search for a formula for the `n`-th prime number::
 
+        sage: # needs sage.libs.pari
         sage: dataprime = [(i, nth_prime(i)) for i in range(1, 5000, 100)]
         sage: find_fit(dataprime, a * x * log(b * x),                                   # needs sage.symbolic
         ....:          parameters=[a, b], variables=[x])
@@ -908,24 +912,24 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
 
         sage: from sage.numerical.optimize import binpacking
         sage: values = [1/5, 1/3, 2/3, 3/4, 5/7]
-        sage: bins = binpacking(values)
-        sage: len(bins)
+        sage: bins = binpacking(values)                                                 # needs sage.numerical.mip
+        sage: len(bins)                                                                 # needs sage.numerical.mip
         3
 
     Checking the bins are of correct size ::
 
-        sage: all(sum(b) <= 1 for b in bins)
+        sage: all(sum(b) <= 1 for b in bins)                                            # needs sage.numerical.mip
         True
 
     Checking every item is in a bin ::
 
-        sage: b1, b2, b3 = bins
-        sage: all((v in b1 or v in b2 or v in b3) for v in values)
+        sage: b1, b2, b3 = bins                                                         # needs sage.numerical.mip
+        sage: all((v in b1 or v in b2 or v in b3) for v in values)                      # needs sage.numerical.mip
         True
 
     And only in one bin ::
 
-        sage: sum(len(b) for b in bins) == len(values)
+        sage: sum(len(b) for b in bins) == len(values)                                  # needs sage.numerical.mip
         True
 
     One way to use only three boxes (which is best possible) is to put
@@ -935,7 +939,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
     Of course, we can also check that there is no solution using only two boxes ::
 
         sage: from sage.numerical.optimize import binpacking
-        sage: binpacking([0.2,0.3,0.8,0.9], k=2)
+        sage: binpacking([0.2,0.3,0.8,0.9], k=2)                                        # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         ValueError: this problem has no solution
@@ -944,8 +948,8 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
     its weight. Then, the bins contain the name of the items inside it ::
 
         sage: values = {'a':1/5, 'b':1/3, 'c':2/3, 'd':3/4, 'e':5/7}
-        sage: bins = binpacking(values)
-        sage: set(flatten(bins)) == set(values.keys())
+        sage: bins = binpacking(values)                                                 # needs sage.numerical.mip
+        sage: set(flatten(bins)) == set(values.keys())                                  # needs sage.numerical.mip
         True
 
     TESTS:
