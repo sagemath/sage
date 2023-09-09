@@ -1788,113 +1788,6 @@ class Stream_dirichlet_convolve(Stream_binary):
                        and (l := self._left[k])))
 
 
-class Stream_dirichlet_invert(Stream_unary):
-    r"""
-    Operator for inverse with respect to Dirichlet convolution of the stream.
-
-    INPUT:
-
-    - ``series`` -- a :class:`Stream`
-
-    EXAMPLES::
-
-        sage: from sage.data_structures.stream import (Stream_dirichlet_invert, Stream_function)
-        sage: f = Stream_function(lambda n: 1, True, 1)
-        sage: g = Stream_dirichlet_invert(f, True)
-        sage: [g[i] for i in range(10)]
-        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
-        sage: [moebius(i) for i in range(10)]                                           # needs sage.libs.pari
-        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
-    """
-    def __init__(self, series, is_sparse):
-        """
-        Initialize.
-
-        TESTS::
-
-            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
-            sage: f = Stream_exact([0, 0], constant=1)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g[1]
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is non-zero
-        """
-        super().__init__(series, is_sparse)
-        self._zero = ZZ.zero()
-
-    @lazy_attribute
-    def _approximate_order(self):
-        """
-        Compute and return the approximate order of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function, Stream_dirichlet_invert
-            sage: f = Stream_function(lambda n: n, True, 1)
-            sage: h = Stream_dirichlet_invert(f, True)
-            sage: h._approximate_order
-            1
-            sage: [h[i] for i in range(5)]
-            [0, -2, -8, -12, -48]
-        """
-        # this is the true order, but we want to check first
-        if self._series._approximate_order > 1:
-            raise ZeroDivisionError("the Dirichlet inverse only exists if the "
-                                    "coefficient with index 1 is non-zero")
-        self._true_order = True
-        return 1
-
-    @lazy_attribute
-    def _ainv(self):
-        """
-        The inverse of the leading coefficient.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
-            sage: f = Stream_exact([0, 3], constant=2)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g._ainv
-            1/3
-
-            sage: f = Stream_exact([Zmod(6)(5)], constant=2, order=1)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g._ainv
-            5
-        """
-        try:
-            return ~self._series[1]
-        except TypeError:
-            return self._series[1].inverse_of_unit()
-
-    def get_coefficient(self, n):
-        """
-        Return the ``n``-th coefficient of ``self``.
-
-        INPUT:
-
-        - ``n`` -- integer; the degree for the coefficient
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
-            sage: f = Stream_exact([0, 3], constant=2)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g.get_coefficient(6)
-            2/27
-            sage: [g[i] for i in range(8)]
-            [0, 1/3, -2/9, -2/9, -2/27, -2/9, 2/27, -2/9]
-        """
-        if n == 1:
-            return self._ainv
-        # TODO: isn't self[k] * l and l * self[k] the same here?
-        c = sum(self[k] * l for k in divisors(n)
-                if (k < n
-                    and (l := self._series[n // k])))
-        return -c * self._ainv
-
-
 class Stream_cauchy_compose(Stream_binary):
     r"""
     Return ``f`` composed by ``g``.
@@ -2765,6 +2658,113 @@ class Stream_cauchy_invert(Stream_unary):
             True
         """
         return True
+
+
+class Stream_dirichlet_invert(Stream_unary):
+    r"""
+    Operator for inverse with respect to Dirichlet convolution of the stream.
+
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import (Stream_dirichlet_invert, Stream_function)
+        sage: f = Stream_function(lambda n: 1, True, 1)
+        sage: g = Stream_dirichlet_invert(f, True)
+        sage: [g[i] for i in range(10)]
+        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
+        sage: [moebius(i) for i in range(10)]                                           # needs sage.libs.pari
+        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
+    """
+    def __init__(self, series, is_sparse):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 0], constant=1)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g[1]
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is non-zero
+        """
+        super().__init__(series, is_sparse)
+        self._zero = ZZ.zero()
+
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_dirichlet_invert
+            sage: f = Stream_function(lambda n: n, True, 1)
+            sage: h = Stream_dirichlet_invert(f, True)
+            sage: h._approximate_order
+            1
+            sage: [h[i] for i in range(5)]
+            [0, -2, -8, -12, -48]
+        """
+        # this is the true order, but we want to check first
+        if self._series._approximate_order > 1:
+            raise ZeroDivisionError("the Dirichlet inverse only exists if the "
+                                    "coefficient with index 1 is non-zero")
+        self._true_order = True
+        return 1
+
+    @lazy_attribute
+    def _ainv(self):
+        """
+        The inverse of the leading coefficient.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 3], constant=2)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g._ainv
+            1/3
+
+            sage: f = Stream_exact([Zmod(6)(5)], constant=2, order=1)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g._ainv
+            5
+        """
+        try:
+            return ~self._series[1]
+        except TypeError:
+            return self._series[1].inverse_of_unit()
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 3], constant=2)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g.get_coefficient(6)
+            2/27
+            sage: [g[i] for i in range(8)]
+            [0, 1/3, -2/9, -2/9, -2/27, -2/9, 2/27, -2/9]
+        """
+        if n == 1:
+            return self._ainv
+        # TODO: isn't self[k] * l and l * self[k] the same here?
+        c = sum(self[k] * l for k in divisors(n)
+                if (k < n
+                    and (l := self._series[n // k])))
+        return -c * self._ainv
 
 
 class Stream_map_coefficients(Stream_unary):
