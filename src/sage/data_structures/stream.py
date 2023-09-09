@@ -179,7 +179,6 @@ class Stream():
             False
             sage: CS != Stream(-2)
             False
-
         """
         return False
 
@@ -199,21 +198,18 @@ class Stream():
         """
         return False
 
-    def is_trivially_ne(self, other):
-        """
-        Return if ``self`` is trivially not equal to ``other``.
+    def is_uninitialized(self):
+        r"""
+        Return ``True`` if ``self`` is an uninitialized stream.
 
         The default implementation is ``False``.
 
-        .. NOTE::
+        EXAMPLES::
 
-            This does not check that the streams are equal.
-        """
-        return False
-
-    def is_uninitialized(self):
-        """
-        Return ``True`` if ``self`` is an uninitialized stream.
+            sage: from sage.data_structures.stream import Stream_zero
+            sage: zero = Stream_zero()
+            sage: zero.is_uninitialized()
+            False
         """
         return False
 
@@ -939,7 +935,6 @@ class Stream_iterator(Stream_inexact):
         sage: f = Stream_iterator(iter(NonNegativeIntegers()), 1)
         sage: [f[i] for i in range(10)]
         [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-
     """
     def __init__(self, iter, approximate_order, true_order=False):
         """
@@ -967,6 +962,11 @@ class Stream_function(Stream_inexact):
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
+
+    .. NOTE::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
 
     EXAMPLES::
 
@@ -999,6 +999,43 @@ class Stream_function(Stream_inexact):
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
         self._approximate_order = approximate_order
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: g = Stream_function(lambda n: 1, False, 1)
+            sage: hash(f) == hash(g)
+            True
+        """
+        # We don't hash the function as it might not be hashable.
+        return hash(type(self))
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: fun = lambda n: n
+            sage: f = Stream_function(fun, True, 0)
+            sage: g = Stream_function(fun, False, 0)
+            sage: h = Stream_function(lambda n: n, False, 0)
+            sage: f == g
+            True
+            sage: f == h
+            False
+        """
+        return isinstance(other, type(self)) and self.get_coefficient == other.get_coefficient
 
 
 class Stream_uninitialized(Stream_inexact):
@@ -1086,6 +1123,9 @@ class Stream_unary(Stream_inexact):
     INPUT:
 
     - ``series`` -- :class:`Stream` the operator acts on
+    - ``is_sparse`` -- boolean
+    - ``true_order`` -- boolean (default: ``False``) if the approximate order
+      is the actual order
 
     EXAMPLES::
 
@@ -1098,7 +1138,7 @@ class Stream_unary(Stream_inexact):
         sage: [g[i] for i in range(10)]
         [0, 4, 8, 12, 16, 20, 24, 28, 32, 36]
     """
-    def __init__(self, series, is_sparse):
+    def __init__(self, series, is_sparse, true_order=False):
         """
         Initialize ``self``.
 
@@ -1113,7 +1153,7 @@ class Stream_unary(Stream_inexact):
             sage: TestSuite(g).run()
         """
         self._series = series
-        super().__init__(is_sparse, False)
+        super().__init__(is_sparse, true_order)
 
     def __hash__(self):
         """
@@ -1350,7 +1390,6 @@ class Stream_zero(Stream):
         sage: s[5]
         0
     """
-
     def __init__(self):
         """
         Initialize ``self``.
@@ -1360,7 +1399,6 @@ class Stream_zero(Stream):
             sage: from sage.data_structures.stream import Stream_zero
             sage: s = Stream_zero()
             sage: TestSuite(s).run()
-
         """
         super().__init__(True)
         self._approximate_order = infinity
@@ -1415,7 +1453,7 @@ class Stream_zero(Stream):
 
     def __ne__(self, other):
         """
-        Return whether ``self`` and ``other`` are known to be not equal.
+        Return whether ``self`` and ``other`` are known to be different.
 
         INPUT:
 
@@ -1748,6 +1786,7 @@ class Stream_dirichlet_convolve(Stream_binary):
                    if (k >= self._left._approximate_order
                        and n // k >= self._right._approximate_order
                        and (l := self._left[k])))
+
 
 class Stream_dirichlet_invert(Stream_unary):
     r"""
@@ -2309,7 +2348,7 @@ class Stream_plethysm(Stream_binary):
 #####################################################################
 # Unary operations
 
-class Stream_scalar(Stream_inexact):
+class Stream_scalar(Stream_unary):
     """
     Base class for operators multiplying a coefficient stream by a
     scalar.
@@ -2318,14 +2357,7 @@ class Stream_scalar(Stream_inexact):
 
     - ``series`` -- a :class:`Stream`
     - ``scalar`` -- a non-zero, non-one scalar
-
-    .. TODO::
-
-        This does not inherit from :class:`Stream_unary`, because of
-        the extra argument ``scalar``.  However, we could also
-        override :meth:`Stream_unary.hash`,
-        :meth:`Stream_unary.__eq__`.  Would this be any better?
-
+    - ``is_sparse`` -- boolean
     """
     def __init__(self, series, scalar, is_sparse):
         """
@@ -2337,10 +2369,10 @@ class Stream_scalar(Stream_inexact):
             sage: f = Stream_function(lambda n: -1, True, 0)
             sage: g = Stream_rmul(f, 3, True)
         """
-        self._series = series
         self._scalar = scalar
         assert scalar, "the scalar must not be equal to 0"
-        super().__init__(is_sparse, series._true_order)
+        assert scalar != 1, "the scalar must not be equal to 1"
+        super().__init__(series, is_sparse, series._true_order)
 
     @lazy_attribute
     def _approximate_order(self):
@@ -2422,20 +2454,6 @@ class Stream_scalar(Stream_inexact):
             True
         """
         return self._series.is_nonzero()
-
-    def is_uninitialized(self):
-        """
-        Return ``True`` if ``self`` is an uninitialized stream.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_lmul, Stream_function
-            sage: C = Stream_uninitialized(0)
-            sage: B = Stream_lmul(C, 2, True)
-            sage: B.is_uninitialized()
-            True
-        """
-        return self._series.is_uninitialized()
 
 
 class Stream_rmul(Stream_scalar):
@@ -2749,7 +2767,7 @@ class Stream_cauchy_invert(Stream_unary):
         return True
 
 
-class Stream_map_coefficients(Stream_inexact):
+class Stream_map_coefficients(Stream_unary):
     r"""
     The stream with ``function`` applied to each non-zero coefficient
     of ``series``.
@@ -2758,6 +2776,11 @@ class Stream_map_coefficients(Stream_inexact):
 
     - ``series`` -- a :class:`Stream`
     - ``function`` -- a function that modifies the elements of the stream
+
+    .. NOTE::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
 
     EXAMPLES::
 
@@ -2780,8 +2803,7 @@ class Stream_map_coefficients(Stream_inexact):
             sage: TestSuite(g).run(skip="_test_pickling")
         """
         self._function = function
-        self._series = series
-        super().__init__(is_sparse, true_order)
+        super().__init__(series, is_sparse, true_order)
         if approximate_order is not None:
             self._approximate_order = approximate_order
 
@@ -2868,20 +2890,6 @@ class Stream_map_coefficients(Stream_inexact):
         """
         return (isinstance(other, type(self)) and self._series == other._series
                 and self._function == other._function)
-
-    def is_uninitialized(self):
-        """
-        Return ``True`` if ``self`` is an uninitialized stream.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_map_coefficients
-            sage: C = Stream_uninitialized(0)
-            sage: M = Stream_map_coefficients(C, lambda n: -n, True)
-            sage: M.is_uninitialized()
-            True
-        """
-        return self._series.is_uninitialized()
 
 
 class Stream_shift(Stream):
@@ -3031,7 +3039,7 @@ class Stream_shift(Stream):
         return self._series.is_uninitialized()
 
 
-class Stream_truncated(Stream_inexact):
+class Stream_truncated(Stream_unary):
     """
     Operator for shifting a non-zero, non-exact stream that has
     been shifted below its minimal valuation.
@@ -3081,9 +3089,8 @@ class Stream_truncated(Stream_inexact):
             sage: s._approximate_order
             3
         """
-        super().__init__(series._is_sparse, False)
+        super().__init__(series, series._is_sparse, False)
         assert isinstance(series, Stream_inexact)
-        self._series = series
         # We share self._series._cache but not self._series._approximate order
         # self._approximate_order cannot be updated by self._series.__getitem__
         self._cache = series._cache
@@ -3279,22 +3286,8 @@ class Stream_truncated(Stream_inexact):
         start = self._approximate_order - offset
         return any(self._cache[start:])
 
-    def is_uninitialized(self):
-        """
-        Return ``True`` if ``self`` is an uninitialized stream.
 
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_truncated
-            sage: C = Stream_uninitialized(0)
-            sage: S = Stream_truncated(C, -5, 3)
-            sage: S.is_uninitialized()
-            True
-        """
-        return self._series.is_uninitialized()
-
-
-class Stream_derivative(Stream_inexact):
+class Stream_derivative(Stream_unary):
     """
     Operator for taking derivatives of a non-exact stream.
 
@@ -3302,6 +3295,7 @@ class Stream_derivative(Stream_inexact):
 
     - ``series`` -- a :class:`Stream`
     - ``shift`` -- a positive integer
+    - ``is_sparse`` -- boolean
     """
     def __init__(self, series, shift, is_sparse):
         """
@@ -3314,9 +3308,8 @@ class Stream_derivative(Stream_inexact):
             sage: f2 = Stream_derivative(f, 2, True)
             sage: TestSuite(f2).run()
         """
-        self._series = series
         self._shift = shift
-        super().__init__(is_sparse, False)
+        super().__init__(series, is_sparse, False)
 
     @lazy_attribute
     def _approximate_order(self):
@@ -3420,17 +3413,3 @@ class Stream_derivative(Stream_inexact):
             True
         """
         return self._series.is_nonzero()
-
-    def is_uninitialized(self):
-        """
-        Return ``True`` if ``self`` is an uninitialized stream.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_derivative
-            sage: C = Stream_uninitialized(0)
-            sage: D = Stream_derivative(C, 1, True)
-            sage: D.is_uninitialized()
-            True
-        """
-        return self._series.is_uninitialized()

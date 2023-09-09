@@ -1158,9 +1158,18 @@ class LazyModuleElement(Element):
         v = self._coeff_stream._approximate_order
         return any(self[i] for i in range(v, v + prec))
 
-    def is_nonzero(self):
+    def is_nonzero(self, proof=False):
         r"""
         Return ``True`` if ``self`` is *known* to be nonzero.
+
+        INPUT:
+
+        - ``proof`` -- (default: ``False``) if ``True``, this will also return
+          an index such that ``self`` has a nonzero coefficient
+
+        .. WARNING::
+
+            If the stream is exactly zero, this will run forever.
 
         EXAMPLES:
 
@@ -1197,42 +1206,32 @@ class LazyModuleElement(Element):
             sage: g.is_nonzero()  # checks up to degree 62 = 42 + 20
             True
             sage: L.options._reset()
+
+        With a proof::
+
+            sage: L.<z> = LazyLaurentSeriesRing(GF(5))
+            sage: g = L(lambda n: 5 if n < 50 else 1, valuation=2)
+            sage: g.is_nonzero(proof=True)
+            (True, 50)
+
+            sage: L.zero().is_nonzero(proof=True)
+            (False, None)
         """
+        if proof:
+            if isinstance(self._coeff_stream, Stream_zero):
+                return (False, None)
+
+            i = self._coeff_stream._approximate_order
+            while True:
+                if self[i]:
+                    return (True, i)
+                i += 1
+
         if self._coeff_stream.is_nonzero():
             return True
         if self.parent().options['halting_precision'] is not None:
             return bool(self)
         return False
-
-    def prove_nonzero(self):
-        r"""
-        Generate coefficients until the result is shown to be nonzero
-        and returns the degree with the first nonzero coefficient.
-
-        .. WARNING::
-
-            If the stream is exactly zero, this will run forever.
-
-        EXAMPLES::
-
-            sage: L.<z> = LazyLaurentSeriesRing(GF(5))
-            sage: g = L(lambda n: 0 if n < 50 else 1, valuation=2)
-            sage: g.prove_nonzero()
-            50
-
-            sage: L.zero().prove_nonzero()
-            Traceback (most recent call last):
-            ...
-            ValueError: trivially zero
-        """
-        if isinstance(self._coeff_stream, Stream_zero):
-            raise ValueError("trivially zero")
-
-        i = self._coeff_stream._approximate_order
-        while True:
-            if self[i]:
-                return i
-            i += 1
 
     def is_trivial_zero(self):
         r"""
@@ -1645,7 +1644,7 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(e)
             sage: L.options.display_length = 3
             sage: ascii_art(1 / (1 - e[1]*z))
-            e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3
+            e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3)
             sage: x = L.undefined(valuation=0)                                          # optional - sage.combinat
             sage: ascii_art(x + x^2 - 5)                                                # optional - sage.combinat
             Uninitialized Lazy Series
@@ -1655,7 +1654,7 @@ class LazyModuleElement(Element):
         if isinstance(self._coeff_stream, Stream_zero):
             return AsciiArt('0')
         if self._coeff_stream.is_uninitialized():
-            return AsciiArt('Uninitialized Lazy Series')
+            return AsciiArt(['Uninitialized Lazy Series'])
         return self._format_series(ascii_art, True)
 
     def _unicode_art_(self):
@@ -1671,7 +1670,7 @@ class LazyModuleElement(Element):
             sage: unicode_art(1 / (1 - e[1]*z))
             e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3)
             sage: x = L.undefined(valuation=0)                                          # optional - sage.combinat
-            sage: ascii_art(x + x^2 - 5)                                                # optional - sage.combinat
+            sage: unicode_art(x + x^2 - 5)                                              # optional - sage.combinat
             Uninitialized Lazy Series
             sage: L.options._reset()
         """
@@ -1679,7 +1678,7 @@ class LazyModuleElement(Element):
         if isinstance(self._coeff_stream, Stream_zero):
             return UnicodeArt('0')
         if self._coeff_stream.is_uninitialized():
-            return UnicodeArt('Uninitialized Lazy Series')
+            return UnicodeArt(['Uninitialized Lazy Series'])
         return self._format_series(unicode_art, True)
 
     def change_ring(self, ring):
