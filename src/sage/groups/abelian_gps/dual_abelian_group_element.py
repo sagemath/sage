@@ -157,7 +157,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             sage: w = a^7*b^3*c^5*d^4*e^4
             sage: x = a^3*b^2*c^2*d^3*e^5
             sage: y = a^2*b^4*c^2*d^4*e^5
-            sage: e.word_problem([u,v,w,x,y])
+            sage: e.word_problem([u,v,w,x,y])                                           # needs sage.libs.gap
             [[b^2*c^2*d^3*e^5, 245]]
         """
         from sage.libs.gap.libgap import libgap
