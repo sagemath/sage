@@ -310,9 +310,9 @@ def dimension_upper_bound(n, d, q, algorithm=None):
 
     EXAMPLES::
 
-        sage: codes.bounds.dimension_upper_bound(10,3,2)                                # needs sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(10,3,2)                                # needs sage.libs.pari sage.symbolic
         6
-        sage: codes.bounds.dimension_upper_bound(30,15,4)                               # needs sage.libs.pari
+        sage: codes.bounds.dimension_upper_bound(30,15,4)                               # needs sage.libs.pari sage.symbolic
         13
         sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # needs sage.libs.pari sage.numerical.mip
         12
@@ -572,7 +572,7 @@ def gv_info_rate(n, delta, q):
 
     EXAMPLES::
 
-        sage: RDF(codes.bounds.gv_info_rate(100,1/4,3))  # abs tol 1e-15                # needs sage.libs.pari
+        sage: RDF(codes.bounds.gv_info_rate(100,1/4,3))  # abs tol 1e-15                # needs sage.libs.pari sage.symbolic
         0.36704992608261894
     """
     q = ZZ(q)
@@ -643,6 +643,7 @@ def entropy_inverse(x, q=2):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.coding.code_bounds import entropy_inverse
         sage: entropy_inverse(0.1)                                                      # needs scipy
         0.012986862055...
@@ -680,6 +681,7 @@ def gv_bound_asymp(delta, q):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: RDF(codes.bounds.gv_bound_asymp(1/4,2))                                   # needs sage.libs.pari
         0.18872187554086...
         sage: f = lambda x: codes.bounds.gv_bound_asymp(x,2)
@@ -695,6 +697,7 @@ def hamming_bound_asymp(delta, q):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: RDF(codes.bounds.hamming_bound_asymp(1/4,2))                              # needs sage.libs.pari
         0.456435556800...
         sage: f = lambda x: codes.bounds.hamming_bound_asymp(x,2)

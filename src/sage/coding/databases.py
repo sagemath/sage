@@ -216,6 +216,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all self-orthogonal codes of length up to 7 and dimension up
     to 3::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3):
         ....:    print(B)
         [2, 1] linear code over GF(2)
@@ -230,6 +231,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all doubly-even codes of length up to 7 and dimension up
     to 3::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3,4):
         ....:    print(B); print(B.generator_matrix())
         [4, 1] linear code over GF(2)
@@ -245,6 +247,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all doubly-even codes of length up to 7 and dimension up
     to 2::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,2,4):
         ....:    print(B); print(B.generator_matrix())
         [4, 1] linear code over GF(2)
@@ -256,6 +259,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all self-orthogonal codes of length equal to 8 and
     dimension equal to 4::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(8, 4, equal=True):
         ....:     print(B); print(B.generator_matrix())
         [8, 4] linear code over GF(2)

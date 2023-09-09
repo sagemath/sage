@@ -135,7 +135,7 @@ class KasamiCode(AbstractLinearCode):
         True
         sage: C1 == C2
         False
-        sage: C1.minimum_distance() == C2.minimum_distance()+1
+        sage: C1.minimum_distance() == C2.minimum_distance() + 1                        # needs sage.libs.gap
         True
         sage: C = codes.KasamiCode(4,2)
         sage: C.dimension()

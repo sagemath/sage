@@ -3944,6 +3944,7 @@ cdef class BinaryCodeClassifier:
 
         MORE EXAMPLES::
 
+            sage: # needs sage.groups
             sage: soc_iter = codes.databases.self_orthogonal_binary_codes(12, 6, 4)
             sage: L = list(soc_iter)
             sage: for n in range(13):

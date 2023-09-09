@@ -2255,15 +2255,14 @@ class LinearCode(AbstractLinearCode):
     optional parameter.::
 
         sage: C  = LinearCode(G, d=3)
-        sage: C.minimum_distance()
+        sage: C.minimum_distance()                                                      # needs sage.libs.gap
         3
 
     Another example.::
 
         sage: MS = MatrixSpace(GF(5),4,7)
         sage: G  = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
-        sage: C  = LinearCode(G)
-        sage: C
+        sage: C  = LinearCode(G); C
         [7, 4] linear code over GF(5)
 
     Providing a code as the parameter in order to "forget" its structure (see
