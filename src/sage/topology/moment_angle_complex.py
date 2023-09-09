@@ -845,7 +845,8 @@ class CohomologyRing(CombinatorialFreeModule):
         The given isomorphism does not rely on the default
         ring structure given by the direct sum of cohomologies,
         but rather it is a vector space isomorphism, where the ring
-        structure (multiplication on the right-hand side) is defined in a certain way. See
+        structure (multiplication on the right-hand side) is defined
+        in a certain way. See
         :meth:`sage.topology.moment_angle_complex.CohomologyRing.Element.cup_product`
         for more information.
 
@@ -862,7 +863,29 @@ class CohomologyRing(CombinatorialFreeModule):
 
     EXAMPLES::
 
-    <lots_of_examples>
+        sage: Z = MomentAngleComplex([[1,2,3], [1,2,4], [3,5], [4,5]])
+        sage: H = Z.cohomology_ring(); H
+        Cohomology module of Moment-angle complex of Simplicial complex with
+        vertex set (1, 2, 3, 4, 5) and facets {(3, 5), (4, 5), (1, 2, 3),
+        (1, 2, 4)} over Rational Field
+        sage: a = H.an_element(); a
+        2*h^{0,0} + 2*h^{3,0} + 3*h^{3,1}
+        sage: b = H.basis()[3,2]
+
+    We can compute the cup product::
+
+        sage: a.cup_product(b)
+        2*h^{3,2} - 5*h^{6,0}
+        sage: a * a
+        4*h^{0,0} + 8*h^{3,0} + 12*h^{3,1}
+
+        sage: RP2 = simplicial_complexes.RealProjectivePlane()
+        sage: Z = MomentAngleComplex(RP2)
+        sage: H = Z.cohomology_ring(GF(2))
+        sage: x = H.basis(5)[5, 0]
+        sage: y = H.basis(5)[5, 1]
+        sage: x * y
+        0
     """
     def __init__(self, base_ring, moment_angle_complex):
         """
@@ -870,7 +893,12 @@ class CohomologyRing(CombinatorialFreeModule):
 
         TESTS::
 
-        <lots_of_examples>
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: Z = MomentAngleComplex(S2)
+            sage: H = Z.cohomology_ring(GF(5))
+            sage: TestSuite(H).run()
+            sage: H = Z.cohomology_ring(ZZ)
+            sage: TestSuite(H).run()
         """
         self._complex = moment_angle_complex
         self._base_ring = base_ring
@@ -906,7 +934,8 @@ class CohomologyRing(CombinatorialFreeModule):
 
     def basis(self, d=None):
         """
-        Return (the degree ``d`` homogeneous component of) the basis of ``self``.
+        Return (the degree ``d`` homogeneous component of) the basis
+        of ``self``.
 
         INPUT:
 
@@ -914,7 +943,19 @@ class CohomologyRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-        <lots_of_examples>
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: Z = MomentAngleComplex(S2)
+            sage: H = Z.cohomology_ring()
+            sage: H.basis()
+            Finite family {(0, 0): h^{0,0}, (7, 0): h^{7,0}}
+            sage: H.basis(5)
+            Finite family {}
+            sage: H.basis(7)
+            Finite family {(7, 0): h^{7,0}}
+            sage: H.basis()[7, 0]
+            h^{7,0}
+            sage: H.basis(8)
+            Finite family {}
         """
         if d is None:
             return Family(self._indices, self.monomial)
@@ -928,7 +969,10 @@ class CohomologyRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-        <lots_of_examples>
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,5], [2,3]])
+            sage: H = Z.cohomology_ring(GF(5))
+            sage: H.degree_on_basis((4, 0))
+            4
         """
         return i[0]
 
@@ -938,7 +982,10 @@ class CohomologyRing(CombinatorialFreeModule):
 
         TESTS::
 
-        <lots_of_examples>
+            sage: MomentAngleComplex([[1,2,3], [3,4]]).cohomology_ring()
+            Cohomology module of Moment-angle complex of Simplicial complex
+            with vertex set (1, 2, 3, 4) and facets {(3, 4), (1, 2, 3)}
+            over Rational Field
         """
         return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
 
@@ -948,7 +995,11 @@ class CohomologyRing(CombinatorialFreeModule):
 
         EXAMPLES::
 
-        <lots_of_examples>
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,5], [2,3]])
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,4], [2,3,5]])
+            sage: H = Z.cohomology_ring(GF(7))
+            sage: H.basis()[3, 2]
+            h^{3,2}
         """
         return 'h^{{{},{}}}'.format(i[0], i[1])
 
@@ -959,8 +1010,12 @@ class CohomologyRing(CombinatorialFreeModule):
         Return the multiplicative identity element.
 
         EXAMPLES::
-
-        <lots_of_examples>
+            sage: Z = MomentAngleComplex([[1,2], [3,4], [2,3,5], [1,5], [4,5]])
+            sage: H = Z.cohomology_ring()
+            sage: H.one()
+            h^{0,0}
+            sage: all(H.one() * x == x == x * H.one() for x in H.basis())
+            True
         """
         one = self._base_ring.one()
         d = {(0, i): one for i in self._graded_indices[0]}
@@ -968,13 +1023,22 @@ class CohomologyRing(CombinatorialFreeModule):
 
     @cached_method
     def _to_cycle_on_basis(self, i):
-        """
+        r"""
         Return the cocycle representative of the basis element
         indexed by ``i``.
 
+        .. SEEALSO::
+
+            :meth:`Element.to_cycle`, :meth:`Element.get_simplicial_complex`.
+
         EXAMPLES::
 
-        <lots_of_examples>
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,5], [2,3]])
+            sage: H = Z.cohomology_ring()
+            sage: H._to_cycle_on_basis((3, 2))
+            \chi_(2,)
+            sage: H._to_cycle_on_basis((4, 2))
+            \chi_(2,) + \chi_(4,)
         """
         subcomplex = self._complex.simplicial_complex().generated_subcomplex(self._gens[i[0]][i[1]][0], is_mutable=False)
         cochains = subcomplex.n_chains(self._gens[i[0]][i[1]][1], base_ring=self._base_ring, cochains=True)
@@ -1078,6 +1142,15 @@ class CohomologyRing(CombinatorialFreeModule):
             """
             Return the cocycle representative of ``self``.
 
+            The cohomology class gets lifted to its cococyle
+            representative in the cochain complex of the
+            corresponding simplicial complex given in the main
+            isomorphism.
+
+            .. SEEALSO::
+
+                :meth:`get_simplicial_complex`.
+
             EXAMPLES::
 
             <lots_of_examples>
@@ -1135,13 +1208,13 @@ class CohomologyRing(CombinatorialFreeModule):
 
             This algorithm is adopted from [Lin2019]_, p. 16.
 
-            First we lift the cohomology classes to their cocycle representatives
-            (which are generators of cohomology groups of all full subcomplexes of
-            the simplicial complex associated with the moment-angle complex;
-            these are stored during initialization), as well as acquire their corresponding
-            simplicial complexes. We then multiply them, as described above and
-            extract the cohomology class using chain contractions of the appropriate
-            simplicial complex.
+            First we lift the cohomology classes to their cocycle
+            representatives (which are generators of cohomology groups of all
+            full subcomplexes of the simplicial complex associated with the
+            moment-angle complex; these are stored during initialization),
+            as well as acquire their corresponding simplicial complexes. We then
+            multiply them, as described above and extract the cohomology class
+            using chain contractions of the appropriate simplicial complex.
 
             .. SEEALSO:
 
