@@ -729,7 +729,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             finally:
                 if self.debugger is not None:
                     self.debugger.set_continue()  # ==== Example Finished ====
-            check_starttime = walltime()
+            check_timer = Timer().start()
             got = self._fakeout.getvalue()
 
             outcome = FAILURE   # guilty until proved innocent or insane
@@ -803,22 +803,22 @@ class SageDocTestRunner(doctest.DocTestRunner):
                                 f"and it succeeded (raised an exception as expected).")
                         outcome = SUCCESS
 
-            check_duration = walltime(check_starttime)
-            self.total_walltime += example.walltime + check_duration
+            check_timer.stop()
+            self.total_walltime += example.walltime + check_timer.walltime
 
             # Report the outcome.
             if example.warnings:
                 for warning in example.warnings:
                     out(self._failure_header(test, example, f'Warning: {warning}'))
             if outcome is SUCCESS:
-                if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
+                if self.options.warn_long > 0 and example.cputime + check_timer.cputime > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
-                                         check_duration=check_duration)
+                                         check_duration=check_timer.cputime)
                 elif example.warnings:
                     pass
                 elif not quiet:
                     self.report_success(out, test, example, got,
-                                        check_duration=check_duration)
+                                        check_duration=check_timer.cputime)
             elif probed_tags:
                 pass
             elif outcome is FAILURE:
@@ -1528,17 +1528,17 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 1.23r
+            sage: ex.cputime = 1.23
             sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34r)
             **********************************************************************
             File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Warning, slow doctest:
                 doctest_var = 42; doctest_var^2
-            Test ran for 1.23 s, check ran for 2.34 s
+            Test ran for 1.23 cpu seconds, check ran for 2.34 cpu seconds
         """
         out(self._failure_header(test, example, 'Warning, slow doctest:') +
-            ('Test ran for %.2f s, check ran for %.2f s\n'
-             % (example.walltime, check_duration)))
+            ('Test ran for %.2f cpu seconds, check ran for %.2f cpu seconds\n'
+             % (example.cputime, check_duration)))
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""
