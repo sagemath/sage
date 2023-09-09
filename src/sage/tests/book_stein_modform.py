@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-repl
-# sage.doctest: needs sage.modular
+# sage.doctest: needs sage.libs.flint sage.modular
 """
 This file contains a bunch of tests extracted from the published book
 'Modular Forms: a Computational Approach' by William Stein, AMS 2007.
