@@ -64,7 +64,7 @@ def is_Graphics(x):
         sage: from sage.plot.graphics import is_Graphics
         sage: is_Graphics(1)
         False
-        sage: is_Graphics(disk((0.0, 0.0), 1, (0, pi/2)))
+        sage: is_Graphics(disk((0.0, 0.0), 1, (0, pi/2)))                               # needs sage.symbolic
         True
     """
     return isinstance(x, Graphics)
@@ -1359,6 +1359,7 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: p = plot(x, 1, 10)
             sage: fig = p.matplotlib()
             sage: ax = fig.get_axes()[0]
@@ -1373,6 +1374,7 @@ class Graphics(WithEqualityById, SageObject):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: p._set_scale(ax, 'log')
             Traceback (most recent call last):
             ...
