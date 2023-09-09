@@ -1052,7 +1052,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     using the built-in construction::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: g = graphs.T2starGeneralizedQuadrangleGraph(4); g
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1064,7 +1064,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     supplying your own hyperoval::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(4,'b')
         sage: O = [vector(F,(0,0,0,1)),vector(F,(0,0,1,0))] + [vector(F, (0,1,x^2,x))
         ....:                                                  for x in F]
@@ -1075,7 +1075,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(4,'b')  # repeating a point...
         sage: O = [vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F)
@@ -1175,21 +1175,23 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     using the built-in constructions::
 
-        sage: g = graphs.HaemersGraph(4); g                                             # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
+        sage: g = graphs.HaemersGraph(4); g
         Haemers(4): Graph on 96 vertices
-        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
+        sage: g.is_strongly_regular(parameters=True)
         (96, 19, 2, 4)
 
     supplying your own hyperoval_matching::
 
-        sage: g = graphs.HaemersGraph(4, hyperoval_matching=((0,5),(1,4),(2,3))); g     # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
+        sage: g = graphs.HaemersGraph(4, hyperoval_matching=((0,5),(1,4),(2,3))); g
         Haemers(4): Graph on 96 vertices
-        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
+        sage: g.is_strongly_regular(parameters=True)
         (96, 19, 2, 4)
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(4,'b')  # repeating a point...
         sage: O = [vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.HaemersGraph(4, hyperoval=O, field=F)
@@ -1399,7 +1401,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     using the built-in construction::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: g = graphs.Nowhere0WordsTwoWeightCodeGraph(8); g
         Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1410,7 +1412,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     supplying your own hyperoval::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(8)
         sage: O = [vector(F,(0,0,1)),vector(F,(0,1,0))] + [vector(F, (1,x^2,x))
         ....:                                              for x in F]
@@ -1421,7 +1423,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(8)  # repeating a point...
         sage: O = [vector(F,(1,0,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
         sage: graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F)

@@ -4148,12 +4148,12 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     EXAMPLES::
 
-        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)         # needs sage.modules sage.rings.finite_rings
+        sage: # needs sage.combinat sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)
         (378, 116, 34, 36)
-        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,                # needs sage.modules
+        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,
         ....:        (1,(1,2)):0, (0,(0,2)):0, (3,(0,3)):0, (3,(1,3)):1}
-        sage: graphs.MuzychukS6Graph(2, 2,                                              # needs sage.modules sage.rings.finite_rings
-        ....:                        Phi=phi).is_strongly_regular(parameters=True)
+        sage: graphs.MuzychukS6Graph(2, 2, Phi=phi).is_strongly_regular(parameters=True)
         (16, 5, 0, 2)
 
     TESTS::
