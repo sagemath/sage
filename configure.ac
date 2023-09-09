@@ -555,6 +555,12 @@ AS_IF([test "$SAGE_ENABLE_r" = no -a "$SAGE_ENABLE_sage_docbuild" = no], [
     AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
   done
 ])
+AS_IF([test "$SAGE_ENABLE_r" = no -a "$SAGE_ENABLE_notebook" = no], [
+  dnl These two are dependencies of both rpy2 and some notebook stuff
+  for pkg in cffi pycparser; do
+    AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+  done
+])
 
 dnl Packages that require a special override to use the SPKG
 dnl when the system package is not usable.
