@@ -591,6 +591,7 @@ def line2d(points, **options):
 
     A red, blue, and green "cool cat"::
 
+        sage: # needs sage.symbolic
         sage: G = plot(-cos(x), -2, 2, thickness=5, rgbcolor=(0.5,1,0.5))
         sage: P = polygon([[1,2], [5,6], [5,0]], rgbcolor=(1,0,0))
         sage: Q = polygon([(-x,y) for x,y in P[0]], rgbcolor=(0,0,1))
