@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-# sage.doctest: needs sage.graphs
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Fundamental Group of an Extended Affine Weyl Group
 

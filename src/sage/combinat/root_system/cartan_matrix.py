@@ -453,7 +453,7 @@ class CartanMatrix(Base, CartanType_abstract,
         EXAMPLES::
 
             sage: C = CartanMatrix(['A',3])                                             # needs sage.graphs
-            sage: C.reflection_group()                                                  # needs sage.graphs
+            sage: C.reflection_group()                                                  # needs sage.libs.gap sage.graphs
             Weyl Group of type ['A', 3] (as a matrix group acting on the root space)
         """
         RS = self.root_space()

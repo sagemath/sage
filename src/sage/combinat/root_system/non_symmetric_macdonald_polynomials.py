@@ -73,7 +73,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     Here is the nonsymmetric Macdonald polynomial with leading term
     `[2,0,1]`::
 
-        sage: E[L0([2,0,1])]
+        sage: E[L0([2,0,1])]                                                            # needs sage.libs.gap
         ((-q*q1-q*q2)/(-q*q1-q2))*B[(1, 1, 1)]
          + ((-q1-q2)/(-q*q1-q2))*B[(2, 1, 0)] + B[(2, 0, 1)]
 
