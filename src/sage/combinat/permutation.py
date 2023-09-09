@@ -5376,7 +5376,7 @@ class Permutation(CombinatorialElement):
         permutations as the ``shifted_shuffle`` method on words (but is
         faster)::
 
-            sage: all( all( sorted(p1.shifted_shuffle(p2))                              # needs sage.graphs sage.modules sage.rings.finite_rings
+            sage: all( all( sorted(p1.shifted_shuffle(p2))                              # needs sage.combinat sage.graphs sage.modules sage.rings.finite_rings
             ....:           == sorted([Permutation(p) for p in
             ....:                      Word(p1).shifted_shuffle(Word(p2))])
             ....:           for p2 in Permutations(3) )
@@ -7873,40 +7873,36 @@ def bistochastic_as_sum_of_permutations(M, check=True):
     We create a bistochastic matrix from a convex sum of permutations, then
     try to deduce the decomposition from the matrix::
 
+        sage: # needs networkx sage.graphs sage.modules
         sage: from sage.combinat.permutation import bistochastic_as_sum_of_permutations
         sage: L = []
         sage: L.append((9,Permutation([4, 1, 3, 5, 2])))
         sage: L.append((6,Permutation([5, 3, 4, 1, 2])))
         sage: L.append((3,Permutation([3, 1, 4, 2, 5])))
         sage: L.append((2,Permutation([1, 4, 2, 3, 5])))
-        sage: M = sum([c * p.to_matrix() for (c,p) in L])                               # needs sage.modules
-        sage: decomp = bistochastic_as_sum_of_permutations(M)                           # needs sage.graphs sage.modules
-        sage: print(decomp)                                                             # needs sage.graphs sage.modules
+        sage: M = sum([c * p.to_matrix() for (c,p) in L])
+        sage: decomp = bistochastic_as_sum_of_permutations(M)
+        sage: print(decomp)
         2*B[[1, 4, 2, 3, 5]] + 3*B[[3, 1, 4, 2, 5]]
          + 9*B[[4, 1, 3, 5, 2]] + 6*B[[5, 3, 4, 1, 2]]
 
     An exception is raised when the matrix is not positive and bistochastic::
 
-        sage: M = Matrix([[2,3],[2,2]])                                                 # needs sage.modules
-        sage: decomp = bistochastic_as_sum_of_permutations(M)                           # needs sage.graphs sage.modules
+        sage: # needs sage.modules
+        sage: M = Matrix([[2,3],[2,2]])
+        sage: decomp = bistochastic_as_sum_of_permutations(M)
         Traceback (most recent call last):
         ...
         ValueError: The matrix is not bistochastic
-
-        sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))          # needs sage.graphs sage.modules
+        sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))
         Traceback (most recent call last):
         ...
         ValueError: The base ring of the matrix must have a coercion map to RR
-
-        sage: bistochastic_as_sum_of_permutations(Matrix(ZZ, 2, [2,-1,-1,2]))           # needs sage.graphs sage.modules
+        sage: bistochastic_as_sum_of_permutations(Matrix(ZZ, 2, [2,-1,-1,2]))
         Traceback (most recent call last):
         ...
         ValueError: The matrix should have nonnegative entries
     """
-    from sage.graphs.bipartite_graph import BipartiteGraph
-    from sage.combinat.free_module import CombinatorialFreeModule
-    from sage.rings.real_mpfr import RR
-
     n = M.nrows()
 
     if n != M.ncols():
@@ -7918,8 +7914,13 @@ def bistochastic_as_sum_of_permutations(M, check=True):
     if check and not M.is_bistochastic(normalized=False):
         raise ValueError("The matrix is not bistochastic")
 
+    from sage.rings.real_mpfr import RR
+
     if not RR.has_coerce_map_from(M.base_ring()):
         raise ValueError("The base ring of the matrix must have a coercion map to RR")
+
+    from sage.graphs.bipartite_graph import BipartiteGraph
+    from sage.combinat.free_module import CombinatorialFreeModule
 
     CFM = CombinatorialFreeModule(M.base_ring(), Permutations(n))
     value = 0

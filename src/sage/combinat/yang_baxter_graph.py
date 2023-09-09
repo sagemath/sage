@@ -367,7 +367,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y.root()
             (1, 0, 3, 2, 1, 0)
             sage: Y = YangBaxterGraph(partition=[3,2])                                  # needs sage.combinat
-            sage: Y.root()
+            sage: Y.root()                                                              # needs sage.combinat
             (1, 0, 2, 1, 0)
         """
         return self._root
