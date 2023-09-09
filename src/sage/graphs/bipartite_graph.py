@@ -2303,7 +2303,7 @@ class BipartiteGraph(Graph):
 
         The two algorithms should return the same result::
 
-           sage: # needs numpy
+           sage: # needs networkx numpy
            sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))
            sage: vc1 = g.vertex_cover(algorithm="Konig")
            sage: vc2 = g.vertex_cover(algorithm="Cliquer")

@@ -1424,7 +1424,7 @@ def BuckyBall():
     The Bucky Ball can also be created by extracting the 1-skeleton of the Bucky
     Ball polyhedron, but this is much slower::
 
-        sage: # needs sage.geometry.polyhedron sage.rings.number_field
+        sage: # needs sage.geometry.polyhedron sage.groups sage.rings.number_field
         sage: g = polytopes.buckyball().vertex_graph()
         sage: g.remove_loops()
         sage: h = graphs.BuckyBall()
