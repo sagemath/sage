@@ -1111,7 +1111,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()                                                       # needs sage.plot
+            sage: quadrant.plot()                                                       # needs sage.plot sage.symbolic
             Graphics object consisting of 9 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())
@@ -3279,11 +3279,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         We check that :trac:`18613` is fixed::
 
+            sage: # needs sage.graphs sage.groups
             sage: K = cones.trivial(0)
-            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
+            sage: K.is_isomorphic(K)
             True
             sage: K = cones.trivial(1)
-            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
+            sage: K.is_isomorphic(K)
             True
             sage: K = cones.trivial(2)
             sage: K.is_isomorphic(K)
@@ -3292,7 +3293,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A random (strictly convex) cone is isomorphic to itself::
 
             sage: K = random_cone(max_ambient_dim=6, strictly_convex=True)
-            sage: K.is_isomorphic(K)                                                    # needs sage.graphs
+            sage: K.is_isomorphic(K)                                                    # needs sage.graphs sage/groups
             True
         """
         if self.is_strictly_convex() and other.is_strictly_convex():
@@ -3507,7 +3508,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()                                                       # needs sage.plot
+            sage: quadrant.plot()                                                       # needs sage.plot sage.symbolic
             Graphics object consisting of 9 graphics primitives
         """
         # What to do with 3-d cones in 5-d? Use some projection method?

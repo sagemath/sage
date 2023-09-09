@@ -460,7 +460,7 @@ class HyperplaneArrangementLibrary():
              Hyperplane t0 + 0*t1 + 0,
              Hyperplane t0 + 0*t1 + 1,
              Hyperplane t0 + t1 + 0)
-            sage: a.cone().is_free()
+            sage: a.cone().is_free()                                                    # needs sage.libs.singular
             True
 
         .. PLOT::

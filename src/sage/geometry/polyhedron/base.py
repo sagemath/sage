@@ -236,7 +236,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron()
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -245,21 +245,23 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with floating point::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
             sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()                                               # tol 1e-5   # needs sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-5
             1.3090169943749475
 
         Same example with a specific floating point solver::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
             sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()                                               # tol 1e-8   # needs sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-8
             1.3090169943749475
 
         Irrational algebraic linear program over `AA`::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron(base_ring=AA)
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -274,8 +276,8 @@ class Polyhedron_base(Polyhedron_base7):
             sage: p.to_linear_program().polyhedron() == p
             True
 
-            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: p.to_linear_program(solver='PPL')                                     # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
+            sage: p.to_linear_program(solver='PPL')                                     # needs sage.groups sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -769,8 +771,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         The polytope has to have rational coordinates::
 
-            sage: S = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: S.face_fan()                                                          # needs sage.rings.number_field
+            sage: S = polytopes.dodecahedron()                                          # needs sage.groups sage.rings.number_field
+            sage: S.face_fan()                                                          # needs sage.groups sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: face fan handles only polytopes over the rationals
@@ -1164,25 +1166,27 @@ class Polyhedron_base(Polyhedron_base7):
 
         Algebraic polyhedron::
 
-            sage: P = polytopes.dodecahedron(); P                                       # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron(); P
             A 3-dimensional polyhedron
              in (Number Field in sqrt5 with defining polynomial x^2 - 5
                  with sqrt5 = 2.236067977499790?)^3
              defined as the convex hull of 20 vertices
-            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.rings.number_field
+            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake
             Maybe recompile warning...
             Polytope<QuadraticExtension<Rational>>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.rings.number_field
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake
             1 -1+1r5 -4+2r5 0
 
         Floating-point polyhedron::
 
-            sage: P = polytopes.dodecahedron(exact=False); P                            # needs sage.groups
+            sage: # needs sage.groups
+            sage: P = polytopes.dodecahedron(exact=False); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.groups
+            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.groups
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake
             1 -0.472135955 0 -1.236067978
 
         """
