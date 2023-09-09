@@ -5413,12 +5413,12 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
+             multiple-edged or looped graphs
             sage: G.is_planar(set_embedding=True)
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
+             multiple-edged or looped graphs
             sage: G.is_planar(kuratowski=True)
             (True, None)
             sage: G.is_planar(set_pos=True)
@@ -5440,12 +5440,12 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            digraphs with pairs of opposite arcs
+             digraphs with pairs of opposite arcs
             sage: D.is_planar(set_embedding=True)
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            digraphs with pairs of opposite arcs
+             digraphs with pairs of opposite arcs
             sage: D.is_planar(kuratowski=True)
             (True, None)
             sage: D.allow_multiple_edges(True)
@@ -5462,12 +5462,12 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
+             multiple-edged or looped graphs
             sage: D.is_planar(on_embedding={})
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
+             multiple-edged or looped graphs
 
         ::
 
