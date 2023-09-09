@@ -2353,7 +2353,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         A matrix ring over a multivariate quotient over a finite field::
 
-            sage: # needs sage.modules
+            sage: # needs sage.libs.singular sage.modules
             sage: R.<x,y> = GF(7)[]
             sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
             sage: f1 = R.hom([a, b])
@@ -2367,7 +2367,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         TESTS::
 
-            sage: f1M == loads(dumps(f1M))                                              # needs sage.modules
+            sage: f1M == loads(dumps(f1M))                                              # needs sage.libs.singular sage.modules
             True
         """
         if not isinstance(other, RingHomomorphism_from_base):
