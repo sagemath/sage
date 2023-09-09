@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 #########################################################################
 #       Copyright (C) 2011 Cameron Franc and Marc Masdeu
 #
@@ -21,23 +21,23 @@ EXAMPLES:
 
 Create a quotient of the Bruhat-Tits tree::
 
-    sage: X = BruhatTitsQuotient(13,11)
+    sage: X = BruhatTitsQuotient(13, 11)
 
 Declare the corresponding space of harmonic cocycles::
 
-    sage: H = X.harmonic_cocycles(2,prec=5)
+    sage: H = X.harmonic_cocycles(2, prec=5)
 
 And the space of `p`-adic automorphic forms::
 
-    sage: A = X.padic_automorphic_forms(2,prec=5,overconvergent=True)
+    sage: A = X.padic_automorphic_forms(2, prec=5, overconvergent=True)                 # needs sage.rings.padics
 
 Harmonic cocycles, unlike `p`-adic automorphic forms, can be used to compute a basis::
 
-    sage: a = H.gen(0)
+    sage: a = H.gen(0)                                                                  # needs sage.rings.padics
 
 This can then be lifted to an overconvergent `p`-adic modular form::
 
-    sage: A.lift(a) # long time
+    sage: A.lift(a)  # long time                                                        # needs sage.rings.padics
     p-adic automorphic form of cohomological weight 0
 """
 
@@ -136,9 +136,9 @@ def eval_dist_at_powseries(phi, f):
         sage: R.<X> = PowerSeriesRing(ZZ,10)
         sage: f = (1 - 7*X)^(-1)
 
-        sage: D = OverconvergentDistributions(0,7,10)
-        sage: phi = D(list(range(1,11)))
-        sage: eval_dist_at_powseries(phi,f)
+        sage: D = OverconvergentDistributions(0,7,10)                                   # needs sage.rings.padics
+        sage: phi = D(list(range(1,11)))                                                # needs sage.rings.padics
+        sage: eval_dist_at_powseries(phi,f)                                             # needs sage.rings.padics
         1 + 2*7 + 3*7^2 + 4*7^3 + 5*7^4 + 6*7^5 + 2*7^7 + 3*7^8 + 4*7^9 + O(7^10)
     """
     nmoments = phi.parent().precision_cap()

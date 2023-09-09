@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 r"""
 Modular forms with character
 
@@ -7,12 +7,16 @@ EXAMPLES::
 
     sage: eps = DirichletGroup(13).0
     sage: M = ModularForms(eps^2, 2); M
-    Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+    Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+     Cyclotomic Field of order 6 and degree 2
 
     sage: S = M.cuspidal_submodule(); S
-    Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+    Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3,
+     character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
     sage: S.modular_symbols()
-    Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
+    Modular Symbols subspace of dimension 2 of
+     Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6],
+      sign 0, over Cyclotomic Field of order 6 and degree 2
 
 We create a spaces associated to Dirichlet characters of modulus 225::
 
@@ -54,10 +58,12 @@ of `q`-expansions has not been computed yet).
 
     sage: M.eisenstein_submodule()
     Eisenstein subspace of dimension 8 of Modular Forms space of
-    dimension 484, character [1, zeta20] and weight 17 over Cyclotomic Field of order 20 and degree 8
+    dimension 484, character [1, zeta20] and weight 17 over
+    Cyclotomic Field of order 20 and degree 8
 
     sage: M.cuspidal_submodule()
-    Cuspidal subspace of dimension 476 of Modular Forms space of dimension 484, character [1, zeta20] and weight 17 over Cyclotomic Field of order 20 and degree 8
+    Cuspidal subspace of dimension 476 of Modular Forms space of dimension 484,
+    character [1, zeta20] and weight 17 over Cyclotomic Field of order 20 and degree 8
 
 TESTS::
 
@@ -114,7 +120,8 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         EXAMPLES::
 
             sage: m = ModularForms(DirichletGroup(11).0,3); m
-            Modular Forms space of dimension 3, character [zeta10] and weight 3 over Cyclotomic Field of order 10 and degree 4
+            Modular Forms space of dimension 3, character [zeta10] and weight 3 over
+             Cyclotomic Field of order 10 and degree 4
             sage: type(m)
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
@@ -168,9 +175,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
             sage: eps = DirichletGroup(4).0
             sage: M = ModularForms(eps, 5); M
-            Modular Forms space of dimension 3, character [-1] and weight 5 over Rational Field
+            Modular Forms space of dimension 3, character [-1] and weight 5
+             over Rational Field
             sage: M.cuspidal_submodule()
-            Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3, character [-1] and weight 5 over Rational Field
+            Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3,
+             character [-1] and weight 5 over Rational Field
         """
         if self.weight() > 1:
             return cuspidal_submodule.CuspidalSubmodule_eps(self)
@@ -186,9 +195,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         EXAMPLES::
 
             sage: m = ModularForms(DirichletGroup(13).0^2,2); m
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+            Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+             Cyclotomic Field of order 6 and degree 2
             sage: m.change_ring(CyclotomicField(12))
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 12 and degree 4
+            Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+             Cyclotomic Field of order 12 and degree 4
 
         It must be possible to change the ring of the underlying Dirichlet character::
 
@@ -211,11 +222,14 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: eps = DirichletGroup(13).0
             sage: M = ModularForms(eps^2, 2)
             sage: M.modular_symbols()
-            Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 4 and level 13, weight 2,
+             character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
             sage: M.modular_symbols(1)
-            Modular Symbols space of dimension 3 and level 13, weight 2, character [zeta6], sign 1, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 3 and level 13, weight 2,
+             character [zeta6], sign 1, over Cyclotomic Field of order 6 and degree 2
             sage: M.modular_symbols(-1)
-            Modular Symbols space of dimension 1 and level 13, weight 2, character [zeta6], sign -1, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 1 and level 13, weight 2,
+             character [zeta6], sign -1, over Cyclotomic Field of order 6 and degree 2
             sage: M.modular_symbols(2)
             Traceback (most recent call last):
             ...
@@ -237,9 +251,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         EXAMPLES::
 
             sage: m = ModularForms(DirichletGroup(13).0^2,2); m
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+            Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+             Cyclotomic Field of order 6 and degree 2
             sage: m.eisenstein_submodule()
-            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 3,
+             character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
         """
         return eisenstein_submodule.EisensteinSubmodule_eps(self)
 
@@ -255,13 +271,15 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: M = ModularForms(DirichletGroup(15).0, 3); M.character().conductor()
             3
             sage: M.hecke_module_of_level(3)
-            Modular Forms space of dimension 2, character [-1] and weight 3 over Rational Field
+            Modular Forms space of dimension 2, character [-1] and weight 3
+             over Rational Field
             sage: M.hecke_module_of_level(5)
             Traceback (most recent call last):
             ...
             ValueError: conductor(=3) must divide M(=5)
             sage: M.hecke_module_of_level(30)
-            Modular Forms space of dimension 16, character [-1, 1] and weight 3 over Rational Field
+            Modular Forms space of dimension 16, character [-1, 1] and weight 3
+             over Rational Field
         """
         from . import constructor
         if N % self.level() == 0:

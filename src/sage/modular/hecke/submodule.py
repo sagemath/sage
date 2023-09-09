@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Submodules of Hecke modules
 """

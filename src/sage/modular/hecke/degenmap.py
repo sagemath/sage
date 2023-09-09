@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.libs.flint
 """
 Degeneracy maps
 """
@@ -34,7 +35,8 @@ class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
         sage: M = ModularSymbols(33)
         sage: d = M.degeneracy_map(11)
         sage: d
-        Hecke module morphism degeneracy map corresponding to f(q) |--> f(q) defined by the matrix
+        Hecke module morphism degeneracy map corresponding to f(q) |--> f(q)
+        defined by the matrix
         [ 1  0  0]
         [ 0  0  1]
         [ 0  0 -1]
@@ -57,12 +59,14 @@ class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
         sage: d = M.degeneracy_map(11,2)
         Traceback (most recent call last):
         ...
-        ValueError: the level of self (=33) must be a divisor or multiple of level (=11) and t (=2) must be a divisor of the quotient
+        ValueError: the level of self (=33) must be a divisor or multiple
+        of level (=11) and t (=2) must be a divisor of the quotient
 
     Degeneracy maps can also go from lower level to higher level::
 
         sage: M.degeneracy_map(66,2)
-        Hecke module morphism degeneracy map corresponding to f(q) |--> f(q^2) defined by the matrix
+        Hecke module morphism degeneracy map corresponding to f(q) |--> f(q^2)
+        defined by the matrix
         [ 2  0  0  0  0  0  1  0  0  0  1 -1  0  0  0 -1  1  0  0  0  0  0  0  0 -1]
         [ 0  0  1 -1  0 -1  1  0 -1  2  0  0  0 -1  0  0 -1  1  2 -2  0  0  0 -1  1]
         [ 0  0  1  0  0  0  0  0  1  0  0  0  1  0  0  0 -1  1  0  0 -1  1  0  0  0]

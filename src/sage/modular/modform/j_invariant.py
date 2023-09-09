@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.libs.flint
 r"""
 `q`-expansion of `j`-invariant
 """

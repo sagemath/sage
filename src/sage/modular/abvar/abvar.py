@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Base class for modular abelian varieties
 
@@ -318,7 +318,7 @@ class ModularAbelianVariety_abstract(Parent):
 
             sage: A = J0(37); A
             Abelian variety J0(37) of dimension 2
-            sage: A.base_extend(QQbar)
+            sage: A.base_extend(QQbar)                                                  # needs sage.rings.number_field
             Abelian variety J0(37) over Algebraic Field of dimension 2
             sage: A.base_extend(GF(7))
             Abelian variety J0(37) over Finite Field of size 7 of dimension 2

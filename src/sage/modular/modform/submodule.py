@@ -1,17 +1,21 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.libs.pari
 """
 Submodules of spaces of modular forms
 
 EXAMPLES::
 
     sage: M = ModularForms(Gamma1(13),2); M
-    Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
+    Modular Forms space of dimension 13 for
+     Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
     sage: M.eisenstein_subspace()
-    Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
+    Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for
+     Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
     sage: M == loads(dumps(M))
     True
     sage: M.cuspidal_subspace()
-    Cuspidal subspace of dimension 2 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
+    Cuspidal subspace of dimension 2 of Modular Forms space of dimension 13 for
+     Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
 """
 
 #########################################################################

@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.libs.flint
 """
 Hecke operators on `q`-expansions
 """
@@ -41,14 +42,18 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         sage: hecke_operator_on_qexp(M.basis()[0], 1, 12, prec=7)
         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 + O(q^7)
         sage: hecke_operator_on_qexp(M.basis()[0], 1, 12)
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8 - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13 + O(q^14)
+        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8
+          - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13 + O(q^14)
 
         sage: M.prec(20)
         20
         sage: hecke_operator_on_qexp(M.basis()[0], 3, 12)
         252*q - 6048*q^2 + 63504*q^3 - 370944*q^4 + 1217160*q^5 - 1524096*q^6 + O(q^7)
         sage: hecke_operator_on_qexp(M.basis()[0], 1, 12)
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8 - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13 + 401856*q^14 + 1217160*q^15 + 987136*q^16 - 6905934*q^17 + 2727432*q^18 + 10661420*q^19 - 7109760*q^20 + O(q^21)
+        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8
+          - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13
+          + 401856*q^14 + 1217160*q^15 + 987136*q^16 - 6905934*q^17 + 2727432*q^18
+          + 10661420*q^19 - 7109760*q^20 + O(q^21)
 
         sage: (hecke_operator_on_qexp(M.basis()[0], 1, 12)*252).add_bigoh(7)
         252*q - 6048*q^2 + 63504*q^3 - 370944*q^4 + 1217160*q^5 - 1524096*q^6 + O(q^7)
@@ -184,7 +189,8 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
         sage: ModularForms(1,12).q_expansion_basis()
         [
         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
-        1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
+        1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3
+          + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
         ]
         sage: hecke_operator_on_basis(ModularForms(1,12).q_expansion_basis(), 3, 12)
         Traceback (most recent call last):
@@ -206,6 +212,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     This shows that empty input is handled sensibly (:trac:`12202`)::
 
+        sage: # needs sage.rings.number_field
         sage: x = hecke_operator_on_basis([], 3, 12); x
         []
         sage: x.parent()

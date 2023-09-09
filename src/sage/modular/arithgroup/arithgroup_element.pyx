@@ -341,6 +341,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example involving the Gaussian numbers::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)

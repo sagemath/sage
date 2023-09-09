@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Dimensions of spaces of modular forms
 
@@ -228,6 +228,7 @@ def CohenOesterle(eps, k):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43, K).0^2
             sage: sage.modular.dims.CohenOesterle(eps, 2)

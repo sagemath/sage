@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.libs.pari
 """
 The cuspidal subspace
 
@@ -162,17 +163,21 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             Modular Symbols subspace of dimension 2 of Modular Symbols space of
             dimension 3 for Gamma_0(1) of weight 12 with sign 0 over Rational Field
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(13).0
             sage: S = CuspForms(eps^2, 2)
-
             sage: S.modular_symbols(sign=0)
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
-
+            Modular Symbols subspace of dimension 2 of Modular Symbols space
+            of dimension 4 and level 13, weight 2, character [zeta6], sign 0,
+            over Cyclotomic Field of order 6 and degree 2
             sage: S.modular_symbols(sign=1)
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 and level 13, weight 2, character [zeta6], sign 1, over Cyclotomic Field of order 6 and degree 2
-
+            Modular Symbols subspace of dimension 1 of Modular Symbols space
+            of dimension 3 and level 13, weight 2, character [zeta6], sign 1,
+            over Cyclotomic Field of order 6 and degree 2
             sage: S.modular_symbols(sign=-1)
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 1 and level 13, weight 2, character [zeta6], sign -1, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols subspace of dimension 1 of Modular Symbols space
+            of dimension 1 and level 13, weight 2, character [zeta6], sign -1,
+            over Cyclotomic Field of order 6 and degree 2
         """
         A = self.ambient_module()
         return A.modular_symbols(sign).cuspidal_submodule()
@@ -190,11 +195,16 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: chi = DirichletGroup(109, CyclotomicField(3)).0
             sage: S9 = CuspForms(chi, 2, base_ring = CyclotomicField(9)); S9
-            Cuspidal subspace of dimension 8 of Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2 over Cyclotomic Field of order 9 and degree 6
+            Cuspidal subspace of dimension 8 of
+             Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2
+             over Cyclotomic Field of order 9 and degree 6
             sage: S9.change_ring(CyclotomicField(3))
-            Cuspidal subspace of dimension 8 of Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2 over Cyclotomic Field of order 3 and degree 2
+            Cuspidal subspace of dimension 8 of
+             Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2
+             over Cyclotomic Field of order 3 and degree 2
             sage: S9.change_ring(QQ)
             Traceback (most recent call last):
             ...
@@ -210,6 +220,7 @@ class CuspidalSubmodule_R(CuspidalSubmodule):
         r"""
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: CuspForms(Gamma1(13), 2, base_ring=QuadraticField(-7, 'a')).q_expansion_basis() # indirect doctest
             [
             q - 4*q^3 - q^4 + 3*q^5 + O(q^6),
@@ -269,12 +280,14 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
         EXAMPLES::
 
             sage: CuspForms(105, 2).hecke_polynomial(2, 'y')
-            y^13 + 5*y^12 - 4*y^11 - 52*y^10 - 34*y^9 + 174*y^8 + 212*y^7 - 196*y^6 - 375*y^5 - 11*y^4 + 200*y^3 + 80*y^2
+            y^13 + 5*y^12 - 4*y^11 - 52*y^10 - 34*y^9 + 174*y^8 + 212*y^7
+             - 196*y^6 - 375*y^5 - 11*y^4 + 200*y^3 + 80*y^2
 
         Check that this gives the same answer as computing the Hecke matrix::
 
             sage: CuspForms(105, 2).hecke_matrix(2).charpoly(var='y')
-            y^13 + 5*y^12 - 4*y^11 - 52*y^10 - 34*y^9 + 174*y^8 + 212*y^7 - 196*y^6 - 375*y^5 - 11*y^4 + 200*y^3 + 80*y^2
+            y^13 + 5*y^12 - 4*y^11 - 52*y^10 - 34*y^9 + 174*y^8 + 212*y^7
+             - 196*y^6 - 375*y^5 - 11*y^4 + 200*y^3 + 80*y^2
 
         Check that :trac:`21546` is fixed (this example used to take about 5 hours)::
 
@@ -291,7 +304,9 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
         EXAMPLES::
 
             sage: CuspForms(55).new_submodule()
-            Modular Forms subspace of dimension 3 of Modular Forms space of dimension 8 for Congruence Subgroup Gamma0(55) of weight 2 over Rational Field
+            Modular Forms subspace of dimension 3 of
+             Modular Forms space of dimension 8 for
+              Congruence Subgroup Gamma0(55) of weight 2 over Rational Field
         """
         symbs = self.modular_symbols(sign=1).new_subspace(p)
         bas = []
@@ -348,7 +363,7 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
 
         EXAMPLES::
 
-            sage: CuspForms(DirichletGroup(23, QQ).0, 1).q_echelon_basis() # indirect doctest
+            sage: CuspForms(DirichletGroup(23, QQ).0, 1).q_echelon_basis()  # indirect doctest
             [
             q - q^2 - q^3 + O(q^6)
             ]
@@ -373,7 +388,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
 
         EXAMPLES::
 
-            sage: CuspForms(GammaH(31, [7]), 1).q_expansion_basis() # indirect doctest
+            sage: CuspForms(GammaH(31, [7]), 1).q_expansion_basis()  # indirect doctest
             [
             q - q^2 - q^5 + O(q^6)
             ]
@@ -448,7 +463,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
 
             sage: CuspForms(GammaH(31, [7]), 1)._transformation_matrix()
             [1]
-            sage: CuspForms(GammaH(124, [33]), 1)._transformation_matrix() # long time
+            sage: CuspForms(GammaH(124, [33]), 1)._transformation_matrix()  # long time
             [ 1  1  0  0  0  0  1]
             [ 0  0  0  0  0  1  0]
             [ 1  0  1  1 -1 -1  1]
@@ -505,8 +520,10 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
 
             sage: CuspForms(GammaH(31, [7]), 1).hecke_matrix(7)
             [-1]
-            sage: C = CuspForms(GammaH(124, [33]), 1) # long time
-            sage: C.hecke_matrix(2) # long time
+
+            sage: # long time
+            sage: C = CuspForms(GammaH(124, [33]), 1)
+            sage: C.hecke_matrix(2)
             [ 0  0 -1 -1  0  1  0]
             [ 1  0  0 -1 -1 -1  0]
             [ 0  0  0 -1  1  1 -1]
@@ -514,7 +531,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             [ 0  0 -1  0  0  1  1]
             [ 0  0  0 -1  0  0 -1]
             [ 0  0  0  0  0  1  0]
-            sage: C.hecke_matrix(7) # long time
+            sage: C.hecke_matrix(7)
             [ 0  1  0 -1  0  0  1]
             [ 0 -1  0  0  0  0  0]
             [ 0  1 -1  0  0  0  1]
@@ -522,7 +539,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             [ 0  1  1  0  0 -1  0]
             [ 1  0 -1 -1 -1  0  1]
             [ 0  1  0  0  1  0  0]
-            sage: C.hecke_matrix(23) == 0 # long time
+            sage: C.hecke_matrix(23) == 0
             True
 
         """
@@ -598,7 +615,7 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
         r"""
         EXAMPLES::
 
-            sage: CuspForms(Gamma1(5), 6).diamond_bracket_matrix(3) # indirect doctest
+            sage: CuspForms(Gamma1(5), 6).diamond_bracket_matrix(3)  # indirect doctest
             [ -1   0   0]
             [  3   5 -12]
             [  1   2  -5]
@@ -623,7 +640,8 @@ class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
     EXAMPLES::
 
         sage: S = CuspForms(DirichletGroup(5).0,5); S
-        Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3, character [zeta4] and weight 5 over Cyclotomic Field of order 4 and degree 2
+        Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3,
+        character [zeta4] and weight 5 over Cyclotomic Field of order 4 and degree 2
 
         sage: S.basis()
         [
@@ -659,7 +677,7 @@ def _convert_matrix_from_modsyms(symbs, T):
 
     EXAMPLES::
 
-        sage: CuspForms(Gamma1(5), 6).diamond_bracket_matrix(3) # indirect doctest
+        sage: CuspForms(Gamma1(5), 6).diamond_bracket_matrix(3)  # indirect doctest
         [ -1   0   0]
         [  3   5 -12]
         [  1   2  -5]

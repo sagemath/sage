@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of graded rings of modular forms for Hecke triangle groups
 
@@ -102,24 +103,24 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiModularFormsRing
-            sage: x, y, z, d = var("x,y,z,d")                                           # needs sage.symbolic
+            sage: x, y, z, d = var("x,y,z,d")
             sage: MR = QuasiModularFormsRing(n=5)
-            sage: el = MR(x^3*d + y*z); el                                              # needs sage.symbolic
+            sage: el = MR(x^3*d + y*z); el
             f_rho^3*d + f_i*E2
-            sage: el.rat()                                                              # needs sage.symbolic
+            sage: el.rat()
             x^3*d + y*z
-            sage: el.parent()                                                           # needs sage.symbolic
+            sage: el.parent()
             QuasiModularFormsRing(n=5) over Integer Ring
-            sage: el.rat().parent()                                                     # needs sage.symbolic
+            sage: el.rat().parent()
             Fraction Field of Multivariate Polynomial Ring in x, y, z, d over Integer Ring
-
             sage: MR = QuasiModularFormsRing(n=infinity)
-            sage: el = MR(d*x*(x-y^2)); el                                              # needs sage.symbolic
+            sage: el = MR(d*x*(x-y^2)); el
             -E4*f_i^2*d + E4^2*d
-            sage: el.rat()                                                              # needs sage.symbolic
+            sage: el.rat()
             -x*y^2*d + x^2*d
-            sage: el.parent()                                                           # needs sage.symbolic
+            sage: el.parent()
             QuasiModularFormsRing(n=+Infinity) over Integer Ring
         """
         self._rat = rat
