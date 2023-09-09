@@ -69,7 +69,6 @@ import fractions
 import sage.rings.rational_field
 
 from sage.arith.long cimport integer_check_long_py
-from sage.arith.misc import prime_factors
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 from sage.cpython.string cimport char_to_str, str_to_bytes
@@ -3129,6 +3128,8 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         if self.is_zero():
             raise ArithmeticError("Support of 0 not defined.")
+        from sage.arith.misc import prime_factors
+
         return prime_factors(self)
 
     def log(self, m=None, prec=None):
