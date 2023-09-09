@@ -6014,6 +6014,7 @@ class SemistandardTableaux(Tableaux):
             ...
             ValueError: the maximum entry must match the weight
 
+            sage: # needs sage.modules
             sage: SemistandardTableaux([[1]])
             Traceback (most recent call last):
             ...
