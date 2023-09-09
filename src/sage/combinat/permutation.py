@@ -8131,6 +8131,7 @@ def bistochastic_as_sum_of_permutations(M, check=True):
     We create a bistochastic matrix from a convex sum of permutations, then
     try to deduce the decomposition from the matrix::
 
+        sage: # needs networkx sage.graphs sage.modules
         sage: from sage.combinat.permutation import bistochastic_as_sum_of_permutations
 
         sage: # needs networkx sage.graphs sage.modules
