@@ -66,13 +66,13 @@ class UniversalCyclotomicField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: K = UniversalCyclotomicField()                                            # needs sage.rings.number_field
-        sage: isinstance(K, sage.rings.abc.UniversalCyclotomicField)                    # needs sage.rings.number_field
+        sage: K = UniversalCyclotomicField()                                            # needs sage.libs.gap
+        sage: isinstance(K, sage.rings.abc.UniversalCyclotomicField)                    # needs sage.libs.gap
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.UniversalCyclotomicField.__subclasses__()                  # needs sage.rings.number_field
+        sage: sage.rings.abc.UniversalCyclotomicField.__subclasses__()                  # needs sage.libs.gap
         [<class 'sage.rings.universal_cyclotomic_field.UniversalCyclotomicField'>]
 
         sage: len(sage.rings.abc.NumberField_cyclotomic.__subclasses__()) <= 1

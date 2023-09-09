@@ -4014,7 +4014,7 @@ cdef class ComplexBall(RingElement):
              [2.2882956833435e+50 +/- ...e+36],
              [1.2807602335816e+51 +/- ...e+37])
             sage: ai, aip, bi, bip = CBF(1,2).airy()
-            sage: (ai * bip - bi * aip) * CBF(pi)
+            sage: (ai * bip - bi * aip) * CBF(pi)                                       # needs sage.symbolic
             [1.0000000000000 +/- ...e-15] + [+/- ...e-16]*I
 
         """

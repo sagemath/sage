@@ -89,7 +89,7 @@ Verify that :trac:`7475` is fixed::
 
 Reducing a curve modulo a prime::
 
-    sage: # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field sage.schemes
     sage: K.<s> = NumberField(x^2 + 23)
     sage: OK = K.ring_of_integers()
     sage: E = EllipticCurve([0,0,0,K(1),K(5)])
@@ -99,7 +99,6 @@ Reducing a curve modulo a prime::
     Elliptic Curve defined by y^2 = x^3 + x + 5 over
      Residue field of Fractional ideal (13, 1/2*s + 9/2)
 
-    sage: # needs sage.rings.finite_rings
     sage: R.<t> = GF(11)[]
     sage: P = R.ideal(t^3 + t + 4)
     sage: ff.<a> = R.residue_field(P)

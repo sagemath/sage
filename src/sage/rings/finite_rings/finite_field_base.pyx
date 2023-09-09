@@ -4,6 +4,7 @@ Base class for finite fields
 
 TESTS::
 
+    sage: x = polygen(ZZ)
     sage: K.<a> = NumberField(x^2 + 1)                                                  # needs sage.rings.number_field
     sage: F = K.factor(3)[0][0].residue_field()                                         # needs sage.rings.number_field
     sage: loads(dumps(F)) == F                                                          # needs sage.rings.number_field
@@ -1238,6 +1239,7 @@ cdef class FiniteField(Field):
             (0, 1)
 
             sage: # needs sage.modules
+            sage: x = polygen(ZZ)
             sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
             sage: h = Hom(F,E).an_element()

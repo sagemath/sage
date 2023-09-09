@@ -985,13 +985,13 @@ cdef class RingHomomorphism(RingMap):
             sage: K.<a> = NumberField(QQ['x']('x^2+2'))
             sage: f = K.hom([-a], K)
             sage: I = K.ideal([a + 1])
-            sage: f.inverse_image(I)
+            sage: f.inverse_image(I)                                                    # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError: inverse image not implemented...
-            sage: f.inverse_image(K.ideal(0)).is_zero()
+            sage: f.inverse_image(K.ideal(0)).is_zero()                                 # needs sage.libs.singular
             True
-            sage: f.inverse()(I)
+            sage: f.inverse()(I)                                                        # needs sage.rings.padics
             Fractional ideal (-a + 1)
 
         ALGORITHM:
@@ -1033,7 +1033,7 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x,y> = QQbar[]
             sage: f = R.hom([x, QQbar(i) * x + y^2], R)
             sage: I = R.ideal(y^3)
@@ -1192,7 +1192,7 @@ cdef class RingHomomorphism(RingMap):
         ::
 
             sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
-            sage: K.hom([-sqrt2], K).kernel().is_zero()                                 # needs sage.rings.number_field
+            sage: K.hom([-sqrt2], K).kernel().is_zero()                                 # needs sage.libs.singular sage.rings.number_field
             True
 
         ::
@@ -1201,7 +1201,7 @@ cdef class RingHomomorphism(RingMap):
             sage: A.<a> = QuadraticField(2)
             sage: B.<b> = A.extension(A['b']('b^2-3'))
             sage: C.<c> = B.absolute_field()
-            sage: A.hom([B(a)], C).kernel().is_zero()
+            sage: A.hom([B(a)], C).kernel().is_zero()                                   # needs sage.libs.singular
             True
             sage: A.hom([a], B).kernel()
             Traceback (most recent call last):
@@ -1459,11 +1459,12 @@ cdef class RingHomomorphism(RingMap):
 
             sage: K.<zeta7> = CyclotomicField(7)                                        # needs sage.rings.number_field
             sage: c = K.hom([1/zeta7])                                                  # needs sage.rings.number_field
-            sage: (c.inverse() * c).is_identity()                                       # needs sage.rings.number_field
+            sage: (c.inverse() * c).is_identity()                                       # needs sage.libs.singular sage.rings.number_field
             True
+
             sage: F.<t> = GF(7^3)                                                       # needs sage.rings.finite_rings
             sage: f = F.hom(t^7, F)                                                     # needs sage.rings.finite_rings
-            sage: (f.inverse() * f).is_identity()                                       # needs sage.rings.finite_rings
+            sage: (f.inverse() * f).is_identity()                                       # needs sage.libs.singular sage.rings.finite_rings
             True
 
         An isomorphism between the algebraic torus and the circle over a number
@@ -1632,7 +1633,7 @@ cdef class RingHomomorphism(RingMap):
 
             sage: R.<x,y> = GF(17)[]
             sage: f = R.hom([3*x, y + x^2 + x^3], R)
-            sage: (f * ~f).is_identity()                                                # needs sage.rings.finite_rings
+            sage: (f * ~f).is_identity()                                                # needs sage.libs.singular
             True
         """
         return self.inverse()
@@ -2921,7 +2922,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
             sage: phi = S.hom([b, c, a])
@@ -2946,7 +2947,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
             sage: phi = S.hom([b, c, a])

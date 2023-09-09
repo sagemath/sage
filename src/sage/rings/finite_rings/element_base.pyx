@@ -1004,6 +1004,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         Check that :trac:`26761` is fixed::
 
+            sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
             sage: g1, g2 = G32.gens()
             sage: m1 = g1.matrix()

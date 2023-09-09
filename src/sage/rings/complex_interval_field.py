@@ -517,7 +517,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Real Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(UniversalCyclotomicField())
+            sage: CIF.coerce_map_from(UniversalCyclotomicField())                       # needs sage.libs.gap
             Conversion via _complex_mpfi_ method map:
               From: Universal Cyclotomic Field
               To:   Complex Interval Field with 53 bits of precision
