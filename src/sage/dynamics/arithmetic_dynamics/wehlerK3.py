@@ -26,26 +26,30 @@ REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.functions", "jacobian")
-from sage.categories.fields import Fields
+from copy import copy
+
+import sage.rings.abc
+
 from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.misc.functional import sqrt
 from sage.misc.cachefunc import cached_method
+from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
 from sage.misc.mrange import xmrange
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.order import is_NumberFieldOrder
-from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
-from sage.schemes.product_projective.subscheme import AlgebraicScheme_subscheme_product_projective
 from sage.schemes.product_projective.space import ProductProjectiveSpaces
-from copy import copy
+from sage.schemes.product_projective.subscheme import AlgebraicScheme_subscheme_product_projective
+
+lazy_import("sage.calculus.functions", "jacobian")
+lazy_import('sage.rings.padics.factory', 'Qp')
+
 
 _NumberFields = NumberFields()
 _Fields = Fields()
@@ -910,11 +914,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             [2, 3, 5, 11, 23, 47, 48747691, 111301831]
         """
         PP = self.ambient_space()
-        if PP.base_ring() in _NumberFields or is_NumberFieldOrder(PP.base_ring()):
-            if PP.base_ring() != ZZ and PP.base_ring() != QQ:
+        if PP.base_ring() != ZZ and PP.base_ring() != QQ:
+            if PP.base_ring() in _NumberFields or isinstance(PP.base_ring(), sage.rings.abc.Order):
                 raise NotImplementedError("must be ZZ or QQ")
-        else:
-            raise TypeError("must be over a number field")
+            else:
+                raise TypeError("must be over a number field")
         if self.is_degenerate():
             raise TypeError("surface is degenerate at all primes")
         RR = PP.coordinate_ring()
