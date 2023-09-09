@@ -7388,9 +7388,10 @@ cdef class Matrix(Matrix1):
         In this case, we can still verify the eigenvector equation for the
         first eigenvalue and first eigenvector::
 
-            sage: l = D[0, 0]                                                           # needs sage.symbolic
+            sage: # needs scipy
+            sage: l = D[0, 0]
             sage: v = P[:, 0]
-            sage: (A * v  - B * v * l).norm() < 1e-14                                   # needs sage.symbolic
+            sage: (A * v  - B * v * l).norm() < 1e-14
             True
 
         The second eigenvector is contained in the right kernel of `B`::
