@@ -821,6 +821,80 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
 
     def cohomology_ring(self, base_ring=QQ):
+        r"""
+        Return the unreduced cohomology of ``self`` with coefficients in
+        ``base_ring``.
+
+        This offers additional information about the cohomology,
+        and is intended to be used only when in need of specific
+        cohomology operations, such as the cup product, which
+        this does offer.
+
+        INPUT:
+
+        - ``base_ring`` -- commutative ring (default: ``QQ``); must be
+          ``ZZ`` or a field
+
+        The basis elements in dimension ``dim`` are named ``'h^{dim,i}'``
+        where `i` ranges between 0 and `r-1`, where `r` is the rank of
+        the cohomology group.
+
+        .. SEEALSO::
+
+            For more information on what this offers, see
+            :class:`.moment_angle_complex.CohomologyRing`.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[1,2], [2,3], [3,4], [4,5], [5,1]])
+            sage: H = Z.cohomology_ring()
+            sage: sorted(H.basis())
+            [h^{0,0},
+             h^{3,0},
+             h^{3,1},
+             h^{3,2},
+             h^{3,3},
+             h^{3,4},
+             h^{4,0},
+             h^{4,1},
+             h^{4,2},
+             h^{4,3},
+             h^{4,4},
+             h^{7,0}]
+
+        Notice (by looking at the dimension) that this does
+        indeed coincide with the reduced cohomology::
+
+            sage: Z.cohomology(reduced=False, base_ring=QQ)
+            {0: Vector space of dimension 1 over Rational Field,
+             1: Vector space of dimension 0 over Rational Field,
+             2: Vector space of dimension 0 over Rational Field,
+             3: Vector space of dimension 5 over Rational Field,
+             4: Vector space of dimension 5 over Rational Field,
+             5: Vector space of dimension 0 over Rational Field,
+             6: Vector space of dimension 0 over Rational Field,
+             7: Vector space of dimension 1 over Rational Field}
+            sage: a = H.basis()[3, 0]; a
+            h^{3,0}
+            sage: b = H.basis()[4, 4]; b
+            h^{4,4}
+            sage: a.cup_product(b)
+            -h^{7,0}
+            sage: a * b  # alternative notation
+            -h^{7,0}
+            sage: a * a
+            0
+
+        We can lift cohomology classes to their cocycle
+        represetnatives and also acquire their originating
+        subcomplexes::
+
+            sage: a.to_cycle()
+            \chi_(1,)
+            sage: a.get_simplicial_complex()
+            Simplicial complex with vertex set (1, 3) and facets {(1,), (3,)}
+        """
+
         return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
 
@@ -831,7 +905,7 @@ class CohomologyRing(CombinatorialFreeModule):
     Here we don't explicitly compute the cohomology ring
     of a moment-angle complex as a topological space, but
     we use the following result to compute its cohomology
-    ring (Theorem 4.5.8 of [BP2014]_)::
+    ring (Theorem 4.5.8 of [BP2014]_):
 
     .. MATH::
 
@@ -1287,7 +1361,7 @@ class CohomologyRing(CombinatorialFreeModule):
             cohomology class using chain contractions of the appropriate
             simplicial complex.
 
-            .. SEEALSO:
+            .. SEEALSO::
 
                 For more information on the `\epsilon` function,
                 see :meth:`sage.topology.moment_angle_complex.eps`.
