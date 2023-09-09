@@ -384,6 +384,7 @@ which gives additionally the state in which we arrived.
 
 We can also let an automaton act on a :doc:`word <words/words>`::
 
+    sage: # needs sage.combinat
     sage: W = Words([-1, 0, 1]); W
     Finite and infinite words over {-1, 0, 1}
     sage: w = W([1, 0, 1, 0, -1]); w
@@ -3676,6 +3677,7 @@ class FiniteStateMachine(SageObject):
 
         We can also let them act on :doc:`words <words/words>`::
 
+            sage: # needs sage.combinat
             sage: W = Words([0, 1]); W
             Finite and infinite words over {0, 1}
             sage: binary_inverter(W([0, 1, 1, 0, 1, 1]))
@@ -3683,6 +3685,7 @@ class FiniteStateMachine(SageObject):
 
         Infinite words work as well::
 
+            sage: # needs sage.combinat
             sage: words.FibonacciWord()
             word: 0100101001001010010100100101001001010010...
             sage: binary_inverter(words.FibonacciWord())
@@ -4147,7 +4150,7 @@ class FiniteStateMachine(SageObject):
             sage: F.state(0).initial_probability = p + q
             sage: F.is_Markov_chain()
             False
-            sage: F.is_Markov_chain(is_zero_polynomial)
+            sage: F.is_Markov_chain(is_zero_polynomial)                                 # needs sage.libs.singular
             True
         """
         def default_is_zero(expression):
@@ -6251,6 +6254,8 @@ class FiniteStateMachine(SageObject):
 
             sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
             ....:     initial_states=['A'], final_states=['A'])
+
+            sage: # needs sage.combinat
             sage: words.FibonacciWord()
             word: 0100101001001010010100100101001001010010...
             sage: it = inverter.iter_process(
@@ -6260,19 +6265,20 @@ class FiniteStateMachine(SageObject):
 
         This can also be done by::
 
-            sage: inverter.iter_process(words.FibonacciWord(),
+            sage: inverter.iter_process(words.FibonacciWord(),                          # needs sage.combinat
             ....:                       iterator_type='simple',
             ....:                       automatic_output_type=True)
             word: 1011010110110101101011011010110110101101...
 
         or even simpler by::
 
-            sage: inverter(words.FibonacciWord())
+            sage: inverter(words.FibonacciWord())                                       # needs sage.combinat
             word: 1011010110110101101011011010110110101101...
 
         To see what is going on, we use :meth:`iter_process` without
         arguments::
 
+            sage: # needs sage.combinat
             sage: from itertools import islice
             sage: it = inverter.iter_process(words.FibonacciWord())
             sage: for current in islice(it, 4r):
@@ -6401,9 +6407,9 @@ class FiniteStateMachine(SageObject):
 
             sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
             ....:     initial_states=['A'], final_states=['A'])
-            sage: it = inverter.iter_process(words.FibonacciWord()[:10])
-            sage: it_simple = inverter._iter_process_simple_(it)
-            sage: list(it_simple)
+            sage: it = inverter.iter_process(words.FibonacciWord()[:10])                # needs sage.combinat
+            sage: it_simple = inverter._iter_process_simple_(it)                        # needs sage.combinat
+            sage: list(it_simple)                                                       # needs sage.combinat
             [1, 0, 1, 1, 0, 1, 0, 1, 1, 0]
 
         .. SEEALSO::
@@ -10525,6 +10531,7 @@ class FiniteStateMachine(SageObject):
 
             ::
 
+                sage: # needs sage.libs.singular
                 sage: def test(h, r):
                 ....:     R = PolynomialRing(
                 ....:             QQ,
@@ -12779,6 +12786,7 @@ class Transducer(FiniteStateMachine):
 
         This can also be used with words as input::
 
+            sage: # needs sage.combinat
             sage: W = Words([0, 1]); W
             Finite and infinite words over {0, 1}
             sage: w = W([0, 1, 0, 0, 1, 1]); w
@@ -12789,7 +12797,7 @@ class Transducer(FiniteStateMachine):
         In this case it is automatically determined that the output is
         a word. The call above is equivalent to::
 
-            sage: binary_inverter.process(w,
+            sage: binary_inverter.process(w,                                            # needs sage.combinat
             ....:                         full_output=False,
             ....:                         list_of_outputs=False,
             ....:                         automatic_output_type=True)
