@@ -6,6 +6,7 @@ Base class for all number fields
 
 TESTS::
 
+    sage: x = polygen(ZZ)
     sage: k = NumberField(x^2 + 1, 'i'); k == loads(dumps(k))
     True
 """
@@ -20,6 +21,7 @@ def is_NumberField(x):
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field_base import is_NumberField
+        sage: x = polygen(ZZ)
         sage: is_NumberField(NumberField(x^2 + 1, 'a'))
         doctest:...: DeprecationWarning: the function is_NumberField is deprecated; use
         isinstance(x, sage.rings.number_field.number_field_base.NumberField) instead
@@ -75,6 +77,7 @@ cdef class NumberField(Field):
 
         Pushout is implemented for number field embedded in ``AA``::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))
             sage: L.<b> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))
             sage: cm = sage.structure.element.get_coercion_model()
@@ -152,6 +155,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.ring_of_integers()
             Gaussian Integers in Number Field in a with defining polynomial x^2 + 1
@@ -164,6 +168,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 - 2,'a').OK()
             Maximal Order in Number Field in a with defining polynomial x^3 - 2
         """
@@ -176,6 +181,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 - 2,'b').maximal_order()
             Maximal Order in Number Field in b with defining polynomial x^3 - 2
         """
@@ -187,6 +193,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.is_absolute()
             True
@@ -206,6 +213,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 - 2, 'a').signature()
             (1, 1)
         """
@@ -217,6 +225,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 + 9, 'a').degree()
             3
         """
@@ -228,6 +237,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 + 9, 'a').discriminant()
             -243
         """
@@ -287,6 +297,7 @@ cdef class NumberField(Field):
         We compute the Minkowski bound for `\QQ[\sqrt{2}+\sqrt{3}]`::
 
             sage: # needs sage.symbolic
+            sage: x = polygen(ZZ)
             sage: K.<y,z> = NumberField([x^2 - 2, x^2 - 3])
             sage: L.<w> = QQ[sqrt(2) + sqrt(3)]
             sage: B = K.minkowski_bound(); B
@@ -376,6 +387,7 @@ cdef class NumberField(Field):
 
         TESTS::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^3 - x^2 - x - 1, embedding=1)
             sage: K._get_embedding_approx(0)   # indirect doctest
             1.839286755214161?
