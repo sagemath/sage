@@ -143,7 +143,7 @@ def vectors_by_length(self, bound):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.vectors_by_length(5)                                                # optional - sage.symbolic
+        sage: Q.vectors_by_length(5)                                                    # needs sage.symbolic
         [[[0, 0]],
          [[0, -1], [-1, 0]],
          [[-1, -1], [1, -1]],
@@ -154,7 +154,7 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [1,3,5,7])
-        sage: Q1.vectors_by_length(5)                                               # optional - sage.symbolic
+        sage: Q1.vectors_by_length(5)                                                   # needs sage.symbolic
         [[[0, 0, 0, 0]],
          [[-1, 0, 0, 0]],
          [],
@@ -165,13 +165,13 @@ def vectors_by_length(self, bound):
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,1,1,1, 1,0,0, 1,0, 1])
-        sage: list(map(len, Q.vectors_by_length(2)))                                # optional - sage.symbolic
+        sage: list(map(len, Q.vectors_by_length(2)))                                    # needs sage.symbolic
         [1, 12, 12]
 
     ::
 
         sage: Q = QuadraticForm(ZZ, 4, [1,-1,-1,-1, 1,0,0, 4,-3, 4])
-        sage: list(map(len, Q.vectors_by_length(3)))                                # optional - sage.symbolic
+        sage: list(map(len, Q.vectors_by_length(3)))                                    # needs sage.symbolic
         [1, 3, 0, 3]
     """
     # pari uses eps = 1e-6 ; nothing bad should happen if eps is too big
@@ -236,7 +236,7 @@ def vectors_by_length(self, bound):
         Q_val = Q_val_double.round()
 
         # SANITY CHECK: Roundoff Error is < 0.001
-        if abs(Q_val_double -  Q_val) > 0.001:
+        if abs(Q_val_double - Q_val) > 0.001:
             print(" x = ", x)
             print(" Float = ", Q_val_double, "   Long = ", Q_val)
             raise RuntimeError("The roundoff error is bigger than 0.001, so we should use more precision somewhere...")
@@ -377,7 +377,7 @@ def split_local_cover(self):
     EXAMPLES::
 
         sage: Q1 = DiagonalQuadraticForm(ZZ, [7,5,3])
-        sage: Q1.split_local_cover()                                                # optional - sage.symbolic
+        sage: Q1.split_local_cover()                                                    # needs sage.symbolic
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 0 0 ]
         [ * 5 0 ]

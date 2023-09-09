@@ -494,7 +494,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
         - ``codomain_subset`` - if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
           if ``map`` is a :class:`Chart`, the relative interior of a polyhedron.
 
-        For other inputs, a ``NotImplementedError`` will be raised.
+        For other inputs, a :class:`NotImplementedError` will be raised.
 
         OUTPUT:
 

@@ -318,7 +318,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         from . import integer_ring
         return FractionField(), integer_ring.ZZ
 
-    def completion(self, p, prec, extras = {}):
+    def completion(self, p, prec, extras={}):
         r"""
         Return the completion of `\QQ` at `p`.
 
@@ -374,7 +374,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if S is ZZ:
             return rational.Z_to_Q()
         elif S is int:
-            return rational.long_to_Q()
+            return rational.int_to_Q()
         elif ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
         from sage.rings.localization import Localization
@@ -540,8 +540,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             return
 
         from sage.arith.misc import primes
-        for p in primes(B+1):
-            yield p
+        yield from primes(B + 1)
 
     def discriminant(self):
         """
@@ -1054,6 +1053,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         We make a single absolute extension::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = QQ.extension(x^3 + 5); K                                      # optional - sage.rings.number_field
             Number Field in a with defining polynomial x^3 + 5
 
@@ -1673,10 +1673,12 @@ class RationalField(Singleton, number_field_base.NumberField):
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self, p)
 
+
 QQ = RationalField()
 Q = QQ
 
-def is_RationalField(x):
+
+def is_RationalField(x) -> bool:
     """
     Check to see if ``x`` is the rational field.
 
@@ -1690,7 +1692,8 @@ def is_RationalField(x):
     """
     return isinstance(x, RationalField)
 
-def frac(n,d):
+
+def frac(n, d):
     """
     Return the fraction ``n/d``.
 

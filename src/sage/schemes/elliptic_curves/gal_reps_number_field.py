@@ -9,6 +9,7 @@ and ``non_surjective`` methods of an elliptic curve over a number field.
 
 EXAMPLES::
 
+    sage: x = polygen(ZZ, 'x')
     sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
     sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
     sage: rho = E.galois_representation()
@@ -74,6 +75,7 @@ class GaloisRepresentation(SageObject):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 + 1, 'a')
         sage: E = EllipticCurve('11a1').change_ring(K)
         sage: rho = E.galois_representation()
@@ -87,6 +89,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a')
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
@@ -103,6 +106,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a')
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
@@ -128,6 +132,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a'); a = K.gen()
             sage: rho1 = EllipticCurve_from_j(1 + a).galois_representation()
             sage: rho2 = EllipticCurve_from_j(2 + a).galois_representation()
@@ -148,6 +153,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a'); a = K.gen()
             sage: E = EllipticCurve_from_j(a)
             sage: rho = E.galois_representation()
@@ -175,6 +181,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
@@ -225,6 +232,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
@@ -290,6 +298,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
@@ -369,6 +378,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
             sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
             sage: rho = E.galois_representation()
@@ -426,6 +436,7 @@ def _non_surjective(E, patience=100):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._non_surjective(E) # See Section 5.10 of [Ser1972].  # long time
@@ -542,7 +553,7 @@ def Frobenius_filter(E, L, patience=100):
         L.remove(2)
         include_2 = not E.division_polynomial(2).is_irreducible()
 
-    K_is_Q = (K==QQ)
+    K_is_Q = (K == QQ)
     from sage.arith.misc import primes
     from sage.rings.infinity import infinity
 
@@ -557,7 +568,7 @@ def Frobenius_filter(E, L, patience=100):
                         yield P
     numP = 0
     for P in primes_iter():
-        if not L or numP==patience:  # stop if no primes are left, or patience is exhausted
+        if not L or numP == patience:  # stop if no primes are left, or patience is exhausted
             break
 
         numP += 1
@@ -600,6 +611,7 @@ def _exceptionals(E, L, patience=1000):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._exceptionals(E, [29, 31])
@@ -798,7 +810,7 @@ def deg_one_primes_iter(K, principal_only=False):
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2
 
-    K_is_Q = (K==QQ)
+    K_is_Q = (K == QQ)
 
     for p in primes(start=start, stop=Infinity):
         if K_is_Q:
@@ -832,6 +844,7 @@ def _semistable_reducible_primes(E, verbose=False):
     This example, over a quintic field with Galois group `S_5`, took a
     very long time before :trac:`22343`::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^5 - 6*x^3 + 8*x - 1)
         sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1, a + 1, -a^3 + a + 1, -a])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import _semistable_reducible_primes
@@ -859,23 +872,23 @@ def _semistable_reducible_primes(E, verbose=False):
     while len(precomp) < 2:
         P = next(deg_one_primes)
         p = P.norm()
-        if p != last_p and (d==1 or P.ramification_index() == 1) and E.has_good_reduction(P):
+        if p != last_p and (d == 1 or P.ramification_index() == 1) and E.has_good_reduction(P):
             precomp.append(P)
             last_p = p
 
     Px, Py = precomp
     x, y = [PP.gens_reduced()[0] for PP in precomp]
-    EmodPx = E.reduction(Px) if d>1 else E.reduction(x)
-    EmodPy = E.reduction(Py) if d>1 else E.reduction(y)
+    EmodPx = E.reduction(Px) if d > 1 else E.reduction(x)
+    EmodPy = E.reduction(Py) if d > 1 else E.reduction(y)
     fxpol = EmodPx.frobenius_polynomial()
     fypol = EmodPy.frobenius_polynomial()
     fx12pol = fxpol.adams_operator(12) # roots are 12th powers of those of fxpol
     fy12pol = fypol.adams_operator(12)
-    px = x.norm() if d>1 else x
-    py = y.norm() if d>1 else x
+    px = x.norm() if d > 1 else x
+    py = y.norm() if d > 1 else x
     Zx = fxpol.parent()
-    xpol = x.charpoly() if d>1 else Zx([-x,1])
-    ypol = y.charpoly() if d>1 else Zx([-y,1])
+    xpol = x.charpoly() if d > 1 else Zx([-x,1])
+    ypol = y.charpoly() if d > 1 else Zx([-y,1])
 
     if verbose:
         print("Finished precomp, x={} (p={}), y={} (p={})".format(x,px,y,py))
@@ -938,7 +951,7 @@ def _semistable_reducible_primes(E, verbose=False):
         # has CM and computing the set of CM j-invariants of K to check.
         # TODO: Is this the best value for this parameter?
 
-        while div==0 and patience>0:
+        while div == 0 and patience > 0:
             P = next(deg_one_primes) # a prime of K not K_rel
             while E.has_bad_reduction(P):
                 P = next(deg_one_primes)
@@ -954,7 +967,7 @@ def _semistable_reducible_primes(E, verbose=False):
             div2 = Integer(xpol.resultant(fpol.adams_operator(12)) // x.norm()**12)
             if div2:
                 div = div2.isqrt()
-                assert div2==div**2
+                assert div2 == div**2
                 if verbose:
                     print("...div = {}".format(div))
             else:
@@ -1148,6 +1161,7 @@ def Billerey_P_l(E, l):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_P_l
@@ -1184,6 +1198,7 @@ def Billerey_B_l(E,l,B=0):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_B_l
@@ -1225,6 +1240,7 @@ def Billerey_R_q(E, q, B=0):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_R_q
@@ -1285,6 +1301,7 @@ def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_B_bound
@@ -1324,7 +1341,7 @@ def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
             B1 = B1.prime_to_m_part(p)
         return B1
     ll = primes(5,max_l) # iterator
-    while B!=1 and len(ells)<num_l:
+    while B != 1 and len(ells) < num_l:
         try:
             l = next(ll)
             while B0.valuation(l):
@@ -1394,6 +1411,7 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
 
     EXAMPLES::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import Billerey_R_bound
@@ -1503,6 +1521,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import reducible_primes_Billerey
+        sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 - 29, 'a'); a = K.gen()
         sage: E = EllipticCurve([1, 0, ((5 + a)/2)**2, 0, 0])
         sage: reducible_primes_Billerey(E)  # long time
@@ -1612,6 +1631,7 @@ def reducible_primes_naive(E, max_l=None, num_P=None, verbose=False):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import reducible_primes_naive
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^4 - 5*x^2 + 3)
         sage: E = EllipticCurve(K, [a^2 - 2, -a^2 + 3, a^2 - 2, -50*a^2 + 35, 95*a^2 - 67])
         sage: reducible_primes_naive(E,num_P=10)

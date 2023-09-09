@@ -46,7 +46,7 @@ class HeckeModules(Category_module):
 
         sage: HeckeModules(IntegerRing())
         Category of Hecke modules over Integer Ring
-        sage: HeckeModules(FiniteField(5))                                              # optional - sage.rings.finite_rings
+        sage: HeckeModules(FiniteField(5))
         Category of Hecke modules over Finite Field of size 5
 
     The base ring doesn't have to be a principal ideal domain::
@@ -64,7 +64,7 @@ class HeckeModules(Category_module):
 
             sage: TestSuite(HeckeModules(ZZ)).run()
 
-            sage: HeckeModules(Partitions(3)).run()                                     # optional - sage.combinat
+            sage: HeckeModules(Partitions(3)).run()                                     # needs sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: R (=Partitions of the integer 3) must be a commutative ring
@@ -103,7 +103,7 @@ class HeckeModules(Category_module):
 
         def _Hom_(self, Y, category):
             r"""
-            Returns the homset from ``self`` to ``Y`` in the category ``category``
+            Return the homset from ``self`` to ``Y`` in the category ``category``
 
             INPUT:
 
@@ -121,8 +121,9 @@ class HeckeModules(Category_module):
 
             EXAMPLES::
 
+                sage: # needs sage.modular
                 sage: M = ModularForms(Gamma0(7), 4)
-                sage: H = M._Hom_(M, category = HeckeModules(QQ)); H
+                sage: H = M._Hom_(M, category=HeckeModules(QQ)); H
                 Set of Morphisms
                  from Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
                    to Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
@@ -142,7 +143,7 @@ class HeckeModules(Category_module):
 
             TESTS::
 
-                sage: H = M._Hom_(M, category = HeckeModules(GF(5))); H
+                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # needs sage.modular sage.rings.finite_rings
                 Traceback (most recent call last):
                 ...
                 TypeError: Category of Hecke modules over Finite Field of size 5

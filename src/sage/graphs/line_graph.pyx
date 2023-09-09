@@ -176,8 +176,8 @@ def is_line_graph(g, certificate=False):
 
     This is indeed the subgraph returned::
 
-        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]
-        sage: C.is_isomorphic(graphs.ClawGraph())
+        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]             # needs sage.modules
+        sage: C.is_isomorphic(graphs.ClawGraph())                                       # needs sage.modules
         True
 
     The house graph is a line graph::
@@ -188,10 +188,11 @@ def is_line_graph(g, certificate=False):
 
     But what is the graph whose line graph is the house ?::
 
+        sage: # needs sage.modules
         sage: is_line, R, isom = g.is_line_graph(certificate=True)
         sage: R.sparse6_string()
         ':DaHI~'
-        sage: R.show()                                                                  # optional - sage.plot
+        sage: R.show()                                                                  # needs sage.plot
         sage: isom
         {0: (0, 1), 1: (0, 2), 2: (1, 3), 3: (2, 3), 4: (3, 4)}
 
@@ -201,8 +202,8 @@ def is_line_graph(g, certificate=False):
 
         sage: g = 2 * graphs.CycleGraph(3)
         sage: gl = g.line_graph().relabel(inplace=False)
-        sage: new_g = gl.is_line_graph(certificate=True)[1]
-        sage: g.line_graph().is_isomorphic(gl)
+        sage: new_g = gl.is_line_graph(certificate=True)[1]                             # needs sage.modules
+        sage: g.line_graph().is_isomorphic(gl)                                          # needs sage.modules
         True
 
     Verify that :trac:`29740` is fixed::
@@ -309,12 +310,12 @@ def line_graph(g, labels=True):
         sage: h = g.line_graph()
         sage: h.vertices(sort=True)
         [(0, 1, None),
-        (0, 2, None),
-        (0, 3, None),
-        (1, 2, None),
-        (1, 3, None),
-        (2, 3, None)]
-        sage: h.am()
+         (0, 2, None),
+         (0, 3, None),
+         (1, 2, None),
+         (1, 3, None),
+         (2, 3, None)]
+        sage: h.am()                                                                    # needs sage.modules
         [0 1 1 1 1 0]
         [1 0 1 1 0 1]
         [1 1 0 0 1 1]
@@ -324,17 +325,17 @@ def line_graph(g, labels=True):
         sage: h2 = g.line_graph(labels=False)
         sage: h2.vertices(sort=True)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: h2.am() == h.am()
+        sage: h2.am() == h.am()                                                         # needs sage.modules
         True
         sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()
         sage: h.vertices(sort=True)
         [(1, 2, None),
-        (1, 3, None),
-        (1, 4, None),
-        (2, 3, None),
-        (2, 4, None),
-        (3, 4, None)]
+         (1, 3, None),
+         (1, 4, None),
+         (2, 3, None),
+         (2, 4, None),
+         (3, 4, None)]
         sage: h.edges(sort=True)
         [((1, 2, None), (2, 3, None), None),
          ((1, 2, None), (2, 4, None), None),

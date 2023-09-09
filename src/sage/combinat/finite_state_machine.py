@@ -944,7 +944,6 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.misc.sageinspect import sage_getargspec
-from sage.rings.qqbar import QQbar
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
@@ -5755,7 +5754,7 @@ class FiniteStateMachine(SageObject):
                 state.transitions,
                 key=lambda t: t.word_in)
 
-            for key, transition_class in transition_classes_by_word_in:
+            for _, transition_class in transition_classes_by_word_in:
                 if len(transition_class) > 1:
                     return False
         return True
@@ -6447,14 +6446,14 @@ class FiniteStateMachine(SageObject):
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(current),))
-            pos, states = next(iter(current.items()))
+            _, states = next(iter(current.items()))
             if len(states) > 1:
                 raise RuntimeError("Process has branched "
                                    "(visiting %s states in branch). The "
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(states),))
-            state, branch = next(iter(states.items()))
+            _, branch = next(iter(states.items()))
             if len(branch.outputs) > 1:
                 raise RuntimeError("Process has branched. "
                                    "(%s different outputs in branch). The "
@@ -8217,7 +8216,7 @@ class FiniteStateMachine(SageObject):
         for state_result in result.iter_states():
             state = state_result.label()[0]
             if state.is_final:
-                accept, state_to, output = self.process(
+                accept, _, output = self.process(
                     state.final_word_out,
                     initial_state=self.state(state_result.label()[1]))
                 if not accept:
@@ -9708,7 +9707,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS::
 
-            sage: FiniteStateMachine([('A', 'A', 0)]).plot()
+            sage: FiniteStateMachine([('A', 'A', 0)]).plot()                            # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         return self.graph(edge_labels='words_in_out').plot()
@@ -9885,7 +9884,7 @@ class FiniteStateMachine(SageObject):
         from sage.arith.misc import binomial
         from sage.symbolic.ring import SR
         if base_ring is None:
-            base_ring = QQbar
+            from sage.rings.qqbar import QQbar as base_ring
         if variable is None:
             variable = SR.symbol('n')
 
@@ -10437,11 +10436,11 @@ class FiniteStateMachine(SageObject):
             and the variance are `\sum_{k\ge 1} k2^{-k}=2` and
             `\sum_{k\ge 1} (k-2)^2 2^{-k}=2`::
 
-                sage: var('k')
+                sage: var('k')                                                          # optional - sage.symbolic
                 k
-                sage: sum(k * 2^(-k), k, 1, infinity)
+                sage: sum(k * 2^(-k), k, 1, infinity)                                   # optional - sage.symbolic
                 2
-                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)
+                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)                             # optional - sage.symbolic
                 2
 
             We now compute the same expectation and variance by using a
@@ -11810,7 +11809,7 @@ class Automaton(FiniteStateMachine):
         if kwargs['always_include_output']:
             return super()._process_convert_output_(
                 output_data, **kwargs)
-        accept_input, current_state, output = output_data
+        accept_input, current_state, _ = output_data
         if kwargs['full_output']:
             return (accept_input, current_state)
         else:
@@ -11846,13 +11845,13 @@ class Automaton(FiniteStateMachine):
             sage: NAF = Automaton([(0, 0, 0), (0, 1, 1), (0, 1, -1),
             ....:                  (1, 0, 0)], initial_states=[0],
             ....:                 final_states=[0, 1])
-            sage: P_NAF = NAF.shannon_parry_markov_chain()
-            sage: P_NAF.transitions()
+            sage: P_NAF = NAF.shannon_parry_markov_chain()                              # optional - sage.symbolic
+            sage: P_NAF.transitions()                                                   # optional - sage.symbolic
             [Transition from 0 to 0: 1/2|0,
              Transition from 0 to 1: 1/4|1,
              Transition from 0 to 1: 1/4|-1,
              Transition from 1 to 0: 1|0]
-            sage: for s in P_NAF.iter_states():
+            sage: for s in P_NAF.iter_states():                                         # optional - sage.symbolic
             ....:     print(s.color)
             3/4
             3/2
@@ -11860,7 +11859,7 @@ class Automaton(FiniteStateMachine):
         The stationary distribution is also computed and saved as the
         initial probabilities of the returned Markov chain::
 
-            sage: for s in P_NAF.states():
+            sage: for s in P_NAF.states():                                              # optional - sage.symbolic
             ....:     print("{} {}".format(s, s.initial_probability))
             0 2/3
             1 1/3
@@ -13770,8 +13769,8 @@ class _FSMTapeCacheDetectAll_(_FSMTapeCache_):
             next(it_word)
 
         # check letters not already cached
-        for letter_in_word in it_word:
-            successful, letter_on_track = self.read(track_number)
+        for _ in it_word:
+            successful, _ = self.read(track_number)
             if not successful:
                 return False
         return True

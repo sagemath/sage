@@ -12,7 +12,7 @@ fields of `F = \QQ(\sqrt{2})` of discriminant `\le 2000`.
 
 ::
 
-    sage: ZZx = ZZ['x']
+    sage: ZZx.<x> = ZZ[]
     sage: F.<t> = NumberField(x^2 - 2)
     sage: enumerate_totallyreal_fields_rel(F, 2, 2000)
     [[1600, x^4 - 6*x^2 + 4, xF^2 + xF - 1]]
@@ -257,6 +257,7 @@ class tr_data_rel:
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: F.<t> = NumberField(x^2 - 2)
             sage: T = sage.rings.number_field.totallyreal_rel.tr_data_rel(F, 2, 2000)
         """
@@ -698,7 +699,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     EXAMPLES::
 
-        sage: ZZx = ZZ['x']
+        sage: ZZx.<x> = ZZ[]
         sage: F.<t> = NumberField(x^2 - 2)
         sage: enumerate_totallyreal_fields_rel(F, 1, 2000)
         [[1, [-2, 0, 1], xF - 1]]

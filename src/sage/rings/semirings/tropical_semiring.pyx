@@ -5,7 +5,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-04-28) - Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -27,10 +27,8 @@ from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.semirings import Semirings
 from sage.categories.map cimport Map
-from sage.sets.family import Family
 from sage.rings.integer_ring import ZZ
 
-import operator
 
 cdef class TropicalSemiringElement(Element):
     r"""

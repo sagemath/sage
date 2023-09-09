@@ -5,16 +5,15 @@ AUTHORS:
 
 - Travis Scrimshaw (2023-05-06): Initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2023 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import sqrt
@@ -27,7 +26,7 @@ from sage.modules.free_module import FreeModule
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.categories.rings import Rings
 from sage.categories.metric_spaces import MetricSpaces
-from sage.categories.fields import Fields
+
 
 cdef class Octonion_generic(AlgebraElement):
     r"""
@@ -390,7 +389,6 @@ cdef class Octonion_generic(AlgebraElement):
             0
         """
         cdef int i
-        a, b, c = self._parent._params
         cdef tuple table = self._parent._mult_table
         ret = self.vec.get_unsafe(0) ** 2
         for i in range(1, 8):
@@ -783,13 +781,13 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         g = a * b * c
         self._mult_table = (
           ((0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1)),
-          ((1, 1), (0, a), (3,-1), (2,-a), (5,-1), (4,-a), (7, 1), (6, a)),
-          ((2, 1), (3, 1), (0, b), (1, b), (6,-1), (7,-1), (4,-b), (5,-b)),
-          ((3, 1), (2, a), (1,-b), (0,-d), (7,-1), (6,-a), (5, b), (4, d)),
+          ((1, 1), (0, a), (3, -1), (2, -a), (5, -1), (4, -a), (7, 1), (6, a)),
+          ((2, 1), (3, 1), (0, b), (1, b), (6, -1), (7, -1), (4, -b), (5, -b)),
+          ((3, 1), (2, a), (1, -b), (0, -d), (7, -1), (6, -a), (5, b), (4, d)),
           ((4, 1), (5, 1), (6, 1), (7, 1), (0, c), (1, c), (2, c), (3, c)),
-          ((5, 1), (4, a), (7, 1), (6, a), (1,-c), (0,-e), (3,-c), (2,-e)),
-          ((6, 1), (7,-1), (4, b), (5,-b), (2,-c), (3, c), (0,-f), (1, f)),
-          ((7, 1), (6,-a), (5, b), (4,-d), (3,-c), (2, e), (1,-f), (0, g)),
+          ((5, 1), (4, a), (7, 1), (6, a), (1, -c), (0, -e), (3, -c), (2, -e)),
+          ((6, 1), (7, -1), (4, b), (5, -b), (2, -c), (3, c), (0, -f), (1, f)),
+          ((7, 1), (6, -a), (5, b), (4, -d), (3, -c), (2, e), (1, -f), (0, g)),
         )
 
     def _test_alternative(self, **options):

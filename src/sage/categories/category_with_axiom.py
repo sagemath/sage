@@ -2462,9 +2462,9 @@ class CategoryWithAxiom(Category):
             sage: C.axioms()
             frozenset({'Finite'})
 
-            sage: C = Modules(GF(5)).FiniteDimensional(); C                             # optional - sage.rings.finite_rings
+            sage: C = Modules(GF(5)).FiniteDimensional(); C
             Category of finite dimensional vector spaces over Finite Field of size 5
-            sage: sorted(C.axioms())                                                    # optional - sage.rings.finite_rings
+            sage: sorted(C.axioms())
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Finite', 'FiniteDimensional']
 
@@ -2472,7 +2472,7 @@ class CategoryWithAxiom(Category):
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Associative', 'Distributive',
              'FiniteDimensional', 'Unital', 'WithBasis']
-            sage: sorted(FiniteMonoids().Algebras(GF(3)).axioms())                      # optional - sage.rings.finite_rings
+            sage: sorted(FiniteMonoids().Algebras(GF(3)).axioms())
             ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
              'AdditiveUnital', 'Associative', 'Distributive', 'Finite',
              'FiniteDimensional', 'Unital', 'WithBasis']
@@ -2523,6 +2523,7 @@ class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_rin
 
 class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):#, Category_singleton, FastHashable_class):
     pass
+
 
 """
 The following workaround is needed until any :class:`CategoryWithAxiom` of a
@@ -2764,6 +2765,7 @@ class TestObjects(Category_singleton):
     class FiniteDimensional(CategoryWithAxiom):
         class Finite(CategoryWithAxiom):
             pass
+
         class Unital(CategoryWithAxiom):
             class Commutative(CategoryWithAxiom):
                 pass
@@ -2771,13 +2773,16 @@ class TestObjects(Category_singleton):
     class Commutative(CategoryWithAxiom):
         class Facade(CategoryWithAxiom):
             pass
+
         class FiniteDimensional(CategoryWithAxiom):
             pass
+
         class Finite(CategoryWithAxiom):
             pass
 
     class Unital(CategoryWithAxiom):
         pass
+
 
 class TestObjectsOverBaseRing(Category_over_base_ring):
     r"""
@@ -2805,6 +2810,7 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
     class FiniteDimensional(CategoryWithAxiom_over_base_ring):
         class Finite(CategoryWithAxiom_over_base_ring):
             pass
+
         class Unital(CategoryWithAxiom_over_base_ring):
             class Commutative(CategoryWithAxiom_over_base_ring):
                 pass
@@ -2812,8 +2818,10 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
     class Commutative(CategoryWithAxiom_over_base_ring):
         class Facade(CategoryWithAxiom_over_base_ring):
             pass
+
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             pass
+
         class Finite(CategoryWithAxiom_over_base_ring):
             pass
 

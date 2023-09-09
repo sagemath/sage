@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Fundamental Group of an Extended Affine Weyl Group
 
@@ -406,7 +407,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                  EnumeratedSets()))
         else:
             cat = Groups().Commutative().Infinite()
-        Parent.__init__(self, category = cat)
+        Parent.__init__(self, category=cat)
 
     @cached_method
     def one(self):

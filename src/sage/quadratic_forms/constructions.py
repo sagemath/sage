@@ -32,7 +32,7 @@ def BezoutianQuadraticForm(f, g):
         sage: R = PolynomialRing(ZZ, 'x')
         sage: f = R([1,2,3])
         sage: g = R([2,5])
-        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # optional - sage.libs.singular
+        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # needs sage.libs.singular
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 -12 ]
         [ * -15 ]
@@ -90,4 +90,4 @@ def HyperbolicPlane_quadratic_form(R, r=1):
         raise TypeError("the multiplicity r must be a natural number")
 
     H = QuadraticForm(R, 2, [0, 1, 0])
-    return sum([H  for i in range(r - 1)], H)
+    return sum([H for i in range(r - 1)], H)

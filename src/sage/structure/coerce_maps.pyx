@@ -32,16 +32,19 @@ cdef class DefaultConvertMap(Map):
         Maps of this type are morphisms in the category of sets with
         partial maps (see :trac:`15618`)::
 
-            sage: f = GF(11).convert_map_from(GF(7)); f
+            sage: f = GF(11).convert_map_from(GF(7)); f                                 # needs sage.rings.finite_rings
             Conversion map:
               From: Finite Field of size 7
               To:   Finite Field of size 11
-            sage: f.parent()
-            Set of Morphisms from Finite Field of size 7 to Finite Field of size 11 in Category of sets with partial maps
+            sage: f.parent()                                                            # needs sage.rings.finite_rings
+            Set of Morphisms
+             from Finite Field of size 7
+             to Finite Field of size 11
+             in Category of sets with partial maps
 
         Test that :trac:`23211` is resolved::
 
-            sage: f._is_coercion
+            sage: f._is_coercion                                                        # needs sage.rings.finite_rings
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
@@ -50,7 +53,8 @@ cdef class DefaultConvertMap(Map):
 
             sage: from sage.structure.coerce_maps import DefaultConvertMap
             sage: DefaultConvertMap(ZZ, ZZ)
-            doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable
+            doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead.
+            This probably means that _element_constructor_ should be a method and not some other kind of callable
             See https://github.com/sagemath/sage/issues/26879 for details.
             Conversion map:
               From: Integer Ring
@@ -81,8 +85,8 @@ cdef class DefaultConvertMap(Map):
 
         EXAMPLES::
 
-            sage: f = GF(11).convert_map_from(GF(7))
-            sage: f._repr_type()
+            sage: f = GF(11).convert_map_from(GF(7))                                    # needs sage.rings.finite_rings
+            sage: f._repr_type()                                                        # needs sage.rings.finite_rings
             'Conversion'
         """
         return self._repr_type_str or ("Coercion" if self._is_coercion else "Conversion")
@@ -190,14 +194,15 @@ cdef class NamedConvertMap(Map):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
             sage: var('t')
             t
             sage: mor = NamedConvertMap(SR, QQ['t'], '_polynomial_')
-            sage: mor(t^2/4+1)
+            sage: mor(t^2/4 + 1)
             1/4*t^2 + 1
             sage: mor = NamedConvertMap(SR, GF(7)[['t']], '_polynomial_')
-            sage: mor(t^2/4+1)
+            sage: mor(t^2/4 + 1)
             1 + 2*t^2
         """
         if isinstance(domain, type):
@@ -213,6 +218,7 @@ cdef class NamedConvertMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
             sage: var('t')
             t
@@ -222,11 +228,11 @@ cdef class NamedConvertMap(Map):
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented
+            sage: phi == psi                    # not implemented
             True
-            sage: psi(t^2/4+1)
+            sage: psi(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: psi(t^2/4+1) == phi(t^2/4+1)
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)
             True
         """
         slots = Map._extra_slots(self)
@@ -239,6 +245,7 @@ cdef class NamedConvertMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
             sage: var('t')
             t
@@ -248,11 +255,11 @@ cdef class NamedConvertMap(Map):
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented
+            sage: phi == psi                    # not implemented
             True
-            sage: psi(t^2/4+1)
+            sage: psi(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: psi(t^2/4+1) == phi(t^2/4+1)
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)
             True
         """
         self.method_name = _slots['method_name']
@@ -297,8 +304,8 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')
-            sage: f(x^2+1, check=True)
+            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')                      # needs sage.symbolic
+            sage: f(x^2 + 1, check=True)                                                # needs sage.symbolic
             x^2 + 1
         """
         cdef Parent C = self._codomain
@@ -331,6 +338,7 @@ cdef class CallableConvertMap(Map):
 
         ::
 
+            sage: # needs sage.symbolic
             sage: f = CallableConvertMap(RR, RR, exp, parent_as_first_arg=False)
             sage: f(0)
             1.00000000000000

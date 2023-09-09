@@ -434,6 +434,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         (0, d)
     """
     Element = quotient_ring_element.QuotientRingElement
+
     def __init__(self, R, I, names, category=None):
         """
         Create the quotient ring of `R` by the twosided ideal `I`.
@@ -832,7 +833,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         return self.__I
 
     @cached_method
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         r"""
         Returns ``True`` if the quotient ring is a field. Checks to see if the
         defining ideal is maximal.

@@ -64,7 +64,7 @@ cdef class WordDatatype():
         cdef int res
         if self._hash is None:
             res = 5381
-            for s in islice(self,1024):
+            for s in islice(self, 1024):
                 res = ((res << 5) + res) + hash(s)
             self._hash = res
         return self._hash
@@ -94,10 +94,9 @@ cdef class WordDatatype_list(WordDatatype):
             sage: w = Word([0,1,1,0])
             sage: isinstance(w, sage.combinat.words.word_datatypes.WordDatatype_list)
             True
-
         """
         self._parent = parent
-        if isinstance(data,list):
+        if isinstance(data, list):
             self._data = data
         else:
             self._data = list(data)
@@ -697,7 +696,7 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.split("32")
             [word: , word: 30301030, word: , word: 12, word: 30, word: , word: 1]
 
-        If the separator is not a string a ValueError is raised::
+        If the separator is not a string a :class:`ValueError` is raised::
 
             sage: w = Word("le papa du papa du papa etait un petit pioupiou")
             sage: w.split(Word(['p','a','p','a']))
@@ -867,14 +866,12 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: abba.is_prefix(ab)
             False
-
         """
         if isinstance(other, WordDatatype_str):
             return other._data.startswith(self._data)
-        if isinstance(other ,str):
+        if isinstance(other, str):
             return other.startswith(self._data)
-        else:
-            return super().is_prefix(other)
+        return super().is_prefix(other)
 
     def has_prefix(self, other):
         r"""
@@ -940,10 +937,9 @@ cdef class WordDatatype_tuple(WordDatatype):
             sage: u = Word([0,1,1,0], datatype='tuple')
             sage: isinstance(u, sage.combinat.words.word_datatypes.WordDatatype_tuple)
             True
-
         """
         self._parent = parent
-        if isinstance(data,tuple):
+        if isinstance(data, tuple):
             self._data = data
         else:
             self._data = tuple(data)

@@ -9,7 +9,7 @@ from sage.libs.mpfr.types cimport mpfr_prec_t
 cdef class RealNumber(sage.structure.element.RingElement)  # forward decl
 
 cdef class RealField_class(sage.rings.abc.RealField):
-    cdef mpfr_prec_t __prec
+    cdef mpfr_prec_t _prec
     cdef bint sci_not
     cdef mpfr_rnd_t rnd
     cdef object rnd_str

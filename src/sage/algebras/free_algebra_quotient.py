@@ -211,7 +211,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: H.gen(2)
             k
 
-        An IndexError is raised if an invalid generator is requested::
+        An :class:`IndexError` is raised if an invalid generator is requested::
 
             sage: H.gen(3)
             Traceback (most recent call last):

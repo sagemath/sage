@@ -49,9 +49,14 @@ The first way yields a Maxima object.
 
 ::
 
+    sage: x,y = SR.var('x,y')
     sage: F = maxima.factor('x^5 - y^5')
-    sage: F
-    -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: F # not tested - depends on maxima version
+    -((y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4))
+    sage: actual = F.sage()
+    sage: expected = -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: bool(actual == expected)
+    True
     sage: type(F)
     <class 'sage.interfaces.maxima.MaximaElement'>
 
@@ -71,18 +76,19 @@ data to other systems.
 
 ::
 
+    sage: F = maxima('x * y')
     sage: repr(F)
-    '-(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)'
+    'x*y'
     sage: F.str()
-    '-(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)'
+    'x*y'
 
 The ``maxima.eval`` command evaluates an expression in
 maxima and returns the result as a *string* not a maxima object.
 
 ::
 
-    sage: print(maxima.eval('factor(x^5 - y^5)'))
-    -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: print(maxima.eval('factor(x^5 - 1)'))
+    (x-1)*(x^4+x^3+x^2+x+1)
 
 We can create the polynomial `f` as a Maxima polynomial,
 then call the factor method on it. Notice that the notation
@@ -91,11 +97,11 @@ works.
 
 ::
 
-    sage: f = maxima('x^5 - y^5')
+    sage: f = maxima('x^5 + y^5')
     sage: f^2
-    (x^5-y^5)^2
+    (y^5+x^5)^2
     sage: f.factor()
-    -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    (y+x)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)
 
 Control-C interruption works well with the maxima interface,
 because of the excellent implementation of maxima. For example, try
@@ -161,20 +167,20 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
     sage: eqn = maxima(['a+b*c=1', 'b-a*c=0', 'a+b=5'])
     sage: s = eqn.solve('[a,b,c]'); s
-    [[a = -(sqrt(79)*%i-11)/4,b = (sqrt(79)*%i+9)/4, c = (sqrt(79)*%i+1)/10], [a = (sqrt(79)*%i+11)/4,b = -(sqrt(79)*%i-9)/4, c = -(sqrt(79)*%i-1)/10]]
+    [[a = -...(sqrt(79)*%i-11)/4...,b = (sqrt(79)*%i+9)/4, c = (sqrt(79)*%i+1)/10], [a = (sqrt(79)*%i+11)/4,b = -...(sqrt(79)*%i-9)/4..., c = -...(sqrt(79)*%i-1)/10...]]
 
 Here is an example of solving an algebraic equation::
 
     sage: maxima('x^2+y^2=1').solve('y')
     [y = -sqrt(1-x^2),y = sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
-    [y = -sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
+    [y = -sqrt((...-y^2...-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt((...-y^2...-x^2)*sqrt(y^2+x^2)+x^2)]
 
 
 You can even nicely typeset the solution in latex::
 
     sage: latex(s)
-    \left[ \left[ a=-{{\sqrt{79}\,i-11}\over{4}} , b={{\sqrt{79}\,i+9  }\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{  \sqrt{79}\,i+11}\over{4}} , b=-{{\sqrt{79}\,i-9}\over{4}} , c=-{{  \sqrt{79}\,i-1}\over{10}} \right]  \right]
+    \left[ \left[ a=-...{{\sqrt{79}\,i-11}\over{4}}... , b={{...\sqrt{79}\,i+9...}\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{...\sqrt{79}\,i+11}\over{4}} , b=-...{{\sqrt{79}\,i-9...}\over{4}}... , c=-...{{...\sqrt{79}\,i-1}\over{10}}... \right]  \right]
 
 To have the above appear onscreen via ``xdvi``, type
 ``view(s)``. (TODO: For OS X should create pdf output
@@ -200,7 +206,7 @@ and use preview instead?)
     sage: f.diff('x')
     k*x^3*%e^(k*x)*sin(w*x)+3*x^2*%e^(k*x)*sin(w*x)+w*x^3*%e^(k*x) *cos(w*x)
     sage: f.integrate('x')
-    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3 +(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+((-18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4 +36*k^2*w^2-6*k^4) *%e^(k*x)*sin(w*x) +(((-w^7)-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3 +(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3 +24*k^3*w) *%e^(k*x)*cos(w*x)) /(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
+    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3 +(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+(...-...18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4 +36*k^2*w^2-6*k^4) *%e^(k*x)*sin(w*x) +((...-w^7...-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3...+(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2...+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3 +24*k^3*w) *%e^(k*x)*cos(w*x)) /(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
 
 ::
 
@@ -234,7 +240,7 @@ is `i/j`, for `i,j=1,\ldots,4`.
     sage: A.eigenvalues()
     [[0,4],[3,1]]
     sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-...4/3...]],[[1,2,3,4]]]]
 
 We can also compute the echelon form in Sage::
 
@@ -287,12 +293,12 @@ We illustrate Laplace transforms::
 ::
 
     sage: maxima("laplace(diff(x(t),t,2),t,s)")
-    (-%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s
+    ...-...%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s
 
 It is difficult to read some of these without the 2d
 representation::
 
-    sage: print(maxima("laplace(diff(x(t),t,2),t,s)"))
+    sage: print(maxima("laplace(diff(x(t),t,2),t,s)")) # not tested - depends on maxima version
                              !
                     d        !          2
                  (- -- (x(t))!     ) + s  laplace(x(t), t, s) - x(0) s
@@ -396,7 +402,7 @@ Here's another example::
 
     sage: g = maxima('exp(3*%i*x)/(6*%i) + exp(%i*x)/(2*%i) + c')
     sage: latex(g)
-    -{{i\,e^{3\,i\,x}}\over{6}}-{{i\,e^{i\,x}}\over{2}}+c
+    -...{{i\,e^{3\,i\,x}}\over{6}}...-{{i\,e^{i\,x}}\over{2}}+c
 
 Long Input
 ----------
@@ -684,7 +690,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.assume('a>0')
             [a > 0]
             sage: maxima('integrate(1/(x^3*(a+b*x)^(1/3)),x)')
-            (-(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3))) +(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3)) +(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3)) +(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3)) /(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
+            ...-...(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3))) +(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3)) +(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3)) +(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3)) /(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
             sage: maxima('integrate(x^n,x)')
             Traceback (most recent call last):
             ...

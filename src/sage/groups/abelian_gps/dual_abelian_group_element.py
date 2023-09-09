@@ -71,7 +71,7 @@ def is_DualAbelianGroupElement(x) -> bool:
     EXAMPLES::
 
         sage: from sage.groups.abelian_gps.dual_abelian_group import is_DualAbelianGroupElement
-        sage: F = AbelianGroup(5,[5,5,7,8,9],names = list("abcde")).dual_group()
+        sage: F = AbelianGroup(5, [5,5,7,8,9], names=list("abcde")).dual_group()
         sage: is_DualAbelianGroupElement(F)
         False
         sage: is_DualAbelianGroupElement(F.an_element())
@@ -146,7 +146,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(5,[3, 5, 5, 7, 8],names="abcde")
+            sage: G = AbelianGroup(5,[3, 5, 5, 7, 8], names="abcde")
             sage: Gd = G.dual_group(names="abcde")
             sage: a,b,c,d,e = Gd.gens()
             sage: u = a^3*b*c*d^2*e^5

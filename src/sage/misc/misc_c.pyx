@@ -23,8 +23,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sys
-
 from cpython.sequence cimport *
 from cpython.list cimport *
 from cpython.tuple cimport *
@@ -745,7 +743,7 @@ def cyflush():
     EXAMPLES::
 
         sage: R.<t> = QQ[]
-        sage: t^(sys.maxsize//2)
+        sage: t^(sys.maxsize//2)                                                        # needs sage.libs.flint
         Traceback (most recent call last):
         ...
         RuntimeError: FLINT exception

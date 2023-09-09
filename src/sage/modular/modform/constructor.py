@@ -34,7 +34,9 @@ import re
 
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
-import sage.rings.all as rings
+from sage.rings.integer import Integer
+from sage.rings.rational_field import Q as QQ
+from sage.rings.ring import CommutativeRing
 
 from .ambient_eps import ModularFormsAmbient_eps
 from .ambient_g0 import ModularFormsAmbient_g0_Q
@@ -92,38 +94,38 @@ def canonical_parameters(group, level, weight, base_ring):
         ...
         ValueError: group and level do not match.
     """
-    weight = rings.Integer(weight)
+    weight = Integer(weight)
     if weight <= 0:
         raise NotImplementedError("weight must be at least 1")
 
     if isinstance(group, dirichlet.DirichletCharacter):
-        if ( group.level() != rings.Integer(level) ):
+        if ( group.level() != Integer(level) ):
             raise ValueError("group.level() and level do not match.")
         group = group.minimize_base_ring()
-        level = rings.Integer(level)
+        level = Integer(level)
 
     elif arithgroup.is_CongruenceSubgroup(group):
-        if ( rings.Integer(level) != group.level() ):
+        if ( Integer(level) != group.level() ):
             raise ValueError("group.level() and level do not match.")
         # normalize the case of SL2Z
         if arithgroup.is_SL2Z(group) or \
-           arithgroup.is_Gamma1(group) and group.level() == rings.Integer(1):
-            group = arithgroup.Gamma0(rings.Integer(1))
+           arithgroup.is_Gamma1(group) and group.level() == Integer(1):
+            group = arithgroup.Gamma0(Integer(1))
 
     elif group is None:
         pass
 
     else:
         try:
-            m = rings.Integer(group)
+            m = Integer(group)
         except TypeError:
             raise TypeError("group of unknown type.")
-        level = rings.Integer(level)
+        level = Integer(level)
         if ( m != level ):
             raise ValueError("group and level do not match.")
         group = arithgroup.Gamma0(m)
 
-    if not isinstance(base_ring, rings.CommutativeRing):
+    if not isinstance(base_ring, CommutativeRing):
         raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)
 
     # it is *very* important to include the level as part of the data
@@ -299,7 +301,7 @@ def ModularForms(group=1,
         if base_ring is None:
             base_ring = group.minimize_base_ring().base_ring()
     if base_ring is None:
-        base_ring = rings.QQ
+        base_ring = QQ
 
     if isinstance(group, dirichlet.DirichletCharacter) \
            or arithgroup.is_CongruenceSubgroup(group):
@@ -324,17 +326,17 @@ def ModularForms(group=1,
     M = None
     if arithgroup.is_Gamma0(group):
         M = ModularFormsAmbient_g0_Q(group.level(), weight)
-        if base_ring != rings.QQ:
+        if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
     elif arithgroup.is_Gamma1(group):
         M = ModularFormsAmbient_g1_Q(group.level(), weight, eis_only)
-        if base_ring != rings.QQ:
+        if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
     elif arithgroup.is_GammaH(group):
         M = ModularFormsAmbient_gH_Q(group, weight, eis_only)
-        if base_ring != rings.QQ:
+        if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
     elif isinstance(group, dirichlet.DirichletCharacter):
@@ -466,7 +468,7 @@ def Newforms(group, weight=2, base_ring=None, names=None):
     return CuspForms(group, weight, base_ring).newforms(names)
 
 
-def Newform(identifier, group=None, weight=2, base_ring=rings.QQ, names=None):
+def Newform(identifier, group=None, weight=2, base_ring=QQ, names=None):
     """
     INPUT:
 
@@ -497,7 +499,7 @@ def Newform(identifier, group=None, weight=2, base_ring=rings.QQ, names=None):
         group, identifier = parse_label(identifier)
         if weight != 2:
             raise ValueError("Canonical label not implemented for higher weight forms.")
-        elif base_ring != rings.QQ:
+        elif base_ring != QQ:
             raise ValueError("Canonical label not implemented except for over Q.")
     elif group is None:
         raise ValueError("Must specify a group or a label.")

@@ -30,9 +30,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from sage.arith.misc import binomial
 from sage.arith.misc import GCD as gcd
 from sage.libs.gmp.mpz cimport *
-from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.real_mpfi import RealIntervalField
 from sage.rings.real_mpfr import RealField
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
@@ -122,13 +120,13 @@ cdef double eval_seq_as_poly(int *f, int n, double x):
 
         f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
-    cdef double s, xp
+    cdef double s
 
     # Horner's method: With polynomials of small degree, we shouldn't
     # expect asymptotic methods to be any faster.
     s = f[n]
     for i from n > i >= 0:
-        s = s*x+f[i]
+        s = s * x + f[i]
     return s
 
 cdef double newton(int *f, int *df, int n, double x0, double eps):
@@ -222,13 +220,10 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
         sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)
         [0.0, -1.0]
     """
-    cdef double zmin, zmax, val
-    cdef double *roots_data
     cdef long coeffs[7]
     cdef int r, rsq, rcu
     cdef int nr, nrsq, nrcu
     cdef int s1, s1sq, s1cu, s1fo, s2, s2sq, s2cu, s3, s3sq
-    cdef int found_minmax = 0
 
     RRx = PolynomialRing(RealField(20),'x')
 
@@ -359,11 +354,11 @@ cdef int eval_seq_as_poly_int(int *f, int n, int x):
 
         f[n]*x^n + f[n-1]*x^(n-1) + ... + f[0].
     """
-    cdef int s, xp
+    cdef int s
 
     s = f[n]
     for i from n > i >= 0:
-        s = s*x+f[i]
+        s = s * x + f[i]
     return s
 
 cdef double eps_abs, phi, sqrt2
@@ -376,7 +371,7 @@ cdef int easy_is_irreducible(int *a, int n):
     Very often, polynomials have roots in {+/-1, +/-2, +/-phi, sqrt2}, so we rule
     these out quickly.  Returns 0 if reducible, 1 if inconclusive.
     """
-    cdef int s, t, st, sgn, i
+    cdef int s, t, st, i
 
     # Check if a has a root in {1,-1,2,-2}.
     if eval_seq_as_poly_int(a,n,1) == 0 or eval_seq_as_poly_int(a,n,-1) == 0 or eval_seq_as_poly_int(a,n,2) == 0 or eval_seq_as_poly_int(a,n,-2) == 0:
@@ -668,8 +663,7 @@ cdef class tr_data:
 
             None. The return value is stored in the variable f_out.
         """
-
-        cdef int n, np1, k, i, j, nk, kz
+        cdef int n, np1, k, i, nk, kz
         cdef int *gnkm
         cdef int *gnkm1
         cdef double *betak

@@ -826,8 +826,7 @@ class GroupMixinLibGAP():
             60
         """
         if self.list.cache is not None:
-            for g in self.list():
-                yield g
+            yield from self.list()
             return
         iterator = self.gap().Iterator()
         while not iterator.IsDoneIterator().sage():

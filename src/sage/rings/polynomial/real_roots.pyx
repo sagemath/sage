@@ -147,7 +147,6 @@ from sage.modules.free_module_element import free_module_element as vector
 from sage.modules.free_module import FreeModule
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import polygen
 from sage.misc.functional import numerator, denominator
 from sage.misc.misc_c import prod
 
@@ -436,7 +435,7 @@ dr_cache = {}
 
 cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     """
-    This is the subclass of interval_bernstein_polynomial where
+    This is the subclass of :class:`interval_bernstein_polynomial` where
     polynomial coefficients are represented using integers.
 
     In this integer representation, each coefficient is represented by
@@ -444,8 +443,8 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     E (which is a machine integer).  These represent the coefficients
     A*2^n <= c < (A+E)*2^n.
 
-    (Note that mk_ibpi is a simple helper function for creating
-    elements of interval_bernstein_polynomial_integer in doctests.)
+    (Note that :func:`mk_ibpi is a simple helper` function for creating
+    elements of :class:`interval_bernstein_polynomial_integer` in doctests.)
 
     EXAMPLES::
 
@@ -456,11 +455,13 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         <IBP: (1, 2, 3) + [0 .. 5)>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1, error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
+        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1,        # needs sage.symbolic
+        ....:              error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with 2-bit coefficients
-        sage: bp
-        <IBP: ((-3, -1, 1, -1, -3, -1) + [0 .. 2)) * 2^-3 over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
-        sage: bp.variations()
+        sage: bp                                                                        # needs sage.symbolic
+        <IBP: ((-3, -1, 1, -1, -3, -1) + [0 .. 2)) * 2^-3 over [1 .. 5/4]; usign 1;
+              level 2; slope_err 3.141592653589794?>
+        sage: bp.variations()                                                           # needs sage.symbolic
         (3, 3)
     """
 
@@ -875,7 +876,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
                 indicator = '='
             if bitsize(err) > 17:
                 shift = bitsize(err) - 15
-                for i in xrange(len(ribp)):
+                for i in range(len(ribp)):
                     ribp[i] = ribp[i] >> shift
                 max_err = max_err >> shift
                 err = -((-err) >> shift)
@@ -944,7 +945,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
             <IBP: ((0, 3, 12, 28) + [0 .. 1)) * 2^5>
         """
         p = self.coeffs.__copy__()
-        for i in xrange(len(p)):
+        for i in range(len(p)):
             p[i] = p[i] >> bits
         return interval_bernstein_polynomial_integer(p, self.lower, self.upper, self.lsign, self.usign, -((-self.error) >> bits), self.scale_log2 + bits, self.level, self.slope_err)
 
@@ -1331,7 +1332,7 @@ def intvec_to_doublevec(Vector_integer_dense b, long err):
 
 cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
     """
-    This is the subclass of interval_bernstein_polynomial where
+    This is the subclass of :class:`interval_bernstein_polynomial` where
     polynomial coefficients are represented using floating-point numbers.
 
     In the floating-point representation, each coefficient is represented
@@ -1342,8 +1343,8 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
     Note that we always have E1 <= 0 <= E2.  Also, each floating-point
     coefficient has absolute value less than one.
 
-    (Note that mk_ibpf is a simple helper function for creating
-    elements of interval_bernstein_polynomial_float in doctests.)
+    (Note that :func:`mk_ibpf` is a simple helper function for creating
+    elements of :class:`interval_bernstein_polynomial_float` in doctests.)
 
     EXAMPLES::
 
@@ -1354,11 +1355,14 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         <IBP: (0.1, 0.2, 0.3) + [0.0 .. 0.5]>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1], lower=1, upper=5/4, usign=1, pos_err=0.2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
+        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1],                         # needs sage.symbolic
+        ....:              lower=1, upper=5/4, usign=1, pos_err=0.2,
+        ....:              scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with floating-point coefficients
-        sage: bp
-        <IBP: ((-0.3, -0.1, 0.1, -0.1, -0.3, -0.1) + [0.0 .. 0.2]) * 2^-3 over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
-        sage: bp.variations()
+        sage: bp                                                                        # needs sage.symbolic
+        <IBP: ((-0.3, -0.1, 0.1, -0.1, -0.3, -0.1) + [0.0 .. 0.2]) * 2^-3
+              over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
+        sage: bp.variations()                                                           # needs sage.symbolic
         (3, 3)
     """
 
@@ -1561,13 +1565,13 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 
         INPUT:
 
-        - ``mid`` -- where to split the Bernstein basis region; 0 < mid < 1
-        - ``msign`` -- default 0 (unknown); the sign of this polynomial at mid
+        - ``mid`` -- where to split the Bernstein basis region; ``0 < mid < 1``
+        - ``msign`` -- default 0 (unknown); the sign of this polynomial at ``mid``
 
         OUTPUT:
 
         - ``bp1``, ``bp2`` -- the new interval Bernstein polynomials
-        - ``ok`` -- a boolean; True if the sign of the original polynomial at mid is known
+        - ``ok`` -- a boolean; ``True`` if the sign of the original polynomial at ``mid`` is known
 
         EXAMPLES::
 
@@ -1680,7 +1684,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 def mk_ibpf(coeffs, lower=0, upper=1, lsign=0, usign=0, neg_err=0, pos_err=0,
             scale_log2=0, level=0, slope_err=RIF(0)):
     """
-    A simple wrapper for creating interval_bernstein_polynomial_float
+    A simple wrapper for creating :class:`interval_bernstein_polynomial_float`
     objects with coercions, defaults, etc.
 
     For use in doctests.
@@ -2039,7 +2043,7 @@ def precompute_degree_reduction_cache(n):
         # polynomial, and be fairly certain (absolutely certain?) that
         # the error in the reduced polynomial will be no better
         # than this product.
-        expected_err = max([sum([abs(x) for x in bd.row(k)]) for k in xrange(next+1)])
+        expected_err = max([sum([abs(x) for x in bd.row(k)]) for k in range(next+1)])
 
         # bdd = bd.denominator()
         # bdi = MatrixSpace(ZZ, next+1, samps, sparse=False)(bd * bdd)
@@ -2208,7 +2212,7 @@ def cl_maximum_root_first_lambda(cl):
     negCounter = 0
     pos = []
     neg = []
-    for j in xrange(n-1, -2, -1):
+    for j in range(n-1, -2, -1):
         if j < 0:
             coeff = 1
         else:
@@ -2232,7 +2236,7 @@ def cl_maximum_root_first_lambda(cl):
         return RIF.upper_field().zero()
 
     max_ub_log = RIF('-infinity')
-    for j in xrange(len(neg)):
+    for j in range(len(neg)):
         cur_ub_log = (-neg[j][0] / pos[j][0]).log() / (pos[j][1] - neg[j][1])
         max_ub_log = max_ub_log.union(cur_ub_log)
 
@@ -2284,7 +2288,7 @@ def cl_maximum_root_local_max(cl):
     max_pos_uses = 0
     max_ub_log = RIF('-infinity')
 
-    for j in xrange(n-1, -1, -1):
+    for j in range(n-1, -1, -1):
         if cl[j] < 0:
             max_pos_uses = max_pos_uses+1
             cur_ub_log = (-cl[j] / (max_pos_coeff >> max_pos_uses)).log() / (max_pos_exp - j)
@@ -2363,7 +2367,7 @@ def root_bounds(p):
     ub = cl_maximum_root(cl)
 
     neg_cl = copy(cl)
-    for j in xrange(n-1, -1, -2):
+    for j in range(n-1, -1, -2):
         neg_cl[j] = -neg_cl[j]
 
     lb = -cl_maximum_root(neg_cl)

@@ -387,10 +387,10 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = CircuitClosuresMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)
-            sage: M1._is_isomorphic(M2)
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
             sage: M1 = CircuitClosuresMatroid(matroids.named_matroids.Fano())
             sage: M2 = matroids.named_matroids.NonFano()
@@ -513,8 +513,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         N._groundset = self._groundset
         N._circuit_closures = self._circuit_closures
         N._matroid_rank = self._matroid_rank
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo=None):
@@ -539,8 +538,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -570,7 +568,7 @@ cdef class CircuitClosuresMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         import sage.matroids.unpickling
-        data = (self._groundset, self._circuit_closures, getattr(self, '__custom_name'))
+        data = (self._groundset, self._circuit_closures, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_circuit_closures_matroid, (version, data)
 

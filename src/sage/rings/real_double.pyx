@@ -45,13 +45,10 @@ from libc.string cimport memcpy
 from cpython.object cimport *
 from cpython.float cimport *
 
-from cysignals.signals cimport sig_on, sig_off
-
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
 import math
-import operator
 
 import sage.rings.integer
 import sage.rings.rational
@@ -1023,7 +1020,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: sage_input(RDF(-e), verify=True, preparse=False)
             # Verified
             -RDF(2.718281828459045...)
-            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)
+            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)          # optional - sage.symbolic
             # Verified
             R = RDF['x']
             x = R.gen()
@@ -1514,7 +1511,6 @@ cdef class RealDoubleElement(FieldElement):
             return 1
         return -1
 
-
     ###################
     # Rounding etc
     ###################
@@ -1695,7 +1691,6 @@ cdef class RealDoubleElement(FieldElement):
             from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element
         return new_gen_from_real_double_element(self)
 
-
     ###########################################
     # Comparisons: ==, !=, <, <=, >, >=
     ###########################################
@@ -1801,7 +1796,6 @@ cdef class RealDoubleElement(FieldElement):
             return x > y
         else:
             return x >= y
-
 
     ############################
     # Special Functions

@@ -1,3 +1,4 @@
+# optional - sage.combinat sage.modules sage.groups
 r"""
 Symmetric Group Algebra
 """

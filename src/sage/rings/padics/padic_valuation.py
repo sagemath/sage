@@ -416,7 +416,9 @@ class PadicValuationFactory(UniqueFactory):
                 raise NotImplementedError
             return parent.__make_element_class__(pAdicFromLimitValuation)(parent, v, G.change_ring(R.base_ring()), approximants)
 
+
 pAdicValuation = PadicValuationFactory("sage.rings.padics.padic_valuation.pAdicValuation")
+
 
 class pAdicValuation_base(DiscreteValuation):
     r"""
@@ -738,6 +740,7 @@ class pAdicValuation_base(DiscreteValuation):
         TESTS::
 
             sage: R.<a> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = QQ.extension(x^3 - 2)
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b^2 + 2*b + a)
@@ -1384,6 +1387,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
         Check that this also works for relative extensions::
 
             sage: v = QQ.valuation(2)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^2 + 2)
             sage: M.<b> = L.extension(x^2 + 1)
             sage: w = v.extension(L).extension(M)

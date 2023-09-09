@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Number Field Ideals
 
@@ -2757,7 +2757,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         G = self.idealstar(2)
         invs = G.invariants()
 
-        from sage.matrix.constructor import Matrix as matrix
+        from sage.matrix.constructor import matrix
         from sage.matrix.special import identity_matrix
         from sage.matrix.special import zero_matrix
         from sage.matrix.special import diagonal_matrix
@@ -3196,7 +3196,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         if not self.is_prime():
             raise ValueError("The ideal must be prime")
-        return self.number_field().residue_field(self, names = names)
+        return self.number_field().residue_field(self, names=names)
 
     def residue_class_degree(self):
         r"""

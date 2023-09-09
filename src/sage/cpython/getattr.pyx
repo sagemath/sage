@@ -37,7 +37,7 @@ cdef extern from "Python.h":
 
 cdef class AttributeErrorMessage:
     """
-    Tries to emulate the standard Python ``AttributeError`` message.
+    Tries to emulate the standard Python :class:`AttributeError` message.
 
     .. NOTE::
 
@@ -54,7 +54,8 @@ cdef class AttributeErrorMessage:
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
-        sage: QQ[x].gen().bla
+        sage: x = polygen(ZZ, 'x')
+        sage: QQ[x].gen().bla                                                           # needs sage.libs.flint
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'
@@ -67,7 +68,7 @@ cdef class AttributeErrorMessage:
 
     TESTS:
 
-    The error message used for the ``AttributeError`` is a unique object
+    The error message used for the :class:`AttributeError` is a unique object
     and is changed inplace. This is for reasons of efficiency.
     Hence, if one really needs the error message as a string, then one should
     make a copy of its string representation before it changes. ::
@@ -83,7 +84,7 @@ cdef class AttributeErrorMessage:
         ....: except AttributeError as exc:
         ....:     ElementError2 = exc
         sage: ElementError
-        AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla'...)
+        AttributeError('sage.rings.polynomial...' object has no attribute '__bla'...)
         sage: ElementError2.args[0] is ElementError.args[0]
         True
         sage: isinstance(ElementError.args[0], sage.cpython.getattr.AttributeErrorMessage)
@@ -239,7 +240,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
     - ``name`` -- a string
 
-    If self is an instance of cls, raises an ``AttributeError``, to
+    If self is an instance of cls, raises an :class:`AttributeError`, to
     avoid a double lookup. This function is intended to be called from
     __getattr__, and so should not be called if name is an attribute
     of self.
@@ -270,7 +271,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
     Caveat: lazy attributes work with extension types only
     if they allow attribute assignment or have a public attribute
-    ``__cached_methods`` of type ``<dict>``. This condition
+    ``_cached_methods`` of type ``<dict>``. This condition
     is satisfied, e.g., by any class that is derived from
     :class:`Parent`::
 
@@ -299,7 +300,7 @@ cpdef getattr_from_other_class(self, cls, name):
         TypeError: descriptor '__weakref__' for 'A' objects doesn't apply
         to ...'sage.rings.integer.Integer' object
 
-    When this occurs, an ``AttributeError`` is raised::
+    When this occurs, an :class:`AttributeError` is raised::
 
         sage: getattr_from_other_class(1, A, "__weakref__")
         Traceback (most recent call last):
@@ -366,7 +367,7 @@ cpdef getattr_from_other_class(self, cls, name):
         # Not a descriptor
         return attribute
     # Conditionally defined lazy_attributes don't work well with fake subclasses
-    # (a TypeError is raised if the lazy attribute is not defined).
+    # (a :class:`TypeError` is raised if the lazy attribute is not defined).
     # For the moment, we ignore that when this occurs.
     # Other descriptors (including __weakref__) also break.
     try:
@@ -406,20 +407,21 @@ def dir_with_other_class(self, *cls):
 
     Check that objects without dicts are well handled::
 
-        sage: cython("cdef class A:\n    cdef public int a")            # optional - sage.misc.cython
-        sage: cython("cdef class B:\n    cdef public int b")            # optional - sage.misc.cython
-        sage: x = A()                                                   # optional - sage.misc.cython
-        sage: x.a = 1                                                   # optional - sage.misc.cython
-        sage: hasattr(x,'__dict__')                                     # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython("cdef class A:\n    cdef public int a")
+        sage: cython("cdef class B:\n    cdef public int b")
+        sage: x = A()
+        sage: x.a = 1
+        sage: hasattr(x,'__dict__')
         False
-        sage: dir_with_other_class(x, B)                                # optional - sage.misc.cython
+        sage: dir_with_other_class(x, B)
         [..., 'a', 'b']
 
     TESTS:
 
     Check that :trac:`13043` is fixed::
 
-        sage: len(dir(RIF))==len(set(dir(RIF)))
+        sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
         True
     """
     ret = set()

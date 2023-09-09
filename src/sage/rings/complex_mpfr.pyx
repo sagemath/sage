@@ -30,15 +30,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import math
-import operator
 import weakref
 
 import sage.misc.misc
 
 from sage.libs.mpfr cimport *
 
-from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
+from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.structure.parent import Parent
@@ -48,7 +46,7 @@ from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import ring, infinity
+from . import infinity
 from .integer cimport Integer
 
 from .complex_double cimport ComplexDoubleElement
@@ -381,7 +379,6 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         return ComplexField(prec)
 
-
     # very useful to cache this.
     def _real_field(self):
         """
@@ -464,6 +461,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             1.00000000000000*I
             sage: CC.gen() + QQ[I].gen()
             2.00000000000000*I
+            sage: x = polygen(ZZ, 'x')
             sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()
             Traceback (most recent call last):
             ...
@@ -494,7 +492,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         Check that :trac:`14989` is fixed::
 
-            sage: QQi = NumberField(x^2+1, 'i', embedding=CC(0,1))
+            sage: x = polygen(ZZ, 'x')
+            sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))
             sage: i = QQi.order(QQi.gen()).gen(1)
             sage: CC(i)
             1.00000000000000*I
@@ -1659,28 +1658,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(right_nm)
         return x
 
-    def __rtruediv__(self, left):
-        r"""
-        Return the quotient of left with ``self``, that is:
-
-        ``left/self``
-
-        as a complex number.
-
-        INPUT:
-
-        - ``left`` -- a complex number to divide by ``self``
-
-        EXAMPLES::
-
-            sage: a = ComplexNumber(2,0)
-            sage: a.__rtruediv__(CC(1))
-            0.500000000000000
-            sage: CC(1)/a
-            0.500000000000000
-        """
-        return ComplexNumber(self._parent, left)/self
-
     def __pow__(self, right, modulus):
         r"""
         Raise ``self`` to the ``right`` exponent.
@@ -2069,7 +2046,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         elif abs(abs(self) - 1) > 0.1:  # clearly not a root of unity
             return infinity.infinity
         raise NotImplementedError("order of element not known")
-
 
     ########################################################################
     # Plotting

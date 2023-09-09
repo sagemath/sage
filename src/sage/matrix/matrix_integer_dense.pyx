@@ -75,7 +75,7 @@ from sage.libs.gmp.mpz cimport *
 
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose, get_verbose
 
 from sage.arith.misc import previous_prime
@@ -86,7 +86,6 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 
-from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 from .args cimport SparseEntry, MatrixArgs_init
 
 #########################################################
@@ -114,7 +113,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import is_Vector
-from sage.structure.sequence import Sequence
 
 from .matrix_modn_dense_float cimport Matrix_modn_dense_template
 from .matrix_modn_dense_float cimport Matrix_modn_dense_float
@@ -1096,7 +1094,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return ans
 
-
     ########################################################################
     # LEVEL 3 functionality (Optional)
     #    * __deepcopy__
@@ -1374,12 +1371,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if algorithm == 'flint':
             g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
             sig_on()
-            fmpz_mat_charpoly(g.__poly, self._matrix)
+            fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'linbox':
             g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
             sig_on()
-            linbox_fmpz_mat_charpoly(g.__poly, self._matrix)
+            linbox_fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
@@ -1463,7 +1460,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if algorithm == 'linbox':
             g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
             sig_on()
-            linbox_fmpz_mat_minpoly(g.__poly, self._matrix)
+            linbox_fmpz_mat_minpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'generic':
             g = Matrix_dense.minpoly(self, var)
@@ -1616,7 +1613,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             return self._mod_two()
         elif p < MAX_MODULUS_FLOAT:
             res_f = Matrix_modn_dense_float.__new__(Matrix_modn_dense_float,
-                                                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None)
+                                                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None, zeroed_alloc=False)
             for i from 0 <= i < self._nrows:
                 res_row_f = res_f._matrix[i]
                 for j from 0 <= j < self._ncols:
@@ -1625,7 +1622,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         elif p < MAX_MODULUS_DOUBLE:
             res_d = Matrix_modn_dense_double.__new__(Matrix_modn_dense_double,
-                                                     matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None)
+                                                     matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None, zeroed_alloc=False)
             for i from 0 <= i < self._nrows:
                 res_row_d = res_d._matrix[i]
                 for j from 0 <= j < self._ncols:
@@ -1651,11 +1648,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if p < MAX_MODULUS_FLOAT:
                 res.append( Matrix_modn_dense_float.__new__(Matrix_modn_dense_float,
                                                             matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
-                                                            None, None, None) )
+                                                            None, None, None, zeroed_alloc=False) )
             elif p < MAX_MODULUS_DOUBLE:
                 res.append( Matrix_modn_dense_double.__new__(Matrix_modn_dense_double,
                                                              matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
-                                                             None, None, None) )
+                                                             None, None, None, zeroed_alloc=False) )
             else:
                 raise ValueError("p=%d too big."%p)
 
@@ -2456,10 +2453,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
            :meth:`elementary_divisors`
         """
-        X = self.matrix_space()([self[i,j] for i in xrange(self._nrows-1,-1,-1) for j in xrange(self._ncols-1,-1,-1)])
+        X = self.matrix_space()([self[i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
         v = X.__pari__().matsnf(1).sage()
         # need to reverse order of rows of U, columns of V, and both of D.
-        D = self.matrix_space()([v[2][i,j] for i in xrange(self._nrows-1,-1,-1) for j in xrange(self._ncols-1,-1,-1)])
+        D = self.matrix_space()([v[2][i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
 
         if not transformation:
             return D
@@ -2473,13 +2470,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             # silly special cases for matrices with 0 columns (PARI has a unique empty matrix)
             U = self.matrix_space(ncols = self._nrows)(1)
         else:
-            U = self.matrix_space(ncols = self._nrows)([v[0][i,j] for i in xrange(self._nrows-1,-1,-1) for j in xrange(self._nrows-1,-1,-1)])
+            U = self.matrix_space(ncols = self._nrows)([v[0][i,j] for i in range(self._nrows-1,-1,-1) for j in range(self._nrows-1,-1,-1)])
 
         if self._nrows == 0:
             # silly special cases for matrices with 0 rows (PARI has a unique empty matrix)
             V = self.matrix_space(nrows = self._ncols)(1)
         else:
-            V = self.matrix_space(nrows = self._ncols)([v[1][i,j] for i in xrange(self._ncols-1,-1,-1) for j in xrange(self._ncols-1,-1,-1)])
+            V = self.matrix_space(nrows = self._ncols)([v[1][i,j] for i in range(self._ncols-1,-1,-1) for j in range(self._ncols-1,-1,-1)])
 
         return D, U, V
 
@@ -2745,10 +2742,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         import sage.libs.ntl.ntl_mat_ZZ
         return sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols, self.list())
 
-
-    ####################################################################################
+    #######################################################################
     # LLL
-    ####################################################################################
+    #######################################################################
 
     def BKZ(self, delta=None, algorithm="fpLLL", fp=None, block_size=10, prune=0,
             use_givens=False, precision=0, proof=None, **kwds):
@@ -3312,7 +3308,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         #For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
         norms = [G[i].norm()**2 for i in range(len(G))]
-        for i in xrange(1,self.nrows()):
+        for i in range(1,self.nrows()):
             if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
                 return False
         return True
@@ -3412,7 +3408,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ZeroDivisionError: The modulus cannot be zero
         """
-        from .misc import matrix_integer_dense_rational_reconstruction
+        from .misc_flint import matrix_integer_dense_rational_reconstruction
         return matrix_integer_dense_rational_reconstruction(self, N)
 
     def randomize(self, density=1, x=None, y=None, distribution=None,
@@ -5166,7 +5162,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_free(T_ent)
         sig_free(T_rows)
         return res
-
 
     #################################################################
     # operations with matrices

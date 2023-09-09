@@ -53,7 +53,7 @@ class FusionRing(WeylCharacterRing):
     The cyclotomic order is an integer `N` such that all computations
     will return elements of the cyclotomic field of `N`-th roots of unity.
     Normally you will never need to change this but consider changing it
-    if :meth:`root_of_unity` raises a ``ValueError``.
+    if :meth:`root_of_unity` raises a :class:`ValueError`.
 
     This algebra has a basis (sometimes called *primary fields* but here
     called *simple objects*) indexed by the weights of level `\leq k`.
@@ -1289,7 +1289,7 @@ class FusionRing(WeylCharacterRing):
           we don't run the solver again.
         - ``use_mp`` -- (default: ``True``) a boolean indicating whether
           to use multiprocessing to speed up the computation; this is
-          highly recommended. Python 3.8+ is required.
+          highly recommended.
         - ``verbose`` -- (default: ``True``) boolean indicating whether
           to be verbose with the computation
 

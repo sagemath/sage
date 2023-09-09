@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Catalog of posets and lattices
 
@@ -990,7 +991,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.SSTPoset([2,1],2).cover_relations()
             [[[[1, 1], [2]], [[1, 2], [2]]]]
 
-            sage: posets.SSTPoset([3,2]).bottom()  # long time (6s on sage.math, 2012)
+            sage: posets.SSTPoset([3,2]).bottom()       # long time (6s on sage.math, 2012)
             [[1, 1, 1], [2, 2]]
 
             sage: posets.SSTPoset([3,2],4).maximal_elements()
@@ -1276,12 +1277,12 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['B', 3])
-            sage: posets.CoxeterGroupAbsoluteOrderPoset(W)
+            sage: W = CoxeterGroup(['B', 3])                                            # needs sage.groups
+            sage: posets.CoxeterGroupAbsoluteOrderPoset(W)                              # needs sage.groups
             Finite poset containing 48 elements
 
-            sage: W = WeylGroup(['B', 2], prefix='s')
-            sage: posets.CoxeterGroupAbsoluteOrderPoset(W, False)
+            sage: W = WeylGroup(['B', 2], prefix='s')                                   # needs sage.groups
+            sage: posets.CoxeterGroupAbsoluteOrderPoset(W, False)                       # needs sage.groups
             Finite poset containing 8 elements
         """
         if use_reduced_words:
@@ -1300,12 +1301,12 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3])
-            sage: posets.NoncrossingPartitions(W)
+            sage: W = CoxeterGroup(['A', 3])                                            # needs sage.groups
+            sage: posets.NoncrossingPartitions(W)                                       # needs sage.groups
             Finite lattice containing 14 elements
 
-            sage: W = WeylGroup(['B', 2], prefix='s')
-            sage: posets.NoncrossingPartitions(W)
+            sage: W = WeylGroup(['B', 2], prefix='s')                                   # needs sage.groups
+            sage: posets.NoncrossingPartitions(W)                                       # needs sage.groups
             Finite lattice containing 6 elements
         """
         return W.noncrossing_partition_lattice()
@@ -1331,11 +1332,11 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(4)
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(4)                            # needs sage.groups
             Finite poset containing 24 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")           # needs sage.groups
             Finite poset containing 6 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")    # needs sage.groups
             Finite poset containing 6 elements
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup

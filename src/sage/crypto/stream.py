@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Cryptosystems
 """
@@ -28,7 +29,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
     """
     Linear feedback shift register cryptosystem class
     """
-    def __init__(self, field = None):
+    def __init__(self, field=None):
         """
         Create a linear feedback shift cryptosystem.
 

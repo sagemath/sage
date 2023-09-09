@@ -1201,7 +1201,7 @@ def is_pAdicRing(R):
 
 
 class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return whether this ring is actually a field, ie ``False``.
 

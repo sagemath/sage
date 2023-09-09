@@ -17,10 +17,10 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 
 from sage.libs.gmp.all cimport *
 

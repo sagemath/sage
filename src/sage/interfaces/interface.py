@@ -1169,11 +1169,8 @@ class InterfaceElement(Element):
             s = cr
         else:
             s = self._repr_()
-        if self._name in s:
-            try:
-                s = s.replace(self._name, getattr(self, '__custom_name'))
-            except AttributeError:
-                pass
+        if self._name in s and self.get_custom_name() is not None:
+            s = s.replace(self._name, self.get_custom_name())
         if cr:
             self._cached_repr = s
         return s
@@ -1579,20 +1576,20 @@ class InterfaceElement(Element):
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)') # not a function!
+            sage: g = maxima('cos(x)') # not a function!
             sage: f*g
-            -cos(x)*sin(x)
+            cos(x)*sin(x)
             sage: _(2)
-            -cos(2)*sin(2)
+            cos(2)*sin(2)
 
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: g*f
-            -cos(x)*sin(x)
+            cos(x)*sin(x)
             sage: _(2)
-            -cos(2)*sin(2)
+            cos(2)*sin(2)
             sage: 2*f
             2*sin(x)
         """
@@ -1612,20 +1609,20 @@ class InterfaceElement(Element):
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: f/g
-            -sin(x)/cos(x)
+            sin(x)/cos(x)
             sage: _(2)
-            -sin(2)/cos(2)
+            sin(2)/cos(2)
 
         ::
 
             sage: f = maxima.function('x','sin(x)')
-            sage: g = maxima('-cos(x)')
+            sage: g = maxima('cos(x)')
             sage: g/f
-            -cos(x)/sin(x)
+            cos(x)/sin(x)
             sage: _(2)
-            -cos(2)/sin(2)
+            cos(2)/sin(2)
             sage: 2/f
             2/sin(x)
         """

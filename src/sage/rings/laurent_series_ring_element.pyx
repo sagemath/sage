@@ -51,7 +51,7 @@ AUTHORS:
 
 - Robert Bradshaw: Cython version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -64,19 +64,16 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .infinity import infinity
 
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-import sage.rings.polynomial.polynomial_element as polynomial
 import sage.misc.latex
-from sage.rings.integer import Integer
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
 from .power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, ModuleElement, RingElement, AlgebraElement
+from sage.structure.element cimport Element, AlgebraElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.misc.derivative import multi_derivative
 
@@ -305,7 +302,7 @@ cdef class LaurentSeries(AlgebraElement):
         x = im_gens[0]
         return codomain(self.__u._im_gens_(codomain, im_gens, base_map=base_map) * x**self.__n)
 
-    cdef __normalize(self):
+    cdef _normalize(self):
         r"""
         A Laurent series is a pair (u(t), n), where either u=0 (to some
         precision) or u is a unit. This pair corresponds to
@@ -339,7 +336,7 @@ cdef class LaurentSeries(AlgebraElement):
         X = self._parent.variable_name()
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         first = True
-        for n in xrange(m):
+        for n in range(m):
             x = v[n]
             e = n + valuation
             x = str(x)
@@ -462,7 +459,7 @@ cdef class LaurentSeries(AlgebraElement):
         X = self._parent.latex_variable_names()[0]
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         first = True
-        for n in xrange(m):
+        for n in range(m):
             x = v[n]
             e = n + valuation
             x = sage.misc.latex.latex(x)
@@ -728,7 +725,7 @@ cdef class LaurentSeries(AlgebraElement):
                 R = self._parent.base_ring()
                 coeffs = [value] + [R(0) for _ in range(1,-j)] + self.__u.list()
                 self.__u = self.__u._parent(coeffs)
-        self.__normalize()
+        self._normalize()
 
     cpdef _add_(self, right_m):
         """
@@ -754,6 +751,14 @@ cdef class LaurentSeries(AlgebraElement):
             t^-3 + t^3 + O(t^9)
 
         ALGORITHM: Shift the unit parts to align them, then add.
+
+        TESTS:
+
+        Verify that :trac:`35860` is fixed::
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: sqrt(t^2) + t^-1
+            t^-1 + t
         """
         cdef LaurentSeries right = <LaurentSeries>right_m
         cdef long m
@@ -1258,7 +1263,6 @@ cdef class LaurentSeries(AlgebraElement):
             deg = prec - 1
 
         cdef long i
-        cdef int c
         for i in range(val, deg + 1):
             li = self[i]
             ri = right[i]
@@ -1594,8 +1598,8 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS::
 
-            sage: y = var('y')
-            sage: f.derivative(y)
+            sage: y = var('y')                                                          # optional - sage.symbolic
+            sage: f.derivative(y)                                                       # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: cannot differentiate with respect to y

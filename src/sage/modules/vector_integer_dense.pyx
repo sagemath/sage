@@ -208,8 +208,8 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             (1, 2, 3, 4)
         """
         cdef int i
-        return [_Integer_from_mpz(self._entries[i]) for i in
-                                  xrange(self._degree)]
+        return [_Integer_from_mpz(self._entries[i])
+                for i in range(self._degree)]
 
     def __reduce__(self):
         return (unpickle_v1, (self._parent, self.list(), self._degree,
@@ -314,10 +314,10 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
             sage: A = random_matrix(ZZ,1,3)
             sage: v = A.row(0)
-            sage: vs = singular(v)
-            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)
+            sage: vs = singular(v)                                                      # needs sage.libs.singular
+            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)                              # needs sage.libs.singular
             True
-            sage: vs.type()
+            sage: vs.type()                                                             # needs sage.libs.singular
             'intvec'
         """
         if singular is None:

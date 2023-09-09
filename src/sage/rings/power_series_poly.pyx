@@ -5,8 +5,8 @@ Power Series Methods
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
 from .power_series_ring_element cimport PowerSeries
-from sage.structure.element cimport Element, ModuleElement, RingElement
-from .infinity import infinity, is_Infinite
+from sage.structure.element cimport Element
+from .infinity import infinity
 from sage.libs.pari.all import pari_gen, PariError
 
 
@@ -97,7 +97,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f == loads(dumps(f)) # indirect doctest
             True
         """
-        return self.__class__, (self._parent, self.__f, self._prec, self.__is_gen)
+        return self.__class__, (self._parent, self.__f, self._prec, self._is_gen)
 
     def polynomial(self):
         """
@@ -1122,11 +1122,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         a ratio of two polynomials
 
-        .. WARNING::
-
-            The current implementation uses a very slow algorithm and is not
-            suitable for high orders.
-
         ALGORITHM:
 
         This method uses the formula as a quotient of two determinants.
@@ -1221,9 +1216,7 @@ cdef class PowerSeries_poly(PowerSeries):
             Order(x^20)
         """
         from sage.symbolic.ring import SR
-        from sage.rings.infinity import PlusInfinity
-        poly = self.polynomial()
-        pex = SR(poly)
+        pex = SR(self.polynomial())
         var = SR.var(self.variable())
         return pex.series(var, self.prec())
 

@@ -32,7 +32,7 @@ TESTS::
 
 from collections import defaultdict
 
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation

@@ -8,7 +8,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010-2011 André Apitzsch <andre.apitzsch@st.ovgu.de>
 #                     2012      Nils Bruin
 #                     2014      David Roe
@@ -17,16 +17,14 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
-from sage.rings.fast_arith import prime_range
 from sage.structure.factorization_integer import IntegerFactorization
-from math import floor
 from sage.misc.misc_c import prod
 
 cdef extern from "limits.h":

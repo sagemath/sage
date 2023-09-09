@@ -95,32 +95,23 @@ With power series the behavior is the same.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import operator
-
 from cpython.object cimport Py_EQ, Py_NE
 from .infinity import infinity, is_Infinite
 
 from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-import sage.rings.polynomial.polynomial_element
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
-from . import rational_field
-from . import integer_ring
 from .integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from warnings import warn
 
 from sage.categories.fields import Fields
 _Fields = Fields()
 
 from sage.misc.derivative import multi_derivative
-
-Polynomial = sage.rings.polynomial.polynomial_element.Polynomial_generic_dense
-
-from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport AlgebraElement, RingElement
 from sage.structure.richcmp cimport richcmp
 
 
@@ -168,7 +159,7 @@ cdef class PowerSeries(AlgebraElement):
              over Finite Field of size 3
         """
         AlgebraElement.__init__(self, parent)
-        self.__is_gen = is_gen
+        self._is_gen = is_gen
         self._prec = prec
 
     def __hash__(self):
@@ -243,7 +234,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: 1*t == t
             True
         """
-        return bool(self.__is_gen)
+        return bool(self._is_gen)
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -702,7 +693,7 @@ cdef class PowerSeries(AlgebraElement):
             v = self.list()
             m = len(v)
             first = True
-            for n in xrange(m):
+            for n in range(m):
                 x = v[n]
                 x = repr(x)
                 if x != '0':
@@ -765,7 +756,7 @@ cdef class PowerSeries(AlgebraElement):
         X = self._parent.latex_variable_names()[0]
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         first = True
-        for n in xrange(m):
+        for n in range(m):
             x = v[n]
             x = sage.misc.latex.latex(x)
             if x != '0':
@@ -1416,7 +1407,7 @@ cdef class PowerSeries(AlgebraElement):
 
         Another example::
 
-            sage: (exp(t)).stieltjes_continued_fraction()
+            sage: (exp(t)).stieltjes_continued_fraction()                               # optional - sage.symbolic
             (1,
              -1/2,
              1/6,
@@ -1866,7 +1857,7 @@ cdef class PowerSeries(AlgebraElement):
         one raises an error::
 
             sage: g = 2+f
-            sage: cos(g)
+            sage: cos(g)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply cos to formal power series with zero constant term
@@ -1951,7 +1942,7 @@ cdef class PowerSeries(AlgebraElement):
         one raises an error::
 
             sage: g = 2+f
-            sage: sin(g)
+            sage: sin(g)                                                                # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only apply sin to formal power series with zero constant term

@@ -719,8 +719,7 @@ class Sudoku(SageObject):
         """
         from .sudoku_backtrack import backtrack_all
         solutions = backtrack_all(self.n, self.puzzle)
-        for soln in solutions:
-            yield soln
+        yield from solutions
 
     def dlx(self, count_only=False):
         r"""

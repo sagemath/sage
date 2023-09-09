@@ -21,7 +21,7 @@ from sage_docbuild.conf import *  # NOQA
 html_static_path = [] + html_common_static_path
 
 # General information about the project.
-project =  "Documentation"
+project = "Documentation"
 
 # The name for this set of Sphinx documents.
 html_title = project
@@ -33,8 +33,8 @@ htmlhelp_basename = 'sage_documentation'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'sage_documentation.tex', 'Documentation',
-   'The Sage Development Team', 'manual'),
+    ('index', 'sage_documentation.tex', 'Documentation',
+     'The Sage Development Team', 'manual'),
 ]
 
 # Note that this effectively replaces the index.html generated from index.rst.

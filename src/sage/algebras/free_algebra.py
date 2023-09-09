@@ -331,6 +331,7 @@ class FreeAlgebraFactory(UniqueFactory):
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
         return FreeAlgebra_generic(key[0], len(key[1]), key[1])
 
+
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
 
 
@@ -420,6 +421,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
     is a coercion.
     """
     Element = FreeAlgebraElement
+
     def __init__(self, R, n, names):
         """
         The free algebra on `n` generators over a base ring.

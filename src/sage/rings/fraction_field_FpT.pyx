@@ -6,23 +6,19 @@
 # distutils: language = c++
 "Univariate rational functions over prime fields"
 
-import sys
-
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT32_LIMIT
 
 from sage.libs.gmp.mpz cimport *
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport n_jacobi
-from sage.structure.element cimport Element, ModuleElement, FieldElement
+from sage.structure.element cimport Element, FieldElement
 from sage.rings.integer_ring import ZZ
-from sage.rings.fraction_field import FractionField_generic, FractionField_1poly_field
+from sage.rings.fraction_field import FractionField_1poly_field
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_zmod_flint cimport Polynomial_zmod_flint, get_cparent
-import sage.algebras.algebra
 
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
@@ -1654,7 +1650,7 @@ cdef class FpT_Fp_section(Section):
                 raise ValueError("not constant")
         ans = IntegerMod_int.__new__(IntegerMod_int)
         ans._parent = self.codomain()
-        ans.__modulus = ans._parent._pyx_order
+        ans._modulus = ans._parent._pyx_order
         if nmod_poly_get_coeff_ui(x._denom, 0) != 1:
             normalize(x._numer, x._denom, self.p)
         ans.ivalue = nmod_poly_get_coeff_ui(x._numer, 0)
