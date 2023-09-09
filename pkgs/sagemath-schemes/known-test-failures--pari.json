@@ -63,9 +63,7 @@
     "sage.calculus.interpolators": {
         "failed": true
     },
-    "sage.calculus.ode": {
-        "failed": true
-    },
+    "sage.calculus.ode": {},
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
@@ -867,9 +865,7 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1260,9 +1256,7 @@
     "sage.misc.viewer": {},
     "sage.misc.weak_dict": {},
     "sage.misc.weak_dict.pxd": {},
-    "sage.modular.abvar.abvar": {
-        "failed": true
-    },
+    "sage.modular.abvar.abvar": {},
     "sage.modular.abvar.abvar_ambient_jacobian": {
         "failed": true
     },
@@ -1279,24 +1273,12 @@
     "sage.modular.abvar.finite_subgroup": {
         "failed": true
     },
-    "sage.modular.abvar.homology": {
-        "failed": true
-    },
-    "sage.modular.abvar.homspace": {
-        "failed": true
-    },
-    "sage.modular.abvar.lseries": {
-        "failed": true
-    },
-    "sage.modular.abvar.morphism": {
-        "failed": true
-    },
-    "sage.modular.abvar.torsion_point": {
-        "failed": true
-    },
-    "sage.modular.abvar.torsion_subgroup": {
-        "failed": true
-    },
+    "sage.modular.abvar.homology": {},
+    "sage.modular.abvar.homspace": {},
+    "sage.modular.abvar.lseries": {},
+    "sage.modular.abvar.morphism": {},
+    "sage.modular.abvar.torsion_point": {},
+    "sage.modular.abvar.torsion_subgroup": {},
     "sage.modular.all": {},
     "sage.modular.arithgroup.all": {},
     "sage.modular.arithgroup.arithgroup_element": {
@@ -1305,9 +1287,7 @@
     "sage.modular.arithgroup.arithgroup_generic": {
         "failed": true
     },
-    "sage.modular.arithgroup.arithgroup_perm": {
-        "failed": true
-    },
+    "sage.modular.arithgroup.arithgroup_perm": {},
     "sage.modular.arithgroup.congroup": {},
     "sage.modular.arithgroup.congroup_gamma": {
         "failed": true
@@ -1321,16 +1301,12 @@
     "sage.modular.arithgroup.congroup_gammaH": {
         "failed": true
     },
-    "sage.modular.arithgroup.congroup_generic": {
-        "failed": true
-    },
+    "sage.modular.arithgroup.congroup_generic": {},
     "sage.modular.arithgroup.congroup_sl2z": {},
     "sage.modular.arithgroup.farey_symbol": {
         "failed": true
     },
-    "sage.modular.arithgroup.tests": {
-        "failed": true
-    },
+    "sage.modular.arithgroup.tests": {},
     "sage.modular.btquotients.all": {},
     "sage.modular.btquotients.btquotient": {
         "failed": true
@@ -1356,34 +1332,18 @@
     "sage.modular.etaproducts": {
         "failed": true
     },
-    "sage.modular.hecke.algebra": {
-        "failed": true
-    },
+    "sage.modular.hecke.algebra": {},
     "sage.modular.hecke.all": {},
-    "sage.modular.hecke.ambient_module": {
-        "failed": true
-    },
-    "sage.modular.hecke.degenmap": {
-        "failed": true
-    },
-    "sage.modular.hecke.element": {
-        "failed": true
-    },
-    "sage.modular.hecke.hecke_operator": {
-        "failed": true
-    },
+    "sage.modular.hecke.ambient_module": {},
+    "sage.modular.hecke.degenmap": {},
+    "sage.modular.hecke.element": {},
+    "sage.modular.hecke.hecke_operator": {},
     "sage.modular.hecke.homspace": {
         "failed": true
     },
-    "sage.modular.hecke.module": {
-        "failed": true
-    },
-    "sage.modular.hecke.morphism": {
-        "failed": true
-    },
-    "sage.modular.hecke.submodule": {
-        "failed": true
-    },
+    "sage.modular.hecke.module": {},
+    "sage.modular.hecke.morphism": {},
+    "sage.modular.hecke.submodule": {},
     "sage.modular.hypergeometric_misc": {
         "failed": true
     },
@@ -1398,9 +1358,7 @@
     "sage.modular.local_comp.local_comp": {
         "failed": true
     },
-    "sage.modular.local_comp.smoothchar": {
-        "failed": true
-    },
+    "sage.modular.local_comp.smoothchar": {},
     "sage.modular.local_comp.type_space": {
         "failed": true
     },
@@ -1411,9 +1369,7 @@
     "sage.modular.modform.ambient_R": {
         "failed": true
     },
-    "sage.modular.modform.ambient_eps": {
-        "failed": true
-    },
+    "sage.modular.modform.ambient_eps": {},
     "sage.modular.modform.ambient_g0": {
         "failed": true
     },
@@ -1427,27 +1383,17 @@
         "failed": true
     },
     "sage.modular.modform.defaults": {},
-    "sage.modular.modform.eis_series": {
-        "failed": true
-    },
+    "sage.modular.modform.eis_series": {},
     "sage.modular.modform.eisenstein_submodule": {
         "failed": true
     },
-    "sage.modular.modform.element": {
-        "failed": true
-    },
-    "sage.modular.modform.find_generators": {
-        "failed": true
-    },
+    "sage.modular.modform.element": {},
+    "sage.modular.modform.find_generators": {},
     "sage.modular.modform.half_integral": {
         "failed": true
     },
-    "sage.modular.modform.hecke_operator_on_qexp": {
-        "failed": true
-    },
-    "sage.modular.modform.j_invariant": {
-        "failed": true
-    },
+    "sage.modular.modform.hecke_operator_on_qexp": {},
+    "sage.modular.modform.j_invariant": {},
     "sage.modular.modform.l_series_gross_zagier": {
         "failed": true
     },
@@ -1455,13 +1401,9 @@
         "failed": true
     },
     "sage.modular.modform.notes": {},
-    "sage.modular.modform.numerical": {
-        "failed": true
-    },
+    "sage.modular.modform.numerical": {},
     "sage.modular.modform.periods": {},
-    "sage.modular.modform.ring": {
-        "failed": true
-    },
+    "sage.modular.modform.ring": {},
     "sage.modular.modform.space": {
         "failed": true
     },
@@ -1472,9 +1414,7 @@
         "failed": true
     },
     "sage.modular.modform.theta": {},
-    "sage.modular.modform.vm_basis": {
-        "failed": true
-    },
+    "sage.modular.modform.vm_basis": {},
     "sage.modular.modform.weight1": {
         "failed": true
     },
@@ -1486,107 +1426,51 @@
     },
     "sage.modular.modform_hecketriangle.all": {},
     "sage.modular.modform_hecketriangle.analytic_type": {},
-    "sage.modular.modform_hecketriangle.constructor": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.element": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.functors": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.graded_ring": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.graded_ring_element": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.hecke_triangle_group_element": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.hecke_triangle_groups": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.readme": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.series_constructor": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.space": {
-        "failed": true
-    },
-    "sage.modular.modform_hecketriangle.subspace": {
-        "failed": true
-    },
+    "sage.modular.modform_hecketriangle.constructor": {},
+    "sage.modular.modform_hecketriangle.element": {},
+    "sage.modular.modform_hecketriangle.functors": {},
+    "sage.modular.modform_hecketriangle.graded_ring": {},
+    "sage.modular.modform_hecketriangle.graded_ring_element": {},
+    "sage.modular.modform_hecketriangle.hecke_triangle_group_element": {},
+    "sage.modular.modform_hecketriangle.hecke_triangle_groups": {},
+    "sage.modular.modform_hecketriangle.readme": {},
+    "sage.modular.modform_hecketriangle.series_constructor": {},
+    "sage.modular.modform_hecketriangle.space": {},
+    "sage.modular.modform_hecketriangle.subspace": {},
     "sage.modular.modsym.all": {},
-    "sage.modular.modsym.ambient": {
-        "failed": true
-    },
-    "sage.modular.modsym.boundary": {
-        "failed": true
-    },
-    "sage.modular.modsym.element": {
-        "failed": true
-    },
+    "sage.modular.modsym.ambient": {},
+    "sage.modular.modsym.boundary": {},
+    "sage.modular.modsym.element": {},
     "sage.modular.modsym.g1list": {},
     "sage.modular.modsym.ghlist": {},
-    "sage.modular.modsym.hecke_operator": {
-        "failed": true
-    },
-    "sage.modular.modsym.manin_symbol": {
-        "failed": true
-    },
+    "sage.modular.modsym.hecke_operator": {},
+    "sage.modular.modsym.manin_symbol": {},
     "sage.modular.modsym.manin_symbol.pxd": {},
     "sage.modular.modsym.manin_symbol_list": {
         "failed": true
     },
-    "sage.modular.modsym.modsym": {
-        "failed": true
-    },
-    "sage.modular.modsym.modular_symbols": {
-        "failed": true
-    },
+    "sage.modular.modsym.modsym": {},
+    "sage.modular.modsym.modular_symbols": {},
     "sage.modular.modsym.p1list": {},
     "sage.modular.modsym.p1list.pxd": {},
     "sage.modular.modsym.p1list_nf": {},
-    "sage.modular.modsym.relation_matrix": {
-        "failed": true
-    },
+    "sage.modular.modsym.relation_matrix": {},
     "sage.modular.modsym.relation_matrix_pyx": {},
-    "sage.modular.modsym.space": {
-        "failed": true
-    },
-    "sage.modular.modsym.subspace": {
-        "failed": true
-    },
-    "sage.modular.modsym.tests": {
-        "failed": true
-    },
-    "sage.modular.multiple_zeta": {
-        "failed": true
-    },
-    "sage.modular.multiple_zeta_F_algebra": {
-        "failed": true
-    },
+    "sage.modular.modsym.space": {},
+    "sage.modular.modsym.subspace": {},
+    "sage.modular.modsym.tests": {},
+    "sage.modular.multiple_zeta": {},
+    "sage.modular.multiple_zeta_F_algebra": {},
     "sage.modular.overconvergent.all": {},
-    "sage.modular.overconvergent.genus0": {
-        "failed": true
-    },
-    "sage.modular.overconvergent.hecke_series": {
-        "failed": true
-    },
+    "sage.modular.overconvergent.genus0": {},
+    "sage.modular.overconvergent.hecke_series": {},
     "sage.modular.overconvergent.weightspace": {},
     "sage.modular.pollack_stevens.all": {},
-    "sage.modular.pollack_stevens.distributions": {
-        "failed": true
-    },
+    "sage.modular.pollack_stevens.distributions": {},
     "sage.modular.pollack_stevens.fund_domain": {
         "failed": true
     },
-    "sage.modular.pollack_stevens.manin_map": {
-        "failed": true
-    },
+    "sage.modular.pollack_stevens.manin_map": {},
     "sage.modular.pollack_stevens.modsym": {
         "failed": true
     },
@@ -1594,13 +1478,9 @@
     "sage.modular.pollack_stevens.sigma0": {
         "failed": true
     },
-    "sage.modular.pollack_stevens.space": {
-        "failed": true
-    },
+    "sage.modular.pollack_stevens.space": {},
     "sage.modular.quasimodform.all": {},
-    "sage.modular.quasimodform.element": {
-        "failed": true
-    },
+    "sage.modular.quasimodform.element": {},
     "sage.modular.quasimodform.ring": {
         "failed": true
     },
