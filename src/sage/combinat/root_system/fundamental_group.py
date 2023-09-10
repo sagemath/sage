@@ -334,8 +334,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
 
             sage: W = ExtendedAffineWeylGroup('A4')
             sage: fun = W.fundamental_group().an_element()
-            sage: w = W.FW().an_element()
-            sage: hash(w) == hash(w.value())
+            sage: hash(fun) == hash(fun.value())
             True
         """
         return hash(self.value())
