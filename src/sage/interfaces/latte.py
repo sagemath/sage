@@ -309,13 +309,13 @@ def _str_to_multivariate_generating_function(summand, B=None,
 
         sage: from sage.interfaces.latte import _str_to_multivariate_generating_function # optional - latte_int
         sage: B = LaurentPolynomialRing(ZZ, 'y', 3)
-        sage: _str_to_multivariate_generating_function(
-        ....:     '(-1)*x[0]^(-1)*x[2]/((1-x[0]^(-1)*x[1]^(-1))*(1-x[0]^(-1)*x[2]^(-1))*(1-x[0]))', B) # optional - latte_int
+        sage: _str_to_multivariate_generating_function( # optional - latte_int
+        ....:     '(-1)*x[0]^(-1)*x[2]/((1-x[0]^(-1)*x[1]^(-1))*(1-x[0]^(-1)*x[2]^(-1))*(1-x[0]))', B)
         (-y0^-1*y2) * (1 - y0^-1*y1^-1)^-1 * (1 - y0^-1*y2^-1)^-1 * (-y0 + 1)^-1
         sage: _str_to_multivariate_generating_function('(-1)/((1-x[0]*x[1]*x[2])*(1-x[1]^2*x[2]))\n', B) # optional - latte_int
         (-1) * (-y0*y1*y2 + 1)^-1 * (-y1^2*y2 + 1)^-1
-        sage: _str_to_multivariate_generating_function(
-        ....:    '((-1)*x[0]*x[2]^2 + x[1]^(-2)*x[2])/((1-x[0]*x[1]*x[2])*(1-x[1]^2*x[2]))', B) # optional - latte_int
+        sage: _str_to_multivariate_generating_function( # optional - latte_int
+        ....:    '((-1)*x[0]*x[2]^2 + x[1]^(-2)*x[2])/((1-x[0]*x[1]*x[2])*(1-x[1]^2*x[2]))', B)
         (-y0*y2^2 + y1^-2*y2) * (-y0*y1*y2 + 1)^-1 * (-y1^2*y2 + 1)^-1
     """
     from sage.rings.integer_ring import ZZ
@@ -326,6 +326,7 @@ def _str_to_multivariate_generating_function(summand, B=None,
 
     gen_regex = re.compile(r'(?<=\[)(\d*)(?=\])')
     exponent_regex = re.compile(r'([\d|-]+)')
+
     def str_to_laurent_monomial(monomial_str, B):
         result = 1
         for gen_str in monomial_str.split('*'):
@@ -337,7 +338,7 @@ def _str_to_multivariate_generating_function(summand, B=None,
         return result
 
     def str_to_coef_times_laurent_monomial(monomial_str, B):
-        if not 'x' in monomial_str:
+        if 'x' not in monomial_str:
             if '*' in monomial_str:
                 aa, bb = monomial_str.split('*')
                 return ZZ(aa.replace('(','').replace(')',''))*ZZ(bb.replace('(','').replace(')',''))
