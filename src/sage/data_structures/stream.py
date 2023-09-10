@@ -3319,8 +3319,7 @@ class Stream_infinite_operator(Stream):
             self._advance()
         while self._cur_order <= 0:
             self._advance()
-        self._true_order = True
-        return self._cur._coeff_stream.order()
+        return self._cur._coeff_stream._approximate_order
 
     def _advance(self):
         r"""
@@ -3363,6 +3362,7 @@ class Stream_infinite_operator(Stream):
                 return
             self.initial(temp)
             self._cur_order = temp._coeff_stream._approximate_order
+
         order = self._cur_order
         while order == self._cur_order:
             try:
@@ -3379,8 +3379,9 @@ class Stream_infinite_operator(Stream):
                     order = coeff_stream._approximate_order
                     raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
             self.apply_operator(next_factor)
-            # nonzero checks are safer than equality checks (i.e. in lazy series)
-            while not next_factor._coeff_stream[order]:
+            order = coeff_stream._approximate_order
+            # We check to see if we need to increment the order
+            if order == self._cur_order and not coeff_stream[order]:
                 order += 1
         self._cur_order = order
 

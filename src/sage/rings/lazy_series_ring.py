@@ -1023,6 +1023,17 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.sum(lambda n: t^n / (n+1), PositiveIntegers())
             1/2*t + 1/3*t^2 + 1/4*t^3 + 1/5*t^4 + 1/6*t^5 + 1/7*t^6 + 1/8*t^7 + O(t^8)
 
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: T = L.undefined(1)
+            sage: D = L.undefined(0)
+            sage: H = L.sum(lambda k: T(z^k)/k, 2)
+            sage: T.define(z*exp(T)*D)
+            sage: D.define(exp(H))
+            sage: T
+            z + z^2 + 2*z^3 + 4*z^4 + 9*z^5 + 20*z^6 + 48*z^7 + O(z^8)
+            sage: D
+            1 + 1/2*z^2 + 1/3*z^3 + 7/8*z^4 + 11/30*z^5 + 281/144*z^6 + O(z^7)
+
         We verify the Rogers-Ramanujan identities up to degree 100::
 
             sage: L.<q> = LazyPowerSeriesRing(QQ)
