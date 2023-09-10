@@ -1195,8 +1195,7 @@ class SignedPermutation(ColoredPermutation,
 
         The cycles are returned in the order of increasing smallest
         elements, and each cycle is returned as a tuple which starts
-        with its smallest positive element. We do not include the
-        corresponding negative cycles.
+        with its smallest positive element.
 
         INPUT:
 
@@ -1269,13 +1268,22 @@ class SignedPermutation(ColoredPermutation,
         Return a pair of partitions of ``len(self)`` corresponding to the
         signed cycle type of ``self``.
 
-        A *negative cycle* is a cycle `C = (c_0, \ldots, c_{2k-1})` such that
-        `c_0 = c_k`. Any other cycle is positive. For any cycle `C`, we
-        ignore the cycle `-C` (provided this is a different cycle).
+        A *cycle* is a tuple `C = (c_0, \ldots, c_k)` with `\pi(c_i) = c_{i+1}`
+        for `0 \leq i < k` and `\pi(c_k) = c_0`. If `C` is a cycle,
+        `\overline{C} = (-c_0, \ldots, -c_k)` is also a cycle. A cycle is
+        *negative*, if `C = \overline{C}` up to cyclic reordering. In this
+        case, `k` is necessarily even and the length of `C` is `k/2`.
+        A *positive cycle* is a pair `C \overline{C}`, its length is `k`.
+
+        Let `\alpha` be the partition whose parts are the lengths of the
+        positive cycles and let `\beta` be the partition whose parts are
+        the lengths of the negative cycles.  Then `(\alpha, \beta)` is
+        the cycle type of `\pi`.
 
         EXAMPLES::
 
-            sage: pi = SignedPermutations(7)([2,-1,4,-6,-5,-3,7])
+            sage: G = SignedPermutations(7)
+            sage: pi = G([2, -1, 4, -6, -5, -3, 7])
             sage: pi.cycle_type()
             ([3, 1], [2, 1])
 
