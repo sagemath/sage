@@ -21,8 +21,10 @@ from sage.rings.fraction_field_element import FractionFieldElement
 import copy
 
 from sage.libs.pari.all import pari, pari_gen
-from sage.libs.ntl.all import ZZX
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
+
+lazy_import('sage.libs.ntl.all', 'ZZX')
 
 min = misc.min
 ZZ = sage.rings.integer_ring.ZZ
@@ -1145,13 +1147,13 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(2, prec=5)
             sage: P.<x> = K[]
             sage: f = x^4 + 2^3*x^3 + 2^13*x^2 + 2^21*x + 2^37
-            sage: f.newton_polygon()
+            sage: f.newton_polygon()                                                    # needs sage.geometry.polyhedron
             Finite Newton polygon with 4 vertices: (0, 37), (1, 21), (3, 3), (4, 0)
 
             sage: K = Qp(5)
             sage: R.<t> = K[]
             sage: f = 5 + 3*t + t^4 + 25*t^10
-            sage: f.newton_polygon()
+            sage: f.newton_polygon()                                                    # needs sage.geometry.polyhedron
             Finite Newton polygon with 4 vertices: (0, 1), (1, 0), (4, 0), (10, 2)
 
         Here is an example where the computation fails because precision is
@@ -1159,14 +1161,14 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
             sage: g = f + K(0,0)*t^4; g
             (5^2 + O(5^22))*t^10 + O(5^0)*t^4 + (3 + O(5^20))*t + 5 + O(5^21)
-            sage: g.newton_polygon()
+            sage: g.newton_polygon()                                                    # needs sage.geometry.polyhedron
             Traceback (most recent call last):
             ...
             PrecisionError: The coefficient of t^4 has not enough precision
 
         TESTS::
 
-            sage: (5*f).newton_polygon()
+            sage: (5*f).newton_polygon()                                                # needs sage.geometry.polyhedron
             Finite Newton polygon with 4 vertices: (0, 2), (1, 1), (4, 1), (10, 3)
 
         AUTHOR:
@@ -1283,13 +1285,13 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K = Qp(5)
             sage: R.<t> = K[]
             sage: f = 5 + 3*t + t^4 + 25*t^10
-            sage: f.newton_polygon()
+            sage: f.newton_polygon()                                                    # needs sage.geometry.polyhedron
             Finite Newton polygon with 4 vertices: (0, 1), (1, 0), (4, 0),
             (10, 2)
-            sage: f.newton_slopes()
+            sage: f.newton_slopes()                                                     # needs sage.geometry.polyhedron
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
 
-            sage: f.newton_slopes(repetition=False)
+            sage: f.newton_slopes(repetition=False)                                     # needs sage.geometry.polyhedron
             [1, 0, -1/3]
 
         AUTHOR:

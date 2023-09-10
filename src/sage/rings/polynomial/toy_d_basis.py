@@ -82,7 +82,7 @@ there are 4 equations in 3 unknowns). ::
 
     sage: P.<x, y, z> = PolynomialRing(IntegerRing(), 3, order='degneglex')
     sage: I = ideal(x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1)
-    sage: I.change_ring(P.change_ring(RationalField())).groebner_basis()
+    sage: I.change_ring(P.change_ring(RationalField())).groebner_basis()                # needs sage.libs.singular
     [1]
 
 However, when we compute the Groebner basis of I (defined over `\ZZ`), we
@@ -104,7 +104,7 @@ of the original system modulo `p`.::
     sage: I.change_ring(P.change_ring(GF(103))).groebner_basis()
     [z - 18, y + 8, x + 39]
 
-    sage: I.change_ring( P.change_ring(GF(27173681))).groebner_basis()                  # needs sage.libs.pari
+    sage: I.change_ring(P.change_ring(GF(27173681))).groebner_basis()                   # needs sage.rings.finite_rings
     [z + 10380032, y + 3186055, x - 536027]
 
 Of course, modulo any other prime the Groebner basis is trivial so

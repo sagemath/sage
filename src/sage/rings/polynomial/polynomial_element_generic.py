@@ -1155,7 +1155,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
+            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<t> = K[]
             sage: f = 5 + 3*t + t^4 + 25*t^10
@@ -1163,8 +1163,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             Finite Newton polygon with 4 vertices: (0, 1), (1, 0), (4, 0), (10, 2)
             sage: f.newton_slopes()
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
-
-            sage: f.newton_slopes(repetition=False)                                     # needs sage.rings.padics
+            sage: f.newton_slopes(repetition=False)
             [1, 0, -1/3]
 
         AUTHOR:
@@ -1184,16 +1183,15 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
+            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<t> = K[]
             sage: f = 5 + 3*t + t^4 + 25*t^10
             sage: f.newton_polygon()
             Finite Newton polygon with 4 vertices: (0, 1), (1, 0), (4, 0), (10, 2)
-
-            sage: g = f + K(0,0)*t^4; g                                                 # needs sage.rings.padics
+            sage: g = f + K(0,0)*t^4; g
             (5^2 + O(5^22))*t^10 + O(5^0)*t^4 + (3 + O(5^20))*t + 5 + O(5^21)
-            sage: g.newton_polygon()                                                    # needs sage.rings.padics
+            sage: g.newton_polygon()
             Traceback (most recent call last):
             ...
             PrecisionError: The coefficient of t^4 has not enough precision
@@ -1354,7 +1352,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
+            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<x> = K[]
             sage: K = Qp(5)
@@ -1362,23 +1360,21 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: f = 5 + 3*t + t^4 + 25*t^10
             sage: f.newton_slopes()
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
-
-            sage: g = f.factor_of_slope(0)                                              # needs sage.rings.padics
-            sage: g.newton_slopes()                                                     # needs sage.rings.padics
+            sage: g = f.factor_of_slope(0)
+            sage: g.newton_slopes()
             [0, 0, 0]
-            sage: (f % g).is_zero()                                                     # needs sage.rings.padics
+            sage: (f % g).is_zero()
             True
-
-            sage: h = f.factor_of_slope()                                               # needs sage.rings.padics
-            sage: h.newton_slopes()                                                     # needs sage.rings.padics
+            sage: h = f.factor_of_slope()
+            sage: h.newton_slopes()
             [1]
-            sage: (f % h).is_zero()                                                     # needs sage.rings.padics
+            sage: (f % h).is_zero()
             True
 
         If ``slope`` is not a slope of ``self``, the corresponding factor
         is `1`::
 
-            sage: f.factor_of_slope(-1)                                                 # needs sage.rings.padics
+            sage: f.factor_of_slope(-1)                                                 # needs sage.geometry.polyhedron sage.rings.padics
             1 + O(5^20)
 
         AUTHOR:
@@ -1424,7 +1420,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
+            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<x> = K[]
             sage: K = Qp(5)
@@ -1432,11 +1428,10 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: f = 5 + 3*t + t^4 + 25*t^10
             sage: f.newton_slopes()
             [1, 0, 0, 0, -1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
-
-            sage: F = f.slope_factorization()                                           # needs sage.rings.padics
-            sage: F.prod() == f                                                         # needs sage.rings.padics
+            sage: F = f.slope_factorization()
+            sage: F.prod() == f
             True
-            sage: for (f,_) in F:                                                       # needs sage.rings.padics
+            sage: for (f,_) in F:
             ....:     print(f.newton_slopes())
             [-1/3, -1/3, -1/3, -1/3, -1/3, -1/3]
             [0, 0, 0]
@@ -1502,7 +1497,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: # needs sage.rings.padics
+            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: R = Zp(2)
             sage: S.<x> = R[]
             sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)

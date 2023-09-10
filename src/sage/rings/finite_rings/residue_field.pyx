@@ -99,11 +99,12 @@ Reducing a curve modulo a prime::
     Elliptic Curve defined by y^2 = x^3 + x + 5 over
      Residue field of Fractional ideal (13, 1/2*s + 9/2)
 
+    sage: # needs sage.libs.pari sage.schemes
     sage: R.<t> = GF(11)[]
     sage: P = R.ideal(t^3 + t + 4)
     sage: ff.<a> = R.residue_field(P)
-    sage: E = EllipticCurve([0,0,0,R(1),R(t)])                                          # needs sage.schemes
-    sage: E.base_extend(ff)                                                             # needs sage.schemes
+    sage: E = EllipticCurve([0,0,0,R(1),R(t)])
+    sage: E.base_extend(ff)
     Elliptic Curve defined by y^2 = x^3 + x + a over
      Residue field in a of Principal ideal (t^3 + t + 4) of
       Univariate Polynomial Ring in t over Finite Field of size 11
