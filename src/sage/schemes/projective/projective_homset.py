@@ -276,7 +276,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         prec = kwds.pop('precision', 53)
         if is_RationalField(R):
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             if isinstance(X, AlgebraicScheme_subscheme): # sieve should only be called for subschemes
                 from sage.schemes.projective.projective_rational_point import sieve
                 return sieve(X, B)
@@ -285,14 +285,14 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                 return enum_projective_rational_field(self, B)
         elif R in NumberFields():
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.projective.projective_rational_point import enum_projective_number_field
             return enum_projective_number_field(self, bound=B, tolerance=tol, precision=prec)
         elif isinstance(R, FiniteField):
             from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
             return enum_projective_finite_field(self.extended_codomain())
         else:
-            raise TypeError("unable to enumerate points over %s"%R)
+            raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """
@@ -426,7 +426,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                                 #of coordinates known so far. This results in a single
                                 #variable polynomial (by elimination)
                                 L = G[i].substitute(P)
-                                if len(RF(L).variables())==1:
+                                if len(RF(L).variables()) == 1:
                                     for pol in L.univariate_polynomial().roots(ring=F, multiplicities=False):
                                         r = L.variables()[0]
                                         varindex = RF.gens().index(r)
@@ -525,11 +525,11 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
         R = self.value_ring()
         if R == ZZ:
             if not B > 0:
-                raise TypeError("a positive bound B (= %s) must be specified"%B)
+                raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
             return enum_projective_rational_field(self,B)
         else:
-            raise TypeError("unable to enumerate points over %s"%R)
+            raise TypeError("unable to enumerate points over %s" % R)
 
 
 class SchemeHomset_polynomial_projective_space(SchemeHomset_generic):

@@ -265,7 +265,7 @@ def cantor_composition_simple(D1,D2,f,genus):
             d, l, h3 = d0.xgcd(b1 + b2)
             a = (a1*a2) // (d**2)
             b = ((b2 + l*h2*(b1-b2)*(a2 // d)) + h3*((f - b2**2) // d)) % (a)
-    a =a.monic()
+    a = a.monic()
     return (a, b)
 
 def cantor_composition(D1,D2,f,h,genus):
@@ -397,8 +397,8 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             C = parent.curve()
             f, h = C.hyperelliptic_polynomials()
             a, b = polys
-            if not (b**2 + h*b - f)%a == 0:
-                raise ValueError("Argument polys (= %s) must be divisor on curve %s."%(
+            if not (b**2 + h*b - f) % a == 0:
+                raise ValueError("Argument polys (= %s) must be divisor on curve %s." % (
                     polys, C))
             genus = C.genus()
             if a.degree() > genus:

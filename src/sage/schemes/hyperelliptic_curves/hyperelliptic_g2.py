@@ -27,7 +27,7 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
         f, h = self.hyperelliptic_polynomials()
         df = f.degree()
         if h.degree() < 3:
-            return df%2 == 1
+            return df % 2 == 1
         elif df < 6:
             return False
         else:

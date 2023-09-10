@@ -177,9 +177,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 except AttributeError:
                     pass
             if not isinstance(v, (list, tuple)):
-                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple"%str(v))
+                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
             if len(v) != d and len(v) != d-1:
-                raise TypeError("v (=%s) must have %s components"%(v, d))
+                raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
             v = Sequence(v, R)
@@ -1153,9 +1153,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
                 except AttributeError:
                     pass
             if not isinstance(v, (list,tuple)):
-                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple"%str(v))
+                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
             if len(v) != d and len(v) != d-1:
-                raise TypeError("v (=%s) must have %s components"%(v, d))
+                raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
             v = Sequence(v, R)

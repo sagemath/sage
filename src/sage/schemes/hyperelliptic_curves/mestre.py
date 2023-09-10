@@ -188,7 +188,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     # setting the cijk from Mestre's algorithm
     c111 = 12*x*y - 2*y/3 - 4*z
     c112 = -18*x**3 - 12*x*y - 36*y**2 - 2*z
-    c113 = -9*x**3 - 36*x**2*y -4*x*y - 6*x*z - 18*y**2
+    c113 = -9*x**3 - 36*x**2*y - 4*x*y - 6*x*z - 18*y**2
     c122 = c113
     c123 = -54*x**4 - 36*x**2*y - 36*x*y**2 - 6*x*z - 4*y**2 - 24*y*z
     c133 = -27*x**4/2 - 72*x**3*y - 6*x**2*y - 9*x**2*z - 39*x*y**2 - \

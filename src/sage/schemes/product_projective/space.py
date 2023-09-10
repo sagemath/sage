@@ -243,7 +243,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         # Note that the coordinate ring should really be the tensor product of
         # the component coordinate rings. But we just deal with them as
         # multihomogeneous polynomial rings.
-        self._coordinate_ring = PolynomialRing(R,sum(N)+ len(N),names)
+        self._coordinate_ring = PolynomialRing(R,sum(N) + len(N),names)
         self._assign_names(names)
 
     def _repr_(self):
@@ -604,12 +604,12 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             [[1, 2], [3, 4], [5, 6]]
         """
         if not isinstance(v, (list, tuple, ETuple)):
-            raise TypeError("%s, must be a list or tuple"%v)
+            raise TypeError("%s, must be a list or tuple" % v)
         if len(v) != self.ngens():
-            raise ValueError("%s must have %s elements"%(v, self.ngens()))
+            raise ValueError("%s must have %s elements" % (v, self.ngens()))
         index = 0
         splitv = []
-        dims=self._dims
+        dims = self._dims
         for i in range(len(dims)):
             splitv.append(v[index:index+dims[i]+1])
             index += dims[i]+1
@@ -731,13 +731,13 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Polynomial Ring in x, y, z, w, u over Rational Field
         """
         if not isinstance(polynomials, (list, tuple)):
-            raise TypeError('the argument polynomials=%s must be a list or tuple'%polynomials)
+            raise TypeError('the argument polynomials=%s must be a list or tuple' % polynomials)
         #check in the coordinate ring
         source_ring = self.coordinate_ring()
         try:
             polynomials = [source_ring(poly) for poly in polynomials]
         except TypeError:
-            raise TypeError("polynomials (=%s) must be elements of %s"%(polynomials,source_ring))
+            raise TypeError("polynomials (=%s) must be elements of %s" % (polynomials,source_ring))
         for f in polynomials:
             self._degree(f) #raises a ValueError if not multi-homogeneous
         return polynomials
@@ -785,15 +785,15 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             TypeError: the components of v=[1, 1/2, 1, 0] must be elements of Integer Ring
         """
         if not isinstance(v, (list, tuple)):
-            raise TypeError('the argument v=%s must be a list or tuple'%v)
+            raise TypeError('the argument v=%s must be a list or tuple' % v)
         n = self.ngens()
         if not len(v) == n:
-            raise TypeError('the list v=%s must have %s components'%(v, n))
+            raise TypeError('the list v=%s must have %s components' % (v, n))
         R = self.base_ring()
         try:
             n = [R(w) for w in v]
         except TypeError:
-            raise TypeError('the components of v=%s must be elements of %s'%(v, R))
+            raise TypeError('the components of v=%s must be elements of %s' % (v, R))
         #check if any of the component points are 0
         N = self._dims
         start = 0
@@ -921,15 +921,15 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
                     (1 : x0 : x1 , x2 : 1 : x3 , x4 : x5 : 1)
         """
         if not isinstance(I, (list, tuple)):
-            raise TypeError('the argument I=%s must be a list or tuple of positive integers'%I)
+            raise TypeError('the argument I=%s must be a list or tuple of positive integers' % I)
         PP = self.ambient_space()
         N = PP._dims
         if len(I) != len(N):
-            raise ValueError('the argument I=%s must have %s entries'%(I,len(N)))
+            raise ValueError('the argument I=%s must have %s entries' % (I,len(N)))
         I = tuple([int(i) for i in I])   # implicit type checking
         for i in range(len(I)):
             if I[i] < 0 or I[i] > N[i]:
-                raise ValueError("argument i (= %s) must be between 0 and %s."%(I[i], N[i]))
+                raise ValueError("argument i (= %s) must be between 0 and %s." % (I[i], N[i]))
         try:
             if return_embedding:
                 return self.__affine_patches[I][1]
@@ -1057,7 +1057,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Y = PS.subscheme(L)
         else:
             if PP.dimension_relative() != M:
-                raise ValueError("projective Space %s must be dimension %s")%(PP, M)
+                raise ValueError("projective Space %s must be dimension %s") % (PP, M)
             S = PP.coordinate_ring()
             psi = R.hom([0]*k + list(S.gens()), S)
             L = [psi(l) for l in L]
@@ -1292,5 +1292,5 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
         if F is None:
             return list(self)
         elif not isinstance(F, FiniteField):
-            raise TypeError("second argument (= %s) must be a finite field"%F)
+            raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))
