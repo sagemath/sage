@@ -87,7 +87,8 @@ from sage.data_structures.stream import (
     Stream_function,
     Stream_iterator,
     Stream_exact,
-    Stream_uninitialized
+    Stream_uninitialized,
+    Stream_taylor
 )
 
 from types import GeneratorType
@@ -1792,6 +1793,43 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise TypeError("the base ring is not a field")
         return R
 
+    def taylor(self, f):
+        r"""
+        Return the Taylor expansion around `0` of the function ``f``.
+
+        INPUT:
+
+        - ``f`` -- a function such that one of the following works:
+
+          * the substitution `f(z)`, where `z` is generator of ``self``
+          * `f` is a function of a single variable with no poles and has a
+            ``derivative`` method
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: x = SR.var('x')
+            sage: f(x) = (1 + x)/(1 - x^2)
+            sage: L.taylor(f)
+            1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
+
+        For inputs as symbolic functions, this uses the generic implementation,
+        and so the function cannot have any poles at `0`::
+
+            sage: f(x) = (1 + x^2) / sin(x^2)
+            sage: L.taylor(f)
+            <repr(...) failed: ValueError: power::eval(): division by zero>
+            sage: def g(a): return (1 + a^2) / sin(a^2)
+            sage: L.taylor(g)
+            z^-2 + 1 + 1/6*z^2 + 1/6*z^4 + O(z^5)
+        """
+        try:
+            return f(self.gen())
+        except (ValueError, TypeError):
+            pass
+        stream = Stream_taylor(f, self.is_sparse())
+        return self.element_class(self, stream)
+
     # === special functions ===
 
     def q_pochhammer(self, q=None):
@@ -2502,6 +2540,57 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sum_gens = PR.sum(PR.gens())
             elts.extend([(z-3)*(2+z)**2, (1 - 2*z**3)/(1 - z + 3*z**2), self(lambda n: sum_gens**n)])
         return elts
+
+    def taylor(self, f):
+        r"""
+        Return the Taylor expansion around `0` of the function ``f``.
+
+        INPUT:
+
+        - ``f`` -- a function such that one of the following works:
+
+          * the substitution `f(z_1, \ldots, z_n)`, where `(z_1, \ldots, z_n)`
+            are the generators of ``self``
+          * `f` is a function of a single variable with no poles and has a
+            ``derivative`` method
+
+        .. WARNING::
+
+            For inputs as symbolic functions/expressions
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: x = SR.var('x')
+            sage: f(x) = (1 + x) / (1 - x^3)
+            sage: L.taylor(f)
+            1 + z + z^3 + z^4 + z^6 + O(z^7)
+            sage: (1 + z) / (1 - z^3)
+            1 + z + z^3 + z^4 + z^6 + O(z^7)
+            sage: f(x) = cos(x + pi/2)
+            sage: L.taylor(f)
+            -z + 1/6*z^3 - 1/120*z^5 + O(z^7)
+
+            sage: L.<a,b> = LazyPowerSeriesRing(QQ)
+            sage: def f(x, y): return (1 + x) / (1 + y)
+            sage: L.taylor(f)
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            sage: y = SR.var('y')
+            sage: g(x, y) = (1 + x) / (1 + y)
+            sage: L.taylor(g)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented generically for one variable
+        """
+        try:
+            return f(*self.gens())
+        except (ValueError, TypeError):
+            pass
+        if self._arity != 1:
+            raise NotImplementedError("only implemented generically for one variable")
+        stream = Stream_taylor(f, self.is_sparse())
+        return self.element_class(self, stream)
+
 
 ######################################################################
 
