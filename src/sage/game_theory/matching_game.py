@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-polyhedra
+# sage.doctest: needs sage.graphs
 """
 Matching games
 

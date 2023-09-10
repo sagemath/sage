@@ -477,6 +477,7 @@ if __name__ == '__main__':
     distribution = args.set or args.add or ''
 
     if distribution == 'all':
+        # Order matters because some MANIFESTs are not careful enough
         distributions = ["sagemath-symbolics",
                          "sagemath-schemes",
                          "sagemath-glpk",
@@ -491,6 +492,7 @@ if __name__ == '__main__':
                          "sagemath-linbox",
                          "sagemath-flint",
                          "sagemath-ntl",
+                         "sagemath-pari",
                          "sagemath-homfly",
                          "sagemath-mpmath",
                          "sagemath-plot",
