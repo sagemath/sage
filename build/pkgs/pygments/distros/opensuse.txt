@@ -1,1 +1,1 @@
-python3-Pygments
+python3${PYTHON_MINOR}-pygments
