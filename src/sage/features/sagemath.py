@@ -384,9 +384,7 @@ class sage__libs__flint(JoinFeature):
                              [PythonModule('sage.libs.flint.flint'),
                               PythonModule('sage.libs.arb.arith'),
                               PythonModule('sage.graphs.chrompoly'),
-                              PythonModule('sage.graphs.matchpoly'),
-                              PythonModule('sage.matrix.matrix_integer_dense'),
-                              PythonModule('sage.matrix.matrix_rational_dense')],
+                              PythonModule('sage.graphs.matchpoly')],
                              spkg='sagemath_flint', type='standard')
 
 
@@ -458,7 +456,9 @@ class sage__libs__linbox(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.linbox',
                              [PythonModule('sage.rings.finite_rings.element_givaro'),
                               PythonModule('sage.matrix.matrix_modn_dense_float'),
-                              PythonModule('sage.matrix.matrix_modn_dense_double')],
+                              PythonModule('sage.matrix.matrix_modn_dense_double'),
+                              PythonModule('sage.matrix.matrix_integer_dense'),
+                              PythonModule('sage.matrix.matrix_rational_dense')],
                              spkg='sagemath_linbox', type='standard')
 
 
@@ -487,61 +487,7 @@ class sage__libs__m4ri(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.m4ri',
                              [PythonModule('sage.matrix.matrix_gf2e_dense'),
                               PythonModule('sage.matrix.matrix_mod2_dense')],
-                             spkg='sagemath_m4ri', type='standard')
-
-
-class sage__libs__linbox(JoinFeature):
-    r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
-    and other modules depending on Givaro, FFLAS-FFPACK, LinBox.
-
-    In addition to the modularization purposes that this tag serves,
-    it also provides attribution to the upstream project.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__libs__linbox
-        sage: sage__libs__linbox().is_present()                                         # needs sage.libs.linbox
-        FeatureTestResult('sage.libs.linbox', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__libs__linbox
-            sage: isinstance(sage__libs__linbox(), sage__libs__linbox)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.libs.linbox',
-                             [PythonModule('sage.rings.finite_rings.element_givaro')],
                              spkg='sagemath_linbox', type='standard')
-
-
-class sage__libs__m4ri(JoinFeature):
-    r"""
-    A :class:`sage.features.Feature` describing the presence of Cython modules
-    depending on the M4RI and/or M4RIe libraries.
-
-    In addition to the modularization purposes that this tag serves,
-    it also provides attribution to the upstream project.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__libs__m4ri
-        sage: sage__libs__m4ri().is_present()                                           # needs sage.libs.m4ri
-        FeatureTestResult('sage.libs.m4ri', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__libs__m4ri
-            sage: isinstance(sage__libs__m4ri(), sage__libs__m4ri)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.libs.m4ri',
-                             [PythonModule('sage.matrix.matrix_gf2e_dense')],
-                             spkg='sagemath_m4ri', type='standard')
 
 
 class sage__libs__ntl(JoinFeature):
