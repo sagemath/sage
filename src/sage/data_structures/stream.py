@@ -3371,7 +3371,7 @@ class Stream_derivative(Stream_unary):
             sage: [f2[i] for i in range(-1, 4)]
             [0, 2, 6, 12, 20]
         """
-        return (prod(n + k for k in range(1, self._shift + 1))
+        return (ZZ.prod(range(n + 1, n + self._shift + 1))
                 * self._series[n + self._shift])
 
     def __hash__(self):
@@ -3431,6 +3431,141 @@ class Stream_derivative(Stream_unary):
             True
         """
         return self._series.is_nonzero()
+
+
+class Stream_integral(Stream_unary):
+    """
+    Operator for taking integrals of a non-exact stream.
+
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+    - ``integration_constants`` -- a list of integration constants
+    - ``is_sparse`` -- boolean
+    """
+    def __init__(self, series, integration_constants, is_sparse):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_integral
+            sage: f = Stream_exact([1, 2, 3])
+            sage: f2 = Stream_integral(f, [-2], True)
+            sage: TestSuite(f2).run()
+        """
+        self._shift = len(integration_constants)
+        self._int_consts = tuple(integration_constants)
+        super().__init__(series, is_sparse, False)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: f = Stream_function(lambda n: (n+1)*(n+2), True, 2)
+            sage: h = Stream_integral(f, [0, 0], True)
+            sage: h._approximate_order
+            0
+            sage: [h[i] for i in range(10)]
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+            sage: h._approximate_order
+            4
+        """
+        # this is generally not the true order
+        return min(self._series._approximate_order + self._shift, 0)
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: f = Stream_function(lambda n: n + 1, True, -3)
+            sage: [f[i] for i in range(-3, 4)]
+            [-2, -1, 0, 1, 2, 3, 4]
+            sage: f2 = Stream_integral(f, [0], True)
+            sage: [f2[i] for i in range(-3, 5)]
+            [0, 1, 1, 0, 1, 1, 1, 1]
+
+            sage: f = Stream_function(lambda n: (n + 1)*(n+2), True, 2)
+            sage: [f[i] for i in range(-1, 4)]
+            [0, 0, 0, 12, 20]
+            sage: f2 = Stream_integral(f, [-1, -1, -1], True)
+            sage: [f2[i] for i in range(-1, 7)]
+            [0, -1, -1, -1/2, 0, 0, 1/5, 1/6]
+        """
+        if 0 <= n < self._shift:
+            return (self._int_consts[n] / ZZ.prod(range(2, n + 1)))
+        return (self._series[n - self._shift] /
+                ZZ.prod(range(n - self._shift + 1, n + 1)))
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: a = Stream_function(lambda n: 2*n, False, 1)
+            sage: f = Stream_integral(a, [0, 1], True)
+            sage: g = Stream_integral(a, [0, 2], True)
+            sage: hash(f) == hash(f)
+            True
+            sage: hash(f) == hash(g)
+            False
+        """
+        return hash((type(self), self._series, self._int_consts))
+
+    def __eq__(self, other):
+        """
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: a = Stream_function(lambda n: 2*n, False, 1)
+            sage: f = Stream_integral(a, [1], True)
+            sage: g = Stream_integral(a, [2], True)
+            sage: f == g
+            False
+            sage: f == Stream_integral(a, [1], True)
+            True
+        """
+        return (isinstance(other, type(self))
+                and self._int_consts == other._int_consts
+                and self._series == other._series)
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be non-zero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: f = Stream_function(lambda n: 2*n, True, 1)
+            sage: f[1]
+            2
+            sage: f.is_nonzero()
+            True
+            sage: Stream_integral(f, [0], True).is_nonzero()
+            True
+            sage: f = Stream_function(lambda n: 0, False, 1)
+            sage: Stream_integral(f, [0, 0, 0], False).is_nonzero()
+            False
+            sage: Stream_integral(f, [0, 2], False).is_nonzero()
+            True
+        """
+        return self._series.is_nonzero() or any(self._int_consts)
 
 
 class Stream_infinite_operator(Stream):
