@@ -2154,7 +2154,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         """
         TESTS::
 
-            sage" # needs sage.graphs sage.modules
+            sage: # needs sage.graphs sage.modules
             sage: S = StandardSkewTableaux([[3, 2, 1], [1, 1]])
             sage: TestSuite(S).run()
         """
