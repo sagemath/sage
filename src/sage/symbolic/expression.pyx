@@ -6396,7 +6396,6 @@ cdef class Expression(Expression_abc):
             sage: type(u._unpack_operands()[0])
             <... 'tuple'>
         """
-        from sage.symbolic.expression import unpack_operands
         return unpack_operands(self)
 
     def operands(self):
