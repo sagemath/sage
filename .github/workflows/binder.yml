@@ -1,0 +1,32 @@
+name: Create Binder branch
+
+on: workflow_dispatch
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create binder branch
+        run: |
+          set -ex
+          REPO_NAME=${{ github.repository }}
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BINDER_REPO_NAME=${REPO_NAME}
+          BINDER_BRANCH_NAME=${BRANCH_NAME}-binder
+          cp .github/workflows/binder-dockerfile Dockerfile
+          sed -i 's/REPO_NAME/'$(echo "${REPO_NAME}" | sed 's/\//\\\//g')'/' Dockerfile
+          sed -i 's/BRANCH_NAME/'$(echo "${BRANCH_NAME}" | sed 's/\//\\\//g')'/' Dockerfile
+          sed -i 's/sagemath\/sage-binder-env\/master/'$(echo "${BINDER_REPO_NAME}/${BINDER_BRANCH_NAME}" | sed 's/\//\\\//g')'/' README.md
+          if [ ! -d .git ]; then git init; fi
+          if [ ! -d notebooks ]; then mkdir notebooks && touch notebooks/my_favorite_notebooks.md; fi
+          git config --global user.email alice@wonderland
+          git config --global user.name alice
+          git config --global --add safe.directory $(pwd)
+          git checkout -b $BINDER_BRANCH_NAME
+          git add -A
+          git commit -a -m "Init"
+          git push origin $BINDER_BRANCH_NAME
