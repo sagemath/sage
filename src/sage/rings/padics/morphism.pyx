@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 Frobenius endomorphisms on p-adic fields
 """

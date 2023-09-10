@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
 """
 Capped relative template for complete discrete valuation rings and their fraction fields
 

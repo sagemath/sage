@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
 from sage.libs.gmp.types cimport mpz_t
 from cypari2.gen cimport Gen as pari_gen
 from sage.rings.padics.padic_floating_point_element cimport FPElement

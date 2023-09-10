@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
 from cpython cimport array
 
 cimport sage.structure.element

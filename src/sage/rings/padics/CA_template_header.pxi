@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
 """
 This file provides the declaration for ``CAElement`` and the morphisms to
 the integers and rationals.

@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint
+# sage_setup: distribution = sagemath-pari
 r"""
 This linkage file implements the padics API using Sage Polynomials.
 

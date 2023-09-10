@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-ntl
+# sage_setup: distribution = sagemath-pari
 """
 This file gives a class from which all the `p`-adic templates inherit.
 

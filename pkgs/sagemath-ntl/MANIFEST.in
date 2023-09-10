@@ -6,8 +6,11 @@ graft sage/libs/ntl
 
 include sage/rings/bernoulli_mod_p.p*
 include sage/rings/finite_rings/*_ntl_*.p*
+
 include sage/rings/padics/padic_ext_element.p*
 include sage/rings/padics/pow_computer_ext.p*
+include sage/rings/padics/padic_ZZ_pX_*.p*
+
 include sage/rings/polynomial/*_ntl.p*
 include sage/rings/polynomial/polynomial_zz_pex.p*
 include sage/rings/polynomial/polynomial_template*.pxi
@@ -22,6 +25,7 @@ include sage/matrix/matrix_modn_*.pxi
 include sage/rings/padics/*.pxd
 include sage/rings/padics/*.pxi                                       # FIXME
 exclude sage/rings/padics/*flint*.p*
+exclude sage/rings/padics/local_generic_element.p*
 
 include sage/schemes/hyperelliptic_curves/hypellfrob.p*
 

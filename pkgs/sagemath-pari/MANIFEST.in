@@ -21,6 +21,7 @@ include sage/rings/pari_ring.p*
 # padics using PARI.
 #
 graft sage/rings/padics
+graft sage/rings/polynomial/padics
 include sage/libs/linkages/padics/*.pxi                         # FIXME?
 # exclude what is shipped by sagemath-categories
 exclude sage/rings/padics/padic_generic.p*
@@ -31,8 +32,11 @@ exclude sage/rings/padics/misc.p*
 # exclude what is shipped by sagemath-ntl
 exclude sage/rings/padics/padic_ext_element.p*
 exclude sage/rings/padics/pow_computer_ext.p*
+exclude sage/rings/padics/padic_ZZ_pX_*.p*
 # exclude what is shipped by sagemath-flint
+exclude sage/rings/padics/all.p*
 exclude sage/rings/padics/*flint*.p*
+exclude sage/rings/padics/padic_relaxed_*.p*
 
 # Parts of quadratic_forms excluded form sagemath-modules;
 # lazy-imported and can only be tested with pari present

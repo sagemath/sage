@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 include "sage/libs/linkages/padics/Polynomial_ram.pxi"
 include "CA_template.pxi"
 
