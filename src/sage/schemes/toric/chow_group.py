@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 # -*- coding: utf-8 -*-
 r"""
 The Chow group of a toric variety
@@ -862,7 +863,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: points = [[1,0,0], [0,1,0], [0,0,1], [1,-1,1], [-1,0,-1]]
             sage: l = LatticePolytope(points)
-            sage: l.show3d()
+            sage: l.show3d()                                                            # needs sage.plot
             sage: X = ToricVariety(FaceFan(l))
             sage: A = X.Chow_group()
             sage: A.degree(2)

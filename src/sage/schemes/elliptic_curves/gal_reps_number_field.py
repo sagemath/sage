@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.number_field
 r"""
 Galois representations for elliptic curves over number fields
 
