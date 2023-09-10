@@ -591,6 +591,8 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
+$(1)-ensure: $(inst_$(1))
+
 $(1)-$(4)-no-deps:
 	+@if [ -z '$$($(4))' ]; then \
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
@@ -649,6 +651,8 @@ $(1)-build-deps: $(2)
 $(1): $(2)
 	+$(MAKE_REC) $(1)-no-deps
 
+$(1)-ensure: $(inst_$(1))
+
 $(1)-no-deps:
 	$(AM_V_at)sage-logger -p 'sage --pip install -r "$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt"' '$$(SAGE_LOGS)/$(1).log'
 
@@ -704,6 +708,8 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 	+$(MAKE_REC) $(1)-$(4)-no-deps
 
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
+
+$(1)-ensure: $(inst_$(1))
 
 $(1)-$(4)-no-deps:
 	$(PLUS)@if [ -z '$$($(4))' ]; then \
