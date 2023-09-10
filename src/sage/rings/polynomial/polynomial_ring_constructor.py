@@ -578,7 +578,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
         sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R
         Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
-        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL
+        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL                                         # needs sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
         sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); TestSuite(ZxFLINT).run(); ZxFLINT
         Univariate Polynomial Ring in x over Integer Ring

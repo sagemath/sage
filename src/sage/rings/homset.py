@@ -266,10 +266,11 @@ class RingHomset_quo_ring(RingHomset_generic):
 
     ::
 
+        sage: # needs sage.libs.singular
         sage: R.<x,y> = PolynomialRing(QQ, 2)
-        sage: S.<a,b> = R.quotient(x^2 + y^2)                                           # needs sage.libs.singular
-        sage: H = S.Hom(R)                                                              # needs sage.libs.singular
-        sage: H == loads(dumps(H))                                                      # needs sage.libs.singular
+        sage: S.<a,b> = R.quotient(x^2 + y^2)
+        sage: H = S.Hom(R)
+        sage: H == loads(dumps(H))
         True
 
     We test pickling of actual homomorphisms in a quotient::
@@ -287,18 +288,19 @@ class RingHomset_quo_ring(RingHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<a,b> = R.quotient(x^2 + y^2)                                       # needs sage.libs.singular
-            sage: H = S.Hom(R)                                                          # needs sage.libs.singular
-            sage: phi = H([b, a]); phi                                                  # needs sage.libs.singular
+            sage: S.<a,b> = R.quotient(x^2 + y^2)
+            sage: H = S.Hom(R)
+            sage: phi = H([b, a]); phi
             Ring morphism:
               From: Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
               To:   Multivariate Polynomial Ring in x, y over Rational Field
               Defn: a |--> b
                     b |--> a
             sage: R2.<x,y> = PolynomialRing(ZZ, 2)
-            sage: H2 = Hom(R2, S)                                                       # needs sage.libs.singular
-            sage: H2(phi)                                                               # needs sage.libs.singular
+            sage: H2 = Hom(R2, S)
+            sage: H2(phi)
             Composite map:
               From: Multivariate Polynomial Ring in x, y over Integer Ring
               To:   Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)

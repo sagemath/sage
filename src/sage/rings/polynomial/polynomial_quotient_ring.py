@@ -1460,7 +1460,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         `x^2 + 31` from 12 to 2, i.e. we lose a generator of order 6 (this was
         fixed in :trac:`14489`)::
 
-            sage: S.S_class_group([K.ideal(a)])  # representation varies    # not tested, needs sage.rings.number_field
+            sage: S.S_class_group([K.ideal(a)])  # representation varies        # not tested, needs sage.rings.number_field
             [((1/4*xbar^2 + 31/4, (-1/8*a + 1/8)*xbar^2 - 31/8*a + 31/8,
                1/16*xbar^3 + 1/16*xbar^2 + 31/16*xbar + 31/16,
                -1/16*a*xbar^3 + (1/16*a + 1/8)*xbar^2 - 31/16*a*xbar + 31/16*a + 31/8),
