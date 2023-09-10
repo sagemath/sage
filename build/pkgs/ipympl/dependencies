@@ -1,4 +1,4 @@
-$(PYTHON) ipywidgets matplotlib ipykernel | $(PYTHON_TOOLCHAIN)  jupyter_packaging
+ ipywidgets matplotlib ipykernel | $(PYTHON_TOOLCHAIN)  jupyter_packaging $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
