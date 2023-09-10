@@ -3594,7 +3594,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
         coeff_stream = self._coeff_stream
         # TODO: coefficients should not be checked here, it prevents
         # us from using self.define in some cases!
-        if any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1)):
+        if ((not coeff_stream.is_uninitialized())
+            and any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1))):
             raise ValueError("can only compose with a positive valuation series")
         # WARNING: d_self need not be a proper element of P, e.g. for
         # multivariate power series
@@ -3646,8 +3647,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
         coeff_stream = self._coeff_stream
         # TODO: coefficients should not be checked here, it prevents
         # us from using self.define in some cases!
-        if (any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 0))
-            or coeff_stream[0] != R.one()):
+        if ((not coeff_stream.is_uninitialized())
+            and (any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 0))
+                 or coeff_stream[0] != R.one())):
             raise ValueError("can only compose with a positive valuation series")
         # WARNING: d_self need not be a proper element of P, e.g. for
         # multivariate power series
