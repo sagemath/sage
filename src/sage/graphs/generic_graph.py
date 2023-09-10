@@ -4704,17 +4704,23 @@ class GenericGraph(GenericGraph_pyx):
             sage: len(g.min_spanning_tree())
             4
             sage: weight = lambda e: 1 / ((e[0] + 1) * (e[1] + 1))
-            sage: sorted(g.min_spanning_tree(weight_function=weight))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
-            sage: sorted(g.min_spanning_tree(weight_function=weight,
-            ....:                            algorithm='Kruskal_Boost'))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
+            sage: E = g.min_spanning_tree(weight_function=weight)
+            sage: T = Graph(E)
+            sage: set(g) == set(T) and T.order() == T.size() + 1 and T.is_tree()
+            True
+            sage: sum(map(weight, E))
+            5/12
+            sage: E = g.min_spanning_tree(weight_function=weight,
+            ....:                         algorithm='Kruskal_Boost')
+            sage: Graph(E).is_tree(); sum(map(weight, E))
+            True
+            5/12
             sage: g = graphs.PetersenGraph()
             sage: g.allow_multiple_edges(True)
             sage: g.add_edges(g.edge_iterator())
-            sage: sorted(g.min_spanning_tree())
-            [(0, 1, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 6, None),
-             (3, 8, None), (5, 7, None), (5, 8, None), (6, 9, None)]
+            sage: T = Graph(g.min_spanning_tree())
+            sage: set(g) == set(T) and T.order() == T.size() + 1 and T.is_tree()
+            True
 
         Boruvka's algorithm::
 
@@ -4725,15 +4731,13 @@ class GenericGraph(GenericGraph_pyx):
         Prim's algorithm::
 
             sage: g = graphs.CompleteGraph(5)
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_edge',
-            ....:                            starting_vertex=2, weight_function=weight))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_fringe',
-            ....:                            starting_vertex=2, weight_function=weight))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
-            sage: sorted(g.min_spanning_tree(weight_function=weight,
-            ....:                            algorithm='Prim_Boost'))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
+            sage: for algo in ['Prim_edge', 'Prim_fringe', 'Prim_Boost']:
+            ....:     E = g.min_spanning_tree(algorithm=algo, weight_function=weight)
+            ....:     T = Graph(E)
+            ....:     print(set(g) == set(T) and T.order() == T.size() + 1 and T.is_tree())
+            True
+            True
+            True
 
         NetworkX algorithm::
 
@@ -4745,29 +4749,42 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = Graph([(0, 1, {'name': 'a', 'weight': 1}),
             ....:            (0, 2, {'name': 'b', 'weight': 3}),
             ....:            (1, 2, {'name': 'b', 'weight': 1})])
-            sage: sorted(G.min_spanning_tree(weight_function=lambda e: e[2]['weight']))
+            sage: sorted(G.min_spanning_tree(algorithm='Boruvka',
+            ....:                            weight_function=lambda e: e[2]['weight']))
             [(0, 1, {'name': 'a', 'weight': 1}), (1, 2, {'name': 'b', 'weight': 1})]
 
         If the graph is not weighted, edge labels are not considered, even if
         they are numbers::
 
             sage: g = Graph([(1, 2, 1), (1, 3, 2), (2, 3, 1)])
-            sage: sorted(g.min_spanning_tree())
+            sage: sorted(g.min_spanning_tree(algorithm='Boruvka'))
             [(1, 2, 1), (1, 3, 2)]
 
         In order to use weights, we need either to set variable ``weighted`` to
         ``True``, or to specify a weight function or set by_weight to ``True``::
 
             sage: g.weighted(True)
-            sage: sorted(g.min_spanning_tree())
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
             [(1, 2, 1), (2, 3, 1)]
             sage: g.weighted(False)
-            sage: sorted(g.min_spanning_tree())
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
             [(1, 2, 1), (1, 3, 2)]
-            sage: sorted(g.min_spanning_tree(by_weight=True))
+            sage: Graph(g.min_spanning_tree(by_weight=True)).edges(sort=True)
             [(1, 2, 1), (2, 3, 1)]
-            sage: sorted(g.min_spanning_tree(weight_function=lambda e: e[2]))
+            sage: Graph(g.min_spanning_tree(weight_function=lambda e: e[2])).edges(sort=True)
             [(1, 2, 1), (2, 3, 1)]
+
+        Note that the order of the vertices on each edge is not guaranteed and
+        may differ from an algorithm to the other::
+
+            sage: g.weighted(True)
+            sage: sorted(g.min_spanning_tree())
+            [(2, 1, 1), (3, 2, 1)]
+            sage: sorted(g.min_spanning_tree(algorithm='Boruvka'))
+            [(1, 2, 1), (2, 3, 1)]
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
+            [(1, 2, 1), (2, 3, 1)]
+
 
         TESTS:
 
@@ -4776,21 +4793,21 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = Graph(weighted=True)
             sage: g.add_edges([[0, 1, 1], [1, 2, 1], [2, 0, 10]])
-            sage: sorted(g.min_spanning_tree())
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Filter_Kruskal'))
+            sage: Graph(g.min_spanning_tree(algorithm='Filter_Kruskal')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Kruskal_Boost'))
+            sage: Graph(g.min_spanning_tree(algorithm='Kruskal_Boost')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_fringe'))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_fringe')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_edge'))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_edge')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_Boost'))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_Boost')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='NetworkX'))                     # needs networkx
+            sage: Graph(g.min_spanning_tree(algorithm='Boruvka')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Boruvka'))
+            sage: Graph(g.min_spanning_tree(algorithm='NetworkX')).edges(sort=True)     # needs networkx
             [(0, 1, 1), (1, 2, 1)]
 
         Check that, if ``weight_function`` is provided, it overrides edge
@@ -4798,29 +4815,27 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = Graph([[0, 1, 1], [1, 2, 1], [2, 0, 10]], weighted=True)
             sage: weight = lambda e: 3 - e[0] - e[1]
-            sage: sorted(g.min_spanning_tree(weight_function=weight))
+            sage: Graph(g.min_spanning_tree(weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Filter_Kruskal', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Filter_Kruskal', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Kruskal_Boost', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Kruskal_Boost', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_fringe', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_fringe', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_edge', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_edge', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_Boost', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_Boost', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='NetworkX', weight_function=weight))         # needs networkx
-            [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Boruvka', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='NetworkX', weight_function=weight)).edges(sort=True)   # needs networkx
             [(0, 2, 10), (1, 2, 1)]
 
         If the graph is directed, it is transformed into an undirected graph::
 
             sage: g = digraphs.Circuit(3)
-            sage: sorted(g.min_spanning_tree(weight_function=weight))
+            sage: Graph(g.min_spanning_tree(weight_function=weight)).edges(sort=True)
             [(0, 2, None), (1, 2, None)]
-            sage: sorted(g.to_undirected().min_spanning_tree(weight_function=weight))
+            sage: Graph(g.to_undirected().min_spanning_tree(weight_function=weight)).edges(sort=True)
             [(0, 2, None), (1, 2, None)]
 
         If at least an edge weight is not convertible to a float, an error is
@@ -4841,6 +4856,17 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: graphs.EmptyGraph().min_spanning_tree()
             []
+
+        Check that the method is robust to incomparable vertices::
+
+            sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+            sage: E = G.min_spanning_tree(algorithm='Prim_Boost', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Prim_fringe', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Prim_edge', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Kruskal_Boost', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Filter_Kruskal', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Boruvka', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='NetworkX', by_weight=True)         # needs networkx
         """
         if not self.order():
             return []
@@ -5136,9 +5162,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: [sorted(c) for c in G.cycle_basis()]                                  # needs networkx
             [['Hey', 'Really ?', 'Wuuhuu'], [0, 2], [0, 1, 2]]
             sage: [sorted(c) for c in G.cycle_basis(output='edge')]                     # needs networkx
-            [[('Hey', 'Wuuhuu', None),
-              ('Really ?', 'Hey', None),
-              ('Wuuhuu', 'Really ?', None)],
+            [[('Hey', 'Really ?', None),
+              ('Really ?', 'Wuuhuu', None),
+              ('Wuuhuu', 'Hey', None)],
              [(0, 2, 'a'), (2, 0, 'b')],
              [(0, 2, 'b'), (1, 0, 'c'), (2, 1, 'd')]]
 

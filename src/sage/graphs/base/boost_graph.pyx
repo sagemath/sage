@@ -686,6 +686,16 @@ cpdef min_spanning_tree(g,
         Traceback (most recent call last):
         ...
         TypeError: float() argument must be a string or a... number...
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)], weighted=True)
+        sage: E = min_spanning_tree(G, algorithm='Kruskal')
+        sage: sum(w for _, _, w in E)
+        3
+        sage: F = min_spanning_tree(G, algorithm='Prim')
+        sage: sum(w for _, _, w in F)
+        3
     """
     from sage.graphs.graph import Graph
 
@@ -719,9 +729,8 @@ cpdef min_spanning_tree(g,
 
     if <v_index> result.size() != 2 * (n - 1):
         return []
-    else:
-        edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
-        return [(min(e[0], e[1]), max(e[0], e[1]), g.edge_label(e[0], e[1])) for e in edges]
+    edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
+    return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
 cpdef blocks_and_cut_vertices(g):
