@@ -546,7 +546,7 @@ Note that the hierarchy of abstract classes is again attached to
 categories and parallel to that we had seen for the elements. This is
 best viewed graphically::
 
-    sage: # needs sage.graphs sage.modules sage.plot
+    sage: # needs sage.combinat sage.graphs sage.modules sage.plot
     sage: g = class_graph(m.__class__)
     sage: g.relabel(lambda x: x.replace("_",r"\_"))
     sage: g.set_latex_options(format="dot2tex")
