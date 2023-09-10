@@ -1023,7 +1023,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
             sage: F.divisor_group()
             Divisor group of Function field in y defined by y^2 + 4*x^3 + 4
         """
-        return "Divisor group of %s"%(self._field,)
+        return "Divisor group of %s" % (self._field,)
 
     def _element_constructor_(self, x):
         """

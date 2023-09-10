@@ -912,7 +912,7 @@ def Balaban11Cage(embedding=1):
         sage: g3 = graphs.Balaban11Cage(embedding=3)                                    # needs networkx
         sage: g1.show(figsize=[10,10])          # long time                             # needs sage.plot
         sage: g2.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
-        sage: g3.show(figsize=[10,10])          # long time                             # needs sage.plot
+        sage: g3.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
 
     Proof that the embeddings are the same graph::
 

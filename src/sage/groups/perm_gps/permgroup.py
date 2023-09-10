@@ -5157,6 +5157,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             other = self.ambient_group()
         return PermutationGroup_generic.is_normal(self, other)
 
+
 # Allow for subclasses to use a different subgroup class
 PermutationGroup_generic.Subgroup = PermutationGroup_subgroup
 
@@ -5264,6 +5265,7 @@ class PermutationGroup_action(PermutationGroup_generic):
             ((0,), (1, 2, 4), (3, 6, 5))
         """
         return self._orbits
+
 
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 __doc__ = __doc__.format(METHODS_OF_PermutationGroup_generic=gen_rest_table_index(PermutationGroup_generic))
