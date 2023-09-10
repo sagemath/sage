@@ -1257,13 +1257,13 @@ class Permutation(CombinatorialElement):
         """
         TESTS::
 
-            sage: # needs sage.modules
-            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
-            sage: SM = SGA.specht_module([2,1])                                         # needs sage.combinat
+            sage: # needs sage.groups sage.modules
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: SM = SGA.specht_module([2,1])
             sage: p213 = Permutations(3)([2,1,3])
-            sage: p213 * SGA.an_element()                                               # needs sage.combinat
+            sage: p213 * SGA.an_element()
             3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + 2*[3, 1, 2]
-            sage: p213 * SM.an_element()                                                # needs sage.combinat
+            sage: p213 * SM.an_element()
             2*B[0] - 4*B[1]
         """
         if not isinstance(rp, Permutation) and isinstance(rp, Element):
@@ -1303,8 +1303,8 @@ class Permutation(CombinatorialElement):
             [3, 2, 1]
             sage: Permutations.options.mult='l2r'
 
-            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat sage.modules
-            sage: SGA.an_element() * Permutations(3)(p213)                              # needs sage.combinat sage.modules
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.groups sage.modules
+            sage: SGA.an_element() * Permutations(3)(p213)                              # needs sage.groups sage.modules
             3*[1, 2, 3] + [2, 1, 3] + 2*[2, 3, 1] + [3, 2, 1]
         """
         if not isinstance(lp, Permutation) and isinstance(lp, Element):
@@ -7263,17 +7263,17 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules
             sage: P = Permutations(4)
-            sage: A = P.algebra(QQ); A                                                  # needs sage.combinat sage.modules
+            sage: A = P.algebra(QQ); A
             Symmetric group algebra of order 4 over Rational Field
-
-            sage: A.category()                                                          # needs sage.combinat sage.modules
+            sage: A.category()
             Join of Category of coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras
                     with basis over Rational Field
-            sage: A = P.algebra(QQ, category=Monoids())                                 # needs sage.combinat sage.modules
-            sage: A.category()                                                          # needs sage.combinat sage.modules
+            sage: A = P.algebra(QQ, category=Monoids())
+            sage: A.category()
             Category of finite dimensional cellular monoid algebras over Rational Field
         """
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
@@ -7873,8 +7873,9 @@ def bistochastic_as_sum_of_permutations(M, check=True):
     We create a bistochastic matrix from a convex sum of permutations, then
     try to deduce the decomposition from the matrix::
 
-        sage: # needs networkx sage.graphs sage.modules
         sage: from sage.combinat.permutation import bistochastic_as_sum_of_permutations
+
+        sage: # needs networkx sage.graphs sage.modules
         sage: L = []
         sage: L.append((9,Permutation([4, 1, 3, 5, 2])))
         sage: L.append((6,Permutation([5, 3, 4, 1, 2])))
