@@ -316,8 +316,8 @@ class Ideal_generic(MonoidElement):
                 s = s.replace('\n','\n  ')
             L.append(s)
         if has_return:
-            return '\n(\n  %s\n)\n'%(',\n\n  '.join(L))
-        return '(%s)'%(', '.join(L))
+            return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
+        return '(%s)' % (', '.join(L))
 
     def __repr__(self):
         """
@@ -329,7 +329,7 @@ class Ideal_generic(MonoidElement):
             sage: P*[a^2,a*b+c,c^3] # indirect doctest
             Ideal (a^2, a*b + c, c^3) of Multivariate Polynomial Ring in a, b, c over Rational Field
         """
-        return "Ideal %s of %s"%(self._repr_short(), self.ring())
+        return "Ideal %s of %s" % (self._repr_short(), self.ring())
 
     def random_element(self, *args, **kwds):
         """
@@ -1280,7 +1280,7 @@ class Ideal_principal(Ideal_generic):
             sage: I # indirect doctest
             Principal ideal (x) of Univariate Polynomial Ring in x over Integer Ring
         """
-        return "Principal ideal (%s) of %s"%(self.gen(), self.ring())
+        return "Principal ideal (%s) of %s" % (self.gen(), self.ring())
 
     def is_principal(self):
         r"""
@@ -1693,7 +1693,7 @@ class Ideal_pid(Ideal_principal):
             TypeError: residue fields only supported for polynomial rings over finite fields.
         """
         if not self.is_prime():
-            raise ValueError("The ideal (%s) is not prime"%self)
+            raise ValueError("The ideal (%s) is not prime" % self)
         from sage.rings.integer_ring import ZZ
         if self.ring() is ZZ:
             return ZZ.residue_field(self, check=False)
@@ -1717,7 +1717,7 @@ class Ideal_fractional(Ideal_generic):
             sage: Ideal_fractional(K, [a])  # indirect doctest                          # needs sage.rings.number_field
             Fractional ideal (a) of Number Field in a with defining polynomial x^2 + 1
         """
-        return "Fractional ideal %s of %s"%(self._repr_short(), self.ring())
+        return "Fractional ideal %s of %s" % (self._repr_short(), self.ring())
 
 # constructors for standard (benchmark) ideals, written uppercase as
 # these are constructors

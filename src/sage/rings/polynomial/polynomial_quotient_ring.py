@@ -548,7 +548,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         try:
             return self.element_class(self, self.__ring(x), check=False)
         except TypeError:
-            raise TypeError("unable to convert %r to an element of %s"%(x, self))
+            raise TypeError("unable to convert %r to an element of %s" % (x, self))
 
     def _coerce_map_from_(self, R):
         r"""
@@ -770,11 +770,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         modulus = S(self.modulus()) # should live in Rpoly
         Rtmp = S(self.polynomial_ring().change_var(self.variable_name()))
         Rtmp.set_ring()
-        self.__singular = S("ideal(fetch(%s,%s))"%(Rpoly.name(),modulus.name()),"qring")
+        self.__singular = S("ideal(fetch(%s,%s))" % (Rpoly.name(),modulus.name()),"qring")
         return self.__singular
 
     def _repr_(self):
-        return "Univariate Quotient Polynomial Ring in %s over %s with modulus %s"%(
+        return "Univariate Quotient Polynomial Ring in %s over %s with modulus %s" % (
             self.variable_name(), self.base_ring(), self.modulus())
 
     def construction(self):
@@ -2127,7 +2127,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 to_isomorphic_ring = self.hom([isomorphic_ring.gen()])
                 return from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring
 
-        raise NotImplementedError("cannot rewrite %r as an isomorphic ring"%(self,))
+        raise NotImplementedError("cannot rewrite %r as an isomorphic ring" % (self,))
 
     def _test_isomorphic_ring(self, **options):
         r"""

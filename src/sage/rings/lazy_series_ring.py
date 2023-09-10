@@ -1021,7 +1021,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 count += 1
                 e1 = y(x)
                 e2 = x(y)
-                tester.assertEqual(e1, e2, "y(x) and x(y) differ for x = %s and y = %s" %(x, y))
+                tester.assertEqual(e1, e2, "y(x) and x(y) differ for x = %s and y = %s" % (x, y))
                 # tester.assertEqual(e1, self.gen())
         # we want to test at least 2 elements
         tester.assertGreater(count, 1, msg="only %s elements in %s.some_elements() have a compositional inverse" % (count, self))
