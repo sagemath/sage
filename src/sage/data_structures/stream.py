@@ -1113,6 +1113,15 @@ class Stream_uninitialized(Stream_inexact):
             sage: C = Stream_uninitialized(0)
             sage: C.is_uninitialized()
             True
+
+        A more subtle uninitialized series::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: T = L.undefined(1)
+            sage: D = L.undefined(0)
+            sage: T.define(z * exp(T) * D)
+            sage: T._coeff_stream.is_uninitialized()
+            True
         """
         if self._target is None:
             return True
