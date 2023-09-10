@@ -62,16 +62,12 @@
     "sage.calculus.interpolation": {},
     "sage.calculus.interpolation.pxd": {},
     "sage.calculus.interpolators": {},
-    "sage.calculus.ode": {
-        "failed": true
-    },
+    "sage.calculus.ode": {},
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
     "sage.calculus.transforms.all": {},
-    "sage.calculus.transforms.dft": {
-        "failed": true
-    },
+    "sage.calculus.transforms.dft": {},
     "sage.calculus.transforms.dwt": {},
     "sage.calculus.transforms.dwt.pxd": {},
     "sage.calculus.transforms.fft": {
@@ -235,9 +231,7 @@
     "sage.categories.graphs": {},
     "sage.categories.group_algebras": {},
     "sage.categories.groupoid": {},
-    "sage.categories.groups": {
-        "failed": true
-    },
+    "sage.categories.groups": {},
     "sage.categories.h_trivial_semigroups": {},
     "sage.categories.hecke_modules": {},
     "sage.categories.highest_weight_crystals": {},
@@ -456,9 +450,7 @@
     "sage.combinat.matrices.dlxcpp": {},
     "sage.combinat.nu_tamari_lattice": {},
     "sage.combinat.ordered_tree": {},
-    "sage.combinat.permutation": {
-        "failed": true
-    },
+    "sage.combinat.permutation": {},
     "sage.combinat.permutation_cython": {},
     "sage.combinat.permutation_cython.pxd": {},
     "sage.combinat.posets.all": {},
@@ -482,9 +474,7 @@
     },
     "sage.combinat.ranker": {},
     "sage.combinat.root_system.all": {},
-    "sage.combinat.root_system.ambient_space": {
-        "failed": true
-    },
+    "sage.combinat.root_system.ambient_space": {},
     "sage.combinat.root_system.associahedron": {},
     "sage.combinat.root_system.braid_move_calculator": {},
     "sage.combinat.root_system.braid_orbit": {},
@@ -496,15 +486,11 @@
         "failed": true
     },
     "sage.combinat.root_system.coxeter_group": {},
-    "sage.combinat.root_system.coxeter_matrix": {
-        "failed": true
-    },
+    "sage.combinat.root_system.coxeter_matrix": {},
     "sage.combinat.root_system.coxeter_type": {},
     "sage.combinat.root_system.dynkin_diagram": {},
     "sage.combinat.root_system.extended_affine_weyl_group": {},
-    "sage.combinat.root_system.fundamental_group": {
-        "failed": true
-    },
+    "sage.combinat.root_system.fundamental_group": {},
     "sage.combinat.root_system.hecke_algebra_representation": {},
     "sage.combinat.root_system.integrable_representations": {
         "failed": true
@@ -543,9 +529,7 @@
     "sage.combinat.root_system.type_H": {},
     "sage.combinat.root_system.type_I": {},
     "sage.combinat.root_system.type_Q": {},
-    "sage.combinat.root_system.type_affine": {
-        "failed": true
-    },
+    "sage.combinat.root_system.type_affine": {},
     "sage.combinat.root_system.type_dual": {},
     "sage.combinat.root_system.type_folded": {},
     "sage.combinat.root_system.type_marked": {
@@ -556,12 +540,8 @@
         "failed": true
     },
     "sage.combinat.root_system.type_super_A": {},
-    "sage.combinat.root_system.weight_lattice_realizations": {
-        "failed": true
-    },
-    "sage.combinat.root_system.weight_space": {
-        "failed": true
-    },
+    "sage.combinat.root_system.weight_lattice_realizations": {},
+    "sage.combinat.root_system.weight_space": {},
     "sage.combinat.root_system.weyl_characters": {},
     "sage.combinat.rooted_tree": {},
     "sage.combinat.shard_order": {},
@@ -573,9 +553,7 @@
     },
     "sage.combinat.tools": {},
     "sage.combinat.tuple": {},
-    "sage.combinat.yang_baxter_graph": {
-        "failed": true
-    },
+    "sage.combinat.yang_baxter_graph": {},
     "sage.cpython": {},
     "sage.cpython._py2_random": {},
     "sage.cpython.all": {},
@@ -940,9 +918,7 @@
     "sage.groups.matrix_gps.all": {},
     "sage.groups.matrix_gps.all__sagemath_modules": {},
     "sage.groups.matrix_gps.catalog": {},
-    "sage.groups.matrix_gps.coxeter_group": {
-        "failed": true
-    },
+    "sage.groups.matrix_gps.coxeter_group": {},
     "sage.groups.matrix_gps.finitely_generated": {},
     "sage.groups.matrix_gps.group_element": {},
     "sage.groups.matrix_gps.group_element.pxd": {},
@@ -1008,7 +984,9 @@
         "failed": true
     },
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1378,9 +1356,7 @@
     "sage.modules.free_module": {
         "failed": true
     },
-    "sage.modules.free_module_element": {
-        "failed": true
-    },
+    "sage.modules.free_module_element": {},
     "sage.modules.free_module_element.pxd": {},
     "sage.modules.free_module_homspace": {},
     "sage.modules.free_module_integer": {
@@ -1660,6 +1636,13 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {
+        "failed": true
+    },
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

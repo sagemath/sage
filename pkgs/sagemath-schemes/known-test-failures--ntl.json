@@ -61,17 +61,13 @@
     "sage.calculus.integration": {},
     "sage.calculus.interpolation": {},
     "sage.calculus.interpolation.pxd": {},
-    "sage.calculus.interpolators": {
-        "failed": true
-    },
+    "sage.calculus.interpolators": {},
     "sage.calculus.ode": {},
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
     "sage.calculus.transforms.all": {},
-    "sage.calculus.transforms.dft": {
-        "failed": true
-    },
+    "sage.calculus.transforms.dft": {},
     "sage.calculus.transforms.dwt": {},
     "sage.calculus.transforms.dwt.pxd": {},
     "sage.calculus.transforms.fft": {
@@ -79,9 +75,7 @@
     },
     "sage.calculus.transforms.fft.pxd": {},
     "sage.calculus.wester": {},
-    "sage.categories.action": {
-        "failed": true
-    },
+    "sage.categories.action": {},
     "sage.categories.action.pxd": {},
     "sage.categories.additive_groups": {},
     "sage.categories.additive_magmas": {
@@ -243,9 +237,7 @@
     "sage.categories.graphs": {},
     "sage.categories.group_algebras": {},
     "sage.categories.groupoid": {},
-    "sage.categories.groups": {
-        "failed": true
-    },
+    "sage.categories.groups": {},
     "sage.categories.h_trivial_semigroups": {},
     "sage.categories.hecke_modules": {
         "failed": true
@@ -285,9 +277,7 @@
     "sage.categories.metric_spaces": {},
     "sage.categories.modular_abelian_varieties": {},
     "sage.categories.modules": {},
-    "sage.categories.modules_with_basis": {
-        "failed": true
-    },
+    "sage.categories.modules_with_basis": {},
     "sage.categories.monoid_algebras": {},
     "sage.categories.monoids": {},
     "sage.categories.morphism": {},
@@ -364,16 +354,12 @@
     "sage.coding.bch_code": {
         "failed": true
     },
-    "sage.coding.binary_code": {
-        "failed": true
-    },
+    "sage.coding.binary_code": {},
     "sage.coding.binary_code.pxd": {},
     "sage.coding.bounds_catalog": {},
     "sage.coding.channel": {},
     "sage.coding.channels_catalog": {},
-    "sage.coding.code_bounds": {
-        "failed": true
-    },
+    "sage.coding.code_bounds": {},
     "sage.coding.code_constructions": {
         "failed": true
     },
@@ -381,23 +367,17 @@
     "sage.coding.cyclic_code": {
         "failed": true
     },
-    "sage.coding.databases": {
-        "failed": true
-    },
+    "sage.coding.databases": {},
     "sage.coding.decoder": {},
     "sage.coding.decoders_catalog": {},
     "sage.coding.delsarte_bounds": {},
     "sage.coding.encoder": {},
     "sage.coding.encoders_catalog": {},
-    "sage.coding.extended_code": {
-        "failed": true
-    },
+    "sage.coding.extended_code": {},
     "sage.coding.gabidulin_code": {
         "failed": true
     },
-    "sage.coding.golay_code": {
-        "failed": true
-    },
+    "sage.coding.golay_code": {},
     "sage.coding.goppa_code": {
         "failed": true
     },
@@ -406,15 +386,11 @@
     },
     "sage.coding.guava": {},
     "sage.coding.guruswami_sudan.all": {},
-    "sage.coding.guruswami_sudan.gs_decoder": {
-        "failed": true
-    },
+    "sage.coding.guruswami_sudan.gs_decoder": {},
     "sage.coding.guruswami_sudan.interpolation": {
         "failed": true
     },
-    "sage.coding.guruswami_sudan.utils": {
-        "failed": true
-    },
+    "sage.coding.guruswami_sudan.utils": {},
     "sage.coding.hamming_code": {},
     "sage.coding.information_set_decoder": {},
     "sage.coding.kasami_codes": {
@@ -493,9 +469,7 @@
     },
     "sage.combinat.root_system.root_lattice_realizations": {},
     "sage.combinat.root_system.root_space": {},
-    "sage.combinat.root_system.root_system": {
-        "failed": true
-    },
+    "sage.combinat.root_system.root_system": {},
     "sage.combinat.root_system.type_A": {},
     "sage.combinat.root_system.type_A_affine": {},
     "sage.combinat.root_system.type_A_infinity": {},
@@ -802,9 +776,7 @@
     "sage.groups.generic": {
         "failed": true
     },
-    "sage.groups.group": {
-        "failed": true
-    },
+    "sage.groups.group": {},
     "sage.groups.group.pxd": {},
     "sage.groups.groups_catalog": {},
     "sage.groups.matrix_gps.all": {},
@@ -866,7 +838,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1145,9 +1119,7 @@
     "sage.matrix.matrix2.pxd": {},
     "sage.matrix.matrix_cdv": {},
     "sage.matrix.matrix_cdv.pxd": {},
-    "sage.matrix.matrix_complex_double_dense": {
-        "failed": true
-    },
+    "sage.matrix.matrix_complex_double_dense": {},
     "sage.matrix.matrix_complex_double_dense.pxd": {},
     "sage.matrix.matrix_dense": {},
     "sage.matrix.matrix_dense.pxd": {},
@@ -1756,9 +1728,7 @@
     "sage.quadratic_forms.genera.spinor_genus": {},
     "sage.quadratic_forms.qfsolve": {},
     "sage.quadratic_forms.quadratic_form": {},
-    "sage.quadratic_forms.quadratic_form__automorphisms": {
-        "failed": true
-    },
+    "sage.quadratic_forms.quadratic_form__automorphisms": {},
     "sage.quadratic_forms.quadratic_form__count_local_2": {},
     "sage.quadratic_forms.quadratic_form__equivalence_testing": {},
     "sage.quadratic_forms.quadratic_form__evaluate": {},
@@ -1893,9 +1863,7 @@
         "failed": true
     },
     "sage.rings.continued_fraction_gosper": {},
-    "sage.rings.derivation": {
-        "failed": true
-    },
+    "sage.rings.derivation": {},
     "sage.rings.factorint": {},
     "sage.rings.factorint_pari": {},
     "sage.rings.fast_arith": {},
@@ -2007,6 +1975,11 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {},
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true
@@ -2709,9 +2682,7 @@
     "sage.tests.book_stein_ent": {
         "failed": true
     },
-    "sage.tests.book_stein_modform": {
-        "failed": true
-    },
+    "sage.tests.book_stein_modform": {},
     "sage.tests.cmdline": {},
     "sage.tests.combinatorial_hopf_algebras": {},
     "sage.tests.finite_poset": {},
@@ -2721,9 +2692,7 @@
     "sage.tests.lazy_imports": {},
     "sage.tests.modular_group_cohomology": {},
     "sage.tests.numpy": {},
-    "sage.tests.parigp": {
-        "failed": true
-    },
+    "sage.tests.parigp": {},
     "sage.tests.startup": {},
     "sage.tests.symbolic-series": {},
     "sage.tests.sympy": {},

@@ -373,9 +373,7 @@
     "sage.combinat.tamari_lattices": {},
     "sage.combinat.tools": {},
     "sage.combinat.tuple": {},
-    "sage.combinat.yang_baxter_graph": {
-        "failed": true
-    },
+    "sage.combinat.yang_baxter_graph": {},
     "sage.cpython": {},
     "sage.cpython._py2_random": {},
     "sage.cpython.all": {},

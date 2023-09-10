@@ -477,7 +477,9 @@
     },
     "sage.combinat.designs.gen_quadrangles_with_spread": {},
     "sage.combinat.designs.group_divisible_designs": {},
-    "sage.combinat.designs.incidence_structures": {},
+    "sage.combinat.designs.incidence_structures": {
+        "failed": true
+    },
     "sage.combinat.designs.latin_squares": {},
     "sage.combinat.designs.orthogonal_arrays": {},
     "sage.combinat.designs.orthogonal_arrays_build_recursive": {},

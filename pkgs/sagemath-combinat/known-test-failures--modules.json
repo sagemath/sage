@@ -214,9 +214,7 @@
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
     "sage.calculus.transforms.all": {},
-    "sage.calculus.transforms.dft": {
-        "failed": true
-    },
+    "sage.calculus.transforms.dft": {},
     "sage.calculus.transforms.dwt": {},
     "sage.calculus.transforms.dwt.pxd": {},
     "sage.calculus.transforms.fft": {
@@ -396,9 +394,7 @@
     "sage.categories.graphs": {},
     "sage.categories.group_algebras": {},
     "sage.categories.groupoid": {},
-    "sage.categories.groups": {
-        "failed": true
-    },
+    "sage.categories.groups": {},
     "sage.categories.h_trivial_semigroups": {},
     "sage.categories.hecke_modules": {},
     "sage.categories.highest_weight_crystals": {},
@@ -876,9 +872,7 @@
         "failed": true
     },
     "sage.combinat.perfect_matching": {},
-    "sage.combinat.permutation": {
-        "failed": true
-    },
+    "sage.combinat.permutation": {},
     "sage.combinat.permutation_cython": {},
     "sage.combinat.permutation_cython.pxd": {},
     "sage.combinat.plane_partition": {
@@ -1107,9 +1101,7 @@
     },
     "sage.combinat.skew_tableau": {},
     "sage.combinat.sloane_functions": {},
-    "sage.combinat.specht_module": {
-        "failed": true
-    },
+    "sage.combinat.specht_module": {},
     "sage.combinat.species.all": {},
     "sage.combinat.species.characteristic_species": {},
     "sage.combinat.species.composition_species": {
@@ -1513,7 +1505,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1982,9 +1976,7 @@
     "sage.modules.with_basis.cell_module": {
         "failed": true
     },
-    "sage.modules.with_basis.indexed_element": {
-        "failed": true
-    },
+    "sage.modules.with_basis.indexed_element": {},
     "sage.modules.with_basis.indexed_element.pxd": {},
     "sage.modules.with_basis.invariant": {},
     "sage.modules.with_basis.morphism": {},
@@ -2222,6 +2214,13 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {
+        "failed": true
+    },
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true
@@ -2637,9 +2636,7 @@
     "sage.tests.book_stein_ent": {},
     "sage.tests.book_stein_modform": {},
     "sage.tests.cmdline": {},
-    "sage.tests.combinatorial_hopf_algebras": {
-        "failed": true
-    },
+    "sage.tests.combinatorial_hopf_algebras": {},
     "sage.tests.finite_poset": {},
     "sage.tests.functools_partial_src": {},
     "sage.tests.gap_packages": {},

@@ -59,17 +59,13 @@
     "sage.calculus.integration": {},
     "sage.calculus.interpolation": {},
     "sage.calculus.interpolation.pxd": {},
-    "sage.calculus.interpolators": {
-        "failed": true
-    },
+    "sage.calculus.interpolators": {},
     "sage.calculus.ode": {},
     "sage.calculus.ode.pxd": {},
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
     "sage.calculus.transforms.all": {},
-    "sage.calculus.transforms.dft": {
-        "failed": true
-    },
+    "sage.calculus.transforms.dft": {},
     "sage.calculus.transforms.dwt": {},
     "sage.calculus.transforms.dwt.pxd": {},
     "sage.calculus.transforms.fft": {
@@ -77,9 +73,7 @@
     },
     "sage.calculus.transforms.fft.pxd": {},
     "sage.calculus.wester": {},
-    "sage.categories.action": {
-        "failed": true
-    },
+    "sage.categories.action": {},
     "sage.categories.action.pxd": {},
     "sage.categories.additive_groups": {},
     "sage.categories.additive_magmas": {},
@@ -233,13 +227,9 @@
     "sage.categories.graphs": {},
     "sage.categories.group_algebras": {},
     "sage.categories.groupoid": {},
-    "sage.categories.groups": {
-        "failed": true
-    },
+    "sage.categories.groups": {},
     "sage.categories.h_trivial_semigroups": {},
-    "sage.categories.hecke_modules": {
-        "failed": true
-    },
+    "sage.categories.hecke_modules": {},
     "sage.categories.highest_weight_crystals": {},
     "sage.categories.homset": {
         "failed": true
@@ -275,9 +265,7 @@
     "sage.categories.metric_spaces": {},
     "sage.categories.modular_abelian_varieties": {},
     "sage.categories.modules": {},
-    "sage.categories.modules_with_basis": {
-        "failed": true
-    },
+    "sage.categories.modules_with_basis": {},
     "sage.categories.monoid_algebras": {},
     "sage.categories.monoids": {},
     "sage.categories.morphism": {},
@@ -353,9 +341,7 @@
     "sage.coding.bounds_catalog": {},
     "sage.coding.channel": {},
     "sage.coding.channels_catalog": {},
-    "sage.coding.code_bounds": {
-        "failed": true
-    },
+    "sage.coding.code_bounds": {},
     "sage.coding.code_constructions": {},
     "sage.coding.codes_catalog": {},
     "sage.coding.cyclic_code": {},
@@ -941,9 +927,7 @@
     "sage.matrix.matrix2.pxd": {},
     "sage.matrix.matrix_cdv": {},
     "sage.matrix.matrix_cdv.pxd": {},
-    "sage.matrix.matrix_complex_double_dense": {
-        "failed": true
-    },
+    "sage.matrix.matrix_complex_double_dense": {},
     "sage.matrix.matrix_complex_double_dense.pxd": {},
     "sage.matrix.matrix_dense": {},
     "sage.matrix.matrix_dense.pxd": {},
@@ -1658,6 +1642,13 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {
+        "failed": true
+    },
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true
@@ -2239,9 +2230,7 @@
     "sage.tests.benchmark": {},
     "sage.tests.book_schilling_zabrocki_kschur_primer": {},
     "sage.tests.book_stein_ent": {},
-    "sage.tests.book_stein_modform": {
-        "failed": true
-    },
+    "sage.tests.book_stein_modform": {},
     "sage.tests.cmdline": {},
     "sage.tests.combinatorial_hopf_algebras": {},
     "sage.tests.finite_poset": {},

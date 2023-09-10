@@ -885,6 +885,9 @@
     "sage.rings.padics.padic_floating_point_element": {},
     "sage.rings.padics.padic_generic": {},
     "sage.rings.padics.precision_error": {},
+    "sage.rings.pari_ring": {
+        "failed": true
+    },
     "sage.rings.polynomial.all__sagemath_categories": {},
     "sage.rings.polynomial.commutative_polynomial": {},
     "sage.rings.polynomial.commutative_polynomial.pxd": {},

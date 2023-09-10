@@ -68,9 +68,7 @@
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
     "sage.calculus.transforms.all": {},
-    "sage.calculus.transforms.dft": {
-        "failed": true
-    },
+    "sage.calculus.transforms.dft": {},
     "sage.calculus.transforms.dwt": {},
     "sage.calculus.transforms.dwt.pxd": {},
     "sage.calculus.transforms.fft": {
@@ -234,9 +232,7 @@
     "sage.categories.graphs": {},
     "sage.categories.group_algebras": {},
     "sage.categories.groupoid": {},
-    "sage.categories.groups": {
-        "failed": true
-    },
+    "sage.categories.groups": {},
     "sage.categories.h_trivial_semigroups": {},
     "sage.categories.hecke_modules": {},
     "sage.categories.highest_weight_crystals": {},
@@ -355,9 +351,7 @@
     "sage.coding.databases": {},
     "sage.coding.decoder": {},
     "sage.coding.decoders_catalog": {},
-    "sage.coding.delsarte_bounds": {
-        "failed": true
-    },
+    "sage.coding.delsarte_bounds": {},
     "sage.coding.encoder": {},
     "sage.coding.encoders_catalog": {},
     "sage.coding.extended_code": {},
@@ -373,7 +367,9 @@
     "sage.coding.hamming_code": {},
     "sage.coding.information_set_decoder": {},
     "sage.coding.kasami_codes": {},
-    "sage.coding.linear_code": {},
+    "sage.coding.linear_code": {
+        "failed": true
+    },
     "sage.coding.linear_code_no_metric": {},
     "sage.coding.linear_rank_metric": {},
     "sage.coding.parity_check_code": {},
@@ -677,9 +673,7 @@
     },
     "sage.game_theory.cooperative_game": {},
     "sage.game_theory.gambit_docs": {},
-    "sage.game_theory.matching_game": {
-        "failed": true
-    },
+    "sage.game_theory.matching_game": {},
     "sage.game_theory.normal_form_game": {
         "failed": true
     },
@@ -707,9 +701,7 @@
     },
     "sage.geometry.hyperplane_arrangement.check_freeness": {},
     "sage.geometry.hyperplane_arrangement.hyperplane": {},
-    "sage.geometry.hyperplane_arrangement.library": {
-        "failed": true
-    },
+    "sage.geometry.hyperplane_arrangement.library": {},
     "sage.geometry.hyperplane_arrangement.plot": {},
     "sage.geometry.integral_points": {},
     "sage.geometry.integral_points.pxi": {
@@ -896,7 +888,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1269,9 +1263,7 @@
     "sage.modules.free_module": {
         "failed": true
     },
-    "sage.modules.free_module_element": {
-        "failed": true
-    },
+    "sage.modules.free_module_element": {},
     "sage.modules.free_module_element.pxd": {},
     "sage.modules.free_module_homspace": {},
     "sage.modules.free_module_integer": {
@@ -1602,6 +1594,13 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {
+        "failed": true
+    },
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true
@@ -1789,9 +1788,7 @@
     "sage.schemes.generic.divisor": {},
     "sage.schemes.generic.divisor_group": {},
     "sage.schemes.generic.glue": {},
-    "sage.schemes.generic.homset": {
-        "failed": true
-    },
+    "sage.schemes.generic.homset": {},
     "sage.schemes.generic.hypersurface": {},
     "sage.schemes.generic.morphism": {
         "failed": true

@@ -26,9 +26,7 @@
         "failed": true
     },
     "sage.combinat.root_system.extended_affine_weyl_group": {},
-    "sage.combinat.root_system.fundamental_group": {
-        "failed": true
-    },
+    "sage.combinat.root_system.fundamental_group": {},
     "sage.combinat.root_system.hecke_algebra_representation": {},
     "sage.combinat.root_system.integrable_representations": {},
     "sage.combinat.root_system.non_symmetric_macdonald_polynomials": {

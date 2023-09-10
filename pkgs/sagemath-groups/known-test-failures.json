@@ -896,9 +896,7 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1303,9 +1301,7 @@
     "sage.modules.free_module": {
         "failed": true
     },
-    "sage.modules.free_module_element": {
-        "failed": true
-    },
+    "sage.modules.free_module_element": {},
     "sage.modules.free_module_element.pxd": {},
     "sage.modules.free_module_homspace": {},
     "sage.modules.free_module_integer": {
@@ -1592,6 +1588,13 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {
+        "failed": true
+    },
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

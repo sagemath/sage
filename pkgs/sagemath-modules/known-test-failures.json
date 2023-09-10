@@ -64,9 +64,7 @@
     "sage.calculus.riemann": {},
     "sage.calculus.test_sympy": {},
     "sage.calculus.transforms.all": {},
-    "sage.calculus.transforms.dft": {
-        "failed": true
-    },
+    "sage.calculus.transforms.dft": {},
     "sage.calculus.transforms.dwt": {},
     "sage.calculus.transforms.dwt.pxd": {},
     "sage.calculus.transforms.fft": {
@@ -230,9 +228,7 @@
     "sage.categories.graphs": {},
     "sage.categories.group_algebras": {},
     "sage.categories.groupoid": {},
-    "sage.categories.groups": {
-        "failed": true
-    },
+    "sage.categories.groups": {},
     "sage.categories.h_trivial_semigroups": {},
     "sage.categories.hecke_modules": {},
     "sage.categories.highest_weight_crystals": {},
@@ -367,7 +363,9 @@
     "sage.coding.hamming_code": {},
     "sage.coding.information_set_decoder": {},
     "sage.coding.kasami_codes": {},
-    "sage.coding.linear_code": {},
+    "sage.coding.linear_code": {
+        "failed": true
+    },
     "sage.coding.linear_code_no_metric": {},
     "sage.coding.linear_rank_metric": {},
     "sage.coding.parity_check_code": {},
@@ -1127,9 +1125,7 @@
     "sage.modules.free_module": {
         "failed": true
     },
-    "sage.modules.free_module_element": {
-        "failed": true
-    },
+    "sage.modules.free_module_element": {},
     "sage.modules.free_module_element.pxd": {},
     "sage.modules.free_module_homspace": {},
     "sage.modules.free_module_integer": {
@@ -1407,6 +1403,13 @@
     "sage.rings.integer_fake.pxd": {},
     "sage.rings.integer_ring": {},
     "sage.rings.integer_ring.pxd": {},
+    "sage.rings.invariants.all": {},
+    "sage.rings.invariants.invariant_theory": {
+        "failed": true
+    },
+    "sage.rings.invariants.reconstruction": {
+        "failed": true
+    },
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true
