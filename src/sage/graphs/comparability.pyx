@@ -677,7 +677,6 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
        ....:        break
 
     """
-    from sage.graphs.comparability import is_comparability
     if certificate:
 
         # First poset, we stop if it fails

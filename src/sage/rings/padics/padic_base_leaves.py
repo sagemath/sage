@@ -731,7 +731,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             a = ZZ.random_element(self.prime()**self.precision_cap())
             return self(self.prime()**k * a, absprec=k + self.precision_cap())
         else:
-            raise NotImplementedError("Don't know %s algorithm"%algorithm)
+            raise NotImplementedError("Don't know %s algorithm" % algorithm)
 
 class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGeneric):
     r"""

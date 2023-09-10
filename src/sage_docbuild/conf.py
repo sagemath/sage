@@ -691,6 +691,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
 
+
 dangling_debug = False
 
 def debug_inf(app, message):
@@ -816,6 +817,7 @@ def find_sage_dangling_links(app, env, node, contnode):
     newnode.append(contnode)
     return newnode
 
+
 # lists of basic Python class which are documented as functions
 base_class_as_func = [
     'bool', 'complex', 'dict', 'file', 'float',
@@ -841,6 +843,7 @@ def nitpick_patch_config(app):
     """
     app.config.values['nitpicky'] = (False, 'sage')
     app.config.values['nitpick_ignore'] = ([], 'sage')
+
 
 skip_picklability_check_modules = [
     #'sage.misc.test_nested_class', # for test only
