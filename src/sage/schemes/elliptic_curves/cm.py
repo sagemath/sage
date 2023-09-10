@@ -535,6 +535,7 @@ def cm_orders(h, proof=None):
 # quadratic field with class number h, and n is the number of such
 # fields.  These are all *unconditional* (not dependent on GRH).
 
+
 watkins_table = {1: (163, 9), 2: (427, 18), 3: (907, 16), 4: (1555, 54), 5: (2683, 25),
                  6: (3763, 51), 7: (5923, 31), 8: (6307, 131), 9: (10627, 34), 10:
                  (13843, 87), 11: (15667, 41), 12: (17803, 206), 13: (20563, 37), 14:
@@ -716,6 +717,7 @@ def largest_disc_with_class_number(h):
 # list of pairs (D0,f) such that D=D0*f**2 has class number h.  We
 # initialise it with h=1 only; other values will be added by calls to
 # discriminants_with_bounded_class_number().
+
 
 hDf_dict = {ZZ(1): [(ZZ(D), ZZ(h)) for D,h in
                     [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2),

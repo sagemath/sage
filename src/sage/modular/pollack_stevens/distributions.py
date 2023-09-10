@@ -224,6 +224,7 @@ class Symk_factory(UniqueFactory):
         """
         return Symk_class(*key)
 
+
 OverconvergentDistributions = OverconvergentDistributions_factory('OverconvergentDistributions')
 Symk = Symk_factory('Symk')
 

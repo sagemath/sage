@@ -802,4 +802,5 @@ class HyperplaneArrangementLibrary():
         A.characteristic_polynomial.set_cache(charpoly)
         return A
 
+
 hyperplane_arrangements = HyperplaneArrangementLibrary()
