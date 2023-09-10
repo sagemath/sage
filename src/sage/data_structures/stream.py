@@ -1080,6 +1080,7 @@ class Stream_uninitialized(Stream_inexact):
             raise ValueError("the valuation must be specified for undefined series")
         super().__init__(False, true_order)
         self._approximate_order = approximate_order
+        self._initializing = False
 
     def iterate_coefficients(self):
         """
@@ -1113,7 +1114,15 @@ class Stream_uninitialized(Stream_inexact):
             sage: C.is_uninitialized()
             True
         """
-        return self._target is None
+        if self._target is None:
+            return True
+        if self._initializing:
+            return False
+        # We implement semaphore-like behavior for coupled (undefined) series
+        self._initializing = True
+        result = self._target.is_uninitialized()
+        self._initializing = False
+        return result
 
 
 class Stream_unary(Stream_inexact):
