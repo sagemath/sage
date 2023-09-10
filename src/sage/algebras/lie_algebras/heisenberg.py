@@ -58,7 +58,7 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
             sage: L.p(2)
             p2
         """
-        return self.element_class(self, {'p%i'%i: self.base_ring().one()})
+        return self.element_class(self, {'p%i' % i: self.base_ring().one()})
 
     def q(self, i):
         """
@@ -70,7 +70,7 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
             sage: L.q(2)
             q2
         """
-        return self.element_class(self, {'q%i'%i: self.base_ring().one()})
+        return self.element_class(self, {'q%i' % i: self.base_ring().one()})
 
     def z(self):
         """
@@ -155,7 +155,7 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
         """
         if len(m) == 1:
             return m
-        return "%s_{%s}"%(m[0], m[1:]) # else it is of length at least 2
+        return "%s_{%s}" % (m[0], m[1:]) # else it is of length at least 2
 
     def _unicode_art_term(self, m):
         r"""
@@ -278,12 +278,12 @@ class HeisenbergAlgebra_fd():
         """
         if self._n == 0:
             return Family(['z'], lambda i: self.z())
-        k = ['p%s'%i for i in range(1, self._n+1)]
-        k += ['q%s'%i for i in range(1, self._n+1)]
+        k = ['p%s' % i for i in range(1, self._n+1)]
+        k += ['q%s' % i for i in range(1, self._n+1)]
         d = {}
         for i in range(1, self._n+1):
-            d['p%s'%i] = self.p(i)
-            d['q%s'%i] = self.q(i)
+            d['p%s' % i] = self.p(i)
+            d['q%s' % i] = self.q(i)
         return Family(k, lambda i: d[i])
 
     @cached_method
@@ -299,8 +299,8 @@ class HeisenbergAlgebra_fd():
         """
         d = {}
         for i in range(1, self._n+1):
-            d['p%s'%i] = self.p(i)
-            d['q%s'%i] = self.q(i)
+            d['p%s' % i] = self.p(i)
+            d['q%s' % i] = self.q(i)
         d['z'] = self.z()
         return Family(self._indices, lambda i: d[i])
 
@@ -402,8 +402,8 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
             sage: TestSuite(L).run()
         """
         HeisenbergAlgebra_fd.__init__(self, n)
-        names = tuple(['p%s'%i for i in range(1,n+1)]
-                      + ['q%s'%i for i in range(1,n+1)]
+        names = tuple(['p%s' % i for i in range(1,n+1)]
+                      + ['q%s' % i for i in range(1,n+1)]
                       + ['z'])
         LieAlgebraWithGenerators.__init__(self, R, names=names, index_set=names,
             category=LieAlgebras(R).Nilpotent().FiniteDimensional().WithBasis())
@@ -704,8 +704,8 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         p = tuple(MS({(0,i): one}) for i in range(1, n+1))
         q = tuple(MS({(i,n+1): one}) for i in range(1, n+1))
         z = (MS({(0,n+1): one}),)
-        names = tuple('p%s'%i for i in range(1,n+1))
-        names = names + tuple('q%s'%i for i in range(1,n+1)) + ('z',)
+        names = tuple('p%s' % i for i in range(1,n+1))
+        names = names + tuple('q%s' % i for i in range(1,n+1)) + ('z',)
         cat = LieAlgebras(R).Nilpotent().FiniteDimensional().WithBasis()
         LieAlgebraFromAssociative.__init__(self, MS, p + q + z, names=names,
                                            index_set=names, category=cat)
@@ -733,7 +733,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
             [0 0 0]
             [0 0 0]
         """
-        return self._gens['p%s'%i]
+        return self._gens['p%s' % i]
 
     def q(self, i):
         r"""
@@ -747,7 +747,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
             [0 0 1]
             [0 0 0]
         """
-        return self._gens['q%s'%i]
+        return self._gens['q%s' % i]
 
     def z(self):
         """
