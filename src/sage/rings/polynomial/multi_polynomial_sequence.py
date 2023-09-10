@@ -317,7 +317,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         if arg2:
             ring = arg2
             if not is_ring(ring):
-                raise TypeError("Ring '%s' not supported."%ring)
+                raise TypeError("Ring '%s' not supported." % ring)
         else:
             try:
                 e = next(iter(gens))
@@ -848,7 +848,7 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         P = magma(self.ring()).name()
         v = [x._magma_init_(magma) for x in list(self)]
-        return 'ideal<%s|%s>'%(P, ','.join(v))
+        return 'ideal<%s|%s>' % (P, ','.join(v))
 
     def _repr_(self):
         """
@@ -876,7 +876,7 @@ class PolynomialSequence_generic(Sequence_generic):
         if len(self) < 20:
             return Sequence_generic._repr_(self)
         else:
-            return "Polynomial Sequence with %d Polynomials in %d Variables"%(len(self),self.nvariables())
+            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self),self.nvariables())
 
     def __add__(self, right):
         """
@@ -1426,7 +1426,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             g = GroebnerStrategy(R)
             for p in self:
                 g.add_as_you_wish(p)
-            g.reduction_strategy.opt_red_tail=True
+            g.reduction_strategy.opt_red_tail = True
             return g
 
     def solve(self, algorithm='polybori', n=1,  eliminate_linear_variables=True, verbose=False, **kwds):
@@ -1629,7 +1629,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if isinstance(R, BooleanPolynomialRing_base):
             from sage.rings.polynomial.pbori.interred import interred as inter_red
 
-            l = [p for p in self if not p==0]
+            l = [p for p in self if not p == 0]
             l = sorted(inter_red(l, completely=True), reverse=True)
             return PolynomialSequence(l, R, immutable=True)
         else:

@@ -15,7 +15,6 @@ context class, and related utilities.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
 from cpython.complex cimport *

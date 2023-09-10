@@ -297,6 +297,7 @@ def create_poly(face, color):
 
 ####################################################
 
+
 singmaster_indices = {
     1: "ulb",
     2: "ub",
@@ -1181,6 +1182,7 @@ def cubie_faces():
             cubies[  1,  i,  j][5] = faceR[1+i][1+j]
 
     return cubies
+
 
 cubie_face_list = cubie_faces()
 

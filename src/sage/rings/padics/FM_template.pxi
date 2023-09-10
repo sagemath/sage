@@ -35,7 +35,7 @@ AUTHORS:
 #*****************************************************************************
 
 include "padic_template_element.pxi"
-from cpython.int cimport *
+from cpython.long cimport *
 
 from sage.structure.element cimport Element
 from sage.rings.padics.common_conversion cimport comb_prec, _process_args_and_kwds

@@ -645,7 +645,7 @@ def _multiple_to_make_good_reduction(E):
         li = []
         for p in ps:
             np = u.valuation(p)
-            if Emin.discriminant() %p != 0:
+            if Emin.discriminant() % p != 0:
                 li.append(Emin.Np(p) * p**(np-1))
             elif Emin.has_additive_reduction(p):
                 li.append(E.tamagawa_number(p) * p**np)
@@ -654,7 +654,7 @@ def _multiple_to_make_good_reduction(E):
             else: # non split
                 li.append(E.tamagawa_number(p) * (p+1) * p**(np-1))
         otherbad = Integer(Emin.discriminant()).prime_divisors()
-        otherbad = [p for p in otherbad if u%p != 0 ]
+        otherbad = [p for p in otherbad if u % p != 0 ]
         li += [E.tamagawa_number(p) for p in otherbad]
         n2 = LCM(li)
     return n2

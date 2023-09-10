@@ -136,7 +136,7 @@ class NumberFieldIdeal(Ideal_generic):
             else:
                 # Assume one element of the field
                 gens = [field(gens, check=False)]
-        if len(gens)==0:
+        if len(gens) == 0:
             raise ValueError("gens must have length at least 1 (zero ideal is not a fractional ideal)")
         Ideal_generic.__init__(self, field, gens, coerce)
         if field.absolute_degree() == 2:
@@ -296,8 +296,8 @@ class NumberFieldIdeal(Ideal_generic):
         if self.ngens() == 1 and other.ngens() == 1:
             return self.ring().ideal(self.gen(0) * other.gen(0))
 
-        K=self.ring()
-        K_pari=K.pari_nf()
+        K = self.ring()
+        K_pari = K.pari_nf()
         return K.ideal(K_pari.idealmul(self, other))
 
     def coordinates(self, x):
@@ -2526,7 +2526,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         N1 = self.numerator()
         D2 = other.denominator()
         N2 = other.numerator()
-        return N1+N2==one and N1+D2==one and D1+N2==one and D1+D2==one
+        return N1+N2 == one and N1+D2 == one and D1+N2 == one and D1+D2 == one
 
     def idealcoprime(self, J):
         """
@@ -2709,7 +2709,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         ALGORITHM: Uses Pari function :pari:`idealstar`
         """
         k = self.number_field()
-        if flag==0 and not hasattr(self, '_bid'):
+        if flag == 0 and not hasattr(self, '_bid'):
             G = k.pari_nf().idealstar(self.pari_hnf(), 0)
         else:
             G = self._pari_bid_(flag)

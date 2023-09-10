@@ -205,4 +205,5 @@ def _get_pari_instance():
 
     return P
 
+
 pari = _get_pari_instance()

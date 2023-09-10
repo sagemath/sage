@@ -134,12 +134,12 @@ class pAdicBaseGeneric(pAdicGeneric):
             else:
                 s = r"\Bold{Z}_{%s}" % self.prime()
             if hasattr(self, '_label') and self._label:
-                s = r"\verb'%s' (\simeq %s)"%(self._label, s)
+                s = r"\verb'%s' (\simeq %s)" % (self._label, s)
         else:
             s = "Field " if self.is_field() else "Ring "
-            s = "%s-adic "%self.prime() + s + precprint(self._prec_type(), self.precision_cap(), self.prime())
+            s = "%s-adic " % self.prime() + s + precprint(self._prec_type(), self.precision_cap(), self.prime())
             if hasattr(self, '_label') and self._label:
-                s+= " (label: %s)"%self._label
+                s += " (label: %s)" % self._label
         return s
 
     def exact_field(self):
@@ -388,7 +388,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             if n == 1:
                 return self(1)
             else:
-                raise ValueError("No, %sth root of unity in self"%n)
+                raise ValueError("No, %sth root of unity in self" % n)
         else:
             from sage.rings.finite_rings.finite_field_constructor import GF
             return self.teichmuller(GF(self.prime()).zeta(n).lift())

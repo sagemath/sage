@@ -683,7 +683,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 # occurs by constructing a matrix in k, and finding a non-zero
                 # vector in the kernel of the matrix.
 
-                m =[]
+                m = []
                 for g in q.basis_matrix():
                     m.extend(matrix([g * mr for mr in matrices_reduced]).columns())
                 beta  = [c.lift() for c in matrix(m).right_kernel().basis()[0]]
@@ -784,7 +784,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
         O = F.base_field().maximal_order_infinite()
         coordinates = self.coordinate_vector(f)
         if not all(c in O for c in coordinates):
-            raise TypeError("%r is not an element of %r"%(f,self))
+            raise TypeError("%r is not an element of %r" % (f,self))
 
         return f
 
@@ -1288,7 +1288,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
                 # p and qgen generates the prime; modulo pO, qgenb generates the prime
                 qgenb = [to(qgen[i]) for i in range(n)]
-                m =[]
+                m = []
                 for i in range(n):
                     m.append(sum(qgenb[j] * mtable[i][j] for j in range(n)))
                 beta  = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
@@ -1383,7 +1383,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 Kb.append(Lb)
 
             # J_1, J_2, ...
-            Jb =[Kb[0]] + [div(Kb[j],Kb[j-1]) for j in range(1,len(Kb))]
+            Jb = [Kb[0]] + [div(Kb[j],Kb[j-1]) for j in range(1,len(Kb))]
 
             # H_1, H_2, ...
             Hb = [div(Jb[j],Jb[j+1]) for j in range(len(Jb)-1)] + [Jb[-1]]
@@ -1455,7 +1455,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                     # Compute an element beta in O but not in pO. How to find beta
                     # is explained in Section 4.8.3 of [Coh1993]. We keep beta
                     # as a vector over k[x] with respect to the basis of O.
-                    m =[]
+                    m = []
                     for i in range(n):
                         r = []
                         for g in prime._hnf:

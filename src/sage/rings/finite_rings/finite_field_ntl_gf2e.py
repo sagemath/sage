@@ -306,4 +306,4 @@ class FiniteField_ntl_gf2e(FiniteField):
             Mod(1, 2)*a^16 + Mod(1, 2)*a^5 + Mod(1, 2)*a^3 + Mod(1, 2)*a^2 + Mod(1, 2)
         """
         f = pari(str(self.modulus()))
-        return f.subst('x', 'a') * pari("Mod(1,%s)"%self.characteristic())
+        return f.subst('x', 'a') * pari("Mod(1,%s)" % self.characteristic())

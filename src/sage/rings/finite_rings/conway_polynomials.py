@@ -474,7 +474,7 @@ def _frobenius_shift(K, generators, check_only=False):
         searched[i] = True
         crt_possibles = []
         for j in range(1,len(qlist)):
-            if i==j:
+            if i == j:
                 continue
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
@@ -490,7 +490,7 @@ def _frobenius_shift(K, generators, check_only=False):
 
     def propagate_levelling(qindex, level, x, xleveled, i):
         for j in range(1, len(qlist)):
-            if i==j:
+            if i == j:
                 continue
             if not xleveled[j] and crt[(i,j)][qindex][1] >= level:
                 newxj = x[i][0] + crt[(i,j)][qindex][0]

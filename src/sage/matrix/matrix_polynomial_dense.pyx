@@ -1670,8 +1670,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # the row-wise case (resp. column-wise case), it will be convenient to
         # have leading position ncols (resp. nrows) for these zero vectors
         pos_zero_vec = self.ncols() if row_wise else self.nrows()
-        leading_positions = [pos if pos>=0 else pos_zero_vec + 1 \
-                                         for pos in leading_positions]
+        leading_positions = [pos if pos >= 0 else pos_zero_vec + 1
+                             for pos in leading_positions]
         # leading positions should not have duplicates, which is equivalent to:
         # once sorted, it doesn't contain a pair of equal successive entries
         if not ordered:

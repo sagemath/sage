@@ -55,7 +55,7 @@ class Ideal_1poly_field(Ideal_pid):
             if not self.ring().base_ring().is_finite():
                 raise TypeError("residue fields only supported for polynomial rings over finite fields.")
             if not self.is_prime():
-                raise ValueError("%s is not a prime ideal"%self)
+                raise ValueError("%s is not a prime ideal" % self)
 
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(self, names, check=False)

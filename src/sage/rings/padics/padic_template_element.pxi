@@ -23,7 +23,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.int cimport *
+from cpython.long cimport *
 
 import itertools
 
@@ -254,7 +254,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         # The "verify that shift is an integer" part could be shared
         cdef long s
         if isinstance(shift, int):
-            s = PyInt_AS_LONG(shift)
+            s = PyLong_AsLong(shift)
         else:
             if not isinstance(shift, Integer):
                 shift = Integer(shift)
@@ -302,7 +302,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         """
         cdef long s
         if isinstance(shift, int):
-            s = PyInt_AS_LONG(shift)
+            s = PyLong_AsLong(shift)
         else:
             if not isinstance(shift, Integer):
                 shift = Integer(shift)

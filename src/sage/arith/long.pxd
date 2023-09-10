@@ -18,8 +18,6 @@ Fast conversion of Python objects to C long
 from libc.limits cimport LONG_MIN, LONG_MAX
 
 from cpython.object cimport Py_SIZE
-from cpython.int cimport PyInt_AS_LONG
-from cpython.long cimport PyLong_AsLong
 from cpython.number cimport PyNumber_Index, PyIndex_Check
 from cpython.longintrepr cimport py_long, PyLong_SHIFT, digit
 
@@ -85,7 +83,7 @@ cdef enum:
 cdef inline bint integer_check_long(x, long* value, int* err) except -1:
     """
     Return whether ``x`` is some integer type. This is true for the
-    Python types ``int`` and ``long``, for Sage Integers and for types
+    Python type ``int``, for Sage Integers and for types
     implementing ``__index__``.
 
     If possible, compute the value of this integer as C long and store

@@ -163,6 +163,7 @@ class Sigma0_factory(UniqueFactory):
         """
         return Sigma0_class(*key)
 
+
 Sigma0 = Sigma0_factory('sage.modular.pollack_stevens.sigma0.Sigma0')
 
 

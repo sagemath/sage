@@ -136,6 +136,7 @@ def canonical_parameters(group, level, weight, base_ring):
     # forms spaces.
     return level, group, weight, base_ring
 
+
 _cache = {}
 
 def ModularForms_clear_cache():

@@ -162,7 +162,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             Y = PS.subscheme(L)
         else:
             if PP.dimension_relative() != M:
-                raise ValueError("projective space %s must be dimension %s")%(PP, M)
+                raise ValueError("projective space %s must be dimension %s") % (PP, M)
             S = PP.coordinate_ring()
             psi = R.hom([0]*k + list(S.gens()), S)
             L = [psi(l) for l in L]
@@ -301,11 +301,11 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         PP = self.ambient_space()
         N = PP.dimension_relative_components()
         if len(I) != len(N):
-            raise ValueError('The argument I=%s must have %s entries'%(I,len(N)))
+            raise ValueError('The argument I=%s must have %s entries' % (I,len(N)))
         I = tuple([int(i) for i in I])   # implicit type checking
         for i in range(len(I)):
             if I[i] < 0 or I[i] > N[i]:
-                raise ValueError("Argument i (= %s) must be between 0 and %s."%(I[i], N[i]))
+                raise ValueError("Argument i (= %s) must be between 0 and %s." % (I[i], N[i]))
         #see if we've already created this affine patch
         try:
             if return_embedding:
@@ -390,7 +390,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         try:
             PP(P)
         except TypeError:
-            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)"%(P,X))
+            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)" % (P,X))
         # find an affine chart of the ambient space of this subscheme that contains P
         indices = []
         aff_pt = []

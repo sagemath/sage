@@ -824,7 +824,7 @@ class FractionWithFactoredDenominator(RingElement):
         for a, m in df:
             am = a**m
             q, r = denominator.quo_rem(am)
-            assert r==0
+            assert r == 0
             numer = p * q.inverse_mod(am) % am
             # The inverse exists because the product and a**m
             # are relatively prime.
@@ -1931,7 +1931,7 @@ class FractionWithFactoredDenominator(RingElement):
             if v.mod(2) == 0:
                 At_derivs = diff_all(At, T, 2 * N - 2, sub=hderivs1,
                                      sub_final=[Tstar, atP], rekey=AA)
-                Phitu_derivs = diff_all(Phitu, T, 2 * N - 2 +v,
+                Phitu_derivs = diff_all(Phitu, T, 2 * N - 2 + v,
                                         sub=hderivs1, sub_final=[Tstar, atP],
                                         zero_order=v + 1, rekey=BB)
             else:

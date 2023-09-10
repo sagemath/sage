@@ -85,7 +85,6 @@ graphs. Here is what they can do
     :meth:`~DiGraph.strongly_connected_components_subgraphs` | Return the strongly connected components as a list of subgraphs.
     :meth:`~DiGraph.strongly_connected_component_containing_vertex` | Return the strongly connected component containing a given vertex
     :meth:`~DiGraph.strongly_connected_components` | Return the list of strongly connected components.
-    :meth:`~DiGraph.immediate_dominators` | Return the immediate dominators of all vertices reachable from `root`.
     :meth:`~DiGraph.strong_articulation_points` | Return the strong articulation points of this digraph.
 
 

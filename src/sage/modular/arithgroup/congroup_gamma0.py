@@ -41,6 +41,7 @@ def is_Gamma0(x):
     """
     return isinstance(x, Gamma0_class)
 
+
 _gamma0_cache = {}
 def Gamma0_constructor(N):
     """

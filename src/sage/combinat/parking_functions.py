@@ -223,11 +223,17 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             <class 'sage.combinat.parking_functions.ParkingFunctions_n_with_category.element_class'>
             sage: type(b)
             <class 'sage.combinat.parking_functions.ParkingFunctions_n_with_category.element_class'>
+
+        Some checks for more general inputs::
+
+            sage: PF = ParkingFunction((1, 1, 2, 2, 5, 6))
+            sage: PF = ParkingFunction(Permutation([4,2,3,1]))
         """
-        if isinstance(lst, ParkingFunction):
-            lst = list(lst)
         if not isinstance(lst, list):
-            raise TypeError('input must be a list')
+            try:
+                lst = list(lst)
+            except TypeError:
+                raise TypeError('input must be convertible to a list')
         if parent is None:
             parent = ParkingFunctions_n(len(lst))
         ClonableArray.__init__(self, parent, lst)

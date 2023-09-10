@@ -1180,7 +1180,7 @@ class FusionRing(WeylCharacterRing):
         comp_basis = list()
         for top in product((a*a).monomials(), repeat=n_strands//2):
             # If the n_strands is odd, we must extend the top row by a fusing anyon
-            top_row = list(top)+[a]*(n_strands%2)
+            top_row = list(top)+[a]*(n_strands % 2)
             comp_basis.extend(tuple([*top, *levels]) for levels in _get_trees(self, top_row, b))
         return comp_basis
 

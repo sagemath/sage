@@ -142,7 +142,7 @@ AUTHORS:
 # ****************************************************************************
 
 from cpython.list cimport *
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.ref cimport *
 
 from cysignals.memory cimport check_reallocarray, sig_free
@@ -1392,7 +1392,7 @@ cdef class ClonableIntArray(ClonableElement):
         cdef list L = <list> PyList_New(self._len)
         cdef object o
         for i in range(self._len):
-            o = PyInt_FromLong(self._list[i])
+            o = PyLong_FromLong(self._list[i])
             Py_INCREF(o)
             PyList_SET_ITEM(L, i, o)
         return L

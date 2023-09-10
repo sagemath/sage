@@ -260,7 +260,7 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
             sage: FunctionField(QQ,'y').maximal_order()._repr_()
             'Maximal order of Rational function field in y over Rational Field'
         """
-        return "Maximal order of %s"%(self.function_field(),)
+        return "Maximal order of %s" % (self.function_field(),)
 
 
 class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionFieldOrderInfinite):
@@ -279,4 +279,4 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
             sage: F.maximal_order_infinite()                                            # needs sage.modules sage.rings.function_field
             Maximal infinite order of Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
-        return "Maximal infinite order of %s"%(self.function_field(),)
+        return "Maximal infinite order of %s" % (self.function_field(),)

@@ -202,10 +202,10 @@ def precprint(prec_type, prec_cap, p):
         sage: precprint('fixed-mod', 1, 17)
         'of fixed modulus 17^1'
     """
-    precD = {'capped-rel':'with capped relative precision %s'%prec_cap,
-             'capped-abs':'with capped absolute precision %s'%prec_cap,
-             'floating-point':'with floating precision %s'%prec_cap,
-             'fixed-mod':'of fixed modulus %s^%s'%(p, prec_cap),
+    precD = {'capped-rel':'with capped relative precision %s' % prec_cap,
+             'capped-abs':'with capped absolute precision %s' % prec_cap,
+             'floating-point':'with floating precision %s' % prec_cap,
+             'fixed-mod':'of fixed modulus %s^%s' % (p, prec_cap),
              'lattice-cap':'with lattice-cap precision',
              'lattice-float':'with lattice-float precision',
              'relaxed':'handled with relaxed arithmetics'}

@@ -13,7 +13,7 @@ AUTHORS:
 - Travis Scrimshaw (2018-02-05): Initial version
 """
 
-#****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroup
@@ -106,27 +106,56 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         Return the corresponding Coxeter group element under the natural
         projection.
 
+        INPUT:
+
+        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image Coxeter group
+
         OUTPUT:
 
-        A permutation.
+        An element of the Coxeter group  ``W``.
 
         EXAMPLES::
 
             sage: # needs sage.rings.number_field
-            sage: A.<s1,s2,s3> = ArtinGroup(['B',3])
+            sage: B.<s1,s2,s3> = ArtinGroup(['B',3])
             sage: b = s1 * s2 / s3 / s2
-            sage: b.coxeter_group_element()
+            sage: b1 = b.coxeter_group_element(); b1
             [ 1 -1  0]
             [ 2 -1  0]
             [ a -a  1]
             sage: b.coxeter_group_element().reduced_word()
             [1, 2, 3, 2]
+            sage: A.<s1,s2,s3> = ArtinGroup(['A',3])
+            sage: c = s1 * s2 *s3
+            sage: c1 = c.coxeter_group_element(); c1
+            [4, 1, 2, 3]
+            sage: c1.reduced_word()
+            [3, 2, 1]
+            sage: c.coxeter_group_element(W=SymmetricGroup(4))
+            (1,4,3,2)
+            sage: A.<s1,s2,s3> = BraidGroup(4)
+            sage: c = s1 * s2 * s3^-1
+            sage: c0 = c.coxeter_group_element(); c0
+            [4, 1, 2, 3]
+            sage: c1 = c.coxeter_group_element(W=SymmetricGroup(4)); c1
+            (1,4,3,2)
+
+        From an element of the Coxeter group it is possible to recover
+        the image by the standard section to the Artin group::
+
+            sage: B(b1)
+            s1*s2*s3*s2
+            sage: A(c0)
+            s1*s2*s3
+            sage: A(c0) == A(c1)
+            True
         """
         if W is None:
             W = self.parent().coxeter_group()
         s = W.simple_reflections()
-        I = W.index_set()
-        return W.prod(s[I[abs(i)-1]] for i in self.Tietze())
+        In = W.index_set()
+        return W.prod(s[In[abs(i)-1]] for i in self.Tietze())
+
 
 class FiniteTypeArtinGroupElement(ArtinGroupElement):
     """
@@ -215,7 +244,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
             sage: b.left_normal_form()
-            (s0^-1*s1^-1*s2^-1*s0^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)
@@ -265,11 +294,11 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         delta = 0
         Delta = self.parent().coxeter_group().long_element()
         sr = self.parent().coxeter_group().simple_reflections()
-        l = self.Tietze()
-        if l == ():
+        tz = self.Tietze()
+        if tz == ():
             return (0,)
         form = []
-        for i in l:
+        for i in tz:
             if i > 0:
                 form.append(sr[i])
             else:
@@ -301,6 +330,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
             form.pop(0)
             delta -= 1
         return tuple([-delta] + form)
+
 
 class ArtinGroup(FinitelyPresentedGroup):
     r"""
@@ -448,12 +478,12 @@ class ArtinGroup(FinitelyPresentedGroup):
         rels = []
         # Generate the relations based on the Coxeter graph
         I = coxeter_matrix.index_set()
-        for ii,i in enumerate(I):
-            for j in I[ii+1:]:
-                m = coxeter_matrix[i,j]
+        for ii, i in enumerate(I):
+            for j in I[ii + 1:]:
+                m = coxeter_matrix[i, j]
                 if m == Infinity:  # no relation
                     continue
-                elt = [i,j]*m
+                elt = [i, j] * m
                 for ind in range(m, 2*m):
                     elt[ind] = -elt[ind]
                 rels.append(free_group(elt))
@@ -621,7 +651,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         rank = self.coxeter_matrix().rank()
         elements_list = [self.gen(0)]
         elements_list.append(self.prod(self.gens()))
-        elements_list.append(elements_list[-1] ** min(rank,3))
+        elements_list.append(elements_list[-1] ** min(rank, 3))
         return elements_list
 
     def _standard_lift_Tietze(self, w):
@@ -660,7 +690,7 @@ class ArtinGroup(FinitelyPresentedGroup):
             sage: B = BraidGroup(5)
             sage: P = Permutation([5, 3, 1, 2, 4])
             sage: B._standard_lift(P)
-            s0*s1*s0*s2*s1*s3
+            s0*s1*s2*s3*s0*s1
         """
         return self(self._standard_lift_Tietze(w))
 
@@ -722,7 +752,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
 
             sage: B = BraidGroup(5)
             sage: B.delta()
-            s0*s1*s0*s2*s1*s0*s3*s2*s1*s0
+            s0*s1*s2*s3*s0*s1*s2*s0*s1*s0
         """
         return self._standard_lift(self._coxeter_group.long_element())
 

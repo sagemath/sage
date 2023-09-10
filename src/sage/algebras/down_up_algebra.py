@@ -239,7 +239,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
             sage: latex(DU)
             \mathcal{DU}(a,b,g)
         """
-        return "\\mathcal{DU}(%s,%s,%s)"%(self._alpha, self._beta, self._gamma)
+        return "\\mathcal{DU}(%s,%s,%s)" % (self._alpha, self._beta, self._gamma)
 
     def _repr_term(self, m):
         r"""

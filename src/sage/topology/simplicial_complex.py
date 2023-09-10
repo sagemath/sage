@@ -1994,7 +1994,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                                  rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
-    def disjoint_union(self, right, rename_vertices=True, is_mutable=True):
+    def disjoint_union(self, right, rename_vertices=None, is_mutable=True):
         """
         The disjoint union of this simplicial complex with another one.
 
@@ -2018,6 +2018,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
+        if rename_vertices is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(35907, 'the "rename_vertices" argument is deprecated')
+
         facets = []
         for f in self._facets:
             facets.append(tuple(["L" + str(v) for v in f]))

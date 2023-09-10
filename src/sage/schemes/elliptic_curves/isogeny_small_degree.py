@@ -2412,14 +2412,18 @@ def is_kernel_polynomial(E, m, f):
     if m == 2 or m == 3:
         return True
 
-    # For each a in a set of generators of (Z/mZ)^* we check that the
-    # multiplication-by-a map permutes the roots of f.  It would be
-    # enough to take a generating (Z/mZ)^*/{1,-1} but that is not
-    # implemented.  If m is prime (or more generally, has a primitive
-    # root) then only one a will be needed.
+    # For each a in a set of generators of (Z/mZ)^*/{1,-1} we check
+    # that the multiplication-by-a map permutes the roots of f.
+    # If m is prime (or more generally, has a primitive root) then
+    # only one a will be needed.
 
-    from sage.rings.finite_rings.integer_mod_ring import Integers
-    for a in Integers(m).unit_gens():
+    if m & 1 and m.is_prime_power():
+        gens = _least_semi_primitive(m),
+    else:
+        from sage.rings.finite_rings.integer_mod_ring import Integers
+        gens = Integers(m).unit_gens()
+
+    for a in gens:
         mu = E.multiplication_by_m(a, x_only=True)
         if f( S(mu.numerator()) / S(mu.denominator()) ) != 0:
             return False

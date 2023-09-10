@@ -288,7 +288,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         B = self.base_ring()
         basis = [vector(B,{2:0,i:1}) for i in range(3)]
         for i in range(3):
-            zerovalue = (basis[i]*A*basis[i].column()== 0)
+            zerovalue = (basis[i]*A*basis[i].column() == 0)
             if zerovalue:
                 for j in range(i+1,3):
                     if basis[j]*A*basis[j].column() != 0:

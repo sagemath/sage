@@ -37,7 +37,7 @@ AUTHORS:
 
 import operator
 
-from cpython.int cimport *
+from cpython.long cimport *
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.stdsage cimport PY_NEW

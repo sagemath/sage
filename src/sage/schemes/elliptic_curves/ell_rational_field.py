@@ -2306,7 +2306,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.gens(algorithm="pari")    # random output
             [(5/4 : 5/8 : 1), (0 : 0 : 1)]
             sage: E = EllipticCurve([0,2429469980725060,0,275130703388172136833647756388,0])
-            sage: len(E.gens(algorithm="pari"))
+            sage: len(E.gens(algorithm="pari"))  # not tested (takes too long)
             14
 
         A non-integral example::
@@ -3055,12 +3055,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__selmer_rank
         except AttributeError:
-            if algorithm=="pari":
+            if algorithm == "pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
                 tor = self.two_torsion_rank()
                 return upper + tor + s
-            elif algorithm=="mwrank":
+            elif algorithm == "mwrank":
                 C = self.mwrank_curve()
                 self.__selmer_rank = C.selmer_rank()
                 return self.__selmer_rank
@@ -3110,11 +3110,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__rank_bound
         except AttributeError:
-            if algorithm=="pari":
+            if algorithm == "pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
                 return upper
-            elif algorithm=="mwrank":
+            elif algorithm == "mwrank":
                 C = self.mwrank_curve()
                 self.__rank_bound = C.rank_bound()
                 return self.__rank_bound

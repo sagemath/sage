@@ -280,7 +280,7 @@ class FunctionField_polymod(FunctionField):
         K = self.base_field()
         if f.element().is_constant():
             return K(f.element())
-        raise ValueError("%r is not an element of the base field"%(f,))
+        raise ValueError("%r is not an element of the base field" % (f,))
 
     def _to_constant_base_field(self, f):
         """
@@ -572,7 +572,7 @@ class FunctionField_polymod(FunctionField):
             sage: L._repr_()
             'Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x'
         """
-        return "Function field in %s defined by %s"%(self.variable_name(), self._polynomial)
+        return "Function field in %s defined by %s" % (self.variable_name(), self._polynomial)
 
     def base_field(self):
         """

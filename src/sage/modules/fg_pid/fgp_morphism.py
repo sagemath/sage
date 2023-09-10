@@ -454,6 +454,7 @@ class FGP_Morphism(Morphism):
         assert self(y) == x, "bug in phi.lift()"
         return y
 
+
 from sage.categories.homset import Homset
 
 import sage.misc.weak_dict

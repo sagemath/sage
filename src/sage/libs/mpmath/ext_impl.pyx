@@ -26,7 +26,6 @@ See if :trac:`15118` is fixed::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
 from cpython.complex cimport *

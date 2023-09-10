@@ -955,6 +955,7 @@ class TrivialTriangleFactory:
         """
         return [a,b,c]
 
+
 from . import parametric_plot3d
 def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     """

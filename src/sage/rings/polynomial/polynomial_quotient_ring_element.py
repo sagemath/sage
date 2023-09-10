@@ -425,7 +425,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             11
         """
         if self._polynomial.is_zero():
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
+            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
         if self._polynomial.is_one():
             return self
 
@@ -443,7 +443,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             raise NotImplementedError("The base ring (=%s) is not a field" % base)
         g, _, a = parent.modulus().xgcd(self._polynomial)
         if g.degree() != 0:
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
+            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
 

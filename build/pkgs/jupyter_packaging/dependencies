@@ -1,4 +1,4 @@
-$(PYTHON) packaging deprecation tomlkit | $(PYTHON_TOOLCHAIN) hatchling
+ packaging deprecation tomlkit | $(PYTHON_TOOLCHAIN) hatchling $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

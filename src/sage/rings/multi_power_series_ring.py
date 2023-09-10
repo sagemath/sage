@@ -410,7 +410,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         else:
             generators_rep = ", ".join(self.variable_names())
 
-        s = "Multivariate Power Series Ring in %s over %s"%(generators_rep, self.base_ring())
+        s = "Multivariate Power Series Ring in %s over %s" % (generators_rep, self.base_ring())
         if self.is_sparse():
             s = 'Sparse ' + s
         return s
@@ -427,7 +427,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             '\\Bold{Q}[[v_{0}, v_{1}, v_{2}, v_{3}]]'
         """
         generators_latex = ", ".join(self.latex_variable_names())
-        return "%s[[%s]]"%(latex.latex(self.base_ring()), generators_latex)
+        return "%s[[%s]]" % (latex.latex(self.base_ring()), generators_latex)
 
     def is_integral_domain(self, proof=False):
         """

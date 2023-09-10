@@ -453,7 +453,7 @@ class LocalGeneric(CommutativeRing):
             functor.extras = copy(functor.extras)
             functor.extras['print_mode'] = copy(functor.extras['print_mode'])
             if 'type' in kwds and kwds['type'] not in functor._dvr_types:
-                raise ValueError("completion type must be one of %s"%(", ".join(functor._dvr_types[1:])))
+                raise ValueError("completion type must be one of %s" % (", ".join(functor._dvr_types[1:])))
             if 'field' in kwds:
                 field = kwds.pop('field')
                 if field:
@@ -494,7 +494,7 @@ class LocalGeneric(CommutativeRing):
                 if atr in kwds:
                     functor.extras['print_mode'][atr] = kwds.pop(atr)
             if kwds:
-                raise ValueError("Extra arguments received: %s"%(", ".join(kwds.keys())))
+                raise ValueError("Extra arguments received: %s" % (", ".join(kwds.keys())))
             if q is not None:
                 # Create an unramified extension
                 base = functor(ring)

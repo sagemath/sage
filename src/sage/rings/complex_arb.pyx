@@ -154,7 +154,7 @@ import sage.categories.fields
 cimport sage.rings.abc
 cimport sage.rings.rational
 
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from cpython.object cimport Py_EQ, Py_NE
 from cpython.complex cimport PyComplex_FromDoubles
 
@@ -2736,7 +2736,7 @@ cdef class ComplexBall(RingElement):
         cdef ComplexBall self = val
         cdef ComplexBall res = self._new()
         if is_small_python_int(shift):
-            acb_mul_2exp_si(res.value, self.value, PyInt_AS_LONG(shift))
+            acb_mul_2exp_si(res.value, self.value, PyLong_AsLong(shift))
         elif isinstance(shift, Integer):
             sig_on()
             fmpz_init(tmpz)
@@ -2878,7 +2878,7 @@ cdef class ComplexBall(RingElement):
         cdef ComplexBall res = self._new()
         if is_small_python_int(expo):
             if _do_sig(prec(self)): sig_on()
-            acb_pow_si(res.value, self.value, PyInt_AS_LONG(expo), prec(self))
+            acb_pow_si(res.value, self.value, PyLong_AsLong(expo), prec(self))
             if _do_sig(prec(self)): sig_off()
         elif isinstance(expo, Integer):
             if _do_sig(prec(self)): sig_on()
