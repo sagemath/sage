@@ -51,10 +51,6 @@ from .finite_rings.all import *
 # Function field
 from .function_field.all import *
 
-# p-adic field
-from .padics.all import *
-from .padics.padic_printing import _printer_defaults as padic_printing
-
 # valuations
 from .valuation.all import *
 
@@ -64,16 +60,10 @@ from .polynomial.all import *
 # Tate algebras
 from .tate_algebra import TateAlgebra
 
-# Pseudo-ring of PARI objects.
-from .pari_ring import PariRing, Pari
-
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 
 from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
-
-# invariant theory
-from .invariants.all import *
 
 from .fast_arith import prime_range
 

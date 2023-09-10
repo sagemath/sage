@@ -1,5 +1,7 @@
 # sage_setup: distribution = sagemath-flint
 
+from .all__sagemath_pari import *
+
 # Real numbers
 from sage.rings.real_arb import RealBallField, RBF
 

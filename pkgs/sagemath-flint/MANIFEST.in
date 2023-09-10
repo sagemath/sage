@@ -4,7 +4,7 @@ prune sage
 
 graft             sage/libs/arb
 graft             sage/libs/flint
-graft             sage/libs/linkages                                            # FIXME
+graft             sage/libs/linkages
 include           sage/libs/pari/convert_flint.p*
 recursive-include sage/libs/ntl *.pxi *.h                                       # FIXME
 include           sage/matrix/matrix_complex_ball_dense.p*

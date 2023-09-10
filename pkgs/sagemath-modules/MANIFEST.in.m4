@@ -220,6 +220,8 @@ include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimpo
 
 include sage/rings/ring_extension*.p*
 
+graft sage/rings/invariants
+
 # mpfr, gsl
 graft sage/libs/mpfr
 graft sage/libs/gsl
