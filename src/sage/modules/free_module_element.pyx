@@ -3225,6 +3225,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         We test this by building a specialized vector space with a non-standard
         inner product, and constructing a test vector in this space. ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: V = VectorSpace(CDF, 2, inner_product_matrix=[[2,1],[1,5]])
             sage: v = vector(CDF, [2-3*I, 4+5*I])
             sage: w = V(v)
