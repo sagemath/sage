@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-flint
+# sage.doctest: needs numpy
 """
 Isolate Real Roots of Real Polynomials
 
