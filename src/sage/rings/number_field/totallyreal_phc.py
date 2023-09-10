@@ -126,12 +126,12 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     for P in sage.combinat.partition.Partitions(n-1,length=m-1):
         f = open(tmpfile, 'w')
         # First line: number of variables/equations
-        f.write('%d'%m + '\n')
+        f.write('%d' % m + '\n')
         # In the next m-1 lines, write the equation S_j(x) = S[j]
         for j in range(1,m+1):
             for i in range(m-1):
-                f.write('%d'%P[i] + '*x%d'%i + '**%d'%j + ' + ')
-            f.write('xn**%d'%j + ' - (%d'%S[j] + ');\n')
+                f.write('%d' % P[i] + '*x%d' % i + '**%d' % j + ' + ')
+            f.write('xn**%d' % j + ' - (%d' % S[j] + ');\n')
         f.close()
 
         os.remove(tmpfile + '.phc')

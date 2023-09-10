@@ -332,10 +332,10 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             try:
                 cf0_inv = ~(cf[0])
                 cf0_inv = self(cf0_inv)
-                verbose("invertible coefficient: %s found" %(cf0_inv))
+                verbose("invertible coefficient: %s found" % (cf0_inv))
                 break
             except NotImplementedError:
-                verbose("constant coefficient: %s not invertibe" %(cf0))
+                verbose("constant coefficient: %s not invertibe" % (cf0))
 
         # ------------------------------------------------------------------
         # assuming that cf splits into linear factors over self

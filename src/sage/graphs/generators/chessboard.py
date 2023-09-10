@@ -4,11 +4,11 @@ Chessboard graphs
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 
-- :meth:`BishopGraph <GraphGenerators.BishopGraph>`
-- :meth:`KingGraph <GraphGenerators.KingGraph>`
-- :meth:`KnightGraph <GraphGenerators.KnightGraph>`
-- :meth:`QueenGraph <GraphGenerators.QueenGraph>`
-- :meth:`RookGraph <GraphGenerators.RookGraph>`
+- :meth:`BishopGraph <sage.graphs.graph_generators.GraphGenerators.BishopGraph>`
+- :meth:`KingGraph <sage.graphs.graph_generators.GraphGenerators.KingGraph>`
+- :meth:`KnightGraph <sage.graphs.graph_generators.GraphGenerators.KnightGraph>`
+- :meth:`QueenGraph <sage.graphs.graph_generators.GraphGenerators.QueenGraph>`
+- :meth:`RookGraph <sage.graphs.graph_generators.GraphGenerators.RookGraph>`
 
 AUTHORS:
 

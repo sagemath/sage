@@ -345,7 +345,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
         def build_assoc(row):
             ret = {}
             for i, v in row.dict().items():
-                ret[i//m, i%m] = v
+                ret[i//m, i % m] = v
             return self._assoc(ret)
 
         while added:
@@ -1124,7 +1124,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
         dim = self._classical.dimension()
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
         index_set = FiniteEnumeratedSet(range(dim))
-        names = tuple(['CR%s'%s for s in range(dim)])
+        names = tuple(['CR%s' % s for s in range(dim)])
         category = LieAlgebras(R).FiniteDimensional().WithBasis()
         FinitelyGeneratedLieAlgebra.__init__(self, R, names=names,
                                              index_set=index_set,

@@ -29,7 +29,7 @@ TESTS::
 from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython.int cimport PyInt_FromSize_t
+from cpython.long cimport PyLong_FromSize_t
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.ext.mod_int cimport *
@@ -723,7 +723,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         del M
 
-        return PyInt_FromSize_t(r)
+        return PyLong_FromSize_t(r)
 
     def _det_linbox(self):
         r"""
