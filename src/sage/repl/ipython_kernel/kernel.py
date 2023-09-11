@@ -99,7 +99,7 @@ class SageKernel(IPythonKernel):
         #
         # is constructed by kernel_url('doc/html/en/index.html'), but these
         # URLs of local files don't work for JupyterLab. Hence all URLs here
-        # have been replaced with URLs of external documents.
+        # have been replaced with URLs of online documents.
 
         from sage.repl.ipython_kernel.install import SageKernelSpec
         identifier = SageKernelSpec.identifier()
