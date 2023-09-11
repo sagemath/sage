@@ -5382,6 +5382,41 @@ class Permutation(CombinatorialElement):
         """
         return self.shifted_concatenation(other, "right").\
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
+    
+    def transposition_distance(self, other):
+            r"""
+            Compute the transposition distance between two permutations.
+
+            INPUT:
+
+            - ``other`` -- Another permutation to compute the transposition distance to.
+
+            OUTPUT:
+
+            - An integer representing the transposition distance between the two permutations.
+
+            EXAMPLES::
+
+                sage: p1 = Permutation([2, 1, 3, 4])
+                sage: p2 = Permutation([1, 3, 2, 4])
+                sage: p1.transposition_distance(p2)
+                2
+            """
+            perm1 = list(self)
+            perm2 = list(other)
+
+            if len(perm1) != len(perm2):
+                raise ValueError("Permutations must have the same length")
+
+            transpositions = 0
+
+            while perm1 != perm2:
+                misplaced_index = next(i for i in range(len(perm1)) if perm1[i] != perm2[i])  
+                correct_index = perm1.index(perm2[misplaced_index])
+                perm1[misplaced_index], perm1[correct_index] = perm1[correct_index], perm1[misplaced_index]
+                transpositions += 1
+
+            return transpositions
 
 
 def _tableau_contribution(T):
