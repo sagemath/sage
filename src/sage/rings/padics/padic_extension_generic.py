@@ -20,10 +20,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
+
 from .padic_generic import pAdicGeneric, ResidueLiftingMap
 from .padic_base_generic import pAdicBaseGeneric
 from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.number_field.order import Order
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import op_EQ
@@ -224,7 +225,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
                 cat = R.category()
             else:
                 cat = EuclideanDomains() & MetricSpaces().Complete()
-        elif isinstance(R, Order) and R.number_field().defining_polynomial() == self.defining_polynomial():
+        elif isinstance(R, sage.rings.abc.Order) and R.number_field().defining_polynomial() == self.defining_polynomial():
             cat = IntegralDomains()
         elif isinstance(R, NumberField) and R.defining_polynomial() == self.defining_polynomial():
             if self.is_field():
