@@ -210,7 +210,7 @@ class SymmetricIdeal(Ideal_generic):
             Symmetric Ideal (x_1^2 + y_2^2, x_2*x_1*y_3 + x_1*y_4) of Infinite polynomial ring in x, y over Rational Field
 
         """
-        return "Symmetric Ideal %s of %s"%(self._repr_short(), self.ring())
+        return "Symmetric Ideal %s of %s" % (self._repr_short(), self.ring())
 
     def _latex_(self):
         r"""
@@ -242,7 +242,7 @@ class SymmetricIdeal(Ideal_generic):
             sage: I                                                                     # needs sage.combinat
             Symmetric Ideal (x_1^2 + x_1, x_2 - x_1) of
              Infinite polynomial ring in x over Rational Field
-            sage: x[2]^2 + x[3] in I # indirect doctest                                 # needs sage.combinat
+            sage: x[2]^2 + x[3] in I  # indirect doctest                                # needs sage.combinat
             True
         """
         try:
@@ -269,7 +269,7 @@ class SymmetricIdeal(Ideal_generic):
         """
         # determine maximal generator index
         PARENT = self.ring()
-        if (not isinstance(other, self.__class__)) or self.ring()!=other.ring():
+        if (not isinstance(other, self.__class__)) or self.ring() != other.ring():
             if hasattr(other,'gens'):
                 other = SymmetricIdeal(PARENT, other.gens(), coerce=True)
         other = other.symmetrisation()
@@ -355,7 +355,7 @@ class SymmetricIdeal(Ideal_generic):
             if self.is_trivial() and not self.is_zero():
                 return True
         V = [p.variables() for p in self.gens()]
-        V = [x for x in V if len(x)==1]
+        V = [x for x in V if len(x) == 1]
         V = [str(x[0]).split('_')[0] for x in V]
         return set(V) == set(self.ring().variable_names())
 
@@ -555,11 +555,11 @@ class SymmetricIdeal(Ideal_generic):
             if DONE == TODO:
                 break
             else:
-                if len(TODO)==len(DONE):
+                if len(TODO) == len(DONE):
                     import copy
                     bla = copy.copy(TODO)
                     bla.sort()
-                    if bla==DONE:
+                    if bla == DONE:
                         break
                 TODO = DONE
         return SymmetricIdeal(self.ring(),DONE, coerce=False)
@@ -640,7 +640,7 @@ class SymmetricIdeal(Ideal_generic):
             N = max([Y.max_index() for Y in newOUT.gens()]+[1])
         else:
             N = Integer(N)
-        if hasattr(R,'_max') and R._max<N:
+        if hasattr(R,'_max') and R._max < N:
             R.gen()[N]
         if report is not None:
             print("Symmetrise %d polynomials at level %d" %
@@ -655,7 +655,7 @@ class SymmetricIdeal(Ideal_generic):
         from sage.combinat.permutation import Permutation
         from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
         RStrat = SymmetricReductionStrategy(self.ring(),OUT.gens(),tailreduce=tailreduce)
-        while (OUT!=newOUT):
+        while (OUT != newOUT):
             OUT = newOUT
             PermutedGens = list(OUT.gens())
             if not (report is None):
@@ -665,7 +665,7 @@ class SymmetricIdeal(Ideal_generic):
                     P = Permutation(((i,j)))
                     for X in OUT.gens():
                         p = RStrat.reduce(X**P,report=report)
-                        if p._p !=0:
+                        if p._p != 0:
                             PermutedGens.append(p)
                             RStrat.add_generator(p,good_input=True)
             newOUT = (PermutedGens * R).interreduction(tailreduce=tailreduce,report=report)
@@ -705,7 +705,7 @@ class SymmetricIdeal(Ideal_generic):
              Infinite polynomial ring in x over Rational Field
 
         """
-        return SymmetricIdeal(self.ring(), [X/X.lc() for X in self.gens() if X._p!=0])
+        return SymmetricIdeal(self.ring(), [X/X.lc() for X in self.gens() if X._p != 0])
 
     def squeezed(self):
         """
@@ -931,16 +931,16 @@ class SymmetricIdeal(Ideal_generic):
         # determine maximal generator index
         # and construct a common parent for the generators of self
         if algorithm is None:
-            algorithm=''
+            algorithm = ''
         PARENT = self.ring()
         if not (hasattr(PARENT.base_ring(),'is_field') and PARENT.base_ring().is_field()):
-            raise TypeError("The base ring (= %s) must be a field"%PARENT.base_ring())
+            raise TypeError("The base ring (= %s) must be a field" % PARENT.base_ring())
         OUT = self.symmetrisation(tailreduce=tailreduce,report=report,use_full_group=use_full_group)
         if not (report is None):
             print("Symmetrisation done")
         VarList = set()
         for P in OUT.gens():
-            if P._p!=0:
+            if P._p != 0:
                 if P.is_unit():
                     return Sequence([PARENT(1)], PARENT, check=False)
                 VarList = VarList.union([str(X) for X in P.variables()])
@@ -957,7 +957,7 @@ class SymmetricIdeal(Ideal_generic):
             else:
                 VarList = set()
                 for P in OUT.gens():
-                    if P._p!=0:
+                    if P._p != 0:
                         if P.is_unit():
                             return Sequence([PARENT(1)], PARENT, check=False)
                         VarList = VarList.union([str(X) for X in P.variables()])
@@ -966,7 +966,7 @@ class SymmetricIdeal(Ideal_generic):
                 CommonR = PolynomialRing(PARENT._base, VarList, order=PARENT._order)
 
             try: # working around one libsingular bug and one libsingular oddity
-                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens()!=P._p.parent().ngens()) else CommonR(repr(P._p)) for P in OUT.gens()]*CommonR
+                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens() != P._p.parent().ngens()) else CommonR(repr(P._p)) for P in OUT.gens()]*CommonR
             except Exception:
                 if report is not None:
                     print("working around a libsingular bug")
@@ -974,7 +974,7 @@ class SymmetricIdeal(Ideal_generic):
 
             if report is not None:
                 print("Classical Groebner basis")
-                if algorithm!='':
+                if algorithm != '':
                     print("(using %s)" % algorithm)
             newOUT = (DenseIdeal.groebner_basis(algorithm)*PARENT)
             if report is not None:
