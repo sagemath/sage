@@ -315,7 +315,7 @@ class WeylGroups(Category_singleton):
 
             from sage.graphs.digraph import DiGraph
             return DiGraph(visited,
-                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set),
+                           name ="Parabolic Quantum Bruhat Graph of %s for nodes %s" % (self, index_set),
                            format="dict_of_dicts",
                            data_structure="static_sparse")
 
@@ -493,7 +493,7 @@ class WeylGroups(Category_singleton):
             W = self.parent()
             pieri_factors = W.pieri_factors()
             from sage.rings.rational_field import QQ
-            R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
+            R = QQ[','.join('x%s' % l for l in range(1,pieri_factors.max_length()+1))]
             x = R.gens()
             if self.is_one():
                 return R.one()

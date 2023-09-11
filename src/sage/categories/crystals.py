@@ -908,7 +908,7 @@ class Crystals(Category_singleton):
                     child = x.f(i)
                     if child is None or child not in subset:
                         continue
-                    d[x][child]=i
+                    d[x][child] = i
             G = DiGraph(d)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
@@ -1057,12 +1057,12 @@ class Crystals(Category_singleton):
                     c2 = int(35*tallness*scaling_factor)
                     c3 = int(12*scaling_factor)
                     c4 = int(-12*scaling_factor)
-                outstring = "verbatimtex\n\\magnification=600\netex\n\nbeginfig(-1);\nsx:=35; sy:=30;\n\nz1000=(%d,0);\nz1001=(%d,%d);\nz1002=(%d,%d);\nz2001=(-3,3);\nz2002=(3,3);\nz2003=(0,-3);\nz2004=(7,0);\nz2005=(0,7);\nz2006=(-7,0);\nz2007=(0,7);\n\n"%(c0,c1,c2,c3,c4)
+                outstring = "verbatimtex\n\\magnification=600\netex\n\nbeginfig(-1);\nsx:=35; sy:=30;\n\nz1000=(%d,0);\nz1001=(%d,%d);\nz1002=(%d,%d);\nz2001=(-3,3);\nz2002=(3,3);\nz2003=(0,-3);\nz2004=(7,0);\nz2005=(0,7);\nz2006=(-7,0);\nz2007=(0,7);\n\n" % (c0,c1,c2,c3,c4)
             else:
                 if labels:
-                    outstring = "verbatimtex\n\\magnification=600\netex\n\nbeginfig(-1);\n\nsx := %d;\nsy=%d;\n\nz1000=(2*sx,0);\nz1001=(-sx,sy);\nz1002=(-16,-10);\n\nz2001=(0,-3);\nz2002=(-5,3);\nz2003=(0,3);\nz2004=(5,3);\nz2005=(10,1);\nz2006=(0,10);\nz2007=(-10,1);\nz2008=(0,-8);\n\n"%(int(scaling_factor*40),int(tallness*scaling_factor*40))
+                    outstring = "verbatimtex\n\\magnification=600\netex\n\nbeginfig(-1);\n\nsx := %d;\nsy=%d;\n\nz1000=(2*sx,0);\nz1001=(-sx,sy);\nz1002=(-16,-10);\n\nz2001=(0,-3);\nz2002=(-5,3);\nz2003=(0,3);\nz2004=(5,3);\nz2005=(10,1);\nz2006=(0,10);\nz2007=(-10,1);\nz2008=(0,-8);\n\n" % (int(scaling_factor*40),int(tallness*scaling_factor*40))
                 else:
-                    outstring = "beginfig(-1);\n\nsx := %d;\nsy := %d;\n\nz1000=(2*sx,0);\nz1001=(-sx,sy);\nz1002=(-5,-5);\n\nz1003=(10,10);\n\n"%(int(scaling_factor*35),int(tallness*scaling_factor*35))
+                    outstring = "beginfig(-1);\n\nsx := %d;\nsy := %d;\n\nz1000=(2*sx,0);\nz1001=(-sx,sy);\nz1002=(-5,-5);\n\nz1003=(10,10);\n\n" % (int(scaling_factor*35),int(tallness*scaling_factor*35))
             for i in range(size):
                 if self.cartan_type()[0] == 'A':
                     [a1,a2,a3] = string_data[i]
@@ -1079,12 +1079,12 @@ class Crystals(Category_singleton):
                         if b1+b3 == a1+a3 and b2+b4 == a2+a4:
                             shift += 1
                 if self.cartan_type()[0] == 'A':
-                    outstring = outstring +"z%d=%d*z1000+%d*z1001+%d*z1002;\n"%(i,a1+a3,a2,shift)
+                    outstring = outstring + "z%d=%d*z1000+%d*z1001+%d*z1002;\n" % (i,a1+a3,a2,shift)
                 else:
-                    outstring = outstring +"z%d=%d*z1000+%d*z1001+%d*z1002;\n"%(i,a1+a3,a2+a4,shift)
+                    outstring = outstring + "z%d=%d*z1000+%d*z1001+%d*z1002;\n" % (i,a1+a3,a2+a4,shift)
             outstring = outstring + "\n"
             if thicklines:
-                outstring = outstring +"pickup pencircle scaled 2\n\n"
+                outstring = outstring + "pickup pencircle scaled 2\n\n"
             for i in range(size):
                 for j in range(1,3):
                     dest = self.list()[i].f(j)
@@ -1096,19 +1096,19 @@ class Crystals(Category_singleton):
                             col = "green;  "
                         if self.cartan_type()[0] == 'A':
                             [a1,a2,a3] = string_data[i] # included to facilitate hand editing of the .mp file
-                            outstring = outstring+"draw z%d--z%d withcolor %s   %% %d %d %d\n"%(i,dest,col,a1,a2,a3)
+                            outstring = outstring+"draw z%d--z%d withcolor %s   %% %d %d %d\n" % (i,dest,col,a1,a2,a3)
                         else:
                             [a1,a2,a3,a4] = string_data[i]
-                            outstring = outstring+"draw z%d--z%d withcolor %s   %% %d %d %d %d\n"%(i,dest,col,a1,a2,a3,a4)
+                            outstring = outstring+"draw z%d--z%d withcolor %s   %% %d %d %d %d\n" % (i,dest,col,a1,a2,a3,a4)
             outstring += "\npickup pencircle scaled 3;\n\n"
             for i in range(self.cardinality()):
                 if labels:
                     if self.cartan_type()[0] == 'A':
-                        outstring = outstring+"pickup pencircle scaled 15;\nfill z%d+z2004..z%d+z2006..z%d+z2006..z%d+z2007..cycle withcolor white;\nlabel(btex %d etex, z%d+z2001);\nlabel(btex %d etex, z%d+z2002);\nlabel(btex %d etex, z%d+z2003);\npickup pencircle scaled .5;\ndraw z%d+z2004..z%d+z2006..z%d+z2006..z%d+z2007..cycle;\n"%(i,i,i,i,string_data[i][2],i,string_data[i][1],i,string_data[i][0],i,i,i,i,i)
+                        outstring = outstring+"pickup pencircle scaled 15;\nfill z%d+z2004..z%d+z2006..z%d+z2006..z%d+z2007..cycle withcolor white;\nlabel(btex %d etex, z%d+z2001);\nlabel(btex %d etex, z%d+z2002);\nlabel(btex %d etex, z%d+z2003);\npickup pencircle scaled .5;\ndraw z%d+z2004..z%d+z2006..z%d+z2006..z%d+z2007..cycle;\n" % (i,i,i,i,string_data[i][2],i,string_data[i][1],i,string_data[i][0],i,i,i,i,i)
                     else:
-                        outstring = outstring+"%%%d %d %d %d\npickup pencircle scaled 1;\nfill z%d+z2005..z%d+z2006..z%d+z2007..z%d+z2008..cycle withcolor white;\nlabel(btex %d etex, z%d+z2001);\nlabel(btex %d etex, z%d+z2002);\nlabel(btex %d etex, z%d+z2003);\nlabel(btex %d etex, z%d+z2004);\npickup pencircle scaled .5;\ndraw z%d+z2005..z%d+z2006..z%d+z2007..z%d+z2008..cycle;\n\n"%(string_data[i][0],string_data[i][1],string_data[i][2],string_data[i][3],i,i,i,i,string_data[i][0],i,string_data[i][1],i,string_data[i][2],i,string_data[i][3],i,i,i,i,i)
+                        outstring = outstring+"%%%d %d %d %d\npickup pencircle scaled 1;\nfill z%d+z2005..z%d+z2006..z%d+z2007..z%d+z2008..cycle withcolor white;\nlabel(btex %d etex, z%d+z2001);\nlabel(btex %d etex, z%d+z2002);\nlabel(btex %d etex, z%d+z2003);\nlabel(btex %d etex, z%d+z2004);\npickup pencircle scaled .5;\ndraw z%d+z2005..z%d+z2006..z%d+z2007..z%d+z2008..cycle;\n\n" % (string_data[i][0],string_data[i][1],string_data[i][2],string_data[i][3],i,i,i,i,string_data[i][0],i,string_data[i][1],i,string_data[i][2],i,string_data[i][3],i,i,i,i,i)
                 else:
-                    outstring += "drawdot z%d;\n"%i
+                    outstring += "drawdot z%d;\n" % i
             outstring += "\nendfig;\n\nend;\n\n"
 
             f = open(filename, 'w')
@@ -1153,8 +1153,8 @@ class Crystals(Category_singleton):
                     else:
                         option = ""
                         (source, target) = (x, child)
-                    result += "  " + vertex_key(source) + " -> "+vertex_key(target)+ " [ "+option+"label = \" \", texlbl = \""+quoted_latex(i)+"\" ];\n"
-            result+="}"
+                    result += "  " + vertex_key(source) + " -> "+vertex_key(target) + " [ "+option+"label = \" \", texlbl = \""+quoted_latex(i)+"\" ];\n"
+            result += "}"
             return result
 
         def plot(self, **options):
