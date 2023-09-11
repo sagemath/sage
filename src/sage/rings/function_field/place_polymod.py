@@ -602,7 +602,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         if deg > 1:
             if isinstance(k, NumberField):
                 if name is None:
-                    name='s'
+                    name = 's'
                 K = k.extension(min_poly, names=name)
 
                 def from_W(e):

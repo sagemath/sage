@@ -14,7 +14,7 @@ Coerce actions
 
 import operator
 
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.number cimport *
 from cysignals.signals cimport sig_check
 

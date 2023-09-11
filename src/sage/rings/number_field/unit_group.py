@@ -321,12 +321,12 @@ class UnitGroup(AbelianGroupWithValues_class):
                 try:
                     S = tuple(K.ideal(S).prime_factors())
                 except (NameError, TypeError, ValueError):
-                    raise ValueError("Cannot make a set of primes from %s"%(S,))
+                    raise ValueError("Cannot make a set of primes from %s" % (S,))
             else:
                 try:
                     S = tuple(K.ideal(P) for P in S)
                 except (NameError, TypeError, ValueError):
-                    raise ValueError("Cannot make a set of primes from %s"%(S,))
+                    raise ValueError("Cannot make a set of primes from %s" % (S,))
                 if not all(P.is_prime() for P in S):
                     raise ValueError("Not all elements of %s are prime ideals" % (S,))
             self.__S = S
@@ -398,14 +398,14 @@ class UnitGroup(AbelianGroupWithValues_class):
         try:
             u = K(u)
         except TypeError:
-            raise ValueError("%s is not an element of %s"%(u,K))
+            raise ValueError("%s is not an element of %s" % (u,K))
         if self.__S:
             m = pK.bnfisunit(pari(u), self.__S_unit_data).mattranspose()
             if m.ncols() == 0:
-                raise ValueError("%s is not an S-unit"%u)
+                raise ValueError("%s is not an S-unit" % u)
         else:
             if not u.is_integral() or u.norm().abs() != 1:
-                raise ValueError("%s is not a unit"%u)
+                raise ValueError("%s is not a unit" % u)
             m = pK.bnfisunit(pari(u)).mattranspose()
 
         # convert column matrix to a list:
@@ -448,11 +448,11 @@ class UnitGroup(AbelianGroupWithValues_class):
              with S = (Fractional ideal (a),)
         """
         if self.__S:
-            return 'S-unit group with structure %s of %s with S = %s'%(
+            return 'S-unit group with structure %s of %s with S = %s' % (
                 self._group_notation(self.gens_orders()),
                 self.number_field(),
                 self.primes())
-        return 'Unit group with structure %s of %s'%(
+        return 'Unit group with structure %s of %s' % (
             self._group_notation(self.gens_orders()),
             self.number_field())
 
@@ -561,7 +561,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         K = self.number_field()
         n = ZZ(n)
         if n <= 0:
-            raise ValueError("n (=%s) must be positive"%n)
+            raise ValueError("n (=%s) must be positive" % n)
         if n == 1:
             if all:
                 return [K(1)]
@@ -582,7 +582,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             if all:
                 return []
             else:
-                raise ValueError("n (=%s) does not divide order of generator"%n)
+                raise ValueError("n (=%s) does not divide order of generator" % n)
 
     def number_field(self):
         """
