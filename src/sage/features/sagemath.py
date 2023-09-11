@@ -214,6 +214,7 @@ class sage__geometry__polyhedron(JoinFeature):
         JoinFeature.__init__(self, 'sage.geometry.polyhedron',
                              [PythonModule('sage.geometry'),                        # namespace package
                               PythonModule('sage.geometry.polyhedron'),             # representative
+                              PythonModule('sage.geometry.newton_polygon'),
                               PythonModule('sage.schemes.toric'),                   # namespace package
                               PythonModule('sage.schemes.toric.variety'),           # representative
                               sage__modules(),
@@ -383,6 +384,8 @@ class sage__libs__flint(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.flint',
                              [PythonModule('sage.libs.flint.flint'),
                               PythonModule('sage.libs.arb.arith'),
+                              PythonModule('sage.rings.padics.padic_relaxed_element'),
+                              PythonModule('sage.rings.padics.pow_computer_flint'),
                               PythonModule('sage.graphs.chrompoly'),
                               PythonModule('sage.graphs.matchpoly')],
                              spkg='sagemath_flint', type='standard')
@@ -513,7 +516,9 @@ class sage__libs__ntl(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.ntl',
-                             [PythonModule('sage.libs.ntl.convert')],
+                             [PythonModule('sage.libs.ntl.convert'),
+                              PythonModule('sage.rings.polynomial.polynomial_integer_dense_ntl'),
+                              ],
                              spkg='sagemath_ntl', type='standard')
 
 
@@ -611,6 +616,7 @@ class sage__libs__singular(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.singular',
                              [PythonModule('sage.libs.singular.singular'),
                               PythonModule('sage.interfaces.singular'),
+                              PythonModule('sage.rings.function_field.function_field_polymod'),
                               PythonModule('sage.rings.polynomial.plural')])
 
 
@@ -923,6 +929,7 @@ class sage__rings__number_field(JoinFeature):
                              [PythonModule('sage.rings.number_field.number_field_element'),
                               PythonModule('sage.rings.number_field.number_field_element_quadratic'),
                               PythonModule('sage.rings.qqbar'),
+                              PythonModule('sage.rings.real_roots'),
                               sage__libs__flint()],
                              type='standard')
 
