@@ -458,9 +458,9 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v.is_immutable()
         True
 
-        sage: # needs numpy
+        sage: # needs numpy sage.symbolic
         sage: import numpy as np
-        sage: w = np.array([1, 2, pi], float)                                           # needs sage.symbolic
+        sage: w = np.array([1, 2, pi], float)
         sage: v = vector(w, immutable=True)
         sage: v.is_immutable()
         True
