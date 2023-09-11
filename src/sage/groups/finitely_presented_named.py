@@ -101,9 +101,10 @@ def CyclicPresentation(n):
     n = Integer(n)
     if n < 1:
         raise ValueError('finitely presented group order must be positive')
-    F = FreeGroup( 'a' )
+    F = FreeGroup('a')
     rls = F([1])**n,
-    return FinitelyPresentedGroup( F, rls )
+    return FinitelyPresentedGroup(F, rls)
+
 
 def FinitelyGeneratedAbelianPresentation(int_list):
     r"""
@@ -384,6 +385,7 @@ def DiCyclicPresentation(n):
     rls = F([1])**(2*n), F([2,2])*F([-1])**n, F([-2,1,2,1])
     return FinitelyPresentedGroup(F, rls)
 
+
 def SymmetricPresentation(n):
     r"""
     Build the Symmetric group of order `n!` as a finitely presented group.
@@ -422,14 +424,18 @@ def SymmetricPresentation(n):
     from sage.groups.free_group import _lexi_gen
 
     n = Integer(n)
+    if n <= 1:
+        return FinitelyPresentedGroup(FreeGroup(()), ())
+
     perm_rep = SymmetricGroup(n)
     GAP_fp_rep = libgap.Image(libgap.IsomorphismFpGroupByGenerators(perm_rep, perm_rep.gens()))
     image_gens = GAP_fp_rep.FreeGeneratorsOfFpGroup()
-    name_itr = _lexi_gen() # Python generator object for variable names
+    name_itr = _lexi_gen()  # Python generator object for variable names
     F = FreeGroup([next(name_itr) for x in perm_rep.gens()])
     ret_rls = tuple([F(rel_word.TietzeWordAbstractWord(image_gens).sage())
-                for rel_word in GAP_fp_rep.RelatorsOfFpGroup()])
-    return FinitelyPresentedGroup(F,ret_rls)
+                     for rel_word in GAP_fp_rep.RelatorsOfFpGroup()])
+    return FinitelyPresentedGroup(F, ret_rls)
+
 
 def QuaternionPresentation():
     r"""
@@ -481,9 +487,10 @@ def AlternatingPresentation(n):
         sage: A6.as_permutation_group().is_isomorphic(AlternatingGroup(6)), A6.order()
         (True, 360)
 
-    TESTS::
+    TESTS:
 
-        sage: #even permutation test..
+    Even permutation tests::
+
         sage: A1 = groups.presentation.Alternating(1); A2 = groups.presentation.Alternating(2)
         sage: A1.is_isomorphic(A2), A1.order()
         (True, 1)
@@ -496,14 +503,18 @@ def AlternatingPresentation(n):
     from sage.groups.free_group import _lexi_gen
 
     n = Integer(n)
+    if n <= 2:
+        return FinitelyPresentedGroup(FreeGroup(()), ())
+
     perm_rep = AlternatingGroup(n)
     GAP_fp_rep = libgap.Image(libgap.IsomorphismFpGroupByGenerators(perm_rep, perm_rep.gens()))
     image_gens = GAP_fp_rep.FreeGeneratorsOfFpGroup()
-    name_itr = _lexi_gen() # Python generator object for variable names
+    name_itr = _lexi_gen()  # Python generator object for variable names
     F = FreeGroup([next(name_itr) for x in perm_rep.gens()])
     ret_rls = tuple([F(rel_word.TietzeWordAbstractWord(image_gens).sage())
-                for rel_word in GAP_fp_rep.RelatorsOfFpGroup()])
-    return FinitelyPresentedGroup(F,ret_rls)
+                     for rel_word in GAP_fp_rep.RelatorsOfFpGroup()])
+    return FinitelyPresentedGroup(F, ret_rls)
+
 
 def KleinFourPresentation():
     r"""

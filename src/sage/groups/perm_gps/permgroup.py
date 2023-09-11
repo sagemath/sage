@@ -1273,7 +1273,7 @@ class PermutationGroup_generic(FiniteGroup):
         We make sure that the trivial group gets handled correctly::
 
             sage: SymmetricGroup(1).gens()
-            ((),)
+            ()
         """
         return self._gens
 
@@ -2028,8 +2028,11 @@ class PermutationGroup_generic(FiniteGroup):
                end;
                return CosetsStabChain(S0);
             end;""")
-            G = libgap.Group(self.gens())  # G = libgap(self)
-            S = G.StabChain()
+            if self._gens:
+                G = libgap.Group(self.gens())  # G = libgap(self)
+            else:
+                G = libgap.SymmetricGroup([])
+            S = G.StabChainImmutable()
             cosets = gap_cosets(S)
             one = self.one()
             return [[one._generate_new_GAP(libgap.ListPerm(elt))

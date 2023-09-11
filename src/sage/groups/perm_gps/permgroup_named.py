@@ -244,6 +244,12 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         sage: groups.permutation.Symmetric(4)
         Symmetric group of order 4! as a permutation group
+        sage: groups.permutation.Symmetric(1).gens()
+        ()
+
+    Check for :issue:`36204`::
+
+        sage: h = SymmetricGroup(1).hom(SymmetricGroup(2))
     """
     def __init__(self, domain=None):
         """
@@ -262,20 +268,24 @@ class SymmetricGroup(PermutationGroup_symalt):
         # Note that we skip the call to the superclass initializer in order to
         # avoid infinite recursion since SymmetricGroup is called by
         # PermutationGroupElement
-        cat = Category.join([FinitePermutationGroups(), FiniteWeylGroups().Irreducible()])
+        cat = Category.join([FinitePermutationGroups(),
+                             FiniteWeylGroups().Irreducible()])
         super(PermutationGroup_generic, self).__init__(category=cat)
 
         self._domain = domain
-        self._deg = len(self._domain)
+        self._deg = n = len(self._domain)
         self._domain_to_gap = {key: i+1 for i, key in enumerate(self._domain)}
         self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         # Create the generators for the symmetric group
-        gens = [tuple(self._domain)]
-        if len(self._domain) > 2:
-            gens.append(tuple(self._domain[:2]))
-        self._gens = tuple([self.element_class(g, self, check=False)
-                            for g in gens])
+        if n <= 1:
+            self._gens = ()
+        else:
+            gens = [tuple(self._domain)]
+            if n > 2:
+                gens.append(tuple(self._domain[:2]))
+            self._gens = tuple([self.element_class(g, self, check=False)
+                                for g in gens])
 
     def _gap_init_(self, gap=None):
         """
@@ -3440,6 +3450,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
 
+
 class SmallPermutationGroup(PermutationGroup_generic):
     r"""
     A GAP SmallGroup, returned as a permutation group.
@@ -3500,7 +3511,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         """
         self._n = order
         self._gap_id = gap_id
-        self._gap_small_group = libgap.SmallGroup(order,gap_id)
+        self._gap_small_group = libgap.SmallGroup(order, gap_id)
         gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
 
