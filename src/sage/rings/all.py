@@ -51,9 +51,6 @@ from .finite_rings.all import *
 # Function field
 from .function_field.all import *
 
-# valuations
-from .valuation.all import *
-
 # Polynomial Rings and Polynomial Quotient Rings
 from .polynomial.all import *
 

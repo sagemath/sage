@@ -214,7 +214,7 @@ include sage/rings/function_field/derivations_rational.p*                # modul
 include sage/rings/function_field/differential.p*                        # module elements
 include sage/rings/function_field/divisor.p*                             # module elements
 include sage/rings/function_field/hermite_form_polynomial.p*             # cimports Matrix
-#include sage/rings/function_field/valuation.p*                           # ??
+#include sage/rings/function_field/valuation.p*                  -> sagemath-pari
 
 include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimports Matrix
 

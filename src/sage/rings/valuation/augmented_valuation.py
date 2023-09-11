@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # -*- coding: utf-8 -*-
 r"""
 Augmented valuations on polynomial rings
