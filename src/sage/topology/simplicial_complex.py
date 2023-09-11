@@ -4183,7 +4183,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # to make lookup faster.
         spanning_tree = set(frozenset((u, v)) for u, v, _ in G.min_spanning_tree())
         gens = [e for e in G.edge_iterator(labels=False)
-                    if frozenset(e) not in spanning_tree]
+                if frozenset(e) not in spanning_tree]
         if not gens:
             return gap.TrivialGroup()
 
