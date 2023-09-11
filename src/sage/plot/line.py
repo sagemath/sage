@@ -560,6 +560,7 @@ def line2d(points, **options):
 
     A purple plot of the Riemann zeta function `\zeta(1/2 + it)`, `0 < t < 30`::
 
+        sage: # needs sage.libs.pari sage.rings.complex_double
         sage: i = CDF.gen()
         sage: v = [zeta(0.5 + n/10 * i) for n in range(300)]
         sage: L = [(z.real(), z.imag()) for z in v]
