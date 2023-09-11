@@ -1,1 +1,1 @@
-$(PYTHON) jupyter_client | $(PYTHON_TOOLCHAIN) pysingular ipython ipywidgets
+ jupyter_client | $(PYTHON_TOOLCHAIN) pysingular ipython ipywidgets $(PYTHON)

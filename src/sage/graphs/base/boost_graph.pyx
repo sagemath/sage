@@ -561,7 +561,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a wrong algorithm::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(graphs.PathGraph(3), algorithm='tip top')
         Traceback (most recent call last):
         ...
@@ -569,7 +569,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a graph with no edges::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
         sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx

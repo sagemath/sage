@@ -519,7 +519,9 @@ class BinaryRecurrenceSequence(SageObject):
 
         OUTPUT:
 
-        - A list of the indices of all ``p`` th powers less bounded by ``Bound``.  If the sequence is degenerate and there are many ``p`` th powers, raises ``ValueError``.
+        - A list of the indices of all ``p`` th powers less bounded by
+          ``Bound``. If the sequence is degenerate and there are many
+          ``p`` th powers, raises :class:`ValueError`.
 
         EXAMPLES::
 

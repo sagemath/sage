@@ -12,18 +12,18 @@ EXAMPLES::
     Projective Plane Curve over Integer Ring defined by x0^5 + x0^4*x1 + x1^5 - x2^5
     sage: D.change_ring(QQ).genus()
     6
-    sage: C.change_ring(GF(5))                                                          # optional - sage.rings.finite_rings
+    sage: C.change_ring(GF(5))
     Traceback (most recent call last):
     ...
     ValueError: As the characteristic divides the order of the cover, this model is not smooth.
 
-    sage: GF7x.<x> = GF(7)[]                                                            # optional - sage.rings.finite_rings
-    sage: C = CyclicCover(3, x^9 + x + 1)                                               # optional - sage.rings.finite_rings
-    sage: C                                                                             # optional - sage.rings.finite_rings
+    sage: GF7x.<x> = GF(7)[]
+    sage: C = CyclicCover(3, x^9 + x + 1)
+    sage: C
     Cyclic Cover of P^1 over Finite Field of size 7 defined by y^3 = x^9 + x + 1
-    sage: C.genus()                                                                     # optional - sage.rings.finite_rings
+    sage: C.genus()
     7
-    sage: C.projective_closure()                                                        # optional - sage.rings.finite_rings
+    sage: C.projective_closure()
     Traceback (most recent call last):
     ...
     NotImplementedError: Weighted Projective Space is not implemented
@@ -71,20 +71,20 @@ class CyclicCover_generic(AffinePlaneCurve):
             Projective Plane Curve over Integer Ring defined by x0^5 + x0^4*x1 + x1^5 - x2^5
             sage: D.change_ring(QQ).genus()
             6
-            sage: C.change_ring(GF(5))                                                  # optional - sage.rings.finite_rings
+            sage: C.change_ring(GF(5))
             Traceback (most recent call last):
             ...
             ValueError: As the characteristic divides the order of the cover,
             this model is not smooth.
 
 
-            sage: GF7x.<x> = GF(7)[]                                                    # optional - sage.rings.finite_rings
-            sage: C = CyclicCover(3, x^9 + x + 1)                                       # optional - sage.rings.finite_rings
-            sage: C                                                                     # optional - sage.rings.finite_rings
+            sage: GF7x.<x> = GF(7)[]
+            sage: C = CyclicCover(3, x^9 + x + 1)
+            sage: C
             Cyclic Cover of P^1 over Finite Field of size 7 defined by y^3 = x^9 + x + 1
-            sage: C.genus()                                                             # optional - sage.rings.finite_rings
+            sage: C.genus()
             7
-            sage: C.projective_closure()                                                # optional - sage.rings.finite_rings
+            sage: C.projective_closure()
             Traceback (most recent call last):
             ...
             NotImplementedError: Weighted Projective Space is not implemented
@@ -115,17 +115,17 @@ class CyclicCover_generic(AffinePlaneCurve):
 
             sage: ZZx.<x> = ZZ[]
             sage: C = CyclicCover(5, x^5 + x + 1)
-            sage: C.change_ring(GF(5))                                                  # optional - sage.rings.finite_rings
+            sage: C.change_ring(GF(5))
             Traceback (most recent call last):
             ...
             ValueError: As the characteristic divides the order of the cover,
             this model is not smooth.
-            sage: C.change_ring(GF(3))                                                  # optional - sage.rings.finite_rings
+            sage: C.change_ring(GF(3))
             Traceback (most recent call last):
             ...
             ValueError: Not a smooth Cyclic Cover of P^1: singularity in the
             provided affine patch.
-            sage: C.change_ring(GF(17))                                                 # optional - sage.rings.finite_rings
+            sage: C.change_ring(GF(17))
             Cyclic Cover of P^1 over Finite Field of size 17 defined by y^5 = x^5 + x + 1
         """
         from .constructor import CyclicCover
@@ -241,8 +241,8 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         EXAMPLES::
 
-            sage: GF7x.<x> = GF(7)[]                                                    # optional - sage.rings.finite_rings
-            sage: CyclicCover(3, x^9 + x + 1).projective_closure()                      # optional - sage.rings.finite_rings
+            sage: GF7x.<x> = GF(7)[]
+            sage: CyclicCover(3, x^9 + x + 1).projective_closure()
             Traceback (most recent call last):
             ...
             NotImplementedError: Weighted Projective Space is not implemented

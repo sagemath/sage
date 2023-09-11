@@ -1,1 +1,1 @@
-python3-nibabel
+python3${PYTHON_MINOR}-nibabel

@@ -358,7 +358,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + y + x^3)                                    # needs sage.rings.function_field
             sage: v = K.valuation(1/x)                                                  # needs sage.rings.function_field
-            sage: w = v.extension(L) # indirect doctest                                 # needs sage.rings.function_field
+            sage: w = v.extension(L)  # indirect doctest                                # needs sage.rings.function_field
 
         """
         from sage.categories.function_fields import FunctionFields
@@ -453,6 +453,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             return parent.__make_element_class__(FunctionFieldFromLimitValuation)(parent, valuation, domain.polynomial(), extra_args['approximants'])
 
         raise NotImplementedError("valuation on %r from %r on %r" % (domain, valuation, valuation.domain()))
+
 
 FunctionFieldValuation = FunctionFieldValuationFactory("sage.rings.function_field.valuation.FunctionFieldValuation")
 
@@ -1117,7 +1118,7 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         sage: K.<x> = FunctionField(QQ)
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - (x^2 + x + 1))                                  # needs sage.rings.function_field
-        sage: v = K.valuation(x - 1) # indirect doctest                                 # needs sage.rings.function_field
+        sage: v = K.valuation(x - 1)  # indirect doctest                                # needs sage.rings.function_field
         sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
         (x - 1)-adic valuation
 

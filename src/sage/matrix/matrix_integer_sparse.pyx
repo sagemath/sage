@@ -29,7 +29,7 @@ TESTS::
 from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython.int cimport PyInt_FromSize_t
+from cpython.long cimport PyLong_FromSize_t
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.ext.mod_int cimport *
@@ -723,7 +723,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         del M
 
-        return PyInt_FromSize_t(r)
+        return PyLong_FromSize_t(r)
 
     def _det_linbox(self):
         r"""
@@ -869,10 +869,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
-        fmpz_poly_fit_length(g.__poly, p.size())
+        fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g.__poly, i, p[0][i].get_mpz_const())
-        _fmpz_poly_set_length(g.__poly, p.size())
+            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+        _fmpz_poly_set_length(g._poly, p.size())
 
         del M
         del p
@@ -968,10 +968,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
-        fmpz_poly_fit_length(g.__poly, p.size())
+        fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g.__poly, i, p[0][i].get_mpz_const())
-        _fmpz_poly_set_length(g.__poly, p.size())
+            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+        _fmpz_poly_set_length(g._poly, p.size())
 
         del M
         del p

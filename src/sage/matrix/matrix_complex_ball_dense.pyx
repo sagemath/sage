@@ -664,7 +664,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         Pol = polynomial_ring_constructor._single_variate(self.base_ring(), var)
         cdef Polynomial_complex_arb res = Polynomial_complex_arb(Pol)
         sig_on()
-        acb_mat_charpoly(res.__poly, self.value, prec(self))
+        acb_mat_charpoly(res._poly, self.value, prec(self))
         sig_off()
         return res
 

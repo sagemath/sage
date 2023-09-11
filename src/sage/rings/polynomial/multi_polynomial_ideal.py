@@ -300,12 +300,14 @@ class RequireField(MethodDecorator):
         """
         R = self._instance.ring()
         if not R.base_ring().is_field():
-            raise ValueError("Coefficient ring must be a field for function '%s'."%(self.f.__name__))
+            raise ValueError("Coefficient ring must be a field for function '%s'." % (self.f.__name__))
         return self.f(self._instance, *args, **kwds)
+
 
 require_field = RequireField
 
-def is_MPolynomialIdeal(x):
+
+def is_MPolynomialIdeal(x) -> bool:
     """
     Return ``True`` if the provided argument ``x`` is an ideal in a
     multivariate polynomial ring.
@@ -334,6 +336,7 @@ def is_MPolynomialIdeal(x):
         True
     """
     return isinstance(x, MPolynomialIdeal)
+
 
 class MPolynomialIdeal_magma_repr:
     def _magma_init_(self, magma):
@@ -364,7 +367,7 @@ class MPolynomialIdeal_magma_repr:
         """
         P = magma(self.ring())
         G = magma(self.gens())
-        return 'ideal<%s|%s>'%(P.name(), G._ref())
+        return 'ideal<%s|%s>' % (P.name(), G._ref())
 
     @magma_gb_standard_options
     def _groebner_basis_magma(self, deg_bound=None, prot=False, magma=magma_default):
@@ -413,7 +416,7 @@ class MPolynomialIdeal_magma_repr:
         from sage.interfaces.magma import MagmaGBLogPrettyPrinter
 
         if prot:
-            log_parser = MagmaGBLogPrettyPrinter(verbosity=get_verbose()+ 1, style="sage" if prot=="sage" else "magma")
+            log_parser = MagmaGBLogPrettyPrinter(verbosity=get_verbose() + 1, style="sage" if prot == "sage" else "magma")
         else:
             log_parser = None
 
@@ -535,7 +538,7 @@ class MPolynomialIdeal_singular_base_repr:
         from sage.libs.singular.function_factory import ff
         groebner = ff.groebner
 
-        if get_verbose()>=2:
+        if get_verbose() >= 2:
             opt['prot'] = True
         for name, value in kwds.items():
             if value is not None:
@@ -552,7 +555,7 @@ class MPolynomialIdeal_singular_base_repr:
                 fnc = singular_function(algorithm)
                 S = fnc(self)
             except NameError:
-                raise NameError("Algorithm '%s' unknown"%algorithm)
+                raise NameError("Algorithm '%s' unknown" % algorithm)
         return S
 
     @libsingular_gb_standard_options
@@ -1151,7 +1154,7 @@ class MPolynomialIdeal_singular_repr(
             f = singular_function(algorithm[9:])
             Tbar = f(I, attributes={I:{'isSB':1}})
         else:
-            raise TypeError("algorithm '%s' unknown"%algorithm)
+            raise TypeError("algorithm '%s' unknown" % algorithm)
 
         T = Sequence([ MPolynomialIdeal(Q,t) for t in Tbar])
         return sorted(T, key=lambda x: x.gens())
@@ -1390,7 +1393,7 @@ class MPolynomialIdeal_singular_repr(
         try:
             im = ginv.MonomInterface(term_order_map[T.name()], st, list(P.variable_names()))
         except KeyError:
-            raise NotImplementedError("Term order '%s' not supported by Sage's GINV interface or GINV"%T.term_order())
+            raise NotImplementedError("Term order '%s' not supported by Sage's GINV interface or GINV" % T.term_order())
 
         from sage.rings.rational_field import QQ
         if K is QQ:
@@ -1398,7 +1401,7 @@ class MPolynomialIdeal_singular_repr(
         elif K.order() <= 2**16 and K.order().is_prime():
             ic = ginv.CoeffInterface("ModularShort", st, modularShort=K.order())
         else:
-            raise NotImplementedError("GINV interface for base ring '%s' is not implemented."%K)
+            raise NotImplementedError("GINV interface for base ring '%s' is not implemented." % K)
 
         ip = ginv.PolyInterface("PolyList", st, im, ic)
         iw = ginv.WrapInterface(criteria, ip)
@@ -1516,7 +1519,7 @@ class MPolynomialIdeal_singular_repr(
             o = _options_py_to_singular.get(o,o)
             if v:
                 if o in ['degBound','multBound']:
-                    singular.eval(o+'=%d'%v)
+                    singular.eval(o+'=%d' % v)
                 else:
                     singular.option(o)
             else:
@@ -1551,7 +1554,7 @@ class MPolynomialIdeal_singular_repr(
             elif algorithm == "stdfglm":
                 S = obj.stdfglm()
             else:
-                raise TypeError("algorithm '%s' unknown"%algorithm)
+                raise TypeError("algorithm '%s' unknown" % algorithm)
         self.__gb_singular = S
         if prot == "sage":
             print("")
@@ -2137,7 +2140,7 @@ class MPolynomialIdeal_singular_repr(
             M = (F * LTF.syz()).reduce(self._singular_())
 
             for i in range(M.ncols()):
-                if int(singular.eval("%s[1,%s+1]!=0"%(M.name(),i))):
+                if int(singular.eval("%s[1,%s+1]!=0" % (M.name(),i))):
                     return False
             self._singular_().attrib('isSB',1)
         return True
@@ -2818,7 +2821,7 @@ class MPolynomialIdeal_singular_repr(
 
         d = self.dimension()
         if d > 0:
-            raise ValueError("The dimension of the ideal is %s, but it should be 0"%d)
+            raise ValueError("The dimension of the ideal is %s, but it should be 0" % d)
         if d == -1:
             return []
 
@@ -3455,7 +3458,7 @@ class MPolynomialIdeal_macaulay2_repr:
         """
         I = self._macaulay2_()
         M2 = I.parent()
-        k = M2('(%r) %% %s'%(f, I.name()))
+        k = M2('(%r) %% %s' % (f, I.name()))
         R = self.ring()
         return R(k)
 
@@ -4713,7 +4716,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 ginv,alg = algorithm.split(":")
                 gb = self._groebner_basis_ginv(algorithm=alg,*args, **kwds)
             else:
-                raise NameError("Algorithm '%s' unknown."%algorithm)
+                raise NameError("Algorithm '%s' unknown." % algorithm)
         elif algorithm == 'giac:gbasis':
             from sage.libs.giac import groebner_basis as groebner_basis_libgiac
             gb = groebner_basis_libgiac(self, prot=prot, *args, **kwds)
@@ -4726,7 +4729,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             from . import msolve
             return msolve.groebner_basis_degrevlex(self, *args, **kwds)
         else:
-            raise NameError("Algorithm '%s' unknown."%algorithm)
+            raise NameError("Algorithm '%s' unknown." % algorithm)
 
         gb = sorted(gb, reverse=True)
         if self.ring().base_ring().is_field():
@@ -5136,7 +5139,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             semi-regular sequences. For more details about
             semi-regular sequences see [BFS2004]_.
         """
-        degs = [f.degree() for f in self.gens() if f!=0]  # we ignore zeroes
+        degs = [f.degree() for f in self.gens() if f != 0]  # we ignore zeroes
         m, n = self.ngens(), len(set(sum([f.variables() for f in self.gens()],())))
         if m <= n:
             raise ValueError("This function requires an overdefined system of polynomials.")
@@ -5235,7 +5238,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             V = [(variables[0], None, None), (variables[1], None, None)]
 
             if len(args) > 2:
-                raise TypeError("Expected up to 2 optional parameters but got %d."%len(args))
+                raise TypeError("Expected up to 2 optional parameters but got %d." % len(args))
 
             # first check whether user supplied boundaries
             for e in args:

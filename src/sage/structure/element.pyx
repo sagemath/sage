@@ -379,6 +379,7 @@ cdef class Element(SageObject):
     .. automethod:: __mod__
     """
     @cython.binding(False)
+    @cython.always_allow_keywords(False)
     def __getmetaclass__(_):
         from sage.misc.inherit_comparison import InheritComparisonMetaclass
         return InheritComparisonMetaclass
@@ -2356,18 +2357,18 @@ cdef class ElementWithCachedMethod(Element):
             True
         """
         try:
-            return self.__cached_methods[name]
+            return self._cached_methods[name]
         except KeyError:
             attr = getattr_from_other_class(self,
                                         self._parent.category().element_class,
                                         name)
-            self.__cached_methods[name] = attr
+            self._cached_methods[name] = attr
             return attr
         except TypeError:
             attr = getattr_from_other_class(self,
                                         self._parent.category().element_class,
                                         name)
-            self.__cached_methods = {name : attr}
+            self._cached_methods = {name : attr}
             return attr
 
 

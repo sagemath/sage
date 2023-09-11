@@ -15,13 +15,13 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef _weak_invariant_var, _strong_invariant_var, _heuristic_invariant_var
     cdef SetSystem _weak_partition_var, _strong_partition_var, _heuristic_partition_var
 
-    cdef __relabel(self, l)
+    cdef _relabel(self, l)
 
-    cdef __pack(self, bitset_t, X)
+    cdef _pack(self, bitset_t, X)
     cdef __unpack(self, bitset_t)
-    cdef bint __is_exchange_pair(self, long x, long y) except -1
-    cdef int __exchange(self, long x, long y) except -1
-    cdef int __move(self, bitset_t X, bitset_t Y) except -1
+    cdef bint _is_exchange_pair(self, long x, long y) except -1
+    cdef int _exchange(self, long x, long y) except -1
+    cdef int _move(self, bitset_t X, bitset_t Y) except -1
     cdef __fundamental_cocircuit(self, bitset_t, long x)
     cdef __fundamental_circuit(self, bitset_t, long y)
 
@@ -30,7 +30,7 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef __closure(self, bitset_t, bitset_t)
     cdef __max_coindependent(self, bitset_t, bitset_t)
     cdef __cocircuit(self, bitset_t, bitset_t)
-    cdef __coclosure(self, bitset_t, bitset_t)
+    cdef _coclosure_internal(self, bitset_t, bitset_t)
 
     cdef __augment(self, bitset_t, bitset_t, bitset_t)
     cdef bint __is_independent(self, bitset_t F) except -1

@@ -32,18 +32,19 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     By default, this ambient space uses the barycentric projection for plotting::
 
+        sage: # needs sage.symbolic
         sage: L = RootSystem(["G",2]).ambient_space()
         sage: e = L.basis()
-        sage: L._plot_projection(e[0])                                                  # optional - sage.symbolic
+        sage: L._plot_projection(e[0])
         (1/2, 989/1142)
-        sage: L._plot_projection(e[1])                                                  # optional - sage.symbolic
+        sage: L._plot_projection(e[1])
         (-1, 0)
-        sage: L._plot_projection(e[2])                                                  # optional - sage.symbolic
+        sage: L._plot_projection(e[2])
         (1/2, -989/1142)
         sage: L = RootSystem(["A",3]).ambient_space()
         sage: l = L.an_element(); l
         (2, 2, 3, 0)
-        sage: L._plot_projection(l)                                                     # optional - sage.symbolic
+        sage: L._plot_projection(l)
         (0, -1121/1189, 7/3)
 
     .. SEEALSO::
@@ -185,13 +186,12 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: g = CartanType(['G',2]).dynkin_diagram()
-            sage: g
+            sage: g = CartanType(['G',2]).dynkin_diagram(); g                           # needs sage.graphs
               3
             O=<=O
             1   2
             G2
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 3)]
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -256,12 +256,12 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: G2.dual()
             ['G', 2] relabelled by {1: 2, 2: 1}
 
-            sage: G2.dynkin_diagram()
+            sage: G2.dynkin_diagram()                                                   # needs sage.graphs
               3
             O=<=O
             1   2
             G2
-            sage: G2.dual().dynkin_diagram()
+            sage: G2.dual().dynkin_diagram()                                            # needs sage.graphs
               3
             O=<=O
             2   1

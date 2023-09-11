@@ -375,7 +375,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             ...
             NotImplementedError: polynomials in -1 variables are not supported in Singular
         """
-        self.__ngens = n
+        self._ngens = n
         self._ring = singular_ring_new(base_ring, n, names, order)
         self._zero_element = new_MP(self, NULL)
         cdef MPolynomial_libsingular one = new_MP(self, p_ISet(1, self._ring))
@@ -1019,7 +1019,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             Multivariate Polynomial Ring in x, y over Rational Field
         """
         varstr = ", ".join(char_to_str(rRingVar(i,self._ring))
-                           for i in range(self.__ngens))
+                           for i in range(self._ngens))
         return "Multivariate Polynomial Ring in %s over %s" % (varstr, self.base_ring())
 
     def ngens(self):
@@ -1037,7 +1037,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: P.ngens()                                                             # needs sage.rings.finite_rings
             1000
         """
-        return int(self.__ngens)
+        return int(self._ngens)
 
     def gen(self, int n=0):
         """
@@ -1065,7 +1065,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *_p
         cdef ring *_ring = self._ring
 
-        if n < 0 or n >= self.__ngens:
+        if n < 0 or n >= self._ngens:
             raise ValueError("Generator not defined.")
 
         rChangeCurrRing(_ring)
@@ -1494,7 +1494,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         return unpickle_MPolynomialRing_libsingular, \
             (self.base_ring(), self.variable_names(), self.term_order())
 
-    def __temporarily_change_names(self, names, latex_names):
+    def _temporarily_change_names(self, names, latex_names):
         """
         This is used by the variable names context manager.
 

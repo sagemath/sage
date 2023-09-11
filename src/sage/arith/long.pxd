@@ -17,8 +17,6 @@ Fast conversion of Python objects to C long
 from libc.limits cimport LONG_MIN, LONG_MAX
 
 from cpython.object cimport Py_SIZE
-from cpython.int cimport PyInt_AS_LONG
-from cpython.long cimport PyLong_AsLong
 from cpython.number cimport PyNumber_Index, PyIndex_Check
 from cpython.longintrepr cimport py_long, PyLong_SHIFT, digit
 
@@ -30,8 +28,9 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A ``TypeError`` is raised if the input cannot be converted to an integer or
-    an ``OverflowError`` is raised if it does not fit into a C long.
+    A :class:`TypeError` is raised if the input cannot be converted to
+    an integer or
+    an :class:`OverflowError` is raised if it does not fit into a C long.
 
     TESTS:
 
@@ -83,7 +82,7 @@ cdef enum:
 cdef inline bint integer_check_long(x, long* value, int* err) except -1:
     """
     Return whether ``x`` is some integer type. This is true for the
-    Python types ``int`` and ``long``, for Sage Integers and for types
+    Python type ``int``, for Sage Integers and for types
     implementing ``__index__``.
 
     If possible, compute the value of this integer as C long and store
@@ -104,7 +103,7 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
 
     - ``ERR_TYPE``: ``x`` is not an integer type of any kind.
 
-    - ``ERR_INDEX``: ``x`` implements ``__index__`` but a ``TypeError``
+    - ``ERR_INDEX``: ``x`` implements ``__index__`` but a :class:`TypeError`
       was raised calling ``__index__()``.
 
     - Other exceptions in ``__index__`` are simply propagated. This is
