@@ -196,7 +196,7 @@ def FinitelyGeneratedAbelianPresentation(int_list):
     invariants = FGP_Module(ZZ**(len(int_list)), col_sp).invariants()
     name_gen = _lexi_gen()
     F = FreeGroup([next(name_gen) for i in invariants])
-    ret_rls = [F([i+1])**invariants[i] for i in range(len(invariants)) if invariants[i]!=0]
+    ret_rls = [F([i+1])**invariants[i] for i in range(len(invariants)) if invariants[i] != 0]
 
     # Build commutator relations
     gen_pairs = [[F.gen(i),F.gen(j)] for i in range(F.ngens()-1) for j in range(i+1,F.ngens())]
@@ -285,7 +285,7 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
     # Third set of relations: [z, yi] = 1
     r3 = [commutator(z, y[i]) for i in range(n)]
     # Fourth set of relations: [xi, yi] = 1 for i != j
-    r4 = [commutator(x[i], y[j]) for i in range(n) for j in range(n) if i!=j]
+    r4 = [commutator(x[i], y[j]) for i in range(n) for j in range(n) if i != j]
     rls = r1 + r2 + r3 + r4
 
     from sage.sets.primes import Primes
