@@ -555,16 +555,18 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: TQ = TropicalSemiring(QQ)
+            sage: TQ.has_coerce_map_from(TQ)
+            True
+            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
+            True
+
+            sage: # needs sage.rings.real_mpfr
             sage: TR = TropicalSemiring(RR)
             sage: T60 = TropicalSemiring(RealField(60))
             sage: TR.has_coerce_map_from(T60)
             True
-            sage: TQ = TropicalSemiring(QQ)
-            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
-            True
             sage: TR.has_coerce_map_from(TR)
-            True
-            sage: TQ.has_coerce_map_from(TQ)
             True
             sage: TR.has_coerce_map_from(TQ)
             True

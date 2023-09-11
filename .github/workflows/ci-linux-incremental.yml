@@ -1,0 +1,97 @@
+name: CI Linux incremental
+
+## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
+## whenever a GitHub pull request is opened or synchronized in a repository
+## where GitHub Actions are enabled.
+##
+## It builds and checks some sage spkgs as defined in TARGETS.
+##
+## A job succeeds if there is no error.
+##
+## The build is run with "make V=0", so the build logs of individual packages are suppressed.
+##
+## At the end, all package build logs that contain an error are printed out.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+
+on:
+  pull_request:
+    types:
+      # Defaults
+      - opened
+      - synchronize
+      - reopened
+      # When a CI label is added
+      - labeled
+  workflow_dispatch:
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  packages: write
+
+jobs:
+
+  changed_files:
+    runs-on: ubuntu-latest
+    name: List changed packages
+    outputs:
+      uninstall_targets: ${{ steps.build-targets.outputs.uninstall_targets }}
+      build_targets:     ${{ steps.build-targets.outputs.build_targets }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get all packages that have changed
+        id: changed-packages
+        uses: tj-actions/changed-files@v38
+        with:
+          files_yaml: |
+            configures:
+              - 'build/pkgs/*/spkg-configure.m4'
+            pkgs:
+              - 'build/pkgs/**'
+              - 'pkgs/**'
+      - name: Determine targets to build
+        id: build-targets
+        run: |
+          echo "uninstall_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))" >> $GITHUB_OUTPUT
+          echo "build_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.pkgs_all_changed_files }}; do echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([-_.a-z0-9]*)/[^ ]* *,\2-ensure,;'; done | sort -u))" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
+  minimal:
+    needs: [changed_files]
+    if: |
+      github.event_name != 'pull_request' ||
+      ((github.event.action != 'labeled' &&
+         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
+          contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
+       (github.event.action == 'labeled' &&
+         (github.event.label.name == 'c: packages: optional' ||
+          github.event.label.name == 'c: packages: standard')))
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from published Docker image
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets"
+      targets: "${{needs.changed_files.outputs.uninstall_targets}} ${{needs.changed_files.outputs.build_targets}} build doc-html ptest"
+      tox_system_factors: >-
+        ["ubuntu-focal",
+         "ubuntu-jammy",
+         "ubuntu-mantic,
+         "debian-bullseye",
+         "debian-bookworm",
+         "ubuntu-mantic,
+         "fedora-30",
+         "fedora-38",
+         "gentoo-python3.11",
+         "debian-bullseye-i386"]
+      tox_packages_factors: >-
+          ["standard",
+           "minimal"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/

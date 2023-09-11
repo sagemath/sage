@@ -502,7 +502,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
                 for j in indices:
                     if j != i:
                         mon *= A.gen(j)
-                rel += sign *mon
+                rel += sign * mon
                 sign = -sign
             rels.append(rel)
         I = A.ideal(rels)
