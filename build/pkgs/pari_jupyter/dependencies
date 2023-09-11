@@ -1,1 +1,1 @@
-$(PYTHON) pari | $(PYTHON_TOOLCHAIN) cython notebook jupyter_core
+ pari | $(PYTHON_TOOLCHAIN) cython notebook jupyter_core $(PYTHON)

@@ -8,6 +8,11 @@ on:
       - 'public/build/**-runci'
   pull_request:
     types:
+      # Defaults
+      - opened
+      - synchronize
+      - reopened
+      # When a CI label is added
       - labeled
   workflow_dispatch:
     # Allow to run manually
@@ -21,13 +26,18 @@ jobs:
   test:
     name: Conda
     runs-on: ${{ matrix.os }}
-    
-    # Run on push, workflow dispatch and when certain labels are added 
+
+    # Run on push, workflow dispatch and when certain labels are added or are present
     if: |
-      github.event.action != 'labeled' ||
-      github.event.label.name == 'c: packages: optional' || 
-      github.event.label.name == 'c: packages: standard' || 
-      github.event.label.name == 's: run conda ci'
+      github.event_name != 'pull_request' ||
+      ((github.event.action != 'labeled' &&
+         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
+          contains(github.event.pull_request.labels.*.name, 'c: packages: optional') ||
+          contains(github.event.pull_request.labels.*.name, 's: run conda ci'))) ||
+       (github.event.action == 'labeled' &&
+         (github.event.label.name == 'c: packages: optional' ||
+          github.event.label.name == 'c: packages: standard' ||
+          github.event.label.name == 's: run conda ci')))
 
     strategy:
       fail-fast: false

@@ -2649,7 +2649,6 @@ def SRG_126_50_13_24():
         sage: G.is_strongly_regular(parameters=True)
         (126, 50, 13, 24)
     """
-    from sage.graphs.strongly_regular_db import SRG_175_72_20_36
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     hs = HoffmanSingletonGraph()
     s = set(hs.vertices(sort=False)).difference(hs.neighbors(0) + [0])

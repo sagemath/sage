@@ -445,6 +445,40 @@ AC_ARG_ENABLE([download-from-upstream-url],
     [disallow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])], [],
     [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
 
+AC_ARG_ENABLE(
+  [system-site-packages], [AS_HELP_STRING(
+    [--enable-system-site-packages],
+    [allow the use of python packages from the system (experimental; default: no)]
+  )], [
+  AS_IF([test "x$enable_system_site_packages" = "xyes"], [
+    dnl When installing python SPKGs in the presence of system-site
+    dnl packages, we need to --ignore-installed so that a patched SPKG
+    dnl can be installed in the presence of an unpatched system package
+    dnl that appears (to pip) to be identical. The --no-deps flag is
+    dnl then needed because --ignore-installed will make any installed
+    dnl dependencies invisible to pip, who does not appreciate that.
+    SAGE_PIP_INSTALL_FLAGS="${SAGE_PIP_INSTALL_FLAGS} --no-deps --ignore-installed"
+
+    SAGE_VENV_FLAGS="${SAGE_VENV_FLAGS} --system-site-packages"
+
+    dnl We want to raise an error if the user asked for "system site
+    dnl packages" but the system python will not be used. Technically
+    dnl that causes no problems (SAGE_PYTHON_PACKAGE_CHECK always fails,
+    dnl so SPKGs are used for all python packages), but it may be confusing
+    dnl to end users who expect the flag to actually give them access to
+    dnl their system python packages and who may not be paying close
+    dnl attention to their ./configure output.
+    with_system_python3="force"
+
+    dnl This is substituted in to build/bin/sage-build-env-config.in for use
+    dnl by build/bin/sage-get-system-packages
+    ENABLE_SYSTEM_SITE_PACKAGES=yes
+  ])
+])
+AC_SUBST([ENABLE_SYSTEM_SITE_PACKAGES])
+AC_SUBST([SAGE_PIP_INSTALL_FLAGS])
+AC_SUBST([SAGE_VENV_FLAGS])
+
 SAGE_SPKG_OPTIONS=""
 AS_IF([test "x$enable_experimental_packages" = "xyes"], [
   AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -y"])
@@ -487,7 +521,7 @@ AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
-    for pkg in r rpy2 r_jupyter; do
+    for pkg in r rpy2 r_jupyter tzlocal; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])

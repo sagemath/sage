@@ -58,6 +58,31 @@ dnl   indicate why
 m4_pushdef([SPKG_USE_SYSTEM], [sage_use_system_]SPKG_NAME)
 # BEGIN SAGE_SPKG_CONFIGURE_]m4_toupper($1)[
 
+dnl Hide the output from Python (system site package) checks
+dnl when --enable-system-site-packages was not given. This
+dnl doesn't affect the test results but it minimizes the noise
+dnl in the ./configure output. The config.log however retains
+dnl everything.
+dnl
+dnl Open descriptor 9 as a copy of AS_MESSAGE_FD, so that it
+dnl can later be used to restore AS_MESSAGE_FD. Afterwards,
+dnl send AS_MESSAGE_FD to /dev/null. We'll restore it if this
+dnl isn't a python package or if --enable-system-site-packages
+dnl was given (or at the end of this macro, if nothing else).
+exec 9<&AS_MESSAGE_FD
+exec AS_MESSAGE_FD>/dev/null
+
+AS_IF([test "${enable_system_site_packages}" = "yes"], [
+  dnl Python package checks are enabled, so restore AS_MESSAGE_FD
+  exec AS_MESSAGE_FD<&9
+])
+
+SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/$1/spkg-configure.m4"
+AS_IF([! grep -q [SAGE_PYTHON_PACKAGE_CHECK] "${SPKG_CONFIGURE}"],[
+  dnl Not a python package, so restore AS_MESSAGE_FD
+  exec AS_MESSAGE_FD<&9
+])
+
 echo "-----------------------------------------------------------------------------" >& AS_MESSAGE_FD
 echo "Checking whether SageMath should install SPKG $1..." >& AS_MESSAGE_FD
 AS_BOX([Checking whether SageMath should install SPKG $1...]) >& AS_MESSAGE_LOG_FD
@@ -139,6 +164,13 @@ AS_VAR_IF(SPKG_INSTALL, [no], [
 
 dnl Run POST
 $5
+
+dnl Restore the message file descriptor that we clobbered earlier
+dnl for the sake of hiding site package check noise. It's possible
+dnl that we've already done this above, but it doesn't hurt to do
+dnl it again, and we want everything "back to normal" at the end
+dnl of this macro.
+exec AS_MESSAGE_FD<&9
 
 # END SAGE_SPKG_CONFIGURE_]m4_toupper($1)[
 m4_popdef([SPKG_USE_SYSTEM])

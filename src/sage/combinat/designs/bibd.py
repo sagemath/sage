@@ -1048,6 +1048,7 @@ def _PBD_4_5_8_9_12_closure(B):
             BB.append(X)
     return BB
 
+
 table_7_1 = {
     0:{'t':-4,'u':16,'s':2},
     1:{'t':-4,'u':17,'s':2},
@@ -1651,5 +1652,6 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         values = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         return [self._points[i] for (i,j) in values.items() if j]
+
 
 BIBD = BalancedIncompleteBlockDesign
