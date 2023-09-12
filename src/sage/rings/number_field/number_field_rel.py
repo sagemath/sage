@@ -2252,7 +2252,7 @@ class NumberField_relative(NumberField_generic):
 
             sage: x = polygen(ZZ, 'x')
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
-            sage: L.places()
+            sage: L.places()                                                            # needs sage.libs.linbox
             [Relative number field morphism:
                From: Number Field in b with defining polynomial x^2 - 5 over its base field
                To:   Real Field with 106 bits of precision

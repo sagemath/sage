@@ -4,6 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
+# sage.doctest: needs sage.libs.linbox
 """
 Number field elements (implementation using NTL)
 
@@ -526,13 +527,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: (a**2 - a + 1)._gap_init_()                                           # needs sage.libs.gap
+            sage: (a**2 - a + 1)._gap_init_()
             '\\$sage4^2 - \\$sage4 + 1'
-            sage: gap(_)                                                                # needs sage.libs.gap
+            sage: gap(_)
             a^2-a+1
-
             sage: F = CyclotomicField(8)
             sage: F.gen()
             zeta8
@@ -581,15 +582,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
-            sage: F.gen()._libgap_()                                                    # needs sage.libs.gap
+            sage: F.gen()._libgap_()
             E(8)
-            sage: libgap(F.gen())   # syntactic sugar                                   # needs sage.libs.gap
+            sage: libgap(F.gen())   # syntactic sugar
             E(8)
-            sage: E8 = F.gen()                                                          # needs sage.libs.gap
-            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)                                      # needs sage.libs.gap
+            sage: E8 = F.gen()
+            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)
             E(8)+3/2*E(8)^2-100*E(8)^3
-            sage: type(_)                                                               # needs sage.libs.gap
+            sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
         Check that :trac:`15276` is fixed::
@@ -620,15 +622,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
+            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: K.zero()._pari_polynomial('x')                                        # needs sage.libs.pari
+            sage: K.zero()._pari_polynomial('x')
             0
-            sage: K.one()._pari_polynomial()                                            # needs sage.libs.pari
+            sage: K.one()._pari_polynomial()
             1
-            sage: (a + 1)._pari_polynomial()                                            # needs sage.libs.pari
+            sage: (a + 1)._pari_polynomial()
             y + 1
-            sage: a._pari_polynomial('c')                                               # needs sage.libs.pari
+            sage: a._pari_polynomial('c')
             c
         """
         f = pari(self._coefficients()).Polrev()
@@ -651,14 +654,15 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: K(1).__pari__()                                                       # needs sage.libs.pari
+            sage: K(1).__pari__()
             Mod(1, y^3 + 2)
-            sage: (a + 2).__pari__()                                                    # needs sage.libs.pari
+            sage: (a + 2).__pari__()
             Mod(y + 2, y^3 + 2)
             sage: L.<b> = K.extension(x^2 + 2)
-            sage: (b + a).__pari__()                                                    # needs sage.libs.pari
+            sage: (b + a).__pari__()
             Mod(24/101*y^5 - 9/101*y^4 + 160/101*y^3 - 156/101*y^2 + 397/101*y + 364/101, y^6 + 6*y^4 - 4*y^3 + 12*y^2 + 24*y + 12)
 
         ::

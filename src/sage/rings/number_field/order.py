@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.linbox
 """
 Orders in Number Fields
 
