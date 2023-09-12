@@ -13,6 +13,7 @@ This distribution makes the following features available::
 
 from .all__sagemath_categories import *
 
+from sage.groups.all__sagemath_pari import *
 from sage.libs.all__sagemath_pari import *
 from sage.rings.all__sagemath_pari import *
 

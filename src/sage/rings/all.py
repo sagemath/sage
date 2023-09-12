@@ -60,8 +60,6 @@ from .tate_algebra import TateAlgebra
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 
-from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
-
 from .fast_arith import prime_range
 
 # asymptotic ring

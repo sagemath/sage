@@ -1,10 +1,14 @@
 # sage_setup: distribution = sagemath-groups
 from .all__sagemath_modules import *
+
+try:
+    from .all__sagemath_pari import *
+except ImportError:
+    pass
+
 from .all__sagemath_gap import *
 
 from sage.misc.lazy_import import lazy_import
-
-lazy_import('sage.groups.pari_group', 'PariGroup')
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 
