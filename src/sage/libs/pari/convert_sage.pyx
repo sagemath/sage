@@ -207,6 +207,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
 
     Converting vectors::
 
+        sage: # needs sage.rings.number_field sage.rings.real_mpfr
         sage: z1 = pari('[-3, 2.1, 1+I]'); z1
         [-3, 2.10000000000000, 1 + I]
         sage: z2 = pari('[1.0*I, [1,2]]~'); z2
