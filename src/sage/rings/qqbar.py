@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.linbox
 r"""
 Field of Algebraic Numbers
 
@@ -2078,7 +2078,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             (12) * (x - 0.5773502691896258?) * (x + 0.5773502691896258?)
             sage: QQbar._factor_univariate_polynomial(R(-1))
             -1
-            sage: QQbar._factor_univariate_polynomial(EllipticCurve('11a1').change_ring(QQbar).division_polynomial(5))
+            sage: QQbar._factor_univariate_polynomial(EllipticCurve('11a1').change_ring(QQbar).division_polynomial(5))  # needs sage.schemes
             (5) * (x - 16) * (x - 5) * (x - 1.959674775249769?) * (x - 1.427050983124843? - 3.665468789467727?*I) * (x - 1.427050983124843? + 3.665468789467727?*I) * (x + 0.9549150281252629? - 0.8652998037182486?*I) * (x + 0.9549150281252629? + 0.8652998037182486?*I) * (x + 1.927050983124843? - 1.677599044300515?*I) * (x + 1.927050983124843? + 1.677599044300515?*I) * (x + 2.959674775249769?) * (x + 6.545084971874737? - 7.106423590645660?*I) * (x + 6.545084971874737? + 7.106423590645660?*I)
 
         """
@@ -8603,10 +8603,10 @@ class ANBinaryExpr(ANDescr):
         We lower the recursion limit for this test to allow
         a test in reasonable time::
 
+            sage: # needs sage.combinat
             sage: import sys
             sage: old_recursion_limit = sys.getrecursionlimit()
             sage: sys.setrecursionlimit(1000)
-
             sage: sys.getrecursionlimit()
             1000
             sage: s = SymmetricFunctions(QQ).schur()
@@ -8615,7 +8615,6 @@ class ANBinaryExpr(ANDescr):
             0
             sage: sys.getrecursionlimit()
             1000
-
             sage: sys.setrecursionlimit(old_recursion_limit)
         """
         import sys

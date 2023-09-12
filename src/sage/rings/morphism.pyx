@@ -1572,8 +1572,8 @@ cdef class RingHomomorphism(RingMap):
         Check that results are cached::
 
             sage: R.<x,y> = GF(823)[]
-            sage: f = R.hom([x, y+x^2], R)
-            sage: f.inverse() is f.inverse()                                            # needs sage.rings.finite_rings
+            sage: f = R.hom([x, y + x^2], R)
+            sage: f.inverse() is f.inverse()                                            # needs sage.libs.singular
             True
 
         Some subclasses of ring homomorphisms are not supported::
