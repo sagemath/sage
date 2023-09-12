@@ -1651,6 +1651,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.eisenstein_series()
             Traceback (most recent call last):
             ...
@@ -1837,6 +1838,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.modular_symbols()
             Traceback (most recent call last):
             ...
