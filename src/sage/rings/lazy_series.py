@@ -1381,7 +1381,7 @@ class LazyModuleElement(Element):
             sage: E = L(lambda n: s[n], valuation=0)
             sage: X = L(s[1])
             sage: A = L.undefined()
-            sage: A.define(X*E(A, check=False))
+            sage: A.define(X*E(A))
             sage: A[:6]
             [m[1],
              2*m[1, 1] + m[2],
@@ -3632,7 +3632,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         P = self.parent()
         R = self.base_ring()
         coeff_stream = self._coeff_stream
-        # TODO: coefficients should not be checked here, it prevents
+        # coefficients must not be checked here, it prevents
         # us from using self.define in some cases!
         if ((not coeff_stream.is_uninitialized())
             and any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1))):
@@ -3685,7 +3685,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         P = self.parent()
         R = self.base_ring()
         coeff_stream = self._coeff_stream
-        # TODO: coefficients should not be checked here, it prevents
+        # coefficients must not be checked here, it prevents
         # us from using self.define in some cases!
         if ((not coeff_stream.is_uninitialized())
             and (any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 0))
@@ -3827,7 +3827,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         return codomain(self.map_coefficients(base_map)(im_gens[0]))
 
-    def __call__(self, g, *, check=True):
+    def __call__(self, g):
         r"""
         Return the composition of ``self`` with ``g``.
 
@@ -4221,18 +4221,18 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             raise NotImplementedError("can only compose with a lazy series")
 
         # Perhaps we just don't yet know if the valuation is positive
-        if check:
-            if g._coeff_stream._approximate_order <= 0:
-                if any(g._coeff_stream[i] for i in range(g._coeff_stream._approximate_order, 1)):
-                    raise ValueError("can only compose with a positive valuation series")
-                g._coeff_stream._approximate_order = 1
+        if g._coeff_stream._approximate_order <= 0:
+            if (not g._coeff_stream.is_uninitialized()
+                and any(g._coeff_stream[i] for i in range(g._coeff_stream._approximate_order, 1))):
+                raise ValueError("can only compose with a positive valuation series")
+            g._coeff_stream._approximate_order = 1
 
         if isinstance(g, LazyDirichletSeries):
-            if check:
-                if g._coeff_stream._approximate_order == 1:
-                    if g._coeff_stream[1] != 0:
-                        raise ValueError("can only compose with a positive valuation series")
-                    g._coeff_stream._approximate_order = 2
+            if g._coeff_stream._approximate_order == 1:
+                if (not g._coeff_stream.is_uninitialized()
+                    and g._coeff_stream[1] != 0):
+                    raise ValueError("can only compose with a positive valuation series")
+                g._coeff_stream._approximate_order = 2
             # we assume that the valuation of self[i](g) is at least i
 
             def coefficient(n):
@@ -4815,7 +4815,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         return codomain(self.map_coefficients(base_map)(*im_gens))
 
-    def __call__(self, *g, check=True):
+    def __call__(self, *g):
         r"""
         Return the composition of ``self`` with ``g``.
 
@@ -5068,18 +5068,17 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             g = [P(h) for h in g]
         R = P._internal_poly_ring.base_ring()
 
-        if check:
-            for h in g:
-                if h._coeff_stream._approximate_order == 0:
-                    if h[0]:
-                        raise ValueError("can only compose with a positive valuation series")
-                    h._coeff_stream._approximate_order = 1
+        for h in g:
+            if h._coeff_stream._approximate_order == 0:
+                if not h._coeff_stream.is_uninitialized() and h[0]:
+                    raise ValueError("can only compose with a positive valuation series")
+                h._coeff_stream._approximate_order = 1
 
-                if isinstance(h, LazyDirichletSeries):
-                    if h._coeff_stream._approximate_order == 1:
-                        if h._coeff_stream[1] != 0:
-                            raise ValueError("can only compose with a positive valuation series")
-                        h._coeff_stream._approximate_order = 2
+            if isinstance(h, LazyDirichletSeries):
+                if h._coeff_stream._approximate_order == 1:
+                    if not h._coeff_stream.is_uninitialized() and h._coeff_stream[1] != 0:
+                        raise ValueError("can only compose with a positive valuation series")
+                    h._coeff_stream._approximate_order = 2
 
         # We now have that every element of g has a _coeff_stream
         sorder = self._coeff_stream._approximate_order
@@ -5812,7 +5811,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             return False
         return self[0].is_unit()
 
-    def __call__(self, *args, check=True):
+    def __call__(self, *args):
         r"""
         Return the composition of ``self`` with ``g``.
 
@@ -5998,10 +5997,10 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                 P = LazySymmetricFunctions(R)
                 g = P(g)
 
-            if check and not (isinstance(self._coeff_stream, Stream_exact)
-                              and not self._coeff_stream._constant):
+            if not (isinstance(self._coeff_stream, Stream_exact)
+                    and not self._coeff_stream._constant):
                 if g._coeff_stream._approximate_order == 0:
-                    if g[0]:
+                    if not g._coeff_stream.is_uninitialized() and g[0]:
                         raise ValueError("can only compose with a positive valuation series")
                     g._coeff_stream._approximate_order = 1
 
@@ -6401,7 +6400,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         else:
             raise NotImplementedError("only implemented for arity 1")
 
-    def arithmetic_product(self, *args, check=True):
+    def arithmetic_product(self, *args):
         r"""
         Return the arithmetic product of ``self`` with ``g``.
 
@@ -6449,9 +6448,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         INPUT:
 
         - ``g`` -- a cycle index series having the same parent as ``self``
-
-        - ``check`` -- (default: ``True``) a Boolean which, when set
-          to ``False``, will cause input checks to be skipped
 
         OUTPUT:
 
@@ -6596,15 +6592,11 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                     and not g._coeff_stream._constant):
                     gs = g.symmetric_function()
                     c += self[0].arithmetic_product(gs)
-                elif check:
-                    raise ValueError("can only take the arithmetic product with a positive valuation series")
             if g[0]:
                 if (isinstance(self._coeff_stream, Stream_exact)
                     and not self._coeff_stream._constant):
                     fs = self.symmetric_function()
                     c += fs.arithmetic_product(g[0])
-                elif check:
-                    raise ValueError("can only take the arithmetic product with a positive valuation series")
 
             p = R.realization_of().p()
             # TODO: does the following introduce a memory leak?
@@ -6879,7 +6871,7 @@ class LazyDirichletSeries(LazyModuleElement):
         return P.element_class(P, Stream_dirichlet_invert(self._coeff_stream,
                                                           P.is_sparse()))
 
-    def __call__(self, p, *, check=True):
+    def __call__(self, p):
         r"""
         Return the composition of ``self`` with a linear polynomial ``p``.
 
