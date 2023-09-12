@@ -655,7 +655,7 @@ class ClassicalFunctionFieldValuation_base(DiscreteFunctionFieldValuation_base):
 
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
-            sage: v._test_classical_residue_field()
+            sage: v._test_classical_residue_field()                                     # needs sage.rings.number_field
 
         """
         tester = self._tester(**options)
@@ -775,7 +775,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
-            sage: v.reduce(x)
+            sage: v.reduce(x)                                                           # needs sage.rings.number_field
             u1
 
         """
@@ -806,7 +806,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: K.valuation(x^2 + 1) # indirect doctest
+            sage: K.valuation(x^2 + 1)  # indirect doctest
             (x^2 + 1)-adic valuation
 
         """
@@ -828,6 +828,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
             sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())

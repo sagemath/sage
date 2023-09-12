@@ -2129,6 +2129,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
+            sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='kash')   # optional - kash
             Transitive group number 5 of degree 4
@@ -2325,6 +2326,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         A more difficult example::
 
+            sage: R.<x> = QQ[]
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
             sage: f.factor_padic(5, 10)                                                 # needs sage.rings.padic
             (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + 5^-1 + O(5^9))^2
