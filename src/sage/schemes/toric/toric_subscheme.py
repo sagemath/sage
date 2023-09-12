@@ -270,6 +270,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               z0^3 + z1^3 + 1
 
+            sage: # needs fpylll
             sage: cone = Cone([(0,1), (2,1)])
             sage: A2Z2.<x,y> = AffineToricVariety(cone)
             sage: A2Z2.affine_algebraic_patch()
