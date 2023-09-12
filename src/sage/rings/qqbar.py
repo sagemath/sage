@@ -748,24 +748,21 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             sage: R.<x,y> = QQbar[]
             sage: A.<u,v> = AA[]
 
-            sage: L = QQbar._factor_multivariate_polynomial(x^2-y^2)
-            sage: L
+            sage: # needs sage.libs.singular
+            sage: L = QQbar._factor_multivariate_polynomial(x^2 - y^2); L
             (x - y) * (x + y)
-            sage: L = QQbar._factor_multivariate_polynomial(x^2+y^2)
-            sage: L
+            sage: L = QQbar._factor_multivariate_polynomial(x^2 + y^2); L
             (x + (-1*I)*y) * (x + 1*I*y)
             sage: L.value()
             x^2 + y^2
-
-            sage: L = AA._factor_multivariate_polynomial(u^2-v^2)
-            sage: L
+            sage: L = AA._factor_multivariate_polynomial(u^2 - v^2); L
             (u - v) * (u + v)
-            sage: L = AA._factor_multivariate_polynomial(u^2+v^2)
-            sage: L
+            sage: L = AA._factor_multivariate_polynomial(u^2 + v^2); L
             u^2 + v^2
 
         The test from Singular's ``absfact`` documentation::
 
+            sage: # needs sage.libs.singular
             sage: p = (-7*x^2 + 2*x*y^2 + 6*x + y^4 + 14*y^2 + 47)*(5*x^2+y^2)^3*(x-y)^4
             sage: F = QQbar._factor_multivariate_polynomial(p)
             sage: F
@@ -775,7 +772,6 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             * (y^2 + 3.828427124746190?*x + 8.414213562373095?)
             sage: F.value() == p
             True
-
             sage: p = (-7*u^2 + 2*u*v^2 + 6*u + v^4 + 14*v^2 + 47)*(5*u^2+v^2)^3*(u-v)^4
             sage: F = AA._factor_multivariate_polynomial(p)
             sage: F
@@ -789,15 +785,13 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         A test requiring us to further extend a number field that was
         used to specify the polynomial::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.libs.singular sage.symbolic
             sage: p = x^2 + QQbar(sqrt(2))*y^2
             sage: F = QQbar._factor_multivariate_polynomial(p)
             sage: F
             (x + (-1.189207115002722?*I)*y) * (x + 1.189207115002722?*I*y)
             sage: F.value() == p
             True
-
-            sage: # needs sage.symbolic
             sage: p = u^2 + AA(sqrt(2))*v^2
             sage: F = AA._factor_multivariate_polynomial(p)
             sage: F
@@ -808,15 +802,13 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         A test requiring a number field different from the number field
         used to specify the polynomial::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.libs.singular sage.symbolic
             sage: p = QQbar(sqrt(2))*(x^2+y^2)
             sage: F = QQbar._factor_multivariate_polynomial(p)
             sage: F
             (1.414213562373095?) * (x + (-1*I)*y) * (x + 1*I*y)
             sage: F.value() == p
             True
-
-            sage: # needs sage.symbolic
             sage: p = AA(sqrt(2))*(u^2+v^2)
             sage: F = AA._factor_multivariate_polynomial(p)
             sage: F
@@ -827,19 +819,15 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         A test where a factor introduces a number field that was already
         used to specify the polynomial::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.libs.singular sage.symbolic
             sage: p = QQbar(sqrt(2))*(x^2-2*y^2)^2
-            sage: F = QQbar._factor_multivariate_polynomial(p)
-            sage: F
+            sage: F = QQbar._factor_multivariate_polynomial(p); F
             (1.414213562373095?)
             * (x + (-1.414213562373095?)*y)^2 * (x + 1.414213562373095?*y)^2
             sage: F.value() == p
             True
-
-            sage: # needs sage.symbolic
             sage: p = AA(sqrt(2))*(u^2-2*v^2)^2
-            sage: F = AA._factor_multivariate_polynomial(p)
-            sage: F
+            sage: F = AA._factor_multivariate_polynomial(p); F
             (1.414213562373095?)
             * (u - 1.414213562373095?*v)^2 * (u + 1.414213562373095?*v)^2
             sage: F.value() == p
@@ -847,19 +835,17 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
         A test where two factors produce the same factor in the norm::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.libs.singular sage.symbolic
             sage: p = (x^2+QQbar(sqrt(2))*y^2)*(x^4-2*y^4)
-            sage: F = QQbar._factor_multivariate_polynomial(p)
-            sage: F
+            sage: F = QQbar._factor_multivariate_polynomial(p); F
             (x + (-1.189207115002722?)*y) * (x + 1.189207115002722?*y)
             * (x + (-1.189207115002722?*I)*y)^2 * (x + 1.189207115002722?*I*y)^2
             sage: F.value() == p
             True
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.libs.singular sage.symbolic
             sage: p = (u^2+AA(sqrt(2))*v^2)*(u^4-2*v^4)
-            sage: F = AA._factor_multivariate_polynomial(p)
-            sage: F
+            sage: F = AA._factor_multivariate_polynomial(p); F
             (u - 1.189207115002722?*v) * (u + 1.189207115002722?*v)
             * (u^2 + 1.414213562373095?*v^2)^2
             sage: F.value() == p
@@ -868,9 +854,9 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         A test where the number field that expresses the result is a subfield
         of the number field that expressed the polynomial::
 
+            sage: # needs sage.libs.singular
             sage: p = (x^2+QQbar(2)^(1/2)*y^2)*(x+QQbar(2)^(1/8)*y)
-            sage: F = QQbar._factor_multivariate_polynomial(p)
-            sage: F
+            sage: F = QQbar._factor_multivariate_polynomial(p); F
             (x + (-1.189207115002722?*I)*y) * (x + 1.189207115002722?*I*y)
             * (x + 1.090507732665258?*y)
             sage: F.value() == p
@@ -879,14 +865,15 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         A test where the polynomial variable names conflict with the
         number field generator::
 
+            sage: # needs sage.libs.singular sage.symbolic
             sage: S.<a,b> = QQbar[]
-            sage: p = a^2 + QQbar(sqrt(2))*b^2                                          # needs sage.symbolic
-            sage: F = QQbar._factor_multivariate_polynomial(p)                          # needs sage.symbolic
-            sage: F                                                                     # needs sage.symbolic
+            sage: p = a^2 + QQbar(sqrt(2))*b^2
+            sage: F = QQbar._factor_multivariate_polynomial(p); F
             (a + (-1.189207115002722?*I)*b) * (a + 1.189207115002722?*I*b)
 
         A test that led to :trac:`26898`::
 
+            sage: # needs sage.libs.singular
             sage: R.<x> = QQ[]
             sage: minpoly = 4*x^7 + 27
             sage: NF.<b> = NumberField(minpoly)
@@ -896,6 +883,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
         Test :trac:`29076`::
 
+            sage: # needs sage.libs.singular
             sage: AA['x','y'](1).factor()   # indirect doctest
             1
 
@@ -1520,7 +1508,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             (12) * (x - 0.5773502691896258?) * (x + 0.5773502691896258?)
             sage: AA._factor_univariate_polynomial(12*x^2 + 4)
             (12) * (x^2 + 0.3333333333333334?)
-            sage: AA._factor_univariate_polynomial(EllipticCurve('11a1').change_ring(AA).division_polynomial(5))
+            sage: AA._factor_univariate_polynomial(EllipticCurve('11a1').change_ring(AA).division_polynomial(5))    # needs sage.schemes
             (5) * (x - 16.00000000000000?) * (x - 5.000000000000000?) * (x - 1.959674775249769?) * (x + 2.959674775249769?) * (x^2 - 2.854101966249685?*x + 15.47213595499958?) * (x^2 + 1.909830056250526?*x + 1.660606461254312?) * (x^2 + 3.854101966249685?*x + 6.527864045000421?) * (x^2 + 13.09016994374948?*x + 93.33939353874569?)
 
         """
@@ -1700,8 +1688,9 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             sage: QQbar.has_coerce_map_from(SR)                                         # needs sage.symbolic
             False
 
-            sage: i + QQbar(2)
+            sage: i + QQbar(2)                                                          # needs sage.symbolic
             I + 2
+
             sage: K.<ii> = QuadraticField(-1, embedding=ComplexField(13)(0,-1))
             sage: ii + QQbar(2)
             -I + 2
@@ -2807,15 +2796,16 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
 
     Tests more complicated combinations::
 
+        sage: # needs sage.libs.gap sage.symbolic
         sage: UCF = UniversalCyclotomicField()
         sage: E = UCF.gen(5)
         sage: L.<b> = NumberField(x^2-189*x+16, embedding=200)
         sage: x = polygen(ZZ)
-        sage: my_nums = [-52*E - 136*E^2 - 136*E^3 - 52*E^4,                            # needs sage.symbolic
+        sage: my_nums = [-52*E - 136*E^2 - 136*E^3 - 52*E^4,
         ....:            L.gen()._algebraic_(AA),
         ....:            sqrt(2), AA.polynomial_root(x^3 - 3, RIF(0,3)), 11/9, 1]
-        sage: res = number_field_elements_from_algebraics(my_nums, embedded=True)       # needs sage.symbolic
-        sage: res[0]                                                                    # needs sage.symbolic
+        sage: res = number_field_elements_from_algebraics(my_nums, embedded=True)
+        sage: res[0]
         Number Field in a with defining polynomial y^24 - 107010*y^22 - 24*y^21 + ...
         + 250678447193040618624307096815048024318853254384 with a = 93.32530798172420?
     """

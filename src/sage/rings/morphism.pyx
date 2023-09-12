@@ -1587,8 +1587,8 @@ cdef class RingHomomorphism(RingMap):
 
         ::
 
-            sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: R.hom([y, x], R).inverse()                                            # needs sage.libs.singular
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)                                   # needs sage.modules
+            sage: R.hom([y, x], R).inverse()                                            # needs sage.libs.singular sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError

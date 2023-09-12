@@ -119,7 +119,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             2.000000000000000*x
             sage: Polynomial_complex_arb(Pol, (1,))
             1.000000000000000
-            sage: Polynomial_complex_arb(Pol, (CBF(i), 1))
+            sage: Polynomial_complex_arb(Pol, (CBF(i), 1))                              # needs sage.symbolic
             x + I
             sage: Polynomial_complex_arb(Pol, polygen(QQ,'y')+2)
             x + 2.000000000000000
@@ -190,6 +190,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: Pol.<x> = ComplexBallField(42)[]
             sage: pol = (x + i)/3
             sage: pol2 = loads(dumps(pol))

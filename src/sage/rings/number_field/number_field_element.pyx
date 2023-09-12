@@ -551,7 +551,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Check that :trac:`15276` is fixed::
 
-            sage: for n in range(2,20):
+            sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
             ....:     assert K(gap(K.gen())) == K.gen(), "n = {}".format(n)
             ....:     assert K(gap(K.one())) == K.one(), "n = {}".format(n)

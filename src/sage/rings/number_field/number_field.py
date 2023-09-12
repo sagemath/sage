@@ -1787,7 +1787,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Check that :trac:`30961` is fixed::
 
-            sage: QQi = i.parent()
+            sage: QQi = i.parent()                                                      # needs sage.symbolic
             sage: x = SR.var('x')                                                       # needs sage.symbolic
             sage: QQi((x, x))                                                           # needs sage.symbolic
             Traceback (most recent call last):
@@ -9431,6 +9431,7 @@ class NumberField_absolute(NumberField_generic):
 
         We embed a cubic field in the complex numbers::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.embeddings(CC)
             [
@@ -12818,12 +12819,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12835,7 +12836,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
         [10]
 
     """
