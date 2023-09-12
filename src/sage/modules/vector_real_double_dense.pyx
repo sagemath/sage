@@ -73,7 +73,7 @@ cdef class Vector_real_double_dense(Vector_double_dense):
         EXAMPLES::
 
             sage: v = vector(RDF, range(9))
-            sage: v.stats_skew()
+            sage: v.stats_skew()                                                        # needs scipy
             0.0
         """
         import scipy.stats

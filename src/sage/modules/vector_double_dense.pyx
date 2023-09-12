@@ -559,6 +559,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: v = vector(RDF, range(9))
             sage: w = vector(CDF, [k+(9-k)*I for k in range(9)])
             sage: v.stats_kurtosis()  # rel tol 5e-15
