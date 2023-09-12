@@ -5022,15 +5022,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1,2,3], [1,4], [3,2,4]])
             sage: X.moment_angle_complex()
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3, 4) and facets {(1, 4), (2, 3, 4), (0, 1, 2, 3)}
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4) and facets {(1, 4), (2, 3, 4), (0, 1, 2, 3)}
             sage: K = simplicial_complexes.KleinBottle()
             sage: K.moment_angle_complex()
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
 
         We can also create it explicitly::
 
             sage: Z = MomentAngleComplex(K); Z
-            Moment-angle complex of Simplicial complex with vertex set (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
         """
         from .moment_angle_complex import MomentAngleComplex
         return MomentAngleComplex(self)
