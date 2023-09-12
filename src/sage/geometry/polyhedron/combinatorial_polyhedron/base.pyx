@@ -2683,7 +2683,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: C = CombinatorialPolyhedron(P)
             sage: C.meet_of_Hrep(0)
