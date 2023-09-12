@@ -37,7 +37,6 @@ jobs:
         id: upd_tag_list
         run: |
           TAG_LIST="${{ env.TAG_LIST }}, sagemath/sagemath-dev:latest"
-          TAG_LIST="${{ env.TAG_LIST }}"  # don't tag latest until meaning of sagemath-dev is clear
           echo "TAG_LIST=$TAG_LIST" >> $GITHUB_ENV
         if: "!contains(env.TAG_NAME, 'beta') && !contains(env.TAG_NAME, 'rc')"
 
