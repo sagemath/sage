@@ -540,8 +540,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: x = Zp(3)(-17)
-                sage: lift(x)
+                sage: x = Zp(3)(-17)                                                    # needs sage.rings.padics
+                sage: lift(x)                                                           # needs sage.rings.padics
                 3486784384
             """
             try:
@@ -601,6 +601,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 5
             sage: T = BruhatTitsTree(p)
@@ -962,6 +963,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: T = BruhatTitsTree(5)
             sage: K.<a> = Qq(5^2,20)
@@ -977,9 +979,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         affinoid. That is, it is a `p`-adic unit and its reduction
         modulo `p` is not in `\GF{p}`::
 
-            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz
+            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz                          # needs sage.rings.padics
             (a + 1) + O(5^19)
-            sage: gz.valuation() == 0
+            sage: gz.valuation() == 0                                                   # needs sage.rings.padics
             True
         """
         # Assume z belongs to some extension of QQp.
@@ -1063,6 +1065,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 3
             sage: K.<a> = Qq(p^2)
