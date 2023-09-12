@@ -192,8 +192,9 @@ class LimitValuation_generic(DiscretePseudoValuation):
         r"""
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<i> = QQ.extension(x^2 + 1)                                         # needs sage.rings.number_field
+            sage: K.<i> = QQ.extension(x^2 + 1)
             sage: v = K.valuation(2)
             sage: from sage.rings.valuation.limit_valuation import LimitValuation_generic
             sage: isinstance(v._base_valuation, LimitValuation_generic)
@@ -526,8 +527,8 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         This method has no effect, if the approximation is already an infinite
         valuation::
 
-            sage: u._improve_approximation()
-            sage: u._approximation
+            sage: u._improve_approximation()                                            # needs sage.rings.number_field
+            sage: u._approximation                                                      # needs sage.rings.number_field
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2, v(t^2 + 1) = +Infinity ]
 
         """

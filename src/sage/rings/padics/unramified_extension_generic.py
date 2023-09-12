@@ -69,7 +69,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
             sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = Qp(5).extension(x^2 - 5)                                     # needs sage.libs.ntl
-            sage: L._extension_type()
+            sage: L._extension_type()                                                   # needs sage.libs.ntl
             'Eisenstein'
         """
         return "Unramified"

@@ -1309,9 +1309,10 @@ cdef class CRElement(pAdicTemplateElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<x> = ZZ[]
             sage: K.<a> = Qq(25)
-            sage: W.<w> = K.extension(x^3-5)
+            sage: W.<w> = K.extension(x^3 - 5)
             sage: (1 + w + O(w^11))._polynomial_list()
             [1 + O(5^4), 1 + O(5^4)]
             sage: (1 + w + O(w^11))._polynomial_list(pad=True)

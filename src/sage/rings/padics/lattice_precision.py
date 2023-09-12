@@ -1092,7 +1092,6 @@ class DifferentialPrecisionGeneric(SageObject):
              WeakProxy#...,
              WeakProxy#...,
              WeakProxy#...]
-
             sage: del x; del y
             sage: prec.tracked_elements()
             [None, None, 2 + O(2^5), O(2^5), None]

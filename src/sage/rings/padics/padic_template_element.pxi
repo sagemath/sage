@@ -615,6 +615,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Qq(125)
             sage: b = a^2 + 5*a + 1
             sage: b._ext_p_list(True)
@@ -635,6 +636,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(125)
             sage: (5*a).unit_part()
             a + O(5^20)
@@ -694,6 +696,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(27, 4)
             sage: (3 + 3*a).residue()
             0
@@ -702,6 +705,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS::
 
+            sage: # needs sage.libs.ntl
             sage: a.residue(0)
             0
             sage: a.residue(2)
@@ -717,6 +721,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             ...
             NotImplementedError: reduction modulo p^n with n>1
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, 4)
             sage: (3 + 3*a).residue()
             0

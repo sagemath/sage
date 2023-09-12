@@ -487,7 +487,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: R.<u> = Qq(4,5)                                                       # needs sage.libs.ntl
+            sage: # needs sage.libs.ntl
+            sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: v.E()

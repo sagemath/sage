@@ -55,8 +55,8 @@ non-prime residue field::
     sage: v = GaussValuation(S)
     sage: w = v.augmentation(x^2 + x + u, 1/2)
     sage: TestSuite(w).run()                    # long time                             # needs sage.geometry.polyhedron
-
-    sage: ww = w.augmentation(x^8 + 4*x^7 + 2*x^6 + 2*x^5 + x^4 + 2*x^3 + 4*(u + 1)*x^2 + 6*(u + 1)*x + 4 + 3*u, 10)
+    sage: ww = w.augmentation(x^8 + 4*x^7 + 2*x^6 + 2*x^5 + x^4 + 2*x^3
+    ....:                      + 4*(u + 1)*x^2 + 6*(u + 1)*x + 4 + 3*u, 10)
     sage: TestSuite(ww).run() # long time
 
 Run the test suite for an augmentation of a ramified augmentation::
@@ -98,8 +98,7 @@ Run the test suite for another augmentation with iterated residue field extensio
     sage: v = GaussValuation(S)
     sage: w = v.augmentation(x^2 + x + u, 1)
     sage: TestSuite(w).run()                    # long time                             # needs sage.geometry.polyhedron
-
-    sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)             # needs sage.libs.ntl
+    sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
     sage: TestSuite(ww).run()                   # long time                             # needs sage.numerical.mip
 
 Run the test suite for a rather trivial pseudo-valuation::
@@ -129,8 +128,7 @@ extends the residue field::
     sage: v = GaussValuation(S)
     sage: w = v.augmentation(x^2 + x + u, 1/2)
     sage: TestSuite(w).run()                    # long time                             # needs sage.geometry.polyhedron
-
-    sage: ww = w.augmentation((x^2 + x + u)^2 + 2, infinity)                            # needs sage.libs.ntl
+    sage: ww = w.augmentation((x^2 + x + u)^2 + 2, infinity)
     sage: TestSuite(ww).run()                   # long time                             # needs sage.numerical.mip
 
 Run the test suite if the polynomial ring is not over a field::
