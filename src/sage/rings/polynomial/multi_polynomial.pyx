@@ -1047,21 +1047,22 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # optional - magma, needs sage.rings.finite_rings
             sage: k.<b> = GF(25); R.<x,y> = k[]
             sage: f = y*x^2*b + x*(b+1) + 1
             sage: magma = Magma()                       # so var names same below
-            sage: magma(f)                                      # optional - magma
+            sage: magma(f)
             b*x^2*y + b^22*x + 1
-            sage: f._magma_init_(magma)                         # optional - magma
+            sage: f._magma_init_(magma)
             '_sage_[...]!((_sage_[...]!(_sage_[...]))*_sage_[...]^2*_sage_[...]+(_sage_[...]!(_sage_[...] + 1))*_sage_[...]+(_sage_[...]!(1))*1)'
 
         A more complicated nested example::
 
+            sage: # optional - magma
             sage: R.<x,y> = QQ[]; S.<z,w> = R[]; f = (2/3)*x^3*z + w^2 + 5
-            sage: f._magma_init_(magma)                         # optional - magma
+            sage: f._magma_init_(magma)
             '_sage_[...]!((_sage_[...]!((1/1)*1))*_sage_[...]^2+(_sage_[...]!((2/3)*_sage_[...]^3))*_sage_[...]+(_sage_[...]!((5/1)*1))*1)'
-            sage: magma(f)                                      # optional - magma
+            sage: magma(f)
             w^2 + 2/3*x^3*z + 5
         """
         R = magma(self.parent())

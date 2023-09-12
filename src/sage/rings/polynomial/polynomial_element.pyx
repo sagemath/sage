@@ -1585,7 +1585,7 @@ cdef class Polynomial(CommutativePolynomial):
         error the product may not always exactly equal the constant
         polynomial 1 and have extra terms with coefficients close to zero. ::
 
-            sage: # needs sage.modules
+            sage: # needs scipy sage.modules
             sage: R.<x> = RDF[]
             sage: epsilon = RDF(1).ulp()*50   # Allow an error of up to 50 ulp
             sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14
@@ -2131,7 +2131,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check root computation over large finite fields::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.m4ri sage.rings.finite_rings
             sage: K.<a> = GF(2**50)
             sage: x = polygen(K)
             sage: (x**10+x+a).any_root()
