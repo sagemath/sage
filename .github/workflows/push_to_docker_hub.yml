@@ -5,7 +5,6 @@ on:
     # Allow to run manually
     branches:
       - 'develop'
-      - 'docker_hub_gha'
   push:
     tags:
       # Just create image on pushing a tag
@@ -14,6 +13,7 @@ on:
 jobs:
   sagemath-dev:
     name: Build Docker image on target make-build and push to DockerHub sagemath-dev
+    # target make-build replaces former sagemath-dev, see https://github.com/sagemath/sage/pull/36047
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +25,7 @@ jobs:
         id: set_tag
         run: |
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          TAG_NAME=$(git tag --sort=v:refname | tail -1)
+          TAG_NAME=$(git tag --sort=creatordate | tail -1)
           TAG="sagemath/sagemath-dev:$TAG_NAME"
           TAG_LIST="$TAG, sagemath/sagemath-dev:develop"
           TAG_LIST="$TAG" # don't tag develop until meaning of sagemath-dev is clear
@@ -40,15 +40,6 @@ jobs:
           TAG_LIST="${{ env.TAG_LIST }}"  # don't tag latest until meaning of sagemath-dev is clear
           echo "TAG_LIST=$TAG_LIST" >> $GITHUB_ENV
         if: "!contains(env.TAG_NAME, 'beta') && !contains(env.TAG_NAME, 'rc')"
-
-      - name: Check env
-        run: |
-          echo ${{ env.TAG_NAME }}
-          echo ${{ env.TAG }}
-          echo ${{ env.TAG_LIST }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -84,7 +75,7 @@ jobs:
         id: set_tag
         run: |
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          TAG_NAME=$(git tag --sort=v:refname | tail -1)
+          TAG_NAME=$(git tag --sort=creatordate | tail -1)
           TAG="sagemath/sagemath:$TAG_NAME"
           TAG_LIST="$TAG, sagemath/sagemath:develop"
           BASE="sagemath/sagemath-dev:$TAG_NAME"
@@ -99,9 +90,6 @@ jobs:
           TAG_LIST="${{ env.TAG_LIST }}, sagemath/sagemath:latest"
           echo "TAG_LIST=$TAG_LIST" >> $GITHUB_ENV
         if: "!contains(env.TAG_NAME, 'beta') && !contains(env.TAG_NAME, 'rc')"
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
