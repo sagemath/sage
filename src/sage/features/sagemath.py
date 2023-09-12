@@ -616,7 +616,6 @@ class sage__libs__singular(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.singular',
                              [PythonModule('sage.libs.singular.singular'),
                               PythonModule('sage.interfaces.singular'),
-                              PythonModule('sage.rings.function_field.function_field_polymod'),
                               PythonModule('sage.rings.polynomial.plural')])
 
 
@@ -938,6 +937,20 @@ class sage__rings__padics(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``sage.rings.padics``.
 
+    This includes the element implementations using :ref:`PARI <spkg_pari>` and :ref:`NTL <spkg_ntl>`.
+
+    EXAMPLES::
+
+        sage: Qp(3)                                                                     # needs sage.rings.padics
+        sage: Qq(125)                                                                   # needs sage.rings.padics
+
+    Some other precision models require the additional feature :mod:`sage.libs.flint`::
+
+        sage: R.<a> = QqFP(25, 40); R                                                   # needs sage.libs.flint sage.rings.padics
+        5-adic Unramified Extension Field in a defined by x^2 + 4*x + 2
+        sage: R.<a> = Zq(9, 5, 'fixed-mod', print_mode='series'); b = 3*(1+2*a)^4; b    # needs sage.libs.flint sage.rings.padics
+        2*3 + (2*a + 2)*3^2 + (2*a + 1)*3^3
+
     TESTS::
 
         sage: from sage.features.sagemath import sage__rings__padics
@@ -953,7 +966,9 @@ class sage__rings__padics(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.rings.padics',
-                             [PythonModule('sage.rings.padics.factory')],
+                             [PythonModule('sage.rings.padics.factory'),
+                              PythonModule('sage.rings.padics.padic_ext_element'),
+                              PythonModule('polynomial_padic_capped_relative_dense')],
                              type='standard')
 
 
