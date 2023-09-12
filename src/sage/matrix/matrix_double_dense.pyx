@@ -100,7 +100,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         sage: m**2
         [ 7.0 10.0]
         [15.0 22.0]
-        sage: m^(-1)        # rel tol 1e-15
+        sage: m^(-1)        # rel tol 1e-15                                             # needs scipy
         [-1.9999999999999996  0.9999999999999998]
         [ 1.4999999999999998 -0.4999999999999999]
 

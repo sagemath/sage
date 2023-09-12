@@ -170,7 +170,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: (A - L*L.T).norm(1) < 1e-10
             True
             sage: B = A.dense_matrix()
-            sage: (B.cholesky() - L).norm(1) < 1e-10
+            sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
 
         ::
@@ -184,7 +184,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: (A - L*L.H).norm(1) < 1e-10
             True
             sage: B = A.dense_matrix()
-            sage: (B.cholesky() - L).norm(1) < 1e-10
+            sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
         """
         cdef Matrix L # output matrix

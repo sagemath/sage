@@ -20,8 +20,8 @@ TESTS::
     [8.000000000000000 11.00000000000000]
     [22.00000000000000 41.00000000000000]
 
-    sage: mat = matrix(ComplexBallField(20), 2, 2, list(range(4)))*i/3
-    sage: loads(dumps(mat)).identical(mat)
+    sage: mat = matrix(ComplexBallField(20), 2, 2, list(range(4)))*i/3                  # needs sage.symbolic
+    sage: loads(dumps(mat)).identical(mat)                                              # needs sage.symbolic
     True
 """
 # ****************************************************************************
