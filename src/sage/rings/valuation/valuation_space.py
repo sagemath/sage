@@ -511,8 +511,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 sage: valuations.TrivialValuation(ZZ).residue_ring()
                 Integer Ring
                 sage: GaussValuation(ZZ['x'], ZZ.valuation(2)).residue_ring()
-                Univariate Polynomial Ring in x over Finite Field of size 2 (using ...)
-
+                Univariate Polynomial Ring in x over Finite Field of size 2...
 
             """
 
@@ -1337,7 +1336,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             TESTS::
 
                 sage: v = QQ.valuation(5)
-                sage: v._test_value_semigroup()
+                sage: v._test_value_semigroup()                                         # needs sage.geometry.polyhedron
 
             """
             tester = self._tester(**options)
@@ -1356,7 +1355,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             TESTS::
 
                 sage: v = QQ.valuation(5)
-                sage: v._test_element_with_valuation()
+                sage: v._test_element_with_valuation()                                  # needs sage.geometry.polyhedron
 
             """
             tester = self._tester(**options)

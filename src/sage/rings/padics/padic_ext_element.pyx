@@ -5,6 +5,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic Extension Element
 
@@ -281,7 +282,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(566)
             sage: a._const_term_test()
@@ -321,7 +322,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: y = W(775, 19); y
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + O(w^19)
@@ -443,6 +444,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         Unramified case::
 
+            sage: # needs sage.libs.flint
             sage: R = ZpCA(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -467,6 +469,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: K = Qp(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -475,6 +478,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
             ...
             ValueError: element must have non-negative valuation in order to compute residue
 
+            sage: # needs sage.libs.flint
             sage: R = ZpFM(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 3)

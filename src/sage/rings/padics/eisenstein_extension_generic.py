@@ -32,8 +32,8 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7) #indirect doctest
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2+7)  #indirect doctest                               # needs sage.libs.ntl sage.rings.padics
         """
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         #self._precompute()
@@ -47,13 +47,13 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(5^3)
-            sage: K._extension_type()
+            sage: K.<a> = Qq(5^3)                                                       # needs sage.libs.ntl
+            sage: K._extension_type()                                                   # needs sage.libs.ntl
             'Unramified'
 
             sage: x = polygen(ZZ, 'x')
-            sage: L.<pi> = Qp(5).extension(x^2 - 5)
-            sage: L._extension_type()
+            sage: L.<pi> = Qp(5).extension(x^2 - 5)                                     # needs sage.libs.ntl
+            sage: L._extension_type()                                                   # needs sage.libs.ntl
             'Eisenstein'
         """
         return "Eisenstein"
@@ -64,13 +64,13 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_e()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_e()                                                        # needs sage.libs.ntl
             1
 
             sage: x = polygen(ZZ, 'x')
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_e()
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_e()                                                        # needs sage.libs.ntl
             2
         """
         return self.modulus().degree() * self.base_ring().absolute_e()
@@ -85,9 +85,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2 + 7)
-            sage: B.inertia_subring()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2 + 7)                                                # needs sage.libs.ntl
+            sage: B.inertia_subring()                                                   # needs sage.libs.ntl
             7-adic Ring with capped relative precision 10
         """
         return self.ground_ring()
@@ -107,9 +107,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2 + 7)
-            sage: B.residue_class_field()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2 + 7)                                                # needs sage.libs.ntl
+            sage: B.residue_class_field()                                               # needs sage.libs.ntl
             Finite Field of size 7
         """
         return self.ground_ring().residue_class_field()
@@ -121,13 +121,13 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: S.<x> = ZZ[]
-            sage: W.<w> = Zp(5).extension(x^2 - 5)
-            sage: W.residue_ring(1)
+            sage: W.<w> = Zp(5).extension(x^2 - 5)                                      # needs sage.libs.ntl
+            sage: W.residue_ring(1)                                                     # needs sage.libs.ntl
             Ring of integers modulo 5
 
         The following requires implementing more general Artinian rings::
 
-            sage: W.residue_ring(2)
+            sage: W.residue_ring(2)                                                     # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -170,9 +170,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2 + 7)
-            sage: B.gen()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2 + 7)                                                # needs sage.libs.ntl
+            sage: B.gen()                                                               # needs sage.libs.ntl
             t + O(t^21)
         """
         if n != 0:
@@ -187,9 +187,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2 + 7)
-            sage: B.uniformizer_pow(5)
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2 + 7)                                                # needs sage.libs.ntl
+            sage: B.uniformizer_pow(5)                                                  # needs sage.libs.ntl
             t^5 + O(t^25)
         """
         if n is infinity:
@@ -205,9 +205,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2 + 7)
-            sage: B.uniformizer()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2 + 7)                                                # needs sage.libs.ntl
+            sage: B.uniformizer()                                                       # needs sage.libs.ntl
             t + O(t^21)
         """
         return self.gen()
@@ -220,9 +220,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B._uniformizer_print()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2+7)                                                  # needs sage.libs.ntl
+            sage: B._uniformizer_print()                                                # needs sage.libs.ntl
             't'
         """
         return self.variable_name()

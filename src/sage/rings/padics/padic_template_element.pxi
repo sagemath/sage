@@ -98,6 +98,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS::
 
+            sage: # needs sage.libs.ntl
             sage: QQq.<zz> = Qq(25,4)
             sage: FFp = Zp(5,5).residue_field()
             sage: QQq(FFp.zero())
@@ -518,6 +519,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         Check to see that :trac:`10292` is resolved::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve('37a')
             sage: R = E.padic_regulator(7)
             sage: len(R.expansion())

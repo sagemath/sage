@@ -40,6 +40,7 @@ class pAdicRelativeBaseringInjection(Morphism):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.ntl
         sage: K.<a> = Qq(125)
         sage: R.<x> = K[]
         sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -54,6 +55,7 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -73,11 +75,12 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125,2)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
             sage: f = W.coerce_map_from(K)
-            sage: f(a+5) # indirect doctest
+            sage: f(a+5)  # indirect doctest
             a + (4*a^2 + 4*a + 3)*w^3 + (a + 2)*w^4 + (2*a^2 + 4*a + 2)*w^5 + O(w^6)
         """
         if x.is_zero():
@@ -92,13 +95,14 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125,2)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
             sage: f = W.coerce_map_from(K)
             sage: f(5*a,5)
             (4*a^2 + a + 3)*w^3 + (a^2 + 2*a)*w^4 + O(w^5)
-            sage: f(5*a,8,2) # indirect doctest
+            sage: f(5*a,8,2)  # indirect doctest
             (4*a^2 + a + 3)*w^3 + (a^2 + 2*a)*w^4 + O(w^5)
         """
         return self.codomain()([x], *args, **kwds)
@@ -109,6 +113,7 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125,2)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -125,6 +130,7 @@ class pAdicRelativeBaseringSection(Morphism):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.ntl
         sage: K.<a> = Qq(2^10)
         sage: R.<x> = K[]
         sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6)
@@ -139,6 +145,7 @@ class pAdicRelativeBaseringSection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^10)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6*a)
@@ -154,11 +161,12 @@ class pAdicRelativeBaseringSection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^10)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6*a)
             sage: f = K.convert_map_from(W)
-            sage: f(a + w - w) # indirect doctest
+            sage: f(a + w - w)  # indirect doctest
             a + O(2^20)
             sage: f(w)
             Traceback (most recent call last):
@@ -176,11 +184,12 @@ class pAdicRelativeBaseringSection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^10)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6*a)
             sage: f = K.convert_map_from(W)
-            sage: f(a, 5) # indirect doctest
+            sage: f(a, 5)  # indirect doctest
             a + O(2^5)
         """
         return self.codomain()(self._call_(x), *args, **kwds)
@@ -191,6 +200,7 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: A.<a> = ZqFM(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -204,10 +214,11 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: A.<a> = ZqFM(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
-            sage: TestSuite(W).run(max_samples=16) # long time
+            sage: TestSuite(W).run(max_samples=16)      # long time
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
@@ -226,6 +237,7 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: A.<a> = ZqCA(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -239,10 +251,11 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: A.<a> = ZqCA(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
-            sage: TestSuite(W).run(max_samples=16) # long time
+            sage: TestSuite(W).run(max_samples=16)      # long time
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
@@ -261,6 +274,7 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
 
     EXAMPLES::
 
+        sage: # needs sage.libs.ntl
         sage: A.<a> = ZqCR(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -274,10 +288,11 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: A.<a> = ZqCR(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
-            sage: TestSuite(W).run(max_samples=16) # long time
+            sage: TestSuite(W).run(max_samples=16)      # long time
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
@@ -296,6 +311,7 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
 
     EXAMPLES::
 
+        sage: # needs sage.libs.ntl
         sage: A.<a> = QqCR(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -309,10 +325,11 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: A.<a> = QqCR(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
-            sage: TestSuite(W).run(max_samples=16) # long time
+            sage: TestSuite(W).run(max_samples=16)      # long time
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
@@ -333,6 +350,7 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: A.<a> = ZqFP(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -346,10 +364,11 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: A.<a> = ZqFP(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
-            sage: TestSuite(W).run(max_samples=16) # long time
+            sage: TestSuite(W).run(max_samples=16)      # long time
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
@@ -368,6 +387,7 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: A.<a> = QqFP(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -381,10 +401,11 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: A.<a> = QqFP(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
-            sage: TestSuite(W).run(max_samples=16) # long time
+            sage: TestSuite(W).run(max_samples=16)      # long time
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()

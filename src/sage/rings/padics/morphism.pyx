@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-pari
+# sage.doctest: needs sage.libs.ntl
 """
 Frobenius endomorphisms on p-adic fields
 """
