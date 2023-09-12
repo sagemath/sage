@@ -654,6 +654,8 @@ if __name__ == "__main__":
                     else:
                         for d in stats.values():
                             del d['walltime']
+                        stats = {k: d for k, d in stats.items()
+                                 if d.get('failed') or d.get('ntests', True)}
                         if extras:
                             extras_suffix = '--' + '--'.join(extras.split(','))
                         else:

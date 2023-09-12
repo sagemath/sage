@@ -418,7 +418,7 @@ class DocTestReporter(SageObject):
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s"%fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6)
+                stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
                 if not the_baseline_stats.get('failed', False):
                     self.error_status |= 4
             elif return_code:
@@ -434,7 +434,7 @@ class DocTestReporter(SageObject):
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6)
+                stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
                 if not the_baseline_stats.get('failed', False):
                     self.error_status |= (8 if return_code > 0 else 16)
             else:
@@ -490,9 +490,9 @@ class DocTestReporter(SageObject):
                     if hasattr(result_dict, 'tb'):
                         log(result_dict.tb)
                     if hasattr(result_dict, 'walltime'):
-                        stats[basename] = dict(failed=True, walltime=wall)
+                        stats[basename] = dict(failed=True, walltime=wall, ntests=ntests)
                     else:
-                        stats[basename] = dict(failed=True, walltime=1e6)
+                        stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
                     self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
@@ -504,9 +504,9 @@ class DocTestReporter(SageObject):
                         if not the_baseline_stats.get('failed', False):
                             self.error_status |= 1
                     if f or result_dict.err == 'tab':
-                        stats[basename] = dict(failed=True, walltime=wall)
+                        stats[basename] = dict(failed=True, walltime=wall, ntests=ntests)
                     else:
-                        stats[basename] = dict(walltime=wall)
+                        stats[basename] = dict(walltime=wall, ntests=ntests)
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 
