@@ -28,7 +28,6 @@ jobs:
           TAG_NAME=$(git tag --sort=creatordate | tail -1)
           TAG="sagemath/sagemath-dev:$TAG_NAME"
           TAG_LIST="$TAG, sagemath/sagemath-dev:develop"
-          TAG_LIST="$TAG" # don't tag develop until meaning of sagemath-dev is clear
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "TAG=$TAG" >> $GITHUB_ENV
           echo "TAG_LIST=$TAG_LIST" >> $GITHUB_ENV
