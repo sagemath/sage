@@ -1268,12 +1268,13 @@ class SignedPermutation(ColoredPermutation,
         Return a pair of partitions of ``len(self)`` corresponding to the
         signed cycle type of ``self``.
 
-        A *cycle* is a tuple `C = (c_0, \ldots, c_k)` with `\pi(c_i) = c_{i+1}`
-        for `0 \leq i < k` and `\pi(c_k) = c_0`. If `C` is a cycle,
-        `\overline{C} = (-c_0, \ldots, -c_k)` is also a cycle. A cycle is
-        *negative*, if `C = \overline{C}` up to cyclic reordering. In this
-        case, `k` is necessarily even and the length of `C` is `k/2`.
-        A *positive cycle* is a pair `C \overline{C}`, its length is `k`.
+        A *cycle* is a tuple `C = (c_0, \ldots, c_{k-1})` with
+        `\pi(c_i) = c_{i+1}` for `0 \leq i < k` and `\pi(c_{k-1}) = c_0`.
+        If `C` is a cycle, `\overline{C} = (-c_0, \ldots, -c_{k-1})` is
+        also a cycle. A cycle is *negative*, if `C = \overline{C}` up
+        to cyclic reordering. In this case, `k` is necessarily even
+        and the length of `C` is `k/2`. A *positive cycle* is a pair
+        `C \overline{C}`, its length is `k`.
 
         Let `\alpha` be the partition whose parts are the lengths of the
         positive cycles and let `\beta` be the partition whose parts are
