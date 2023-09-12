@@ -87,6 +87,8 @@ class Representation_abstract:
         tester = self._tester(**options)
         S = tester.some_elements()
         elts = self._lie_algebra.basis()
+        if elts.cardinality() == float('inf'):
+            elts = list(elts.some_elements())
         from sage.misc.misc import some_tuples
         for x, y in some_tuples(elts, 2, tester._max_runs):
             for v in S:
