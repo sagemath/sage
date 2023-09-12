@@ -40,7 +40,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         TESTS::
 
-            sage: R = Zp(5) #indirect doctest
+            sage: R = Zp(5)  #indirect doctest
         """
         if self.is_relaxed():
             from sage.rings.padics.pow_computer_flint import PowComputer_flint
@@ -92,21 +92,21 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: K = Zp(17); K #indirect doctest
+            sage: K = Zp(17); K  #indirect doctest
             17-adic Ring with capped relative precision 20
             sage: latex(K)
             \Bold{Z}_{17}
-            sage: K = ZpCA(17); K #indirect doctest
+            sage: K = ZpCA(17); K  #indirect doctest
             17-adic Ring with capped absolute precision 20
             sage: latex(K)
             \Bold{Z}_{17}
-            sage: K = ZpFP(17); K #indirect doctest
+            sage: K = ZpFP(17); K  #indirect doctest
             17-adic Ring with floating precision 20
             sage: latex(K)
             \Bold{Z}_{17}
             sage: K = ZpFM(7); K
             7-adic Ring of fixed modulus 7^20
-            sage: latex(K) #indirect doctest
+            sage: latex(K)  #indirect doctest
             \Bold{Z}_{7}
             sage: K = ZpLF(2); K   # indirect doctest
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
@@ -114,11 +114,11 @@ class pAdicBaseGeneric(pAdicGeneric):
             2-adic Ring with lattice-float precision
             sage: latex(K)
             \Bold{Z}_{2}
-            sage: K = Qp(17); K #indirect doctest
+            sage: K = Qp(17); K  #indirect doctest
             17-adic Field with capped relative precision 20
             sage: latex(K)
             \Bold{Q}_{17}
-            sage: K = QpFP(17); K #indirect doctest
+            sage: K = QpFP(17); K  #indirect doctest
             17-adic Field with floating precision 20
             sage: latex(K)
             \Bold{Q}_{17}

@@ -126,16 +126,16 @@ cdef class pAdicCappedRelativeElement(CRElement):
     Construct from Pari objects::
 
         sage: R = Zp(5)
-        sage: x = pari(123123) ; R(x)
+        sage: x = pari(123123) ; R(x)                                                   # needs sage.libs.pari
         3 + 4*5 + 4*5^2 + 4*5^3 + 5^4 + 4*5^5 + 2*5^6 + 5^7 + O(5^20)
         sage: R(pari(R(5252)))
         2 + 2*5^3 + 3*5^4 + 5^5 + O(5^20)
         sage: R = Zp(5,prec=5)
         sage: R(pari(-1))
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(-1))
+        sage: pari(R(-1))                                                               # needs sage.libs.pari
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(0))
+        sage: pari(R(0))                                                                # needs sage.libs.pari
         0
         sage: R(pari(R(0,5)))
         O(5^5)
@@ -201,11 +201,11 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(17, 10); a = ~R(14); pari(a) #indirect doctest
+            sage: R = Zp(17, 10); a = ~R(14); pari(a)  #indirect doctest
             11 + 3*17 + 17^2 + 6*17^3 + 13*17^4 + 15*17^5 + 10*17^6 + 3*17^7 + 17^8 + 6*17^9 + O(17^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(17^5)
         """
         return self._to_gen()
@@ -216,13 +216,13 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(5, 10); a = R(17); pari(a) #indirect doctest
+            sage: R = Zp(5, 10); a = R(17); pari(a)  #indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^5)
-            sage: pari(R(0,5)).debug()
+            sage: pari(R(0,5)).debug()                                                  # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=5):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
@@ -535,7 +535,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R.<w> = Zq(7^2,5)
+            sage: R.<w> = Zq(7^2,5)                                                     # needs sage.libs.ntl
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)

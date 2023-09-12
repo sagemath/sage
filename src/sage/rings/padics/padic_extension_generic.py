@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.ntl
 """
 `p`-adic Extension Generic
 
@@ -49,7 +50,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
-            sage: W.<w> = R.ext(f) #indirect doctest
+            sage: W.<w> = R.ext(f)  #indirect doctest
         """
         #type checking done in factory
         self._given_poly = poly
@@ -72,7 +73,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
             sage: R = Zp(5); S.<x> = ZZ[]; f = x^5 + 25*x - 5; W.<w> = R.ext(f)
             sage: L = W.fraction_field()
-            sage: w + L(w) #indirect doctest
+            sage: w + L(w)  #indirect doctest
             2*w + O(w^101)
             sage: w + R(5,2)
             w + w^5 + O(w^10)
@@ -141,7 +142,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             '\\Bold{Z}_{7^{3}}'
             sage: x = polygen(ZZ, 'x')
             sage: R2.<t> = R.ext(x^2 + 7)
-            sage: R2 #indirect doctest
+            sage: R2  #indirect doctest
             7-adic Eisenstein Extension Ring in t defined by x^2 + 7
             sage: R2._latex_()
             '\\Bold{Z}_{7}[t]'
@@ -155,7 +156,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: K1._latex_()
             '\\Bold{Q}_{7^{3}}'
             sage: K2.<t> = K.ext(x^2+7)
-            sage: K2 #indirect doctest
+            sage: K2  #indirect doctest
             7-adic Eisenstein Extension Field in t defined by x^2 + 7
             sage: K2._latex_()
             '\\Bold{Q}_{7}[t]'
@@ -734,7 +735,7 @@ class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
 
         sage: K.<a> = Qq(125)
         sage: V, fr, to = K.free_module()
-        sage: TestSuite(fr).run(skip=['_test_nonzero_equal']) # skipped since Qq(125) doesn't have dimension()
+        sage: TestSuite(fr).run(skip=['_test_nonzero_equal'])  # skipped since Qq(125) doesn't have dimension()
     """
     def _call_(self, x):
         """
@@ -795,7 +796,7 @@ class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
         sage: R.<x> = ZZ[]
         sage: L.<b> = K.extension(x^2 - 5*x + 5)
         sage: V, fr, to = L.free_module(base=Qp(5))
-        sage: TestSuite(fr).run(skip=['_test_nonzero_equal']) # skipped since L doesn't have dimension()
+        sage: TestSuite(fr).run(skip=['_test_nonzero_equal'])  # skipped since L doesn't have dimension()
     """
     def _call_(self, x):
         """
@@ -939,7 +940,7 @@ class DefPolyConversion(Morphism):
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: z = W.random_element()
-            sage: r = repr(W.change(print_mode='digits')(z, absprec=8)) # indirect doctest
+            sage: r = repr(W.change(print_mode='digits')(z, absprec=8))  # indirect doctest
             sage: r[:3] == '...'
             True
             sage: all(l in ['0', '1', '2'] for l in r[3:])

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.ntl
 """
 p-adic Capped Relative Dense Polynomials
 """
