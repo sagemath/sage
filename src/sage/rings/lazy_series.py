@@ -57,7 +57,7 @@ We can do arithmetic with lazy power series::
     sage: f
     1 + z + 2*z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + O(z^7)
     sage: f^-1
-    1 - z - z^2 + O(z^7)
+    1 - z - z^2
     sage: f + f^-1
     2 + z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + O(z^7)
     sage: g = (f + f^-1)*(f - f^-1); g
@@ -3256,10 +3256,20 @@ class LazyCauchyProductSeries(LazyModuleElement):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: cannot divide by a series of positive valuation
+
+        Check that :issue:`36253` is fixed::
+
+            sage: f = L(lambda n: n)
+            sage: ~f
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: cannot divide by a series of positive valuation
         """
         P = self.parent()
         coeff_stream = self._coeff_stream
-        if P._minimal_valuation is not None and coeff_stream._approximate_order > 0:
+        if (P._minimal_valuation is not None
+            and (coeff_stream._approximate_order > 0
+                 or not coeff_stream.is_uninitialized() and not coeff_stream[0])):
             raise ZeroDivisionError("cannot divide by a series of positive valuation")
 
         # the inverse is exact if and only if coeff_stream corresponds to one of
@@ -3411,9 +3421,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: 1 / f
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: cannot divide by 0
+            ZeroDivisionError: cannot divide by a series of positive valuation
             sage: L.options._reset()
         """
+        if self.is_one():
+            return ~other
         if not other:
             raise ZeroDivisionError("cannot divide by 0")
 
@@ -4351,6 +4363,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                     R = P.base_ring()
                     # we cannot assume that the last initial coefficient
                     # and the constant differ, see stream.Stream_exact
+                    # TODO: provide example or remove this claim
                     if (coeff_stream._degree == 1 + len(coeff_stream._initial_coefficients)
                         and coeff_stream._constant == -R.one()
                         and all(c == -R.one() for c in coeff_stream._initial_coefficients)):
