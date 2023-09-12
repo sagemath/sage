@@ -345,6 +345,7 @@ def PermutationGroup(gens=None, *args, **kwds):
     Note that we provide generators for the acting group.  The
     permutation group we construct is its homomorphic image::
 
+        sage: # needs sage.combinat
         sage: a = lambda g, x: vector(g*x, immutable=True)
         sage: X = [vector(x, immutable=True) for x in GF(3)^2]
         sage: G = SL(2,3); G.gens()
@@ -1548,6 +1549,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: g = graphs.PetersenGraph()
             sage: g.relabel(list("abcdefghik"))
             sage: g.vertices(sort=True)
@@ -3705,6 +3707,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         But the automorphism group of Petersen's graph does not::
 
+            sage: # needs sage.graphs
             sage: G = graphs.PetersenGraph().automorphism_group()
             sage: G.has_regular_subgroup()
             False
@@ -3766,6 +3769,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         Picking an interesting group::
 
+            sage: # needs sage.graphs
             sage: g = graphs.DodecahedralGraph()
             sage: g.is_vertex_transitive()
             True
@@ -3775,12 +3779,12 @@ class PermutationGroup_generic(FiniteGroup):
 
         Computing its blocks representatives::
 
-            sage: ag.blocks_all()
+            sage: ag.blocks_all()                                                       # needs sage.graphs
             [[0, 15]]
 
         Now the full block::
 
-            sage: sorted(ag.blocks_all(representatives = False)[0])
+            sage: sorted(ag.blocks_all(representatives=False)[0])                       # needs sage.graphs
             [[0, 15], [1, 16], [2, 12], [3, 13], [4, 9],
              [5, 10], [6, 11], [7, 18], [8, 17], [14, 19]]
 
@@ -3976,6 +3980,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CompleteGraph(4)
             sage: g.relabel(['a','b','c','d'])
             sage: mgs = g.automorphism_group().minimal_generating_set(); len(mgs)
