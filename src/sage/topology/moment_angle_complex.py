@@ -1086,6 +1086,7 @@ class CohomologyRing(CombinatorialFreeModule):
         Return the multiplicative identity element.
 
         EXAMPLES::
+
             sage: Z = MomentAngleComplex([[1,2], [3,4], [2,3,5], [1,5], [4,5]])
             sage: H = Z.cohomology_ring()
             sage: H.one()
@@ -1096,6 +1097,20 @@ class CohomologyRing(CombinatorialFreeModule):
         one = self._base_ring.one()
         d = {(0, i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
+
+    def complex(self):
+        """
+        Return the moment-angle complex associated with ``self``.
+
+        EXAMPLES::
+
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: H = MomentAngleComplex(S2).cohomology_ring()
+            sage: H.complex()
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3) and facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
+        """
+        return self._complex
 
     @cached_method
     def _to_cycle_on_basis(self, i):
