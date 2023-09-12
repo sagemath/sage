@@ -2429,7 +2429,7 @@ class Sandpile(DiGraph):
             sage: p[0]
             [{0: -8, 1: 5, 2: 4, 3: 1},
              Simplicial complex with vertex set (1, 2, 3) and facets {(3,), (1, 2)}]
-            sage: S.resolution()
+            sage: S.resolution()                                                        # needs sage.libs.singular
             'R^1 <-- R^5 <-- R^5 <-- R^1'
             sage: S.betti()                                                             # needs sage.libs.singular
                        0     1     2     3
