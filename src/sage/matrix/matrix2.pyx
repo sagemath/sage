@@ -382,7 +382,7 @@ cdef class Matrix(Matrix1):
         A degenerate case::
 
             sage: A = matrix(RDF, 0, 0, [])
-            sage: A.solve_left(vector(RDF,[]))
+            sage: A.solve_left(vector(RDF,[]))                                          # needs scipy
             ()
 
         Over an inexact ring like ``RDF``, the coefficient matrix of a
@@ -677,7 +677,7 @@ cdef class Matrix(Matrix1):
             sage: b = vector(RDF, [5, 6, 1])
             sage: A.solve_right(b)  # tol 1e-14                                         # needs scipy
             (1.4782608695652177, 0.35177865612648235)
-            sage: ~(A.T * A) * A.T * b  # closed form solution, tol 1e-14
+            sage: ~(A.T * A) * A.T * b  # closed form solution, tol 1e-14               # needs scipy
             (1.4782608695652177, 0.35177865612648235)
 
         Over the reals::
@@ -1579,7 +1579,7 @@ cdef class Matrix(Matrix1):
             sage: (~M * M).norm()  # a considerable error                               # needs scipy
             1.3...
             sage: Mx = M.pseudoinverse(algorithm="exact")
-            sage: (Mx*M).norm()  # huge error
+            sage: (Mx * M).norm()  # huge error                                         # needs scipy
             11.5...
             sage: Mx = M.pseudoinverse(algorithm="numpy")                               # needs numpy
             sage: (Mx * M).norm()  # still OK
@@ -7404,6 +7404,7 @@ cdef class Matrix(Matrix1):
         Running this test independently, without adjusting the eigenvectors
         could indicate this situation on your hardware.  ::
 
+            sage: # needs scipy
             sage: B = matrix(QQ, 3, 3, range(9))
             sage: em = B.change_ring(RDF).eigenmatrix_right()
             sage: evalues = em[0]; evalues.dense_matrix()  # abs tol 1e-13
@@ -7421,7 +7422,7 @@ cdef class Matrix(Matrix1):
 
         The following example shows that :trac:`20439` has been resolved::
 
-            sage: # needs sage.rings.complex_double
+            sage: # needs scipy sage.rings.complex_double
             sage: A = matrix(CDF, [[-2.53634347567,  2.04801738686, -0.0, -62.166145304],
             ....:                  [ 0.7, -0.6, 0.0, 0.0],
             ....:                  [0.547271128842, 0.0, -0.3015, -21.7532081652],
@@ -7433,7 +7434,7 @@ cdef class Matrix(Matrix1):
         The following example shows that the fix for :trac:`20439` (conjugating
         eigenvectors rather than eigenvalues) is the correct one::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
+            sage: # needs scipy sage.rings.complex_double sage.symbolic
             sage: A = Matrix(CDF,[[I,0],[0,1]])
             sage: D, P = A.eigenmatrix_right()
             sage: (A*P - P*D).norm() < 10^(-2)
@@ -10820,6 +10821,7 @@ cdef class Matrix(Matrix1):
         A rectangular matrix.  Note that the ``orthonormal`` keyword
         is ignored in these cases.  ::
 
+            sage: # needs scipy
             sage: A = matrix(RDF, [[-0.978325, -0.751994, 0.925305, -0.200512, 0.420458],
             ....:                  [-0.474877, -0.983403, 0.089836,  0.132218, 0.672965]])
             sage: G, M = A.gram_schmidt(orthonormal=False)
@@ -10842,6 +10844,7 @@ cdef class Matrix(Matrix1):
         are treated as being of full rank.  Try one of the base rings that
         provide exact results if you need exact results.  ::
 
+            sage: # needs scipy
             sage: entries = [[1,1,2], [2,1,3], [3,1,4]]
             sage: A = matrix(QQ, entries)
             sage: A.rank()
@@ -14492,7 +14495,7 @@ cdef class Matrix(Matrix1):
             sage: L*D*L.T
             [1e-10   1.0]
             [  1.0   0.0]
-            sage: A.block_ldlt()
+            sage: A.block_ldlt()                                                        # needs scipy
             (
             [1.0 0.0]  [1.0 0.0]  [1e-10   1.0]
             [0.0 1.0], [0.0 1.0], [  1.0 2e-10]
@@ -14502,7 +14505,7 @@ cdef class Matrix(Matrix1):
         but `P^{T}AP` will ideally be close to `LDL^{*}` in the metric
         induced by the norm::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
+            sage: # needs scipy sage.rings.complex_double sage.symbolic
             sage: A = matrix(CDF, 2, 2, [ [-1.1933, -0.3185 - 1.3553*I],
             ....:                         [-0.3185 + 1.3553*I, 1.5729 ] ])
             sage: P,L,D = A.block_ldlt()
@@ -14833,7 +14836,7 @@ cdef class Matrix(Matrix1):
             ....:     return ( A.is_hermitian() and
             ....:              all(v >= 0 for v in A.eigenvalues()) )
             sage: expected = is_positive_semidefinite_naive(A)                          # needs scipy
-            sage: actual = A.is_positive_semidefinite()
+            sage: actual = A.is_positive_semidefinite()                                 # needs scipy
             sage: actual == expected                                                    # needs scipy
             True
 
@@ -15402,7 +15405,7 @@ cdef class Matrix(Matrix1):
             sage: Id.norm(2)                                                            # needs scipy
             1.0
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs scipy sage.rings.real_mpfr
             sage: A = matrix(RR, 2, 2, [13,-4,-4,7])
             sage: A.norm()  # rel tol 2e-16
             14.999999999999998
