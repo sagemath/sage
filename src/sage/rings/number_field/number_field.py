@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-flint
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.linbox
 r"""
 Number Fields
 
