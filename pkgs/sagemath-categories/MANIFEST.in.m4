@@ -83,6 +83,7 @@ include sage/misc/random_testing.p*
 include sage/misc/rest_index_of_methods.p*
 include sage/misc/callable_dict.p*
 include sage/misc/search.p*
+include sage/misc/stopgap.p*
 
 ## Data structures
 include sage/misc/binary_tree.p*

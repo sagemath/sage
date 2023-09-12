@@ -8,3 +8,5 @@ from .factory import Qp, Qq, Qp as pAdicField, QpCR, QpFP, QpLC, QpLF, QqCR, QqF
 from .factory import pAdicExtension
 
 from .padic_printing import _printer_defaults as padic_printing
+
+from .pow_computer import PowComputer
