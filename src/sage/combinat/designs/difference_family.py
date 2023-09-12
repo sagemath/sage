@@ -3606,6 +3606,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     return G, D
 
+
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 import sys
 __doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index(sys.modules[__name__]))

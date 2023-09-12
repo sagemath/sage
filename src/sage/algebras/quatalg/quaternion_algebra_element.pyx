@@ -34,7 +34,6 @@ Check that :trac:`20829` is fixed::
 
 from sage.structure.element cimport AlgebraElement, Element
 from sage.structure.richcmp cimport rich_to_bool, rich_to_bool_sgn, richcmp_item
-from sage.algebras.quatalg.quaternion_algebra_element cimport QuaternionAlgebraElement_abstract
 from sage.rings.rational cimport Rational
 from sage.rings.integer cimport Integer
 from sage.rings.number_field.number_field_element cimport NumberFieldElement

@@ -1,6 +1,5 @@
 from sage.categories.map cimport Map
 from sage.rings.ring cimport CommutativeRing, CommutativeAlgebra
-from sage.rings.ring_extension cimport RingExtension_generic
 
 
 cdef class RingExtension_generic(CommutativeAlgebra):

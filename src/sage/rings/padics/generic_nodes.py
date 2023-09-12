@@ -1471,7 +1471,7 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
             else:
                 return self(ZZ.random_element(self.prime_pow.pow_Integer_Integer(self.precision_cap())))
         else:
-            raise NotImplementedError("Don't know %s algorithm"%algorithm)
+            raise NotImplementedError("Don't know %s algorithm" % algorithm)
 
     #def unit_group(self):
     #    raise NotImplementedError
