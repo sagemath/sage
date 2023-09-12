@@ -773,7 +773,10 @@ def lookup_global(name):
             try:
                 import sage.all__sagemath_modules as all
             except ImportError:
-                import sage.all__sagemath_categories as all
+                try:
+                    import sage.all__sagemath_pari as all
+                except ImportError:
+                    import sage.all__sagemath_categories as all
     return getattr(all, name)
 
 
