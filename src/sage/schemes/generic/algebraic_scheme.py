@@ -388,7 +388,7 @@ class AlgebraicScheme(scheme.Scheme):
               To:   Affine Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x, y) to (x, y)
 
-i           sage: # needs sage.graphs sage.geometry.polyhedron sage.libs.singular
+            sage: # needs sage.graphs sage.geometry.polyhedron sage.libs.singular
             sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()
             sage: P1 = P1xP1.subscheme(x - y)
             sage: P1.embedding_morphism()

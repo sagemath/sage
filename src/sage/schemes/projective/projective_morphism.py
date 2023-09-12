@@ -2123,8 +2123,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
              over Finite Field in z4 of size 5^4
               Defn: Defined on coordinates by sending (x : y) to
                     ((z4^3 + z4^2 + z4 - 2)*x^2 + z4*y^2 : x*y)
-            sage: f = DynamicalSystem_projective([L.gen(3)*x^2 + L.gen(2)*y^2, x*y])
-            sage: f.reduce_base_field()                                                 # needs sage.libs.singular
+            sage: f = DynamicalSystem_projective([L.gen(3)*x^2 + L.gen(2)*y^2, x*y])    # needs sage.schemes
+            sage: f.reduce_base_field()                                                 # needs sage.libs.singular sage.schemes
             Dynamical System of Projective Space of dimension 1
              over Finite Field in z6 of size 5^6
               Defn: Defined on coordinates by sending (x : y) to
