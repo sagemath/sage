@@ -119,7 +119,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             sage: A = AffineNilTemperleyLiebTypeA(3); A
             The affine nilTemperley Lieb algebra A3 over the ring Integer Ring
         """
-        return "The affine nilTemperley Lieb algebra A%s over the ring %s"%(self._n, self._base_ring)
+        return "The affine nilTemperley Lieb algebra A%s over the ring %s" % (self._n, self._base_ring)
 
     def weyl_group(self):
         """
@@ -234,7 +234,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             return False
         s = w.parent().simple_reflections()
         wi = w*s[i]
-        adjacent = [(i-1)%w.parent().n, (i+1)%w.parent().n]
+        adjacent = [(i-1) % w.parent().n, (i+1) % w.parent().n]
         for j in adjacent:
             if j in w.descents():
                 if j in wi.descents():
@@ -258,6 +258,6 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         if len(redword) == 0:
             return "1"
         elif short_display:
-            return "*".join("%s%d"%(self._prefix, i) for i in redword)
+            return "*".join("%s%d" % (self._prefix, i) for i in redword)
         else:
-            return "*".join("%s[%d]"%(self._prefix, i) for i in redword)
+            return "*".join("%s[%d]" % (self._prefix, i) for i in redword)

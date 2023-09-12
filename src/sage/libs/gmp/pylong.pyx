@@ -26,7 +26,6 @@ AUTHORS:
 
 
 from cpython.object cimport Py_SIZE
-from cpython.int cimport PyInt_FromLong
 from cpython.long cimport PyLong_FromLong
 from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
 from .mpz cimport *
@@ -85,7 +84,7 @@ cdef mpz_get_pyintlong(mpz_srcptr z):
     if the value is too large.
     """
     if mpz_fits_slong_p(z):
-        return PyInt_FromLong(mpz_get_si(z))
+        return PyLong_FromLong(mpz_get_si(z))
     return mpz_get_pylong_large(z)
 
 

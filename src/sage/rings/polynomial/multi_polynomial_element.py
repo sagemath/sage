@@ -114,7 +114,7 @@ class MPolynomial_element(MPolynomial):
             sage: x + QQbar(sqrt(2) - 1/2*I)  # indirect doctest                        # needs sage.rings.number_field sage.symbolic
             x + 1.414213562373095? - 0.50000000000000000?*I
         """
-        return "%s"%self.__element
+        return "%s" % self.__element
 
     ####################
 
@@ -220,7 +220,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQbar, 2)                                    # needs sage.rings.number_field
             sage: f = R.hom([y, x], R)                                                  # needs sage.rings.number_field
-            sage: f(x^2 + 3*y^5) # indirect doctest                                     # needs sage.rings.number_field
+            sage: f(x^2 + 3*y^5)  # indirect doctest                                    # needs sage.rings.number_field
             3*x^5 + y^2
 
         You can specify a map on the base ring::
@@ -1455,7 +1455,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         variables = list(self.parent().gens())
         for i in range(0,len(variables)):
             if str(variables[i]) in kw:
-                variables[i]=kw[str(variables[i])]
+                variables[i] = kw[str(variables[i])]
             elif fixed and variables[i] in fixed:
                 variables[i] = fixed[variables[i]]
         return self(tuple(variables))
