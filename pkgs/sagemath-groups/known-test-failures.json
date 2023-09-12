@@ -588,7 +588,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -863,9 +865,7 @@
     "sage.groups.perm_gps.partn_ref2.all": {},
     "sage.groups.perm_gps.partn_ref2.refinement_generic": {},
     "sage.groups.perm_gps.partn_ref2.refinement_generic.pxd": {},
-    "sage.groups.perm_gps.permgroup": {
-        "failed": true
-    },
+    "sage.groups.perm_gps.permgroup": {},
     "sage.groups.perm_gps.permgroup_element": {},
     "sage.groups.perm_gps.permgroup_element.pxd": {},
     "sage.groups.perm_gps.permgroup_morphism": {},
@@ -896,7 +896,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1592,9 +1594,7 @@
     "sage.rings.invariants.invariant_theory": {
         "failed": true
     },
-    "sage.rings.invariants.reconstruction": {
-        "failed": true
-    },
+    "sage.rings.invariants.reconstruction": {},
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

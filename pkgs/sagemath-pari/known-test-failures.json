@@ -367,7 +367,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -460,6 +462,7 @@
     "sage.geometry.all__sagemath_categories": {},
     "sage.groups.all__sagemath_categories": {},
     "sage.groups.all__sagemath_objects": {},
+    "sage.groups.all__sagemath_pari": {},
     "sage.groups.generic": {
         "failed": true
     },
@@ -468,6 +471,9 @@
     "sage.groups.groups_catalog": {},
     "sage.groups.old": {},
     "sage.groups.old.pxd": {},
+    "sage.groups.pari_group": {
+        "failed": true
+    },
     "sage.groups.perm_gps.all__sagemath_categories": {},
     "sage.groups.perm_gps.partn_ref.all": {},
     "sage.groups.perm_gps.partn_ref.all__sagemath_categories": {},
@@ -521,9 +527,7 @@
     "sage.libs.pari.all": {},
     "sage.libs.pari.convert_gmp": {},
     "sage.libs.pari.convert_gmp.pxd": {},
-    "sage.libs.pari.convert_sage": {
-        "failed": true
-    },
+    "sage.libs.pari.convert_sage": {},
     "sage.libs.pari.convert_sage.pxd": {},
     "sage.libs.pari.convert_sage_complex_double": {},
     "sage.libs.pari.convert_sage_complex_double.pxd": {},
@@ -653,6 +657,7 @@
     "sage.misc.session": {
         "failed": true
     },
+    "sage.misc.stopgap": {},
     "sage.misc.superseded": {},
     "sage.misc.table": {},
     "sage.misc.temporary_file": {},
@@ -820,6 +825,7 @@
     },
     "sage.rings.function_field.all": {},
     "sage.rings.function_field.all__sagemath_categories": {},
+    "sage.rings.function_field.all__sagemath_pari": {},
     "sage.rings.function_field.constructor": {},
     "sage.rings.function_field.element": {},
     "sage.rings.function_field.element.pxd": {},
@@ -837,6 +843,9 @@
     "sage.rings.function_field.order_rational": {},
     "sage.rings.function_field.place": {},
     "sage.rings.function_field.place_rational": {},
+    "sage.rings.function_field.valuation": {
+        "failed": true
+    },
     "sage.rings.homset": {},
     "sage.rings.ideal": {},
     "sage.rings.ideal_monoid": {},
@@ -854,9 +863,7 @@
     "sage.rings.localization": {
         "failed": true
     },
-    "sage.rings.morphism": {
-        "failed": true
-    },
+    "sage.rings.morphism": {},
     "sage.rings.morphism.pxd": {},
     "sage.rings.multi_power_series_ring": {
         "failed": true
@@ -872,23 +879,77 @@
     "sage.rings.number_field.number_field_element_base": {},
     "sage.rings.number_field.number_field_element_base.pxd": {},
     "sage.rings.number_field.number_field_ideal": {},
+    "sage.rings.padics.CA_template.pxi": {},
+    "sage.rings.padics.CA_template_header.pxi": {},
+    "sage.rings.padics.CR_template.pxi": {},
+    "sage.rings.padics.CR_template_header.pxi": {},
+    "sage.rings.padics.FM_template.pxi": {},
+    "sage.rings.padics.FM_template_header.pxi": {},
+    "sage.rings.padics.FP_template.pxi": {},
+    "sage.rings.padics.FP_template_header.pxi": {},
     "sage.rings.padics.all__sagemath_categories": {},
     "sage.rings.padics.all__sagemath_pari": {},
     "sage.rings.padics.common_conversion": {},
+    "sage.rings.padics.common_conversion.pxd": {},
+    "sage.rings.padics.eisenstein_extension_generic": {},
+    "sage.rings.padics.factory": {
+        "failed": true
+    },
+    "sage.rings.padics.generic_nodes": {},
+    "sage.rings.padics.lattice_precision": {},
     "sage.rings.padics.local_generic": {},
     "sage.rings.padics.local_generic_element": {},
     "sage.rings.padics.local_generic_element.pxd": {},
     "sage.rings.padics.misc": {},
+    "sage.rings.padics.morphism": {},
+    "sage.rings.padics.morphism.pxd": {},
+    "sage.rings.padics.padic_base_generic": {},
+    "sage.rings.padics.padic_base_leaves": {},
     "sage.rings.padics.padic_capped_absolute_element": {},
+    "sage.rings.padics.padic_capped_absolute_element.pxd": {},
     "sage.rings.padics.padic_capped_relative_element": {},
+    "sage.rings.padics.padic_capped_relative_element.pxd": {},
+    "sage.rings.padics.padic_extension_generic": {},
+    "sage.rings.padics.padic_extension_leaves": {},
     "sage.rings.padics.padic_fixed_mod_element": {},
+    "sage.rings.padics.padic_fixed_mod_element.pxd": {},
     "sage.rings.padics.padic_floating_point_element": {},
+    "sage.rings.padics.padic_floating_point_element.pxd": {},
     "sage.rings.padics.padic_generic": {},
-    "sage.rings.padics.precision_error": {},
-    "sage.rings.pari_ring": {
+    "sage.rings.padics.padic_generic_element": {
         "failed": true
     },
+    "sage.rings.padics.padic_generic_element.pxd": {},
+    "sage.rings.padics.padic_lattice_element": {},
+    "sage.rings.padics.padic_printing": {},
+    "sage.rings.padics.padic_printing.pxd": {},
+    "sage.rings.padics.padic_template_element.pxi": {
+        "failed": true
+    },
+    "sage.rings.padics.padic_template_element_header.pxi": {},
+    "sage.rings.padics.padic_valuation": {},
+    "sage.rings.padics.pow_computer": {},
+    "sage.rings.padics.pow_computer.pxd": {},
+    "sage.rings.padics.pow_computer_relative": {},
+    "sage.rings.padics.pow_computer_relative.pxd": {},
+    "sage.rings.padics.precision_error": {},
+    "sage.rings.padics.relative_extension_leaves": {},
+    "sage.rings.padics.relative_ramified_CA": {},
+    "sage.rings.padics.relative_ramified_CA.pxd": {},
+    "sage.rings.padics.relative_ramified_CR": {},
+    "sage.rings.padics.relative_ramified_CR.pxd": {},
+    "sage.rings.padics.relative_ramified_FM": {},
+    "sage.rings.padics.relative_ramified_FM.pxd": {},
+    "sage.rings.padics.relative_ramified_FP": {},
+    "sage.rings.padics.relative_ramified_FP.pxd": {},
+    "sage.rings.padics.relaxed_template.pxi": {},
+    "sage.rings.padics.relaxed_template_header.pxi": {},
+    "sage.rings.padics.tests": {},
+    "sage.rings.padics.tutorial": {},
+    "sage.rings.padics.unramified_extension_generic": {},
+    "sage.rings.pari_ring": {},
     "sage.rings.polynomial.all__sagemath_categories": {},
+    "sage.rings.polynomial.all__sagemath_pari": {},
     "sage.rings.polynomial.commutative_polynomial": {},
     "sage.rings.polynomial.commutative_polynomial.pxd": {},
     "sage.rings.polynomial.cyclotomic": {},
@@ -925,6 +986,10 @@
     "sage.rings.polynomial.multi_polynomial_sequence": {
         "failed": true
     },
+    "sage.rings.polynomial.padics.all": {},
+    "sage.rings.polynomial.padics.polynomial_padic": {},
+    "sage.rings.polynomial.padics.polynomial_padic_capped_relative_dense": {},
+    "sage.rings.polynomial.padics.polynomial_padic_flat": {},
     "sage.rings.polynomial.polydict": {},
     "sage.rings.polynomial.polydict.pxd": {},
     "sage.rings.polynomial.polynomial_compiled": {},
@@ -999,6 +1064,21 @@
     "sage.rings.sum_of_squares": {},
     "sage.rings.sum_of_squares.pxd": {},
     "sage.rings.tests": {},
+    "sage.rings.valuation.all": {},
+    "sage.rings.valuation.augmented_valuation": {
+        "failed": true
+    },
+    "sage.rings.valuation.developing_valuation": {},
+    "sage.rings.valuation.gauss_valuation": {},
+    "sage.rings.valuation.inductive_valuation": {},
+    "sage.rings.valuation.limit_valuation": {},
+    "sage.rings.valuation.mapped_valuation": {},
+    "sage.rings.valuation.scaled_valuation": {},
+    "sage.rings.valuation.trivial_valuation": {},
+    "sage.rings.valuation.valuation": {},
+    "sage.rings.valuation.valuation_space": {},
+    "sage.rings.valuation.valuations_catalog": {},
+    "sage.rings.valuation.value_group": {},
     "sage.schemes.affine.affine_homset": {},
     "sage.schemes.affine.affine_morphism": {
         "failed": true

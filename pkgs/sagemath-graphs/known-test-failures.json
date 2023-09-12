@@ -419,7 +419,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -810,6 +812,7 @@
     "sage.misc.session": {
         "failed": true
     },
+    "sage.misc.stopgap": {},
     "sage.misc.superseded": {},
     "sage.misc.table": {},
     "sage.misc.temporary_file": {},

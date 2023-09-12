@@ -541,7 +541,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -758,7 +760,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -921,9 +925,7 @@
     "sage.matrix.matrix_generic_sparse": {},
     "sage.matrix.matrix_generic_sparse.pxd": {},
     "sage.matrix.matrix_misc": {},
-    "sage.matrix.matrix_numpy_dense": {
-        "failed": true
-    },
+    "sage.matrix.matrix_numpy_dense": {},
     "sage.matrix.matrix_numpy_dense.pxd": {},
     "sage.matrix.matrix_numpy_integer_dense": {},
     "sage.matrix.matrix_numpy_integer_dense.pxd": {},
@@ -1145,9 +1147,7 @@
     "sage.modules.free_module": {
         "failed": true
     },
-    "sage.modules.free_module_element": {
-        "failed": true
-    },
+    "sage.modules.free_module_element": {},
     "sage.modules.free_module_element.pxd": {},
     "sage.modules.free_module_homspace": {},
     "sage.modules.free_module_integer": {
@@ -1194,9 +1194,7 @@
     "sage.modules.vector_modn_dense.pxd": {},
     "sage.modules.vector_modn_sparse": {},
     "sage.modules.vector_modn_sparse.pxd": {},
-    "sage.modules.vector_numpy_dense": {
-        "failed": true
-    },
+    "sage.modules.vector_numpy_dense": {},
     "sage.modules.vector_numpy_dense.pxd": {},
     "sage.modules.vector_numpy_integer_dense": {},
     "sage.modules.vector_numpy_integer_dense.pxd": {},
@@ -1241,9 +1239,7 @@
     },
     "sage.plot.all": {},
     "sage.plot.animate": {},
-    "sage.plot.arc": {
-        "failed": true
-    },
+    "sage.plot.arc": {},
     "sage.plot.arrow": {},
     "sage.plot.bar_chart": {},
     "sage.plot.bezier_path": {},
@@ -1255,9 +1251,7 @@
     "sage.plot.contour_plot": {},
     "sage.plot.density_plot": {},
     "sage.plot.disk": {},
-    "sage.plot.ellipse": {
-        "failed": true
-    },
+    "sage.plot.ellipse": {},
     "sage.plot.graphics": {},
     "sage.plot.histogram": {
         "failed": true
@@ -1265,12 +1259,8 @@
     "sage.plot.hyperbolic_arc": {},
     "sage.plot.hyperbolic_polygon": {},
     "sage.plot.hyperbolic_regular_polygon": {},
-    "sage.plot.line": {
-        "failed": true
-    },
-    "sage.plot.matrix_plot": {
-        "failed": true
-    },
+    "sage.plot.line": {},
+    "sage.plot.matrix_plot": {},
     "sage.plot.misc": {},
     "sage.plot.multigraphics": {},
     "sage.plot.plot": {},
@@ -1295,9 +1285,7 @@
     "sage.plot.plot3d.revolution_plot3d": {},
     "sage.plot.plot3d.shapes": {},
     "sage.plot.plot3d.shapes.pxd": {},
-    "sage.plot.plot3d.shapes2": {
-        "failed": true
-    },
+    "sage.plot.plot3d.shapes2": {},
     "sage.plot.plot3d.tachyon": {},
     "sage.plot.plot3d.texture": {},
     "sage.plot.plot3d.transform": {
@@ -1513,9 +1501,7 @@
     "sage.rings.invariants.invariant_theory": {
         "failed": true
     },
-    "sage.rings.invariants.reconstruction": {
-        "failed": true
-    },
+    "sage.rings.invariants.reconstruction": {},
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

@@ -629,7 +629,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -974,9 +976,7 @@
     "sage.homology.free_resolution": {},
     "sage.homology.graded_resolution": {},
     "sage.homology.hochschild_complex": {},
-    "sage.homology.homology_group": {
-        "failed": true
-    },
+    "sage.homology.homology_group": {},
     "sage.homology.homology_morphism": {
         "failed": true
     },
@@ -984,9 +984,7 @@
         "failed": true
     },
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1640,9 +1638,7 @@
     "sage.rings.invariants.invariant_theory": {
         "failed": true
     },
-    "sage.rings.invariants.reconstruction": {
-        "failed": true
-    },
+    "sage.rings.invariants.reconstruction": {},
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

@@ -367,9 +367,7 @@
     "sage.coding.hamming_code": {},
     "sage.coding.information_set_decoder": {},
     "sage.coding.kasami_codes": {},
-    "sage.coding.linear_code": {
-        "failed": true
-    },
+    "sage.coding.linear_code": {},
     "sage.coding.linear_code_no_metric": {},
     "sage.coding.linear_rank_metric": {},
     "sage.coding.parity_check_code": {},
@@ -544,7 +542,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -701,7 +701,9 @@
     },
     "sage.geometry.hyperplane_arrangement.check_freeness": {},
     "sage.geometry.hyperplane_arrangement.hyperplane": {},
-    "sage.geometry.hyperplane_arrangement.library": {},
+    "sage.geometry.hyperplane_arrangement.library": {
+        "failed": true
+    },
     "sage.geometry.hyperplane_arrangement.plot": {},
     "sage.geometry.integral_points": {},
     "sage.geometry.integral_points.pxi": {
@@ -888,9 +890,7 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1598,9 +1598,7 @@
     "sage.rings.invariants.invariant_theory": {
         "failed": true
     },
-    "sage.rings.invariants.reconstruction": {
-        "failed": true
-    },
+    "sage.rings.invariants.reconstruction": {},
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

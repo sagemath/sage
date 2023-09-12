@@ -539,7 +539,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -788,7 +790,9 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {},
+    "sage.homology.matrix_utils": {
+        "failed": true
+    },
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -944,9 +948,7 @@
     "sage.matrix.matrix_generic_sparse": {},
     "sage.matrix.matrix_generic_sparse.pxd": {},
     "sage.matrix.matrix_misc": {},
-    "sage.matrix.matrix_numpy_dense": {
-        "failed": true
-    },
+    "sage.matrix.matrix_numpy_dense": {},
     "sage.matrix.matrix_numpy_dense.pxd": {},
     "sage.matrix.matrix_numpy_integer_dense": {},
     "sage.matrix.matrix_numpy_integer_dense.pxd": {},
@@ -1177,9 +1179,7 @@
     "sage.modular.arithgroup.arithgroup_generic": {},
     "sage.modular.arithgroup.arithgroup_perm": {},
     "sage.modular.arithgroup.congroup": {},
-    "sage.modular.arithgroup.congroup_gamma": {
-        "failed": true
-    },
+    "sage.modular.arithgroup.congroup_gamma": {},
     "sage.modular.arithgroup.congroup_gamma0": {},
     "sage.modular.arithgroup.congroup_gamma1": {},
     "sage.modular.arithgroup.congroup_gammaH": {},
@@ -1265,9 +1265,7 @@
     "sage.modular.modform_hecketriangle.abstract_ring": {
         "failed": true
     },
-    "sage.modular.modform_hecketriangle.abstract_space": {
-        "failed": true
-    },
+    "sage.modular.modform_hecketriangle.abstract_space": {},
     "sage.modular.modform_hecketriangle.all": {},
     "sage.modular.modform_hecketriangle.analytic_type": {},
     "sage.modular.modform_hecketriangle.constructor": {},
@@ -1354,9 +1352,7 @@
     "sage.modules.free_module": {
         "failed": true
     },
-    "sage.modules.free_module_element": {
-        "failed": true
-    },
+    "sage.modules.free_module_element": {},
     "sage.modules.free_module_element.pxd": {},
     "sage.modules.free_module_homspace": {},
     "sage.modules.free_module_integer": {
@@ -1403,9 +1399,7 @@
     "sage.modules.vector_modn_dense.pxd": {},
     "sage.modules.vector_modn_sparse": {},
     "sage.modules.vector_modn_sparse.pxd": {},
-    "sage.modules.vector_numpy_dense": {
-        "failed": true
-    },
+    "sage.modules.vector_numpy_dense": {},
     "sage.modules.vector_numpy_dense.pxd": {},
     "sage.modules.vector_numpy_integer_dense": {},
     "sage.modules.vector_numpy_integer_dense.pxd": {},
@@ -1440,7 +1434,9 @@
     },
     "sage.parallel.all": {},
     "sage.parallel.decorate": {},
-    "sage.parallel.map_reduce": {},
+    "sage.parallel.map_reduce": {
+        "failed": true
+    },
     "sage.parallel.multiprocessing_sage": {},
     "sage.parallel.ncpus": {},
     "sage.parallel.parallelism": {},
@@ -1646,9 +1642,7 @@
     "sage.rings.invariants.invariant_theory": {
         "failed": true
     },
-    "sage.rings.invariants.reconstruction": {
-        "failed": true
-    },
+    "sage.rings.invariants.reconstruction": {},
     "sage.rings.laurent_series_ring": {},
     "sage.rings.laurent_series_ring_element": {
         "failed": true

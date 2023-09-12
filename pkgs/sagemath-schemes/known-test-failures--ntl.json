@@ -589,7 +589,9 @@
     "sage.doctest.parsing": {
         "failed": true
     },
-    "sage.doctest.reporting": {},
+    "sage.doctest.reporting": {
+        "failed": true
+    },
     "sage.doctest.sources": {},
     "sage.doctest.test": {},
     "sage.doctest.util": {},
@@ -773,6 +775,7 @@
     "sage.groups.all__sagemath_categories": {},
     "sage.groups.all__sagemath_modules": {},
     "sage.groups.all__sagemath_objects": {},
+    "sage.groups.all__sagemath_pari": {},
     "sage.groups.generic": {
         "failed": true
     },
@@ -796,6 +799,9 @@
     "sage.groups.matrix_gps.unitary": {},
     "sage.groups.old": {},
     "sage.groups.old.pxd": {},
+    "sage.groups.pari_group": {
+        "failed": true
+    },
     "sage.groups.perm_gps.all__sagemath_categories": {},
     "sage.groups.perm_gps.all__sagemath_modules": {},
     "sage.groups.perm_gps.partn_ref.all": {},
@@ -838,9 +844,7 @@
     "sage.homology.homology_morphism": {},
     "sage.homology.homology_vector_space_with_basis": {},
     "sage.homology.koszul_complex": {},
-    "sage.homology.matrix_utils": {
-        "failed": true
-    },
+    "sage.homology.matrix_utils": {},
     "sage.interfaces.abc": {},
     "sage.interfaces.all": {},
     "sage.interfaces.all__sagemath_categories": {},
@@ -1070,9 +1074,7 @@
     "sage.libs.pari.all": {},
     "sage.libs.pari.convert_gmp": {},
     "sage.libs.pari.convert_gmp.pxd": {},
-    "sage.libs.pari.convert_sage": {
-        "failed": true
-    },
+    "sage.libs.pari.convert_sage": {},
     "sage.libs.pari.convert_sage.pxd": {},
     "sage.libs.pari.convert_sage_complex_double": {},
     "sage.libs.pari.convert_sage_complex_double.pxd": {},
@@ -1143,9 +1145,7 @@
     },
     "sage.matrix.matrix_modn_dense_template_header.pxi": {},
     "sage.matrix.matrix_modn_sparse.pxd": {},
-    "sage.matrix.matrix_numpy_dense": {
-        "failed": true
-    },
+    "sage.matrix.matrix_numpy_dense": {},
     "sage.matrix.matrix_numpy_dense.pxd": {},
     "sage.matrix.matrix_numpy_integer_dense": {},
     "sage.matrix.matrix_numpy_integer_dense.pxd": {},
@@ -1383,9 +1383,7 @@
     },
     "sage.modular.arithgroup.arithgroup_perm": {},
     "sage.modular.arithgroup.congroup": {},
-    "sage.modular.arithgroup.congroup_gamma": {
-        "failed": true
-    },
+    "sage.modular.arithgroup.congroup_gamma": {},
     "sage.modular.arithgroup.congroup_gamma0": {
         "failed": true
     },
@@ -1515,9 +1513,7 @@
     "sage.modular.modform_hecketriangle.abstract_ring": {
         "failed": true
     },
-    "sage.modular.modform_hecketriangle.abstract_space": {
-        "failed": true
-    },
+    "sage.modular.modform_hecketriangle.abstract_space": {},
     "sage.modular.modform_hecketriangle.all": {},
     "sage.modular.modform_hecketriangle.analytic_type": {},
     "sage.modular.modform_hecketriangle.constructor": {},
@@ -1659,9 +1655,7 @@
     "sage.modules.vector_modn_dense.pxd": {},
     "sage.modules.vector_modn_sparse": {},
     "sage.modules.vector_modn_sparse.pxd": {},
-    "sage.modules.vector_numpy_dense": {
-        "failed": true
-    },
+    "sage.modules.vector_numpy_dense": {},
     "sage.modules.vector_numpy_dense.pxd": {},
     "sage.modules.vector_numpy_integer_dense": {},
     "sage.modules.vector_numpy_integer_dense.pxd": {},
@@ -1914,13 +1908,9 @@
     "sage.rings.finite_rings.integer_mod.pxd": {},
     "sage.rings.finite_rings.integer_mod_ring": {},
     "sage.rings.finite_rings.maps_finite_field": {},
-    "sage.rings.finite_rings.residue_field": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.residue_field": {},
     "sage.rings.finite_rings.residue_field.pxd": {},
-    "sage.rings.finite_rings.residue_field_ntl_gf2e": {
-        "failed": true
-    },
+    "sage.rings.finite_rings.residue_field_ntl_gf2e": {},
     "sage.rings.finite_rings.residue_field_pari_ffelt": {},
     "sage.rings.finite_rings.stdint.pxd": {},
     "sage.rings.fraction_field": {
@@ -1932,6 +1922,7 @@
     "sage.rings.function_field.all": {},
     "sage.rings.function_field.all__sagemath_categories": {},
     "sage.rings.function_field.all__sagemath_modules": {},
+    "sage.rings.function_field.all__sagemath_pari": {},
     "sage.rings.function_field.constructor": {},
     "sage.rings.function_field.derivations": {},
     "sage.rings.function_field.derivations_rational": {},
@@ -1939,9 +1930,7 @@
     "sage.rings.function_field.divisor": {},
     "sage.rings.function_field.element": {},
     "sage.rings.function_field.element.pxd": {},
-    "sage.rings.function_field.element_rational": {
-        "failed": true
-    },
+    "sage.rings.function_field.element_rational": {},
     "sage.rings.function_field.extensions": {},
     "sage.rings.function_field.function_field": {},
     "sage.rings.function_field.function_field_rational": {
@@ -1953,11 +1942,12 @@
     "sage.rings.function_field.maps": {},
     "sage.rings.function_field.order": {},
     "sage.rings.function_field.order_basis": {},
-    "sage.rings.function_field.order_rational": {
-        "failed": true
-    },
+    "sage.rings.function_field.order_rational": {},
     "sage.rings.function_field.place": {},
     "sage.rings.function_field.place_rational": {
+        "failed": true
+    },
+    "sage.rings.function_field.valuation": {
         "failed": true
     },
     "sage.rings.homset": {},
@@ -1988,9 +1978,7 @@
     "sage.rings.localization": {
         "failed": true
     },
-    "sage.rings.morphism": {
-        "failed": true
-    },
+    "sage.rings.morphism": {},
     "sage.rings.morphism.pxd": {},
     "sage.rings.multi_power_series_ring": {
         "failed": true
@@ -2006,50 +1994,62 @@
     "sage.rings.number_field.number_field_element_base": {},
     "sage.rings.number_field.number_field_element_base.pxd": {},
     "sage.rings.number_field.number_field_ideal": {},
-    "sage.rings.padics.CA_template.pxi": {
-        "failed": true
-    },
+    "sage.rings.padics.CA_template.pxi": {},
     "sage.rings.padics.CA_template_header.pxi": {},
-    "sage.rings.padics.CR_template.pxi": {
-        "failed": true
-    },
+    "sage.rings.padics.CR_template.pxi": {},
     "sage.rings.padics.CR_template_header.pxi": {},
-    "sage.rings.padics.FM_template.pxi": {
-        "failed": true
-    },
+    "sage.rings.padics.FM_template.pxi": {},
     "sage.rings.padics.FM_template_header.pxi": {},
-    "sage.rings.padics.FP_template.pxi": {
-        "failed": true
-    },
+    "sage.rings.padics.FP_template.pxi": {},
     "sage.rings.padics.FP_template_header.pxi": {},
     "sage.rings.padics.all__sagemath_categories": {},
     "sage.rings.padics.all__sagemath_ntl": {},
     "sage.rings.padics.all__sagemath_pari": {},
     "sage.rings.padics.common_conversion": {},
     "sage.rings.padics.common_conversion.pxd": {},
+    "sage.rings.padics.eisenstein_extension_generic": {},
+    "sage.rings.padics.factory": {
+        "failed": true
+    },
+    "sage.rings.padics.generic_nodes": {},
+    "sage.rings.padics.lattice_precision": {
+        "failed": true
+    },
     "sage.rings.padics.local_generic": {},
     "sage.rings.padics.local_generic_element": {},
     "sage.rings.padics.local_generic_element.pxd": {},
     "sage.rings.padics.misc": {},
+    "sage.rings.padics.morphism": {},
     "sage.rings.padics.morphism.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_CA_element": {},
     "sage.rings.padics.padic_ZZ_pX_CA_element.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_CR_element": {},
     "sage.rings.padics.padic_ZZ_pX_CR_element.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_FM_element": {},
     "sage.rings.padics.padic_ZZ_pX_FM_element.pxd": {},
+    "sage.rings.padics.padic_ZZ_pX_element": {},
     "sage.rings.padics.padic_ZZ_pX_element.pxd": {},
+    "sage.rings.padics.padic_base_generic": {},
+    "sage.rings.padics.padic_base_leaves": {},
     "sage.rings.padics.padic_capped_absolute_element": {},
     "sage.rings.padics.padic_capped_absolute_element.pxd": {},
     "sage.rings.padics.padic_capped_relative_element": {},
     "sage.rings.padics.padic_capped_relative_element.pxd": {},
-    "sage.rings.padics.padic_ext_element": {
-        "failed": true
-    },
+    "sage.rings.padics.padic_ext_element": {},
     "sage.rings.padics.padic_ext_element.pxd": {},
+    "sage.rings.padics.padic_extension_generic": {},
+    "sage.rings.padics.padic_extension_leaves": {},
     "sage.rings.padics.padic_fixed_mod_element": {},
     "sage.rings.padics.padic_fixed_mod_element.pxd": {},
     "sage.rings.padics.padic_floating_point_element": {},
     "sage.rings.padics.padic_floating_point_element.pxd": {},
     "sage.rings.padics.padic_generic": {},
+    "sage.rings.padics.padic_generic_element": {
+        "failed": true
+    },
     "sage.rings.padics.padic_generic_element.pxd": {},
+    "sage.rings.padics.padic_lattice_element": {},
+    "sage.rings.padics.padic_printing": {},
     "sage.rings.padics.padic_printing.pxd": {},
     "sage.rings.padics.padic_relaxed_element.pxd": {},
     "sage.rings.padics.padic_relaxed_errors.pxd": {},
@@ -2057,24 +2057,33 @@
         "failed": true
     },
     "sage.rings.padics.padic_template_element_header.pxi": {},
+    "sage.rings.padics.padic_valuation": {},
+    "sage.rings.padics.pow_computer": {},
     "sage.rings.padics.pow_computer.pxd": {},
-    "sage.rings.padics.pow_computer_ext": {
-        "failed": true
-    },
+    "sage.rings.padics.pow_computer_ext": {},
     "sage.rings.padics.pow_computer_ext.pxd": {},
+    "sage.rings.padics.pow_computer_relative": {},
     "sage.rings.padics.pow_computer_relative.pxd": {},
     "sage.rings.padics.precision_error": {},
+    "sage.rings.padics.relative_extension_leaves": {},
+    "sage.rings.padics.relative_ramified_CA": {},
     "sage.rings.padics.relative_ramified_CA.pxd": {},
+    "sage.rings.padics.relative_ramified_CR": {},
     "sage.rings.padics.relative_ramified_CR.pxd": {},
+    "sage.rings.padics.relative_ramified_FM": {},
     "sage.rings.padics.relative_ramified_FM.pxd": {},
+    "sage.rings.padics.relative_ramified_FP": {},
     "sage.rings.padics.relative_ramified_FP.pxd": {},
-    "sage.rings.padics.relaxed_template.pxi": {
-        "failed": true
-    },
+    "sage.rings.padics.relaxed_template.pxi": {},
     "sage.rings.padics.relaxed_template_header.pxi": {},
+    "sage.rings.padics.tests": {},
+    "sage.rings.padics.tutorial": {},
+    "sage.rings.padics.unramified_extension_generic": {},
+    "sage.rings.pari_ring": {},
     "sage.rings.polynomial.all__sagemath_categories": {},
     "sage.rings.polynomial.all__sagemath_modules": {},
     "sage.rings.polynomial.all__sagemath_ntl": {},
+    "sage.rings.polynomial.all__sagemath_pari": {},
     "sage.rings.polynomial.commutative_polynomial": {},
     "sage.rings.polynomial.commutative_polynomial.pxd": {},
     "sage.rings.polynomial.cyclotomic": {},
@@ -2119,6 +2128,10 @@
     "sage.rings.polynomial.multi_polynomial_sequence": {
         "failed": true
     },
+    "sage.rings.polynomial.padics.all": {},
+    "sage.rings.polynomial.padics.polynomial_padic": {},
+    "sage.rings.polynomial.padics.polynomial_padic_capped_relative_dense": {},
+    "sage.rings.polynomial.padics.polynomial_padic_flat": {},
     "sage.rings.polynomial.polydict": {},
     "sage.rings.polynomial.polydict.pxd": {},
     "sage.rings.polynomial.polynomial_compiled": {},
@@ -2159,9 +2172,7 @@
         "failed": true
     },
     "sage.rings.polynomial.polynomial_template_header.pxi": {},
-    "sage.rings.polynomial.polynomial_zz_pex": {
-        "failed": true
-    },
+    "sage.rings.polynomial.polynomial_zz_pex": {},
     "sage.rings.polynomial.polynomial_zz_pex.pxd": {},
     "sage.rings.polynomial.symmetric_ideal": {},
     "sage.rings.polynomial.symmetric_reduction": {},
@@ -2180,9 +2191,7 @@
         "failed": true
     },
     "sage.rings.power_series_poly.pxd": {},
-    "sage.rings.power_series_ring": {
-        "failed": true
-    },
+    "sage.rings.power_series_ring": {},
     "sage.rings.power_series_ring_element": {},
     "sage.rings.power_series_ring_element.pxd": {},
     "sage.rings.puiseux_series_ring": {},
@@ -2251,6 +2260,21 @@
     "sage.rings.sum_of_squares": {},
     "sage.rings.sum_of_squares.pxd": {},
     "sage.rings.tests": {},
+    "sage.rings.valuation.all": {},
+    "sage.rings.valuation.augmented_valuation": {
+        "failed": true
+    },
+    "sage.rings.valuation.developing_valuation": {},
+    "sage.rings.valuation.gauss_valuation": {},
+    "sage.rings.valuation.inductive_valuation": {},
+    "sage.rings.valuation.limit_valuation": {},
+    "sage.rings.valuation.mapped_valuation": {},
+    "sage.rings.valuation.scaled_valuation": {},
+    "sage.rings.valuation.trivial_valuation": {},
+    "sage.rings.valuation.valuation": {},
+    "sage.rings.valuation.valuation_space": {},
+    "sage.rings.valuation.valuations_catalog": {},
+    "sage.rings.valuation.value_group": {},
     "sage.schemes.affine.affine_homset": {},
     "sage.schemes.affine.affine_morphism": {
         "failed": true
