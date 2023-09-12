@@ -492,8 +492,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
         INPUT:
 
-        -  ``i`` -- element in ``self``
-        -  ``j`` -- element in ``self``
+        - ``i`` -- element in ``self``
+        - ``j`` -- element in ``self``
 
         EXAMPLES::
 
@@ -637,7 +637,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         INPUT:
 
-        -  ``iterable`` -- An iterable of hashable objects.
+        - ``iterable`` -- An iterable of hashable objects.
 
         EXAMPLES::
 
@@ -792,8 +792,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         INPUT:
 
-        -  ``e`` -- element in ``self``
-        -  ``f`` -- element in ``self``
+        - ``e`` -- element in ``self``
+        - ``f`` -- element in ``self``
 
         EXAMPLES::
 
