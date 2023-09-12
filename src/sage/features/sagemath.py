@@ -217,7 +217,7 @@ class sage__geometry__polyhedron(JoinFeature):
                               PythonModule('sage.geometry.newton_polygon'),
                               PythonModule('sage.schemes.toric'),                   # namespace package
                               PythonModule('sage.schemes.toric.variety'),           # representative
-                              sage__modules(),
+                              # sage__modules(),
                              ],
                              spkg='sagemath_polyhedra', type="standard")
 
