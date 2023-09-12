@@ -6272,8 +6272,9 @@ def gauss_sum(char_value, finite_field):
 
     TESTS::
 
-        sage: # needs sage.libs.gap sage.libs.pari
         sage: F = GF(11); q = 11
+
+        sage: # needs sage.libs.gap sage.libs.pari
         sage: zq = UniversalCyclotomicField().zeta(q - 1)
         sage: gauss_sum(zq**2, F).n(60)
         2.6361055643248352 + 2.0126965627574471*I
