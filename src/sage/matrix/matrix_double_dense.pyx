@@ -1739,7 +1739,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             import scipy
         import scipy.linalg
         X = self._new(self._ncols, B.ncols())
-        arr, _, _, _ = scipy.linalg.lstsq(self._matrix_numpy, B.numpy())
+        arr = scipy.linalg.lstsq(self._matrix_numpy, B.numpy())[0]
         X._matrix_numpy = arr
         return X
 
