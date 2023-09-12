@@ -357,7 +357,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     A = random_matrix(*args, **kwds)
         ....:     density_sum += float(A.density())
 
-        sage: # needs sage.libs.flint (otherwise timeout)
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=-10, y=10, density=0.75)
@@ -367,14 +367,14 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
 
-        sage: # needs sage.libs.flint (otherwise timeout)
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
 
-        sage: # needs sage.libs.flint (otherwise timeout)
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)
@@ -397,7 +397,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
 
-        sage: # needs sage.libs.flint (otherwise timeout)
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
         100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 

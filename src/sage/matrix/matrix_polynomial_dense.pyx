@@ -2826,7 +2826,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [      6*x + 3     5*x^2 + 6             3]
             )
 
-            sage: A.right_quo_rem(B[:2,:]) # matrix 2 x 3, full row rank                # needs sage.rings.finite_rings
+            sage: A.right_quo_rem(B[:2,:])  # matrix 2 x 3, full row rank               # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: division of these matrices does not admit a remainder

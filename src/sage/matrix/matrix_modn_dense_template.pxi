@@ -466,7 +466,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         TESTS::
 
             sage: import gc
-            sage: for i in range(10):                                                   # needs sage.rings.finite_rings
+            sage: for i in range(10):                                                   # needs sage.libs.linbox sage.rings.finite_rings
             ....:      A = random_matrix(GF(7),1000,1000)
             ....:      B = random_matrix(Integers(10),1000,1000)
             ....:      C = random_matrix(GF(16007),1000,1000)
