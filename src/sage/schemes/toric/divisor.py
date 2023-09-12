@@ -1066,7 +1066,7 @@ class ToricDivisor_generic(Divisor_generic):
             (A vertex at (0, 0),)
             sage: D.is_nef()
             False
-            sage: dP7.integrate( D.ch() * dP7.Td() )
+            sage: dP7.integrate(D.ch() * dP7.Td())                                      # needs sage.libs.singular
             1
             sage: P_antiK = (-dP7.K()).polyhedron(); P_antiK
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 5 vertices
@@ -1270,7 +1270,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: P1.<u,v> = toric_varieties.P1()
             sage: D = -P1.K()
-            sage: D.Kodaira_map()
+            sage: D.Kodaira_map()                                                       # needs fpylll
             Scheme morphism:
               From: 1-d CPR-Fano toric variety covered by 2 affine patches
               To:   Closed subscheme of Projective Space of dimension 2
@@ -1279,7 +1279,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: dP6 = toric_varieties.dP6()
             sage: D = -dP6.K()
-            sage: D.Kodaira_map(names='x')
+            sage: D.Kodaira_map(names='x')                                              # needs fpylll
             Scheme morphism:
               From: 2-d CPR-Fano toric variety covered by 6 affine patches
               To:   Closed subscheme of Projective Space of dimension 6
