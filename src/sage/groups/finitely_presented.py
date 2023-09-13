@@ -166,7 +166,6 @@ class GroupMorphismWithGensImages(SetMorphism):
               x1 |--> ()
               x2 |--> ()
     """
-
     def _repr_defn(self):
         r"""
         Return the part of the representation that includes the images of the generators.
