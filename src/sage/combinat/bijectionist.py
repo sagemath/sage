@@ -2174,7 +2174,7 @@ class Bijectionist(SageObject):
         A = self._A
         P = self._P
         images = defaultdict(set)  # A^k -> A, a_1,...,a_k +-> {pi(a_1,...,a_k) for all pi}
-        for composition_index, pi_rho in enumerate(self._pi_rho):
+        for pi_rho in self._pi_rho:
             for a_tuple in itertools.product(*([A]*pi_rho.numargs)):
                 if pi_rho.domain is not None and not pi_rho.domain(*a_tuple):
                     continue

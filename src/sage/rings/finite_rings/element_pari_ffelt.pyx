@@ -28,15 +28,15 @@ from .element_base cimport FinitePolyExtElement
 from .integer_mod import IntegerMod_abstract
 
 import sage.rings.integer
-from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
+from sage.structure.element cimport Vector
 from sage.structure.richcmp cimport rich_to_bool
 
-
 from sage.interfaces.abc import GapElement
+
 
 cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
     """
@@ -454,7 +454,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sig_off()
             raise TypeError(f"unable to convert PARI {x.type()} to finite field element")
 
-        elif (isinstance(x, FreeModuleElement)
+        elif (isinstance(x, Vector)
               and x.parent() is self._parent.vector_space(map=False)):
             g = (<pari_gen>self._parent._gen_pari).g
             t = g[1]  # codeword: t_FF_FpXQ, t_FF_Flxq, t_FF_F2xq
@@ -1042,7 +1042,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         If ``extend`` is ``True``, a square root is chosen in an
         extension field if necessary.  If ``extend`` is ``False``, a
-        ValueError is raised if the element is not a square in the
+        :class:`ValueError` is raised if the element is not a square in the
         base field.
 
         .. WARNING::
@@ -1330,9 +1330,10 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(2^3, 'aa', impl='pari_ffelt')
             sage: aa = F.multiplicative_generator()
-            sage: gap(aa) # indirect doctest
+            sage: gap(aa)  # indirect doctest
             Z(2^3)
             sage: b = F.multiplicative_generator()
             sage: a = b^3
@@ -1347,6 +1348,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         You can specify the instance of the Gap interpreter that is used::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(200)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_ (gap)
@@ -1356,6 +1358,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         Gap only supports relatively small finite fields::
 
+            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(1000)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_init_()

@@ -131,9 +131,9 @@ class Line(GraphicPrimitive_xydata):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()
-            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)
-            sage: E + F  # long time (5s on sage.math, 2012)
+            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()                   # needs sage.schemes
+            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)                # needs sage.schemes
+            sage: E + F                         # long time (5s on sage.math, 2012), needs sage.schemes
             Graphics3d Object
 
         .. PLOT::
@@ -389,16 +389,16 @@ def line2d(points, **options):
 
     A line with no points or one point::
 
-        sage: line([])      #returns an empty plot
+        sage: line([])      # returns an empty plot
         Graphics object consisting of 0 graphics primitives
-        sage: import numpy; line(numpy.array([]))
+        sage: import numpy; line(numpy.array([]))                                       # needs numpy
         Graphics object consisting of 0 graphics primitives
         sage: line([(1,1)])
         Graphics object consisting of 1 graphics primitive
 
     A line with numpy arrays::
 
-        sage: line(numpy.array([[1,2], [3,4]]))
+        sage: line(numpy.array([[1,2], [3,4]]))                                         # needs numpy
         Graphics object consisting of 1 graphics primitive
 
     A line with a legend::
@@ -442,7 +442,9 @@ def line2d(points, **options):
 
     A blue conchoid of Nicomedes::
 
-        sage: L = [[1+5*cos(pi/2+pi*i/100), tan(pi/2+pi*i/100)*(1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
+        sage: from math import pi
+        sage: L = [[1 + 5*cos(pi/2+pi*i/100),
+        ....:       tan(pi/2+pi*i/100) * (1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
         sage: line(L, rgbcolor=(1/4,1/8,3/4))
         Graphics object consisting of 1 graphics primitive
 
@@ -454,7 +456,7 @@ def line2d(points, **options):
     A line with 2 complex points::
 
         sage: i = CC(0,1)
-        sage: line([1+i, 2+3*i])
+        sage: line([1 + i, 2 + 3*i])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -466,7 +468,8 @@ def line2d(points, **options):
     A blue hypotrochoid (3 leaves)::
 
         sage: n = 4; h = 3; b = 2
-        sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+        sage: L = [[n*cos(pi*i/100) + h*cos((n/b)*pi*i/100),
+        ....:       n*sin(pi*i/100) - h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: line(L, rgbcolor=(1/4,1/4,3/4))
         Graphics object consisting of 1 graphics primitive
 
@@ -482,7 +485,8 @@ def line2d(points, **options):
     A blue hypotrochoid (4 leaves)::
 
         sage: n = 6; h = 5; b = 2
-        sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+        sage: L = [[n*cos(pi*i/100) + h*cos((n/b)*pi*i/100),
+        ....:       n*sin(pi*i/100) - h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: line(L, rgbcolor=(1/4,1/4,3/4))
         Graphics object consisting of 1 graphics primitive
 
@@ -493,7 +497,8 @@ def line2d(points, **options):
 
     A red limacon of Pascal::
 
-        sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))] for i in range(-100,101)]
+        sage: L = [[sin(pi*i/100) + sin(pi*i/50),
+        ....:       -(1 + cos(pi*i/100) + cos(pi*i/50))] for i in range(-100,101)]
         sage: line(L, rgbcolor=(1,1/4,1/2))
         Graphics object consisting of 1 graphics primitive
 
@@ -504,7 +509,8 @@ def line2d(points, **options):
 
     A light green trisectrix of Maclaurin::
 
-        sage: L = [[2*(1-4*cos(-pi/2+pi*i/100)^2),10*tan(-pi/2+pi*i/100)*(1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
+        sage: L = [[2 * (1-4*cos(-pi/2+pi*i/100)^2),
+        ....:       10 * tan(-pi/2+pi*i/100) * (1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
         sage: line(L, rgbcolor=(1/4,1,1/8))
         Graphics object consisting of 1 graphics primitive
 
@@ -530,8 +536,8 @@ def line2d(points, **options):
 
     A red plot of the Jacobi elliptic function `\text{sn}(x,2)`, `-3 < x < 3`::
 
-        sage: L = [(i/100.0, real_part(jacobi('sn', i/100.0, 2.0))) for i in
-        ....:      range(-300, 300, 30)]
+        sage: L = [(i/100.0, real_part(jacobi('sn', i/100.0, 2.0)))
+        ....:      for i in range(-300, 300, 30)]
         sage: line(L, rgbcolor=(3/4, 1/4, 1/8))
         Graphics object consisting of 1 graphics primitive
 
@@ -543,7 +549,7 @@ def line2d(points, **options):
     A red plot of `J`-Bessel function `J_2(x)`, `0 < x < 10`::
 
         sage: L = [(i/10.0, bessel_J(2,i/10.0)) for i in range(100)]
-        sage: line(L, rgbcolor=(3/4,1/4,5/8))
+        sage: line(L, rgbcolor=(3/4, 1/4, 5/8))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -556,7 +562,7 @@ def line2d(points, **options):
         sage: i = CDF.gen()
         sage: v = [zeta(0.5 + n/10 * i) for n in range(300)]
         sage: L = [(z.real(), z.imag()) for z in v]
-        sage: line(L, rgbcolor=(3/4,1/2,5/8))
+        sage: line(L, rgbcolor=(3/4, 1/2, 5/8))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -568,8 +574,9 @@ def line2d(points, **options):
 
     A purple plot of the Hasse-Weil `L`-function `L(E, 1 + it)`, `-1 < t < 10`::
 
+        sage: # needs sage.schemes
         sage: E = EllipticCurve('37a')
-        sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100) # critical line
+        sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100)  # critical line
         sage: L = [(z[1].real(), z[1].imag()) for z in vals]
         sage: line(L, rgbcolor=(3/4,1/2,5/8))
         Graphics object consisting of 1 graphics primitive

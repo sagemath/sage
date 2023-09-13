@@ -945,7 +945,7 @@ written.
   for both examples.
 
 - **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not
-  `1.3333333333333333` as in Python 3.8. Testing occurs with full Sage
+  `1.3333333333333333` as in Python. Testing occurs with full Sage
   preparsing of input within the standard Sage shell environment, as
   described in :ref:`section-preparsing`.
 

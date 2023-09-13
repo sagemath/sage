@@ -143,7 +143,7 @@ class NumberFieldHomset(RingHomset_generic):
         else:
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError("There is no morphism from {} to {}".format(
-                                              self.domain(), self.codomain()))
+                self.domain(), self.codomain()))
 
     def _repr_(self):
         r"""
@@ -238,7 +238,7 @@ class NumberFieldHomset(RingHomset_generic):
             v = [D.hom([r], codomain=C, check=False) for r in roots]
         else:
             v = []
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=bool(v))
 
     def __getitem__(self, n):
         r"""
@@ -342,10 +342,10 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
         are only approximate::
 
             sage: K.<a> = QuadraticField(-7)
-            sage: f = K.hom([CC(sqrt(-7))], check=False)
+            sage: f = K.hom([CC(sqrt(-7))], check=False)                                # needs sage.symbolic
             sage: x = polygen(K)
             sage: L.<b> = K.extension(x^2 - a - 5)
-            sage: L.Hom(CC)(f(a + 5).sqrt(), f, check=False)
+            sage: L.Hom(CC)(f(a + 5).sqrt(), f, check=False)                            # needs sage.symbolic
             Relative number field morphism:
               From: Number Field in b with defining polynomial x^2 - a - 5 over its base field
               To:   Complex Field with 53 bits of precision
@@ -389,7 +389,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
                 raise ValueError("codomain of absolute homomorphism must be codomain of this homset.")
             return self.element_class(self, x)
         if (isinstance(x, RelativeNumberFieldHomomorphism_from_abs)
-            and x.parent() == self):
+                and x.parent() == self):
             return self.element_class(self, x.abs_hom())
         if base_map is None:
             base_map = self.default_base_hom()
@@ -519,7 +519,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
         C = self.codomain()
         D_abs = D.absolute_field('a')
         v = [self(f, check=False) for f in D_abs.Hom(C).list()]
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=bool(v))
 
 
 class CyclotomicFieldHomset(NumberFieldHomset):
@@ -579,7 +579,7 @@ class CyclotomicFieldHomset(NumberFieldHomset):
             x^2 + b
         """
         if (isinstance(x, CyclotomicFieldHomomorphism_im_gens)
-            and x.parent() == self):
+                and x.parent() == self):
             return self.element_class(self, x.im_gens())
         return self.element_class(self, x, check=check)
 
@@ -615,11 +615,11 @@ class CyclotomicFieldHomset(NumberFieldHomset):
         z = D.gen()
         n = z.multiplicative_order()
         if not n.divides(C.zeta_order()):
-            v =[]
+            v = []
         else:
             if D == C:
                 w = z
             else:
                 w = C.zeta(n)
             v = [self([w**k], check=False) for k in Zmod(n) if k.is_unit()]
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=bool(v))

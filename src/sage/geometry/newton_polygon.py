@@ -464,7 +464,7 @@ class NewtonPolygon_element(Element):
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ])
-            sage: polygon = NP.plot()  # optional - sage.plot
+            sage: polygon = NP.plot()                                                   # needs sage.plot
         """
         vertices = self.vertices()
         if len(vertices) == 0:

@@ -227,11 +227,13 @@ SAGE_I_TARGETS = sagelib doc
 	python3_venv _clean-broken-gcc
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
+PYTHON_MINOR = @PYTHON_MINOR@
+SAGE_VENV_FLAGS = @SAGE_VENV_FLAGS@
 
 ifneq ($(PYTHON_FOR_VENV),)
 # Special rule for making the Python virtualenv from the system Python (Python
 # 3 only).  $(PYTHON) is set in Makefile to python3_venv.
-# Thus $(inst_python3_venv) will be the dependency of every Python package.
+# Thus $(inst_python3_venv) will an (order-only) dependency of every Python package.
 #
 # TODO: If we reconfigure to build our own Python after having used the system
 # Python, files installed to create the virtualenv should be *removed*.  That
@@ -239,10 +241,15 @@ ifneq ($(PYTHON_FOR_VENV),)
 ifeq ($(PYTHON),python3)
 PYTHON = python3_venv
 endif
-inst_python3_venv = $(SAGE_VENV)/pyvenv.cfg
+inst_python3_venv = $(SAGE_VENV)/$(SPKG_INST_RELDIR)/python3_venv-3.$(PYTHON_MINOR)-$(subst /,-,$(PYTHON_FOR_VENV))$(findstring --system-site-packages,$(SAGE_VENV_FLAGS))
 
-$(inst_python3_venv):
-	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv "$(SAGE_VENV)"
+$(SAGE_VENV)/$(SPKG_INST_RELDIR):
+	mkdir -p "$@"
+
+$(inst_python3_venv): | $(SAGE_VENV)/$(SPKG_INST_RELDIR)
+	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv $(SAGE_VENV_FLAGS) "$(SAGE_VENV)"
+	rm -f "$(SAGE_VENV)/$(SPKG_INST_RELDIR)"/python3_venv-*
+	touch "$@"
 endif
 
 # Build everything and start Sage.
@@ -591,6 +598,8 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
+$(1)-ensure: $(inst_$(1))
+
 $(1)-$(4)-no-deps:
 	+@if [ -z '$$($(4))' ]; then \
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
@@ -649,6 +658,8 @@ $(1)-build-deps: $(2)
 $(1): $(2)
 	+$(MAKE_REC) $(1)-no-deps
 
+$(1)-ensure: $(inst_$(1))
+
 $(1)-no-deps:
 	$(AM_V_at)sage-logger -p 'sage --pip install -r "$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt"' '$$(SAGE_LOGS)/$(1).log'
 
@@ -704,6 +715,8 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 	+$(MAKE_REC) $(1)-$(4)-no-deps
 
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
+
+$(1)-ensure: $(inst_$(1))
 
 $(1)-$(4)-no-deps:
 	$(PLUS)@if [ -z '$$($(4))' ]; then \

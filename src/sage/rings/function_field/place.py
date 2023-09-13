@@ -24,17 +24,17 @@ constant field::
     sage: F.<x> = FunctionField(GF(2))
     sage: O = F.maximal_order()
     sage: p = O.ideal(x^2 + x + 1).place()                                              # needs sage.libs.pari
-    sage: k, fr_k, to_k = p.residue_field()                                             # needs sage.rings.function_field
-    sage: k
+    sage: k, fr_k, to_k = p.residue_field()                                             # needs sage.libs.pari sage.rings.function_field
+    sage: k                                                                             # needs sage.libs.pari sage.rings.function_field
     Finite Field in z2 of size 2^2
 
 The homomorphisms are between the valuation ring and the residue field::
 
-    sage: fr_k
+    sage: fr_k                                                                          # needs sage.libs.pari sage.rings.function_field
     Ring morphism:
       From: Finite Field in z2 of size 2^2
       To:   Valuation ring at Place (x^2 + x + 1)
-    sage: to_k
+    sage: to_k                                                                          # needs sage.libs.pari sage.rings.function_field
     Ring morphism:
       From: Valuation ring at Place (x^2 + x + 1)
       To:   Finite Field in z2 of size 2^2

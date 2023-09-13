@@ -187,6 +187,7 @@ class Gnuplot(SageObject):
     def console(self):
         gnuplot_console()
 
+
 # An instance
 gnuplot = Gnuplot()
 

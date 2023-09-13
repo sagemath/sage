@@ -56,6 +56,7 @@ def M2Z(x):
     x.set_immutable()
     return x
 
+
 Id = M2Z([1, 0, 0, 1])
 sig = M2Z([0, 1, -1, 0])
 tau = M2Z([0, -1, 1, -1])
