@@ -113,14 +113,42 @@ class Timer:
         This also includes the times for child processes **that have
         been ``wait()``ed for and terminated**. Specifically, pexpect
         processes DO NOT fall into that category.
+
+        Raises an ``OSError`` if anything goes wrong.
         """
-        with open(f"/proc/{pid}/stat", "r") as statfile:
-            stats = statfile.read().split()
+        try:
+            with open(f"/proc/{pid}/stat", "r") as statfile:
+                stats = statfile.read().split()
+        except (FileNotFoundError, PermissionError):
+            # FileNotFoundError: bad PID, or no /proc support
+            # PermissionError: can't read the stat file
+            raise OSError
 
-        # man 5 proc (linux)
-        cputicks = sum( float(s) for s in stats[13:17] )
+        try:
+            # man 5 proc (linux)
+            cputicks = sum( float(s) for s in stats[13:17] )
+        except (ArithmeticError, LookupError, TypeError):
+            # ArithmeticError: unexpected (non-numeric?) values in fields
+            # LookupError: missing the expected fields
+            # TypeError: fields can't be converted to float
+            raise OSError
 
-        hertz = sysconf("SC_CLK_TCK")
+        try:
+            hertz = sysconf("SC_CLK_TCK")
+        except (ValueError):
+            # ValueError: SC_CLK_TCK doesn't exist
+            raise OSError
+
+        if hertz <= 0:
+            # The python documentation for os.sysconf() says, "If the
+            # configuration value specified by name isn’t defined, -1
+            # is returned." Having tried this with a junk value, I
+            # don't believe it: I got a ValueError that was handled
+            # above. Nevertheless, we play it safe here and turn a -1
+            # into an OSError. We check for zero, too, because we're
+            # about to divide by it.
+            raise OSError
+
         return (cputicks / hertz)
 
     def _quick_cputime(self):
@@ -156,8 +184,7 @@ class Timer:
             if S and S.is_running():
                 try:
                     cputime += self._pid_cpu_seconds(S.pid())
-                except (ArithmeticError, LookupError, OSError,
-                        TypeError, ValueError):
+                except OSError:
                     # This will fail anywhere but linux/BSD, but
                     # there's no good cross-platform way to get the
                     # cputimes from pexpect interfaces without
