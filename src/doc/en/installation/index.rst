@@ -128,7 +128,7 @@ In the cloud
 ============
 
 - `Sage Binder repo <https://github.com/sagemath/sage-binder-env>`_ provides a
-  Binder badge to launch JupyterLab computing environment with Sage.
+  Binder badge to launch JupyterLab environment with Sage.
 
 - `Sage Cell Server <https://sagecell.sagemath.org/>`_ is a free online service for
   quick computations with Sage.
@@ -138,7 +138,6 @@ In the cloud
 
 - `Docker image sagemathinc/cocalc
   <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
-
 
 
 More information:
