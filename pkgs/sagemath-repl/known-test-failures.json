@@ -24,7 +24,7 @@
     },
     "sage.doctest.sources": {
         "failed": true,
-        "ntests": 375
+        "ntests": 376
     },
     "sage.doctest.test": {
         "ntests": 23

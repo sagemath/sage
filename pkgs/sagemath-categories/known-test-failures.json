@@ -2,6 +2,10 @@
     "sage.arith.numerical_approx": {
         "ntests": 1
     },
+    "sage.arith.power": {
+        "failed": true,
+        "ntests": 16
+    },
     "sage.categories.action": {
         "failed": true,
         "ntests": 78
@@ -792,6 +796,12 @@
     "sage.cpython.string": {
         "ntests": 1
     },
+    "sage.cpython.string.pxd": {
+        "ntests": 8
+    },
+    "sage.cpython.type": {
+        "ntests": 7
+    },
     "sage.cpython.wrapperdescr": {
         "failed": true,
         "ntests": 0
@@ -821,7 +831,7 @@
     },
     "sage.doctest.sources": {
         "failed": true,
-        "ntests": 377
+        "ntests": 378
     },
     "sage.doctest.test": {
         "failed": true,
@@ -972,6 +982,10 @@
     "sage.misc.bindable_class": {
         "ntests": 47
     },
+    "sage.misc.c3_controlled": {
+        "failed": true,
+        "ntests": 150
+    },
     "sage.misc.cachefunc": {
         "failed": true,
         "ntests": 692
@@ -996,6 +1010,9 @@
     "sage.misc.flatten": {
         "failed": true,
         "ntests": 15
+    },
+    "sage.misc.function_mangling": {
+        "ntests": 32
     },
     "sage.misc.inherit_comparison": {
         "ntests": 2
@@ -1229,7 +1246,7 @@
         "failed": true,
         "ntests": 336
     },
-    "sage.rings.integer_fake": {
+    "sage.rings.integer_fake.pxd": {
         "ntests": 1
     },
     "sage.rings.ring": {
@@ -1270,6 +1287,10 @@
     "sage.structure.element": {
         "failed": true,
         "ntests": 562
+    },
+    "sage.structure.element.pxd": {
+        "failed": true,
+        "ntests": 23
     },
     "sage.structure.element_wrapper": {
         "failed": true,
@@ -1343,6 +1364,9 @@
     "sage.structure.richcmp": {
         "failed": true,
         "ntests": 56
+    },
+    "sage.structure.richcmp.pxd": {
+        "ntests": 24
     },
     "sage.structure.sage_object": {
         "failed": true,
