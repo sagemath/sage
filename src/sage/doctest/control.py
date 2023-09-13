@@ -617,9 +617,9 @@ class DocTestController(SageObject):
         # The developer's guide says that even a "long time" test
         # should ideally complete in under five seconds, so we're
         # being rather generous here.
-        self.options.warn_long = 10.0
+        self.options.warn_long = 5.0
         if self.options.long:
-            self.options.warn_long = 60.0
+            self.options.warn_long = 30.0
 
     def second_on_modern_computer(self):
         """
