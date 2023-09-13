@@ -1921,7 +1921,7 @@ class MPowerSeries(PowerSeries):
         Another workaround for this limitation is to change base ring
         to one which is closed under exponentiation, such as `\RR` or `\CC`::
 
-            sage: exp(g.change_ring(RDF))                                               # needs sage.symbolic
+            sage: exp(g.change_ring(RDF))
             7.38905609... + 7.38905609...*a + 7.38905609...*b + 3.69452804...*a^2 +
             14.7781121...*a*b + 3.69452804...*b^2 + O(a, b)^3
 
@@ -2013,7 +2013,7 @@ class MPowerSeries(PowerSeries):
         Another workaround for this limitation is to change base ring
         to one which is closed under exponentiation, such as `\RR` or `\CC`::
 
-            sage: log(g.change_ring(RDF))                                               # needs sage.symbolic
+            sage: log(g.change_ring(RDF))
             1.09861228... + 0.333333333...*a + 0.333333333...*b - 0.0555555555...*a^2
             + 0.222222222...*a*b - 0.0555555555...*b^2 + 0.0123456790...*a^3
             - 0.0740740740...*a^2*b - 0.0740740740...*a*b^2 + 0.0123456790...*b^3
