@@ -5382,42 +5382,43 @@ class Permutation(CombinatorialElement):
         """
         return self.shifted_concatenation(other, "right").\
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
-    
+
     def transposition_distance(self, other):
-            r"""
-            Compute the transposition distance between two permutations.
+        r"""
+        Compute the transposition distance between two permutations.
 
-            INPUT:
+        INPUT:
 
-            - ``other`` -- Another permutation to compute the transposition distance to.
+        - ``other`` -- Another permutation to compute the transposition distance to.
 
-            OUTPUT:
+        OUTPUT:
 
-            - An integer representing the transposition distance between the two permutations.
+        - An integer representing the transposition distance between the two permutations.
 
-            EXAMPLES::
+        EXAMPLES::
 
-                sage: p1 = Permutation([2, 1, 3, 4])
-                sage: p2 = Permutation([1, 3, 2, 4])
-                sage: p1.transposition_distance(p2)
-                2
-            """
-            perm1 = list(self)
-            perm2 = list(other)
+            sage: p1 = Permutation([2, 1, 3, 4])
+            sage: p2 = Permutation([1, 3, 2, 4])
+            sage: p1.transposition_distance(p2)
+            2
+        """
+        if not self.parent() == other.parent():
+            raise ValueError("Permutations must belong to the same permutation group.")
 
-            if len(perm1) != len(perm2):
-                raise ValueError("Permutations must have the same length")
+        n = self.parent().degree()
+        if n != other.parent().degree():
+            raise ValueError("Permutations must have the same degree.")
 
-            transpositions = 0
+        transpositions = 0
+        perm1 = list(self)
 
-            while perm1 != perm2:
-                misplaced_index = next(i for i in range(len(perm1)) if perm1[i] != perm2[i])  
-                correct_index = perm1.index(perm2[misplaced_index])
-                perm1[misplaced_index], perm1[correct_index] = perm1[correct_index], perm1[misplaced_index]
+        for i in range(n):
+            if perm1[i] != other[i]:
+                j = perm1.index(other[i], i)
+                perm1[i], perm1[j] = perm1[j], perm1[i]
                 transpositions += 1
 
-            return transpositions
-
+        return transpositions
 
 def _tableau_contribution(T):
     r"""
