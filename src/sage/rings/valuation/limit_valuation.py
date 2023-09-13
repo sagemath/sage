@@ -769,9 +769,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: w = v.extension(L)
             sage: v = QQ.valuation(5)
             sage: u,uu = v.extensions(L)
-            sage: w._base_valuation._weakly_separating_element(u._base_valuation) # long time
+            sage: w._base_valuation._weakly_separating_element(u._base_valuation)   # long time
             2
-            sage: u._base_valuation._weakly_separating_element(uu._base_valuation) # long time
+            sage: u._base_valuation._weakly_separating_element(uu._base_valuation)  # long time
             t + 2
 
             sage: # needs sage.rings.function_field
@@ -784,14 +784,14 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: w,ww = v.extensions(L)
             sage: v = K.valuation(1)
             sage: v = v.extension(L)
-            sage: u.separating_element([uu,ww,w,v])     # long time
+            sage: u.separating_element([uu,ww,w,v])  # random output                # long time
             ((8*x^4 + 12*x^2 + 4)/(x^2 - x))*y + (8*x^4 + 8*x^2 + 1)/(x^3 - x^2)
 
         The underlying algorithm is quite naive and might not terminate in
         reasonable time. In particular, the order of the arguments sometimes
         has a huge impact on the runtime::
 
-            sage: u.separating_element([ww,w,v,uu]) # not tested, takes forever
+            sage: u.separating_element([ww,w,v,uu])  # not tested, takes forever
 
         """
         from .scaled_valuation import ScaledValuation_generic
