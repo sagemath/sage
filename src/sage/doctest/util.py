@@ -125,7 +125,7 @@ class Timer:
 
     def _quick_cputime(self):
         r"""
-        A fast and replacement for ``sage.misc.misc.cputime``.
+        A fast and replacement for ``sage.misc.timing.cputime``.
 
         This is a "reliable" replacement (on Linux/BSD) that takes
         subprocesses (particularly pexpect interfaces) into
