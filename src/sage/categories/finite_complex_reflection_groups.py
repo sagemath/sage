@@ -1210,9 +1210,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 I = self.index_set()
                 cosets = {}
                 for i in I:
-                    Ip = list(I)
-                    Ip.remove(i)
-                    Ip = tuple(Ip)
+                    Ip = tuple([j for j in I if j != i])
                     cosets[Ip] = []
                     for g in self:
                         if any(g in C for C in cosets[Ip]):

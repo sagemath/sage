@@ -880,6 +880,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             I = self.index_set()
             facets = {}
+            Ip = {i: tuple([j for j in I if j != i]) for i in I}
             for g in self:
                 V = []
                 for i in I:
@@ -892,9 +893,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                         D = gp.descents(side='right')
                         if D and D[0] == i:
                             D.pop(0)
-                    Ip = list(I)
-                    Ip.remove(i)
-                    V.append((gp, tuple(Ip)))
+                    V.append((gp, Ip[i]))
                 facets[g] = V
             verts = set()
             for F in facets.values():
