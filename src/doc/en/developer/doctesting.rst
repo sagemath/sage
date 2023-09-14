@@ -1633,6 +1633,9 @@ To have the doctest fixer take care of the ``# optional/needs`` tags,
 but not change the expected results of examples, use the option ``--only-tags``.
 This mode is suitable for mostly unattended runs on many files.
 
+With the option ``--verbose``, the doctest fixer shows the doctester's messages
+one by one and reports the changes made.
+
 .. warning::
 
    While the doctest fixer guarantees to preserve any comments that
@@ -1674,6 +1677,12 @@ to the doctest.
 
 Likewise, when the doctester runs into a :class:`ModuleNotFoundError`,
 the doctest fixer will automatically add a ``# needs ...`` tag.
+
+The switch ``--distribution`` can be repeated; the given distributions
+will be tested in sequence.  Using ``--distribution all`` is equivalent
+to a preset list of ``--distribution`` switches.  With the switch
+``--fixed-point``, the doctest fixer runs the given distributions until
+no more changes are made.
 
 
 Updating baseline files
