@@ -78,7 +78,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     Given a simplicial complex `K`, with a set of vertices
     `V = \{v_1, v_2, \ldots, v_n\}`, a moment-angle complex over `K` is a
     topological space `Z`, which is a union of `X_{\sigma}`, where
-    `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \ldots
+    `\sigma \in K`, and `X_{\sigma} = Y_{v_1} \times Y_{v_2} \times \cdots
     \times Y_{v_n}` and `Y_{v_i}` is a 2-disk (a 2-simplex) if
     `v_i \in \sigma` , or a 1-sphere otherwise.
 
@@ -148,7 +148,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         and facets {(0, 1, 2)}
 
     This can be seen by viewing the components used in the construction
-    of this moment-angle complex by calling ``components()``::
+    of this moment-angle complex by calling :meth:`components()`::
 
         sage: Z.components()
         {(0, 1, 2): [The 2-simplex, The 2-simplex, The 2-simplex]}
