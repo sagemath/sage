@@ -1233,7 +1233,6 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 from sage.topology.simplicial_complex import SimplicialComplex
                 return SimplicialComplex(facets)
 
-
         class Irreducible(CategoryWithAxiom):
             r"""
             The category of finite irreducible well-generated
