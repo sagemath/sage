@@ -58,15 +58,26 @@ jupyter_execute_default_kernel = 'sagemath'
 if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
-        if SAGE_JUPYTER_SERVER == 'binder': # default binder repo
-            binder_repo = "sagemath/sage-binder-env"
-        else: # format "binder:sagemath/sage-binder-env"
+        # format: "binder" or
+        #         "binder:sagemath/sage-binder-env" or
+        #         "binder:sagemath/sage-binder-env/dev"
+        if SAGE_JUPYTER_SERVER == 'binder':
+            binder_repo = "sagemath/sage-binder-env/master"
+        else:
             binder_repo = SAGE_JUPYTER_SERVER[7:]
+        s = binder_repo.split('/')
+        if len(s) > 2:
+            binder_options = {
+                'repo': s[0] + '/' + s[1],
+                'ref': s[2]
+            }
+        else:
+            binder_options = {
+                'repo': binder_repo
+            }
         jupyter_sphinx_thebelab_config = {
             'requestKernel': False,
-            'binderOptions': {
-                'repo': binder_repo,
-            },
+            'binderOptions': binder_options,
             'kernelOptions': {
                 'name': "sagemath",
                 'kernelName': "sagemath",
