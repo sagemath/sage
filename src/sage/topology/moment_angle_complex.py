@@ -523,8 +523,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         - ``cohomology`` -- boolean (default: ``False``);
           if ``True``, compute cohomology rather than homology
         - ``algorithm`` -- string (default: ``'pari'``); the options are
-          ``'auto'``, ``'dhsw'``, or ``'pari'``; see below for a description
-          of what they mean
+          ``'auto'``, ``'dhsw'``, or ``'pari'``; see
+          :meth:`.cell_complex.GenericCellComplex.homology` documentation
+          for a description of what they mean
         - ``verbose`` -- boolean (default: ``False``); if ``True``,
           print some messages as the homology is computed
         - ``reduced`` -- boolean (default: ``True``); if ``True``,
@@ -613,6 +614,18 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
              15: 0,
              16: 0,
              17: 0}
+            sage: Z = MomentAngleComplex([[0,1,2,3], [0,1,2,4], [0,1,3,5],
+            ....:                         [0,1,4,5], [0,2,3,6], [0,2,4,6]])
+            sage: Z.homology(dim=range(0,5), reduced=True)
+            {0: 0, 1: 0, 2: 0, 3: Z x Z x Z x Z, 4: Z x Z}
+            sage: Z.homology(dim=range(0,5), reduced=False)
+            {0: Z, 1: 0, 2: 0, 3: Z x Z x Z x Z, 4: Z x Z}
+            sage: all(Z.homology(i,reduced=True) == Z.homology(i,reduced=False)
+            ....:     for i in range(1, dim(Z)))
+            True
+            sage: all(Z.homology(i,reduced=True) == Z.homology(i,reduced=False)
+            ....:     for i in range(0, dim(Z)))
+            False
         """
         if dim is not None:
             if isinstance(dim, (list, tuple, range)):
