@@ -804,7 +804,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word mask = (1<<(self._parent.base_ring().degree())) - 1
 
         cdef randstate rstate = current_randstate()
-        K = self._parent.base_ring()
 
         if self._ncols == 0 or self._nrows == 0:
             return
@@ -898,7 +897,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             self.cache('pivots', [])
             return self
 
-        cdef int k, n, full
+        cdef int full
 
         full = int(reduced)
 
