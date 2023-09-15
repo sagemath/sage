@@ -4,9 +4,11 @@ Elements of quasimodular forms rings
 AUTHORS:
 
 - DAVID AYOTTE (2021-03-18): initial version
+- Seewoo Lee (2023-09): coefficients method
 """
 # ****************************************************************************
 #       Copyright (C) 2021 David Ayotte
+#                     2023 Seewoo Lee <seewoo5@berkeley.edu>
 #
 #
 # This program is free software: you can redistribute it and/or modify
@@ -730,7 +732,7 @@ class QuasiModularFormsElement(ModuleElement):
         return sum(f.serre_derivative() + R(k) * u * f * E2 for k, f in hom_comp.items())
 
     def _compute(self, X):
-        """
+        r"""
         Compute the coefficients of `q^n` of the power series of self,
         for `n` in the list `X`.  The results are not cached.  (Use
         coefficients for cached results).
@@ -752,7 +754,7 @@ class QuasiModularFormsElement(ModuleElement):
         return [q_exp[i] for i in X]        
 
     def coefficients(self, X):
-        """
+        r"""
         The coefficients a_n of self, for integers n>=0 in the list
         X. If X is an Integer, return coefficients for indices from 1
         to X.
