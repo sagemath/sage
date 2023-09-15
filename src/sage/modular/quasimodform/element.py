@@ -728,3 +728,58 @@ class QuasiModularFormsElement(ModuleElement):
         hom_comp = self.homogeneous_components()
 
         return sum(f.serre_derivative() + R(k) * u * f * E2 for k, f in hom_comp.items())
+
+    def _compute(self, X):
+        """
+        Compute the coefficients of `q^n` of the power series of self,
+        for `n` in the list `X`.  The results are not cached.  (Use
+        coefficients for cached results).
+
+        EXAMPLES::
+
+            sage: E2 = QuasiModularForms(1).0
+            sage: E2.q_expansion(10)
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 - 288*q^6 - 192*q^7 - 360*q^8 - 312*q^9 + O(q^10)
+            sage: E2._compute([3, 6])
+            [-96, -288]
+            sage: E2._compute([])
+            []
+        """
+        if not isinstance(X, list) or not X:
+            return []
+        bound = max(X)
+        q_exp = self.q_expansion(bound + 1)
+        return [q_exp[i] for i in X]        
+
+    def coefficients(self, X):
+        """
+        The coefficients a_n of self, for integers n>=0 in the list
+        X. If X is an Integer, return coefficients for indices from 1
+        to X.
+
+        This function caches the results of the compute function.
+
+        TESTS::
+
+            sage: E2 = QuasiModularForms(1).0
+            sage: f = E2^2
+            sage: f.coefficients(10)
+            [-48, 432, 3264, 9456, 21600, 39744, 66432, 105840, 147984, 220320]
+            sage: f.coefficients([0,1])
+            [1, -48]
+            sage: f.coefficients([0,1,2,3])
+            [1, -48, 432, 3264]
+            sage: f.coefficients([2,3])
+            [432, 3264]
+        """
+        try:
+            self.__coefficients
+        except AttributeError:
+            self.__coefficients = {}
+        if isinstance(X, Integer):
+            X = list(range(1, X + 1))
+        Y = [n for n in X if n not in self.__coefficients]
+        v = self._compute(Y)
+        for i in range(len(v)):
+            self.__coefficients[Y[i]] = v[i]
+        return [self.__coefficients[x] for x in X]
