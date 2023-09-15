@@ -763,8 +763,9 @@ class QuasiModularFormsElement(ModuleElement):
 
         TESTS::
 
-            sage: E2 = QuasiModularForms(1).0
+            sage: E2, E4 = QuasiModularForms(1).0, QuasiModularForms(1).1
             sage: f = E2^2
+            sage: g = E2^3 * E4
             sage: f.coefficients(10)
             [-48, 432, 3264, 9456, 21600, 39744, 66432, 105840, 147984, 220320]
             sage: f.coefficients([0,1])
@@ -773,6 +774,19 @@ class QuasiModularFormsElement(ModuleElement):
             [1, -48, 432, 3264]
             sage: f.coefficients([2,3])
             [432, 3264]
+            sage: g.coefficients(10)
+            [168,
+            -13608,
+            210336,
+            1805496,
+            -22562064,
+            -322437024,
+            -2063087808,
+            -9165872520,
+            -32250917496,
+            -96383477232]
+            sage: g.coefficients([3, 7])
+            [210336, -2063087808]
         """
         try:
             self.__coefficients
