@@ -65,7 +65,7 @@ if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
             binder_repo = "sagemath/sage-binder-env/master"
         else:
             binder_repo = SAGE_JUPYTER_SERVER[7:]
-        s = binder_repo.split('/')
+        s = binder_repo.split('/', 2)
         if len(s) > 2:
             binder_options = {
                 'repo': s[0] + '/' + s[1],
