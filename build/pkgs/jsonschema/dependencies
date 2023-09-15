@@ -1,4 +1,4 @@
-jsonschema_specifications attrs importlib_metadata | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs hatch_fancy_pypi_readme $(PYTHON)
+jsonschema_specifications pyrsistent attrs importlib_metadata fqdn | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs hatch_fancy_pypi_readme $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
