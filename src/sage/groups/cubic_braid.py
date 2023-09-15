@@ -820,9 +820,9 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             Assion group on 2 strands of type U
         """
         if self._cbg_type == CubicBraidGroup.type.Coxeter:
-            return "Cubic Braid group on %s strands"%(self.strands())
+            return "Cubic Braid group on %s strands" % (self.strands())
         else:
-            return "Assion group on %s strands of type %s"%(self.strands() ,self._cbg_type.value)
+            return "Assion group on %s strands of type %s" % (self.strands() ,self._cbg_type.value)
 
     def index_set(self):
         r"""
@@ -916,7 +916,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         elem = self.an_element()
         att_grp_elem = attached_group(elem)
         if self.is_finite() and self.strands() <= 7: # not realistic for larger number of strands
-            att_grp_elem_back= self(att_grp_elem)
+            att_grp_elem_back = self(att_grp_elem)
             tester.assertEqual(att_grp_elem_back, elem)
         return
 
@@ -1183,14 +1183,14 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # computing a hyperbolic decomposition basis with respect
             # to the invariant bilinear form.
             # -----------------------------------------------------------
-            xbas =[bas[mhalf -i -1] for i in range(mhalf)]
-            ybas =[bas[mhalf +i]    for i in range(mhalf)]
+            xbas = [bas[mhalf - i - 1] for i in range(mhalf)]
+            ybas = [bas[mhalf + i]    for i in range(mhalf)]
 
             # -----------------------------------------------------------
             # computing the List of transvection vectors according to
             # the Assion paper, page 292.
             # -----------------------------------------------------------
-            transvections =[xbas[0]]                                   # t_1      = x_1
+            transvections = [xbas[0]]                                   # t_1      = x_1
             for i in range(mhalf-1):
                 transvections.append(ybas[i])                          # t_{2i}   = y_i
                 transvections.append(xbas[i] + xbas[i+1])              # t_{2i+1} = x_j + x_(j+1)
@@ -1256,26 +1256,26 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # computing a orthonormal basis with respect
             # to the invariant bilinear form.
             # -----------------------------------------------------------
-            xbas =[]
+            xbas = []
             for i in range(m):
                 if 2*i == m-1:
                     xbas.append(bas[i])
                 else:
-                    xbas.append(a*bas[i] + a.frobenius()*bas[m-1 -i])
+                    xbas.append(a*bas[i] + a.frobenius()*bas[m-1 - i])
 
             # -----------------------------------------------------------
             # computing the List of transvection vectors according to
             # Assion paper, page 293.
             # -----------------------------------------------------------
-            transvections =[xbas[0]]                                          # t_1 = x_1
+            transvections = [xbas[0]]                                          # t_1 = x_1
             if m > 1:
                 transvections.append(xbas[0]+xbas[1]+xbas[2])                 # t_2 = x_1 + x_2 + x_3
             for j in range(mthird):
                 pos = 3*(j+1)-1
                 transvections.append(xbas[pos-1])                             # t_{3i}   = x_{3i-1}
-                if pos +1  < m:
+                if pos + 1  < m:
                     transvections.append(xbas[pos-1]+xbas[pos]+xbas[pos+1])   # t_{3i+1} = x_{3i-1} + x_{3i} + x_{3i+1}
-                if pos +3  < m:
+                if pos + 3  < m:
                     transvections.append(xbas[pos+1]+xbas[pos+2]+xbas[pos+3]) # t_{3i+2} = x_{3i+1} + x_{3i+2} + x_{3i+3}
 
             # -----------------------------------------------------------
@@ -1286,7 +1286,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             def transvec2mat(v, bas=bas, bform=bform, fact=a):
                 # note x does not change under conjugation, since it belongs to standard basis
-                t = [x + fact *(x * bform * v.conjugate()) * v for x in bas]
+                t = [x + fact * (x * bform * v.conjugate()) * v for x in bas]
                 return matrix(F, t)
 
             # ------------------------------------------------------------------------------

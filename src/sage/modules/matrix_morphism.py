@@ -188,7 +188,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if parent(x) is not self.domain():
                 x = self.domain()(x)
         except TypeError:
-            raise TypeError("%s must be coercible into %s"%(x,self.domain()))
+            raise TypeError("%s must be coercible into %s" % (x,self.domain()))
         if self.domain().is_ambient():
             x = x.element()
         else:
