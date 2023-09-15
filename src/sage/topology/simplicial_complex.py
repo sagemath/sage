@@ -4990,7 +4990,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Return whether ``self`` is minimally non-Golod.
 
-        If a simplicial complex itself is not Golod, but deleting each vertex
+        If a simplicial complex itself is not Golod, but deleting any vertex
         gives us a full subcomplex that is Golod, then we say that a simplicial
         complex is minimally non-Golod.
 
@@ -5018,6 +5018,39 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return X.is_golod()
 
         return not self.is_golod() and all(test(v) for v in self.vertices())
+
+    def moment_angle_complex(self):
+        """
+        Return the moment-angle complex of ``self``.
+
+        A moment-angle complex is a topological space created
+        from this simplicial complex, which holds a lot of
+        information about the simplicial complex itself.
+
+        .. SEEALSO::
+
+            See :mod:`sage.topology.moment_angle_complex` for
+            more information on moment-angle complexes.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[0,1,2,3], [1,4], [3,2,4]])
+            sage: X.moment_angle_complex()
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4) and facets {(1, 4), (2, 3, 4), (0, 1, 2, 3)}
+            sage: K = simplicial_complexes.KleinBottle()
+            sage: K.moment_angle_complex()
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
+
+        We can also create it explicitly::
+
+            sage: Z = MomentAngleComplex(K); Z
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
+        """
+        from .moment_angle_complex import MomentAngleComplex
+        return MomentAngleComplex(self)
 
 # Miscellaneous utility functions.
 
