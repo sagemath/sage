@@ -4177,29 +4177,16 @@ class SimplicialComplex(Parent, GenericCellComplex):
         from sage.groups.free_group import FreeGroup
         from sage.libs.gap.libgap import libgap as gap
         G = self.graph()
-        # If the vertices and edges of G are not sortable, e.g., a mix
-        # of str and int, Sage+Python 3 may raise a TypeError when
-        # trying to find the spanning tree. So create a graph
-        # isomorphic to G but with sortable vertices. Use a copy of G,
-        # because self.graph() is cached, and relabeling its vertices
-        # would relabel the cached version.
-        int_to_v = dict(enumerate(G.vertex_iterator()))
-        v_to_int = {v: i for i, v in int_to_v.items()}
-        G2 = G.copy(immutable=False)
-        G2.relabel(v_to_int)
-        spanning_tree = G2.min_spanning_tree()
-        gens = [(int_to_v[e[0]], int_to_v[e[1]])
-                for e in G2.edges(sort=True)
-                if e not in spanning_tree]
-        if len(gens) == 0:
-            return gap.TrivialGroup()
-
         # Edges in the graph may be sorted differently than in the
         # simplicial complex, so convert the edges to frozensets so we
         # don't have to worry about it. Convert spanning_tree to a set
         # to make lookup faster.
-        spanning_tree = set(frozenset((int_to_v[e[0]], int_to_v[e[1]]))
-                            for e in spanning_tree)
+        spanning_tree = set(frozenset((u, v)) for u, v, _ in G.min_spanning_tree())
+        gens = [e for e in G.edge_iterator(labels=False)
+                if frozenset(e) not in spanning_tree]
+        if not gens:
+            return gap.TrivialGroup()
+
         gens_dict = {frozenset(g): i for i, g in enumerate(gens)}
         FG = FreeGroup(len(gens), 'e')
         rels = []
@@ -4208,7 +4195,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             z = dict()
             for i in range(3):
                 x = frozenset(bdry[i])
-                if (x in spanning_tree):
+                if x in spanning_tree:
                     z[i] = FG.one()
                 else:
                     z[i] = FG.gen(gens_dict[x])
