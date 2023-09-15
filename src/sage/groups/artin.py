@@ -39,6 +39,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: A.<s1,s2,s3> = ArtinGroup(['B',3])
         sage: A
         Artin group of type ['B', 3]
@@ -57,9 +58,9 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         TESTS::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: b = A([1, 2, 3, -1, 2, -3])
-            sage: b._latex_()
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: b = A([1, 2, 3, -1, 2, -3])                                           # needs sage.rings.number_field
+            sage: b._latex_()                                                           # needs sage.rings.number_field
             '\\sigma_{1}\\sigma_{2}\\sigma_{3}\\sigma_{1}^{-1}\\sigma_{2}\\sigma_{3}^{-1}'
 
             sage: B = BraidGroup(4)
@@ -80,6 +81,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: A = ArtinGroup(['E',6])
             sage: b = A([1, 4, -3, 2])
             sage: b.exponent_sum()
@@ -113,6 +115,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: B.<s1,s2,s3> = ArtinGroup(['B',3])
             sage: b = s1 * s2 / s3 / s2
             sage: b1 = b.coxeter_group_element(); b1
@@ -163,6 +166,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: A = ArtinGroup(['B',3])
             sage: x = A([1, 2, 1])
             sage: y = A([2, 1, 2])
@@ -191,6 +195,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: B.<s1,s2,s3> = ArtinGroup(['B',3])
             sage: hash(s1*s3) == hash(s3*s1)
             True
@@ -218,6 +223,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: A = ArtinGroup(['B',3])
             sage: A([1]).left_normal_form()
             (1, s1)
@@ -259,6 +265,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: A = ArtinGroup(['E',6])
             sage: A([2, -4, 2, 3, 1, 3, 2, 1, -2])._left_normal_form_coxeter()
             (
@@ -375,9 +382,9 @@ class ArtinGroup(FinitelyPresentedGroup):
 
     EXAMPLES::
 
-        sage: A.<a,b,c> = ArtinGroup(['B',3]);  A
+        sage: A.<a,b,c> = ArtinGroup(['B',3]);  A                                       # needs sage.rings.number_field
         Artin group of type ['B', 3]
-        sage: ArtinGroup(['B',3])
+        sage: ArtinGroup(['B',3])                                                       # needs sage.rings.number_field
         Artin group of type ['B', 3]
 
     The input must always include the Coxeter data, but the ``names``
@@ -385,11 +392,11 @@ class ArtinGroup(FinitelyPresentedGroup):
     the explicit names of the generators. Otherwise the default prefix
     of ``'s'`` is used::
 
-        sage: ArtinGroup(['B',2]).generators()
+        sage: ArtinGroup(['B',2]).generators()                                          # needs sage.rings.number_field
         (s1, s2)
-        sage: ArtinGroup(['B',2], 'g').generators()
+        sage: ArtinGroup(['B',2], 'g').generators()                                     # needs sage.rings.number_field
         (g1, g2)
-        sage: ArtinGroup(['B',2], 'x,y').generators()
+        sage: ArtinGroup(['B',2], 'x,y').generators()                                   # needs sage.rings.number_field
         (x, y)
 
     REFERENCES:
@@ -407,26 +414,28 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: A1 = ArtinGroup(['B',3])
             sage: A2 = ArtinGroup(['B',3], 's')
             sage: A3 = ArtinGroup(['B',3],  ['s1','s2','s3'])
             sage: A1 is A2 and A2 is A3
             True
 
+            sage: # needs sage.rings.number_field
             sage: A1 = ArtinGroup(['B',2], 'a,b')
             sage: A2 = ArtinGroup([[1,4],[4,1]], 'a,b')
             sage: A3.<a,b> = ArtinGroup('B2')
             sage: A1 is A2 and A2 is A3
             True
 
-            sage: ArtinGroup(['A',3]) is BraidGroup(4, 's1,s2,s3')
+            sage: ArtinGroup(['A',3]) is BraidGroup(4, 's1,s2,s3')                      # needs sage.rings.number_field
             True
 
             sage: G = graphs.PathGraph(3)
             sage: CM = CoxeterMatrix([[1,-1,2],[-1,1,-1],[2,-1,1]], index_set=G.vertices(sort=True))
-            sage: A = groups.misc.Artin(CM)
-            sage: Ap = groups.misc.RightAngledArtin(G, 's')
-            sage: A is Ap
+            sage: A = groups.misc.Artin(CM)                                             # needs sage.rings.number_field
+            sage: Ap = groups.misc.RightAngledArtin(G, 's')                             # needs sage.rings.number_field
+            sage: A is Ap                                                               # needs sage.rings.number_field
             True
         """
         coxeter_data = CoxeterMatrix(coxeter_data)
@@ -457,6 +466,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: A = ArtinGroup(['D',4])
             sage: TestSuite(A).run()
             sage: A = ArtinGroup(['B',3], ['x','y','z'])
@@ -484,9 +494,9 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         TESTS::
 
-            sage: ArtinGroup(['B',3])
+            sage: ArtinGroup(['B',3])                                                   # needs sage.rings.number_field
             Artin group of type ['B', 3]
-            sage: ArtinGroup(['D',4], 'g')
+            sage: ArtinGroup(['D',4], 'g')                                              # needs sage.rings.number_field
             Artin group of type ['D', 4]
         """
         try:
@@ -511,8 +521,8 @@ class ArtinGroup(FinitelyPresentedGroup):
             sage: G.cardinality()
             +Infinity
 
-            sage: A = ArtinGroup(['A',1])
-            sage: A.cardinality()
+            sage: A = ArtinGroup(['A',1])                                               # needs sage.rings.number_field
+            sage: A.cardinality()                                                       # needs sage.rings.number_field
             +Infinity
         """
         from sage.rings.infinity import Infinity
@@ -536,8 +546,8 @@ class ArtinGroup(FinitelyPresentedGroup):
             ...
             ValueError: the group is infinite
 
-            sage: A = ArtinGroup(['D',4], 'g')
-            sage: A.as_permutation_group()
+            sage: A = ArtinGroup(['D',4], 'g')                                          # needs sage.rings.number_field
+            sage: A.as_permutation_group()                                              # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: the group is infinite
@@ -550,8 +560,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['D',4])
-            sage: A.coxeter_type()
+            sage: A = ArtinGroup(['D',4])                                               # needs sage.rings.number_field
+            sage: A.coxeter_type()                                                      # needs sage.rings.number_field
             Coxeter type of ['D', 4]
         """
         return self._coxeter_group.coxeter_type()
@@ -562,8 +572,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: A.coxeter_matrix()
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A.coxeter_matrix()                                                    # needs sage.rings.number_field
             [1 3 2]
             [3 1 4]
             [2 4 1]
@@ -576,8 +586,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['D',4])
-            sage: A.coxeter_group()
+            sage: A = ArtinGroup(['D',4])                                               # needs sage.rings.number_field
+            sage: A.coxeter_group()                                                     # needs sage.rings.number_field
             Finite Coxeter group over Integer Ring with Coxeter matrix:
             [1 3 2 2]
             [3 1 3 3]
@@ -596,8 +606,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['E',7])
-            sage: A.index_set()
+            sage: A = ArtinGroup(['E',7])                                               # needs sage.rings.number_field
+            sage: A.index_set()                                                         # needs sage.rings.number_field
             (1, 2, 3, 4, 5, 6, 7)
         """
         return self._coxeter_group.index_set()
@@ -606,8 +616,8 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         TESTS::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: A([2,1,-2,3,3,3,1])
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A([2,1,-2,3,3,3,1])                                                   # needs sage.rings.number_field
             s2*s1*s2^-1*s3^3*s1
         """
         if x in self._coxeter_group:
@@ -621,8 +631,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['B',2])
-            sage: A.an_element()
+            sage: A = ArtinGroup(['B',2])                                               # needs sage.rings.number_field
+            sage: A.an_element()                                                        # needs sage.rings.number_field
             s1
         """
         return self.gen(0)
@@ -633,8 +643,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: A.some_elements()
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A.some_elements()                                                     # needs sage.rings.number_field
             [s1, s1*s2*s3, (s1*s2*s3)^3]
         """
         rank = self.coxeter_matrix().rank()
@@ -654,8 +664,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: A._standard_lift_Tietze(A.coxeter_group().long_element())
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A._standard_lift_Tietze(A.coxeter_group().long_element())             # needs sage.rings.number_field
             [3, 2, 3, 1, 2, 3, 1, 2, 1]
         """
         return w.reduced_word()
@@ -672,8 +682,8 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: A._standard_lift(A.coxeter_group().long_element())
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A._standard_lift(A.coxeter_group().long_element())                    # needs sage.rings.number_field
             s3*(s2*s3*s1)^2*s2*s1
 
             sage: B = BraidGroup(5)
@@ -701,7 +711,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
 
     EXAMPLES::
 
-        sage: ArtinGroup(['E',7])
+        sage: ArtinGroup(['E',7])                                                       # needs sage.rings.number_field
         Artin group of type ['E', 7]
 
     Since the word problem for finite-type Artin groups is solvable, their
@@ -714,15 +724,15 @@ class FiniteTypeArtinGroup(ArtinGroup):
         ....:         for w in Words(alphabet=group.gens(), length=length):
         ....:              ret.add(prod(w))
         ....:     return ret
-        sage: A = ArtinGroup(['B',3])
-        sage: GA = A.cayley_graph(elements=ball(A, 4), generators=A.gens()); GA
+        sage: A = ArtinGroup(['B',3])                                                   # needs sage.rings.number_field
+        sage: GA = A.cayley_graph(elements=ball(A, 4), generators=A.gens()); GA         # needs sage.rings.number_field
         Digraph on 32 vertices
 
     Since the Artin group has nontrivial relations, this graph contains less
     vertices than the one associated to the free group (which is a tree)::
 
         sage: F = FreeGroup(3)
-        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF
+        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF         # needs sage.combinat
         Digraph on 40 vertices
     """
     def delta(self):
@@ -731,12 +741,12 @@ class FiniteTypeArtinGroup(ArtinGroup):
 
         EXAMPLES::
 
-            sage: A = ArtinGroup(['B',3])
-            sage: A.delta()
+            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A.delta()                                                             # needs sage.rings.number_field
             s3*(s2*s3*s1)^2*s2*s1
 
-            sage: A = ArtinGroup(['G',2])
-            sage: A.delta()
+            sage: A = ArtinGroup(['G',2])                                               # needs sage.rings.number_field
+            sage: A.delta()                                                             # needs sage.rings.number_field
             (s2*s1)^3
 
             sage: B = BraidGroup(5)

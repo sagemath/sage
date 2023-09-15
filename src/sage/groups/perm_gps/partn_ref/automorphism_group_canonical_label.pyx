@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Automorphism groups and canonical labels
 
