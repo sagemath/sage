@@ -1,1 +1,47 @@
-../sagemath-objects/setup.py
+#!/usr/bin/env python
+
+from distutils import log
+from setuptools import setup, Extension
+
+# Work around a Cython problem in Python 3.8.x on macOS
+# https://github.com/cython/cython/issues/3262
+import os
+if os.uname().sysname == 'Darwin':
+    import multiprocessing
+    multiprocessing.set_start_method('fork', force=True)
+
+import sys
+
+from sage_setup.excepthook import excepthook
+sys.excepthook = excepthook
+
+from sage_setup.setenv import setenv
+setenv()
+
+import sage.env
+sage.env.default_required_modules = sage.env.default_optional_modules = ()
+print(f'##################### {sage.env.SAGE_SRC=}')
+
+from sage_setup.command.sage_build_cython import sage_build_cython
+from sage_setup.command.sage_build_ext import sage_build_ext
+#from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
+
+sage_build_cython.built_distributions = ['sagemath-polyhedra']
+
+cmdclass = dict(build_cython=sage_build_cython,
+                build_ext=sage_build_ext)
+
+from sage_setup.find import find_python_sources
+python_packages, python_modules, cython_modules = find_python_sources(
+    '.', ['sage'], distributions=['sagemath-polyhedra'])
+
+log.debug('python_packages = {0}'.format(sorted(python_packages)))
+log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
+log.debug('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
+
+setup(
+    cmdclass = cmdclass,
+    packages = python_packages,
+    py_modules  = python_modules,
+    ext_modules = cython_modules,
+)
