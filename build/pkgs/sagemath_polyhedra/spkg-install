@@ -16,7 +16,8 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
 if [ "$SAGE_EDITABLE" = yes ]; then
     tox_envs=$(tox -l | sed s/norequirements/editable/)
-    tox_args="-p auto -v -e $(echo $tox_envs | sed 's/ /,/g')"
+    # FIXME: Should use -r if sage_setup or another build requirement changes
+    tox_args="-p auto -v -v -v -v -e $(echo $tox_envs | sed 's/ /,/g')"
     if [ "$SAGE_CHECK" = no ]; then
         tox_args="$tox_args --notest"
     fi
