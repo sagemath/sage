@@ -1,4 +1,4 @@
-$(PYTHON) babel jupyterlab json5 requests | $(PYTHON_TOOLCHAIN)
+$(PYTHON) babel jupyterlab json5 jsonschema requests | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.
