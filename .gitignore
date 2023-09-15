@@ -235,6 +235,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-mpmath/pyproject.toml
 /pkgs/sagemath-ntl/pyproject.toml
 /pkgs/sagemath-pari/pyproject.toml
+/pkgs/sagemath-standard/pyproject.toml
 
 /pkgs/sagemath-objects/requirements*.txt
 /pkgs/sagemath-bliss/requirements*.txt
