@@ -1,4 +1,1 @@
  | $(PYTHON_TOOLCHAIN) certifi $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.
