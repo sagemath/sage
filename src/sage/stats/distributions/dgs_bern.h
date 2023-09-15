@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-modules
+ */
 /**
    Bernoulli samplers.
 
