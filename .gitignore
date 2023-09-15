@@ -173,6 +173,7 @@ build/bin/sage-build-env-config
 
 # Generated files in the top-level source trees
 /pkgs/*/build
+/pkgs/*/cython_debug
 /pkgs/*/dist
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
