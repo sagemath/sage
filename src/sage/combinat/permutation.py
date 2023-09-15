@@ -5403,7 +5403,7 @@ class Permutation(CombinatorialElement):
             2
         """
         if not self.parent() == other.parent():
-            raise ValueError("Permutations must belong to the same permutation group.")
+            raise ValueError("permutations must belong to the same permutation group")
 
         n = self.parent().degree()
         if n != other.parent().degree():
