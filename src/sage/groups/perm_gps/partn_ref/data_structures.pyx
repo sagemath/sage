@@ -1576,7 +1576,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
                         print('element {}'.format(permy))
                         print('GAP says it is an element, SC_contains(modify=1) does not')
                         raise AssertionError
-                    permy = list(xrange(1, n + 1))
+                    permy = list(range(1, n + 1))
                     shuffle(permy)
                     gap_says = (PermutationGroupElement(permy) in G)
                     for j from 0 <= j < n:
