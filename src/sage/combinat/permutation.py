@@ -5407,7 +5407,7 @@ class Permutation(CombinatorialElement):
 
         n = self.parent().degree()
         if n != other.parent().degree():
-            raise ValueError("Permutations must have the same degree.")
+            raise ValueError("permutations must have the same degree")
 
         transpositions = 0
         perm1 = list(self)
