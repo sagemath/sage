@@ -5402,8 +5402,7 @@ class Permutation(CombinatorialElement):
             sage: p1.transposition_distance(p2)
             2
         """
-        if not self.parent() == other.parent():
-            raise ValueError("permutations must belong to the same permutation group")
+        other = self.parent()(other)
 
         n = self.parent().degree()
         if n != other.parent().degree():
