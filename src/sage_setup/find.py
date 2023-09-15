@@ -130,7 +130,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         sage: find_python_sources(SAGE_SRC, modules=['sage_setup'])
         (['sage_setup', ...], [...'sage_setup.find'...], [])
     """
-    from setuptools import Extension
+    from setuptools.extension import Extension
 
     PYMOD_EXT = get_extensions('source')[0]
 
@@ -146,7 +146,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         for module in modules:
             for dirpath, dirnames, filenames in os.walk(module):
                 package = dirpath.replace(os.path.sep, '.')
-                if not is_package_or_namespace_package_dir(dirpath):
+                if not is_package_or_namespace_package_dir(dirpath, distribution_filter=distribution_filter):
                     # Skip any subdirectories
                     dirnames[:] = []
                     continue
