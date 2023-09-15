@@ -273,16 +273,16 @@ class SymmetricGroup(PermutationGroup_symalt):
         super(PermutationGroup_generic, self).__init__(category=cat)
 
         self._domain = domain
-        self._deg = n = len(self._domain)
+        self._deg = len(self._domain)
         self._domain_to_gap = {key: i+1 for i, key in enumerate(self._domain)}
         self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         # Create the generators for the symmetric group
-        if n <= 1:
+        if self._deg <= 1:
             self._gens = ()
         else:
             gens = [tuple(self._domain)]
-            if n > 2:
+            if self._deg > 2:
                 gens.append(tuple(self._domain[:2]))
             self._gens = tuple([self.element_class(g, self, check=False)
                                 for g in gens])
@@ -1952,11 +1952,11 @@ def TransitiveGroups(d=None):
     """
     if d is None:
         return TransitiveGroupsAll()
-    else:
-        d = Integer(d)
-        if d < 0:
-            raise ValueError("a transitive group acts on a non negative integer number of positions")
-        return TransitiveGroupsOfDegree(d)
+
+    d = Integer(d)
+    if d < 0:
+        raise ValueError("a transitive group acts on a non negative integer number of positions")
+    return TransitiveGroupsOfDegree(d)
 
 
 class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
