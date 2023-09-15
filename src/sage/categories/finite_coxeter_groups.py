@@ -357,7 +357,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 c = self.prod(s[i] for i in I)
                 roots = c.matrix().change_ring(QQbar).charpoly().roots()
                 args = ((z.rational_argument(), m) for z, m in roots)
-                args = [(z if z >=0 else 1 + z, m) for z, m in args]
+                args = [(z if z >= 0 else 1 + z, m) for z, m in args]
                 h = max(z.denominator() for z, m in args)
                 return tuple(sorted(ZZ(z * h + 1)
                                     for z, m in args if z
@@ -992,11 +992,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                         v[i] = w[i-1]
                         v[i-1] = w[i]
                         d += [tuple(v)]
-                elif w[i-1]<w[i-2] and w[i-2]<w[i]:
+                elif w[i-1] < w[i-2] and w[i-2] < w[i]:
                     v[i] = w[i-1]
                     v[i-1] = w[i]
                     d += [tuple(v)]
-                elif w[i-2]<w[i] and w[i]<w[i-1]:
+                elif w[i-2] < w[i] and w[i] < w[i-1]:
                     v[i-2] = w[i-1]
                     v[i-1] = w[i-2]
                     d += [tuple(v)]
