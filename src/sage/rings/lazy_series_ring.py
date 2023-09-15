@@ -19,6 +19,21 @@ We provide lazy implementations for various `\NN`-graded rings.
     :class:`sage.rings.padics.generic_nodes.pAdicRelaxedGeneric`,
     :func:`sage.rings.padics.factory.ZpER`
 
+.. WARNING::
+
+    When the halting precision is infinite, the default for ``bool(f)``
+    is ``True`` for any lazy series ``f`` that is not known to be zero.
+    This could end up resulting in infinite loops::
+
+        sage: L.<x> = LazyPowerSeriesRing(ZZ)
+        sage: f = L(lambda n: 0, valuation=0)
+        sage: 1 / f  # not tested - infinite loop
+
+.. SEEALSO::
+
+    The examples of :class:`LazyLaurentSeriesRing` contain a discussion
+    about the different methods of comparisons the lazy series can use.
+
 AUTHORS:
 
 - Kwankyu Lee (2019-02-24): initial version
@@ -490,7 +505,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                     if valuation is None:
                         raise ValueError("you must specify the degree for the polynomial 0")
                     degree = valuation
-                if x == R.zero():
+                if not x:
                     coeff_stream = Stream_exact([], order=degree, constant=constant)
                     return self.element_class(self, coeff_stream)
                 initial_coefficients = [x[i] for i in range(x.valuation(), x.degree() + 1)]
@@ -663,6 +678,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
               - constant_length:   3
               - display_length:    7
               - halting_precision: None
+              - secure:            False
 
             sage: LLS.options.display_length
             7
@@ -696,8 +712,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                                description='the number of coefficients to display for nonzero constant series',
                                checker=lambda x: x in ZZ and x > 0)
         halting_precision = dict(default=None,
-                               description='the number of coefficients, beginning with the approximate valuation, to check in equality tests',
-                               checker=lambda x: x is None or x in ZZ and x > 0)
+                                 description='the number of coefficients, beginning with the approximate valuation, to check in equality tests',
+                                 checker=lambda x: x is None or x in ZZ and x > 0)
+        secure = dict(default=False,
+                      description='whether to raise an error when a comparison is unknown',
+                      checker=lambda x: x is True or x is False)
 
     @cached_method
     def one(self):
@@ -1330,12 +1349,59 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         sage: s
         1 + z + 2*z^2 + 5*z^3 + 14*z^4 + 42*z^5 + 132*z^6 + O(z^7)
 
-    If the series is not specified by a finite number of initial
-    coefficients and a constant for the remaining coefficients, then
-    equality checking will depend on the coefficients which have
-    already been computed.  If this information is not enough to
-    check that two series are different we raise an error::
+    By default, any two series ``f`` and ``g`` that are not known to
+    be equal are considered to be different::
 
+        sage: f = L(lambda n: 0, valuation=0)
+        sage: f == 0
+        False
+
+        sage: f = L(constant=1, valuation=0).derivative(); f
+        1 + 2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+        sage: g = L(lambda n: (n+1), valuation=0); g
+        1 + 2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+        sage: f == g
+        False
+
+    .. WARNING::
+
+        We have imposed that ``(f == g) == not (f != g)``, and so
+        ``f != g`` returning ``True`` might not mean that the two
+        series are actually different::
+
+            sage: f = L(lambda n: 0, valuation=0)
+            sage: g = L.zero()
+            sage: f != g
+            True
+
+        This can be verified by :meth:`~sage.rings.lazy_series.is_nonzero()`,
+        which only returns ``True`` if the series is known to be nonzero::
+
+            sage: (f - g).is_nonzero()
+            False
+
+    The implementation of the ring can be either be a sparse or a dense one.
+    The default is a sparse implementation::
+
+        sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+        sage: L.is_sparse()
+        True
+        sage: L.<z> = LazyLaurentSeriesRing(ZZ, sparse=False)
+        sage: L.is_sparse()
+        False
+
+    We additionally provide two other methods of performing comparisons.
+    The first is raising a ``ValueError`` and the second uses a check
+    up to a (user set) finite precision. These behaviors are set using the
+    options ``secure`` and ``halting_precision``. In particular,
+    this applies to series that are not specified by a finite number
+    of initial coefficients and a constant for the remaining coefficients.
+    Equality checking will depend on the coefficients which have
+    already been computed. If this information is not enough to
+    check that two series are different, then if ``L.options.secure``
+    is set to ``True``, then we raise a ``ValueError``::
+
+        sage: L.options.secure = True
         sage: f = 1 / (z + z^2); f
         z^-1 - 1 + z - z^2 + z^3 - z^4 + z^5 + O(z^6)
         sage: f2 = f * 2  # currently no coefficients computed
@@ -1350,16 +1416,45 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         3*z^-1 - 3 + 3*z - 3*z^2 + 3*z^3 - 3*z^4 + 3*z^5 + O(z^6)
         sage: f2 == f3
         False
+        sage: f2a = f + f
+        sage: f2 == f2a
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
+        sage: zf = L(lambda n: 0, valuation=0)
+        sage: zf == 0
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
 
-    The implementation of the ring can be either be a sparse or a dense one.
-    The default is a sparse implementation::
+    For boolean checks, an error is raised when it is not known to be nonzero::
 
-        sage: L.<z> = LazyLaurentSeriesRing(ZZ)
-        sage: L.is_sparse()
-        True
-        sage: L.<z> = LazyLaurentSeriesRing(ZZ, sparse=False)
-        sage: L.is_sparse()
+        sage: bool(zf)
+        Traceback (most recent call last):
+        ...
+        ValueError: undecidable
+
+    If the halting precision is set to a finite number `p` (for unlimited
+    precision, it is set to ``None``), then it will check up to `p` values
+    from the current position::
+
+        sage: L.options.halting_precision = 20
+        sage: f2 = f * 2  # currently no coefficients computed
+        sage: f3 = f * 3  # currently no coefficients computed
+        sage: f2 == f3
         False
+        sage: f2a = f + f
+        sage: f2 == f2a
+        True
+        sage: zf = L(lambda n: 0, valuation=0)
+        sage: zf == 0
+        True
+
+    TESTS:
+
+    We reset the options::
+
+        sage: L.options._reset()
     """
     Element = LazyLaurentSeries
 
@@ -2509,10 +2604,10 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             if basis not in GradedAlgebrasWithBasis:
                 raise ValueError("basis should be in GradedAlgebrasWithBasis")
             self._arity = 1
-        category = Algebras(base_ring.category())
-        if base_ring in IntegralDomains():
+        category = Algebras(basis.category())
+        if basis in IntegralDomains():
             category &= IntegralDomains()
-        elif base_ring in Rings().Commutative():
+        elif basis in Rings().Commutative():
             category = category.Commutative()
 
         if base_ring.is_zero():
