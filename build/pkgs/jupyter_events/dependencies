@@ -1,4 +1,4 @@
-$(PYTHON) jsonschema | $(PYTHON_TOOLCHAIN)
+$(PYTHON) jsonschema python_json_logger | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.
