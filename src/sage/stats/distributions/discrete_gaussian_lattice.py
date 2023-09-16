@@ -57,14 +57,15 @@ EXAMPLES::
 #*****************************************************************************/
 
 from sage.functions.log import exp
-from sage.functions.other import ceil
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
-from sage.matrix.constructor import matrix, identity_matrix
+from sage.misc.functional import sqrt
+from sage.symbolic.constants import pi
+from sage.matrix.constructor import matrix
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 
@@ -156,7 +157,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         INPUT:
 
-        - ``precision`` - an integer `> 53` nor ``None``.
+        - ``precision`` - an integer `>= 53` nor ``None``.
         - ``sigma`` - if ``precision`` is ``None`` then the precision of
           ``sigma`` is used.
 
@@ -185,19 +186,20 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         precision = max(53, precision)
         return precision
 
-    def _normalisation_factor_zz(self, tau=3):
+    def _normalisation_factor_zz(self, tau=None, prec=None):
         r"""
-        This function returns an approximation of `∑_{x ∈ \ZZ^n}
+        This function returns an approximation of `∑_{x ∈ B}
         \exp(-|x|_2^2/(2σ²))`, i.e. the normalisation factor such that the sum
-        over all probabilities is 1 for `\ZZⁿ`.
-
-        If this ``self.B`` is not an identity matrix over `\ZZ` a
-        ``NotImplementedError`` is raised.
+        over all probabilities is 1 for `B`, via Poisson summation.
 
         INPUT:
 
-        - ``tau`` -- all vectors `v` with `|v|_∞ ≤ τ·σ` are enumerated
-                     (default: ``3``).
+        - ``tau`` -- (default: ``None``) all vectors `v` with `|v|_2^2 ≤ τ·σ`
+          are enumerated; if none is provided, enumerate vectors with
+          increasing norm until the sum converges to given precision. For high
+          dimension lattice, this is recommended.
+
+        - ``prec`` -- (default: ``None``) Passed to :meth:`compute_precision`
 
         EXAMPLES::
 
@@ -206,7 +208,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
             sage: f = D.f
             sage: c = D._normalisation_factor_zz(); c
-            15.528...
+            15.7496..
 
             sage: from collections import defaultdict
             sage: counter = defaultdict(Integer)
@@ -228,15 +230,73 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: while v not in counter: add_samples(1000)
 
             sage: while abs(m*f(v)*1.0/c/counter[v] - 1.0) >= 0.2: add_samples(1000)  # long time
-        """
-        if self.B != identity_matrix(ZZ, self.B.nrows()):
-            raise NotImplementedError("This function is only implemented when B is an identity matrix.")
 
-        f = self.f
-        n = self.B.ncols()
+            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^8, 0.5)
+            sage: D._normalisation_factor_zz(tau=3)
+            3.1653...
+            sage: D._normalisation_factor_zz()
+            6.8249...
+            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^8, 1000)
+            sage: round(D._normalisation_factor_zz(prec=100))
+            1558545456544038969634991553
+
+            sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1], [3, -4, 2]])
+            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 3)
+
+            sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1]])
+            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 3)
+        """
+
+        # If σ > 1:
+        # We use the Fourier transform g(t) of f(x) = exp(-k^2 / 2σ^2), but
+        # taking the norm of vector t^2 as input, and with norm_factor factored.
+        # If σ ≤ 1:
+        # The formula in docstring converges quickly since it has -1 / σ^2 in
+        # the exponent
+        def f(x):
+            # Fun fact: If you remove this R() and delay the call to return,
+            # It might give an error due to precision error. For example,
+            # RR(1 + 100 * exp(-5.0 * pi^2)) == 0
+            if sigma > 1:
+                return R(exp(-pi**2 * (2 * sigma**2) * x))
+            return R(exp(-x / (2 * sigma**2)))
+
+        if self.B != 1:
+            # TODO: Implement
+            raise NotImplementedError("Implement")
+
         sigma = self._sigma
-        return sum(f(x) for x in _iter_vectors(n, -ceil(tau * sigma),
-                                               ceil(tau * sigma)))
+        prec = DiscreteGaussianDistributionLatticeSampler.compute_precision(
+            prec, sigma
+        )
+        R = RealField(prec=prec)
+        if sigma > 1:
+            B = self.B
+            # TODO: Take B dual
+            raise NotImplementedError("oh no")
+            norm_factor = (sigma * sqrt(2 * pi))**self.B.ncols()
+        else:
+            B = self.B
+            norm_factor = 1
+
+        # qfrep computes theta series of a quadratic form, which is *half* the
+        # generating function of number of vectors with given norm (and no 0)
+        if tau is not None:
+            freq = self.Q.__pari__().qfrep(tau * sigma, 0)
+            res = R(1)
+            for x, fq in enumerate(freq):
+                res += 2 * ZZ(fq) * f(x + 1)
+            return R(norm_factor * res)
+
+        res = R(1)
+        bound = 0
+        while True:
+            bound += 1
+            cnt = ZZ(self.Q.__pari__().qfrep(bound, 0)[bound - 1])
+            inc = 2 * cnt * f(bound)
+            if cnt > 0 and res == res + inc:
+                return R(norm_factor * res)
+            res += inc
 
     def __init__(self, B, sigma=1, c=None, precision=None):
         r"""
@@ -262,7 +322,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
             sage: f = D.f
             sage: c = D._normalisation_factor_zz(); c
-            56.2162803067524
+            56.5486677646162
 
             sage: from collections import defaultdict
             sage: counter = defaultdict(Integer)
