@@ -408,9 +408,9 @@ class TransversalDesign(GroupDivisibleDesign):
         from math import sqrt
         if k is None:
             if blocks:
-                k=len(blocks[0])
+                k = len(blocks[0])
             else:
-                k=0
+                k = 0
         if n is None:
             n = round(sqrt(len(blocks)))
 
@@ -474,7 +474,7 @@ def is_transversal_design(B, k, n, verbose=False):
         sage: is_transversal_design(TD, 4, 4)
         False
     """
-    return is_orthogonal_array([[x%n for x in R] for R in B],k,n,verbose=verbose)
+    return is_orthogonal_array([[x % n for x in R] for R in B],k,n,verbose=verbose)
 
 def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     r"""
@@ -614,7 +614,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
         master_design = OA
 
     for c in u:
-        assert all(m_ij>=0 and h_size>=0 for m_ij,h_size in c)
+        assert all(m_ij >= 0 and h_size >= 0 for m_ij,h_size in c)
         assert sum(h_size for m_ij,h_size in c) <= r
 
     # Associates a point ij from a truncated column k+i to
@@ -623,7 +623,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     # - its corresponding set of points in the final design.
     point_to_mij = []
     point_to_point_set = []
-    n=r*m
+    n = r*m
     for i,partition in enumerate(u):
         column_i_point_to_mij = []
         column_i_point_to_point_set = []
@@ -631,7 +631,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
             for _ in range(h_size):
                 column_i_point_to_mij.append(mij)
                 column_i_point_to_point_set.append(list(range(n,n+mij)))
-                n+=mij
+                n += mij
         point_to_mij.append(column_i_point_to_mij)
         point_to_point_set.append(column_i_point_to_point_set)
 
@@ -833,11 +833,11 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
         True
         sage: _ = designs.orthogonal_arrays.build(t,5,t)
     """
-    assert n>=0, "n(={}) must be nonnegative".format(n)
+    assert n >= 0, "n(={}) must be nonnegative".format(n)
 
     # A resolvable OA(k,n) is an OA(k+1,n)
     if resolvable:
-        assert t==2, "resolvable designs are only handled when t=2"
+        assert t == 2, "resolvable designs are only handled when t=2"
         if existence and k is not None:
             return orthogonal_array(k+1,n,existence=True)
         if k is None:
@@ -910,7 +910,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
             return True
         if explain_construction:
             return "Cyclic latin square"
-        return [[i,j,(i+j)%n] for i in range(n) for j in range(n)]
+        return [[i,j,(i+j) % n] for i in range(n) for j in range(n)]
 
     # projective spaces are equivalent to OA(n+1,n,2)
     elif (projective_plane(n, existence=True) is True or
@@ -962,12 +962,12 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
     # Constructions from the database III (Quasi-difference matrices)
     elif (may_be_available and
           (n,1) in QDM     and
-          any(kk>=k and mu<=lmbda and (orthogonal_array(k,u,existence=True) is True) for (_,lmbda,mu,u),(kk,_) in QDM[n,1].items())):
+          any(kk >= k and mu <= lmbda and (orthogonal_array(k,u,existence=True) is True) for (_,lmbda,mu,u),(kk,_) in QDM[n,1].items())):
         _OA_cache_set(k,n,True)
 
         for (nn,lmbda,mu,u),(kk,f) in QDM[n,1].items():
-            if (kk>=k     and
-                mu<=lmbda and
+            if (kk >= k     and
+                mu <= lmbda and
                 (orthogonal_array(k,u,existence=True) is True)):
                 if existence:
                     return True
@@ -1038,9 +1038,9 @@ def largest_available_k(n,t=2):
         ValueError: n(=-1) was expected to be >=0
     """
     from .block_design import projective_plane
-    if n<0:
+    if n < 0:
         raise ValueError("n(={}) was expected to be >=0".format(n))
-    if t<0:
+    if t < 0:
         raise ValueError("t(={}) was expected to be >=0".format(t))
     if n == 0 or n == 1:
         from sage.rings.infinity import Infinity
@@ -1049,11 +1049,11 @@ def largest_available_k(n,t=2):
         if projective_plane(n,existence=True) is True:
             return n+1
         else:
-            k=1
+            k = 1
             while _OA_cache_construction_available(k+1,n) is True:
-                k=k+1
+                k = k+1
     else:
-        k=t-1
+        k = t-1
 
     while orthogonal_array(k+1,n,t,existence=True) is True:
         k += 1
@@ -1221,10 +1221,10 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     """
     from sage.combinat.designs.database import QDM
     for h in holes:
-        if h<0:
+        if h < 0:
             raise ValueError("Holes must have size >=0, but {} was in the list").format(h)
 
-    holes = [h for h in holes if h>0]
+    holes = [h for h in holes if h > 0]
 
     if not holes:
         return orthogonal_array(k,n,existence=existence,resolvable=resolvable)
@@ -1247,7 +1247,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         raise EmptySetError("There is no resolvable incomplete OA({},{}) whose holes' sizes sum to {}<n(={})".format(k,n,sum_of_holes,n))
 
     # resolvable OA(k,n)-n.OA(k,1) ==> equivalent to OA(k+1,n)
-    if max_hole==1 and resolvable:
+    if max_hole == 1 and resolvable:
         if existence:
             return orthogonal_array(k+1,n,existence=True)
 
@@ -1267,7 +1267,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         return OA[:-n]
 
     # Easy case
-    elif max_hole==1 and number_of_holes <= 1:
+    elif max_hole == 1 and number_of_holes <= 1:
         if existence:
             return orthogonal_array(k,n,existence=True)
         OA = orthogonal_array(k,n)
@@ -1299,7 +1299,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         # place the first hole of size 1
         i = holes.index(1)
         for h1 in IOA:
-            if all(x<n-max_hole for x in h1):
+            if all(x < n-max_hole for x in h1):
                 break
         holes[i] = [h1]
         IOA.remove(h1)
@@ -1308,7 +1308,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         if number_of_holes == 3:
             i = holes.index(1)
             for h2 in IOA:
-                if all(h1[j] != x and x<n-max_hole for j,x in enumerate(h2)):
+                if all(h1[j] != x and x < n-max_hole for j,x in enumerate(h2)):
                     break
             holes[i] = [h2]
             IOA.remove(h2)
@@ -1327,21 +1327,21 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         IOA = OA_relabel(IOA,k,n,matrix=holes)
         return IOA
 
-    elif max_hole==1 and number_of_holes >= 2 and k == n+1:
+    elif max_hole == 1 and number_of_holes >= 2 and k == n+1:
         if existence:
             return False
         raise EmptySetError(("There is no OA(n+1,n) - {}.OA(n+1,1) as all blocks "
                              "intersect in a projective plane.").format(number_of_holes))
 
     # Holes of size 1 from OA(k+1,n)
-    elif max_hole==1 and orthogonal_array(k+1,n,existence=True) is True:
+    elif max_hole == 1 and orthogonal_array(k+1,n,existence=True) is True:
         if existence:
             return True
         OA = orthogonal_array(k+1,n)
         independent_set = [B[:-1] for B in OA if B[-1] == 0][:number_of_holes]
         OA = [B[:-1] for B in OA]
 
-    elif max_hole==1 and orthogonal_array(k,n,existence=True) is True:
+    elif max_hole == 1 and orthogonal_array(k,n,existence=True) is True:
         OA = orthogonal_array(k,n)
         try:
             independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
@@ -1353,7 +1353,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
             return True
         independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
 
-    elif max_hole==1 and not orthogonal_array(k,n,existence=True) is True:
+    elif max_hole == 1 and not orthogonal_array(k,n,existence=True) is True:
         return orthogonal_array(k,n,existence=existence)
 
     # From a quasi-difference matrix
@@ -1372,7 +1372,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     # (i.e. OA(k,n1)-x.OA(k,1) and OA(k,n2) ==> OA(k,n1.n2)-x.OA(k,n2) )
     elif (min_hole > 1                                and
           max_hole == min_hole                        and
-          n%min_hole == 0                             and # h divides n
+          n % min_hole == 0                             and # h divides n
           orthogonal_array(k,min_hole,existence=True) and # OA(k,h)
           incomplete_orthogonal_array(k,n//min_hole,[1]*number_of_holes,existence=True)): # OA(k,n/h)-x.OA(k,1)
         if existence:
