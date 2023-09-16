@@ -168,14 +168,14 @@ class Frobby:
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('hilbert', input=frobby_input)
-        ring=monomial_ideal.ring()
-        lines=frobby_output.split('\n')
-        if lines[-1]=='':
+        ring = monomial_ideal.ring()
+        lines = frobby_output.split('\n')
+        if lines[-1] == '':
             lines.pop(-1)
-        if lines[-1]=='(coefficient)':
+        if lines[-1] == '(coefficient)':
             lines.pop(-1)
         lines.pop(0)
-        resul=0
+        resul = 0
         for l in lines:
             lis = [int(_) for _ in l.split()]
             resul += lis[0]+prod([ring.gen(i)**lis[i+1] for i in range(len(lis)-1)])
@@ -206,9 +206,9 @@ class Frobby:
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('assoprimes', input=frobby_input)
-        lines=frobby_output.split('\n')
+        lines = frobby_output.split('\n')
         lines.pop(0)
-        if lines[-1]=='':
+        if lines[-1] == '':
             lines.pop(-1)
         lists = [[int(_) for _ in a.split()] for a in lines]
 
@@ -334,10 +334,10 @@ class Frobby:
                 lines.pop(0)
                 matrices.append('1 '+str(ring.ngens())+'\n'+'0 '*ring.ngens()+'\n')
             else:
-                nrows=int(lines[0].split()[0])
-                nmatrix=lines.pop(0)+'\n'
+                nrows = int(lines[0].split()[0])
+                nmatrix = lines.pop(0)+'\n'
                 for i in range(nrows):
-                    nmatrix+=lines.pop(0)+'\n'
+                    nmatrix += lines.pop(0)+'\n'
                 matrices.append(nmatrix)
 
         def to_ideal(exps):

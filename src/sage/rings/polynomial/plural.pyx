@@ -2403,7 +2403,7 @@ cdef class NCPolynomial_plural(RingElement):
         p = self._poly
 
         pl = list()
-        ml = list(xrange(r.N))
+        ml = list(range(r.N))
         while p:
             for v from 1 <= v <= r.N:
                 ml[v - 1] = p_GetExp(p, v, r)

@@ -7143,12 +7143,16 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             sage: PP = Permutations(5)
             sage: PP.element_in_conjugacy_classes([2,2])                                # optional - sage.combinat
             [2, 1, 4, 3, 5]
+            sage: PP.element_in_conjugacy_classes([5, 5])
+            Traceback (most recent call last):
+            ...
+            ValueError: the size of the partition (=10) should be at most the size of the permutations (=5)
         """
         from sage.combinat.partition import Partition
         nu = Partition(nu)
         if nu.size() > self.n:
-            raise ValueError("The size of the partition (=%s) should be lower or equal"
-                             " to the size of the permutations (=%s)"%(nu.size,self.n))
+            raise ValueError("the size of the partition (=%s) should be at most"
+                             " the size of the permutations (=%s)" % (nu.size(), self.n))
         l = []
         i = 0
         for nui in nu:
