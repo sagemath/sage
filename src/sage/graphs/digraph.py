@@ -905,8 +905,7 @@ class DiGraph(GenericGraph):
             raise ValueError('dig6 format supports graphs on 0 to 262143 vertices only')
         elif self.has_multiple_edges():
             raise ValueError('dig6 format does not support multiple edges')
-        else:
-            return generic_graph_pyx.small_integer_to_graph6(n) + generic_graph_pyx.binary_string_to_graph6(self._bit_vector())
+        return generic_graph_pyx.small_integer_to_graph6(n) + generic_graph_pyx.binary_string_to_graph6(self._bit_vector())
 
     # Attributes
 
@@ -1641,8 +1640,7 @@ class DiGraph(GenericGraph):
                                       integrality_tolerance=integrality_tolerance)
             if value_only:
                 return FAS + len(loops)
-            else:
-                return FAS + loops
+            return FAS + loops
 
         if not self.is_strongly_connected():
             # If the digraph is not strongly connected, we solve the problem on
@@ -1719,29 +1717,28 @@ class DiGraph(GenericGraph):
         ######################################
         # Ordering-based MILP Implementation #
         ######################################
-        else:
-            p = MixedIntegerLinearProgram(maximization=False, solver=solver)
+        p = MixedIntegerLinearProgram(maximization=False, solver=solver)
 
-            b = p.new_variable(binary=True)
-            d = p.new_variable(integer=True, nonnegative=True)
+        b = p.new_variable(binary=True)
+        d = p.new_variable(integer=True, nonnegative=True)
 
-            n = self.order()
+        n = self.order()
 
-            for u, v in self.edge_iterator(labels=None):
-                p.add_constraint(d[u] - d[v] + n * b[u, v], min=1)
+        for u, v in self.edge_iterator(labels=None):
+            p.add_constraint(d[u] - d[v] + n * b[u, v], min=1)
 
-            for v in self:
-                p.add_constraint(d[v] <= n)
+        for v in self:
+            p.add_constraint(d[v] <= n)
 
-            p.set_objective(p.sum(b[e] for e in self.edge_iterator(labels=False)))
+        p.set_objective(p.sum(b[e] for e in self.edge_iterator(labels=False)))
 
-            p.solve(log=verbose)
+        p.solve(log=verbose)
 
-            b_sol = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
+        b_sol = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
 
-            if value_only:
-                return sum(1 for e in self.edge_iterator(labels=False) if b_sol[e])
-            return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
+        if value_only:
+            return sum(1 for e in self.edge_iterator(labels=False) if b_sol[e])
+        return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
 
     # Construction
 
@@ -2366,12 +2363,11 @@ class DiGraph(GenericGraph):
 
         if with_labels:
             return ecc
-        else:
-            if len(ecc) == 1:
-                # return single value
-                v, = ecc.values()
-                return v
-            return [ecc[u] for u in v]
+        if len(ecc) == 1:
+            # return single value
+            v, = ecc.values()
+            return v
+        return [ecc[u] for u in v]
 
     def radius(self, by_weight=False, algorithm=None, weight_function=None,
                check_weight=True):
@@ -3264,8 +3260,7 @@ class DiGraph(GenericGraph):
             else:
                 return S
 
-        else:
-            raise ValueError("implementation must be set to one of \"default\" or \"NetworkX\"")
+        raise ValueError("implementation must be set to one of \"default\" or \"NetworkX\"")
 
     def topological_sort_generator(self):
         """
@@ -3365,8 +3360,7 @@ class DiGraph(GenericGraph):
         """
         if have_dot2tex():
             return self.layout_graphviz(rankdir=rankdir, **options)
-        else:
-            return self.layout_acyclic_dummy(rankdir=rankdir, **options)
+        return self.layout_acyclic_dummy(rankdir=rankdir, **options)
 
     def layout_acyclic_dummy(self, heights=None, rankdir='up', **options):
         """
