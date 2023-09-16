@@ -125,7 +125,7 @@ class Elements(Category):
             sage: Elements(ZZ)._repr_object_names()
             'elements of Integer Ring'
         """
-        return "elements of %s"%self.object()
+        return "elements of %s" % self.object()
 
     def _latex_(self):
         r"""
@@ -136,7 +136,7 @@ class Elements(Category):
             sage: latex(x.category())  # indirect doctest                               # needs sage.modules
             \mathbf{Elt}_{\Bold{Q}^{3}}
         """
-        return "\\mathbf{Elt}_{%s}"%latex(self.__object)
+        return "\\mathbf{Elt}_{%s}" % latex(self.__object)
 
 
 #############################################################
@@ -291,7 +291,7 @@ class Category_over_base(CategoryWithParameters):
                 name = base._repr_object_names()
         else:
             name = base
-        return Category._repr_object_names(self) + " over %s"%name
+        return Category._repr_object_names(self) + " over %s" % name
 
     def _latex_(self):
         r"""
@@ -300,7 +300,7 @@ class Category_over_base(CategoryWithParameters):
             sage: latex(ModulesWithBasis(ZZ))
             \mathbf{ModulesWithBasis}_{\Bold{Z}}
         """
-        return "\\mathbf{%s}_{%s}"%(self._label, latex(self.__base))
+        return "\\mathbf{%s}_{%s}" % (self._label, latex(self.__base))
 
 #    def construction(self):
 #        return (self.__class__, self.__base)
@@ -556,7 +556,7 @@ class Category_in_ambient(Category):
             sage: Ideals(IntegerRing())
             Category of ring ideals in Integer Ring
         """
-        return Category._repr_(self) + " in %s"%self.__ambient
+        return Category._repr_(self) + " in %s" % self.__ambient
 
 #    def construction(self):
 #        return (self.__class__, self.__ambient)

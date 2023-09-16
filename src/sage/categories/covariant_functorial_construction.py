@@ -200,7 +200,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
             sage: tensor                       # indirect doctest
             The tensor functorial construction
         """
-        return "The %s functorial construction"%self._functor_name
+        return "The %s functorial construction" % self._functor_name
 
     def __call__(self, args, **kwargs):
         """
@@ -495,7 +495,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             sage: Semigroups().Subquotients()  # indirect doctest
             Category of subquotients of semigroups
         """
-        return "%s of %s"%(Category._repr_object_names(self), self.base_category()._repr_object_names())
+        return "%s of %s" % (Category._repr_object_names(self), self.base_category()._repr_object_names())
 
     def _latex_(self):
         r"""
@@ -509,7 +509,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             \mathbf{Algebras}(\mathbf{Semigroups})
         """
         from sage.misc.latex import latex
-        return "\\mathbf{%s}(%s)"%(self._short_name(), latex(self.base_category()))
+        return "\\mathbf{%s}(%s)" % (self._short_name(), latex(self.base_category()))
 
 class CovariantConstructionCategory(FunctorialConstructionCategory):
     """

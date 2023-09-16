@@ -594,7 +594,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     [direct_sum, phi] = IntegralLatticeDirectSum(Lattices, return_embeddings=True)
     N = len(Lattices)
     for g in glue:
-        if not len(g)==N:
+        if not len(g) == N:
             raise ValueError("the lengths of the lists do not match")
     for i in range(N):
         ALi = Lattices[i].discriminant_group()
@@ -693,7 +693,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         B = self.basis_matrix()
         B = other * B if switch_sides else B * other
         # check whether it is integral
-        if other in ZZ or other.denominator()==1:
+        if other in ZZ or other.denominator() == 1:
             return self.sublattice(B.rows())
         else:
             return self.span(B.rows())
@@ -1059,7 +1059,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         # it might speed up things to use the algorithms given in
         # https://arxiv.org/abs/1208.2481
         # and trac:11940
-        if not self.is_even() and (p is None or p==2):
+        if not self.is_even() and (p is None or p == 2):
             raise ValueError("this lattice must be even to admit an even overlattice")
         from sage.rings.finite_rings.finite_field_constructor import GF
         L = self
@@ -1307,7 +1307,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                               invariant_quotient_module=D)
         return G
 
-    automorphisms=orthogonal_group
+    automorphisms = orthogonal_group
 
     def genus(self):
         r"""
@@ -1482,7 +1482,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             from sage.libs.pari import pari
             m = self.gram_matrix().__pari__()
             gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
-            m = gp.eval('qflllgram_indefgoon(%s)'%m)
+            m = gp.eval('qflllgram_indefgoon(%s)' % m)
             # convert the output string to sage
             G, U = pari(m).sage()
             U = U.T
@@ -1573,7 +1573,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             s = self.base_ring()(s)
         except TypeError:
             raise ValueError("the scaling factor must be an element of the base ring.")
-        if s==0:
+        if s == 0:
             raise ValueError("the scaling factor must be non zero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())

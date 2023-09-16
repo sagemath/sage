@@ -328,7 +328,7 @@ class Animation(WithEqualityById, SageObject):
             num = len(self)
         except TypeError:
             num = "unknown number of"
-        return "Animation with %s frames"%num
+        return "Animation with %s frames" % num
 
     def __add__(self, other):
         """
@@ -500,7 +500,7 @@ class Animation(WithEqualityById, SageObject):
             dir = tmp_dir()
         i = 0
         for frame in self._frames:
-            filename = '%s/%08d.png'%(dir,i)
+            filename = '%s/%08d.png' % (dir,i)
             try:
                 save_image = frame.save_image
             except AttributeError:

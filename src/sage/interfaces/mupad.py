@@ -267,11 +267,11 @@ command-line version of MuPAD.
 
         global seq
         seq += 1
-        START = '__start__(%s+1)'%seq
-        END = '__end__(%s+1)'%seq
-        line = '%s; %s; %s;'%(START, line, END)
-        START = '__start__(%s)'%(seq+1)
-        END = '__end__(%s)'%(seq+1)
+        START = '__start__(%s+1)' % seq
+        END = '__end__(%s+1)' % seq
+        line = '%s; %s; %s;' % (START, line, END)
+        START = '__start__(%s)' % (seq+1)
+        END = '__end__(%s)' % (seq+1)
 
         E = self._expect
         E.sendline(line)
@@ -279,7 +279,7 @@ command-line version of MuPAD.
         z = E.before
         i = z.find(START)
         if i == -1:
-            raise RuntimeError("%s\nError evaluating code in MuPAD"%z)
+            raise RuntimeError("%s\nError evaluating code in MuPAD" % z)
         z = z[i+len(START)+2:]
         z = z.rstrip().rstrip(END).rstrip('"').rstrip().strip('\n').strip('\r').strip('\n').replace('\\\r\n','')
         i = z.find('Error: ')
@@ -297,7 +297,7 @@ command-line version of MuPAD.
         if t is None:
             return float(str(self('time()')))/1000
         else:
-            return float(str(self('time() - %s'%float(t))))/1000
+            return float(str(self('time() - %s' % float(t))))/1000
 
     def set(self, var, value):
         """
@@ -309,7 +309,7 @@ command-line version of MuPAD.
             sage: mupad.get('a').strip() # optional - mupad
             '4'
         """
-        cmd = '%s:=%s:'%(var,value)
+        cmd = '%s:=%s:' % (var,value)
         out = self.eval(cmd)
         i = out.find('Error: ')
         if i != -1:
@@ -326,7 +326,7 @@ command-line version of MuPAD.
             '4'
 
         """
-        s = self.eval('%s'%var)
+        s = self.eval('%s' % var)
         i = s.find('=')
         return s[i+1:]
 
@@ -428,7 +428,7 @@ command-line version of MuPAD.
             sage: mupad.completions('linal') # optional - mupad
             ['linalg']
         """
-        res = self.eval('_pref(Complete)("%s")'%string).strip()
+        res = self.eval('_pref(Complete)("%s")' % string).strip()
         res = res.replace('\n', '').split(',')
         res = [s.strip().strip('"') for s in res]
         res = [s for s in res if not s.endswith('::')]
@@ -511,7 +511,7 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
             else:
                 return self.__dict__[attrname]
         name = self._name+"::"+attrname
-        if P.eval('type(%s)'%name) == "DOM_DOMAIN":
+        if P.eval('type(%s)' % name) == "DOM_DOMAIN":
             return MupadElement(P, name)
         else:
             return MupadFunctionElement(self._obj, name)
@@ -543,7 +543,7 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
             s[1, 1, 1]
         """
         P = self._obj.parent()
-        if P.eval('type(%s)'%(self._obj.name())).strip() == "DOM_DOMAIN":
+        if P.eval('type(%s)' % (self._obj.name())).strip() == "DOM_DOMAIN":
             return P.function_call(self._name, list(args))
         else:
             return P.function_call(self._name, [self._obj] + list(args))
@@ -578,8 +578,8 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
 
         name = self._name + "::" + attrname
         try:
-            if P.eval('type(%s::%s)'%(self.name(),attrname)).strip() == "DOM_DOMAIN":
-                return P.new("%s::%s"%(self.name(),attrname))
+            if P.eval('type(%s::%s)' % (self.name(),attrname)).strip() == "DOM_DOMAIN":
+                return P.new("%s::%s" % (self.name(),attrname))
             else:
                 return MupadFunctionElement(self, name)
         except RuntimeError as err:
@@ -611,7 +611,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         """
         self._check_valid()
         P = self.parent()
-        s = P._eval_line('generate::TeX(%s)'%self.name())
+        s = P._eval_line('generate::TeX(%s)' % self.name())
         s = s.replace('\\\\','\\').strip().strip('"')
         return s
 

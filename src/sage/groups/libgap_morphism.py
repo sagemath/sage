@@ -551,9 +551,9 @@ class GroupMorphism_libgap(Morphism):
         phi = self.gap()
         from sage.groups.perm_gps.permgroup import PermutationGroup_generic
         if not isinstance(S, (ParentLibGAP, PermutationGroup_generic)):
-            raise TypeError("%s must be a GAP or permutation group of %s"%(S, self))
+            raise TypeError("%s must be a GAP or permutation group of %s" % (S, self))
         if not self.codomain().gap().IsSubgroup(S.gap()).sage():
-            raise ValueError("%s must be a subgroup of %s"%(S, self))
+            raise ValueError("%s must be a subgroup of %s" % (S, self))
         preimage = phi.PreImage(S.gap())
         return self.domain()._subgroup_constructor(preimage)
 

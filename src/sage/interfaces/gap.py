@@ -443,7 +443,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             print("Loading GAP package {}".format(pkg))
         x = self.eval('LoadPackage("{}")'.format(pkg))
         if x == 'fail':
-            raise RuntimeError("Error loading Gap package "+str(pkg)+". "+
+            raise RuntimeError("Error loading Gap package "+str(pkg)+". " +
                                "You may want to install gap_packages SPKG.")
 
     def eval(self, x, newlines=False, strip=True, split_lines=True, **kwds):
@@ -502,7 +502,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         #it is occurring in a string.  If it is not in a string, we
         #strip off the comment.
         if not split_lines:
-            input_line=str(x)
+            input_line = str(x)
         else:
             input_line = ""
             for line in str(x).rstrip().split('\n'):
@@ -528,10 +528,10 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 raise RuntimeError("Passing commands this long to gap would hang")
             E.sendline(line)
         except OSError:
-            raise RuntimeError("Error evaluating %s in %s"%(line, self))
+            raise RuntimeError("Error evaluating %s in %s" % (line, self))
         if not wait_for_prompt:
             return (b'',b'')
-        if len(line)==0:
+        if len(line) == 0:
             return (b'',b'')
         try:
             terminal_echo = []   # to be discarded
@@ -566,23 +566,23 @@ class Gap_generic(ExtraTabCompletion, Expect):
                     break
                 elif x == 9: # @m finished running a child
                     pass   # there is no need to do anything
-                elif x==10: #@n normal output line
+                elif x == 10: #@n normal output line
                     current_outputs = normal_outputs
-                elif x==11: #@r echoing input
+                elif x == 11: #@r echoing input
                     current_outputs = terminal_echo
-                elif x==12: #@sN shouldn't happen
+                elif x == 12: #@sN shouldn't happen
                     warnings.warn("this should never happen")
-                elif x==13: #@w GAP is trying to send a Window command
+                elif x == 13: #@w GAP is trying to send a Window command
                     warnings.warn("this should never happen")
-                elif x ==14: #@x seems to be safely ignorable
+                elif x == 14: #@x seems to be safely ignorable
                     pass
                 elif x == 15:#@z GAP starting a subprocess
                     pass  # there is no need to do anything
         except pexpect.EOF:
             if not expect_eof:
-                raise RuntimeError("Unexpected EOF from %s executing %s"%(self,line))
+                raise RuntimeError("Unexpected EOF from %s executing %s" % (self,line))
         except IOError:
-            raise RuntimeError("IO Error from %s executing %s"%(self,line))
+            raise RuntimeError("IO Error from %s executing %s" % (self,line))
         return (b"".join(normal_outputs), b"".join(error_outputs))
 
     def _keyboard_interrupt(self):
@@ -603,7 +603,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             2
         """
         self.quit()
-        raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
+        raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
     def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True, restart_if_needed=True):
         r"""
@@ -688,7 +688,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
                     self.quit()
                     gap_reset_workspace()
                 error = error.replace('\r','')
-                raise RuntimeError("%s produced error output\n%s\n   executing %s"%(self, error,line))
+                raise RuntimeError("%s produced error output\n%s\n   executing %s" % (self, error,line))
             if not normal:
                 return ''
 
@@ -726,7 +726,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         except KeyboardInterrupt:
             self._keyboard_interrupt()
-            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
     def unbind(self, var):
         """
@@ -745,7 +745,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             Error, Variable: 'x' must have a value
             ...
         """
-        self.eval('Unbind(%s)'%var)
+        self.eval('Unbind(%s)' % var)
         self.clear(var)
 
     def _contains(self, v1, v2):
@@ -762,7 +762,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             sage: 2 in gap('Integers')
             True
         """
-        return self.eval('%s in %s'%(v1,v2)) == "true"
+        return self.eval('%s in %s' % (v1,v2)) == "true"
 
     def _true_symbol(self):
         """
@@ -866,8 +866,8 @@ class Gap_generic(ExtraTabCompletion, Expect):
         #value, then that value will be in 'last', otherwise it will
         #be the marker.
         marker = '__SAGE_LAST__:="__SAGE_LAST__";;'
-        cmd = "%s(%s);;"%(function, ",".join([s.name() for s in args]+
-                ['%s=%s'%(key,value.name()) for key, value in kwds.items()]))
+        cmd = "%s(%s);;" % (function, ",".join([s.name() for s in args] +
+                ['%s=%s' % (key,value.name()) for key, value in kwds.items()]))
         if len(marker) + len(cmd) <= self._eval_using_file_cutoff:
             # We combine the two commands so we only run eval() once and the
             #   only output would be from the second command
@@ -978,9 +978,9 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
             it is false
         """
         P = self.parent()
-        if P.eval('%s = true'%self.name()) == 'true':
+        if P.eval('%s = true' % self.name()) == 'true':
             return 1
-        elif P.eval('%s = false'%self.name()) == 'true':
+        elif P.eval('%s = false' % self.name()) == 'true':
             return 0
         else:
             return int(self.Length())
@@ -1145,7 +1145,7 @@ class Gap(Gap_generic):
             del self._available_vars[0]
             return v
         self.__seq += 1
-        return r'\$sage%s'%self.__seq
+        return r'\$sage%s' % self.__seq
 
     def _start(self):
         """
@@ -1270,7 +1270,7 @@ class Gap(Gap_generic):
         from sage.misc.temporary_file import atomic_write
         with atomic_write(WORKSPACE) as f:
             f.close()
-            self.eval('SaveWorkspace("%s");'%(f.name), allow_use_file=False)
+            self.eval('SaveWorkspace("%s");' % (f.name), allow_use_file=False)
 
     # Todo -- this -- but there is a tricky "when does it end" issue!
     # Maybe do via a file somehow?
@@ -1356,14 +1356,14 @@ class Gap(Gap_generic):
             tmp = self._local_tmpfile()
             if os.path.exists(tmp):
                 os.unlink(tmp)
-            self.eval('PrintTo("%s", %s);'%(tmp,var), strip=False)
+            self.eval('PrintTo("%s", %s);' % (tmp,var), strip=False)
             with open(tmp) as f:
                 r = f.read()
             r = r.strip().replace("\\\n","")
             os.unlink(tmp)
             return r
         else:
-            return self.eval('Print(%s);'%var, newlines=False)
+            return self.eval('Print(%s);' % var, newlines=False)
 
     def _pre_interact(self):
         """
@@ -1390,7 +1390,7 @@ class Gap(Gap_generic):
             if j >= 0 and j < i:
                 i = -1
         if i == -1:
-            line0 = 'Print( %s );'%line.rstrip().rstrip(';')
+            line0 = 'Print( %s );' % line.rstrip().rstrip(';')
             try:  # this is necessary, since Print requires something as input, and some functions (e.g., Read) return nothing.
                 return Expect._eval_line_using_file(self, line0)
             except RuntimeError:
@@ -1562,7 +1562,7 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
         """
         P = self._check_valid()
         try:
-            s = P.eval('LaTeXObj(%s)'%self.name())
+            s = P.eval('LaTeXObj(%s)' % self.name())
             s = s.replace('\\\\','\\').replace('"','')
             s = s.replace('%\\n',' ')
             return s
@@ -1585,7 +1585,7 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
             True
         """
         P = self.parent()
-        v = P.eval(r'\$SAGE.OperationsAdmittingFirstArgument(%s)'%self.name())
+        v = P.eval(r'\$SAGE.OperationsAdmittingFirstArgument(%s)' % self.name())
         v = v.replace('Tester(','').replace('Setter(','').replace(')','').replace('\n', '')
         v = v.split(',')
         v = [ oper.split('"')[1] for oper in v ]

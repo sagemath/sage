@@ -358,10 +358,10 @@ class Scilab(Expect):
             sage: scilab.get('a')               # optional - scilab
             '\n \n    123.'
         """
-        cmd = '%s=%s;'%(var,value)
+        cmd = '%s=%s;' % (var,value)
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
@@ -374,7 +374,7 @@ class Scilab(Expect):
             sage: scilab.get('b')                       # optional - scilab
             '\n \n    124.'
         """
-        s = self.eval('%s'%var)
+        s = self.eval('%s' % var)
         i = s.find('=')
         return s[i+1:]
 
@@ -521,7 +521,7 @@ class ScilabElement(ExpectElement):
         """
         P = self._check_valid()
         z = P(x)
-        P.eval('%s(%s,%s) = %s'%(self.name(), i, j, z.name()))
+        P.eval('%s(%s,%s) = %s' % (self.name(), i, j, z.name()))
 
 
 # An instance

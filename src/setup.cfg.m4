@@ -20,7 +20,6 @@ dnl From build/pkgs/sagelib/dependencies
     SPKG_INSTALL_REQUIRES_gmpy2
     SPKG_INSTALL_REQUIRES_importlib_metadata
     SPKG_INSTALL_REQUIRES_importlib_resources
-    SPKG_INSTALL_REQUIRES_jinja2
     SPKG_INSTALL_REQUIRES_jupyter_core
     SPKG_INSTALL_REQUIRES_lrcalc_python
     SPKG_INSTALL_REQUIRES_memory_allocator

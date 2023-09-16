@@ -1479,10 +1479,10 @@ class FinitePosets(CategoryWithAxiom):
 
             """
             from sage.plot.plot import graphics_array
-            plot_of_orb_plots=[]
+            plot_of_orb_plots = []
             max_orbit_size = 0
             for orb in self.rowmotion_orbits():
-                orb_plots=[]
+                orb_plots = []
                 if len(orb) > max_orbit_size:
                     max_orbit_size = len(orb)
                 for oi in orb:
@@ -1566,10 +1566,10 @@ class FinitePosets(CategoryWithAxiom):
 
             """
             from sage.plot.plot import graphics_array
-            plot_of_orb_plots=[]
+            plot_of_orb_plots = []
             max_orbit_size = 0
             for orb in self.toggling_orbits(vs):
-                orb_plots=[]
+                orb_plots = []
                 if len(orb) > max_orbit_size:
                     max_orbit_size = len(orb)
                 for oi in orb:

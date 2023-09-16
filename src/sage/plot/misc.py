@@ -260,8 +260,8 @@ def unify_arguments(funcs):
         sage: sage.plot.misc.unify_arguments((x+y,x-y))
         ((x, y), (x, y))
     """
-    vars=set()
-    free_variables=set()
+    vars = set()
+    free_variables = set()
     if not isinstance(funcs, (list, tuple)):
         funcs = [funcs]
 
@@ -318,7 +318,7 @@ def _multiple_of_constant(n, pos, const):
     k = 1
     while cf.quotient(k) != Infinity and cf.denominator(k) < 12:
         k += 1
-    return '$%s$'%latex(cf.convergent(k-1)*const)
+    return '$%s$' % latex(cf.convergent(k-1)*const)
 
 
 def get_matplotlib_linestyle(linestyle, return_type):
@@ -405,9 +405,9 @@ def get_matplotlib_linestyle(linestyle, return_type):
         '--', ':', '-.', ''}
 
     """
-    long_to_short_dict={'solid' : '-','dashed' : '--', 'dotted' : ':',
+    long_to_short_dict = {'solid' : '-','dashed' : '--', 'dotted' : ':',
                         'dashdot':'-.'}
-    short_to_long_dict={'-' : 'solid','--' : 'dashed', ':' : 'dotted',
+    short_to_long_dict = {'-' : 'solid','--' : 'dashed', ':' : 'dotted',
                         '-.':'dashdot'}
 
     # We need this to take care of region plot. Essentially, if None is
@@ -442,7 +442,7 @@ def get_matplotlib_linestyle(linestyle, return_type):
             raise ValueError("WARNING: Unrecognized linestyle '%s'. "
                              "Possible linestyle options are:\n{'solid', "
                              "'dashed', 'dotted', dashdot', 'None'}, "
-                             "respectively {'-', '--', ':', '-.', ''}"%
+                             "respectively {'-', '--', ':', '-.', ''}" %
                              (linestyle))
 
     elif return_type == 'long':
@@ -456,7 +456,7 @@ def get_matplotlib_linestyle(linestyle, return_type):
             raise ValueError("WARNING: Unrecognized linestyle '%s'. "
                              "Possible linestyle options are:\n{'solid', "
                              "'dashed', 'dotted', dashdot', 'None'}, "
-                             "respectively {'-', '--', ':', '-.', ''}"%
+                             "respectively {'-', '--', ':', '-.', ''}" %
                              (linestyle))
 
 
