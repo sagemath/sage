@@ -17,8 +17,8 @@ TESTS:
 
 Check :trac:`12482` (shall be run in a fresh session)::
 
-    sage: P = Partitions(3)
-    sage: Family(P, lambda x: x).category()
+    sage: P = Partitions(3)                                                             # optional - sage.combinat
+    sage: Family(P, lambda x: x).category()                                             # optional - sage.combinat
     Category of finite enumerated sets
 """
 
@@ -185,10 +185,10 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
     Beware that for those kind of families len(f) is not supposed to
     work. As a replacement, use the .cardinality() method::
 
-       sage: f = Family(Permutations(3), attrcall("to_lehmer_code"))
-       sage: list(f)
+       sage: f = Family(Permutations(3), attrcall("to_lehmer_code"))                    # optional - sage.combinat
+       sage: list(f)                                                                    # optional - sage.combinat
        [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0], [2, 0, 0], [2, 1, 0]]
-       sage: f.cardinality()
+       sage: f.cardinality()                                                            # optional - sage.combinat
        6
 
     Caveat: Only certain families with lazy behavior can be pickled. In
@@ -196,14 +196,14 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
     and unpickle_function (in sage.misc.fpickle) will correctly
     unpickle. The following two work::
 
-       sage: f = Family(Permutations(3), lambda p: p.to_lehmer_code()); f
+       sage: f = Family(Permutations(3), lambda p: p.to_lehmer_code()); f               # optional - sage.combinat
        Lazy family (<lambda>(i))_{i in Standard permutations of 3}
-       sage: f == loads(dumps(f))
+       sage: f == loads(dumps(f))                                                       # optional - sage.combinat
        True
 
-       sage: f = Family(Permutations(3), attrcall("to_lehmer_code")); f
+       sage: f = Family(Permutations(3), attrcall("to_lehmer_code")); f                 # optional - sage.combinat
        Lazy family (i.to_lehmer_code())_{i in Standard permutations of 3}
-       sage: f == loads(dumps(f))
+       sage: f == loads(dumps(f))                                                       # optional - sage.combinat
        True
 
     But this one does not::
@@ -1187,12 +1187,12 @@ class LazyFamily(AbstractFamily):
             sage: d['set']
             [3, 4, 7]
 
-            sage: f = LazyFamily(Permutations(3), lambda p: p.to_lehmer_code())
-            sage: f == loads(dumps(f))
+            sage: f = LazyFamily(Permutations(3), lambda p: p.to_lehmer_code())         # optional - sage.combinat
+            sage: f == loads(dumps(f))                                                  # optional - sage.combinat
             True
 
-            sage: f = LazyFamily(Permutations(3), attrcall("to_lehmer_code"))
-            sage: f == loads(dumps(f))
+            sage: f = LazyFamily(Permutations(3), attrcall("to_lehmer_code"))           # optional - sage.combinat
+            sage: f == loads(dumps(f))                                                  # optional - sage.combinat
             True
         """
         f = self.function
@@ -1417,8 +1417,8 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(3))
-            sage: TestSuite(f).run()
+            sage: f = EnumeratedFamily(Permutations(3))                                 # optional - sage.combinat
+            sage: TestSuite(f).run()                                                    # optional - sage.combinat
 
             sage: f = Family(NonNegativeIntegers())
             sage: TestSuite(f).run()
@@ -1428,12 +1428,12 @@ class EnumeratedFamily(LazyFamily):
         Check that category and keys are set correctly (:trac:`28274`)::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(4))
-            sage: f.category()
+            sage: f = EnumeratedFamily(Permutations(4))                                 # optional - sage.combinat
+            sage: f.category()                                                          # optional - sage.combinat
             Category of finite enumerated sets
-            sage: list(f.keys()) == list(range(f.cardinality()))
+            sage: list(f.keys()) == list(range(f.cardinality()))                        # optional - sage.combinat
             True
-            sage: Family(Permutations()).keys()
+            sage: Family(Permutations()).keys()                                         # optional - sage.combinat
             Non negative integers
             sage: type(Family(NN))
             <class 'sage.sets.family.EnumeratedFamily_with_category'>
@@ -1449,8 +1449,8 @@ class EnumeratedFamily(LazyFamily):
         """
         EXAMPLES::
 
-            sage: f = Family(Permutations(3))
-            sage: g = Family(Permutations(3))
+            sage: f = Family(Permutations(3))                                           # optional - sage.combinat
+            sage: g = Family(Permutations(3))                                           # optional - sage.combinat
             sage: f == g
             True
         """
@@ -1461,7 +1461,7 @@ class EnumeratedFamily(LazyFamily):
         """
         EXAMPLES::
 
-            sage: f = Family(Permutations(3)); f # indirect doctest
+            sage: f = Family(Permutations(3)); f # indirect doctest                     # optional - sage.combinat
             Family (Standard permutations of 3)
 
             sage: f = Family(NonNegativeIntegers()); f
@@ -1476,7 +1476,7 @@ class EnumeratedFamily(LazyFamily):
         """
         EXAMPLES::
 
-            sage: f = Family(Permutations(3))
+            sage: f = Family(Permutations(3))                                           # optional - sage.combinat
             sage: [2,1,3] in f
             True
         """
@@ -1489,8 +1489,8 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(3))
-            sage: f.cardinality()
+            sage: f = EnumeratedFamily(Permutations(3))                                 # optional - sage.combinat
+            sage: f.cardinality()                                                       # optional - sage.combinat
             6
 
             sage: f = Family(NonNegativeIntegers())
@@ -1504,8 +1504,8 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(3))
-            sage: [i for i in f]
+            sage: f = EnumeratedFamily(Permutations(3))                                 # optional - sage.combinat
+            sage: [i for i in f]                                                        # optional - sage.combinat
             [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
         """
         for i in self.enumset:
@@ -1516,8 +1516,8 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(3))
-            sage: f[1]
+            sage: f = EnumeratedFamily(Permutations(3))                                 # optional - sage.combinat
+            sage: f[1]                                                                  # optional - sage.combinat
             [1, 3, 2]
         """
         return self.enumset.unrank(i)
@@ -1527,10 +1527,10 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(3))
-            sage: f.__getstate__()
+            sage: f = EnumeratedFamily(Permutations(3))                                 # optional - sage.combinat
+            sage: f.__getstate__()                                                      # optional - sage.combinat
             {'enumset': Standard permutations of 3}
-            sage: loads(dumps(f)) == f
+            sage: loads(dumps(f)) == f                                                  # optional - sage.combinat
             True
         """
         return {'enumset': self.enumset}
@@ -1540,9 +1540,9 @@ class EnumeratedFamily(LazyFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import EnumeratedFamily
-            sage: f = EnumeratedFamily(Permutations(0))
-            sage: f.__setstate__({'enumset': Permutations(3)})
-            sage: f
+            sage: f = EnumeratedFamily(Permutations(0))                                 # optional - sage.combinat
+            sage: f.__setstate__({'enumset': Permutations(3)})                          # optional - sage.combinat
+            sage: f                                                                     # optional - sage.combinat
             Family (Standard permutations of 3)
         """
         self.__init__(state['enumset'])
