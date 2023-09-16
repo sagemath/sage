@@ -988,11 +988,12 @@ Environment variables for documentation build:
   - ``binder:repo`` specifies a Binder repo with ``repo``, which is a GitHub
     repository name, optionally added with a branch name with ``/`` separator.
 
-  - If a local Jupyter server is used, then set the URL to
-    :envvar:`SAGE_JUPYTER_SERVER` and the secret token to environemt variable
-    :envvar:`SAGE_JUPYTER_SERVER_TOKEN`, which can be left unset if the
-    default token  ``secret`` is used. For this case, run a local Jupyter
-    server by
+  - To use a local Jupyter server instead of Binder, then set the URL to
+    :envvar:`SAGE_JUPYTER_SERVER` and the secret token to environment variable
+    :envvar:`SAGE_JUPYTER_SERVER_TOKEN`, which can be left unset if the default
+    token  ``secret`` is used. If the live doc was built with
+    ``SAGE_JUPYTER_SERVER=http://localhost:8889``, run a local Jupyter server
+    by
 
     .. CODE-BLOCK:: bash
 
