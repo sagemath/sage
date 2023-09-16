@@ -7,7 +7,7 @@ from setuptools import setup
 from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
 from sage_setup.cython_options import compiler_directives, compile_time_env_variables
 from sage_setup.extensions import create_extension
-from sage_setup.find import find_python_sources
+from sage_setup.find import find_python_sources, find_extra_files
 
 # Work around a Cython problem in Python 3.8.x on macOS
 # https://github.com/cython/cython/issues/3262
@@ -38,16 +38,25 @@ if sdist:
     extensions = []
     python_modules = []
     python_packages = []
+    package_data = {}
 else:
     log.info("Discovering Python/Cython source code....")
     t = time.time()
 
     python_packages, python_modules, cython_modules = find_python_sources(
         '.', ['sage'], distributions=['sagemath-groups'])
+    extra_files = find_extra_files(
+        '.', ['sage'], '/doesnotexist', distributions=['sagemath-groups'])
+    package_data = {"": [f
+                         for pkg, files in extra_files.items()
+                         for f in files ]}
+    package_data.update({})
+    python_packages += list(package_data)
 
     log.debug('python_packages = {0}'.format(sorted(python_packages)))
     log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
     log.debug('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
+    log.debug('package_data = {0}'.format(package_data))
 
     log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
 
@@ -77,4 +86,6 @@ else:
 setup(cmdclass=cmdclass,
       packages=python_packages,
       py_modules=python_modules,
-      ext_modules=extensions)
+      ext_modules=extensions,
+      package_data=package_data,
+)

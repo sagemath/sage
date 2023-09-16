@@ -26,7 +26,6 @@ setenv()
 
 import sage.env
 sage.env.default_required_modules = sage.env.default_optional_modules = ()
-print(f'##################### {sage.env.SAGE_SRC=}')
 
 cmdclass = dict(build_ext=sage_build_ext_minimal)
 
@@ -39,6 +38,7 @@ if sdist:
     extensions = []
     python_modules = []
     python_packages = []
+    package_data = {}
 else:
     log.info("Generating auto-generated sources")
     # from sage_setup.autogen import autogen_all
@@ -53,10 +53,18 @@ else:
 
     python_packages, python_modules, cython_modules = find_python_sources(
         '.', ['sage'], distributions=['sagemath-categories'])
+    extra_files = find_extra_files(
+        '.', ['sage'], '/doesnotexist', distributions=['sagemath-categories'])
+    package_data = {"": [f
+                         for pkg, files in extra_files.items()
+                         for f in files ]}
+    package_data.update({})
+    python_packages += list(package_data)
 
     log.debug('python_packages = {0}'.format(sorted(python_packages)))
     log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
     log.debug('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
+    log.debug('package_data = {0}'.format(package_data))
 
     log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
 
@@ -86,4 +94,6 @@ else:
 setup(cmdclass=cmdclass,
       packages=python_packages,
       py_modules=python_modules,
-      ext_modules=extensions)
+      ext_modules=extensions,
+      package_data=package_data,
+)
