@@ -1910,7 +1910,7 @@ class MPowerSeries(PowerSeries):
         are not yet implemented and therefore such cases raise an error::
 
             sage: g = 2 + f
-            sage: exp(g)
+            sage: exp(g)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Symbolic Ring' and
@@ -1944,9 +1944,12 @@ class MPowerSeries(PowerSeries):
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
-        from sage.functions.log import exp
         c = self.constant_coefficient()
-        exp_c = exp(c)
+        if not c:
+            exp_c = self.base_ring().one()
+        else:
+            from sage.functions.log import exp
+            exp_c = exp(c)
         x = self._bg_value - c
         if x.is_zero():
             return exp_c
@@ -2000,7 +2003,7 @@ class MPowerSeries(PowerSeries):
         are not yet implemented and therefore such cases raise an error::
 
             sage: g = 2 + f
-            sage: log(g)
+            sage: log(g)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for -: 'Symbolic Ring' and 'Power
@@ -2036,11 +2039,14 @@ class MPowerSeries(PowerSeries):
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
-        from sage.functions.log import log
         c = self.constant_coefficient()
         if c.is_zero():
             raise ValueError('Can only take formal power series for non-zero constant term.')
-        log_c = log(c)
+        if c.is_one():
+            log_c = self.base_ring().zero()
+        else:
+            from sage.functions.log import log
+            log_c = log(c)
         x = 1 - self._bg_value/c
         if x.is_zero():
             return log_c

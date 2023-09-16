@@ -3431,3 +3431,323 @@ class Stream_derivative(Stream_unary):
             True
         """
         return self._series.is_nonzero()
+
+
+class Stream_infinite_operator(Stream):
+    r"""
+    Stream defined by applying an operator an infinite number of times.
+
+    The ``iterator`` returns elements `s_i` to compute an infinite operator.
+    The valuation of `s_i` is weakly increasing as we iterate over `I` and
+    there are only finitely many terms with any fixed valuation.
+    In particular, this *assumes* the result is nonzero.
+
+    .. WARNING::
+
+        This does not check that the input is valid.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def __init__(self, iterator):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+        """
+        self._op_iter = iterator
+        self._cur = None
+        self._cur_order = -infinity
+        super().__init__(False)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        r"""
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum, Stream_infinite_product
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._approximate_order
+            1
+            sage: it = (t^n for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._approximate_order
+            0
+            sage: it = (t^(n-10) for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._approximate_order
+            -45
+        """
+        if self._cur is None:
+            self._advance()
+        while self._cur_order <= 0:
+            self._advance()
+        return self._cur._coeff_stream._approximate_order
+
+    def _advance(self):
+        r"""
+        Advance the iterator so that the approximate order increases
+        by at least one.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (n * t^n for n in range(10))
+            sage: f = Stream_infinite_sum(it)
+            sage: f._cur is None
+            True
+            sage: f._advance()
+            sage: f._cur
+            t + 2*t^2
+            sage: f._cur_order
+            2
+            sage: for _ in range(20):
+            ....:     f._advance()
+            sage: f._cur
+            t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 6*t^6 + 7*t^7 + 8*t^8 + 9*t^9
+            sage: f._cur_order
+            +Infinity
+
+            sage: it = (t^(n//3) / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._advance()
+            sage: f._cur
+            2 + 3*t + 3*t^2 + 3*t^3 + O(t^4)
+            sage: f._advance()
+            sage: f._cur
+            2 + 5*t + 6*t^2 + 6*t^3 + 6*t^4 + O(t^5)
+        """
+        if self._cur is None:
+            temp = next(self._op_iter)
+            if isinstance(temp._coeff_stream, Stream_zero):
+                self._advance()
+                return
+            self.initial(temp)
+            self._cur_order = temp._coeff_stream._approximate_order
+
+        order = self._cur_order
+        while order == self._cur_order:
+            try:
+                next_factor = next(self._op_iter)
+            except StopIteration:
+                self._cur_order = infinity
+                return
+            if isinstance(next_factor._coeff_stream, Stream_zero):
+                continue
+            coeff_stream = next_factor._coeff_stream
+            while coeff_stream._approximate_order < order:
+                # This check also updates the next_factor._approximate_order
+                if coeff_stream[coeff_stream._approximate_order]:
+                    order = coeff_stream._approximate_order
+                    raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
+            self.apply_operator(next_factor)
+            order = coeff_stream._approximate_order
+            # We check to see if we need to increment the order
+            if order == self._cur_order and not coeff_stream[order]:
+                order += 1
+        self._cur_order = order
+
+    def __getitem__(self, n):
+        r"""
+        Return the ``n``-th coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f[2]
+            2
+            sage: f[5]
+            5
+        """
+        while n >= self._cur_order:
+            self._advance()
+        return self._cur[n]
+
+    def order(self):
+        r"""
+        Return the order of ``self``, which is the minimum index ``n`` such
+        that ``self[n]`` is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^(5+n) / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f.order()
+            6
+        """
+        return self._approximate_order
+
+    def __hash__(self):
+        r"""
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: hash(f) == hash((type(f), f._op_iter))
+            True
+        """
+        return hash((type(self), self._op_iter))
+
+    def __ne__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: itf = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(itf)
+            sage: itg = (t^(2*n-1) / (1 - t) for n in PositiveIntegers())
+            sage: g = Stream_infinite_sum(itg)
+            sage: f != g
+            False
+            sage: f[10]
+            10
+            sage: g[10]
+            5
+            sage: f != g
+            True
+        """
+        if not isinstance(other, type(self)):
+            return True
+        ao = min(self._approximate_order, other._approximate_order)
+        if any(self[i] != other[i] for i in range(ao, min(self._cur_order, other._cur_order))):
+            return True
+        return False
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f.is_nonzero()
+            True
+        """
+        return True
+
+
+class Stream_infinite_sum(Stream_infinite_operator):
+    r"""
+    Stream defined by an infinite sum.
+
+    The ``iterator`` returns elements `s_i` to compute the product
+    `\sum_{i \in I} s_i`. See :class:`Stream_infinite_operator`
+    for restrictions on the `s_i`.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def initial(self, obj):
+        r"""
+        Set the initial data.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._cur is None
+            True
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            t + 2*t^2 + 2*t^3 + 2*t^4 + O(t^5)
+        """
+        self._cur = obj
+
+    def apply_operator(self, next_obj):
+        r"""
+        Apply the operator to ``next_obj``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^(n//2) / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._advance()
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            1 + 3*t + 4*t^2 + 4*t^3 + 4*t^4 + O(t^5)
+        """
+        self._cur += next_obj
+
+
+class Stream_infinite_product(Stream_infinite_operator):
+    r"""
+    Stream defined by an infinite product.
+
+    The ``iterator`` returns elements `p_i` to compute the product
+    `\prod_{i \in I} (1 + p_i)`. See :class:`Stream_infinite_operator`
+    for restrictions on the `p_i`.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def initial(self, obj):
+        r"""
+        Set the initial data.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._cur is None
+            True
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 6*t^6 + O(t^7)
+        """
+        self._cur = obj + 1
+
+    def apply_operator(self, next_obj):
+        r"""
+        Apply the operator to ``next_obj``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._advance()
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            1 + t + 2*t^2 + 4*t^3 + 6*t^4 + 9*t^5 + 13*t^6 + O(t^7)
+        """
+        self._cur = self._cur + self._cur * next_obj

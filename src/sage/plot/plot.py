@@ -736,8 +736,8 @@ def SelectiveFormatter(formatter, skip_values):
                     sage: with NamedTemporaryFile(suffix=".png") as f:
                     ....:     fig.savefig(f.name)
                 """
-                self.formatter=formatter
-                self.skip_values=skip_values
+                self.formatter = formatter
+                self.skip_values = skip_values
 
             def set_locs(self, locs):
                 """
@@ -2175,7 +2175,7 @@ def _plot(funcs, xrange, parametric=False,
                                            options['plot_points'],
                                            imaginary_tolerance=imag_tol)
     xmin, xmax, delta = ranges[0]
-    xrange=ranges[0][:2]
+    xrange = ranges[0][:2]
     # parametric_plot will be a list or tuple of two functions (f,g)
     # and will plotted as (f(x), g(x)) for all x in the given range
     if parametric:
@@ -2314,7 +2314,7 @@ def _plot(funcs, xrange, parametric=False,
                 if i < len(legend_color_temp):
                     legend_color_entry = legend_color_temp[i]
             elif legend_color_temp == 'automatic':
-                if len(funcs)>1:
+                if len(funcs) > 1:
                     legend_color_entry = golden_rainbow(i)
             elif legend_color_temp is not None:
                 legend_color_entry = legend_color_temp
@@ -2858,7 +2858,7 @@ def polar_plot(funcs, *args, **kwds):
         sphinx_plot(g)
 
     """
-    kwds['polar']=True
+    kwds['polar'] = True
     return plot(funcs, *args, **kwds)
 
 @options(aspect_ratio='automatic')
@@ -3903,14 +3903,14 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     try:
         y = float(f(x))
         if str(y) in ['nan', 'NaN', 'inf', '-inf']:
-            sage.misc.verbose.verbose("%s\nUnable to compute f(%s)"%(msg, x),1)
+            sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (msg, x),1)
             # give up for this branch
             if excluded:
                 return [(x, 'NaN')]
             return []
 
     except (ZeroDivisionError, TypeError, ValueError, OverflowError) as msg:
-        sage.misc.verbose.verbose("%s\nUnable to compute f(%s)"%(msg, x), 1)
+        sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (msg, x), 1)
         # give up for this branch
         if excluded:
             return [(x, 'NaN')]

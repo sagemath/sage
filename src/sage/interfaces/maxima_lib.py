@@ -222,14 +222,14 @@ init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'ke
 # See trac # 6818.
 init_code.append('nolabels : true')
 for l in init_code:
-    ecl_eval("#$%s$"%l)
+    ecl_eval("#$%s$" % l)
 # To get more debug information uncomment the next line
 # should allow to do this through a method
 #ecl_eval("(setf *standard-output* original-standard-output)")
 
 # This is the main function (ECL object) used for evaluation
 # This returns an EclObject
-maxima_eval=ecl_eval("""
+maxima_eval = ecl_eval("""
 (defun maxima-eval( form )
     (with-$error (meval form)))
 """)
@@ -240,27 +240,27 @@ maxima_lib_instances = 0
 # Here we define several useful ECL/Maxima objects
 # The Maxima string function can change the structure of its input
 #maxprint=EclObject("$STRING")
-maxprint=EclObject(r"""(defun mstring-for-sage (form)
+maxprint = EclObject(r"""(defun mstring-for-sage (form)
                          (coerce (mstring form) 'string))""").eval()
-meval=EclObject("MEVAL")
-msetq=EclObject("MSETQ")
-mlist=EclObject("MLIST")
-mequal=EclObject("MEQUAL")
-cadadr=EclObject("CADADR")
+meval = EclObject("MEVAL")
+msetq = EclObject("MSETQ")
+mlist = EclObject("MLIST")
+mequal = EclObject("MEQUAL")
+cadadr = EclObject("CADADR")
 
-max_integrate=EclObject("$INTEGRATE")
-max_sum=EclObject("$SUM")
-max_simplify_sum=EclObject("$SIMPLIFY_SUM")
-max_prod=EclObject("$PRODUCT")
-max_simplify_prod=EclObject("$SIMPLIFY_PRODUCT")
-max_ratsimp=EclObject("$RATSIMP")
-max_limit=EclObject("$LIMIT")
-max_tlimit=EclObject("$TLIMIT")
-max_plus=EclObject("$PLUS")
-max_minus=EclObject("$MINUS")
-max_use_grobner=EclObject("$USE_GROBNER")
-max_to_poly_solve=EclObject("$TO_POLY_SOLVE")
-max_at=EclObject("%AT")
+max_integrate = EclObject("$INTEGRATE")
+max_sum = EclObject("$SUM")
+max_simplify_sum = EclObject("$SIMPLIFY_SUM")
+max_prod = EclObject("$PRODUCT")
+max_simplify_prod = EclObject("$SIMPLIFY_PRODUCT")
+max_ratsimp = EclObject("$RATSIMP")
+max_limit = EclObject("$LIMIT")
+max_tlimit = EclObject("$TLIMIT")
+max_plus = EclObject("$PLUS")
+max_minus = EclObject("$MINUS")
+max_use_grobner = EclObject("$USE_GROBNER")
+max_to_poly_solve = EclObject("$TO_POLY_SOLVE")
+max_at = EclObject("%AT")
 
 def stdout_to_string(s):
     r"""
@@ -284,7 +284,7 @@ def stdout_to_string(s):
         '2\n\n'
     """
     return ecl_eval(r"""(with-output-to-string (*standard-output*)
-                          (maxima-eval #$%s$))"""%s).python()[1:-1]
+                          (maxima-eval #$%s$))""" % s).python()[1:-1]
 
 def max_to_string(s):
     r"""
@@ -306,7 +306,7 @@ def max_to_string(s):
     return maxprint(s).python()[1:-1]
 
 
-my_mread=ecl_eval("""
+my_mread = ecl_eval("""
 (defun my-mread (cmd)
   (caddr (mread (make-string-input-stream cmd))))
 """)
@@ -327,7 +327,7 @@ def parse_max_string(s):
         sage: parse_max_string('1+1')
         <ECL: ((MPLUS) 1 1)>
     """
-    return my_mread('"%s;"'%s)
+    return my_mread('"%s;"' % s)
 
 class MaximaLib(MaximaAbstract):
     """
@@ -458,9 +458,9 @@ class MaximaLib(MaximaAbstract):
         """
         result = ''
         while line:
-            ind_dollar=line.find("$")
-            ind_semi=line.find(";")
-            if ind_dollar == -1 or (ind_semi >=0 and ind_dollar > ind_semi):
+            ind_dollar = line.find("$")
+            ind_semi = line.find(";")
+            if ind_dollar == -1 or (ind_semi >= 0 and ind_dollar > ind_semi):
                 if ind_semi == -1:
                     statement = line
                     line = ''
@@ -468,7 +468,7 @@ class MaximaLib(MaximaAbstract):
                     statement = line[:ind_semi]
                     line = line[ind_semi+1:]
                 if statement:
-                    result = ((result + '\n') if result else '') + max_to_string(maxima_eval("#$%s$"%statement))
+                    result = ((result + '\n') if result else '') + max_to_string(maxima_eval("#$%s$" % statement))
             else:
                 statement = line[:ind_dollar]
                 line = line[ind_dollar+1:]
@@ -526,7 +526,7 @@ class MaximaLib(MaximaAbstract):
         """
         if not isinstance(value, str):
             raise TypeError
-        cmd = '%s : %s$'%(var, value.rstrip(';'))
+        cmd = '%s : %s$' % (var, value.rstrip(';'))
         self.eval(cmd)
 
     def clear(self, var):
@@ -550,8 +550,8 @@ class MaximaLib(MaximaAbstract):
             'xxxxx'
         """
         try:
-            self.eval('kill(%s)$'%var)
-            ecl_eval("(unintern '$%s)"%var)
+            self.eval('kill(%s)$' % var)
+            ecl_eval("(unintern '$%s)" % var)
         except (TypeError, AttributeError):
             pass
 
@@ -572,7 +572,7 @@ class MaximaLib(MaximaAbstract):
             sage: maxima_lib.get('xxxxx')
             '2'
         """
-        s = self.eval('%s;'%var)
+        s = self.eval('%s;' % var)
         return s
 
     def _create(self, value, name=None):
@@ -617,7 +617,7 @@ class MaximaLib(MaximaAbstract):
         name = self._next_var_name() if name is None else name
         try:
             if isinstance(value,EclObject):
-                maxima_eval([[msetq],cadadr("#$%s$#$"%name),value])
+                maxima_eval([[msetq],cadadr("#$%s$#$" % name),value])
             else:
                 self.set(name, value)
         except RuntimeError as error:
@@ -1051,7 +1051,7 @@ class MaximaLib(MaximaAbstract):
         k = errstr.find(' ',jj+1)
 
         outstr = "Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume("\
-             + errstr[jj+1:k] +">0)', see `assume?` for more details)\n" + errstr
+             + errstr[jj+1:k] + ">0)', see `assume?` for more details)\n" + errstr
         outstr = outstr.replace('_SAGE_VAR_','')
         raise ValueError(outstr)
 
@@ -1110,7 +1110,7 @@ class MaximaLibElement(MaximaAbstractElement):
         try:
             return self._ecl
         except AttributeError:
-            self._ecl=maxima_eval("#$%s$"%self._name)
+            self._ecl = maxima_eval("#$%s$" % self._name)
             return self._ecl
 
     def to_poly_solve(self,vars,options=""):
@@ -1136,10 +1136,10 @@ class MaximaLibElement(MaximaAbstractElement):
             [[x == pi*z...]]
         """
         if options.find("use_grobner=true") != -1:
-            cmd=EclObject([[max_to_poly_solve], self.ecl(), sr_to_max(vars),
+            cmd = EclObject([[max_to_poly_solve], self.ecl(), sr_to_max(vars),
                                              [[mequal],max_use_grobner,True]])
         else:
-            cmd=EclObject([[max_to_poly_solve], self.ecl(), sr_to_max(vars)])
+            cmd = EclObject([[max_to_poly_solve], self.ecl(), sr_to_max(vars)])
         return self.parent()(maxima_eval(cmd))
 
     def display2d(self, onscreen=True):
@@ -1166,7 +1166,7 @@ class MaximaLibElement(MaximaAbstractElement):
         self._check_valid()
         P = self.parent()
         P._eval_line('display2d : true$')
-        s = stdout_to_string('disp(%s)'%self.name())
+        s = stdout_to_string('disp(%s)' % self.name())
         #s = P._eval_line('disp(%s)$'%self.name())
         P._eval_line('display2d : false$')
         s = s.strip('\r\n')
@@ -1216,17 +1216,17 @@ import sage.symbolic.integration.integral
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
 
-car=EclObject("car")
-cdr=EclObject("cdr")
-caar=EclObject("caar")
-cadr=EclObject("cadr")
-cddr=EclObject("cddr")
-caddr=EclObject("caddr")
-caaadr=EclObject("caaadr")
-cadadr=EclObject("cadadr")
-meval=EclObject("meval")
-NIL=EclObject("NIL")
-lisp_length=EclObject("length")
+car = EclObject("car")
+cdr = EclObject("cdr")
+caar = EclObject("caar")
+cadr = EclObject("cadr")
+cddr = EclObject("cddr")
+caddr = EclObject("caddr")
+caaadr = EclObject("caaadr")
+cadadr = EclObject("cadadr")
+meval = EclObject("meval")
+NIL = EclObject("NIL")
+lisp_length = EclObject("length")
 
 # Dictionaries for standard operators
 sage_op_dict = {
@@ -1280,12 +1280,12 @@ def sage_rat(x,y):
     return x/y
 
 
-mplus=EclObject("MPLUS")
-mtimes=EclObject("MTIMES")
-rat=EclObject("RAT")
-max_op_dict[mplus]=add_vararg
-max_op_dict[mtimes]=mul_vararg
-max_op_dict[rat]=sage_rat
+mplus = EclObject("MPLUS")
+mtimes = EclObject("MTIMES")
+rat = EclObject("RAT")
+max_op_dict[mplus] = add_vararg
+max_op_dict[mtimes] = mul_vararg
+max_op_dict[rat] = sage_rat
 
 
 # Here we build dictionaries for operators needing special conversions.
@@ -1365,9 +1365,9 @@ def mqapply_to_sage(expr):
                                                             mlist_to_sage(car(cdr(cdr(cdr(expr))))),
                                                             max_to_sr(car(cdr(cdr(cdr(cdr(expr)))))))
     else:
-        op=max_to_sr(cadr(expr))
-        max_args=cddr(expr)
-        args=[max_to_sr(a) for a in max_args]
+        op = max_to_sr(cadr(expr))
+        max_args = cddr(expr)
+        args = [max_to_sr(a) for a in max_args]
         return op(*args)
 
 def mdiff_to_sage(expr):
@@ -1436,13 +1436,13 @@ def max_at_to_sage(expr):
         sage: max_at_to_sage(a.ecl())
         f(1, y, z)
     """
-    arg=max_to_sr(expr.cadr())
-    subsarg=caddr(expr)
-    if caar(subsarg)==mlist:
-        subsvalues=dict( (v.lhs(),v.rhs()) for v in max_to_sr(subsarg))
+    arg = max_to_sr(expr.cadr())
+    subsarg = caddr(expr)
+    if caar(subsarg) == mlist:
+        subsvalues = dict( (v.lhs(),v.rhs()) for v in max_to_sr(subsarg))
     else:
-        v=max_to_sr(subsarg)
-        subsvalues=dict([(v.lhs(),v.rhs())])
+        v = max_to_sr(subsarg)
+        subsvalues = dict([(v.lhs(),v.rhs())])
     return SR(arg).subs(subsvalues)
 
 def dummy_integrate(expr):
@@ -1526,24 +1526,24 @@ special_max_to_sage = {
     max_pochhammer: max_pochhammer_to_sage
 }
 
-special_sage_to_max={
+special_sage_to_max = {
     sage.functions.log.polylog : lambda N,X : [[mqapply],[[max_li, max_array],N],X],
     sage.functions.gamma.psi1 : lambda X : [[mqapply],[[max_psi, max_array],0],X],
     sage.functions.gamma.psi2 : lambda N,X : [[mqapply],[[max_psi, max_array],N],X],
-    sage.functions.log.lambert_w : lambda N,X : [[max_lambert_w], X] if N==EclObject(0) else [[mqapply],[[max_lambert_w, max_array],N],X],
+    sage.functions.log.lambert_w : lambda N,X : [[max_lambert_w], X] if N == EclObject(0) else [[mqapply],[[max_lambert_w, max_array],N],X],
     sage.functions.log.harmonic_number : lambda N,X : [[max_harmo],X,N],
     sage.functions.hypergeometric.hypergeometric : lambda A, B, X : [[mqapply],[[max_hyper, max_array],lisp_length(A.cdr()),lisp_length(B.cdr())],A,B,X]
 }
 
 
 # Dictionaries for symbols
-sage_sym_dict={}
-max_sym_dict={}
+sage_sym_dict = {}
+max_sym_dict = {}
 
 
 # Generic conversion functions
 
-max_i=EclObject("$%I")
+max_i = EclObject("$%I")
 def pyobject_to_max(obj):
     r"""
     Convert a (simple) Python object into a Maxima object.
@@ -1639,13 +1639,13 @@ def sr_to_max(expr):
                 # _symbol0=1. See trac #12796. Note that we cannot use
                 # SR.temp_var here since two conversions of the same
                 # expression have to be equal.
-                temp_args = [SR.symbol("_symbol%s"%i) for i in range(len(args))]
+                temp_args = [SR.symbol("_symbol%s" % i) for i in range(len(args))]
                 f = sr_to_max(op.function()(*temp_args))
                 params = op.parameter_set()
                 deriv_max = [[mdiff],f]
                 for i in set(params):
                     deriv_max.extend([sr_to_max(temp_args[i]), EclObject(params.count(i))])
-                at_eval=sr_to_max([temp_args[i]==args[i] for i in range(len(args))])
+                at_eval = sr_to_max([temp_args[i] == args[i] for i in range(len(args))])
                 return EclObject([[max_at],deriv_max,at_eval])
 
             f = sr_to_max(op.function()(*args))
@@ -1718,7 +1718,7 @@ def max_to_sr(expr):
         True
     """
     if expr.consp():
-        op_max=caar(expr)
+        op_max = caar(expr)
         if op_max in special_max_to_sage:
             return special_max_to_sage[op_max](expr)
         if op_max not in max_op_dict:
@@ -1732,8 +1732,8 @@ def max_to_sr(expr):
                 op = sage_expr.operator()
             if op in sage_op_dict:
                 raise RuntimeError("Encountered operator mismatch in maxima-to-sr translation")
-            max_op_dict[op_max]=op
-            sage_op_dict[op]=op_max
+            max_op_dict[op_max] = op
+            sage_op_dict[op] = op_max
         else:
             op = max_op_dict[op_max]
         max_args = cdr(expr)

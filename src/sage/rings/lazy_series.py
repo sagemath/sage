@@ -1154,7 +1154,6 @@ class LazyModuleElement(Element):
             sage: bool(g)  # checks up to degree 62 = 42 + 20
             True
             sage: L.options._reset()
-
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return False
