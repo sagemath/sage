@@ -56,7 +56,7 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
         """
         return "An example of a finite dimensional algebra with basis: " \
             "the path algebra of the Kronecker quiver " \
-            "(containing the arrows a:x->y and b:x->y) over %s "%(self.base_ring())
+            "(containing the arrows a:x->y and b:x->y) over %s " % (self.base_ring())
 
     def one(self):
         r"""

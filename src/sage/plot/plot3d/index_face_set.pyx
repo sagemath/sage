@@ -1722,14 +1722,13 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: S = B.stickers(['red','yellow','blue'], 0.1, 0.05)
             sage: S.show()
             sage: (S+B).show()
-
         """
         all = []
         n = self.fcount
         ct = len(colors)
         for k in range(len(colors)):
             if colors[k]:
-                all.append(self.sticker(list(xrange(k, n, ct)), width, hover,
+                all.append(self.sticker(list(range(k, n, ct)), width, hover,
                                         texture=colors[k]))
         return Graphics3dGroup(all)
 
