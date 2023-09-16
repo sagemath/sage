@@ -54,13 +54,6 @@ else:
     python_packages, python_modules, cython_modules = find_python_sources(
         '.', ['sage'], distributions=['sagemath-modules'])
 
-    ## extra_files = find_extra_files(
-    ##     '.', ['sage'], '/doesnotexist', distributions=['sagemath-modules'])
-    ## package_data = {"": [f
-    ##                      for pkg, files in extra_files.items()
-    ##                      for f in files ]}
-    ## python_packages += list(package_data)
-
     log.debug('python_packages = {0}'.format(sorted(python_packages)))
     log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
     log.debug('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
