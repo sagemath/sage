@@ -3027,7 +3027,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X = SimplicialComplex([[0,1,2], [1,2,3]])
             sage: X.core(is_mutable=False)
             Simplicial complex with vertex set (0, 3) and facets {(0,), (3,)}
-            sage: Y = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
+            sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
             sage: X.core()
             Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 3), (1, 2), (2, 3)}
             sage: X.core() == X
@@ -3108,9 +3108,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return all( answer[1] for answer in all_homologies_in_list_vanish(facs_divided) )
 
-    def is_gorenstein(self):
+    def is_gorenstein(self, base_ring=QQ):
         r"""
-        Return whether ``self`` is a Gorenstein complex.
+        Return whether ``self`` is a Gorenstein complex over ``base_ring``.
 
         A Cohen-Macaulay simplicial complex `\Delta` of dimension `n-1` with `m`
         vertices is called *Gorenstein* if the Betti number of `\Delta` in dimension
@@ -3122,12 +3122,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
+            sage: X.is_gorenstein()
+            True
+            sage: S3 = simplicial_complexes.Sphere(3)
+            sage: S3.is_gorenstein()
+            True
+            sage: X = SimplicialComplex([[0,1,2], [2,3,4]])
+            sage: X.is_gorenstein()
+            False
         """
         m = len(self.vertices())
         n = self.dimension() + 1;
-        return self.is_cohen_macaulay() and self.betti(n-m) == 1
+        b = sum(self.bigraded_betti_number(-(m-n), 2*j, base_ring=base_ring) for j in range(n+m))
+        return self.is_cohen_macaulay(base_ring) and b == 1
 
-    def is_gorenstein_star(self):
+    def is_gorenstein_star(self, base_ring=QQ):
         r"""
         Return whether ``self`` is a Gorenstein`^*` complex.
 
@@ -3144,7 +3154,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         # The definition given in the docstring is equivalent to
         # saying that the core of a simplicial complex is Gorenstein
-        return self.core().is_gorenstein()
+        return self.core().is_gorenstein(base_ring)
 
     def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
         """
