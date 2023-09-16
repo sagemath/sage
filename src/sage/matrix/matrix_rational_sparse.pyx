@@ -303,13 +303,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Rational()
                 mpq_set((<Rational>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
 
@@ -396,17 +396,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return 0
 
     cdef int mpz_denom(self, mpz_t d) except -1:
-        mpz_set_si(d,1)
+        mpz_set_si(d, 1)
         cdef Py_ssize_t i, j
-        cdef mpq_vector *v
 
         sig_on()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 mpz_lcm(d, d, mpq_denref(self._matrix[i].entries[j]))
         sig_off()
         return 0
-
 
     def denominator(self):
         """
@@ -414,7 +412,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         OUTPUT:
 
-            -- Sage Integer
+        - Sage Integer
 
         EXAMPLES::
 

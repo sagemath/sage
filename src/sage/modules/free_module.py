@@ -1963,7 +1963,7 @@ class FreeModule_generic(Module_free_ambient):
 
         rank = sage.rings.integer.Integer(rank)
         if rank < 0:
-            raise ValueError("rank (=%s) must be nonnegative"%rank)
+            raise ValueError("rank (=%s) must be nonnegative" % rank)
 
         Module_free_ambient.__init__(self, base_ring, degree=degree, sparse=sparse, category=category)
         self.__coordinate_ring = coordinate_ring
@@ -3437,9 +3437,9 @@ class FreeModule_generic(Module_free_ambient):
         K = magma(self.base_ring())
         if not self._inner_product_is_dot_product():
             M = magma(self.inner_product_matrix())
-            return "RSpace(%s,%s,%s)"%(K.name(), self.rank(), M._ref())
+            return "RSpace(%s,%s,%s)" % (K.name(), self.rank(), M._ref())
         else:
-            return "RSpace(%s,%s)"%(K.name(), self.rank())
+            return "RSpace(%s,%s)" % (K.name(), self.rank())
 
     def _macaulay2_(self, macaulay2=None):
         r"""
@@ -3668,7 +3668,7 @@ class FreeModule_generic_domain(FreeModule_generic):
         if not isinstance(other, FreeModule_generic):
             if other == 0:
                 return self
-            raise TypeError("other (=%s) must be a free module"%other)
+            raise TypeError("other (=%s) must be a free module" % other)
         if not (self.ambient_vector_space() == other.ambient_vector_space()):
             raise TypeError("ambient vector spaces must be equal")
         return self.span(self.basis() + other.basis())
@@ -4104,7 +4104,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             try:
                 return M.span_of_basis(basis)
             except TypeError:
-                raise ValueError("Argument gens (= %s) is not compatible "%basis +
+                raise ValueError("Argument gens (= %s) is not compatible " % basis +
                     "with base_ring (= %s)." % base_ring)
 
     def submodule_with_basis(self, basis, check=True, already_echelonized=False):
@@ -4329,7 +4329,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             <repr(<sage.modules.free_module.FreeModule_generic_field_with_category at 0x...>) failed: NotImplementedError>
         """
         if not isinstance(base_field, ring.Field):
-            raise TypeError("The base_field (=%s) must be a field"%base_field)
+            raise TypeError("The base_field (=%s) must be a field" % base_field)
         super().__init__(base_field, dimension, degree, sparse=sparse, category=category)
 
     def _Hom_(self, Y, category):
@@ -5597,9 +5597,9 @@ class FreeModule_ambient(FreeModule_generic):
             Ambient free module of rank 12 over Ring of integers modulo 12
         """
         if self.is_sparse():
-            return "Ambient sparse free module of rank %s over %s"%(self.rank(), self.base_ring())
+            return "Ambient sparse free module of rank %s over %s" % (self.rank(), self.base_ring())
         else:
-            return "Ambient free module of rank %s over %s"%(self.rank(), self.base_ring())
+            return "Ambient free module of rank %s over %s" % (self.rank(), self.base_ring())
 
     def _latex_(self):
         r"""
@@ -6063,10 +6063,10 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
             Ambient free module of rank 7 over the integral domain Univariate Polynomial Ring in x over Integer Ring
         """
         if self.is_sparse():
-            return "Ambient sparse free module of rank %s over the integral domain %s"%(
+            return "Ambient sparse free module of rank %s over the integral domain %s" % (
                 self.rank(), self.base_ring())
         else:
-            return "Ambient free module of rank %s over the integral domain %s"%(
+            return "Ambient free module of rank %s over the integral domain %s" % (
                 self.rank(), self.base_ring())
 
     def ambient_vector_space(self):
@@ -6255,10 +6255,10 @@ class FreeModule_ambient_pid(FreeModule_generic_pid, FreeModule_ambient_domain):
             Ambient free module of rank 7 over the principal ideal domain Integer Ring
         """
         if self.is_sparse():
-            return "Ambient sparse free module of rank %s over the principal ideal domain %s"%(
+            return "Ambient sparse free module of rank %s over the principal ideal domain %s" % (
                 self.rank(), self.base_ring())
         else:
-            return "Ambient free module of rank %s over the principal ideal domain %s"%(
+            return "Ambient free module of rank %s over the principal ideal domain %s" % (
                 self.rank(), self.base_ring())
 
 
@@ -6332,9 +6332,9 @@ class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid)
             Vector space of dimension 7 over Rational Field
         """
         if self.is_sparse():
-            return "Sparse vector space of dimension %s over %s"%(self.dimension(), self.base_ring())
+            return "Sparse vector space of dimension %s over %s" % (self.dimension(), self.base_ring())
         else:
-            return "Vector space of dimension %s over %s"%(self.dimension(), self.base_ring())
+            return "Vector space of dimension %s over %s" % (self.dimension(), self.base_ring())
 
     def ambient_vector_space(self):
         """
@@ -6783,11 +6783,11 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             [-1  0  0  0  0  0  0  1]
         """
         if self.is_sparse():
-            s = "Sparse free module of degree %s and rank %s over %s\n"%(
+            s = "Sparse free module of degree %s and rank %s over %s\n" % (
                 self.degree(), self.rank(), self.base_ring()) + \
                 "User basis matrix:\n%r" % self.basis_matrix()
         else:
-            s = "Free module of degree %s and rank %s over %s\n"%(
+            s = "Free module of degree %s and rank %s over %s\n" % (
                 self.degree(), self.rank(), self.base_ring()) + \
                 "User basis matrix:\n%r" % self.basis_matrix()
         return s
@@ -6803,7 +6803,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: M._latex_()
             '\\mathrm{RowSpan}_{\\Bold{Z}}\\left(\\begin{array}{rrr}\n1 & 2 & 3 \\\\\n4 & 5 & 6\n\\end{array}\\right)'
         """
-        return "\\mathrm{RowSpan}_{%s}%s"%(latex.latex(self.base_ring()), latex.latex(self.basis_matrix()))
+        return "\\mathrm{RowSpan}_{%s}%s" % (latex.latex(self.base_ring()), latex.latex(self.basis_matrix()))
 
     def ambient_module(self):
         """
@@ -7605,13 +7605,13 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
             [ 0  0  0  0  0  0  1 -1]
         """
         if self.is_sparse():
-            s = "Sparse free module of degree %s and rank %s over %s\n"%(
+            s = "Sparse free module of degree %s and rank %s over %s\n" % (
                 self.degree(), self.rank(), self.base_ring()) + \
-                "Echelon basis matrix:\n%s"%self.basis_matrix()
+                "Echelon basis matrix:\n%s" % self.basis_matrix()
         else:
-            s = "Free module of degree %s and rank %s over %s\n"%(
+            s = "Free module of degree %s and rank %s over %s\n" % (
                 self.degree(), self.rank(), self.base_ring()) + \
-                "Echelon basis matrix:\n%s"%self.basis_matrix()
+                "Echelon basis matrix:\n%s" % self.basis_matrix()
         return s
 
     def coordinate_vector(self, v, check=True):
@@ -7809,11 +7809,11 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
             [ 0  0  0  1 -1]
         """
         if self.is_sparse():
-            return "Sparse vector space of degree %s and dimension %s over %s\n"%(
+            return "Sparse vector space of degree %s and dimension %s over %s\n" % (
                     self.degree(), self.dimension(), self.base_field()) + \
                     "User basis matrix:\n%r" % self.basis_matrix()
         else:
-            return "Vector space of degree %s and dimension %s over %s\n"%(
+            return "Vector space of degree %s and dimension %s over %s\n" % (
                     self.degree(), self.dimension(), self.base_field()) + \
                     "User basis matrix:\n%r" % self.basis_matrix()
 
@@ -8008,11 +8008,11 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
             [ 0  0  0  1 -1]
         """
         if self.is_sparse():
-            return "Sparse vector space of degree %s and dimension %s over %s\n"%(
+            return "Sparse vector space of degree %s and dimension %s over %s\n" % (
                 self.degree(), self.dimension(), self.base_field()) + \
                 "Basis matrix:\n%r" % self.basis_matrix()
         else:
-            return "Vector space of degree %s and dimension %s over %s\n"%(
+            return "Vector space of degree %s and dimension %s over %s\n" % (
                 self.degree(), self.dimension(), self.base_field()) + \
                 "Basis matrix:\n%r" % self.basis_matrix()
 
@@ -8059,7 +8059,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
         if not isinstance(v, free_module_element.FreeModuleElement):
             v = self.ambient_vector_space()(v)
         if v.degree() != self.degree():
-            raise ArithmeticError("v (=%s) is not in self"%v)
+            raise ArithmeticError("v (=%s) is not in self" % v)
         E = self.echelonized_basis_matrix()
         P = E.pivots()
         if not P:
