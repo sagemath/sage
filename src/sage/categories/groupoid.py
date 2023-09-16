@@ -52,7 +52,7 @@ class Groupoid(CategoryWithParameters):
             sage: Groupoid(S8)
             Groupoid with underlying set Symmetric group of order 8! as a permutation group
         """
-        return "Groupoid with underlying set %s"%self.__G
+        return "Groupoid with underlying set %s" % self.__G
 
     #def construction(self):
     #    return (self.__class__, self.__G)

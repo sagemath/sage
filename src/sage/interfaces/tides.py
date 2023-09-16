@@ -156,9 +156,9 @@ def subexpressions_list(f, pars=None):
     F = symbolic_expression([i(*variables) for i in f]).function(*varpar)
     lis = flatten([fast_callable(i,vars=varpar).op_list() for i in F], max_level=1)
     stack = []
-    const =[]
-    stackcomp=[]
-    detail=[]
+    const = []
+    stackcomp = []
+    detail = []
     for i in lis:
         if i[0] == 'load_arg':
             stack.append(varpar[i[1]])
@@ -166,76 +166,76 @@ def subexpressions_list(f, pars=None):
             if i[1] in NN:
                 basis = stack[-1]
                 for j in range(i[1]-1):
-                    a=stack.pop(-1)
+                    a = stack.pop(-1)
                     detail.append(('mul', a, basis))
                     stack.append(a*basis)
                     stackcomp.append(stack[-1])
             else:
                 detail.append(('pow',stack[-1],i[1]))
-                stack[-1]=stack[-1]**i[1]
+                stack[-1] = stack[-1]**i[1]
                 stackcomp.append(stack[-1])
 
         elif i[0] == 'load_const':
             const.append(i[1])
             stack.append(i[1])
         elif i == 'mul':
-            a=stack.pop(-1)
-            b=stack.pop(-1)
+            a = stack.pop(-1)
+            b = stack.pop(-1)
             detail.append(('mul', a, b))
             stack.append(a*b)
             stackcomp.append(stack[-1])
 
         elif i == 'div':
-            a=stack.pop(-1)
-            b=stack.pop(-1)
+            a = stack.pop(-1)
+            b = stack.pop(-1)
             detail.append(('div', a, b))
             stack.append(b/a)
             stackcomp.append(stack[-1])
 
         elif i == 'add':
-            a=stack.pop(-1)
-            b=stack.pop(-1)
+            a = stack.pop(-1)
+            b = stack.pop(-1)
             detail.append(('add',a,b))
             stack.append(a+b)
             stackcomp.append(stack[-1])
 
         elif i == 'pow':
-            a=stack.pop(-1)
-            b=stack.pop(-1)
+            a = stack.pop(-1)
+            b = stack.pop(-1)
             detail.append(('pow', b, a))
             stack.append(b**a)
             stackcomp.append(stack[-1])
 
-        elif i[0] == 'py_call' and str(i[1])=='log':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'log':
+            a = stack.pop(-1)
             detail.append(('log', a))
             stack.append(log(a))
             stackcomp.append(stack[-1])
 
-        elif i[0] == 'py_call' and str(i[1])=='exp':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'exp':
+            a = stack.pop(-1)
             detail.append(('exp', a))
             stack.append(exp(a))
             stackcomp.append(stack[-1])
 
-        elif i[0] == 'py_call' and str(i[1])=='sin':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'sin':
+            a = stack.pop(-1)
             detail.append(('sin', a))
             detail.append(('cos', a))
             stackcomp.append(sin(a))
             stackcomp.append(cos(a))
             stack.append(sin(a))
 
-        elif i[0] == 'py_call' and str(i[1])=='cos':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'cos':
+            a = stack.pop(-1)
             detail.append(('sin', a))
             detail.append(('cos', a))
             stackcomp.append(sin(a))
             stackcomp.append(cos(a))
             stack.append(cos(a))
 
-        elif i[0] == 'py_call' and str(i[1])=='tan':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'tan':
+            a = stack.pop(-1)
             b = sin(a)
             c = cos(a)
             detail.append(('sin', a))
@@ -246,8 +246,8 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(b/c)
             stack.append(b/c)
 
-        elif i[0] == 'py_call' and str(i[1])=='arctan':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'arctan':
+            a = stack.pop(-1)
             detail.append(('mul', a, a))
             detail.append(('add', 1, a*a))
             detail.append(('atan', a))
@@ -256,12 +256,12 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(arctan(a))
             stack.append(arctan(a))
 
-        elif i[0] == 'py_call' and str(i[1])=='arcsin':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'arcsin':
+            a = stack.pop(-1)
             detail.append(('mul', a, a))
             detail.append(('mul', -1, a*a))
             detail.append(('add', 1, -a*a))
-            detail.append(('pow', 1- a*a, 0.5))
+            detail.append(('pow', 1 - a*a, 0.5))
             detail.append(('asin', a))
             stackcomp.append(a*a)
             stackcomp.append(-a*a)
@@ -270,12 +270,12 @@ def subexpressions_list(f, pars=None):
             stackcomp.append(arcsin(a))
             stack.append(arcsin(a))
 
-        elif i[0] == 'py_call' and str(i[1])=='arccos':
-            a=stack.pop(-1)
+        elif i[0] == 'py_call' and str(i[1]) == 'arccos':
+            a = stack.pop(-1)
             detail.append(('mul', a, a))
             detail.append(('mul', -1, a*a))
             detail.append(('add', 1, -a*a))
-            detail.append(('pow', 1- a*a, 0.5))
+            detail.append(('pow', 1 - a*a, 0.5))
             detail.append(('mul', -1, sqrt(1-a*a)))
             detail.append(('acos', a))
             stackcomp.append(a*a)
@@ -287,7 +287,7 @@ def subexpressions_list(f, pars=None):
             stack.append(arccos(a))
 
         elif i[0] == 'py_call' and 'sqrt' in str(i[1]):
-            a=stack.pop(-1)
+            a = stack.pop(-1)
             detail.append(('pow', a, 0.5))
             stackcomp.append(sqrt(a))
             stack.append(sqrt(a))
@@ -334,13 +334,13 @@ def remove_repeated(l1, l2):
 
     """
     for i in range(len(l1)-1):
-        j=i+1
-        while j<len(l1):
+        j = i+1
+        while j < len(l1):
             if str(l1[j]) == str(l1[i]):
                 l1.pop(j)
                 l2.pop(j)
             else:
-                j+=1
+                j += 1
 
 
 def remove_constants(l1,l2):
@@ -361,13 +361,13 @@ def remove_constants(l1,l2):
         ([a*cos(7), a*cos(7) + 1], [('mul', cos(7), a), ('add', 1, a*cos(7))])
 
     """
-    i=0
+    i = 0
     while i < len(l1):
         if l1[i] in RealField():
             l1.pop(i)
             l2.pop(i)
         else:
-            i+=1
+            i += 1
 
 
 def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
@@ -472,7 +472,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     l0 = [str(l) for l in l1]
     #generate the corresponding c lines
 
-    l3=[]
+    l3 = []
     var = f[0].arguments()
     lv = [str(v) for v in var]
     for i in l2:
@@ -485,17 +485,17 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
                 l3.append((oper, 'XX[{}]'.format(l0.index(str(a))+len(var))))
 
         else:
-            a=i[1]
-            b=i[2]
-            consta=False
-            constb=False
+            a = i[1]
+            b = i[2]
+            consta = False
+            constb = False
 
             if str(a) in lv:
                 aa = 'XX[{}]'.format(lv.index(str(a)))
             elif str(a) in l0:
                 aa = 'XX[{}]'.format(l0.index(str(a))+len(var))
             else:
-                consta=True
+                consta = True
                 aa = RR(a).str()
             if str(b) in lv:
                 bb = 'XX[{}]'.format(lv.index(str(b)))
@@ -506,7 +506,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
                 bb = RR(b).str()
             if consta:
                 oper += '_c'
-                if not oper=='div':
+                if not oper == 'div':
                     bb, aa = aa, bb
             elif constb:
                 oper += '_c'
@@ -518,13 +518,13 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
         el = l3[i]
         string = "XX[{}][i] = ".format(i + n)
         if el[0] == 'add':
-            string += el[1] + "[i] + " + el[2] +"[i];"
+            string += el[1] + "[i] + " + el[2] + "[i];"
         elif el[0] == 'add_c':
-            string += "(i==0)? {}+".format(el[2]) + el[1] + "[0] : "+ el[1]+ "[i];"
+            string += "(i==0)? {}+".format(el[2]) + el[1] + "[0] : " + el[1] + "[i];"
         elif el[0] == 'mul':
             string += "mul_mc("+el[1]+","+el[2]+",i);"
         elif el[0] == 'mul_c':
-            string += el[2] + "*"+ el[1] + "[i];"
+            string += el[2] + "*" + el[1] + "[i];"
         elif el[0] == 'pow_c':
             string += "pow_mc_c("+el[1]+","+el[2]+",XX[{}], i);".format(i+n)
         elif el[0] == 'div':
@@ -613,7 +613,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     double tolrel, tolabs, tini, tend, dt;
     double v[VARS], p[PARS];
 
-    """%(n-1)
+    """ % (n-1)
     outfile.write(auxstring)
     for i in range(len(ics)):
         outfile.write('\tv[{}] = {} ; \n'.format(i, RR(ics[i]).str()))
@@ -623,7 +623,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     outfile.write('\ttolrel = {} ;\n'.format(RR(tolrel).str()))
     outfile.write('\ttolabs = {} ;\n'.format(RR(tolabs).str()))
     outfile.write('\textern char ofname[500];')
-    outfile.write('\tstrcpy(ofname, "'+ output +'");\n')
+    outfile.write('\tstrcpy(ofname, "' + output + '");\n')
     outfile.write('\tminc_tides(v,VARS,p,PARS,tini,tend,dt,tolrel,tolabs);\n')
     outfile.write('\treturn 0; \n }')
     outfile.close()
@@ -751,7 +751,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     l1, l2 = subexpressions_list(f, parameters)
     remove_repeated(l1, l2)
     remove_constants(l1, l2)
-    l3=[]
+    l3 = []
     var = f[0].arguments()
     l0 = [str(l) for l in l1]
     lv = [str(v) for v in var]
@@ -768,12 +768,12 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                 l3.append((oper, 'link[{}]'.format(l0.index(str(a)))))
 
         else:
-            a=i[1]
-            b=i[2]
+            a = i[1]
+            b = i[2]
             sa = str(a)
             sb = str(b)
-            consta=False
-            constb=False
+            consta = False
+            constb = False
 
             if sa in lv:
                 aa = 'var[{}]'.format(lv.index(sa))
@@ -782,7 +782,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
             elif sa in lp:
                 aa = 'par[{}]'.format(lp.index(sa))
             else:
-                consta=True
+                consta = True
                 aa = RR(a).str()
             if sb in lv:
                 bb = 'var[{}]'.format(lv.index(sb))
@@ -791,11 +791,11 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
             elif sb in lp:
                 bb = 'par[{}]'.format(lp.index(sb))
             else:
-                constb=True
+                constb = True
                 bb = RR(b).str()
             if consta:
                 oper += '_c'
-                if not oper=='div':
+                if not oper == 'div':
                     bb, aa = aa,bb
             elif constb:
                 oper += '_c'

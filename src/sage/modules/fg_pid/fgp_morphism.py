@@ -127,7 +127,7 @@ class FGP_Morphism(Morphism):
             sage: phi._repr_()
             'Morphism from module over Integer Ring with invariants (4, 12) to module with invariants (4, 12) that sends the generators to [(1, 3), (0, 11)]'
         """
-        return "Morphism from module over %s with invariants %s to module with invariants %s that sends the generators to %s"%(
+        return "Morphism from module over %s with invariants %s to module with invariants %s that sends the generators to %s" % (
             self.domain().base_ring(), self.domain().invariants(), self.codomain().invariants(),
             list(self.im_gens()))
 
