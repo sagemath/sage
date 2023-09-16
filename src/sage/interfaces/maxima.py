@@ -887,7 +887,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima._batch('10003;',batchload=False)
             '...batch...10003...'
         """
-        filename = '%s-%s'%(self._local_tmpfile(),randrange(2147483647))
+        filename = '%s-%s' % (self._local_tmpfile(),randrange(2147483647))
         F = open(filename, 'w')
         F.write(s)
         F.close()
@@ -897,13 +897,13 @@ class Maxima(MaximaAbstract, Expect):
         tmp_to_use = filename
 
         if batchload:
-            cmd = 'batchload("%s");'%tmp_to_use
+            cmd = 'batchload("%s");' % tmp_to_use
         else:
-            cmd = 'batch("%s");'%tmp_to_use
+            cmd = 'batch("%s");' % tmp_to_use
 
         r = randrange(2147483647)
         s = str(r+1)
-        cmd = "%s1+%s;\n"%(cmd,r)
+        cmd = "%s1+%s;\n" % (cmd,r)
 
         self._sendline(cmd)
         self._expect_expr(s)
@@ -969,7 +969,7 @@ class Maxima(MaximaAbstract, Expect):
             Maxima ERROR:
                 Principal Value
         """
-        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s"%(cmd, out.replace('-- an error.  To debug this try debugmode(true);','')))
+        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s" % (cmd, out.replace('-- an error.  To debug this try debugmode(true);','')))
 
     ###########################################
     # Direct access to underlying lisp interpreter.
@@ -989,7 +989,7 @@ class Maxima(MaximaAbstract, Expect):
             19
             (
         """
-        self._eval_line(':lisp %s\n""'%cmd, allow_use_file=False,
+        self._eval_line(':lisp %s\n""' % cmd, allow_use_file=False,
                wait_for_prompt=False, reformat=False, error_check=False)
         self._expect_expr('(%i)')
         return self._before()
@@ -1016,7 +1016,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         if not isinstance(value, str):
             raise TypeError
-        cmd = '%s : %s$'%(var, value.rstrip(';'))
+        cmd = '%s : %s$' % (var, value.rstrip(';'))
         if len(cmd) > self.__eval_using_file_cutoff:
             self._batch(cmd, batchload=True)
         else:
@@ -1196,7 +1196,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
         P = self.parent()
         with gc_disabled():
             P._eval_line('display2d : true$')
-            s = P._eval_line('disp(%s)$'%self.name(), reformat=False)
+            s = P._eval_line('disp(%s)$' % self.name(), reformat=False)
             P._eval_line('display2d : false$')
         s = s.strip('\r\n')
 

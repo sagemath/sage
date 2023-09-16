@@ -241,6 +241,13 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
         Traceback (most recent call last):
         ...
         ValueError: the input graph must be undirected
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: E = kruskal(G, by_weight=True)
+        sage: sum(w for _, _, w in E)
+        3
     """
     return list(kruskal_iterator(G, by_weight=by_weight, weight_function=weight_function,
                                  check_weight=check_weight, check=check))
@@ -313,6 +320,13 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
         Traceback (most recent call last):
         ...
         ValueError: the input graph must be undirected
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: E = list(kruskal_iterator(G, by_weight=True))
+        sage: sum(w for _, _, w in E)
+        3
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -382,6 +396,14 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
         sage: union_set = DisjointSet(G)
         sage: next(kruskal_iterator_from_edges(G.edges(sort=False), union_set, by_weight=G.weighted()))
         (1, 6, 10)
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: union_set = DisjointSet(G)
+        sage: E = list(kruskal_iterator_from_edges(G.edges(sort=False), union_set, by_weight=True))
+        sage: sum(w for _, _, w in E)
+        3
     """
     # We sort edges, as specified.
     if weight_function is not None:
@@ -472,6 +494,15 @@ def filter_kruskal(G, threshold=10000, by_weight=True, weight_function=None,
 
         sage: filter_kruskal(Graph(2), check=True)
         []
+
+    TESTS:
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: E = filter_kruskal(G, by_weight=True)
+        sage: sum(w for _, _, w in E)
+        3
     """
     return list(filter_kruskal_iterator(G, threshold=threshold,
                                         by_weight=by_weight, weight_function=weight_function,
@@ -563,6 +594,13 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
 
         sage: len(list(filter_kruskal_iterator(graphs.HouseGraph(), threshold=1)))
         4
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: E = list(filter_kruskal_iterator(G, by_weight=True))
+        sage: sum(w for _, _, w in E)
+        3
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -776,6 +814,13 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         Traceback (most recent call last):
         ...
         ValueError: the input graph must be undirected
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: E = boruvka(G, by_weight=True)
+        sage: sum(w for _, _, w in E)
+        3
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -985,6 +1030,13 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
         Traceback (most recent call last):
         ...
         ValueError: works only for non-empty connected graphs
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: T = G.random_spanning_tree(by_weight=True, output_as_graph=True)
+        sage: T.is_tree()
+        True
     """
     from sage.misc.prandom import randint
     from sage.misc.prandom import random
@@ -1113,6 +1165,12 @@ def spanning_trees(g, labels=False):
         Traceback (most recent call last):
         ...
         ValueError: this method is for undirected graphs only
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+        sage: len(list(G.spanning_trees(labels=False)))
+        4
     """
     from sage.graphs.graph import Graph
     if not isinstance(g, Graph):
@@ -1257,6 +1315,14 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         Traceback (most recent call last):
         ...
         ValueError: this method is for undirected graphs only
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph()
+        sage: G.add_clique([0, 1, 2, 'a', 'b'])
+        sage: F = G.edge_disjoint_spanning_trees(k=2)
+        sage: len(F)
+        2
     """
     if G.is_directed():
         raise ValueError("this method is for undirected graphs only")

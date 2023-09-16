@@ -17,7 +17,7 @@ jobs:
     steps:
     - name: Configure git
       run: git config --global core.symlinks true
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Ubuntu 20.04 (in WSL)
       run: |
         (New-Object System.Net.WebClient).DownloadFile("https://aka.ms/wslubuntu2004", "Ubuntu.appx")

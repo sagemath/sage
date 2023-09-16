@@ -166,7 +166,7 @@ class FiniteGroups(CategoryWithAxiom):
                 ...
                 NotImplementedError: Listing the conjugacy classes for group <sage.groups.group.FiniteGroup object at ...> is not implemented
             """
-            raise NotImplementedError("Listing the conjugacy classes for group %s is not implemented"%self)
+            raise NotImplementedError("Listing the conjugacy classes for group %s is not implemented" % self)
 
         def conjugacy_classes_representatives(self):
             r"""

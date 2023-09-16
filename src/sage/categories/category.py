@@ -629,7 +629,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: latex(CommutativeAdditiveSemigroups())
             \mathbf{CommutativeAdditiveSemigroups}
         """
-        return "\\mathbf{%s}"%self._short_name()
+        return "\\mathbf{%s}" % self._short_name()
 
 #   The convention for which hash function to use should be decided at the level of UniqueRepresentation
 #   The implementation below is bad (hash independent of the base ring)
@@ -1452,9 +1452,9 @@ class Category(UniqueRepresentation, SageObject):
         from sage.categories.sets_cat import Sets
         tester = self._tester(**options)
         tester.assertTrue(isinstance(self.super_categories(), list),
-                       "%s.super_categories() should return a list"%self)
+                       "%s.super_categories() should return a list" % self)
         tester.assertTrue(self.is_subcategory(Objects()),
-                       "%s is not a subcategory of Objects()"%self)
+                       "%s is not a subcategory of Objects()" % self)
         tester.assertTrue(isinstance(self.parent_class, type))
         tester.assertTrue(all(not isinstance(cat, JoinCategory) for cat in self._super_categories))
         if not isinstance(self, JoinCategory):
@@ -1580,7 +1580,7 @@ class Category(UniqueRepresentation, SageObject):
         cls = self.__class__
         if isinstance(cls, DynamicMetaclass):
             cls = cls.__base__
-        class_name = "%s.%s"%(cls.__name__, name)
+        class_name = "%s.%s" % (cls.__name__, name)
         method_provider_cls = getattr(self, method_provider, None)
         if method_provider_cls is None:
             # If the category provides no XXXMethods class,
@@ -1589,10 +1589,10 @@ class Category(UniqueRepresentation, SageObject):
         else:
             # Otherwise, check XXXMethods
             assert inspect.isclass(method_provider_cls),\
-                "%s.%s should be a class"%(cls.__name__, method_provider)
+                "%s.%s should be a class" % (cls.__name__, method_provider)
             mro = inspect.getmro(method_provider_cls)
             if len(mro) > 2 or (len(mro) == 2 and mro[1] is not object):
-                warn("%s.%s should not have a super class"%(cls.__name__, method_provider))
+                warn("%s.%s should not have a super class" % (cls.__name__, method_provider))
             # and point the documentation to it
             doccls = method_provider_cls
         if picklable:

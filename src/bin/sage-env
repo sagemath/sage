@@ -635,3 +635,11 @@ if [ -n "$SAGE_LOCAL" ]; then
     fi
 
 fi
+
+
+# Newer versions of debugpy come with a bundled pydevd that complains
+# about >=python-3.11's core modules being frozen (and therefore not
+# breakpoint-able). This workaround simply hides the warning to keep
+# our doctests predictable (which was the status quo with earlier
+# versions of debugpy).
+export PYDEVD_DISABLE_FILE_VALIDATION=1

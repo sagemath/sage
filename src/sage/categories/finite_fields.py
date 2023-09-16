@@ -89,7 +89,7 @@ class FiniteFields(CategoryWithAxiom):
             ...
             TypeError: unable to canonically associate a finite field to Rational Field
         """
-        raise TypeError("unable to canonically associate a finite field to %s"%x)
+        raise TypeError("unable to canonically associate a finite field to %s" % x)
         # TODO: local dvr ring?
 
     class ParentMethods:
