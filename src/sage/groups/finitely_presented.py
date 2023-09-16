@@ -827,7 +827,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         gens = ', '.join(self.variable_names())
         rels = ', '.join([str(r) for r in self.relations()])
-        return 'Finitely presented group ' + ' < ' + gens + ' | ' + rels + ' >'
+        return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
         """

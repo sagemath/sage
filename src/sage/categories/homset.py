@@ -663,7 +663,7 @@ class Homset(Set_generic):
         self.__category = category
         if check:
             if not isinstance(category, Category):
-                raise TypeError("category (=%s) must be a category"%category)
+                raise TypeError("category (=%s) must be a category" % category)
             #if not X in category:
             #    raise TypeError, "X (=%s) must be in category (=%s)"%(X, category)
             #if not Y in category:
@@ -957,12 +957,12 @@ class Homset(Set_generic):
             if x.domain() != self.domain():
                 mor = x.domain()._internal_coerce_map_from(self.domain())
                 if mor is None:
-                    raise TypeError("Incompatible domains: x (=%s) cannot be an element of %s"%(x,self))
+                    raise TypeError("Incompatible domains: x (=%s) cannot be an element of %s" % (x,self))
                 x = x * mor
             if x.codomain() != self.codomain():
                 mor = self.codomain()._internal_coerce_map_from(x.codomain())
                 if mor is None:
-                    raise TypeError("Incompatible codomains: x (=%s) cannot be an element of %s"%(x,self))
+                    raise TypeError("Incompatible codomains: x (=%s) cannot be an element of %s" % (x,self))
                 x = mor * x
             return x
 
@@ -1050,7 +1050,7 @@ class Homset(Set_generic):
             sage: issubclass(cls, Semigroups().Finite().Homsets().element_class)        # needs sage.groups
             False
         """
-        class_name = "%s._abstract_element_class"%self.__class__.__name__
+        class_name = "%s._abstract_element_class" % self.__class__.__name__
         return dynamic_class(class_name, (self.category().element_class, self.homset_category().morphism_class))
 
     @lazy_attribute
