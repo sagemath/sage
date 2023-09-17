@@ -11,10 +11,10 @@ EXAMPLES:
 
 We create a toy example based on the Mordell-Weil group of an elliptic curve over `\QQ`::
 
+    sage: # needs sage.schemes
     sage: E = EllipticCurve('30a2')
     sage: pts = [E(4,-7,1), E(7/4, -11/8, 1), E(3, -2, 1)]
-    sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [3, 2, 2])
-    sage: M
+    sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [3, 2, 2]); M
     Additive abelian group isomorphic to Z/3 + Z/2 + Z/2 embedded in Abelian
     group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - 19*x + 26
     over Rational Field
@@ -24,7 +24,7 @@ We create a toy example based on the Mordell-Weil group of an elliptic curve ove
     (0 : 1 : 0)
     sage: 3000000000000001 * M.0
     (4 : -7 : 1)
-    sage: M == loads(dumps(M))  # known bug, see https://github.com/sagemath/sage/issues/11599#comment:7
+    sage: M == loads(dumps(M))  # known bug (https://github.com/sagemath/sage/issues/11599#comment:7)
     True
 
 TESTS:
@@ -33,7 +33,7 @@ We check that ridiculous operations are being avoided::
 
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(2, 'additive_abelian_wrapper.py')
-    sage: 300001 * M.0
+    sage: 300001 * M.0                                                                  # needs sage.schemes
     verbose 1 (...: additive_abelian_wrapper.py, discrete_exp) Calling discrete exp on (1, 0, 0)
     (4 : -7 : 1)
     sage: set_verbose(0, 'additive_abelian_wrapper.py')
@@ -85,12 +85,13 @@ class UnwrappingMorphism(Morphism):
         r"""
         EXAMPLES::
 
-            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
-            sage: F = QQbar.coerce_map_from(G); F
+            sage: G = AdditiveAbelianGroupWrapper(QQbar,                                # needs sage.rings.number_field
+            ....:                                 [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
+            sage: F = QQbar.coerce_map_from(G); F                                       # needs sage.rings.number_field
             Generic morphism:
               From: Additive abelian group isomorphic to Z + Z embedded in Algebraic Field
               To:   Algebraic Field
-            sage: type(F)
+            sage: type(F)                                                               # needs sage.rings.number_field
             <class 'sage.groups.additive_abelian.additive_abelian_wrapper.UnwrappingMorphism'>
         """
         Morphism.__init__(self, domain.Hom(domain.universe()))
@@ -99,13 +100,14 @@ class UnwrappingMorphism(Morphism):
         r"""
         TESTS::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve("65a1")
             sage: G = E.torsion_subgroup()
             sage: isinstance(G, sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper)
             True
             sage: P1 = E([1,-1,1])
             sage: P2 = E([0,1,0])
-            sage: P1 in G # indirect doctest
+            sage: P1 in G  # indirect doctest
             False
             sage: P2 in G
             True
@@ -127,8 +129,9 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
         EXAMPLES::
 
             sage: from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
-            sage: G.0 # indirect doctest
+            sage: G = AdditiveAbelianGroupWrapper(QQbar,                                # needs sage.rings.number_field
+            ....:                                 [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
+            sage: G.0  # indirect doctest                                               # needs sage.rings.number_field
             1.414213562373095?
         """
         addgp.AdditiveAbelianGroupElement.__init__(self, parent, vector, check)
@@ -142,11 +145,11 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
         EXAMPLES::
 
-            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)
-            sage: T; type(T)
+            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)                    # needs sage.schemes
+            sage: T; type(T)                                                            # needs sage.schemes
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category.element_class'>
-            sage: T.element(); type(T.element())
+            sage: T.element(); type(T.element())                                        # needs sage.schemes
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_number_field'>
         """
@@ -160,8 +163,8 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
         EXAMPLES::
 
-            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)
-            sage: repr(T) # indirect doctest
+            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)                    # needs sage.schemes
+            sage: repr(T)  # indirect doctest                                           # needs sage.schemes
             '(0 : 0 : 1)'
         """
         return repr(self.element())
@@ -179,19 +182,22 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         sage: G6 = AdditiveAbelianGroupWrapper(Zmod(42), [6], [7]); G6
         Additive abelian group isomorphic to Z/7 embedded in Ring of integers modulo 42
         sage: G = AdditiveAbelianGroupWrapper(Zmod(42), [21,14,6], [2,3,7]); G
-        Additive abelian group isomorphic to Z/2 + Z/3 + Z/7 embedded in Ring of integers modulo 42
+        Additive abelian group isomorphic to Z/2 + Z/3 + Z/7 embedded in
+         Ring of integers modulo 42
         sage: G.invariants()
         (42,)
 
     ::
 
-        sage: AdditiveAbelianGroupWrapper(QQbar, [sqrt(2), sqrt(3)], [0, 0])
+        sage: AdditiveAbelianGroupWrapper(QQbar, [sqrt(2), sqrt(3)], [0, 0])            # needs sage.rings.number_field sage.symbolic
         Additive abelian group isomorphic to Z + Z embedded in Algebraic Field
 
     ::
 
-        sage: EllipticCurve(GF(419**2), [1,0]).abelian_group()  # indirect doctest
-        Additive abelian group isomorphic to Z/420 + Z/420 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
+        sage: EllipticCurve(GF(419**2), [1,0]).abelian_group()  # indirect doctest      # needs sage.rings.finite_rings sage.schemes
+        Additive abelian group isomorphic to Z/420 + Z/420 embedded in
+         Abelian group of points on Elliptic Curve
+          defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
     """
 
     Element = AdditiveAbelianGroupWrapperElement
@@ -200,7 +206,8 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         r"""
         EXAMPLES::
 
-            sage: AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0]) # indirect doctest
+            sage: AdditiveAbelianGroupWrapper(QQbar,  # indirect doctest                # needs sage.rings.number_field
+            ....:                             [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
             Additive abelian group isomorphic to Z + Z embedded in Algebraic Field
         """
         self._universe = universe
@@ -217,8 +224,10 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         EXAMPLES::
 
-            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
-            sage: G.universe()
+            sage: G = AdditiveAbelianGroupWrapper(QQbar,                                # needs sage.rings.number_field
+            ....:                                 [sqrt(QQbar(2)), sqrt(QQbar(3))],
+            ....:                                 [0, 0])
+            sage: G.universe()                                                          # needs sage.rings.number_field
             Algebraic Field
         """
         return self._universe
@@ -246,8 +255,9 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         r"""
         EXAMPLES::
 
-            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
-            sage: repr(G) # indirect doctest
+            sage: G = AdditiveAbelianGroupWrapper(QQbar,                                # needs sage.rings.number_field
+            ....:                                 [sqrt(QQbar(2)), sqrt(QQbar(3))], [0, 0])
+            sage: repr(G)  # indirect doctest                                           # needs sage.rings.number_field
             'Additive abelian group isomorphic to Z + Z embedded in Algebraic Field'
         """
         return addgp.AdditiveAbelianGroup_fixed_gens._repr_(self) + " embedded in " + self.universe()._repr_()
@@ -283,10 +293,11 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         EXAMPLES::
 
-            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(QQbar(2)), -1], [0, 0])
-            sage: v = G.discrete_exp([3, 5]); v
+            sage: G = AdditiveAbelianGroupWrapper(QQbar,                                # needs sage.rings.number_field
+            ....:                                 [sqrt(QQbar(2)), -1], [0, 0])
+            sage: v = G.discrete_exp([3, 5]); v                                         # needs sage.rings.number_field
             -0.7573593128807148?
-            sage: v.parent() is QQbar
+            sage: v.parent() is QQbar                                                   # needs sage.rings.number_field
             True
 
         This method is an inverse of :meth:`discrete_log`::
@@ -332,16 +343,17 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([2, 2*3, 2*3*5, 2*3*5*7, 2*3*5*7*11])
-            sage: A = AdditiveAbelianGroupWrapper(G.0.parent(), G.gens(), [g.order() for g in G.gens()])
+            sage: A = AdditiveAbelianGroupWrapper(G.0.parent(), G.gens(),
+            ....:                                 [g.order() for g in G.gens()])
             sage: A.discrete_log(A.discrete_exp([1,5,23,127,539]))
             (1, 5, 23, 127, 539)
 
         ::
 
             sage: x = polygen(ZZ, 'x')
-            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))     # optional - sage.rings.finite_rings
-            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)      # optional - sage.rings.finite_rings
-            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])             # optional - sage.rings.finite_rings
+            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))     # needs sage.rings.finite_rings sage.schemes
+            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)      # needs sage.rings.finite_rings sage.schemes
+            sage: E.abelian_group().discrete_log(123 * P + 777 * Q, [P, Q])             # needs sage.rings.finite_rings sage.schemes
             (123, 777)
 
         ::
@@ -357,8 +369,8 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ::
 
-            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(2)], [0])
-            sage: G.discrete_log(QQbar(2*sqrt(2)))
+            sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(2)], [0])                # needs sage.rings.number_field sage.symbolic
+            sage: G.discrete_log(QQbar(2*sqrt(2)))                                      # needs sage.rings.number_field sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: No black-box discrete log for infinite abelian groups
@@ -426,33 +438,43 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             sage: A = AdditiveAbelianGroupWrapper(G.0.parent(), G.gens(), ords)
             sage: T = A.torsion_subgroup(5)
             sage: T
-            Additive abelian group isomorphic to Z/5 + Z/5 + Z/5 embedded in Additive abelian group isomorphic to Z/2 + Z/6 + Z/30 + Z + Z/210 + Z/2310
+            Additive abelian group isomorphic to Z/5 + Z/5 + Z/5 embedded in
+             Additive abelian group isomorphic to Z/2 + Z/6 + Z/30 + Z + Z/210 + Z/2310
             sage: T.gens()
             ((0, 0, 6, 0, 0, 0), (0, 0, 0, 0, 42, 0), (0, 0, 0, 0, 0, 462))
 
         ::
 
+            sage: # needs sage.rings.finite_rings sage.schemes
             sage: E = EllipticCurve(GF(487^2), [311,205])
-            sage: T = E.abelian_group().torsion_subgroup(42)
-            sage: T
-            Additive abelian group isomorphic to Z/42 + Z/6 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 311*x + 205 over Finite Field in z2 of size 487^2
+            sage: T = E.abelian_group().torsion_subgroup(42); T
+            Additive abelian group isomorphic to Z/42 + Z/6 embedded in
+             Abelian group of points on Elliptic Curve
+              defined by y^2 = x^3 + 311*x + 205 over Finite Field in z2 of size 487^2
             sage: [P.order() for P in T.gens()]
             [42, 6]
 
         ::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve('574i1')
             sage: pts = [E(103,172), E(61,18)]
             sage: assert pts[0].order() == 7 and pts[1].order() == infinity
-            sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [7,0])
-            sage: M
-            Additive abelian group isomorphic to Z/7 + Z embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [7,0]); M
+            Additive abelian group isomorphic to Z/7 + Z embedded in
+             Abelian group of points on Elliptic Curve defined by
+              y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
             sage: M.torsion_subgroup()
-            Additive abelian group isomorphic to Z/7 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            Additive abelian group isomorphic to Z/7 embedded in
+             Abelian group of points on Elliptic Curve defined by
+              y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
             sage: M.torsion_subgroup(7)
-            Additive abelian group isomorphic to Z/7 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            Additive abelian group isomorphic to Z/7 embedded in
+             Abelian group of points on Elliptic Curve defined by
+              y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
             sage: M.torsion_subgroup(5)
-            Trivial group embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            Trivial group embedded in Abelian group of points on Elliptic Curve
+             defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
 
         AUTHORS:
 
@@ -493,7 +515,8 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             sage: G = AdditiveAbelianGroup([15, 30, 45])
             sage: gs = [G((1,2,3)), G((4,5,6)), G((7,7,7)), G((3,2,1))]
             sage: H = AdditiveAbelianGroupWrapper.from_generators(gs); H
-            Additive abelian group isomorphic to Z/90 + Z/15 embedded in Additive abelian group isomorphic to Z/15 + Z/30 + Z/45
+            Additive abelian group isomorphic to Z/90 + Z/15 embedded in
+             Additive abelian group isomorphic to Z/15 + Z/30 + Z/45
             sage: H.gens()
             ((12, 13, 14), (1, 26, 21))
 
@@ -552,12 +575,13 @@ def _discrete_log_pgroup(p, vals, aa, b):
 
     Check for :trac:`34716`::
 
+        sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(GF(487^2), [311,205])
         sage: G = E.abelian_group().torsion_subgroup(42)
         sage: G.invariants()
         (6, 42)
         sage: P, Q = G.torsion_subgroup(6).gens()
-        sage: G.discrete_log(2*P + 3*Q, [P, Q])  # indirect doctest
+        sage: G.discrete_log(2*P + 3*Q, [P, Q])  # indirect doctest                     # needs sage.groups
         (2, 3)
     """
     from itertools import product as iproduct
@@ -748,6 +772,7 @@ def basis_from_generators(gens, ords=None):
 
     EXAMPLES::
 
+        sage: # needs sage.groups sage.rings.finite_rings
         sage: from sage.groups.additive_abelian.additive_abelian_wrapper import basis_from_generators
         sage: E = EllipticCurve(GF(31337^6,'a'), j=37)
         sage: E.order()

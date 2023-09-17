@@ -118,7 +118,7 @@ class Bimodules(CategoryWithParameters):
             Category of bimodules over Rational Field on the left and Integer Ring on the right
         """
         return "bimodules over %s on the left and %s on the right" \
-            %(self._left_base_ring, self._right_base_ring)
+            % (self._left_base_ring, self._right_base_ring)
 
     def left_base_ring(self):
         """

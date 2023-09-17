@@ -3098,13 +3098,13 @@ class QuotientFunctor(ConstructionFunctor):
         for k,v in self.kwds.items():
             kwds[k] = v
         for k,v in other.kwds.items():
-            if k=='category':
+            if k == 'category':
                 if kwds[k] is not None:
                     kwds[k] = v.join([v,kwds[k]])
                 else:
                     kwds[k] = v
                 continue
-            if k in kwds and kwds[k] is not None and v!=kwds[k]:
+            if k in kwds and kwds[k] is not None and v != kwds[k]:
                 # Don't know what default to choose. Hence: No merge!
                 return None
             kwds[k] = v
