@@ -259,7 +259,7 @@ def _cythonized_dir(src_dir=None, editable_install=None):
 
 
 def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
-                     distributions=None):
+                     distributions=None, exclude_distributions=None):
     """
     Find all extra files which should be installed.
 
@@ -291,6 +291,11 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
       should be a sequence or set of strings: only find files whose
       ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
       directive in the file) is an element of ``distributions``.
+
+    - ``exclude_distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: exclude modules whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the module source file) is in ``exclude_distributions``.
 
     OUTPUT: dict with items ``{dir: files}`` where ``dir`` is a
     directory relative to ``src_dir`` and ``files`` is a list of
