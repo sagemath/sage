@@ -3353,13 +3353,7 @@ def compute_isogeny_bmss(E1, E2, l):
     Compute the kernel polynomial of the unique normalized isogeny
     of degree ``l`` between ``E1`` and ``E2``.
 
-    ALGORITHM: [BMSS2006], algorithm *fastElkies'*.
-
-    AUTHORS: Rémy Oudompheng.
-    `Original code <https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332>`
-    released under the
-    `MIT license <https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/LICENSE>`.
-    Slightly adjusted for inclusion in the Sage library.
+    ALGORITHM: [BMSS2006]_, algorithm *fastElkies'*.
 
     EXAMPLES::
 
@@ -3369,6 +3363,10 @@ def compute_isogeny_bmss(E1, E2, l):
         sage: compute_isogeny_bmss(E1, E2, 13)
         x^6 + 139*x^5 + 73*x^4 + 139*x^3 + 120*x^2 + 88*x
     """
+    # Original author of this function: Rémy Oudompheng.
+    # https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332
+    # Released under the MIT license: https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/LICENSE
+    # Slightly adjusted for inclusion in the Sage library.
     Rx, x = E1.base_ring()["x"].objgen()
     # Compute C = 1/(1 + Ax^4 + Bx^6) mod x^4l
     A, B = E1.a4(), E1.a6()
