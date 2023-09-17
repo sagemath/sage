@@ -834,12 +834,12 @@ def atomic_basis(n, basis, **kwds):
         """
         dict = {}
         if basis.find('wood') >= 0:
-            k=0
-            m=0
+            k = 0
+            m = 0
             deg = 2**m * (2**(k+1) - 1)
             while deg <= n:
                 dict[deg] = (m,k)
-                if m>0:
+                if m > 0:
                     m = m - 1
                     k = k + 1
                 else:
@@ -847,8 +847,8 @@ def atomic_basis(n, basis, **kwds):
                     k = 0
                 deg = 2**m * (2**(k+1) - 1)
         elif basis.find('wall') >= 0 or basis.find('arnon') >= 0:
-            k=0
-            m=0
+            k = 0
+            m = 0
             deg = 2**k * (2**(m-k+1) - 1)
             while deg <= n:
                 dict[deg] = (m,k)
@@ -859,8 +859,8 @@ def atomic_basis(n, basis, **kwds):
                     k = k - 1
                 deg = 2**k * (2**(m-k+1) - 1)
         elif basis.find('pst') >= 0 or basis.find('comm') >= 0:
-            s=0
-            t=1
+            s = 0
+            t = 1
             deg = 2**s * (2**t - 1)
             while deg <= n:
                 if basis.find('pst') >= 0:
@@ -1128,7 +1128,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            verbose("up to dimension %s"%i)
+            verbose("up to dimension %s" % i)
         milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,generic=generic))
         for B in bases:
             if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,generic=generic)):
@@ -1147,7 +1147,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            verbose("up to dimension %s"%i)
+            verbose("up to dimension %s" % i)
         for pro in profiles:
             milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,profile=pro,generic=generic))
             for B in bases:

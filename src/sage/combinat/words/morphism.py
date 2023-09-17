@@ -3687,7 +3687,7 @@ class WordMorphism(SageObject):
         r"""
         If this morphism is simplifiable, return morphisms `h` and `k` such that
         this morphism is simplifiable with respect to `h` and `k`, otherwise
-        raise  ``ValueError``.
+        raise :class:`ValueError`.
 
         This method is quite fast if this morphism is non-injective, but very
         slow if it is injective.

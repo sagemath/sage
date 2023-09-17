@@ -423,7 +423,7 @@ cdef class GenericBackend:
             sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6) # optional - Nonexistent_LP_solver
             sage: p.remove_constraints([0, 1])                       # optional - Nonexistent_LP_solver
         """
-        if type(constraints) == int: self.remove_constraint(constraints)
+        if isinstance(constraints, int): self.remove_constraint(constraints)
 
         cdef int last = self.nrows() + 1
 
@@ -721,7 +721,7 @@ cdef class GenericBackend:
             tester = p._tester(**options)
         # From doctest of GenericBackend.solve:
         tester.assertIsNone(p.add_linear_constraints(5, 0, None))
-        tester.assertIsNone(p.add_col(list(xrange(5)), list(xrange(5))))
+        tester.assertIsNone(p.add_col(list(range(5)), list(range(5))))
         tester.assertEqual(p.solve(), 0)
         tester.assertIsNone(p.objective_coefficient(0,1))
         from sage.numerical.mip import MIPSolverException
@@ -1288,8 +1288,8 @@ cdef class GenericBackend:
         del cp
         self._do_test_problem_data(tester, cpcp)
 
-
     # TODO: We should have a more systematic way of generating MIPs for testing.
+
     @classmethod
     def _test_copy_some_mips(cls, tester=None, **options):
         p = cls()                         # fresh instance of the backend
@@ -1299,7 +1299,7 @@ cdef class GenericBackend:
         p.add_linear_constraints(5, 0, None)
         try:
             # p.add_col(range(5), range(5))     -- bad test because COIN sparsifies the 0s away on copy
-            p.add_col(list(xrange(5)), list(xrange(1, 6)))
+            p.add_col(list(range(5)), list(range(1, 6)))
         except NotImplementedError:
             # Gurobi does not implement add_col
             pass

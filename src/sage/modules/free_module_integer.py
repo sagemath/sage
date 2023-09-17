@@ -38,7 +38,11 @@ from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
 from sage.modules.free_module_element import vector
-from sage.rings.number_field.number_field_element import OrderElement_absolute
+
+try:
+    from sage.rings.number_field.number_field_element import OrderElement_absolute
+except ImportError:
+    OrderElement_absolute = ()
 
 
 def IntegerLattice(basis, lll_reduce=True):
@@ -107,9 +111,11 @@ def IntegerLattice(basis, lll_reduce=True):
 
     We construct an ideal lattice from an element of an absolute order::
 
+        sage: # needs sage.rings.number_field
         sage: K.<a>  = CyclotomicField(17)
         sage: O = K.ring_of_integers()
-        sage: f = O(-a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7 - 4*a^6 + a^5 + 210*a^4 + 2*a^3 - 2*a^2 + 2*a - 2)
+        sage: f = O(-a^15 + a^13 + 4*a^12 - 12*a^11 - 256*a^10 + a^9 - a^7
+        ....:       - 4*a^6 + a^5 + 210*a^4 + 2*a^3 - 2*a^2 + 2*a - 2)
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: IntegerLattice(f)
         Free module of degree 16 and rank 16 over Integer Ring
@@ -151,6 +157,7 @@ def IntegerLattice(basis, lll_reduce=True):
 
     Sage also interfaces with fpylll's lattice generator::
 
+        sage: # needs fpylll
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: from fpylll import IntegerMatrix
         sage: A = IntegerMatrix.random(8, "simdioph", bits=20, bits2=10)
@@ -197,7 +204,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     EXAMPLES::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: L = IntegerLattice(sage.crypto.gen_lattice(type='modular', m=10, seed=1337, dual=True)); L
+        sage: L = IntegerLattice(sage.crypto.gen_lattice(type='modular', m=10,
+        ....:                                            seed=1337, dual=True)); L
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
         [-1  1  2 -2  0  1  0 -1  2  1]
@@ -259,11 +267,12 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: M.row_space() == L.matrix().row_space()
             True
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^8 + 1)                                          # optional - sage.rings.number_field
-            sage: O = K.ring_of_integers()                                              # optional - sage.rings.number_field
-            sage: f = O(a^7 - a^6 + 4*a^5 - a^4 + a^3 + 1)                              # optional - sage.rings.number_field
-            sage: IntegerLattice(f)                                                     # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^8 + 1)
+            sage: O = K.ring_of_integers()
+            sage: f = O(a^7 - a^6 + 4*a^5 - a^4 + a^3 + 1)
+            sage: IntegerLattice(f)
             Free module of degree 8 and rank 8 over Integer Ring
             User basis matrix:
             [ 0  1  0  1  0  3  3  0]
@@ -365,10 +374,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ...
             sage: L.reduced_basis == A
             True
-            sage: old = L.reduced_basis[0].norm().n()
+            sage: old = L.reduced_basis[0].norm().n()                                   # needs sage.symbolic
             sage: _ = L.LLL()
-            sage: new = L.reduced_basis[0].norm().n()
-            sage: new <= old
+            sage: new = L.reduced_basis[0].norm().n()                                   # needs sage.symbolic
+            sage: new <= old                                                            # needs sage.symbolic
             True
         """
         basis = self.reduced_basis
@@ -398,21 +407,18 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint (o/w timeout)
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=60, q=2^60, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
             sage: min(v.norm().n() for v in L.reduced_basis)
             4.17330740711759e15
-
             sage: L.LLL()
             60 x 60 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-
             sage: min(v.norm().n() for v in L.reduced_basis)
             5.19615242270663
-
             sage: L.BKZ(block_size=10)
             60 x 60 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-
             sage: min(v.norm().n() for v in L.reduced_basis)
             4.12310562561766
 
@@ -558,21 +564,21 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
             6.03890756700000e10
 
-            sage: L.shortest_vector().norm().n()
+            sage: L.shortest_vector().norm().n()                                        # needs sage.symbolic
             3.74165738677394
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)
+            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
             6.03890756700000e10
 
-            sage: L.shortest_vector(algorithm="pari").norm().n()
+            sage: L.shortest_vector(algorithm="pari").norm().n()                        # needs sage.symbolic
             3.74165738677394
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm="pari").norm().n()
+            sage: L.shortest_vector(algorithm="pari").norm().n()                        # needs sage.symbolic
             3.74165738677394
         """
         if algorithm == "pari":
@@ -649,7 +655,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L = IntegerLattice([[1, 0], [0, 1]])
             sage: V = L.voronoi_cell()
             sage: V.Vrepresentation()
-            (A vertex at (1/2, -1/2), A vertex at (1/2, 1/2), A vertex at (-1/2, 1/2), A vertex at (-1/2, -1/2))
+            (A vertex at (1/2, -1/2),
+             A vertex at (1/2, 1/2),
+             A vertex at (-1/2, 1/2),
+             A vertex at (-1/2, -1/2))
 
         The volume of the Voronoi cell is the square root of the
         discriminant of the lattice::
@@ -661,8 +670,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             [  1  -1   2   1]
             [ -6   0   3   3]
             [ -6 -24  -6  -5]
-            sage: V = L.voronoi_cell() # long time
-            sage: V.volume()           # long time
+            sage: V = L.voronoi_cell()  # long time
+            sage: V.volume()            # long time
             678
             sage: sqrt(L.discriminant())
             678
@@ -672,7 +681,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L = IntegerLattice([[2, 0, 0], [0, 2, 0]])
             sage: V = L.voronoi_cell()
             sage: V.Hrepresentation()
-            (An inequality (-1, 0, 0) x + 1 >= 0, An inequality (0, -1, 0) x + 1 >= 0, An inequality (1, 0, 0) x + 1 >= 0, An inequality (0, 1, 0) x + 1 >= 0)
+            (An inequality (-1, 0, 0) x + 1 >= 0,
+             An inequality (0, -1, 0) x + 1 >= 0,
+             An inequality (1, 0, 0) x + 1 >= 0,
+             An inequality (0, 1, 0) x + 1 >= 0)
 
         ALGORITHM:
 
@@ -777,7 +789,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         def CVPP_2V(t, V, voronoi_cell):
             t_new = t
             while not voronoi_cell.contains(t_new.list()):
-                v = max(V, key=lambda v: t_new * v / v.norm() ** 2)
+                v = max(V, key=lambda v: t_new * v / v.dot_product(v))
                 t_new = t_new - v
             return t - t_new
 

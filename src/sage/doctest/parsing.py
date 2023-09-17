@@ -1071,6 +1071,28 @@ class SageDocTestParser(doctest.DocTestParser):
             '',
             (None, '5 # optional guava\n', 'Integer(5) # optional guava\n'),
             '']
+
+        TESTS::
+
+            sage: parse("::\n\n    sage: # needs sage.combinat\n    sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n    ....:         import incidence_matrix_to_bit_rep_of_Vrep\n    sage: P = polytopes.associahedron(['A',3])\n\n")
+            ['::\n\n',
+            '',
+            (None,
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n',
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n'),
+            '',
+            (None,
+            "P = polytopes.associahedron(['A',3])\n",
+            "P = polytopes.associahedron(['A',Integer(3)])\n"),
+            '\n']
+
+            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
+            sage: parsed4 = DTP.parse(example4)
+            sage: dte = parsed4[1]
+            sage: dte.sage_source
+            'C.minimum_distance(algorithm="guava")  # optional - guava\n'
+            sage: dte.want
+            '...\n24\n'
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1078,7 +1100,7 @@ class SageDocTestParser(doctest.DocTestParser):
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
         backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *(((\.){4}:)|((\.){3}))?\ *""")
+\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
@@ -1087,13 +1109,8 @@ class SageDocTestParser(doctest.DocTestParser):
         # doctest system.
         m = backslash_replacer.search(string)
         while m is not None:
-            next_prompt = find_sage_prompt.search(string, m.end())
             g = m.groups()
-            if next_prompt:
-                future = string[m.end():next_prompt.start()] + '\n' + string[next_prompt.start():]
-            else:
-                future = string[m.end():]
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + future
+            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
             m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
@@ -1614,6 +1631,17 @@ class SageOutputChecker(doctest.OutputChecker):
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True
 
+        if "Overriding pythran description" in got:
+            # Some signatures changed in numpy-1.25.x that may yet be
+            # reverted, but which pythran would otherwise warn about.
+            # Pythran has a special case for numpy.random that hides
+            # the warning -- I guess until we know if the changes will
+            # be reverted -- but only in v0.14.0 of pythran. Ignoring
+            # This warning allows us to support older pythran with e.g.
+            # numpy-1.25.2.
+            pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
+            got = pythran_numpy_warning_regex.sub('', got)
+            did_fixup = True
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):

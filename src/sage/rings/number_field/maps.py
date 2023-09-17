@@ -79,7 +79,7 @@ class NumberFieldIsomorphism(Map):
 
     def is_injective(self):
         r"""
-         EXAMPLES::
+        EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 + 3*x + 1)
@@ -91,7 +91,7 @@ class NumberFieldIsomorphism(Map):
 
     def is_surjective(self):
         r"""
-         EXAMPLES::
+        EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^4 + 3*x + 1)

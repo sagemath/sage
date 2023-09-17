@@ -201,7 +201,7 @@ class WithProof():
     This would hang "forever" if attempted with ``proof=True``::
 
         sage: proof.arithmetic(True)
-        sage: with proof.WithProof('arithmetic', False):                                # optional - sage.libs.pari
+        sage: with proof.WithProof('arithmetic', False):                                # needs sage.libs.pari
         ....:      print((10^1000 + 453).is_prime())
         ....:      print(1/0)
         Traceback (most recent call last):

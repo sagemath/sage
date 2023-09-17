@@ -296,6 +296,7 @@ def MOLS_18_3():
 #
 # This dictionary is used by designs.mutually_orthogonal_latin_squares(k,n).
 
+
 MOLS_constructions = {
     10 : (2, MOLS_10_2),
     12 : (5, MOLS_12_5),
@@ -2021,6 +2022,7 @@ def OA_10_1620():
 #
 # This dictionary is used by designs.orthogonal_array(k,n).
 
+
 OA_constructions = {
     18  : (7  , OA_7_18),
     40  : (9  , OA_9_40),
@@ -2454,6 +2456,7 @@ def QDM_57_9_1_1_8():
 #         (n,lmbda,mu,u): (k,qdm_constructor),
 #         }
 # }
+
 
 QDM: dict[tuple[int, int], dict] = {}
 for ((n,k,lmbda,mu,u),f) in [((19,6,1,1,1), QDM_19_6_1_1_1),
@@ -4018,6 +4021,7 @@ def DM_993_32_1():
     G = AdditiveCyclic(993)
     return G, M
 
+
 DM = {
     (12 ,1) : (6 ,DM_12_6_1),
     (21 ,1) : (6 ,DM_21_6_1),
@@ -4464,9 +4468,9 @@ def HigmanSimsDesign():
 
     EXAMPLES::
 
-        sage: H = designs.HigmanSimsDesign(); H  # optional - gap_packages
+        sage: H = designs.HigmanSimsDesign(); H                     # optional - gap_package_design
         Incidence structure with 176 points and 176 blocks
-        sage: H.is_t_design(return_parameters=1) # optional - gap_packages
+        sage: H.is_t_design(return_parameters=1)                    # optional - gap_package_design
         (True, (2, 176, 50, 14))
 
     Make sure that the automorphism group of this designs is isomorphic to the
@@ -4475,9 +4479,9 @@ def HigmanSimsDesign():
     first of those permutation groups acts on 176 points, while the second acts
     on 100::
 
-        sage: gH = H.automorphism_group()                        # optional - gap_packages
-        sage: gG = graphs.HigmanSimsGraph().automorphism_group() # optional - gap_packages
-        sage: gG.is_isomorphic(gG)                   # long time # optional - gap_packages
+        sage: gH = H.automorphism_group()                           # optional - gap_package_design
+        sage: gG = graphs.HigmanSimsGraph().automorphism_group()    # optional - gap_package_design
+        sage: gG.is_isomorphic(gG)                       # long time, optional - gap_package_design
         True
 
     REFERENCE:
@@ -4685,6 +4689,7 @@ def BIBD_56_11_2():
 
     D = IncidenceStructure(libgap.Orbit(G, B, libgap.OnSets))
     return D._blocks
+
 
 # Index of the BIBD constructions
 #
