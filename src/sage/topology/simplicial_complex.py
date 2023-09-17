@@ -3025,8 +3025,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[0,1,2], [1,2,3]])
-            sage: X.core(is_mutable=False)
+            sage: X.core()
             Simplicial complex with vertex set (0, 3) and facets {(0,), (3,)}
+            sage: X.core(is_mutable=False).is_immutable()
+            True
             sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
             sage: X.core()
             Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1), (0, 3), (1, 2), (2, 3)}
@@ -3113,7 +3115,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Return whether ``self`` is a Gorenstein complex over ``base_ring``.
 
         A Cohen-Macaulay simplicial complex `\Delta` of dimension `n-1` with `m`
-        vertices is called *Gorenstein* if the Betti number of `\Delta` in dimension
+        vertices is called Gorenstein if the Betti number of `\Delta` in dimension
         `n-m` is equal to 1.
 
         .. SEEALSO::
@@ -3132,16 +3134,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X.is_gorenstein()
             False
         """
+        if not self.is_cohen_macaulay(base_ring):
+            return False
         m = len(self.vertices())
         n = self.dimension() + 1;
         b = sum(self.bigraded_betti_number(-(m-n), 2*j, base_ring=base_ring) for j in range(n+m))
-        return self.is_cohen_macaulay(base_ring) and b == 1
+        return b == 1
 
     def is_gorenstein_star(self, base_ring=QQ):
         r"""
         Return whether ``self`` is a Gorenstein`^*` complex.
 
-        A simplicial complex `\Delta` is called *Gorenstein`^*`* if it is Gorenstein
+        A simplicial complex `\Delta` is called Gorenstein`^*` if it is Gorenstein
         and `\Delta = \mathrm{core} \Delta`.
 
         .. SEEALSO::
@@ -3151,10 +3155,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
+            sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,0]])
+            sage: X.is_gorenstein_star()
+            True
+            sage: X = SimplicialComplex([[1,2,3], [2,3,4], [1,4]])
+            sage: (X.core() == X, X.is_gorenstein(GF(5)))
+            (True, False)
+            sage: X.is_gorenstein_star(GF(5))
+            False
+            sage: X = SimplicialComplex([[0,1,2], [1,2,3]])
+            sage: (X.core() == X, X.is_gorenstein())
+            (False, True)
+            sage: X.is_gorenstein_star()
+            False
         """
-        # The definition given in the docstring is equivalent to
-        # saying that the core of a simplicial complex is Gorenstein
-        return self.core().is_gorenstein(base_ring)
+        return self.is_gorenstein(base_ring) and self.core() == self
 
     def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
         """
