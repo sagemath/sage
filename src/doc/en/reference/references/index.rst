@@ -351,6 +351,10 @@ REFERENCES:
             *Characteristic polynomials of subspace arrangements and finite fields*.
             Advances in Mathematics, 122(2):193-233, 1996.
 
+.. [Ath2000] \C. A. Athanasiadis,
+            *Deformations of Coxeter hyperplane arrangements and their characteristic polynomials*.
+            Adv. Stud. Pure Math., 27, 2000.
+
 .. [Av2000] \D. Avis, *A revised implementation of the reverse search
             vertex enumeration algorithm.* Polytopes-combinatorics and
             computation. Birkhauser Basel, 2000.
@@ -1103,6 +1107,9 @@ REFERENCES:
 .. [BP2000] \V. M. Bukhshtaber and T. E. Panov, "Moment-angle
             complexes and combinatorics of simplicial manifolds,"
             *Uspekhi Mat. Nauk* 55 (2000), 171--172.
+
+.. [BP2014] \V. M. Bukhshtaber and T. E. Panov. "Toric Topology",
+            2014. :arxiv:`1210.2368`
 
 .. [BP2015] \P. Butera and M. Pernici "Sums of permanental minors
             using Grassmann algebra", International Journal of Graph
@@ -2783,6 +2790,10 @@ REFERENCES:
 
 .. [GL1996] \G. Golub and C. van Loan. *Matrix Computations*. 3rd
             edition, Johns Hopkins Univ. Press, 1996.
+
+.. [GL2019] \J. Grbić and A. Linton.
+            "Lowest-degree triple Massey products in moment-angle complexes",
+            2019. :arxiv:`1908.02222v2`
 
 .. [GrLe1996] \J. Graham and G.I. Lehrer
               *Cellular algebras*. Invent. Math. 123 (1996), 1–34.

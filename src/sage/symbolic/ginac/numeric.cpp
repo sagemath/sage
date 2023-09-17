@@ -176,12 +176,7 @@ inline void py_error(const char* errmsg) {
                         "pyerror() called but no error occurred!");
 }
 
-#if PY_MAJOR_VERSION < 3
-#define PyNumber_TrueDivide PyNumber_Divide
-
-#else
 #define PyString_FromString PyUnicode_FromString
-#endif
 
 // The following variable gets changed to true once
 // this library has been imported by the Python
@@ -491,15 +486,9 @@ static PyObject* py_tuple_from_numvector(const std::vector<numeric>& vec)
 // class numeric
 ///////////////////////////////////////////////////////////////////////////////
 
-#if PY_MAJOR_VERSION < 3
-PyObject* ZERO = PyInt_FromLong(0); // todo: never freed
-PyObject* ONE = PyInt_FromLong(1); // todo: never freed
-PyObject* TWO = PyInt_FromLong(2); // todo: never freed
-#else
 PyObject* ZERO = PyLong_FromLong(0); // todo: never freed
 PyObject* ONE = PyLong_FromLong(1); // todo: never freed
 PyObject* TWO = PyLong_FromLong(2); // todo: never freed
-#endif
 
 std::ostream& operator<<(std::ostream& os, const numeric& s) {
         switch (s.t) {
@@ -811,16 +800,6 @@ void set_from(Type& t, Value& v, long& hash, mpq_t bigrat)
 numeric::numeric(PyObject* o, bool force_py) : basic(&numeric::tinfo_static) {
         if (o == nullptr) py_error("Error");
         if (not force_py) {
-#if PY_MAJOR_VERSION < 3
-                if (PyInt_Check(o)) {
-                        t = LONG;
-                        v._long = PyInt_AsLong(o);
-                        hash = (v._long==-1) ? -2 : v._long;
-                        setflag(status_flags::evaluated | status_flags::expanded);
-                        Py_DECREF(o);
-                        return;
-                } 
-#endif
                 if (PyLong_Check(o)) {
                     t = MPZ;
                     mpz_init(v._bigint);
@@ -1533,31 +1512,6 @@ const numeric numeric::div(const numeric &other) const {
                 return bigrat;
         }
         case PYOBJECT:
-#if PY_MAJOR_VERSION < 3
-                if (PyObject_Compare(other.v._pyobject, ONE) == 0
-                and py_funcs.py_is_integer(other.v._pyobject) != 0) {
-                        return *this;
-                }
-                if (PyInt_Check(v._pyobject)) {
-                        if (PyInt_Check(other.v._pyobject)) {
-                                // This branch happens at startup.
-                                PyObject *o = PyNumber_TrueDivide(Integer(PyInt_AsLong(v._pyobject)),
-                                Integer(PyInt_AsLong(other.v._pyobject)));
-                                // I don't 100% understand why I have to incref this,
-                                // but if I don't, Sage crashes on exit.
-                                Py_INCREF(o);
-                                return o;
-                        }
-                        if (PyLong_Check(other.v._pyobject)) {
-                                PyObject *d = py_funcs.
-                                        py_integer_from_python_obj(other.v._pyobject);
-                                PyObject *ans = PyNumber_TrueDivide(v._pyobject,
-                                                d);
-                                Py_DECREF(d);
-                                return ans;
-                        }
-                }
-#endif
                 if (PyLong_Check(v._pyobject)) {
                         PyObject *n = py_funcs.
                                 py_integer_from_python_obj(v._pyobject);
@@ -1866,17 +1820,6 @@ const ex numeric::power(const numeric &exponent) const {
 
         // any PyObjects castable to long are casted
         if (exponent.t == PYOBJECT) {
-#if PY_MAJOR_VERSION < 3
-                if (PyInt_Check(exponent.v._pyobject)) {
-                        long si = PyInt_AsLong(exponent.v._pyobject);
-                        if (si == -1 and PyErr_Occurred())
-                                PyErr_Clear();
-                        else {
-                                expo.t = MPZ;
-                                mpz_set_si(expo.v._bigint, si);
-                        }
-                } else
-#endif
                 if (PyLong_Check(exponent.v._pyobject)) {
                         expo.t = MPZ;
                         _mpz_set_pylong(expo.v._bigint,
@@ -2503,49 +2446,6 @@ numeric & operator/=(numeric & lh, const numeric & rh)
                 return lh;
         case PYOBJECT: {
                 PyObject *p = lh.v._pyobject;
-#if PY_MAJOR_VERSION < 3
-                {
-                        if (PyInt_Check(p)) {
-                                if (PyInt_Check(rh.v._pyobject)) {
-                                        // This branch happens at startup.
-                                        lh.v._pyobject = PyNumber_TrueDivide(Integer(PyInt_AsLong(p)),
-                                        Integer(PyInt_AsLong(rh.v._pyobject)));
-                                        // I don't 100% understand why I have to incref this,
-                                        // but if I don't, Sage crashes on exit.
-                                        if (lh.v._pyobject == nullptr) {
-                                                lh.v._pyobject = p;
-                                                py_error("numeric operator/=");
-                                        }
-                                        lh.hash = PyObject_Hash(lh.v._pyobject);
-                                        Py_DECREF(p);
-                                        return lh;
-                                }
-                                if (PyLong_Check(rh.v._pyobject)) {
-                                        PyObject *d = py_funcs.py_integer_from_python_obj(rh.v._pyobject);
-                                        lh.v._pyobject = PyNumber_TrueDivide(p, d);
-                                        if (lh.v._pyobject == nullptr) {
-                                                lh.v._pyobject = p;
-                                                py_error("numeric operator/=");
-                                        }
-                                        lh.hash = PyObject_Hash(lh.v._pyobject);
-                                        Py_DECREF(d);
-                                        Py_DECREF(p);
-                                        return lh;
-                                }
-                        } else if (PyLong_Check(p)) {
-                                PyObject *n = py_funcs.py_integer_from_python_obj(p);
-                                lh.v._pyobject = PyNumber_TrueDivide(n, rh.v._pyobject);
-                                if (lh.v._pyobject == nullptr) {
-                                        lh.v._pyobject = p;
-                                        py_error("numeric operator/=");
-                                }
-                                lh.hash = PyObject_Hash(lh.v._pyobject);
-                                Py_DECREF(n);
-                                Py_DECREF(p);
-                                return lh;
-                        }
-                }
-#else
                 {
                         if (PyLong_Check(p)) {
                                 PyObject *n = py_funcs.py_integer_from_python_obj(p);
@@ -2560,7 +2460,7 @@ numeric & operator/=(numeric & lh, const numeric & rh)
                                 return lh;
                         }
                 }
-#endif
+
                 lh.v._pyobject = PyNumber_TrueDivide(p, rh.v._pyobject);
                 if (lh.v._pyobject == nullptr) {
                         lh.v._pyobject = p;

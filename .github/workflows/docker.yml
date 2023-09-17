@@ -18,6 +18,7 @@ on:
         default: >-
           ["ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
+           "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-kinetic",
@@ -56,6 +57,7 @@ on:
            "opensuse-15.4-gcc_11-python3.10",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
+           "opensuse-tumbleweed",
            "conda-forge",
            "ubuntu-bionic-gcc_8-i386",
            "debian-bullseye-i386",
@@ -144,7 +146,7 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Check out SageMath
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}

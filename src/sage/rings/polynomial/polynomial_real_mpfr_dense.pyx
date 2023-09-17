@@ -26,7 +26,7 @@ Check that operations with numpy elements work well (see :trac:`18076` and
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from cpython.float cimport PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
@@ -151,7 +151,7 @@ cdef class PolynomialRealDense(Polynomial):
                 if type(a) is RealNumber:
                     mpfr_set(coeffs[i], (<RealNumber>a).value, rnd)
                 elif type(a) is int:
-                    mpfr_set_si(coeffs[i], PyInt_AS_LONG(a), rnd)
+                    mpfr_set_si(coeffs[i], PyLong_AsLong(a), rnd)
                 elif type(a) is float:
                     mpfr_set_d(coeffs[i], PyFloat_AS_DOUBLE(a), rnd)
                 elif type(a) is Integer:

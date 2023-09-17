@@ -660,7 +660,7 @@ def _qepcad_cmd(memcells=None):
         memcells_arg = '+N%s' % memcells
     else:
         memcells_arg = ''
-    return "env qe=%s qepcad %s"%(SAGE_LOCAL, memcells_arg)
+    return "env qe=%s qepcad %s" % (SAGE_LOCAL, memcells_arg)
 
 
 _command_info_cache = None
@@ -835,7 +835,7 @@ class Qepcad:
         self._cell_cache = {}
 
         if verbose:
-            logfile=sys.stdout
+            logfile = sys.stdout
 
         varlist = None
         if vars is not None:
@@ -1320,14 +1320,14 @@ class Qepcad:
         name = name.replace('_', '-')
         args = [str(_) for _ in args]
         pre_phase = self.phase()
-        result = self._eval_line('%s %s'%(name, ' '.join(args)))
+        result = self._eval_line('%s %s' % (name, ' '.join(args)))
         post_phase = self.phase()
         if len(result) and post_phase != 'EXITED':
             return AsciiArtString(result)
         if pre_phase != post_phase:
             if post_phase == 'EXITED' and name != 'quit':
                 return self.answer()
-            return AsciiArtString("QEPCAD object has moved to phase '%s'"%post_phase)
+            return AsciiArtString("QEPCAD object has moved to phase '%s'" % post_phase)
 
 def _format_cell_index(a):
     """

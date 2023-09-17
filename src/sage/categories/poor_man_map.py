@@ -94,8 +94,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
         """
         return ((self._name if self._name is not None else "A map") +
-                (" from %s"%(self._domain,) if self._domain   is not None else ""     ) +
-                (" to %s"%(self._codomain,) if self._codomain is not None else ""     ))
+                (" from %s" % (self._domain,) if self._domain   is not None else ""     ) +
+                (" to %s" % (self._codomain,) if self._codomain is not None else ""     ))
 
     def domain(self):
         """

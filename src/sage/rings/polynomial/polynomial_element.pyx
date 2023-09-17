@@ -2711,7 +2711,7 @@ cdef class Polynomial(CommutativePolynomial):
         m = self.degree() + 1
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         coeffs = self.list(copy=False)
-        for n in reversed(xrange(m)):
+        for n in reversed(range(m)):
             x = coeffs[n]
             is_nonzero = False
             try:
@@ -2801,7 +2801,7 @@ cdef class Polynomial(CommutativePolynomial):
         if name is None:
             name = self._parent.latex_variable_names()[0]
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
-        for n in reversed(xrange(m)):
+        for n in reversed(range(m)):
             x = coeffs[n]
             x = y = latex(x)
             if x != '0':
@@ -9848,13 +9848,13 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
-            sage: (2*x).is_squarefree()                                                 # needs sage.libs.pari
+            sage: (2*x).is_squarefree()
             True
-            sage: (4*x).is_squarefree()                                                 # needs sage.libs.pari
+            sage: (4*x).is_squarefree()
             False
-            sage: (2*x^2).is_squarefree()                                               # needs sage.libs.pari
+            sage: (2*x^2).is_squarefree()
             False
-            sage: R(0).is_squarefree()                                                  # needs sage.libs.pari
+            sage: R(0).is_squarefree()
             False
 
             sage: S.<y> = QQ[]

@@ -129,7 +129,7 @@ TESTS::
     sage: TestSuite(L).run(max_runs=8)          # long time (25s)                       # needs sage.rings.function_field sage.rings.number_field
     sage: TestSuite(M).run(max_runs=8)          # long time (35s)                       # needs sage.rings.finite_rings sage.rings.function_field
     sage: TestSuite(N).run(max_runs=8, skip='_test_derivation')         # long time (15s), needs sage.rings.finite_rings
-    sage: TestSuite(O).run()
+    sage: TestSuite(O).run()                                                            # needs sage.rings.function_field
     sage: TestSuite(R).run()                                                            # needs sage.rings.finite_rings sage.rings.function_field
     sage: TestSuite(S).run()                    # long time (4s)                        # needs sage.rings.finite_rings sage.rings.function_field
 
@@ -781,7 +781,7 @@ class FunctionField(Field):
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
-            sage: K(L(x)) # indirect doctest                                            # needs sage.rings.function_field
+            sage: K(L(x))  # indirect doctest                                           # needs sage.rings.function_field
             x
         """
         try:

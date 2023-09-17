@@ -230,7 +230,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: F = CombinatorialSpecies()
             sage: F.generating_series()
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
         """
         if base_ring not in self._generating_series:
             self._generating_series[base_ring] = series_ring.undefined(valuation=(0 if self._min is None else self._min))
@@ -247,7 +247,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: F = CombinatorialSpecies()
             sage: F.isotype_generating_series()
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
         """
         if base_ring not in self._isotype_generating_series:
             self._isotype_generating_series[base_ring] = series_ring.undefined(valuation=(0 if self._min is None else self._min))
@@ -264,7 +264,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: F = CombinatorialSpecies()
             sage: F.cycle_index_series()
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
         """
         if base_ring not in self._cycle_index_series:
             self._cycle_index_series[base_ring] = series_ring.undefined(valuation=(0 if self._min is None else self._min))
@@ -401,6 +401,15 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
             [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
             sage: F.isotype_generating_series()[0:10]
             [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+
+        Check that :issue:`35071` is fixed::
+
+            sage: X = species.SingletonSpecies()
+            sage: E = species.SetSpecies(max=3)
+            sage: B = species.CombinatorialSpecies(min=1)
+            sage: B.define(X*E(B))
+            sage: B.generating_series()
+            z + z^2 + 3/2*z^3 + 5/2*z^4 + 9/2*z^5 + 17/2*z^6 + 133/8*z^7 + O(z^8)
         """
         if not isinstance(x, GenericCombinatorialSpecies):
             raise TypeError("x must be a combinatorial species")
