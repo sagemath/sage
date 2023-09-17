@@ -73,6 +73,7 @@ exclude sage/misc/search.p*
 exclude sage/misc/derivative.p*
 exclude sage/misc/functional.p*
 exclude sage/misc/binary_tree.p*
+exclude sage/misc/stopgap.p*
 
 # Exclude what's in sagemath-environment
 exclude sage/misc/package.py
