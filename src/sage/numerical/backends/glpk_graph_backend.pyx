@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-glpk
+# sage.doctest: needs sage.graphs
 """
 GLPK Backend for access to GLPK graph functions
 

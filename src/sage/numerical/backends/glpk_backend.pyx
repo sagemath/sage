@@ -1098,6 +1098,7 @@ cdef class GLPKBackend(GenericBackend):
         the result is not optimal. To do this, we try to compute the maximum
         number of disjoint balls (of diameter 1) in a hypercube::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -1111,6 +1112,7 @@ cdef class GLPKBackend(GenericBackend):
 
         Same, now with a time limit::
 
+            sage: # needs sage.graphs
             sage: p.solver_parameter("mip_gap_tolerance",1)
             sage: p.solver_parameter("timelimit",3.0)
             sage: p.solve() # rel tol 100
@@ -1198,6 +1200,7 @@ cdef class GLPKBackend(GenericBackend):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -1232,6 +1235,7 @@ cdef class GLPKBackend(GenericBackend):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -1251,7 +1255,7 @@ cdef class GLPKBackend(GenericBackend):
         Just make sure that the variable *has* been defined, and is not just
         undefined::
 
-            sage: backend.get_relative_objective_gap() > 1
+            sage: backend.get_relative_objective_gap() > 1                              # needs sage.graphs
             True
         """
         return self.search_tree_data.mip_gap
