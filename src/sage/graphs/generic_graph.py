@@ -1716,13 +1716,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.igraph_graph(vertex_list=[])                       # optional - python_igraph
             Traceback (most recent call last):
             ...
-            ValueError: ``vertex_list`` must be a permutation of the vertices
+            ValueError: parameter vertex_list must be a permutation of the vertices
         """
         if vertex_list is None:
             vertex_list = self
         elif (len(vertex_list) != self.order() or
               set(vertex_list) != set(self)):
-            raise ValueError("``vertex_list`` must be a permutation of the vertices")
+            raise ValueError("parameter vertex_list must be a permutation of the vertices")
 
         v_to_int = {v: i for i, v in enumerate(vertex_list)}
         edges = [(v_to_int[v], v_to_int[w]) for v, w in self.edge_iterator(labels=False)]
@@ -2031,11 +2031,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: graphs.PathGraph(5).adjacency_matrix(vertices=[0,0,0,0,0])            # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: ``vertices`` must be a permutation of the vertices
+            ValueError: parameter vertices must be a permutation of the vertices
             sage: graphs.PathGraph(5).adjacency_matrix(vertices=[1,2,3])                # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: ``vertices`` must be a permutation of the vertices
+            ValueError: parameter vertices must be a permutation of the vertices
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix()
             Traceback (most recent call last):
             ...
@@ -2060,7 +2060,7 @@ class GenericGraph(GenericGraph_pyx):
                                 "``vertices``")
         elif (len(vertices) != n or
               set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("``vertices`` must be a permutation of the vertices")
+            raise ValueError("parameter vertices must be a permutation of the vertices")
 
         new_indices = {v: i for i, v in enumerate(vertices)}
         D = {}
@@ -2258,11 +2258,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: P5.incidence_matrix(vertices=[1] * P5.order())                        # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: ``vertices`` must be a permutation of the vertices
+            ValueError: parameter vertices must be a permutation of the vertices
             sage: P5.incidence_matrix(edges=[(0, 1)] * P5.size())                       # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: ``edges`` must be a permutation of the edges
+            ValueError: parameter edges must be a permutation of the edges
             sage: P5.incidence_matrix(edges=P5.edges(sort=False, labels=True))          # needs sage.modules
             [1 0 0 0]
             [1 1 0 0]
@@ -2277,13 +2277,13 @@ class GenericGraph(GenericGraph_pyx):
             vertices = self.vertices(sort=False)
         elif (len(vertices) != self.num_verts() or
               set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("``vertices`` must be a permutation of the vertices")
+            raise ValueError("parameter vertices must be a permutation of the vertices")
 
         verts = {v: i for i, v in enumerate(vertices)}
         if edges is None:
             edges = self.edge_iterator(labels=False)
         elif len(edges) != self.size():
-            raise ValueError("``edges`` must be a permutation of the edges")
+            raise ValueError("parameter edges must be a permutation of the edges")
         else:
             # We check that we have the same set of unlabeled edges
             if oriented:
@@ -2295,7 +2295,7 @@ class GenericGraph(GenericGraph_pyx):
                 i_edges = [reorder(verts[e[0]], verts[e[1]]) for e in edges]
                 s_edges = [reorder(verts[u], verts[v]) for u, v in self.edge_iterator(labels=False)]
             if sorted(i_edges) != sorted(s_edges):
-                raise ValueError("``edges`` must be a permutation of the edges")
+                raise ValueError("parameter edges must be a permutation of the edges")
 
         from sage.matrix.constructor import matrix
         if base_ring is None:
@@ -2425,7 +2425,7 @@ class GenericGraph(GenericGraph_pyx):
             vertices = self.vertices(sort=True)
         elif (len(vertices) != self.order() or
               set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("``vertices`` must be a permutation of the vertices")
+            raise ValueError("parameter vertices must be a permutation of the vertices")
 
         # We extract from **kwds the arguments for distance_all_pairs
         keys = ['by_weight', 'algorithm', 'weight_function', 'check_weight']
@@ -2559,7 +2559,7 @@ class GenericGraph(GenericGraph_pyx):
             vertices = self.vertices(sort=True)
         elif (len(vertices) != self.num_verts() or
               set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("``vertices`` must be a permutation of the vertices")
+            raise ValueError("parameter vertices must be a permutation of the vertices")
 
         # Method for checking edge weights and setting default weight
         if default_weight is None:
@@ -24501,7 +24501,7 @@ class GenericGraph(GenericGraph_pyx):
             vertices = self.vertices(sort=True)
         elif (len(vertices) != n or
               set(vertices) != set(self)):
-            raise ValueError("``vertices`` must be a permutation of the vertices")
+            raise ValueError("parameter vertices must be a permutation of the vertices")
 
         A = self.adjacency_matrix(vertices=vertices)
 
