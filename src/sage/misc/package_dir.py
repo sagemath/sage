@@ -125,9 +125,12 @@ def read_distribution(src_file):
             line = line.lstrip()
             if not line:
                 continue
-            if line[0] != '#':
+            if line.startswith('#'):
+                line = line[1:].lstrip()
+            elif line.startswith('/*') or line.startswith('//'):
+                line = line[2:].lstrip()
+            else:
                 break
-            line = line[1:].lstrip()
             kind = "sage_setup:"
             if line.startswith(kind):
                 key, _, value = [s.strip() for s in line[len(kind):].partition('=')]
