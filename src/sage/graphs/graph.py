@@ -2065,7 +2065,7 @@ class Graph(GenericGraph):
             if not P:  # The graph is planar
                 it = self.vertex_iterator()
                 return [next(it) for _ in range(k)]
-            elif len(P) > 1:
+            if len(P) > 1:
                 return []
 
             # We proceed with the non planar component

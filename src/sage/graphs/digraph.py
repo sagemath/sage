@@ -1717,28 +1717,29 @@ class DiGraph(GenericGraph):
         ######################################
         # Ordering-based MILP Implementation #
         ######################################
-        p = MixedIntegerLinearProgram(maximization=False, solver=solver)
+        else:
+            p = MixedIntegerLinearProgram(maximization=False, solver=solver)
 
-        b = p.new_variable(binary=True)
-        d = p.new_variable(integer=True, nonnegative=True)
+            b = p.new_variable(binary=True)
+            d = p.new_variable(integer=True, nonnegative=True)
 
-        n = self.order()
+            n = self.order()
 
-        for u, v in self.edge_iterator(labels=None):
-            p.add_constraint(d[u] - d[v] + n * b[u, v], min=1)
+            for u, v in self.edge_iterator(labels=None):
+                p.add_constraint(d[u] - d[v] + n * b[u, v], min=1)
 
-        for v in self:
-            p.add_constraint(d[v] <= n)
+            for v in self:
+                p.add_constraint(d[v] <= n)
 
-        p.set_objective(p.sum(b[e] for e in self.edge_iterator(labels=False)))
+            p.set_objective(p.sum(b[e] for e in self.edge_iterator(labels=False)))
 
-        p.solve(log=verbose)
+            p.solve(log=verbose)
 
-        b_sol = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
+            b_sol = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
 
-        if value_only:
-            return sum(1 for e in self.edge_iterator(labels=False) if b_sol[e])
-        return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
+            if value_only:
+                return sum(1 for e in self.edge_iterator(labels=False) if b_sol[e])
+            return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
 
     # Construction
 
