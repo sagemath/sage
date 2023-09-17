@@ -3019,7 +3019,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         - ``is_mutable`` -- (default: ``True``) boolean; determines
           whether the output is mutable
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             :meth:`star`
 
