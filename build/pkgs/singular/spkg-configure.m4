@@ -12,6 +12,7 @@ SAGE_SPKG_CONFIGURE([singular], [
             #include <singular/singularconfig.h>
             #if !defined(HAVE_FLINT)
             #  error "Need Singular compiled with FLINT"
+            #endif
           ], [])
         ], [
           AC_MSG_RESULT([yes])

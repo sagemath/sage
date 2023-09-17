@@ -275,7 +275,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
         # For some reason this trivial comp
         # keeps certain random freezes from occurring.  Do not remove this.
         # The space before the \n is also important.
-        return ')read %s \n'%filename
+        return ')read %s \n' % filename
 
     def _quit_string(self):
         """
@@ -384,11 +384,11 @@ class PanAxiom(ExtraTabCompletion, Expect):
             '2'
 
         """
-        cmd = '%s := %s'%(var, value)
+        cmd = '%s := %s' % (var, value)
         out = self._eval_line(cmd, reformat=False)
 
         if out.find("error") != -1:
-            raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         r"""
@@ -565,7 +565,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         """
         self._check_valid()
         P = self.parent()
-        return P('%s(%s)'%(self.name(), x))
+        return P('%s(%s)' % (self.name(), x))
 
     def _richcmp_(self, other, op):
         """
@@ -601,11 +601,11 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
         """
         P = self.parent()
-        if 'true' in P.eval("(%s = %s) :: Boolean"%(self.name(),other.name())):
+        if 'true' in P.eval("(%s = %s) :: Boolean" % (self.name(),other.name())):
             return rich_to_bool(op, 0)
-        elif 'true' in P.eval("(%s < %s) :: Boolean"%(self.name(), other.name())):
+        elif 'true' in P.eval("(%s < %s) :: Boolean" % (self.name(), other.name())):
             return rich_to_bool(op, -1)
-        elif 'true' in P.eval("(%s > %s) :: Boolean"%(self.name(),other.name())):
+        elif 'true' in P.eval("(%s > %s) :: Boolean" % (self.name(),other.name())):
             return rich_to_bool(op, 1)
 
         return NotImplemented
@@ -635,7 +635,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             6
         """
         P = self._check_valid()
-        s = P.eval('# %s '%self.name())
+        s = P.eval('# %s ' % self.name())
         i = s.rfind('Type')
         return int(s[:i-1])
 
@@ -667,9 +667,9 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             raise IndexError("index out of range")
         P = self._check_valid()
         if not isinstance(n, tuple):
-            return P.new('%s(%s)'%(self._name, n))
+            return P.new('%s(%s)' % (self._name, n))
         else:
-            return P.new('%s(%s)'%(self._name, str(n)[1:-1]))
+            return P.new('%s(%s)' % (self._name, str(n)[1:-1]))
 
     def comma(self, *args):
         """
@@ -733,7 +733,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         """
         P = self._check_valid()
         type = P(type)
-        return P.new("%s :: %s"%(self.name(), type.name()))
+        return P.new("%s :: %s" % (self.name(), type.name()))
 
     def unparsed_input_form(self):
         """
@@ -750,7 +750,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
         """
         P = self._check_valid()
-        s = P.eval('unparse(%s::InputForm)'%self._name)
+        s = P.eval('unparse(%s::InputForm)' % self._name)
         if 'translation error' in s or 'Cannot convert' in s:
             raise NotImplementedError
         s = multiple_replace({'\r\n':'', # fix stupid Fortran-ish
@@ -855,7 +855,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
          #If all else fails, try using the unparsed input form
         try:
             import sage.misc.sage_eval
-            vars=sage.symbolic.ring.var(str(self.variables())[1:-1])
+            vars = sage.symbolic.ring.var(str(self.variables())[1:-1])
             if isinstance(vars,tuple):
                 return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(x):x for x in vars})
             else:

@@ -34,10 +34,8 @@ from sage.misc.functional import cyclotomic_polynomial
 from sage.modules.free_module_element import vector
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.qqbar import QQbar
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 
 
@@ -179,10 +177,11 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         Check that :trac:`25706` still works after :trac:`26903`::
 
+            sage: # needs sage.libs.pari
             sage: MG = GU(3,2).as_matrix_group()
             sage: PG = MG.as_permutation_group()
             sage: mg = MG.an_element()
-            sage: PG(mg).order() # particular element depends on the set of GAP packages installed
+            sage: PG(mg).order()  # particular element depends on the set of GAP packages installed
             6
         """
         # Note that the output of IsomorphismPermGroup() depends on
@@ -211,14 +210,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: F = GF(3); MS = MatrixSpace(F,4,4)
             sage: M = MS(0)
-            sage: M[0,1]=1;M[1,2]=1;M[2,3]=1;M[3,0]=1
+            sage: M[0,1] = 1; M[1,2] = 1; M[2,3] = 1; M[3,0] = 1
             sage: G = MatrixGroup([M])
             sage: G.module_composition_factors()
             [(Finite Field of size 3, 1, True),
              (Finite Field of size 3, 1, True),
              (Finite Field of size 3, 2, True)]
             sage: F = GF(7); MS = MatrixSpace(F,2,2)
-            sage: gens = [MS([[0,1],[-1,0]]),MS([[1,1],[2,3]])]
+            sage: gens = [MS([[0,1],[-1,0]]), MS([[1,1],[2,3]])]
             sage: G = MatrixGroup(gens)
             sage: G.module_composition_factors()
             [(Finite Field of size 7, 2, True)]
@@ -272,20 +271,22 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: F = GF(7); MS = MatrixSpace(F,2,2)
             sage: gens = [MS([[0,1],[-1,0]]),MS([[1,1],[2,3]])]
             sage: G = MatrixGroup(gens)
-            sage: G.invariant_generators()
+            sage: G.invariant_generators()                                              # needs sage.libs.singular
             [x1^7*x2 - x1*x2^7,
              x1^12 - 2*x1^9*x2^3 - x1^6*x2^6 + 2*x1^3*x2^9 + x2^12,
              x1^18 + 2*x1^15*x2^3 + 3*x1^12*x2^6 + 3*x1^6*x2^12 - 2*x1^3*x2^15 + x2^18]
 
             sage: q = 4; a = 2
             sage: MS = MatrixSpace(QQ, 2, 2)
-            sage: gen1 = [[1/a,(q-1)/a],[1/a, -1/a]]; gen2 = [[1,0],[0,-1]]; gen3 = [[-1,0],[0,1]]
-            sage: G = MatrixGroup([MS(gen1),MS(gen2),MS(gen3)])
+            sage: gen1 = [[1/a, (q-1)/a], [1/a, -1/a]]
+            sage: gen2 = [[1,0], [0,-1]]; gen3 = [[-1,0], [0,1]]
+            sage: G = MatrixGroup([MS(gen1), MS(gen2), MS(gen3)])
             sage: G.cardinality()
             12
-            sage: G.invariant_generators()
+            sage: G.invariant_generators()                                              # needs sage.libs.singular
             [x1^2 + 3*x2^2, x1^6 + 15*x1^4*x2^2 + 15*x1^2*x2^4 + 33*x2^6]
 
+            sage: # needs sage.rings.number_field
             sage: F = CyclotomicField(8)
             sage: z = F.gen()
             sage: a = z+1/z
@@ -294,7 +295,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: g1 = MS([[1/a, 1/a], [1/a, -1/a]])
             sage: g2 = MS([[-b, 0], [0, b]])
             sage: G = MatrixGroup([g1,g2])
-            sage: G.invariant_generators()
+            sage: G.invariant_generators()                                              # needs sage.libs.singular
             [x1^4 + 2*x1^2*x2^2 + x2^4,
              x1^5*x2 - x1*x2^5,
              x1^8 + 28/9*x1^6*x2^2 + 70/9*x1^4*x2^4 + 28/9*x1^2*x2^6 + x2^8]
@@ -442,13 +443,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for finite groups
-            sage: MatrixGroup(matrix(GF(3),2,2,[1,1,0,1])).molien_series()
+            sage: MatrixGroup(matrix(GF(3),2,2,[1,1,0,1])).molien_series()              # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: characteristic cannot divide group order
 
         Tetrahedral Group::
 
+            sage: # needs sage.rings.number_field
             sage: K.<i> = CyclotomicField(4)
             sage: Tetra =  MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
             sage: Tetra.molien_series(prec=30)
@@ -466,12 +468,12 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: S3 = MatrixGroup(SymmetricGroup(3))
             sage: mol = S3.molien_series(prec=10); mol
             1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 7*t^6 + 8*t^7 + 10*t^8 + 12*t^9 + O(t^10)
             sage: mol.parent()
             Power Series Ring in t over Integer Ring
-
             sage: mol = S3.molien_series(prec=oo); mol
             1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 7*t^6 + O(t^7)
             sage: mol.parent()
@@ -479,28 +481,32 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         Octahedral Group::
 
+            sage: # needs sage.rings.number_field
             sage: K.<v> = CyclotomicField(8)
-            sage: a = v-v^3 #sqrt(2)
+            sage: a = v - v^3  # sqrt(2)
             sage: i = v^2
-            sage: Octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],
+            sage: Octa = MatrixGroup([(-1+i)/2, (-1+i)/2,  (1+i)/2, (-1-i)/2],          # needs sage.symbolic
             ....:                    [(1+i)/a, 0,  0, (1-i)/a])
-            sage: Octa.molien_series(prec=30)
+            sage: Octa.molien_series(prec=30)                                           # needs sage.symbolic
             1 + t^8 + t^12 + t^16 + t^18 + t^20 + 2*t^24 + t^26 + t^28 + O(t^30)
 
         Icosahedral Group::
 
+            sage: # needs sage.rings.number_field
             sage: K.<v> = CyclotomicField(10)
             sage: z5 = v^2
             sage: i = z5^5
-            sage: a = 2*z5^3 + 2*z5^2 + 1 #sqrt(5)
+            sage: a = 2*z5^3 + 2*z5^2 + 1  #sqrt(5)
             sage: Ico = MatrixGroup([[z5^3,0, 0,z5^2],
             ....:                    [0,1, -1,0],
-            ....:                    [(z5^4-z5)/a, (z5^2-z5^3)/a, (z5^2-z5^3)/a, -(z5^4-z5)/a]])
+            ....:                    [(z5^4-z5)/a, (z5^2-z5^3)/a,
+            ....:                     (z5^2-z5^3)/a, -(z5^4-z5)/a]])
             sage: Ico.molien_series(prec=40)
             1 + t^12 + t^20 + t^24 + t^30 + t^32 + t^36 + O(t^40)
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: G = MatrixGroup(CyclicPermutationGroup(3))
             sage: chi = G.character(G.character_table()[1])
             sage: G.molien_series(chi, prec=10)
@@ -509,15 +515,18 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: K = GF(5)
             sage: S = MatrixGroup(SymmetricGroup(4))
-            sage: G = MatrixGroup([matrix(K, 4, 4, [K(y) for u in m.list() for y in u])
+            sage: G = MatrixGroup([matrix(K, 4, 4,
+            ....:                         [K(y) for u in m.list() for y in u])
             ....:                  for m in S.gens()])
             sage: G.molien_series(return_series=False)
             1/(t^10 - t^9 - t^8 + 2*t^5 - t^2 - t + 1)
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: i = GF(7)(3)
             sage: G = MatrixGroup([[i^3,0, 0,-i^3], [i^2,0, 0,-i^2]])
             sage: chi = G.character(G.character_table()[4])
@@ -554,6 +563,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             w = F.roots(ring=R.algebraic_closure(), multiplicities=False)[0]
             # don't need to extend further in this case since the order of
             # the roots of unity in the character divide the order of the group
+            from sage.rings.number_field.number_field import CyclotomicField
             L = CyclotomicField(N, 'v')
             v = L.gen()
             # construct Molien series
@@ -627,11 +637,12 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: S3 = MatrixGroup(SymmetricGroup(3))
             sage: R.<x,y,z> = QQ[]
             sage: f = x*y*z^3
-            sage: S3.reynolds_operator(f)
+            sage: S3.reynolds_operator(f)                                               # needs sage.rings.number_field
             1/3*x^3*y*z + 1/3*x*y^3*z + 1/3*x*y*z^3
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: G = MatrixGroup(CyclicPermutationGroup(4))
             sage: chi = G.character(G.character_table()[3])
             sage: K.<v> = CyclotomicField(4)
@@ -645,6 +656,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: K.<i> = CyclotomicField(4)
             sage: G =  MatrixGroup(CyclicPermutationGroup(3))
             sage: chi = G.character(G.character_table()[1])
@@ -659,6 +671,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K.<i> = CyclotomicField(4)
             sage: Tetra =  MatrixGroup([(-1+i)/2,(-1+i)/2, (1+i)/2,(-1-i)/2], [0,i, -i,0])
             sage: chi = Tetra.character(Tetra.character_table()[4])
@@ -678,6 +691,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: G =  MatrixGroup(DihedralGroup(4))
             sage: chi = G.character(G.character_table()[1])
             sage: R.<x,y> = QQ[]
@@ -705,10 +719,10 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: i = GF(7)(3)
             sage: G = MatrixGroup([[i^3,0, 0,-i^3], [i^2,0, 0,-i^2]])
-            sage: chi = G.character(G.character_table()[4])
+            sage: chi = G.character(G.character_table()[4])                             # needs sage.rings.number_field
             sage: R.<w,x> = GF(7)[]
             sage: f = w^5*x + x^6
-            sage: G.reynolds_operator(f, chi)
+            sage: G.reynolds_operator(f, chi)                                           # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: nontrivial characters not implemented for characteristic > 0
@@ -717,6 +731,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: K = GF(3^2,'t')
             sage: G = MatrixGroup([matrix(K, 2, 2, [0,K.gen(), 1,0])])
             sage: R.<x,y> = GF(3)[]
@@ -725,6 +740,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: K = GF(3^2,'t')
             sage: G = MatrixGroup([matrix(GF(3), 2, 2, [0,1, 1,0])])
             sage: R.<x,y> = K[]
@@ -738,6 +754,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         C = FractionField(self.base_ring())
         if chi is None:  # then this is the trivial character
             if R.characteristic() == 0:
+                from sage.rings.qqbar import QQbar
                 # non-modular case
                 if C == QQbar or R == QQbar:
                     L = QQbar
@@ -770,6 +787,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         # non-trivial character case
         K = chi.values()[0].parent()
         if R.characteristic() == 0:
+            from sage.rings.qqbar import QQbar
             # extend base_ring to compositum
             if C == QQbar or K == QQbar or R == QQbar:
                 L = QQbar
@@ -831,6 +849,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: Gr = MatrixGroup(SymmetricGroup(2))
             sage: sorted(Gr.invariants_of_degree(3))
             [x0^2*x1 + x0*x1^2, x0^3 + x1^3]
@@ -840,6 +859,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: R.<x,y,z> = QQ[]
             sage: Gr = MatrixGroup(DihedralGroup(3))
             sage: ct = Gr.character_table()
@@ -852,11 +872,12 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: i = GF(7)(3)
             sage: G = MatrixGroup([[i^3,0,0,-i^3],[i^2,0,0,-i^2]])
-            sage: G.invariants_of_degree(25)
+            sage: G.invariants_of_degree(25)                                            # needs sage.rings.number_field
             []
 
         ::
 
+            sage: # needs sage.groups
             sage: G = MatrixGroup(SymmetricGroup(5))
             sage: R = QQ['x,y']
             sage: G.invariants_of_degree(3, R=R)
@@ -866,6 +887,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: K.<i> = CyclotomicField(4)
             sage: G =  MatrixGroup(CyclicPermutationGroup(3))
             sage: chi = G.character(G.character_table()[1])
@@ -878,6 +900,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         ::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: S3 = MatrixGroup(SymmetricGroup(3))
             sage: chi = S3.character(S3.character_table()[0])
             sage: sorted(S3.invariants_of_degree(5, chi=chi))
@@ -907,13 +930,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
 def _new_invariant_is_linearly_independent(F, invariants):
     """
-    EXAMPLES ::
+    EXAMPLES::
+
         sage: gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
         sage: G = MatrixGroup(gens)
-        sage: s = Sequence(G.invariants_of_degree(14))
-        sage: s.coefficient_matrix()[0].rank()
+        sage: s = Sequence(G.invariants_of_degree(14))                                  # needs sage.rings.number_field
+        sage: s.coefficient_matrix()[0].rank()                                          # needs sage.rings.number_field
         3
-        sage: len(s)
+        sage: len(s)                                                                    # needs sage.rings.number_field
         3
     """
     if len(invariants)==0:

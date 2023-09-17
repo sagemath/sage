@@ -182,24 +182,21 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         return M
 
     cpdef _add_(self, right):
-        cdef Py_ssize_t i, j
-        cdef mpz_vector *self_row
-        cdef mpz_vector *M_row
+        cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
         M = Matrix_integer_sparse.__new__(Matrix_integer_sparse, self._parent, None, None, None)
         cdef mpz_t mul
         mpz_init_set_si(mul,1)
-        for i from 0 <= i < self._nrows:
+        for i in range(self._nrows):
             mpz_vector_clear(&M._matrix[i])
-            add_mpz_vector_init(&M._matrix[i], &self._matrix[i], &(<Matrix_integer_sparse>right)._matrix[i], mul)
+            add_mpz_vector_init(&M._matrix[i], &self._matrix[i],
+                                &(<Matrix_integer_sparse>right)._matrix[i], mul)
         mpz_clear(mul)
         return M
 
     cpdef _sub_(self, right):
-        cdef Py_ssize_t i, j
-        cdef mpz_vector *self_row
-        cdef mpz_vector *M_row
+        cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
         M = Matrix_integer_sparse.__new__(Matrix_integer_sparse, self._parent, None, None, None)
@@ -214,6 +211,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
     def _dict(self):
         """
         Unsafe version of the dict method, mainly for internal use.
+
         This may return the dict of elements, but as an *unsafe*
         reference to the underlying dict of the object.  It might
         be dangerous if you change entries of the returned dict.
@@ -222,13 +220,13 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Integer()
                 mpz_set((<Integer>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
 

@@ -1375,7 +1375,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                 location = None
                 best_fit = tol
                 for i in range(len(ev_group)):
-                    s, m, avg = ev_group[i]
+                    _, m, avg = ev_group[i]
                     d = numpy.abs(avg - e)
                     if d < best_fit:
                         best_fit = d
@@ -1739,14 +1739,13 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             import scipy
         import scipy.linalg
         X = self._new(self._ncols, B.ncols())
-        arr, resid, rank, s = scipy.linalg.lstsq(self._matrix_numpy, B.numpy())
+        arr = scipy.linalg.lstsq(self._matrix_numpy, B.numpy())[0]
         X._matrix_numpy = arr
         return X
 
-
     def determinant(self):
         """
-        Return the determinant of self.
+        Return the determinant of ``self``.
 
         ALGORITHM:
 
@@ -1808,7 +1807,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             []
             sage: m.log_determinant()
             0.0
-
         """
         global numpy
         cdef Matrix_double_dense U
@@ -1819,7 +1817,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
 
-        P, L, U = self.LU()
+        _, _, U = self.LU()
         if numpy is None:
             import numpy
 
@@ -2490,7 +2488,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             return True
         if numpy is None:
             import numpy
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         cdef Matrix_double_dense T
         # A matrix M is skew-hermitian iff I*M is hermitian
         T = self.__mul__(1j) if skew else self.__copy__()
@@ -2500,13 +2498,13 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         hermitian = T._is_lower_triangular(tol)
         if hermitian:
             for i in range(T._nrows):
-                if abs(T.get_unsafe(i,i).imag()) > tol:
+                if abs(T.get_unsafe(i, i).imag()) > tol:
                     hermitian = False
                     break
         self.cache(key, hermitian)
         return hermitian
 
-    def is_hermitian(self, tol = 1e-12, algorithm = "naive"):
+    def is_hermitian(self, tol=1e-12, algorithm = "naive"):
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
 
