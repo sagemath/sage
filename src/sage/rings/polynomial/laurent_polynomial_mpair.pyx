@@ -1520,7 +1520,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         return R({m[i]: c for m, c in self.dict().iteritems()})
 
-    def polynomial_construction(self):
+    def monomial_factorization(self):
         """
         Factor ``self`` into a polynomial and a monomial.
 
@@ -1533,28 +1533,21 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: f = y / x + x^2 / y + 3 * x^4 * y^-2
-            sage: f.polynomial_construction()
+            sage: f.monomial_factorization()
             (3*x^5 + x^3*y + y^3, 1/(x*y^2))
             sage: f = y * x + x^2 / y + 3 * x^4 * y^-2
-            sage: f.polynomial_construction()
+            sage: f.monomial_factorization()
              (3*x^3 + y^3 + x*y, x/y^2)
-            sage: x.polynomial_construction()
+            sage: x.monomial_factorization()
             (1, x)
-            sage: (y^-1).polynomial_construction()
+            sage: (y^-1).monomial_factorization()
             (1, 1/y)
         """
         self._normalize()
         ring = self._parent._R
         g = ring.gens()
         mon = ring.prod(g[i] ** j for i, j in enumerate(self._mon))
-        return (self._poly, mon)        # R = self.parent()
-        # n = R.ngens()
-        # S = R.polynomial_ring()
-        # if not self:
-        #     return (self, R(1))
-        # minimo = tuple(min(a[1].degree(v) for a in self) for v in R.gens())
-        # mon = R({minimo: 1})
-        # return (S(mon ** -1 * self), mon)
+        return (self._poly, mon)
 
     def factor(self):
         """
