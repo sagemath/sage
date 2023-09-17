@@ -310,12 +310,14 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
     data_files = {}
     cy_exts = ('.pxd', '.pxi', '.pyx')
 
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
+
     cwd = os.getcwd()
     try:
         os.chdir(src_dir)
         for module in modules:
             for dir, dirnames, filenames in os.walk(module):
-                if not is_package_or_namespace_package_dir(dir):
+                if not is_package_or_namespace_package_dir(dir, distribution_filter=distribution_filter):
                     continue
                 sdir = os.path.join(src_dir, dir)
                 cydir = os.path.join(cythonized_dir, dir)
