@@ -3938,7 +3938,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         [-4 -3 -2  2  3  4 -1  0  1]
         [-2 -4 -3  4  2  3  1 -1  0]
 
-        sage: # needs sage.modules sage.rings.finite_rings sage.groups sage.libs.gap
+        sage: # needs sage.groups sage.libs.gap sage.modules sage.rings.finite_rings
         sage: G.relabel(range(9))
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)
         sage: G3x3.is_strongly_regular(parameters=True)
