@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 # -*- coding: utf-8 -*-
 """
 Temporary file handling

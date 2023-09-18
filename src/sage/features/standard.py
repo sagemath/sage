@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Check for various standard packages (for modularized distributions)
 
