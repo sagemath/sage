@@ -535,6 +535,107 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             from sage.matrix.constructor import Matrix
             return Matrix(list(self.independent_roots())).inverse()
 
+        def milnor_fiber_poset(self):
+            r"""
+            Return the Milnor fiber poset of ``self``.
+
+            The *Milnor fiber poset* of a finite complex reflection group `W`
+            is defined as the poset of (right) standard cosets `gW_J`,
+            where `J` is a subset of the index set `I` of `W`, ordered
+            by reverse inclusion. This is conjecturally a meet semilattice
+            if and only if `W` is well-generated.
+
+            EXAMPLES::
+
+                sage: W = ColoredPermutations(3, 2)
+                sage: P = W.milnor_fiber_poset()
+                sage: P
+                Finite meet-semilattice containing 34 elements
+                sage: R.<x> = ZZ[]
+                sage: sum(x**P.rank(elt) for elt in P)
+                18*x^2 + 15*x + 1
+
+                sage: W = ReflectionGroup(4)                     # optional - gap3
+                sage: P = W.milnor_fiber_poset()                 # optional - gap3
+                sage: P                                          # optional - gap3
+                Finite meet-semilattice containing 41 elements
+                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
+                24*x^2 + 16*x + 1
+
+                sage: W = ReflectionGroup([4,2,2])               # optional - gap3
+                sage: W.is_well_generated()                      # optional - gap3
+                False
+                sage: P = W.milnor_fiber_poset()                 # optional - gap3
+                sage: P                                          # optional - gap3
+                Finite poset containing 47 elements
+                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
+                16*x^3 + 24*x^2 + 6*x + 1
+                sage: P.is_meet_semilattice()                    # optional - gap3
+                False
+            """
+            I = self.index_set()
+            data = {}
+            next_reprs = {(): [g for g in self]}
+            next_cosets = {(): [frozenset([g]) for g in next_reprs[()]]}
+            next_level = set((i, ()) for i in range(len(next_cosets[()])))
+            while next_level:
+                cur = next_level
+                cosets = next_cosets
+                reprs = next_reprs
+                next_level = set()
+                next_cosets = {}
+                next_reprs = {}
+                for Y in cur:
+                    index, J = Y
+                    for i in I:
+                        if i in J:
+                            continue
+                        Jp = tuple(sorted(J + (i,)))
+                        # See if the coset is already there
+                        found_coset = False
+                        if Jp in next_cosets:
+                            rep = reprs[J][index]
+                            for ii, C in enumerate(next_cosets[Jp]):
+                                if rep in C:
+                                    found_coset = True
+                                    Yp = (reprs[J][index], J)
+                                    Xp = (next_reprs[Jp][ii], Jp)
+                                    if Xp in data:
+                                        data[Xp].append(Yp)
+                                    else:
+                                        data[Xp] = [Yp]
+                        else:
+                            next_cosets[Jp] = []
+                            next_reprs[Jp] = []
+                        if found_coset:
+                            continue
+
+                        # Otherwise build the coset
+                        next_level.add((len(next_cosets[Jp]), Jp))
+                        H = set(cosets[J][index])
+                        to_test = [(g, i) for g in H]
+                        while to_test:
+                            g, j = to_test.pop()
+                            gp = g.apply_simple_reflection(j, side='right')
+                            if gp in H:
+                                continue
+                            H.add(gp)
+                            to_test.extend((gp, j) for j in Jp)
+                        rep = min(H, key=lambda g: g.length())
+                        next_cosets[Jp].append(frozenset(H))
+                        next_reprs[Jp].append(rep)
+                        Yp = (reprs[J][index], J)
+                        Xp = (rep, Jp)
+                        if Xp in data:
+                            data[Xp].append(Yp)
+                        else:
+                            data[Xp] = [Yp]
+            if self.is_well_generated():
+                from sage.combinat.posets.lattices import MeetSemilattice
+                return MeetSemilattice(data)
+            from sage.combinat.posets.posets import Poset
+            return Poset(data)
+
     class ElementMethods:
 
         @abstract_method(optional=True)
@@ -1078,6 +1179,59 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                      [2, 1, 3], [2, 1, 3, 2, 1], [3, 2, 1]]
                 """
                 return self.coxeter_element().conjugacy_class()
+
+            def milnor_fiber_complex(self):
+                r"""
+                Return the Milnor fiber complex of ``self``.
+
+                The *Milnor fiber complex* of a finite well-generated
+                complex reflection group `W` is the simplicial complex whose
+                face poset is given by :meth:`milnor_fiber_poset`. When `W`
+                is an irreducible Shephard group, it is also an equivariant
+                strong deformation retract of the Milnor fiber `f_1^{-1}(1)`,
+                where `f_1: V \to \CC` is the polynomial invariant of smallest
+                degree acting on the reflection representation `V`.
+
+                When `W` is a Coxeter group, this is isomorphic to the
+                :wikipedia:`Coxeter complex <Coxeter_complex>` of `W`.
+
+                EXAMPLES::
+
+                    sage: W = ColoredPermutations(3, 2)
+                    sage: C = W.milnor_fiber_complex()
+                    sage: C.homology()
+                    {0: 0, 1: Z x Z x Z x Z}
+
+                    sage: W = ReflectionGroup(5)                  # optional - gap3
+                    sage: C = W.milnor_fiber_complex()            # optional - gap3
+                    sage: C.homology()                            # optional - gap3
+                    {0: 0, 1: Z^25}
+                """
+                I = self.index_set()
+                cosets = {}
+                for i in I:
+                    Ip = tuple([j for j in I if j != i])
+                    cosets[Ip] = []
+                    for g in self:
+                        if any(g in C for C in cosets[Ip]):
+                            continue
+                        H = set([g])
+                        to_test = [(g, j) for j in Ip]
+                        while to_test:
+                            h, j = to_test.pop()
+                            hp = h.apply_simple_reflection(j, side='right')
+                            if hp in H:
+                                continue
+                            H.add(hp)
+                            to_test.extend((hp, j) for j in Ip)
+                        cosets[Ip].append(frozenset(H))
+                verts = {}
+                for Ip in cosets:
+                    for C in cosets[Ip]:
+                        verts[C, Ip] = len(verts)
+                facets = [[verts[k] for k in verts if g in k[0]] for g in self]
+                from sage.topology.simplicial_complex import SimplicialComplex
+                return SimplicialComplex(facets)
 
         class Irreducible(CategoryWithAxiom):
             r"""

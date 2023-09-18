@@ -160,17 +160,17 @@ class ReductionData(SageObject):
         if self.Q == 0:
             yterm = ''
         else:
-            yterm = '+ (%s)*y '%self.Q
+            yterm = '+ (%s)*y ' % self.Q
 
         s = 'Reduction data about this proper smooth genus 2 curve:\n'
-        s += '\ty^2 %s= %s\n'%(yterm, self.P)
+        s += '\ty^2 %s= %s\n' % (yterm, self.P)
         if self.Qmin:
-            s += 'A Minimal Equation:\n\ty^2 + (%s)y = %s\n'%(self.Qmin, self.Pmin)
+            s += 'A Minimal Equation:\n\ty^2 + (%s)y = %s\n' % (self.Qmin, self.Pmin)
         else:
-            s += 'A Minimal Equation:\n\ty^2 = %s\n'%self.Pmin
-        s += 'Minimal Discriminant: %s\n'%self.minimal_disc
-        s += 'Conductor: %s\n'%self.conductor
-        s += 'Local Data:\n%s'%self._local_data_str()
+            s += 'A Minimal Equation:\n\ty^2 = %s\n' % self.Pmin
+        s += 'Minimal Discriminant: %s\n' % self.minimal_disc
+        s += 'Conductor: %s\n' % self.conductor
+        s += 'Local Data:\n%s' % self._local_data_str()
         return s
 
     def _local_data_str(self):
@@ -178,7 +178,7 @@ class ReductionData(SageObject):
         D = self.local_data
         K = sorted(D.keys())
         for p in K:
-            s += 'p=%s\n%s\n'%(p, D[p])
+            s += 'p=%s\n%s\n' % (p, D[p])
         s = '\t' + '\n\t'.join(s.strip().split('\n'))
         return s
 
@@ -217,7 +217,7 @@ def divisors_to_string(divs):
             # Next divisor is different or we are done? Print current one
             if s:
                 s += "x"
-            s += "(%s)"%divs[i]
+            s += "(%s)" % divs[i]
             if n > 1:
                 s += "^%s" % n
             n = 0

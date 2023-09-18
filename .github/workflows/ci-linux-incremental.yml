@@ -43,7 +43,7 @@ jobs:
       uninstall_targets: ${{ steps.build-targets.outputs.uninstall_targets }}
       build_targets:     ${{ steps.build-targets.outputs.build_targets }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get all packages that have changed
         id: changed-packages
         uses: tj-actions/changed-files@v38

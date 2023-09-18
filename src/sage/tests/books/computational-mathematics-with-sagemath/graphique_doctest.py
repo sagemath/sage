@@ -134,11 +134,11 @@ Sage example in ./graphique.tex, line 1120::
   sage: t = srange(0, 5, 0.1); p = Graphics()
   sage: for k in srange(0, 10, 0.15):
   ....:       y = integrate.odeint(f, k, t)
-  ....:       p += line(zip(t, flatten(y)))
+  ....:       p += line(zip(t, flatten(y.tolist())))
   sage: t = srange(0, -5, -0.1); q = Graphics()
   sage: for k in srange(0, 10, 0.15):
   ....:       y = integrate.odeint(f, k, t)
-  ....:       q += line(zip(t, flatten(y)))
+  ....:       q += line(zip(t, flatten(y.tolist())))
   sage: y = var('y')
   sage: v = plot_vector_field((1, -cos(x*y)), (x,-5,5), (y,-2,11))
   sage: g = p + q + v; g.show()

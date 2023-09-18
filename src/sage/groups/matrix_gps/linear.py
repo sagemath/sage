@@ -9,22 +9,22 @@ EXAMPLES::
     General Linear Group of degree 1 over Integer Ring
     sage: GL(100, RR)
     General Linear Group of degree 100 over Real Field with 53 bits of precision
-    sage: GL(3, GF(49,'a'))                                                             # optional - sage.rings.finite_rings
+    sage: GL(3, GF(49,'a'))                                                             # needs sage.rings.finite_rings
     General Linear Group of degree 3 over Finite Field in a of size 7^2
 
     sage: SL(2, ZZ)
     Special Linear Group of degree 2 over Integer Ring
-    sage: G = SL(2, GF(3)); G                                                           # optional - sage.rings.finite_rings
+    sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
-    sage: G.is_finite()                                                                 # optional - sage.rings.finite_rings
+    sage: G.is_finite()
     True
-    sage: G.conjugacy_classes_representatives()                                         # optional - sage.rings.finite_rings
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
     )
-    sage: G = SL(6, GF(5))                                                              # optional - sage.rings.finite_rings
-    sage: G.gens()                                                                      # optional - sage.rings.finite_rings
+    sage: G = SL(6, GF(5))
+    sage: G.gens()
     (
     [2 0 0 0 0 0]  [4 0 0 0 0 1]
     [0 3 0 0 0 0]  [4 0 0 0 0 0]
@@ -93,14 +93,14 @@ def GL(n, R, var='a'):
 
     EXAMPLES::
 
-        sage: G = GL(6, GF(5))                                                          # optional - sage.rings.finite_rings
-        sage: G.order()                                                                 # optional - sage.rings.finite_rings
+        sage: G = GL(6, GF(5))
+        sage: G.order()
         11064475422000000000000000
-        sage: G.base_ring()                                                             # optional - sage.rings.finite_rings
+        sage: G.base_ring()
         Finite Field of size 5
-        sage: G.category()                                                              # optional - sage.rings.finite_rings
+        sage: G.category()
         Category of finite groups
-        sage: TestSuite(G).run()                                                        # optional - sage.rings.finite_rings
+        sage: TestSuite(G).run()
 
         sage: G = GL(6, QQ)
         sage: G.category()
@@ -109,34 +109,34 @@ def GL(n, R, var='a'):
 
     Here is the Cayley graph of (relatively small) finite General Linear Group::
 
-        sage: g = GL(2,3)                                                               # optional - sage.rings.finite_rings
-        sage: d = g.cayley_graph(); d                                                   # optional - sage.graphs sage.rings.finite_rings
+        sage: g = GL(2,3)
+        sage: d = g.cayley_graph(); d                                                   # needs sage.graphs
         Digraph on 48 vertices
-        sage: d.plot(color_by_label=True, vertex_size=0.03,  # long time                # optional - sage.graphs sage.rings.finite_rings sage.plot
+        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.graphs sage.plot
         ....:        vertex_labels=False)
         Graphics object consisting of 144 graphics primitives
-        sage: d.plot3d(color_by_label=True)  # long time                                # optional - sage.graphs sage.rings.finite_rings sage.plot
+        sage: d.plot3d(color_by_label=True)                     # long time             # needs sage.graphs sage.plot
         Graphics3d Object
 
     ::
 
-        sage: F = GF(3); MS = MatrixSpace(F, 2, 2)                                      # optional - sage.rings.finite_rings
-        sage: gens = [MS([[2,0], [0,1]]), MS([[2,1], [2,0]])]                           # optional - sage.rings.finite_rings
-        sage: G = MatrixGroup(gens)                                                     # optional - sage.rings.finite_rings
-        sage: G.order()                                                                 # optional - sage.rings.finite_rings
+        sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
+        sage: gens = [MS([[2,0], [0,1]]), MS([[2,1], [2,0]])]
+        sage: G = MatrixGroup(gens)
+        sage: G.order()
         48
-        sage: G.cardinality()                                                           # optional - sage.rings.finite_rings
+        sage: G.cardinality()
         48
-        sage: H = GL(2,F)                                                               # optional - sage.rings.finite_rings
-        sage: H.order()                                                                 # optional - sage.rings.finite_rings
+        sage: H = GL(2,F)
+        sage: H.order()
         48
-        sage: H == G                                                                    # optional - sage.rings.finite_rings
+        sage: H == G
         True
-        sage: H.gens() == G.gens()                                                      # optional - sage.rings.finite_rings
+        sage: H.gens() == G.gens()
         True
-        sage: H.as_matrix_group() == H                                                  # optional - sage.rings.finite_rings
+        sage: H.as_matrix_group() == H
         True
-        sage: H.gens()                                                                  # optional - sage.rings.finite_rings
+        sage: H.gens()
         (
         [2 0]  [2 1]
         [0 1], [2 0]
@@ -144,11 +144,11 @@ def GL(n, R, var='a'):
 
     TESTS::
 
-        sage: groups.matrix.GL(2, 3)                                                    # optional - sage.groups sage.rings.finite_rings
+        sage: groups.matrix.GL(2, 3)
         General Linear Group of degree 2 over Finite Field of size 3
-        sage: groups.matrix.GL(1, ZZ).category()                                        # optional - sage.groups
+        sage: groups.matrix.GL(1, ZZ).category()
         Category of groups
-        sage: groups.matrix.GL(1, QQ).category()                                        # optional - sage.groups
+        sage: groups.matrix.GL(1, QQ).category()
         Category of infinite groups
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
@@ -207,15 +207,15 @@ def SL(n, R, var='a'):
 
     EXAMPLES::
 
-        sage: SL(3, GF(2))                                                              # optional - sage.rings.finite_rings
+        sage: SL(3, GF(2))
         Special Linear Group of degree 3 over Finite Field of size 2
-        sage: G = SL(15, GF(7)); G                                                      # optional - sage.rings.finite_rings
+        sage: G = SL(15, GF(7)); G
         Special Linear Group of degree 15 over Finite Field of size 7
-        sage: G.category()                                                              # optional - sage.rings.finite_rings
+        sage: G.category()
         Category of finite groups
-        sage: G.order()                                                                 # optional - sage.rings.finite_rings
+        sage: G.order()
         1956712595698146962015219062429586341124018007182049478916067369638713066737882363393519966343657677430907011270206265834819092046250232049187967718149558134226774650845658791865745408000000
-        sage: len(G.gens())                                                             # optional - sage.rings.finite_rings
+        sage: len(G.gens())
         2
         sage: G = SL(2, ZZ); G
         Special Linear Group of degree 2 over Integer Ring
@@ -285,8 +285,8 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: G = SL(2, GF(5))                                                      # optional - sage.rings.finite_rings
-            sage: G._check_matrix(G.an_element().matrix())                              # optional - sage.rings.finite_rings
+            sage: G = SL(2, GF(5))
+            sage: G._check_matrix(G.an_element().matrix())
         """
         if self._special:
             if x.determinant() != 1:

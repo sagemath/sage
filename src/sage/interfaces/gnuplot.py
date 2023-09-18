@@ -99,7 +99,7 @@ class Gnuplot(SageObject):
             print("Saving plot to %s" % file)
             self(cmd)
             time.sleep(0.1)
-            os.system('mv %s %s 2>/dev/null'%(tmp, file))
+            os.system('mv %s %s 2>/dev/null' % (tmp, file))
             time.sleep(0.1)
         self('set terminal x11')
 
@@ -110,7 +110,7 @@ class Gnuplot(SageObject):
         if title is None:
             title = str(f)
         f = f.replace('^','**')
-        cmd="""
+        cmd = """
         set xlabel "%s"
         set ylabel "%s"
         set key top
@@ -125,7 +125,7 @@ class Gnuplot(SageObject):
         #show pm3d
         #show palette
         splot %s
-        """%(xlabel, ylabel,
+        """ % (xlabel, ylabel,
              xmin, xmax, ymin, ymax, #zmin, zmax,
              samples, isosamples,
              title, f)
@@ -163,7 +163,7 @@ class Gnuplot(SageObject):
         """
         if title is None:
             title = str(f)
-        cmd="""
+        cmd = """
         set key top
         set border 4095
         set samples %s

@@ -289,7 +289,7 @@ def skipfile(filename, tested_optional_tags=False, *,
         if log:
             log(f"Skipping '{filename}' because it is created by the jupyter-sphinx extension for internal use and should not be tested")
         return True
-    if if_installed and ext in ('.py', '.pyx', '.pxd'):
+    if if_installed:
         module_name = get_basename(filename)
         try:
             if not importlib.util.find_spec(module_name):  # tries to import the containing package
