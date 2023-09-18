@@ -5385,7 +5385,7 @@ class Permutation(CombinatorialElement):
 
     def transposition_distance(self, other):
         r"""
-        Compute the transposition distance between two permutations.
+        Return the transposition distance between ``self`` and ``other``.
 
         INPUT:
 
