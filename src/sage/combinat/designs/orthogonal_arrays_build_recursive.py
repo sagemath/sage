@@ -1606,13 +1606,13 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         OA.extend([N-xx-1 for xx in B] for B in orthogonal_array(k,x))
 
     # iv)
-    elif (x == q**2+1 and
-          orthogonal_array( k  ,  x  ,existence=True) and # d0
-          orthogonal_array(k+e4, t+1 ,existence=True) and # d2-e4
-          orthogonal_array(k + 1,t+q+1,existence=True)):   # d4-1
+    elif (x == q**2 + 1 and
+          orthogonal_array(k, x, existence=True) and            # d0
+          orthogonal_array(k + e4, t + 1, existence=True) and   # d2 - e4
+          orthogonal_array(k + 1, t + q + 1, existence=True)):  # d4 - 1
 
         if verbose:
-            print("Case iv) with k={},q={},t={},x={},e4={}".format(k,q,t,x,e4))
+            print(f"Case iv) with k={k},q={q},t={t},x={x},e4={e4}")
 
         # Sets of size t:
         #

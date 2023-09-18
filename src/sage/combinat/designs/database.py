@@ -2080,21 +2080,22 @@ def QDM_19_6_1_1_1():
     """
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     M = [[None,   7,  13,   1,  16,   9,   2],
-       [   0,   1,  15,   7,  17,   6,  14],
-       [   0,  11,  10,  11,   5,   4,   3],
-       [   7,None,  13,  16,   1,   2,   9],
-       [   1,   0,  15,  17,   7,  14,   6],
-       [  11,   0,  10,   5,  11,   3,   4]]
+         [   0,   1,  15,   7,  17,   6,  14],
+         [   0,  11,  10,  11,   5,   4,   3],
+         [   7,None,  13,  16,   1,   2,   9],
+         [   1,   0,  15,  17,   7,  14,   6],
+         [  11,   0,  10,   5,  11,   3,   4]]
 
     Mb = []
 
     for R in zip(*M):
-        a,b,c,d,e,f = R
-        Mb.append([a,b,c,d,e,f])
-        Mb.append([b,c,a,f,d,e])
-        Mb.append([c,a,b,e,f,d])
+        a, b, c, d, e, f = R
+        Mb.append([a, b, c, d, e, f])
+        Mb.append([b, c, a, f, d, e])
+        Mb.append([c, a, b, e, f, d])
 
     return AdditiveCyclic(19), Mb
+
 
 def QDM_21_5_1_1_1():
     r"""
@@ -4321,17 +4322,21 @@ def BIBD_111_6_1():
     """
     from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
     from .incidence_structures import IncidenceStructure
-    bibd = [(( 0,0), ( 1,0), ( 3,0), ( 7,0), (17,0), ( 0,1)),
-            (( 0,0), ( 5,0), (19,1), (28,1), (10,2), (30,2)),
-            (( 5,0), (33,0), (13,1), (34,1), (19,2), ( 7,2)),
-            (( 9,0), (27,0), (16,1), (11,1), (12,2), (36,2)),
-            ((10,0), (23,0), (26,1), ( 8,1), ( 1,2), ( 6,2)),
-            ((13,0), (24,0), (19,1), (18,1), ( 5,2), (32,2)),
-            ((26,0), (34,0), ( 1,1), ( 7,1), (10,2), (33,2))]
-    gens = lambda B: [frozenset(((x*10) % 37,(y+1) % 3) for x,y in B),
-                      frozenset(((x+1) % 37,      y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    bibd = [(( 0, 0), ( 1, 0), ( 3, 0), ( 7, 0), (17, 0), ( 0, 1)),
+            (( 0, 0), ( 5, 0), (19, 1), (28, 1), (10, 2), (30, 2)),
+            (( 5, 0), (33, 0), (13, 1), (34, 1), (19, 2), ( 7, 2)),
+            (( 9, 0), (27, 0), (16, 1), (11, 1), (12, 2), (36, 2)),
+            ((10, 0), (23, 0), (26, 1), ( 8, 1), ( 1, 2), ( 6, 2)),
+            ((13, 0), (24, 0), (19, 1), (18, 1), ( 5, 2), (32, 2)),
+            ((26, 0), (34, 0), ( 1, 1), ( 7, 1), (10, 2), (33, 2))]
+    gens = lambda B: [frozenset(((x * 10) % 37, (y + 1) % 3)
+                                for x, y in B),
+                      frozenset(((x + 1) % 37, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_126_6_1():
     r"""
@@ -4382,9 +4387,12 @@ def BIBD_136_6_1():
             ((0,0), (11,0), (17,0), ( 4,2), ( 5,2), (28,2)),
             ((0,0), ( 1,0), ( 0,1), (16,1), ( 0,2), (31,2)),
             ( inf ,( 0,0), ( 9,0), (18,0), (27,0), (36,0))]
-    gens = lambda B: [frozenset(((x*16) % 45,(y+1) % 3) if (x,y) != inf else inf for x,y in B),
-                      frozenset(((x+1) % 45,y)       if (x,y) != inf else inf for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 16) % 45,(y + 1) % 3)
+                                if (x, y) != inf else inf for x, y in B),
+                      frozenset(((x + 1) % 45,y)
+                                if (x, y) != inf else inf for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 
@@ -4414,10 +4422,14 @@ def BIBD_141_6_1():
             ( inf ,( 0,0), ( 7,0), (14,0), (21,0), (28,0)),
             ( inf ,( 0,a), ( 7,a), (14,a), (21,a), (28,a))]
 
-    gens = lambda B: [frozenset(((x*16) % 35,(y+1) % 3 if y != a else a) if (x,y) != inf else inf for x,y in B),
-                      frozenset(((x+1) % 35, y )                    if (x,y) != inf else inf for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 16) % 35, (y + 1) % 3 if y != a else a)
+                                if (x, y) != inf else inf for x, y in B),
+                      frozenset(((x + 1) % 35, y )
+                                if (x, y) != inf else inf for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_171_6_1():
     r"""
@@ -4442,10 +4454,14 @@ def BIBD_171_6_1():
             (( 0,0), (12,0), ( 0,1), (27,1), ( 0,2), (18,2)),
             ((37,0), (42,0), (31,1), ( 9,1), (46,2), ( 6,2))]
 
-    gens = lambda B: [frozenset(((x*7) % 57,(y+1) % 3) for x,y in B),
-                      frozenset(((x+1) % 57,      y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 7) % 57, (y + 1) % 3)
+                                for x, y in B),
+                      frozenset(((x + 1) % 57, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def HigmanSimsDesign():
     r"""
@@ -4535,10 +4551,14 @@ def BIBD_196_6_1():
             ((0,0), ( 1,0), ( 0,1), (30,1), ( 0,2), (18,2)),
             ((8,0), (19,0), (44,1), (31,1), (46,2), (48,2))]
 
-    gens = lambda B: [frozenset(((x*30) % 49,(y+1) % 3 if y != a else a) for x,y in B),
-                      frozenset(((x+1) % 49,   y)                   for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 30) % 49, (y + 1) % 3 if y != a else a)
+                                for x, y in B),
+                      frozenset(((x + 1) % 49,   y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_201_6_1():
     r"""
@@ -4564,10 +4584,14 @@ def BIBD_201_6_1():
             ((3,1), (20,1), (44,1), (36,2), (39,2), (59,2)),
             ((0,0), ( 0,1), (30,1), (38,1), (66,1), ( 0,2))]
 
-    gens = lambda B: [frozenset(((x*29) % 67,y) for x,y in B),
-                      frozenset(((x+1) % 67,y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 29) % 67, y)
+                                for x, y in B),
+                      frozenset(((x + 1) % 67, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_79_13_2():
     r"""

@@ -1372,8 +1372,8 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     # (i.e. OA(k,n1)-x.OA(k,1) and OA(k,n2) ==> OA(k,n1.n2)-x.OA(k,n2) )
     elif (min_hole > 1                                and
           max_hole == min_hole                        and
-          n % min_hole == 0                             and # h divides n
-          orthogonal_array(k,min_hole,existence=True) and # OA(k,h)
+          n % min_hole == 0                           and  # h divides n
+          orthogonal_array(k,min_hole,existence=True) and  # OA(k,h)
           incomplete_orthogonal_array(k,n//min_hole,[1]*number_of_holes,existence=True)): # OA(k,n/h)-x.OA(k,1)
         if existence:
             return True
