@@ -2462,7 +2462,7 @@ def p3_group_bitrade_generators(p):
     assert is_prime(p)
 
     F = libgap.FreeGroup(3)
-    a, b, c = F.GeneratorsOfInverseSemigroup()
+    a, b, c = F.GeneratorsOfGroup()
 
     rels = []
     rels.append(a**p)
@@ -2473,7 +2473,7 @@ def p3_group_bitrade_generators(p):
     rels.append(c*b*((b*c)**(-1)))
 
     G = F.FactorGroupFpGroupByRels(rels)
-    u, v, _ = G.GeneratorsOfInverseSemigroup()
+    u, v, _ = G.GeneratorsOfGroup()
 
     iso = libgap.IsomorphismPermGroup(G)
 
