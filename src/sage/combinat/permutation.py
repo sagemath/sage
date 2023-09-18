@@ -5389,7 +5389,7 @@ class Permutation(CombinatorialElement):
 
         INPUT:
 
-        - ``other`` -- Another permutation to compute the transposition distance to.
+        - ``other`` -- a permutation
 
         OUTPUT:
 
