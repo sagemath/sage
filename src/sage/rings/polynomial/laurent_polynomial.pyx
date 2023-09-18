@@ -1557,8 +1557,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         Return the polynomial and the shift in power used to construct the
         Laurent polynomial `t^n u`.
 
-        ``monomial_factorization`` is an alias for ``polynomial_construction``
-
         OUTPUT:
 
         A tuple ``(u, n)`` where ``u`` is the underlying polynomial and ``n``
@@ -1570,12 +1568,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f = 1/x + x^2 + 3*x^4
             sage: f.polynomial_construction()
             (3*x^5 + x^3 + 1, -1)
-            sage: f.polynomial_construction() == f.monomial_factorization()
-            True
         """
         return (self.__u, self.__n)
 
-    monomial_factorization = polynomial_construction
+    monomial_reduction = polynomial_construction
 
     def is_constant(self):
         """

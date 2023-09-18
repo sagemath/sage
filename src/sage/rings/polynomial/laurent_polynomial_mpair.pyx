@@ -1520,7 +1520,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         return R({m[i]: c for m, c in self.dict().iteritems()})
 
-    def monomial_factorization(self):
+    def monomial_reduction(self):
         """
         Factor ``self`` into a polynomial and a monomial.
 
@@ -1533,14 +1533,14 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: f = y / x + x^2 / y + 3 * x^4 * y^-2
-            sage: f.monomial_factorization()
+            sage: f.monomial_reduction()
             (3*x^5 + x^3*y + y^3, 1/(x*y^2))
             sage: f = y * x + x^2 / y + 3 * x^4 * y^-2
-            sage: f.monomial_factorization()
+            sage: f.monomial_reduction()
              (3*x^3 + y^3 + x*y, x/y^2)
-            sage: x.monomial_factorization()
+            sage: x.monomial_reduction()
             (1, x)
-            sage: (y^-1).monomial_factorization()
+            sage: (y^-1).monomial_reduction()
             (1, 1/y)
         """
         self._normalize()

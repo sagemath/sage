@@ -1798,7 +1798,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         S = R.polynomial_ring()
         ideal = [S(elt) for elt in ideal]
         for j in range(1, A.ncols()):
-            L = [p.monomial_factorization()[0] for p in A.minors(j)]
+            L = [p.monomial_reduction()[0] for p in A.minors(j)]
             J = R.ideal(L + ideal)
             res.append(J)
         if not groebner or not R.base_ring().is_field():
