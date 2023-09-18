@@ -4424,7 +4424,7 @@ def BIBD_141_6_1():
 
     gens = lambda B: [frozenset(((x * 16) % 35, (y + 1) % 3 if y != a else a)
                                 if (x, y) != inf else inf for x, y in B),
-                      frozenset(((x + 1) % 35, y )
+                      frozenset(((x + 1) % 35, y)
                                 if (x, y) != inf else inf for x, y in B)]
     bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
                                     successors=gens)
@@ -4553,7 +4553,7 @@ def BIBD_196_6_1():
 
     gens = lambda B: [frozenset(((x * 30) % 49, (y + 1) % 3 if y != a else a)
                                 for x, y in B),
-                      frozenset(((x + 1) % 49,   y)
+                      frozenset(((x + 1) % 49, y)
                                 for x, y in B)]
     bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
                                     successors=gens)
