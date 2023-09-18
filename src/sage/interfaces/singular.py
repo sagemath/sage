@@ -664,7 +664,7 @@ class Singular(ExtraTabCompletion, Expect):
         # "Segment fault" is not a typo:
         # Singular actually does use that string
         if s.find("error occurred") != -1 or s.find("Segment fault") != -1:
-            raise SingularError('Singular error:\n%s'%s)
+            raise SingularError('Singular error:\n%s' % s)
 
         if get_verbose() > 0:
             for line in s.splitlines():
@@ -703,8 +703,8 @@ class Singular(ExtraTabCompletion, Expect):
             '0'
 
         """
-        cmd = ''.join('if(defined(%s)){kill %s;};'%(v,v) for v in self.__to_clear)
-        cmd += '%s %s=%s;'%(type, name, value)
+        cmd = ''.join('if(defined(%s)){kill %s;};' % (v,v) for v in self.__to_clear)
+        cmd += '%s %s=%s;' % (type, name, value)
         self.__to_clear = []
         self.eval(cmd)
 
@@ -718,7 +718,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: singular.get('x')
             '2'
         """
-        return self.eval('print(%s);'%var)
+        return self.eval('print(%s);' % var)
 
     def clear(self, var):
         """
@@ -843,7 +843,7 @@ class Singular(ExtraTabCompletion, Expect):
             0.02
         """
         if t:
-            return float(self.eval('timer-(%d)'%(int(1000*t))))/1000.0
+            return float(self.eval('timer-(%d)' % (int(1000*t))))/1000.0
         else:
             return float(self.eval('timer'))/1000.0
 
@@ -1041,9 +1041,9 @@ class Singular(ExtraTabCompletion, Expect):
         """
         name = self._next_var_name()
         if entries is None:
-            self.eval('matrix %s[%s][%s]'%(name, nrows, ncols))
+            self.eval('matrix %s[%s][%s]' % (name, nrows, ncols))
         else:
-            self.eval('matrix %s[%s][%s] = %s'%(name, nrows, ncols, entries))
+            self.eval('matrix %s[%s][%s] = %s' % (name, nrows, ncols, entries))
         return SingularElement(self, None, name, True)
 
     def ring(self, char=0, vars='(x)', order='lp', check=None):
@@ -1442,13 +1442,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             0,  y,0,
             x*y,0,0
         """
-        if (self.type()=='ring') or (self.type()=='qring'):
+        if (self.type() == 'ring') or (self.type() == 'qring'):
             # Problem: singular has no clean method to produce
             # a copy of a ring/qring. We use ringlist, but this
             # is only possible if we make self the active ring,
             # use ringlist, and switch back to the previous
             # base ring.
-            br=self.parent().current_ring()
+            br = self.parent().current_ring()
             self.set_ring()
             OUT = (self.ringlist()).ring()
             br.set_ring()
@@ -1508,9 +1508,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             if len(n) != 2:
                 raise ValueError("If n (=%s) is a tuple, it must be a 2-tuple" % n)
             x, y = n
-            P.eval('%s[%s,%s] = %s'%(self.name(), x, y, value.name()))
+            P.eval('%s[%s,%s] = %s' % (self.name(), x, y, value.name()))
         else:
-            P.eval('%s[%s] = %s'%(self.name(), n, value.name()))
+            P.eval('%s[%s] = %s' % (self.name(), n, value.name()))
 
     def __bool__(self):
         """
@@ -1634,7 +1634,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         singular = self.parent()
         charstr = singular.eval('charstr(basering)').split(',',1)
         from sage.rings.integer_ring import ZZ
-        is_extension = len(charstr)==2
+        is_extension = len(charstr) == 2
         if charstr[0] in ['integer', 'ZZ']:
             br = ZZ
             is_extension = False
@@ -1648,7 +1648,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = RealField(ceil((ZZ(prec)+1)/log(2,10)))
             is_extension = False
-        elif charstr[0]=='complex':
+        elif charstr[0] == 'complex':
             from sage.rings.complex_mpfr import ComplexField
             from sage.functions.other import ceil
             from sage.misc.functional import log
@@ -1678,7 +1678,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                 if is_short != '0':
                     singular.eval('short=0')
                     minpoly = ZZ[charstr[1]](singular.eval('minpoly'))
-                    singular.eval('short=%s'%is_short)
+                    singular.eval('short=%s' % is_short)
                 else:
                     minpoly = ZZ[charstr[1]](minpoly)
                 BR = br.extension(minpoly,names=charstr[1])
@@ -1692,7 +1692,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # Meanwhile Singulars quotient rings are also of 'ring' type, not 'qring' as it was in the past.
         # To find out if a singular ring is a quotient ring or not checking for ring type does not help
         # and instead of that we check if the quotient ring is zero or not:
-        if (singular.eval('ideal(basering)==0')=='1'):
+        if (singular.eval('ideal(basering)==0') == '1'):
             return PolynomialRing(BR, names=singular.eval('varstr(basering)'), order=termorder_from_singular(singular))
         P = PolynomialRing(BR, names=singular.eval('varstr(basering)'), order=termorder_from_singular(singular))
         return P.quotient(singular('ringlist(basering)[4]')._sage_(P), names=singular.eval('varstr(basering)'))
@@ -1822,15 +1822,15 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # as we know what to expect.
 
         is_short = self.parent().eval('short')
-        if is_short!='0':
+        if is_short != '0':
             self.parent().eval('short=0')
             if isinstance(R, MPolynomialRing_libsingular):
                 out = R(self)
-                self.parent().eval('short=%s'%is_short)
+                self.parent().eval('short=%s' % is_short)
                 return out
             singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (
                 self.name(),variable_str)).split(",")
-            self.parent().eval('short=%s'%is_short)
+            self.parent().eval('short=%s' % is_short)
         else:
             if isinstance(R, MPolynomialRing_libsingular):
                 return R(self)
@@ -1864,19 +1864,19 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                     variables = [var.split("^") for var in monomial.split("*") ]
                     for e in variables:
                         var = e[0]
-                        if len(e)==int(2):
+                        if len(e) == int(2):
                             power = int(e[1])
                         else:
-                            power=1
-                        exp[var_dict[var]]=power
+                            power = 1
+                        exp[var_dict[var]] = power
 
                 if kcache is None:
-                    sage_repr[ETuple(exp,ngens)]=k(singular_poly_list[coeff_start+i])
+                    sage_repr[ETuple(exp,ngens)] = k(singular_poly_list[coeff_start+i])
                 else:
                     elem = singular_poly_list[coeff_start+i]
                     if elem not in kcache:
                         kcache[elem] = k( elem )
-                    sage_repr[ETuple(exp,ngens)]= kcache[elem]
+                    sage_repr[ETuple(exp,ngens)] = kcache[elem]
 
             return R(sage_repr)
 
@@ -1890,7 +1890,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
                 if monomial not in ['1', '(1.000e+00)']:
                     term = monomial.split("^")
-                    if len(term)==int(2):
+                    if len(term) == int(2):
                         exp = int(term[1])
                     else:
                         exp = int(1)
@@ -1901,7 +1901,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                     elem = singular_poly_list[coeff_start+i]
                     if elem not in kcache:
                         kcache[elem] = k( elem )
-                    sage_repr[ exp ]= kcache[elem]
+                    sage_repr[ exp ] = kcache[elem]
 
             return R(sage_repr)
 
@@ -1941,14 +1941,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             #this is slow
             for x in range(nrows):
                 for y in range(ncols):
-                    A[x,y]=self[x+1,y+1].sage_poly(R)
+                    A[x,y] = self[x+1,y+1].sage_poly(R)
             return A
 
         A = Matrix(R, nrows, ncols, sparse=sparse)
         #this is slow
         for x in range(nrows):
             for y in range(ncols):
-                A[x,y]=R(self[x+1,y+1])
+                A[x,y] = R(self[x+1,y+1])
 
         return A
 
@@ -2027,9 +2027,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         """
         typ = self.type()
-        if typ=='poly':
+        if typ == 'poly':
             return self.sage_poly(R)
-        elif typ=='int':
+        elif typ == 'int':
             return sage.rings.integer.Integer(repr(self))
         elif typ == 'module':
             return self.sage_matrix(R,sparse=True)
@@ -2149,7 +2149,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: RL.sage_structured_str_list()
             ['0', ['x', 'y'], [['dp', '1,\n1'], ['C', '0']], '0']
         """
-        if not (self.type()=='list'):
+        if not (self.type() == 'list'):
             return str(self)
         return [X.sage_structured_str_list() for X in self]
 

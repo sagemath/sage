@@ -349,7 +349,7 @@ class CommutativeRings(CategoryWithAxiom):
                 try:
                     ~q
                 except ZeroDivisionError:
-                    raise ValueError("%s is not invertible in %s"%(q,self))
+                    raise ValueError("%s is not invertible in %s" % (q,self))
 
                 if cosets is None:
                     rest = set(self)

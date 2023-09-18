@@ -355,7 +355,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         else:
             if not hasattr(A, 'hermite_form'):
-                raise NotImplementedError("base ring (%s) must have hermite_form algorithm in order to compute inverse image"%R)
+                raise NotImplementedError("base ring (%s) must have hermite_form algorithm in order to compute inverse image" % R)
 
             # 1. Compute H such that U*A = H = hnf(A) without zero
             # rows. What this "does" is find a basis for the image of
@@ -463,7 +463,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         else:
             # see inverse_image for similar code but with comments
             if not hasattr(A, 'hermite_form'):
-                raise NotImplementedError("base ring (%s) must have hermite_form algorithm in order to compute inverse image"%R)
+                raise NotImplementedError("base ring (%s) must have hermite_form algorithm in order to compute inverse image" % R)
             H, U = A.hermite_form(transformation=True,include_zero_rows=False)
             Y = H.solve_left(vector(self.codomain().coordinates(x)))
             C = Y*U
@@ -557,13 +557,13 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         if self.base_ring().is_field():
             if self.is_endomorphism():
                 if self.side() == "right":
-                    seigenvec=self.matrix().eigenvectors_right(extend=extend)
+                    seigenvec = self.matrix().eigenvectors_right(extend=extend)
                 else:
-                    seigenvec=self.matrix().eigenvectors_left(extend=extend)
-                resu=[]
+                    seigenvec = self.matrix().eigenvectors_left(extend=extend)
+                resu = []
                 for i in seigenvec:
-                    V=self.domain().base_extend(i[0].parent())
-                    svectors=Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
+                    V = self.domain().base_extend(i[0].parent())
+                    svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
                     resu.append((i[0],svectors,i[2]))
                 return resu
             else:
