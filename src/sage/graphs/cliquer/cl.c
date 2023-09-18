@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-graphs
+ */
 #include "cliquer/cliquer.h"
 
 static int maximal;
