@@ -1,41 +1,22 @@
 #!/usr/bin/env python
 
-import os
-import sys
 import time
-# Import setuptools before importing distutils, so that setuptools
-# can replace distutils by its own vendored copy.
-import setuptools
+
 from distutils import log
 from setuptools import setup
+from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
+from sage_setup.cython_options import compiler_directives, compile_time_env_variables
+from sage_setup.extensions import create_extension
+from sage_setup.find import find_python_sources, find_extra_files
 
 # Work around a Cython problem in Python 3.8.x on macOS
 # https://github.com/cython/cython/issues/3262
+import os
 if os.uname().sysname == 'Darwin':
     import multiprocessing
     multiprocessing.set_start_method('fork', force=True)
 
-# If build isolation is not in use and setuptools_scm is installed,
-# then its file_finders entry point is invoked, which we don't need.
-# Workaround from ​https://github.com/pypa/setuptools_scm/issues/190#issuecomment-351181286
-try:
-    import setuptools_scm.integration
-    setuptools_scm.integration.find_files = lambda _: []
-except ImportError:
-    pass
-
-#########################################################
-### Set source directory
-#########################################################
-
-
-import sage.env
-sage.env.SAGE_SRC = os.getcwd()
-from sage.env import *
-
-#########################################################
-### Configuration
-#########################################################
+import sys
 
 from sage_setup.excepthook import excepthook
 sys.excepthook = excepthook
@@ -43,69 +24,68 @@ sys.excepthook = excepthook
 from sage_setup.setenv import setenv
 setenv()
 
-from sage_setup.command.sage_build_cython import sage_build_cython
-from sage_setup.command.sage_build_ext import sage_build_ext
-from sage_setup.command.sage_install import sage_develop, sage_install_and_clean
+import sage.env
+#sage.env.default_required_modules = sage.env.default_optional_modules = ()
 
-cmdclass = dict(build_cython=sage_build_cython,
-                build_ext=sage_build_ext,
-                develop=sage_develop,
-                install=sage_install_and_clean)
+cmdclass = dict(build_ext=sage_build_ext_minimal)
 
-#########################################################
-### Testing related stuff
-#########################################################
+sdist = len(sys.argv) > 1 and (sys.argv[1] in ["sdist", "egg_info", "dist_info"])
 
-# Remove (potentially invalid) star import caches
-import sage.misc.lazy_import_cache
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
+# ########################################################
+# ## Discovering Sources
+# ########################################################
+if sdist:
+    extensions = []
+    python_modules = []
+    python_packages = []
+    package_data = {}
+else:
+    log.info("Discovering Python/Cython source code....")
+    t = time.time()
 
-#########################################################
-### Discovering Sources
-#########################################################
+    python_packages, python_modules, cython_modules = find_python_sources(
+        '.', ['sage'], distributions=[''])
+    extra_files = find_extra_files(
+        '.', ['sage'], '/doesnotexist', distributions=[''])
+    package_data = {"": [f
+                         for pkg, files in extra_files.items()
+                         for f in files ]}
+    package_data.update({})
+    #python_packages += list(package_data)
 
-if any(x in sys.argv
-       for x in ['build', 'bdist_wheel', 'install']):
-    log.info("Generating auto-generated sources")
-    from sage_setup.autogen import autogen_all
-    autogen_all()
+    log.warn('python_packages = {0}'.format(sorted(python_packages)))
+    log.warn('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
+    log.warn('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
+    log.warn('package_data = {0}'.format(package_data))
 
-# TODO: This should be quiet by default
-print("Discovering Python/Cython source code....")
-t = time.time()
+    log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
 
-from sage.misc.package import is_package_installed_and_updated
-distributions = ['',
-                 # 'sagemath-flint',
-                 # 'sagemath-gap',
-                 # 'sagemath-giac',
-                 # 'sagemath-homfly',
-                 # 'sagemath-mpmath',
-                 # 'sagemath-ntl',
-                 # 'sagemath-pari',
-                 ]
-optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
-distributions += ['sagemath-{}'.format(pkg)
-                  for pkg in optional_packages_with_extensions
-                  if is_package_installed_and_updated(pkg)]
-log.warn('distributions = {0}'.format(distributions))
-from sage_setup.find import find_python_sources
-python_packages, python_modules, cython_modules = find_python_sources(
-    SAGE_SRC, ['sage'], distributions=distributions)
+    # from sage_build_cython:
+    import Cython.Compiler.Options
+    Cython.Compiler.Options.embed_pos_in_docstring = True
+    gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
 
-log.warn('python_packages = {0}'.format(python_packages))
-log.warn('python_modules = {0}'.format(python_modules))
-log.warn('cython_modules = {0}'.format(cython_modules))
+    try:
+        from Cython.Build import cythonize
+        from sage.env import cython_aliases, sage_include_directories
+        from sage.misc.package_dir import cython_namespace_package_support
+        with cython_namespace_package_support():
+            extensions = cythonize(
+                cython_modules,
+                include_path=sage_include_directories(use_sources=True) + ['.'],
+                compile_time_env=compile_time_env_variables(),
+                compiler_directives=compiler_directives(False),
+                aliases=cython_aliases(),
+                create_extension=create_extension,
+                gdb_debug=gdb_debug,
+                nthreads=4)
+    except Exception as exception:
+        log.warn(f"Exception while cythonizing source files: {repr(exception)}")
+        raise
 
-print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
-
-#########################################################
-### Distutils
-#########################################################
-
-code = setup(
+setup(cmdclass=cmdclass,
       packages=python_packages,
-      cmdclass=cmdclass,
-      ext_modules=cython_modules,
+      py_modules=python_modules,
+      ext_modules=extensions,
+      package_data=package_data,
 )

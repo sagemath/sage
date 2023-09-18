@@ -17,7 +17,7 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 if [ "$SAGE_EDITABLE" = yes ]; then
     tox_envs=$(tox -l | sed s/norequirements/editable/)
     # FIXME: Should use -r if sage_setup or another build requirement changes
-    tox_args="-p auto -v -v -v -v -e $(echo $tox_envs | sed 's/ /,/g')"
+    tox_args="-r -v -v -v -v -e $(echo $tox_envs | sed 's/ /,/g')"
     if [ "$SAGE_CHECK" = no ]; then
         tox_args="$tox_args --notest"
     fi
@@ -46,6 +46,7 @@ if [ -n "$tox_args" ]; then
     tox $tox_args
     status=$?
     case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
+        0:no:*)   echo "Not testing the package";;
         0:*:0)    echo "Passed the test suite (modulo baseline known-test-failures*.json)";;
         0:*:*)    echo "Passed the test suite";;
         *:warn:0) echo "Warning: New failures (not in baseline known-test-failures*.json (ignored)"; status=0;;

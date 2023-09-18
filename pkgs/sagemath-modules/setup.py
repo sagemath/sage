@@ -26,7 +26,6 @@ setenv()
 
 import sage.env
 sage.env.default_required_modules = sage.env.default_optional_modules = ('gsl', )
-print(f'##################### {sage.env.SAGE_SRC=}')
 
 cmdclass = dict(build_ext=sage_build_ext_minimal)
 

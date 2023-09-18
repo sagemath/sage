@@ -6,6 +6,10 @@ SPKG_INSTALL_REQUIRES_cysignals
 SPKG_INSTALL_REQUIRES_memory_allocator
 SPKG_INSTALL_REQUIRES_ipython
 SPKG_INSTALL_REQUIRES_ipywidgets
+-e ../sagemath-environment
+-e ../sagemath-categories
+-e ../sagemath-glpk
+-e ../sagemath-modules
+-e ../sagemath-mpmath
 dnl To be added when ready for editable:
-dnl -e ../sagemath-environment
 dnl -e ../sagemath-objects
