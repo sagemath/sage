@@ -58,7 +58,7 @@ from sage.libs.gmp.mpz cimport mpz_set
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_vec cimport *
 
-cdef extern from "sage/rings/polynomial/weil/power_sums.c":
+cdef extern from "power_sums.c":
     ctypedef struct ps_static_data_t:
         pass
 
