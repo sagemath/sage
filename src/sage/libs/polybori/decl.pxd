@@ -24,7 +24,7 @@ cdef extern from "polybori/pbori_defs.h" namespace "COrderEnums":
         greater_or_equal_min    "CTypes::greater_or_equal_min"
 
 
-cdef extern from "sage/libs/polybori/pb_wrap.h":
+cdef extern from "pb_wrap.h":
     cdef cppclass PBNavigator "CCuddNavigator":
         PBNavigator thenBranch()
         PBNavigator elseBranch()
