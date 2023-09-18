@@ -5393,7 +5393,7 @@ class Permutation(CombinatorialElement):
 
         OUTPUT:
 
-        - An integer representing the transposition distance between the two permutations.
+        the transposition distance between the two permutations
 
         EXAMPLES::
 
