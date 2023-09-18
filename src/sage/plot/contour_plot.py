@@ -1391,11 +1391,9 @@ def implicit_plot(f, xrange, yrange, **options):
         raise ValueError("fill=%s is not supported" % options['fill'])
 
 
-@options(plot_points=100, incol='blue', outcol=None, bordercol=None,
-         borderstyle=None, borderwidth=None, frame=False, axes=True,
-         legend_label=None, aspect_ratio=1, alpha=1)
-def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
-                borderstyle, borderwidth, alpha, **options):
+@options(frame=False, axes=True, legend_label=None, aspect_ratio=1)
+def region_plot(f, xrange, yrange, plot_points=100, incol='blue', outcol=None, bordercol=None,
+                borderstyle=None, borderwidth=None, alpha=1, **options):
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
     and plots the region where f is True over the specified
