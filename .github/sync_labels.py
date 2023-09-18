@@ -329,6 +329,8 @@ class GhLabelSynchronizer:
         else:
             # To separate a not supplied value from not cached (see https://github.com/sagemath/sage/pull/36177#issuecomment-1704022893 ff)
             self._review_decision = ReviewDecision.unclear
+            info('No review decision for %s' % self._issue)
+            return None
         info('Review decision for %s: %s' % (self._issue, self._review_decision.value))
         return self._review_decision
 
@@ -539,7 +541,7 @@ class GhLabelSynchronizer:
         r"""
         Approve the PR by the actor.
         """
-        self.review('--approve', '%s approved this PR' % self._actor)
+        self.review('--approve', '@%s approved this PR' % self._actor)
         info('PR %s approved by %s' % (self._issue, self._actor))
 
     def request_changes(self):
