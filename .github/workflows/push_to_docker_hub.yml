@@ -48,7 +48,7 @@ jobs:
           echo ${{ env.TAG_LIST }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -101,7 +101,7 @@ jobs:
         if: "!contains(env.TAG_NAME, 'beta') && !contains(env.TAG_NAME, 'rc')"
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
