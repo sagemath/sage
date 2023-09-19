@@ -70,35 +70,6 @@ from sage.structure.factory import UniqueFactory
 #  Callable functions
 ######################################################################
 
-def is_CallableSymbolicExpression(x):
-    r"""
-    Return ``True`` if ``x`` is a callable symbolic expression.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.callable import is_CallableSymbolicExpression
-        sage: var('a x y z')
-        (a, x, y, z)
-        sage: f(x,y) = a + 2*x + 3*y + z
-        sage: is_CallableSymbolicExpression(f)
-        doctest:warning...
-        DeprecationWarning: is_CallableSymbolicExpression is deprecated;
-        use isinstance(..., Expression) and ....is_callable() instead
-        See https://github.com/sagemath/sage/issues/34215 for details.
-        True
-        sage: is_CallableSymbolicExpression(a+2*x)
-        False
-        sage: def foo(n): return n^2
-        ...
-        sage: is_CallableSymbolicExpression(foo)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34215, 'is_CallableSymbolicExpression is deprecated; use isinstance(..., Expression) and ....is_callable() instead')
-    from sage.structure.element import Expression
-    return isinstance(x, Expression) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
-
-
 class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def __init__(self, arguments):
         """
