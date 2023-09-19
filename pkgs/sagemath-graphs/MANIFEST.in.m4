@@ -41,6 +41,8 @@ exclude sage/graphs/matchpoly.p*                        # needs flint
 
 include sage/groups/perm_gps/partn_ref/refinement_graphs.p*
 
+graft sage/knots
+
 graft sage/sandpiles
 
 # quivers use bounded_integer_sequences, which depends on flint (for a bad reason)
@@ -52,6 +54,9 @@ graft sage/topology            # depends on sage.combinat.subset (now in sagemat
 
 # Could also try to add:
 # sage/geometry/polyhedron/combinatorial_polyhedron
+
+include sage/databases/knotinfo_db.p*
+
 
 global-exclude all__sagemath_*.py
 global-include all__sagemath_graphs.py
