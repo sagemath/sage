@@ -16,9 +16,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import combinations
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.homology.homology_group import HomologyGroup
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
@@ -26,7 +28,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 from .cubical_complex import CubicalComplex, cubical_complexes
 from .simplicial_complex import SimplicialComplex, copy
 from sage.topology import simplicial_complex_catalog as simplicial_complexes
-from itertools import combinations
+
+lazy_import('sage.homology.homology_group', 'HomologyGroup')
 
 
 def _cubical_complex_union(c1, c2):
