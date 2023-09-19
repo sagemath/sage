@@ -14,6 +14,7 @@ include           sage/groups/*gap*.p*
 include           sage/groups/abelian_gps/abelian_group_gap.p*
 include           sage/groups/abelian_gps/abelian_aut.p*
 include           sage/groups/abelian_gps/abelian_group_morphism.p*
+include           sage/groups/galois_group_perm.p*
 include           sage/groups/matrix_gps/*_gap.*
 include           sage/groups/matrix_gps/heisenberg.p*
 include           sage/groups/matrix_gps/isometries.p*
