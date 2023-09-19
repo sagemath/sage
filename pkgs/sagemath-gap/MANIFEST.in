@@ -28,6 +28,7 @@ graft             sage/libs/gap
 include           sage/matrix/matrix_gap.p*
 include           sage/rings/universal_cyclotomic_field.p*
 
+include           sage/geometry/ribbon_graph.p*
 
 global-exclude *.c
 global-exclude *.cpp

@@ -9,6 +9,8 @@ This distribution makes the following feature available::
     FeatureTestResult('sage.libs.gap', True)
 """
 
+from sage.geometry.all__sagemath_gap import *
+
 import sage.libs.gap.element
 
 from sage.libs.gap.libgap import libgap
