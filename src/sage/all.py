@@ -141,8 +141,6 @@ from sage.numerical.all  import *
 from sage.stats.all      import *
 import sage.stats.all as stats
 
-lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
-
 from sage.parallel.all   import *
 
 from sage.ext.fast_callable  import fast_callable
