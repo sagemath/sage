@@ -69,34 +69,6 @@ from sage.structure.factory import UniqueFactory
 ######################################################################
 #  Callable functions
 ######################################################################
-def is_CallableSymbolicExpressionRing(x):
-    """
-    Return ``True`` if ``x`` is a callable symbolic expression ring.
-
-    INPUT:
-
-    -  ``x`` - object
-
-    OUTPUT: bool
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.callable import is_CallableSymbolicExpressionRing
-        sage: is_CallableSymbolicExpressionRing(QQ)
-        doctest:warning...
-        DeprecationWarning: is_CallableSymbolicExpressionRing is deprecated;
-        use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead
-        See https://github.com/sagemath/sage/issues/32665 for details.
-        False
-        sage: var('x,y,z')
-        (x, y, z)
-        sage: is_CallableSymbolicExpressionRing(CallableSymbolicExpressionRing((x,y,z)))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32665, 'is_CallableSymbolicExpressionRing is deprecated; use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead')
-    return isinstance(x, CallableSymbolicExpressionRing_class)
-
 
 def is_CallableSymbolicExpression(x):
     r"""
