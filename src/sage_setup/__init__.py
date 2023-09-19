@@ -37,11 +37,13 @@ def sage_setup(distributions, *,
     # ########################################################
     # ## Discovering Sources
     # ########################################################
+    if package_data is None:
+        package_data = {}
+
     if sdist:
         extensions = []
         python_modules = []
         python_packages = []
-        package_data = {}
     else:
         if interpreters:
             log.info("Generating auto-generated sources")
@@ -59,10 +61,9 @@ def sage_setup(distributions, *,
             '.', ['sage'], distributions=distributions)
         extra_files = find_extra_files(
             '.', ['sage'], '/doesnotexist', distributions=distributions)
-        package_data = {"": [f
-                             for pkg, files in extra_files.items()
-                             for f in files ]}
-        package_data.update({})
+        package_data.update({"": [f
+                                  for pkg, files in extra_files.items()
+                                  for f in files]})
         python_packages += list(package_data)
 
         log.debug('python_packages = {0}'.format(sorted(python_packages)))
