@@ -82,7 +82,6 @@ from sage.groups.free_group import FreeGroup, is_FreeGroup
 from sage.functions.generalized import sign
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
-from sage.knots.knot import Knot
 from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.lazy_attribute import lazy_attribute
@@ -101,6 +100,7 @@ lazy_import('sage.libs.braiding',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
             feature=PythonModule('sage.libs.braiding', spkg='libbraiding', type='standard'))
+lazy_import('sage.knots.knot', 'Knot')
 
 
 class Braid(FiniteTypeArtinGroupElement):
