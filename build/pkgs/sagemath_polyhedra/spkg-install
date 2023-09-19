@@ -12,6 +12,12 @@ fi
 cd src
 
 export PIP_NO_INDEX=true
+
+if [ -r vendor.txt ]; then
+    export PIP_FIND_LINKS="file://$SAGE_DISTFILES"
+    vendoring sync
+fi
+
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
 if [ "$SAGE_EDITABLE" = yes ]; then
