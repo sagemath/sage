@@ -491,7 +491,9 @@ if __name__ == '__main__':
                          "sagemath-mcqd",
                          "sagemath-sirocco",
                          "sagemath-coxeter3",
+                         "sagemath-meataxe",
                          "sagemath-giac",
+                         "sagemath-singular",
                          "sagemath-linbox",
                          "sagemath-flint",
                          "sagemath-ntl",
@@ -503,6 +505,7 @@ if __name__ == '__main__':
                          "sagemath-modules",
                          "sagemath-categories",
                          "sagemath-repl",
+                         "sagemath-environment",
                          "sagemath-objects"]
     else:
         distributions = [distribution]
