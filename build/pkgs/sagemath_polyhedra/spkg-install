@@ -42,11 +42,15 @@ fi
 
 if [ -n "$tox_args" ]; then
     export TOX_PARALLEL_NO_SPINNER=1
+    if [ ! -r tox.ini ]; then
+        echo "Not testing the package because there is no tox.ini"
+        exit 0
+    fi
     echo Running "tox $tox_args"
     tox $tox_args
     status=$?
     case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
-        0:no:*)   echo "Not testing the package";;
+        0:no:*)   echo "Not testing the package because SAGE_CHECK=no";;
         0:*:0)    echo "Passed the test suite (modulo baseline known-test-failures*.json)";;
         0:*:*)    echo "Passed the test suite";;
         *:warn:0) echo "Warning: New failures (not in baseline known-test-failures*.json (ignored)"; status=0;;
