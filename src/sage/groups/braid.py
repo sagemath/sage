@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-groups
-# -*- coding: utf-8 -*-
 """
 Braid groups
 
