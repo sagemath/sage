@@ -26,17 +26,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
+from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebras import Algebras
+from sage.categories.category import Category
+from sage.categories.left_modules import LeftModules
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.matrix.constructor import matrix
 from sage.sets.family import Family
 
 try:
     from sage.topology.simplicial_complex import SimplicialComplex
     from sage.topology.simplicial_set import SimplicialSet_arbitrary
+    from sage.topology.cubical_complex import CubicalComplex
 except ImportError:
-    SimplicialComplex = SimplicialSet_arbitrary = ()
+    SimplicialComplex = SimplicialSet_arbitrary = CubicalComplex = ()
 
 
 class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
@@ -385,6 +390,60 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                                          cochains=self._cohomology)
         return chains.from_vector(vec)
 
+    def dual(self):
+        r"""
+        Return the dual space.
+
+        If ``self`` is homology, return the cohomology ring. If
+        ``self`` is cohomology, return the homology as a vector space.
+
+        EXAMPLES::
+
+            sage: T = simplicial_complexes.Torus()
+            sage: hom = T.homology_with_basis(GF(2))
+            sage: coh = T.cohomology_ring(GF(2))
+            sage: hom.dual() is coh
+            True
+            sage: coh.dual() is hom
+            True
+        """
+        if self._cohomology:
+            return HomologyVectorSpaceWithBasis(self.base_ring(), self.complex(), not self._cohomology)
+        return CohomologyRing(self.base_ring(), self.complex())
+
+    def _test_duality(self, **options):
+        r"""
+        Test whether the ordered bases for homology and cohomology are compatible.
+        Return nothing if the test succeeds.
+
+        This checks whether each evaluation map `H^n \otimes H_n \to
+        k` is represented by the identity matrix, in terms of the
+        chosen bases.
+
+        TESTS::
+
+            sage: T = simplicial_complexes.Torus()
+            sage: K = T.suspension()
+            sage: K.set_immutable()
+            sage: H = K.cohomology_ring(QQ)
+            sage: H._test_duality()
+
+            sage: simplicial_complexes.RandomComplex(8, 2, .2).homology_with_basis(GF(2))._test_duality()
+            sage: simplicial_complexes.RandomComplex(8, 2, .4).homology_with_basis(GF(2))._test_duality()
+            sage: simplicial_complexes.RandomComplex(8, 2, .6).homology_with_basis(GF(2))._test_duality()
+
+            sage: simplicial_complexes.RandomComplex(12, 3, .5).homology_with_basis(GF(2))._test_duality() # long time
+        """
+        okay = True
+        dual = self.dual()
+        dims = [a[0] for a in self._indices]
+        for dim in range(max(dims) + 1):
+            n = len(self.basis(dim))
+            m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
+            okay = (m == 1)
+            if not okay:
+                print('error in dimension {}'.format(dim))
+
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
             r"""
@@ -413,6 +472,22 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                 raise ValueError("only defined for homogeneous elements")
             return sum(c * self.parent()._to_cycle_on_basis(i) for i, c in self)
 
+        def eval(self, other):
+            r"""
+            Evaluate ``self`` at ``other``.
+
+            INPUT:
+
+            - ``other`` -- an element of the dual space: if ``self``
+              is an element of cohomology in dimension `n`, then
+              ``other`` should be an element of homology in dimension
+              `n`, and vice versa.
+            """
+            if self.parent()._cohomology:
+                return self.to_cycle().eval(other.to_cycle())
+            else:
+                return other.to_cycle().eval(self.to_cycle())
+
 
 class CohomologyRing(HomologyVectorSpaceWithBasis):
     """
@@ -431,6 +506,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
     - ``base_ring`` -- must be a field
     - ``cell_complex`` -- the cell complex whose homology we are
       computing
+    - ``category`` -- (optional) a subcategory of modules with basis
 
     EXAMPLES::
 
@@ -485,8 +561,8 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             sage: H = RP2.cohomology_ring(GF(5))
             sage: TestSuite(H).run()
         """
-        cat = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
-        HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex, True, cat)
+        category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
+        HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex, True, category)
 
     def _repr_(self):
         """
@@ -686,10 +762,16 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
             .. WARNING::
 
-               This is only implemented for simplicial complexes.
+                The main implementation is only for simplicial
+                complexes and simplicial sets; cubical complexes are
+                converted to simplicial complexes first. Note that
+                this converted complex may be large and so computations
+                may be slow. There is no implementation for
+                `\Delta`-complexes.
 
             This cohomology operation is only defined in
-            characteristic 2.
+            characteristic 2. Odd primary Steenrod operations are not
+            implemented.
 
             Algorithm: see González-Díaz and Réal [GDR1999]_,
             Corollary 3.2.
@@ -707,6 +789,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: y.Sq(1)
                 h^{3,0}
 
+                sage: # long time
                 sage: RP4 = simplicial_complexes.RealProjectiveSpace(4)
                 sage: H = RP4.cohomology_ring(GF(2))
                 sage: x = H.basis()[1,0]
@@ -714,7 +797,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: z = H.basis()[3,0]
                 sage: x.Sq(1) == y
                 True
-                sage: z.Sq(1)  # long time
+                sage: z.Sq(1)
                 h^{4,0}
 
             This calculation is much faster with simplicial sets (on
@@ -728,12 +811,16 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
             TESTS::
 
-                sage: T = cubical_complexes.Torus()
+                sage: RP_cubical = cubical_complexes.RealProjectivePlane()
+                sage: x = RP_cubical.cohomology_ring(GF(2)).basis()[1,0]
+                sage: x.Sq(1)
+                h^{2,0}
+                sage: T = delta_complexes.Torus()
                 sage: x = T.cohomology_ring(GF(2)).basis()[1,0]
                 sage: x.Sq(1)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: Steenrod squares are only implemented for simplicial complexes and simplicial sets
+                NotImplementedError: Steenrod squares are not implemented for this type of cell complex
                 sage: S2 = simplicial_complexes.Sphere(2)
                 sage: x = S2.cohomology_ring(GF(7)).basis()[2,0]
                 sage: x.Sq(1)
@@ -743,9 +830,17 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             """
             P = self.parent()
             scomplex = P.complex()
+            if isinstance(scomplex, CubicalComplex):
+                # Convert cubical complex to simplicial complex, and
+                # convert self to basis element in the new complex's
+                # cohomology ring.
+                scomplex = SimplicialComplex(scomplex, is_mutable=False)
+                P = scomplex.cohomology_ring(self.base_ring())
+                self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
-                raise NotImplementedError('Steenrod squares are only implemented for '
-                                          'simplicial complexes and simplicial sets')
+                raise NotImplementedError('Steenrod squares are not implemented for '
+                                          'this type of cell complex')
+            scomplex = P.complex()
             base_ring = P.base_ring()
             if base_ring.characteristic() != 2:
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
