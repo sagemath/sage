@@ -5,4 +5,4 @@ SPKG_INSTALL_REQUIRES_cysignals
 SPKG_INSTALL_REQUIRES_memory_allocator
 -e ../sage-conf
 -e ../sagemath-environment
-dnl -e ../sagemath-objects
+-e ../sagemath-objects

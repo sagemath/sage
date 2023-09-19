@@ -5,7 +5,7 @@ SPKG_INSTALL_REQUIRES_cysignals
 SPKG_INSTALL_REQUIRES_memory_allocator
 SPKG_INSTALL_REQUIRES_numpy
 SPKG_INSTALL_REQUIRES_scipy
-dnl -e ../sagemath-objects
+-e ../sagemath-objects
 -e ../sagemath-categories
 -e ../sagemath-modules
 -e ../sagemath-repl

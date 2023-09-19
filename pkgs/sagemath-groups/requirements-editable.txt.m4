@@ -7,7 +7,7 @@ SPKG_INSTALL_REQUIRES_pplpy
 -e ../sagemath-modules
 -e ../sage-conf
 -e ../sagemath-environment
-dnl -e ../sagemath-objects
+-e ../sagemath-objects
 -e ../sagemath-categories
-dnl -e ../sagemath-gap
+-e ../sagemath-gap
 -e ../sagemath-repl

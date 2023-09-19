@@ -12,4 +12,4 @@ SPKG_INSTALL_REQUIRES_ipywidgets
 -e ../sagemath-modules
 -e ../sagemath-mpmath
 dnl To be added when ready for editable:
-dnl -e ../sagemath-objects
+-e ../sagemath-objects

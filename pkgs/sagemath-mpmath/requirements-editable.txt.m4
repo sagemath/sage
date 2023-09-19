@@ -7,6 +7,6 @@ SPKG_INSTALL_REQUIRES_memory_allocator
 SPKG_INSTALL_REQUIRES_ipython
 SPKG_INSTALL_REQUIRES_ipywidgets
 dnl To be added when ready for editable:
-dnl -e ../sagemath-environment
-dnl -e ../sagemath-objects
+-e ../sagemath-environment
+-e ../sagemath-objects
 -e ../sagemath-categories

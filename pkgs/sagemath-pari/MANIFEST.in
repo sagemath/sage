@@ -57,6 +57,8 @@ include sage/quadratic_forms/special_values.p*
 global-exclude *.c
 global-exclude *.cpp
 
+include sage/rings/padics/transcendantal.c  # sic
+
 global-exclude all__sagemath*.*
 global-include all__sagemath_pari.py
 
