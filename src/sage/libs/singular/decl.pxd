@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 # distutils: include_dirs = SINGULAR_INCDIR
 # distutils: extra_compile_args = SINGULAR_CFLAGS
 # distutils: libraries = SINGULAR_LIBRARIES

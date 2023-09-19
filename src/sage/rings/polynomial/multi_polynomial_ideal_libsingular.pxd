@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 from sage.libs.singular.decl cimport ideal, ring
 
 cdef object singular_ideal_to_sage_sequence(ideal *i, ring *r, object parent)

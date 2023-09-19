@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Weighted homogeneous elements of free algebras, in letterplace implementation
 

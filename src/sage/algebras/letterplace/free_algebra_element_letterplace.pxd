@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 ###############################################################################
 #
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>

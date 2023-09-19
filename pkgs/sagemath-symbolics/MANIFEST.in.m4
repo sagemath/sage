@@ -47,12 +47,7 @@ include sage/interfaces/tides.p*
 include sage/interfaces/sage-maxima.lisp
 
 graft sage/ext_data/kenzo
-graft sage/ext_data/singular
 graft sage/ext_data/magma
-
-# Including singular is too tricky; singular.pyx pulls in pari, ntl, flint, givaro
-#graft sage/libs/singular
-#include sage/rings/polynomial/*_libsingular.p*
 
 global-exclude all__sagemath_*.py
 global-include all__sagemath_symbolics.py
