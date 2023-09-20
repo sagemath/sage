@@ -484,6 +484,8 @@ if __name__ == '__main__':
         distributions = ["sagemath-symbolics",
                          "sagemath-schemes",
                          "sagemath-glpk",
+                         "sagemath-gap",
+                         "sagemath-groups",
                          "sagemath-polyhedra",
                          "sagemath-graphs",
                          "sagemath-bliss",

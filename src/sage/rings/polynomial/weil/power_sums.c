@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-flint
+ */
 /*
   Low-level code to exhaust over trees of Weil polynomials.
   This code does not implement parallelism; see the Cython wrapper.

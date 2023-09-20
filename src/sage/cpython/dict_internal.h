@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-objects
+ */
 /* This contains internal definitions for python dictionaries,
  * mostly copied from cpython sourcecode.
  *
