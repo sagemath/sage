@@ -211,6 +211,8 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-brial/setup.cfg
 /pkgs/sagemath-eclib/setup.cfg
 /pkgs/sagemath-lcalc/setup.cfg
+/pkgs/sagemath-libbraiding/setup.cfg
+/pkgs/sagemath-libecm/setup.cfg
 
 /pkgs/*/pyproject.toml
 
@@ -246,6 +248,8 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-brial/requirements*.txt
 /pkgs/sagemath-eclib/requirements*.txt
 /pkgs/sagemath-lcalc/requirements*.txt
+/pkgs/sagemath-libbraiding/requirements*.txt
+/pkgs/sagemath-libecm/requirements*.txt
 
 /pkgs/sagemath-categories/MANIFEST.in
 /pkgs/sagemath-polyhedra/MANIFEST.in
