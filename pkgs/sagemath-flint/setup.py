@@ -3,4 +3,4 @@
 from sage_setup import sage_setup
 
 sage_setup(['sagemath-flint'],
-           required_modules=('gsl',)
+           required_modules=('gsl',))

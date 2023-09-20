@@ -1,3 +1,5 @@
+prune sage
+
 include VERSION.txt
 
 graft sage/graphs/bliss_cpp

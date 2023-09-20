@@ -52,6 +52,11 @@ graft sage/ext_data/magma
 global-exclude all__sagemath_*.py
 global-include all__sagemath_symbolics.py
 
+global-exclude __pycache__
 global-exclude *.py[co]
-global-exclude *.so
 global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

@@ -3,7 +3,6 @@ prune sage
 
 include VERSION.txt
 
-prune .tox
 exclude *.m4
 include requirements.txt
 
@@ -19,6 +18,11 @@ include sage/interfaces/gnuplot.p*
 include sage/ext_data/graphs/graph_plot_js.html
 graft sage/ext_data/threejs
 
+global-exclude __pycache__
 global-exclude *.py[co]
-global-exclude *.so
 global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

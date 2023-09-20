@@ -3,7 +3,6 @@ prune sage
 
 include VERSION.txt
 
-prune .tox
 exclude *.m4
 include requirements.txt
 
@@ -32,6 +31,11 @@ graft sage/schemes/toric
 global-exclude all__sagemath_*.py
 global-include all__sagemath_polyhedra.py
 
+global-exclude __pycache__
 global-exclude *.py[co]
-global-exclude *.so
 global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

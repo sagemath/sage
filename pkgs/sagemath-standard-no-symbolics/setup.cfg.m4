@@ -29,6 +29,7 @@ install_requires =
     SPKG_INSTALL_REQUIRES_sagemath_polyhedra
     SPKG_INSTALL_REQUIRES_sagemath_repl
     SPKG_INSTALL_REQUIRES_sagemath_schemes
+    SPKG_INSTALL_REQUIRES_sagemath_singular
 dnl From build/pkgs/sagelib/dependencies
     SPKG_INSTALL_REQUIRES_cypari
     SPKG_INSTALL_REQUIRES_cysignals

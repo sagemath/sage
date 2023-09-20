@@ -30,5 +30,6 @@ requires = [
     SPKG_INSTALL_REQUIRES_sagemath_pari
     SPKG_INSTALL_REQUIRES_sagemath_repl
     SPKG_INSTALL_REQUIRES_sagemath_schemes
+    SPKG_INSTALL_REQUIRES_sagemath_singular
 ]
 build-backend = "setuptools.build_meta"

@@ -10,6 +10,7 @@ include requirements.txt
 graft sage/algebras
 graft sage/combinat
 graft sage/monoids
+exclude sage/monoids/monoid.py          # sagemath-categories
 graft sage/games
 graft sage/sat
 
@@ -88,6 +89,11 @@ prune sage/algebras/lie_algebras                # needs modules
 global-exclude all__sagemath_*.*
 global-include all__sagemath_combinat.py
 
+global-exclude __pycache__
 global-exclude *.py[co]
-global-exclude *.so
 global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

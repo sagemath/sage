@@ -52,6 +52,8 @@ graft sage/typeset                     # dep of sage.categories.tensor
 include sage/groups/generic.p*
 include sage/groups/groups_catalog.p*
 
+include sage/monoids/monoid.py
+
 include sage/rings/ring.*
 include sage/rings/quotient_ring*.p*
 include sage/rings/homset.p*
