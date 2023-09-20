@@ -273,7 +273,7 @@ Miscellaneous Inspection and Development Tools
 .. toctree::
    :maxdepth: 1
 
-   sage/docs/instancedoc
+   sage/misc/instancedoc
    sage/misc/sageinspect
    sage/misc/edit_module
    sage/misc/classgraph
