@@ -560,6 +560,12 @@ if __name__ == "__main__":
 
         args.ignore_bad_distributions = True
 
+    if not args.filename:
+        if not args.update_known_test_failures:
+            sys.exit("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
+        if not args.distribution:
+            sys.exit("sage-fixdoctests: At least one --distribution argument is required for --update-known-test-failures")
+
     if args.distribution or args.venv or args.environment:
         args.keep_both = args.full_tracebacks = True
 
@@ -568,9 +574,6 @@ if __name__ == "__main__":
             sys.exit("sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment")
     elif not args.distribution:
         args.distribution = ['']
-
-    if not args.filename and not args.update_known_test_failures:
-        sys.exit("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
 
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
