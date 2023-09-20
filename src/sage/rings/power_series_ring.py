@@ -146,11 +146,11 @@ from . import integer
 from . import ring
 from .infinity import infinity
 import sage.misc.latex as latex
+from sage.misc.lazy_import import lazy_import
 from sage.structure.nonexact import Nonexact
 
 from sage.interfaces.abc import MagmaElement
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.misc.sage_eval import sage_eval
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import normalize_names
@@ -163,6 +163,8 @@ import sage.categories.fields as fields
 _Fields = fields.Fields()
 
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings
+
+lazy_import('sage.misc.sage_eval', 'sage_eval')
 
 try:
     from .laurent_series_ring import LaurentSeriesRing
