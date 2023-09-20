@@ -399,7 +399,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
 
         EXAMPLES::
 
-            sage: GF(3^10).galois_group().permutation_group()                           # needs sage.rings.finite_rings
+            sage: GF(3^10).galois_group().permutation_group()                           # needs sage.libs.gap sage.rings.finite_rings
             Permutation Group with generators [(1,2,3,4,5,6,7,8,9,10)]
         """
         return PermutationGroup(gap_group=self._gap_().RegularActionHomomorphism().Image())
@@ -416,7 +416,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
 
             sage: from sage.groups.galois_group import GaloisGroup_ab
             sage: Gtest = GaloisGroup_ab(field=None, generator_orders=(2,2,4))
-            sage: Gtest.transitive_number()
+            sage: Gtest.transitive_number()                                             # needs sage.libs.gap
             2
         """
         return ZZ(self.permutation_group()._gap_().TransitiveIdentification())
