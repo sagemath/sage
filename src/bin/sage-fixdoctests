@@ -538,8 +538,7 @@ def fix_with_distribution(file_set, distribution=None, verbose=False):
         if args.ignore_bad_distributions:
             print(f"sage-fixdoctests: {e}, ignoring")
         else:
-            print(f"sage-fixdoctests: {e}")
-            sys.exit(1)
+            sys.exit(f"sage-fixdoctests: {e}")
 
 
 if __name__ == "__main__":
@@ -566,13 +565,12 @@ if __name__ == "__main__":
 
     if len(args.distribution) > 1:
         if args.venv or args.environment:
-            print('sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment')
-            sys.exit(1)
+            sys.exit("sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment")
     elif not args.distribution:
         args.distribution = ['']
 
     if not args.filename and not args.update_known_test_failures:
-        print("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
+        sys.exit("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
 
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
