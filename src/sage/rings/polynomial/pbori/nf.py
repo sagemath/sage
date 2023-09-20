@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 from sage.rings.polynomial.pbori.pbori import mod_mon_set
 from .pbori import (BooleSet, GroebnerStrategy, ReductionStrategy,
                     parallel_reduce, easy_linear_factors)
