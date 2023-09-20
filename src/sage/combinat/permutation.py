@@ -5417,7 +5417,7 @@ class Permutation(CombinatorialElement):
                 perm1[i], perm1[j] = perm1[j], perm1[i]
                 transpositions += 1
 
-        return transpositions
+        return ZZ(transpositions)
 
 def _tableau_contribution(T):
     r"""
