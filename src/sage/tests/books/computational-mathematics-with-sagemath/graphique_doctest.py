@@ -66,7 +66,7 @@ Sage example in ./graphique.tex, line 550::
   sage: liste = [10 + floor(10*sin(i)) for i in range(100)]
   sage: bar_chart(liste)
   Graphics object consisting of 1 graphics primitive
-  sage: sage.stats.time_series.TimeSeries(liste).plot_histogram(bins=20)
+  sage: TimeSeries(liste).plot_histogram(bins=20)
   Graphics object consisting of 20 graphics primitives
 
 Sage example in ./graphique.tex, line 714::
