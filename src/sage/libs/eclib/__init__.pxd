@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 # distutils: language = c++
 # distutils: libraries = ec NTL_LIBRARIES pari gmp m
 # distutils: extra_compile_args = NTL_CFLAGS

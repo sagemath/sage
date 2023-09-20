@@ -209,6 +209,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-pari/setup.cfg
 /pkgs/sagemath-singular/setup.cfg
 /pkgs/sagemath-brial/setup.cfg
+/pkgs/sagemath-eclib/setup.cfg
 
 /pkgs/*/pyproject.toml
 
@@ -242,6 +243,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-pari/requirements*.txt
 /pkgs/sagemath-singular/requirements*.txt
 /pkgs/sagemath-brial/requirements*.txt
+/pkgs/sagemath-eclib/requirements*.txt
 
 /pkgs/sagemath-categories/MANIFEST.in
 /pkgs/sagemath-polyhedra/MANIFEST.in
