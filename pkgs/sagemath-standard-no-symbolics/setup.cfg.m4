@@ -12,8 +12,10 @@ python_requires = >=3.8, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_sage_conf
     SPKG_INSTALL_REQUIRES_six
+    SPKG_INSTALL_REQUIRES_sagemath_brial
     SPKG_INSTALL_REQUIRES_sagemath_categories
     SPKG_INSTALL_REQUIRES_sagemath_combinat
+    SPKG_INSTALL_REQUIRES_sagemath_eclib
     SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_sagemath_flint
     SPKG_INSTALL_REQUIRES_sagemath_gap
@@ -21,6 +23,7 @@ install_requires =
     SPKG_INSTALL_REQUIRES_sagemath_graphs
     SPKG_INSTALL_REQUIRES_sagemath_groups
     SPKG_INSTALL_REQUIRES_sagemath_homfly
+    SPKG_INSTALL_REQUIRES_sagemath_linbox
     SPKG_INSTALL_REQUIRES_sagemath_modules
     SPKG_INSTALL_REQUIRES_sagemath_mpmath
     SPKG_INSTALL_REQUIRES_sagemath_ntl
@@ -35,7 +38,6 @@ dnl From build/pkgs/sagelib/dependencies
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_cython
     SPKG_INSTALL_REQUIRES_gmpy2
-    SPKG_INSTALL_REQUIRES_jinja2
     SPKG_INSTALL_REQUIRES_jupyter_core
     SPKG_INSTALL_REQUIRES_lrcalc_python
     SPKG_INSTALL_REQUIRES_memory_allocator
@@ -80,8 +82,6 @@ scripts =
 sage =
     ext_data/*
     ext_data/kenzo/*
-    ext_data/singular/*
-    ext_data/singular/function_field/*
     ext_data/images/*
     ext_data/doctest/*
     ext_data/doctest/invalid/*
@@ -91,12 +91,4 @@ sage =
     ext_data/notebook-ipython/*
     ext_data/nbconvert/*
     ext_data/graphs/*
-    ext_data/pari/*
-    ext_data/pari/dokchitser/*
-    ext_data/pari/buzzard/*
-    ext_data/pari/simon/*
-    ext_data/magma/*
-    ext_data/magma/latex/*
-    ext_data/magma/sage/*
     ext_data/valgrind/*
-    ext_data/threejs/*

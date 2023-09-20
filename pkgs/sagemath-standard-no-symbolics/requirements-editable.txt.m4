@@ -6,13 +6,24 @@ SPKG_INSTALL_REQUIRES_cysignals
 SPKG_INSTALL_REQUIRES_memory_allocator
 SPKG_INSTALL_REQUIRES_ipython
 SPKG_INSTALL_REQUIRES_ipywidgets
--e ../sagemath-environment
+-e ../sagemath-brial
 -e ../sagemath-categories
+-e ../sagemath-combinat
+-e ../sagemath-eclib
+-e ../sagemath-environment
+-e ../sagemath-flint
+-e ../sagemath-gap
 -e ../sagemath-glpk
+-e ../sagemath-graphs
+-e ../sagemath-groups
+-e ../sagemath-homfly
+-e ../sagemath-linbox
 -e ../sagemath-modules
 -e ../sagemath-mpmath
+-e ../sagemath-ntl
+-e ../sagemath-objects
+-e ../sagemath-pari
 -e ../sagemath-polyhedra
 -e ../sagemath-repl
 -e ../sagemath-schemes
-dnl To be added when ready for editable:
--e ../sagemath-objects
+-e ../sagemath-singular
