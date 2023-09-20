@@ -149,6 +149,8 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_homfly				\
 	sagemath_linbox				\
 	sagemath_ntl				\
+	sagemath_brial				\
+	sagemath_eclib				\
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
 	sagemath_tdlib				\
