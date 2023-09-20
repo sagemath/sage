@@ -1,8 +1,6 @@
 # sage_setup: distribution = sagemath-categories
 # interfaces to other interpreters
 
-from .sage0 import sage0, sage0_version, Sage
-
 # import problems
 try:
     # from maxima_lib import maxima_lib
@@ -12,6 +10,7 @@ except ImportError:
 
 from sage.misc.lazy_import import lazy_import
 
+lazy_import('sage.interfaces.sage0', ['sage0', 'sage0_version', 'Sage'])
 lazy_import('sage.interfaces.axiom', ['Axiom', 'axiom'])
 lazy_import('sage.interfaces.ecm', ['ECM', 'ecm'])
 lazy_import('sage.interfaces.four_ti_2', 'four_ti_2')
