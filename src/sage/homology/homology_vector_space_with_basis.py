@@ -34,6 +34,8 @@ from sage.categories.left_modules import LeftModules
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.sets.family import Family
 
 try:
@@ -409,11 +411,13 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         """
         if self._cohomology:
             return HomologyVectorSpaceWithBasis(self.base_ring(), self.complex(), not self._cohomology)
+        if self.base_ring() == GF(2):
+            return CohomologyRing_mod2(self.base_ring(), self.complex())
         return CohomologyRing(self.base_ring(), self.complex())
 
     def _test_duality(self, **options):
         r"""
-        Test whether the ordered bases for homology and cohomology are compatible.
+        Test if the ordered bases for homology and cohomology are compatible.
         Return nothing if the test succeeds.
 
         This checks whether each evaluation map `H^n \otimes H_n \to
@@ -482,6 +486,29 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
               is an element of cohomology in dimension `n`, then
               ``other`` should be an element of homology in dimension
               `n`, and vice versa.
+
+            This just calls the :meth:`~sage.homology.chains.Cochains.Element.eval`
+            method on the representing chains and cochains.
+
+            EXAMPLES::
+
+                sage: T = simplicial_complexes.Torus()
+                sage: homology = T.homology_with_basis(QQ)
+                sage: cohomology = T.cohomology_ring(QQ)
+                sage: a1, a2 = homology.basis(1)
+                sage: alpha1, alpha2 = cohomology.basis(1)
+                sage: a1.to_cycle()
+                (0, 3) - (0, 6) + (3, 6)
+                sage: alpha1.to_cycle()
+                -\chi_(1, 3) - \chi_(1, 4) - \chi_(2, 3) - \chi_(2, 4) - \chi_(2, 5) + \chi_(3, 6)
+                sage: a1.eval(alpha1)
+                1
+                sage: alpha2.to_cycle()
+                \chi_(1, 3) + \chi_(1, 4) + \chi_(1, 6) + \chi_(2, 4) - \chi_(4, 5) + \chi_(5, 6)
+                sage: alpha2.eval(a1)
+                0
+                sage: (2 * alpha2).eval(a1 + a2)
+                2
             """
             if self.parent()._cohomology:
                 return self.to_cycle().eval(other.to_cycle())
@@ -522,46 +549,22 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         -h^{4,0}
         sage: x * x
         -h^{4,0}
-
-    There are mod 2 cohomology operations defined, also, for
-    simplicial complexes and simplicial sets::
-
-        sage: Hmod2 = CP2.cohomology_ring(GF(2))
-        sage: y = Hmod2.basis(2)[2,0]
-        sage: y.Sq(2)
-        h^{4,0}
-
-        sage: # needs sage.groups
-        sage: Y = simplicial_sets.RealProjectiveSpace(6).suspension()
-        sage: H_Y = Y.cohomology_ring(GF(2))
-        sage: b = H_Y.basis()[2,0]
-        sage: b.Sq(1)
-        h^{3,0}
-        sage: b.Sq(2)
-        0
-        sage: c = H_Y.basis()[4,0]
-        sage: c.Sq(1)
-        h^{5,0}
-        sage: c.Sq(2)
-        h^{6,0}
-        sage: c.Sq(3)
-        h^{7,0}
-        sage: c.Sq(4)
-        0
     """
-    def __init__(self, base_ring, cell_complex):
+    def __init__(self, base_ring, cell_complex, category=None):
         """
         Initialize ``self``.
 
         EXAMPLES::
 
             sage: RP2 = simplicial_complexes.ProjectivePlane()
-            sage: H = RP2.cohomology_ring(GF(2))
-            sage: TestSuite(H).run()
             sage: H = RP2.cohomology_ring(GF(5))
             sage: TestSuite(H).run()
+            sage: T = simplicial_complexes.Torus()
+            sage: H = T.cohomology_ring(QQ)
+            sage: TestSuite(H).run()
         """
-        category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
+        if category is None:
+            category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex, True, category)
 
     def _repr_(self):
@@ -752,6 +755,88 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             """
             return self * other
 
+
+class CohomologyRing_mod2(CohomologyRing):
+    """
+    The mod 2 cohomology ring.
+
+    Based on :class:`CohomologyRing`, with Steenrod operations included.
+
+    .. NOTE::
+
+        This is not intended to be created directly by the user, but
+        instead via the
+        :meth:`cohomology ring<sage.topology.cell_complex.GenericCellComplex.cohomology_ring>`
+        of a :class:`cell
+        complex<sage.topology.cell_complex.GenericCellComplex>`.
+
+    INPUT:
+
+    - ``base_ring`` -- must be the field ``GF(2)``
+    - ``cell_complex`` -- the cell complex whose homology we are
+      computing
+    - ``category`` -- (optional) a subcategory of modules with basis
+
+    EXAMPLES:
+
+    Mod 2 cohomology operations are defined::
+
+        sage: CP2 = simplicial_complexes.ComplexProjectivePlane()
+        sage: Hmod2 = CP2.cohomology_ring(GF(2))
+        sage: y = Hmod2.basis(2)[2,0]
+        sage: y.Sq(2)
+        h^{4,0}
+
+        sage: # needs sage.groups
+        sage: Y = simplicial_sets.RealProjectiveSpace(6).suspension()
+        sage: H_Y = Y.cohomology_ring(GF(2))
+        sage: b = H_Y.basis()[2,0]
+        sage: b.Sq(1)
+        h^{3,0}
+        sage: b.Sq(2)
+        0
+        sage: c = H_Y.basis()[4,0]
+        sage: c.Sq(1)
+        h^{5,0}
+        sage: c.Sq(2)
+        h^{6,0}
+        sage: c.Sq(3)
+        h^{7,0}
+        sage: c.Sq(4)
+        0
+
+    Cohomology can be viewed as a left module over the Steenrod
+    algebra, and also as a right module::
+
+        sage: # needs sage.groups
+        sage: RP4 = simplicial_sets.RealProjectiveSpace(4)
+        sage: H = RP4.cohomology_ring(GF(2))
+        sage: x = H.basis()[1,0]
+        sage: Sq(0,1) * x
+        h^{4,0}
+        sage: Sq(3) * x
+        0
+        sage: x * Sq(3)
+        h^{4,0}
+    """
+
+    def __init__(self, base_ring, cell_complex):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: RP2 = simplicial_complexes.ProjectivePlane()
+            sage: H = RP2.cohomology_ring(GF(2))
+            sage: TestSuite(H).run()
+        """
+        if base_ring != GF(2):
+            raise ValueError
+        category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
+        category = Category.join((category, LeftModules(SteenrodAlgebra(2))))
+        CohomologyRing.__init__(self, base_ring, cell_complex, category=category)
+
+    class Element(CohomologyRing.Element):
         def Sq(self, i):
             r"""
             Return the result of applying `Sq^i` to this element.
@@ -790,6 +875,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 h^{3,0}
 
                 sage: # long time
+                sage: # needs sage.groups
                 sage: RP4 = simplicial_complexes.RealProjectiveSpace(4)
                 sage: H = RP4.cohomology_ring(GF(2))
                 sage: x = H.basis()[1,0]
@@ -821,12 +907,6 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: Steenrod squares are not implemented for this type of cell complex
-                sage: S2 = simplicial_complexes.Sphere(2)
-                sage: x = S2.cohomology_ring(GF(7)).basis()[2,0]
-                sage: x.Sq(1)
-                Traceback (most recent call last):
-                ...
-                ValueError: Steenrod squares are only defined in characteristic 2
             """
             P = self.parent()
             scomplex = P.complex()
@@ -843,6 +923,8 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             scomplex = P.complex()
             base_ring = P.base_ring()
             if base_ring.characteristic() != 2:
+                # This should never happen: the class should only be
+                # instantiated in characteristic 2.
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
             # We keep the same notation as in [GDR1999].
             # The trivial cases:
@@ -935,6 +1017,187 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                         result[(m, gamma_index)] = gamma_coeff
                 ret += P._from_dict(result, remove_zeros=False)
             return ret
+
+        def _acted_upon_(self, a, self_on_left):
+            r"""
+            Define multiplication of ``self`` by ``a``, an
+            element of the Steenrod algebra.
+
+            INPUT:
+
+            - ``a`` - an element of the mod 2 Steenrod algebra
+            - ``self_on_left`` -- ``True`` if we are computing ``self * a``,
+              otherwise ``a * self``
+
+            Algorithm: for left multiplication by ``a``, since we have
+            :meth:`Sq` to compute multiplication by a single generator
+            `Sq^i`, first convert ``a`` to the Serre-Cartan basis ---
+            that is, sums of products of the elements `Sq^i` --- and
+            then apply :meth:`Sq` repeatedly. Right multiplication by
+            ``a`` is the same as left multiplication by the antipode
+            applied to ``a``.
+
+            EXAMPLES::
+
+                sage: # needs sage.groups
+                sage: SRP4 = simplicial_sets.RealProjectiveSpace(4).suspension()
+                sage: H = SRP4.cohomology_ring(GF(2))
+                sage: x = H.basis()[2,0]
+                sage: Sq(0,1) * x
+                h^{5,0}
+                sage: Sq(3) * x
+                0
+                sage: x * Sq(3)
+                h^{5,0}
+
+            TESTS::
+
+                sage: (Sq(2) * Sq(1)) * x == Sq(2) * (Sq(1) * x)
+                True
+                sage: x * (Sq(1) * Sq(2)) == (x * Sq(1)) * Sq(2)
+                True
+            """
+            # Handle field elements first.
+            if a in self.base_ring():
+                return self.map_coefficients(lambda c: c*a)
+            if self_on_left: # i.e., module element on left
+                a = a.antipode()
+            b = a.change_basis('adem')
+            ans = self.parent().zero()
+            mono_dict = b.monomial_coefficients()
+            for seq in mono_dict:
+                x = self
+                for i in reversed(seq):
+                    x = x.Sq(i)
+                ans += mono_dict[seq] * x
+            return ans
+
+    def steenrod_module_map(self, deg_domain, deg_codomain, side='left'):
+        r"""
+        Return a component of the module structure map `A \otimes
+        H \to H`, where `H` is this cohomology ring and `A` is the
+        Steenrod algebra.
+
+        INPUT:
+
+        - ``deg_domain`` -- the degree of the domain in the cohomology
+          ring
+
+        - ``deg_codomain`` -- the degree of the codomain in the
+          cohomology ring
+
+        - ``side`` (optional, default ``'left'``) -- are we computing
+          the action as a left module action or a right module? (This
+          documentation is written from the point of view of a left
+          action for brevity. Just switch all of the tensors for the
+          right action.)
+
+        Writing `m` for ``deg_domain`` and `n` for ``deg_codomain``, this
+        returns `A^{n-m} \otimes H^{m} \to H^{n}`, one single
+        component of the map making `H` into an `A`-module.
+
+        .. WARNING::
+
+           This is only implemented in characteristic two. The main
+           implementation is only for simplicial complexes and simplicial
+           sets; cubical complexes are converted to simplicial complexes
+           first. Note that this converted complex may be large and so
+           computations may be slow. There is no implementation for
+           `\Delta`-complexes.
+
+        Algorithm: use the Milnor basis for the truncated Steenrod
+        algebra `A`, and for cohomology, use the basis with which it
+        is equipped. For each pair of basis elements `a` and `h`,
+        compute the product `a \otimes h`, and use this to assemble a
+        matrix defining the action map via multiplication on the
+        appropriate side. That is, if ``side`` is ``'left`'', return a
+        matrix suitable for multiplication on the left, etc.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: RP4 = simplicial_sets.RealProjectiveSpace(4)
+            sage: H = RP4.cohomology_ring(GF(2))
+            sage: H.steenrod_module_map(1, 2)
+            [1]
+            sage: H.steenrod_module_map(1, 3)
+            [0]
+            sage: H.steenrod_module_map(1, 4, 'left')
+            [1 0]
+            sage: H.steenrod_module_map(1, 4, 'right')
+            [1]
+            [1]
+
+        Products of projective spaces::
+
+            sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
+            sage: K = RP3.product(RP3)
+            sage: H = K.cohomology_ring(GF(2))
+            sage: H
+            Cohomology ring of RP^3 x RP^3 over Finite Field of size 2
+
+        There is one column for each element `a \otimes b`, where `a`
+        is a basis element for the Steenrod algebra and `b` is a basis
+        element for the cohomology algebra.  There is one row for each
+        basis element of the cohomology algebra. Unfortunately, the
+        chosen basis is not the monomial basis for this truncated
+        polynomial algebra::
+
+            sage: x1, x2 = H.basis(1)
+            sage: x1 * x1
+            h^{2,0} + h^{2,1}
+            sage: x2 * x2
+            h^{2,2}
+            sage: x1 * x2
+            h^{2,0}
+
+            sage: H.steenrod_module_map(1, 2)
+            [1 0]
+            [1 0]
+            [0 1]
+            sage: H.steenrod_module_map(1, 3, 'left')
+            [0 0]
+            [0 0]
+            [0 0]
+            [0 0]
+            sage: H.steenrod_module_map(1, 3, 'right')
+            [0 0 0 0]
+            [0 0 0 0]
+            sage: H.steenrod_module_map(2, 3)
+            [0 0 0]
+            [1 1 0]
+            [0 0 0]
+            [0 0 0]
+        """
+        side = side.lower()
+        if side not in ['right', 'left']:
+            raise ValueError('side must be either "left" or "right"')
+        base_ring = self.base_ring()
+        char = base_ring.characteristic()
+        # Use sorted(...) so that there are reproducible orders on the bases.
+        A_basis = sorted(SteenrodAlgebra(char).basis(deg_codomain - deg_domain))
+        H_basis_dom = sorted(self.basis(deg_domain))
+        H_basis_cod = self.basis(deg_codomain).keys()
+        H_basis_cod = {elt: idx for idx, elt in enumerate(sorted(H_basis_cod))}
+        entries = []
+        for a in A_basis:
+            for h in H_basis_dom:
+                vec = vector(base_ring, len(H_basis_cod))
+                if side == 'left':
+                    x = a * h
+                else:
+                    x = h * a
+                monos = x.monomial_coefficients()
+                for seq in monos:
+                    vec[H_basis_cod[seq]] = monos[seq]
+                entries.extend(vec)
+        # We built the matrix column by column, so now we take the
+        # transpose.
+        if side == 'left':
+            return matrix(base_ring, len(A_basis) * len(H_basis_dom),
+                          len(H_basis_cod), entries).transpose()
+        return matrix(base_ring, len(A_basis) * len(H_basis_dom),
+                          len(H_basis_cod), entries)
 
 
 def sum_indices(k, i_k_plus_one, S_k_plus_one):
