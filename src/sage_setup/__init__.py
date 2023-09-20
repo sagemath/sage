@@ -1,11 +1,12 @@
 def sage_setup(distributions, *,
                interpreters=(),
                required_modules=(), optional_modules=(),
+               recurse_packages=(),
                package_data=None):
     import time
 
     from distutils import log
-    from setuptools import setup
+    from setuptools import setup, find_namespace_packages
     from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
     from sage_setup.cython_options import compiler_directives, compile_time_env_variables
     from sage_setup.extensions import create_extension
@@ -51,8 +52,8 @@ def sage_setup(distributions, *,
             # autogen_all()
             from sage_setup.autogen.interpreters import rebuild
             rebuild(os.path.join("sage", "ext", "interpreters"),
-                    interpreters=['CDF', 'RDF', 'RR', 'CC'],
-                    distribution='sagemath-modules', force=True)
+                    interpreters=interpreters,
+                    distribution=distributions[0], force=True)
 
         log.info("Discovering Python/Cython source code....")
         t = time.time()
@@ -61,6 +62,9 @@ def sage_setup(distributions, *,
             '.', ['sage'], distributions=distributions)
         extra_files = find_extra_files(
             '.', ['sage'], '/doesnotexist', distributions=distributions)
+
+        python_packages += find_namespace_packages(where='.', include=recurse_packages)
+
         package_data.update({"": [f
                                   for pkg, files in extra_files.items()
                                   for f in files]})
