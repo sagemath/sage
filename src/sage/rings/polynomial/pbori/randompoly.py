@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 from random import Random
 from pprint import pformat
 
