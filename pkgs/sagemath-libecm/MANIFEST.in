@@ -1,0 +1,21 @@
+prune sage
+
+include VERSION.txt
+
+include sage/interfaces/ecm.p*
+include sage/libs/libecm.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude all__sagemath_*.py
+global-include all__sagemath_libecm.py
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist
