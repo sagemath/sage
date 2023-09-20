@@ -166,7 +166,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ...
             NotImplementedError
         """
-        raise NotImplementedError
+        return self.base_ring().is_noetherian()
 
     def construction(self):
         """

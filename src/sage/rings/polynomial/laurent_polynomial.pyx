@@ -1969,3 +1969,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             0
         """
         return self.__u[-self.__n]
+
+    def divides(self, other):
+        R = self.parent().polynomial_ring()
+        p = R(self.polynomial_construction()[0])
+        q = R(other.polynomial_construction()[0])
+        return p.divides(q)
