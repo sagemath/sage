@@ -11,6 +11,7 @@ include(`setup_cfg_metadata.m4')dnl'
 python_requires = >=3.8, <3.12
 install_requires =
     SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_cysignals
 
 [options.extras_require]
