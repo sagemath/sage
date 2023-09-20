@@ -1857,6 +1857,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def divides(self, other):
         R = self.parent().polynomial_ring()
+        if not R.base_ring().is_integral_domain():
+            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
         p = R(self.monomial_reduction()[0])
         q = R(other.monomial_reduction()[0])
         return p.divides(q)

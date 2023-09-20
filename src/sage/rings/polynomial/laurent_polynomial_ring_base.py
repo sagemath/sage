@@ -162,9 +162,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_noetherian()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            True
         """
         return self.base_ring().is_noetherian()
 
