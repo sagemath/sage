@@ -151,6 +151,9 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_ntl				\
 	sagemath_brial				\
 	sagemath_eclib				\
+	sagemath_lcalc				\
+	sagemath_libbraiding			\
+	sagemath_libecm				\
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
 	sagemath_tdlib				\
@@ -159,7 +162,8 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_meataxe			\
 	sagemath_symbolics			\
 	sagemath_glpk				\
-	sagemath_mpmath
+	sagemath_mpmath				\
+	sagemath_standard_no_symbolics
 
 # sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\

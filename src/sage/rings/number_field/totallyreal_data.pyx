@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-flint
-# sage_setup: distribution = sagemath-pari
 
 # distutils: libraries = gmp
 """

@@ -31,9 +31,10 @@ include sage/combinat/finite_state_machine*.p*
 #include src/sage/combinat/rigged_configurations/kleber_tree.py # want?
 
 graft sage/graphs
+exclude sage/graphs/bliss.p*
 prune sage/graphs/bliss_cpp
 exclude sage/graphs/mcqd.p*
-exclude sage/graph_decompositions/*tdlib*.*
+exclude sage/graphs/graph_decompositions/*tdlib*.*
 
 exclude sage/graphs/chrompoly.p*                        # needs flint
 exclude sage/graphs/matchpoly.p*                        # needs flint
