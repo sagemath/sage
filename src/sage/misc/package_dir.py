@@ -493,6 +493,8 @@ if __name__ == '__main__':
                          "sagemath-coxeter3",
                          "sagemath-meataxe",
                          "sagemath-giac",
+                         "sagemath-brial",
+                         "sagemath-eclib",
                          "sagemath-singular",
                          "sagemath-linbox",
                          "sagemath-flint",
@@ -508,7 +510,7 @@ if __name__ == '__main__':
                          "sagemath-environment",
                          "sagemath-objects"]
     else:
-        distributions = [distribution]
+        distributions = [distribution.replace('_', '-')]
 
     if args.from_egg_info:
         if not distribution:
@@ -573,13 +575,16 @@ if __name__ == '__main__':
                 print("Switch '--from-egg-info' must be used with either "
                       "'--add DISTRIBUTION' or '--set DISTRIBUTION'")
                 sys.exit(1)
-            if (not SAGE_ROOT
-                    or not os.path.exists(os.path.join(SAGE_ROOT, 'pkgs', distribution))):
+            if not SAGE_ROOT:
                 print(f'{SAGE_ROOT=} does not seem to contain a copy of the Sage source root')
+                sys.exit(1)
+            distribution_dir = os.path.join(SAGE_ROOT, 'pkgs', distribution)
+            if not os.path.exists(distribution_dir):
+                print(f'{distribution_dir} does not exist')
                 sys.exit(1)
             distribution_underscore = distribution.replace('-', '_')
             try:
-                with open(os.path.join(SAGE_ROOT, 'pkgs', distribution,
+                with open(os.path.join(distribution_dir,
                                        f'{distribution_underscore}.egg-info', 'SOURCES.txt'), "r") as f:
                     paths.extend(os.path.join(SAGE_ROOT, 'src', line.strip())
                                  for line in f
