@@ -1,3 +1,27 @@
+# sage.doctest: optional - sage.rings.finite_rings
+r"""
+Complex Drinfeld module
+
+This module provides the class
+:class:`sage.rings.function_fields.drinfeld_module.complex_drinfeld_module.DrinfeldModule_complex`,
+which inherits
+:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+
+AUTHORS:
+
+- David Ayotte (2023-09)
+"""
+
+# *****************************************************************************
+#        Copyright (C) 2022 David Ayotte <david.ayotte@mail.concordia.ca>
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
+
 from .drinfeld_module import DrinfeldModule
 
 from sage.rings.integer_ring import ZZ
@@ -8,10 +32,56 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 class DrinfeldModule_complex(DrinfeldModule):
+    r"""
+    This class implements complex Drinfeld `\mathbb{F}_q[T]`-modules.
+
+    A *complex Drinfeld module* is a Drinfeld module whose base field
+    contains `\mathbb{F}_q(T)` and can be embedded in
+    `\mathbb{C}_{\infty}`, the completion of an algebraic closure of
+    `\mathbb{F}_q((1/T))` (the completion of `\mathbb{F}_q(T)`).
+
+    For general definitions and help on Drinfeld modules, see class
+    :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+
+    .. RUBRIC:: Construction:
+
+    The user does not ever need to directly call
+    ``DrinfeldModule_complex`` --- the metaclass ``DrinfeldModule`` is
+    responsible for instantiating the right class depending on the
+    input::
+
+        sage: A = GF(3)['T']
+        sage: K.<T> = Frac(A)
+        sage: phi = DrinfeldModule(A, [T, 1])
+        sage: phi
+        Drinfeld module defined by T |--> t + T
+
+    ::
+
+        sage: isinstance(phi, DrinfeldModule)
+        True
+        sage: from sage.rings.function_field.drinfeld_modules.complex_drinfeld_module import DrinfeldModule_complex
+        sage: isinstance(phi, DrinfeldModule_complex)
+        True
+
+    .. RUBRIC:: Logarithm and exponential
+
+    It is possible to calculate the logarithm and the exponential of
+    any complex Drinfeld modules::
+
+        sage: A = GF(2)['T']
+        sage: K.<T> = Frac(A)
+        sage: phi = DrinfeldModule(A, [T, 1])
+        sage: phi.exponential()
+        z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
+        sage: phi.logarithm()
+        z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
+    """
     @cached_method
     def _compute_coefficient_exp(self, k):
         r"""
-        Return the `q^k`-th coefficient of the exponential of this Drinfeld module.
+        Return the `q^k`-th coefficient of the exponential of this
+        Drinfeld module.
 
         INPUT:
 
@@ -129,7 +199,8 @@ class DrinfeldModule_complex(DrinfeldModule):
     @cached_method
     def _compute_coefficient_log(self, k):
         r"""
-        Return the `q^k`-th coefficient of the logarithm of this Drinfeld module.
+        Return the `q^k`-th coefficient of the logarithm of this
+        Drinfeld module.
 
         TESTS::
 
