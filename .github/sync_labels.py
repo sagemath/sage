@@ -108,6 +108,7 @@ class GhLabelSynchronizer:
         self._url = url
         self._actor = actor
         self._warning_prefix = 'Label Sync Warning:'
+        self._hint_prefix = 'Label Sync Hint:'
         self._labels = None
         self._author = None
         self._draft = None
@@ -262,10 +263,15 @@ class GhLabelSynchronizer:
             created_at = c['created_at']
             if login.startswith('github-actions'):
                 debug('github-actions comment %s created at %s on issue %s found' % (comment_id, created_at, issue))
+                prefix = None
                 if body.startswith(self._warning_prefix):
+                    prefix = self._warning_prefix
+                if body.startswith(self._hint_prefix):
+                    prefix = self._hint_prefix
+                if prefix:
                     created = datetime.strptime(created_at, datetime_format)
                     lifetime = today - created
-                    debug('github-actions %s %s is %s old' % (self._warning_prefix, comment_id, lifetime))
+                    debug('github-actions %s %s is %s old' % (prefix, comment_id, lifetime))
                     if lifetime > warning_lifetime:
                         try:
                             self.rest_api('%s/%s' % (path_args, comment_id), method='DELETE')
@@ -494,8 +500,15 @@ class GhLabelSynchronizer:
             return False
 
         coms = self.get_commits()
-        authors = sum(com['authors'] for com in coms)
-        authors = [auth for auth in authors if not auth['login'] in (self._actor, 'github-actions')]
+        authors = []
+        for com in coms:
+            for author in com['authors']:
+                login = author['login']
+                if not login in authors:
+                    if not login in (self._actor, 'github-actions'):
+                        debug('PR %s has recent commit by %s' % (self._issue, login))
+                        authors.append(login)
+
         if not authors:
             info('PR %s can\'t be approved by the author %s since no other person commited to it' % (self._issue, self._actor))
             return False
@@ -571,6 +584,12 @@ class GhLabelSynchronizer:
         """
         self.add_comment('%s %s' % (self._warning_prefix, text))
 
+    def add_hint(self, text):
+        r"""
+        Perform a system call to ``gh`` to add a hint to an issue or PR.
+        """
+        self.add_comment('%s %s' % (self._hint_prefix, text))
+
     def add_label(self, label):
         r"""
         Add the given label to the issue or PR.
@@ -624,11 +643,10 @@ class GhLabelSynchronizer:
         a corresponding other one.
         """
         if type(item) == State:
-            sel_list = 'state'
+            sel_list = 'status'
         else:
             sel_list = 'priority'
-        self.add_warning('Label *%s* can not be removed. Please add the %s-label which should replace it' % (item.value, sel_list))
-        self.add_label(item.value)
+        self.add_hint('You don\'t need to remove %s labels any more. You\'d better just add the label which replaces it' % sel_list)
         return
 
     # -------------------------------------------------------------------------
@@ -715,6 +733,10 @@ class GhLabelSynchronizer:
             return
 
         item = sel_list(label)
+
+        if len(self.active_partners(item)) > 0:
+            return
+
         if sel_list is State:
             if self.is_pull_request():
                 if item != State.needs_info:
