@@ -208,7 +208,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
             sage: f = D.f
             sage: c = D._normalisation_factor_zz(); c
-            15.7496..
+            15.7496...
 
             sage: from collections import defaultdict
             sage: counter = defaultdict(Integer)
@@ -241,10 +241,19 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             1558545456544038969634991553
 
             sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1], [3, -4, 2]])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 3)
+            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 1.7)
+            sage: D._normalisation_factor_zz() # long time
+            7247.1975...
 
             sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1]])
             sage: D = DiscreteGaussianDistributionLatticeSampler(M, 3)
+            sage: D._normalisation_factor_zz()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Basis must be a square matrix for now.
+
+            sage: c = vector([3, 7, 1])
+            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 3, c = c)
         """
 
         # If σ > 1:
@@ -261,9 +270,13 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
                 return R(exp(-pi**2 * (2 * sigma**2) * x))
             return R(exp(-x / (2 * sigma**2)))
 
-        if self.B != 1:
-            # TODO: Implement
-            raise NotImplementedError("Implement")
+        if self.B.nrows() != self.B.ncols():
+            raise NotImplementedError("Basis must be a square matrix for now.")
+
+        if not self._c_in_lattice:
+            raise NotImplementedError("Lattice must contain 0 for now.")
+
+        n = self.B.nrows()
 
         sigma = self._sigma
         prec = DiscreteGaussianDistributionLatticeSampler.compute_precision(
@@ -271,29 +284,29 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         )
         R = RealField(prec=prec)
         if sigma > 1:
-            B = self.B
-            # TODO: Take B dual
-            raise NotImplementedError("oh no")
-            norm_factor = (sigma * sqrt(2 * pi))**self.B.ncols()
+            det = self.B.det()
+            norm_factor = (sigma * sqrt(2 * pi))**n / det
         else:
-            B = self.B
+            det = 1
             norm_factor = 1
 
         # qfrep computes theta series of a quadratic form, which is *half* the
         # generating function of number of vectors with given norm (and no 0)
+        Q = self.B * self.B.T
         if tau is not None:
-            freq = self.Q.__pari__().qfrep(tau * sigma, 0)
+            freq = Q.__pari__().qfrep(tau * sigma, 0)
             res = R(1)
             for x, fq in enumerate(freq):
-                res += 2 * ZZ(fq) * f(x + 1)
+                res += 2 * ZZ(fq) * f((x + 1) / det**n)
             return R(norm_factor * res)
 
         res = R(1)
         bound = 0
+        # There might still be precision issue but whatever
         while True:
             bound += 1
-            cnt = ZZ(self.Q.__pari__().qfrep(bound, 0)[bound - 1])
-            inc = 2 * cnt * f(bound)
+            cnt = ZZ(Q.__pari__().qfrep(bound, 0)[bound - 1])
+            inc = 2 * cnt * f(bound / det**n)
             if cnt > 0 and res == res + inc:
                 return R(norm_factor * res)
             res += inc
@@ -311,7 +324,12 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
           - an object with a ``matrix()`` method, e.g. ``ZZ^n``, or
           - an object where ``matrix(B)`` succeeds, e.g. a list of vectors.
 
-        - ``sigma`` -- Gaussian parameter `σ>0`.
+        - ``sigma`` -- Gaussian parameter, one of the following:
+
+          - a real number `σ > 0`,
+          - a positive definite matrix `Σ`, or
+          - any matrix-like ``B``, equivalent to ``Σ = BBᵀ``
+
         - ``c`` -- center `c`, any vector in `\ZZ^n` is supported, but `c ∈ Λ(B)` is faster.
         - ``precision`` -- bit precision `≥ 53`.
 
@@ -322,7 +340,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
             sage: f = D.f
             sage: c = D._normalisation_factor_zz(); c
-            56.5486677646162
+            56.5486677646...
 
             sage: from collections import defaultdict
             sage: counter = defaultdict(Integer)
@@ -357,7 +375,17 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         precision = DiscreteGaussianDistributionLatticeSampler.compute_precision(precision, sigma)
 
         self._RR = RealField(precision)
-        self._sigma = self._RR(sigma)
+        # Check if sigma is a (real) number or a scaled identity matrix
+        self.is_spherical = True
+        try:
+            self._sigma = self._RR(sigma)
+        except TypeError as e:
+            print("error:", e)
+            self._sigma = matrix(self._RR, sigma)
+            if self._sigma == self._sigma[0, 0]:
+                self._sigma = self._RR(self._sigma[0, 0])
+            else:
+                self.is_spherical = False
 
         try:
             B = matrix(B)
@@ -384,25 +412,32 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         self.f = lambda x: exp(-(vector(ZZ, B.ncols(), x) - c).norm() ** 2 / (2 * self._sigma ** 2))
 
-        # deal with trivial case first, it is common
-        if self._G == 1 and self._c == 0:
-            self._c_in_lattice = True
-            D = DiscreteGaussianDistributionIntegerSampler(sigma=sigma)
-            self.D = tuple([D for _ in range(self.B.nrows())])
-            self.VS = FreeModule(ZZ, B.nrows())
-            return
+        if self.is_spherical:
+            # deal with trivial case first, it is common
+            if self._G == 1 and self._c == 0:
+                self._c_in_lattice = True
+                D = DiscreteGaussianDistributionIntegerSampler(sigma=sigma)
+                self.D = tuple([D for _ in range(self.B.nrows())])
+                self.VS = FreeModule(ZZ, B.nrows())
+                return
 
-        w = B.solve_left(c)
-        if w in ZZ ** B.nrows():
-            self._c_in_lattice = True
-            D = []
-            for i in range(self.B.nrows()):
-                sigma_ = self._sigma / self._G[i].norm()
-                D.append(DiscreteGaussianDistributionIntegerSampler(sigma=sigma_))
-            self.D = tuple(D)
-            self.VS = FreeModule(ZZ, B.nrows())
+            else:
+                self._c_in_lattice = False
+                try:
+                    w = B.solve_left(c)
+                    if w in ZZ ** B.nrows():
+                        self._c_in_lattice = True
+                        D = []
+                        for i in range(self.B.nrows()):
+                            sigma_ = self._sigma / self._G[i].norm()
+                            D.append(DiscreteGaussianDistributionIntegerSampler(sigma=sigma_))
+                        self.D = tuple(D)
+                        self.VS = FreeModule(ZZ, B.nrows())
+                except ValueError:
+                    pass
         else:
-            self._c_in_lattice = False
+            # TODO: Precompute basis of sqrt(sigma), change _str_
+            raise NotImplementedError
 
     def __call__(self):
         r"""
@@ -535,3 +570,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             c = c - z * B[i]
             v = v + z * B[i]
         return v
+
+    def _call_non_spherical(self):
+        """
+        Non-spherical sampler
+
+        .. note::
+
+           Do not call this method directly, call :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
+        """
+        # TODO: Implement
+        raise NotImplementedError
