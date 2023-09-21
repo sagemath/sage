@@ -721,7 +721,7 @@ cdef class GenericBackend:
             tester = p._tester(**options)
         # From doctest of GenericBackend.solve:
         tester.assertIsNone(p.add_linear_constraints(5, 0, None))
-        tester.assertIsNone(p.add_col(list(xrange(5)), list(xrange(5))))
+        tester.assertIsNone(p.add_col(list(range(5)), list(range(5))))
         tester.assertEqual(p.solve(), 0)
         tester.assertIsNone(p.objective_coefficient(0,1))
         from sage.numerical.mip import MIPSolverException
@@ -1299,7 +1299,7 @@ cdef class GenericBackend:
         p.add_linear_constraints(5, 0, None)
         try:
             # p.add_col(range(5), range(5))     -- bad test because COIN sparsifies the 0s away on copy
-            p.add_col(list(xrange(5)), list(xrange(1, 6)))
+            p.add_col(list(range(5)), list(range(1, 6)))
         except NotImplementedError:
             # Gurobi does not implement add_col
             pass

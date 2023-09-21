@@ -324,7 +324,7 @@ class Interface(WithEqualityById, ParentWithBase):
         If no such method is defined, raises an AttributeError instead of a
         TypeError.
         """
-        s = '_%s_'%self.name()
+        s = '_%s_' % self.name()
         if s == '_maxima_lib_':
             s = '_maxima_'
         if s == '_pari_':
@@ -375,11 +375,11 @@ class Interface(WithEqualityById, ParentWithBase):
                     A.append(w.name())
                     z.append(w)
             X = ','.join(A)
-            r = self.new('%s%s%s'%(self._left_list_delim(), X, self._right_list_delim()))
+            r = self.new('%s%s%s' % (self._left_list_delim(), X, self._right_list_delim()))
             r.__sage_list = z   # do this to avoid having the entries of the list be garbage collected
             return r
 
-        raise TypeError("unable to coerce element into %s"%self.name())
+        raise TypeError("unable to coerce element into %s" % self.name())
 
     def new(self, code):
         return self(code)
@@ -412,14 +412,14 @@ class Interface(WithEqualityById, ParentWithBase):
         try:
             return self.__true_symbol
         except AttributeError:
-            self.__true_symbol = self.get('1 %s 1'%self._equality_symbol())
+            self.__true_symbol = self.get('1 %s 1' % self._equality_symbol())
             return self.__true_symbol
 
     def _false_symbol(self):
         try:
             return self.__false_symbol
         except AttributeError:
-            self.__false_symbol = self.get('1 %s 2'%self._equality_symbol())
+            self.__false_symbol = self.get('1 %s 2' % self._equality_symbol())
             return self.__false_symbol
 
     def _lessthan_symbol(self):
@@ -470,7 +470,7 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s%s%s;'%(var,self._assign_symbol(), value)
+        cmd = '%s%s%s;' % (var,self._assign_symbol(), value)
         self.eval(cmd)
 
     def get(self, var):
@@ -509,7 +509,7 @@ class Interface(WithEqualityById, ParentWithBase):
             del self._available_vars[0]
             return v
         self.__seq += 1
-        return "sage%s"%self.__seq
+        return "sage%s" % self.__seq
 
     def _create(self, value, name=None):
         name = self._next_var_name() if name is None else name
@@ -612,7 +612,7 @@ class Interface(WithEqualityById, ParentWithBase):
         self._check_valid_function_name(function)
         s = self._function_call_string(function,
                                        [s.name() for s in args],
-                                       ['%s=%s'%(key,value.name()) for key, value in kwds.items()])
+                                       ['%s=%s' % (key,value.name()) for key, value in kwds.items()])
         return self.new(s)
 
     def _function_call_string(self, function, args, kwds):
@@ -624,7 +624,7 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: maxima._function_call_string('diff', ['f(x)', 'x'], [])
             'diff(f(x),x)'
         """
-        return "%s(%s)"%(function, ",".join(list(args) + list(kwds)))
+        return "%s(%s)" % (function, ",".join(list(args) + list(kwds)))
 
     def call(self, function_name, *args, **kwds):
         return self.function_call(function_name, args, kwds)
@@ -962,18 +962,18 @@ class InterfaceElement(Element):
         """
         P = self._check_valid()
         try:
-            if P.eval("%s %s %s"%(self.name(), P._equality_symbol(),
+            if P.eval("%s %s %s" % (self.name(), P._equality_symbol(),
                                      other.name())) == P._true_symbol():
                 return rich_to_bool(op, 0)
         except RuntimeError:
             pass
         try:
-            if P.eval("%s %s %s"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
+            if P.eval("%s %s %s" % (self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, -1)
         except RuntimeError:
             pass
         try:
-            if P.eval("%s %s %s"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
+            if P.eval("%s %s %s" % (self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 1)
         except Exception:
             pass
@@ -1004,7 +1004,7 @@ class InterfaceElement(Element):
         try:
             P = self.parent()
             if P is None:
-                raise ValueError("The %s session in which this object was defined is no longer running."%P.name())
+                raise ValueError("The %s session in which this object was defined is no longer running." % P.name())
         except AttributeError:
             raise ValueError("The session in which this object was defined is no longer running.")
         return P
@@ -1285,14 +1285,14 @@ class InterfaceElement(Element):
             -122023936/161051
         """
         P = self._check_valid()
-        return P('%s.%s'%(self.name(), attrname))
+        return P('%s.%s' % (self.name(), attrname))
 
     def __getitem__(self, n):
         P = self._check_valid()
         if not isinstance(n, tuple):
-            return P.new('%s[%s]'%(self._name, n))
+            return P.new('%s[%s]' % (self._name, n))
         else:
-            return P.new('%s[%s]'%(self._name, str(n)[1:-1]))
+            return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
 
     def __int__(self):
         """
@@ -1429,7 +1429,7 @@ class InterfaceElement(Element):
 
     def gen(self, n):
         P = self._check_valid()
-        return P.new('%s.%s'%(self._name, int(n)))
+        return P.new('%s.%s' % (self._name, int(n)))
 
     def _operation(self, operation, other=None):
         r"""
@@ -1466,9 +1466,9 @@ class InterfaceElement(Element):
         """
         P = self._check_valid()
         if other is None:
-            cmd = '%s %s'%(operation, self._name)
+            cmd = '%s %s' % (operation, self._name)
         else:
-            cmd = '%s %s %s'%(self._name, operation, other._name)
+            cmd = '%s %s %s' % (self._name, operation, other._name)
         try:
             return P.new(cmd)
         except Exception as msg:
