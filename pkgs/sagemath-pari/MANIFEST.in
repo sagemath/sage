@@ -26,6 +26,7 @@ graft sage/rings/polynomial/padics
 graft sage/rings/valuation
 include sage/rings/function_field/valuation.p*
 include sage/libs/linkages/padics/*.pxi                         # FIXME?
+include sage/rings/tate*.p*
 # exclude what is shipped by sagemath-categories
 exclude sage/rings/padics/padic_generic.p*
 exclude sage/rings/padics/local_generic.p*

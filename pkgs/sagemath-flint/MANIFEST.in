@@ -27,6 +27,8 @@ include           sage/rings/fraction_field_FpT.p*
 include           sage/combinat/posets/hasse_cython_flint.p*
 include           sage/graphs/chrompoly.p*
 include           sage/graphs/matchpoly.p*
+include           sage/data_structures/bounded_integer_sequences.p*     # uses flint ... just for bitcount
+graft             sage/quivers                                  # because of the dep on bounded_integer_sequences
 
 ## Number fields, MPFI
 
@@ -60,6 +62,8 @@ global-include    all__sagemath_flint.py
 
 global-exclude *.c
 global-exclude *.cpp
+
+include sage/rings/polynomial/weil/power_sums.c
 
 global-exclude __pycache__
 global-exclude *.py[co]

@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-brial
+ */
 #include <polybori/BoolePolynomial.h>
 #include <polybori/BoolePolyRing.h>
 #include <polybori/factories/VariableBlock.h>

@@ -219,6 +219,8 @@ include sage/rings/function_field/hermite_form_polynomial.p*             # cimpo
 #include sage/rings/function_field/valuation.p*                  -> sagemath-pari
 
 include sage/rings/polynomial/laurent_polynomial_mpair.p*                # cimports Matrix
+include sage/rings/polynomial/ore_*.p*
+include sage/rings/polynomial/skew_*.p*
 
 include sage/rings/ring_extension*.p*
 

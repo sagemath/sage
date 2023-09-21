@@ -69,6 +69,7 @@ include sage/rings/rational*.*
 include sage/rings/infinity.*
 include sage/rings/factorint.p*
 include sage/rings/sum_of_squares.p*
+include sage/rings/generic.p*
 
 include sage/misc/allocator.*
 include sage/misc/latex*.*
@@ -129,6 +130,7 @@ include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.p*
 include sage/rings/finite_rings/integer_mod_ring.p*
 include sage/rings/finite_rings/conway_polynomials.p*
+include sage/rings/finite_rings/galois_group.p*
 include sage/rings/algebraic_closure_finite_field.p*
 
 include sage/rings/number_field/number_field_base.p*

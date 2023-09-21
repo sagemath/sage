@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Univariate dense skew polynomials over finite fields
 
