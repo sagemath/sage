@@ -31,6 +31,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.algebras import Algebras
 from sage.categories.category import Category
 from sage.categories.left_modules import LeftModules
+from sage.categories.right_modules import RightModules
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
@@ -409,10 +410,15 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             sage: coh.dual() is hom
             True
         """
-        if self._cohomology:
-            return HomologyVectorSpaceWithBasis(self.base_ring(), self.complex(), not self._cohomology)
         if self.base_ring() == GF(2):
+            if self._cohomology:
+                return HomologyVectorSpaceWithBasis_mod2(self.base_ring(),
+                                                         self.complex())
             return CohomologyRing_mod2(self.base_ring(), self.complex())
+        if self._cohomology:
+            return HomologyVectorSpaceWithBasis(self.base_ring(),
+                                                self.complex(),
+                                                not self._cohomology)
         return CohomologyRing(self.base_ring(), self.complex())
 
     def _test_duality(self, **options):
@@ -510,10 +516,186 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                 sage: (2 * alpha2).eval(a1 + a2)
                 2
             """
+            if not self or not other:
+                return self.base_ring().zero()
             if self.parent()._cohomology:
                 return self.to_cycle().eval(other.to_cycle())
             else:
                 return other.to_cycle().eval(self.to_cycle())
+
+class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
+    r"""
+    Homology vector space mod 2.
+
+    Based on :class:`HomologyVectorSpaceWithBasis`, with Steenrod
+    operations included.
+
+    .. NOTE::
+
+        This is not intended to be created directly by the user, but
+        instead via the method
+        :meth:`~sage.topology.cell_complex.GenericCellComplex.homology_with_basis`
+        for the class of :class:`cell
+        complexes<sage.topology.cell_complex.GenericCellComplex>`.
+
+    .. TODO::
+
+        Implement Steenrod operations on (co)homology at odd primes,
+        and thereby implement this class over `\GF{p}` for any `p`.
+
+    INPUT:
+
+    - ``base_ring`` -- must be the field ``GF(2)``
+    - ``cell_complex`` -- the cell complex whose homology we are
+      computing
+    - ``category`` -- (optional) a subcategory of modules with basis
+
+    This does not include the ``cohomology`` argument present for
+    :class:`HomologyVectorSpaceWithBasis`: use
+    :class:`CohomologyRing_mod2` for cohomology.
+
+    EXAMPLES:
+
+    Mod 2 cohomology operations are defined on both the left and the
+    right::
+
+        sage: # needs sage.groups
+        sage: RP4 = simplicial_sets.RealProjectiveSpace(5)
+        sage: H = RP4.homology_with_basis(GF(2))
+        sage: x4 = H.basis()[4,0]
+        sage: x4 * Sq(1)
+        h_{3,0}
+        sage: Sq(1) * x4
+        h_{3,0}
+        sage: Sq(2) * x4
+        h_{2,0}
+        sage: Sq(3) * x4
+        h_{1,0}
+        sage: Sq(0,1) * x4
+        h_{1,0}
+        sage: x4 * Sq(0,1)
+        h_{1,0}
+        sage: Sq(3) * x4
+        h_{1,0}
+        sage: x4 * Sq(3)
+        0
+    """
+    def __init__(self, base_ring, cell_complex, category=None):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: H = simplicial_complexes.Torus().homology_with_basis(GF(2))
+            sage: TestSuite(H).run()
+            sage: H = simplicial_complexes.Sphere(3).homology_with_basis(GF(2))
+            sage: TestSuite(H).run()
+        """
+        if base_ring != GF(2):
+            raise ValueError
+        category = Modules(base_ring).WithBasis().Graded().FiniteDimensional().or_subcategory(category)
+        category = Category.join((category, 
+                                  LeftModules(SteenrodAlgebra(2)),
+                                  RightModules(SteenrodAlgebra(2))))
+        HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex,
+                                              cohomology=False,
+                                              category=category)
+
+    class Element(HomologyVectorSpaceWithBasis.Element):
+
+        def _acted_upon_(self, a, self_on_left):
+            r"""
+            Define multiplication of ``self`` by ``a``, an
+            element of the Steenrod algebra.
+
+            INPUT:
+
+            - ``a`` - an element of the mod 2 Steenrod algebra
+            - ``self_on_left`` -- ``True`` if we are computing ``self * a``,
+              otherwise ``a * self``
+
+            Algorithm: use the action of the Steenrod algebra `A` on
+            cohomology to construct the action on homology. That is,
+            given a right action of `A` on `H^*`,
+
+            .. MATH::
+
+                \phi_L: H^* \otimes A \to H^*
+
+            we define (a la Boardman [Boa1982]_, p. 190)
+
+            .. MATH::
+
+                S'' \phi_L: A \otimes H_* \to H_*
+
+            using the formula
+
+            .. MATH::
+
+                \langle (S'' \phi) (f \otimes a), x \rangle
+                = \langle f, \phi_L (a \otimes x) \rangle,
+
+            for `f \in H_m`, `a \in A^n`, and `x \in
+            H^{m-n}`. Somewhat more succintly, we define the action `f
+            \cdot a` by
+
+            .. MATH::
+
+                (f \cdot a) (x) = f (a \cdot x)
+
+            So given `f` (a.k.a. ``self``) and `a`, we compute `f (a
+            \cdot x)` for all basis elements `x` in `H^{m-n}`,
+            yielding a vector indexed by those basis elements. Since
+            our basis for homology is dual to the basis for
+            cohomology, we can then use the homology basis to convert
+            the vector to an element of `H_{m-n}`.
+
+            This gives a right module structure. To get a left module
+            structure, use the right module structure after applying
+            the antipode to `a`.
+
+            EXAMPLES::
+
+                sage: # needs sage.groups
+                sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
+                sage: H = RP5.homology_with_basis(GF(2))
+                sage: x5 = list(H.basis(5))[0]
+                sage: Sq(1) * x5
+                0
+                sage: Sq(2) * x5
+                h_{3,0}
+                sage: x5 * Sq(2)
+                h_{3,0}
+
+            TESTS::
+
+                sage: # needs sage.groups
+                sage: RP4 = simplicial_sets.RealProjectiveSpace(5)
+                sage: H = RP4.homology_with_basis(GF(2))
+                sage: x4 = H.basis()[4,0]
+                sage: (Sq(1) * Sq(2)) * x4 != 0
+                True
+                sage: (Sq(1) * Sq(2)) * x4 == Sq(1) * (Sq(2) * x4)
+                True
+                sage: x4 * (Sq(2) * Sq(1)) == (x4 * Sq(2)) * Sq(1)
+                True
+            """
+            # Handle field elements first.
+            if a in self.base_ring():
+                return self.map_coefficients(lambda c: c*a)
+            if not self_on_left: # i.e., module element on left
+                a = a.antipode()
+
+            m = self.degree()
+            n = a.degree()
+            if m <= n:
+                return self.parent().zero()
+
+            vec = []
+            for x in sorted(self.parent().dual().basis(m-n)):
+                vec.append(self.eval(a * x))
+            B = list(self.parent().basis(m-n))
+            return self.parent().linear_combination(zip(B, vec))
 
 
 class CohomologyRing(HomologyVectorSpaceWithBasis):
@@ -757,7 +939,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
 
 class CohomologyRing_mod2(CohomologyRing):
-    """
+    r"""
     The mod 2 cohomology ring.
 
     Based on :class:`CohomologyRing`, with Steenrod operations included.
@@ -770,6 +952,11 @@ class CohomologyRing_mod2(CohomologyRing):
         of a :class:`cell
         complex<sage.topology.cell_complex.GenericCellComplex>`.
 
+    .. TODO::
+
+        Implement Steenrod operations on (co)homology at odd primes,
+        and thereby implement this class over `\GF{p}` for any `p`.
+
     INPUT:
 
     - ``base_ring`` -- must be the field ``GF(2)``
@@ -779,7 +966,8 @@ class CohomologyRing_mod2(CohomologyRing):
 
     EXAMPLES:
 
-    Mod 2 cohomology operations are defined::
+    Mod 2 cohomology operations are defined on both the left and the
+    right::
 
         sage: CP2 = simplicial_complexes.ComplexProjectivePlane()
         sage: Hmod2 = CP2.cohomology_ring(GF(2))
@@ -833,7 +1021,9 @@ class CohomologyRing_mod2(CohomologyRing):
         if base_ring != GF(2):
             raise ValueError
         category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
-        category = Category.join((category, LeftModules(SteenrodAlgebra(2))))
+        category = Category.join((category, 
+                                  LeftModules(SteenrodAlgebra(2)),
+                                  RightModules(SteenrodAlgebra(2))))
         CohomologyRing.__init__(self, base_ring, cell_complex, category=category)
 
     class Element(CohomologyRing.Element):
@@ -1052,6 +1242,7 @@ class CohomologyRing_mod2(CohomologyRing):
 
             TESTS::
 
+                sage: # needs sage.groups
                 sage: (Sq(2) * Sq(1)) * x == Sq(2) * (Sq(1) * x)
                 True
                 sage: x * (Sq(1) * Sq(2)) == (x * Sq(1)) * Sq(2)
@@ -1110,7 +1301,7 @@ class CohomologyRing_mod2(CohomologyRing):
         is equipped. For each pair of basis elements `a` and `h`,
         compute the product `a \otimes h`, and use this to assemble a
         matrix defining the action map via multiplication on the
-        appropriate side. That is, if ``side`` is ``'left`'', return a
+        appropriate side. That is, if ``side`` is ``'left'``, return a
         matrix suitable for multiplication on the left, etc.
 
         EXAMPLES::
@@ -1140,8 +1331,8 @@ class CohomologyRing_mod2(CohomologyRing):
         is a basis element for the Steenrod algebra and `b` is a basis
         element for the cohomology algebra.  There is one row for each
         basis element of the cohomology algebra. Unfortunately, the
-        chosen basis is not the monomial basis for this truncated
-        polynomial algebra::
+        chosen basis for this truncated polynomial algebra is not the
+        monomial basis::
 
             sage: x1, x2 = H.basis(1)
             sage: x1 * x1

@@ -837,8 +837,7 @@ class GenericCellComplex(SageObject):
         .. SEEALSO::
 
             If ``cohomology`` is ``True``, this returns the cohomology
-            as a graded module. For the ring structure, use
-            :meth:`cohomology_ring`.
+            as a ring: it calls :meth:`cohomology_ring`.
 
         EXAMPLES::
 
@@ -866,7 +865,12 @@ class GenericCellComplex(SageObject):
             sage: list(H.basis(3))                                                      # needs sage.modules
             [h^{3,0}]
         """
-        from sage.homology.homology_vector_space_with_basis import HomologyVectorSpaceWithBasis
+        from sage.homology.homology_vector_space_with_basis import \
+            HomologyVectorSpaceWithBasis, HomologyVectorSpaceWithBasis_mod2
+        if base_ring == GF(2):
+            if cohomology:
+                return self.cohomology_ring(base_ring)
+            return HomologyVectorSpaceWithBasis_mod2(base_ring, self)
         return HomologyVectorSpaceWithBasis(base_ring, self, cohomology)
 
     def cohomology_ring(self, base_ring=QQ):
