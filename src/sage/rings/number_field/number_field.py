@@ -5085,9 +5085,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         else:
             return gens
 
-    # For backwards compatibility:
-    selmer_group = deprecated_function_alias(31345, selmer_generators)
-
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
         Return an iterator through elements of the finite group `K(S,m)`.
