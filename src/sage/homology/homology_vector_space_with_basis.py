@@ -444,15 +444,13 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
 
             sage: simplicial_complexes.RandomComplex(12, 3, .5).homology_with_basis(GF(2))._test_duality() # long time
         """
-        okay = True
+        tester = self._tester(**options))
         dual = self.dual()
         dims = [a[0] for a in self._indices]
-        for dim in range(max(dims) + 1):
+        for dim in range(max(max(dims),  tester._max_runs) + 1):
             n = len(self.basis(dim))
             m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
-            okay = (m == 1)
-            if not okay:
-                print('error in dimension {}'.format(dim))
+            tester.assertEqual(m, 1,f "error in dimension {dim}")
 
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
@@ -488,10 +486,10 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``other`` -- an element of the dual space: if ``self``
+            - ``other`` -- an element of the dual space; if ``self``
               is an element of cohomology in dimension `n`, then
               ``other`` should be an element of homology in dimension
-              `n`, and vice versa.
+              `n`, and vice versa
 
             This just calls the :meth:`~sage.homology.chains.Cochains.Element.eval`
             method on the representing chains and cochains.
@@ -522,6 +520,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                 return self.to_cycle().eval(other.to_cycle())
             else:
                 return other.to_cycle().eval(self.to_cycle())
+
 
 class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
     r"""
@@ -594,7 +593,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
         if base_ring != GF(2):
             raise ValueError
         category = Modules(base_ring).WithBasis().Graded().FiniteDimensional().or_subcategory(category)
-        category = Category.join((category, 
+        category = Category.join((category,
                                   LeftModules(SteenrodAlgebra(2)),
                                   RightModules(SteenrodAlgebra(2))))
         HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex,
@@ -691,11 +690,10 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
             if m <= n:
                 return self.parent().zero()
 
-            vec = []
-            for x in sorted(self.parent().dual().basis(m-n)):
-                vec.append(self.eval(a * x))
-            B = list(self.parent().basis(m-n))
-            return self.parent().linear_combination(zip(B, vec))
+            P = self.parent()
+            B = list(P.basis(m-n))
+            return P._from_dict({b.support()[0]: self.eval(a * x)
+                                 for x in sorted(self.parent().dual().basis(m-n))})
 
 
 class CohomologyRing(HomologyVectorSpaceWithBasis):
@@ -1019,9 +1017,9 @@ class CohomologyRing_mod2(CohomologyRing):
             sage: TestSuite(H).run()
         """
         if base_ring != GF(2):
-            raise ValueError
+            raise ValueError("the base ring must be GF(2)")
         category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
-        category = Category.join((category, 
+        category = Category.join((category,
                                   LeftModules(SteenrodAlgebra(2)),
                                   RightModules(SteenrodAlgebra(2))))
         CohomologyRing.__init__(self, base_ring, cell_complex, category=category)
@@ -1277,12 +1275,11 @@ class CohomologyRing_mod2(CohomologyRing):
         - ``deg_codomain`` -- the degree of the codomain in the
           cohomology ring
 
-        - ``side`` (optional, default ``'left'``) -- are we computing
-          the action as a left module action or a right module? (This
-          documentation is written from the point of view of a left
-          action for brevity. Just switch all of the tensors for the
-          right action.)
+        - ``side`` default ``'left'``) -- whether we are computing
+          the action as a left module action or a right module
 
+        We will write this with respect to the left action;
+        for the right action, just switch all of the the tensors.
         Writing `m` for ``deg_domain`` and `n` for ``deg_codomain``, this
         returns `A^{n-m} \otimes H^{m} \to H^{n}`, one single
         component of the map making `H` into an `A`-module.
@@ -1296,7 +1293,9 @@ class CohomologyRing_mod2(CohomologyRing):
            computations may be slow. There is no implementation for
            `\Delta`-complexes.
 
-        Algorithm: use the Milnor basis for the truncated Steenrod
+        ALGORITHM:
+
+        Use the Milnor basis for the truncated Steenrod
         algebra `A`, and for cohomology, use the basis with which it
         is equipped. For each pair of basis elements `a` and `h`,
         compute the product `a \otimes h`, and use this to assemble a

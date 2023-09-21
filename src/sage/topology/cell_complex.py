@@ -867,9 +867,9 @@ class GenericCellComplex(SageObject):
         """
         from sage.homology.homology_vector_space_with_basis import \
             HomologyVectorSpaceWithBasis, HomologyVectorSpaceWithBasis_mod2
+        if cohomology:
+            return self.cohomology_ring(base_ring)
         if base_ring == GF(2):
-            if cohomology:
-                return self.cohomology_ring(base_ring)
             return HomologyVectorSpaceWithBasis_mod2(base_ring, self)
         return HomologyVectorSpaceWithBasis(base_ring, self, cohomology)
 
