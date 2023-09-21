@@ -1364,7 +1364,7 @@ it is possible to distinguish files with known doctest failures
 from new failures. The file ``known-test-failures.json`` should be
 prepared in the same format as ``timings2.json``.
 
-Source files that marked as failed there will be marked as "[failed in baseline]"
+Source files marked as failed there will be marked as "[failed in baseline]"
 failures in the doctest report; and if there are only baseline failures, no
 new failures, then ``sage -t`` will exit with status code 0 (success).
 
