@@ -1970,10 +1970,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__u[-self.__n]
 
+    @coerce_binop
     def divides(self, other):
         R = self.parent().polynomial_ring()
-        if not R.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
         p = R(self.polynomial_construction()[0])
         q = R(other.polynomial_construction()[0])
         return p.divides(q)

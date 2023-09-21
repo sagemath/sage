@@ -442,10 +442,9 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         TESTS::
 
-            # sage: TestSuite(LaurentPolynomialRing(Zmod(4), 'y')).run()
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2), 'y')).run()
             sage: TestSuite(LaurentPolynomialRing(ZZ, 'u')).run()
-
-            # sage: TestSuite(LaurentPolynomialRing(Zmod(4)['T'], 'u')).run()
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2)['T'], 'u')).run()
         """
         if R.ngens() != 1:
             raise ValueError("must be 1 generator")

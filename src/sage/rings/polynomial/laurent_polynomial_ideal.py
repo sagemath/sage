@@ -24,6 +24,7 @@ AUTHORS:
 
 from sage.rings.ideal import Ideal_generic
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
+from sage.arith.misc import GCD
 
 class LaurentPolynomialIdeal( Ideal_generic ):
     def __init__(self, ring, gens, coerce=True, hint=None):
@@ -399,31 +400,36 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y
              over Rational Field
         """
-        if self._poly_ideal is not None and (self._saturated or not saturate):
-            return self._poly_ideal
         P = self.ring()
         Q = self._poly_ring
+        if len(P.gens()) == 1:
+            a = [Q(p.polynomial_construction()[0]) for p in self.gens()]
+            if P.is_integral_domain():
+                a = GCD(a)
+            return Q.ideal(a)
+        if self._poly_ideal is not None and (self._saturated or not saturate):
+            return self._poly_ideal
         gens = self.gens()
         if len(gens) == 0:
-            I = Q.ideal([])
-            self._poly_ideal = I
-            self._hint = I
+            id = Q.ideal([])
+            self._poly_ideal = id
+            self._hint = id
             self._saturated = True
-            return I
+            return id
         l2 = [f.__reduce__()[1][0] for f in gens]
         hint = self._hint
         l2 += list(hint.groebner_basis())
-        I = Q.ideal(l2)
+        id = Q.ideal(l2)
         if not saturate:
-            self._poly_ideal = I
-            self._hint = I
+            self._poly_ideal = id
+            self._hint = id
             return Q.ideal(l2)
         n = P.ngens()
-        I = I.saturation(Q.ideal([Q.monomial(*((1,) * n))]))[0]
-        self._poly_ideal = I
-        self._hint = I
+        id = id.saturation(Q.ideal([Q.monomial(*((1,) * n))]))[0]
+        self._poly_ideal = id
+        self._hint = id
         self._saturated = True
-        return I
+        return id
 
     def groebner_basis(self, saturate=True):
         """
