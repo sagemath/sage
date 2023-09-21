@@ -56,8 +56,6 @@ from sage.libs.gsl.complex cimport *
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
 
-from sage.misc.superseded import deprecated_function_alias
-
 cimport gmpy2
 gmpy2.import_gmpy2()
 
@@ -2240,8 +2238,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             0.217621561854403 - 0.868014142895925*I
         """
         return ~(self.tan())
-
-    cotan = deprecated_function_alias(29412, cot)
 
     def cos(self):
         """
