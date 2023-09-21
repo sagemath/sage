@@ -1588,8 +1588,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f.monomial_reduction()
             (3*x^5 + x^3 + 1, x^-1)
         """
-        u, n = self.polynomial_construction()
-        return (u, self.parent().gen(0) ** n)
+        return (self.__u, self._parent.gen(0) ** self.__n)
 
     def is_constant(self):
         """
