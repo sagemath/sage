@@ -264,7 +264,9 @@ class DocTestReporter(SageObject):
             Output so far...
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Or a process that returned a bad exit code::
 
@@ -275,7 +277,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Or a process that segfaulted::
 
@@ -287,7 +291,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Report a timeout with results and a ``SIGKILL``::
 
@@ -299,7 +305,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 1,
+                                        'walltime': 1000000.0}}
 
         This is an internal error since results is None::
 
@@ -310,12 +318,15 @@ class DocTestReporter(SageObject):
             All output
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 1,
+                                        'walltime': 1000000.0}}
 
         Or tell the user that everything succeeded::
 
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
@@ -323,7 +334,7 @@ class DocTestReporter(SageObject):
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
                 [... tests, ... s]
             sage: DTR.stats
-            {'sage.doctest.reporting': {'walltime': ...}}
+            {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
 
         Or inform the user that some doctests failed::
 
@@ -366,7 +377,8 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
