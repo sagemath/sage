@@ -526,7 +526,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def __classcall_private__(cls, function_ring, gen, name='t'):
         """
         Check input validity and return a ``DrinfeldModule`` or
-        ``FiniteDrinfeldModule`` object accordingly.
+        ``DrinfeldModule_finite`` object accordingly.
 
         INPUT:
 
@@ -541,24 +541,24 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         OUTPUT:
 
-        A DrinfeldModule or FiniteDrinfeldModule.
+        A DrinfeldModule or DrinfeldModule_finite.
 
         TESTS::
 
-            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
+            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             sage: Fq = GF(25)
             sage: A.<T> = Fq[]
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: isinstance(phi, FiniteDrinfeldModule)
+            sage: isinstance(phi, DrinfeldModule_finite)
             True
 
         ::
 
             sage: K = Frac(A)
             sage: phi = DrinfeldModule(A, [K(T), 1])
-            sage: isinstance(psi, FiniteDrinfeldModule)
+            sage: isinstance(psi, DrinfeldModule_finite)
             False
         """
 
@@ -624,10 +624,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
 
-        # Instantiate the appropriate class
+        # Instantiate the appropriate class:
         if base_field.is_finite():
-            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-            return FiniteDrinfeldModule(gen, category)
+            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+            return DrinfeldModule_finite(gen, category)
         return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):
@@ -1601,8 +1601,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi.is_finite()
             False
         """
-        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-        return isinstance(self, FiniteDrinfeldModule)
+        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+        return isinstance(self, DrinfeldModule_finite)
 
     def j_invariant(self, parameter=None, check=True):
         r"""
