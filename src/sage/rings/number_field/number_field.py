@@ -3449,29 +3449,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     H.append(chi)
         return H
 
-    def latex_variable_name(self, name=None):
-        """
-        Return the latex representation of the variable name for this
-        number field.
-
-        EXAMPLES::
-
-            sage: x = polygen(QQ, 'x')
-            sage: NumberField(x^2 + 3, 'a').latex_variable_name()
-            doctest:...: DeprecationWarning: This method is replaced by ...
-            See https://github.com/sagemath/sage/issues/30372 for details.
-            'a'
-            sage: NumberField(x^3 + 3, 'theta3').latex_variable_name()
-            '\\theta_{3}'
-            sage: CyclotomicField(5).latex_variable_name()
-            '\\zeta_{5}'
-        """
-        deprecation(30372, 'This method is replaced by the method latex_variable_names')
-        if name is None:
-            return self._latex_names[0]
-        else:
-            self._latex_names = (name,)
-
     def _repr_(self):
         """
         Return string representation of this number field.
