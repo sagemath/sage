@@ -6099,24 +6099,6 @@ cdef class int_toRR(Map):
         return y
 
 
-def create_RealField(*args, **kwds):
-    r"""
-    Deprecated function moved to :mod:`sage.rings.real_field`.
-
-    TESTS::
-
-        sage: from sage.rings.real_mpfr import create_RealField
-        sage: create_RealField()
-        doctest:...: DeprecationWarning: Please import create_RealField from sage.rings.real_field
-        See https://github.com/sagemath/sage/issues/24511 for details.
-        Real Field with 53 bits of precision
-    """
-    # deprecation has already been imported in this file
-    deprecation(24511, "Please import create_RealField from sage.rings.real_field")
-    from sage.rings.real_field import create_RealField as cr
-    return cr(*args, **kwds)
-
-
 # Support Python's numbers abstract base class
 import numbers
 numbers.Real.register(RealNumber)
