@@ -4704,17 +4704,23 @@ class GenericGraph(GenericGraph_pyx):
             sage: len(g.min_spanning_tree())
             4
             sage: weight = lambda e: 1 / ((e[0] + 1) * (e[1] + 1))
-            sage: sorted(g.min_spanning_tree(weight_function=weight))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
-            sage: sorted(g.min_spanning_tree(weight_function=weight,
-            ....:                            algorithm='Kruskal_Boost'))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
+            sage: E = g.min_spanning_tree(weight_function=weight)
+            sage: T = Graph(E)
+            sage: set(g) == set(T) and T.order() == T.size() + 1 and T.is_tree()
+            True
+            sage: sum(map(weight, E))
+            5/12
+            sage: E = g.min_spanning_tree(weight_function=weight,
+            ....:                         algorithm='Kruskal_Boost')
+            sage: Graph(E).is_tree(); sum(map(weight, E))
+            True
+            5/12
             sage: g = graphs.PetersenGraph()
             sage: g.allow_multiple_edges(True)
             sage: g.add_edges(g.edge_iterator())
-            sage: sorted(g.min_spanning_tree())
-            [(0, 1, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 6, None),
-             (3, 8, None), (5, 7, None), (5, 8, None), (6, 9, None)]
+            sage: T = Graph(g.min_spanning_tree())
+            sage: set(g) == set(T) and T.order() == T.size() + 1 and T.is_tree()
+            True
 
         Boruvka's algorithm::
 
@@ -4725,15 +4731,13 @@ class GenericGraph(GenericGraph_pyx):
         Prim's algorithm::
 
             sage: g = graphs.CompleteGraph(5)
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_edge',
-            ....:                            starting_vertex=2, weight_function=weight))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_fringe',
-            ....:                            starting_vertex=2, weight_function=weight))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
-            sage: sorted(g.min_spanning_tree(weight_function=weight,
-            ....:                            algorithm='Prim_Boost'))
-            [(0, 4, None), (1, 4, None), (2, 4, None), (3, 4, None)]
+            sage: for algo in ['Prim_edge', 'Prim_fringe', 'Prim_Boost']:
+            ....:     E = g.min_spanning_tree(algorithm=algo, weight_function=weight)
+            ....:     T = Graph(E)
+            ....:     print(set(g) == set(T) and T.order() == T.size() + 1 and T.is_tree())
+            True
+            True
+            True
 
         NetworkX algorithm::
 
@@ -4745,29 +4749,42 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = Graph([(0, 1, {'name': 'a', 'weight': 1}),
             ....:            (0, 2, {'name': 'b', 'weight': 3}),
             ....:            (1, 2, {'name': 'b', 'weight': 1})])
-            sage: sorted(G.min_spanning_tree(weight_function=lambda e: e[2]['weight']))
+            sage: sorted(G.min_spanning_tree(algorithm='Boruvka',
+            ....:                            weight_function=lambda e: e[2]['weight']))
             [(0, 1, {'name': 'a', 'weight': 1}), (1, 2, {'name': 'b', 'weight': 1})]
 
         If the graph is not weighted, edge labels are not considered, even if
         they are numbers::
 
             sage: g = Graph([(1, 2, 1), (1, 3, 2), (2, 3, 1)])
-            sage: sorted(g.min_spanning_tree())
+            sage: sorted(g.min_spanning_tree(algorithm='Boruvka'))
             [(1, 2, 1), (1, 3, 2)]
 
         In order to use weights, we need either to set variable ``weighted`` to
         ``True``, or to specify a weight function or set by_weight to ``True``::
 
             sage: g.weighted(True)
-            sage: sorted(g.min_spanning_tree())
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
             [(1, 2, 1), (2, 3, 1)]
             sage: g.weighted(False)
-            sage: sorted(g.min_spanning_tree())
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
             [(1, 2, 1), (1, 3, 2)]
-            sage: sorted(g.min_spanning_tree(by_weight=True))
+            sage: Graph(g.min_spanning_tree(by_weight=True)).edges(sort=True)
             [(1, 2, 1), (2, 3, 1)]
-            sage: sorted(g.min_spanning_tree(weight_function=lambda e: e[2]))
+            sage: Graph(g.min_spanning_tree(weight_function=lambda e: e[2])).edges(sort=True)
             [(1, 2, 1), (2, 3, 1)]
+
+        Note that the order of the vertices on each edge is not guaranteed and
+        may differ from an algorithm to the other::
+
+            sage: g.weighted(True)
+            sage: sorted(g.min_spanning_tree())
+            [(2, 1, 1), (3, 2, 1)]
+            sage: sorted(g.min_spanning_tree(algorithm='Boruvka'))
+            [(1, 2, 1), (2, 3, 1)]
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
+            [(1, 2, 1), (2, 3, 1)]
+
 
         TESTS:
 
@@ -4776,21 +4793,21 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = Graph(weighted=True)
             sage: g.add_edges([[0, 1, 1], [1, 2, 1], [2, 0, 10]])
-            sage: sorted(g.min_spanning_tree())
+            sage: Graph(g.min_spanning_tree()).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Filter_Kruskal'))
+            sage: Graph(g.min_spanning_tree(algorithm='Filter_Kruskal')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Kruskal_Boost'))
+            sage: Graph(g.min_spanning_tree(algorithm='Kruskal_Boost')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_fringe'))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_fringe')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_edge'))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_edge')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_Boost'))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_Boost')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='NetworkX'))                     # needs networkx
+            sage: Graph(g.min_spanning_tree(algorithm='Boruvka')).edges(sort=True)
             [(0, 1, 1), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Boruvka'))
+            sage: Graph(g.min_spanning_tree(algorithm='NetworkX')).edges(sort=True)     # needs networkx
             [(0, 1, 1), (1, 2, 1)]
 
         Check that, if ``weight_function`` is provided, it overrides edge
@@ -4798,29 +4815,27 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = Graph([[0, 1, 1], [1, 2, 1], [2, 0, 10]], weighted=True)
             sage: weight = lambda e: 3 - e[0] - e[1]
-            sage: sorted(g.min_spanning_tree(weight_function=weight))
+            sage: Graph(g.min_spanning_tree(weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Filter_Kruskal', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Filter_Kruskal', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Kruskal_Boost', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Kruskal_Boost', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_fringe', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_fringe', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_edge', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_edge', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Prim_Boost', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='Prim_Boost', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='NetworkX', weight_function=weight))         # needs networkx
-            [(0, 2, 10), (1, 2, 1)]
-            sage: sorted(g.min_spanning_tree(algorithm='Boruvka', weight_function=weight))
+            sage: Graph(g.min_spanning_tree(algorithm='NetworkX', weight_function=weight)).edges(sort=True)   # needs networkx
             [(0, 2, 10), (1, 2, 1)]
 
         If the graph is directed, it is transformed into an undirected graph::
 
             sage: g = digraphs.Circuit(3)
-            sage: sorted(g.min_spanning_tree(weight_function=weight))
+            sage: Graph(g.min_spanning_tree(weight_function=weight)).edges(sort=True)
             [(0, 2, None), (1, 2, None)]
-            sage: sorted(g.to_undirected().min_spanning_tree(weight_function=weight))
+            sage: Graph(g.to_undirected().min_spanning_tree(weight_function=weight)).edges(sort=True)
             [(0, 2, None), (1, 2, None)]
 
         If at least an edge weight is not convertible to a float, an error is
@@ -4841,6 +4856,17 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: graphs.EmptyGraph().min_spanning_tree()
             []
+
+        Check that the method is robust to incomparable vertices::
+
+            sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)])
+            sage: E = G.min_spanning_tree(algorithm='Prim_Boost', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Prim_fringe', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Prim_edge', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Kruskal_Boost', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Filter_Kruskal', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='Boruvka', by_weight=True)
+            sage: E = G.min_spanning_tree(algorithm='NetworkX', by_weight=True)         # needs networkx
         """
         if not self.order():
             return []
@@ -5136,9 +5162,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: [sorted(c) for c in G.cycle_basis()]                                  # needs networkx
             [['Hey', 'Really ?', 'Wuuhuu'], [0, 2], [0, 1, 2]]
             sage: [sorted(c) for c in G.cycle_basis(output='edge')]                     # needs networkx
-            [[('Hey', 'Wuuhuu', None),
-              ('Really ?', 'Hey', None),
-              ('Wuuhuu', 'Really ?', None)],
+            [[('Hey', 'Really ?', None),
+              ('Really ?', 'Wuuhuu', None),
+              ('Wuuhuu', 'Hey', None)],
              [(0, 2, 'a'), (2, 0, 'b')],
              [(0, 2, 'b'), (1, 0, 'c'), (2, 1, 'd')]]
 
@@ -5399,7 +5425,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: k43 = graphs.CompleteBipartiteGraph(4, 3)
             sage: result = k43.is_planar(kuratowski=True); result
-            (False, Graph on 6 vertices)
+            (False,
+             Kuratowski subgraph of (Complete bipartite graph of order 4+3): Graph on 6 vertices)
             sage: result[1].is_isomorphic(graphs.CompleteBipartiteGraph(3, 3))
             True
 
@@ -5412,19 +5439,61 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
-            sage: G.is_planar(set_pos=True)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
+             multiple-edged or looped graphs
             sage: G.is_planar(set_embedding=True)
             Traceback (most recent call last):
             ...
             NotImplementedError: cannot compute with embeddings of
-            multiple-edged or looped graphs
+             multiple-edged or looped graphs
             sage: G.is_planar(kuratowski=True)
             (True, None)
+            sage: G.is_planar(set_pos=True)
+            True
+            sage: sorted(G.get_pos().items())
+            [(0, [0, 0]), (1, [0, 1])]
+
+        Digraphs with multiple edges or loops or pairs of opposite arcs are
+        partially supported (:trac:`35152`)::
+
+            sage: D = digraphs.Complete(3)
+            sage: D.is_planar()
+            True
+            sage: D.is_planar(set_pos=True)
+            True
+            sage: sorted(D.get_pos().items())
+            [(0, [0, 1]), (1, [1, 1]), (2, [1, 0])]
+            sage: D.is_planar(on_embedding={})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+             digraphs with pairs of opposite arcs
+            sage: D.is_planar(set_embedding=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+             digraphs with pairs of opposite arcs
+            sage: D.is_planar(kuratowski=True)
+            (True, None)
+            sage: D.allow_multiple_edges(True)
+            sage: D.add_edges(D.edges(sort=False))
+            sage: D.allow_loops(True)
+            sage: D.add_edges((u, u) for u in D)
+            sage: D.is_planar()
+            True
+            sage: D.is_planar(kuratowski=True)
+            (True, None)
+            sage: D.is_planar(set_pos=True)
+            True
+            sage: D.is_planar(set_embedding=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+             multiple-edged or looped graphs
+            sage: D.is_planar(on_embedding={})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of
+             multiple-edged or looped graphs
 
         ::
 
@@ -5485,31 +5554,35 @@ class GenericGraph(GenericGraph_pyx):
             if self.order() > 4 and self.size() > 3 * self.order() - 6:
                 return False
 
-        if self.has_multiple_edges() or self.has_loops():
-            if set_embedding or (on_embedding is not None) or set_pos:
+        if set_embedding or (on_embedding is not None):
+            # So far, working with embeddings is not working properly when a
+            # (di)graph has multiple edges or loops, or when a digraph has pairs
+            # of opposite arcs
+            if self.has_multiple_edges() or self.has_loops():
                 raise NotImplementedError("cannot compute with embeddings of multiple-edged or looped graphs")
-            else:
-                return self.to_simple().is_planar(kuratowski=kuratowski)
+            elif (self.is_directed() and
+                      any(self.has_edge(v, u) for u, v in self.edge_iterator(labels=False))):
+                raise NotImplementedError("cannot compute with embeddings of digraphs with pairs of opposite arcs")
 
         if on_embedding is not None:
             self._check_embedding_validity(on_embedding, boolean=False)
             return (0 == self.genus(minimal=False, set_embedding=False, on_embedding=on_embedding))
+
+        # We take the underlying undirected and simple graph
+        G = self.to_simple(to_undirected=True, immutable=False)
+        # And check if it is planar
+        from sage.graphs.planarity import is_planar
+        planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
+        if kuratowski:
+            bool_result = planar[0]
         else:
-            from sage.graphs.planarity import is_planar
-            G = self.to_undirected()
-            if hasattr(G, '_immutable'):
-                G = copy(G)
-            planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
-            if kuratowski:
-                bool_result = planar[0]
-            else:
-                bool_result = planar
-            if bool_result:
-                if set_pos:
-                    self._pos = G._pos
-                if set_embedding:
-                    self._embedding = G._embedding
-            return planar
+            bool_result = planar
+        if bool_result:
+            if set_pos:
+                self._pos = G._pos
+            if set_embedding:
+                self._embedding = G._embedding
+        return planar
 
     def is_circular_planar(self, on_embedding=None, kuratowski=False,
                            set_embedding=True, boundary=None,
@@ -5591,7 +5664,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g439.is_circular_planar(boundary=[1, 2, 3, 4])
             False
             sage: g439.is_circular_planar(kuratowski=True, boundary=[1, 2, 3, 4])
-            (False, Graph on 8 vertices)
+            (False, Kuratowski subgraph of (): Graph on 8 vertices)
             sage: g439.is_circular_planar(kuratowski=True, boundary=[1, 2, 3])
             (True, None)
             sage: g439.get_embedding()

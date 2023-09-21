@@ -17,7 +17,7 @@ jobs:
     container: ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets:dev
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Update system packages
         run: |
@@ -82,6 +82,7 @@ jobs:
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
           set -ex
+          export SAGE_USE_CDNS=yes
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git

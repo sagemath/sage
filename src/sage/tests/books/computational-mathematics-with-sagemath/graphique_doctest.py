@@ -134,11 +134,11 @@ Sage example in ./graphique.tex, line 1120::
   sage: t = srange(0, 5, 0.1); p = Graphics()
   sage: for k in srange(0, 10, 0.15):
   ....:       y = integrate.odeint(f, k, t)
-  ....:       p += line(zip(t, flatten(y)))
+  ....:       p += line(zip(t, flatten(y.tolist())))
   sage: t = srange(0, -5, -0.1); q = Graphics()
   sage: for k in srange(0, 10, 0.15):
   ....:       y = integrate.odeint(f, k, t)
-  ....:       q += line(zip(t, flatten(y)))
+  ....:       q += line(zip(t, flatten(y.tolist())))
   sage: y = var('y')
   sage: v = plot_vector_field((1, -cos(x*y)), (x,-5,5), (y,-2,11))
   sage: g = p + q + v; g.show()
@@ -215,11 +215,13 @@ Sage example in ./graphique.tex, line 1781::
   sage: plot3d(h, (u,-1,1), (v,-1,1), aspect_ratio=[1,1,1])
   Graphics3d Object
 
-Sage example in ./graphique.tex, line 1833::
+Sage example in ./graphique.tex, line 1833. Sometimes the result
+needs to be simplified to obtain a nice short expression::
 
   sage: f(x, y) = x^2 * y / (x^4 + y^2)
   sage: t, theta = var('t, theta')
-  sage: limit(f(t * cos(theta), t * sin(theta)) / t, t=0)
+  sage: result = limit(f(t * cos(theta), t * sin(theta)) / t, t=0)
+  sage: result.full_simplify()
   cos(theta)^2/sin(theta)
 
 Sage example in ./graphique.tex, line 1847::

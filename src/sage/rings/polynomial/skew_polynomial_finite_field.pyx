@@ -1036,9 +1036,9 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             count /= factorial(m)
         return count * factorial(summ)
 
-
     # Not optimized:
     # many calls to reduced_norm, reduced_norm_factor, _rdivisor_c, which are slow
+
     def factorizations(self):
         r"""
         Return an iterator over all factorizations (as a product

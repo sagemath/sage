@@ -26,7 +26,7 @@ Check that operations with numpy elements work well (see :trac:`18076` and
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from cpython.float cimport PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
@@ -116,7 +116,7 @@ cdef class PolynomialRealDense(Polynomial):
         Polynomial.__init__(self, parent, is_gen=is_gen)
         self._base_ring = parent._base
         cdef Py_ssize_t i, degree
-        cdef int prec = self._base_ring.__prec
+        cdef int prec = self._base_ring._prec
         cdef mpfr_rnd_t rnd = self._base_ring.rnd
         if x is None:
             self._coeffs = <mpfr_t*>check_allocarray(1, sizeof(mpfr_t)) # degree zero
@@ -151,7 +151,7 @@ cdef class PolynomialRealDense(Polynomial):
                 if type(a) is RealNumber:
                     mpfr_set(coeffs[i], (<RealNumber>a).value, rnd)
                 elif type(a) is int:
-                    mpfr_set_si(coeffs[i], PyInt_AS_LONG(a), rnd)
+                    mpfr_set_si(coeffs[i], PyLong_AsLong(a), rnd)
                 elif type(a) is float:
                     mpfr_set_d(coeffs[i], PyFloat_AS_DOUBLE(a), rnd)
                 elif type(a) is Integer:
@@ -227,7 +227,7 @@ cdef class PolynomialRealDense(Polynomial):
 
     cdef PolynomialRealDense _new(self, Py_ssize_t degree):
         cdef Py_ssize_t i
-        cdef int prec = self._base_ring.__prec
+        cdef int prec = self._base_ring._prec
         cdef PolynomialRealDense f = <PolynomialRealDense>PolynomialRealDense.__new__(PolynomialRealDense)
         f._parent = self._parent
         f._base_ring = self._base_ring
@@ -501,7 +501,7 @@ cdef class PolynomialRealDense(Polynomial):
         else:
             f = left._new(left._degree + right._degree)
         sig_on()
-        mpfr_init2(tmp, left._base_ring.__prec)
+        mpfr_init2(tmp, left._base_ring._prec)
         for i from 0 <= i <= f._degree:
             # Yes, we could make this more efficient by initializing with
             # a multiple of left rather than all zeros...
@@ -661,7 +661,7 @@ cdef class PolynomialRealDense(Polynomial):
         q = self._new(self._degree - other._degree)
         # This is the standard division algorithm
         sig_on()
-        mpfr_init2(tmp, self._base_ring.__prec)
+        mpfr_init2(tmp, self._base_ring._prec)
         for i from self._degree >= i >= other._degree:
             mpfr_set(q._coeffs[i-other._degree], r._coeffs[i], rnd)
             for j from 0 <= j < other._degree:
@@ -725,7 +725,7 @@ cdef class PolynomialRealDense(Polynomial):
         cdef RealNumber x = <RealNumber>xx
         cdef RealNumber res
 
-        if (<RealField_class>x._parent).__prec < self._base_ring.__prec:
+        if (<RealField_class>x._parent)._prec < self._base_ring._prec:
             res = RealNumber(x._parent)
         else:
             res = RealNumber(self._base_ring)

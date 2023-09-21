@@ -5,14 +5,14 @@ TESTS:
 
 Loading, saving, ... works::
 
-    sage: G = GL(2,5); G                                                                # optional - sage.rings.finite_rings
+    sage: G = GL(2,5); G
     General Linear Group of degree 2 over Finite Field of size 5
-    sage: TestSuite(G).run()                                                            # optional - sage.rings.finite_rings
+    sage: TestSuite(G).run()
 
-    sage: g = G.1; g                                                                    # optional - sage.rings.finite_rings
+    sage: g = G.1; g
     [4 1]
     [4 0]
-    sage: TestSuite(g).run()                                                            # optional - sage.rings.finite_rings
+    sage: TestSuite(g).run()
 
 We test that :trac:`9437` is fixed::
 
@@ -107,9 +107,9 @@ class MatrixGroup_base(Group):
 
     TESTS::
 
-        sage: G = SO(3, GF(11)); G                                                      # optional - sage.rings.finite_rings
+        sage: G = SO(3, GF(11)); G
         Special Orthogonal Group of degree 3 over Finite Field of size 11
-        sage: G.category()                                                              # optional - sage.rings.finite_rings
+        sage: G.category()
         Category of finite groups
     """
     _ambient = None  # internal attribute to register the ambient group in case this instance is a subgroup
@@ -137,9 +137,9 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: G = SU(2, GF(5)); F = G.base_ring()  # this is GF(5^2,'a')            # optional - sage.rings.finite_rings
-            sage: G._check_matrix(identity_matrix(F, 2))                                # optional - sage.rings.finite_rings
-            sage: G._check_matrix(matrix(F, [[1,1], [0,1]]))                            # optional - sage.rings.finite_rings
+            sage: G = SU(2, GF(5)); F = G.base_ring()  # this is GF(5^2,'a')            # needs sage.rings.finite_rings
+            sage: G._check_matrix(identity_matrix(F, 2))                                # needs sage.rings.finite_rings
+            sage: G._check_matrix(matrix(F, [[1,1], [0,1]]))                            # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: matrix must be unitary with respect to the hermitian form
@@ -158,8 +158,8 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: G = SU(4, GF(5))                                                      # optional - sage.rings.finite_rings
-            sage: G.as_matrix_group()                                                   # optional - sage.rings.finite_rings
+            sage: G = SU(4, GF(5))                                                      # needs sage.rings.finite_rings
+            sage: G.as_matrix_group()                                                   # needs sage.rings.finite_rings
             Matrix group over Finite Field in a of size 5^2 with 2 generators (
             [      a       0       0       0]  [      1       0 4*a + 3       0]
             [      0 2*a + 3       0       0]  [      1       0       0       0]
@@ -167,8 +167,8 @@ class MatrixGroup_base(Group):
             [      0       0       0     3*a], [      0 3*a + 1       0       0]
             )
 
-            sage: G = GO(3,GF(5))                                                       # optional - sage.rings.finite_rings
-            sage: G.as_matrix_group()                                                   # optional - sage.rings.finite_rings
+            sage: G = GO(3,GF(5))
+            sage: G.as_matrix_group()
             Matrix group over Finite Field of size 5 with 2 generators (
             [2 0 0]  [0 1 0]
             [0 3 0]  [1 4 4]
@@ -191,22 +191,24 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: UCF = UniversalCyclotomicField()                                      # optional - sage.rings.number_field
-            sage: G  = GL(3, UCF)                                                       # optional - sage.rings.number_field
-            sage: e3 = UCF.gen(3); e5 = UCF.gen(5)                                      # optional - sage.rings.number_field
-            sage: m = matrix(UCF, 3,3, [[e3, 1, 0], [0, e5, 7],[4, 3, 2]])              # optional - sage.rings.number_field
-            sage: S = G.subgroup([m]); S                                                # optional - sage.rings.number_field
+            sage: # needs sage.libs.gap sage.rings.number_field
+            sage: UCF = UniversalCyclotomicField()
+            sage: G  = GL(3, UCF)
+            sage: e3 = UCF.gen(3); e5 = UCF.gen(5)
+            sage: m = matrix(UCF, 3,3, [[e3, 1, 0], [0, e5, 7],[4, 3, 2]])
+            sage: S = G.subgroup([m]); S
             Subgroup with 1 generators (
             [E(3)    1    0]
             [   0 E(5)    7]
             [   4    3    2]
             ) of General Linear Group of degree 3 over Universal Cyclotomic Field
 
-            sage: CF3 = CyclotomicField(3)                                              # optional - sage.rings.number_field
-            sage: G  = GL(3, CF3)                                                       # optional - sage.rings.number_field
-            sage: e3 = CF3.gen()                                                        # optional - sage.rings.number_field
-            sage: m = matrix(CF3, 3,3, [[e3, 1, 0], [0, ~e3, 7],[4, 3, 2]])             # optional - sage.rings.number_field
-            sage: S = G.subgroup([m]); S                                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: CF3 = CyclotomicField(3)
+            sage: G  = GL(3, CF3)
+            sage: e3 = CF3.gen()
+            sage: m = matrix(CF3, 3,3, [[e3, 1, 0], [0, ~e3, 7],[4, 3, 2]])
+            sage: S = G.subgroup([m]); S
             Subgroup with 1 generators (
             [     zeta3          1          0]
             [         0 -zeta3 - 1          7]
@@ -215,8 +217,8 @@ class MatrixGroup_base(Group):
 
         TESTS::
 
-            sage: TestSuite(G).run()                                                    # optional - sage.rings.number_field
-            sage: TestSuite(S).run()                                                    # optional - sage.rings.number_field
+            sage: TestSuite(G).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(S).run()                                                    # needs sage.rings.number_field
         """
         try:
             test = self.is_finite()
@@ -265,10 +267,10 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: F = GF(5); MS = MatrixSpace(F, 2, 2)                                  # optional - sage.rings.finite_rings
-            sage: gens = [MS([[1,2], [-1,1]]), MS([[1,1], [0,1]])]                      # optional - sage.rings.finite_rings
-            sage: G = MatrixGroup(gens)                                                 # optional - sage.rings.finite_rings
-            sage: G                                                                     # optional - sage.rings.finite_rings
+            sage: F = GF(5); MS = MatrixSpace(F, 2, 2)
+            sage: gens = [MS([[1,2], [-1,1]]), MS([[1,1], [0,1]])]
+            sage: G = MatrixGroup(gens)
+            sage: G
             Matrix group over Finite Field of size 5 with 2 generators (
             [1 2]  [1 1]
             [4 1], [0 1]
@@ -276,11 +278,12 @@ class MatrixGroup_base(Group):
 
         case of being a subgroup::
 
-            sage: CF3 = CyclotomicField(3)                                              # optional - sage.rings.number_field
-            sage: G  = GL(2, CF3)                                                       # optional - sage.rings.number_field
-            sage: e3 = CF3.gen()                                                        # optional - sage.rings.number_field
-            sage: m = matrix(CF3, 2, 2, [[e3, 1], [0, ~e3]])                            # optional - sage.rings.number_field
-            sage: S = G.subgroup([m]); S                                                # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: CF3 = CyclotomicField(3)
+            sage: G  = GL(2, CF3)
+            sage: e3 = CF3.gen()
+            sage: m = matrix(CF3, 2, 2, [[e3, 1], [0, ~e3]])
+            sage: S = G.subgroup([m]); S
             Subgroup with 1 generators (
             [     zeta3          1]
             [         0 -zeta3 - 1]
@@ -313,8 +316,8 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: SO3 = groups.matrix.SO(3, QQ)                                         # optional - sage.groups
-            sage: SO3._repr_option('element_ascii_art')                                 # optional - sage.groups
+            sage: SO3 = groups.matrix.SO(3, QQ)                                         # needs sage.groups sage.modules
+            sage: SO3._repr_option('element_ascii_art')                                 # needs sage.groups sage.modules
             True
         """
         if key == 'element_ascii_art':
@@ -325,9 +328,9 @@ class MatrixGroup_base(Group):
         r"""
         EXAMPLES::
 
-            sage: MS = MatrixSpace(GF(5), 2, 2)                                         # optional - sage.rings.finite_rings
-            sage: G = MatrixGroup(MS([[1,2], [-1,1]]), MS([[1,1], [0,1]]))              # optional - sage.rings.finite_rings
-            sage: latex(G)                                                              # optional - sage.rings.finite_rings
+            sage: MS = MatrixSpace(GF(5), 2, 2)
+            sage: G = MatrixGroup(MS([[1,2], [-1,1]]), MS([[1,1], [0,1]]))
+            sage: latex(G)
             \left\langle \left(\begin{array}{rr}
             1 & 2 \\
             4 & 1
@@ -355,19 +358,19 @@ class MatrixGroup_base(Group):
         EXAMPLES::
 
             sage: G = GL(2, QQ)
-            sage: V = G.sign_representation()                                           # optional - sage.combinat
-            sage: e = G.an_element()                                                    # optional - sage.combinat
-            sage: e                                                                     # optional - sage.combinat
+            sage: V = G.sign_representation()
+            sage: e = G.an_element()
+            sage: e
             [1 0]
             [0 1]
-            sage: V._default_sign(e)                                                    # optional - sage.combinat
+            sage: V._default_sign(e)
             1
-            sage: m2 = V.an_element()                                                   # optional - sage.combinat
-            sage: m2                                                                    # optional - sage.combinat
+            sage: m2 = V.an_element()
+            sage: m2
             2*B['v']
-            sage: m2*e                                                                  # optional - sage.combinat
+            sage: m2*e
             2*B['v']
-            sage: m2*e*e                                                                # optional - sage.combinat
+            sage: m2*e*e
             2*B['v']
         """
         if base_ring is None:
@@ -432,7 +435,7 @@ class MatrixGroup_generic(MatrixGroup_base):
 
         EXAMPLES::
 
-            sage: SU(5,5).degree()                                                      # optional - sage.rings.finite_rings
+            sage: SU(5,5).degree()                                                      # needs sage.rings.finite_rings
             5
         """
         return self._deg
@@ -447,11 +450,11 @@ class MatrixGroup_generic(MatrixGroup_base):
 
         EXAMPLES::
 
-            sage: F = GF(5); MS = MatrixSpace(F, 2, 2)                                  # optional - sage.rings.finite_rings
-            sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])                               # optional - sage.rings.finite_rings
-            sage: G.matrix_space()                                                      # optional - sage.rings.finite_rings
+            sage: F = GF(5); MS = MatrixSpace(F, 2, 2)
+            sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])
+            sage: G.matrix_space()
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 5
-            sage: G.matrix_space() is MS                                                # optional - sage.rings.finite_rings
+            sage: G.matrix_space() is MS
             True
         """
         return MatrixSpace(self.base_ring(), self.degree())
@@ -476,11 +479,11 @@ class MatrixGroup_generic(MatrixGroup_base):
 
         EXAMPLES::
 
-            sage: G = GL(2,3)                                                           # optional - sage.rings.finite_rings
-            sage: H = MatrixGroup(G.gens())                                             # optional - sage.rings.finite_rings
-            sage: H == G                                                                # optional - sage.rings.finite_rings
+            sage: G = GL(2,3)
+            sage: H = MatrixGroup(G.gens())
+            sage: H == G
             True
-            sage: G == H                                                                # optional - sage.rings.finite_rings
+            sage: G == H
             True
 
             sage: MS = MatrixSpace(QQ, 2, 2)
@@ -492,11 +495,12 @@ class MatrixGroup_generic(MatrixGroup_base):
 
         TESTS::
 
-            sage: G = groups.matrix.GL(4,2)                                             # optional - sage.groups sage.rings.finite_rings
-            sage: H = MatrixGroup(G.gens())                                             # optional - sage.groups sage.rings.finite_rings
-            sage: G == H                                                                # optional - sage.groups sage.rings.finite_rings
+            sage: # needs sage.groups sage.rings.finite_rings
+            sage: G = groups.matrix.GL(4,2)
+            sage: H = MatrixGroup(G.gens())
+            sage: G == H
             True
-            sage: G != H                                                                # optional - sage.groups sage.rings.finite_rings
+            sage: G != H
             False
         """
         if not is_MatrixGroup(other):

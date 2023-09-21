@@ -911,7 +911,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             v = valuation
             while not v.is_gauss_valuation():
                 if v(G) <= v._base_valuation(G):
-                    raise ValueError("The valuation %r is not an approximant for a valuation which extends %r with respect to %r since the valuation of %r does not increase in every step"%(valuation, self, G, G))
+                    raise ValueError("The valuation %r is not an approximant for a valuation which extends %r with respect to %r since the valuation of %r does not increase in every step" % (valuation, self, G, G))
                 v = v._base_valuation
 
         if approximants is None:
@@ -921,15 +921,15 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         greater_approximants = [w for w in approximants if w >= valuation]
         if len(greater_approximants) > 1:
-            raise ValueError("The valuation %r does not approximate a unique extension of %r with respect to %r"%(valuation, self, G))
+            raise ValueError("The valuation %r does not approximate a unique extension of %r with respect to %r" % (valuation, self, G))
         if len(greater_approximants) == 1:
             return greater_approximants[0]
 
         smaller_approximants = [w for w in approximants if w <= valuation]
         if len(smaller_approximants) > 1:
-            raise ValueError("The valuation %r is not approximated by a unique extension of %r with respect to %r"%(valuation, self, G))
+            raise ValueError("The valuation %r is not approximated by a unique extension of %r with respect to %r" % (valuation, self, G))
         if len(smaller_approximants) == 0:
-            raise ValueError("The valuation %r is not related to an extension of %r with respect to %r"%(valuation, self, G))
+            raise ValueError("The valuation %r is not related to an extension of %r with respect to %r" % (valuation, self, G))
         return smaller_approximants[0]
 
     def montes_factorization(self, G, assume_squarefree=False, required_precision=None):

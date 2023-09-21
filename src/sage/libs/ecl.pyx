@@ -563,15 +563,15 @@ cdef class EclObject:
     Floats in Python are IEEE double, which LISP has as well. However,
     the printing of floating point types in LISP depends on settings::
 
-        sage: a = EclObject(float(10^40))
+        sage: a = EclObject(float(1.234e40))
         sage: ecl_eval("(setf *read-default-float-format* 'single-float)")
         <ECL: SINGLE-FLOAT>
         sage: a
-        <ECL: 1.d40>
+        <ECL: 1.234d40>
         sage: ecl_eval("(setf *read-default-float-format* 'double-float)")
         <ECL: DOUBLE-FLOAT>
         sage: a
-        <ECL: 1.e40>
+        <ECL: 1.234e40>
 
     Tuples are translated to dotted lists::
 

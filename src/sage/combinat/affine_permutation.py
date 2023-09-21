@@ -706,7 +706,7 @@ class AffinePermutationTypeA(AffinePermutation):
             y = self.clone().apply_simple_reflection(i,side)
             T = [i]
             j = i
-            for count in range(1, self.k):
+            for _ in range(1, self.k):
                 if (typ[0],side[0]) == ('d', 'r'):
                     j=(j+1)%(k+1)
                 if (typ[0],side[0]) == ('i', 'r'):
@@ -917,10 +917,10 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``typ`` -- 'increasing' or 'decreasing' (default: 'decreasing'.)
+        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
           Chooses whether to find increasing or decreasing sets.
 
-        - ``side`` -- 'right' or 'left' (default: 'right'.)  Chooses whether to
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
           find maximal sets starting from the left or the right.
 
         EXAMPLES::
@@ -941,9 +941,9 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``typ`` -- 'increasing' or 'decreasing' (default: 'decreasing'.)
+        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
 
-        - ``side`` -- 'right' or 'left' (default: 'right'.)  Chooses whether to
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
           find maximal sets starting from the left or the right.
 
         EXAMPLES::

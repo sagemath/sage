@@ -398,7 +398,8 @@ cpdef dict sum_of_terms(index_coeff_pairs):
         {'a': 1, 'b': 3}
         sage: blas.sum_of_terms([('a', 5), ('b', 3), ('a', -5)])
         {'b': 3}
-        sage: blas.sum_of_terms([('a', 5), ('b', GF(2).one()), ('a', -5), ('b', GF(2).one())])
+        sage: blas.sum_of_terms([('a', 5), ('b', GF(2).one()),
+        ....:                    ('a', -5), ('b', GF(2).one())])
         {}
     """
     cdef dict result = {}

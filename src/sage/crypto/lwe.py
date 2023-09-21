@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs scipy sage.symbolic
 """
 (Ring-)LWE oracle generators
 
@@ -52,6 +52,7 @@ Finally, :func:`samples` also accepts instances of classes::
 
 Note that Ring-LWE samples are returned as vectors::
 
+    sage: # needs sage.libs.pari
     sage: from sage.crypto.lwe import RingLWE
     sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
     sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], euler_phi(16), 5)
@@ -296,8 +297,8 @@ class LWE(SageObject):
         fix the representation and recover the correct standard deviation of the
         noise::
 
-            sage: from numpy import std
-            sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:
+            sage: from numpy import std                                                             # needs numpy
+            sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:             # needs numpy
             ....:     L = []  # reset L to avoid quadratic behaviour
             ....:     add_samples()
 
@@ -306,7 +307,7 @@ class LWE(SageObject):
             sage: from sage.crypto.lwe import LWE
             sage: lwe = LWE(n=20, q=next_prime(400), D=D, m=30)
             sage: _ = [lwe() for _ in range(30)]
-            sage: lwe() # 31
+            sage: lwe()  # 31
             Traceback (most recent call last):
             ...
             IndexError: Number of available samples exhausted.
@@ -539,8 +540,8 @@ class RingLWE(SageObject):
 
             sage: from sage.crypto.lwe import RingLWE
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
-            sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n=euler_phi(20), sigma=3.0)
-            sage: RingLWE(N=20, q=next_prime(800), D=D)
+            sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n=euler_phi(20), sigma=3.0)                # needs sage.libs.pari
+            sage: RingLWE(N=20, q=next_prime(800), D=D)                                 # needs sage.libs.pari
             RingLWE(20, 809, Discrete Gaussian sampler for polynomials of degree < 8 with σ=3.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None)
         """
         self.N  = ZZ(N)
@@ -587,6 +588,7 @@ class RingLWE(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: from sage.crypto.lwe import DiscreteGaussianDistributionPolynomialSampler, RingLWE
             sage: N = 16
             sage: n = euler_phi(N)

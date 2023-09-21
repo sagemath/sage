@@ -1094,7 +1094,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return ans
 
-
     ########################################################################
     # LEVEL 3 functionality (Optional)
     #    * __deepcopy__
@@ -1372,12 +1371,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if algorithm == 'flint':
             g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
             sig_on()
-            fmpz_mat_charpoly(g.__poly, self._matrix)
+            fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'linbox':
             g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
             sig_on()
-            linbox_fmpz_mat_charpoly(g.__poly, self._matrix)
+            linbox_fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
@@ -1461,7 +1460,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if algorithm == 'linbox':
             g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
             sig_on()
-            linbox_fmpz_mat_minpoly(g.__poly, self._matrix)
+            linbox_fmpz_mat_minpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'generic':
             g = Matrix_dense.minpoly(self, var)
@@ -1614,7 +1613,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             return self._mod_two()
         elif p < MAX_MODULUS_FLOAT:
             res_f = Matrix_modn_dense_float.__new__(Matrix_modn_dense_float,
-                                                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None)
+                                                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None, zeroed_alloc=False)
             for i from 0 <= i < self._nrows:
                 res_row_f = res_f._matrix[i]
                 for j from 0 <= j < self._ncols:
@@ -1623,7 +1622,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         elif p < MAX_MODULUS_DOUBLE:
             res_d = Matrix_modn_dense_double.__new__(Matrix_modn_dense_double,
-                                                     matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None)
+                                                     matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None, zeroed_alloc=False)
             for i from 0 <= i < self._nrows:
                 res_row_d = res_d._matrix[i]
                 for j from 0 <= j < self._ncols:
@@ -1649,11 +1648,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if p < MAX_MODULUS_FLOAT:
                 res.append( Matrix_modn_dense_float.__new__(Matrix_modn_dense_float,
                                                             matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
-                                                            None, None, None) )
+                                                            None, None, None, zeroed_alloc=False) )
             elif p < MAX_MODULUS_DOUBLE:
                 res.append( Matrix_modn_dense_double.__new__(Matrix_modn_dense_double,
                                                              matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
-                                                             None, None, None) )
+                                                             None, None, None, zeroed_alloc=False) )
             else:
                 raise ValueError("p=%d too big."%p)
 
@@ -2743,10 +2742,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         import sage.libs.ntl.ntl_mat_ZZ
         return sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols, self.list())
 
-
-    ####################################################################################
+    #######################################################################
     # LLL
-    ####################################################################################
+    #######################################################################
 
     def BKZ(self, delta=None, algorithm="fpLLL", fp=None, block_size=10, prune=0,
             use_givens=False, precision=0, proof=None, **kwds):
@@ -4678,7 +4676,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         if self._nrows == 0:
             pivots = []
-            nonpivots = list(xrange(self._ncols))
+            nonpivots = list(range(self._ncols))
             X = self.__copy__()
             d = Integer(1)
             return pivots, nonpivots, X, d
@@ -4947,7 +4945,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 new_top = s*row_i  +  t*row_n
                 new_bot = bg*row_i - ag*row_n
 
-
                 # OK -- now we have to make sure the top part of the matrix
                 # but with row i replaced by
                 #     r = s*row_i[j]  +  t*row_n[j]
@@ -4955,7 +4952,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 # function with the top part of A (all but last row) and the
                 # row r.
 
-                zz = list(xrange(A.nrows() - 1))
+                zz = list(range(A.nrows() - 1))
                 del zz[i]
                 top_mat = A.matrix_from_rows(zz)
                 new_pivots = list(pivots)
@@ -5164,7 +5161,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_free(T_ent)
         sig_free(T_rows)
         return res
-
 
     #################################################################
     # operations with matrices

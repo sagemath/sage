@@ -69,7 +69,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
         """
         ring = self.coordinate_ring()
         args = ring.arguments()
-        repr_x=self.change_ring(SR)._repr_()
+        repr_x = self.change_ring(SR)._repr_()
         if len(args) == 1:
             return "%s |--> %s" % (args[0], repr_x)
         else:

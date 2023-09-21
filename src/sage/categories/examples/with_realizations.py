@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Examples of parents endowed with multiple realizations
 """
@@ -278,7 +278,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             sage: Sets().WithRealizations().example()   # indirect doctest
             The subset algebra of {1, 2, 3} over Rational Field
         """
-        return "The subset algebra of %s over %s"%(self.base_set(), self.base_ring())
+        return "The subset algebra of %s over %s" % (self.base_set(), self.base_ring())
 
     class Bases(Category_realization_of_parent):
         r"""

@@ -14,7 +14,7 @@ cdef class RingMap_lift(RingMap):
 
 cdef class RingHomomorphism(RingMap):
     cdef Morphism _lift
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
 cdef class RingHomomorphism_im_gens(RingHomomorphism):
     cdef _im_gens

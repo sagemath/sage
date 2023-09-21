@@ -135,6 +135,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.misc.cachefunc import cached_method
+from sage.groups.free_group import FreeGroup
 from sage.groups.free_group import FreeGroupElement
 from sage.functions.generalized import sign
 from sage.matrix.constructor import matrix
@@ -642,7 +643,7 @@ class RewritingSystem():
                 bfg = self._monoid_isomorphism.PreImagesRepresentative(bfpmon)
                 btz = bfg.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
                 bf = self._free_group(btz.sage())
-                dic[af]=bf
+                dic[af] = bf
         return dic
 
     def is_confluent(self):
@@ -825,7 +826,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         """
         gens = ', '.join(self.variable_names())
         rels = ', '.join([ str(r) for r in self.relations() ])
-        return 'Finitely presented group ' + '< '+ gens + ' | ' + rels + ' >'
+        return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
         """
@@ -1111,7 +1112,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             name_itr = _lexi_gen() # Python generator for lexicographical variable names
             gen_names = [next(name_itr) for i in GAP_gens]
         else:
-            gen_names= [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
+            gen_names = [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
         # Build the direct product in Sage for better variable names
         ret_F = FreeGroup(gen_names)
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
@@ -1312,10 +1313,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: H([1, 2, 1, -2]) # indirect doctest
             a*b*a*b^-1
         """
-        if len(args)!=1:
+        if len(args) != 1:
             return self.element_class(self, *args, **kwds)
         x = args[0]
-        if x==1:
+        if x == 1:
             return self.one()
         try:
             P = x.parent()
@@ -1425,6 +1426,35 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
+
+    def sorted_presentation(self):
+        """
+        Return the same presentation with the relations sorted to ensure equality.
+
+        OUTPUT:
+
+        A new finitely presented group with the relations sorted.
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(2) / [(1, 2, -1, -2), ()]; G
+            Finitely presented group < x0, x1 | x0*x1*x0^-1*x1^-1, 1 >
+            sage: G.sorted_presentation()
+            Finitely presented group < x0, x1 | 1, x1^-1*x0^-1*x1*x0 >
+        """
+        F = FreeGroup(self.ngens())
+        L0 = [r.Tietze() for r in self.relations()]
+        L1 = []
+        for rel in L0:
+            C = [rel]
+            for j in range(len(rel) - 1):
+                C.append(rel[j + 1:] + rel[:j + 1])
+            C1 = [tuple(-j for j in reversed(l)) for l in C]
+            C += C1
+            C.sort()
+            L1.append(C[0])
+        L1.sort()
+        return F/L1
 
     def epimorphisms(self, H):
         r"""

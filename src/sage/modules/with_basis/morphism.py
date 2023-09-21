@@ -691,9 +691,9 @@ class TriangularModuleMorphism(ModuleMorphism):
         self._inverse_on_support = inverse_on_support
 
         if invertible is None and (domain.basis().keys() == codomain.basis().keys()) and \
-           (self._inverse_on_support==identity or domain in Modules.FiniteDimensional):
+           (self._inverse_on_support == identity or domain in Modules.FiniteDimensional):
             invertible = True
-        self._invertible=invertible
+        self._invertible = invertible
 
     def _richcmp_(self, other, op):
         r"""
@@ -772,10 +772,10 @@ class TriangularModuleMorphism(ModuleMorphism):
             bs, co = self._dominant_item(on_basis(x))
             if self._unitriangular:
                 tester.assertEqual(co, self.domain().base_ring().one(),
-                    LazyFormat("morphism is not unitriangular on %s")%(x))
+                    LazyFormat("morphism is not unitriangular on %s") % (x))
             xback = self._inverse_on_support(bs)
             tester.assertEqual(x, xback,
-                LazyFormat("morphism is not triangular on %s")%(x))
+                LazyFormat("morphism is not triangular on %s") % (x))
 
     def __invert__(self):
         """
@@ -1452,12 +1452,12 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
                              "and the same basis indexing")
         from collections.abc import Callable
         if not isinstance(diagonal, Callable):
-            raise ValueError("diagonal (=%s) should be a function"%diagonal)
+            raise ValueError("diagonal (=%s) should be a function" % diagonal)
         if category is None:
             category = ModulesWithBasis(domain.base_ring())
         ModuleMorphismByLinearity.__init__(
             self, domain=domain, codomain=codomain, category=category)
-        self._diagonal=diagonal
+        self._diagonal = diagonal
 
     def _richcmp_(self, other, op):
         r"""

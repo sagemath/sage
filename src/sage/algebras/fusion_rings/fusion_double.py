@@ -198,7 +198,7 @@ class FusionDouble(CombinatorialFreeModule):
             The Fusion Ring of the Drinfeld Double of Symmetric group of
                 order 3! as a permutation group
         """
-        return "The Fusion Ring of the Drinfeld Double of %s"%self._G
+        return "The Fusion Ring of the Drinfeld Double of %s" % self._G
 
     def inject_variables(self):
         """
