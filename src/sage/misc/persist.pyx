@@ -887,7 +887,7 @@ class SageUnpickler(_BaseUnpickler):
     @classmethod
     def loads(cls, data, **kwargs):
         """
-        Equivalent to :func:`pickle.dumps` but using the
+        Equivalent to :func:`pickle.loads` but using the
         :class:`sage.misc.persist.SagePickler`.
 
         INPUT:
