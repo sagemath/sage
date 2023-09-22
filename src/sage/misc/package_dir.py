@@ -125,9 +125,9 @@ def read_distribution(src_file):
             line = line.lstrip()
             if not line:
                 continue
-            if line.startswith('#'):
+            if line.startswith('#') or line.startswith(';'):
                 line = line[1:].lstrip()
-            elif line.startswith('/*') or line.startswith('//'):
+            elif line.startswith('/*') or line.startswith('//') or line.startswith(';;'):
                 line = line[2:].lstrip()
             else:
                 break
