@@ -19,6 +19,7 @@ AUTHOR:
 #*****************************************************************************
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
+from sage.matrix.constructor import identity_matrix
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
