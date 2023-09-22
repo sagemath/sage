@@ -160,7 +160,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         ...
         ValueError: 'm4ri' matrices are only available for fields of characteristic 2
         and order <= 65536
-        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')                # needs sage.libs.linbox
         Traceback (most recent call last):
         ...
         ValueError: 'linbox-float' matrices can only deal with order < 256
@@ -903,7 +903,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Ensure that :trac:`12020` is fixed::
 
             sage: rings = [ZZ, QQ, RDF]
-            sage: rings.extend([RealField(100), ComplexField(100)]                      # needs sage.rings.real_mpfr
+            sage: rings.extend([RealField(100), ComplexField(100)])                     # needs sage.rings.real_mpfr
             sage: rings.append(CDF)                                                     # needs sage.rings.complex_double
             sage: rings.append(PolynomialRing(QQ, 'x'))
             sage: rings.append(PolynomialRing(CC, 2, 'x'))                              # needs sage.rings.real_mpfr
