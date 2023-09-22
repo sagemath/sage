@@ -5021,6 +5021,11 @@ REFERENCES:
              small Schroeder paths*, JCTA 125 (2014), 357-378,
              :doi:`10.1016/j.jcta.2014.04.002`
 
+.. [Pei2010] Peikert, C. (2010). An Efficient and Parallel Gaussian Sampler for
+             Lattices. In: Rabin, T. (eds) Advances in Cryptology – CRYPTO 2010.
+             CRYPTO 2010. Lecture Notes in Computer Science, vol 6223. Springer,
+             Berlin, Heidelberg. :doi:`10.1007/978-3-642-14623-7_5`
+
 .. [Pen2012] \R. Pendavingh, On the evaluation at `(-i, i)` of the
              Tutte polynomial of a binary matroid. Preprint:
              :arxiv:`1203.0910`
