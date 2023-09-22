@@ -197,7 +197,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         if not f or f in self.gens():
             return True
         f = self.ring()(f)
-        g = f.__reduce__()[1][0]
+        g = f.__reduce__()[1][1]
         return (g in self.polynomial_ideal())
 
     # Operations on ideals
