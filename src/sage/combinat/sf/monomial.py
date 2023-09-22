@@ -175,7 +175,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         assert self.base_ring() == f.base_ring()
         if check and not f.is_symmetric():
-            raise ValueError("%s is not a symmetric polynomial"%f)
+            raise ValueError("%s is not a symmetric polynomial" % f)
         out = self._from_dict({_Partitions.element_class(_Partitions, list(e)): c
                                for (e,c) in f.dict().items()
                                if all(e[i+1] <= e[i] for i in range(len(e)-1))},

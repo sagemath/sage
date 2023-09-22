@@ -366,7 +366,7 @@ class ClusterQuiver(SageObject):
             elif n+m == 1:
                 self._description = 'Quiver on 1 vertex'
             else:
-                self._description = 'Quiver on %d vertices' %(n+m)
+                self._description = 'Quiver on %d vertices' % (n+m)
 
         # constructs a quiver from a digraph
         elif isinstance(data, DiGraph):
@@ -1512,7 +1512,7 @@ class ClusterQuiver(SageObject):
             raise ValueError('The quiver can only be mutated at a vertex or at a sequence of vertices')
         if any(v not in V for v in sequence):
             v = next(v for v in sequence if v not in V)
-            raise ValueError('The quiver can only be mutated at the vertex %s'%v )
+            raise ValueError('The quiver can only be mutated at the vertex %s' % v )
 
         quiver = copy( self )
         quiver_sequence = []
