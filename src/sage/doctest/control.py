@@ -595,8 +595,8 @@ class DocTestController(SageObject):
         finish in less than about 5 seconds. Longer tests typically
         don't add coverage, they just make testing slow.
 
-        The default used here is 10 seconds, unless `--long` was used,
-        in which case it is 60 seconds.
+        The default used here is 5 seconds, unless `--long` was used,
+        in which case it is 30 seconds.
 
         TESTS:
 
