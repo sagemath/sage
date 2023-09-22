@@ -10,6 +10,8 @@ global-exclude *.cpp
 global-exclude all__sagemath_*.py
 global-include all__sagemath_eclib.py
 
+include sage/libs/eclib/wrap.cpp
+
 global-exclude __pycache__
 global-exclude *.py[co]
 global-exclude *.bak

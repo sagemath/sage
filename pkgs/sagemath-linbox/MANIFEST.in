@@ -19,6 +19,7 @@ include sage/rings/finite_rings/*_givaro*.p*
 
 # entangled via matrix_integer_dense
 include sage/geometry/integral_points_integer_dense.p*
+include sage/geometry/integral_points.pxi                                       # FIXME?
 
 # Depends on m4ri -- entangled via matrix_integer_dense
 include sage/libs/m4ri*.p*
