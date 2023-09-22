@@ -1284,6 +1284,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: k = RealField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial( x )
