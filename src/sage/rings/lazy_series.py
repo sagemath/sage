@@ -1428,6 +1428,11 @@ class LazyModuleElement(Element):
             sage: f
             1 - x - x^2 - 2*x^3 - 5*x^4 - 14*x^5 - 42*x^6 + O(x^7)
 
+            sage: f = P.undefined()
+            sage: f.define(1 - x / f)
+            sage: f
+            1 - x - x^2 - 2*x^3 - 5*x^4 - 14*x^5 - 42*x^6 + O(x^7)
+
             sage: D = LazyDirichletSeriesRing(QQ, "s")
             sage: g = D([0, 1])
             sage: f = D.undefined()
@@ -1437,17 +1442,6 @@ class LazyModuleElement(Element):
 
             sage: oeis(f[:30])                                                  # optional - internet
             0: A122698: a(1)=a(2)=1 then a(n) = Sum_{d|n, 1<d<n} a(d)*a(n/d).
-
-        Note that we cannot use division in the examples above.
-        Since we allow division by series with positive valuation,
-        the valuation of `x / f` might be zero::
-
-            sage: f = P.undefined()
-            sage: f.define(1 - x / f)
-            sage: f[0]
-            Traceback (most recent call last):
-            ...
-            ValueError: inverse does not exist
 
         Check that reversion is lazy enough::
 
@@ -1514,6 +1508,14 @@ class LazyModuleElement(Element):
             sage: f.define((1/(1-L(lambda n: 0 if not n else sigma(f[n-1]+1)))))
             sage: f
             1 + 3*x + 16*x^2 + 87*x^3 + 607*x^4 + 4518*x^5 + 30549*x^6 + O(x^7)
+
+        Undefined series given by division (:issue:`36287`)::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: t = L.undefined(0)
+            sage: t.define(z / (1 - t))
+            sage: t
+            z + z^2 + 2*z^3 + 5*z^4 + 14*z^5 + 42*z^6 + O(z^7)
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")
@@ -3517,7 +3519,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # we cannot pass the approximate order here, even when
         # P._minimal_valuation is zero, because we allow division by
         # series of positive valuation
-        right_inverse = Stream_cauchy_invert(right)
+        if P._minimal_valuation is None:
+            right_inverse = Stream_cauchy_invert(right)
+        else:
+            ao = min(P._minimal_valuation, -right._approximate_order)
+            right_inverse = Stream_cauchy_invert(right, approximate_order=ao)
         if P in Rings().Commutative():
             coeff_stream = Stream_cauchy_mul_commutative(left, right_inverse, P.is_sparse())
         else:
