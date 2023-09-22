@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Galois groups of Finite Fields
 """

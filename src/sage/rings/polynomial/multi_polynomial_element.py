@@ -2124,7 +2124,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
             sage: R.<z> = PolynomialRing(CC,1)                                          # needs sage.rings.real_mpfr
             sage: f = z^4 - 6*z + 3                                                     # needs sage.rings.real_mpfr
-            sage: f.factor()                                                            # needs sage.rings.real_mpfr
+            sage: f.factor()                                                            # needs sage.libs.pari sage.rings.real_mpfr
             (z - 1.60443920904349) * (z - 0.511399619393097)
              * (z + 1.05791941421830 - 1.59281852704435*I)
              * (z + 1.05791941421830 + 1.59281852704435*I)

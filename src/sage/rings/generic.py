@@ -21,6 +21,7 @@ class ProductTree:
     (the famous *Fast* Fourier Transform) can be implemented as follows
     using the :meth:`remainders` method of this class::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.generic import ProductTree
         sage: F = GF(65537)
         sage: a = F(1111)
@@ -88,8 +89,8 @@ class ProductTree:
         EXAMPLES::
 
             sage: from sage.rings.generic import ProductTree
-            sage: vs = prime_range(100)
-            sage: tree = ProductTree(vs)
+            sage: vs = prime_range(100)                                                 # needs sage.libs.pari
+            sage: tree = ProductTree(vs)                                                # needs sage.libs.pari
         """
         V = tuple(leaves)
         self.layers = [V]
@@ -183,6 +184,7 @@ class ProductTree:
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: from sage.rings.generic import ProductTree
             sage: vs = prime_range(100)
             sage: tree = ProductTree(vs)

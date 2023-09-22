@@ -640,7 +640,6 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(11)[]
             sage: der = R.derivation()
             sage: S.<x> = R['x', der]
@@ -668,6 +667,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -681,7 +681,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Divisibility by `0` does not make sense::
 
-            sage: c.is_left_divisible_by(S(0))
+            sage: c.is_left_divisible_by(S(0))                                          # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero is not valid

@@ -89,7 +89,7 @@ there are 4 equations in 3 unknowns). ::
 However, when we compute the Groebner basis of I (defined over `\ZZ`), we
 note that there is a certain integer in the ideal which is not 1::
 
-    sage: gb = d_basis(I); gb
+    sage: gb = d_basis(I); gb                                                           # needs sage.libs.singular
     [z ..., y ..., x ..., 282687803443]
 
 Now for each prime `p` dividing this integer 282687803443, the Groebner

@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Univariate dense skew polynomials over finite fields
 

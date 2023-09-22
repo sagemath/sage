@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-categories
-# sage.doctest: needs sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
 """
 Lazy real and complex numbers
 
