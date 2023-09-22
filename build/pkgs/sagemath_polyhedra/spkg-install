@@ -20,6 +20,8 @@ fi
 
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
+unset tox_args
+
 if [ "$SAGE_EDITABLE" = yes ]; then
     tox_envs=$(tox -l | sed s/norequirements/editable/)
     # FIXME: Should use -r if sage_setup or another build requirement changes
@@ -27,22 +29,26 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     if [ "$SAGE_CHECK" = no ]; then
         tox_args="$tox_args --notest"
     fi
-else
+fi
+
+if [ "$SAGE_WHEELS" = yes ]; then
     rm -Rf build
     # First build the sdist, then build the wheel from the sdist.
     # https://pypa-build.readthedocs.io/en/latest/#python--m-build
-    # (Important because the package uses MANIFEST.in for filtering.)
-    # Do not install the wheel.
+    # This makes sure that the sdist is complete.
     DIST_DIR="$(mktemp -d)"
     python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
     ls -l "$DIST_DIR"/dist/*.tar.gz
-    wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
+    if [ "$SAGE_EDITABLE" = yes ]; then
+        # Do not install the wheel
+        wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
+    else
+        wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . >&2 && echo $wheel)
+    fi
     ls -l "$wheel"
     if [ "$SAGE_CHECK" != no ]; then
         tox_envs=$(tox -l)
         tox_args="-r -p auto -v --installpkg $wheel"
-    else
-        unset tox_args
     fi
 fi
 
