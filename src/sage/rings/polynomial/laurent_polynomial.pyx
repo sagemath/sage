@@ -592,11 +592,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 elif e == 0:
                     var = ""
                 else:
-                    var = "*{}^{}".format(X,e)
-                s += "{}{}".format(x,var)
+                    var = "*{}^{}".format(X, e)
+                s += "{}{}".format(x, var)
                 first = False
         s = s.replace(" + -", " - ")
-        s = s.replace(" 1*"," ")
+        s = s.replace(" 1*", " ")
         s = s.replace(" -1*", " -")
         return s[1:]
 
@@ -701,7 +701,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # degrees
         cdef long result = 0
         cdef long result_mon
-        cdef int i,j
+        cdef int i, j
         cdef long var_hash_name = hash(self.__u._parent._names[0])
         for i in range(self.__u.degree()+1):
             result_mon = hash(self.__u[i])
@@ -913,11 +913,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         j = i - self.__n
         if j >= 0:
             self.__u._unsafe_mutate(j, value)
-        else: # off to the left
+        else:  # off to the left
             if value != 0:
                 self.__n = self.__n + j
                 R = self._parent.base_ring()
-                coeffs = [value] + [R.zero() for _ in range(1,-j)] + self.__u.list()
+                coeffs = [value] + [R.zero() for _ in range(1, -j)] + self.__u.list()
                 self.__u = self.__u._parent(coeffs)
         self._normalize()
 
@@ -1282,7 +1282,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             Fraction Field of Univariate Polynomial Ring in t over Rational Field
         """
         cdef LaurentPolynomial_univariate ret
-        if self.__u.is_constant(): # this has a single term c*x^n
+        if self.__u.is_constant():  # this has a single term c*x^n
             ret = <LaurentPolynomial_univariate> self._new_c()
             if self.__u.is_unit():
                 ret.__u = self.__u.inverse_of_unit()
@@ -1599,7 +1599,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__n == 0 and self.__u.is_constant()
 
-
     def is_square(self, root=False):
         r"""
         Return whether this Laurent polynomial is a square.
@@ -1846,10 +1845,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         cdef list a = self.__u.list(copy=False)
         if n < 0:
-            v = [a[i]/(n+i+1) for i in range(min(-1-n,len(a)))] + [0]
+            v = [a[i] / (n + i + 1) for i in range(min(-1 - n, len(a)))] + [0]
         else:
             v = []
-        v += [a[i]/(n+i+1) for i in range(max(-n,0), len(a))]
+        v += [a[i] / (n + i + 1) for i in range(max(-n, 0), len(a))]
         try:
             u = self._parent._R(v)
         except TypeError:
@@ -1888,7 +1887,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         if kwds:
             f = self.subs(**kwds)
-            if x: # If there are non-keyword arguments
+            if x:  # If there are non-keyword arguments
                 return f(*x)
             else:
                 return f
@@ -1972,6 +1971,43 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
     @coerce_binop
     def divides(self, other):
+        r"""
+        Return ``True`` if ``self`` divides ``other``.
+
+        This method is only implemented for Laurent polynomials over an integral domain.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: (2*x**-1 + 1).divides(4*x**-2 - 1)
+            True
+            sage: (2*x + 1).divides(4*x**2 + 1)
+            False
+            sage: (2*x + x**-1).divides(R(0))
+            True
+            sage: R(0).divides(2*x ** -1 + 1)
+            False
+            sage: R(0).divides(R(0))
+            True
+            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+            sage: p = 4*x + 3*x^-1
+            sage: q = 5*x^2 + x + 2*x^-2
+            sage: p.divides(q)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: divisibility test only implemented for Laurent polynomials over an integral domain
+
+
+            sage: R.<x,y> = GF(2)[]
+            sage: S.<z> = LaurentPolynomialRing(R)
+            sage: p = (x+y+1) * z**-1 + x*y
+            sage: q = (y^2-x^2) * z**-2 + z + x-y
+            sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
+            (False, True)
+        """
+        if not self.base_ring().is_integral_domain():
+            raise NotImplementedError("divisibility test only implemented for Laurent polynomials over an integral domain")
+
         R = self.parent().polynomial_ring()
         p = R(self.polynomial_construction()[0])
         q = R(other.polynomial_construction()[0])

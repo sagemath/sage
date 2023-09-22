@@ -213,7 +213,7 @@ cdef class Polynomial(CommutativePolynomial):
     .. automethod:: _mul_trunc_
     """
 
-    def __init__(self, parent, is_gen = False, construct=False):
+    def __init__(self, parent, is_gen=False, construct=False):
         """
         The following examples illustrate creation of elements of
         polynomial rings, and some basic arithmetic.
@@ -357,7 +357,7 @@ cdef class Polynomial(CommutativePolynomial):
         from sage.plot.all import plot, point
         if R.characteristic() == 0:
             if xmin is None and xmax is None:
-                (xmin, xmax) = (-1,1)
+                (xmin, xmax) = (-1, 1)
             elif xmin is None or xmax is None:
                 raise AttributeError("must give both plot endpoints")
             return plot(self.__call__, (xmin, xmax), *args, **kwds)
@@ -365,10 +365,10 @@ cdef class Polynomial(CommutativePolynomial):
             if R.is_finite():
                 v = list(R)
                 v.sort()
-                w = dict([(v[i],i) for i in range(len(v))])
+                w = dict([(v[i], i) for i in range(len(v))])
                 z = [(i, w[self(v[i])]) for i in range(len(v))]
                 return point(z, *args, **kwds)
-        raise NotImplementedError("plotting of polynomials over %s not implemented"%R)
+        raise NotImplementedError("plotting of polynomials over %s not implemented" % R)
 
     cpdef _lmul_(self, Element left):
         """
@@ -832,7 +832,7 @@ cdef class Polynomial(CommutativePolynomial):
                     # is more permissive about its arguments than we are.
                     top = top(*args, **kwds)
                 except TypeError:
-                    if args: # bwd compat: nonsense *keyword* arguments are okay
+                    if args:  # bwd compat: nonsense *keyword* arguments are okay
                         raise TypeError("Wrong number of arguments")
                 else:
                     eval_coeffs = True
@@ -912,7 +912,7 @@ cdef class Polynomial(CommutativePolynomial):
         d = pol.degree()
 
         if d <= 0 or (isinstance(a, Element) and R.is_exact() and a.is_zero()):
-            return cst # with the right parent thanks to the above coercion
+            return cst  # with the right parent thanks to the above coercion
         elif pol._parent is R and a.is_gen():
             return pol
         elif hasattr(a, "_evaluate_polynomial"):
@@ -1078,18 +1078,18 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Py_ssize_t d2 = pol.degree()
 
         # Special case constant polynomials
-        if d1 == -1: # self is the 0 polynomial
+        if d1 == -1:  # self is the 0 polynomial
             if d2 == -1:
-                return rich_to_bool(op, 0) # both polynomials are 0
+                return rich_to_bool(op, 0)  # both polynomials are 0
             elif d2 == 0:
                 return richcmp(self._parent._base.zero(), pol.get_unsafe(0), op)
-            return rich_to_bool_sgn(op, -1) # we have d2 > 0
-        elif d1 == 0: # self is a nonzero constant
+            return rich_to_bool_sgn(op, -1)  # we have d2 > 0
+        elif d1 == 0:  # self is a nonzero constant
             if d2 == -1:
                 return richcmp(self.get_unsafe(0), pol._parent._base.zero(), op)
             elif d2 == 0:
                 return richcmp(self.get_unsafe(0), pol.get_unsafe(0), op)
-            return rich_to_bool_sgn(op, -1) # we have d2 > d1 == 0
+            return rich_to_bool_sgn(op, -1)  # we have d2 > d1 == 0
 
         # For different degrees, compare the degree
         if d1 != d2:
@@ -1272,12 +1272,12 @@ cdef class Polynomial(CommutativePolynomial):
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
 
         """
-        cdef long result = 0 # store it in a c-int and just let the overflowing additions wrap
+        cdef long result = 0  # store it in a c-int and just let the overflowing additions wrap
         cdef long result_mon
         cdef long c_hash
         cdef long var_name_hash
         cdef int i
-        for i from 0<= i <= self.degree():
+        for i from 0 <= i <= self.degree():
             if i == 1:
                 # we delay the hashing until now to not waste it on a constant poly
                 var_name_hash = hash(self._parent._names[0])
@@ -1331,7 +1331,7 @@ cdef class Polynomial(CommutativePolynomial):
         a = im_gens[0]
         d = self.degree()
         if d == -1:
-            return codomain.zero() # Special case: 0 should always coerce to 0
+            return codomain.zero()  # Special case: 0 should always coerce to 0
         if base_map is None:
             base_map = codomain.coerce_map_from(self.base_ring())
         result = base_map(self.get_unsafe(d))
@@ -1661,9 +1661,9 @@ cdef class Polynomial(CommutativePolynomial):
             for i in range(n+1):
                 for j in range(n-1):
                     M[i+j, j+n] = m[i]
-            v = vector(R, [R.one()] + [R.zero()]*(2*n-2)) # the constant polynomial 1
+            v = vector(R, [R.one()] + [R.zero()]*(2*n-2))  # the constant polynomial 1
             if M.is_invertible():
-                x = M.solve_right(v) # there has to be a better way to solve
+                x = M.solve_right(v)  # there has to be a better way to solve
                 return a.parent()(list(x)[0:n])
             else:
                 raise ValueError("Impossible inverse modulo")
@@ -1846,7 +1846,7 @@ cdef class Polynomial(CommutativePolynomial):
         This is the default implementation that does the multiplication and then
         truncate! There are custom implementations in several subclasses:
 
-        - :meth:`on dense polynomial over integers (via FLINT) <sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint._mul_trunc_>`
+        - :meth:`on dense polynomial over integers (via FLINT)     <sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint._mul_trunc_>`
 
         - :meth:`on dense polynomial over Z/nZ (via FLINT)
           <sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint._mul_trunc_>`
@@ -1961,7 +1961,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         if self.degree() < 0:
             raise ValueError("square-free decomposition not defined for zero polynomial")
-        if hasattr(self.base_ring(),'_squarefree_decomposition_univariate_polynomial'):
+        if hasattr(self.base_ring(), '_squarefree_decomposition_univariate_polynomial'):
             return self.base_ring()._squarefree_decomposition_univariate_polynomial(self)
         raise NotImplementedError("square-free decomposition not implemented for this polynomial")
 
@@ -2188,11 +2188,11 @@ cdef class Polynomial(CommutativePolynomial):
                     raise ValueError("ring must be an extension of the base ring")
                 if not (ring.is_field() and ring.is_finite()):
                     raise NotImplementedError
-                allowed_deg_mult = Integer(ring.factored_order()[0][1]) # generally it will be the quotient of this by the degree of the base ring.
+                allowed_deg_mult = Integer(ring.factored_order()[0][1])  # generally it will be the quotient of this by the degree of the base ring.
             if degree is None:
                 x = self._parent.gen()
                 if allowed_deg_mult == 1:
-                    xq = pow(x,q,self)
+                    xq = pow(x, q, self)
                     self = self.gcd(xq-x)
                     degree = -1
                     if self.degree() == 0:
@@ -2210,7 +2210,7 @@ cdef class Polynomial(CommutativePolynomial):
                             break
                         while d < allowed_deg_mult:
                             d = d+1
-                            xq = pow(xq,q,self)
+                            xq = pow(xq, q, self)
                             if d.divides(allowed_deg_mult):
                                 break
                         A = self.gcd(xq-x)
@@ -2234,8 +2234,8 @@ cdef class Polynomial(CommutativePolynomial):
                                 break
                             while True:
                                 # we waste a little effort here in computing the xq again.
-                                d = d+1
-                                xq = pow(xq,q,self)
+                                d = d + 1
+                                xq = pow(xq, q, self)
                                 if allowed_deg_mult.divides(d):
                                     break
                             A = self.gcd(xq-x)
@@ -2257,7 +2257,7 @@ cdef class Polynomial(CommutativePolynomial):
                             raise ValueError("no roots D %s" % self)
                         break
                     d = d+1
-                    xq = pow(xq,q,self)
+                    xq = pow(xq, q, self)
                     if d == degree:
                         break
                     A = self.gcd(xq-x)
@@ -2273,13 +2273,13 @@ cdef class Polynomial(CommutativePolynomial):
                 if degree == 1:
                     ring = self.base_ring()
                 else:
-                    ring = self.base_ring().extension(degree) # this won't work yet.
+                    ring = self.base_ring().extension(degree)  # this won't work yet.
             # now self has only roots of degree ``degree``.
             # for now, we only implement the Cantor-Zassenhaus split
             k = self.degree() // degree
             if k == 1:
                 try:
-                    return self.roots(ring, multiplicities=False)[0] # is there something better to do here?
+                    return self.roots(ring, multiplicities=False)[0]  # is there something better to do here?
                 except IndexError:
                     raise ValueError("no roots F %s" % self)
             if q % 2 == 0:
@@ -2289,8 +2289,8 @@ cdef class Polynomial(CommutativePolynomial):
                         continue
                     T = T.monic()
                     C = T
-                    for i in range(degree-1):
-                        C = T + pow(C,q,self)
+                    for i in range(degree - 1):
+                        C = T + pow(C, q, self)
                     h = self.gcd(C)
                     hd = h.degree()
                     if hd != 0 and hd != self.degree():
@@ -2536,7 +2536,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 v = [R.zero()]*right + [R.one()]
             return self.parent()(v, check=False)
-        if right > 20: # no gain below
+        if right > 20:  # no gain below
             try:
                 p = self.parent().characteristic()
             except (AttributeError, NotImplementedError):
@@ -2557,7 +2557,7 @@ cdef class Polynomial(CommutativePolynomial):
                     q, r = q.quo_rem(p)
                     if r != 0:
                         if sparse:
-                            tmp = self.parent()({e*k : d[k]**e for k in d})
+                            tmp = self.parent()({e * k: d[k] ** e for k in d})
                         else:
                             tmp = [0] * (e * len(c) - e + 1)
                             for i in range(len(c)):
@@ -2728,19 +2728,19 @@ cdef class Polynomial(CommutativePolynomial):
                 if y.find("-") == 0:
                     y = y[1:]
                 if not atomic_repr and n > 0 and (y.find("+") != -1 or y.find("-") != -1):
-                    x = "(%s)"%x
+                    x = "(%s)" % x
                 if n > 1:
-                    var = "*%s^%s"%(name,n)
-                elif n==1:
-                    var = "*%s"%name
+                    var = "*%s^%s" % (name, n)
+                elif n == 1:
+                    var = "*%s" % name
                 else:
                     var = ""
                 sbuf.write(x)
                 sbuf.write(var)
         s = sbuf.getvalue()
         s = s.replace(" + -", " - ")
-        s = re.sub(r' 1(\.0+)?\*',' ', s)
-        s = re.sub(r' -1(\.0+)?\*',' -', s)
+        s = re.sub(r' 1(\.0+)?\*', ' ', s)
+        s = re.sub(r' -1(\.0+)?\*', ' -', s)
         if s == " ":
             return "0"
         return s[1:]
@@ -2813,7 +2813,7 @@ cdef class Polynomial(CommutativePolynomial):
                     x = "\\left(%s\\right)" % x
                 if n > 1:
                     var = "|%s^{%s}" % (name, n)
-                elif n==1:
+                elif n == 1:
                     var = "|%s" % name
                 else:
                     var = ""
@@ -3150,12 +3150,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         - Didier Deshommes (2006-05-25)
         """
-        return self._parent(polynomial_fateman._mul_fateman_mul(self,right))
+        return self._parent(polynomial_fateman._mul_fateman_mul(self, right))
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _mul_karatsuba(self, right, K_threshold = None):
+    def _mul_karatsuba(self, right, K_threshold=None):
         r"""
         Compute the product of two polynomials using the Karatsuba divide
         and conquer multiplication algorithm. This is only used over a
@@ -3328,8 +3328,8 @@ cdef class Polynomial(CommutativePolynomial):
         if n <= K_threshold or m <= K_threshold:
             return self._new_generic(do_schoolbook_product(f, g, -1))
         if n == m:
-            return self._new_generic(do_karatsuba(f,g, K_threshold, 0, 0, n))
-        return self._new_generic(do_karatsuba_different_size(f,g, K_threshold))
+            return self._new_generic(do_karatsuba(f, g, K_threshold, 0, 0, n))
+        return self._new_generic(do_karatsuba_different_size(f, g, K_threshold))
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -3487,7 +3487,7 @@ cdef class Polynomial(CommutativePolynomial):
         if var not in variables:
             x = base_ring(self) if base_ring else self
             const_ix = ETuple((0,)*len(variables))
-            return { const_ix: x }
+            return {const_ix: x}
 
         cdef tuple prev_variables = variables[:variables.index(var)]
         const_ix = ETuple((0,)*len(prev_variables))
@@ -3509,7 +3509,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef dict D = {}
         cdef tuple leftovers = (0,) * (len(variables) - len(prev_variables) - 1)
         for k in range(len(mpolys)):
-            for i,a in mpolys[k].iteritems():
+            for i, a in mpolys[k].iteritems():
                 j = ETuple((k,) + leftovers)
                 D[i + j] = a
 
@@ -3680,7 +3680,7 @@ cdef class Polynomial(CommutativePolynomial):
             for y in x:
                 d = d.lcm(y.denominator())
             return d
-        except(AttributeError):
+        except (AttributeError):
             return self.base_ring().one()
 
     def numerator(self):
@@ -3951,7 +3951,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return [self.diff()]
 
-    def integral(self,var=None):
+    def integral(self, var=None):
         """
         Return the integral of this polynomial.
 
@@ -4571,39 +4571,39 @@ cdef class Polynomial(CommutativePolynomial):
         #     PARI for smaller degree over other rings besides Z, and use
         #     NTL in general.
         # A remark from Bill Hart (2007-09-25) about the above observation:
-        ## NTL uses the Berlekamp-Zassenhaus method with van Hoeij's improvements.
-        ## But so does Magma since about Jul 2001.
-        ##
-        ## But here's the kicker. PARI also uses this algorithm. Even Maple uses
-        ## it!
-        ##
-        ## NTL's LLL algorithms are extremely well developed (van Hoeij uses
-        ## LLL). There is also a possible speed difference in whether one uses
-        ## quadratic convergence or not in the Hensel lift. But the right choice
-        ## is not always what one thinks.
-        ##
-        ## But more than likely NTL is just better for large problems because
-        ## Victor Shoup was very careful with the choice of strategies and
-        ## parameters he used. Paul Zimmerman supplied him with a pile of
-        ## polynomials to factor for comparison purposes and these seem to have
-        ## been used to tune the algorithm for a wide range of inputs, including
-        ## cases that van Hoeij's algorithm doesn't usually like.
-        ##
-        ## If you have a bound on the coefficients of the factors, one can surely
-        ## do better than a generic implementation, but probably not much better
-        ## if there are many factors.
-        ##
+        # # NTL uses the Berlekamp-Zassenhaus method with van Hoeij's improvements.
+        # # But so does Magma since about Jul 2001.
+        # #
+        # # But here's the kicker. PARI also uses this algorithm. Even Maple uses
+        # # it!
+        # #
+        # # NTL's LLL algorithms are extremely well developed (van Hoeij uses
+        # # LLL). There is also a possible speed difference in whether one uses
+        # # quadratic convergence or not in the Hensel lift. But the right choice
+        # # is not always what one thinks.
+        # #
+        # # But more than likely NTL is just better for large problems because
+        # # Victor Shoup was very careful with the choice of strategies and
+        # # parameters he used. Paul Zimmerman supplied him with a pile of
+        # # polynomials to factor for comparison purposes and these seem to have
+        # # been used to tune the algorithm for a wide range of inputs, including
+        # # cases that van Hoeij's algorithm doesn't usually like.
+        # #
+        # # If you have a bound on the coefficients of the factors, one can surely
+        # # do better than a generic implementation, but probably not much better
+        # # if there are many factors.
+        # #
 
-        ## HUGE TODO, refactor the code below here such that this method will
-        ## have as only the following code
-        ##
-        ## R = self.parent().base_ring()
-        ## return R._factor_univariate_polynomial(self)
-        ##
-        ## in this way we can move the specific logic of factoring to the
-        ## self.parent().base_ring() and get rid of all the ugly
-        ## is_SomeType(R) checks and get way nicer structured code
-        ## 200 lines of spaghetti code is just way to much!
+        # # HUGE TODO, refactor the code below here such that this method will
+        # # have as only the following code
+        # #
+        # # R = self.parent().base_ring()
+        # # return R._factor_univariate_polynomial(self)
+        # #
+        # # in this way we can move the specific logic of factoring to the
+        # # self.parent().base_ring() and get rid of all the ugly
+        # # is_SomeType(R) checks and get way nicer structured code
+        # # 200 lines of spaghetti code is just way to much!
 
         if self.degree() < 0:
             raise ArithmeticError("factorization of {!r} is not defined".format(self))
@@ -4617,7 +4617,7 @@ cdef class Polynomial(CommutativePolynomial):
             try:
                 F = flatten(self).factor(**kwargs)
                 unflatten = flatten.section()
-                return Factorization(((unflatten(f),m) for (f,m) in F), unit = F.unit())
+                return Factorization(((unflatten(f), m) for (f, m) in F), unit=F.unit())
             except NotImplementedError:
                 pass
 
@@ -4650,7 +4650,7 @@ cdef class Polynomial(CommutativePolynomial):
             # This was copied from the general multivariate implementation
             try:
                 if R.is_finite():
-                    if R.characteristic() > 1<<29:
+                    if R.characteristic() > 1 << 29:
                         raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
                 P = self._parent
@@ -4658,8 +4658,8 @@ cdef class Polynomial(CommutativePolynomial):
                 S = self._singular_().factorize()
                 factors = S[1]
                 exponents = S[2]
-                v = sorted([( P(factors[i+1]),
-                              sage.rings.integer.Integer(exponents[i+1]))
+                v = sorted([(P(factors[i + 1]),
+                            sage.rings.integer.Integer(exponents[i + 1]))
                             for i in range(len(factors))])
                 unit = P.one()
                 for i in range(len(v)):
@@ -4936,7 +4936,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         raise NotImplementedError("splitting_field() is only implemented over number fields and finite fields")
 
-    def pseudo_quo_rem(self,other):
+    def pseudo_quo_rem(self, other):
         r"""
         Compute the pseudo-division of two polynomials.
 
@@ -4996,7 +4996,7 @@ cdef class Polynomial(CommutativePolynomial):
             e -= 1
 
         q = d**e
-        return (q*Q,q*R)
+        return (q * Q, q * R)
 
     @coerce_binop
     def gcd(self, other):
@@ -5089,7 +5089,7 @@ cdef class Polynomial(CommutativePolynomial):
         try:
             doit = self._parent._base._gcd_univariate_polynomial
         except AttributeError:
-            raise NotImplementedError("%s does not provide a gcd implementation for univariate polynomials"%self._parent._base)
+            raise NotImplementedError("%s does not provide a gcd implementation for univariate polynomials" % self._parent._base)
         else:
             return doit(self, other)
 
@@ -5462,7 +5462,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         return R.fraction_field()[self._parent.variable_name()].quotient(self, names)
 
-    def sylvester_matrix(self, right, variable = None):
+    def sylvester_matrix(self, right, variable=None):
         """
         Return the Sylvester matrix of ``self`` and ``right``.
 
@@ -5588,10 +5588,10 @@ cdef class Polynomial(CommutativePolynomial):
         # sylvester_matrix() in multi_polynomial.pyx.
 
         if self._parent != right.parent():
-            a, b = coercion_model.canonical_coercion(self,right)
+            a, b = coercion_model.canonical_coercion(self, right)
             variable = a.parent()(self.variables()[0])
-            #We add the variable to cover the case that right is a multivariate
-            #polynomial
+            # We add the variable to cover the case that right is a multivariate
+            # polynomial
             return a.sylvester_matrix(b, variable)
 
         if variable:
@@ -6446,13 +6446,18 @@ cdef class Polynomial(CommutativePolynomial):
 
         e = self.exponents()
         c = self.coefficients()
-        if len(e) == 0: return []
+        if len(e) == 0:
+            return []
         if len(e) == 1:
-            if e[0] == 0: return []
-            else:         return [(infinity.infinity, e[0])]
+            if e[0] == 0:
+                return []
+            else:
+                return [(infinity.infinity, e[0])]
 
-        if e[0] == 0: slopes = []
-        else:         slopes = [(infinity.infinity, e[0])]
+        if e[0] == 0:
+            slopes = []
+        else:
+            slopes = [(infinity.infinity, e[0])]
 
         points = [(e[0], c[0].valuation(p)), (e[1], c[1].valuation(p))]
         slopes.append((-(c[1].valuation(p)-c[0].valuation(p))/(e[1] - e[0]), e[1]-e[0]))
@@ -6463,8 +6468,8 @@ cdef class Polynomial(CommutativePolynomial):
                 slopes = slopes[:-1]
                 points = points[:-1]
                 s = -(v-points[-1][1])/(e[i]-points[-1][0])
-            slopes.append((s,e[i]-points[-1][0]))
-            points.append((e[i],v))
+            slopes.append((s, e[i] - points[-1][0]))
+            points.append((e[i], v))
 
         return slopes
 
@@ -6508,7 +6513,7 @@ cdef class Polynomial(CommutativePolynomial):
                 if m != n or p[n] != q[n]:
                     continue
                 alpha = (q[n-1] - p[n-1])/(n*p[n])
-                if alpha.is_integer(): # ZZ() might work for non-integers...
+                if alpha.is_integer():  # ZZ() might work for non-integers...
                     alpha = ZZ(alpha)
                 else:
                     continue
@@ -7178,7 +7183,7 @@ cdef class Polynomial(CommutativePolynomial):
             if Sf is not QQ or (d1 <= N and d2 <= N):
                 algorithm = "resultant"
             else:
-                c = d1*sum(bool(p1[i]) for i in range(d1 + 1))*\
+                c = d1*sum(bool(p1[i]) for i in range(d1 + 1)) * \
                     d2*sum(bool(p2[i]) for i in range(d2 + 1))
                 if c <= N**4:
                     algorithm = "resultant"
@@ -7591,8 +7596,7 @@ cdef class Polynomial(CommutativePolynomial):
             return self  # return 0
         n = self.degree()
         base_ring = self._parent.base_ring()
-        if (is_MPolynomialRing(base_ring) or
-            is_PowerSeriesRing(base_ring)):
+        if (is_MPolynomialRing(base_ring) or is_PowerSeriesRing(base_ring)):
             # It is often cheaper to compute discriminant of simple
             # multivariate polynomial and substitute the real
             # coefficients into that result (see #16014).
@@ -7601,13 +7605,13 @@ cdef class Polynomial(CommutativePolynomial):
         k = d.degree()
 
         r = n % 4
-        u = -1 # (-1)**(n*(n-1)/2)
+        u = -1  # (-1)**(n*(n-1)/2)
         if r == 0 or r == 1:
             u = 1
         try:
             an = self.get_coeff_c(n)**(n - k - 2)
         except ZeroDivisionError:
-            assert(n-k-2 == -1)
+            assert (n-k-2 == -1)
             # Rather than dividing the resultant by the leading coefficient,
             # we alter the Sylvester matrix (see #11782).
             mat = self.sylvester_matrix(d)
@@ -7656,14 +7660,14 @@ cdef class Polynomial(CommutativePolynomial):
         if degree is not None:
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             if len(v) < degree+1:
                 v.reverse()
                 v = [self.base_ring().zero()]*(degree+1-len(v)) + v
             elif len(v) > degree+1:
                 v = v[:degree+1]
                 v.reverse()
-            else: # len(v) == degree + 1
+            else:  # len(v) == degree + 1
                 v.reverse()
         else:
             v.reverse()
@@ -8418,9 +8422,9 @@ cdef class Polynomial(CommutativePolynomial):
                                   sage.rings.abc.RealDoubleField,
                                   sage.rings.abc.ComplexDoubleField))
         output_fp = isinstance(L, (sage.rings.abc.RealField,
-                                  sage.rings.abc.ComplexField,
-                                  sage.rings.abc.RealDoubleField,
-                                  sage.rings.abc.ComplexDoubleField))
+                                   sage.rings.abc.ComplexField,
+                                   sage.rings.abc.RealDoubleField,
+                                   sage.rings.abc.ComplexDoubleField))
         input_complex = isinstance(K, (sage.rings.abc.ComplexField, sage.rings.abc.ComplexDoubleField))
         output_complex = isinstance(L, (sage.rings.abc.ComplexField, sage.rings.abc.ComplexDoubleField))
         input_gaussian = (isinstance(K, sage.rings.abc.NumberField_quadratic)
@@ -8503,20 +8507,20 @@ cdef class Polynomial(CommutativePolynomial):
                 from sage.symbolic.constants import I
                 coeffs = self.list()
                 D = coeffs[1]*coeffs[1] - 4*coeffs[0]*coeffs[2]
-                l = None
+                l0 = None
                 if D > 0:
-                    l = [((-coeffs[1]-sqrt(D))/2/coeffs[2], 1),
-                         ((-coeffs[1]+sqrt(D))/2/coeffs[2], 1)]
+                    l0 = [((-coeffs[1] - sqrt(D)) / 2 / coeffs[2], 1),
+                          ((-coeffs[1] + sqrt(D)) / 2 / coeffs[2], 1)]
                 elif D < 0:
-                    l = [((-coeffs[1]-I*sqrt(-D))/2/coeffs[2], 1),
-                         ((-coeffs[1]+I*sqrt(-D))/2/coeffs[2], 1)]
+                    l0 = [((-coeffs[1] - I * sqrt(-D)) / 2 / coeffs[2], 1),
+                          ((-coeffs[1] + I * sqrt(-D)) / 2 / coeffs[2], 1)]
                 elif D == 0:
-                    l = [(-coeffs[1]/2/coeffs[2], 2)]
-                if l:
+                    l0 = [(-coeffs[1] / 2 / coeffs[2], 2)]
+                if l0:
                     if multiplicities:
-                        return l
+                        return l0
                     else:
-                        return [val for val,m in l]
+                        return [val for val, m in l0]
             from sage.symbolic.ring import SR
             vname = 'do_not_use_this_name_in_a_polynomial_coefficient'
             var = SR(vname)
@@ -8534,7 +8538,7 @@ cdef class Polynomial(CommutativePolynomial):
             # and complex root isolation and for p-adic factorization
             if (is_IntegerRing(K) or is_RationalField(K)
                 or isinstance(K, sage.rings.abc.AlgebraicRealField)) and \
-                isinstance(L, (sage.rings.abc.AlgebraicRealField, sage.rings.abc.RealIntervalField)):
+                   isinstance(L, (sage.rings.abc.AlgebraicRealField, sage.rings.abc.RealIntervalField)):
 
                 from sage.rings.polynomial.real_roots import real_roots
 
@@ -8564,7 +8568,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             if (is_IntegerRing(K) or is_RationalField(K)
                 or isinstance(K, sage.rings.abc.AlgebraicField_common) or input_gaussian) and \
-                isinstance(L, (sage.rings.abc.ComplexIntervalField, sage.rings.abc.AlgebraicField_common)):
+                   isinstance(L, (sage.rings.abc.ComplexIntervalField, sage.rings.abc.AlgebraicField_common)):
 
                 from sage.rings.polynomial.complex_roots import complex_roots
 
@@ -8682,7 +8686,7 @@ cdef class Polynomial(CommutativePolynomial):
                     pass
                 else:
                     if multiplicities:
-                        seq.append((rt,fac[1]))
+                        seq.append((rt, fac[1]))
                     else:
                         seq.append(rt)
         return seq
@@ -9088,7 +9092,7 @@ cdef class Polynomial(CommutativePolynomial):
         coeffs = []
         m = Q.degree() // 2
         for i in reversed(range(m + 1)):
-            coeffs.insert(0, Q[2*i]) # Note: degree of Q may be less than 2*i
+            coeffs.insert(0, Q[2*i])  # Note: degree of Q may be less than 2*i
             Q = (Q % (x**2 + q)**i) // x
         return S(coeffs), cofactor, q
 
@@ -9294,7 +9298,7 @@ cdef class Polynomial(CommutativePolynomial):
         if hasattr(self.base_ring(), '_xgcd_univariate_polynomial'):
             return self.base_ring()._xgcd_univariate_polynomial(self, other)
         else:
-            raise NotImplementedError("%s does not provide an xgcd implementation for univariate polynomials"%self.base_ring())
+            raise NotImplementedError("%s does not provide an xgcd implementation for univariate polynomials" % self.base_ring())
 
     def rational_reconstruction(self, m, n_deg=None, d_deg=None):
         r"""
@@ -9459,9 +9463,9 @@ cdef class Polynomial(CommutativePolynomial):
             sF = Pf(self)
             mF = Pf(m)
             n, d = sF.rational_reconstruction(mF, n_deg, d_deg)
-            l = lcm([n.denominator(), d.denominator()])
-            n *= l
-            d *= l
+            lc = lcm([n.denominator(), d.denominator()])
+            n *= lc
+            d *= lc
             return P(n), P(d)
 
         # n and d are unique if m.degree() > (n.degree() + d.degree())
@@ -9472,9 +9476,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         if n_deg < 0 or d_deg < 0:
             raise ValueError("the degree bounds "
-                    "n_deg and d_deg should be positive")
+                             "n_deg and d_deg should be positive")
 
-        #XGCD until degree the degree of t1 surpasses the degree of n
+        # XGCD until degree the degree of t1 surpasses the degree of n
         s0 = P(0)
         t0 = P(1)
         s1 = P(m)
@@ -9583,15 +9587,15 @@ cdef class Polynomial(CommutativePolynomial):
             _p = self._parent.coerce(p)
         elif p is infinity.infinity:
             return -self.degree()
-        elif is_Ideal(p) and p.ring() is self._parent: # eventually need to handle fractional ideals in the fraction field
-            if self._parent.base_ring().is_field(): # common case
+        elif is_Ideal(p) and p.ring() is self._parent:  # eventually need to handle fractional ideals in the fraction field
+            if self._parent.base_ring().is_field():  # common case
                 _p = p.gen()
             else:
                 raise NotImplementedError
         else:
             from sage.rings.fraction_field import is_FractionField
             if is_FractionField(p.parent()) and self._parent.has_coerce_map_from(p.parent().ring()):
-                _p = self._parent.coerce(p.parent().ring()(p)) # here we require that p be integral.
+                _p = self._parent.coerce(p.parent().ring()(p))  # here we require that p be integral.
             else:
                 raise TypeError("The polynomial, p, must have the same parent as self.")
 
@@ -10846,13 +10850,13 @@ cdef class Polynomial(CommutativePolynomial):
         elif n == 1 or self.is_zero() or self.is_one():
             return self
         elif self.degree() % n:
-            raise ValueError("not a %s power"%Integer(n).ordinal_str())
-        elif self.get_unsafe(0).is_zero(): # We know that self is not 0, so it must have degree >= 0
+            raise ValueError("not a %s power" % Integer(n).ordinal_str())
+        elif self.get_unsafe(0).is_zero():  # We know that self is not 0, so it must have degree >= 0
             # p = x^k q
             # p^(1/n) = x^(k/n) q^(1/n)
             i = self.valuation()
-            if i%n:
-                raise ValueError("not a %s power"%Integer(n).ordinal_str())
+            if i % n:
+                raise ValueError("not a %s power" % Integer(n).ordinal_str())
             return (self >> i).nth_root(n) << (i // n)
 
         if self.get_unsafe(0).is_one():
@@ -10871,7 +10875,7 @@ cdef class Polynomial(CommutativePolynomial):
         if q**n == p:
             return S(q)
         else:
-            raise ValueError("not a %s power"%Integer(n).ordinal_str())
+            raise ValueError("not a %s power" % Integer(n).ordinal_str())
 
     def _nth_root_series(self, long n, long prec, start=None):
         r"""
@@ -10964,12 +10968,12 @@ cdef class Polynomial(CommutativePolynomial):
             raise ValueError("n (={}) must be positive".format(m))
         elif m.is_one() or self.is_zero() or self.is_one():
             return self
-        elif self.get_unsafe(0).is_zero(): # we know that self is not zero, so the degree >= 0
+        elif self.get_unsafe(0).is_zero():  # we know that self is not zero, so the degree >= 0
             # p = x^i q
             # p^(1/m) = x^(i/m) q^(1/m)
             i = self.valuation()
             if i % m:
-                raise ValueError("not a %s power"%m.ordinal_str())
+                raise ValueError("not a %s power" % m.ordinal_str())
             return (self >> i)._nth_root_series(m, prec - i // m) << (i // m)
         else:
             c = R.characteristic()
@@ -10981,7 +10985,7 @@ cdef class Polynomial(CommutativePolynomial):
                 for i in range(self.degree()+1):
                     if self.get_unsafe(i):
                         if i % cc:
-                            raise ValueError("not a %s power"%m.ordinal_str())
+                            raise ValueError("not a %s power" % m.ordinal_str())
                         ans[i//cc] = self.get_unsafe(i).nth_root(cc)
                 p = self._parent(ans)
                 m = m // cc
@@ -11077,12 +11081,16 @@ cdef class Polynomial(CommutativePolynomial):
         if not self.base_ring().is_integral_domain():
             raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
 
-        if p.is_zero(): return True          # everything divides 0
-        if self.is_zero(): return False      # 0 only divides 0
+        if p.is_zero():
+            return True          # everything divides 0
+        if self.is_zero():
+            return False      # 0 only divides 0
         try:
-            if self.is_unit(): return True   # units divide everything
+            if self.is_unit():
+                return True   # units divide everything
         except NotImplementedError:
-            if self.is_one(): return True    # if is_unit is not implemented
+            if self.is_one():
+                return True    # if is_unit is not implemented
 
         if self.degree() > p.degree():
             return False
@@ -11134,9 +11142,8 @@ cdef class Polynomial(CommutativePolynomial):
                 raise ValueError("either the dictionary or the specialization must be provided")
         else:
             from sage.rings.polynomial.flatten import SpecializationMorphism
-            phi = SpecializationMorphism(self._parent,D)
+            phi = SpecializationMorphism(self._parent, D)
         return phi(self)
-
 
     def _log_series(self, long n):
         r"""
@@ -11335,10 +11342,10 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
         return y
     elif d1 == 0:
         c = x[0]
-        return [c*a for a in y[:deg]] # beware of noncommutative rings
+        return [c * a for a in y[:deg]]  # beware of noncommutative rings
     elif d2 == 0:
         c = y[0]
-        return [a*c for a in x[:deg]] # beware of noncommutative rings
+        return [a * c for a in x[:deg]]  # beware of noncommutative rings
     coeffs = [None]*deg
     for k in range(deg):
         start = 0 if k <= d2 else k-d2  # max(0, k-d2)
@@ -11384,10 +11391,10 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
         return []
     if n == 1:
         c = left[0]
-        return [c*a for a in right]
+        return [c * a for a in right]
     if m == 1:
         c = right[0]
-        return [a*c for a in left] # beware of noncommutative rings
+        return [a * c for a in left]  # beware of noncommutative rings
     if n <= K_threshold or m <= K_threshold:
         return do_schoolbook_product(left, right, -1)
     if n == m:
@@ -11434,7 +11441,7 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.overflowcheck(False)
-cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t start_l, Py_ssize_t start_r,Py_ssize_t num_elts):
+cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold, Py_ssize_t start_l, Py_ssize_t start_r, Py_ssize_t num_elts):
     """
     Core routine for Karatsuba multiplication. This function works for two
     polynomials of the same degree.
@@ -11489,8 +11496,8 @@ cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t 
             d = right[start_r]
             c = right[start_r+1]
             return [b*d, a*d+b*c, a*c]
-        return do_schoolbook_product(left[start_l:start_l+num_elts],
-                right[start_r:start_r+num_elts], -1)
+        return do_schoolbook_product(left[start_l:start_l + num_elts],
+                                     right[start_r:start_r + num_elts], -1)
     if num_elts == 2:
         # beware of noncommutative rings
         b = left[start_l]
@@ -11524,7 +11531,7 @@ cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t 
         bd[e+i] = bd[e+i] + tt1[i]
     bd.append(tt1[e-1])
     for i from 0 <= i < lenac -e:
-        ac[i] = ac[i] + tt1[e+i]
+        ac[i] = ac[i] + tt1[e + i]
     return bd + ac
 
 
@@ -11603,10 +11610,10 @@ cdef class Polynomial_generic_dense(Polynomial):
             check = 0
         elif not isinstance(x, (list, tuple)):
             # We trust that the element constructors do not send x=0
-#            if x:
+            # if x:
             x = [x]   # constant polynomials
-#            else:
-#                x = []    # zero polynomial
+            # else:
+            #   x = []    # zero polynomial
         if check:
             self._coeffs = [R(z, **kwds) for z in x]
             self._normalize()
@@ -11639,9 +11646,9 @@ cdef class Polynomial_generic_dense(Polynomial):
             Univariate Polynomial Ring in x over Univariate Polynomial Ring in y over Rational Field
         """
         if a:
-            return self._new_c([a],P)
+            return self._new_c([a], P)
         else:
-            return self._new_c([],P)
+            return self._new_c([], P)
 
     def __reduce__(self):
         """
@@ -11710,7 +11717,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             for i in range(ell):
                 v[i+d] = c * x[i]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
-        #if not v[len(v)-1]:
+        # if not v[len(v)-1]:
         # "normalize" checks this anyway...
         res._normalize()
         return res
@@ -11853,7 +11860,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             2*y*x^3 + (y + 3)*x^2 + (-2*y + 1)*x + 1
         """
         cdef Polynomial_generic_dense res
-        cdef Py_ssize_t check=0, i, min
+        cdef Py_ssize_t check = 0, i, min
         x = (<Polynomial_generic_dense>self)._coeffs
         y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
@@ -11874,7 +11881,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
     cpdef _sub_(self, right):
         cdef Polynomial_generic_dense res
-        cdef Py_ssize_t check=0, i, min
+        cdef Py_ssize_t check = 0, i, min
         x = (<Polynomial_generic_dense>self)._coeffs
         y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
@@ -11900,7 +11907,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             c = (<Element>self._coeffs[0])._parent.coerce(c)
         v = [c * a for a in self._coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
-        #if not v[len(v)-1]:
+        # if not v[len(v)-1]:
         # "normalize" checks this anyway...
         res._normalize()
         return res
@@ -11912,7 +11919,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             c = (<Element>self._coeffs[0])._parent.coerce(c)
         v = [a * c for a in self._coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
-        #if not v[len(v)-1]:
+        # if not v[len(v)-1]:
         # "normalize" checks this anyway...
         res._normalize()
         return res
@@ -12121,7 +12128,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 quo.append(q)
         quo.reverse()
 
-        return self._new_c(quo,self._parent), self._new_c(x,self._parent)._inplace_truncate(n-1)
+        return self._new_c(quo, self._parent), self._new_c(x, self._parent)._inplace_truncate(n-1)
 
     cpdef Polynomial truncate(self, long n):
         r"""
@@ -12150,10 +12157,10 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: type(f)
             <class 'sage.rings.polynomial.polynomial_element.Polynomial_generic_dense'>
         """
-        l = len(self._coeffs)
-        if n > l:
-            n = l
-        while n > 0 and not self._coeffs[n-1]:
+        ln = len(self._coeffs)
+        if n > ln:
+            n = ln
+        while n > 0 and not self._coeffs[n - 1]:
             n -= 1
         return self._new_c(self._coeffs[:n], self._parent)
 
@@ -12163,6 +12170,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 n -= 1
         self._coeffs = self._coeffs[:n]
         return self
+
 
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)
@@ -12205,7 +12213,7 @@ def universal_discriminant(n):
     pr1 = PolynomialRing(ZZ, n + 1, 'a')
     pr2 = PolynomialRing(pr1, 'x')
     p = pr2(list(pr1.gens()))
-    return (1 - (n&2))*p.resultant(p.derivative())//pr1.gen(n)
+    return (1 - (n & 2)) * p.resultant(p.derivative()) // pr1.gen(n)
 
 
 cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
@@ -12301,7 +12309,7 @@ cpdef list _dict_to_list(dict x, zero):
         return []
     n = max(x.keys())
     cdef list v
-    if isinstance(n, tuple): # a mpoly dict
+    if isinstance(n, tuple):  # a mpoly dict
         n = n[0]
         v = [zero] * (n+1)
         for i, z in x.iteritems():

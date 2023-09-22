@@ -1241,19 +1241,19 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             else:
                 return f
 
-        cdef int l = len(x)
+        cdef int ln = len(x)
 
-        if l == 1 and isinstance(x[0], (tuple, list)):
+        if ln == 1 and isinstance(x[0], (tuple, list)):
             x = x[0]
-            l = len(x)
+            ln = len(x)
 
-        if l != self._parent.ngens():
+        if ln != self._parent.ngens():
             raise TypeError("number of arguments does not match the number"
                             " of generators in parent")
 
         # Check to make sure that we aren't dividing by zero
         cdef Py_ssize_t m
-        for m in range(l):
+        for m in range(ln):
             if x[m] == 0:
                 if self.has_inverse_of(m):
                     raise ZeroDivisionError

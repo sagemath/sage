@@ -327,8 +327,8 @@ def _split_dict_(D, indices, group_by=None):
         if not all(r == 0 for r in extract(K, remaining)):
             raise SplitDictError('split not possible')
         G = extract(K, group_by)
-        I = extract(K, indices)
-        result.setdefault(G, dict()).update({I: V})
+        In = extract(K, indices)
+        result.setdefault(G, dict()).update({In: V})
     if not group_by:
         return result.popitem()[1]
     else:
@@ -755,7 +755,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         P = parent(x)
         if P is self.polynomial_ring():
             from sage.rings.polynomial.polydict import ETuple
-            return self.element_class( self, x, mon=ETuple({}, int(self.ngens())) )
+            return self.element_class(self, x, mon=ETuple({}, int(self.ngens())))
 
         elif isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
