@@ -68,17 +68,6 @@ Database Access
 
    sage/databases/sql_db
 
-Media
-~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/structure/graphics_file
-   sage/media/wav
-.. underscore-methods only
-..   sage/media/channels
-
 Warnings
 ~~~~~~~~
 
