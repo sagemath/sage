@@ -480,7 +480,7 @@ def q_catalan_number(n, m=1, q=None):
         sage: q_catalan_number(3,m=2)
         q^12 + q^10 + q^9 + q^8 + q^7 + 2*q^6 + q^5 + q^4 + q^3 + q^2 + 1
 
-    TESTS::
+    TESTS:
 
     The `q`-Catalan number of index `n` is only defined for `n` a
     nonnegative integer (:trac:`11411`)::
