@@ -1713,7 +1713,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn(f"Profiling in {output} ...")
+            logger.warning(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()
