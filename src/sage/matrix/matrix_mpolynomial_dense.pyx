@@ -21,6 +21,7 @@ from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
+from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
 from sage.libs.singular.function import singular_function
@@ -554,3 +555,24 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         self.cache('det', d)
         return d
+
+    def laurent_matrix_reduction(self):
+        R = self._base_ring
+        n_rows, n_cols = self.dimensions()
+        mat_l = identity_matrix(R, n_rows)
+        mat_r = identity_matrix(R, n_cols)
+        if not isinstance(R, LaurentPolynomialRing_generic):
+            return mat_l, self, mat_r
+        res = self
+        for j, rw in enumerate(self.rows()):
+            for t in R.gens():
+                n = min(mon.degree(t) for a in rw for cf, mon in a)
+                res.rescale_row(j, t ** -n)
+                mat_l.rescale_col(j, t ** n)
+        for j, cl in enumerate(self.columns()):
+            for t in R.gens():
+                n = min(mon.degree(t) for a in cl for cf, mon in a)
+                res.rescale_col(j, t ** -n)
+                mat_r.rescale_row(j, t ** n)
+        res = res.change_ring(R.polynomial_ring())
+        return mat_l, res, mat_r
