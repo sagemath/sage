@@ -265,7 +265,7 @@ do not change as the representation changes.  ::
               [0 0 0 0 0 0 0 1 1 0]
               [0 0 0 0 0 0 0 0 1 1]
               [0 0 0 0 0 0 0 0 0 1]
-    sage: zeta.eigenvalues()
+    sage: zeta.eigenvalues()                                                            # needs sage.rings.number_field
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
 
 Equality
