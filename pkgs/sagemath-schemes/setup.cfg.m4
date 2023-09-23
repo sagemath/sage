@@ -15,6 +15,7 @@ install_requires =
     SPKG_INSTALL_REQUIRES_memory_allocator
     SPKG_INSTALL_REQUIRES_scipy
     SPKG_INSTALL_REQUIRES_sagemath_modules
+    SPKG_INSTALL_REQUIRES_sagemath_singular
 
 [options.extras_require]
 test = SPKG_INSTALL_REQUIRES_sagemath_repl
@@ -32,6 +33,7 @@ pari    = SPKG_INSTALL_REQUIRES_sagemath_pari
 
 # extras by packages (specific to sagemath-schemes)
 
+singular = # no extra needed
 
 # extras by rings; same as in sagemath-modules
 RDF     = sagemath-schemes[numpy]
@@ -65,4 +67,4 @@ toric           = SPKG_INSTALL_REQUIRES_sagemath_polyhedra
 padics          = sagemath-schemes[Zp]
 
 # the whole package
-standard        = sagemath-schemes[toric,padics,NumberField,FiniteField,flint,linbox,mpfi,ntl,numpy,pari]
+standard        = sagemath-schemes[toric,padics,NumberField,FiniteField,flint,linbox,mpfi,ntl,numpy,pari,singular]

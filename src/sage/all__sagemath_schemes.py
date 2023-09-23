@@ -13,6 +13,8 @@ This distribution makes the following features available::
 
 from .all__sagemath_modules import *
 
+from .all__sagemath_singular import *
+
 from sage.modular.all    import *
 from sage.schemes.all    import *
 from sage.dynamics.all__sagemath_schemes import *
