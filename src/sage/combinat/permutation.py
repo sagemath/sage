@@ -6939,9 +6939,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             sage: P.has_coerce_map_from(Permutations(7))
             False
 
-            sage: P.has_coerce_map_from(groups.misc.Cactus(5))                          # needs sage.groups
+            sage: P.has_coerce_map_from(groups.misc.Cactus(5))                          # needs sage.graphs sage.groups
             True
-            sage: P.has_coerce_map_from(groups.misc.Cactus(7))                          # needs sage.groups
+            sage: P.has_coerce_map_from(groups.misc.Cactus(7))                          # needs sage.graphs sage.groups
             False
         """
         if isinstance(G, SymmetricGroup):
@@ -6975,11 +6975,12 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
         EXAMPLES::
 
-            sage: J3 = groups.misc.Cactus(3)                                            # needs sage.groups
-            sage: s12,s13,s23 = J3.gens()                                               # needs sage.groups
-            sage: elt = s12 * s23 * s13                                                 # needs sage.groups
+            sage: # needs sage.graphs sage.groups
+            sage: J3 = groups.misc.Cactus(3)
+            sage: s12,s13,s23 = J3.gens()
+            sage: elt = s12 * s23 * s13
             sage: P5 = Permutations(5)
-            sage: P5._from_cactus_group_element(elt)                                    # needs sage.groups
+            sage: P5._from_cactus_group_element(elt)
             [1, 3, 2, 4, 5]
         """
         return self(x.to_permutation())
