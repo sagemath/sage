@@ -100,8 +100,6 @@ from sage.homology.all   import *
 
 from sage.quadratic_forms.all import *
 
-lazy_import('sage.media.wav', 'Wave', as_='wave', deprecation=12673)
-
 from sage.logic.all      import *
 
 from sage.numerical.all  import *
