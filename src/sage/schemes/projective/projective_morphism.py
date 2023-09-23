@@ -66,6 +66,7 @@ from sage.interfaces.singular import singular
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.ext.fast_callable import fast_callable
 from sage.calculus.functions import jacobian
 import sage.rings.abc
@@ -77,7 +78,6 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
@@ -87,6 +87,8 @@ from sage.categories.finite_fields import FiniteFields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 _NumberFields = NumberFields()
 _FiniteFields = FiniteFields()
@@ -1404,7 +1406,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         K = self.domain().base_ring()
         if K in _NumberFields or is_NumberFieldOrder(K):
             f = self
-        elif K is QQbar:
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             f = self._number_field_from_algebraics()
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")
@@ -2144,7 +2146,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                     (x^2 + y^2 : y^2)
         """
         K = self.base_ring()
-        if K in NumberFields() or K is QQbar:
+        if K in NumberFields() or isinstance(K, sage.rings.abc.AlgebraicField):
             return self._number_field_from_algebraics()
         if K in FiniteFields():
             #find the degree of the extension containing the coefficients
