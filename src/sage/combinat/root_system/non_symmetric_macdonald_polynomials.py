@@ -93,7 +93,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: q,t = K.gens()
         sage: E = NonSymmetricMacdonaldPolynomials(["A",2,1], q=q, q1=t, q2=-1)
         sage: vars = K['x0,x1,x2'].gens()
-        sage: E[L0([2,0,1])].expand(vars)
+        sage: E[L0([2,0,1])].expand(vars)                                               # needs sage.libs.gap
         (t - 1)/(q*t - 1)*x0^2*x1 + x0^2*x2 + (q*t - q)/(q*t - 1)*x0*x1*x2
 
         sage: from sage.combinat.sf.ns_macdonald import E                               # needs sage.combinat
@@ -105,7 +105,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(["G",2,1])
         sage: L0 = E.keys()
         sage: omega = L0.fundamental_weights()
-        sage: E[ omega[2]-omega[1] ]
+        sage: E[omega[2] - omega[1]]
         ((-q*q1^3*q2-q*q1^2*q2^2)/(q*q1^4-q2^4))*B[(0, 0, 0)]
          + B[(1, -1, 0)] + ((-q1*q2^3-q2^4)/(q*q1^4-q2^4))*B[(1, 0, -1)]
 
@@ -1686,7 +1686,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             ...
             ValueError: 1/2*e[0] + 1/2*e[1] does not lift to a level 0 element
             of the affine weight lattice
-            sage: E[2*omega[2]]
+            sage: E[2*omega[2]]                                                         # needs sage.libs.gap
             ((q^2*q1^2+q^2*q1*q2)/(q^2*q1^2-q2^2))*B[(0, 0)]
             + ((-q^2*q1^2-q^2*q1*q2)/(-q^2*q1^2+q2^2))*B[(1, 0)] + B[(1, 1)]
             + ((-q^2*q1^2-q^2*q1*q2)/(-q^2*q1^2+q2^2))*B[(0, 1)]
@@ -1753,7 +1753,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: KL = RootSystem(["A",1,1]).ambient_space().algebra(K)
             sage: E = NonSymmetricMacdonaldPolynomials(KL,q, q1, q2)
             sage: L0 = E.keys()
-            sage: E.eigenvalues(L0([0,0]))  # Checked by hand by Mark and Arun
+            sage: E.eigenvalues(L0([0,0]))  # Checked by hand by Mark and Arun          # needs sage.libs.gap
             [1/(q*t), t]
             sage: alpha = E.Y().keys().simple_roots()
             sage: E.eigenvalue_experimental(L0([0,0]), alpha[0]) # todo: not implemented
@@ -1763,6 +1763,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         Some examples of eigenvalues (not mathematically checked!!!)::
 
+            sage: # needs sage.libs.gap
             sage: E.eigenvalues(L0([1,0]))
             [t, 1/(q*t)]
             sage: E.eigenvalues(L0([0,1]))
@@ -1882,13 +1883,13 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: q,v,t = K.gens()
             sage: E = NonSymmetricMacdonaldPolynomials(['A',2,1], q, v, -1/v)
             sage: om = E.L0().fundamental_weights()
-            sage: E.symmetric_macdonald_polynomial(om[2])
+            sage: E.symmetric_macdonald_polynomial(om[2])                               # needs sage.libs.gap
             B[(1, 1, 0)] + B[(1, 0, 1)] + B[(0, 1, 1)]
-            sage: E.symmetric_macdonald_polynomial(2*om[1])
+            sage: E.symmetric_macdonald_polynomial(2*om[1])                             # needs sage.libs.gap
             ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(1, 1, 0)]
             + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(1, 0, 1)] + B[(2, 0, 0)]
             + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(0, 1, 1)] + B[(0, 2, 0)] + B[(0, 0, 2)]
-            sage: f = E.symmetric_macdonald_polynomial(E.L0()((2,1,0))); f
+            sage: f = E.symmetric_macdonald_polynomial(E.L0()((2,1,0))); f              # needs sage.libs.gap
             ((2*q*v^4+v^4-q*v^2+v^2-q-2)/(q*v^4-1))*B[(1, 1, 1)] + B[(1, 2, 0)]
             + B[(1, 0, 2)] + B[(2, 1, 0)] + B[(2, 0, 1)] + B[(0, 1, 2)] + B[(0, 2, 1)]
 

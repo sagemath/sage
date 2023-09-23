@@ -318,6 +318,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: W = WeylGroup(['A',2], prefix='s', implementation="permutation")
             sage: for w in W:
             ....:     w.reduced_word()

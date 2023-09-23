@@ -3861,11 +3861,11 @@ class FiniteStateMachine(SageObject):
             sage: from itertools import islice
             sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
             ....:     initial_states=['A'], final_states=['A'])
-            sage: inverter(words.FibonacciWord())
+            sage: inverter(words.FibonacciWord())                                       # needs sage.combinat
             word: 1011010110110101101011011010110110101101...
-            sage: inverter(words.FibonacciWord(), automatic_output_type=True)
+            sage: inverter(words.FibonacciWord(), automatic_output_type=True)           # needs sage.combinat
             word: 1011010110110101101011011010110110101101...
-            sage: tuple(islice(inverter(words.FibonacciWord(),
+            sage: tuple(islice(inverter(words.FibonacciWord(),                          # needs sage.combinat
             ....:                       automatic_output_type=False), 10r))
             (1, 0, 1, 1, 0, 1, 0, 1, 1, 0)
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
@@ -10587,6 +10587,7 @@ class FiniteStateMachine(SageObject):
             The expectation of `B_j` is given in [FHP2015]_, Theorem 2.
             Here, we verify this result by using transducers::
 
+                sage: # needs sage.libs.singular
                 sage: def test(h, r, j):
                 ....:     R = PolynomialRing(
                 ....:             QQ,

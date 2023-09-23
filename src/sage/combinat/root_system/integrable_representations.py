@@ -1127,8 +1127,8 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Thus we have a branching to
         `\mathfrak{sl}(2) \times \mathfrak{sl}(2) \times \mathfrak{sl}(2)`::
 
-            sage: A1xA1xA1 = WeylCharacterRing("A1xA1xA1",style="coroots")
-            sage: V.branch(i=2,weyl_character_ring=A1xA1xA1)
+            sage: A1xA1xA1 = WeylCharacterRing("A1xA1xA1",style="coroots")              # needs sage.libs.gap
+            sage: V.branch(i=2,weyl_character_ring=A1xA1xA1)                            # needs sage.libs.gap
             [A1xA1xA1(1,0,0),
              A1xA1xA1(0,1,2),
              A1xA1xA1(1,0,0) + A1xA1xA1(1,2,0) + A1xA1xA1(1,0,2),
@@ -1161,7 +1161,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         The nodes `0, 2, 3, 4` of ``F4~`` correspond to ``1, 4, 3, 2``
         of ``A1xC3`` and so we encode this in a dictionary::
 
-            sage: V.branch(i=1,weyl_character_ring=A1xC3,sequence={0:1,2:4,3:3,4:2}) # long time
+            sage: V.branch(i=1, weyl_character_ring=A1xC3, sequence={0:1,2:4,3:3,4:2})  # long time
             [A1xC3(1,0,0,0),
              A1xC3(0,0,0,1),
              A1xC3(1,0,0,0) + A1xC3(1,2,0,0),
