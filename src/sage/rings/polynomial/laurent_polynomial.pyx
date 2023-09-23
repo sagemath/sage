@@ -359,7 +359,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         elif (not isinstance(f, Polynomial)) or (parent is not f.parent()):
             if isinstance(f, dict):
                 v = min(f) if f else 0
-                f = {i-v: c for i,c in f.items()}
+                f = {i-v: c for i, c in f.items()}
                 n += v
             f = parent._R(f)
 
@@ -653,19 +653,19 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 elif e == 0:
                     var = ""
                 elif e > 0:
-                    var = "|{}^{{{}}}".format(X,e)
+                    var = "|{}^{{{}}}".format(X, e)
                 if e >= 0:
-                    s += "{}{}".format(x,var)
-                else: # negative e
+                    s += "{}{}".format(x, var)
+                else:  # negative e
                     if e == -1:
                         s += "\\frac{{{}}}{{{}}}".format(x, X)
                     else:
-                        s += "\\frac{{{}}}{{{}^{{{}}}}}".format(x, X,-e)
+                        s += "\\frac{{{}}}{{{}^{{{}}}}}".format(x, X, -e)
                 first = False
         s = s.replace(" + -", " - ")
-        s = s.replace(" 1|"," ")
+        s = s.replace(" 1|", " ")
         s = s.replace(" -1|", " -")
-        s = s.replace("|","")
+        s = s.replace("|", "")
 
         return s[1:]
 
