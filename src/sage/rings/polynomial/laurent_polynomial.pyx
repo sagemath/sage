@@ -379,7 +379,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: loads(dumps(elt)) == elt
             True
         """
-        return LaurentPolynomial_univariate, (self.__u, self.__n)  # eliminate first term in the tuple for the previous definition
+        return LaurentPolynomial_univariate, (self._parent, self.__u, self.__n)
 
     def _polynomial_(self, R):
         r"""
