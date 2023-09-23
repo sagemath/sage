@@ -728,6 +728,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: (a + 1).residue()
             a0 + 1
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Qq(27, 4)
             sage: (3 + 3*a).residue()
             0
