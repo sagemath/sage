@@ -73,7 +73,7 @@ from sage.categories.groups import Groups
 from sage.combinat.permutation import Permutation
 from sage.combinat.permutation import Permutations
 from sage.combinat.subset import Subsets
-from sage.features import PythonModule
+from sage.features.sagemath import sage__libs__braiding
 from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.groups.finitely_presented import GroupMorphismWithGensImages
@@ -98,7 +98,7 @@ lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
-            feature=PythonModule('sage.libs.braiding', spkg='libbraiding', type='standard'))
+            feature=sage__libs__braiding())
 lazy_import('sage.knots.knot', 'Knot')
 
 
