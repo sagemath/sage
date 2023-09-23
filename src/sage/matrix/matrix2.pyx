@@ -7470,8 +7470,8 @@ cdef class Matrix(Matrix1):
             sage: M.eigenvalue_multiplicity(1)
             0
 
-            sage: M = posets.DiamondPoset(5).coxeter_transformation()                   # needs sage.graphs
-            sage: [M.eigenvalue_multiplicity(x) for x in [-1, 1]]                       # needs sage.graphs
+            sage: M = posets.DiamondPoset(5).coxeter_transformation()                   # needs sage.graphs sage.libs.flint
+            sage: [M.eigenvalue_multiplicity(x) for x in [-1, 1]]                       # needs sage.graphs sage.libs.flint
             [3, 2]
 
         TESTS::
