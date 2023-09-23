@@ -84,9 +84,9 @@ Defining a link from the original name string::
 
 Obtaining an instance of :class:`~sage.groups.braid.Braid`::
 
-    sage: L.braid()
+    sage: L.braid()                                                                     # needs sage.groups
     s1^-2*s0^-1*s1*s0^-1
-    sage: type(_)
+    sage: type(_)                                                                       # needs sage.groups
     <class 'sage.groups.braid.BraidGroup_class_with_category.element_class'>
 
 Obtaining an instance of :class:`Link`::
@@ -130,9 +130,9 @@ types::
 
 Obtaining the HOMFLY-PT polynomial::
 
-    sage: L.homfly_polynomial()
+    sage: L.homfly_polynomial()                                                         # needs sage.groups
     -v^-1*z - v^-3*z - v^-3*z^-1 + v^-5*z^-1
-    sage: _ == l.homfly_polynomial(normalization='vz')
+    sage: _ == l.homfly_polynomial(normalization='vz')                                  # needs sage.groups
     True
 
 
@@ -433,7 +433,7 @@ class KnotInfoBase(Enum):
 
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
-            sage: L._braid_group()
+            sage: L._braid_group()                                                      # needs sage.groups
             Braid group on 3 strands
         """
         n = self.braid_index()
@@ -452,7 +452,7 @@ class KnotInfoBase(Enum):
 
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_1
-            sage: L._homfly_pol_ring('u', 'v')
+            sage: L._homfly_pol_ring('u', 'v')                                          # needs sage.groups
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
         """
         K3_1 = Knots().from_table(3,1)
@@ -702,7 +702,7 @@ class KnotInfoBase(Enum):
 
             sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
-            sage: K.braid()
+            sage: K.braid()                                                             # needs sage.groups
             s^3
             sage: K.braid_notation()
             (1, 1, 1)
@@ -742,7 +742,7 @@ class KnotInfoBase(Enum):
             4
             sage: KnotInfo.K3_1.crossing_number()
             3
-            sage: Link(KnotInfo.L4a1_0.braid())
+            sage: Link(KnotInfo.L4a1_0.braid())                                         # needs sage.groups
             Link with 2 components represented by 5 crossings
         """
         return int(self[self.items.crossing_number])
@@ -798,14 +798,14 @@ class KnotInfoBase(Enum):
         EXAMPLES::
 
             sage: from sage.knots.knotinfo import KnotInfo
-            sage: KnotInfo.K5_2.three_genus()     # optional - databsase_knotinfo
+            sage: KnotInfo.K5_2.three_genus()     # optional - database_knotinfo
             1
 
         Note that this differs from the corresponding result in Sage
         since the latter is obtained for a Seifert surface that does not
         have the minimal genus::
 
-            sage: KnotInfo.K5_2.link().genus()
+            sage: KnotInfo.K5_2.link().genus()                                          # needs sage.groups
             3
         """
         return int(self[self.items.three_genus])
@@ -827,7 +827,7 @@ class KnotInfoBase(Enum):
         EXAMPLES::
 
             sage: from sage.knots.knotinfo import KnotInfo
-            sage: KnotInfo.K5_2.signature()       # optional - databsase_knotinfo
+            sage: KnotInfo.K5_2.signature()       # optional - database_knotinfo
             1
         """
         return int(self[self.items.signature])
@@ -965,7 +965,7 @@ class KnotInfoBase(Enum):
             sage: Kn.is_amphicheiral(positive=True)  # optional - database_knotinfo
             False
 
-            sage: KnotInfo.L4a1_0.is_amphicheiral()
+            sage: KnotInfo.L4a1_0.is_amphicheiral()                                     # needs sage.groups
             False
             sage: KnotInfo.L10n59_1.is_amphicheiral() # optional - database_knotinfo
             True
@@ -1191,6 +1191,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: from sage.knots.knotinfo import KnotInfo
             sage: K3_1 = KnotInfo.K3_1
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
@@ -1202,6 +1203,7 @@ class KnotInfoBase(Enum):
 
         for proper links::
 
+            sage: # needs sage.groups
             sage: L4a1_1 = KnotInfo.L4a1_1
             sage: PL4a1_1 = L4a1_1.homfly_polynomial(var1='x', var2='y'); PL4a1_1
             -x^5*y + x^3*y^3 - x^5*y^-1 + 3*x^3*y + x^3*y^-1
@@ -1211,6 +1213,7 @@ class KnotInfoBase(Enum):
         check the skein-relation from the KnotInfo description page (applied to one
         of the positive crossings of the right-handed trefoil)::
 
+            sage: # needs sage.groups
             sage: R = PK3_1.parent()
             sage: PO = R.one()
             sage: L2a1_1 = KnotInfo.L2a1_1
@@ -1221,6 +1224,7 @@ class KnotInfoBase(Enum):
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: H = KnotInfo.L11n459_1_1_1.homfly_polynomial()   # optional - database_knotinfo
             sage: all(L.homfly_polynomial() == L.link().homfly_polynomial(normalization='vz')\
                       for L in KnotInfo if L.crossing_number() < 7)
@@ -1289,6 +1293,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L2a1_1
             sage: L.kauffman_polynomial()
@@ -1398,7 +1403,7 @@ class KnotInfoBase(Enum):
 
             sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K4_1
-            sage: Kj = K.jones_polynomial(); Kj
+            sage: Kj = K.jones_polynomial(); Kj                                         # needs sage.symbolic
             t^2 - t - 1/t + 1/t^2 + 1
             sage: Kjs = K.jones_polynomial(skein_normalization=True); Kjs
             A^-8 - A^-4 + 1 - A^4 + A^8
@@ -1408,17 +1413,17 @@ class KnotInfoBase(Enum):
         for proper links::
 
             sage: L = KnotInfo.L2a1_1
-            sage: Lj = L.jones_polynomial(); Lj
+            sage: Lj = L.jones_polynomial(); Lj                                         # needs sage.symbolic
             -x^5 - x
-            sage: Ljt = L.jones_polynomial(use_sqrt=True); Ljt
+            sage: Ljt = L.jones_polynomial(use_sqrt=True); Ljt                          # needs sage.symbolic
             -t^(5/2) - sqrt(t)
             sage: Ljp = L.jones_polynomial(puiseux=True); Ljp
             -t^(1/2) - t^(5/2)
             sage: Ljs = L.jones_polynomial(skein_normalization=True); Ljs
             -A^2 - A^10
-            sage: Lj.parent()
+            sage: Lj.parent()                                                           # needs sage.symbolic
             Symbolic Ring
-            sage: Ljt.parent()
+            sage: Ljt.parent()                                                          # needs sage.symbolic
             Symbolic Ring
             sage: Ljp.parent()
             Puiseux Series Ring in t over Integer Ring
@@ -1428,17 +1433,17 @@ class KnotInfoBase(Enum):
         Comparison with Sage's results::
 
             sage: k = K.link()
-            sage: kj = k.jones_polynomial()
+            sage: kj = k.jones_polynomial()                                             # needs sage.symbolic
             sage: bool(Kj == kj)
             True
             sage: kjs = k.jones_polynomial(skein_normalization=True)
             sage: Kjs == kjs
             True
             sage: l = L.link()
-            sage: lj = l.jones_polynomial()
+            sage: lj = l.jones_polynomial()                                             # needs sage.symbolic
             sage: bool(Lj == lj)
             False
-            sage: bool(Ljt == lj)   # see note above
+            sage: bool(Ljt == lj)   # see note above                                    # needs sage.symbolic
             True
             sage: ljs = l.jones_polynomial(skein_normalization=True)
             sage: Ljs == ljs
@@ -1447,6 +1452,7 @@ class KnotInfoBase(Enum):
         Check the skein-relation from the KnotInfo description page (applied to one
         of the positive crossings of the right-handed trefoil)::
 
+            sage: # needs sage.symbolic
             sage: K3_1  = KnotInfo.K3_1
             sage: K3_1j = K3_1.jones_polynomial()
             sage: L2a1_1j = Ljt     # see note above
@@ -1582,11 +1588,11 @@ class KnotInfoBase(Enum):
         Comparison with Sage's results::
 
             sage: k = K.link()
-            sage: ka = k.alexander_polynomial(); ka
+            sage: ka = k.alexander_polynomial(); ka                                     # needs sage.groups
             -t^-1 + 3 - t
-            sage: K.alexander_polynomial(laurent_poly=True)
+            sage: K.alexander_polynomial(laurent_poly=True)                             # needs sage.groups
             t^-1 - 3 + t
-            sage: _ == -ka
+            sage: _ == -ka                                                              # needs sage.groups
             True
 
         Launch the KnotInfo description web-page::
@@ -1658,16 +1664,16 @@ class KnotInfoBase(Enum):
             sage: Lc = L.conway_polynomial(); Lc
             t^3
 
-        Comparision to Sage's results::
+        Comparison to Sage's results::
 
-            sage: Kc == K.link().conway_polynomial()
+            sage: Kc == K.link().conway_polynomial()                                    # needs sage.groups
             True
-            sage: Lc == L.link().conway_polynomial()
+            sage: Lc == L.link().conway_polynomial()                                    # needs sage.groups
             True
 
         Launch the KnotInfo description web-page::
 
-            sage: K.items.conway_polynomial.description_webpage() # not tested
+            sage: K.items.conway_polynomial.description_webpage()  # not tested
             True
         """
         conway_polynomial = self[self.items.conway_polynomial]
@@ -1739,6 +1745,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K6_3
             sage: Kk = K.khovanov_polynomial(); Kk
@@ -1747,6 +1754,7 @@ class KnotInfoBase(Enum):
             sage: Kk2 = K.khovanov_polynomial(var1='p', base_ring=GF(2)); Kk2
             p^7*t^3 + p^5*t^3 + p^5*t^2 + p^3*t + p^-1 + p^-1*t^-1 + p^-3*t^-2 + p^-7*t^-3
 
+            sage: # needs sage.modules
             sage: L = KnotInfo.L5a1_0
             sage: Lk = L.khovanov_polynomial(); Lk
             q^4*t^2 + t + 2 + 2*q^-2 + q^-2*t^-1 + q^-4*t^-2 + q^-6*t^-2 + q^-8*t^-3
@@ -1755,6 +1763,7 @@ class KnotInfoBase(Enum):
 
         Obtaining the reduced homology (for knots only)::
 
+            sage: # needs sage.modules
             sage: Kkr = K.khovanov_polynomial(reduced=True); Kkr
             q^6*t^3 + 2*q^4*t^2 + 2*q^2*t + 3 + 2*q^-2*t^-1 + 2*q^-4*t^-2 + q^-6*t^-3
             sage: K.khovanov_polynomial(base_ring=QQ, reduced=True) == Kkr
@@ -1768,6 +1777,7 @@ class KnotInfoBase(Enum):
 
         Obtaining the odd Khovanov homology (for knots only)::
 
+            sage: # needs sage.modules
             sage: K.khovanov_polynomial(odd=True) == Kkr
             True
             sage: K.khovanov_polynomial(base_ring=QQ, odd=True) == Kkr
@@ -1780,8 +1790,9 @@ class KnotInfoBase(Enum):
             False
 
 
-        Comparision to Sage's results::
+        Comparison to Sage's results::
 
+            sage: # needs sage.modules
             sage: Kk == K.link().khovanov_polynomial()
             True
             sage: Kk2 == K.link().khovanov_polynomial(var1='p', base_ring=GF(2))
@@ -1791,6 +1802,7 @@ class KnotInfoBase(Enum):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: KnotInfo.K0_1.inject()
             Defining K0_1
             sage: K0_1.khovanov_polynomial()
@@ -1936,16 +1948,16 @@ class KnotInfoBase(Enum):
             sage: K = KnotInfo.K3_1
             sage: K.link()
             Knot represented by 3 crossings
-            sage: _.braid()
+            sage: _.braid()                                                             # needs sage.groups
             s^3
-            sage: _ == K.braid()
+            sage: _ == K.braid()                                                        # needs sage.groups
             True
 
         using ``dt_notation``::
 
             sage: K.link(use_item=K.items.dt_notation)
             Knot represented by 3 crossings
-            sage: _.braid()
+            sage: _.braid()                                                             # needs sage.groups
             s^3
 
             sage: L = KnotInfo.L4a1_0
@@ -1980,12 +1992,12 @@ class KnotInfoBase(Enum):
 
         using ``braid_notation``::
 
-            sage: L2.link(use_item=L.items.braid_notation) == l2
+            sage: L2.link(use_item=L.items.braid_notation) == l2                        # needs sage.groups
             True
 
         observe::
 
-            sage: L.link(use_item=L.items.braid_notation)
+            sage: L.link(use_item=L.items.braid_notation)                               # needs sage.groups
             Link with 2 components represented by 5 crossings
 
             sage: K6_1 = KnotInfo.K6_1
@@ -2000,6 +2012,7 @@ class KnotInfoBase(Enum):
             sage: K4_1.pd_notation()
             [[4, 2, 5, 1], [8, 6, 1, 5], [6, 3, 7, 4], [2, 7, 3, 8]]
 
+            sage: # needs sage.groups
             sage: K5_1 = KnotInfo.K5_1
             sage: K5_1.link().braid()
             s^5
@@ -2050,6 +2063,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.is_unique()
             True
@@ -2104,6 +2118,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.inject()
             Defining L4a1_0
@@ -2616,6 +2631,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.series().inject()
             Defining L4a
@@ -2645,21 +2661,25 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: from sage.knots.knotinfo import KnotInfo
-            sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirec doctest
+            sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirect doctest
             running ._test_category() . . . pass
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
             running ._test_recover() . . . pass
-            sage: TestSuite(KnotInfo.K6_1.series()).run(max_samples=infinity)  # indirec doctest
+            sage: TestSuite(KnotInfo.K6_1.series()).run(max_samples=infinity)  # indirect doctest
         """
         tester = options['tester']
         max_samples = tester._max_samples
-        if max_samples:
-            tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
-        else:
-            tester.assertTrue(self.is_recoverable(unique=False))
+        try:
+            if max_samples:
+                tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
+            else:
+                tester.assertTrue(self.is_recoverable(unique=False))
+        except ImportError:
+            pass
 
     def inject(self, verbose=True):
         r"""

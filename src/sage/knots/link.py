@@ -92,12 +92,11 @@ class Link(SageObject):
 
     - The closure of a braid is a link::
 
+        sage: # needs sage.groups
         sage: B = BraidGroup(8)
-        sage: L = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 3]))
-        sage: L
+        sage: L = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 3])); L
         Link with 1 component represented by 9 crossings
-        sage: L = Link(B([1, 2, 1, -2, -1]))
-        sage: L
+        sage: L = Link(B([1, 2, 1, -2, -1])); L
         Link with 2 components represented by 5 crossings
 
       .. NOTE::
@@ -168,9 +167,9 @@ class Link(SageObject):
 
     We can construct links from the braid group::
 
+        sage: # needs sage.groups
         sage: B = BraidGroup(4)
-        sage: L = Link(B([-1, -1, -1, -2, 1, -2, 3, -2]))
-        sage: L
+        sage: L = Link(B([-1, -1, -1, -2, 1, -2, 3, -2])); L
         Link with 2 components represented by 8 crossings
 
     .. PLOT::
@@ -182,8 +181,7 @@ class Link(SageObject):
 
     ::
 
-        sage: L = Link(B([1, 2, 1, 3]))
-        sage: L
+        sage: L = Link(B([1, 2, 1, 3])); L                                              # needs sage.groups
         Link with 2 components represented by 4 crossings
 
     .. PLOT::
@@ -202,7 +200,7 @@ class Link(SageObject):
         sage: L.oriented_gauss_code()
         [[[1, -4, 3, -1, 10, -9, 6, -7, 8, 5, 4, -3, 2, -6, 7, -8, 9, -10, -5, -2]],
          [1, -1, 1, 1, 1, -1, -1, -1, -1, -1]]
-        sage: L.braid()
+        sage: L.braid()                                                                 # needs sage.groups
         s0*s1^-3*s2^-1*s1*s3*s2^2*s1^-1*s0^-1*s2*s1^-1*s3^-1*s2*s1^-1
 
     .. PLOT::
@@ -234,6 +232,7 @@ class Link(SageObject):
 
     We construct the knot `7_1` and compute some invariants::
 
+        sage: # needs sage.groups
         sage: B = BraidGroup(2)
         sage: L = Link(B([1]*7))
 
@@ -246,6 +245,7 @@ class Link(SageObject):
 
     ::
 
+        sage: # needs sage.groups
         sage: L.alexander_polynomial()
         t^-3 - t^-2 + t^-1 - 1 + t - t^2 + t^3
         sage: L.jones_polynomial()
@@ -257,6 +257,7 @@ class Link(SageObject):
 
     The links here have removed components in which no strand is used::
 
+        sage: # needs sage.groups
         sage: B = BraidGroup(8)
         sage: b = B([1])
         sage: L = Link(b)
@@ -291,15 +292,16 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: L = Link(B([-1, -1, -1, -2,1, -2, 3, -2]))
             sage: TestSuite(L).run()
             sage: L = Link(B([1, 2, 1]))
             sage: TestSuite(L).run()
+            sage: L = Link(B.one())
+
             sage: L = Link([[1, 1, 2, 2]])
             sage: TestSuite(L).run()
-
-            sage: L = Link(B.one())
             sage: L = Link([])
             sage: L = Link([[], []])
 
@@ -333,9 +335,9 @@ class Link(SageObject):
 
         Verify that :trac:`29692` is fixed::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(5)
-            sage: L = Link(B([3,4,3,-4]))
-            sage: L
+            sage: L = Link(B([3,4,3,-4])); L
             Link with 1 component represented by 4 crossings
             sage: L.braid()
             s0*s1*s0*s1^-1
@@ -343,7 +345,7 @@ class Link(SageObject):
         PD code can be a list of 4-tuples::
 
             sage: code = [(2, 5, 3, 6), (4, 1, 5, 2), (6, 3, 1, 4)]
-            sage: K = Knot(code); K.alexander_polynomial()
+            sage: K = Knot(code); K.alexander_polynomial()                              # needs sage.groups
             t^-1 - 1 + t
         """
         if isinstance(data, list):
@@ -487,6 +489,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: L = Link([[1, 4, 3, 2], [3, 4, 1, 2]])
             sage: L.fundamental_group()
             Finitely presented group < x0, x1, x2 | x1*x0^-1*x2^-1*x0, x2*x0*x1^-1*x0^-1 >
@@ -496,14 +499,13 @@ class Link(SageObject):
         We can see, for instance, that the  two presentations of the group
         of the figure eight knot correspond to isomorphic groups::
 
+            sage: # needs sage.groups
             sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
-            sage: GA = K8.fundamental_group()
-            sage: GA
+            sage: GA = K8.fundamental_group(); GA
             Finitely presented group < x0, x1, x2, x3 |
              x2*x0*x3^-1*x0^-1, x0*x2*x1^-1*x2^-1,
              x1*x3^-1*x2^-1*x3, x3*x1^-1*x0^-1*x1 >
-            sage: GB = K8.fundamental_group(presentation='braid')
-            sage: GB
+            sage: GB = K8.fundamental_group(presentation='braid'); GB
             Finitely presented group
              < x0, x1, x2 | x1*x2^-1*x1^-1*x0*x1*x2*x1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0^-1,
                             x1*x2^-1*x1^-1*x0*x1*x2*x1^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2*x1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-2,
@@ -547,10 +549,11 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
-            sage: L = Link(B([1, 2, 1, 2]))
-            sage: L
+            sage: L = Link(B([1, 2, 1, 2])); L
             Link with 1 component represented by 4 crossings
+
             sage: L = Link([[[-1, 2], [-3, 4], [1, 3, -4, -2]], [-1, -1, 1, 1]])
             sage: L
             Link with 3 components represented by 4 crossings
@@ -569,6 +572,7 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: L1 = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 5, 4]))
             sage: L2 = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 5, 4]))
@@ -594,6 +598,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: L1 = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 5, 4]))
             sage: H = hash(L1)
@@ -606,6 +611,7 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: L1 = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 5, 4]))
             sage: L2 = Link(B([-1, -1, -1, -2, 1, -2, 3, -2, 5, 4]))
@@ -631,6 +637,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: L = Link([[2, 4, 1, 3], [4, 2, 3, 1]])
             sage: L.braid()
             s^2
@@ -643,6 +650,7 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: L = Link([])
             sage: L.braid()
             1
@@ -652,6 +660,7 @@ class Link(SageObject):
 
         Check that :trac:`25050` is solved::
 
+            sage: # needs sage.groups
             sage: A = Link([[[1, 2, -2, -1, -3, -4, 4, 3]], [1, 1, 1, 1]])
             sage: A.braid()
             s0*s1*s2*s3
@@ -1136,13 +1145,13 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
-            sage: K._khovanov_homology_cached(-5)
+            sage: K._khovanov_homology_cached(-5)                                       # needs sage.modules
             ((-3, 0), (-2, Z), (-1, 0), (0, 0))
 
         The figure eight knot::
 
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
-            sage: L._khovanov_homology_cached(-1)
+            sage: L._khovanov_homology_cached(-1)                                       # needs sage.modules
             ((-2, 0), (-1, Z), (0, Z), (1, 0), (2, 0))
         """
         crossings = self.pd_code()
@@ -1201,7 +1210,7 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
-            sage: K.khovanov_homology()
+            sage: K.khovanov_homology()                                                 # needs sage.modules
             {-9: {-3: Z},
              -7: {-3: 0, -2: C2},
              -5: {-3: 0, -2: Z, -1: 0, 0: 0},
@@ -1211,21 +1220,23 @@ class Link(SageObject):
         The figure eight knot::
 
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
-            sage: L.khovanov_homology(height=-1)
+            sage: L.khovanov_homology(height=-1)                                        # needs sage.modules
             {-1: {-2: 0, -1: Z, 0: Z, 1: 0, 2: 0}}
 
         The Hopf link::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(2)
             sage: b = B([1, 1])
             sage: K = Link(b)
-            sage: K.khovanov_homology(degree = 2)
+            sage: K.khovanov_homology(degree=2)
             {2: {2: 0}, 4: {2: Z}, 6: {2: Z}}
 
         TESTS:
 
         Check that :trac:`31001` is fixed::
 
+            sage: # needs sage.modules
             sage: L = Link([])
             sage: L.khovanov_homology()
             {-1: {0: Z}, 1: {0: Z}}
@@ -1300,12 +1311,15 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: L = Link([[1, 10, 2, 11], [6, 3, 7, 2], [3, 9, 4, 12], [9, 6, 10, 5], [8, 4, 5, 1], [11, 7, 12, 8]])
+            sage: L = Link([[1, 10, 2, 11], [6, 3, 7, 2], [3, 9, 4, 12],
+            ....:           [9, 6, 10, 5], [8, 4, 5, 1], [11, 7, 12, 8]])
             sage: L.oriented_gauss_code()
             [[[-1, 2, -3, 5], [4, -2, 6, -5], [-4, 1, -6, 3]], [-1, 1, 1, 1, -1, -1]]
             sage: L = Link([[1, 3, 2, 4], [6, 2, 3, 1], [7, 5, 8, 4], [5, 7, 6, 8]])
             sage: L.oriented_gauss_code()
             [[[-1, 2], [-3, 4], [1, 3, -4, -2]], [-1, -1, 1, 1]]
+
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: b = B([1, 1, 1, 1, 1])
             sage: L = Link(b)
@@ -1317,6 +1331,8 @@ class Link(SageObject):
             sage: L = Link([])
             sage: L.oriented_gauss_code()
             [[], []]
+
+            sage: # needs sage.groups
             sage: L = Link(BraidGroup(2).one())
             sage: L.oriented_gauss_code()
             [[], []]
@@ -1385,6 +1401,8 @@ class Link(SageObject):
             sage: L = Link([[[1, -2, 3, -4, 2, -1, 4, -3]], [1, 1, -1, -1]])
             sage: L.pd_code()
             [[6, 2, 7, 1], [2, 6, 3, 5], [8, 3, 1, 4], [4, 7, 5, 8]]
+
+            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: b = B([1, 1, 1, 1, 1])
             sage: L = Link(b)
@@ -1402,6 +1420,8 @@ class Link(SageObject):
             sage: L = Link([[], []])
             sage: L.pd_code()
             []
+
+            sage: # needs sage.groups
             sage: L = Link(BraidGroup(2).one())
             sage: L.pd_code()
             []
@@ -1490,10 +1510,13 @@ class Link(SageObject):
             sage: L = Link([[1, 4, 2, 3], [4, 1, 3, 2]])
             sage: L.gauss_code()
             [[-1, 2], [1, -2]]
+
+            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: L = Link(B([1, -2, 1, -2, -2]))
             sage: L.gauss_code()
             [[-1, 3, -4, 5], [1, -2, 4, -5, 2, -3]]
+
             sage: L = Link([[[-1, 2], [-3, 4], [1, 3, -4, -2]], [-1, -1, 1, 1]])
             sage: L.gauss_code()
             [[-1, 2], [-3, 4], [1, 3, -4, -2]]
@@ -1517,9 +1540,12 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: L = Link([[[-1, 2, -3, 4, 5, 1, -2, 6, 7, 3, -4, -7, -6,-5]], [-1, -1, -1, -1, 1, -1, 1]])
+            sage: L = Link([[[-1, 2, -3, 4, 5, 1, -2, 6, 7, 3, -4, -7, -6,-5]],
+            ....:           [-1, -1, -1, -1, 1, -1, 1]])
             sage: L.dowker_notation()
             [(1, 6), (7, 2), (3, 10), (11, 4), (14, 5), (13, 8), (12, 9)]
+
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([1, 2, 1, 2]))
             sage: L.dowker_notation()
@@ -1550,6 +1576,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L._braid_word_components()
@@ -1592,6 +1619,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L._braid_word_components_vector()
@@ -1625,6 +1653,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L._homology_generators()
@@ -1664,6 +1693,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.seifert_matrix()
@@ -1713,6 +1743,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.number_of_components()
@@ -1746,6 +1777,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([1, 3, 1, -3]))
             sage: L.is_knot()
@@ -1763,6 +1795,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.genus()
@@ -1826,6 +1859,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.signature()
@@ -1868,6 +1902,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules sage.rings.number_field
             sage: B = BraidGroup(4)
             sage: K = Knot(B([1,1,1,2,-1,2,-3,2,-3]))
             sage: omega = QQbar.zeta(3)
@@ -1893,6 +1928,7 @@ class Link(SageObject):
         We begin by computing the Alexander polynomial for the
         figure-eight knot::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(3)
             sage: L = Link(B([1, -2, 1, -2]))
             sage: L.alexander_polynomial()
@@ -1903,11 +1939,12 @@ class Link(SageObject):
             sage: L = Link([[3,1,2,4],[8,9,1,7],[5,6,7,3],[4,18,6,5],
             ....:           [17,19,8,18],[9,10,11,14],[10,12,13,11],
             ....:           [12,19,15,13],[20,16,14,15],[16,20,17,2]])
-            sage: L.alexander_polynomial()
+            sage: L.alexander_polynomial()                                              # needs sage.groups sage.modules
             1
 
         Some additional examples::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(2)
             sage: L = Link(B([1]))
             sage: L.alexander_polynomial()
@@ -1923,6 +1960,7 @@ class Link(SageObject):
         When the Seifert surface is disconnected, the Alexander
         polynomial is defined to be `0`::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([1,3]))
             sage: L.alexander_polynomial()
@@ -1930,6 +1968,7 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.alexander_polynomial()
@@ -1967,6 +2006,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(3)
             sage: L = Link(B([1, -2, 1, -2]))
             sage: L.conway_polynomial()
@@ -2027,25 +2067,26 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
-            sage: K.khovanov_polynomial()
+            sage: K.khovanov_polynomial()                                               # needs sage.modules
             q^-1 + q^-3 + q^-5*t^-2 + q^-9*t^-3
-            sage: K.khovanov_polynomial(base_ring=GF(2))
+            sage: K.khovanov_polynomial(base_ring=GF(2))                                # needs sage.modules
             q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-9*t^-3
 
         The figure eight knot::
 
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
-            sage: L.khovanov_polynomial(var1='p')
+            sage: L.khovanov_polynomial(var1='p')                                       # needs sage.modules
             p^5*t^2 + p*t + p + p^-1 + p^-1*t^-1 + p^-5*t^-2
-            sage: L.khovanov_polynomial(var1='p', var2='s', base_ring=GF(4))
+            sage: L.khovanov_polynomial(var1='p', var2='s', base_ring=GF(4))            # needs sage.modules sage.rings.finite_rings
             p^5*s^2 + p^3*s^2 + p*s + p + p^-1 + p^-1*s^-1 + p^-3*s^-1 + p^-5*s^-2
 
         The Hopf link::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: b = B([1, 1])
             sage: K = Link(b)
-            sage: K.khovanov_polynomial()
+            sage: K.khovanov_polynomial()                                               # needs sage.modules
             q^6*t^2 + q^4*t^2 + q^2 + 1
 
         .. SEEALSO:: :meth:`khovanov_homology`
@@ -2070,6 +2111,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 2, 1, 2]))
             sage: L.determinant()
@@ -2087,6 +2129,7 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups sage.modules
             sage: B = BraidGroup(3)
             sage: Link(B([1, 2, 1, -2, -1])).determinant()
             0
@@ -2122,6 +2165,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, -1, -1, -1]))
             sage: L.is_alternating()
@@ -2147,6 +2191,7 @@ class Link(SageObject):
             sage: K5_2.is_alternating()
             True
 
+            sage: # needs sage.groups
             sage: K5_2b = Link(K5_2.braid())
             sage: K5_2b.is_alternating()
             False
@@ -2175,10 +2220,12 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: L = Link([[1, 2, 5, 4], [3, 7, 6, 5], [4, 6, 9, 8], [7, 11, 10, 9], [8, 10, 13, 1], [11, 3, 2, 13]])
+            sage: L = Link([[1, 2, 5, 4], [3, 7, 6, 5], [4, 6, 9, 8], [7, 11, 10, 9],
+            ....:           [8, 10, 13, 1], [11, 3, 2, 13]])
             sage: L.orientation()
             [-1, 1, -1, 1, -1, 1]
-            sage: L = Link([[1, 6, 2, 7], [7, 2, 8, 3], [3, 10, 4, 11], [11, 4, 12, 5], [14, 6, 1, 5], [13, 8, 14, 9], [12, 10, 13, 9]])
+            sage: L = Link([[1, 6, 2, 7], [7, 2, 8, 3], [3, 10, 4, 11], [11, 4, 12, 5],
+            ....:           [14, 6, 1, 5], [13, 8, 14, 9], [12, 10, 13, 9]])
             sage: L.orientation()
             [-1, -1, -1, -1, 1, -1, 1]
             sage: L = Link([[1, 3, 3, 2], [2, 5, 5, 4], [4, 7, 7, 1]])
@@ -2213,18 +2260,24 @@ class Link(SageObject):
             sage: L = Link([[[1, -2, 3, -4, 2, -1, 4, -3]], [1, 1, -1, -1]])
             sage: L.seifert_circles()
             [[1, 7, 5, 3], [2, 6], [4, 8]]
-            sage: L = Link([[[-1, 2, 3, -4, 5, -6, 7, 8, -2, -5, 6, 1, -8, -3, 4, -7]], [-1, -1, -1, -1, 1, 1, -1, 1]])
+            sage: L = Link([[[-1, 2, 3, -4, 5, -6, 7, 8, -2, -5, 6, 1, -8, -3, 4, -7]],
+            ....:           [-1, -1, -1, -1, 1, 1, -1, 1]])
             sage: L.seifert_circles()
             [[1, 13, 9, 3, 15, 5, 11, 7], [2, 10, 6, 12], [4, 16, 8, 14]]
-            sage: L = Link([[[-1, 2, -3, 4, 5, 1, -2, 6, 7, 3, -4, -7, -6, -5]], [-1, -1, -1, -1, 1, -1, 1]])
+            sage: L = Link([[[-1, 2, -3, 4, 5, 1, -2, 6, 7, 3, -4, -7, -6, -5]],
+            ....:           [-1, -1, -1, -1, 1, -1, 1]])
             sage: L.seifert_circles()
             [[1, 7, 3, 11, 5], [2, 8, 14, 6], [4, 12, 10], [9, 13]]
-            sage: L = Link([[1, 7, 2, 6], [7, 3, 8, 2], [3, 11, 4, 10], [11, 5, 12, 4], [14, 5, 1, 6], [13, 9, 14, 8], [12, 9, 13, 10]])
+            sage: L = Link([[1, 7, 2, 6], [7, 3, 8, 2], [3, 11, 4, 10], [11, 5, 12, 4],
+            ....:           [14, 5, 1, 6], [13, 9, 14, 8], [12, 9, 13, 10]])
             sage: L.seifert_circles()
             [[1, 7, 3, 11, 5], [2, 8, 14, 6], [4, 12, 10], [9, 13]]
-            sage: L = Link([[[-1, 2, -3, 5], [4, -2, 6, -5], [-4, 1, -6, 3]], [-1, 1, 1, 1, -1, -1]])
+            sage: L = Link([[[-1, 2, -3, 5], [4, -2, 6, -5], [-4, 1, -6, 3]],
+            ....:           [-1, 1, 1, 1, -1, -1]])
             sage: L.seifert_circles()
             [[1, 11, 8], [2, 7, 12, 4, 5, 10], [3, 9, 6]]
+
+            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: L = Link(B([1, 1, 1]))
             sage: L.seifert_circles()
@@ -2281,22 +2334,30 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: L = Link([[[-1, +2, -3, 4, +5, +1, -2, +6, +7, 3, -4, -7, -6,-5]],[-1, -1, -1, -1, 1, -1, 1]])
+            sage: L = Link([[[-1, +2, -3, 4, +5, +1, -2, +6, +7, 3, -4, -7, -6,-5]],
+            ....:           [-1, -1, -1, -1, 1, -1, 1]])
             sage: L.regions()
-            [[14, -5, 12, -9], [13, 9], [11, 5, 1, 7, 3], [10, -3, 8, -13], [6, -1], [4, -11], [2, -7], [-2, -6, -14, -8], [-4, -10, -12]]
+            [[14, -5, 12, -9], [13, 9], [11, 5, 1, 7, 3], [10, -3, 8, -13],
+             [6, -1], [4, -11], [2, -7], [-2, -6, -14, -8], [-4, -10, -12]]
             sage: L = Link([[[1, -2, 3, -4, 2, -1, 4, -3]],[1, 1, -1, -1]])
             sage: L.regions()
             [[8, 4], [7, -4, 1], [6, -1, -3], [5, 3, -8], [2, -5, -7], [-2, -6]]
-            sage: L = Link([[[-1, +2, 3, -4, 5, -6, 7, 8, -2, -5, +6, +1, -8, -3, 4, -7]],[-1, -1, -1, -1, 1, 1, -1, 1]])
+            sage: L = Link([[[-1, +2, 3, -4, 5, -6, 7, 8, -2, -5, +6, +1, -8, -3, 4, -7]],
+            ....:           [-1, -1, -1, -1, 1, 1, -1, 1]])
             sage: L.regions()
-            [[16, 8, 14, 4], [15, -4], [13, -8, 1], [12, -1, -7], [11, 7, -16, 5], [10, -5, -15, -3], [9, 3, -14], [6, -11], [2, -9, -13], [-2, -12, -6, -10]]
+            [[16, 8, 14, 4], [15, -4], [13, -8, 1], [12, -1, -7], [11, 7, -16, 5],
+             [10, -5, -15, -3], [9, 3, -14], [6, -11], [2, -9, -13], [-2, -12, -6, -10]]
+
+            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: L = Link(B([-1, -1, -1]))
             sage: L.regions()
             [[6, -5], [5, 1, 3], [4, -3], [2, -1], [-2, -6, -4]]
-            sage: L = Link([[[1, -2, 3, -4], [-1, 5, -3, 2, -5, 4]], [-1, 1, 1, -1, -1]])
+            sage: L = Link([[[1, -2, 3, -4], [-1, 5, -3, 2, -5, 4]],
+            ....:           [-1, 1, 1, -1, -1]])
             sage: L.regions()
-            [[10, -4, -7], [9, 7, -3], [8, 3], [6, -9, -2], [5, 2, -8, 4], [1, -5], [-1, -10, -6]]
+            [[10, -4, -7], [9, 7, -3], [8, 3], [6, -9, -2], [5, 2, -8, 4],
+             [1, -5], [-1, -10, -6]]
             sage: L = Link([[1, 3, 3, 2], [2, 4, 4, 5], [5, 6, 6, 7], [7, 8, 8, 1]])
             sage: L.regions()
             [[-3], [-4], [-6], [-8], [7, 1, 2, 5], [-1, 8, -7, 6, -5, 4, -2, 3]]
@@ -2309,6 +2370,7 @@ class Link(SageObject):
 
         TESTS::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(6)
             sage: L = Link(B([1, 3, 5]))
             sage: L.regions()
@@ -2376,6 +2438,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: g = BraidGroup(2).gen(0)
             sage: K = Link(g^3)
             sage: K2 = K.mirror_image(); K2
@@ -2470,33 +2533,34 @@ class Link(SageObject):
            sage: K3 = Knot([[5, 2, 4, 1], [3, 6, 2, 5], [1, 4, 6, 3]])
            sage: K3r = K3.reverse(); K3r.pd_code()
            [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
-           sage: K3 == K3r
+           sage: K3 == K3r                                                              # needs sage.groups
            True
 
         a non reversable knot::
 
-           sage: K8_17 = Knot([[6, 1, 7, 2], [14, 7, 15, 8], [8, 4, 9, 3],
-           ....:               [2, 14, 3, 13], [12, 6, 13, 5], [4, 10, 5, 9],
-           ....:               [16, 11, 1, 12], [10, 15, 11, 16]])
-           sage: K8_17r = K8_17.reverse()
-           sage: b = K8_17.braid(); b
-           s0^2*s1^-1*(s1^-1*s0)^2*s1^-1
-           sage: br = K8_17r.braid(); br
-           s0^-1*s1*s0^-2*s1^2*s0^-1*s1
-           sage: b.is_conjugated(br)
-           False
-           sage: b == br.reverse()
-           False
-           sage: b.is_conjugated(br.reverse())
-           True
-           sage: K8_17b = Link(b)
-           sage: K8_17br = K8_17b.reverse()
-           sage: bbr = K8_17br.braid(); bbr
-           (s1^-1*s0)^2*s1^-2*s0^2
-           sage: br == bbr
-           False
-           sage: br.is_conjugated(bbr)
-           True
+            sage: # needs sage.groups
+            sage: K8_17 = Knot([[6, 1, 7, 2], [14, 7, 15, 8], [8, 4, 9, 3],
+            ....:               [2, 14, 3, 13], [12, 6, 13, 5], [4, 10, 5, 9],
+            ....:               [16, 11, 1, 12], [10, 15, 11, 16]])
+            sage: K8_17r = K8_17.reverse()
+            sage: b = K8_17.braid(); b
+            s0^2*s1^-1*(s1^-1*s0)^2*s1^-1
+            sage: br = K8_17r.braid(); br
+            s0^-1*s1*s0^-2*s1^2*s0^-1*s1
+            sage: b.is_conjugated(br)
+            False
+            sage: b == br.reverse()
+            False
+            sage: b.is_conjugated(br.reverse())
+            True
+            sage: K8_17b = Link(b)
+            sage: K8_17br = K8_17b.reverse()
+            sage: bbr = K8_17br.braid(); bbr
+            (s1^-1*s0)^2*s1^-2*s0^2
+            sage: br == bbr
+            False
+            sage: br.is_conjugated(bbr)
+            True
         """
         if self._reverse:
             return self._reverse
@@ -2591,6 +2655,7 @@ class Link(SageObject):
 
         The unknot::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(9)
             sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
             sage: Link(b).jones_polynomial()
@@ -2601,7 +2666,7 @@ class Link(SageObject):
             sage: L = Link([[3,1,2,4],[8,9,1,7],[5,6,7,3],[4,18,6,5],
             ....:           [17,19,8,18],[9,10,11,14],[10,12,13,11],
             ....:           [12,19,15,13],[20,16,14,15],[16,20,17,2]])
-            sage: L.jones_polynomial()
+            sage: L.jones_polynomial()                                                  # needs sage.symbolic
             1
 
         The Ochiai unknot::
@@ -2609,25 +2674,28 @@ class Link(SageObject):
             sage: L = Link([[[1,-2,-3,-8,-12,13,-14,15,-7,-1,2,-4,10,11,-13,12,
             ....:             -11,-16,4,3,-5,6,-9,7,-15,14,16,-10,8,9,-6,5]],
             ....:           [-1,-1,1,1,1,1,-1,1,1,-1,1,-1,-1,-1,-1,-1]])
-            sage: L.jones_polynomial()  # long time
+            sage: L.jones_polynomial()  # long time                                     # needs sage.symbolic
             1
 
         Two unlinked unknots::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: b = B([1, 3])
-            sage: Link(b).jones_polynomial()
+            sage: Link(b).jones_polynomial()                                            # needs sage.symbolic
             -sqrt(t) - 1/sqrt(t)
 
         The Hopf link::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: b = B([-1,-1])
-            sage: Link(b).jones_polynomial()
+            sage: Link(b).jones_polynomial()                                            # needs sage.symbolic
             -1/sqrt(t) - 1/t^(5/2)
 
         Different representations of the trefoil and one of its mirror::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: b = B([-1, -1, -1])
             sage: Link(b).jones_polynomial(skein_normalization=True)
@@ -2649,15 +2717,17 @@ class Link(SageObject):
         `K11n42` (the mirror of the "Kinoshita-Terasaka" knot) and `K11n34`
         (the mirror of the "Conway" knot) in [KnotAtlas]_::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: K11n42 = Link(B([1, -2, 3, -2, 3, -2, -2, -1, 2, -3, -3, 2, 2]))
             sage: K11n34 = Link(B([1, 1, 2, -3, 2, -3, 1, -2, -2, -3, -3]))
-            sage: bool(K11n42.jones_polynomial() == K11n34.jones_polynomial())
+            sage: bool(K11n42.jones_polynomial() == K11n34.jones_polynomial())          # needs sage.symbolic
             True
 
         The two algorithms for computation give the same result when the
         trace closure of the braid representation is the link itself::
 
+            sage: # needs sage.symbolic
             sage: L = Link([[[-1, 2, -3, 4, 5, 1, -2, 6, 7, 3, -4, -7, -6, -5]],
             ....:           [-1, -1, -1, -1, 1, -1, 1]])
             sage: jonesrep = L.jones_polynomial(algorithm='jonesrep')
@@ -2669,6 +2739,7 @@ class Link(SageObject):
         braid is not necessarily the link itself, this is only true up to a
         power of the Jones polynomial of the unknot::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(3)
             sage: b = B([1])
             sage: L = Link(b)
@@ -2676,17 +2747,17 @@ class Link(SageObject):
             2
             sage: L.number_of_components()
             1
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # needs sage.symbolic
             -sqrt(t) - 1/sqrt(t)
-            sage: L.jones_polynomial()
+            sage: L.jones_polynomial()                                                  # needs sage.symbolic
             1
-            sage: L.jones_polynomial(algorithm='statesum')
+            sage: L.jones_polynomial(algorithm='statesum')                              # needs sage.symbolic
             1
 
         TESTS::
 
             sage: L = Link([])
-            sage: L.jones_polynomial(algorithm='statesum')
+            sage: L.jones_polynomial(algorithm='statesum')                              # needs sage.symbolic
             1
 
             sage: L.jones_polynomial(algorithm='other')
@@ -2696,7 +2767,7 @@ class Link(SageObject):
 
         Check that :trac:`31001` is fixed::
 
-            sage: L.jones_polynomial()
+            sage: L.jones_polynomial()                                                  # needs sage.groups
             1
         """
         if algorithm == 'statesum':
@@ -2873,6 +2944,7 @@ class Link(SageObject):
 
         We give some examples::
 
+            sage: # needs sage.groups
             sage: g = BraidGroup(2).gen(0)
             sage: K = Knot(g^5)
             sage: K.homfly_polynomial()
@@ -2920,6 +2992,7 @@ class Link(SageObject):
 
         The knot `9_6`::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(3)
             sage: K = Knot(B([-1,-1,-1,-1,-1,-1,-2,1,-2,-2]))
             sage: K.homfly_polynomial()
@@ -3036,7 +3109,7 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: Hopf = Link([[1, 3, 2, 4], [4, 2, 3, 1]])
-            sage: Hopf.links_gould_polynomial()
+            sage: Hopf.links_gould_polynomial()                                         # needs sage.groups
             -1 + t1^-1 + t0^-1 - t0^-1*t1^-1
         """
         return self.braid().links_gould_polynomial(varnames=varnames)
@@ -3062,13 +3135,14 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari sage.modules
             sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
-            sage: K._coloring_matrix(3)                                                 # needs sage.rings.finite_rings
+            sage: K._coloring_matrix(3)
             [2 2 2]
             [2 2 2]
             [2 2 2]
             sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
-            sage: K8._coloring_matrix(4)                                                # needs sage.rings.finite_rings
+            sage: K8._coloring_matrix(4)
             [2 0 4 4]
             [4 4 2 0]
             [0 4 4 2]
@@ -3119,13 +3193,13 @@ class Link(SageObject):
         We show that the trefoil knot is 3-colorable::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
-            sage: K.is_colorable(3)
+            sage: K.is_colorable(3)                                                     # needs sage.libs.pari sage.modules
             True
 
         But the figure eight knot is not::
 
             sage: K8 = Link([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
-            sage: K8.is_colorable(3)
+            sage: K8.is_colorable(3)                                                    # needs sage.libs.pari sage.modules
             False
 
         REFERENCES:
@@ -3158,7 +3232,7 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
-            sage: K.colorings(3)                                                        # needs sage.rings.finite_rings
+            sage: K.colorings(3)                                                        # needs sage.libs.pari sage.modules
             [{(1, 2): 0, (3, 4): 1, (5, 6): 2},
              {(1, 2): 0, (3, 4): 2, (5, 6): 1},
              {(1, 2): 1, (3, 4): 0, (5, 6): 2},
@@ -3340,6 +3414,7 @@ class Link(SageObject):
         If a coloring is passed, the different arcs are plotted with
         the corresponding colors::
 
+            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: b = B([1,2,3,1,2,-1,-3,2,3])
             sage: L = Link(b)
@@ -3678,6 +3753,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: b = BraidGroup(4)((1, 2, -3, 2, 2, 2, 2, 2, 2, -1, 2, 3, 2))
             sage: L = Link([[2, 5, 4, 1], [5, 7, 6, 4], [7, 9, 8, 6], [9, 11, 10, 8],
             ....:           [11, 13, 12, 10], [13, 15, 14, 12], [15, 17, 16, 14],
@@ -3884,13 +3960,15 @@ class Link(SageObject):
         cannot be identified. In addition non prime links or even links whose
         HOMFLY-PT polynomial is not irreducible cannot be identified::
 
+            sage: # needs sage.groups
             sage: b, = BraidGroup(2).gens()
             sage: Link(b**13).get_knotinfo()
             Traceback (most recent call last):
             ...
             NotImplementedError: this knot having more than 12 crossings cannot be determined
 
-            sage: Link([[1, 4, 2, 5], [3, 8, 4, 1], [5, 2, 6, 3], [6, 10, 7, 9], [10, 8, 9, 7]])
+            sage: Link([[1, 4, 2, 5], [3, 8, 4, 1], [5, 2, 6, 3],
+            ....:       [6, 10, 7, 9], [10, 8, 9, 7]])
             Link with 2 components represented by 5 crossings
             sage: _.get_knotinfo()
             Traceback (most recent call last):
@@ -3935,9 +4013,10 @@ class Link(SageObject):
             sage: k11mr.get_knotinfo(unique=False)    # optional - database_knotinfo
             [(<KnotInfo.K11n_82: '11n_82'>, '?')]
 
+            sage: # needs sage.groups, optional - database_knotinfo
             sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
             sage: l8 = Link(BraidGroup(3)(t))
-            sage: l8.get_knotinfo()                   # optional - database_knotinfo
+            sage: l8.get_knotinfo()
             Traceback (most recent call last):
             ...
             NotImplementedError: this link cannot be uniquely determined
@@ -3947,15 +4026,16 @@ class Link(SageObject):
             [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
              (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
 
+            sage: # needs sage.groups, optional - database_knotinfo
             sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
             sage: l12 = Link(BraidGroup(5)(t))
-            sage: l12.get_knotinfo()                  # optional - database_knotinfo
+            sage: l12.get_knotinfo()
             Traceback (most recent call last):
             ...
-            NotImplementedError: this link having more than 11 crossings cannot be uniquely determined
+            NotImplementedError: this link having more than 11 crossings
+            cannot be uniquely determined
             use keyword argument `unique` to obtain more details
-
-            sage: l12.get_knotinfo(unique=False)      # optional - database_knotinfo
+            sage: l12.get_knotinfo(unique=False)
             [(<KnotInfo.L10n36_0: 'L10n36{0}'>, '?'),
              (<KnotInfo.L10n36_1: 'L10n36{1}'>, None),
              (<KnotInfo.L10n59_0: 'L10n59{0}'>, None),
@@ -3965,6 +4045,7 @@ class Link(SageObject):
         the same unoriented name (according to the note above) the option can be
         used to achieve more detailed information::
 
+            sage: # needs sage.groups
             sage: L2a1 = Link(b**2)
             sage: L2a1.get_knotinfo()
             (Series of links L2a1, None)
@@ -4191,11 +4272,11 @@ class Link(SageObject):
             sage: l2 = Link([[1, 8, 2, 9], [9, 2, 10, 3], [3, 14, 4, 1],
             ....:            [13, 4, 14, 5], [5, 12, 6, 13], [11, 6, 12, 7],
             ....:            [7, 10, 8, 11]])
-            sage: l1.is_isotopic(l2)
+            sage: l1.is_isotopic(l2)                                                    # needs sage.groups
             True
 
             sage: l3 = l2.mirror_image()
-            sage: l1.is_isotopic(l3)
+            sage: l1.is_isotopic(l3)                                                    # needs sage.groups
             False
 
             sage: # optional - database_knotinfo
@@ -4206,13 +4287,13 @@ class Link(SageObject):
             sage: L == L7a7(0)
             True
             sage: l = L.link()
-            sage: l.is_isotopic(L7a7(1).link())
+            sage: l.is_isotopic(L7a7(1).link())                                         # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: comparison not possible!
-            sage: l.is_isotopic(L7a7(2).link())
+            sage: l.is_isotopic(L7a7(2).link())                                         # needs sage.groups
             True
-            sage: l.is_isotopic(L7a7(3).link())
+            sage: l.is_isotopic(L7a7(3).link())                                         # needs sage.groups
             False
         """
         from sage.misc.verbose import verbose

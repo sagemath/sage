@@ -3175,9 +3175,9 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: Q = DiGraph({1: {2: ['a', 'c']}, 2: {3: ['b']}})
-            sage: F = Q.path_semigroup(); F
+            sage: F = Q.path_semigroup(); F                                             # needs sage.libs.flint
             Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices
-            sage: list(F)
+            sage: list(F)                                                               # needs sage.libs.flint
             [e_1, e_2, e_3, a, c, b, a*b, c*b]
 
         """
