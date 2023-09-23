@@ -227,13 +227,13 @@ class OreFunction(AlgebraElement):
             sage: S.<x> = R['x', sigma]
             sage: s = (x + z)^2
             sage: t = (x + z) * (x^2 + z^2)
-            sage: f = s^(-1) * t
-            sage: f.left_denominator()
+            sage: f = s^(-1) * t                                                        # needs sage.rings.function_field
+            sage: f.left_denominator()                                                  # needs sage.rings.function_field
             x^2 + (z^2 + z)*x + z^2
 
         However, the following always holds true::
 
-            sage: f == f.left_denominator()^(-1) * f.right_numerator()
+            sage: f == f.left_denominator()^(-1) * f.right_numerator()                  # needs sage.rings.function_field
             True
 
         .. SEEALSO::
@@ -363,8 +363,8 @@ class OreFunction(AlgebraElement):
             sage: R.<z> = GF(11)[]
             sage: sigma = R.hom([z^2])
             sage: S.<x> = R['x', sigma]
-            sage: f = (x + z) / (x - z)
-            sage: f.right_denominator()
+            sage: f = (x + z) / (x - z)                                                 # needs sage.rings.function_field
+            sage: f.right_denominator()                                                 # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError: inversion of the twisting morphism Ring endomorphism
@@ -445,7 +445,6 @@ class OreFunction(AlgebraElement):
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = K.random_element()
             sage: h = K.random_element()
@@ -702,14 +701,12 @@ class ConstantOreFunctionSection(Map):
             sage: F = R.fraction_field()
             sage: sigma = R.hom([t^2])
             sage: S.<x> = R['x', sigma]
-
             sage: P = S._random_nonzero_element()
-            sage: f = (t*P) / P
-            sage: F(f)
+            sage: f = (t*P) / P                                                         # needs sage.rings.function_field
+            sage: F(f)                                                                  # needs sage.rings.function_field
             t
-
-            sage: g = x / (x+t)
-            sage: F(g)
+            sage: g = x / (x+t)                                                         # needs sage.rings.function_field
+            sage: F(g)                                                                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             TypeError: not a constant function
@@ -736,9 +733,8 @@ class OreFunctionBaseringInjection(Morphism):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
-            sage: K = S.fraction_field()
-
-            sage: K.coerce_map_from(K.base_ring())  # indirect doctest
+            sage: K = S.fraction_field()                                                # needs sage.rings.function_field
+            sage: K.coerce_map_from(K.base_ring())  # indirect doctest                  # needs sage.rings.function_field
             Ore Function base injection morphism:
               From: Fraction Field of Univariate Polynomial Ring in t over Rational Field
               To:   Ore Function Field in x over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by t |--> t + 1

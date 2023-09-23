@@ -99,19 +99,19 @@ of the original system modulo `p`.::
     sage: factor(282687803443)
     101 * 103 * 27173681
 
-    sage: I.change_ring(P.change_ring(GF(101))).groebner_basis()
+    sage: I.change_ring(P.change_ring(GF(101))).groebner_basis()                        # needs sage.libs.singular
     [z - 33, y + 48, x + 19]
 
-    sage: I.change_ring(P.change_ring(GF(103))).groebner_basis()
+    sage: I.change_ring(P.change_ring(GF(103))).groebner_basis()                        # needs sage.libs.singular
     [z - 18, y + 8, x + 39]
 
-    sage: I.change_ring(P.change_ring(GF(27173681))).groebner_basis()                   # needs sage.rings.finite_rings
+    sage: I.change_ring(P.change_ring(GF(27173681))).groebner_basis()                   # needs sage.libs.singular sage.rings.finite_rings
     [z + 10380032, y + 3186055, x - 536027]
 
 Of course, modulo any other prime the Groebner basis is trivial so
 there are no other solutions. For example::
 
-    sage: I.change_ring(P.change_ring(GF(3))).groebner_basis()
+    sage: I.change_ring(P.change_ring(GF(3))).groebner_basis()                          # needs sage.libs.singular
     [1]
 
 AUTHOR:

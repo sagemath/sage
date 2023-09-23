@@ -64,6 +64,7 @@ class ProductTree:
 
     ::
 
+        sage: # needs sage.libs.pari
         sage: vs = prime_range(100)
         sage: tree = ProductTree(vs)
         sage: tree.root().factor()
@@ -73,7 +74,7 @@ class ProductTree:
 
     We can access the individual layers of the tree::
 
-        sage: tree.layers
+        sage: tree.layers                                                               # needs sage.libs.pari
         [(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97),
          (6, 35, 143, 323, 667, 1147, 1763, 2491, 3599, 4757, 5767, 7387, 97),
          (210, 46189, 765049, 4391633, 17120443, 42600829, 97),
