@@ -1923,7 +1923,7 @@ def SRG_100_44_18_20():
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_44_18_20
         sage: G = SRG_100_44_18_20()                    # long time                     # needs sage.groups
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (100, 44, 18, 20)
     """
     L = ['100', '110', '130', '140', '200', '230', '240', '300', '310', '320',
@@ -1945,7 +1945,7 @@ def SRG_100_45_20_20():
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_45_20_20
         sage: G = SRG_100_45_20_20()                    # long time                     # needs sage.groups
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (100, 45, 20, 20)
     """
     L = ['120', '140', '200', '210', '201', '401', '411', '321', '002', '012',
@@ -2617,7 +2617,7 @@ def SRG_630_85_20_10():
 
         sage: from sage.graphs.strongly_regular_db import SRG_630_85_20_10
         sage: G = SRG_630_85_20_10()                    # long time                     # needs sage.groups
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (630, 85, 20, 10)
     """
     from sage.graphs.generators.intersection import IntersectionGraph

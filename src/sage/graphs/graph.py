@@ -5848,10 +5848,10 @@ class Graph(GenericGraph):
         The graph of eight-bit strings, adjacent if different in an odd number
         of bits::
 
-            sage: # long time
+            sage: # long time, needs sage.symbolic
             sage: G = graphs.CubeGraph(8)
             sage: H = G.distance_graph([1,3,5,7])
-            sage: degrees = [0]*sum([binomial(8,j) for j in [1,3,5,7]])                 # needs sage.symbolic
+            sage: degrees = [0]*sum([binomial(8,j) for j in [1,3,5,7]])
             sage: degrees.append(2^8)
             sage: degrees == H.degree_histogram()
             True
