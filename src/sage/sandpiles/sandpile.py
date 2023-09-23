@@ -2751,7 +2751,7 @@ class Sandpile(DiGraph):
         EXAMPLES::
 
             sage: S = Sandpile({0: {}, 1: {2: 2}, 2: {0: 4, 1: 1}}, 0)
-            sage: Z = S.solve()                                                         # needs sage.libs.singular
+            sage: Z = S.solve(); Z                                                      # needs sage.libs.singular
             [[-0.707107000000000 + 0.707107000000000*I,
               0.707107000000000 - 0.707107000000000*I],
              [-0.707107000000000 - 0.707107000000000*I,
