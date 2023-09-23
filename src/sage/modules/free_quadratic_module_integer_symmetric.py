@@ -1038,7 +1038,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
+            sage: # needs sage.graphs sage.libs.pari
             sage: L = IntegralLattice("A4").twist(25*89)
             sage: L.maximal_overlattice().determinant()
             5
@@ -1049,7 +1049,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         TESTS::
 
-            sage: # needs sage.libs.flint (otherwise timeout)
+            sage: # needs sage.libs.flint (otherwise timeout) sage.libs.pari
             sage: L = IntegralLattice(matrix.diagonal([2,4,4,8]))
             sage: L.maximal_overlattice().is_even()
             True
@@ -1442,7 +1442,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice('A2')                                             # needs sage.graphs
             sage: L.maximum()                                                           # needs sage.graphs
             +Infinity
-            sage: L.twist(-1).maximum()                                                 # needs sage.graphs
+            sage: L.twist(-1).maximum()                                                 # needs sage.graphs sage.libs.pari
             -2
         """
         if self.rank() == 0:
@@ -1464,7 +1464,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: L = IntegralLattice('A2')                                             # needs sage.graphs
-            sage: L.lll() == L                                                          # needs sage.graphs
+            sage: L.lll() == L                                                          # needs sage.graphs sage.libs.pari
             True
 
             sage: G = matrix(ZZ, 3, [0,1,0, 1,0,0, 0,0,7])
@@ -1512,9 +1512,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: A2 = IntegralLattice('A2')                                            # needs sage.graphs
-            sage: A2.short_vectors(3)                                                   # needs sage.graphs
+            sage: A2.short_vectors(3)                                                   # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (-1, -1), (0, 1), (0, -1), (1, 0), (-1, 0)]]
-            sage: A2.short_vectors(3,up_to_sign_flag=True)                              # needs sage.graphs
+            sage: A2.short_vectors(3, up_to_sign_flag=True)                             # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]
         """
         p, m = self.signature_pair()
@@ -1603,7 +1603,7 @@ def local_modification(M, G, p, check=True):
 
     EXAMPLES::
 
-        sage: # needs sage.graphs
+        sage: # needs sage.graphs sage.libs.pari
         sage: from sage.modules.free_quadratic_module_integer_symmetric import local_modification
         sage: L = IntegralLattice("A3").twist(15)
         sage: M = L.maximal_overlattice()
