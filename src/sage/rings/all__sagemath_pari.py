@@ -8,3 +8,6 @@ from .padics.all__sagemath_pari import *
 
 # valuations
 from .valuation.all import *
+
+# Tate algebras
+from .tate_algebra import TateAlgebra

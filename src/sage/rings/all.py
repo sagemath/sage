@@ -54,9 +54,6 @@ from .function_field.all import *
 # Polynomial Rings and Polynomial Quotient Rings
 from .polynomial.all import *
 
-# Tate algebras
-from .tate_algebra import TateAlgebra
-
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 
