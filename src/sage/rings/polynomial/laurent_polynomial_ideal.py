@@ -198,7 +198,7 @@ class LaurentPolynomialIdeal(Ideal_generic):
         if not f or f in self.gens():
             return True
         f = self.ring()(f)
-        g = f.__reduce__()[1][1]
+        g = f.__reduce__()[1][0]
         return (g in self.polynomial_ideal())
 
     # Operations on ideals
@@ -501,7 +501,7 @@ class LaurentPolynomialIdeal(Ideal_generic):
               Multivariate Laurent Polynomial Ring in x, y, z over Rational Field)
         """
         ap = self.polynomial_ideal(saturate=False).associated_primes()
-        ap2 = [self.ring().ideal(id.gens(), hint=id) for Iid in ap]
+        ap2 = [self.ring().ideal(id.gens(), hint=id) for id in ap]
         return tuple(id for id in ap2 if not id.is_one())
 
     def minimal_associated_primes(self, saturate=False):
