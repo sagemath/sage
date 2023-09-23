@@ -104,8 +104,6 @@ from sage.logic.all      import *
 
 from sage.numerical.all  import *
 
-lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
-
 from cysignals.alarm import alarm, cancel_alarm
 
 # Lazily import interacts (#15335)
