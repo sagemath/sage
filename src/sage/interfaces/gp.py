@@ -891,6 +891,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         ::
 
+            sage: # needs sage.modules
             sage: M = Matrix(ZZ,2,2,[1,2,3,4]); M
             [1 2]
             [3 4]

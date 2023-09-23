@@ -315,7 +315,7 @@ class IndexedSequence(SageObject):
                                -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
              indexed by Multiplicative Abelian group isomorphic to C2 x C3
 
-            sage: # needs sage.groups
+            sage: # needs sage.groups sage.rings.number_field
             sage: J = CyclicPermutationGroup(6)
             sage: s = IndexedSequence([1,2,3,4,5,6], J)
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
