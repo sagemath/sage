@@ -1273,7 +1273,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if not self.is_endomorphism():
             raise TypeError("Self must be an endomorphism.")
 
-        if R not in NumberFields() and not isinstance(R, sage.rings.abc.AlgebraicField)
+        if R not in NumberFields() and not isinstance(R, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("Only implemented for number fields.")
 
         f_iterate_map = self.nth_iterate_map(n)
@@ -2458,7 +2458,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         FF = FractionField(self.domain().base_ring()) #lift will only work over fields, so coercing into FF
         if FF not in NumberFields():
-            if FF == QQbar:
+            if isinstance(FF, sage.rings.abc.AlgebraicField):
                 #since this is absolute height, we can choose any number field over which the
                 #function is defined.
                 f = self._number_field_from_algebraics()
@@ -8841,6 +8841,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
             else:
                 return False
+        from sage.rings.qqbar import QQbar
         Fbar = self.change_ring(QQbar)
         Pbar = Fbar.domain()
         fixed = Fbar.periodic_points(1)
