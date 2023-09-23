@@ -443,8 +443,9 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: from sage.rings.power_series_ring_element import PowerSeries
             sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: PowerSeries.list(1+x^2)
+            sage: PowerSeries.list(1 + x^2)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -463,8 +464,9 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: from sage.rings.power_series_ring_element import PowerSeries
             sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: PowerSeries.polynomial(1+x^2)
+            sage: PowerSeries.polynomial(1 + x^2)
             Traceback (most recent call last):
             ...
             NotImplementedError

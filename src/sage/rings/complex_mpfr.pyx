@@ -57,8 +57,6 @@ from sage.libs.gsl.complex cimport *
 from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
 
-from sage.misc.superseded import deprecated_function_alias
-
 cimport gmpy2
 gmpy2.import_gmpy2()
 
@@ -146,32 +144,6 @@ def is_ComplexNumber(x):
         True
     """
     return isinstance(x, ComplexNumber)
-
-
-def is_ComplexField(x):
-    """
-    Check if ``x`` is a :class:`complex field <ComplexField_class>`.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.ComplexField` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_mpfr import is_ComplexField as is_CF
-        sage: is_CF(ComplexField())
-        doctest:warning...
-        DeprecationWarning: is_ComplexField is deprecated;
-        use isinstance(..., sage.rings.abc.ComplexField) instead
-        See https://github.com/sagemath/sage/issues/32610 for details.
-        True
-        sage: is_CF(ComplexField(12))
-        True
-        sage: is_CF(CC)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32610, 'is_ComplexField is deprecated; use isinstance(..., sage.rings.abc.ComplexField) instead')
-    return isinstance(x, ComplexField_class)
 
 
 cache = {}
@@ -2259,8 +2231,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             0.217621561854403 - 0.868014142895925*I
         """
         return ~(self.tan())
-
-    cotan = deprecated_function_alias(29412, cot)
 
     def cos(self):
         """

@@ -15,8 +15,6 @@ Sets of homomorphisms between number fields
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation
-
 from sage.rings.homset import RingHomset_generic
 from sage.rings.number_field.morphism import (NumberFieldHomomorphism_im_gens,
                                               RelativeNumberFieldHomomorphism_from_abs,
@@ -284,7 +282,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
     Element = RelativeNumberFieldHomomorphism_from_abs
 
-    def _element_constructor_(self, x, base_map=None, base_hom=None, check=True):
+    def _element_constructor_(self, x, base_map=None, check=True):
         """
         Construct an element of ``self`` from ``x``.
 
@@ -378,9 +376,6 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
             sage: (x^2 + a).change_ring(phi)
             x^2 + 1/6*c^3 + 1/6*c
         """
-        if base_hom is not None:
-            deprecation(26105, "Use base_map rather than base_hom")
-            base_map = base_hom
         if isinstance(x, NumberFieldHomomorphism_im_gens):
             # Then it must be a homomorphism from the corresponding
             # absolute number field

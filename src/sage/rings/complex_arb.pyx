@@ -194,9 +194,9 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.arith.long cimport is_small_python_int
 
 from sage.misc.lazy_string import lazy_string
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.complex_interval_field import ComplexIntervalField, ComplexIntervalField_class
 from sage.rings.integer_ring import ZZ
+
 
 cdef void ComplexIntervalFieldElement_to_acb(
     acb_t target,
@@ -4231,8 +4231,6 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return result
 
-    ei = deprecated_function_alias(32869, Ei)
-
     def Si(self):
         """
         Return the sine integral with argument ``self``.
@@ -4256,8 +4254,6 @@ cdef class ComplexBall(RingElement):
         return result
 
     sin_integral = Si # as for the symbolic function
-
-    si = deprecated_function_alias(32869, Si)
 
     def Ci(self):
         """
@@ -4283,8 +4279,6 @@ cdef class ComplexBall(RingElement):
 
     cos_integral = Ci # as for the symbolic function
 
-    ci = deprecated_function_alias(32869, Ci)
-
     def Shi(self):
         """
         Return the hyperbolic sine integral with argument ``self``.
@@ -4309,8 +4303,6 @@ cdef class ComplexBall(RingElement):
 
     sinh_integral = Shi
 
-    shi = deprecated_function_alias(32869, Shi)
-
     def Chi(self):
         """
         Return the hyperbolic cosine integral with argument ``self``.
@@ -4334,8 +4326,6 @@ cdef class ComplexBall(RingElement):
         return result
 
     cosh_integral = Chi
-
-    chi = deprecated_function_alias(32869, Chi)
 
     def li(self, bint offset=False):
         """

@@ -270,8 +270,3 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
 class CyclotomicFieldHomomorphism_im_gens(NumberFieldHomomorphism_im_gens):
     pass
-
-
-lazy_import('sage.rings.number_field.homset',
-            ('NumberFieldHomset', 'RelativeNumberFieldHomset', 'CyclotomicFieldHomset'),
-            deprecation=29010)
