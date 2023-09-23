@@ -1634,7 +1634,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = vector([1,2/3,pi])                                                # needs sage.symbolic
             sage: v.items()                                                             # needs sage.symbolic
-            <generator object at ...>
+            <...generator object at ...>
             sage: list(v.items())                                                       # needs sage.symbolic
             [(0, 1), (1, 2/3), (2, pi)]
 
