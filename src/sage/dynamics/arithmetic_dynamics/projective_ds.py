@@ -115,6 +115,7 @@ from sage.structure.element import get_coercion_model
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 try:
     from sage.libs.pari.all import PariError
@@ -763,15 +764,17 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         We check that the dynatomic polynomial has the right
         parent (see :trac:`18409`)::
 
-            sage: P.<x,y> = ProjectiveSpace(QQbar,1)                                    # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
             sage: f = DynamicalSystem_projective([x^2 - 1/3*y^2, y^2])
             sage: f.dynatomic_polynomial(2).parent()                                    # needs sage.libs.pari
             Multivariate Polynomial Ring in x, y over Algebraic Field
 
         ::
 
-            sage: T.<v> = QuadraticField(33)                                            # needs sage.rings.number_field
-            sage: S.<t> = PolynomialRing(T)                                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: T.<v> = QuadraticField(33)
+            sage: S.<t> = PolynomialRing(T)
             sage: P.<x,y> = ProjectiveSpace(FractionField(S),1)
             sage: f = DynamicalSystem_projective([t*x^2 - 1/t*y^2, y^2])
             sage: f.dynatomic_polynomial([1, 2]).parent()                               # needs sage.libs.pari
@@ -4396,9 +4399,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: K.<v> = QuadraticField(5)                                             # needs sage.rings.number_field
-            sage: phi = QQ.embeddings(K)[0]                                             # needs sage.rings.number_field
+            sage: K.<v> = QuadraticField(5)
+            sage: phi = QQ.embeddings(K)[0]
             sage: f = DynamicalSystem_projective([x^2 - y^2, y^2])
             sage: f.preperiodic_points(1, 1, R=phi)
             [(-1/2*v - 1/2 : 1), (1/2*v - 1/2 : 1)]

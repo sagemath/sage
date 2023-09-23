@@ -27,6 +27,7 @@ import sage.rings.abc
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.structure.sequence import Sequence

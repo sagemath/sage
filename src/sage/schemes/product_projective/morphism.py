@@ -22,10 +22,12 @@ EXAMPLES::
 
 import sage.rings.abc
 
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
 _Fields = Fields()
 
 
