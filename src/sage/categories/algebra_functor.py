@@ -728,6 +728,7 @@ class AlgebrasCategory(CovariantConstructionCategory, Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: PF = NonDecreasingParkingFunctions(4)
                 sage: A = PF.algebra(ZZ); A
                 Algebra of Non-decreasing parking functions of size 4 over Integer Ring
