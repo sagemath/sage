@@ -266,10 +266,10 @@
         "ntests": 65
     },
     "sage.categories.finite_complex_reflection_groups": {
-        "ntests": 166
+        "ntests": 172
     },
     "sage.categories.finite_coxeter_groups": {
-        "ntests": 6
+        "ntests": 14
     },
     "sage.categories.finite_dimensional_algebras_with_basis": {
         "ntests": 78
@@ -697,7 +697,7 @@
         "ntests": 9
     },
     "sage.combinat.permutation": {
-        "ntests": 1212
+        "ntests": 1213
     },
     "sage.combinat.permutation_cython": {
         "ntests": 39
@@ -1499,6 +1499,9 @@
     "sage.rings.function_field.place_rational": {
         "ntests": 7
     },
+    "sage.rings.generic": {
+        "ntests": 50
+    },
     "sage.rings.homset": {
         "ntests": 37
     },
@@ -1624,7 +1627,7 @@
     },
     "sage.rings.polynomial.polynomial_element": {
         "failed": true,
-        "ntests": 1842
+        "ntests": 1839
     },
     "sage.rings.polynomial.polynomial_element_generic": {
         "ntests": 188
@@ -1661,7 +1664,6 @@
         "ntests": 32
     },
     "sage.rings.polynomial.toy_d_basis": {
-        "failed": true,
         "ntests": 51
     },
     "sage.rings.polynomial.toy_variety": {

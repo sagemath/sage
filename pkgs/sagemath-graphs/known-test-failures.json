@@ -269,10 +269,10 @@
         "ntests": 65
     },
     "sage.categories.finite_complex_reflection_groups": {
-        "ntests": 166
+        "ntests": 172
     },
     "sage.categories.finite_coxeter_groups": {
-        "ntests": 6
+        "ntests": 14
     },
     "sage.categories.finite_dimensional_algebras_with_basis": {
         "ntests": 78
@@ -750,7 +750,7 @@
         "ntests": 61
     },
     "sage.combinat.finite_state_machine": {
-        "ntests": 66
+        "ntests": 69
     },
     "sage.combinat.finite_state_machine_generators": {
         "ntests": 33
@@ -787,7 +787,7 @@
     },
     "sage.combinat.permutation": {
         "failed": true,
-        "ntests": 1208
+        "ntests": 1209
     },
     "sage.combinat.permutation_cython": {
         "ntests": 39
@@ -802,7 +802,7 @@
         "ntests": 512
     },
     "sage.combinat.posets.lattices": {
-        "ntests": 14
+        "ntests": 40
     },
     "sage.combinat.posets.linear_extension_iterator": {
         "ntests": 13
@@ -818,7 +818,7 @@
         "ntests": 12
     },
     "sage.combinat.posets.posets": {
-        "ntests": 70
+        "ntests": 83
     },
     "sage.combinat.ranker": {
         "ntests": 48
@@ -837,6 +837,9 @@
     },
     "sage.combinat.subsets_pairwise": {
         "ntests": 32
+    },
+    "sage.combinat.tamari_lattices": {
+        "ntests": 1
     },
     "sage.combinat.tools": {
         "ntests": 2
@@ -885,6 +888,9 @@
     },
     "sage.data_structures.mutable_poset": {
         "ntests": 441
+    },
+    "sage.databases.knotinfo_db": {
+        "ntests": 100
     },
     "sage.doctest.external": {
         "ntests": 42
@@ -1117,7 +1123,7 @@
         "ntests": 13
     },
     "sage.graphs.base.boost_graph": {
-        "ntests": 199
+        "ntests": 204
     },
     "sage.graphs.base.c_graph": {
         "ntests": 767
@@ -1147,9 +1153,6 @@
     "sage.graphs.bipartite_graph": {
         "ntests": 372
     },
-    "sage.graphs.bliss": {
-        "ntests": 33
-    },
     "sage.graphs.centrality": {
         "ntests": 31
     },
@@ -1167,7 +1170,6 @@
         "ntests": 43
     },
     "sage.graphs.digraph": {
-        "failed": true,
         "ntests": 545
     },
     "sage.graphs.digraph_generators": {
@@ -1222,7 +1224,7 @@
     },
     "sage.graphs.generic_graph": {
         "failed": true,
-        "ntests": 3588
+        "ntests": 3602
     },
     "sage.graphs.generic_graph_pyx": {
         "ntests": 139
@@ -1332,7 +1334,8 @@
         "ntests": 103
     },
     "sage.graphs.spanning_tree": {
-        "ntests": 141
+        "failed": true,
+        "ntests": 169
     },
     "sage.graphs.strongly_regular_db": {
         "failed": true,
@@ -1401,6 +1404,20 @@
     },
     "sage.interfaces.tab_completion": {
         "ntests": 13
+    },
+    "sage.knots.gauss_code": {
+        "ntests": 18
+    },
+    "sage.knots.knot": {
+        "ntests": 34
+    },
+    "sage.knots.knotinfo": {
+        "failed": true,
+        "ntests": 315
+    },
+    "sage.knots.link": {
+        "failed": true,
+        "ntests": 250
     },
     "sage.misc.abstract_method": {
         "ntests": 33
@@ -1870,6 +1887,9 @@
     "sage.rings.function_field.place_rational": {
         "ntests": 7
     },
+    "sage.rings.generic": {
+        "ntests": 50
+    },
     "sage.rings.homset": {
         "ntests": 37
     },
@@ -1995,7 +2015,7 @@
     },
     "sage.rings.polynomial.polynomial_element": {
         "failed": true,
-        "ntests": 1842
+        "ntests": 1839
     },
     "sage.rings.polynomial.polynomial_element_generic": {
         "ntests": 188
@@ -2032,7 +2052,6 @@
         "ntests": 32
     },
     "sage.rings.polynomial.toy_d_basis": {
-        "failed": true,
         "ntests": 51
     },
     "sage.rings.polynomial.toy_variety": {
@@ -2413,8 +2432,11 @@
         "failed": true,
         "ntests": 99
     },
+    "sage.topology.moment_angle_complex": {
+        "ntests": 77
+    },
     "sage.topology.simplicial_complex": {
-        "ntests": 618
+        "ntests": 623
     },
     "sage.topology.simplicial_complex_catalog": {
         "ntests": 6

@@ -302,10 +302,11 @@
         "ntests": 65
     },
     "sage.categories.finite_complex_reflection_groups": {
-        "ntests": 172
+        "failed": true,
+        "ntests": 183
     },
     "sage.categories.finite_coxeter_groups": {
-        "ntests": 6
+        "ntests": 14
     },
     "sage.categories.finite_dimensional_algebras_with_basis": {
         "failed": true,
@@ -699,7 +700,8 @@
         "ntests": 7
     },
     "sage.combinat.colored_permutations": {
-        "ntests": 317
+        "failed": true,
+        "ntests": 328
     },
     "sage.combinat.combinat": {
         "ntests": 431
@@ -876,7 +878,7 @@
         "ntests": 127
     },
     "sage.combinat.permutation": {
-        "ntests": 1218
+        "ntests": 1219
     },
     "sage.combinat.permutation_cython": {
         "ntests": 39
@@ -998,7 +1000,7 @@
         "ntests": 69
     },
     "sage.combinat.species.recursive_species": {
-        "ntests": 126
+        "ntests": 131
     },
     "sage.combinat.species.set_species": {
         "ntests": 33
@@ -1163,7 +1165,7 @@
         "ntests": 441
     },
     "sage.data_structures.stream": {
-        "ntests": 746
+        "ntests": 882
     },
     "sage.doctest.control": {
         "ntests": 2
@@ -1952,6 +1954,9 @@
     "sage.rings.function_field.place_rational": {
         "ntests": 7
     },
+    "sage.rings.generic": {
+        "ntests": 50
+    },
     "sage.rings.homset": {
         "ntests": 37
     },
@@ -1983,11 +1988,11 @@
     },
     "sage.rings.lazy_series": {
         "failed": true,
-        "ntests": 1354
+        "ntests": 1445
     },
     "sage.rings.lazy_series_ring": {
         "failed": true,
-        "ntests": 0
+        "ntests": 588
     },
     "sage.rings.localization": {
         "failed": true,
@@ -2085,7 +2090,7 @@
     },
     "sage.rings.polynomial.polynomial_element": {
         "failed": true,
-        "ntests": 1842
+        "ntests": 1839
     },
     "sage.rings.polynomial.polynomial_element_generic": {
         "ntests": 188
@@ -2116,7 +2121,6 @@
         "ntests": 32
     },
     "sage.rings.polynomial.toy_d_basis": {
-        "failed": true,
         "ntests": 51
     },
     "sage.rings.polynomial.toy_variety": {

@@ -7,6 +7,7 @@
         "ntests": 200
     },
     "sage.combinat.kazhdan_lusztig": {
+        "failed": true,
         "ntests": 26
     },
     "sage.combinat.root_system.ambient_space": {
@@ -35,13 +36,15 @@
         "ntests": 143
     },
     "sage.combinat.root_system.integrable_representations": {
-        "ntests": 143
+        "failed": true,
+        "ntests": 141
     },
     "sage.combinat.root_system.non_symmetric_macdonald_polynomials": {
         "failed": true,
-        "ntests": 504
+        "ntests": 491
     },
     "sage.combinat.root_system.reflection_group_c": {
+        "failed": true,
         "ntests": 41
     },
     "sage.combinat.root_system.reflection_group_element": {
@@ -53,7 +56,7 @@
     },
     "sage.combinat.root_system.root_lattice_realizations": {
         "failed": true,
-        "ntests": 555
+        "ntests": 545
     },
     "sage.combinat.root_system.root_space": {
         "failed": true,
@@ -121,6 +124,7 @@
         "ntests": 25
     },
     "sage.combinat.root_system.type_affine": {
+        "failed": true,
         "ntests": 72
     },
     "sage.combinat.root_system.type_dual": {
@@ -144,9 +148,11 @@
         "ntests": 127
     },
     "sage.combinat.root_system.weight_lattice_realizations": {
+        "failed": true,
         "ntests": 181
     },
     "sage.combinat.root_system.weight_space": {
+        "failed": true,
         "ntests": 92
     },
     "sage.libs.coxeter3.coxeter": {

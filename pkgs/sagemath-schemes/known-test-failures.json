@@ -327,10 +327,10 @@
         "ntests": 90
     },
     "sage.categories.finite_complex_reflection_groups": {
-        "ntests": 166
+        "ntests": 172
     },
     "sage.categories.finite_coxeter_groups": {
-        "ntests": 6
+        "ntests": 14
     },
     "sage.categories.finite_dimensional_algebras_with_basis": {
         "ntests": 79
@@ -820,7 +820,7 @@
         "ntests": 13
     },
     "sage.combinat.permutation": {
-        "ntests": 1218
+        "ntests": 1219
     },
     "sage.combinat.permutation_cython": {
         "ntests": 39
@@ -854,17 +854,17 @@
         "ntests": 1
     },
     "sage.combinat.root_system.integrable_representations": {
-        "ntests": 3
+        "ntests": 5
     },
     "sage.combinat.root_system.non_symmetric_macdonald_polynomials": {
-        "ntests": 19
+        "ntests": 25
     },
     "sage.combinat.root_system.root_lattice_realization_algebras": {
         "failed": true,
         "ntests": 284
     },
     "sage.combinat.root_system.root_lattice_realizations": {
-        "ntests": 488
+        "ntests": 489
     },
     "sage.combinat.root_system.root_space": {
         "ntests": 72
@@ -1372,6 +1372,9 @@
     "sage.groups.affine_gps.group_element": {
         "ntests": 92
     },
+    "sage.groups.galois_group": {
+        "ntests": 54
+    },
     "sage.groups.generic": {
         "failed": true,
         "ntests": 98
@@ -1454,7 +1457,6 @@
         "ntests": 23
     },
     "sage.homology.matrix_utils": {
-        "failed": true,
         "ntests": 5
     },
     "sage.interfaces.abc": {
@@ -1568,7 +1570,7 @@
     },
     "sage.matrix.matrix_space": {
         "failed": true,
-        "ntests": 426
+        "ntests": 429
     },
     "sage.matrix.matrix_sparse": {
         "ntests": 159
@@ -1625,7 +1627,7 @@
         "ntests": 614
     },
     "sage.matroids.matroid": {
-        "ntests": 852
+        "ntests": 858
     },
     "sage.matroids.matroids_plot_helpers": {
         "ntests": 73
@@ -1936,7 +1938,7 @@
         "ntests": 9
     },
     "sage.modular.arithgroup.congroup_gamma": {
-        "ntests": 44
+        "ntests": 45
     },
     "sage.modular.arithgroup.congroup_gamma1": {
         "ntests": 2
@@ -2156,7 +2158,7 @@
         "ntests": 78
     },
     "sage.modules.vector_space_morphism": {
-        "ntests": 150
+        "ntests": 151
     },
     "sage.modules.with_basis.indexed_element": {
         "ntests": 161
@@ -2185,7 +2187,6 @@
         "ntests": 86
     },
     "sage.parallel.map_reduce": {
-        "failed": true,
         "ntests": 291
     },
     "sage.parallel.multiprocessing_sage": {
@@ -2510,6 +2511,9 @@
     "sage.rings.function_field.place_rational": {
         "ntests": 7
     },
+    "sage.rings.generic": {
+        "ntests": 50
+    },
     "sage.rings.homset": {
         "ntests": 37
     },
@@ -2627,7 +2631,6 @@
         "ntests": 507
     },
     "sage.rings.polynomial.multi_polynomial_element": {
-        "failed": true,
         "ntests": 285
     },
     "sage.rings.polynomial.multi_polynomial_ideal": {
@@ -2644,6 +2647,19 @@
     "sage.rings.polynomial.multi_polynomial_sequence": {
         "failed": true,
         "ntests": 130
+    },
+    "sage.rings.polynomial.ore_function_element": {
+        "ntests": 56
+    },
+    "sage.rings.polynomial.ore_function_field": {
+        "failed": true,
+        "ntests": 63
+    },
+    "sage.rings.polynomial.ore_polynomial_element": {
+        "ntests": 504
+    },
+    "sage.rings.polynomial.ore_polynomial_ring": {
+        "ntests": 135
     },
     "sage.rings.polynomial.polydict": {
         "ntests": 396
@@ -2678,6 +2694,13 @@
     "sage.rings.polynomial.polynomial_singular_interface": {
         "ntests": 42
     },
+    "sage.rings.polynomial.skew_polynomial_element": {
+        "ntests": 49
+    },
+    "sage.rings.polynomial.skew_polynomial_ring": {
+        "failed": true,
+        "ntests": 39
+    },
     "sage.rings.polynomial.symmetric_ideal": {
         "ntests": 37
     },
@@ -2691,7 +2714,6 @@
         "ntests": 32
     },
     "sage.rings.polynomial.toy_d_basis": {
-        "failed": true,
         "ntests": 51
     },
     "sage.rings.polynomial.toy_variety": {
@@ -2740,16 +2762,14 @@
         "ntests": 128
     },
     "sage.rings.real_field": {
-        "failed": true,
         "ntests": 5
     },
     "sage.rings.real_lazy": {
-        "failed": true,
-        "ntests": 279
+        "ntests": 19
     },
     "sage.rings.real_mpfr": {
         "failed": true,
-        "ntests": 1035
+        "ntests": 1026
     },
     "sage.rings.ring": {
         "failed": true,

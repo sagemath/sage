@@ -8,6 +8,6 @@
     },
     "sage.graphs.generic_graph": {
         "failed": true,
-        "ntests": 2946
+        "ntests": 2959
     }
 }
