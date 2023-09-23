@@ -444,13 +444,13 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
 
             sage: simplicial_complexes.RandomComplex(12, 3, .5).homology_with_basis(GF(2))._test_duality() # long time
         """
-        tester = self._tester(**options))
+        tester = self._tester(**options)
         dual = self.dual()
         dims = [a[0] for a in self._indices]
         for dim in range(max(max(dims),  tester._max_runs) + 1):
             n = len(self.basis(dim))
             m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
-            tester.assertEqual(m, 1,f "error in dimension {dim}")
+            tester.assertEqual(m, 1, f"error in dimension {dim}")
 
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
@@ -596,7 +596,8 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
         category = Category.join((category,
                                   LeftModules(SteenrodAlgebra(2)),
                                   RightModules(SteenrodAlgebra(2))))
-        HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex,
+        HomologyVectorSpaceWithBasis.__init__(self, base_ring,
+                                              cell_complex,
                                               cohomology=False,
                                               category=category)
 
@@ -681,18 +682,17 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
             """
             # Handle field elements first.
             if a in self.base_ring():
-                return self.map_coefficients(lambda c: c*a)
-            if not self_on_left: # i.e., module element on left
-                a = a.antipode()
-
+                return a * self
             m = self.degree()
             n = a.degree()
             if m <= n:
                 return self.parent().zero()
 
+            if not self_on_left: # i.e., module element on left
+                a = a.antipode()
             P = self.parent()
             B = list(P.basis(m-n))
-            return P._from_dict({b.support()[0]: self.eval(a * x)
+            return P._from_dict({x.support()[0]: self.eval(a * x)
                                  for x in sorted(self.parent().dual().basis(m-n))})
 
 
@@ -960,7 +960,6 @@ class CohomologyRing_mod2(CohomologyRing):
     - ``base_ring`` -- must be the field ``GF(2)``
     - ``cell_complex`` -- the cell complex whose homology we are
       computing
-    - ``category`` -- (optional) a subcategory of modules with basis
 
     EXAMPLES:
 
