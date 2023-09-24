@@ -16,15 +16,3 @@ install_requires =
     SPKG_INSTALL_REQUIRES_sage_conf
     SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_sagemath_categories
-
-packages =
-    sage.ext_data.gap
-    sage.libs.gap
-
-[options.package_data]
-
-sage.libs.gap =
-    sage.gaprc
-
-sage.ext_data.gap =
-    *
