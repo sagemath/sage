@@ -24,6 +24,11 @@ except ImportError:
     pass
 
 try:  # extra
+    from sage.all__sagemath_groups import *
+except ImportError:
+    pass
+
+try:  # extra
     from sage.all__sagemath_flint import *
 except ImportError:
     pass

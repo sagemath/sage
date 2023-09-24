@@ -23,6 +23,9 @@ install_requires =
     SPKG_INSTALL_REQUIRES_sagemath_graphs
     SPKG_INSTALL_REQUIRES_sagemath_groups
     SPKG_INSTALL_REQUIRES_sagemath_homfly
+    SPKG_INSTALL_REQUIRES_sagemath_lcalc
+    SPKG_INSTALL_REQUIRES_sagemath_libbraiding
+    SPKG_INSTALL_REQUIRES_sagemath_libecm
     SPKG_INSTALL_REQUIRES_sagemath_linbox
     SPKG_INSTALL_REQUIRES_sagemath_modules
     SPKG_INSTALL_REQUIRES_sagemath_mpmath
