@@ -581,7 +581,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
     The bug reported at :trac:`1785` is fixed::
 
-        sage: # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field sage.schemes
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + x - (3^3-3))
         sage: E = EllipticCurve('37a')

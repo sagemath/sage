@@ -469,10 +469,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,                 # needs sage.schemes
+            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,
             ....:                                 (x-2*w)^2, x^2])
-            sage: f.orbit(P.subscheme([x]), 5)                                          # needs sage.schemes
+            sage: f.orbit(P.subscheme([x]), 5)
             [Closed subscheme of Projective Space of dimension 3 over Rational Field
               defined by: x,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
@@ -548,7 +549,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: f = DynamicalSystem_projective([y^2, z^2, x^2, w^2])                  # needs sage.schemes
-            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # needs sage.schemes
+            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # needs sage.libs.singular sage.schemes
             Closed subscheme of Projective Space of dimension 3 over Rational Field
              defined by:
               y - z,
@@ -559,7 +560,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])                       # needs sage.schemes
             sage: X = PS.subscheme([x - y])
-            sage: X.nth_iterate(f, -2)                                                  # needs sage.schemes
+            sage: X.nth_iterate(f, -2)                                                  # needs sage.libs.singular sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: must be a forward orbit
@@ -1039,9 +1040,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.degree()                                                            # needs sage.libs.singular
             3
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
-            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])            # needs sage.schemes
-            sage: C.degree()                                                            # needs sage.libs.singular sage.schemes
+            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])
+            sage: C.degree()
             63
         """
         P = self.defining_ideal().hilbert_polynomial()
@@ -1157,10 +1159,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)
-            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # needs sage.schemes
+            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)
             sage: Q = P([3,0,0,1])
-            sage: C.multiplicity(Q)                                                     # needs sage.libs.singular sage.schemes
+            sage: C.multiplicity(Q)
             8
         """
         if self.base_ring() not in Fields():
@@ -1432,18 +1435,19 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([x^2 + y*z, 2*y*z, 3*x*y])
-            sage: X.global_height()
+            sage: X.global_height()                                                     # needs sage.libs.singular
             0.000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.global_height() # long time
+            sage: X.global_height()  # long time                                        # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().global_height(prec)
@@ -1465,19 +1469,20 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: I = NF.ideal(3)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([3*x*y - 5*x*z, y^2])
-            sage: X.local_height(I)
+            sage: X.local_height(I)                                                     # needs sage.libs.singular
             0.000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.local_height(2)
+            sage: X.local_height(2)                                                     # needs sage.libs.singular
             0.000000000000000
         """
         return self.Chow_form().local_height(v, prec)
@@ -1499,18 +1504,19 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([x^2 + y*z, 3*x*y])
-            sage: X.local_height_arch(1)
+            sage: X.local_height_arch(1)                                                # needs sage.libs.singular
             0.0000000000000000000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.local_height_arch(1)
+            sage: X.local_height_arch(1)                                                # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().local_height_arch(i, prec)
