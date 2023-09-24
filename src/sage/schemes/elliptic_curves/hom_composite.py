@@ -929,20 +929,3 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             True
         """
         return all(phi.is_injective() for phi in self._phis)
-
-    @staticmethod
-    def make_default():
-        r"""
-        This method does nothing and will be removed.
-
-        (It is a leftover from the time when :class:`EllipticCurveHom_composite`
-        wasn't the default yet.)
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            sage: EllipticCurveHom_composite.make_default()
-            doctest:warning ...
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(34410, 'calling EllipticCurveHom_composite.make_default() is no longer necessary')

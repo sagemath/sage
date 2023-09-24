@@ -99,15 +99,15 @@ def group_divisible_design(v,K,G,existence=False,check=False):
         if existence:
             return balanced_incomplete_block_design(v+1,k,existence=True)
         BIBD = balanced_incomplete_block_design(v+1,k)
-        groups = [[x for x in S if x!=v] for S in BIBD if v in S]
+        groups = [[x for x in S if x != v] for S in BIBD if v in S]
         d = {p:i for i,p in enumerate(sum(groups,[]))}
-        d[v]=v
+        d[v] = v
         BIBD.relabel(d)
         groups = [list(range((k-1)*i,(k-1)*(i+1))) for i in range(v//(k-1))]
         blocks = [S for S in BIBD if v not in S]
 
     # (v,{4},{2})-GDD
-    elif (v%2==0   and
+    elif (v % 2 == 0   and
           K == [4] and
           G == [2] and
           GDD_4_2(v//2,existence=True)):
@@ -173,7 +173,7 @@ def GDD_4_2(q,existence=False,check=True):
         ...
         NotImplementedError
     """
-    if q <=1 or q%6 != 1 or not is_prime_power(q):
+    if q <= 1 or q % 6 != 1 or not is_prime_power(q):
         if existence:
             return Unknown
         raise NotImplementedError
@@ -190,7 +190,7 @@ def GDD_4_2(q,existence=False,check=True):
                    for i in range((q - 1) // 6)]
 
     label = {p:i for i,p in enumerate(G)}
-    classes = [[[2*label[x[1]+g]+(x[0]+j)%2 for x in S]
+    classes = [[[2*label[x[1]+g]+(x[0]+j) % 2 for x in S]
                 for S in first_class]
                for g in G for j in range(2)]
 

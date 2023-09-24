@@ -85,7 +85,7 @@ def group_law(G):
     elif G in AdditiveGroups():  # additive groups
         return (G.zero(), operator.add, operator.neg)
     else:
-        raise ValueError("%s does not seem to be a group"%G)
+        raise ValueError("%s does not seem to be a group" % G)
 
 def block_stabilizer(G, B):
     r"""
@@ -557,25 +557,25 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         add_zero = False
 
     # q = 3 mod 4
-    elif v%4 == 3 and k == (v-1)//2:
+    elif v % 4 == 3 and k == (v-1)//2:
         if existence:
             return True
         add_zero = False
 
     # q = 3 mod 4
-    elif v%4 == 3 and k == (v+1)//2:
+    elif v % 4 == 3 and k == (v+1)//2:
         if existence:
             return True
         add_zero = True
 
     # q = 4t^2 + 1, t odd
-    elif v%8 == 5 and k == (v-1)//4 and arith.is_square((v-1)//4):
+    elif v % 8 == 5 and k == (v-1)//4 and arith.is_square((v-1)//4):
         if existence:
             return True
         add_zero = False
 
     # q = 4t^2 + 9, t odd
-    elif v%8 == 5 and k == (v+3)//4 and arith.is_square((v-9)//4):
+    elif v % 8 == 5 and k == (v+3)//4 and arith.is_square((v-9)//4):
         if existence:
             return True
         add_zero = True
@@ -687,7 +687,7 @@ def one_cyclic_tiling(A,n):
     # 1972 article
     n = int(n)
     d = len(A)
-    if len(set(a%d for a in A)) == d:
+    if len(set(a % d for a in A)) == d:
         return [i*d for i in range(n//d)]
 
     # next, we consider an exhaustive search
@@ -695,7 +695,7 @@ def one_cyclic_tiling(A,n):
 
     rows = []
     for i in range(n):
-        rows.append([i+1, [(i+a)%n+1 for a in A]])
+        rows.append([i+1, [(i+a) % n+1 for a in A]])
     M = DLXMatrix(rows)
     for c in M:
         return [i-1 for i in c]
@@ -783,12 +783,12 @@ def one_radical_difference_family(K, k):
     x = K.multiplicative_generator()
 
     e = k*(k-1)
-    if q%e != 1:
+    if q % e != 1:
         raise ValueError("q%e is not 1")
 
     # We define A by (see the function's documentation):
     # ΔB = C.A
-    if k%2 == 1:
+    if k % 2 == 1:
         m = (k-1) // 2
         r = x ** ((q-1) // k)     # k-th root of unity
         A = [r**i - 1 for i in range(1,m+1)]
@@ -802,7 +802,7 @@ def one_radical_difference_family(K, k):
     # discrete logarithm to convert everything into the additive group Z/cZ
     c = m * (q-1) // e # cardinal of ±C
     from sage.groups.generic import discrete_log
-    logA = [discrete_log(a,x)%c for a in A]
+    logA = [discrete_log(a,x) % c for a in A]
 
     # if two elements of A are equal modulo c then no tiling is possible
     if len(set(logA)) != m:
@@ -814,7 +814,7 @@ def one_radical_difference_family(K, k):
         return None
 
     D = K.cyclotomic_cosets(r, [x**i for i in tiling])
-    if k%2 == 0:
+    if k % 2 == 0:
         for d in D:
             d.insert(K.zero(),0)
     return D
@@ -1035,13 +1035,13 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     k = ZZ(k)
     lmbda = ZZ(lmbda)
     qs,r = (k - lmbda).sqrtrem() # sqrt(k-l) should be q^s
-    if r or (qs*(qs-1))%lmbda:
+    if r or (qs*(qs-1)) % lmbda:
         return (False,None) if return_parameters else False
 
     q = qs*(qs-1) // lmbda + 1
     if (q <= 1 or
         v * (q-1) != qs*q * (qs*q+q-2)  or
-        k * (q-1)!= qs * (qs*q-1)):
+        k * (q-1) != qs * (qs*q-1)):
         return (False,None) if return_parameters else False
 
     # NOTE: below we compute the value of s so that qs = q^s. If the method
@@ -1051,7 +1051,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     p1,a1 = qs.is_prime_power(get_data=True)
     p2,a2 = q.is_prime_power(get_data=True)
 
-    if a1 == 0 or a2 == 0 or p1 != p2 or a1%a2:
+    if a1 == 0 or a2 == 0 or p1 != p2 or a1 % a2:
         return (False,None) if return_parameters else False
 
     return (True, (q, a1//a2)) if return_parameters else True
@@ -1527,7 +1527,7 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
         raise ValueError('q must be a prime power')
     if N < 2:
         raise ValueError('N must be at least 2')
-    if (q-1)%d != 0:
+    if (q-1) % d != 0:
         raise ValueError('q-1 must be a multiple of d')
 
     G = AdditiveAbelianGroup([q**N - 1])
@@ -1828,7 +1828,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
         hall += P.monomial(d[0])
 
     def get_T(k):
-        T = P.monomial(0) -1
+        T = P.monomial(0) - 1
         for i in range(k):
             T += P.monomial(i)
         return T
@@ -3470,7 +3470,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
             if existence:
                 return True
             from sage.rings.finite_rings.integer_mod_ring import Zmod
-            l = [0] if k ==1 else []
+            l = [0] if k == 1 else []
             return Zmod(1),[l]
 
         if existence:

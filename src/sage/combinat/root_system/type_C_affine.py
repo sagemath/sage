@@ -124,13 +124,13 @@ class CartanType(CartanType_standard_untwisted_affine):
             from . import cartan_type
             return cartan_type.CartanType(["A",1,1])._latex_dynkin_diagram(label, node, node_dist)
 
-        ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n" % node_dist
         if dual:
             ret += self._latex_draw_arrow_tip(0.5*node_dist-0.2, 0, 180)
         else:
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
-        ret += "{\n\\pgftransformxshift{%s cm}\n"%node_dist
+        ret += "{\n\\pgftransformxshift{%s cm}\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual)
         ret += "}\n" + node(0, 0, label(0))
         return ret

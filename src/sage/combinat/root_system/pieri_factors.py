@@ -756,7 +756,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: WeylGroup(["A", 3, 1]).pieri_factors().cardinality()
             15
         """
-        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) -1:
+        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) - 1:
             return Integer(2**(len(self._extra_support)) - 1)
         else:
             return self.generating_series(weight=ConstantFunction(1))

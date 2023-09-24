@@ -432,10 +432,10 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             if self.dynkin_diagram().rank() == 1:
                 return self.simple_roots()[self.index_set()[0]]
-            longest=next(self.dynkin_diagram().edge_iterator())
+            longest = next(self.dynkin_diagram().edge_iterator())
             for j in self.dynkin_diagram().edge_iterator():
-                if j[2]>longest[2]:
-                    longest=j
+                if j[2] > longest[2]:
+                    longest = j
             return self.simple_roots()[longest[0]]
 
         ##########################################################################
@@ -577,7 +577,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             b = other_affinization.col_annihilator()
             alpha = self.simple_roots()
             result = { i: alpha[i] for i in I0 }
-            result[i0] = (self.null_root() - self.linear_combination( (alpha[i], b[i]) for i in I0))/ b[i0]
+            result[i0] = (self.null_root() - self.linear_combination( (alpha[i], b[i]) for i in I0)) / b[i0]
             return Family(result)
 
         ##########################################################################
@@ -2232,7 +2232,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # original matrix and for the current rational
             # approximation. We tidy up the work by replacing the
             # first column by the opposite of the sum of the others.
-            if self.dimension()>1: # not needed in the trivial cases
+            if self.dimension() > 1: # not needed in the trivial cases
                 m.set_column(0, -sum(m[:,1:].columns()))
             m.set_immutable()
             return m
@@ -2345,7 +2345,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             elif isinstance(collection, (list, tuple)):
                 roots = collection
             else:
-                raise ValueError("Unknown value: %s"%collection)
+                raise ValueError("Unknown value: %s" % collection)
             roots = Family(roots, self)
             return plot_options.family_of_vectors(roots)
 
@@ -2402,7 +2402,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             elif isinstance(collection, (list, tuple)):
                 coroots = collection
             else:
-                raise ValueError("Unknown value: %s"%collection)
+                raise ValueError("Unknown value: %s" % collection)
             coroots = Family(coroots, self)
             return plot_options.family_of_vectors(coroots)
 
@@ -2538,7 +2538,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             elif isinstance(collection, (list, tuple)):
                 coroots = collection
             else:
-                raise ValueError("Unknown value: %s"%collection)
+                raise ValueError("Unknown value: %s" % collection)
 
             G = plot_options.empty()
             for coroot in coroots:
@@ -2656,7 +2656,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 raise TypeError("classical fundamental chamber not yet available in the root lattice")
             Lambda = self.fundamental_weights()
             cartan_type = self.cartan_type()
-            if style=="classical":
+            if style == "classical":
                 if not cartan_type.is_affine():
                     raise TypeError("classical fundamental chamber only available in affine type")
                 I = cartan_type.classical().index_set()
@@ -3729,7 +3729,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [3, 5]
             """
             if index_set is None:
-                index_set=self.parent().index_set()
+                index_set = self.parent().index_set()
             return [ i for i in index_set if self.has_descent(i, positive) ]
 
         def to_dominant_chamber(self, index_set=None, positive=True, reduced_word=False):
@@ -4284,10 +4284,10 @@ class RootLatticeRealizations(Category_over_base_ring):
                 the_word = [x for x in element]
                 I = self.parent().index_set()
                 if not all(i in I for i in the_word):
-                    raise ValueError("Not all members of %s are in the index set of the %s"%(element, self.parent()))
+                    raise ValueError("Not all members of %s are in the index set of the %s" % (element, self.parent()))
             else:
                 if not isinstance(element, Element):
-                    raise TypeError("%s should be an element of a Coxeter group"%(element))
+                    raise TypeError("%s should be an element of a Coxeter group" % (element))
                 W = element.parent()
                 if W is self.parent().weyl_group():
                     # Action by an element of the Coxeter or Weyl group of ``self``
@@ -4297,7 +4297,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 else:
                     # Action by an element of an isomorphic Coxeter or Weyl group
                     if not (W in CoxeterGroups() and W.cartan_type() == self.parent().cartan_type()):
-                        raise TypeError("%s should be an element of a Coxeter group of type %s"%(element, self.parent().cartan_type()))
+                        raise TypeError("%s should be an element of a Coxeter group of type %s" % (element, self.parent().cartan_type()))
                     the_word = element.reduced_word()
             if inverse is False:
                 the_word.reverse()

@@ -441,6 +441,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.singular
         sage: from sage.rings.polynomial.hilbert import first_hilbert_series
 
         sage: # needs sage.libs.singular

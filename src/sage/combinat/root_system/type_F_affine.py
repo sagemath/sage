@@ -98,8 +98,8 @@ class CartanType(CartanType_standard_untwisted_affine):
         """
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%node_dist
-        ret += "{\n\\pgftransformxshift{%s cm}\n"%node_dist
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % node_dist
+        ret += "{\n\\pgftransformxshift{%s cm}\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual)
         ret += "}\n" + node(0, 0, label(0))
         return ret

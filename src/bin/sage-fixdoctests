@@ -67,7 +67,7 @@ parser.add_argument("--full-tracebacks", default=False, action="store_true",
 parser.add_argument("--only-tags", default=False, action="store_true",
                     help="only add '# optional/needs' tags where needed, ignore other failures")
 parser.add_argument("--probe", metavar="FEATURES", type=str, default='',
-                    help="check whether '# optional/needs' tags are still needed, remove these")
+                    help="check whether '# optional/needs' tags are still needed, remove those not needed")
 parser.add_argument("--keep-both", default=False, action="store_true",
                     help="do not replace test results; duplicate the test instead, showing both results, and mark both copies '# optional'")
 parser.add_argument("--overwrite", default=False, action="store_true",
@@ -396,9 +396,11 @@ def doctest_blocks(args, input_filenames, distribution=None, venv=None, environm
     if venv or environment_args:
         # Test the doctester, putting the output of the test into sage's temporary directory
         input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{shlex.quote(input)}'
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}'.rstrip()
         if cmdline not in tested_doctesters:
-            print(f'Running "{cmdline}"')
+            if args.verbose:
+                print(f'sage-fixdoctests: Checking whether the doctester "{cmdline}" works')
+            cmdline += f' {shlex.quote(input)}'
             if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
                 raise BadDistribution(f"Doctester exited with error status {status}")
             tested_doctesters.add(cmdline)
@@ -538,8 +540,7 @@ def fix_with_distribution(file_set, distribution=None, verbose=False):
         if args.ignore_bad_distributions:
             print(f"sage-fixdoctests: {e}, ignoring")
         else:
-            print(f"sage-fixdoctests: {e}")
-            sys.exit(1)
+            sys.exit(f"sage-fixdoctests: {e}")
 
 
 if __name__ == "__main__":
@@ -576,18 +577,20 @@ if __name__ == "__main__":
 
         args.ignore_bad_distributions = True
 
+    if not args.filename:
+        if not args.update_known_test_failures:
+            sys.exit("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
+        if not args.distribution:
+            sys.exit("sage-fixdoctests: At least one --distribution argument is required for --update-known-test-failures")
+
     if args.distribution or args.venv or args.environment:
         args.keep_both = args.full_tracebacks = True
 
     if len(args.distribution) > 1:
         if args.venv or args.environment:
-            print('sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment')
-            sys.exit(1)
+            sys.exit("sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment")
     elif not args.distribution:
         args.distribution = ['']
-
-    if not args.filename and not args.update_known_test_failures:
-        print("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
 
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "

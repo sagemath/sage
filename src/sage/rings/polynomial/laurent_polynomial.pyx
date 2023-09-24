@@ -1573,6 +1573,25 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return (self.__u, self.__n)
 
+    def monomial_reduction(self):
+        """
+        Return the decomposition as a polynomial and a power of the variable.
+        Constructed for compatibility with the multivariate case.
+
+        OUTPUT:
+
+        A tuple ``(u, t^n)`` where ``u`` is the underlying polynomial and ``n``
+        is the power of the exponent shift.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: f = 1/x + x^2 + 3*x^4
+            sage: f.monomial_reduction()
+            (3*x^5 + x^3 + 1, x^-1)
+        """
+        return (self.__u, self._parent.gen(0) ** self.__n)
+
     def is_constant(self):
         """
         Return whether this Laurent polynomial is constant.

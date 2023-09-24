@@ -385,18 +385,18 @@ class AmbientSpace(ambient_space.AmbientSpace):
                 self.PosRoots = ( [ self.root(i,j) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(i,j,p1=1) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ v*(self.root(7)-self.root(6)-self.root(5)+self.root(0,1,2,3,4,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5))
-                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] if (p1+p2+p3+p4+p5)%2 == 0 ])
+                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] if (p1+p2+p3+p4+p5) % 2 == 0 ])
             elif self.rank == 7:
                 self.PosRoots = ( [ self.root(i,j) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(i,j,p1=1) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(6,7,p1=1) ] +
                                   [ v*(self.root(7)-self.root(6)+self.root(0,1,2,3,4,5,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5,p6=p6))
-                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] if (p1+p2+p3+p4+p5+p6)%2 == 1 ])
+                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] if (p1+p2+p3+p4+p5+p6) % 2 == 1 ])
             elif self.rank == 8:
                 self.PosRoots = ( [ self.root(i,j) for i in range(self.rank) for j in range(i+1,self.rank) ] +
                                   [ self.root(i,j,p1=1) for i in range(self.rank) for j in range(i+1,self.rank) ] +
                                   [ v*(self.root(7)+self.root(0,1,2,3,4,5,6,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5,p6=p6,p7=p7))
-                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] for p7 in [0,1] if (p1+p2+p3+p4+p5+p6+p7)%2 == 0 ])
+                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] for p7 in [0,1] if (p1+p2+p3+p4+p5+p6+p7) % 2 == 0 ])
 
         return self.PosRoots
 
@@ -594,8 +594,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         """
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%((self.n-2)*node_dist)
-        ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n"%(2*node_dist, node_dist)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % ((self.n-2)*node_dist)
+        ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n" % (2*node_dist, node_dist)
         ret += node(0, 0, label(1))
         for i in range(1, self.n-1):
             ret += node(i*node_dist, 0, label(i+2))

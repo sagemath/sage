@@ -184,10 +184,10 @@ class CartanType(CartanType_standard_affine):
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
-            ret = "\\draw (0, 0.05 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, -0.05 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
+            ret = "\\draw (0, 0.05 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, -0.05 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n" % node_dist
             if dual:
                 ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
             else:
@@ -196,13 +196,13 @@ class CartanType(CartanType_standard_affine):
             ret += node(node_dist, 0, label(1))
             return ret
 
-        ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n" % node_dist
         if dual:
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
         else:
             ret += self._latex_draw_arrow_tip(0.5*node_dist-0.2, 0, 180)
-        ret += "{\n\\pgftransformxshift{%s cm}\n"%node_dist
+        ret += "{\n\\pgftransformxshift{%s cm}\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual=dual)
         ret += "}\n" + node(0, 0, label(0))
         return ret

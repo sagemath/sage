@@ -598,31 +598,31 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
 
     if minimal and G.is_planar(set_embedding=set_embedding):
         return 0
+
+    if check:
+        if not G.is_connected():
+            raise ValueError("Cannot compute the genus of a disconnected graph")
+
+        if G.is_directed() or G.has_multiple_edges() or G.has_loops():
+            G = G.to_simple()
+
+    G, vmap = G.relabel(inplace=False, return_map=True)
+    backmap = {u: v for v, u in vmap.items()}
+    G = Graph(G, sparse=False)
+    GG = simple_connected_genus_backtracker(G._backend.c_graph()[0])
+
+    if minimal:
+        style = 1
+        cutoff = 1
     else:
-        if check:
-            if not G.is_connected():
-                raise ValueError("Cannot compute the genus of a disconnected graph")
+        style = 2
+        cutoff = 1 + (G.num_edges() - G.num_verts()) / 2  # rounding here is ok
 
-            if G.is_directed() or G.has_multiple_edges() or G.has_loops():
-                G = G.to_simple()
-
-        G, vmap = G.relabel(inplace=False, return_map=True)
-        backmap = {u: v for v, u in vmap.items()}
-        G = Graph(G, sparse=False)
-        GG = simple_connected_genus_backtracker(G._backend.c_graph()[0])
-
-        if minimal:
-            style = 1
-            cutoff = 1
-        else:
-            style = 2
-            cutoff = 1 + (G.num_edges() - G.num_verts()) / 2  # rounding here is ok
-
-        g = GG.genus(style=style, cutoff=cutoff, record_embedding=set_embedding)
-        if set_embedding:
-            oE = {}
-            E = GG.get_embedding()
-            for v in E:
-                oE[backmap[v]] = [backmap[x] for x in E[v]]
-            oG.set_embedding(oE)
-        return g
+    g = GG.genus(style=style, cutoff=cutoff, record_embedding=set_embedding)
+    if set_embedding:
+        oE = {}
+        E = GG.get_embedding()
+        for v in E:
+            oE[backmap[v]] = [backmap[x] for x in E[v]]
+        oG.set_embedding(oE)
+    return g

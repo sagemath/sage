@@ -42,12 +42,12 @@ from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
 
 # cache for H spin basis
-hsp_to_m_cache={}
-m_to_hsp_cache={}
+hsp_to_m_cache = {}
+m_to_hsp_cache = {}
 
 # cache for H cospin basis
-hcosp_to_m_cache={}
-m_to_hcosp_cache={}
+hcosp_to_m_cache = {}
+m_to_hcosp_cache = {}
 
 QQt = QQ['t'].fraction_field()
 # This is to become the "abstract algebra" for llt polynomials
@@ -267,7 +267,7 @@ class LLT_class(UniqueRepresentation):
             skp = Partition(core=[], quotient=skp)
             mu = Partitions( ZZ(sum(skp) / self.level()) )
         else:
-            raise ValueError("LLT polynomials not defined for %s"%skp)
+            raise ValueError("LLT polynomials not defined for %s" % skp)
 
         BR = self.base_ring()
         return sum([ BR(stat(skp,nu,self.level()).subs(t=self.t))*self._m(nu) for nu in mu])

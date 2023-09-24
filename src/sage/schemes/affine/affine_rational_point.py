@@ -51,10 +51,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.misc.mrange import cartesian_product_iterator
 from sage.schemes.generic.scheme import is_Scheme
 
 
@@ -301,7 +301,7 @@ def enum_affine_finite_field(X):
     n = X.codomain().ambient_space().ngens()
     F = X.value_ring()
     pts = []
-    for c in cartesian_product_iterator([F] * n):
+    for c in product(*([F] * n)):
         try:
             pts.append(X(c))
         except Exception:

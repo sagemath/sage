@@ -37,6 +37,7 @@ AUTHORS:
 # ****************************************************************************
 
 import os
+from numbers import Integral
 from collections.abc import Iterable
 from math import isnan
 import sage.misc.verbose
@@ -2877,6 +2878,11 @@ class Graphics(WithEqualityById, SageObject):
                 weight=lopts.pop('font_weight', 'medium'),
                 variant=lopts.pop('font_variant', 'normal'))
             color = lopts.pop('back_color', 'white')
+            if 'loc' in lopts:
+                loc = lopts['loc']
+                if isinstance(loc, Integral):
+                    # matplotlib 3.8 doesn't support sage integers
+                    lopts['loc'] = int(loc)
             leg = subplot.legend(prop=prop, **lopts)
             if leg is None:
                 from warnings import warn

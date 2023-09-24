@@ -1046,7 +1046,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         # the element is in the fundamental group
         PW0 = self.PW0()
         ispecial = f.value()
-        W=self.classical_weyl()
+        W = self.classical_weyl()
         if self._general_linear:
             r = ZZ(Mod(ispecial, self._n))
             weight = self.lattice().from_vector(vector([ZZ((ispecial-r)/self._n)]*self._n))
@@ -1904,7 +1904,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 w = gw.cartesian_projection(1)
                 rw = w.reduced_word()
                 u_curr = We.from_fundamental(g.value())
-                signs=[]
+                signs = []
                 for i in rw:
                     m, beta = u_curr.face_data(i)
                     if beta.is_positive_root():

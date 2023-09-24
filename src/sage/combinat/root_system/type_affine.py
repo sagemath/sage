@@ -215,7 +215,7 @@ class AmbientSpace(CombinatorialFreeModule):
             sage: L._to_classical_on_basis(2)
             (0, 0, 1)
         """
-        if i=="delta" or i=="deltacheck":
+        if i == "delta" or i == "deltacheck":
             return self.classical().zero()
         else:
             return self.classical().monomial(i)

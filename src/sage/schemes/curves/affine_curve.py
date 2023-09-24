@@ -128,27 +128,28 @@ AUTHORS:
 
 from builtins import sum as add
 
+import sage.rings.abc
+
 from sage.arith.misc import binomial
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.homset import Hom, End, hom
 from sage.categories.number_fields import NumberFields
 from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
-from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
-
 from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
                                                   AlgebraicScheme_subscheme_affine_field)
 
 lazy_import('sage.interfaces.singular', 'singular')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
-lazy_import('sage.rings.qqbar', ['number_field_elements_from_algebraics', 'QQbar'])
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 from .curve import Curve_generic
 
@@ -671,7 +672,7 @@ class AffinePlaneCurve(AffineCurve):
         T = sum([binomial(r, i)*deriv[i]*(vars[0])**i*(vars[1])**(r-i) for i in range(r+1)])
         if not factor:
             return [T(coords)]
-        if self.base_ring() == QQbar:
+        if isinstance(self.base_ring(), sage.rings.abc.AlgebraicField):
             fact = []
             # first add tangents corresponding to vars[0], vars[1] if they divide T
             t = min([e[0] for e in T.exponents()])
@@ -1534,6 +1535,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         def extension(self):
             F = self.base_ring()
+            from sage.rings.qqbar import QQbar
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]

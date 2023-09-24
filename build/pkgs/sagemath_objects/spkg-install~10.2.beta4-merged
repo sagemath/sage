@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# From sage-spkg.
+# For type=script packages, the build rule in build/make/Makefile sources
+# sage-env but not sage-dist-helpers.
+lib="$SAGE_ROOT/build/bin/sage-dist-helpers"
+source "$lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $lib"
+    echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+    exit 1
+fi
+cd src
+
+export PIP_NO_INDEX=true
+export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
+
+# First build the sdist, then build the wheel from the sdist.
+# https://pypa-build.readthedocs.io/en/latest/#python--m-build
+# (Important because sagemath-objects uses MANIFEST.in for filtering.)
+# Do not install the wheel.
+DIST_DIR="$(mktemp -d)"
+python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
+
+wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
+ls -l "$wheel"
+
+if [ "$SAGE_CHECK" != no ]; then
+    export TOX_PARALLEL_NO_SPINNER=1
+    echo Running "tox -r -p auto -v --installpkg $wheel"
+    tox -r -p auto -v --installpkg $wheel
+    status=$?
+    case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
+        0:*:0)    echo "Passed the test suite (modulo baseline known-test-failures*.json)";;
+        0:*:*)    echo "Passed the test suite";;
+        *:warn:0) echo "Warning: New failures (not in baseline known-test-failures*.json (ignored)"; status=0;;
+        *:warn:*) echo "Warning: Failures testing the package (ignored)"; status=0;;
+        *:yes:0)  echo "New failures, not in baseline known-test-failures*.json";;
+        *:yes:*)  echo "Failures testing the package";;
+    esac
+    # Show summaries of failures (suppress lines ending with '[failed in baseline]')
+    for f in $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; do
+        if [ -r "$f" ]; then
+            echo "$f"
+            grep '^sage -t.*#[^]]*$' "$f"
+        fi
+    done
+    exit $status
+fi

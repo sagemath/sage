@@ -390,7 +390,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
              for y in Kiter}
         d.update({line_infinity(x): (x,one,zero)
                   for x in Kiter})
-        d[n2+n]=(one,zero,zero)
+        d[n2+n] = (one,zero,zero)
         B.relabel(d)
 
     return B
@@ -589,7 +589,7 @@ def HughesPlane(q2, check=True):
     """
     if not q2.is_square():
         raise EmptySetError("No Hughes plane of non-square order exists.")
-    if q2%2 == 0:
+    if q2 % 2 == 0:
         raise EmptySetError("No Hughes plane of even order exists.")
     q = q2.sqrt()
     K = FiniteField(q2, prefix='x')
@@ -761,7 +761,7 @@ def projective_plane(n, check=True, existence=False):
             return False
         ref = ("C. Lam, L. Thiel and S. Swiercz \"The nonexistence of finite "
                "projective planes of order 10\" (1989), Canad. J. Math.")
-        raise EmptySetError("No projective plane of order 10 exists by %s"%ref)
+        raise EmptySetError("No projective plane of order 10 exists by %s" % ref)
 
     if BruckRyserChowla_check(n*n+n+1, n+1, 1) is False:
         if existence:

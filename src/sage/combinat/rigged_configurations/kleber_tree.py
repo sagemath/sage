@@ -123,13 +123,13 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
         start = [0., 0.]
     if rpos is None:
         rpos = [0., 0.]
-    draw_point = lambda point: '(%.3f, %.3f)'%(point[0],point[1])
+    draw_point = lambda point: '(%.3f, %.3f)' % (point[0],point[1])
     if not tree_node.children:
         r = ''
         node_name = node_prefix + str(node_id)
-        r = "\\node (%s) at %s"%(node_name, draw_point(start))
+        r = "\\node (%s) at %s" % (node_name, draw_point(start))
         if node_label:
-            r += "{$%s$};\n"%tree_node._latex_()
+            r += "{$%s$};\n" % tree_node._latex_()
         else:
             r += "{};\n"
         rpos[0] = start[0]
@@ -141,7 +141,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     if style_line is None:
         style_line_str = ''
     else:
-        style_line_str = "[%s]"%style_line
+        style_line_str = "[%s]" % style_line
     if node_label:
         node_place_str = ''
     else:
@@ -168,29 +168,29 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
                 edge_str = latex(child.up_root.to_vector())
             else:
                 edge_str = latex(child.up_root)
-            lines_str += "\\draw%s (%s%s) to node[sloped,above]{\\tiny $%s$} (%s%s%s);\n"%(style_line_str, node_name, node_place_str, edge_str, node_name, i, node_place_str)
+            lines_str += "\\draw%s (%s%s) to node[sloped,above]{\\tiny $%s$} (%s%s%s);\n" % (style_line_str, node_name, node_place_str, edge_str, node_name, i, node_place_str)
         else:
-            lines_str += "\\draw%s (%s%s) -- (%s%s%s);\n"%(style_line_str, node_name, node_place_str, node_name, i, node_place_str)
+            lines_str += "\\draw%s (%s%s) -- (%s%s%s);\n" % (style_line_str, node_name, node_place_str, node_name, i, node_place_str)
 
     # drawing root
     if style_node is None:
         style_node = ''
     else:
-        style_node = "[%s]"%style_node
+        style_node = "[%s]" % style_node
     if style_point is None:
         style_point = ''
     else:
-        style_point = "[%s]"%style_point
+        style_point = "[%s]" % style_point
     start[1] -= vspace
     rpos[0] = pos[0]
     rpos[1] = pos[1]
     point_str = ''
-    node_str = "\\node%s (%s) at %s"%(style_node, node_name, draw_point(pos))
+    node_str = "\\node%s (%s) at %s" % (style_node, node_name, draw_point(pos))
     if node_label:
-        node_str += "{$%s$};\n"%tree_node._latex_()
+        node_str += "{$%s$};\n" % tree_node._latex_()
     else:
         node_str += "{};\n"
-        point_str = "\\draw%s (%s) circle;\n"%(style_point, node_name)
+        point_str = "\\draw%s (%s) circle;\n" % (style_point, node_name)
 
     res = node_str
     res += children_str
@@ -1001,7 +1001,7 @@ class KleberTree(UniqueRepresentation, Parent):
             sage: KleberTree(['D', 4, 1], [[2, 2]]) # indirect doctest
             Kleber tree of Cartan type ['D', 4, 1] and B = ((2, 2),)
         """
-        return "Kleber tree of Cartan type %s and B = %s"%(repr(self._cartan_type), self.B)
+        return "Kleber tree of Cartan type %s and B = %s" % (repr(self._cartan_type), self.B)
 
     def cartan_type(self):
         r"""
@@ -1195,7 +1195,7 @@ class VirtualKleberTree(KleberTree):
             sage: VirtualKleberTree(['C', 4, 1], [[2, 2]])
             Virtual Kleber tree of Cartan type ['C', 4, 1] and B = ((2, 2),)
         """
-        return "Virtual Kleber tree of Cartan type %s and B = %s"%(repr(self._cartan_type), self.base_dims)
+        return "Virtual Kleber tree of Cartan type %s and B = %s" % (repr(self._cartan_type), self.base_dims)
 
     def _prune(self, new_child, depth):
         r"""

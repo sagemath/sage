@@ -226,7 +226,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
         cdef IntegerMod_int n
         for i from 0 <= i < self._nrows:
@@ -311,10 +311,6 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             v = &(right.rows[i])
             for j in range(v.num_nonzero):
                 (<set> nonzero_positions_in_columns[v.positions[j]]).add(i)
-        # pre-computes the list of nonzero columns of right
-        cdef list right_indices
-        right_indices = [j for j in range(right._ncols)
-                         if nonzero_positions_in_columns[j]]
 
         ans = self.new_matrix(self._nrows, right._ncols)
 
@@ -424,7 +420,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         self.check_mutability()
 
         cdef Py_ssize_t i, r, c, min, min_row,  start_row
-        cdef int a0, a_inverse, b, do_verb
+        cdef int a_inverse, b, do_verb
         cdef c_vector_modint tmp
         start_row = 0
         pivots = []

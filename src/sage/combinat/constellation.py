@@ -49,7 +49,8 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from itertools import repeat
+from itertools import repeat, product
+
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -1409,8 +1410,6 @@ class Constellations_p(UniqueRepresentation, Parent):
             g1 ('a','d','b')('c')
             g2 ('a','b')('c','d')
         """
-        from sage.misc.mrange import cartesian_product_iterator
-
         if self._cd._length == 1:
             if self._cd._degree == 1:
                 yield self([[0]])
@@ -1418,8 +1417,7 @@ class Constellations_p(UniqueRepresentation, Parent):
 
         S = self._cd._sym
         profile = list(self._profile)[:-1]
-        for p in cartesian_product_iterator([S.conjugacy_class(pi)
-                                             for pi in profile]):
+        for p in product(*[S.conjugacy_class(pi) for pi in profile]):
             if self._cd._connected and not perms_are_connected(p, self._cd._degree):
                 continue
             c = self._cd(list(p) + [None], check=False)

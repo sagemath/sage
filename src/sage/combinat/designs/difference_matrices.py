@@ -220,7 +220,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         NotImplementedError: I don't know how to build a (10,9,1)-Difference Matrix!
     """
 
-    if lmbda == 1 and k is not None and k>g:
+    if lmbda == 1 and k is not None and k > g:
         if existence:
             return False
         raise EmptySetError("No ({},{},{})-Difference Matrix exists as k(={})>g(={})".format(g,k,lmbda,k,g))
@@ -250,7 +250,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         return i-1
 
     # From the database
-    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0]>=k:
+    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0] >= k:
         if existence:
             return True
         _,f = DM_constructions[g,lmbda]

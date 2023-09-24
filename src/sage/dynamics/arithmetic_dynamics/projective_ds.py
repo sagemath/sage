@@ -116,7 +116,7 @@ from sage.structure.element import get_coercion_model
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 lazy_import('sage.rings.padics.factory', 'Qp')
-lazy_import('sage.rings.qqbar', ['QQbar', 'number_field_elements_from_algebraics'])
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 try:
     from sage.libs.pari.all import PariError
@@ -765,15 +765,17 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         We check that the dynatomic polynomial has the right
         parent (see :trac:`18409`)::
 
-            sage: P.<x,y> = ProjectiveSpace(QQbar,1)                                    # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
             sage: f = DynamicalSystem_projective([x^2 - 1/3*y^2, y^2])
             sage: f.dynatomic_polynomial(2).parent()                                    # needs sage.libs.pari
             Multivariate Polynomial Ring in x, y over Algebraic Field
 
         ::
 
-            sage: T.<v> = QuadraticField(33)                                            # needs sage.rings.number_field
-            sage: S.<t> = PolynomialRing(T)                                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: T.<v> = QuadraticField(33)
+            sage: S.<t> = PolynomialRing(T)
             sage: P.<x,y> = ProjectiveSpace(FractionField(S),1)
             sage: f = DynamicalSystem_projective([t*x^2 - 1/t*y^2, y^2])
             sage: f.dynatomic_polynomial([1, 2]).parent()                               # needs sage.libs.pari
@@ -1275,7 +1277,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if not self.is_endomorphism():
             raise TypeError("Self must be an endomorphism.")
 
-        if R not in NumberFields() and R is not QQbar:
+        if R not in NumberFields() and not isinstance(R, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("Only implemented for number fields.")
 
         f_iterate_map = self.nth_iterate_map(n)
@@ -2281,7 +2283,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         K = FractionField(self.codomain().base_ring())
 
         if K not in NumberFields():
-            if K is not QQbar:
+            if not isinstance(K, sage.rings.abc.AlgebraicField):
                 raise NotImplementedError("must be over a number field or a number field order or QQbar")
             else:
                 #since this an absolute height, we can compute the height of a QQbar point
@@ -2460,7 +2462,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         FF = FractionField(self.domain().base_ring()) #lift will only work over fields, so coercing into FF
         if FF not in NumberFields():
-            if FF == QQbar:
+            if isinstance(FF, sage.rings.abc.AlgebraicField):
                 #since this is absolute height, we can choose any number field over which the
                 #function is defined.
                 f = self._number_field_from_algebraics()
@@ -2795,7 +2797,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if self.domain().dimension_relative() > 1:
             raise NotImplementedError("only implemented for dimension 1")
         base_ring = self.base_ring()
-        if base_ring is QQbar:
+        if isinstance(base_ring, sage.rings.abc.AlgebraicField):
             if numerical:
                 raise ValueError("can't solve numerically over QQbar, no embedding into CC")
             fbar = self
@@ -4398,6 +4400,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: K.<v> = QuadraticField(5)                                             # needs sage.rings.number_field
             sage: phi = QQ.embeddings(K)[0]                                             # needs sage.rings.number_field
@@ -4606,7 +4609,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if return_scheme:  # this includes the indeterminacy locus points!
             return X
         if X.dimension() <= 0:
-            if R in NumberFields() or R is QQbar or R in FiniteFields():
+            if R in NumberFields() or isinstance(R, sage.rings.abc.AlgebraicField) or R in FiniteFields():
                 Z = f.base_indeterminacy_locus()
                 points = [dom(Q) for Q in X.rational_points()]
                 good_points = []
@@ -4952,7 +4955,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if return_scheme:  # this includes the indeterminacy locus points!
                 return X
             if X.change_ring(FF).dimension() <= 0:
-                if R in NumberFields() or R is QQbar or R in FiniteFields():
+                if R in NumberFields() or isinstance(R, sage.rings.abc.AlgebraicField) or R in FiniteFields():
                     Z = f.base_indeterminacy_locus()
                     points = [dom(Q) for Q in X.rational_points()]
                     good_points = []
@@ -5221,7 +5224,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # if we are already using an algebraic closure, we move the
             # map into a finite extension and set use_algebraic_closure to True
             # in order to get a scheme defined over a finite extension
-            if K is QQbar or isinstance(K, AlgebraicClosureFiniteField_generic):
+            if isinstance(K, sage.rings.abc.AlgebraicField) or isinstance(K, AlgebraicClosureFiniteField_generic):
                 f = self.reduce_base_field()
                 K = f.base_ring()
                 use_algebraic_closure = True
@@ -8143,7 +8146,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         else:
             f = self.change_ring(R)
             g = other.change_ring(R)
-        if not (R in NumberFields() or R is QQbar or R in FiniteFields()):
+        if not (R in NumberFields() or isinstance(R, sage.rings.abc.AlgebraicField) or R in FiniteFields()):
             raise NotImplementedError("ring must be a number field or finite field")
         try:
             f.normalize_coordinates()
@@ -8843,6 +8846,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
             else:
                 return False
+        from sage.rings.qqbar import QQbar
         Fbar = self.change_ring(QQbar)
         Pbar = Fbar.domain()
         fixed = Fbar.periodic_points(1)

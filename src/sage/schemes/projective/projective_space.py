@@ -77,8 +77,9 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 import sage.rings.abc
 
@@ -101,7 +102,6 @@ from sage.categories.map import Map
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.persist import register_unpickle_override
 
 from sage.structure.category_object import normalize_names
@@ -2350,7 +2350,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         C = PHom.codomain()
 
         for k in range(n + 1): # position of last 1 before the 0's
-            for v in cartesian_product_iterator([R for _ in range(n - k)]):
+            for v in product(*[R for _ in range(n - k)]):
                 yield C._point(PHom, v + one + zero * k, check=False)
 
     def rational_points(self, F=None):

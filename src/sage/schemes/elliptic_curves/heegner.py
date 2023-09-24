@@ -96,6 +96,7 @@ The above is consistent with the following analytic computation::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 import sage.rings.abc
 
@@ -5509,11 +5510,10 @@ class HeegnerQuatAlg(SageObject):
             X = I.cyclic_right_subideals(p, alpha_quaternions[i])
             J_lists.append(dict(enumerate(X)))
 
-        ans = [0]*B.dimension()
-        from sage.misc.mrange import cartesian_product_iterator
-        for v in cartesian_product_iterator([range(1,p+1) for p,_ in F]):
+        ans = [0] * B.dimension()
+        for v in product(*[range(1, p + 1) for p, _ in F]):
             J = J_lists[0][v[0]]
-            for i in range(1,len(J_lists)):
+            for i in range(1, len(J_lists)):
                 J = J.intersection(J_lists[i][v[i]])
             J_theta = tuple(J.theta_series_vector(bound))
             d = theta_dict[J_theta]

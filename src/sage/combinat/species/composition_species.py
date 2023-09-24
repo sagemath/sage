@@ -46,7 +46,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
             F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'b', 'c'),)
         """
         f, gs = self._list
-        return "F-structure: %s; G-structures: %s"%(repr(f), repr(gs))
+        return "F-structure: %s; G-structures: %s" % (repr(f), repr(gs))
 
     def transport(self, perm):
         """
@@ -124,7 +124,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         self._F = F
         self._G = G
-        self._name = "Composition of (%s) and (%s)"%(F, G)
+        self._name = "Composition of (%s) and (%s)" % (F, G)
         self._state_info = [F, G]
         GenericCombinatorialSpecies.__init__(self, min=None, max=None, weight=None)
 

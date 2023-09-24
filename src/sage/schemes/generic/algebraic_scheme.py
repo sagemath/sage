@@ -114,6 +114,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 
 from sage.categories.number_fields import NumberFields
 

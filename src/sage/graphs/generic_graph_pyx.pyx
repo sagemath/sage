@@ -488,11 +488,10 @@ def small_integer_to_graph6(n):
     """
     if n < 63:
         return chr(n + 63)
-    else:
-        # get 18-bit rep of n
-        n = int_to_binary_string(n)
-        n = '0'*(18 - len(n)) + n
-        return chr(126) + binary_string_to_graph6(n)
+    # get 18-bit rep of n
+    n = int_to_binary_string(n)
+    n = '0'*(18 - len(n)) + n
+    return chr(126) + binary_string_to_graph6(n)
 
 
 def length_and_string_from_graph6(s):

@@ -378,21 +378,17 @@ def bernoulli(n, algorithm='default', num_threads=1):
             warn("flint is known to not be accurate for large Bernoulli numbers")
         from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
-    elif algorithm == 'pari':
+    elif algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari.all import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
     elif algorithm == 'gap':
-        import sage.interfaces.gap
-        x = sage.interfaces.gap.gap('Bernoulli(%s)' % n)
+        from sage.libs.gap.libgap import libgap
+        x = libgap.Bernoulli(n).sage()
         return Rational(x)
     elif algorithm == 'magma':
         import sage.interfaces.magma
         x = sage.interfaces.magma.magma('Bernoulli(%s)' % n)
-        return Rational(x)
-    elif algorithm == 'gp':
-        import sage.interfaces.gp
-        x = sage.interfaces.gp.gp('bernfrac(%s)' % n)
         return Rational(x)
     elif algorithm == 'bernmm':
         import sage.rings.bernmm
@@ -449,11 +445,9 @@ def factorial(n, algorithm='gmp'):
         sage: factorial(mpz(4))
         24
 
-
     PERFORMANCE: This discussion is valid as of April 2006. All timings
     below are on a Pentium Core Duo 2Ghz MacBook Pro running Linux with
     a 2.6.16.1 kernel.
-
 
     -  It takes less than a minute to compute the factorial of
        `10^7` using the GMP algorithm, and the factorial of
@@ -483,7 +477,7 @@ def factorial(n, algorithm='gmp'):
         raise ValueError('unknown algorithm')
 
 
-def is_prime(n):
+def is_prime(n) -> bool:
     r"""
     Determine whether `n` is a prime element of its parent ring.
 

@@ -328,8 +328,7 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
     # Last, we return the computed value and the certificate
     if h_LB != -1:
         return (h_LB, certificate)
-    else:
-        return (-1, [])
+    return (-1, [])
 
 
 ######################################################################
@@ -826,10 +825,10 @@ cdef tuple hyperbolicity_BCCM(int N,
     # Last, we return the computed value and the certificate
     if not certificate:
         return (-1, [], h_UB)
-    else:
-        # When using far-apart pairs, the loops may end before improving the
-        # upper-bound
-        return (h, certificate, h_UB)
+
+    # When using far-apart pairs, the loops may end before improving the
+    # upper-bound
+    return (h, certificate, h_UB)
 
 
 ######################################################################
@@ -1044,10 +1043,10 @@ cdef tuple hyperbolicity_CCL(int N,
     # Last, we return the computed value and the certificate
     if not certificate:
         return (-1, [], h_UB)
-    else:
-        # When using far-apart pairs, the loops may end before improving the
-        # upper-bound
-        return (h, certificate, h_UB if GOTO_RETURN else h)
+
+    # When using far-apart pairs, the loops may end before improving the
+    # upper-bound
+    return (h, certificate, h_UB if GOTO_RETURN else h)
 
 
 def hyperbolicity(G,

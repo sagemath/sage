@@ -141,17 +141,17 @@ class CartanType(CartanType_standard_untwisted_affine):
             return cartan_type.CartanType(["C",2,1])._latex_dynkin_diagram(label, node, node_dist, dual)
         n = self.n
         single_end = (n-2)*node_dist # Where the single line ends
-        ret = "\\draw (0,0.7 cm) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (0,-0.7 cm) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (%s cm,0) -- (%s cm,0);\n"%(node_dist, single_end)
-        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n"%(single_end, node_dist)
-        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n"%(single_end, node_dist)
+        ret = "\\draw (0,0.7 cm) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (0,-0.7 cm) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (%s cm,0) -- (%s cm,0);\n" % (node_dist, single_end)
+        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n" % (single_end, node_dist)
+        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n" % (single_end, node_dist)
         if dual:
             ret += self._latex_draw_arrow_tip(single_end+0.5*node_dist-0.2, 0, 180)
         else:
             ret += self._latex_draw_arrow_tip(single_end+0.5*node_dist+0.2, 0, 0)
         ret += node(0, 0.7, label(0), 'left=3pt')
-        ret +=node(0, -0.7, label(1), 'left=3pt')
+        ret += node(0, -0.7, label(1), 'left=3pt')
         for i in range(1, n):
             ret += node(i*node_dist, 0, label(i+1))
         return ret
