@@ -14,6 +14,11 @@ This distribution makes the following features available::
 from .all__sagemath_modules import *
 
 try:  # extra
+    from sage.all__sagemath_combinat import *
+except ImportError:
+    pass
+
+try:  # extra
     from sage.all__sagemath_graphs import *
 except ImportError:
     pass

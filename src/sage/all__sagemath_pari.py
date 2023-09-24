@@ -15,6 +15,7 @@ from .all__sagemath_categories import *
 
 from sage.groups.all__sagemath_pari import *
 from sage.libs.all__sagemath_pari import *
+from sage.quadratic_forms.all__sagemath_pari import *
 from sage.rings.all__sagemath_pari import *
 
 # Relink imported lazy_import objects to point to the appropriate namespace

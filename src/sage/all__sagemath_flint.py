@@ -17,6 +17,8 @@ This distribution makes the following features available::
 
 from .all__sagemath_ntl import *
 
+from .libs.all__sagemath_flint import *
+
 from .rings.all__sagemath_flint import *
 
 from sage.rings.qqbar import _init_qqbar

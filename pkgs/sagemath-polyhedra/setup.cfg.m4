@@ -68,4 +68,4 @@ posets      = SPKG_INSTALL_REQUIRES_sagemath_graphs
 toric       = SPKG_INSTALL_REQUIRES_sagemath_graphs
 
 # the whole package
-standard    = sagemath-polyhedra[flint,fpylll,linbox,glpk,graphs,pari,plot,RDF]
+standard    = sagemath-polyhedra[flint,fpylll,linbox,glpk,graphs,groups,pari,plot,RDF]
