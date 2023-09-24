@@ -911,10 +911,10 @@ class PlotOptions():
                 level = 1
             if not space.cartan_type().is_affine():
                 raise ValueError("affine option only valid for affine types")
-            projections=[space.classical()]
+            projections = [space.classical()]
             projection_space = space.classical()
         else:
-            projections=[]
+            projections = []
             projection_space = space
 
         self.affine = affine
@@ -943,8 +943,8 @@ class PlotOptions():
         else:
             if not len(bounding_box) == self.dimension:
                 raise TypeError("bounding_box argument doesn't match with the plot dimension")
-            elif not all(len(b)==2 for b in bounding_box):
-                raise TypeError("Invalid bounding box %s"%bounding_box)
+            elif not all(len(b) == 2 for b in bounding_box):
+                raise TypeError("Invalid bounding box %s" % bounding_box)
         self.bounding_box = Polyhedron(vertices=product(*bounding_box))
 
     @cached_method
@@ -1435,7 +1435,7 @@ class PlotOptions():
 
         # Compute the intersection with the bounding box
         q = p & self.bounding_box
-        if q.dim() >= 0 and p.dim() >= 0 and (draw_degenerate or p.dim()==q.dim()):
+        if q.dim() >= 0 and p.dim() >= 0 and (draw_degenerate or p.dim() == q.dim()):
             if wireframe:
                 options = dict(point=False, line=dict(width=10), polygon=False)
                 center = q.center()

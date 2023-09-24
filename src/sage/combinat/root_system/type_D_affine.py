@@ -139,11 +139,11 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             return cartan_type.CartanType(["A",3,1]).relabel(relabel)._latex_dynkin_diagram(node_dist=node_dist)
         rt_most = (n - 2) * node_dist
         center_point = rt_most - node_dist
-        ret = "\\draw (0,0.7 cm) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (0,-0.7 cm) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (%s cm,0) -- (%s cm,0);\n"%(node_dist, center_point)
-        ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n"%(center_point, rt_most)
-        ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n"%(center_point, rt_most)
+        ret = "\\draw (0,0.7 cm) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (0,-0.7 cm) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (%s cm,0) -- (%s cm,0);\n" % (node_dist, center_point)
+        ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n" % (center_point, rt_most)
+        ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n" % (center_point, rt_most)
         ret += node(0, 0.7, label(0), "left=3pt")
         ret += node(0, -0.7, label(1), "left=3pt")
         for i in range(1, self.n-2):

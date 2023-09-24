@@ -87,7 +87,7 @@ def _MOLS_from_string(s,k):
     matrices = [[] for _ in range(k)]
     for i,l in enumerate(s.split()):
         l = [ord(x) - 97 for x in l]
-        matrices[i%k].append(l)
+        matrices[i % k].append(l)
     return [Matrix(_) for _ in matrices]
 
 def MOLS_10_2():
@@ -360,7 +360,7 @@ def OA_7_18():
                        g + G((0,  0  ,2*y))])
 
     M = OA_from_quasi_difference_matrix(Mb,G,add_col=False)
-    M = [M[i] for i in range(len(M)) if i%18<9] # only develop w.r.t the last two coordinates
+    M = [M[i] for i in range(len(M)) if i % 18 < 9] # only develop w.r.t the last two coordinates
     return M
 
 def OA_9_40():
@@ -430,11 +430,11 @@ def OA_7_66():
     # base block of a (73,9,1) BIBD
     B = [0, 19, 26, 14, 63, 15, 32, 35, 65]
     # The corresponding BIBD
-    BIBD = [[(x+i)%73 for x in B] for i in range(73)]
+    BIBD = [[(x+i) % 73 for x in B] for i in range(73)]
     # the first 7 elements of an oval
     #
     # (this is the only difference with the OA(7,68) construction)
-    oval = [(-x)%73 for x in B][:7]
+    oval = [(-x) % 73 for x in B][:7]
     # PBD minus the oval
     PBD = [[x for x in B if x not in oval] for B in BIBD]
     # We relabel the points to 0,1,2,...
@@ -470,11 +470,11 @@ def OA_7_68():
     # base block of a (73,9,1) BIBD
     B = [0, 19, 26, 14, 63, 15, 32, 35, 65]
     # The corresponding BIBD
-    BIBD = [[(x+i)%73 for x in B] for i in range(73)]
+    BIBD = [[(x+i) % 73 for x in B] for i in range(73)]
     # the first 5 elements of an oval
     #
     # (this is the only difference with the OA(7,66) construction)
-    oval = [(-x)%73 for x in B][:5]
+    oval = [(-x) % 73 for x in B][:5]
     # PBD minus the oval
     PBD = [[x for x in B if x not in oval] for B in BIBD]
     # We relabel the points to 0,1,2,...
@@ -509,7 +509,7 @@ def OA_8_69():
     # base block of a (73,9,1) BIBD
     B = [1,2,4,8,16,32,37,55,64]
     # The corresponding BIBD
-    BIBD = [[(x+i)%73 for x in B] for i in range(73)]
+    BIBD = [[(x+i) % 73 for x in B] for i in range(73)]
     oval = [72,71,69,65]
     # PBD minus the oval
     PBD = [[x for x in B if x not in oval] for B in BIBD]
@@ -582,9 +582,9 @@ def OA_7_74():
     # base block of a (91,10,1) BIBD
     B = [0,1,3,9,27,81,61,49,56,77]
     # The corresponding BIBD
-    BIBD = [[(x+i)%91 for x in B] for i in range(91)]
+    BIBD = [[(x+i) % 91 for x in B] for i in range(91)]
     # an oval
-    oval = [(-x)%91 for x in B][-7:]
+    oval = [(-x) % 91 for x in B][-7:]
     # PBD minus the oval+B
     to_delete = oval + B
     PBD = [[x for x in B if x not in to_delete] for B in BIBD]
@@ -621,7 +621,7 @@ def OA_8_76():
     # base block of a (91,10,1) BIBD
     B = [0,1,3,9,27,81,61,49,56,77]
     # The corresponding BIBD
-    BIBD = [[(x+i)%91 for x in B] for i in range(91)]
+    BIBD = [[(x+i) % 91 for x in B] for i in range(91)]
     oval = [2,4,5,12,24]
     to_remove = oval + B
     # PBD minus the oval
@@ -638,8 +638,8 @@ def OA_8_76():
     # We reorder the rows such that every element of critical_points is exactly
     # once the first element of a row.
     for i,x in zip(critical_points,sets_of_size_seven):
-        x.sort(key=lambda x:-int(x==i))
-        assert x[0]==i
+        x.sort(key=lambda x:-int(x == i))
+        assert x[0] == i
 
     # Blocks of "others", without the 0..0,1..1,2..2 ... rows
     OA = OA_from_PBD(8,76,others,check=False)[:-76]
@@ -844,20 +844,20 @@ def OA_9_135():
     # 0,1, or 3 points. The set of points congruent to 0 mod 39 does the job!
     #
     # ... check that it works
-    assert all(sum((x%39 == 0) for x in B) in [0,1,3] for B in PG16)
+    assert all(sum((x % 39 == 0) for x in B) in [0,1,3] for B in PG16)
 
     # We now build an OA(17,16) from our PG16, in such a way that all points of
     # our PG(2,2) are in different columns. For this, we need to find a point p
     # that is not located on any of the lines defined by the points of the
     # PG(2,2).
 
-    lines = [B for B in PG16 if sum((x%39 == 0) for x in B) == 3]
+    lines = [B for B in PG16 if sum((x % 39 == 0) for x in B) == 3]
     p = set(range(237)).difference(*lines).pop()
 
     # We can now build a TD from our PG16 by removing p.
     for B in PG16:
-        B.sort(key=lambda x:int(x%39 != 0))
-    PG16.sort(key=lambda B:sum((x%39 == 0) for x in B))
+        B.sort(key=lambda x:int(x % 39 != 0))
+    PG16.sort(key=lambda B:sum((x % 39 == 0) for x in B))
 
     r = {}
     for B in PG16:
@@ -870,13 +870,13 @@ def OA_9_135():
     # The columns containing points from PG2 will be the last 7
     assert all(r[x*39] >= (n-1)-16*7 for x in range(7))
     # Those points are the first of each column
-    assert all(r[x*39]%16 == 0 for x in range(7))
+    assert all(r[x*39] % 16 == 0 for x in range(7))
 
     PG = [sorted([r[x] for x in B]) for B in PG16]
-    OA = [[x%16 for x in B] for B in PG if n-1 not in B]
+    OA = [[x % 16 for x in B] for B in PG if n-1 not in B]
 
     # We truncate the last 7 columns to size 1. We also drop the first column
-    truncated_OA = [B[1:-7]+[x if x==0 else None for x in B[-7:]] for B in OA]
+    truncated_OA = [B[1:-7]+[x if x == 0 else None for x in B[-7:]] for B in OA]
 
     # And call Wilson's construction
     return wilson_construction(truncated_OA, 9, 16, 8, (1,)*7, check=False)
@@ -1016,10 +1016,10 @@ def OA_11_185():
     # All points congruent to 0 mod[39] form a Fano subplane with the property
     # that each block of the PG(2,16) intersect the Fano subplane in either 0,1
     # or 3 points
-    assert all(sum(x%39==0 for x in B) in [0,1,3] for B in BIBD)
+    assert all(sum(x % 39 == 0 for x in B) in [0,1,3] for B in BIBD)
 
     # Lines of the Fano subplane that are contained in blocks
-    fano_lines = [B for B in BIBD if sum(x%39==0 for x in B) == 3]
+    fano_lines = [B for B in BIBD if sum(x % 39 == 0 for x in B) == 3]
 
     # Points on a line of the Fano subplane
     on_a_fano_line = set().union(*fano_lines)
@@ -1031,13 +1031,13 @@ def OA_11_185():
     ground_set = not_on_a_fano_line.union(fano_lines[0])
     PBD = [ground_set.intersection(B) for B in BIBD]
     relabel = {v:i for i,v in enumerate(ground_set)}
-    PBD = [[relabel[x] for x in B] for B in PBD if len(B)>1]
+    PBD = [[relabel[x] for x in B] for B in PBD if len(B) > 1]
     special_set = [relabel[x] for x in fano_lines[0]]
 
     # Check that everything is fine
     assert all(len(B) in (11,13) or set(B) == set(special_set) for B in PBD)
 
-    OA = OA_from_PBD(11,185,[B for B in PBD if len(B)<17],check=False)[:-185]
+    OA = OA_from_PBD(11,185,[B for B in PBD if len(B) < 17],check=False)[:-185]
     OA.extend([[i]*11 for i in range(185) if i not in special_set])
     OA.extend([[special_set[x] for x in B] for B in orthogonal_array(11,17)])
     return OA
@@ -1088,7 +1088,7 @@ def OA_10_205():
     baer_subplane_size = 4**2+4+1
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
-    pplane = [[(xx+i)%pplane_size for xx in B]  for i in range(pplane_size)]
+    pplane = [[(xx+i) % pplane_size for xx in B]  for i in range(pplane_size)]
     baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
 
     p = list(baer_subplane)[0]
@@ -1111,7 +1111,7 @@ def OA_10_205():
     blocks_of_size_9 = [B for B in GDD if len(B) == 9]
     blocks_of_size_9_union = sum(blocks_of_size_9,[])
 
-    OA = OA_from_PBD(10,205,[B for B in GDD if len(B)!=9],check=False)[:-205]
+    OA = OA_from_PBD(10,205,[B for B in GDD if len(B) != 9],check=False)[:-205]
 
     OA.extend([[B[xx] for xx in R]
                for R in orthogonal_array(10,9)
@@ -1260,11 +1260,11 @@ def OA_11_254():
 
     # Base block of a PG(2,19)
     B = (0,1,19,28,96,118,151,153,176,202,240,254,290,296,300,307,337,361,366,369)
-    BIBD = [[(x+i)%381 for x in B]  for i in range(381)]
+    BIBD = [[(x+i) % 381 for x in B]  for i in range(381)]
 
     # We only keep points congruent to 0,1 mod 3 and relabel the PBD. The result is
     # a (254,{11,13,16})-PBD
-    BIBD = [[2*(x//3)+x%3 for x in B if x%3<2] for B in BIBD]
+    BIBD = [[2*(x//3)+x % 3 for x in B if x % 3 < 2] for B in BIBD]
 
     return OA_from_PBD(11,254,BIBD,check=False)
 
@@ -1354,7 +1354,7 @@ def OA_20_416():
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
     Z = None
-    A=[
+    A = [
         [(0,Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (0 , Z), (1 , Z), (4 , Z), (9 , Z), (3 , Z), (12, Z)],
         [(0,Z), (1 , Z), (2 ,18), (3 , 2), (4 ,20), (5 ,22), (6 ,11), (7 ,19), (8 , 0), (9 ,26), (10, Z), (11, 5), (12,27), (1 ,17), (0 ,30), (1 ,22), (4 ,29), (9 , 6), (3 ,19)],
         [(0,Z), (2 , 4), (4 ,21), (6 ,10), (8 ,24), (10,13), (12, 7), (1 ,11), (3 ,29), (5 ,12), (7 ,21), (9 , 2), (11,11), (4 , 5), (1 ,11), (0 ,23), (1 ,13), (4 , 6), (9 ,15)],
@@ -1415,7 +1415,7 @@ def OA_20_544():
 
     Z = None
 
-    A=[
+    A = [
         [(0,Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(0 , Z),(1 , Z)],
         [(0,Z),(1 , 4),(2 , 7),(3 ,30),(4 ,17),(5 , 2),(6 ,22),(7 ,23),(8 ,28),(9 , 2),(10,27),(11,26),(12,13),(13,25),(14,18),(15,15),(16,18),(1 ,14),(0 , 1)],
         [(0,Z),(2 , 4),(4 ,20),(6 ,29),(8 ,27),(10, 7),(12,20),(14,19),(16,26),(1 ,28),(3 , Z),(5 ,27),(7 , Z),(9 ,11),(11, Z),(13,17),(15, 1),(4 ,14),(1 ,14)],
@@ -1595,9 +1595,9 @@ def OA_10_796():
 
     OA = orthogonal_array(17,47)
     OA = OA_relabel(OA,17,47,blocks=[OA[0]]) # making sure [46]*17 is a block
-    PBD = [[i*47+x for i,x in enumerate(B) if (x<46 or i<13)] for B in OA]
+    PBD = [[i*47+x for i,x in enumerate(B) if (x < 46 or i < 13)] for B in OA]
     extra_point = 10000
-    PBD.extend([list(range(i*47,(i+1)*47-int(i>=13)))+[extra_point] for i in range(17)]) # Adding the columns
+    PBD.extend([list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point] for i in range(17)]) # Adding the columns
 
     rel = {v:i for i,v in enumerate(set(range(17*47)).difference([(i+1)*47-1 for i in range(13,17)]))}
     rel[extra_point] = len(rel)
@@ -1614,7 +1614,7 @@ def OA_10_796():
 
     for B in PBD:
         if len(B) >= 47:
-            B.sort(key=lambda x:int(x==extra_point))
+            B.sort(key=lambda x:int(x == extra_point))
             OA.extend([[B[i] for i in BB] for BB in iOA[len(B)]])
             span.update(B[:-1])
         else:
@@ -1677,10 +1677,10 @@ def OA_10_469():
          731,824,837,848,932,1002,1051,1055,1089,1105,1145,1165,1196,1217,1226,
          1274,1281,1309,1405)
 
-    BIBD = [[(x+i)%1407 for x in B]  for i in range(1407)]
+    BIBD = [[(x+i) % 1407 for x in B]  for i in range(1407)]
 
     # Only keep points v congruent to 0 mod 3 and relabel
-    PBD = [[x//3 for x in B if x%3==0] for B in BIBD]
+    PBD = [[x//3 for x in B if x % 3 == 0] for B in BIBD]
 
     # Split the block according to their size
     blocks = {9:[],13:[],16:[]}
@@ -1754,8 +1754,8 @@ def OA_520_plus_x(x):
     # corresponding to each (possibly truncated) group extended with a new
     # point. The result is a (520+x,{9+x,16,17,31,32})-PBD.
     new_point = 31*17
-    PBD = [[i*31+xx for i,xx in enumerate(B) if i<9+x or xx<30] for B in OA] # truncated blocks
-    PBD.extend([list(range(i*31,i*31+30+bool(i<9+x)))+[new_point] for i in range(17)]) # extended (+truncated) groups
+    PBD = [[i*31+xx for i,xx in enumerate(B) if i < 9+x or xx < 30] for B in OA] # truncated blocks
+    PBD.extend([list(range(i*31,i*31+30+bool(i < 9+x)))+[new_point] for i in range(17)]) # extended (+truncated) groups
 
     relabel = {v:i for i,v in enumerate(sorted(set().union(*PBD)))}
     PBD = [[relabel[xx] for xx in B] for B in PBD]
@@ -1950,9 +1950,9 @@ def OA_25_1262():
          1217, 1219, 1220, 1261, 1306, 1349, 1370, 1400, 1461, 1480, 1517, 1714,
          1768, 1827, 1833, 1866)
 
-    BIBD = [[(x+i)%1893 for x in B] for i in range(1893)] # a (1893,44,1)-BIBD
-    PBD = [[x for x in B if (x%3)<2] for B in BIBD]       # We only keep the x with x%3=0,1
-    PBD = [[2*(x//3)+(x%3) for x in B] for B in PBD]      # The (1262, {25, 31,32})-PBD
+    BIBD = [[(x+i) % 1893 for x in B] for i in range(1893)] # a (1893,44,1)-BIBD
+    PBD = [[x for x in B if (x % 3) < 2] for B in BIBD]       # We only keep the x with x%3=0,1
+    PBD = [[2*(x//3)+(x % 3) for x in B] for B in PBD]      # The (1262, {25, 31,32})-PBD
 
     return OA_from_PBD(25,1262,PBD,check=False)
 
@@ -2079,22 +2079,23 @@ def QDM_19_6_1_1_1():
         True
     """
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
-    M=[[None,   7,  13,   1,  16,   9,   2],
-       [   0,   1,  15,   7,  17,   6,  14],
-       [   0,  11,  10,  11,   5,   4,   3],
-       [   7,None,  13,  16,   1,   2,   9],
-       [   1,   0,  15,  17,   7,  14,   6],
-       [  11,   0,  10,   5,  11,   3,   4]]
+    M = [[None,   7,  13,   1,  16,   9,   2],
+         [   0,   1,  15,   7,  17,   6,  14],
+         [   0,  11,  10,  11,   5,   4,   3],
+         [   7,None,  13,  16,   1,   2,   9],
+         [   1,   0,  15,  17,   7,  14,   6],
+         [  11,   0,  10,   5,  11,   3,   4]]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
-        a,b,c,d,e,f = R
-        Mb.append([a,b,c,d,e,f])
-        Mb.append([b,c,a,f,d,e])
-        Mb.append([c,a,b,e,f,d])
+        a, b, c, d, e, f = R
+        Mb.append([a, b, c, d, e, f])
+        Mb.append([b, c, a, f, d, e])
+        Mb.append([c, a, b, e, f, d])
 
     return AdditiveCyclic(19), Mb
+
 
 def QDM_21_5_1_1_1():
     r"""
@@ -2122,7 +2123,7 @@ def QDM_21_5_1_1_1():
         [  12,   9,  19,  16,   5,   2,   0],
         ]
 
-    Mb=[[0,7,14,None,0],
+    Mb = [[0,7,14,None,0],
         [0,14,7,0,None]]
 
     for R in zip(*M):
@@ -2170,7 +2171,7 @@ def QDM_21_6_1_1_5():
 
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(21)
-    Mb=[[0,0,0,0,0,0]]
+    Mb = [[0,0,0,0,0,0]]
 
     for R in zip(*M):
         a,b,c,d,e,f = R
@@ -2213,7 +2214,7 @@ def QDM_25_6_1_1_5():
     G = AdditiveAbelianGroup([5,5])
     M = [[None if x is None else G(vector(x)) for x in L] for L in M]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         a,b,c,d,e,f = R
@@ -2299,7 +2300,7 @@ def QDM_37_6_1_1_1():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(37)
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         a,b,c,d,e,f = R
@@ -2338,7 +2339,7 @@ def QDM_35_7_1_1_7():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(35)
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         for i in range(7):
@@ -2375,7 +2376,7 @@ def QDM_45_7_1_1_9():
         [  30,  16,  33,  27, -30, -16, -33, -27,   0],
         ]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         for c in range(7):
@@ -2412,7 +2413,7 @@ def QDM_54_7_1_1_8():
         [41 , 11 ,  1 , 17 , -41 , -11 , - 1 , -17, 28 , 11 ]
         ]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         for c in range(7):
@@ -3228,19 +3229,19 @@ def DM_24_8_1():
 
         sage: _ = designs.difference_matrix(24,8)
     """
-    M = ("0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 "+
-         "0000 0010 0100 0110 1000 1010 1100 1110 2000 2010 2100 2110 "+
-         "0000 0011 1001 2110 0111 2011 2111 1000 0100 1100 1101 2010 "+
-         "0000 1010 1011 2000 1101 2110 0001 0101 2100 2001 0111 1100 "+
-         "0000 0001 2010 1111 2111 2100 1101 0011 1010 2101 1000 0110 "+
-         "0000 1000 2001 1011 0100 1100 0110 2101 2111 0010 1111 2011 "+
-         "0000 1001 0111 2100 2000 0010 1110 2011 1100 1011 0101 2111 "+
+    M = ("0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 " +
+         "0000 0010 0100 0110 1000 1010 1100 1110 2000 2010 2100 2110 " +
+         "0000 0011 1001 2110 0111 2011 2111 1000 0100 1100 1101 2010 " +
+         "0000 1010 1011 2000 1101 2110 0001 0101 2100 2001 0111 1100 " +
+         "0000 0001 2010 1111 2111 2100 1101 0011 1010 2101 1000 0110 " +
+         "0000 1000 2001 1011 0100 1100 0110 2101 2111 0010 1111 2011 " +
+         "0000 1001 0111 2100 2000 0010 1110 2011 1100 1011 0101 2111 " +
          "0000 1011 2101 0100 2110 1001 2000 0110 0101 1111 2011 1010 ")
 
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     from sage.categories.cartesian_product import cartesian_product
     G = cartesian_product([AdditiveCyclic(_) for _ in [2, 2, 6]])
-    rlabel = {(x%2,x%3):x for x in range(6)}
+    rlabel = {(x % 2,x % 3):x for x in range(6)}
     M = [G([int(c),int(d),rlabel[int(b),int(a)]]) for a,b,c,d in M.split()]
     M = [M[i*12:(i+1)*12] for i in range(8)]
     Mb = []
@@ -3275,7 +3276,7 @@ def DM_28_6_1():
 
         sage: _ = designs.difference_matrix(28,6)                                       # needs sage.modules
     """
-    z=2
+    z = 2
     M = [
         [(0,0), (z+1,6),(1,1)  ,(1,1)  ,(1,3)  ,(1,4)  ,(0,0)  ,(1,4), (z,5)  ],
         [(z,2), (0,0)  ,(1,5)  ,(z,1)  ,(z,2)  ,(z,6)  ,(z+1,3),(0,0), (z,1)  ],
@@ -3288,9 +3289,9 @@ def DM_28_6_1():
     from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
     from sage.modules.free_module_element import free_module_element as vector
     G = AdditiveAbelianGroup([2,2,7])
-    M = [[G(vector([x//2,x%2,y])) for x,y in L] for L in M]
+    M = [[G(vector([x//2,x % 2,y])) for x,y in L] for L in M]
 
-    Mb=[[0,0,0,0,0,0]]
+    Mb = [[0,0,0,0,0,0]]
 
     for R in zip(*M):
         a,b,c,d,e,f = R
@@ -3409,7 +3410,7 @@ def DM_36_9_1():
     G = AdditiveAbelianGroup([2,2,3,3])
     M = [[G(vector(x)) for x in L] for L in M]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         a,b,c,d,e,f,g,h,i = R
@@ -3458,7 +3459,7 @@ def DM_39_6_1():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(39)
 
-    Mb=[[ 0,  0,  0,  0,  0,  0],
+    Mb = [[ 0,  0,  0,  0,  0,  0],
         [ 1, 16, 22, 17, 38, 23],
         [-1,-16,-22,-17,-38,-23]]
 
@@ -3507,7 +3508,7 @@ def DM_44_6_1():
 
     M = [[G2211(x) for x in L] for L in M]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         for c in range(5):
@@ -3571,7 +3572,7 @@ def DM_45_7_1():
 
     M[6].extend(M[6][1:8])
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         (x1,y1,z1),(x2,y2,z2),(x3,y3,z3),(x4,y4,z4),(x5,y5,z5),(x6,y6,z6),(x7,y7,z7) = R
@@ -3664,7 +3665,7 @@ def DM_51_6_1():
         [  34,  32,  36,  26,  20]
         ]
 
-    Mb=[[0,0,0,0,0]]
+    Mb = [[0,0,0,0,0]]
 
     for R in zip(*M):
         for i in range(5):
@@ -3721,9 +3722,9 @@ def DM_52_6_1():
         ]
 
     M = [[G(x) for x in L] for L in M]
-    M2= [[G(x) for x in L] for L in M2]
+    M2 = [[G(x) for x in L] for L in M2]
 
-    Mb=[[(0,0)]*6]
+    Mb = [[(0,0)]*6]
 
     from itertools import product
 
@@ -3779,7 +3780,7 @@ def DM_55_7_1():
         [ 16 , 49 , 47 , 29 , 31 , 4  , 44 , 21 , 18]
         ]
 
-    Mb=[[0,0,0,0,0,0,0]]
+    Mb = [[0,0,0,0,0,0,0]]
 
     for R in zip(*M):
         R = list(R)
@@ -3825,7 +3826,7 @@ def DM_56_8_1():
         [(1,0), (   1,0), (   1,0), (   1,0), (   1,0), (   1,0), (   1,0), (   1,0)]
         ]
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         for _ in range(7):
@@ -3854,7 +3855,7 @@ def DM_57_8_1():
         sage: _ = designs.difference_matrix(57,8)                                       # needs sage.rings.finite_rings
     """
     M = orthogonal_array(8,8)
-    M = [R for R in M if any(x!=R[0] for x in R)] # removing the 0..0, 1..1, 7..7 rows.
+    M = [R for R in M if any(x != R[0] for x in R)] # removing the 0..0, 1..1, 7..7 rows.
     B = (1,6,7,9,19,38,42,49) # base block of a (57,8,1) BIBD
     M = [[B[x] for x in R] for R in M]
     M.append([0]*8)
@@ -3901,7 +3902,7 @@ def DM_60_6_1():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     from sage.categories.cartesian_product import cartesian_product
     G = cartesian_product((AdditiveCyclic(2),AdditiveCyclic(30)))
-    M60b=[]
+    M60b = []
     onezero = G((1,0))
 
     for R in zip(*M60):
@@ -3954,7 +3955,7 @@ def DM_75_8_1():
     for i in range(8):
         M[i].extend(M[7-i][:7])
 
-    Mb=[]
+    Mb = []
 
     for R in zip(*M):
         for x in range(5):
@@ -3982,7 +3983,7 @@ def DM_273_17_1():
         sage: _ = designs.difference_matrix(273,17)                                     # needs sage.schemes
     """
     M = orthogonal_array(17,17)
-    M = [R for R in M if any(x!=R[0] for x in R)] # removing the 0..0, 1..1, ... rows.
+    M = [R for R in M if any(x != R[0] for x in R)] # removing the 0..0, 1..1, ... rows.
     B = (1,2,4,8,16,32,64,91,117,128,137,182,195,205,234,239,256) # (273,17,1) difference set
     M = [[B[x] for x in R] for R in M]
     M.append([0]*17)
@@ -4010,7 +4011,7 @@ def DM_993_32_1():
         sage: _ = designs.difference_matrix(993,32)                                     # needs sage.schemes
     """
     M = orthogonal_array(32,32)
-    M = [R for R in M if any(x!=R[0] for x in R)] # removing the 0..0, 1..1, ... rows.
+    M = [R for R in M if any(x != R[0] for x in R)] # removing the 0..0, 1..1, ... rows.
     B = (0,74,81,126,254,282,308,331,344,375,387,409,525,563, # (993,32,1) difference set
          572,611,631,661,694,702,734,763,798,809,814,851,906,
          908,909,923,927,933)
@@ -4047,7 +4048,7 @@ DM = {
 
 # Create the list of DM for the documentation
 _all_l = sorted(set(l for v,l in DM.keys()))
-LIST_OF_DM = "\n".join(r"    - `\lambda={}`:\n       ".format(l)+
+LIST_OF_DM = "\n".join(r"    - `\lambda={}`:\n       ".format(l) +
                        ", ".join("`({},{},{})`".format(v,k,l) for (v,_),(k,__) in sorted(DM.items()) if _ == l)
                        for l in _all_l)
 
@@ -4098,11 +4099,11 @@ def RBIBD_120_8_1():
         sage: _ = designs.balanced_incomplete_block_design(120,8)                       # needs sage.modules
     """
     from .incidence_structures import IncidenceStructure
-    n=273
+    n = 273
 
     # Base block of a cyclic BIBD(273,16,1)
     B = [1,2,4,8,16,32,64,91,117,128,137,182,195,205,234,239,256]
-    BIBD = [[(x+c)%n for x in B] for c in range(n)]
+    BIBD = [[(x+c) % n for x in B] for c in range(n)]
 
     # A (precomputed) set that every block of the BIBD intersects on 0 or 2 points
     hyperoval = [128, 192, 194, 4, 262, 140, 175, 48, 81, 180, 245, 271, 119, 212, 249, 189, 62, 255]
@@ -4176,7 +4177,7 @@ def BIBD_45_9_8(from_code=False):
         C = ExtendedQuadraticResidueCode(47,FiniteField(2))
         min_weight = [map(int,x)[3:] for x in C
                       if x.hamming_weight() == 12 and
-                      x[0]==1 and x[1]==1 and x[2]==1]
+                      x[0] == 1 and x[1] == 1 and x[2] == 1]
 
         return [[i for i,v in enumerate(x) if v] for x in min_weight]
 
@@ -4226,7 +4227,7 @@ def BIBD_66_6_1():
         sage: BalancedIncompleteBlockDesign(66, BIBD_66_6_1())
         (66,6,1)-Balanced Incomplete Block Design
     """
-    BIBD = [frozenset([(x+i*5)%65 if x<65 else x for x in b])
+    BIBD = [frozenset([(x+i*5) % 65 if x < 65 else x for x in b])
             for i in range(65)
             for b in
             [[6, 38, 42, 46, 53, 62], [9, 11, 21, 49, 56, 60], [18, 31, 37, 44, 52, 60],
@@ -4250,7 +4251,7 @@ def BIBD_76_6_1():
         sage: BalancedIncompleteBlockDesign(76, BIBD_76_6_1())
         (76,6,1)-Balanced Incomplete Block Design
     """
-    BIBD = [frozenset([(x+i*4)%76 if x<76 else x for x in b])
+    BIBD = [frozenset([(x+i*4) % 76 if x < 76 else x for x in b])
             for i in range(76)
             for b in
             [[3, 5, 21, 33, 72, 73], [4, 37, 57, 58, 64, 75], [7, 14, 44, 47, 59, 63],
@@ -4274,7 +4275,7 @@ def BIBD_96_6_1():
         sage: BalancedIncompleteBlockDesign(96, BIBD_96_6_1())
         (96,6,1)-Balanced Incomplete Block Design
     """
-    BIBD = [frozenset([(x+i*2)%96 if x<96 else x for x in b])
+    BIBD = [frozenset([(x+i*2) % 96 if x < 96 else x for x in b])
             for i in range(96)
             for b in
             [[3, 13, 32, 47, 68, 87], [9, 36, 70, 75, 81, 88], [22, 52, 72, 76, 78, 79],
@@ -4304,7 +4305,7 @@ def BIBD_106_6_1():
             ((0,0), ( 2,1), ( 7,1), (25,1), (29,1), (49,1)),
             ((0,0), ( 9,0), (21,0), (12,1), (13,1), (27,1))]
 
-    return [[((x+i)%53+y*53) for x,y in B] for i in range(53) for B in bibd]
+    return [[((x+i) % 53+y*53) for x,y in B] for i in range(53) for B in bibd]
 
 def BIBD_111_6_1():
     r"""
@@ -4321,17 +4322,21 @@ def BIBD_111_6_1():
     """
     from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
     from .incidence_structures import IncidenceStructure
-    bibd = [(( 0,0), ( 1,0), ( 3,0), ( 7,0), (17,0), ( 0,1)),
-            (( 0,0), ( 5,0), (19,1), (28,1), (10,2), (30,2)),
-            (( 5,0), (33,0), (13,1), (34,1), (19,2), ( 7,2)),
-            (( 9,0), (27,0), (16,1), (11,1), (12,2), (36,2)),
-            ((10,0), (23,0), (26,1), ( 8,1), ( 1,2), ( 6,2)),
-            ((13,0), (24,0), (19,1), (18,1), ( 5,2), (32,2)),
-            ((26,0), (34,0), ( 1,1), ( 7,1), (10,2), (33,2))]
-    gens = lambda B: [frozenset(((x*10)%37,(y+1)%3) for x,y in B),
-                      frozenset(((x+1) %37,      y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    bibd = [(( 0, 0), ( 1, 0), ( 3, 0), ( 7, 0), (17, 0), ( 0, 1)),
+            (( 0, 0), ( 5, 0), (19, 1), (28, 1), (10, 2), (30, 2)),
+            (( 5, 0), (33, 0), (13, 1), (34, 1), (19, 2), ( 7, 2)),
+            (( 9, 0), (27, 0), (16, 1), (11, 1), (12, 2), (36, 2)),
+            ((10, 0), (23, 0), (26, 1), ( 8, 1), ( 1, 2), ( 6, 2)),
+            ((13, 0), (24, 0), (19, 1), (18, 1), ( 5, 2), (32, 2)),
+            ((26, 0), (34, 0), ( 1, 1), ( 7, 1), (10, 2), (33, 2))]
+    gens = lambda B: [frozenset(((x * 10) % 37, (y + 1) % 3)
+                                for x, y in B),
+                      frozenset(((x + 1) % 37, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_126_6_1():
     r"""
@@ -4347,7 +4352,7 @@ def BIBD_126_6_1():
         (126,6,1)-Balanced Incomplete Block Design
     """
     from itertools import product
-    bibd = [[((x+xx)%5, (y+yy)%5, (z+zz)%5) for x,y,z in B]
+    bibd = [[((x+xx) % 5, (y+yy) % 5, (z+zz) % 5) for x,y,z in B]
             for xx,yy,zz in product(range(5),repeat=3)
             for B in
             [[(0,0,1),(0,0,4),(1,2,2),(1,3,3),(4,2,1),(4,3,4)],
@@ -4375,16 +4380,19 @@ def BIBD_136_6_1():
     """
     from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
     from .incidence_structures import IncidenceStructure
-    inf=(None,None)
+    inf = (None,None)
     bibd = [((0,0), ( 3,0), (15,0), (35,0), ( 6,2), (10,2)),
             ((0,0), (22,0), (11,1), (30,1), ( 1,2), (18,2)),
             ((0,0), ( 5,0), (18,1), (41,1), (13,2), (42,2)),
             ((0,0), (11,0), (17,0), ( 4,2), ( 5,2), (28,2)),
             ((0,0), ( 1,0), ( 0,1), (16,1), ( 0,2), (31,2)),
             ( inf ,( 0,0), ( 9,0), (18,0), (27,0), (36,0))]
-    gens = lambda B: [frozenset(((x*16)%45,(y+1)%3) if (x,y)!=inf else inf for x,y in B),
-                      frozenset(((x+1) %45,y)       if (x,y)!=inf else inf for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 16) % 45,(y + 1) % 3)
+                                if (x, y) != inf else inf for x, y in B),
+                      frozenset(((x + 1) % 45,y)
+                                if (x, y) != inf else inf for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 
@@ -4414,10 +4422,14 @@ def BIBD_141_6_1():
             ( inf ,( 0,0), ( 7,0), (14,0), (21,0), (28,0)),
             ( inf ,( 0,a), ( 7,a), (14,a), (21,a), (28,a))]
 
-    gens = lambda B: [frozenset(((x*16)%35,(y+1)%3 if y!=a else a) if (x,y)!=inf else inf for x,y in B),
-                      frozenset(((x+1) %35, y )                    if (x,y)!=inf else inf for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 16) % 35, (y + 1) % 3 if y != a else a)
+                                if (x, y) != inf else inf for x, y in B),
+                      frozenset(((x + 1) % 35, y)
+                                if (x, y) != inf else inf for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_171_6_1():
     r"""
@@ -4442,10 +4454,14 @@ def BIBD_171_6_1():
             (( 0,0), (12,0), ( 0,1), (27,1), ( 0,2), (18,2)),
             ((37,0), (42,0), (31,1), ( 9,1), (46,2), ( 6,2))]
 
-    gens = lambda B: [frozenset(((x*7) %57,(y+1)%3) for x,y in B),
-                      frozenset(((x+1) %57,      y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 7) % 57, (y + 1) % 3)
+                                for x, y in B),
+                      frozenset(((x + 1) % 57, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def HigmanSimsDesign():
     r"""
@@ -4535,10 +4551,14 @@ def BIBD_196_6_1():
             ((0,0), ( 1,0), ( 0,1), (30,1), ( 0,2), (18,2)),
             ((8,0), (19,0), (44,1), (31,1), (46,2), (48,2))]
 
-    gens = lambda B: [frozenset(((x*30)%49,(y+1)%3 if y!=a else a) for x,y in B),
-                      frozenset(((x+1) %49,   y)                   for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 30) % 49, (y + 1) % 3 if y != a else a)
+                                for x, y in B),
+                      frozenset(((x + 1) % 49, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_201_6_1():
     r"""
@@ -4564,10 +4584,14 @@ def BIBD_201_6_1():
             ((3,1), (20,1), (44,1), (36,2), (39,2), (59,2)),
             ((0,0), ( 0,1), (30,1), (38,1), (66,1), ( 0,2))]
 
-    gens = lambda B: [frozenset(((x*29)%67,y) for x,y in B),
-                      frozenset(((x+1) %67,y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
+    gens = lambda B: [frozenset(((x * 29) % 67, y)
+                                for x, y in B),
+                      frozenset(((x + 1) % 67, y)
+                                for x, y in B)]
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd],
+                                    successors=gens)
     return IncidenceStructure(bibd)._blocks
+
 
 def BIBD_79_13_2():
     r"""
@@ -4743,7 +4767,7 @@ from sage.rings.integer_ring import ZZ
 R = PolynomialRing(ZZ,'a')
 a = R.gen()
 
-EDS={
+EDS = {
 4:{
       13: (None, [0, 1, 11, 5]),
       25: (a**2 + 4*a + 2, [0, 1, a, 3*a + 4]),

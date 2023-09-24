@@ -375,8 +375,7 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
 
     if certificate:
         return new_edges, relabel
-    else:
-        return new_edges
+    return new_edges
 
 
 cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False):
