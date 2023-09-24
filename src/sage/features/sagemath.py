@@ -953,7 +953,7 @@ class sage__rings__number_field(JoinFeature):
                              [PythonModule('sage.rings.number_field.number_field_element'),
                               PythonModule('sage.rings.number_field.number_field_element_quadratic'),
                               PythonModule('sage.rings.qqbar'),
-                              PythonModule('sage.rings.real_roots'),
+                              PythonModule('sage.rings.polynomial.real_roots'),
                               sage__libs__flint()],
                              type='standard')
 
