@@ -1475,12 +1475,12 @@ cdef class Rational(sage.structure.element.FieldElement):
             True
             sage: e.norm()
             3/5
-            sage: 7.is_norm(K)
+            sage: 7.is_norm(K)                                                          # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: is_norm is not implemented unconditionally
              for norms from non-Galois number fields
-            sage: 7.is_norm(K, proof=False)
+            sage: 7.is_norm(K, proof=False)                                             # needs sage.rings.number_field
             False
 
         AUTHORS:

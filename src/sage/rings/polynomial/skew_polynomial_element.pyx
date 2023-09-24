@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.combinat
 r"""
 Univariate skew polynomials
 

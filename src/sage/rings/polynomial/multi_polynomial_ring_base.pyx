@@ -798,7 +798,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.libs.gap sage.rings.number_field
             sage: F = CyclotomicField(8)
             sage: P.<x,y> = F[]
             sage: gap(P)     # indirect doctest
