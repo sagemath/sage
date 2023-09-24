@@ -1779,14 +1779,16 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
         sage: p.base_ring()                                                             # needs sage.rings.number_field
         Algebraic Real Field
-        sage: d = polytopes.dodecahedron()                                              # needs sage.rings.number_field
-        sage: p = get_solver(base_ring=d.base_ring()); p                                # needs sage.rings.number_field
+
+        sage: # needs sage.groups sage.rings.number_field
+        sage: d = polytopes.dodecahedron()
+        sage: p = get_solver(base_ring=d.base_ring()); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                             # needs sage.rings.number_field
+        sage: p.base_ring()
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p                   # needs sage.rings.number_field
+        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                             # needs sage.rings.number_field
+        sage: p.base_ring()
         Rational Field
 
     Passing a callable as the 'solver'::

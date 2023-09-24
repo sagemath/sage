@@ -22,7 +22,7 @@ The following example caused Sage to crash before
 
     sage: R.<theta> = QQ[]
     sage: K.<a> = NumberField(theta^2 + 1)                                              # needs sage.rings.number_field
-    sage: K.absolute_polynomial().galois_group(pari_group=True)                         # needs sage.rings.number_field
+    sage: K.absolute_polynomial().galois_group(pari_group=True)                         # needs sage.groups sage.rings.number_field
     PARI group [2, -1, 1, "S2"] of degree 2
 
 Before :trac:`15654`, this used to take a very long time.
