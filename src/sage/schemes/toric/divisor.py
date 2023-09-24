@@ -1270,7 +1270,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: P1.<u,v> = toric_varieties.P1()
             sage: D = -P1.K()
-            sage: D.Kodaira_map()                                                       # needs fpylll
+            sage: D.Kodaira_map()                                                       # needs fpylll sage.libs.singular
             Scheme morphism:
               From: 1-d CPR-Fano toric variety covered by 2 affine patches
               To:   Closed subscheme of Projective Space of dimension 2
@@ -1279,7 +1279,7 @@ class ToricDivisor_generic(Divisor_generic):
 
             sage: dP6 = toric_varieties.dP6()
             sage: D = -dP6.K()
-            sage: D.Kodaira_map(names='x')                                              # needs fpylll
+            sage: D.Kodaira_map(names='x')                                              # needs fpylll sage.libs.singular
             Scheme morphism:
               From: 2-d CPR-Fano toric variety covered by 6 affine patches
               To:   Closed subscheme of Projective Space of dimension 6

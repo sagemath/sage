@@ -1071,7 +1071,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: H = End(A)
             sage: f = H([x^2 - y^2, y^2])
-            sage: f.weil_restriction()
+            sage: f.weil_restriction()                                                  # needs sage.libs.singular
             Scheme endomorphism of Affine Space of dimension 4 over Rational Field
               Defn: Defined on coordinates by sending (z0, z1, z2, z3) to
                     (z0^2 + 5*z1^2 - z2^2 - 5*z3^2, 2*z0*z1 - 2*z2*z3, z2^2 + 5*z3^2, 2*z2*z3)
@@ -1086,7 +1086,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: F = f.weil_restriction()
             sage: P = PS(2, 1)
             sage: Q = P.weil_restriction()
-            sage: f(P).weil_restriction() == F(Q)
+            sage: f(P).weil_restriction() == F(Q)                                       # needs sage.libs.singular
             True
         """
         if any(isinstance(f, FractionFieldElement) for f in self):
