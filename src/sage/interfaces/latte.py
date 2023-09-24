@@ -181,7 +181,11 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
     if 'redundancy_check' not in kwds:
         args.append('--redundancy-check=none')
 
-    for key, value in kwds.items():
+    mgf_kwds = {}
+    for key,value in kwds.items():
+        if key in ["name", "Factorization_sort", "Factorization_simplify", "sort_factors"]:
+            mgf_kwds[key] = value
+            continue
         if value is None or value is False:
             continue
 
@@ -295,7 +299,8 @@ def str_to_multivariate_generating_function(raw_output_str, name=None, **kwds):
 
 
 def _str_to_multivariate_generating_function(summand, B=None,
-                                             Factorization_sort=False, Factorization_simplify=False):
+                                             Factorization_sort=False, Factorization_simplify=False,
+                                             sort_factors=False):
     r"""
     Helper function for :func:`str_to_multivariate_generating_function`
     which convert a summand string to a ``Factorization`` object.
@@ -353,6 +358,11 @@ def _str_to_multivariate_generating_function(summand, B=None,
 
     term_regex = re.compile(r'(?<=1-)(.+?)(?=$|\)$|\)\*\()')
     terms = (str_to_laurent_monomial(a, B) for a in term_regex.findall(denominator_str[1:-1]))
+    if sort_factors:
+        def key(t):
+            D = t.dict().popitem()[0]
+            return (-sum(abs(d) for d in D), D)
+        terms = sorted(terms, key=key, reverse=True)
     return Factorization([(numerator, 1)] +
                          [(1-t, -1) for t in terms],
                          sort=Factorization_sort,

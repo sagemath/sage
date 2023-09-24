@@ -42,6 +42,7 @@ Hrepresentation_str_options = {'prefix': 'b', 'style': 'positive'}
 def generating_function_of_integral_points(polyhedron, split=False,
                                            result_as_tuple=None,
                                            name=None, names=None,
+                                           algorithm="omega",
                                            **kwds):
     r"""
     Return the multivariate generating function of the
@@ -502,6 +503,25 @@ def generating_function_of_integral_points(polyhedron, split=False,
         name = names[0]
     if name is None:
         name = 'y'
+
+    if algorithm == "latte":
+        from sage.interfaces.latte import count   # optional - latte_int
+        cddin = polyhedron.cdd_Hrepresentation()
+        if result_as_tuple:
+            return count(cddin, cdd=True, multivariate_generating_function=True, name=name, **kwds)
+        else:
+            result = count(cddin, cdd=True, multivariate_generating_function=True, name=name, **kwds)
+            if len(result) != 1:
+                raise ValueError("cannot unpack result "
+                                 "(set 'result_as_tuple=True')")
+            return result[0]
+    elif algorithm == "naive":
+        if polyhedron.is_compact():
+            raise NotImplementedError
+        else:
+            raise ValueError("Polyhedron must be bounded for the naive algorithm")
+    elif algorithm != "omega":
+        raise ValueError('Algorithm must be omega, latte, or naive.')
 
     if split is False:
         result = _generating_function_of_integral_points_(polyhedron, name=name, **kwds)
