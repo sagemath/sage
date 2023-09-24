@@ -159,7 +159,7 @@ Further methods::
     True
     sage: K.is_amphicheiral()
     True
-    sage: K.jones_polynomial()
+    sage: K.jones_polynomial()                                                          # needs sage.symbolic
     t^2 - t - 1/t + 1/t^2 + 1
     sage: K.kauffman_polynomial()
     a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
@@ -1434,14 +1434,14 @@ class KnotInfoBase(Enum):
 
             sage: k = K.link()
             sage: kj = k.jones_polynomial()                                             # needs sage.symbolic
-            sage: bool(Kj == kj)
+            sage: bool(Kj == kj)                                                        # needs sage.symbolic
             True
             sage: kjs = k.jones_polynomial(skein_normalization=True)
             sage: Kjs == kjs
             True
             sage: l = L.link()
             sage: lj = l.jones_polynomial()                                             # needs sage.symbolic
-            sage: bool(Lj == lj)
+            sage: bool(Lj == lj)                                                        # needs sage.symbolic
             False
             sage: bool(Ljt == lj)   # see note above                                    # needs sage.symbolic
             True
@@ -2001,7 +2001,7 @@ class KnotInfoBase(Enum):
             Link with 2 components represented by 5 crossings
 
             sage: K6_1 = KnotInfo.K6_1
-            sage: K6_1.link().braid() == K6_1.braid()
+            sage: K6_1.link().braid() == K6_1.braid()                                   # needs sage.groups
             False
 
         also observe::

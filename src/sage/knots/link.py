@@ -2947,13 +2947,13 @@ class Link(SageObject):
             sage: # needs sage.groups
             sage: g = BraidGroup(2).gen(0)
             sage: K = Knot(g^5)
-            sage: K.homfly_polynomial()
+            sage: K.homfly_polynomial()                                                 # needs sage.libs.homfly
             L^-4*M^4 - 4*L^-4*M^2 + 3*L^-4 - L^-6*M^2 + 2*L^-6
 
         The Hopf link::
 
             sage: L = Link([[1,4,2,3],[4,1,3,2]])
-            sage: L.homfly_polynomial('x', 'y')
+            sage: L.homfly_polynomial('x', 'y')                                         # needs sage.libs.homfly
             -x^-1*y + x^-1*y^-1 + x^-3*y^-1
 
         Another version of the Hopf link where the orientation
@@ -2961,18 +2961,18 @@ class Link(SageObject):
         and `y \mapsto M`::
 
             sage: L = Link([[1,3,2,4], [4,2,3,1]])
-            sage: L.homfly_polynomial()
+            sage: L.homfly_polynomial()                                                 # needs sage.libs.homfly
             L^3*M^-1 - L*M + L*M^-1
             sage: L = Link([[1,3,2,4], [4,2,3,1]])
-            sage: L.homfly_polynomial(normalization='az')
+            sage: L.homfly_polynomial(normalization='az')                               # needs sage.libs.homfly
             a^3*z^-1 - a*z - a*z^-1
 
         The figure-eight knot::
 
             sage: L = Link([[2,5,4,1], [5,3,7,6], [6,9,1,4], [9,7,3,2]])
-            sage: L.homfly_polynomial()
+            sage: L.homfly_polynomial()                                                 # needs sage.libs.homfly
             -L^2 + M^2 - 1 - L^-2
-            sage: L.homfly_polynomial('a', 'z', 'az')
+            sage: L.homfly_polynomial('a', 'z', 'az')                                   # needs sage.libs.homfly
             a^2 - z^2 - 1 + a^-2
 
         The "monster" unknot::
@@ -2980,19 +2980,19 @@ class Link(SageObject):
             sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
             ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
             ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
-            sage: L.homfly_polynomial()
+            sage: L.homfly_polynomial()                                                 # needs sage.libs.homfly
             1
 
         Comparison with KnotInfo::
 
             sage: KI, m = K.get_knotinfo(); KI, m
              (<KnotInfo.K5_1: '5_1'>, False)
-            sage: K.homfly_polynomial(normalization='vz') == KI.homfly_polynomial()
+            sage: K.homfly_polynomial(normalization='vz') == KI.homfly_polynomial()     # needs sage.libs.homfly
             True
 
         The knot `9_6`::
 
-            sage: # needs sage.groups
+            sage: # needs sage.groups sage.libs.homfly
             sage: B = BraidGroup(3)
             sage: K = Knot(B([-1,-1,-1,-1,-1,-1,-2,1,-2,-2]))
             sage: K.homfly_polynomial()
@@ -3006,6 +3006,7 @@ class Link(SageObject):
 
         This works with isolated components::
 
+            sage: # needs sage.libs.homfly
             sage: L = Link([[[1, -1], [2, -2]], [1, 1]])
             sage: L2 = Link([[1, 4, 2, 3], [2, 4, 1, 3]])
             sage: L2.homfly_polynomial()
@@ -3024,7 +3025,7 @@ class Link(SageObject):
         Check that :trac:`30346` is fixed::
 
             sage: L = Link([])
-            sage: L.homfly_polynomial()
+            sage: L.homfly_polynomial()                                                 # needs sage.libs.homfly
             1
 
         REFERENCES:
@@ -3820,9 +3821,9 @@ class Link(SageObject):
             sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L5a1_0.inject()
             Defining L5a1_0
-            sage: L5a1_0.link()._knotinfo_matching_list()
+            sage: L5a1_0.link()._knotinfo_matching_list()                               # needs sage.libs.homfly
             ([<KnotInfo.L5a1_0: 'L5a1{0}'>], True)
-            sage: Link(L5a1_0.braid())._knotinfo_matching_list()
+            sage: Link(L5a1_0.braid())._knotinfo_matching_list()                        # needs sage.libs.homfly
             ([<KnotInfo.L5a1_0: 'L5a1{0}'>, <KnotInfo.L5a1_1: 'L5a1{1}'>], True)
 
         Care is needed for links having non irreducible HOMFLY-PT polynomials::
@@ -3830,7 +3831,7 @@ class Link(SageObject):
             sage: k4_1 = KnotInfo.K4_1.link()
             sage: k5_2 = KnotInfo.K5_2.link()
             sage: k = k4_1.connected_sum(k5_2)
-            sage: k._knotinfo_matching_list()   # optional - database_knotinfo
+            sage: k._knotinfo_matching_list()   # optional - database_knotinfo          # needs sage.libs.homfly
             ([<KnotInfo.K9_12: '9_12'>], False)
 
         """
@@ -3970,7 +3971,7 @@ class Link(SageObject):
             sage: Link([[1, 4, 2, 5], [3, 8, 4, 1], [5, 2, 6, 3],
             ....:       [6, 10, 7, 9], [10, 8, 9, 7]])
             Link with 2 components represented by 5 crossings
-            sage: _.get_knotinfo()
+            sage: _.get_knotinfo()                                                      # needs sage.libs.homfly
             Traceback (most recent call last):
             ...
             NotImplementedError: this (possibly non prime) link cannot be determined
