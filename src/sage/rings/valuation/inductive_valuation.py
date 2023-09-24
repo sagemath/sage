@@ -1272,7 +1272,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.number_field
+            sage: # needs sage.geometry.polyhedron sage.groups sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K1.<pi> = NumberField(x^3 - 2)
             sage: K.<alpha> = K1.galois_closure()
