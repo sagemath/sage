@@ -23,6 +23,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.composition import Composition
@@ -1523,8 +1524,7 @@ def RotheDiagram(w):
 
     N = w.size()
     winv = w.inverse()
-    from sage.misc.mrange import cartesian_product_iterator
-    cells = [c for c in cartesian_product_iterator((range(N), range(N)))
+    cells = [c for c in product(range(N), range(N))
              if c[0] + 1 < winv(c[1] + 1) and c[1] + 1 < w(c[0] + 1)]
 
     return NorthwestDiagram(cells, n_rows=N, n_cols=N, check=False)

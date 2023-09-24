@@ -1179,26 +1179,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         return [ self.teichmuller(ZZ(i)) for i in R if i != 0 ]
 
 
-def is_pAdicRing(R):
-    """
-    Return ``True`` if and only if ``R`` is a `p`-adic ring (not a
-    field).
-
-    EXAMPLES::
-
-        sage: is_pAdicRing(Zp(5))
-        doctest:warning...
-        DeprecationWarning: is_pAdicRing is deprecated; use isinstance(..., sage.rings.abc.pAdicRing) instead
-        See https://github.com/sagemath/sage/issues/32750 for details.
-        True
-        sage: is_pAdicRing(RR)                                                          # needs sage.rings.real_mpfr
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32750, "is_pAdicRing is deprecated; use isinstance(..., sage.rings.abc.pAdicRing) instead")
-    return isinstance(R, pAdicRingGeneric)
-
-
 class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
     def is_field(self, proof=True):
         """
@@ -1327,25 +1307,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
             (3 + O(3^21))*x + a + O(3^20)
         """
         return self._xgcd_univariate_polynomial(f, g)[0]
-
-
-def is_pAdicField(R):
-    """
-    Return ``True`` if and only if ``R`` is a `p`-adic field.
-
-    EXAMPLES::
-
-        sage: is_pAdicField(Zp(17))
-        doctest:warning...
-        DeprecationWarning: is_pAdicField is deprecated; use isinstance(..., sage.rings.abc.pAdicField) instead
-        See https://github.com/sagemath/sage/issues/32750 for details.
-        False
-        sage: is_pAdicField(Qp(17))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32750, "is_pAdicField is deprecated; use isinstance(..., sage.rings.abc.pAdicField) instead")
-    return isinstance(R, pAdicFieldGeneric)
 
 
 class pAdicFieldGeneric(pAdicGeneric, sage.rings.abc.pAdicField):

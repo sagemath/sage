@@ -294,7 +294,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             for i in self.index_set():
                 assert(Lambda[i].is_dominant())
                 for j in self.index_set():
-                    tester.assertEqual(Lambda[j].scalar(alphacheck[i]), (1 if i==j else 0))
+                    tester.assertEqual(Lambda[j].scalar(alphacheck[i]), (1 if i == j else 0))
 
             tester.assertTrue(self.rho().is_dominant())
             if self.root_system.is_finite() and self.root_system.is_irreducible():

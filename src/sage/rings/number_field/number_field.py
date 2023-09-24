@@ -1060,39 +1060,6 @@ def is_AbsoluteNumberField(x):
     return isinstance(x, NumberField_absolute)
 
 
-def is_QuadraticField(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of the quadratic *number* field type.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.NumberField_quadratic` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field import is_QuadraticField
-        sage: is_QuadraticField(QuadraticField(5,'a'))
-        doctest:warning...
-        DeprecationWarning: is_QuadraticField is deprecated;
-        use isinstance(..., sage.rings.abc.NumberField_quadratic instead
-        See https://github.com/sagemath/sage/issues/32660 for details.
-        True
-        sage: x = polygen(ZZ, 'x')
-        sage: is_QuadraticField(NumberField(x^2 - 5, 'b'))
-        True
-        sage: is_QuadraticField(NumberField(x^3 - 5, 'b'))
-        False
-
-    A quadratic field specially refers to a number field, not a finite
-    field::
-
-        sage: is_QuadraticField(GF(9,'a'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32660, 'is_QuadraticField is deprecated; use isinstance(..., sage.rings.abc.NumberField_quadratic instead')
-    return isinstance(x, NumberField_quadratic)
-
-
 class CyclotomicFieldFactory(UniqueFactory):
     r"""
     Return the `n`-th cyclotomic field, where n is a positive integer,
@@ -1253,40 +1220,6 @@ class CyclotomicFieldFactory(UniqueFactory):
 
 
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
-
-
-def is_CyclotomicField(x) -> bool:
-    """
-    Return ``True`` if x is a cyclotomic field, i.e., of the special
-    cyclotomic field class. This function does not return ``True`` for a
-    number field that just happens to be isomorphic to a cyclotomic
-    field.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.NumberField_cyclotomic` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field import is_CyclotomicField
-        sage: x = polygen(ZZ, 'x')
-        sage: is_CyclotomicField(NumberField(x^2 + 1,'zeta4'))
-        doctest:warning...
-        DeprecationWarning: is_CyclotomicField is deprecated;
-        use isinstance(..., sage.rings.abc.NumberField_cyclotomic instead
-        See https://github.com/sagemath/sage/issues/32660 for details.
-        False
-        sage: is_CyclotomicField(CyclotomicField(4))
-        True
-        sage: is_CyclotomicField(CyclotomicField(1))
-        True
-        sage: is_CyclotomicField(QQ)
-        False
-        sage: is_CyclotomicField(7)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32660, 'is_CyclotomicField is deprecated; use isinstance(..., sage.rings.abc.NumberField_cyclotomic instead')
-    return isinstance(x, NumberField_cyclotomic)
 
 
 from . import number_field_base
@@ -3520,29 +3453,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     H.append(chi)
         return H
 
-    def latex_variable_name(self, name=None):
-        """
-        Return the latex representation of the variable name for this
-        number field.
-
-        EXAMPLES::
-
-            sage: x = polygen(QQ, 'x')
-            sage: NumberField(x^2 + 3, 'a').latex_variable_name()
-            doctest:...: DeprecationWarning: This method is replaced by ...
-            See https://github.com/sagemath/sage/issues/30372 for details.
-            'a'
-            sage: NumberField(x^3 + 3, 'theta3').latex_variable_name()
-            '\\theta_{3}'
-            sage: CyclotomicField(5).latex_variable_name()
-            '\\zeta_{5}'
-        """
-        deprecation(30372, 'This method is replaced by the method latex_variable_names')
-        if name is None:
-            return self._latex_names[0]
-        else:
-            self._latex_names = (name,)
-
     def _repr_(self):
         """
         Return string representation of this number field.
@@ -5178,9 +5088,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             return gens, ords
         else:
             return gens
-
-    # For backwards compatibility:
-    selmer_group = deprecated_function_alias(31345, selmer_generators)
 
     def selmer_group_iterator(self, S, m, proof=True):
         r"""

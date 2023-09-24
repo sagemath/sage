@@ -629,7 +629,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         else:
             return sib(self.parent())(v)
 
-    def log(self, b=None, logarithm_exists=None):
+    def log(self, b=None):
         r"""
         Compute the discrete logarithm of this element to base `b`,
         that is,
@@ -759,11 +759,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         - Lorenz Panny (2021): speedups for composite moduli
         """
-
-        if logarithm_exists is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(32375, 'The "logarithm_exists" argument to .log() is no longer necessary and will be removed at some point.')
-
         if not self.is_unit():
             raise ValueError(f"logarithm of {self} is not defined since it is not a unit modulo {self.modulus()}")
 
