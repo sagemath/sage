@@ -1440,14 +1440,14 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([x^2 + y*z, 2*y*z, 3*x*y])
-            sage: X.global_height()
+            sage: X.global_height()                                                     # needs sage.libs.singular
             0.000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.global_height()  # long time
+            sage: X.global_height()  # long time                                        # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().global_height(prec)

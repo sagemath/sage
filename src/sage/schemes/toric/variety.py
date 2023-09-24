@@ -232,7 +232,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
     (False, True)
     sage: HH = P4_11133.cohomology_ring();  HH
     Rational cohomology ring of a 4-d CPR-Fano toric variety covered by 5 affine patches
-    sage: P4_11133.cohomology_basis()
+    sage: P4_11133.cohomology_basis()                                                   # needs sage.libs.singular
     (([1],), ([z4],), ([z4^2],), ([z4^3],), ([z4^4],))
 
 Every cone defines a torus orbit closure, and hence a (co)homology class::
@@ -2486,18 +2486,18 @@ class ToricVariety_field(AmbientSpace):
         EXAMPLES::
 
             sage: A2Z2 = Cone([(0,1), (2,1)])
-            sage: AffineToricVariety(A2Z2)._semigroup_ring()                            # needs fpylll
+            sage: AffineToricVariety(A2Z2)._semigroup_ring()                            # needs fpylll sage.libs.singular
             (Multivariate Polynomial Ring in z0, z1, z2 over Rational Field,
              Ideal (-z0*z1 + z2^2) of Multivariate Polynomial Ring in z0, z1, z2 over Rational Field,
              2-d cone in 2-d lattice M)
 
              sage: P2 = toric_varieties.P2()
              sage: cone = P2.fan().generating_cone(0)
-             sage: P2._semigroup_ring(cone)                                             # needs fpylll
+             sage: P2._semigroup_ring(cone)                                             # needs fpylll sage.libs.singular
              (Multivariate Polynomial Ring in z0, z1 over Rational Field,
               Ideal (0) of Multivariate Polynomial Ring in z0, z1 over Rational Field,
               2-d cone in 2-d lattice M)
-             sage: P2.change_ring(GF(101))._semigroup_ring(cone)                        # needs fpylll
+             sage: P2.change_ring(GF(101))._semigroup_ring(cone)                        # needs fpylll sage.libs.singular
              (Multivariate Polynomial Ring in z0, z1 over Finite Field of size 101,
               Ideal (0) of Multivariate Polynomial Ring in z0, z1 over Finite Field of size 101,
               2-d cone in 2-d lattice M)
@@ -2567,7 +2567,7 @@ class ToricVariety_field(AmbientSpace):
         A more interesting example::
 
             sage: A2Z2 = Cone([(0,1), (2,1)])
-            sage: AffineToricVariety(A2Z2).Spec(names='u,v,t')                          # needs fpylll
+            sage: AffineToricVariety(A2Z2).Spec(names='u,v,t')                          # needs fpylll sage.libs.singular
             Spectrum of Quotient of Multivariate Polynomial Ring
             in u, v, t over Rational Field by the ideal (-u*v + t^2)
         """
@@ -2601,10 +2601,10 @@ class ToricVariety_field(AmbientSpace):
 
             sage: cone = Cone([(0,1), (2,1)])
             sage: A2Z2 = AffineToricVariety(cone)
-            sage: A2Z2.affine_algebraic_patch()                                         # needs fpylll
+            sage: A2Z2.affine_algebraic_patch()                                         # needs fpylll sage.libs.singular
             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
               -z0*z1 + z2^2
-            sage: A2Z2.affine_algebraic_patch(Cone([(0,1)]), names='x, y, t')           # needs fpylll
+            sage: A2Z2.affine_algebraic_patch(Cone([(0,1)]), names='x, y, t')           # needs fpylll sage.libs.singular
             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
               1
         """
