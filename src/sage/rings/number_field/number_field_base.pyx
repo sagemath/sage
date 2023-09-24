@@ -5,6 +5,7 @@ Base class for all number fields
 
 TESTS::
 
+    sage: x = polygen(ZZ)
     sage: k = NumberField(x^2 + 1, 'i'); k == loads(dumps(k))
     True
 """
@@ -19,6 +20,7 @@ def is_NumberField(x):
     EXAMPLES::
 
         sage: from sage.rings.number_field.number_field_base import is_NumberField
+        sage: x = polygen(ZZ)
         sage: is_NumberField(NumberField(x^2 + 1, 'a'))
         doctest:...: DeprecationWarning: the function is_NumberField is deprecated; use
         isinstance(x, sage.rings.number_field.number_field_base.NumberField) instead
@@ -74,6 +76,7 @@ cdef class NumberField(Field):
 
         Pushout is implemented for number field embedded in ``AA``::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))
             sage: L.<b> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))
             sage: cm = sage.structure.element.get_coercion_model()
@@ -151,6 +154,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.ring_of_integers()
             Gaussian Integers in Number Field in a with defining polynomial x^2 + 1
@@ -163,6 +167,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 - 2,'a').OK()
             Maximal Order in Number Field in a with defining polynomial x^3 - 2
         """
@@ -175,6 +180,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 - 2,'b').maximal_order()
             Maximal Order in Number Field in b with defining polynomial x^3 - 2
         """
@@ -186,11 +192,12 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^3+2)
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^3 + 2)
             sage: K.is_absolute()
             True
             sage: y = polygen(K)
-            sage: L.<b> = NumberField(y^2+1)
+            sage: L.<b> = NumberField(y^2 + 1)
             sage: L.is_absolute()
             False
             sage: QQ.is_absolute()
@@ -205,6 +212,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 - 2, 'a').signature()
             (1, 1)
         """
@@ -216,6 +224,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 + 9, 'a').degree()
             3
         """
@@ -227,6 +236,7 @@ cdef class NumberField(Field):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ)
             sage: NumberField(x^3 + 9, 'a').discriminant()
             -243
         """
@@ -253,6 +263,7 @@ cdef class NumberField(Field):
         The Minkowski bound for `\QQ[i]` tells us that the class
         number is 1::
 
+            sage: # needs sage.symbolic
             sage: K = QQ[I]
             sage: B = K.minkowski_bound(); B
             4/pi
@@ -261,6 +272,7 @@ cdef class NumberField(Field):
 
         We compute the Minkowski bound for `\QQ[\sqrt[3]{2}]`::
 
+            sage: # needs sage.symbolic
             sage: K = QQ[2^(1/3)]
             sage: B = K.minkowski_bound(); B
             16/3*sqrt(3)/pi
@@ -272,6 +284,7 @@ cdef class NumberField(Field):
         We compute the Minkowski bound for `\QQ[\sqrt{10}]`, which has class
         number 2::
 
+            sage: # needs sage.symbolic
             sage: K = QQ[sqrt(10)]
             sage: B = K.minkowski_bound(); B
             sqrt(10)
@@ -282,7 +295,9 @@ cdef class NumberField(Field):
 
         We compute the Minkowski bound for `\QQ[\sqrt{2}+\sqrt{3}]`::
 
-            sage: K.<y,z> = NumberField([x^2-2, x^2-3])
+            sage: # needs sage.symbolic
+            sage: x = polygen(ZZ)
+            sage: K.<y,z> = NumberField([x^2 - 2, x^2 - 3])
             sage: L.<w> = QQ[sqrt(2) + sqrt(3)]
             sage: B = K.minkowski_bound(); B
             9/2
@@ -328,6 +343,7 @@ cdef class NumberField(Field):
         We compute both the Minkowski and Bach bounds for a quadratic
         field, where the Minkowski bound is much better::
 
+            sage: # needs sage.symbolic
             sage: K = QQ[sqrt(5)]
             sage: K.minkowski_bound()
             1/2*sqrt(5)
@@ -341,6 +357,7 @@ cdef class NumberField(Field):
         We compute both the Minkowski and Bach bounds for a bigger
         degree field, where the Bach bound is much better::
 
+            sage: # needs sage.symbolic
             sage: K = CyclotomicField(37)
             sage: K.minkowski_bound().n()
             7.50857335698544e14
@@ -349,7 +366,7 @@ cdef class NumberField(Field):
 
         The bound of course also works for the rational numbers::
 
-            sage: QQ.minkowski_bound()
+            sage: QQ.bach_bound()                                                       # needs sage.symbolic
             1
         """
         ans = 12 * abs(self.discriminant()).log()**2
@@ -369,6 +386,7 @@ cdef class NumberField(Field):
 
         TESTS::
 
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^3 - x^2 - x - 1, embedding=1)
             sage: K._get_embedding_approx(0)   # indirect doctest
             1.839286755214161?
@@ -412,7 +430,6 @@ cdef class NumberField(Field):
             0.33473414194335268707509896247329?
             sage: K._get_embedding_approx(1).str(style='brackets')
             '[0.334734141943352687075098962473280 .. 0.334734141943352687075098962473287]'
-
 
             sage: K._get_embedding_approx(2).prec()
             212

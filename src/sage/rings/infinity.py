@@ -1773,17 +1773,15 @@ def test_comparison(ring):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_comparison
-        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, RIF]                       # needs sage.rings.real_mpfr
-        sage: for R in rings:                                                           # needs sage.rings.real_mpfr
+        sage: rings = [ZZ, QQ, RDF]
+        sage: rings += [RR, RealField(200)]                                             # needs sage.rings.real_mpfr
+        sage: rings += [RLF, RIF]                                                       # needs sage.rings.real_interval_field
+        sage: for R in rings:
         ....:     print('testing {}'.format(R))
         ....:     test_comparison(R)
         testing Integer Ring
         testing Rational Field
-        testing Real Field with 53 bits of precision
-        testing Real Field with 200 bits of precision
-        testing Real Double Field
-        testing Real Lazy Field
-        testing Real Interval Field with 53 bits of precision
+        testing Real Double Field...
         sage: test_comparison(AA)                                                       # needs sage.rings.number_field
 
     Comparison with number fields does not work::
@@ -1857,7 +1855,7 @@ def test_signed_infinity(pos_inf):
         sage: from sage.rings.infinity import test_signed_infinity
         sage: test_signed_infinity(oo)
         sage: test_signed_infinity(float('+inf'))
-        sage: test_signed_infinity(RLF(oo))
+        sage: test_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """

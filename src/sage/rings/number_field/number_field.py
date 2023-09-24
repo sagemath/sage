@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.linbox
 r"""
 Number Fields
 
@@ -127,7 +127,7 @@ from sage.rings.finite_rings.integer_mod import mod
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import is_odd, lift
-
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.categories.number_fields import NumberFields
@@ -161,6 +161,10 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
+
+lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
+
 
 _NumberFields = NumberFields()
 
@@ -199,7 +203,7 @@ def is_NumberFieldHomsetCodomain(codomain):
     Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
     not accepted as number field homset codomains::
 
-        sage: is_NumberFieldHomsetCodomain(gap.Rationals)
+        sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
     from sage.categories.fields import Fields
@@ -400,7 +404,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)
+        sage: L = Qp(5)                                                                 # needs sage.rings.padics
         sage: f = polygen(L)^3 - 2
         sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
         sage: a + L(1)
@@ -781,7 +785,7 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
 
     The Galois group is a product of 3 groups of order 2::
 
-        sage: k.absolute_field(names='c').galois_group()
+        sage: k.absolute_field(names='c').galois_group()                                # needs sage.groups
         Galois group 8T3 (2[x]2[x]2) with order 8 of x^8 + 36*x^6 + 302*x^4 + 564*x^2 + 121
 
     Repeatedly calling base_field allows us to descend the internally
@@ -1204,7 +1208,7 @@ class CyclotomicFieldFactory(UniqueFactory):
 
         TESTS::
 
-            sage: CyclotomicField.create_object(None, (0, None, True))
+            sage: CyclotomicField.create_object(None, (0, None, True))                  # needs sage.libs.gap
             Universal Cyclotomic Field
         """
         n, names, embedding = key
@@ -1329,7 +1333,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     This example was suggested on sage-nt; see :trac:`18942`::
 
-        sage: G = DirichletGroup(80)
+        sage: G = DirichletGroup(80)                                                    # needs sage.modular
         sage: for chi in G:             # long time
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
@@ -1716,7 +1720,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Check that :trac:`30961` is fixed::
 
-            sage: QQi = i.parent()
+            sage: QQi = i.parent()                                                      # needs sage.symbolic
             sage: x = SR.var('x')                                                       # needs sage.symbolic
             sage: QQi((x, x))                                                           # needs sage.symbolic
             Traceback (most recent call last):
@@ -9334,6 +9338,7 @@ class NumberField_absolute(NumberField_generic):
 
         We embed a cubic field in the complex numbers::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.embeddings(CC)
             [
@@ -11349,14 +11354,11 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 return NumberField_absolute._element_constructor_(self, x)
         elif isinstance(x, pari_gen):
             return NumberField_absolute._element_constructor_(self, x, check=check)
-        elif isinstance(x, (sage.libs.gap.element.GapElement, GapElement)):
+        elif isinstance(x, (LibGapElement, GapElement)):
             return self._coerce_from_gap(x)
         elif isinstance(x, str):
             return self._convert_from_str(x)
-
-        # late import because of speed
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicFieldElement
-        if isinstance(x, UniversalCyclotomicFieldElement):
+        elif isinstance(x, UniversalCyclotomicFieldElement):
             return x.to_cyclotomic_field(self)
         else:
             return self._convert_non_number_field_element(x)
@@ -12724,12 +12726,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12741,7 +12743,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
         [10]
 
     """

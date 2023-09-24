@@ -4,6 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
+# sage.doctest: needs sage.libs.linbox
 """
 Number field elements (implementation using NTL)
 
@@ -488,13 +489,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: (a**2 - a + 1)._gap_init_()
             '\\$sage4^2 - \\$sage4 + 1'
             sage: gap(_)
             a^2-a+1
-
             sage: F = CyclotomicField(8)
             sage: F.gen()
             zeta8
@@ -512,7 +513,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Check that :trac:`15276` is fixed::
 
-            sage: for n in range(2,20):
+            sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
             ....:     assert K(gap(K.gen())) == K.gen(), "n = {}".format(n)
             ....:     assert K(gap(K.one())) == K.one(), "n = {}".format(n)
@@ -543,15 +544,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
-            sage: F.gen()._libgap_()                                                    # needs sage.libs.gap
+            sage: F.gen()._libgap_()
             E(8)
-            sage: libgap(F.gen())   # syntactic sugar                                   # needs sage.libs.gap
+            sage: libgap(F.gen())   # syntactic sugar
             E(8)
-            sage: E8 = F.gen()                                                          # needs sage.libs.gap
-            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)                                      # needs sage.libs.gap
+            sage: E8 = F.gen()
+            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)
             E(8)+3/2*E(8)^2-100*E(8)^3
-            sage: type(_)                                                               # needs sage.libs.gap
+            sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
         Check that :trac:`15276` is fixed::
@@ -582,15 +584,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
+            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: K.zero()._pari_polynomial('x')                                        # needs sage.libs.pari
+            sage: K.zero()._pari_polynomial('x')
             0
-            sage: K.one()._pari_polynomial()                                            # needs sage.libs.pari
+            sage: K.one()._pari_polynomial()
             1
-            sage: (a + 1)._pari_polynomial()                                            # needs sage.libs.pari
+            sage: (a + 1)._pari_polynomial()
             y + 1
-            sage: a._pari_polynomial('c')                                               # needs sage.libs.pari
+            sage: a._pari_polynomial('c')
             c
         """
         f = pari(self._coefficients()).Polrev()
@@ -613,14 +616,15 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
-            sage: K(1).__pari__()                                                       # needs sage.libs.pari
+            sage: K(1).__pari__()
             Mod(1, y^3 + 2)
-            sage: (a + 2).__pari__()                                                    # needs sage.libs.pari
+            sage: (a + 2).__pari__()
             Mod(y + 2, y^3 + 2)
             sage: L.<b> = K.extension(x^2 + 2)
-            sage: (b + a).__pari__()                                                    # needs sage.libs.pari
+            sage: (b + a).__pari__()
             Mod(24/101*y^5 - 9/101*y^4 + 160/101*y^3 - 156/101*y^2 + 397/101*y + 364/101, y^6 + 6*y^4 - 4*y^3 + 12*y^2 + 24*y + 12)
 
         ::
@@ -1624,12 +1628,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L.<b> = NumberField(X^4 + a + 2)
             sage: (a/4).is_norm(L)
             True
-            sage: (a/2).is_norm(L)
+            sage: (a/2).is_norm(L)                                                      # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: is_norm is not implemented unconditionally
             for norms from non-Galois number fields
-            sage: (a/2).is_norm(L, proof=False)
+            sage: (a/2).is_norm(L, proof=False)                                         # needs sage.groups
             False
 
             sage: K.<a> = NumberField(x^3 + x + 1)
@@ -3055,13 +3059,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: c = a.galois_conjugates(K); c
             [a]
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: c = a.galois_conjugates(K.galois_closure('a1')); c
+            sage: c = a.galois_conjugates(K.galois_closure('a1')); c                    # needs sage.groups
             [1/18*a1^4, -1/36*a1^4 + 1/2*a1, -1/36*a1^4 - 1/2*a1]
             sage: c[0]^3
             2
             sage: parent(c[0])
             Number Field in a1 with defining polynomial x^6 + 108
-            sage: parent(c[0]).is_galois()
+            sage: parent(c[0]).is_galois()                                              # needs sage.groups
             True
 
         There is only one Galois conjugate of `\sqrt[3]{2}` in
@@ -4475,7 +4479,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L.<b> = K.extension(x^2 + 1)
             sage: K(7).residue_symbol(K.ideal(11),2)
             -1
-            sage: K(7).residue_symbol(L.ideal(11),2)
+            sage: K(7).residue_symbol(L.ideal(11),2)                                    # needs sage.libs.gap
             1
 
         Cubic Residue::

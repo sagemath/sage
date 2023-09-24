@@ -157,7 +157,7 @@ quadratic field::
 
 Nevertheless, the tail is preserved under invertible integer homographies::
 
-    sage: # needs sage.rings.number_field
+    sage: # needs sage.modular sage.rings.number_field
     sage: apply_homography =  lambda m,z: (m[0,0]*z + m[0,1]) / (m[1,0]*z + m[1,1])
     sage: m1 = SL2Z([60,13,83,18])
     sage: m2 = SL2Z([27,80,28,83])

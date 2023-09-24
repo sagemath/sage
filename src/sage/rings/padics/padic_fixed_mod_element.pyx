@@ -169,7 +169,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(7,4); a = R(8); a.lift() # indirect doctest
+            sage: R = ZpFM(7,4); a = R(8); a.lift()  # indirect doctest
             8
         """
         cdef Integer ans = PY_NEW(Integer)
@@ -183,7 +183,7 @@ cdef class pAdicFixedModElement(FMElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777)) #indirect doctest
+            sage: pari(R(1777))  #indirect doctest                                      # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
         """
         return self._to_gen()
@@ -194,13 +194,13 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(5, 10); a = R(17); pari(a) # indirect doctest
+            sage: R = ZpFM(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0)).debug()
+            sage: pari(R(0)).debug()                                                    # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=10):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
@@ -542,7 +542,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R.<w> = Zq(7^2,5)
+            sage: R.<w> = Zq(7^2,5)                                                     # needs sage.libs.ntl
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
