@@ -728,8 +728,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)                                 # needs sage.rings.number_field
-            sage: Q = P([QQbar(sqrt(3)), QQbar(sqrt(-2)), 1])                           # needs sage.rings.number_field
-            sage: Q.global_height()                                                     # needs sage.rings.number_field
+            sage: Q = P([QQbar(sqrt(3)), QQbar(sqrt(-2)), 1])                           # needs sage.rings.number_field sage.symbolic
+            sage: Q.global_height()                                                     # needs sage.rings.number_field sage.symbolic
             0.549306144334055
 
         ::

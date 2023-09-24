@@ -1282,7 +1282,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: K = QuadraticField(-3)
             sage: P.<x,y,z,w,t,u> = ProjectiveSpace(K, 5)
             sage: X = P.subscheme([x*y - z^2 - K.0*t^2, t*w*x + y*z^2 - u^3])
-            sage: X.is_irreducible()
+            sage: X.is_irreducible()                                                    # needs sage.libs.singular
             True
 
         ::
@@ -1775,7 +1775,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: K.<v> = NumberField(u^2 + 3)
             sage: A.<x,y> = ProjectiveSpace(K, 1)
             sage: X = A.subscheme(x^2 - y^2)
-            sage: X.rational_points(bound=3)
+            sage: X.rational_points(bound=3)                                            # needs sage.libs.singular
             [(-1 : 1), (1 : 1)]
 
         One can enumerate points up to a given bound on a projective scheme
