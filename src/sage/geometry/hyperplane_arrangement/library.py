@@ -275,10 +275,11 @@ class HyperplaneArrangementLibrary():
         If the Cartan type is not crystallographic, the Coxeter arrangement
         is not implemented yet::
 
-            sage: hyperplane_arrangements.Coxeter("H3")
+            sage: hyperplane_arrangements.Coxeter("H3")                                 # needs sage.libs.gap
             Traceback (most recent call last):
             ...
-            NotImplementedError: Coxeter arrangements are not implemented for non crystallographic Cartan types
+            NotImplementedError: Coxeter arrangements are not implemented
+            for non crystallographic Cartan types
 
         The characteristic polynomial is pre-computed using the results
         of Terao, see [Ath2000]_::

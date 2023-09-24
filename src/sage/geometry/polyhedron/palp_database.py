@@ -6,7 +6,7 @@ Access the PALP database(s) of reflexive lattice polytopes
 EXAMPLES::
 
     sage: from sage.geometry.polyhedron.palp_database import PALPreader
-    sage: for lp in PALPreader(2):                                                      # needs fpylll sage.graphs
+    sage: for lp in PALPreader(2):                                                      # needs fpylll sage.graphs sage.libs.singular
     ....:     cone = Cone([(1,r[0],r[1]) for r in lp.vertices()])
     ....:     fan = Fan([cone])
     ....:     X = ToricVariety(fan)

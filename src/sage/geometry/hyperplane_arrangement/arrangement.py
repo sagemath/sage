@@ -1098,6 +1098,7 @@ class HyperplaneArrangementElement(Element):
 
         We compute types `H_3` and `F_4` in Table 1 of [BHS2023]_::
 
+            sage: # needs sage.libs.gap
             sage: W = CoxeterGroup(['H',3], implementation="matrix")
             sage: A = HyperplaneArrangements(W.base_ring(), tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])

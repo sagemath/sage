@@ -897,6 +897,7 @@ class Polyhedron_base4(Polyhedron_base3):
         The ``output="matrixlist"`` can be used over fields without a
         complete implementation of matrix groups::
 
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron(); P
             A 3-dimensional polyhedron in (Number Field in sqrt5 with defining
              polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3
@@ -910,7 +911,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
             sage: P = Polyhedron(vertices=[(1/3,0,0,1),(0,1/4,0,1),(0,0,1/5,1)],
             ....:                base_ring=RDF)
-            sage: P.restricted_automorphism_group()
+            sage: P.restricted_automorphism_group()                                     # needs sage.groups
             Permutation Group with generators [(2,3), (1,2)]
             sage: len(P.restricted_automorphism_group(output="matrixlist"))
             6
