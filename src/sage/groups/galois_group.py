@@ -18,7 +18,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 
-lazy_import('sage.groups.galois_group_perm', 'GaloisGroup_perm')
+lazy_import('sage.groups.galois_group_perm', ['GaloisGroup_perm', 'GaloisSubgroup_perm'])
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 
 
