@@ -101,15 +101,15 @@ def generating_function_of_integral_points(polyhedron, split=False,
     - ``algorithm`` -- (default:``"omega"``) The algorithm which is used
       to compute the multivariate generating function. Options are:
 
-      * "omega" -- Run the algorithm via
-      :func:`MacMahon's Omega operator <sage.rings.polynomial.omega.MacMahonOmega>`
+        * "omega" -- Run the algorithm via
+          :func:`MacMahon's Omega operator <sage.rings.polynomial.omega.MacMahonOmega>`.
 
-      * "latte" -- Run the corresponding algorithm of ``LattE``.
-      This algorithm requires LattE (Lattice point Enumeration) Integrale.
-      To install LattE Integrale, type :code:`sage -i latte_int` in the terminal.
+        * "latte" -- Run the corresponding algorithm of ``LattE``.
+          This algorithm requires LattE (Lattice point Enumeration) Integrale.
+          To install LattE Integrale, type :code:`sage -i latte_int` in the terminal.
 
-      * "naive" -- Only works for bounded polyhedrons. Collect the monomials
-      corresponding to each integral points. (Not implemented yet)
+        * "naive" -- Only works for bounded polyhedrons. Collect the monomials
+          corresponding to each integral points.
 
     - ``Factorization_sort`` (default: ``False``) and
       ``Factorization_simplify`` (default: ``True``) -- booleans
