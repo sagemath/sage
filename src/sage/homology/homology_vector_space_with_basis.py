@@ -36,7 +36,6 @@ from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.sets.family import Family
 
 try:
@@ -679,10 +678,15 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
                 True
                 sage: x4 * (Sq(2) * Sq(1)) == (x4 * Sq(2)) * Sq(1)
                 True
+                sage: 1 * x4
+                h_{4,0}
+                sage: x4 * 0
+                0
             """
             # Handle field elements first.
-            if a in self.base_ring():
-                return a * self
+            ret = CombinatorialFreeModule.Element._acted_upon_(self, a, self_on_left)
+            if ret is not None:  # did the scalar action
+                return ret
             m = self.degree()
             n = a.degree()
             if m <= n:
@@ -1245,10 +1249,15 @@ class CohomologyRing_mod2(CohomologyRing):
                 True
                 sage: x * (Sq(1) * Sq(2)) == (x * Sq(1)) * Sq(2)
                 True
+                sage: x * 1
+                h^{2,0}
+                sage: 0 * x
+                0
             """
             # Handle field elements first.
-            if a in self.base_ring():
-                return self.map_coefficients(lambda c: c*a)
+            ret = CombinatorialFreeModule.Element._acted_upon_(self, a, self_on_left)
+            if ret is not None:  # did the scalar action
+                return ret
             if self_on_left: # i.e., module element on left
                 a = a.antipode()
             b = a.change_basis('adem')
