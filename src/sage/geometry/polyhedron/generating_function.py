@@ -377,6 +377,8 @@ def generating_function_of_integral_points(polyhedron, split=False,
         y0^5 + y0^4 + y0^3 + y0^2 + y0
         sage: P.generating_function_of_integral_points(algorithm="latte", result_as_tuple=True)
         (y0 * (-y0 + 1)^-1, y0^5 * (1 - y0^-1)^-1)
+        sage: P.generating_function_of_integral_points(algorithm="naive")
+        y0^5 + y0^4 + y0^3 + y0^2 + y0
 
     .. SEEALSO::
 
@@ -515,16 +517,20 @@ def generating_function_of_integral_points(polyhedron, split=False,
         polyhedra with negative coordinates
 
         sage: generating_function_of_integral_points(
-        ....:     Polyhedron(vertices=[[-2],[5]]),
+        ....:     Polyhedron(vertices=[(-2, 0), (5, 0)]),
         ....:     sort_factors=True)
         Traceback (most recent call last):
         ...
         NotImplementedError: cannot compute the generating function of
         polyhedra with negative coordinates
         sage: generating_function_of_integral_points(
-        ....:     Polyhedron(vertices=[[-2],[5]]),
+        ....:     Polyhedron(vertices=[(-2, 0), (5, 0)]),
         ....:     sort_factors=True, algorithm="latte", result_as_tuple=True)
         ((y0^-2) * (-y0 + 1)^-1, y0^5 * (1 - y0^-1)^-1)
+        sage: generating_function_of_integral_points(
+        ....:     Polyhedron(vertices=[(-2, 0), (5, 0)]),
+        ....:     sort_factors=True, algorithm="naive")
+        y0^5 + y0^4 + y0^3 + y0^2 + y0 + 1 + y0^-1 + y0^-2
 
     The outputs of different algorithm options might be different.
     But the sum of the output from ``"latte"`` is the same as the output from ``"omega"``::
@@ -659,7 +665,17 @@ def generating_function_of_integral_points(polyhedron, split=False,
             return result[0]
     elif algorithm == "naive":
         if polyhedron.is_compact():
-            raise NotImplementedError
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+            from sage.structure.factorization import Factorization
+
+            indices = range(polyhedron.ambient_dim())
+
+            B = LaurentPolynomialRing(ZZ,
+                                    tuple(name + str(k) for k in indices),
+                                    len(indices))
+            result = sum(B.monomial(*r) for r in polyhedron.integral_points())
+            return result
         else:
             raise ValueError("Polyhedron must be bounded for the naive algorithm")
     elif algorithm != "omega":
