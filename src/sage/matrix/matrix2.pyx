@@ -8078,11 +8078,7 @@ cdef class Matrix(Matrix1):
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
-<<<<<<< HEAD
-        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm))
-=======
         _ = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm))
->>>>>>> develop
         self.check_mutability()
         cdef Matrix A
 
