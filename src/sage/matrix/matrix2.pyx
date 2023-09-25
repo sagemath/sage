@@ -541,7 +541,7 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: matrix equation has no solutions
 
-        A ValueError is raised if the input is invalid::
+        A :class:`ValueError` is raised if the input is invalid::
 
             sage: A = matrix(QQ,4,2, [0, -1, 1, 0, -2, 2, 1, 0])
             sage: B = matrix(QQ,2,2, [1, 0, 1, -1])
@@ -2191,7 +2191,7 @@ cdef class Matrix(Matrix1):
         Compute the determinant of the upper-left level x level submatrix
         of self. Does not handle degenerate cases, level MUST be >= 2
         """
-        cdef Py_ssize_t n, i
+        cdef Py_ssize_t i
         if level == 2:
             return self.get_unsafe(0, 0) * self.get_unsafe(1, 1) - self.get_unsafe(0, 1) * self.get_unsafe(1, 0)
         else:
@@ -3323,8 +3323,7 @@ cdef class Matrix(Matrix1):
             3
         """
         if self.nrows() == 0 or self.ncols() == 0:
-            return ZZ(1)
-        R = self.base_ring()
+            return ZZ.one()
         x = self.list()
         try:
             d = x[0].denominator()
@@ -3913,7 +3912,7 @@ cdef class Matrix(Matrix1):
         """
         tm = verbose("computing right kernel matrix over a domain for %sx%s matrix"
                      % (self.nrows(), self.ncols()), level=1)
-        d, u, v = self.smith_form()
+        d, _, v = self.smith_form()
         basis = []
         cdef Py_ssize_t i, nrows = self._nrows
         for i in range(self._ncols):
@@ -6110,7 +6109,7 @@ cdef class Matrix(Matrix1):
         # subrings of fields of which an algebraic closure is implemented.
         if format is None:
             try:
-                F = self.base_ring().fraction_field().algebraic_closure()
+                self.base_ring().fraction_field().algebraic_closure()
                 return 'all'
             except (NotImplementedError, AttributeError):
                 return 'galois'
@@ -6934,7 +6933,6 @@ cdef class Matrix(Matrix1):
             from warnings import warn
             warn("Using generic algorithm for an inexact ring, which may result in garbage from numerical precision issues.")
 
-        V = []
         from sage.categories.homset import hom
         eigenspaces = self.eigenspaces_left(format='galois', algebraic_multiplicity=True)
         evec_list = []
@@ -8080,7 +8078,11 @@ cdef class Matrix(Matrix1):
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
+<<<<<<< HEAD
         tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm))
+=======
+        _ = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm))
+>>>>>>> develop
         self.check_mutability()
         cdef Matrix A
 
@@ -8379,7 +8381,6 @@ cdef class Matrix(Matrix1):
         """
         if subdivide not in [True, False]:
             raise TypeError("subdivide must be True or False, not %s" % subdivide)
-        R = self.base_ring()
         ident = self.matrix_space(self.nrows(), self.nrows()).one()
         E = self.augment(ident)
         extended = E.echelon_form(**kwds)
@@ -12239,7 +12240,7 @@ cdef class Matrix(Matrix1):
         Returns a pair (F, C) such that the rows of C form a symplectic
         basis for self and F = C \* self \* C.transpose().
 
-        Raises a ValueError if not over a field, or self is not
+        Raises a :class:`ValueError` if not over a field, or self is not
         anti-symmetric, or self is not alternating.
 
         Anti-symmetric means that `M = -M^t`. Alternating means
@@ -15411,7 +15412,7 @@ cdef class Matrix(Matrix1):
         if p == 2:
             A = self.change_ring(CDF)
             A = A.conjugate().transpose() * A
-            U, S, V = A.SVD()
+            S = A.SVD()[1]
             return max(S.list()).real().sqrt()
 
         A = self.apply_map(abs, R=RDF)
@@ -15902,8 +15903,7 @@ cdef class Matrix(Matrix1):
             dd, uu, vv = mm.smith_form(transformation=True)
         else:
             dd = mm.smith_form(transformation=False)
-        mone = self.new_matrix(1, 1, [1])
-        d = dd.new_matrix(1, 1, [t[0, 0]]).block_sum(dd)
+        d = dd.new_matrix(1,1,[t[0,0]]).block_sum(dd)
         if transformation:
             u = uu.new_matrix(1, 1, [1]).block_sum(uu) * u
             v = v * vv.new_matrix(1, 1, [1]).block_sum(vv)
@@ -16097,18 +16097,17 @@ cdef class Matrix(Matrix1):
             sage: U * A == H
             True
         """
-        left, H, pivots = self._echelon_form_PID()
+        left, H, _ = self._echelon_form_PID()
         if not include_zero_rows:
             i = H.nrows() - 1
             while H.row(i) == 0:
                 i -= 1
-            H = H[:i+1]
+            H = H[:i + 1]
             if transformation:
-                left = left[:i+1]
+                left = left[:i + 1]
         if transformation:
             return H, left
-        else:
-            return H
+        return H
 
     def _echelon_form_PID(self):
         r"""

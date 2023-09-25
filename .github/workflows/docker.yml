@@ -21,7 +21,6 @@ on:
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
-           "ubuntu-kinetic",
            "ubuntu-lunar",
            "ubuntu-mantic",
            "debian-buster-gcc_spkg",
