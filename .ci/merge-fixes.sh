@@ -1,6 +1,7 @@
 #!/bin/sh
 # Merge open PRs from sagemath/sage labeled "blocker".
-GH="gh -R sagemath/sage"
+REPO="sagemath/sage"
+GH="gh -R $REPO"
 PRs="$($GH pr list --label "p: blocker / 1" --json number --jq '.[].number')"
 if [ -z "$PRs" ]; then
     echo 'Nothing to do: Found no open PRs with "blocker" status.'
@@ -11,12 +12,13 @@ else
     export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
     export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
     git commit -q -m "Uncommitted changes" --no-allow-empty -a
-    git tag -f test_head
     for a in $PRs; do
-        echo "::group::Merging PR #$a"
-        $GH pr checkout $a
+        echo "::group::Merging PR https://github.com/$REPO/pull/$a"
+        git tag -f test_head
+        $GH pr checkout -b pr-$a $a
+        git fetch --unshallow --all
         git checkout -q test_head
-        if git merge --no-edit -q FETCH_HEAD; then
+        if git merge --no-edit -q pr-$a; then
             echo "::endgroup::"
             echo "Merged #$a"
         else
@@ -25,4 +27,5 @@ else
             git reset --hard
         fi
     done
+    git log test_head..HEAD
 fi
