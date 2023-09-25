@@ -1651,6 +1651,15 @@ class SageOutputChecker(doctest.OutputChecker):
             pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
             got = pythran_numpy_warning_regex.sub('', got)
             did_fixup = True
+
+        if "duplicate" in got:
+            # New warnings as of Sept '23, OS X 13.6, new command-line tools.
+            dup_rpath_regex = re.compile("ld: warning: duplicate -rpath .* ignored")
+            dup_lib_regex = re.compile("ld: warning: ignoring duplicate libraries: .*")
+            got = dup_rpath_regex.sub('', got)
+            got = dup_lib_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):
