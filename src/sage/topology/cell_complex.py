@@ -47,7 +47,6 @@ by developers producing new classes, not casual users.
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.abstract_method import abstract_method
 
 
@@ -866,10 +865,12 @@ class GenericCellComplex(SageObject):
             [h^{3,0}]
         """
         from sage.homology.homology_vector_space_with_basis import \
-            HomologyVectorSpaceWithBasis, HomologyVectorSpaceWithBasis_mod2
+            HomologyVectorSpaceWithBasis, HomologyVectorSpaceWithBasis_mod2, \
+            is_GF2
+
         if cohomology:
             return self.cohomology_ring(base_ring)
-        if base_ring == GF(2):
+        if is_GF2(base_ring):
             return HomologyVectorSpaceWithBasis_mod2(base_ring, self)
         return HomologyVectorSpaceWithBasis(base_ring, self, cohomology)
 
@@ -977,8 +978,10 @@ class GenericCellComplex(SageObject):
             Cohomology ring of Simplicial complex with 9 vertices and
              18 facets over Rational Field
         """
-        from sage.homology.homology_vector_space_with_basis import CohomologyRing, CohomologyRing_mod2
-        if base_ring == GF(2):
+        from sage.homology.homology_vector_space_with_basis import CohomologyRing, \
+            CohomologyRing_mod2, is_GF2
+
+        if is_GF2(base_ring):
             return CohomologyRing_mod2(base_ring, self)
         return CohomologyRing(base_ring, self)
 

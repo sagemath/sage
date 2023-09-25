@@ -410,7 +410,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             sage: coh.dual() is hom
             True
         """
-        if self.base_ring() == GF(2):
+        if is_GF2(self.base_ring()):
             if self._cohomology:
                 return HomologyVectorSpaceWithBasis_mod2(self.base_ring(),
                                                          self.complex())
@@ -590,7 +590,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
             sage: H = simplicial_complexes.Sphere(3).homology_with_basis(GF(2))
             sage: TestSuite(H).run()
         """
-        if base_ring != GF(2):
+        if not is_GF2(base_ring):
             raise ValueError
         category = Modules(base_ring).WithBasis().Graded().FiniteDimensional().or_subcategory(category)
         category = Category.join((category,
@@ -641,7 +641,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
 
             .. MATH::
 
-                (f \cdot a) (x) = f (a \cdot x)
+                (f \cdot a) (x) = f (a \cdot x).
 
             So given `f` (a.k.a. ``self``) and `a`, we compute `f (a
             \cdot x)` for all basis elements `x` in `H^{m-n}`,
@@ -1015,7 +1015,7 @@ class CohomologyRing_mod2(CohomologyRing):
             sage: H = RP2.cohomology_ring(GF(2))
             sage: TestSuite(H).run()
         """
-        if base_ring != GF(2):
+        if not is_GF2(base_ring):
             raise ValueError("the base ring must be GF(2)")
         category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         category = Category.join((category,
@@ -1105,11 +1105,12 @@ class CohomologyRing_mod2(CohomologyRing):
                 P = scomplex.cohomology_ring(self.base_ring())
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
+                print(scomplex, isinstance(scomplex, SimplicialComplex))
                 raise NotImplementedError('Steenrod squares are not implemented for '
                                           'this type of cell complex')
             scomplex = P.complex()
             base_ring = P.base_ring()
-            if base_ring.characteristic() != 2:
+            if not is_GF2(base_ring):
                 # This should never happen: the class should only be
                 # instantiated in characteristic 2.
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
@@ -1428,3 +1429,19 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
         return [[S_k]]
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
             for l in sum_indices(k-1, i_k, S_k)]
+
+def is_GF2(R):
+    """
+    Return ``True`` iff ``R`` is isomorphic to the field GF(2).
+
+    EXAMPLES::
+
+        sage: from sage.homology.homology_vector_space_with_basis import is_GF2
+        sage: is_GF2(GF(2))
+        True
+        sage: is_GF2(GF(2, impl='ntl'))
+        True
+        sage: is_GF2(GF(3))
+        False
+    """
+    return 2 == R.cardinality() == R.characteristic()
