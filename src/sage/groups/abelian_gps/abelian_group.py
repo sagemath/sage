@@ -201,6 +201,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.arith.functions import lcm
 from sage.arith.misc import divisors, gcd
@@ -211,7 +212,7 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-from sage.misc.mrange import cartesian_product_iterator, mrange
+from sage.misc.mrange import mrange
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
@@ -1498,7 +1499,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
                 # H = the subgroup of *index* H.
                 its = [range(0, H, H // gcd(H, G.gen(i).order()))
                        for i in range(ngens)]
-                for f in cartesian_product_iterator(its):
+                for f in product(*its):
                     verbose("using hom from G to C_%s sending gens to %s" % (H, f))
                     new_sub = []
                     for a in range(ngens):
