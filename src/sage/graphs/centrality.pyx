@@ -119,8 +119,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
     """
     if exact:
         return centrality_betweenness_C(G, <mpq_t> 0, normalize=normalize)
-    else:
-        return centrality_betweenness_C(G, <double>0, normalize=normalize)
+    return centrality_betweenness_C(G, <double>0, normalize=normalize)
 
 
 @cython.cdivision(True)

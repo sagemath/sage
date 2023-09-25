@@ -29,6 +29,7 @@ AUTHORS:
 import numpy
 import math
 import bisect
+from itertools import product
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -41,7 +42,6 @@ from sage.rings.real_mpfi import RIF
 from sage.rings.real_mpfr import RR
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.mrange import cartesian_product_iterator
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
@@ -685,7 +685,7 @@ def rat_term_CIF(z, try_strict=True):
 
         corner_reals = []
         corner_imags = []
-        for a, b in cartesian_product_iterator([z.real().endpoints(), z.imag().endpoints()]):
+        for a, b in product(z.real().endpoints(), z.imag().endpoints()):
             zz = CDF(a,b)
             u = (two_pi_i_CDF*zz).exp()
             f = u/(1-u)**2

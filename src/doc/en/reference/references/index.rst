@@ -1388,6 +1388,10 @@ REFERENCES:
              20(1.6):1-18, 2015. :doi:`10.1145/2780652` or
              [`<https://hal.inria.fr/hal-01182890>`_].
 
+.. [CS1999a] \D. Cohen and A. Suciu. *Characteristic varieties of arrangements*.
+             Math. Proc. Cambridge Philos. Soc.127 (1999), no.1, 33–-53.
+             :doi:`10.1017/S0305004199003576`.
+
 .. [CCLSV2005] \M. Chudnovsky, G. Cornuejols, X. Liu, P. Seymour, K. Vuskovic.
                *Recognizing berge graphs*.
                Combinatorica vol 25 (2005), n 2, pages 143--186.

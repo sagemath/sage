@@ -507,13 +507,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi webencodings tinycss2; do
-      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
-    done
-  ])
-
-AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
-    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 soupsieve fastjsonschema; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -521,7 +515,7 @@ AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
-    for pkg in r rpy2 r_jupyter tzlocal; do
+    for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -530,7 +524,7 @@ AC_ARG_ENABLE([doc],
   AS_HELP_STRING([--disable-doc],
                  [disable build of the Sage documentation and packages depending on it]), [
     dnl Disable packages needed for docbuilding
-    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx furo sphinx_copybutton mathjax; do
+    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx furo sphinx_copybutton mathjax sphinx_basic_ng; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
     AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation
@@ -545,6 +539,28 @@ AC_ARG_ENABLE([sagelib],
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
+
+
+dnl Handle combinations of --disable-foo flags that may enable us to
+dnl prune even more dependencies.
+AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+AS_IF([test "$SAGE_ENABLE_r" = no -a "$SAGE_ENABLE_sage_docbuild" = no], [
+  dnl pytz is needed only by rpy2 and babel, and babel is already
+  dnl disabled by --disable-doc.
+  for pkg in pytz; do
+    AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+  done
+])
+AS_IF([test "$SAGE_ENABLE_r" = no -a "$SAGE_ENABLE_notebook" = no], [
+  dnl These two are dependencies of both rpy2 and some notebook stuff
+  for pkg in cffi pycparser; do
+    AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+  done
+])
 
 dnl Packages that require a special override to use the SPKG
 dnl when the system package is not usable.
