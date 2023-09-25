@@ -18,8 +18,8 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-    sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^10, 3.0)
+    sage: from sage.stats.all import DGL
+    sage: D = DGL(ZZ^10, 3.0)
     sage: D(), D(), D()  # random
     ((3, 0, -5, 0, -1, -3, 3, 3, -7, 2), (4, 0, 1, -2, -4, -4, 4, 0, 1, -4), (-3, 0, 4, 5, 0, 1, 3, 2, 0, -1))
     sage: a = D()
@@ -120,8 +120,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     EXAMPLES::
 
-        sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-        sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^10, 3.0); D
+        sage: from sage.stats.all import DGL
+        sage: D = DGL(ZZ^10, 3.0); D
         Discrete Gaussian sampler with Gaussian parameter σ = 3.00000000000000, c=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) over lattice with basis
         <BLANKLINE>
         [1 0 0 0 0 0 0 0 0 0]
@@ -138,10 +138,10 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     We plot a histogram::
 
-        sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
+        sage: from sage.stats.all import DGL
         sage: import warnings
         sage: warnings.simplefilter('ignore', UserWarning)
-        sage: D = DiscreteGaussianDistributionLatticeSampler(identity_matrix(2), 3.0)
+        sage: D = DGL(identity_matrix(2), 3.0)
         sage: S = [D() for _ in range(2^12)]
         sage: l = [vector(v.list() + [S.count(v)]) for v in set(S)]
         sage: list_plot3d(l, point_list=True, interpolation='nn')
@@ -167,18 +167,18 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: DiscreteGaussianDistributionLatticeSampler.compute_precision(100, RR(3))
+            sage: from sage.stats.all import DGL
+            sage: DGL.compute_precision(100, RR(3))
             100
-            sage: DiscreteGaussianDistributionLatticeSampler.compute_precision(100, RealField(200)(3))
+            sage: DGL.compute_precision(100, RealField(200)(3))
             100
-            sage: DiscreteGaussianDistributionLatticeSampler.compute_precision(100, 3)
+            sage: DGL.compute_precision(100, 3)
             100
-            sage: DiscreteGaussianDistributionLatticeSampler.compute_precision(None, RR(3))
+            sage: DGL.compute_precision(None, RR(3))
             53
-            sage: DiscreteGaussianDistributionLatticeSampler.compute_precision(None, RealField(200)(3))
+            sage: DGL.compute_precision(None, RealField(200)(3))
             200
-            sage: DiscreteGaussianDistributionLatticeSampler.compute_precision(None, 3)
+            sage: DGL.compute_precision(None, 3)
             53
 
         """
@@ -207,9 +207,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
+            sage: from sage.stats.all import DGL
             sage: n = 3; sigma = 1.0
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
+            sage: D = DGL(ZZ^n, sigma)
             sage: f = D.f
             sage: nf = D._normalisation_factor_zz(); nf
             15.7496...
@@ -235,22 +235,22 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
             sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.2: add_samples(1000)  # long time
 
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^8, 0.5)
+            sage: D = DGL(ZZ^8, 0.5)
             sage: D._normalisation_factor_zz(tau=3)
             3.1653...
             sage: D._normalisation_factor_zz()
             6.8249...
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^8, 1000)
+            sage: D = DGL(ZZ^8, 1000)
             sage: round(D._normalisation_factor_zz(prec=100))
             1558545456544038969634991553
 
             sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1], [3, -4, 2]])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 1.7)
+            sage: D = DGL(M, 1.7)
             sage: D._normalisation_factor_zz() # long time
             7247.1975...
 
             sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1]])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(M, 3)
+            sage: D = DGL(M, 3)
             sage: D._normalisation_factor_zz()
             Traceback (most recent call last):
             ...
@@ -297,11 +297,11 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         if self.is_spherical and not self._c_in_lattice:
             raise NotImplementedError("Lattice must contain 0 for now.")
 
-        if self.B.base_ring() not in (ZZ, QQ):
+        if self.B.base_ring() not in ZZ:
             raise NotImplementedError("Lattice must be integral for now.")
 
         sigma = self._sigma
-        prec = DiscreteGaussianDistributionLatticeSampler.compute_precision(
+        prec = DGL.compute_precision(
             prec, sigma
         )
         R = RealField(prec=prec)
@@ -341,6 +341,18 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         This is equivalent to finding `λ₁(Σ / Q) = 1 / λₙ(Q / Σ)`, which is done
         via the Power iteration method.
+
+        EXAMPLES::
+
+            sage: from sage.stats.all import DGL
+            sage: n = 3
+            sage: Sigma = Matrix(ZZ, [[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
+            sage: c = vector(ZZ, [7, 2, 5])
+            sage: D = DGL(ZZ^n, Sigma, c)
+            sage: r = D._maximal_r(); r
+            0.58402...
+            sage: e_vals = (D.sigma - r^2 * D.Q).eigenvalues()
+            sage: assert all(e_val >= -1e-12 for e_val in e_vals)
         """
         # TODO: Write doctest
         if self.is_spherical:
@@ -399,9 +411,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
+            sage: from sage.stats.all import DGL
             sage: n = 2; sigma = 3.0
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
+            sage: D = DGL(ZZ^n, sigma)
             sage: f = D.f
             sage: nf = D._normalisation_factor_zz(); nf
             56.5486677646...
@@ -432,7 +444,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: n = 3
             sage: Sigma = Matrix(ZZ, [[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
             sage: c = vector(ZZ, [7, 2, 5])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^n, Sigma, c)
+            sage: D = DGL(ZZ^n, Sigma, c)
             sage: nf = D._normalisation_factor_zz(); nf # This has not been properly implemented
             63.76927...
             sage: while v not in counter: add_samples(1000)
@@ -451,9 +463,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         We can also initialise with matrix-like objects:
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
+            sage: from sage.stats.all import DGL
             sage: qf = QuadraticForm(matrix(3, [2, 1, 1,  1, 2, 1,  1, 1, 2]))
-            sage: D = DiscreteGaussianDistributionLatticeSampler(qf, 3.0); D
+            sage: D = DGL(qf, 3.0); D
             Discrete Gaussian sampler with Gaussian parameter σ = 3.00000000000000, c=(0, 0, 0) over lattice with basis
             <BLANKLINE>
             [2 1 1]
@@ -462,7 +474,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D().parent() is D.c.parent()
             True
         """
-        precision = DiscreteGaussianDistributionLatticeSampler.compute_precision(precision, sigma)
+        precision = DGL.compute_precision(precision, sigma)
 
         self._RR = RealField(precision)
         # Check if sigma is a (real) number or a scaled identity matrix
@@ -498,12 +510,12 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         self._c_in_lattice = False
 
         try:
-            c = vector(ZZ, B.ncols(), c)
+            c = vector(ZZ, self.n, c)
         except TypeError:
             try:
-                c = vector(QQ, B.ncols(), c)
+                c = vector(QQ, self.n, c)
             except TypeError:
-                c = vector(self._RR, B.ncols(), c)
+                c = vector(self._RR, self.n, c)
 
         self._c = c
 
@@ -562,14 +574,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0))
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0))
             sage: L = [D() for _ in range(2^12)]
             sage: mean_L = sum(L) / len(L)
             sage: norm(mean_L.n() - D.c) < 0.25
             True
 
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1/2,0,0))
+            sage: D = DGL(ZZ^3, 3.0, c=(1/2,0,0))
             sage: L = [D() for _ in range(2^12)]  # long time
             sage: mean_L = sum(L) / len(L)        # long time
             sage: norm(mean_L.n() - D.c) < 0.25   # long time
@@ -614,8 +626,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0))
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0))
             sage: D.sigma
             3.00000000000000
         """
@@ -630,8 +642,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0)); D
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0)); D
             Discrete Gaussian sampler with Gaussian parameter σ = 3.00000000000000, c=(1, 0, 0) over lattice with basis
             <BLANKLINE>
             [1 0 0]
@@ -650,8 +662,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0))
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0))
             sage: D.c = 5
             Traceback (most recent call last):
             ...
@@ -665,8 +677,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         r"""
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0)); D
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0)); D
             Discrete Gaussian sampler with Gaussian parameter σ = 3.00000000000000, c=(1, 0, 0) over lattice with basis
             <BLANKLINE>
             [1 0 0]
@@ -674,7 +686,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             [0 0 1]
 
             sage: Sigma = Matrix(ZZ, [[10, -6, 1], [-6, 5, -1], [1, -1, 2]])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, Sigma); D
+            sage: D = DGL(ZZ^3, Sigma); D
             Discrete Gaussian sampler with Gaussian parameter Σ =
             [ 10.0000000000000 -6.00000000000000  1.00000000000000]
             [-6.00000000000000  5.00000000000000 -1.00000000000000]
@@ -698,8 +710,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1,0,0))
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0))
             sage: L = [D._call_in_lattice() for _ in range(2^12)]
             sage: mean_L = sum(L) / len(L)
             sage: norm(mean_L.n() - D.c) < 0.25
@@ -707,7 +719,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         .. note::
 
-           Do not call this method directly, call :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
+           Do not call this method directly, call :func:`DGL.__call__` instead.
         """
         w = self.VS([d() for d in self.D], check=False)
         return w * self.B + self.c
@@ -718,8 +730,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, 3.0, c=(1/2,0,0))
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1/2,0,0))
             sage: L = [D._call() for _ in range(2^12)]
             sage: mean_L = sum(L) / len(L)
             sage: norm(mean_L.n() - D.c) < 0.25
@@ -727,7 +739,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         .. note::
 
-           Do not call this method directly, call :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
+           Do not call this method directly, call :func:`DGL.__call__` instead.
         """
         v = 0
         c, sigma, B = self._c, self._sigma, self.B
@@ -751,9 +763,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
+            sage: from sage.stats.all import DGL
             sage: Sigma = Matrix([[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, Sigma)
+            sage: D = DGL(ZZ^3, Sigma)
             sage: assert not D.is_spherical
             sage: D.add_offline_samples(2^12)
             sage: L = [D() for _ in range(2^12)] # Takes less time
@@ -772,9 +784,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.stats.distributions.discrete_gaussian_lattice import DiscreteGaussianDistributionLatticeSampler
+            sage: from sage.stats.all import DGL
             sage: Sigma = Matrix([[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
-            sage: D = DiscreteGaussianDistributionLatticeSampler(ZZ^3, Sigma, c=(1/2,0,0))
+            sage: D = DGL(ZZ^3, Sigma, c=(1/2,0,0))
             sage: L = [D._call_non_spherical() for _ in range(2^12)]
             sage: mean_L = sum(L) / len(L)
             sage: norm(mean_L.n() - D.c) < 0.25
@@ -782,7 +794,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         .. note::
 
-           Do not call this method directly, call :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
+           Do not call this method directly, call :func:`DGL.__call__` instead.
         """
         if len(self.offline_samples) == 0:
             self.add_offline_samples()
