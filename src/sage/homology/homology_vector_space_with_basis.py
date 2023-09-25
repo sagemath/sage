@@ -1453,4 +1453,4 @@ def is_GF2(R):
         sage: is_GF2(GF(3))
         False
     """
-    return 2 == R.cardinality() == R.characteristic()
+    return 2 == R.characteristic() == R.cardinality()
