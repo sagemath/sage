@@ -332,7 +332,7 @@ def WordPaths(alphabet, steps=None):
         elif alphabet.cardinality() == 6:
             steps = 'hexagonal_grid'
         else:
-            raise TypeError("Unable to make a class WordPaths from %s"%alphabet)
+            raise TypeError("Unable to make a class WordPaths from %s" % alphabet)
 
     #Returns the class of WordPaths according to the given type of paths
     if isinstance(steps, str):

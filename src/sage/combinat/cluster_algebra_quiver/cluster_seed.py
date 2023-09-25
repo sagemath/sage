@@ -4508,13 +4508,13 @@ class ClusterSeed(SageObject):
             sage: C.get_upper_cluster_algebra_element([1,1,1])
             x0^4*x1^2*x2^3 + x0^2*x1^3*x2^4
         """
-        B=self.b_matrix()
+        B = self.b_matrix()
         # Checks if the length of the
         if len(a) != B.ncols():
             raise ValueError('The length of the input vector must be the same as the number of columns of B.')
         # Runs helper functions.
-        v=_vector_decomposition(a,B.nrows())
-        c=self._compute_compatible_vectors(v)
+        v = _vector_decomposition(a,B.nrows())
+        c = self._compute_compatible_vectors(v)
         return self._produce_upper_cluster_algebra_element(v,c)
 
     def LLM_gen_set(self, size_limit=-1):
