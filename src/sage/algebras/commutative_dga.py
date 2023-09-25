@@ -1562,6 +1562,62 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             """
             return self.lift().dict()
 
+        def __call__(self, *values, **kwargs):
+            r"""
+            Evaluate the reduced expression of this element at ``x``, where ``x``
+            is either the tuple of values to evaluate in, a dictionary indicating
+            to which value is each generator evaluated, or  keywords giving
+            the value to which generators should be evaluated.
+
+            INPUT:
+
+            - ``values`` -- (optional) either a tuple or a dictionary
+
+            OUTPUT:
+
+                this element evaluated in the given values
+
+            EXAMPLES::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f(3, y, x^2, x*z)
+                3*y
+                sage: f(x=3)
+                21*y^2*z^3*t - 5*y*z + 3*y
+                sage: f({x:3, z:x^2})
+                3*y
+
+            If the wrong number of values is provided, it results in an error::
+
+                sage: f(3, 5, y)
+                Traceback (most recent call last):
+                ...
+                ValueError: number of arguments does not match number of variables in parent
+
+            """
+            gens = self.parent().gens()
+            if len(values) == 1 and isinstance(values[0], dict):
+                images = list(gens)
+                for (i, g) in enumerate(gens):
+                    if g in values[0].keys():
+                        images[i] = values[0][g]
+            elif len(values) == len(gens):
+                images = list(values)
+            elif values:
+                raise ValueError("number of arguments does not match number of variables in parent")
+            else:
+                images = list(gens)
+                for (i, g) in enumerate(gens):
+                    gstr = str(g)
+                    if gstr in kwargs.keys():
+                        images[i] = kwargs[gstr]
+            res = 0
+            for (m, c) in self.dict().items():
+                term = prod([gen**y for (y, gen) in zip(m, images)], c)
+                res += term
+            return res
+
         def basis_coefficients(self, total=False):
             """
             Return the coefficients of this homogeneous element with
