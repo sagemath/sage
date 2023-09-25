@@ -243,6 +243,12 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         sage: groups.permutation.Symmetric(4)
         Symmetric group of order 4! as a permutation group
+        sage: groups.permutation.Symmetric(1).gens()
+        ()
+
+    Check for :issue:`36204`::
+
+        sage: h = SymmetricGroup(1).hom(SymmetricGroup(2))
     """
     def __init__(self, domain=None):
         """
@@ -261,7 +267,8 @@ class SymmetricGroup(PermutationGroup_symalt):
         # Note that we skip the call to the superclass initializer in order to
         # avoid infinite recursion since SymmetricGroup is called by
         # PermutationGroupElement
-        cat = Category.join([FinitePermutationGroups(), FiniteWeylGroups().Irreducible()])
+        cat = Category.join([FinitePermutationGroups(),
+                             FiniteWeylGroups().Irreducible()])
         super(PermutationGroup_generic, self).__init__(category=cat)
 
         self._domain = domain
@@ -270,11 +277,14 @@ class SymmetricGroup(PermutationGroup_symalt):
         self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         # Create the generators for the symmetric group
-        gens = [tuple(self._domain)]
-        if len(self._domain) > 2:
-            gens.append(tuple(self._domain[:2]))
-        self._gens = tuple([self.element_class(g, self, check=False)
-                            for g in gens])
+        if self._deg <= 1:
+            self._gens = ()
+        else:
+            gens = [tuple(self._domain)]
+            if self._deg > 2:
+                gens.append(tuple(self._domain[:2]))
+            self._gens = tuple([self.element_class(g, self, check=False)
+                                for g in gens])
 
     def _gap_init_(self, gap=None):
         """
@@ -1946,11 +1956,11 @@ def TransitiveGroups(d=None):
     """
     if d is None:
         return TransitiveGroupsAll()
-    else:
-        d = Integer(d)
-        if d < 0:
-            raise ValueError("a transitive group acts on a non negative integer number of positions")
-        return TransitiveGroupsOfDegree(d)
+
+    d = Integer(d)
+    if d < 0:
+        raise ValueError("a transitive group acts on a non negative integer number of positions")
+    return TransitiveGroupsOfDegree(d)
 
 
 class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
@@ -3449,6 +3459,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
 
+
 class SmallPermutationGroup(PermutationGroup_generic):
     r"""
     A GAP SmallGroup, returned as a permutation group.
@@ -3513,7 +3524,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         """
         self._n = order
         self._gap_id = gap_id
-        self._gap_small_group = libgap.SmallGroup(order,gap_id)
+        self._gap_small_group = libgap.SmallGroup(order, gap_id)
         gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
 

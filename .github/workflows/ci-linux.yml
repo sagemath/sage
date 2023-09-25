@@ -82,7 +82,6 @@ jobs:
       # Only test systems with a usable system python (>= 3.9)
       tox_system_factors: >-
         ["ubuntu-jammy",
-         "ubuntu-kinetic",
          "ubuntu-lunar",
          "ubuntu-mantic",
          "debian-bullseye",
