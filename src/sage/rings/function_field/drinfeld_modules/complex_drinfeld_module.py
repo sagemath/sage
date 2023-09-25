@@ -181,8 +181,6 @@ class DrinfeldModule_complex(DrinfeldModule):
         See section 4.6 of [Gos1998]_ for the definition of the
         exponential.
         """
-        if self.category()._characteristic:
-            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
         zero = self._base.zero()
         q = self._Fq.cardinality()
@@ -286,8 +284,6 @@ class DrinfeldModule_complex(DrinfeldModule):
             True
 
         """
-        if self.category()._characteristic:
-            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
         L = LazyPowerSeriesRing(self._base, name)
         zero = self._base.zero()
         q = self._Fq.cardinality()
