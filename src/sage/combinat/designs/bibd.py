@@ -259,8 +259,8 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
         #
         # With lambda>1 other exceptions are
         # (15,5,2),(21,6,2),(22,7,2),(22,8,4).
-        (k==6 and v in [36,46]) or
-        (k==7 and v == 43) or
+        (k == 6 and v in [36,46]) or
+        (k == 7 and v == 43) or
         # Fisher's inequality
         (lambd*v*(v-1))/(k*(k-1)) < v):
         if existence:
@@ -279,15 +279,15 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
         return BIBD(v, [[x, y] for _ in range(lambd) for x in range(v) for y in range(x+1, v) if x != y], lambd=lambd, check=False, copy=True)
     if k == 3 and lambd == 1:
         if existence:
-            return v%6 == 1 or v%6 == 3
+            return v % 6 == 1 or v % 6 == 3
         return steiner_triple_system(v)
     if k == 4 and lambd == 1:
         if existence:
-            return v%12 == 1 or v%12 == 4
+            return v % 12 == 1 or v % 12 == 4
         return BIBD(v, v_4_1_BIBD(v), copy=False)
     if k == 5 and lambd == 1:
         if existence:
-            return v%20 == 1 or v%20 == 5
+            return v % 20 == 1 or v % 20 == 5
         return BIBD(v, v_5_1_BIBD(v), copy=False)
 
     from .difference_family import difference_family
@@ -426,10 +426,10 @@ def BruckRyserChowla_check(v, k, lambd):
     if k*(k-1) != lambd*(v-1):
         return Unknown
 
-    if v%2 == 0:
+    if v % 2 == 0:
         return is_square(k-lambd)
 
-    g = 1 if v%4 == 1 else -1
+    g = 1 if v % 4 == 1 else -1
     C = Conic(QQ, [1, lambd - k, -g * lambd])
 
     (flag, sol) = C.has_rational_point(point=True)
@@ -491,23 +491,23 @@ def steiner_triple_system(n):
 
     name = "Steiner Triple System on "+str(n)+" elements"
 
-    if n%6 == 3:
+    if n % 6 == 3:
         t = (n-3) // 6
         Z = list(range(2 * t + 1))
 
         T = lambda x_y : x_y[0] + (2*t+1)*x_y[1]
 
         sts = [[(i,0),(i,1),(i,2)] for i in Z] + \
-            [[(i,k),(j,k),(((t+1)*(i+j)) % (2*t+1),(k+1)%3)] for k in range(3) for i in Z for j in Z if i != j]
+            [[(i,k),(j,k),(((t+1)*(i+j)) % (2*t+1),(k+1) % 3)] for k in range(3) for i in Z for j in Z if i != j]
 
-    elif n%6 == 1:
+    elif n % 6 == 1:
 
         t = (n-1) // 6
         N = list(range(2 * t))
         T = lambda x_y : x_y[0]+x_y[1]*t*2 if x_y != (-1,-1) else n-1
 
         L1 = lambda i,j : (i+j) % ((n-1)//3)
-        L = lambda i,j : L1(i,j)//2 if L1(i,j)%2 == 0 else t+(L1(i,j)-1)//2
+        L = lambda i,j : L1(i,j)//2 if L1(i,j) % 2 == 0 else t+(L1(i,j)-1)//2
 
         sts = [[(i,0),(i,1),(i,2)] for i in range(t)] + \
             [[(-1,-1),(i,k),(i-t,(k+1) % 3)] for i in range(t,2*t) for k in [0,1,2]] + \
@@ -601,7 +601,7 @@ def BIBD_from_TD(v,k,existence=False):
         NotImplementedError: I do not know how to build a (20,5,1)-BIBD!
     """
     # First construction
-    if (v%k == 0 and
+    if (v % k == 0 and
         balanced_incomplete_block_design(v//k, k, existence=True) is True and
         transversal_design(k, v//k, existence=True) is True):
 
@@ -617,7 +617,7 @@ def BIBD_from_TD(v,k,existence=False):
             BIBD.extend([[x+i*v for x in B] for B in BIBDvk])
 
     # Second construction
-    elif ((v-1)%k == 0 and
+    elif ((v-1) % k == 0 and
         balanced_incomplete_block_design((v-1)//k+1,k,existence=True) is True and
         transversal_design(k,(v-1)//k,existence=True)) is True:
 
@@ -634,7 +634,7 @@ def BIBD_from_TD(v,k,existence=False):
             BIBD.extend([[inf if x == v else x+i*v for x in B] for B in BIBDv1k])
 
     # Third construction
-    elif ((v-k)%k == 0 and
+    elif ((v-k) % k == 0 and
         balanced_incomplete_block_design((v-k)//k+k,k,existence=True) is True
         and transversal_design(k,(v-k)//k,existence=True) is True):
         if existence:
@@ -798,7 +798,7 @@ def v_4_1_BIBD(v, check=True):
     k = 4
     if v == 0:
         return []
-    if v <= 12 or v%12 not in [1,4]:
+    if v <= 12 or v % 12 not in [1,4]:
         raise EmptySetError("A K_4-decomposition of K_v exists iif v=2,4 mod 12, v>12 or v==0")
 
     # Step 1. Base cases.
@@ -885,7 +885,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
         for XX in base_cases[n,k]:
             if N-1 in XX:
                 continue
-            bibd.append([X[x//(k-1)] + (x%(k-1))*r for x in XX])
+            bibd.append([X[x//(k-1)] + (x % (k-1))*r for x in XX])
 
     for x in range(r):
         bibd.append([x+i*r for i in range(k-1)]+[v-1])
@@ -979,14 +979,14 @@ def PBD_4_5_8_9_12(v, check=True):
         PBD = TD47 + four_more_sets
     elif v == 41:
         TD59 = transversal_design(5,9)
-        PBD = ([[x for x in X if x<41] for X in TD59]
-                +[[i*9+j for j in range(9)] for i in range(4)]
-                +[[36,37,38,39,40]])
+        PBD = ([[x for x in X if x < 41] for X in TD59]
+                + [[i*9+j for j in range(9)] for i in range(4)]
+                + [[36,37,38,39,40]])
     elif v == 44:
         TD59 = transversal_design(5,9)
-        PBD = ([[x for x in X if x<44] for X in TD59]
-                +[[i*9+j for j in range(9)] for i in range(4)]
-                +[[36,37,38,39,40,41,42,43]])
+        PBD = ([[x for x in X if x < 44] for X in TD59]
+                + [[i*9+j for j in range(9)] for i in range(4)]
+                + [[36,37,38,39,40,41,42,43]])
     elif v == 45:
         TD59 = transversal_design(5,9)._blocks
         PBD = (TD59+[[i*9+j for j in range(9)] for i in range(5)])
@@ -1008,7 +1008,7 @@ def PBD_4_5_8_9_12(v, check=True):
     else:
         t,u = _get_t_u(v)
         TD = transversal_design(5,t)
-        TD = [[x for x in X if x<4*t+u] for X in TD]
+        TD = [[x for x in X if x < 4*t+u] for X in TD]
         for B in [list(range(t*i,t*(i+1))) for i in range(4)]:
             TD.extend(_PBD_4_5_8_9_12_closure([B]))
 
@@ -1047,6 +1047,7 @@ def _PBD_4_5_8_9_12_closure(B):
         else:
             BB.append(X)
     return BB
+
 
 table_7_1 = {
     0:{'t':-4,'u':16,'s':2},
@@ -1093,7 +1094,7 @@ def _get_t_u(v):
     # Table 7.1
     v = int(v)
     global table_7_1
-    d = table_7_1[v%48]
+    d = table_7_1[v % 48]
     s = v//48
     if s < d['s']:
         raise RuntimeError("This should not have happened.")
@@ -1140,10 +1141,10 @@ def v_5_1_BIBD(v, check=True):
     v = int(v)
 
     assert (v > 1)
-    assert (v%20 == 5 or v%20 == 1)  # note: equivalent to (v-1)%4 == 0 and (v*(v-1))%20 == 0
+    assert (v % 20 == 5 or v % 20 == 1)  # note: equivalent to (v-1)%4 == 0 and (v*(v-1))%20 == 0
 
     # Lemma 27
-    if v%5 == 0 and (v//5)%4 == 1 and is_prime_power(v//5):
+    if v % 5 == 0 and (v//5) % 4 == 1 and is_prime_power(v//5):
         bibd = BIBD_5q_5_for_q_prime_power(v//5)
     # Lemma 28
     elif v in [21,41,61,81,141,161,281]:
@@ -1198,7 +1199,7 @@ def _get_r_s_t_u(v):
     """
     r = int((v-1)/4)
     s = r//150
-    x = r%150
+    x = r % 150
 
     if x == 0:
         t,u = 30*s-5,  25
@@ -1246,10 +1247,10 @@ def PBD_from_TD(k,t,u):
     """
     from .orthogonal_arrays import transversal_design
     TD = transversal_design(k+bool(u),t, check=False)
-    TD = [[x for x in X if x<k*t+u] for X in TD]
+    TD = [[x for x in X if x < k*t+u] for X in TD]
     for i in range(k):
         TD.append(list(range(t*i,t*i+t)))
-    if u>=2:
+    if u >= 2:
         TD.append(list(range(k*t,k*t+u)))
     return TD
 
@@ -1271,7 +1272,7 @@ def BIBD_5q_5_for_q_prime_power(q):
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-    if q%4 != 1 or not is_prime_power(q):
+    if q % 4 != 1 or not is_prime_power(q):
         raise ValueError("q is not a prime power or q%4!=1.")
 
     d = (q-1)//4
@@ -1284,10 +1285,10 @@ def BIBD_5q_5_for_q_prime_power(q):
         for i in range(5):
             for j in range(d):
                 B.append([        i*q + L[b          ],
-                          ((i+1)%5)*q + L[ a**j+b    ],
-                          ((i+1)%5)*q + L[-a**j+b    ],
-                          ((i+4)%5)*q + L[ a**(j+d)+b],
-                          ((i+4)%5)*q + L[-a**(j+d)+b],
+                          ((i+1) % 5)*q + L[ a**j+b    ],
+                          ((i+1) % 5)*q + L[-a**j+b    ],
+                          ((i+4) % 5)*q + L[ a**(j+d)+b],
+                          ((i+4) % 5)*q + L[-a**(j+d)+b],
                           ])
 
     return B
@@ -1651,5 +1652,6 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         values = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         return [self._points[i] for (i,j) in values.items() if j]
+
 
 BIBD = BalancedIncompleteBlockDesign

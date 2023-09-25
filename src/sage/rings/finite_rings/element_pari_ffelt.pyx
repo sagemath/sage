@@ -32,14 +32,11 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial
 from sage.rings.rational import Rational
+from sage.structure.element cimport Vector
 from sage.structure.richcmp cimport rich_to_bool
 
-try:
-    from sage.modules.free_module_element import FreeModuleElement
-except ImportError:
-    FreeModuleElement = ()
-
 from sage.interfaces.abc import GapElement
+
 
 cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
     """
@@ -457,7 +454,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sig_off()
             raise TypeError(f"unable to convert PARI {x.type()} to finite field element")
 
-        elif (isinstance(x, FreeModuleElement)
+        elif (isinstance(x, Vector)
               and x.parent() is self._parent.vector_space(map=False)):
             g = (<pari_gen>self._parent._gen_pari).g
             t = g[1]  # codeword: t_FF_FpXQ, t_FF_Flxq, t_FF_F2xq
@@ -1045,7 +1042,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         If ``extend`` is ``True``, a square root is chosen in an
         extension field if necessary.  If ``extend`` is ``False``, a
-        ValueError is raised if the element is not a square in the
+        :class:`ValueError` is raised if the element is not a square in the
         base field.
 
         .. WARNING::

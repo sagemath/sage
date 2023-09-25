@@ -570,13 +570,12 @@ class AbstractSimplex_class(SageObject):
             return True
         if self.degeneracies() and other.degeneracies() and self.degeneracies() != other.degeneracies():
             return self.degeneracies() < other.degeneracies()
-        if hasattr(self.nondegenerate(), '__custom_name'):
-            if hasattr(other.nondegenerate(), '__custom_name'):
-                return str(self) < str(other)
+        if self.nondegenerate().get_custom_name() is not None:
+            if other.nondegenerate().get_custom_name() is not None:
+                return self.nondegenerate().get_custom_name() < other.nondegenerate().get_custom_name()
             return True
 
-        if (hasattr(other, '__custom_name')
-                or hasattr(other.nondegenerate(), '__custom_name')):
+        if other.nondegenerate().get_custom_name() is not None:
             return False
         return id(self) < id(other)
 
@@ -793,8 +792,8 @@ class AbstractSimplex_class(SageObject):
         # dimension, the degeneracies, and the name (with a prime
         # added).
         sigma = AbstractSimplex(self._dim, degeneracies=self.degeneracies())
-        if hasattr(self, '__custom_name'):
-            sigma.rename(str(self) + "'")
+        if self.get_custom_name() is not None:
+            sigma.rename(self.get_custom_name() + "'")
         return sigma
 
     def __deepcopy__(self, memo):
@@ -839,8 +838,8 @@ class AbstractSimplex_class(SageObject):
             return memo[underlying].apply_degeneracies(*degens)
         except KeyError:
             sigma = AbstractSimplex(underlying._dim)
-            if hasattr(underlying, '__custom_name'):
-                sigma.rename(str(self) + "'")
+            if underlying.get_custom_name() is not None:
+                sigma.rename(underlying.get_custom_name() + "'")
             memo[underlying] = sigma
             return sigma.apply_degeneracies(*degens)
 
@@ -896,12 +895,12 @@ class AbstractSimplex_class(SageObject):
         """
         if self._latex_name is not None:
             return self._latex_name
-        if hasattr(self, '__custom_name'):
-            return str(self)
+        if self.get_custom_name() is not None:
+            return self.get_custom_name()
         if self.nondegenerate()._latex_name is not None:
             simplex = self.nondegenerate()._latex_name
-        elif hasattr(self.nondegenerate(), '__custom_name'):
-            simplex = str(self.nondegenerate())
+        elif self.nondegenerate().get_custom_name() is not None:
+            simplex = self.nondegenerate().get_custom_name()
         else:
             simplex = "\\Delta^{{{}}}".format(self._dim)
         if self.degeneracies():

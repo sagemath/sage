@@ -994,7 +994,7 @@ class KleshchevPartitionCrystal(KleshchevPartition, KleshchevCrystalMixin):
         cell = self.good_cells(i)
         if cell is None:
             return None
-        r,c = cell
+        r, _ = cell
         mu = list(self)
         mu[r] -= 1
         return type(self)(P, mu)
@@ -1055,7 +1055,7 @@ class KleshchevPartitionTupleCrystal(KleshchevPartitionTuple, KleshchevCrystalMi
         cell = self.good_cells(i)
         if cell is None:
             return None
-        k,r,c = cell
+        k, r, _ = cell
         mu = self.to_list()
         mu[k][r] -= 1
         return type(self)(P, mu)
@@ -1938,7 +1938,7 @@ def _is_regular(kpt, multicharge, convention):
     convention = convention[0] + 'G'
     cell = _a_good_cell(kpt, multicharge, convention)
     while cell is not None:
-        k,r,c = cell
+        k, r, _ = cell
         if kpt[k][r] == 1:
             kpt[k].pop()
         else:
@@ -1964,15 +1964,15 @@ def _is_restricted(kpt, multicharge, convention):
         sage: _is_restricted([[], []], [I3(0),I3(2)], 'RG')
         True
     """
-    if all(part == [] for part in kpt):
+    if all(not part for part in kpt):
         return True
     convention = convention[0] + 'S'
     cell = _a_good_cell(kpt, multicharge, convention)
     while cell is not None:
-        k,r,c = cell
+        k, r, _ = cell
         if kpt[k][r] == 1:
             kpt[k].pop()
         else:
             kpt[k][r] -= 1
         cell = _a_good_cell(kpt, multicharge, convention)
-    return all(part == [] for part in kpt)
+    return all(not part for part in kpt)

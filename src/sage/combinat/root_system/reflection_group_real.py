@@ -47,7 +47,6 @@ AUTHORS:
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.rings.integer_ring import ZZ
-from sage.interfaces.gap3 import gap3
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
 from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
@@ -124,6 +123,8 @@ def ReflectionGroup(*args,**kwds):
     """
     if not is_chevie_available():
         raise ImportError("the GAP3 package 'chevie' is needed to work with (complex) reflection groups")
+
+    from sage.interfaces.gap3 import gap3
     gap3.load_package("chevie")
 
     error_msg = "the input data (%s) is not valid for reflection groups"
@@ -223,6 +224,7 @@ def is_chevie_available():
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: from sage.combinat.root_system.reflection_group_real import is_chevie_available
         sage: is_chevie_available() # random
         False
@@ -563,10 +565,11 @@ class RealReflectionGroup(ComplexReflectionGroup):
             sage: W.fundamental_weights()                               # optional - gap3
             Finite family {1: (3/4, 1/2, 1/4), 2: (1/2, 1, 1/2), 3: (1/4, 1/2, 3/4)}
 
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: S = W.simple_reflections()                            # optional - gap3
-            sage: N = W.fundamental_weights()                           # optional - gap3
-            sage: for i in W.index_set():                               # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: S = W.simple_reflections()
+            sage: N = W.fundamental_weights()
+            sage: for i in W.index_set():
             ....:     for j in W.index_set():
             ....:         print("{} {} {} {}".format(i, j, N[i], N[i]*S[j].to_matrix()))
             1 1 (3/4, 1/2, 1/4) (-1/4, 1/2, 1/4)
@@ -733,24 +736,27 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: x = W.from_reduced_word([1])                          # optional - gap3
-            sage: y = W.w0                                              # optional - gap3
-            sage: W.bruhat_cone(x, y)                                   # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: x = W.from_reduced_word([1])
+            sage: y = W.w0
+            sage: W.bruhat_cone(x, y)
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 rays
 
-            sage: W = ReflectionGroup(['E',6])                          # optional - gap3
-            sage: x = W.one()                                           # optional - gap3
-            sage: y = W.w0                                              # optional - gap3
-            sage: W.bruhat_cone(x, y, side='lower')                     # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['E',6])
+            sage: x = W.one()
+            sage: y = W.w0
+            sage: W.bruhat_cone(x, y, side='lower')
             A 6-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex and 6 rays
 
         TESTS::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: x = W.one()                                           # optional - gap3
-            sage: y = W.w0                                              # optional - gap3
-            sage: W.bruhat_cone(x, y, side='nonsense')                  # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: x = W.one()
+            sage: y = W.w0
+            sage: W.bruhat_cone(x, y, side='nonsense')
             Traceback (most recent call last):
             ...
             ValueError: side must be either 'upper' or 'lower'

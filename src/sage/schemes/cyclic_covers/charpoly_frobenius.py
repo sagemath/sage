@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 r"""
 Computation of the Frobenius polynomial using Newton's identities
 """

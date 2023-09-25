@@ -325,7 +325,11 @@ sdh_store_wheel() {
 }
 
 sdh_store_and_pip_install_wheel() {
-    local pip_options=""
+    # The $SAGE_PIP_INSTALL_FLAGS variable is set by sage-build-env-config.
+    # We skip sanity checking its contents since you should either let sage
+    # decide what it contains, or really know what you are doing.
+    local pip_options="${SAGE_PIP_INSTALL_FLAGS}"
+
     while [ $# -gt 0 ]; do
         case $1 in
             -*) pip_options="$pip_options $1"

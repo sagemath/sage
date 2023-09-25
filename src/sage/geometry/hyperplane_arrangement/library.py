@@ -5,12 +5,12 @@ A collection of useful or interesting hyperplane arrangements. See
 :mod:`sage.geometry.hyperplane_arrangement.arrangement` for details
 about how to construct your own hyperplane arrangements.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 David Perkinson <davidp@reed.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.graphs.graph_generators import graphs
 from sage.matrix.constructor import matrix, random_matrix
@@ -232,6 +232,86 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         return H(x)
+
+    def Coxeter(self, data, K=QQ, names=None):
+        r"""
+        Return the Coxeter arrangement.
+
+        This generalizes the braid arrangements to crystallographic
+        root systems.
+
+        INPUT:
+
+        - ``data`` -- either an integer or a Cartan type (or coercible
+          into; see "CartanType")
+
+        - ``K`` -- field (default:``QQ``)
+
+        - ``names`` -- tuple of strings or ``None`` (default); the
+          variable names for the ambient space
+
+        OUTPUT:
+
+        - If ``data`` is an integer `n`, return the braid arrangement in
+          dimension `n`, i.e. the set of `n(n-1)` hyperplanes:
+          `\{ x_i - x_j = 0,1 : 1 \leq i \leq j \leq n \}`. This corresponds
+          to the Coxeter arrangement of Cartan type `A_{n-1}`.
+
+        - If ``data`` is a Cartan type, return the Coxeter arrangement of given
+          type.
+
+        The Coxeter arrangement of a given crystallographic
+        Cartan type is defined by the inner products
+        `\langle a,x \rangle = 0` where
+        `a \in \Phi^+` runs over positive roots of the root system `\Phi`.
+
+        EXAMPLES::
+
+            sage: # needs sage.combinat
+            sage: hyperplane_arrangements.Coxeter(4)
+            Arrangement of 6 hyperplanes of dimension 4 and rank 3
+            sage: hyperplane_arrangements.Coxeter("B4")
+            Arrangement of 16 hyperplanes of dimension 4 and rank 4
+            sage: hyperplane_arrangements.Coxeter("A3")
+            Arrangement of 6 hyperplanes of dimension 4 and rank 3
+
+        If the Cartan type is not crystallographic, the Coxeter arrangement
+        is not implemented yet::
+
+            sage: hyperplane_arrangements.Coxeter("H3")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Coxeter arrangements are not implemented for non crystallographic Cartan types
+
+        The characteristic polynomial is pre-computed using the results
+        of Terao, see [Ath2000]_::
+
+            sage: # needs sage.combinat
+            sage: hyperplane_arrangements.Coxeter("A3").characteristic_polynomial()
+            x^3 - 6*x^2 + 11*x - 6
+        """
+        from sage.combinat.root_system.weyl_group import WeylGroup
+        if data in NN:
+            cartan_type = CartanType(["A", data - 1])
+        else:
+            cartan_type = CartanType(data)
+        if not cartan_type.is_crystallographic():
+            raise NotImplementedError("Coxeter arrangements are not implemented for non crystallographic Cartan types")
+        W = WeylGroup(cartan_type)
+        Ra = RootSystem(cartan_type).ambient_space()
+        PR = Ra.positive_roots()
+        d = Ra.dimension()
+        H = make_parent(K, d, names)
+        x = H.gens()
+        hyperplanes = []
+
+        for a in PR:
+            hyperplanes.append(sum(a[j] * x[j] for j in range(d)))
+        A = H(*hyperplanes)
+        x = polygen(QQ, 'x')
+        charpoly = prod(x - d + 1 for d in W.degrees())
+        A.characteristic_polynomial.set_cache(charpoly)
+        return A
 
     def G_semiorder(self, G, K=QQ, names=None):
         r"""
@@ -699,7 +779,7 @@ class HyperplaneArrangementLibrary():
             x^3 - 54*x^2 + 972*x - 5832
         """
         if data in NN:
-            cartan_type = CartanType(["A",data-1])
+            cartan_type = CartanType(["A", data - 1])
         else:
             cartan_type = CartanType(data)
         if not cartan_type.is_crystallographic():
@@ -721,5 +801,6 @@ class HyperplaneArrangementLibrary():
         charpoly = x**(d-n) * (x-m*h)**n
         A.characteristic_polynomial.set_cache(charpoly)
         return A
+
 
 hyperplane_arrangements = HyperplaneArrangementLibrary()

@@ -72,8 +72,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: a = CartanType(['A',3,1]).dynkin_diagram()
-            sage: a
+            sage: a = CartanType(['A',3,1]).dynkin_diagram(); a                         # needs sage.graphs
              0
              O-------+
              |       |
@@ -81,7 +80,7 @@ class CartanType(CartanType_standard_untwisted_affine):
              O---O---O
              1   2   3
              A3~
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1),
              (0, 3, 1),
              (1, 0, 1),
@@ -91,12 +90,11 @@ class CartanType(CartanType_standard_untwisted_affine):
              (3, 0, 1),
              (3, 2, 1)]
 
-            sage: a = DynkinDiagram(['A',1,1])
-            sage: a
+            sage: a = DynkinDiagram(['A',1,1]); a                                       # needs sage.graphs
             O<=>O
             0   1
             A1~
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 2), (1, 0, 2)]
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -133,8 +131,8 @@ class CartanType(CartanType_standard_untwisted_affine):
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
-            ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n"%node_dist
+            ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n" % node_dist
             ret += self._latex_draw_arrow_tip(0.33*node_dist-0.2, 0, 180)
             ret += self._latex_draw_arrow_tip(0.66*node_dist+0.2, 0, 0)
             ret += node(0, 0, label(0))
@@ -142,9 +140,9 @@ class CartanType(CartanType_standard_untwisted_affine):
             return ret
         rt_most = (self.n-1)*node_dist
         mid = 0.5 * rt_most
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%rt_most
-        ret += "\\draw (0 cm,0) -- (%s cm, 1.2 cm);\n"%mid
-        ret += "\\draw (%s cm, 1.2 cm) -- (%s cm, 0);\n"%(mid, rt_most)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % rt_most
+        ret += "\\draw (0 cm,0) -- (%s cm, 1.2 cm);\n" % mid
+        ret += "\\draw (%s cm, 1.2 cm) -- (%s cm, 0);\n" % (mid, rt_most)
         for i in range(self.n):
             ret += node(i*node_dist, 0, label(i+1))
         ret += node(mid, 1.2, label(0), 'anchor=south east')

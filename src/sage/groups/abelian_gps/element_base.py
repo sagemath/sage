@@ -48,9 +48,9 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
     EXAMPLES::
 
         sage: F = AbelianGroup(3,[7,8,9])
-        sage: Fd = F.dual_group(names="ABC")
-        sage: A,B,C = Fd.gens()
-        sage: A*B^-1 in Fd
+        sage: Fd = F.dual_group(names="ABC")                                            # needs sage.rings.number_field
+        sage: A,B,C = Fd.gens()                                                         # needs sage.rings.number_field
+        sage: A*B^-1 in Fd                                                              # needs sage.rings.number_field
         True
     """
 
@@ -61,9 +61,9 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: F = AbelianGroup(3,[7,8,9])
-            sage: Fd = F.dual_group(names="ABC")
-            sage: A,B,C = Fd.gens()
-            sage: A*B^-1 in Fd
+            sage: Fd = F.dual_group(names="ABC")                                        # needs sage.rings.number_field
+            sage: A,B,C = Fd.gens()                                                     # needs sage.rings.number_field
+            sage: A*B^-1 in Fd                                                          # needs sage.rings.number_field
             True
 
         Check that :issue:`35216` is fixed::
@@ -125,7 +125,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         TESTS::
 
             sage: F.<a,b,c> = AbelianGroup([7,8,9])
-            sage: libgap(a**2 * c) * libgap(b * c**2)
+            sage: libgap(a**2 * c) * libgap(b * c**2)                                   # needs sage.libs.gap
             f1^2*f2*f6
         """
         from sage.misc.misc_c import prod
@@ -147,6 +147,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: F = AbelianGroup(5,[2, 3, 5, 7, 8], names="abcde")
             sage: a,b,c,d,e = F.gens()
             sage: Ad = F.dual_group(names="ABCDE")
@@ -208,8 +209,8 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
             sage: a > b
             True
 
-            sage: Gd.<A,B> = G.dual_group()
-            sage: A > B
+            sage: Gd.<A,B> = G.dual_group()                                             # needs sage.rings.number_field
+            sage: A > B                                                                 # needs sage.rings.number_field
             True
         """
         return richcmp(self._exponents, other._exponents, op)
@@ -226,9 +227,9 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: F = AbelianGroup(3,[7,8,9])
-            sage: Fd = F.dual_group()
-            sage: A,B,C = Fd.gens()
-            sage: (B*C).order()
+            sage: Fd = F.dual_group()                                                   # needs sage.rings.number_field
+            sage: A,B,C = Fd.gens()                                                     # needs sage.rings.number_field
+            sage: (B*C).order()                                                         # needs sage.rings.number_field
             72
 
             sage: F = AbelianGroup(3,[7,8,9]); F

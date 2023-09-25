@@ -256,9 +256,9 @@ class ReflexiveModule_base(ReflexiveModule_abstract):
             sage: M.base_module() is M
             True
 
-            sage: M = Manifold(2, 'M')                                          # optional - sage.symbolic
-            sage: XM = M.vector_field_module()                                  # optional - sage.symbolic
-            sage: XM.base_module() is XM                                        # optional - sage.symbolic
+            sage: M = Manifold(2, 'M')                                                  # needs sage.symbolic
+            sage: XM = M.vector_field_module()                                          # needs sage.symbolic
+            sage: XM.base_module() is XM                                                # needs sage.symbolic
             True
         """
         return self
@@ -273,9 +273,9 @@ class ReflexiveModule_base(ReflexiveModule_abstract):
             sage: M.tensor_type()
             (1, 0)
 
-            sage: M = Manifold(2, 'M')                                          # optional - sage.symbolic
-            sage: XM = M.vector_field_module()                                  # optional - sage.symbolic
-            sage: XM.tensor_type()                                              # optional - sage.symbolic
+            sage: M = Manifold(2, 'M')                                                  # needs sage.symbolic
+            sage: XM = M.vector_field_module()                                          # needs sage.symbolic
+            sage: XM.tensor_type()                                                      # needs sage.symbolic
             (1, 0)
         """
         return (1, 0)

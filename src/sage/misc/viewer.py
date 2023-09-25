@@ -30,6 +30,7 @@ from sage.structure.sage_object import SageObject
 
 VIEWERS = ['browser', 'dvi_viewer', 'pdf_viewer', 'png_viewer']
 
+
 def default_viewer(viewer=None):
     """
     Set up default programs for opening web pages, PDFs, PNGs, and DVI files.
@@ -137,6 +138,7 @@ def default_viewer(viewer=None):
 
 # _viewer_prefs: a dictionary holding global preferences for viewers.
 _viewer_prefs = {}
+
 
 class Viewer(SageObject):
     """
@@ -301,7 +303,9 @@ class Viewer(SageObject):
         elif x.startswith('pdf'):
             return self.pdf_viewer()
 
+
 viewer = Viewer()
+
 
 def browser():
     """
@@ -319,6 +323,7 @@ def browser():
     """
     return viewer.browser()
 
+
 def dvi_viewer():
     """
     Return the program used to display a dvi file.  By default, the
@@ -335,6 +340,7 @@ def dvi_viewer():
     """
     viewer()
     return viewer.dvi_viewer()
+
 
 def pdf_viewer():
     """
@@ -355,6 +361,7 @@ def pdf_viewer():
     """
     viewer()
     return viewer.pdf_viewer()
+
 
 def png_viewer():
     """

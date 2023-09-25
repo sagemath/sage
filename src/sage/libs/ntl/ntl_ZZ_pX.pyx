@@ -417,8 +417,8 @@ cdef class ntl_ZZ_pX():
         in ZZ_p[X] such that a = b*q + r, deg(r) < deg(b).  This
         function returns r.
 
-        If p is not prime this function may raise a RuntimeError due to division by a noninvertible
-        element of ZZ_p.
+        If p is not prime this function may raise a :class:`RuntimeError`
+        due to division by a noninvertible element of ZZ_p.
 
         EXAMPLES::
 
@@ -1236,7 +1236,7 @@ cdef class ntl_ZZ_pX():
             sage: f.trace_list()
             [5, 0, 14, 0, 10]
 
-        The input polynomial must be monic or a ValueError is raised::
+        The input polynomial must be monic or a :class:`ValueError` is raised::
 
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,0,3,0,2],c)
