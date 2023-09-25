@@ -422,9 +422,10 @@ class OverconvergentModularFormsSpace(Module):
 
     def base_extend(self, ring):
         r"""
-        Return the base extension of self to the given base ring. There must be
-        a canonical map to this ring from the current base ring, otherwise a
-        TypeError will be raised.
+        Return the base extension of ``self`` to the given base ring.
+
+        There must be a canonical map to this ring from the current
+        base ring, otherwise a :class:`TypeError` will be raised.
 
         EXAMPLES::
 

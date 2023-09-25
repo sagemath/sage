@@ -1900,7 +1900,8 @@ class GenericGraph(GenericGraph_pyx):
           matrix. By default, the ordering given by
           :meth:`GenericGraph.vertices` with ``sort=True`` is used.
           If the vertices are not comparable, the keyword ``vertices`` must be
-          used to specify an ordering, or a TypeError exception will be raised.
+          used to specify an ordering, or a :class:`TypeError` exception will
+          be raised.
 
         - ``base_ring`` -- a ring (default: ``ZZ``); the base ring of the matrix
           space to use.
