@@ -1719,13 +1719,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Check that :trac:`30961` is fixed::
 
-            sage: QQi = i.parent()                                                      # needs sage.symbolic
-            sage: x = SR.var('x')                                                       # needs sage.symbolic
-            sage: QQi((x, x))                                                           # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: QQi = i.parent()
+            sage: x = SR.var('x')
+            sage: QQi((x, x))
             Traceback (most recent call last):
             ...
             TypeError: unable to convert x to a rational
-
             sage: QQi(("1", "2"))
             2*I + 1
             sage: QQi((RR(1), RR(2)))
