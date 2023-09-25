@@ -15978,28 +15978,42 @@ cdef class Matrix(Matrix1):
             sage: M.elementary_divisors()
             [1, 1, 4]
 
+        This is also true for univariate polynomials over a field::
+
+            sage: R.<x> = QQ[]
+            sage: M = matrix(R,[[x^2-2*x+1, x-1,x^2-1],[0,x+1,1]])
+            sage: M.fitting_ideal(0)
+            Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+            sage: M.fitting_ideal(1)
+            Principal ideal (x - 1) of Univariate Polynomial Ring in x over Rational Field
+            sage: M.fitting_ideal(2)
+            Principal ideal (1) of Univariate Polynomial Ring in x over Rational Field
+            sage: M.smith_form()[0]
+            [    1     0     0]
+            [    0 x - 1     0]
+
         """
         R = self.base_ring()
         if not R.is_exact():
             raise NotImplementedError("Fitting ideals over non-exact rings not implemented at present")
         n = self.ncols()
-        rank = n - i
-        if rank > self.nrows():
+        rank_minors = n - i
+        if rank_minors > self.nrows():
             return R.ideal([R.zero()])
-        elif rank <= 0:
+        elif rank_minors <= 0:
             return R.ideal([R.one()])
-        elif rank == 1:
+        elif rank_minors == 1:
             return R.ideal(self.coefficients())
         if R in _Fields:
-            if self.rank() >= rank:
+            if self.rank() >= rank_minors:
                 return R.ideal([1])
             else:
                 return R.ideal([0])
         try:
             elemdiv = self.elementary_divisors()
-            if rank > len(elemdiv):
+            if rank_minors > len(elemdiv):
                 return R.ideal([0])
-            return R.ideal(prod(elemdiv[:rank]))
+            return R.ideal(prod(elemdiv[:rank_minors]))
         except (TypeError, NotImplementedError, ArithmeticError):
             pass
         for (nr,r) in enumerate(self.rows()):
@@ -16017,7 +16031,7 @@ cdef class Matrix(Matrix1):
             nz = [e for e in enumerate(c) if e[1]]
             if len(nz) == 0:
                 N = self.delete_columns([nc])
-                return N._fitting_ideal(i - 1)
+                return N.fitting_ideal(i - 1)
             elif len(nz) == 1:
                 N = self.delete_columns([nc])
                 F1 = N.fitting_ideal(i-1)
@@ -16029,8 +16043,7 @@ cdef class Matrix(Matrix1):
                 return self._fitting_ideal(i)
             except NotImplementedError:
                 pass
-        else:
-            return R.ideal(self.minors(rank))
+        return R.ideal(self.minors(rank_minors))
 
 
 
