@@ -721,7 +721,7 @@ class IncidenceStructure():
 
         blocks = [int_points.intersection(S) for S in self._blocks]
         if min_size:
-            blocks = [S for S in blocks if len(S)>=min_size]
+            blocks = [S for S in blocks if len(S) >= min_size]
         if not multiset:
             blocks = set(blocks)
         IS = IncidenceStructure(blocks)
@@ -835,7 +835,7 @@ class IncidenceStructure():
             if self._point_to_index:
                 p = self._point_to_index.get(p,-1)
             else:
-                p = p if (p>=0 and p<len(self._points)) else -1
+                p = p if (p >= 0 and p < len(self._points)) else -1
             return sum((p in b) for b in self._blocks) if p != -1 else 0
 
         # degree of a set
@@ -843,7 +843,7 @@ class IncidenceStructure():
             if self._point_to_index:
                 p = set(self._point_to_index.get(x,-1) for x in p)
             else:
-                p = set(p) if all(x>=0 and x<len(self._points) for x in p) else set([-1])
+                p = set(p) if all(x >= 0 and x < len(self._points) for x in p) else set([-1])
 
             return sum(p.issubset(b) for b in self._blocks) if -1 not in p else 0
 
@@ -896,7 +896,7 @@ class IncidenceStructure():
             d = {t:0 for t in combinations(range(self.num_points()),size)}
             for b in self._blocks:
                 for s in combinations(b,size):
-                    d[s]+=1
+                    d[s] += 1
             if self._point_to_index:
                 return {tuple([self._points[x] for x in s]):v for s,v in d.items()}
             else:
@@ -1310,9 +1310,9 @@ class IncidenceStructure():
             from itertools import combinations
             for B in combinations(range(self.num_points()),k):
                 B = list(B)
-                while i<num_blocks and self._blocks[i] < B:
+                while i < num_blocks and self._blocks[i] < B:
                     i += 1
-                if i<num_blocks and self._blocks[i] == B:
+                if i < num_blocks and self._blocks[i] == B:
                     i += 1
                     continue
                 blocks.append(B)
@@ -1618,14 +1618,14 @@ class IncidenceStructure():
             return (False, (0,0,0,0)) if return_parameters else False
 
         # Trivial case t>k
-        if (t is not None and t>k):
+        if (t is not None and t > k):
             if (l is None or l == 0):
                 return (True, (t,v,k,0)) if return_parameters else True
             else:
                 return (False, (0,0,0,0)) if return_parameters else False
 
         # Trivial case k=0
-        if k==0:
+        if k == 0:
             if (l is None or l == 0):
                 return (True, (0,v,k,b)) if return_parameters else True
             else:
@@ -1664,8 +1664,8 @@ class IncidenceStructure():
 
             ll = b*binomial(k,tt) // binomial(v,tt)
 
-        if ((t is not None and t!=tt) or
-            (l is not None and l!=ll)):
+        if ((t is not None and t != tt) or
+            (l is not None and l != ll)):
             return (False, (0,0,0,0)) if return_parameters else False
         else:
             if tt == 0:
@@ -1763,8 +1763,8 @@ class IncidenceStructure():
         if parameters:
             s = self.is_uniform()
             t = self.is_regular()
-            s = s-1 if (s is not False and s>=2) else False
-            t = t-1 if (t is not False and t>=2) else False
+            s = s-1 if (s is not False and s >= 2) else False
+            t = t-1 if (t is not False and t >= 2) else False
             return (s,t)
         else:
             return True
@@ -1867,11 +1867,11 @@ class IncidenceStructure():
                                              list(range(n,n+self.num_blocks()))])
 
         if self._point_to_index:
-            gens = [[tuple([self._points[i] for i in cycle if (not cycle or cycle[0]<n)])
+            gens = [[tuple([self._points[i] for i in cycle if (not cycle or cycle[0] < n)])
                      for cycle in g.cycle_tuples()]
                     for g in ag.gens()]
         else:
-            gens = [[tuple(cycle) for cycle in g.cycle_tuples() if (not cycle or cycle[0]<n)]
+            gens = [[tuple(cycle) for cycle in g.cycle_tuples() if (not cycle or cycle[0] < n)]
                     for g in ag.gens()]
 
         return PermutationGroup(gens, domain=self._points)
@@ -2261,12 +2261,12 @@ class IncidenceStructure():
 
         # Prints each set with its color
         for s,i in colored_sets:
-            current_color = colors[i%len(colors)]
+            current_color = colors[i % len(colors)]
 
             if len(s) == 2:
                 s = list(s)
-                tex += ("\\draw[color="+str(current_color)+","+
-                        "line width=.1cm,opacity = .6] "+
+                tex += ("\\draw[color="+str(current_color)+"," +
+                        "line width=.1cm,opacity = .6] " +
                         str(pos[s[0]])+" -- "+str(pos[s[1]])+";\n")
                 continue
 

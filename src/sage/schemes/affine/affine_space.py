@@ -9,6 +9,7 @@ Affine `n` space over a ring
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
 from sage.rings.integer import Integer
@@ -22,7 +23,6 @@ from sage.categories.map import Map
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.misc.latex import latex
-from sage.misc.mrange import cartesian_product_iterator
 from sage.matrix.constructor import matrix
 from sage.structure.category_object import normalize_names
 from sage.schemes.generic.scheme import AffineScheme
@@ -225,7 +225,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         AHom = self.point_homset()
         C = AHom.codomain()
 
-        for v in cartesian_product_iterator([R for _ in range(n)]):
+        for v in product(*[R for _ in range(n)]):
             yield C._point(AHom, v, check=False)
 
     def ngens(self):
