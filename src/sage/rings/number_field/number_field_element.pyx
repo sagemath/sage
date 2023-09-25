@@ -123,44 +123,6 @@ def is_NumberFieldElement(x):
     return isinstance(x, NumberFieldElement)
 
 
-def __create__NumberFieldElement_version0(parent, poly):
-    """
-    Used in unpickling elements of number fields pickled under very old Sage versions.
-
-    TESTS::
-
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^3 - 2)
-        sage: R.<z> = QQ[]
-        sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version0(k, z^2 + z + 1)
-        doctest:...: DeprecationWarning: __create__NumberFieldElement_version0() is deprecated
-        See https://github.com/sagemath/sage/issues/25848 for details.
-        a^2 + a + 1
-    """
-    from sage.misc.superseded import deprecation_cython as deprecation
-    deprecation(25848, '__create__NumberFieldElement_version0() is deprecated')
-    return NumberFieldElement(parent, poly)
-
-
-def __create__NumberFieldElement_version1(parent, cls, poly):
-    """
-    Used in unpickling elements of number fields pickled under old Sage versions.
-
-    TESTS::
-
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^3 - 2)
-        sage: R.<z> = QQ[]
-        sage: sage.rings.number_field.number_field_element.__create__NumberFieldElement_version1(k, type(a), z^2 + z + 1)
-        doctest:...: DeprecationWarning: __create__NumberFieldElement_version1() is deprecated
-        See https://github.com/sagemath/sage/issues/25848 for details.
-        a^2 + a + 1
-    """
-    from sage.misc.superseded import deprecation_cython as deprecation
-    deprecation(25848, '__create__NumberFieldElement_version1() is deprecated')
-    return cls(parent, poly)
-
-
 def _inverse_mod_generic(elt, I):
     r"""
     Return an inverse of ``elt`` modulo the given ideal. This is a separate
