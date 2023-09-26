@@ -561,7 +561,7 @@ If this all works, you can then make calls like:
         try:
             if self._expect is not None:
                 self._expect.close(force=force)
-        except ExceptionPexpect:
+        except (ExceptionPexpect, OSError):
             self._expect.ptyproc.fd = -1
             self._expect.ptyproc.closed = True
             self._expect.child_fd = -1
