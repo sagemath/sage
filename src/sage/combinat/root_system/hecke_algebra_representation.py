@@ -113,7 +113,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             on Algebra of Weyl Group of type ['A', 3]
             (as a matrix group acting on the ambient space) over Rational Field"
         """
-        return "A representation of the %s-Hecke algebra of type %s on %s"%((self._q1,self._q2), self.cartan_type(), self.domain())
+        return "A representation of the %s-Hecke algebra of type %s on %s" % ((self._q1,self._q2), self.cartan_type(), self.domain())
 
     @cached_method
     def parameters(self, i):

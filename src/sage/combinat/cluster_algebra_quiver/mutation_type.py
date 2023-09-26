@@ -311,7 +311,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
                 if conn_vert_list:
                     conn_verts = list(set(dg).difference(conn_verts))
             if mut_type._letter == hope_letter and not mut_type._twist and conn_vert.issubset(conn_verts):
-                if len(check_letter)>1:
+                if len(check_letter) > 1:
                     check_twist = 1
                 if check_twist:
                     n -= 1

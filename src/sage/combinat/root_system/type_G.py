@@ -217,9 +217,9 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0,0) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (0,0) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n" % node_dist
         if dual:
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
         else:
