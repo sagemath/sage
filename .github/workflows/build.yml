@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p upstream
           git format-patch --stdout test_base > upstream/ci_fixes.patch
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: upstream
           name: upstream
