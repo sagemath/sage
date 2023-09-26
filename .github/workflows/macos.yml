@@ -87,7 +87,7 @@ jobs:
         if: inputs.upstream_artifact
       - name: Update Sage packages from upstream artifact
         run: |
-          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore && echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - build/bin/write-dockerfile.sh && git diff)
+          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && git diff)
         if: inputs.upstream_artifact
 
       - name: Merge CI fixes from sagemath/sage
