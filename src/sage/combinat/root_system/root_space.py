@@ -266,7 +266,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         """
         # Find some better test
         if not (lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()):
-            raise TypeError("%s is not in a coroot lattice/space"%(lambdacheck))
+            raise TypeError("%s is not in a coroot lattice/space" % (lambdacheck))
         zero = self.parent().base_ring().zero()
         cartan_matrix = self.parent().dynkin_diagram()
         return sum( (sum( (lambdacheck[i]*s for i,s in cartan_matrix.column(j)), zero) * c for j,c in self), zero)
@@ -287,7 +287,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             sage: w.is_positive_root()
             False
         """
-        return all( c>= 0 for c in self.coefficients() )
+        return all( c >= 0 for c in self.coefficients() )
 
     @cached_in_parent_method
     def associated_coroot(self):
