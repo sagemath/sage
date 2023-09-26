@@ -3211,8 +3211,8 @@ class Link(SageObject):
     def coloring_maps(self, n=None, finitely_presented=False):
         r"""
         Return the ``n``-coloring maps of ``self``. These are group
-        homomorphisms from the fundamental group of ``self`` to the ``n``th
-        dihedral group.
+        homomorphisms from the fundamental group of ``self`` to the
+        ``n``-th dihedral group.
 
         INPUT:
 
