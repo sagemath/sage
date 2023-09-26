@@ -3334,6 +3334,9 @@ def compute_isogeny_bmss(E1, E2, l):
     Compute the kernel polynomial of the unique normalized isogeny
     of degree ``l`` between ``E1`` and ``E2``.
 
+    Both curves must be given in short Weierstrass form, and the
+    characteristic must be either `0` or no smaller than `4l+4`.
+
     ALGORITHM: [BMSS2006]_, algorithm *fastElkies'*.
 
     EXAMPLES::
@@ -3348,6 +3351,13 @@ def compute_isogeny_bmss(E1, E2, l):
     # https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332
     # Released under the MIT license: https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/LICENSE
     # Slightly adjusted for inclusion in the Sage library.
+    if E1.a1() or E1.a2() or E1.a3():
+        raise ValueError('E1 must be a short Weierstrass curve')
+    if E2.a1() or E2.a2() or E2.a3():
+        raise ValueError('E2 must be a short Weierstrass curve')
+    char = E1.base_ring().characteristic()
+    if char != 0 and char < 4*l + 4:
+        raise ValueError('characteristic must be at least 4*degree+4')
     Rx, x = E1.base_ring()["x"].objgen()
     # Compute C = 1/(1 + Ax^4 + Bx^6) mod x^4l
     A, B = E1.a4(), E1.a6()
@@ -3577,12 +3587,18 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         from sage.misc.superseded import deprecation
         deprecation(34871, 'The "starks" algorithm is being renamed to "stark".')
         algorithm = 'stark'
+
     if algorithm is None:
+        char = E1.base_ring().characteristic()
+        if char != 0 and char < 4*ell + 4:
+            raise NotImplementedError(f'no algorithm for computing kernel polynomial from domain and codomain is implemented for degree {ell} and characteristic {char}')
         algorithm = 'stark' if ell < 10 else 'bmss'
+
     if algorithm == 'bmss':
         return compute_isogeny_bmss(E1, E2, ell)
     if algorithm == 'stark':
         return compute_isogeny_stark(E1, E2, ell).radical()
+
     raise NotImplementedError(f'unknown algorithm {algorithm}')
 
 def compute_intermediate_curves(E1, E2):
