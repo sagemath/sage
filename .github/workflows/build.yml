@@ -101,7 +101,7 @@ jobs:
           if [ -r upstream/ci_fixes.patch ]; then
             (cd worktree-image && git commit --quiet -m "current changes" --allow-empty -a && git am) < upstream/ci_fixes.patch
             git reset --quiet old
-            git add -N .
+            git add --quiet -N .
           fi
 
       - name: Incremental build, test changed files (sage -t --new)
