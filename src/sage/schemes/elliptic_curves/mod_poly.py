@@ -2,7 +2,7 @@ r"""
 Modular polynomials for elliptic curves
 
 For a positive integer `\ell`, the classical modular polynomial
-`\Phi_\ell\in\ZZ[X,Y]` is characterized by the property that its
+`\Phi_\ell \in \ZZ[X,Y]` is characterized by the property that its
 zero set is exactly the set of pairs of `j`-invariants connected
 by a cyclic `\ell`-isogeny.
 
@@ -11,12 +11,9 @@ AUTHORS:
 - Lorenz Panny (2023)
 """
 
-from sage.misc.cachefunc import cached_function
-from sage.structure.parent import Parent
-from sage.structure.element import parent, FieldElement
+from sage.structure.element import parent
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring import polygen, polygens
 
 from sage.libs.pari import pari
 from cypari2.handle_error import PariError
@@ -44,21 +41,17 @@ def classical_modular_polynomial(l, j=None):
     INPUT:
 
     - ``l`` -- positive integer.
-
-    - ``j`` -- either ``None`` or a ring element.
-
-      - If ``None`` is given, the original modular polynomial
-        is returned as an element of `\ZZ[X,Y]`.
-
-      - If a ring element `j \in R` is given, the evaluation
+    - ``j`` -- either ``None`` or a ring element:
+      * if ``None`` is given, the original modular polynomial
+        is returned as an element of `\ZZ[X,Y]`
+      * if a ring element `j \in R` is given, the evaluation
         `\Phi_\ell(j,Y)` is returned as an element of the
-        univariate polynomial ring `R[Y]`.
+        univariate polynomial ring `R[Y]`
 
     ALGORITHMS:
 
     - The Kohel database
       :class:`~sage.databases.db_modular_polynomials.ClassicalModularPolynomialDatabase`
-
     - :pari:`polmodular`
 
     EXAMPLES::
@@ -96,7 +89,7 @@ def classical_modular_polynomial(l, j=None):
                 pari_Phi = pari.polmodular(l)
             except PariError:
                 raise NotImplementedError('modular polynomial is not in database and computing it on the fly is not yet implemented')
-            d = {(i,j): c for i,f in enumerate(pari_Phi) for j,c in enumerate(f)}
+            d = {(i, j): c for i,f in enumerate(pari_Phi) for j, c in enumerate(f)}
             Phi = ZZ['X,Y'](d)
 
         if l <= classical_modular_polynomial.cache_bound:
@@ -104,16 +97,13 @@ def classical_modular_polynomial(l, j=None):
 
         return Phi
 
-    R,Y = parent(j)['Y'].objgen()
+    R = parent(j)['Y']
+    Y = R.gen()
 
     # If the generic polynomial is in the cache or the database, evaluating
     # it directly should always be faster than recomputing it from scratch.
-    try:
-        Phi = _cache[l]
-    except KeyError:
-        pass
-    else:
-        return Phi(j, Y)
+    if l  in _cache:
+        return _cache[l](j, Y)
     try:
         Phi = _db[l]
     except ValueError:
