@@ -544,24 +544,27 @@ class GhLabelSynchronizer:
         """
         self.gh_cmd('ready', '', '')
 
-    def review(self, arg, text):
+    def review(self, arg, text=None):
         r"""
         Perform a system call to ``gh`` to review a PR.
         """
-        self.gh_cmd('review', arg, '-b \"%s\"' % text)
+        if text:
+            self.gh_cmd('review', arg, '-b \"%s\"' % text)
+        else:
+            self.gh_cmd('review', arg)
 
     def approve(self):
         r"""
         Approve the PR by the actor.
         """
-        self.review('--approve', '@%s approved this PR' % self._actor)
+        self.review('--approve')
         info('PR %s approved by %s' % (self._issue, self._actor))
 
     def request_changes(self):
         r"""
         Request changes for this PR by the actor.
         """
-        self.review('--request-changes', '%s requested changes for this PR' % self._actor)
+        self.review('--request-changes', '@%s requested changes for this PR' % self._actor)
         info('Changes requested for PR %s by %s' % (self._issue, self._actor))
 
     def review_comment(self, text):
