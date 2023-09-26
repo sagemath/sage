@@ -21,8 +21,11 @@ else
         git checkout -q test_head
         if git merge --no-edit --squash -q pr-$a; then
             echo "::endgroup::"
-            git commit -q -m "Merge https://github.com/$REPO/pull/$a" -a --allow-empty
-            echo "Merged #$a"
+            if git commit -q -m "Merge https://github.com/$REPO/pull/$a" -a --no-allow-empty; then
+                echo "Merged #$a"
+            else
+                echo "Empty, skipped"
+            fi
         else
             echo "::endgroup::"
             echo "Failure merging #$a, resetting"

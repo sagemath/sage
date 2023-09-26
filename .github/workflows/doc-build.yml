@@ -85,9 +85,7 @@ jobs:
         # After applying the fixes, make sure all changes are marked as uncommitted changes.
         run: |
           if [ -r upstream/ci_fixes.patch ]; then
-            (cd worktree-image && git commit -m "current changes" --allow-empty -a && git am) < upstream/ci_fixes.patch
-            git reset --quiet old
-            git add -N .
+            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
           fi
 
       - name: Incremental build
