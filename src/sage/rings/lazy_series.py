@@ -57,7 +57,7 @@ We can do arithmetic with lazy power series::
     sage: f
     1 + z + 2*z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + O(z^7)
     sage: f^-1
-    1 - z - z^2
+    1 - z - z^2 + O(z^7)
     sage: f + f^-1
     2 + z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + O(z^7)
     sage: g = (f + f^-1)*(f - f^-1); g
@@ -3448,11 +3448,12 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: 1 / f
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: cannot divide by a series of positive valuation
+            ZeroDivisionError: cannot divide by 0
             sage: L.options._reset()
         """
-        if self.is_one():
-            return ~other
+        # currently __invert__ and _div_ behave differently with
+        # respect to division by lazy power series of positive
+        # valuation, so we cannot call ~other if self.is_one()
         if not other:
             raise ZeroDivisionError("cannot divide by 0")
 
