@@ -11,6 +11,7 @@ else
     export GIT_AUTHOR_EMAIL="ci-sage@example.com"
     export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
     export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+    git tag -f test_base
     git commit -q -m "Uncommitted changes" --no-allow-empty -a
     for a in $PRs; do
         echo "::group::Merging PR https://github.com/$REPO/pull/$a"
@@ -18,8 +19,9 @@ else
         $GH pr checkout -b pr-$a $a
         git fetch --unshallow --all
         git checkout -q test_head
-        if git merge --no-edit -q pr-$a; then
+        if git merge --no-edit --squash -q pr-$a; then
             echo "::endgroup::"
+            git commit -q -m "Merge https://github.com/$REPO/pull/$a" -a --allow-empty
             echo "Merged #$a"
         else
             echo "::endgroup::"
@@ -27,5 +29,5 @@ else
             git reset --hard
         fi
     done
-    git log test_head..HEAD
+    git log test_base..HEAD
 fi
