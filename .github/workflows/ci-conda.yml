@@ -99,9 +99,6 @@ jobs:
           echo "::remove-matcher owner=configure-system-package-warning::"
           echo "::remove-matcher owner=configure-system-package-error::"
 
-          # Manually install ptyprocess for now, until https://github.com/sagemath/sage/issues/32147 is fixed
-          pip install --no-build-isolation -v -v ptyprocess==0.5.1
-
       - name: Build
         shell: bash -l {0}
         run: |
