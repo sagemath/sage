@@ -657,9 +657,9 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         result = self._type._latex_()
         import re
         if re.match(r".*\^{\(\d\)}$", result):
-            return "%s%s}"%(result[:-1], self.options('dual_latex'))
+            return "%s%s}" % (result[:-1], self.options('dual_latex'))
         else:
-            return "{%s}^%s"%(result, self.options('dual_latex'))
+            return "{%s}^%s" % (result, self.options('dual_latex'))
 
     def _default_folded_cartan_type(self):
         """

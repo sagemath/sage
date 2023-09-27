@@ -40,7 +40,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
@@ -51,7 +51,7 @@ from sage.structure.element cimport Element
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.libs.gmp.randomize cimport *
 
-from sage.libs.flint.types cimport fmpz_t, fmpq
+from sage.libs.flint.types cimport fmpz_t
 from sage.libs.flint.fmpz cimport fmpz_init, fmpz_clear, fmpz_set_mpz, fmpz_one, fmpz_get_mpz, fmpz_add, fmpz_mul, fmpz_sub, fmpz_mul_si, fmpz_mul_si, fmpz_mul_si, fmpz_divexact, fmpz_lcm
 from sage.libs.flint.fmpq cimport fmpq_is_zero, fmpq_set_mpq, fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
@@ -327,7 +327,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         cdef Py_ssize_t k, c
         cdef NumberFieldElement x
         cdef NumberFieldElement_quadratic xq
-        cdef mpz_t quo, tmp
+        cdef mpz_t tmp
         cdef fmpz_t denom, ftmp
         cdef ZZ_c coeff
 
@@ -680,8 +680,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
     cdef long _hash_(self) except -1:
         """
-        Return hash of an immutable matrix. Raise a TypeError if input
-        matrix is mutable.
+        Return hash of an immutable matrix.
+
+        This raises a :class:`TypeError` if input matrix is mutable.
 
         EXAMPLES:
 
@@ -1036,7 +1037,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         cdef Py_ssize_t i
         cdef Matrix_rational_dense mat = self._matrix
-        cdef fmpq * entry
         cdef mpq_t tmp
 
         sig_on()
@@ -1198,8 +1198,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         if self._nrows <= 3:
             return max(1, 3*B, 6*B**2, 4*B**3)
 
-        # This is an approximation to 2^(5/6*log_2(5) - 2/3*log_2(6))
-        alpha = RealNumber('1.15799718800731')
         # This is 2*e^(1-(2(7\gamma-4))/(13(3-2\gamma))), where \gamma
         # is Euler's constant.
         delta = RealNumber('5.418236')
@@ -1333,20 +1331,20 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             [4 0 0]
             [0 0 0]
         """
-        tm = verbose("Computing characteristic polynomial of cyclotomic matrix modulo %s."%p)
+        tm = verbose("Computing characteristic polynomial of cyclotomic matrix modulo %s." % p)
         # Reduce self modulo all primes over p
-        R, denom = self._reductions(p)
+        R, _ = self._reductions(p)
         # Compute the characteristic polynomial of each reduced matrix
         F = [A.charpoly('x') for A in R]
         # Put the characteristic polynomials together as the rows of a mod-p matrix
         k = R[0].base_ring()
-        S = matrix(k, len(F), self.nrows()+1, [f.list() for f in F])
+        S = matrix(k, len(F), self.nrows() + 1, [f.list() for f in F])
         # multiply by inverse of reduction matrix to lift
         _, L = self._reduction_matrix(p)
         X = L * S
         # Now the columns of the matrix X define the entries of the
         # charpoly modulo p.
-        verbose("Finished computing charpoly mod %s."%p, tm)
+        verbose("Finished computing charpoly mod %s." % p, tm)
         return X
 
     def _charpoly_multimodular(self, var='x', proof=None):
@@ -1676,7 +1674,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             [   1    0 7/19]
             [   0    1 3/19]
         """
-        cdef int i
         cdef Matrix_cyclo_dense res
         cdef bint is_square
 
@@ -1827,14 +1824,11 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             Traceback (most recent call last):
             ...
             ValueError: echelon form mod 7 not defined
-
         """
-        cdef Matrix_cyclo_dense res
         cdef int i
 
         # Initialize variables
-        is_square = self._nrows == self._ncols
-        ls, denom = self._reductions(p)
+        ls, _ = self._reductions(p)
 
         # Find our first echelon form, and the associated list
         # of pivots
@@ -1936,13 +1930,11 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         X = R._generator_matrix()
         d = self._degree
         MS = MatrixSpace(QQ, d, d)
-        mlst = self.list()
         for c in self._matrix.columns():
             v = c.list()
             for n in range(d-1):
                 c = c * X
                 v += c.list()
-            temp = MS(v)
             rmul = MS([v[d*i+j] for j in range(d) for i in range(d)]) # We take the transpose
             l.append(rmul * A._rational_matrix())
 

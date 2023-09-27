@@ -6475,7 +6475,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
             sage: 1 in SST
             False
         """
-        return SemistandardTableaux.__contains__(self, x) and [len(_) for _ in x]==self.shape
+        return SemistandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
     def _repr_(self):
         """
@@ -6587,7 +6587,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
             sage: 1 in SST
             False
         """
-        if self.size==0:
+        if self.size == 0:
             return x == []
 
         return (SemistandardTableaux.__contains__(self, x)

@@ -1173,7 +1173,7 @@ cdef class FiniteField(Field):
             else:
                 return PolynomialRing(GF(self.characteristic()), variable_name)
 
-    def free_module(self, base=None, basis=None, map=None, subfield=None):
+    def free_module(self, base=None, basis=None, map=True):
         """
         Return the vector space over the subfield isomorphic to this
         finite field as a vector space, along with the isomorphisms.
@@ -1253,15 +1253,6 @@ cdef class FiniteField(Field):
             sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
             True
         """
-        if subfield is not None:
-            if base is not None:
-                raise ValueError
-            deprecation(28481, "The subfield keyword argument has been renamed to base")
-            base = subfield
-        if map is None:
-            deprecation(28481, "The default value for map will be changing to True.  To keep the current behavior, explicitly pass map=False.")
-            map = False
-
         if base is None and self.__vector_space is not None and not map:
             # A very common case: return as early as possible.
             return self.__vector_space

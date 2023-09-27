@@ -1,29 +1,5 @@
 """
 Rings
-
-Tests for deprecations of imports in global namespace from :trac:`33602`::
-
-    sage: PowerSeries
-    doctest:warning...:
-    DeprecationWarning:
-    Importing PowerSeries from here is deprecated;
-    please use "from sage.rings.power_series_ring_element import PowerSeries" instead.
-    See https://github.com/sagemath/sage/issues/33602 for details.
-    ...
-    sage: PuiseuxSeries
-    doctest:warning...:
-    DeprecationWarning:
-    Importing PuiseuxSeries from here is deprecated;
-    please use "from sage.rings.puiseux_series_ring_element import PuiseuxSeries" instead.
-    See https://github.com/sagemath/sage/issues/33602 for details.
-    ...
-    sage: LaurentSeries
-    doctest:warning...:
-    DeprecationWarning:
-    Importing LaurentSeries from here is deprecated;
-    please use "from sage.rings.laurent_series_ring_element import LaurentSeries" instead.
-    See https://github.com/sagemath/sage/issues/33602 for details.
-    ...
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -139,11 +115,9 @@ lazy_import("sage.rings.imaginary_unit", "I")
 
 # Power series rings
 from .power_series_ring import PowerSeriesRing
-lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=33602)
 
 # Laurent series ring in one variable
 from .laurent_series_ring import LaurentSeriesRing
-lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
 
 # Lazy Laurent series ring
 lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
@@ -154,7 +128,6 @@ from .tate_algebra import TateAlgebra
 
 # Puiseux series ring
 from .puiseux_series_ring import PuiseuxSeriesRing
-lazy_import('sage.rings.puiseux_series_ring_element', 'PuiseuxSeries', deprecation=33602)
 
 # Pseudo-ring of PARI objects.
 from .pari_ring import PariRing, Pari
