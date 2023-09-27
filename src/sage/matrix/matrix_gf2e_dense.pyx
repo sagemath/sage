@@ -83,11 +83,11 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_check, sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from sage.structure.element cimport Matrix, Vector
-from sage.structure.element cimport ModuleElement, Element, RingElement
+from sage.structure.element cimport Matrix
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.element_base cimport Cache_base
 
@@ -97,7 +97,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from .args cimport SparseEntry, MatrixArgs_init
 
-from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzd_init
+from sage.libs.m4ri cimport m4ri_word, mzd_copy
 from sage.libs.m4rie cimport *
 from sage.libs.m4rie cimport mzed_t
 
@@ -804,7 +804,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word mask = (1<<(self._parent.base_ring().degree())) - 1
 
         cdef randstate rstate = current_randstate()
-        K = self._parent.base_ring()
 
         if self._ncols == 0 or self._nrows == 0:
             return
@@ -898,7 +897,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             self.cache('pivots', [])
             return self
 
-        cdef int k, n, full
+        cdef int full
 
         full = int(reduced)
 

@@ -6,17 +6,14 @@ AUTHORS:
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
 
 """
-
 #*****************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-
-from sage.misc.misc_c import prod
 
 
 cpdef julia(ff_j, z, int iterations):
@@ -31,6 +28,7 @@ cpdef julia(ff_j, z, int iterations):
 
     TESTS::
 
+        sage: # needs sage.symbolic
         sage: from sage.interacts.library_cython import julia
         sage: z = var('z')
         sage: c_real, c_imag = 1, 1
@@ -58,6 +56,7 @@ cpdef mandel(ff_m, z, int iterations):
 
     TESTS::
 
+        sage: # needs sage.symbolic
         sage: from sage.interacts.library_cython import mandel
         sage: z, c = var('z, c')
         sage: f = symbolic_expression(z**2 + c).function(z,c)

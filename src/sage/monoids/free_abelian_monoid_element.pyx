@@ -26,19 +26,20 @@ The list is a copy, so changing the list does not change the element::
     a^7*b^2*d*e
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2006 William Stein <wstein@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.integer cimport Integer, _Integer_from_mpz
 from sage.libs.gmp.mpz cimport *
+
 
 def is_FreeAbelianMonoidElement(x):
     r"""
@@ -54,6 +55,7 @@ def is_FreeAbelianMonoidElement(x):
       ``False`` otherwise.
     """
     return isinstance(x, FreeAbelianMonoidElement)
+
 
 cdef class FreeAbelianMonoidElement(MonoidElement):
     cdef int _init(self, Py_ssize_t n, Parent parent) except -1:
@@ -307,7 +309,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
             a^2*b^4
         """
         if not isinstance(y, FreeAbelianMonoidElement):
-            raise TypeError("argument y (= %s) is of wrong type"%y)
+            raise TypeError("argument y (= %s) is of wrong type" % y)
         cdef FreeAbelianMonoidElement s, z, r
         s = self
         r = y

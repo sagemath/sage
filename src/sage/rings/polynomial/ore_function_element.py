@@ -165,7 +165,7 @@ class OreFunction(AlgebraElement):
             sage: P = K.random_element()
             sage: Q = K.random_element()
             sage: D = K.random_element()
-            sage: Q == 0 or D == 0 or (P*D) / (Q*D) == P/Q
+            sage: Q == 0 or D == 0 or (P*D) / (Q*D) == P/Q  # long time
             True
 
         """

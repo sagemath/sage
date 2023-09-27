@@ -234,11 +234,7 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element
 from sage.structure.element import is_Matrix
-from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.rings.integer_ring import ZZ
 
 
@@ -997,11 +993,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef str s
         cdef GenericBackend b = self._backend
 
-        result = list()
+        result = []
 
         # If indices is None, we actually want to return all constraints
         if indices is None:
-            indices = list(xrange(b.nrows()))
+            indices = list(range(b.nrows()))
 
         # Only one constraint
         if isinstance(indices, (int, Integer)):

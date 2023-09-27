@@ -22,7 +22,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
     cpdef _bracket_(self, right)
     cpdef to_vector(self, bint sparse=*)
     cpdef dict monomial_coefficients(self, bint copy=*)
-    #cpdef lift(self)
+    # cpdef lift(self)
 
 cdef class UntwistedAffineLieAlgebraElement(Element):
     cdef dict _t_dict

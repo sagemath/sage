@@ -23,20 +23,21 @@ AUTHORS:
 - Reimundo Heluani (2019-08-09): Initial implementation.
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .lie_conformal_algebra_with_structure_coefs import \
-                                LieConformalAlgebraWithStructureCoefficients
+    LieConformalAlgebraWithStructureCoefficients
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
+
 
 class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     r"""
@@ -132,7 +133,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         from sage.matrix.matrix_space import MatrixSpace
         if ngens:
             from sage.rings.integer_ring import ZZ
-            if not(ngens in ZZ and not ngens % 2):
+            if not (ngens in ZZ and not ngens % 2):
                 raise ValueError("ngens needs to be an even positive Integer, "
                                  f"got {ngens}")
         if gram_matrix is not None:
@@ -163,8 +164,9 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         names, index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        weyldict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
-                    index_set.rank(j)]}} for i in index_set for j in index_set}
+        weyldict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
+                                                       index_set.rank(j)]}}
+                    for i in index_set for j in index_set}
 
         super().__init__(R, weyldict, names=names,
                          latex_names=latex_names,
@@ -182,7 +184,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             The Weyl Lie conformal algebra with generators (alpha0, alpha1, K) over Integer Ring
         """
         return "The Weyl Lie conformal algebra with generators {} over {}"\
-                .format(self.gens(),self.base_ring())
+            .format(self.gens(), self.base_ring())
 
     def gram_matrix(self):
         r"""

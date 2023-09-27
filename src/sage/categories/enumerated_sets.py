@@ -85,7 +85,8 @@ class EnumeratedSets(CategoryWithAxiom):
         sage: EnumeratedSets().super_categories()
         [Category of sets]
         sage: EnumeratedSets().all_super_categories()
-        [Category of enumerated sets, Category of sets, Category of sets with partial maps, Category of objects]
+        [Category of enumerated sets, Category of sets,
+         Category of sets with partial maps, Category of objects]
 
     TESTS::
 
@@ -277,6 +278,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: P = Partitions()
                 sage: list(P.iterator_range(stop=5))
                 [[], [1], [2], [1, 1], [3]]
@@ -356,6 +358,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: P = Partitions()
                 sage: P.unrank_range(stop=5)
                 [[], [1], [2], [1, 1], [3]]
@@ -409,6 +412,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: P = Partitions()
                 sage: P[:5]
                 [[], [1], [2], [1, 1], [3]]
@@ -469,7 +473,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
                 sage: len(GF(5))
                 5
-                sage: len(MatrixSpace(GF(2), 3, 3))
+                sage: len(MatrixSpace(GF(2), 3, 3))                                     # needs sage.modules
                 512
             """
             from sage.rings.infinity import Infinity
@@ -494,7 +498,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: (GF(3)^2).tuple()
+                sage: (GF(3)^2).tuple()                                                 # needs sage.modules
                 ((0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2))
                 sage: R = Integers(11)
                 sage: l = R.tuple(); l
@@ -575,7 +579,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: (GF(3)^2).list()
+                sage: (GF(3)^2).list()                                                  # needs sage.modules
                 [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
                 sage: R = Integers(11)
                 sage: R.list()
@@ -603,7 +607,7 @@ class EnumeratedSets(CategoryWithAxiom):
             Trying to list an infinite vector space raises an error
             instead of running forever (see :trac:`10470`)::
 
-                sage: (QQ^2).list()  # indirect test
+                sage: (QQ^2).list()  # indirect test                                    # needs sage.modules
                 Traceback (most recent call last):
                 ...
                 AttributeError: 'FreeModule_ambient_field_with_category' object has no attribute 'list'
@@ -738,7 +742,7 @@ class EnumeratedSets(CategoryWithAxiom):
             for counter, u in enumerate(self):
                 if counter == r:
                     return u
-            raise ValueError("the rank must be in the range from %s to %s"%(0,counter))
+            raise ValueError("the rank must be in the range from %s to %s" % (0,counter))
         unrank = _unrank_from_iterator
 
         def _rank_from_iterator(self, x):
@@ -809,17 +813,12 @@ class EnumeratedSets(CategoryWithAxiom):
                 [0, 1, 2, 3, 4]
             """
             f = self.first()
-            yield f
-            while True:
+            while not (f is None or f is False):
+                yield f
                 try:
                     f = self.next(f)
-                except (TypeError, ValueError ):
-                    break
-
-                if f is None or f is False:
-                    break
-                else:
-                    yield f
+                except (TypeError, ValueError):
+                    f = None
 
         def _iterator_from_unrank(self):
             """

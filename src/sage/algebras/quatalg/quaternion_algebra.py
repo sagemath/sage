@@ -1031,8 +1031,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(19).discriminant()
             19
 
-            sage: F.<a> = NumberField(x^2-x-1)
-            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a,F(-1))
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a, F(-1))
             sage: B.discriminant()
             Fractional ideal (2)
 
@@ -1399,8 +1400,8 @@ class QuaternionOrder(Parent):
                     raise ValueError("lattice must contain 1")
 
                 # check if multiplicatively closed
-                M1 = basis_for_quaternion_lattice(basis)
-                M2 = basis_for_quaternion_lattice(list(basis) + [x * y for x in basis for y in basis])
+                M1 = basis_for_quaternion_lattice(basis, reverse=False)
+                M2 = basis_for_quaternion_lattice(list(basis) + [x * y for x in basis for y in basis], reverse=False)
                 if M1 != M2:
                     raise ValueError("given lattice must be a ring")
 
@@ -1791,6 +1792,42 @@ class QuaternionOrder(Parent):
             return QuaternionFractionalIdeal_rational(self.quaternion_algebra(), self.basis(), left_order=self, right_order=self, check=False)
         else:
             raise NotImplementedError("ideal only implemented for quaternion algebras over QQ")
+
+    def basis_matrix(self):
+        r"""
+        Return the basis matrix of this quaternion order, for the
+        specific basis returned by :meth:`basis()`.
+
+        OUTPUT: matrix over `\QQ`
+
+        EXAMPLES::
+
+            sage: O = QuaternionAlgebra(-11,-1).maximal_order()
+            sage: O.basis()
+            (1/2 + 1/2*i, 1/2*j - 1/2*k, i, -k)
+            sage: O.basis_matrix()
+            [ 1/2  1/2    0    0]
+            [   0    0  1/2 -1/2]
+            [   0    1    0    0]
+            [   0    0    0   -1]
+
+        Note that the returned matrix is *not* necessarily the same as
+        the basis matrix of the :meth:`unit_ideal()`::
+
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O = Q.quaternion_order([j,i,-1,k])
+            sage: O.basis_matrix()
+            [ 0  0  1  0]
+            [ 0  1  0  0]
+            [-1  0  0  0]
+            [ 0  0  0  1]
+            sage: O.unit_ideal().basis_matrix()
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1]
+        """
+        return matrix(QQ, map(list, self.__basis))
 
     def __mul__(self, other):
         """
@@ -2548,7 +2585,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # if self.__right_order == right.__left_order:
         #     left_order = self.__left_order
         #     right_order = right.__right_order
-        basis = tuple(basis_for_quaternion_lattice(gens))
+        basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         A = self.quaternion_algebra()
         return A.ideal(basis, check=False)
 
@@ -2691,7 +2728,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Jbar = [b.conjugate() for b in J.basis()]
         gens = [a * b for a in self.basis() for b in Jbar]
-        basis = tuple(basis_for_quaternion_lattice(gens))
+        basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
 
@@ -2791,8 +2828,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         .. NOTE::
 
            Currently, `p` must satisfy a bunch of conditions, or a
-           ``NotImplementedError`` is raised.  In particular, `p` must be
-           odd and unramified in the quaternion algebra, must be
+           :class:`NotImplementedError` is raised.  In particular, `p` must
+           be odd and unramified in the quaternion algebra, must be
            coprime to the index of the right order in the maximal
            order, and also coprime to the normal of self.  (The Brandt
            modules code has a more general algorithm in some cases.)
@@ -2899,7 +2936,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 #######################################################################
 
 
-def basis_for_quaternion_lattice(gens, reverse=False):
+def basis_for_quaternion_lattice(gens, reverse=None):
     r"""
     Return a basis for the `\ZZ`-lattice in a quaternion algebra
     spanned by the given gens.
@@ -2918,12 +2955,18 @@ def basis_for_quaternion_lattice(gens, reverse=False):
         sage: from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
         sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
         sage: basis_for_quaternion_lattice([i+j, i-j, 2*k, A(1/3)])
+        doctest:warning ... DeprecationWarning: ...
         [1/3, i + j, 2*j, 2*k]
 
         sage: basis_for_quaternion_lattice([A(1),i,j,k])
         [1, i, j, k]
 
     """
+    if reverse is None:
+        from sage.misc.superseded import deprecation
+        deprecation(34880, 'The default value for the "reverse" argument to basis_for_quaternion_lattice() will'
+                           ' change from False to True. Pass the argument explicitly to silence this warning.')
+        reverse = False
     if not gens:
         return []
     Z, d = quaternion_algebra_cython.integral_matrix_and_denom_from_rational_quaternions(gens, reverse)

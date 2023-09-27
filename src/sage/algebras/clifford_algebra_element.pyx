@@ -6,8 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-09-06): Initial version
 - Trevor Karn (2022-07-10): Rewrite multiplication using bitsets
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2022 Trevor K. Karn <karnx018 at umn.edu>
 #                 (C) 2022 Travis Scrimshaw <tcscrims at gmail.com>
 #
@@ -16,8 +15,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 from sage.structure.parent cimport Parent
 from sage.data_structures.bitset cimport Bitset
 from sage.algebras.weyl_algebra import repr_from_monomials
@@ -125,7 +123,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
 
         for ml, cl in self:
             # Distribute the current term ``cl`` * ``ml`` over ``other``.
-            cur = copy(other._monomial_coefficients) # The current distribution of the term
+            cur = copy(other._monomial_coefficients)  # The current distribution of the term
             for i in reversed(ml):
                 # Distribute the current factor ``e[i]`` (the ``i``-th
                 # element of the standard basis).
@@ -142,10 +140,10 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
                             break
                         # Add the additional term from the commutation
                         # get a non-frozen bitset to manipulate
-                        t = Bitset(mr) # a mutable copy
+                        t = Bitset(mr)  # a mutable copy
                         t.discard(j)
                         t = FrozenBitset(t)
-                        next_level[t] = next_level.get(t, zero) + cr * Q[i,j]
+                        next_level[t] = next_level.get(t, zero) + cr * Q[i, j]
                         # Note: ``Q[i,j] == Q(e[i]+e[j]) - Q(e[i]) - Q(e[j])`` for
                         # ``i != j``, where ``e[k]`` is the ``k``-th standard
                         # basis vector.
@@ -154,16 +152,16 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
                             del next_level[t]
 
                     # Check to see if we have a squared term or not
-                    mr = Bitset(mr) # temporarily mutable
+                    mr = Bitset(mr)  # temporarily mutable
                     if i in mr:
                         mr.discard(i)
-                        cr *= Q[i,i]
+                        cr *= Q[i, i]
                         # Note: ``Q[i,i] == Q(e[i])`` where ``e[i]`` is the
                         # ``i``-th standard basis vector.
                     else:
                         # mr is implicitly sorted
                         mr.add(i)
-                    mr = FrozenBitset(mr) # refreeze it
+                    mr = FrozenBitset(mr)  # refreeze it
                     next_level[mr] = next_level.get(mr, zero) + cr
                     if next_level[mr] == zero:
                         del next_level[mr]
@@ -213,11 +211,6 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             sage: r * 2  # indirect doctest
             2*x*y*z + 2*x*y + 2*x*z + 2*y*z + 2*x + 2*y + 2*z + 2
         """
-        cdef dict d
-        cdef list to_remove
-        cdef Py_ssize_t num_cross, tot_cross, i, j
-        cdef FrozenBitset ml
-
         if supp.isempty():  # Multiplication by a base ring element
             if coeff == self._parent._base.one():
                 return self
@@ -315,7 +308,8 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             sage: all(x.reflection().reflection() == x for x in Cl.basis())
             True
         """
-        return self.__class__(self._parent, {m: (-1)**len(m) * c for m,c in self})
+        return self.__class__(self._parent,
+                              {m: (-1)**len(m) * c for m, c in self})
 
     degree_negation = reflection
 
@@ -361,7 +355,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         if not self._monomial_coefficients:
             return P.zero()
         g = P.gens()
-        return P.sum(c * P.prod(g[i] for i in reversed(m)) for m,c in self)
+        return P.sum(c * P.prod(g[i] for i in reversed(m)) for m, c in self)
 
     def conjugate(self):
         r"""
@@ -475,7 +469,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
         ml = FrozenBitset()
         if ml in self._monomial_coefficients:
             const_coeff = self._monomial_coefficients[ml]
-            d = dict(rhs._monomial_coefficients) # Make a shallow copy
+            d = dict(rhs._monomial_coefficients)  # Make a shallow copy
             to_remove = []
             if const_coeff != P._base.one():
                 for k in d:
@@ -488,10 +482,12 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
             d = {}
 
         n = P.ngens()
-        for ml, cl in self._monomial_coefficients.items(): # ml for "monomial on the left"
+        for ml, cl in self._monomial_coefficients.items():
+            # ml for "monomial on the left"
             if ml.isempty():  # We already handled the trivial element
                 continue
-            for mr,cr in rhs._monomial_coefficients.items(): # mr for "monomial on the right"
+            for mr, cr in rhs._monomial_coefficients.items():
+                # mr for "monomial on the right"
                 if mr.isempty():
                     t = ml
                 else:
@@ -502,7 +498,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
                     it = iter(mr)
                     j = next(it)
 
-                    num_cross = 0 # keep track of the number of signs
+                    num_cross = 0  # keep track of the number of signs
                     tot_cross = 0
                     for i in ml:
                         while i > j:
@@ -576,7 +572,8 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
 
         n = self._parent.ngens()
         d = {}
-        for ml, cl in self._monomial_coefficients.items(): # ml for "monomial on the left"
+        for ml, cl in self._monomial_coefficients.items():
+            # ml for "monomial on the left"
             if not ml.isdisjoint(supp):
                 # if they intersect nontrivially, move along.
                 continue
@@ -584,7 +581,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
             it = iter(supp)
             j = next(it)
 
-            num_cross = 0 # keep track of the number of signs
+            num_cross = 0  # keep track of the number of signs
             tot_cross = 0
             for i in ml:
                 while i > j:
@@ -668,7 +665,8 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
             const_coeff = self._monomial_coefficients.pop(mr)
             d[supp] = const_coeff
 
-        for mr, cr in self._monomial_coefficients.items(): # mr for "monomial on the right"
+        for mr, cr in self._monomial_coefficients.items():
+            # mr for "monomial on the right"
             if not supp.isdisjoint(mr):
                 # if they intersect nontrivially, move along.
                 continue
@@ -676,7 +674,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
             it = iter(mr)
             j = next(it)  # We assume mr is non-empty here
 
-            num_cross = 0 # keep track of the number of signs
+            num_cross = 0  # keep track of the number of signs
             tot_cross = 0
             for i in supp:
                 while i > j:
@@ -839,7 +837,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
         """
         P = self._parent
         return P.sum([c * cx * P.interior_product_on_basis(m, mx)
-                      for m,c in self for mx,cx in x])
+                      for m, c in self for mx, cx in x])
 
     antiderivation = interior_product
 
@@ -968,7 +966,8 @@ cdef class CohomologyRAAGElement(CliffordAlgebraElement):
                 tp = tuple(sorted(mr + ml))
                 if any(tp[i] == tp[i+1] for i in range(len(tp)-1)):  # e_i ^ e_i = 0
                     continue
-                if tp not in I: # not an independent set, so this term is also 0
+                if tp not in I:
+                    # not an independent set, so this term is also 0
                     continue
 
                 t = list(mr)

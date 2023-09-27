@@ -136,7 +136,7 @@ class PadicValuationFactory(UniqueFactory):
         elif isinstance(R.fraction_field(), NumberField) or is_PolynomialQuotientRing(R):
             return self.create_key_and_extra_args_for_number_field(R, prime, approximants=approximants)
         else:
-            raise NotImplementedError("p-adic valuations not implemented for %r"%(R,))
+            raise NotImplementedError("p-adic valuations not implemented for %r" % (R,))
 
     def create_key_for_integers(self, R, prime):
         r"""
@@ -156,7 +156,7 @@ class PadicValuationFactory(UniqueFactory):
         if isinstance(prime, DiscretePseudoValuation):
             prime = prime.uniformizer()
         if prime not in ZZ or not ZZ(prime).is_prime():
-            raise ValueError("prime must be a prime in the integers but %s is not"%(prime,))
+            raise ValueError("prime must be a prime in the integers but %s is not" % (prime,))
         return R, prime
 
     def create_key_for_local_ring(self, R, prime):
@@ -254,8 +254,7 @@ class PadicValuationFactory(UniqueFactory):
             # v is defined on a ring whose field of fractions is L
             v = v._base_valuation._initial_approximation.change_domain(G.parent())
         else:
-            raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r"%(v, v.domain(), G.parent()))
-
+            raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r" % (v, v.domain(), G.parent()))
 
         assert(v.domain() is G.parent())
 
@@ -316,7 +315,7 @@ class PadicValuationFactory(UniqueFactory):
         p = I.relative_norm()
         F = p.factor()
         if len(F) != 1:
-            raise ValueError("%r does not lie over a single prime of %r"%(I, K))
+            raise ValueError("%r does not lie over a single prime of %r" % (I, K))
         vK = K.valuation(F[0][0])
         approximants = vK.mac_lane_approximants(G, require_incomparability=True)
 
@@ -337,7 +336,7 @@ class PadicValuationFactory(UniqueFactory):
             match = [i for (i, v) in enumerate(candidates) if v and all(v(g) > 0 for g in gens)]
 
             if len(match) > 1:
-                raise ValueError("%s does not single out a unique extension of %s to %s"%(prime, vK, L))
+                raise ValueError("%s does not single out a unique extension of %s to %s" % (prime, vK, L))
             if len(match) == 1:
                 return (R, approximants[match[0]]), {'approximants': approximants}
 
@@ -370,7 +369,7 @@ class PadicValuationFactory(UniqueFactory):
         elif is_PolynomialQuotientRing(R):
             from sage.categories.number_fields import NumberFields
             if R.base_ring().fraction_field() not in NumberFields():
-                raise NotImplementedError("cannot normalize quotients over %r"%(R.base_ring(),))
+                raise NotImplementedError("cannot normalize quotients over %r" % (R.base_ring(),))
             L = R.fraction_field()
             K = R.base_ring().fraction_field()
             G = R.modulus().change_ring(K)
@@ -378,7 +377,6 @@ class PadicValuationFactory(UniqueFactory):
             raise NotImplementedError("cannot normalize %r" % (R,))
 
         return K, L, G
-
 
     def create_object(self, version, key, **extra_args):
         r"""
@@ -399,11 +397,11 @@ class PadicValuationFactory(UniqueFactory):
         R = key[0]
         parent = DiscretePseudoValuationSpace(R)
         if isinstance(R, pAdicGeneric):
-            assert(len(key)==1)
+            assert(len(key) == 1)
             return parent.__make_element_class__(pAdicValuation_padic)(parent)
         elif R is ZZ or R is QQ:
             prime = key[1]
-            assert(len(key)==2)
+            assert(len(key) == 2)
             return parent.__make_element_class__(pAdicValuation_int)(parent, prime)
         else:
             v = key[1]
@@ -418,7 +416,9 @@ class PadicValuationFactory(UniqueFactory):
                 raise NotImplementedError
             return parent.__make_element_class__(pAdicFromLimitValuation)(parent, v, G.change_ring(R.base_ring()), approximants)
 
+
 pAdicValuation = PadicValuationFactory("sage.rings.padics.padic_valuation.pAdicValuation")
+
 
 class pAdicValuation_base(DiscreteValuation):
     r"""
@@ -592,7 +592,7 @@ class pAdicValuation_base(DiscreteValuation):
                 break
 
             next = v.mac_lane_step(G, assume_squarefree=True)
-            if len(next)>1:
+            if len(next) > 1:
                 ret = False
                 break
             steps.append(next[0])
@@ -689,7 +689,7 @@ class pAdicValuation_base(DiscreteValuation):
                 break
 
             next = v.mac_lane_step(G, assume_squarefree=True)
-            if len(next)>1:
+            if len(next) > 1:
                 ret = False
                 break
             steps.append(next[0])
@@ -740,6 +740,7 @@ class pAdicValuation_base(DiscreteValuation):
         TESTS::
 
             sage: R.<a> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = QQ.extension(x^3 - 2)
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b^2 + 2*b + a)
@@ -827,7 +828,7 @@ class pAdicValuation_base(DiscreteValuation):
             return self
 
         if not ring.is_subring(self.domain()):
-            raise ValueError("ring must be a subring of the domain of this valuation but %r is not a subring of %r"%(ring, self.domain()))
+            raise ValueError("ring must be a subring of the domain of this valuation but %r is not a subring of %r" % (ring, self.domain()))
 
         return pAdicValuation(ring, self.p())
 
@@ -962,7 +963,7 @@ class pAdicValuation_padic(pAdicValuation_base):
         from sage.rings.rational_field import QQ
         v = QQ(v)
         if v not in self.value_semigroup():
-            raise ValueError("%r is not in the value semigroup of %r"%(v, self))
+            raise ValueError("%r is not in the value semigroup of %r" % (v, self))
         v = ZZ(v * self.domain().absolute_e())
         return self.domain().one() << v
 
@@ -976,7 +977,7 @@ class pAdicValuation_padic(pAdicValuation_base):
             '3-adic valuation'
 
         """
-        return "%s-adic valuation"%(self.p())
+        return "%s-adic valuation" % (self.p())
 
     def _call_(self, x):
         r"""
@@ -1101,7 +1102,7 @@ class pAdicValuation_int(pAdicValuation_base):
             '3-adic valuation'
 
         """
-        return "%s-adic valuation"%(self.p())
+        return "%s-adic valuation" % (self.p())
 
     def _call_(self, x):
         """
@@ -1280,7 +1281,7 @@ class pAdicValuation_int(pAdicValuation_base):
                     if self._relative_size(rational) < self._relative_size(best):
                         best = rational
 
-        assert(self(x-best)>error)
+        assert(self(x-best) > error)
 
         return best
 
@@ -1386,6 +1387,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
         Check that this also works for relative extensions::
 
             sage: v = QQ.valuation(2)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^2 + 2)
             sage: M.<b> = L.extension(x^2 + 1)
             sage: w = v.extension(L).extension(M)

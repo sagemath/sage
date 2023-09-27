@@ -45,6 +45,7 @@ FLINT
    sage/libs/flint/flint
    sage/libs/flint/fmpz_poly
    sage/libs/flint/arith
+   sage/libs/flint/qsieve
 
 Giac
 ----

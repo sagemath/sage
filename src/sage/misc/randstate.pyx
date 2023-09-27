@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups sage.libs.gap sage.libs.ntl sage.libs.pari
 r"""
 Random Number States
 
@@ -419,7 +420,6 @@ import os
 import time
 import weakref
 import random as _random
-import sys
 
 use_urandom = False
 # Check whether os.urandom() works.
@@ -713,7 +713,6 @@ cdef class randstate:
             if self._gap_saved_seed is not None:
                 mersenne_seed, classic_seed = self._gap_saved_seed
             else:
-                import sage.rings.integer_ring as integer_ring
                 from sage.rings.integer_ring import ZZ
                 seed = ZZ.random_element(long(1)<<128)
                 classic_seed = seed

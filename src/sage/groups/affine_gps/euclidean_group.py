@@ -21,7 +21,7 @@ from sage.groups.affine_gps.affine_group import AffineGroup
 
 class EuclideanGroup(AffineGroup):
     r"""
-    an Euclidean group.
+    A Euclidean group.
 
     The Euclidean group `E(A)` (or general affine group) of an affine
     space `A` is the group of all invertible affine transformations from
@@ -121,11 +121,11 @@ class EuclideanGroup(AffineGroup):
 
     Some additional ways to create Euclidean groups::
 
-        sage: A = AffineSpace(2, GF(4,'a'));  A
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                         # needs sage.rings.finite_rings
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: G = EuclideanGroup(A); G
+        sage: G = EuclideanGroup(A); G                                                  # needs sage.rings.finite_rings
         Euclidean Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is EuclideanGroup(2,4) # shorthand
+        sage: G is EuclideanGroup(2,4)  # shorthand                                     # needs sage.rings.finite_rings
         True
 
         sage: V = ZZ^3;  V

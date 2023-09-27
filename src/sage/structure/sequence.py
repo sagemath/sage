@@ -201,7 +201,7 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     This example illustrates how every element of a list is taken into account
     when constructing a sequence.::
 
-        sage: v = Sequence([1,7,6,GF(5)(3)]); v
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v
         [1, 2, 1, 3]
         sage: v.universe()
         Finite Field of size 5
@@ -397,7 +397,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     ::
 
-        sage: v = Sequence([1,7,6,GF(5)(3)]); v
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v
         [1, 2, 1, 3]
         sage: v.universe()
         Finite Field of size 5
@@ -519,10 +519,10 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         """
         if isinstance(n, slice):
             return Sequence(list.__getitem__(self, n),
-                            universe = self.__universe,
-                            check = False,
-                            immutable = False,
-                            cr = self.__cr)
+                            universe=self.__universe,
+                            check=False,
+                            immutable=False,
+                            cr=self.__cr)
         else:
             return list.__getitem__(self,n)
 
@@ -674,11 +674,11 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         r"""
         TESTS::
 
-            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t
+            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t               # needs sage.symbolic
             [sqrt(x), e^x, x^(x - 1)]
-            sage: t._latex_()
+            sage: t._latex_()                                                           # needs sage.symbolic
             '\\left[\\sqrt{x}, e^{x}, x^{x - 1}\\right]'
-            sage: latex(t)
+            sage: latex(t)                                                              # needs sage.symbolic
             \left[\sqrt{x}, e^{x}, x^{x - 1}\right]
         """
         from sage.misc.latex import list_function as list_latex_function
@@ -710,9 +710,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         EXAMPLES::
 
-            sage: Sequence([1,2/3,-2/5]).universe()
+            sage: Sequence([1, 2/3, -2/5]).universe()
             Rational Field
-            sage: Sequence([1,2/3,'-2/5']).universe()
+            sage: Sequence([1, 2/3, '-2/5']).universe()
             Category of objects
         """
         return self.__universe
@@ -738,7 +738,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         EXAMPLES::
 
-            sage: v = Sequence([1,2,3,4/5])
+            sage: v = Sequence([1, 2, 3, 4/5])
             sage: v[0] = 5
             sage: v
             [5, 2, 3, 4/5]
@@ -759,7 +759,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         EXAMPLES::
 
-            sage: v = Sequence([1,2,3,4/5])
+            sage: v = Sequence([1, 2, 3, 4/5])
             sage: v[0] = 5
             sage: v
             [5, 2, 3, 4/5]
@@ -778,7 +778,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         """
         EXAMPLES::
 
-            sage: a = Sequence([1,2/3,-2/5])
+            sage: a = Sequence([1, 2/3, -2/5])
             sage: a.is_mutable()
             True
             sage: a[0] = 100
@@ -889,6 +889,8 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             return self.__hash
         else:
             raise AttributeError("'Sequence_generic' object has no attribute '%s'"%name)
+
+
 seq = Sequence
 
 from sage.misc.persist import register_unpickle_override

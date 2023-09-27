@@ -71,11 +71,12 @@ univariate.  Hence, we always have at least two variables::
     sage: g2 = 3*beta[1]; g2
     3*beta_1
     sage: A.polynomial_ring()
-    Multivariate Polynomial Ring in alpha_5, alpha_4, alpha_3, alpha_2, alpha_1, alpha_0, beta_5, beta_4, beta_3, beta_2, beta_1, beta_0 over Rational Field
+    Multivariate Polynomial Ring in alpha_5, alpha_4, alpha_3, alpha_2, alpha_1, alpha_0,
+     beta_5, beta_4, beta_3, beta_2, beta_1, beta_0 over Rational Field
 
 Of course, we provide the usual polynomial arithmetic::
 
-    sage: f+g
+    sage: f + g
     x_5 + 3*y_1 + 2
     sage: p = x[10]^2*(f+g); p
     x_10^2*x_5 + 3*x_10^2*y_1 + 2*x_10^2
@@ -101,8 +102,8 @@ Ideals*. Symmetric Ideals are finitely generated modulo addition,
 multiplication by ring elements and permutation of variables. If the
 base ring is a field, one can compute Symmetric Groebner Bases::
 
-    sage: J = A*(alpha[1]*beta[2])
-    sage: J.groebner_basis()
+    sage: J = A * (alpha[1]*beta[2])
+    sage: J.groebner_basis()                                                            # needs sage.combinat sage.libs.singular
     [alpha_1*beta_2, alpha_2*beta_1]
 
 For more details, see :class:`~sage.rings.polynomial.symmetric_ideal.SymmetricIdeal`.
@@ -126,7 +127,8 @@ This is also allowed if finite polynomial rings are involved::
     sage: A.<a_3,a_1,b_1,c_2,c_0> = ZZ[]
     sage: B.<b,c,d> = InfinitePolynomialRing(A, order='degrevlex')
     sage: B
-    Infinite polynomial ring in b, c, d over Multivariate Polynomial Ring in a_3, a_1 over Integer Ring
+    Infinite polynomial ring in b, c, d over
+     Multivariate Polynomial Ring in a_3, a_1 over Integer Ring
 
 It is no problem if one generator of the Infinite Polynomial Ring is
 called ``x`` and one variable of the base ring is also called
@@ -144,7 +146,8 @@ order of ``X`` is 'degrevlex', but of ``Y`` is 'lex'.
 ::
 
     sage: Y
-    Infinite polynomial ring in x, z over Multivariate Polynomial Ring in x, y_1 over Integer Ring
+    Infinite polynomial ring in x, z over
+     Multivariate Polynomial Ring in x, y_1 over Integer Ring
 
 The variable ``x`` of ``X`` can still be interpreted in ``Y``,
 although the first generator of ``Y`` is called ``x`` as well::
@@ -171,7 +174,7 @@ an error is raised::
     Traceback (most recent call last):
     ...
     CoercionException: Overlapping variables (('z', 'y'),['y_1']) are incompatible
-    sage: X.<x_3,y_1,y_2> = PolynomialRing(ZZ,order='lex')
+    sage: X.<x_3,y_1,y_2> = PolynomialRing(ZZ, order='lex')
     sage: # y_1 and y_2 would be in opposite order in an Infinite Polynomial Ring
     sage: Y.<y> = InfinitePolynomialRing(X)
     Traceback (most recent call last):
@@ -184,10 +187,10 @@ if the implementations do not match, there is no simplified
 construction available::
 
     sage: X.<x,y> = InfinitePolynomialRing(ZZ)
-    sage: Y.<z> = InfinitePolynomialRing(X,order='degrevlex')
+    sage: Y.<z> = InfinitePolynomialRing(X, order='degrevlex')
     sage: Y
     Infinite polynomial ring in z over Infinite polynomial ring in x, y over Integer Ring
-    sage: Y.<z> = InfinitePolynomialRing(X,implementation='sparse')
+    sage: Y.<z> = InfinitePolynomialRing(X, implementation='sparse')
     sage: Y
     Infinite polynomial ring in z over Infinite polynomial ring in x, y over Integer Ring
 
@@ -203,18 +206,18 @@ all constituents coerce.
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
-    sage: R.<a,b> = InfinitePolynomialRing(ZZ,implementation='sparse')
+    sage: R.<a,b> = InfinitePolynomialRing(ZZ, implementation='sparse')
     sage: X.<x> = InfinitePolynomialRing(R)
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
-    sage: R.<a,b> = InfinitePolynomialRing(ZZ,implementation='sparse')
-    sage: X.<x> = InfinitePolynomialRing(R,implementation='sparse')
+    sage: R.<a,b> = InfinitePolynomialRing(ZZ, implementation='sparse')
+    sage: X.<x> = InfinitePolynomialRing(R, implementation='sparse')
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
     sage: R.<a,b> = InfinitePolynomialRing(ZZ)
-    sage: X.<x> = InfinitePolynomialRing(R,implementation='sparse')
+    sage: X.<x> = InfinitePolynomialRing(R, implementation='sparse')
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
@@ -309,11 +312,13 @@ class InfinitePolynomialRingFactory(UniqueFactory):
             (InfPoly{[y1], "lex", "dense"}(FractionField(...)), Integer Ring)
             sage: _[0].all
             [FractionField, InfPoly{[y1], "lex", "dense"}]
-            sage: InfinitePolynomialRing.create_key(QQ, names=['beta'], order='deglex', implementation='sparse')
+            sage: InfinitePolynomialRing.create_key(QQ, names=['beta'], order='deglex',
+            ....:                                   implementation='sparse')
             (InfPoly{[beta], "deglex", "sparse"}(FractionField(...)), Integer Ring)
             sage: _[0].all
             [FractionField, InfPoly{[beta], "deglex", "sparse"}]
-            sage: InfinitePolynomialRing.create_key(QQ, names=['x','y'], implementation='dense')
+            sage: InfinitePolynomialRing.create_key(QQ, names=['x','y'],
+            ....:                                   implementation='dense')
             (InfPoly{[x,y], "lex", "dense"}(FractionField(...)), Integer Ring)
             sage: _[0].all
             [FractionField, InfPoly{[x,y], "lex", "dense"}]
@@ -326,7 +331,7 @@ class InfinitePolynomialRingFactory(UniqueFactory):
             sage: _[0].all
             [FractionField, InfPoly{[x], "lex", "dense"}]
 
-        If it is attempted to use no generator, a ValueError is raised::
+        If it is attempted to use no generator, a :class:`ValueError` is raised::
 
             sage: InfinitePolynomialRing.create_key(ZZ, names=[])
             Traceback (most recent call last):
@@ -1292,10 +1297,10 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         EXAMPLES::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(25,'a'))
-            sage: X
+            sage: X.<x,y> = InfinitePolynomialRing(GF(25,'a'))                          # needs sage.rings.finite_rings
+            sage: X                                                                     # needs sage.rings.finite_rings
             Infinite polynomial ring in x, y over Finite Field in a of size 5^2
-            sage: X.characteristic()
+            sage: X.characteristic()                                                    # needs sage.rings.finite_rings
             5
 
         """
@@ -1359,11 +1364,12 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         EXAMPLES::
 
             sage: R.<x> = InfinitePolynomialRing(GF(2))
-            sage: R.key_basis()
+            sage: R.key_basis()                                                         # needs sage.combinat sage.modules
             Key polynomial basis over Finite Field of size 2
         """
         from sage.combinat.key_polynomial import KeyPolynomialBasis
         return KeyPolynomialBasis(self)
+
 
 class InfinitePolynomialGen(SageObject):
     """
@@ -1641,7 +1647,8 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
             Multivariate Polynomial Ring in xx_0, yy_0 over Integer Ring
             sage: a = yy[3]
             sage: X.polynomial_ring()
-            Multivariate Polynomial Ring in xx_3, xx_2, xx_1, xx_0, yy_3, yy_2, yy_1, yy_0 over Integer Ring
+            Multivariate Polynomial Ring in xx_3, xx_2, xx_1, xx_0, yy_3, yy_2, yy_1, yy_0
+             over Integer Ring
 
         """
         return self._P

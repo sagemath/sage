@@ -236,17 +236,15 @@ cdef class DenseGraph(CGraph):
             sage: D.realloc(30)
             sage: D.current_allocation()
             30
-
         """
-        cdef int i, j
+        cdef int i
         if not total_verts:
             raise RuntimeError('dense graphs must allocate space for vertices')
 
         cdef bitset_t bits
-        cdef int min_verts, min_longs
+        cdef int min_verts
         if <size_t>total_verts < self.active_vertices.size:
             min_verts = total_verts
-            min_longs = -1
             bitset_init(bits, self.active_vertices.size)
             bitset_set_first_n(bits, total_verts)
             if not bitset_issubset(self.active_vertices, bits):
@@ -402,7 +400,7 @@ cdef class DenseGraph(CGraph):
         """
         cdef int num_arcs_old = self.num_arcs
 
-        cdef size_t i, j
+        cdef size_t i
         i = bitset_next(self.active_vertices, 0)
         while i != -1:
             self.add_arc_unsafe(i, i)

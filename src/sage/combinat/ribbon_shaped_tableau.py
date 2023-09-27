@@ -1,7 +1,7 @@
 r"""
 Ribbon Shaped Tableaux
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,8 @@ Ribbon Shaped Tableaux
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTableaux
 from sage.combinat.tableau import Tableaux
@@ -78,6 +78,18 @@ class RibbonShapedTableau(SkewTableau):
 
             sage: RibbonShapedTableau([[2,3],[1,4,5]])
             [[None, None, 2, 3], [1, 4, 5]]
+
+        TESTS::
+
+            sage: RibbonShapedTableau([4,5])
+            Traceback (most recent call last):
+            ...
+            TypeError: rows must be lists of positive integers
+
+            sage: RibbonShapedTableau([[2,3],[-4,5]])
+            Traceback (most recent call last):
+            ...
+            TypeError: r must be a list of positive integers
         """
         try:
             r = [tuple(r) for r in rows]
@@ -85,7 +97,8 @@ class RibbonShapedTableau(SkewTableau):
             raise TypeError("rows must be lists of positive integers")
         if not r:
             return StandardRibbonShapedTableaux()(r)
-        if all(all(j is None or (isinstance(j, (int, Integer)) and j>0) for j in i) for i in r):
+        if all(j is None or (isinstance(j, (int, Integer)) and j > 0)
+               for i in r for j in i):
             return StandardRibbonShapedTableaux()(r)
         raise TypeError("r must be a list of positive integers")
 
@@ -99,13 +112,13 @@ class RibbonShapedTableau(SkewTableau):
             sage: TestSuite(R).run()
         """
         if not isinstance(t, SkewTableau):
-            #scrubing None
-            t = [ [i for i in row if i is not None] for row in t]
+            # scrubbing None
+            t = [[i for i in row if i is not None] for row in t]
 
             st = []
             space_count = 0
             for row in reversed(t):
-                st.append( [None]*space_count + row )
+                st.append([None] * space_count + row)
                 space_count += len(row) - 1
             st.reverse()
             t = st
@@ -136,7 +149,7 @@ class RibbonShapedTableau(SkewTableau):
             sage: RibbonShapedTableau([[2,3],[1,4,5]]).spin()
             1/2
         """
-        return Integer(self.height()-1)/2
+        return Integer(self.height() - 1) / 2
 
     def width(self):
         """
@@ -173,9 +186,9 @@ class RibbonShapedTableaux(SkewTableaux):
             sage: S1 is S2
             True
         """
-        #if shape is not None:
-        #    from sage.combinat.partition import Partition
-        #    return RibbonShapedTableaux_shape(Partition(shape))
+        # if shape is not None:
+        #     from sage.combinat.partition import Partition
+        #     return RibbonShapedTableaux_shape(Partition(shape))
 
         # Otherwise arg0 takes the place of the category in pickling
         return super(RibbonShapedTableaux, cls).__classcall__(cls, **kwds)
@@ -218,7 +231,7 @@ class RibbonShapedTableaux(SkewTableaux):
         pos = 0
         r = []
         for l in shape:
-            r.append(word[pos:pos+l])
+            r.append(word[pos:pos + l])
             pos += l
         return self.element_class(self, r)
 
@@ -313,7 +326,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         pos = 0
         r = []
         for l in shape:
-            r.append(word[pos:pos+l])
+            r.append(word[pos:pos + l])
             pos += l
         return self.element_class(self, r)
 
@@ -344,9 +357,9 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
 
         r = []
         r.append([p[j] for j in range(comp[0])])
-        for i in range(len(comp)-1):
-            r.append([ p[j] for j in range(comp[i],comp[i+1]) ])
-        r.append( [ p[j] for j in range(comp[-1], len(p))] )
+        for i in range(len(comp) - 1):
+            r.append([p[j] for j in range(comp[i], comp[i + 1])])
+        r.append([p[j] for j in range(comp[-1], len(p))])
         r.reverse()
         return self.element_class(self, r)
 
@@ -405,7 +418,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
             sage: StandardRibbonShapedTableaux([2,2])
             Standard ribbon shaped tableaux of shape [2, 2]
         """
-        return "Standard ribbon shaped tableaux of shape %s"%list(self.shape)
+        return "Standard ribbon shaped tableaux of shape %s" % list(self.shape)
 
     def first(self):
         """

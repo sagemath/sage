@@ -51,7 +51,7 @@ from sage.misc.prandom import randint
 import sage.schemes.elliptic_curves.constructor as elliptic
 from .sql_db import SQLDatabase, verify_column
 from sage.features.databases import DatabaseCremona
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 import re
 import string
@@ -217,7 +217,7 @@ def cremona_letter_code(n):
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
-        sage: cremona_letter_code(x)
+        sage: cremona_letter_code(x)                                                    # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
@@ -1377,7 +1377,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         if largest_conductor:
             print("largest conductor =", largest_conductor)
-            self.__largest_conductor__ =  largest_conductor
+            self.__largest_conductor__ = largest_conductor
 
         # Since July 2014 the data files have been arranged in
         # subdirectories (see trac #16903).

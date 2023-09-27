@@ -40,20 +40,20 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
 include "sage/libs/ntl/decl.pxi"
 
-from sage.structure.element cimport ModuleElement, RingElement, Element, Vector
+from sage.structure.element cimport Element
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.libs.gmp.randomize cimport *
 
-from sage.libs.flint.types cimport fmpz_t, fmpq
-from sage.libs.flint.fmpz cimport fmpz_init, fmpz_clear, fmpz_set, fmpz_set_mpz, fmpz_one, fmpz_get_mpz, fmpz_add, fmpz_mul, fmpz_sub, fmpz_mul_si, fmpz_mul_si, fmpz_mul_si, fmpz_divexact, fmpz_lcm
-from sage.libs.flint.fmpq cimport fmpq_is_zero, fmpq_get_mpq, fmpq_set_mpq, fmpq_canonicalise
+from sage.libs.flint.types cimport fmpz_t
+from sage.libs.flint.fmpz cimport fmpz_init, fmpz_clear, fmpz_set_mpz, fmpz_one, fmpz_get_mpz, fmpz_add, fmpz_mul, fmpz_sub, fmpz_mul_si, fmpz_mul_si, fmpz_mul_si, fmpz_divexact, fmpz_lcm
+from sage.libs.flint.fmpq cimport fmpq_is_zero, fmpq_set_mpq, fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
 
 from .args cimport MatrixArgs_init
@@ -63,21 +63,19 @@ from .matrix cimport Matrix
 from . import matrix_dense
 from .matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
-from .misc import matrix_integer_dense_rational_reconstruction
+from .misc_flint import matrix_integer_dense_rational_reconstruction
 
 from sage.arith.misc import binomial, previous_prime
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import create_RealNumber as RealNumber
 from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.number_field.number_field_element cimport NumberFieldElement
 from sage.rings.number_field.number_field_element_quadratic cimport NumberFieldElement_quadratic
 
 from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.misc.verbose import verbose
-import math
 
 from sage.matrix.matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_modn_dense_double
 from sage.arith.multi_modular import MAX_MODULUS as MAX_MODULUS_multi_modular
@@ -329,7 +327,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         cdef Py_ssize_t k, c
         cdef NumberFieldElement x
         cdef NumberFieldElement_quadratic xq
-        cdef mpz_t quo, tmp
+        cdef mpz_t tmp
         cdef fmpz_t denom, ftmp
         cdef ZZ_c coeff
 
@@ -398,11 +396,11 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             # Now set k-th entry of x's numerator to tmp
             fmpz_get_mpz(tmp, ftmp)
             mpz_to_ZZ(&coeff, tmp)
-            ZZX_SetCoeff(x.__numerator, k, coeff)
+            ZZX_SetCoeff(x._numerator, k, coeff)
 
         # Set the denominator of x to denom.
         fmpz_get_mpz(tmp, denom)
-        mpz_to_ZZ(&x.__denominator, tmp)
+        mpz_to_ZZ(&x._denominator, tmp)
         fmpz_clear(denom)
         mpz_clear(tmp)
         fmpz_clear(ftmp)
@@ -816,7 +814,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         A._matrix = -self._matrix
         return A
 
-
     ########################################################################
     # LEVEL 3 functionality (Optional)
     #    * __deepcopy__
@@ -826,6 +823,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     #    * Specialized echelon form
     #    * tensor product
     ########################################################################
+
     def set_immutable(self):
         """
         Change this matrix so that it is immutable.
@@ -1038,7 +1036,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         cdef Py_ssize_t i
         cdef Matrix_rational_dense mat = self._matrix
-        cdef fmpq * entry
         cdef mpq_t tmp
 
         sig_on()
@@ -1200,8 +1197,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         if self._nrows <= 3:
             return max(1, 3*B, 6*B**2, 4*B**3)
 
-        # This is an approximation to 2^(5/6*log_2(5) - 2/3*log_2(6))
-        alpha = RealNumber('1.15799718800731')
         # This is 2*e^(1-(2(7\gamma-4))/(13(3-2\gamma))), where \gamma
         # is Euler's constant.
         delta = RealNumber('5.418236')
@@ -1335,20 +1330,20 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             [4 0 0]
             [0 0 0]
         """
-        tm = verbose("Computing characteristic polynomial of cyclotomic matrix modulo %s."%p)
+        tm = verbose("Computing characteristic polynomial of cyclotomic matrix modulo %s." % p)
         # Reduce self modulo all primes over p
-        R, denom = self._reductions(p)
+        R, _ = self._reductions(p)
         # Compute the characteristic polynomial of each reduced matrix
         F = [A.charpoly('x') for A in R]
         # Put the characteristic polynomials together as the rows of a mod-p matrix
         k = R[0].base_ring()
-        S = matrix(k, len(F), self.nrows()+1, [f.list() for f in F])
+        S = matrix(k, len(F), self.nrows() + 1, [f.list() for f in F])
         # multiply by inverse of reduction matrix to lift
         _, L = self._reduction_matrix(p)
         X = L * S
         # Now the columns of the matrix X define the entries of the
         # charpoly modulo p.
-        verbose("Finished computing charpoly mod %s."%p, tm)
+        verbose("Finished computing charpoly mod %s." % p, tm)
         return X
 
     def _charpoly_multimodular(self, var='x', proof=None):
@@ -1678,7 +1673,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             [   1    0 7/19]
             [   0    1 3/19]
         """
-        cdef int i
         cdef Matrix_cyclo_dense res
         cdef bint is_square
 
@@ -1829,14 +1823,11 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             Traceback (most recent call last):
             ...
             ValueError: echelon form mod 7 not defined
-
         """
-        cdef Matrix_cyclo_dense res
         cdef int i
 
         # Initialize variables
-        is_square = self._nrows == self._ncols
-        ls, denom = self._reductions(p)
+        ls, _ = self._reductions(p)
 
         # Find our first echelon form, and the associated list
         # of pivots
@@ -1938,13 +1929,11 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         X = R._generator_matrix()
         d = self._degree
         MS = MatrixSpace(QQ, d, d)
-        mlst = self.list()
         for c in self._matrix.columns():
             v = c.list()
             for n in range(d-1):
                 c = c * X
                 v += c.list()
-            temp = MS(v)
             rmul = MS([v[d*i+j] for j in range(d) for i in range(d)]) # We take the transpose
             l.append(rmul * A._rational_matrix())
 

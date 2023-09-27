@@ -561,7 +561,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a wrong algorithm::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(graphs.PathGraph(3), algorithm='tip top')
         Traceback (most recent call last):
         ...
@@ -569,10 +569,10 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a graph with no edges::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
-        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))
+        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     """
@@ -686,6 +686,16 @@ cpdef min_spanning_tree(g,
         Traceback (most recent call last):
         ...
         TypeError: float() argument must be a string or a... number...
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)], weighted=True)
+        sage: E = min_spanning_tree(G, algorithm='Kruskal')
+        sage: sum(w for _, _, w in E)
+        3
+        sage: F = min_spanning_tree(G, algorithm='Prim')
+        sage: sum(w for _, _, w in F)
+        3
     """
     from sage.graphs.graph import Graph
 
@@ -719,9 +729,8 @@ cpdef min_spanning_tree(g,
 
     if <v_index> result.size() != 2 * (n - 1):
         return []
-    else:
-        edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
-        return [(min(e[0], e[1]), max(e[0], e[1]), g.edge_label(e[0], e[1])) for e in edges]
+    edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
+    return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
 cpdef blocks_and_cut_vertices(g):
@@ -1183,7 +1192,6 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     cdef BoostVecWeightedGraph g_boost_und
     cdef int N = g.num_verts()
     cdef vector[vector[double]] result
-    cdef int u_int, v_int
 
     if g.is_directed():
         boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
@@ -1340,7 +1348,6 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     cdef BoostVecWeightedGraph g_boost_und
     cdef int N = g.num_verts()
     cdef vector[vector[double]] result
-    cdef int u_int, v_int
 
     if g.is_directed():
         boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
@@ -1966,8 +1973,8 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 
     TESTS::
 
-        sage: G = graphs.RandomBarabasiAlbert(17,6)
-        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')
+        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # needs networkx
+        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # needs networkx
         True
         sage: G = Graph([(0,1,-1)], weighted=True)
         sage: diameter_DHV(G)
@@ -2330,13 +2337,13 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     import sys
     # These variables are automatically deleted when the function terminates.
     cdef double LB, LB_1, LB_2, UB
-    cdef v_index s, m, d, v, tmp
+    cdef v_index m, v, tmp
     cdef v_index i
     cdef vector[double] distances
     cdef vector[pair[double, v_index]] order_1, order_2
 
     # We select a vertex with low eccentricity using 2Dsweep
-    LB, s, m, d = diameter_lower_bound_2Dsweep(g_boost, rev_g_boost,
+    LB, _, m, _ = diameter_lower_bound_2Dsweep(g_boost, rev_g_boost,
                                                source, algorithm)
 
     # If the lower bound is a very large number, it means that the digraph is
@@ -2969,7 +2976,6 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
 
     # These variables are automatically deleted when the function terminates.
     cdef v_index vi, u, v
-    cdef dict int_to_v = dict(enumerate(g))
     cdef dict v_to_int = {vv: vi for vi, vv in enumerate(g)}
     cdef BoostVecWeightedDiGraphU g_boost_dir
     cdef BoostVecWeightedGraph g_boost_und

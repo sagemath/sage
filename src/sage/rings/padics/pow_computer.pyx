@@ -65,7 +65,7 @@ cdef class PowComputer_class(SageObject):
         sig_on()
         mpz_init(self.temp_m)
         sig_off()
-        self.__allocated = 1
+        self._allocated = 1
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
@@ -485,7 +485,7 @@ cdef class PowComputer_base(PowComputer_class):
         finally:
             sig_off()
 
-        self.__allocated = 2
+        self._allocated = 2
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
@@ -529,7 +529,7 @@ cdef class PowComputer_base(PowComputer_class):
         """
         cdef Py_ssize_t i
 
-        if self.__allocated >= 2:
+        if self._allocated >= 2:
             for i in range(self.cache_limit + 1):
                 mpz_clear(self.small_powers[i])
             mpz_clear(self.top_power)

@@ -45,7 +45,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
 
         EXAMPLES::
 
-            sage: HopfAlgebras(ZZ).WithBasis().FiniteDimensional().Super() # indirect doctest
+            sage: HopfAlgebras(ZZ).WithBasis().FiniteDimensional().Super()  # indirect doctest
             Category of finite dimensional super hopf algebras with basis over Integer Ring
         """
         axioms = axiom_whitelist.intersection(category.axioms())
@@ -182,6 +182,7 @@ class SuperModules(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: cat = Algebras(QQ).WithBasis().Super()
                 sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)
                 sage: C.degree_on_basis = sum
@@ -198,6 +199,7 @@ class SuperModules(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: cat = Algebras(QQ).WithBasis().Super()
                 sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)
                 sage: C.degree_on_basis = sum
@@ -214,6 +216,7 @@ class SuperModules(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: cat = Algebras(QQ).WithBasis().Super()
                 sage: C = CombinatorialFreeModule(QQ, Partitions(), category=cat)
                 sage: C.degree_on_basis = sum

@@ -322,7 +322,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         name = str(name)
     except UnicodeEncodeError:
         pass
-    assert(isinstance(name, str))
+    assert isinstance(name, str)
     #    assert(cls is None or issubtype(type(cls), type) or type(cls) is classobj)
     if cache is True:
         return dynamic_class_internal(name, bases, cls, reduction, doccls, prepend_cls_bases)

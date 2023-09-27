@@ -454,6 +454,7 @@ from sage.rings.real_mpfr import RR
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.diff_form import DiffForm
     from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
     from sage.manifolds.differentiable.vectorfield_module import (
         VectorFieldFreeModule,
@@ -2177,7 +2178,7 @@ class DifferentiableManifold(TopologicalManifold):
             resu._init_components(args[1], **kwargs)
         return resu
 
-    def diff_form(self, *args, **kwargs):
+    def diff_form(self, *args, **kwargs) -> DiffForm:
         r"""
         Define a differential form on ``self``.
 
@@ -2281,7 +2282,7 @@ class DifferentiableManifold(TopologicalManifold):
             resu._init_components(args[1], **kwargs)
         return resu
 
-    def one_form(self, *comp, **kwargs):
+    def one_form(self, *comp, **kwargs) -> DiffForm:
         r"""
         Define a 1-form on the manifold.
 

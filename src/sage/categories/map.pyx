@@ -115,7 +115,7 @@ cdef class Map(Element):
 
         Using domain and codomain::
 
-            sage: Map(QQ['x'], SymmetricGroup(6))
+            sage: Map(QQ['x'], SymmetricGroup(6))                                       # needs sage.groups
             Generic map:
               From: Univariate Polynomial Ring in x over Rational Field
               To:   Symmetric group of order 6! as a permutation group
@@ -131,13 +131,13 @@ cdef class Map(Element):
         C = parent.codomain()
         self._category_for = parent.homset_category()
         self._codomain = C
-        self.domain    = ConstantFunction(D)
-        self.codomain  = ConstantFunction(C)
+        self.domain = ConstantFunction(D)
+        self.codomain = ConstantFunction(C)
         self._is_coercion = False
         if D.is_exact() and C.is_exact():
-            self._coerce_cost = 10 # default value.
+            self._coerce_cost = 10  # default value.
         else:
-            self._coerce_cost = 10000 # inexact morphisms are bad.
+            self._coerce_cost = 10000  # inexact morphisms are bad.
 
     def __copy__(self):
         """
@@ -196,34 +196,45 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-5)
-            sage: phi = CDF._internal_convert_map_from(Q)
-            sage: print(phi.parent())
-            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I to Complex Double Field
+            sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
+            sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
+            sage: print(phi.parent())                                                   # needs sage.rings.number_field
+            Set of field embeddings
+             from Number Field in a with defining polynomial x^2 + 5
+                  with a = 2.236067977499790?*I
+               to Complex Double Field
 
         We now demonstrate that the reference to the coercion map `\phi` does
         not prevent `Q` from being garbage collected::
 
             sage: import gc
-            sage: del Q
+            sage: del Q                                                                 # needs sage.rings.number_field
             sage: _ = gc.collect()
-            sage: phi.parent()
+            sage: phi.parent()                                                          # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
-            ValueError: This map is in an invalid state, the domain has been garbage collected
+            ValueError: This map is in an invalid state,
+            the domain has been garbage collected
 
         You can still obtain copies of the maps used by the coercion system with
         strong references::
 
+            sage: # needs sage.rings.number_field
             sage: Q = QuadraticField(-5)
             sage: phi = CDF.convert_map_from(Q)
             sage: print(phi.parent())
-            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I to Complex Double Field
+            Set of field embeddings
+             from Number Field in a with defining polynomial x^2 + 5
+                  with a = 2.236067977499790?*I
+               to Complex Double Field
             sage: import gc
             sage: del Q
             sage: _ = gc.collect()
             sage: phi.parent()
-            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I to Complex Double Field
+            Set of field embeddings
+             from Number Field in a with defining polynomial x^2 + 5
+                  with a = 2.236067977499790?*I
+               to Complex Double Field
         """
         if self._parent is None:
             D = self.domain()
@@ -250,28 +261,33 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-5)
-            sage: phi = CDF._internal_convert_map_from(Q)
+            sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
+            sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
         By :trac:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
-            sage: phi.domain
+            sage: phi.domain                                                            # needs sage.rings.number_field
             <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
-            sage: phi._make_strong_references()
-            sage: print(phi.domain)
-            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
+            sage: phi._make_strong_references()                                         # needs sage.rings.number_field
+            sage: print(phi.domain)                                                     # needs sage.rings.number_field
+            The constant function (...) -> Number Field in a
+            with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
+            sage: # needs sage.rings.number_field
             sage: import gc
             sage: _ = gc.collect()
             sage: C = Q.__class__.__base__
-            sage: numberQuadFields = len([x for x in gc.get_objects() if isinstance(x, C)])
+            sage: x = None
+            sage: numberQuadFields = len([x for x in gc.get_objects()
+            ....:                         if isinstance(x, C)])
             sage: del Q, x
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)])
+            sage: numberQuadFields == len([x for x in gc.get_objects()
+            ....:                          if isinstance(x, C)])
             True
 
         However, if we now make the references weak again, the number field can
@@ -279,9 +295,11 @@ cdef class Map(Element):
         invalid. This is why :meth:`_make_weak_references` should only be used
         if one really knows what one is doing::
 
+            sage: # needs sage.rings.number_field
             sage: phi._make_weak_references()
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1
+            sage: numberQuadFields == len([x for x in gc.get_objects()
+            ....:                          if isinstance(x, C)]) + 1
             True
             sage: phi
             Defunct map
@@ -311,28 +329,33 @@ cdef class Map(Element):
 
         EXAMPLES::
 
-            sage: Q = QuadraticField(-5)
-            sage: phi = CDF._internal_convert_map_from(Q)
+            sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
+            sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
         By :trac:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
-            sage: phi.domain
+            sage: phi.domain                                                            # needs sage.rings.number_field
             <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
-            sage: phi._make_strong_references()
-            sage: print(phi.domain)
-            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
+            sage: phi._make_strong_references()                                         # needs sage.rings.number_field
+            sage: print(phi.domain)                                                     # needs sage.rings.number_field
+            The constant function (...) -> Number Field in a
+            with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
+            sage: # needs sage.rings.number_field
             sage: import gc
             sage: _ = gc.collect()
             sage: C = Q.__class__.__base__
-            sage: numberQuadFields = len([x for x in gc.get_objects() if isinstance(x, C)])
+            sage: x = None
+            sage: numberQuadFields = len([x for x in gc.get_objects()
+            ....:                         if isinstance(x, C)])
             sage: del Q, x
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)])
+            sage: numberQuadFields == len([x for x in gc.get_objects()
+            ....:                          if isinstance(x, C)])
             True
 
         However, if we now make the references weak again, the number field can
@@ -340,9 +363,11 @@ cdef class Map(Element):
         invalid. This is why :meth:`_make_weak_references` should only be used
         if one really knows what one is doing::
 
+            sage: # needs sage.rings.number_field
             sage: phi._make_weak_references()
             sage: _ = gc.collect()
-            sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1
+            sage: numberQuadFields == len([x for x in gc.get_objects()
+            ....:                          if isinstance(x, C)]) + 1
             True
             sage: phi
             Defunct map
@@ -380,6 +405,7 @@ cdef class Map(Element):
         Since it is a ``cdef``d method, it is tested using a dummy python method.
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: from sage.categories.map import Map
             sage: f = Map(Hom(QQ, ZZ, Rings()))
             sage: f._update_slots_test({"_domain": RR, "_codomain": QQ}) # indirect doctest
@@ -410,6 +436,7 @@ cdef class Map(Element):
 
         TESTS::
 
+            sage: # needs sage.rings.real_mpfr
             sage: from sage.categories.map import Map
             sage: f = Map(Hom(QQ, ZZ, Rings()))
             sage: f._update_slots_test({"_domain": RR, "_codomain": QQ})
@@ -544,6 +571,7 @@ cdef class Map(Element):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: Q = QuadraticField(-5)
             sage: phi = CDF._internal_coerce_map_from(Q); phi
             (map internal to coercion system -- copy before use)
@@ -559,13 +587,13 @@ cdef class Map(Element):
         D = self.domain()
         if D is None:
             return "Defunct map"
-        s = "%s map:"%self._repr_type()
-        s += "\n  From: %s"%D
-        s += "\n  To:   %s"%self._codomain
+        s = "%s map:" % self._repr_type()
+        s += "\n  From: %s" % D
+        s += "\n  To:   %s" % self._codomain
         if isinstance(self.domain, ConstantFunction):
             d = self._repr_defn()
             if d != '':
-                s += "\n  Defn: %s"%('\n        '.join(d.split('\n')))
+                s += "\n  Defn: %s" % ('\n        '.join(d.split('\n')))
         else:
             d = "(map internal to coercion system -- copy before use)"
             s = d + "\n" + s
@@ -575,12 +603,12 @@ cdef class Map(Element):
         D = self.domain()
         if D is None:
             return "Defunct map"
-        s = "%s map:"%self._repr_type()
-        s += "\n  From: %s"%D
-        s += "\n  To:   %s"%self._codomain
+        s = "%s map:" % self._repr_type()
+        s += "\n  From: %s" % D
+        s += "\n  To:   %s" % self._codomain
         d = self._repr_defn()
         if d != '':
-            s += "\n  Defn: %s"%('\n        '.join(d.split('\n')))
+            s += "\n  Defn: %s" % ('\n        '.join(d.split('\n')))
         return s
 
     def domains(self):
@@ -704,7 +732,8 @@ cdef class Map(Element):
             sage: f(1/2)
             Traceback (most recent call last):
             ...
-            TypeError: 1/2 fails to convert into the map's domain Integer Ring, but a `pushforward` method is not properly implemented
+            TypeError: 1/2 fails to convert into the map's domain Integer Ring,
+            but a `pushforward` method is not properly implemented
 
         We test that the default call method really works as described
         above (that was fixed in :trac:`10496`)::
@@ -746,11 +775,11 @@ cdef class Map(Element):
         ``pushforward`` fails, ``_call_`` is tried after conversion::
 
             sage: g = FOO(QQ, ZZ)
-            sage: g(SR(3))                                                      # optional - sage.symbolic
+            sage: g(SR(3))                                                              # needs sage.symbolic
             pushforward Symbolic Ring
             _call_ Rational Field
             3
-            sage: g(SR(3), exponent=2)                                          # optional - sage.symbolic
+            sage: g(SR(3), exponent=2)                                                  # needs sage.symbolic
             pushforward Symbolic Ring
             _call_with_args Rational Field
             9
@@ -761,7 +790,8 @@ cdef class Map(Element):
             sage: h(2/3)
             Traceback (most recent call last):
             ...
-            TypeError: 2/3 fails to convert into the map's domain Integer Ring, but a `pushforward` method is not properly implemented
+            TypeError: 2/3 fails to convert into the map's domain Integer Ring,
+            but a `pushforward` method is not properly implemented
         """
         P = parent(x)
         cdef Parent D = self.domain()
@@ -816,8 +846,8 @@ cdef class Map(Element):
         """
         if not args and not kwds:
             return self(x)
-        else:
-            raise NotImplementedError("_call_with_args not overridden to accept arguments for %s" % type(self))
+        raise NotImplementedError("_call_with_args not overridden "
+                                  f"to accept arguments for {type(self)}")
 
     def __mul__(self, right):
         r"""
@@ -1062,7 +1092,7 @@ cdef class Map(Element):
         - ``self`` -- a Map in some ``Hom(X, Y, category_right)``
         - ``left`` -- a Map in some ``Hom(Y, Z, category_left)``
 
-        Returns the composition of ``self`` followed by ``right`` as a
+        Returns the composition of ``self`` followed by ``left`` as a
         morphism in ``Hom(X, Z, category)`` where ``category`` is the
         meet of ``category_left`` and ``category_right``.
 
@@ -1103,10 +1133,11 @@ cdef class Map(Element):
         OUTPUT:
 
         An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a TypeError is raised.
+        no canonical `\phi` exists, a :class:`TypeError` is raised.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.complex_double
             sage: mor = CDF.coerce_map_from(RDF)
             sage: mor.extend_domain(QQ)
             Composite map:
@@ -1122,7 +1153,8 @@ cdef class Map(Element):
             sage: mor.extend_domain(ZZ['x'])
             Traceback (most recent call last):
             ...
-            TypeError: No coercion from Univariate Polynomial Ring in x over Integer Ring to Real Double Field
+            TypeError: No coercion from Univariate Polynomial Ring in x over Integer Ring
+            to Real Double Field
         """
         D = self.domain()
         if D is None:
@@ -1146,7 +1178,7 @@ cdef class Map(Element):
         OUTPUT:
 
         An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a TypeError is raised.
+        no canonical `\phi` exists, a :class:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1217,6 +1249,7 @@ cdef class Map(Element):
             ...
             TypeError: self must be an endomorphism
 
+            sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^4 - 5*x + 5)
             sage: C5.<z> = CyclotomicField(5)
             sage: tau = K.hom([z - z^2]); tau
@@ -1777,7 +1810,7 @@ cdef class FormalCompositeMap(Map):
                       From: Univariate Polynomial Ring in x over Rational Field
                       To:   Univariate Polynomial Ring in a over Rational Field
         """
-        s = "  %s"%(self.__list[0])
+        s = "  %s" % (self.__list[0])
         for f in self.__list[1:]:
             s += "\nthen\n  %s" % f
         return s
@@ -1851,6 +1884,7 @@ cdef class FormalCompositeMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: V1 = QQ^2
             sage: V2 = QQ^3
             sage: phi1 = (QQ^1).hom(Matrix([[1, 1]]), V1)
@@ -1859,16 +1893,18 @@ cdef class FormalCompositeMap(Map):
         If both constituents are injective, the composition is injective::
 
             sage: from sage.categories.map import FormalCompositeMap
-            sage: c1 = FormalCompositeMap(Hom(QQ^1, V2, phi1.category_for()), phi1, phi2)
-            sage: c1.is_injective()
+            sage: c1 = FormalCompositeMap(Hom(QQ^1, V2, phi1.category_for()),           # needs sage.modules
+            ....:                         phi1, phi2)
+            sage: c1.is_injective()                                                     # needs sage.modules
             True
 
         If it cannot be determined whether the composition is injective,
         an error is raised::
 
-            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)
-            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()), phi2, psi1)
-            sage: c2.is_injective()
+            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)                   # needs sage.modules
+            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()),             # needs sage.modules
+            ....:                         phi2, psi1)
+            sage: c2.is_injective()                                                     # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: not enough information to deduce injectivity
@@ -1876,17 +1912,18 @@ cdef class FormalCompositeMap(Map):
         If the first map is surjective and the second map is not injective,
         then the composition is not injective::
 
-            sage: psi2 = V1.hom([[1], [1]], QQ^1)
-            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, phi2.category_for()), psi2, psi1)
-            sage: c3.is_injective()
+            sage: psi2 = V1.hom([[1], [1]], QQ^1)                                       # needs sage.modules
+            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, phi2.category_for()),           # needs sage.modules
+            ....:                         psi2, psi1)
+            sage: c3.is_injective()                                                     # needs sage.modules
             False
 
         TESTS:
 
         Check that :trac:`23205` has been resolved::
 
-            sage: f = QQ.hom(QQbar)*ZZ.hom(QQ)
-            sage: f.is_injective()
+            sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # needs sage.rings.number_field
+            sage: f.is_injective()                                                      # needs sage.rings.number_field
             True
 
         """
@@ -1923,33 +1960,39 @@ cdef class FormalCompositeMap(Map):
         EXAMPLES::
 
             sage: from sage.categories.map import FormalCompositeMap
-            sage: V3 = QQ^3
-            sage: V2 = QQ^2
-            sage: V1 = QQ^1
+            sage: V3 = QQ^3                                                             # needs sage.modules
+            sage: V2 = QQ^2                                                             # needs sage.modules
+            sage: V1 = QQ^1                                                             # needs sage.modules
 
         If both maps are surjective, the composition is surjective::
 
+            sage: # needs sage.modules
             sage: phi32 = V3.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V2)
             sage: phi21 = V2.hom(Matrix([[1], [1]]), V1)
-            sage: c_phi = FormalCompositeMap(Hom(V3, V1, phi32.category_for()), phi32, phi21)
+            sage: c_phi = FormalCompositeMap(Hom(V3, V1, phi32.category_for()),
+            ....:                            phi32, phi21)
             sage: c_phi.is_surjective()
             True
 
         If the second map is not surjective, the composition is not
         surjective::
 
-            sage: FormalCompositeMap(Hom(V3, V1, phi32.category_for()), phi32, V2.hom(Matrix([[0], [0]]), V1)).is_surjective()
+            sage: FormalCompositeMap(Hom(V3, V1, phi32.category_for()),                 # needs sage.modules
+            ....:                    phi32,
+            ....:                    V2.hom(Matrix([[0], [0]]), V1)).is_surjective()
             False
 
         If the second map is an isomorphism and the first map is not
         surjective, then the composition is not surjective::
 
-            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()), V2.hom(Matrix([[0], [0]]), V1), V1.hom(Matrix([[1]]), V1)).is_surjective()
+            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),                 # needs sage.modules
+            ....:                    V2.hom(Matrix([[0], [0]]), V1),
+            ....:                    V1.hom(Matrix([[1]]), V1)).is_surjective()
             False
 
         Otherwise, surjectivity of the composition cannot be determined::
 
-            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),
+            sage: FormalCompositeMap(Hom(V2, V1, phi32.category_for()),                 # needs sage.modules
             ....:     V2.hom(Matrix([[1, 1], [1, 1]]), V2),
             ....:     V2.hom(Matrix([[1], [1]]), V1)).is_surjective()
             Traceback (most recent call last):
@@ -1991,8 +2034,8 @@ cdef class FormalCompositeMap(Map):
         EXAMPLES::
 
             sage: f = QQ.coerce_map_from(ZZ)
-            sage: g = MatrixSpace(QQ, 2, 2).coerce_map_from(QQ)
-            sage: list((g*f).domains())
+            sage: g = MatrixSpace(QQ, 2, 2).coerce_map_from(QQ)                         # needs sage.modules
+            sage: list((g * f).domains())                                               # needs sage.modules
             [Integer Ring, Rational Field]
         """
         for f in self.__list:

@@ -17,7 +17,6 @@ AUTHORS:
 # ****************************************************************************
 include "algebra_elements.pxi"
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.repr import repr_lincomb
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
@@ -90,15 +89,16 @@ cdef class PathAlgebraElement(RingElement):
     faster, but the timing for path algebra elements has improved by
     about 20%::
 
-        sage: timeit('pF^5+3*pF^3')    # not tested
+        sage: # not tested
+        sage: timeit('pF^5+3*pF^3')
         1 loops, best of 3: 338 ms per loop
-        sage: timeit('pP^5+3*pP^3')    # not tested
+        sage: timeit('pP^5+3*pP^3')
         100 loops, best of 3: 2.55 ms per loop
-        sage: timeit('pF2^7')          # not tested
+        sage: timeit('pF2^7')
         10000 loops, best of 3: 513 ms per loop
-        sage: timeit('pL2^7')          # not tested
+        sage: timeit('pL2^7')
         125 loops, best of 3: 1.99 ms per loop
-        sage: timeit('pP2^7')          # not tested
+        sage: timeit('pP2^7')
         10000 loops, best of 3: 1.54 ms per loop
 
     So, if one is merely interested in basic arithmetic operations for
@@ -477,9 +477,9 @@ cdef class PathAlgebraElement(RingElement):
         cdef path_homog_poly_t *H = self.data
         cdef path_term_t *T
         cdef list L = []
-        while H!=NULL:
+        while H != NULL:
             T = H.poly.lead
-            while T!=NULL:
+            while T != NULL:
                 L.append(<object>T.coef)
                 T = T.nxt
             H = H.nxt
@@ -534,9 +534,9 @@ cdef class PathAlgebraElement(RingElement):
         cdef path_term_t *T
         cdef object one = self.base_ring().one()
         cdef list L = []
-        while H!=NULL:
+        while H != NULL:
             T = H.poly.lead
-            while T!=NULL:
+            while T != NULL:
                 out = homog_poly_create(H.start, H.end)
                 out.poly.lead = term_create_blank(one)
                 mon_copy(out.poly.lead.mon, T.mon)
@@ -587,11 +587,10 @@ cdef class PathAlgebraElement(RingElement):
         cdef path_homog_poly_t *H = self.data
         cdef path_homog_poly_t *out
         cdef path_term_t *T
-        cdef object one = self.base_ring().one()
         cdef list L = []
-        while H!=NULL:
+        while H != NULL:
             T = H.poly.lead
-            while T!=NULL:
+            while T != NULL:
                 out = homog_poly_create(H.start, H.end)
                 out.poly.lead = term_copy(T)
                 out.poly.lead.nxt = NULL
@@ -647,9 +646,9 @@ cdef class PathAlgebraElement(RingElement):
         cdef QuiverPath sample = self._parent.semigroup().gen(0)
         cdef QuiverPath tmp
         cdef list L = []
-        while H!=NULL:
+        while H != NULL:
             T = H.poly.lead
-            while T!=NULL:
+            while T != NULL:
                 tmp = sample._new_(H.start, H.end)
                 biseq_init_copy(tmp._path, T.mon.path)
                 L.append(tmp)
@@ -766,9 +765,9 @@ cdef class PathAlgebraElement(RingElement):
         cdef path_term_t *T
         cdef QuiverPath sample = self._parent.semigroup().gen(0)
         cdef QuiverPath tmp
-        while H!=NULL:
+        while H != NULL:
             T = H.poly.lead
-            while T!=NULL:
+            while T != NULL:
                 sig_check()
                 tmp = sample._new_(H.start, H.end)
                 biseq_init_copy(tmp._path, T.mon.path)
@@ -975,7 +974,6 @@ cdef class PathAlgebraElement(RingElement):
         cdef PathAlgebraElement self = left
         cdef path_homog_poly_t *H1 = self.data
         cdef path_homog_poly_t *H2 = other.data
-        cdef int c
         while H1 != NULL and H2 != NULL:
             v1 = H1.start
             v2 = H2.start
@@ -1318,12 +1316,10 @@ cdef class PathAlgebraElement(RingElement):
         cdef path_homog_poly_t *H1 = self.data
         cdef path_homog_poly_t *H2
         cdef path_term_t *T2
-        cdef path_poly_t *P
         cdef path_homog_poly_t *out_orig = NULL
         cdef path_homog_poly_t *out = NULL
         cdef path_homog_poly_t *nxt
         cdef path_term_t *P1start
-        cdef int c
         while H1 != NULL:
             H2 = right.data
             while H2 != NULL:

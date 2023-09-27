@@ -46,13 +46,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         EXAMPLES::
 
             sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
-            sage: C.example()
+            sage: C.example()                                                           # needs sage.modules
             An example of a finite dimensional Lie algebra with basis:
              the 3-dimensional abelian Lie algebra over Rational Field
 
         Other dimensions can be specified as an optional argument::
 
-            sage: C.example(5)
+            sage: C.example(5)                                                          # needs sage.modules
             An example of a finite dimensional Lie algebra with basis:
              the 5-dimensional abelian Lie algebra over Rational Field
         """
@@ -70,6 +70,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.libs.singular sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: UEA = L._construct_UEA(); UEA
                 Noncommutative Multivariate Polynomial Ring in b0, b1, b2
@@ -79,7 +80,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'):{'z':1}, ('y','z'):{'x':1}, ('z','x'):{'y':1}})
+                sage: # needs sage.combinat sage.libs.singular sage.modules
+                sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1},
+                ....:                             ('y','z'): {'x':1},
+                ....:                             ('z','x'):{'y':1}})
                 sage: UEA = L._construct_UEA(); UEA
                 Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
                  nc-relations: {...}
@@ -89,8 +93,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Singular's ``nc_algebra`` does not work over `\ZZ/6\ZZ`,
             so we fallback to the PBW basis in this case::
 
-                sage: L = lie_algebras.pwitt(Zmod(6), 6)
-                sage: L._construct_UEA()
+                sage: L = lie_algebras.pwitt(Zmod(6), 6)                                # needs sage.combinat sage.modules
+                sage: L._construct_UEA()                                                # needs sage.combinat sage.libs.singular sage.modules
                 Universal enveloping algebra of
                  The 6-Witt Lie algebra over Ring of integers modulo 6
                  in the Poincare-Birkhoff-Witt basis
@@ -147,8 +151,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: L._basis_ordering
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L._basis_ordering                                                 # needs sage.modules
                 (0, 1, 2)
             """
             return tuple(self.basis().keys())
@@ -161,6 +165,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
                 sage: S = GroupAlgebra(G, QQ)
                 sage: L = LieAlgebra(associative=S)
@@ -175,24 +180,26 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: L = lie_algebras.three_dimensional_by_rank(QQ, 3, names=['E','F','H'])
-                sage: PBW = L.pbw_basis()
-                sage: PBW._basis_key('E') < PBW._basis_key('H')
+                sage: L = lie_algebras.three_dimensional_by_rank(QQ, 3,                 # needs sage.groups sage.modules
+                ....:                                            names=['E','F','H'])
+                sage: PBW = L.pbw_basis()                                               # needs sage.groups sage.modules
+                sage: PBW._basis_key('E') < PBW._basis_key('H')                         # needs sage.groups sage.modules
                 True
 
             ::
 
-                sage: L = lie_algebras.sl(QQ, 2)
+                sage: L = lie_algebras.sl(QQ, 2)                                        # needs sage.groups sage.modules
                 sage: def neg_key(x):
                 ....:     return -L.basis().keys().index(x)
-                sage: PBW = L.pbw_basis(basis_key=neg_key)
-                sage: prod(PBW.gens())  # indirect doctest
+                sage: PBW = L.pbw_basis(basis_key=neg_key)                              # needs sage.groups sage.modules
+                sage: prod(PBW.gens())  # indirect doctest                              # needs sage.groups sage.modules
                 PBW[-alpha[1]]*PBW[alphacheck[1]]*PBW[alpha[1]]
                  - 4*PBW[-alpha[1]]*PBW[alpha[1]] + PBW[alphacheck[1]]^2
                  - 2*PBW[alphacheck[1]]
 
             Check that :trac:`23266` is fixed::
 
+                sage: # needs sage.groups sage.modules
                 sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
                 sage: sl2.indices()
                 {'e1', 'f1', 'h1'}
@@ -214,8 +221,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: L._dense_free_module()
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L._dense_free_module()                                            # needs sage.modules
                 Vector space of dimension 3 over Rational Field
             """
             if R is None:
@@ -237,10 +244,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: u = L.from_vector(vector(QQ, (1, 0, 0))); u
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: u = L.from_vector(vector(QQ, (1, 0, 0))); u                       # needs sage.modules
                 (1, 0, 0)
-                sage: parent(u) is L
+                sage: parent(u) is L                                                    # needs sage.modules
                 True
             """
             if order is None:
@@ -260,17 +267,17 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: a,b,c = L.lie_algebra_generators()
-                sage: L.killing_matrix(a, b)
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: L.killing_matrix(a, b)                                            # needs sage.modules
                 [0 0 0]
                 [0 0 0]
                 [0 0 0]
 
             ::
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: L.killing_matrix(y, x)
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})                    # needs sage.combinat sage.modules
+                sage: L.killing_matrix(y, x)                                            # needs sage.combinat sage.modules
                 [ 0 -1]
                 [ 0  0]
             """
@@ -291,9 +298,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: a,b,c = L.lie_algebra_generators()
-                sage: L.killing_form(a, b)
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: a, b, c = L.lie_algebra_generators()                              # needs sage.modules
+                sage: L.killing_form(a, b)                                              # needs sage.modules
                 0
             """
             return self.killing_matrix(x, y).trace()
@@ -309,12 +316,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.killing_form_matrix()
                 [0 0 0]
                 [0 0 0]
                 [0 0 0]
-
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example(0)
                 sage: m = L.killing_form_matrix(); m
                 []
@@ -347,14 +354,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: L.structure_coefficients()
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()     # needs sage.modules
+                sage: L.structure_coefficients()                                        # needs sage.modules
                 Finite family {}
-                sage: L.structure_coefficients(True)
+                sage: L.structure_coefficients(True)                                    # needs sage.modules
                 Finite family {(0, 1): (0, 0, 0), (0, 2): (0, 0, 0), (1, 2): (0, 0, 0)}
 
             ::
 
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3)
                 sage: S = GroupAlgebra(G, QQ)
                 sage: L = LieAlgebra(associative=S)
@@ -401,16 +409,18 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: a,b,c = L.lie_algebra_generators()
+                sage: a, b, c = L.lie_algebra_generators()
                 sage: L.centralizer_basis([a + b, 2*a + c])
                 [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
+                sage: # needs sage.combinat sage.modules
                 sage: H = lie_algebras.Heisenberg(QQ, 2)
                 sage: H.centralizer_basis(H)
                 [z]
 
-
+                sage: # needs sage.combinat sage.groupssage.modules
                 sage: D = DescentAlgebra(QQ, 4).D()
                 sage: L = LieAlgebra(associative=D)
                 sage: L.centralizer_basis(L)
@@ -465,8 +475,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
-                sage: a,b,c = L.lie_algebra_generators()
+                sage: a, b, c = L.lie_algebra_generators()
                 sage: S = L.centralizer([a + b, 2*a + c]); S
                 An example of a finite dimensional Lie algebra with basis:
                  the 3-dimensional abelian Lie algebra over Rational Field
@@ -483,6 +494,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: Z = L.center(); Z
                 An example of a finite dimensional Lie algebra with basis: the
@@ -514,6 +526,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             We construct the derivations of the Heisenberg Lie algebra::
 
+                sage: # needs sage.combinat sage.modules
                 sage: H = lie_algebras.Heisenberg(QQ, 1)
                 sage: H.derivations_basis()
                 (
@@ -524,6 +537,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             We construct the derivations of `\mathfrak{sl}_2`::
 
+                sage: # needs sage.combinat sage.modules
                 sage: sl2 = lie_algebras.sl(QQ, 2)
                 sage: sl2.derivations_basis()
                 (
@@ -534,6 +548,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             We verify these are derivations::
 
+                sage: # needs sage.combinat sage.modules
                 sage: D = [sl2.module_morphism(matrix=M, codomain=sl2)
                 ....:      for M in sl2.derivations_basis()]
                 sage: all(d(a.bracket(b)) == d(a).bracket(b) + a.bracket(d(b))
@@ -578,6 +593,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: H = lie_algebras.Heisenberg(QQ, 1)
                 sage: H.inner_derivations_basis()
                 (
@@ -606,6 +622,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: H = lie_algebras.Heisenberg(QQ, 2)
                 sage: p1,p2,q1,q2,z = H.basis()
                 sage: S = H.subalgebra([p1, q1])
@@ -618,6 +635,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Passing an extra category to a subalgebra::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebra(QQ, 3, step=2)
                 sage: x,y,z = L.homogeneous_component_basis(1)
                 sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
@@ -645,9 +663,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: H = lie_algebras.Heisenberg(QQ, 2)
                 sage: p1,p2,q1,q2,z = H.basis()
-                sage: I = H.ideal([p1-p2, q1-q2])
+                sage: I = H.ideal([p1 - p2, q1 - q2])
                 sage: I.basis().list()
                 [-p1 + p2, -q1 + q2, z]
                 sage: I.reduce(p1 + p2 + q1 + q2 + z)
@@ -655,6 +674,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Passing an extra category to an ideal::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L.<x,y,z> = LieAlgebra(QQ, abelian=True)
                 sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
                 sage: C = C.Subobjects().Graded().Stratified()
@@ -676,18 +696,19 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: a, b, c = L.lie_algebra_generators()
                 sage: I = L.ideal([2*a - c, b + c])
                 sage: I.is_ideal(L)
                 True
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: L.is_ideal(L)
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})                     # needs sage.combinat sage.modules
+                sage: L.is_ideal(L)                                                     # needs sage.combinat sage.modules
                 True
 
-                sage: F = LieAlgebra(QQ, 'F', representation='polynomial')
-                sage: L.is_ideal(F)
+                sage: F = LieAlgebra(QQ, 'F', representation='polynomial')              # needs sage.combinat sage.modules
+                sage: L.is_ideal(F)                                                     # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: A must be a finite dimensional Lie algebra
@@ -728,24 +749,27 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             The Engel Lie algebra as a quotient of the free nilpotent Lie algebra
             of step 3 with 2 generators::
 
-                    sage: L.<X,Y,Z,W,U> = LieAlgebra(QQ, 2, step=3)
-                    sage: E = L.quotient(U); E
-                    Lie algebra quotient L/I of dimension 4 over Rational Field where
-                    L: Free Nilpotent Lie algebra on 5 generators (X, Y, Z, W, U) over Rational Field
-                    I: Ideal (U)
-                    sage: E.basis().list()
-                    [X, Y, Z, W]
-                    sage: E(X).bracket(E(Y))
-                    Z
-                    sage: Y.bracket(Z)
-                    -U
-                    sage: E(Y).bracket(E(Z))
-                    0
-                    sage: E(U)
-                    0
+                sage: # needs sage.combinat sage.modules
+                sage: L.<X,Y,Z,W,U> = LieAlgebra(QQ, 2, step=3)
+                sage: E = L.quotient(U); E
+                Lie algebra quotient L/I of dimension 4 over Rational Field where
+                 L: Free Nilpotent Lie algebra on 5 generators (X, Y, Z, W, U)
+                    over Rational Field
+                 I: Ideal (U)
+                sage: E.basis().list()
+                [X, Y, Z, W]
+                sage: E(X).bracket(E(Y))
+                Z
+                sage: Y.bracket(Z)
+                -U
+                sage: E(Y).bracket(E(Z))
+                0
+                sage: E(U)
+                0
 
             Quotients when the base ring is not a field are not implemented::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.Heisenberg(ZZ, 1)
                 sage: L.quotient(L.an_element())
                 Traceback (most recent call last):
@@ -769,23 +793,23 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: a,b,c = L.lie_algebra_generators()
-                sage: X = L.subalgebra([a, b+c])
+                sage: X = L.subalgebra([a, b + c])
                 sage: L.product_space(X)
                 An example of a finite dimensional Lie algebra with basis:
                  the 0-dimensional abelian Lie algebra over Rational Field
-                 with basis matrix:
-                []
-                sage: Y = L.subalgebra([a, 2*b-c])
+                  with basis matrix: []
+                sage: Y = L.subalgebra([a, 2*b - c])
                 sage: X.product_space(Y)
                 An example of a finite dimensional Lie algebra with basis:
-                 the 0-dimensional abelian Lie algebra over Rational
-                 Field with basis matrix:
-                []
+                 the 0-dimensional abelian Lie algebra over Rational Field
+                  with basis matrix: []
 
             ::
 
+                sage: # needs sage.combinat sage.modules
                 sage: H = lie_algebras.Heisenberg(ZZ, 4)
                 sage: Hp = H.product_space(H, submodule=True).basis()
                 sage: [H.from_vector(v) for v in Hp]
@@ -793,20 +817,25 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: Lp = L.product_space(L) # todo: not implemented - #17416
-                sage: Lp # todo: not implemented - #17416
-                Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                (x,)
-                sage: Lp.product_space(L) # todo: not implemented - #17416
-                Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                (x,)
-                sage: L.product_space(Lp) # todo: not implemented - #17416
-                Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                (x,)
-                sage: Lp.product_space(Lp) # todo: not implemented - #17416
-                Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                ()
+                sage: Lp = L.product_space(L)   # not implemented
+                sage: Lp                        # not implemented
+                Subalgebra generated of
+                 Lie algebra on 2 generators (x, y) over Rational Field
+                 with basis: (x,)
+                sage: Lp.product_space(L)       # not implemented
+                Subalgebra generated of
+                 Lie algebra on 2 generators (x, y) over Rational Field
+                 with basis: (x,)
+                sage: L.product_space(Lp)       # not implemented
+                Subalgebra generated of
+                 Lie algebra on 2 generators (x, y) over Rational Field
+                 with basis: (x,)
+                sage: Lp.product_space(Lp)      # not implemented
+                Subalgebra generated of
+                 Lie algebra on 2 generators (x, y) over Rational Field
+                 with basis: ()
             """
             from sage.matrix.constructor import matrix
 
@@ -843,6 +872,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.derived_subalgebra()
                 An example of a finite dimensional Lie algebra with basis:
@@ -852,7 +882,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``self`` is semisimple, then the derived subalgebra is ``self``::
 
-                sage: sl3 = LieAlgebra(QQ, cartan_type=['A',2])
+                sage: # needs sage.combinat sage.modules
+                sage: sl3 = LieAlgebra(QQ, cartan_type=['A', 2])
                 sage: sl3.derived_subalgebra()
                 Lie algebra of ['A', 2] in the Chevalley basis
                 sage: sl3 is sl3.derived_subalgebra()
@@ -894,24 +925,27 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.derived_series()
                 (An example of a finite dimensional Lie algebra with basis:
                     the 3-dimensional abelian Lie algebra over Rational Field,
                  An example of a finite dimensional Lie algebra with basis:
                     the 0-dimensional abelian Lie algebra over Rational Field
-                    with basis matrix:
-                    [])
+                    with basis matrix: [])
 
             ::
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: L.derived_series() # todo: not implemented - #17416
+                sage: # needs sage.combinat sage.modules
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
+                sage: L.derived_series()        # not implemented
                 (Lie algebra on 2 generators (x, y) over Rational Field,
-                 Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                (x,),
-                 Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                ())
+                 Subalgebra generated of
+                  Lie algebra on 2 generators (x, y) over Rational Field
+                  with basis: (x,),
+                 Subalgebra generated of
+                  Lie algebra on 2 generators (x, y) over Rational Field
+                  with basis: ())
             """
             L = [self]
             while L[-1].dimension() > 0:
@@ -952,31 +986,33 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.derived_series()
                 (An example of a finite dimensional Lie algebra with basis:
-                    the 3-dimensional abelian Lie algebra over Rational Field,
+                  the 3-dimensional abelian Lie algebra over Rational Field,
                  An example of a finite dimensional Lie algebra with basis:
-                    the 0-dimensional abelian Lie algebra over Rational Field
-                    with basis matrix:
-                    [])
+                  the 0-dimensional abelian Lie algebra over Rational Field
+                   with basis matrix: [])
 
             The lower central series as submodules::
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
+                sage: # needs sage.combinat sage.modules
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
                 sage: L.lower_central_series(submodule=True)
                 (Sparse vector space of dimension 2 over Rational Field,
-                Vector space of degree 2 and dimension 1 over Rational Field
-                Basis matrix:
-                [1 0])
+                 Vector space of degree 2 and dimension 1 over Rational Field
+                  Basis matrix: [1 0])
 
             ::
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: L.lower_central_series() # todo: not implemented - #17416
+                sage: # needs sage.combinat sage.modules
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
+                sage: L.lower_central_series()  # not implemented
                 (Lie algebra on 2 generators (x, y) over Rational Field,
-                 Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
-                (x,))
+                 Subalgebra generated of
+                  Lie algebra on 2 generators (x, y) over Rational Field
+                  with basis: (x,))
             """
             if submodule:
                 L = [self.module()]
@@ -995,12 +1031,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.is_abelian()
                 True
 
             ::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
                 sage: L.is_abelian()
                 False
@@ -1018,14 +1056,16 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.is_solvable()
                 True
 
             ::
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: L.is_solvable() # todo: not implemented - #17416
+                sage: # needs sage.combinat sage.modules
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
+                sage: L.is_solvable()           # not implemented
                 False
             """
             return not self.derived_series()[-1].dimension()
@@ -1039,6 +1079,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.is_nilpotent()
                 True
@@ -1055,6 +1096,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.is_semisimple()
                 False
@@ -1101,6 +1143,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sl(ZZ, 2)
                 sage: C = L.chevalley_eilenberg_complex(); C
                 Chain complex with at most 4 nonzero terms over Integer Ring
@@ -1110,14 +1153,16 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                             [0 0 0]       [ 0  0  2]       [0]
                  0 <-- C_0 <-------- C_1 <----------- C_2 <---- C_3 <-- 0
 
+                sage: # long time, needs sage.combinat sage.modules
                 sage: L = LieAlgebra(QQ, cartan_type=['C',2])
-                sage: C = L.chevalley_eilenberg_complex()  # long time
-                sage: [C.free_module_rank(i) for i in range(11)]  # long time
+                sage: C = L.chevalley_eilenberg_complex()
+                sage: [C.free_module_rank(i) for i in range(11)]
                 [1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1]
 
-                sage: g = lie_algebras.sl(QQ,2)
-                sage: E,F,H = g.basis()
-                sage: n = g.subalgebra([F,H])
+                sage: # needs sage.combinat sage.modules
+                sage: g = lie_algebras.sl(QQ, 2)
+                sage: E, F, H = g.basis()
+                sage: n = g.subalgebra([F, H])
                 sage: ascii_art(n.chevalley_eilenberg_complex())
                                         [0]
                             [0 0]       [2]
@@ -1202,7 +1247,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     zero = [zero] * len(indices)
                 for X in combinations(Ind, k):
                     if not sparse:
-                        ret =  list(zero)
+                        ret = list(zero)
                     for i in range(k):
                         Y = list(X)
                         Y.pop(i)
@@ -1269,6 +1314,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.cross_product(QQ)
                 sage: L.homology()
                 {0: Vector space of dimension 1 over Rational Field,
@@ -1276,6 +1322,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  2: Vector space of dimension 0 over Rational Field,
                  3: Vector space of dimension 1 over Rational Field}
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.pwitt(GF(5), 5)
                 sage: L.homology()
                 {0: Vector space of dimension 1 over Finite Field of size 5,
@@ -1285,6 +1332,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  4: Vector space of dimension 0 over Finite Field of size 5,
                  5: Vector space of dimension 1 over Finite Field of size 5}
 
+                sage: # needs sage.combinat sage.modules
                 sage: d = {('x', 'y'): {'y': 2}}
                 sage: L.<x,y> = LieAlgebra(ZZ, d)
                 sage: L.homology()
@@ -1334,6 +1382,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.so(QQ, 4)
                 sage: L.cohomology()
                 {0: Vector space of dimension 1 over Rational Field,
@@ -1344,6 +1393,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  5: Vector space of dimension 0 over Rational Field,
                  6: Vector space of dimension 1 over Rational Field}
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.Heisenberg(QQ, 2)
                 sage: L.cohomology()
                 {0: Vector space of dimension 1 over Rational Field,
@@ -1353,6 +1403,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  4: Vector space of dimension 4 over Rational Field,
                  5: Vector space of dimension 1 over Rational Field}
 
+                sage: # needs sage.combinat sage.modules
                 sage: d = {('x', 'y'): {'y': 2}}
                 sage: L.<x,y> = LieAlgebra(ZZ, d)
                 sage: L.cohomology()
@@ -1376,10 +1427,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.cross_product(QQ)
-                sage: x,y,z = L.basis()
+                sage: x, y, z = L.basis()
                 sage: F = L.as_finite_dimensional_algebra()
-                sage: X,Y,Z = F.basis()
+                sage: X, Y, Z = F.basis()
                 sage: x.bracket(y)
                 Z
                 sage: X * Y
@@ -1436,7 +1488,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             A quotient type Lie algebra morphism ::
 
-                sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
+                sage: # needs sage.combinat sage.modules
+                sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z': 1},
+                ....:                               ('X','Z'): {'W': 1}})
                 sage: K.<A,B> = LieAlgebra(QQ, abelian=True)
                 sage: L.morphism({X: A, Y: B})
                 Lie algebra morphism:
@@ -1450,6 +1504,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             The reverse map `A \mapsto X`, `B \mapsto Y` does not define a Lie
             algebra morphism, since `[A,B] = 0`, but `[X,Y] \neq 0`::
 
+                sage: # needs sage.combinat sage.modules
                 sage: K.morphism({A:X, B: Y})
                 Traceback (most recent call last):
                 ...
@@ -1460,10 +1515,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             on the coefficients, even though it's not a Lie algebra morphism
             (since it isn't linear)::
 
+                sage: # needs sage.combinat sage.modules sage.rings.number_fields
                 sage: R.<x> = ZZ[]
                 sage: K.<i> = NumberField(x^2 + 1)
                 sage: cc = K.hom([-i])
-                sage: L.<X,Y,Z,W> = LieAlgebra(K, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
+                sage: L.<X,Y,Z,W> = LieAlgebra(K, {('X','Y'): {'Z': 1},
+                ....:                              ('X','Z'): {'W': 1}})
                 sage: M.<A,B> = LieAlgebra(K, abelian=True)
                 sage: phi = L.morphism({X: A, Y: B}, base_map=cc)
                 sage: phi(X)
@@ -1497,11 +1554,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
                 sage: L.universal_polynomials()
                 Finite family {('x', 'x', 'y'): X01*X10 - X00*X11 + X00,
                                ('y', 'x', 'y'): X10}
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebra(QQ, cartan_type=['A',1])
                 sage: list(L.universal_polynomials())
                 [-2*X01*X10 + 2*X00*X11 - 2*X00,
@@ -1514,13 +1573,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  -2*X12*X20 + 2*X10*X22 + X21,
                  -2*X12*X21 + 2*X11*X22 - 2*X22]
 
-                sage: L = LieAlgebra(QQ, cartan_type=['B',2])
-                sage: al = RootSystem(['B',2]).root_lattice().simple_roots()
+                sage: # long time, needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, cartan_type=['B', 2])
+                sage: al = RootSystem(['B', 2]).root_lattice().simple_roots()
                 sage: k = list(L.basis().keys())[0]
-                sage: UP = L.universal_polynomials()  # long time
-                sage: len(UP)  # long time
+                sage: UP = L.universal_polynomials()
+                sage: len(UP)
                 450
-                sage: UP[al[2],al[1],-al[1]]  # long time
+                sage: UP[al[2], al[1], -al[1]]
                 X0_7*X4_1 - X0_1*X4_7 - 2*X0_7*X5_1 + 2*X0_1*X5_7 + X2_7*X7_1
                  - X2_1*X7_7 - X3_7*X8_1 + X3_1*X8_7 + X0_4
             """
@@ -1574,10 +1634,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
                 sage: A = L.universal_commutative_algebra()
-                sage: a,b,c,d = A.gens()
-                sage: (a,b,c,d)
+                sage: a, b, c, d = A.gens()
+                sage: a, b, c, d
                 (X00bar, X01bar, 0, X11bar)
                 sage: a*d - a
                 0
@@ -1586,6 +1647,173 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             R = P[0].parent()
             return R.quotient(P)
 
+        def casimir_element(self, order=2, UEA=None, force_generic=False):
+            r"""
+            Return the Casimir element in the universal enveloping algebra
+            of ``self``.
+
+            A *Casimir element* of order `k` is a distinguished basis element
+            for the center of `U(\mathfrak{g})` of homogeneous degree `k`
+            (that is, it is an element of `U_k \setminus U_{k-1}`, where
+            `\{U_i\}_{i=0}^{\infty}` is the natural filtration of
+            `U(\mathfrak{g})`). When `\mathfrak{g}` is a simple Lie algebra,
+            then this spans `Z(U(\mathfrak{g}))_k`.
+
+            INPUT:
+
+            - ``order`` -- (default: ``2``) the order of the Casimir element
+            - ``UEA`` -- (optional) the universal enveloping algebra to
+              return the result in
+            - ``force_generic`` -- (default: ``False``) if ``True`` for the
+              quadratic order, then this uses the default algorithm; otherwise
+              this is ignored
+
+            ALGORITHM:
+
+            For the quadratic order (i.e., ``order=2``), then this uses
+            `K^{ij}`, the inverse of the Killing form matrix, to compute
+            `C_{(2)} = \sum_{i,j} K^{ij} X_i \cdots X_j`, where `\{X_1, \ldots,
+            X_n\}` is a basis for `\mathfrak{g}`. Otherwise this solves the
+            system of equations
+
+            .. MATH::
+
+                f_{aj}^b \kappa^{jc\cdots d} + f_{aj}^c \kappa^{cj\cdots d}
+                \cdots + f_{aj}^d \kappa^{bc \cdots j}
+
+            for the symmetric tensor `\kappa^{i_1 \cdots i_k}`, where `k` is
+            the ``order``. This system comes from `[X_i, C_{(k)}] = 0` with
+
+            .. MATH::
+
+                C_{(k)} = \sum_{i_1, \ldots, i_k}^n
+                \kappa^{i_1 \cdots i_k} X_{i_1} \cdots X_{i_k}.
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
+                sage: C = L.casimir_element(); C
+                1/8*b1^2 + 1/2*b0*b2 - 1/4*b1
+                sage: U = L.universal_enveloping_algebra()
+                sage: all(g * C == C * g for g in U.gens())
+                True
+                sage: U = L.pbw_basis()
+                sage: C = L.casimir_element(UEA=U); C
+                1/2*PBW[alpha[1]]*PBW[-alpha[1]] + 1/8*PBW[alphacheck[1]]^2
+                 - 1/4*PBW[alphacheck[1]]
+                sage: all(g * C == C * g for g in U.algebra_generators())
+                True
+
+                sage: # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, cartan_type=['B', 2])
+                sage: U = L.pbw_basis()
+                sage: C = L.casimir_element(UEA=U)
+                sage: all(g * C == C * g for g in U.algebra_generators())
+                True
+
+                sage: # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, cartan_type=['C', 3])
+                sage: U = L.pbw_basis()
+                sage: C = L.casimir_element(UEA=U)
+                sage: all(g * C == C * g for g in U.algebra_generators())
+                True
+
+                sage: # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
+                sage: C4 = L.casimir_element(order=4, UEA=L.pbw_basis()); C4
+                4*PBW[alpha[1]]^2*PBW[-alpha[1]]^2
+                 + 2*PBW[alpha[1]]*PBW[alphacheck[1]]^2*PBW[-alpha[1]]
+                 + 1/4*PBW[alphacheck[1]]^4 - PBW[alphacheck[1]]^3
+                 - 4*PBW[alpha[1]]*PBW[-alpha[1]] + 2*PBW[alphacheck[1]]
+                sage: all(g * C4 == C4 * g for g in L.pbw_basis().algebra_generators())
+                True
+
+                sage: # needs sage.combinat sage.modules
+                sage: L = lie_algebras.Heisenberg(QQ, 2)
+                sage: L.casimir_element()
+                0
+
+            TESTS::
+
+                sage: # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
+                sage: L.casimir_element(1)
+                Traceback (most recent call last):
+                ...
+                ValueError: invalid order
+                sage: 4 * L.casimir_element() == L.casimir_element(force_generic=True)
+                True
+
+            .. TODO::
+
+                Use the symmetry of the tensor to reduce the number of
+                equations and/or variables to solve.
+            """
+            if order < 2:
+                raise ValueError("invalid order")
+
+            if UEA is None:
+                UEA = self.universal_enveloping_algebra()
+
+            B = self.basis()
+
+            if order == 2 and not force_generic:
+                # Special case for the quadratic using the Killing form
+                try:
+                    K = self.killing_form_matrix().inverse()
+                    return UEA.sum(K[i, j] * UEA(x) * UEA(y) for i, x in enumerate(B)
+                                   for j, y in enumerate(B) if K[i, j])
+                except (ValueError, TypeError, ZeroDivisionError):
+                    # fall back to finding solutions to the system of equations
+                    pass
+
+            keys = self.get_order()
+            dim = len(keys)
+            s_coeffs = dict(self.structure_coefficients())
+            for k in list(s_coeffs.keys()):
+                s_coeffs[k[1], k[0]] = -s_coeffs[k]
+
+            # setup the equations
+            from sage.matrix.constructor import matrix
+            from itertools import product
+            eqns = matrix.zero(self.base_ring(), dim**(order+1), dim**order, sparse=True)
+            for ii, p in enumerate(product(range(dim), repeat=order+1)):
+                i = p[0]
+                a = keys[i]
+                for j, b in enumerate(keys):
+                    if (a, b) not in s_coeffs:
+                        continue
+                    sc_val = s_coeffs[a, b]
+                    for k in range(order):
+                        c = keys[p[k+1]]
+                        if not sc_val[c]:
+                            continue
+                        pp = list(p[1:])
+                        pp[k] = j
+                        jj = sum(dim**m * pp[m] for m in range(order))
+                        eqns[ii, jj] += sc_val[c]
+
+            ker = eqns.right_kernel()
+            if ker.dimension() == 0:
+                return self.zero()
+
+            tens = ker.basis()[0]
+            del eqns  # no need to hold onto the matrix
+
+            def to_prod(index):
+                coeff = tens[index]
+                p = [0] * order
+                base = dim ** (order-1)
+                for i in range(order):
+                    p[i] = index // base
+                    index %= base
+                    base //= dim
+                p.reverse()
+                return coeff * UEA.prod(UEA(B[keys[i]]) for i in p)
+
+            return UEA.sum(to_prod(index) for index in tens.support())
+
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism
             """
@@ -1593,6 +1821,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.an_element().adjoint_matrix()
                 [0 0 0]
@@ -1603,7 +1832,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
+                sage: # needs sage.combinat sage.modules
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
                 sage: x.adjoint_matrix()
                 [0 1]
                 [0 0]
@@ -1613,6 +1843,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             We verify that this forms a representation::
 
+                sage: # needs sage.combinat sage.modules
                 sage: sl3 = lie_algebras.sl(QQ, 3)
                 sage: e1, e2 = sl3.e(1), sl3.e(2)
                 sage: e12 = e1.bracket(e2)
@@ -1640,13 +1871,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.an_element().to_vector()
                 (0, 0, 0)
-
                 sage: L.an_element().to_vector(sparse=True)
                 (0, 0, 0)
 
+                sage: # needs sage.combinat sage.groupssage.modules
                 sage: D = DescentAlgebra(QQ, 4).D()
                 sage: L = LieAlgebra(associative=D)
                 sage: L.an_element().to_vector()
@@ -1657,6 +1889,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Check that the error raised agrees with the one
             from ``monomial_coefficients()`` (see :trac:`25007`)::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sp(QQ, 4, representation='matrix')
                 sage: x = L.an_element()
                 sage: x.monomial_coefficients()
@@ -1697,9 +1930,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+                    sage: # needs sage.combinat sage.modules
+                    sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
+                    sage: L = C.example()
                     sage: a, b, c = L.lie_algebra_generators()
-                    sage: S = L.subalgebra([2*a+b, b + c])
+                    sage: S = L.subalgebra([2*a + b, b + c])
                     sage: S.ambient() == L
                     True
                 """
@@ -1711,9 +1946,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+                    sage: # needs sage.combinat sage.modules
+                    sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
+                    sage: L = C.example()
                     sage: a, b, c = L.lie_algebra_generators()
-                    sage: S = L.subalgebra([2*a+b, b + c])
+                    sage: S = L.subalgebra([2*a + b, b + c])
                     sage: S.basis_matrix()
                     [   1    0 -1/2]
                     [   0    1    1]

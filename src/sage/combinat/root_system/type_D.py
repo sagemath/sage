@@ -224,42 +224,43 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: d = CartanType(['D',5]).dynkin_diagram(); d
+            sage: d = CartanType(['D',5]).dynkin_diagram(); d                           # needs sage.graphs
                     O 5
                     |
                     |
             O---O---O---O
             1   2   3   4
             D5
-            sage: d.edges(sort=True)
-            [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1), (3, 4, 1), (3, 5, 1), (4, 3, 1), (5, 3, 1)]
+            sage: d.edges(sort=True)                                                    # needs sage.graphs
+            [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1),
+             (3, 4, 1), (3, 5, 1), (4, 3, 1), (5, 3, 1)]
 
-            sage: d = CartanType(['D',4]).dynkin_diagram(); d
+            sage: d = CartanType(['D',4]).dynkin_diagram(); d                           # needs sage.graphs
                 O 4
                 |
                 |
             O---O---O
             1   2   3
             D4
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (2, 4, 1), (3, 2, 1), (4, 2, 1)]
 
-            sage: d = CartanType(['D',3]).dynkin_diagram(); d
+            sage: d = CartanType(['D',3]).dynkin_diagram(); d                           # needs sage.graphs
             O 3
             |
             |
             O---O
             1   2
             D3
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (1, 3, 1), (2, 1, 1), (3, 1, 1)]
 
 
-            sage: d = CartanType(['D',2]).dynkin_diagram(); d
+            sage: d = CartanType(['D',2]).dynkin_diagram(); d                           # needs sage.graphs
             O   O
             1   2
             D2
-            sage: d.edges(sort=True)
+            sage: d.edges(sort=True)                                                    # needs sage.graphs
             []
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -295,9 +296,9 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             return ret
         rt_most = (self.n-2) * node_dist
         center_point = rt_most - node_dist
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%center_point
-        ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n"%(center_point, rt_most)
-        ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n"%(center_point, rt_most)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % center_point
+        ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n" % (center_point, rt_most)
+        ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n" % (center_point, rt_most)
         for i in range(self.n-2):
             ret += node(i*node_dist, 0, label(i+1))
         ret += node(rt_most, 0.7, label(self.n), 'right=3pt')
@@ -341,9 +342,9 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         if n == 2:
             ret = "{}   {}\n".format(node(label(1)), node(label(2)))
             return ret + "{!s:4}{!s:4}".format(label(1), label(2))
-        ret =  (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
-        ret += ((4*(n-3))*" " +"|\n")*2
-        ret += "---".join(node(label(i)) for i in range(1, n)) +"\n"
+        ret = (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
+        ret += ((4*(n-3))*" " + "|\n")*2
+        ret += "---".join(node(label(i)) for i in range(1, n)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret
 

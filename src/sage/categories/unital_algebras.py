@@ -18,6 +18,7 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
 from sage.categories.magmatic_algebras import MagmaticAlgebras
+from sage.categories.cartesian_product import CartesianProductsCategory
 
 
 class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
@@ -25,7 +26,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
     The category of non-associative algebras over a given base ring.
 
     A non-associative algebra over a ring `R` is a module over `R`
-    which s also a unital magma.
+    which is also a unital magma.
 
     .. WARNING::
 
@@ -61,9 +62,10 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = AlgebrasWithBasis(QQ).example(); A
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-                sage: A.from_base_ring(1)
+                sage: A = AlgebrasWithBasis(QQ).example(); A                            # needs sage.combinat sage.modules
+                An example of an algebra with basis:
+                 the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                sage: A.from_base_ring(1)                                               # needs sage.combinat sage.modules
                 B[word: ]
             """
             return self.one()._lmul_(r)
@@ -75,16 +77,18 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = AlgebrasWithBasis(QQ).example(); A
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                sage: A = AlgebrasWithBasis(QQ).example(); A                            # needs sage.combinat sage.modules
+                An example of an algebra with basis:
+                 the free algebra on the generators ('a', 'b', 'c') over Rational Field
                 sage: coercion_model = sage.structure.element.get_coercion_model()
-                sage: coercion_model.discover_coercion(QQ, A)
+                sage: coercion_model.discover_coercion(QQ, A)                           # needs sage.combinat sage.modules
                 ((map internal to coercion system -- copy before use)
                  Generic morphism:
                    From: Rational Field
-                   To:   An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field,
+                   To:   An example of an algebra with basis:
+                          the free algebra on the generators ('a', 'b', 'c') over Rational Field,
                  None)
-                sage: A(1)          # indirect doctest
+                sage: A(1)          # indirect doctest                                  # needs sage.combinat sage.modules
                 B[word: ]
 
             TESTS:
@@ -92,13 +96,13 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             Ensure that :trac:`28328` is fixed and that non-associative
             algebras are supported::
 
+                sage: # needs sage.modules
                 sage: class Foo(CombinatorialFreeModule):
                 ....:     def one(self):
                 ....:         return self.monomial(0)
-                sage: from sage.categories.magmatic_algebras \
-                ....:   import MagmaticAlgebras
+                sage: from sage.categories.magmatic_algebras import MagmaticAlgebras
                 sage: C = MagmaticAlgebras(QQ).WithBasis().Unital()
-                sage: F = Foo(QQ,(1,),category=C)
+                sage: F = Foo(QQ, (1,), category=C)
                 sage: F(0)
                 0
                 sage: F(3)
@@ -183,8 +187,8 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
             Check that :trac:`29312` is fixed::
 
-                sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-                sage: F._coerce_map_from_base_ring()
+                sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')         # needs sage.combinat sage.modules
+                sage: F._coerce_map_from_base_ring()                                    # needs sage.combinat sage.modules
                 Generic morphism:
                   From: Rational Field
                   To:   Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
@@ -274,6 +278,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
                     word:
@@ -295,6 +300,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
                     word:
@@ -307,6 +313,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 Try to check that :trac:`5843` Heisenbug is fixed::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: B = AlgebrasWithBasis(QQ).example(('a', 'c'))
                     sage: A == B
@@ -319,9 +326,9 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                Even if called in the wrong order, they should returns their
                respective one::
 
-                    sage: Bone().parent() is B
+                    sage: Bone().parent() is B                                          # needs sage.combinat sage.modules
                     True
-                    sage: Aone().parent() is A
+                    sage: Aone().parent() is A                                          # needs sage.combinat sage.modules
                     True
                 """
                 return self.monomial(self.one_basis()) #.
@@ -333,10 +340,10 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = AlgebrasWithBasis(QQ).example()
-                    sage: A.one_basis()
+                    sage: A = AlgebrasWithBasis(QQ).example()                           # needs sage.combinat sage.modules
+                    sage: A.one_basis()                                                 # needs sage.combinat sage.modules
                     word:
-                    sage: A.one()
+                    sage: A.one()                                                       # needs sage.combinat sage.modules
                     B[word: ]
                 """
                 if self.one_basis is NotImplemented:
@@ -348,8 +355,8 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 """
                 TESTS::
 
-                    sage: A = AlgebrasWithBasis(QQ).example()
-                    sage: A.from_base_ring(3)
+                    sage: A = AlgebrasWithBasis(QQ).example()                           # needs sage.combinat sage.modules
+                    sage: A.from_base_ring(3)                                           # needs sage.combinat sage.modules
                     3*B[word: ]
                 """
                 if self.one_basis is NotImplemented:
@@ -366,6 +373,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.from_base_ring_from_one_basis(3)
                     3*B[word: ]
@@ -375,3 +383,55 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     3*B[word: ]
                 """
                 return self.term(self.one_basis(), r)
+
+    class CartesianProducts(CartesianProductsCategory):
+        r"""
+        The category of unital algebras constructed as Cartesian products
+        of unital algebras.
+
+        This construction gives the direct product of algebras. See
+        discussion on:
+
+         - http://groups.google.fr/group/sage-devel/browse_thread/thread/35a72b1d0a2fc77a/348f42ae77a66d16#348f42ae77a66d16
+         - :wikipedia:`Direct_product`
+        """
+        def extra_super_categories(self):
+            """
+            A Cartesian product of algebras is endowed with a natural
+            unital algebra structure.
+
+            EXAMPLES::
+
+                sage: from sage.categories.unital_algebras import UnitalAlgebras
+                sage: C = UnitalAlgebras(QQ).CartesianProducts()
+                sage: C.extra_super_categories()
+                [Category of unital algebras over Rational Field]
+                sage: sorted(C.super_categories(), key=str)
+                [Category of Cartesian products of distributive magmas and additive magmas,
+                 Category of Cartesian products of unital magmas,
+                 Category of Cartesian products of vector spaces over Rational Field,
+                 Category of unital algebras over Rational Field]
+            """
+            return [self.base_category()]
+
+        class ParentMethods:
+            @cached_method
+            def one(self):
+                r"""
+                Return the multiplicative unit element.
+
+                EXAMPLES::
+
+                    sage: S2 = simplicial_complexes.Sphere(2)
+                    sage: H = S2.cohomology_ring(QQ)
+                    sage: C = cartesian_product([H, H])
+                    sage: one = C.one()
+                    sage: one
+                    B[(0, (0, 0))] + B[(1, (0, 0))]
+                    sage: one == one * one
+                    True
+                    sage: all(b == b * one for b in C.basis())
+                    True
+                """
+                data = enumerate(self.cartesian_factors())
+                return self._cartesian_product_of_elements([C.one() for i, C in data])

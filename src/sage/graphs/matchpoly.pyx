@@ -32,7 +32,7 @@ Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
@@ -41,7 +41,6 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.misc.misc_c import prod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
@@ -217,14 +216,14 @@ def matching_polynomial(G, complement=True, name=None):
 
     cdef int i, j, d
     cdef fmpz_poly_t pol
-    cdef nverts = G.num_verts()
+    cdef int nverts = G.num_verts()
 
     # Using Godsil's duality theorem when the graph is dense
 
     if complement and G.density() > 0.5:  # this cutoff could probably be tuned
         f_comp = matching_polynomial(G.complement()).list()
         f = x.parent().zero()
-        for i from 0 <= i <= nverts / 2:  # implicit floor
+        for i in range(nverts // 2 + 1):
             j = nverts - 2 * i
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f
@@ -329,9 +328,9 @@ def complete_poly(n):
 
     Checking the numerical results up to 20::
 
-        sage: from sage.functions.orthogonal_polys import hermite       # optional - sage.symbolic
-        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))              # optional - sage.symbolic
-        sage: all(p(i) == complete_poly(i) for i in range(2, 20))       # optional - sage.symbolic
+        sage: from sage.functions.orthogonal_polys import hermite                       # needs sage.symbolic
+        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))                              # needs sage.symbolic
+        sage: all(p(i) == complete_poly(i) for i in range(2, 20))                       # needs sage.symbolic
         True
     """
     # global complete_matching_polys # if we do eventually make it a C array...

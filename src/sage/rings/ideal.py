@@ -126,7 +126,7 @@ def Ideal(*args, **kwds):
     even if they are PIDs.::
 
         sage: R.<x> = GF(5)[]
-        sage: I = R*(x^2+3)
+        sage: I = R * (x^2 + 3)
         sage: type(I)
         <class 'sage.rings.polynomial.ideal.Ideal_1poly_field'>
 
@@ -163,11 +163,11 @@ def Ideal(*args, **kwds):
         sage: J = R.ideal([2*x + 2*x^2])
         sage: J
         Principal ideal (x^2 + x) of Univariate Polynomial Ring in x over Rational Field
-        sage: S = R.quotient_ring(I)
-        sage: U = R.quotient_ring(J)
+        sage: S = R.quotient_ring(I)                                                    # needs sage.libs.pari
+        sage: U = R.quotient_ring(J)                                                    # needs sage.libs.pari
         sage: I == J
         True
-        sage: S == U
+        sage: S == U                                                                    # needs sage.libs.pari
         True
     """
     if len(args) == 0:
@@ -295,8 +295,8 @@ class Ideal_generic(MonoidElement):
         the generators are not represented from left to right but from
         top to bottom. This is the case, e.g., for matrices::
 
-            sage: MS = MatrixSpace(QQ,2,2)
-            sage: MS*[MS.1,2]
+            sage: MS = MatrixSpace(QQ, 2, 2)                                            # needs sage.modules
+            sage: MS * [MS.1, 2]                                                        # needs sage.modules
             Left Ideal
             (
               [0 1]
@@ -316,8 +316,8 @@ class Ideal_generic(MonoidElement):
                 s = s.replace('\n','\n  ')
             L.append(s)
         if has_return:
-            return '\n(\n  %s\n)\n'%(',\n\n  '.join(L))
-        return '(%s)'%(', '.join(L))
+            return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
+        return '(%s)' % (', '.join(L))
 
     def __repr__(self):
         """
@@ -329,7 +329,7 @@ class Ideal_generic(MonoidElement):
             sage: P*[a^2,a*b+c,c^3] # indirect doctest
             Ideal (a^2, a*b + c, c^3) of Multivariate Polynomial Ring in a, b, c over Rational Field
         """
-        return "Ideal %s of %s"%(self._repr_short(), self.ring())
+        return "Ideal %s of %s" % (self._repr_short(), self.ring())
 
     def random_element(self, *args, **kwds):
         """
@@ -376,8 +376,8 @@ class Ideal_generic(MonoidElement):
         EXAMPLES::
 
             sage: P.<a,b,c> = QQ[]
-            sage: I = P*[a, b]
-            sage: a + b in I
+            sage: I = P * [a, b]
+            sage: a + b in I                                                            # needs sage.libs.singular
             True
             sage: P2.<w,x,y,z> = QQ[]
             sage: x + 2*y + w*z in I
@@ -470,11 +470,11 @@ class Ideal_generic(MonoidElement):
 
         And `p`-adic numbers::
 
-            sage: R = Zp(7, prec=10); R
+            sage: R = Zp(7, prec=10); R                                                 # needs sage.rings.padics
             7-adic Ring with capped relative precision 10
-            sage: I = 7*R; I
+            sage: I = 7*R; I                                                            # needs sage.rings.padics
             Principal ideal (7 + O(7^11)) of 7-adic Ring with capped relative precision 10
-            sage: I.base_ring()
+            sage: I.base_ring()                                                         # needs sage.rings.padics
             7-adic Ring with capped relative precision 10
         """
         return self.ring().base_ring()
@@ -486,13 +486,17 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: psi = CC['x'].hom([-CC['x'].0])
             sage: J = ideal([CC['x'].0 + 1]); J
-            Principal ideal (x + 1.00000000000000) of Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
+            Principal ideal (x + 1.00000000000000) of Univariate Polynomial Ring in x
+             over Complex Field with 53 bits of precision
             sage: psi(J)
-            Principal ideal (x - 1.00000000000000) of Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
+            Principal ideal (x - 1.00000000000000) of Univariate Polynomial Ring in x
+             over Complex Field with 53 bits of precision
             sage: J.apply_morphism(psi)
-            Principal ideal (x - 1.00000000000000) of Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
+            Principal ideal (x - 1.00000000000000) of Univariate Polynomial Ring in x
+             over Complex Field with 53 bits of precision
 
         ::
 
@@ -506,6 +510,8 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
+            sage: # needs sage.rings.number_fields
+            sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: A = K.ideal(a)
             sage: taus = K.embeddings(K)
@@ -518,6 +524,7 @@ class Ideal_generic(MonoidElement):
 
         ::
 
+            sage: # needs sage.rings.number_fields
             sage: K.<a> = NumberField(x^2 + 5)
             sage: B = K.ideal([2, a + 1]); B
             Fractional ideal (2, a + 1)
@@ -527,9 +534,9 @@ class Ideal_generic(MonoidElement):
 
         Since 2 is totally ramified, complex conjugation fixes it::
 
-            sage: B.apply_morphism(taus[1]) # complex conjugation
+            sage: B.apply_morphism(taus[1])  # complex conjugation                      # needs sage.rings.number_fields
             Fractional ideal (2, a + 1)
-            sage: taus[1](B)
+            sage: taus[1](B)                                                            # needs sage.rings.number_fields
             Fractional ideal (2, a + 1)
         """
         from sage.categories.morphism import is_Morphism
@@ -585,12 +592,14 @@ class Ideal_generic(MonoidElement):
             sage: I = R.ideal(x^2 - 3)
             sage: I.ring()
             Univariate Polynomial Ring in x over Rational Field
-            sage: Rbar = R.quotient(I, names='a')
-            sage: S = PolynomialRing(Rbar, 'y'); y = Rbar.gen(); S
-            Univariate Polynomial Ring in y over Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
-            sage: J = S.ideal(y^2 + 1)
-            sage: J.ring()
-            Univariate Polynomial Ring in y over Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
+            sage: Rbar = R.quotient(I, names='a')                                       # needs sage.libs.pari
+            sage: S = PolynomialRing(Rbar, 'y'); y = Rbar.gen(); S                      # needs sage.libs.pari
+            Univariate Polynomial Ring in y over
+             Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
+            sage: J = S.ideal(y^2 + 1)                                                  # needs sage.libs.pari
+            sage: J.ring()                                                              # needs sage.libs.pari
+            Univariate Polynomial Ring in y over
+             Univariate Quotient Polynomial Ring in a over Rational Field with modulus x^2 - 3
         """
         return self.__ring
 
@@ -738,28 +747,29 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x, y> = QQ[]
             sage: I = R.ideal([x^2, x*y])
-            sage: I.is_primary()
+            sage: I.is_primary()                                                        # needs sage.libs.singular
             False
-            sage: J = I.primary_decomposition()[1]; J
+            sage: J = I.primary_decomposition()[1]; J                                   # needs sage.libs.singular
             Ideal (y, x^2) of Multivariate Polynomial Ring in x, y over Rational Field
-            sage: J.is_primary()
+            sage: J.is_primary()                                                        # needs sage.libs.singular
             True
-            sage: J.is_prime()
+            sage: J.is_prime()                                                          # needs sage.libs.singular
             False
 
         Some examples from the Macaulay2 documentation::
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<x, y, z> = GF(101)[]
             sage: I = R.ideal([y^6])
-            sage: I.is_primary()
+            sage: I.is_primary()                                                        # needs sage.libs.singular
             True
-            sage: I.is_primary(R.ideal([y]))
+            sage: I.is_primary(R.ideal([y]))                                            # needs sage.libs.singular
             True
             sage: I = R.ideal([x^4, y^7])
-            sage: I.is_primary()
+            sage: I.is_primary()                                                        # needs sage.libs.singular
             True
             sage: I = R.ideal([x*y, y^2])
-            sage: I.is_primary()
+            sage: I.is_primary()                                                        # needs sage.libs.singular
             False
 
         .. NOTE::
@@ -798,16 +808,16 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x, y> = QQ[]
             sage: I = R.ideal([x, y])
-            sage: I.is_prime()        # a maximal ideal
+            sage: I.is_prime()        # a maximal ideal                                 # needs sage.libs.singular
             True
-            sage: I = R.ideal([x^2-y])
-            sage: I.is_prime()        # a non-maximal prime ideal
+            sage: I = R.ideal([x^2 - y])
+            sage: I.is_prime()        # a non-maximal prime ideal                       # needs sage.libs.singular
             True
             sage: I = R.ideal([x^2, y])
-            sage: I.is_prime()        # a non-prime primary ideal
+            sage: I.is_prime()        # a non-prime primary ideal                       # needs sage.libs.singular
             False
             sage: I = R.ideal([x^2, x*y])
-            sage: I.is_prime()        # a non-prime non-primary ideal
+            sage: I.is_prime()        # a non-prime non-primary ideal                   # needs sage.libs.singular
             False
 
             sage: S = Integers(8)
@@ -886,7 +896,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x, y> = QQ[]
             sage: I = R.ideal(x^2, x*y)
-            sage: I.embedded_primes()
+            sage: I.embedded_primes()                                                   # needs sage.libs.singular
             [Ideal (y, x) of Multivariate Polynomial Ring in x, y over Rational Field]
         """
         # by definition, embedded primes are associated primes that
@@ -915,13 +925,13 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: R = ZZ['x']
-            sage: I = R.ideal(2,x)
+            sage: R.<x> = ZZ[]
+            sage: I = R.ideal(2, x)
             sage: I.is_principal()
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: J = R.base_extend(QQ).ideal(2,x)
+            sage: J = R.base_extend(QQ).ideal(2, x)
             sage: J.is_principal()
             True
         """
@@ -954,20 +964,20 @@ class Ideal_generic(MonoidElement):
         ::
 
             sage: I = QQ['x', 'y'].ideal(-5)
-            sage: I.is_trivial()
+            sage: I.is_trivial()                                                        # needs sage.libs.singular
             True
 
         ::
 
-            sage: I = CC['x'].ideal(0)
-            sage: I.is_trivial()
+            sage: I = CC['x'].ideal(0)                                                  # needs sage.rings.real_mpfr
+            sage: I.is_trivial()                                                        # needs sage.rings.real_mpfr
             True
 
         This test addresses issue :trac:`20514`::
 
             sage: R = QQ['x', 'y']
             sage: I = R.ideal(R.gens())
-            sage: I.is_trivial()
+            sage: I.is_trivial()                                                        # needs sage.libs.singular
             False
         """
         return self.is_zero() or self == self.ring().unit_ideal()
@@ -1112,10 +1122,11 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(8, names='a')[]
-            sage: I = R.ideal(t^4 + t + 1)
-            sage: I.norm()
-            Principal ideal (t^4 + t + 1) of Univariate Polynomial Ring in t over Finite Field in a of size 2^3
+            sage: R.<t> = GF(8, names='a')[]                                            # needs sage.rings.finite_rings
+            sage: I = R.ideal(t^4 + t + 1)                                              # needs sage.rings.finite_rings
+            sage: I.norm()                                                              # needs sage.rings.finite_rings
+            Principal ideal (t^4 + t + 1) of Univariate Polynomial Ring in t
+             over Finite Field in a of size 2^3
         """
         return self
 
@@ -1135,9 +1146,9 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(9, names='a')[]
-            sage: I = R.ideal(t^4 + t + 1)
-            sage: I.absolute_norm()
+            sage: R.<t> = GF(9, names='a')[]                                            # needs sage.rings.finite_rings
+            sage: I = R.ideal(t^4 + t + 1)                                              # needs sage.rings.finite_rings
+            sage: I.absolute_norm()                                                     # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1155,7 +1166,7 @@ class Ideal_generic(MonoidElement):
             sage: R.<x,y,z,w> = PolynomialRing(ZZ, 4)
             sage: I = R.ideal([x*y-z^2, y^2-w^2]); I
             Ideal (x*y - z^2, y^2 - w^2) of Multivariate Polynomial Ring in x, y, z, w over Integer Ring
-            sage: macaulay2(I)                              # optional - macaulay2
+            sage: macaulay2(I)                                  # optional - macaulay2
                           2   2    2
             ideal (x*y - z , y  - w )
 
@@ -1164,7 +1175,7 @@ class Ideal_generic(MonoidElement):
             sage: R.<x> = PolynomialRing(ZZ)
             sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2]); I
             Ideal (x^2 + 3*x + 4, x^2 + 1) of Univariate Polynomial Ring in x over Integer Ring
-            sage: macaulay2(I)                              # optional - macaulay2
+            sage: macaulay2(I)                                  # optional - macaulay2
                     2            2
             ideal (x  + 3x + 4, x  + 1)
 
@@ -1173,19 +1184,19 @@ class Ideal_generic(MonoidElement):
 
             sage: P.<x,y> = PolynomialRing(GF(2), 2)
             sage: I = sage.rings.ideal.FieldIdeal(P); I
-            Ideal (x^2 + x, y^2 + y) of Multivariate Polynomial Ring in x, y over
-            Finite Field of size 2
-            sage: macaulay2(I)                              # optional - macaulay2
+            Ideal (x^2 + x, y^2 + y) of Multivariate Polynomial Ring in x, y
+             over Finite Field of size 2
+            sage: macaulay2(I)                          # optional - macaulay2          # needs sage.rings.finite_rings
                     2       2
             ideal (x  + x, y  + y)
 
         Ideals in PIDs::
 
-            sage: macaulay2(ideal(5))                       # optional - macaulay2
+            sage: macaulay2(ideal(5))                   # optional - macaulay2
             ideal 5
             sage: J = ideal(QQ(5))
             ...
-            sage: macaulay2(J)                              # optional - macaulay2
+            sage: macaulay2(J)                          # optional - macaulay2
             ideal 1
 
         TESTS:
@@ -1222,7 +1233,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: I = R.ideal([x^4 + 3*x^2 + 2])
-            sage: I.free_resolution()
+            sage: I.free_resolution()                                                   # needs sage.modules
             S^1 <-- S^1 <-- 0
         """
         if not self.is_principal():
@@ -1241,7 +1252,7 @@ class Ideal_generic(MonoidElement):
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: I = R.ideal([x^3])
-            sage: I.graded_free_resolution()
+            sage: I.graded_free_resolution()                                            # needs sage.modules
             S(0) <-- S(-3) <-- 0
         """
         from sage.homology.graded_resolution import GradedFiniteFreeResolution_free_module
@@ -1269,7 +1280,7 @@ class Ideal_principal(Ideal_generic):
             sage: I # indirect doctest
             Principal ideal (x) of Univariate Polynomial Ring in x over Integer Ring
         """
-        return "Principal ideal (%s) of %s"%(self.gen(), self.ring())
+        return "Principal ideal (%s) of %s" % (self.gen(), self.ring())
 
     def is_principal(self):
         r"""
@@ -1577,9 +1588,9 @@ class Ideal_pid(Ideal_principal):
             sage: ZZ.ideal(0).is_prime()
             True
             sage: R.<x> = QQ[]
-            sage: P = R.ideal(x^2+1); P
+            sage: P = R.ideal(x^2 + 1); P
             Principal ideal (x^2 + 1) of Univariate Polynomial Ring in x over Rational Field
-            sage: P.is_prime()
+            sage: P.is_prime()                                                          # needs sage.libs.pari
             True
 
         In fields, only the zero ideal is prime::
@@ -1609,6 +1620,7 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: p = R.ideal(t^2 + 2)
             sage: p.is_maximal()
@@ -1638,6 +1650,7 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: P = ZZ.ideal(61); P
             Principal ideal (61) of Integer Ring
             sage: F = P.residue_field(); F
@@ -1670,9 +1683,9 @@ class Ideal_pid(Ideal_principal):
 
         ::
 
-            sage: R.<x>=QQ[]
-            sage: I=R.ideal(x^2+1)
-            sage: I.is_prime()
+            sage: R.<x> = QQ[]
+            sage: I = R.ideal(x^2 + 1)
+            sage: I.is_prime()                                                          # needs sage.libs.pari
             True
             sage: I.residue_field()
             Traceback (most recent call last):
@@ -1680,10 +1693,10 @@ class Ideal_pid(Ideal_principal):
             TypeError: residue fields only supported for polynomial rings over finite fields.
         """
         if not self.is_prime():
-            raise ValueError("The ideal (%s) is not prime"%self)
+            raise ValueError("The ideal (%s) is not prime" % self)
         from sage.rings.integer_ring import ZZ
         if self.ring() is ZZ:
-            return ZZ.residue_field(self, check = False)
+            return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
 
 class Ideal_fractional(Ideal_generic):
@@ -1699,11 +1712,12 @@ class Ideal_fractional(Ideal_generic):
         EXAMPLES::
 
             sage: from sage.rings.ideal import Ideal_fractional
-            sage: K.<a> = NumberField(x^2 + 1)
-            sage: Ideal_fractional(K, [a]) # indirect doctest
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: Ideal_fractional(K, [a])  # indirect doctest                          # needs sage.rings.number_field
             Fractional ideal (a) of Number Field in a with defining polynomial x^2 + 1
         """
-        return "Fractional ideal %s of %s"%(self._repr_short(), self.ring())
+        return "Fractional ideal %s of %s" % (self._repr_short(), self.ring())
 
 # constructors for standard (benchmark) ideals, written uppercase as
 # these are constructors
@@ -1735,21 +1749,20 @@ def Cyclic(R, n=None, homog=False, singular=None):
     An example from a multivariate polynomial ring over the
     rationals::
 
-        sage: P.<x,y,z> = PolynomialRing(QQ,3,order='lex')
-        sage: I = sage.rings.ideal.Cyclic(P)
-        sage: I
-        Ideal (x + y + z, x*y + x*z + y*z, x*y*z - 1) of Multivariate Polynomial
-        Ring in x, y, z over Rational Field
-        sage: I.groebner_basis()
+        sage: P.<x,y,z> = PolynomialRing(QQ, 3, order='lex')
+        sage: I = sage.rings.ideal.Cyclic(P); I                                         # needs sage.libs.singular
+        Ideal (x + y + z, x*y + x*z + y*z, x*y*z - 1)
+         of Multivariate Polynomial Ring in x, y, z over Rational Field
+        sage: I.groebner_basis()                                                        # needs sage.libs.singular
         [x + y + z, y^2 + y*z + z^2, z^3 - 1]
 
     We compute a Groebner basis for cyclic 6, which is a standard
     benchmark and test ideal::
 
         sage: R.<x,y,z,t,u,v> = QQ['x,y,z,t,u,v']
-        sage: I = sage.rings.ideal.Cyclic(R,6)
-        sage: B = I.groebner_basis()
-        sage: len(B)
+        sage: I = sage.rings.ideal.Cyclic(R, 6)                                         # needs sage.libs.singular
+        sage: B = I.groebner_basis()                                                    # needs sage.libs.singular
+        sage: len(B)                                                                    # needs sage.libs.singular
         45
     """
     from .rational_field import RationalField
@@ -1794,15 +1807,15 @@ def Katsura(R, n=None, homog=False, singular=None):
 
     EXAMPLES::
 
-        sage: P.<x,y,z> = PolynomialRing(QQ,3)
-        sage: I = sage.rings.ideal.Katsura(P,3); I
+        sage: P.<x,y,z> = PolynomialRing(QQ, 3)
+        sage: I = sage.rings.ideal.Katsura(P, 3); I                                     # needs sage.libs.singular
         Ideal (x + 2*y + 2*z - 1, x^2 + 2*y^2 + 2*z^2 - x, 2*x*y + 2*y*z - y)
         of Multivariate Polynomial Ring in x, y, z over Rational Field
 
     ::
 
-        sage: Q.<x> = PolynomialRing(QQ, implementation="singular")
-        sage: J = sage.rings.ideal.Katsura(Q,1); J
+        sage: Q.<x> = PolynomialRing(QQ, implementation="singular")                     # needs sage.libs.singular
+        sage: J = sage.rings.ideal.Katsura(Q,1); J                                      # needs sage.libs.singular
         Ideal (x - 1) of Multivariate Polynomial Ring in x over Rational Field
     """
     from .rational_field import RationalField
@@ -1842,18 +1855,18 @@ def FieldIdeal(R):
     The field ideal generated from the polynomial ring over
     two variables in the finite field of size 2::
 
-        sage: P.<x,y> = PolynomialRing(GF(2),2)
+        sage: P.<x,y> = PolynomialRing(GF(2), 2)
         sage: I = sage.rings.ideal.FieldIdeal(P); I
-        Ideal (x^2 + x, y^2 + y) of Multivariate Polynomial Ring in x, y over
-        Finite Field of size 2
+        Ideal (x^2 + x, y^2 + y) of
+         Multivariate Polynomial Ring in x, y over Finite Field of size 2
 
     Another, similar example::
 
-        sage: Q.<x1,x2,x3,x4> = PolynomialRing(GF(2^4,name='alpha'), 4)
-        sage: J = sage.rings.ideal.FieldIdeal(Q); J
+        sage: Q.<x1,x2,x3,x4> = PolynomialRing(GF(2^4, name='alpha'), 4)                # needs sage.rings.finite_rings
+        sage: J = sage.rings.ideal.FieldIdeal(Q); J                                     # needs sage.rings.finite_rings
         Ideal (x1^16 + x1, x2^16 + x2, x3^16 + x3, x4^16 + x4) of
-        Multivariate Polynomial Ring in x1, x2, x3, x4 over Finite
-        Field in alpha of size 2^4
+         Multivariate Polynomial Ring in x1, x2, x3, x4
+          over Finite Field in alpha of size 2^4
     """
     q = R.base_ring().order()
     import sage.rings.infinity

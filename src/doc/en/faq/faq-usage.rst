@@ -115,7 +115,7 @@ issue these commands:
     import _tkinter
     import Tkinter
 
-If they do not raise an ``ImportError`` then it worked.
+If they do not raise an :class:`ImportError` then it worked.
 
 
 How do I import Sage into a Python script?
@@ -322,7 +322,7 @@ ints. For example::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind([1,2,3,4,5], [2,3,4,5,.6])
-    Ttest_indResult(statistic=0.0767529..., pvalue=0.940704...)
+    Ttest...Result(statistic=0.0767529..., pvalue=0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 
@@ -663,7 +663,7 @@ With objects a and b and a function f, I accidentally typed f(a) = b instead of 
 It is because of how functions are defined in Sage with the
 ``f(x) = expr`` notation using the preparser. Also notice that if you
 make this mistake inside of an ``if`` statement, you will get a
-``SyntaxError`` before anything else goes wrong. So in this case,
+:class:`SyntaxError` before anything else goes wrong. So in this case,
 there is no problem.
 
 

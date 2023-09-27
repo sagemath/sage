@@ -32,7 +32,7 @@ from sage.libs.singular.decl cimport p_Copy, p_Add_q, p_Neg, pp_Mult_nn, p_GetCo
 from sage.libs.singular.decl cimport p_GetMaxExp, pp_Mult_qq, pPower, p_String, p_GetExp, p_LDeg
 from sage.libs.singular.decl cimport n_Delete, idInit, fast_map_common_subexp, id_Delete
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omFree
-from sage.libs.singular.decl cimport p_GetComp, p_SetComp
+from sage.libs.singular.decl cimport p_GetComp
 from sage.libs.singular.decl cimport pSubst
 from sage.libs.singular.decl cimport p_Normalize
 from sage.libs.singular.decl cimport ndCopyMap, maMapPoly

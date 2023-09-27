@@ -1,3 +1,4 @@
+# sage.doctest: # needs sage.symbolic
 """
 Real intervals with a fixed absolute precision
 """
@@ -7,7 +8,7 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
 
 from sage.structure.factory import UniqueFactory
-from sage.structure.element cimport RingElement, ModuleElement, Element, FieldElement
+from sage.structure.element cimport Element, FieldElement
 from sage.rings.ring cimport Field
 from sage.rings.integer cimport Integer
 import sage.rings.abc

@@ -17,12 +17,10 @@ from sage.arith.misc import (CRT_vectors,
                              hilbert_symbol,
                              kronecker as kronecker_symbol,
                              prime_to_m_part)
-from sage.libs.pari.all import pari
 from sage.misc.functional import is_odd
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
-from sage.quadratic_forms.quadratic_form import QuadraticForm__constructor as QuadraticForm
 from sage.rings.integer_ring import ZZ
 
 
@@ -133,6 +131,8 @@ def adjoint(self):
         [ * * 8 ]
 
     """
+    from sage.quadratic_forms.quadratic_form import QuadraticForm as QuadraticForm
+
     if is_odd(self.dim()):
         return QuadraticForm(self.matrix().adjoint_classical() * 2)
     return QuadraticForm(self.matrix().adjoint_classical())
@@ -150,7 +150,7 @@ def antiadjoint(self):
         [ 1 0 -1 ]
         [ * 2 -1 ]
         [ * * 5 ]
-        sage: Q.antiadjoint()
+        sage: Q.antiadjoint()                                                           # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: not an adjoint
@@ -174,7 +174,7 @@ def is_adjoint(self) -> bool:
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
-        sage: Q.is_adjoint()
+        sage: Q.is_adjoint()                                                            # needs sage.symbolic
         False
         sage: Q.adjoint().is_adjoint()
         True
@@ -187,7 +187,7 @@ def is_adjoint(self) -> bool:
 
 
 def reciprocal(self):
-    """
+    r"""
     This gives the reciprocal quadratic form associated to the given form.
     This is defined as the multiple of the primitive adjoint with the same
     content as the given form.
@@ -213,7 +213,7 @@ def reciprocal(self):
 
 
 def omega(self):
-    """
+    r"""
     This is the content of the adjoint of the primitive associated quadratic form.
 
     Ref: See Dickson's "Studies in Number Theory".
@@ -229,7 +229,7 @@ def omega(self):
 
 
 def delta(self):
-    """
+    r"""
     This is the omega of the adjoint form,
     which is the same as the omega of the reciprocal form.
 
@@ -243,14 +243,14 @@ def delta(self):
 
 
 def level__Tornaria(self):
-    """
+    r"""
     Return the level of the quadratic form,
     defined as
 
-        level(B)    for even dimension
-        level(B)/4  for odd dimension
+    - level(`B`)    for even dimension,
+    - level(`B`)/4  for odd dimension,
 
-    where 2Q(`x`) `= x^t * B * x`.
+    where `2Q(x) = x^t\cdot B\cdot x`.
 
     This agrees with the usual level for even dimension...
 
@@ -269,7 +269,7 @@ def level__Tornaria(self):
 
 
 def discrec(self):
-    """
+    r"""
     Return the discriminant of the reciprocal form.
 
     EXAMPLES::
@@ -289,10 +289,11 @@ def discrec(self):
 
 def hasse_conductor(self):
     """
-    This is the product of all primes where the Hasse invariant equals -1
+    This is the product of all primes where the Hasse invariant equals `-1`
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q.hasse_invariant(2)
         -1
@@ -301,9 +302,9 @@ def hasse_conductor(self):
         sage: Q.hasse_conductor()
         74
 
-        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).hasse_conductor()
+        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).hasse_conductor()                    # needs sage.libs.pari
         1
-        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).hasse_conductor()
+        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).hasse_conductor()               # needs sage.libs.pari
         10
     """
     return prod([x[0] for x in factor(2 * self.level())
@@ -320,8 +321,9 @@ def clifford_invariant(self, p):
 
     EXAMPLES:
 
-    For hyperbolic spaces, the clifford invariant is +1::
+    For hyperbolic spaces, the Clifford invariant is +1::
 
+        sage: # needs sage.libs.pari
         sage: H = QuadraticForm(ZZ, 2, [0, 1, 0])
         sage: H.clifford_invariant(2)
         1
@@ -346,9 +348,9 @@ def clifford_invariant(self, p):
 
 def clifford_conductor(self):
     """
-    This is the product of all primes where the Clifford invariant is -1
+    This is the product of all primes where the Clifford invariant is `-1`
 
-    ..NOTE::
+    .. NOTE::
 
         For ternary forms, this is the discriminant of the
         quaternion algebra associated to the quadratic space
@@ -356,6 +358,7 @@ def clifford_conductor(self):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, -1, 2, -1, 5])
         sage: Q.clifford_invariant(2)
         1
@@ -364,13 +367,14 @@ def clifford_conductor(self):
         sage: Q.clifford_conductor()
         37
 
-        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).clifford_conductor()
+        sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).clifford_conductor()                 # needs sage.libs.pari
         2
-        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).clifford_conductor()
+        sage: QuadraticForm(ZZ, 3, [2, -2, 0, 2, 0, 5]).clifford_conductor()            # needs sage.libs.pari
         30
 
-    For hyperbolic spaces, the clifford conductor is 1::
+    For hyperbolic spaces, the Clifford conductor is 1::
 
+        sage: # needs sage.libs.pari
         sage: H = QuadraticForm(ZZ, 2, [0, 1, 0])
         sage: H.clifford_conductor()
         1
@@ -389,7 +393,7 @@ def clifford_conductor(self):
 
 def basiclemma(self, M):
     """
-    Find a number represented by self and coprime to M.
+    Find a number represented by self and coprime to `M`.
 
     EXAMPLES::
 
@@ -404,7 +408,7 @@ def basiclemma(self, M):
 
 def basiclemmavec(self, M):
     """
-    Find a vector where the value of the quadratic form is coprime to M.
+    Find a vector where the value of the quadratic form is coprime to `M`.
 
     EXAMPLES::
 
@@ -450,7 +454,9 @@ def xi(self, p):
     Return the value of the genus characters Xi_p... which may be missing one character.
     We allow -1 as a prime.
 
-    Reference: Dickson's "Studies in the Theory of Numbers"
+    REFERENCES:
+
+    Dickson's "Studies in the Theory of Numbers"
 
     EXAMPLES::
 
@@ -458,9 +464,10 @@ def xi(self, p):
         sage: Q2 = QuadraticForm(ZZ, 3, [2, -1, 0, 2, 0, 50])
         sage: [Q1.omega(), Q2.omega()]
         [5, 5]
-        sage: [Q1.hasse_invariant(5), Q2.hasse_invariant(5)]    # equivalent over Q_5
+        sage: [Q1.hasse_invariant(5),                   # equivalent over Q_5           # needs sage.libs.pari
+        ....:  Q2.hasse_invariant(5)]
         [1, 1]
-        sage: [Q1.xi(5), Q2.xi(5)]                              # not equivalent over Z_5
+        sage: [Q1.xi(5), Q2.xi(5)]                      # not equivalent over Z_5       # needs sage.libs.pari
         [1, -1]
     """
     if self.dim() == 2 and self.disc() % p:
@@ -478,11 +485,13 @@ def xi_rec(self,p):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q1 = QuadraticForm(ZZ, 3, [1, 1, 1, 14, 3, 14])
         sage: Q2 = QuadraticForm(ZZ, 3, [2, -1, 0, 2, 0, 50])
-        sage: [Q1.clifford_conductor(), Q2.clifford_conductor()]   # equivalent over Q
+        sage: [Q1.clifford_conductor(),                 # equivalent over Q
+        ....:  Q2.clifford_conductor()]
         [3, 3]
-        sage: Q1.is_locally_equivalent_to(Q2)                # not in the same genus
+        sage: Q1.is_locally_equivalent_to(Q2)           # not in the same genus
         False
         sage: [Q1.delta(), Q2.delta()]
         [480, 480]
@@ -498,14 +507,14 @@ def xi_rec(self,p):
 
 def lll(self):
     """
-    Return an LLL-reduced form of Q (using Pari).
+    Return an LLL-reduced form of `Q` (using PARI).
 
     EXAMPLES::
 
         sage: Q = QuadraticForm(ZZ, 4, range(1,11))
         sage: Q.is_definite()
         True
-        sage: Q.lll()
+        sage: Q.lll()                                                                   # needs sage.libs.pari
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 1 0 ]
         [ * 4 3 3 ]
@@ -521,10 +530,12 @@ def representation_number_list(self, B):
 
     EXAMPLES::
 
-        sage: Q = DiagonalQuadraticForm(ZZ,[1,1,1,1,1,1,1,1])
-        sage: Q.representation_number_list(10)
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1,1,1,1])
+        sage: Q.representation_number_list(10)                                          # needs sage.libs.pari
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
     """
+    from sage.libs.pari.all import pari
+
     ans = pari(1).concat(self.__pari__().qfrep(B - 1, 1) * 2)
     return ans.sage()
 
@@ -537,6 +548,7 @@ def representation_vector_list(self, B, maxvectors=10**8):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = DiagonalQuadraticForm(ZZ, [1, 1])
         sage: Q.representation_vector_list(10)
         [[(0, 0)],
@@ -556,13 +568,13 @@ def representation_vector_list(self, B, maxvectors=10**8):
 
     TESTS::
 
-        sage: R = QuadraticForm(ZZ,2,[-4,-3,0])
-        sage: R.representation_vector_list(10)
+        sage: R = QuadraticForm(ZZ, 2, [-4,-3,0])
+        sage: R.representation_vector_list(10)                                          # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         PariError: domain error in minim0: form is not positive definite
     """
-    n, m, vs = self.__pari__().qfminim(2 * (B - 1), maxvectors)
+    n, _, vs = self.__pari__().qfminim(2 * (B - 1), maxvectors)
 
     if n != 2 * len(vs):
         raise RuntimeError("insufficient number of vectors")
@@ -576,8 +588,8 @@ def representation_vector_list(self, B, maxvectors=10**8):
 # zeros
 
 def is_zero(self, v, p=0) -> bool:
-    """
-    Determine if the vector v is on the conic Q(x) = 0 (mod p).
+    r"""
+    Determine if the vector `v` is on the conic `Q(x) = 0` (mod `p`).
 
     EXAMPLES::
 
@@ -597,7 +609,7 @@ def is_zero(self, v, p=0) -> bool:
 
 def is_zero_nonsingular(self, v, p=0) -> bool:
     """
-    Determine if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
+    Determine if the vector `v` is on the conic `Q(x) = 0` (mod `p`),
     and that this point is non-singular point of the conic.
 
     EXAMPLES::
@@ -620,7 +632,7 @@ def is_zero_nonsingular(self, v, p=0) -> bool:
 
 def is_zero_singular(self, v, p=0) -> bool:
     """
-    Determine if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
+    Determine if the vector `v` is on the conic `Q(x) = 0` (mod `p`),
     and that this point is singular point of the conic.
 
     EXAMPLES::

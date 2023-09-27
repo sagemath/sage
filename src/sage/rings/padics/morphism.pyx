@@ -1,41 +1,37 @@
 """
 Frobenius endomorphisms on p-adic fields
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import Infinity
 
-from sage.rings.ring import CommutativeRing
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport (richcmp, rich_to_bool,
-        richcmp_not_equal)
+                                     richcmp_not_equal)
 
 from sage.rings.morphism cimport RingHomomorphism
 from .padic_generic import pAdicGeneric
 
-from sage.categories.morphism cimport Morphism
-
 
 cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     """
-    A class implementing Frobenius endomorphisms on padic fields.
+    A class implementing Frobenius endomorphisms on p-adic fields.
     """
     def __init__ (self,domain,n=1):
         """
         INPUT:
 
-        -  ``domain`` -- an unramified padic field
+        -  ``domain`` -- an unramified p-adic field
 
         -  ``n`` -- an integer (default: 1)
 
@@ -63,6 +59,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             TypeError: n (=a + O(5^20)) is not an integer
 
             sage: K = Qp(5)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = K.extension(x^2 - 5)
             sage: FrobeniusEndomorphism_padics(L)
             Traceback (most recent call last):
@@ -271,8 +268,8 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def is_injective(self):
         """
-        Return true since any power of the Frobenius endomorphism
-        over an unramified padic field is always injective.
+        Return ``True`` since any power of the Frobenius endomorphism
+        over an unramified p-adic field is always injective.
 
         EXAMPLES::
 
@@ -286,8 +283,8 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def is_surjective(self):
         """
-        Return true since any power of the Frobenius endomorphism
-        over an unramified padic field is always surjective.
+        Return ``True`` since any power of the Frobenius endomorphism
+        over an unramified p-adic field is always surjective.
 
         EXAMPLES::
 
@@ -301,7 +298,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     def is_identity(self):
         """
-        Return true if this morphism is the identity morphism.
+        Return ``True`` if this morphism is the identity morphism.
 
         EXAMPLES::
 
@@ -335,7 +332,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
 
     cpdef _richcmp_(left, right, int op):
         """
-        Compare ``left'' and ``right''
+        Compare ``left`` and ``right``
 
         EXAMPLES::
 

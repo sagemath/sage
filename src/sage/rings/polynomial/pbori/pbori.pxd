@@ -41,8 +41,9 @@ cdef class BooleanMonomialVariableIterator:
     cdef object parent
     cdef BooleanPolynomialRing _ring
     cdef BooleanMonomial obj
-    cdef PBMonomVarIter _iter
-    cdef PBMonomVarIter _end
+    cdef PBMonomIter _iter
+    cdef PBMonomIter _end
+    cdef Py_ssize_t* pbind
 
 cdef class BooleanMonomialIterator:
     cdef BooleanMonomial obj

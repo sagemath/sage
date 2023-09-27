@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Examples of sets
 """
@@ -143,7 +144,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
             AssertionError: 14 is not a prime number
         """
         p = self.element_class(e)
-        assert is_prime(p), "%s is not a prime number"%(p)
+        assert is_prime(p), "%s is not a prime number" % (p)
         return p
 
     element_class = Integer
@@ -212,7 +213,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         if i in self:
             return self._from_integer_(i)
         else:
-            raise ValueError("%s is not a prime number"%(i))
+            raise ValueError("%s is not a prime number" % (i))
 
     @abstract_method
     def _from_integer_(self, i):
@@ -538,6 +539,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         return self.element_class(self, Integer(e))
 
     from sage.structure.element_wrapper import ElementWrapper
+
     class Element (ElementWrapper, PrimeNumbers_Abstract.Element):
         def _integer_(self, IntRing):
             """

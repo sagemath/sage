@@ -15,7 +15,7 @@ cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
 cdef sage.rings.fast_arith.arith_llong arith_llong
-arith_int  = sage.rings.fast_arith.arith_int()
+arith_int = sage.rings.fast_arith.arith_int()
 arith_llong = sage.rings.fast_arith.arith_llong()
 
 ctypedef long long llong
@@ -108,7 +108,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
         Ng = N/g
         vNg = (v*Ng) % N
         t = 1
-        for k from 2 <= k <= g:
+        for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
             if v<min_v and arith_int.c_gcd_int(t,N)==1:
@@ -166,8 +166,9 @@ def p1_normalize_int(N, u, v):
         78
     """
     cdef int uu, vv, ss
-    c_p1_normalize_int(N, u%N, v%N, &uu, &vv, &ss, 1)
-    return (uu,vv,ss)
+    c_p1_normalize_int(N, u % N, v % N, &uu, &vv, &ss, 1)
+    return (uu, vv, ss)
+
 
 def p1list_int(int N):
     r"""
@@ -219,25 +220,25 @@ def p1list_int(int N):
 
     lst = [(0,1)]
     c = 1
-    for d from 0 <= d < N:
-        lst.append((c,d))
+    for d in range(N):
+        lst.append((c, d))
 
-    cmax = N/2
-    if N%2:   # N odd, max divisor is <= N/3
-        if N%3:  # N not a multiple of 3 either, max is N/5
-            cmax = N/5
+    cmax = N // 2
+    if N % 2:   # N odd, max divisor is <= N/3
+        if N % 3:  # N not a multiple of 3 either, max is N/5
+            cmax = N // 5
         else:
-            cmax = N/3
+            cmax = N // 3
 
-    for c from 2 <= c <= cmax:
-        if N%c == 0:  # c is a proper divisor
-            h = N/c
-            g = arith_int.c_gcd_int(c,h)
-            for d from 1 <= d <= h:
+    for c in range(2, cmax + 1):
+        if N % c == 0:  # c is a proper divisor
+            h = N // c
+            g = arith_int.c_gcd_int(c, h)
+            for d in range(1, h + 1):
                 sig_check()
-                if arith_int.c_gcd_int(d,g)==1:
+                if arith_int.c_gcd_int(d, g) == 1:
                     d1 = d
-                    while arith_int.c_gcd_int(d1,c)!=1:
+                    while arith_int.c_gcd_int(d1, c) != 1:
                         d1 += h
                     c_p1_normalize_int(N, c, d1, &u, &v, &s, 0)
                     lst.append((u,v))
@@ -364,7 +365,7 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     # Multiply [u,v] by s; then [s*u,s*v] = [g,s*v] (mod N)
     u = g
     # v = (s*v) % N
-    v = <int> ( ((<llong>s) * (<llong>v)) % ll_N )
+    v = <int> (((<llong>s) * (<llong>v)) % ll_N)
 
     min_v = v
     min_t = 1
@@ -372,10 +373,10 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
         Ng = N/g
         vNg = <int> ((<llong>v * <llong> Ng) % ll_N)
         t = 1
-        for k from 2 <= k <= g:
+        for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
-            if v<min_v and arith_int.c_gcd_int(t,N)==1:
+            if v < min_v and arith_int.c_gcd_int(t, N) == 1:
                 min_v = v
                 min_t = t
     v = min_v
@@ -430,8 +431,9 @@ def p1_normalize_llong(N, u, v):
         78
     """
     cdef int uu, vv, ss
-    c_p1_normalize_llong(N, u%N, v%N, &uu, &vv, &ss, 1)
-    return (uu,vv,ss)
+    c_p1_normalize_llong(N, u % N, v % N, &uu, &vv, &ss, 1)
+    return (uu, vv, ss)
+
 
 def p1list_llong(int N):
     r"""
@@ -470,28 +472,28 @@ def p1list_llong(int N):
 
     lst = [(0,1)]
     c = 1
-    for d from 0 <= d < N:
-        lst.append((c,d))
+    for d in range(N):
+        lst.append((c, d))
 
-    cmax = N/2
-    if N%2:   # N odd, max divisor is <= N/3
-        if N%3:  # N not a multiple of 3 either, max is N/5
-            cmax = N/5
+    cmax = N // 2
+    if N % 2:   # N odd, max divisor is <= N/3
+        if N % 3:  # N not a multiple of 3 either, max is N/5
+            cmax = N // 5
         else:
-            cmax = N/3
+            cmax = N // 3
 
-    for c from 2 <= c <= cmax:
-        if N%c == 0:  # c is a proper divisor
-            h = N/c
-            g = arith_int.c_gcd_int(c,h)
-            for d from 1 <= d <= h:
-                if arith_int.c_gcd_int(d,g)==1:
+    for c in range(2, cmax + 1):
+        if N % c == 0:  # c is a proper divisor
+            h = N // c
+            g = arith_int.c_gcd_int(c, h)
+            for d in range(1, h + 1):
+                if arith_int.c_gcd_int(d, g) == 1:
                     sig_check()
                     d1 = d
-                    while arith_int.c_gcd_int(d1,c)!=1:
+                    while arith_int.c_gcd_int(d1, c) != 1:
                         d1 += h
                     c_p1_normalize_llong(N, c, d1, &u, &v, &s, 0)
-                    lst.append((u,v))
+                    lst.append((u, v))
     lst.sort()
     return lst
 
@@ -586,6 +588,7 @@ def p1_normalize(int N, int u, int v):
     else:
         raise OverflowError
 
+
 cdef int p1_normalize_xgcdtable(int N, int u, int v,
                                 int compute_s,
                                 int *t_g, int *t_a, int *t_b,
@@ -623,7 +626,7 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
         v += N
     if u == 0:
         uu[0] = 0
-        if t_g[v] == 1:    #  "if arith_int.c_gcd_int(v,N) == 1"
+        if t_g[v] == 1:    # "if arith_int.c_gcd_int(v,N) == 1"
             vv[0] = 1
         else:
             vv[0] = 0
@@ -660,10 +663,10 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
         Ng = N/g
         vNg = (v*Ng) % N
         t = 1
-        for k from 2 <= k <= g:
+        for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
-            if v<min_v and t_g[t] == 1:                           #arith_int.c_gcd_int(t,N)==1:
+            if v < min_v and t_g[t] == 1:     # arith_int.c_gcd_int(t,N)==1:
                 min_v = v
                 min_t = t
     v = min_v
@@ -674,8 +677,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     uu[0] = u
     vv[0] = v
     if compute_s:
-        #ss[0] = arith_int.c_inverse_mod_int(s*min_t, N);
-        ss[0] = t_a[(s*min_t)%N]
+        # ss[0] = arith_int.c_inverse_mod_int(s*min_t, N);
+        ss[0] = t_a[(s*min_t) % N]
     return 0
 
 
@@ -720,10 +723,10 @@ cdef class P1List():
         self.__N = N
         if N <= 46340:
             self.__list = p1list_int(N)
-            self.__normalize = c_p1_normalize_int
+            self._normalize = c_p1_normalize_int
         elif N <= 2147483647:
             self.__list = p1list_llong(N)
-            self.__normalize = c_p1_normalize_llong
+            self._normalize = c_p1_normalize_llong
         else:
             raise OverflowError("p1list not defined for such large N.")
         self.__list.sort()
@@ -741,10 +744,10 @@ cdef class P1List():
         cdef llong ll_s, ll_t, ll_N = N
 
         if N <= 46340:
-            for i from 0 <= i < N:
+            for i in range(N):
                 self.g[i] = arith_int.c_xgcd_int(i, N, &self.s[i], &self.t[i])
         else:
-            for i from 0 <= i < N:
+            for i in range(N):
                 self.g[i] = arith_llong.c_xgcd_longlong(i, N, &ll_s, &ll_t)
                 self.s[i] = <int>(ll_s % ll_N)
                 self.t[i] = <int>(ll_t % ll_N)
@@ -918,7 +921,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -951,7 +954,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -984,7 +987,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -1057,7 +1060,7 @@ cdef class P1List():
             s[0] = 1
             return
 
-        cdef int uu, vv, ss
+        cdef int uu, vv
         p1_normalize_xgcdtable(self.__N, u, v, 1, self.g, self.s, self.t, &uu, &vv, s)
         if uu == 1:
             i[0] = vv + 1
@@ -1150,7 +1153,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 0)
         return (uu,vv)
 
     def normalize_with_scalar(self, int u, int v):
@@ -1183,7 +1186,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 1)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 1)
         return (uu, vv, ss)
 
     def N(self):

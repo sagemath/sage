@@ -10,7 +10,7 @@ SAGE_SPKG_CONFIGURE([openblas], [
   dnl Reject openblas 0.3.22 - https://github.com/sagemath/sage/pull/35371
   m4_pushdef([SAGE_OPENBLAS_LT_VERSION_MAJOR], [0])
   m4_pushdef([SAGE_OPENBLAS_LT_VERSION_MINOR], [3])
-  m4_pushdef([SAGE_OPENBLAS_LT_VERSION_MICRO], [22])
+  m4_pushdef([SAGE_OPENBLAS_LT_VERSION_MICRO], [99])
   m4_pushdef([SAGE_OPENBLAS_LT_VERSION], [SAGE_OPENBLAS_LT_VERSION_MAJOR.SAGE_OPENBLAS_LT_VERSION_MINOR.SAGE_OPENBLAS_LT_VERSION_MICRO])
   PKG_CHECK_MODULES([OPENBLAS], [openblas >= ]SAGE_OPENBLAS_MIN_VERSION [openblas < ]SAGE_OPENBLAS_LT_VERSION, [
     LIBS="$OPENBLAS_LIBS $LIBS"
@@ -41,6 +41,21 @@ SAGE_SPKG_CONFIGURE([openblas], [
        sage_spkg_install_openblas=yes
        ])
      AS_IF([test x$sage_spkg_install_openblas != xyes], [
+       AC_MSG_CHECKING([the OpenBLAS version using openblas_get_config])
+       AC_LANG_PUSH([C])
+       AC_RUN_IFELSE([
+         dnl Reject 0.3.22 - see https://github.com/sagemath/sage/pull/35377
+         AC_LANG_PROGRAM([[#include <string.h>
+                           char *openblas_get_config(void); ]],
+                         [[if (!strncmp(openblas_get_config(), "OpenBLAS 0.3.22", 15)) return 1;]])
+       ], [
+         AC_MSG_RESULT([good])
+       ], [
+         AC_MSG_RESULT([known bad version])
+         sage_spkg_install_openblas=yes])
+       AC_LANG_POP([C])
+     ])
+     AS_IF([test x$sage_spkg_install_openblas != xyes], [
         AC_SUBST([SAGE_SYSTEM_FACADE_PC_FILES])
         AC_SUBST([SAGE_OPENBLAS_PC_COMMAND], ["\$(LN) -sf \"$OPENBLASPCDIR/openblas.pc\" \"\$(@)\""])
         m4_foreach([blaslibnam], [blas, cblas, lapack], [
@@ -66,6 +81,7 @@ SAGE_SPKG_CONFIGURE([openblas], [
                          AC_LANG_PUSH([C])
                          AC_RUN_IFELSE([
                            AC_LANG_PROGRAM([[#include <stdio.h>
+                                             #include <string.h>
                                              char *openblas_get_config(void);
                                              int version[3]; ]],
                                            [[version[0] = version[1] = version[2] = 0;
@@ -86,7 +102,8 @@ SAGE_SPKG_CONFIGURE([openblas], [
                                                  >=10000 * ]]SAGE_OPENBLAS_LT_VERSION_MAJOR[[
                                                    + 100 * ]]SAGE_OPENBLAS_LT_VERSION_MINOR[[
                                                          + ]]SAGE_OPENBLAS_LT_VERSION_MICRO[[)
-                                               return 1;]])
+                                               return 1;
+                                             if (!strncmp(openblas_get_config(), "OpenBLAS 0.3.22", 15)) return 1;]])
                          ], [AS_VAR_SET([HAVE_OPENBLAS], [yes])], [AS_VAR_SET([HAVE_OPENBLAS], [no])],
                             [AS_VAR_SET([HAVE_OPENBLAS], [yes])])
                          AC_LANG_POP([C])

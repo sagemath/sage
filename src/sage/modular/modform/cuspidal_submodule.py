@@ -41,12 +41,14 @@ EXAMPLES::
 from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose  import verbose
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 
+lazy_import('sage.modular.modform.vm_basis', 'victor_miller_basis')
+
 from .submodule import ModularFormsSubmodule
-from . import vm_basis
 from . import weight1
 
 class CuspidalSubmodule(ModularFormsSubmodule):
@@ -316,8 +318,7 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
             prec = self.prec()
         else:
             prec = Integer(prec)
-        return vm_basis.victor_miller_basis(self.weight(), prec,
-                                            cusp_only=True, var='q')
+        return victor_miller_basis(self.weight(), prec, cusp_only=True, var='q')
 
     def _pari_init_(self):
         """
@@ -379,7 +380,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         A more elaborate example (two Galois-conjugate characters each giving a
         2-dimensional space)::
 
-            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()
+            sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()  # long time
             [
             q - q^4 - q^6 + O(q^7),
             q^2 + O(q^7),

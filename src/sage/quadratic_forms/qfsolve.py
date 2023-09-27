@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Solving quadratic equations
 
@@ -15,7 +16,7 @@ AUTHORS:
 - Tyler Gaona (2015-11-14): added the `solve` method
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander
 #       Copyright (C) 2014 Jeroen Demeyer
 #
@@ -23,8 +24,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -46,7 +47,7 @@ def qfsolve(G):
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfsolve``.
+    Uses PARI/GP function :pari:`qfsolve`.
 
     EXAMPLES::
 
@@ -79,25 +80,26 @@ def qfsolve(G):
         return vector(QQ, ret)
     return ZZ(ret)
 
+
 def qfparam(G, sol):
     r"""
-    Parametrizes the conic defined by the matrix ``G``.
+    Parametrize the conic defined by the matrix `G`.
 
     INPUT:
 
-     - ``G`` -- a `3 \times 3`-matrix over `\QQ`.
+    - ``G`` -- a `3 \times 3`-matrix over `\QQ`
 
-     - ``sol`` -- a triple of rational numbers providing a solution
-       to sol*G*sol^t = 0.
+    - ``sol`` -- a triple of rational numbers providing a solution
+      to `x\cdot G\cdot x^t = 0`
 
     OUTPUT:
 
     A triple of polynomials that parametrizes all solutions of
-    x*G*x^t = 0 up to scaling.
+    `x\cdot G\cdot x^t = 0` up to scaling.
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfparam``.
+    Uses PARI/GP function :pari:`qfparam`.
 
     EXAMPLES::
 
@@ -110,7 +112,8 @@ def qfparam(G, sol):
         sage: ret = qfparam(M, sol); ret
         (-12*t^2 - 1, 24*t, 24)
         sage: ret.parent()
-        Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
+        Ambient free module of rank 3 over the principal ideal domain
+         Univariate Polynomial Ring in t over Rational Field
     """
     R = QQ['t']
     mat = G.__pari__().qfparam(sol)
@@ -124,15 +127,13 @@ def solve(self, c=0):
 
     INPUT:
 
-    - ``c`` -- (default: 0) a rational number.
+    - ``c`` -- (default: 0) a rational number
 
-    OUTPUT:
-
-    - A non-zero vector `x` satisfying ``self(x) == c``.
+    OUTPUT: A non-zero vector `x` satisfying ``self(x) == c``.
 
     ALGORITHM:
 
-    Uses PARI's qfsolve(). Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
 
     EXAMPLES::
 
@@ -220,8 +221,8 @@ def solve(self, c=0):
     N = Matrix(self.base_ring(), d+1, d+1)
     for i in range(d):
         for j in range(d):
-            N[i,j] = M[i,j]
-    N[d,d] = -c
+            N[i, j] = M[i, j]
+    N[d, d] = -c
 
     # Find a solution x to Q(x) = 0, using qfsolve()
     x = qfsolve(N)

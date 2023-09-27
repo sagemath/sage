@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 r"""
 Algebraic topological model for a cell complex
 
@@ -32,6 +32,7 @@ from .chain_complex import ChainComplex
 from .chain_complex_morphism import ChainComplexMorphism
 from .chain_homotopy import ChainContraction
 from sage.rings.rational_field import QQ
+
 
 def algebraic_topological_model(K, base_ring=None):
     r"""
@@ -123,7 +124,8 @@ def algebraic_topological_model(K, base_ring=None):
         1
         sage: phi.dual()
         Chain homotopy between:
-          Chain complex endomorphism of Chain complex with at most 3 nonzero terms over Rational Field
+          Chain complex endomorphism of
+            Chain complex with at most 3 nonzero terms over Rational Field
           and Chain complex morphism:
             From: Chain complex with at most 3 nonzero terms over Rational Field
             To:   Chain complex with at most 3 nonzero terms over Rational Field
@@ -335,6 +337,7 @@ def algebraic_topological_model(K, base_ring=None):
     phi = ChainContraction(phi_data, pi, iota)
     return phi, M
 
+
 def algebraic_topological_model_delta_complex(K, base_ring=None):
     r"""
     Algebraic topological model for cell complex ``K``
@@ -485,7 +488,7 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
         iota_cols = {}
         pi_cols_old = pi_cols
         pi_cols = []
-        phi_old = MatrixSpace(base_ring, rank, old_rank, sparse=(base_ring==QQ)).zero()
+        phi_old = MatrixSpace(base_ring, rank, old_rank, sparse=(base_ring == QQ)).zero()
         phi_old_cols = phi_old.columns()
         phi_old = conditionally_sparse(phi_old)
         to_be_deleted = []
@@ -542,8 +545,8 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
                 # The matrices involved have many zero entries. For
                 # such matrices, using sparse matrices is faster over
                 # the rationals, slower over finite fields.
-                phi_old = matrix(base_ring, phi_old_cols, sparse=(base_ring==QQ)).transpose()
-                keep = vector(base_ring, pi_nrows, {i:1 for i in range(pi_nrows)
+                phi_old = matrix(base_ring, phi_old_cols, sparse=(base_ring == QQ)).transpose()
+                keep = vector(base_ring, pi_nrows, {i: 1 for i in range(pi_nrows)
                                                     if i not in to_be_deleted})
                 cols = [v.pairwise_product(keep) for v in pi_cols_old]
                 pi_old = MS_pi_t.matrix(cols).transpose()

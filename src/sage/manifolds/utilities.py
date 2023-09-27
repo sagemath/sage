@@ -987,7 +987,7 @@ class ExpressionNice(Expression):
                        for i in diffargs)
 
             res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                               [i for i in occ.values()])
+                occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])
@@ -1356,5 +1356,6 @@ def exterior_derivative(form):
 
     """
     return form.exterior_derivative()
+
 
 xder = exterior_derivative
