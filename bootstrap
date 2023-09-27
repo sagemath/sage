@@ -216,10 +216,10 @@ save () {
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
 	src/doc/en/reference/spkg/*.rst \
-	environment.yml \
-	src/environment.yml \
-	environment-optional.yml \
-	src/environment-optional.yml \
+	environment-3.[89].yml environment-3.1[0-9].yml \
+	src/environment-3.[89].yml src/environment-3.1[0-9].yml \
+	environment-optional-3.[89].yml environment-optional-3.1[0-9].yml \
+	src/environment-optional-3.[89].yml src/environment-optional-3.1[0-9].yml \
 	src/Pipfile \
 	src/pyproject.toml \
 	src/requirements.txt \
