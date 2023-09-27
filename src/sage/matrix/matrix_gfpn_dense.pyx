@@ -55,7 +55,7 @@ from sage.misc.randstate import current_randstate
 from sage.misc.randstate cimport randstate
 from sage.structure.element cimport Element, Matrix
 from sage.structure.richcmp import rich_to_bool
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 from libc.string cimport memset, memcpy
 
@@ -730,7 +730,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         x = self.Data.Data
         cdef int nr = self.Data.Nor
         cdef int nc = self.Data.Noc
-        cdef int i, j, k
+        cdef int i, j
 
         FfSetField(fl)
         FfSetNoc(nc)
@@ -1392,15 +1392,13 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             True
             sage: M*int(-1)+M == 0
             True
-
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
-        cdef Matrix_gfpn_dense left
         FfSetField(self.Data.Field)
         cdef FEL r
         with cython.cdivision(False):
-            r = FfFromInt(n%FfChar)
+            r = FfFromInt(n % FfChar)
         sig_on()
         try:
             mat = MatDup(self.Data)

@@ -438,7 +438,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             cond = []
             for dummy in range(2):
                 val = []
-                for k in range(m):
+                for _ in range(m):
                     val.append(bdry)
                     bdry = not bdry
                 cond.append(tuple(val))

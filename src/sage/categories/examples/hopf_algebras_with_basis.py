@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis
 """
@@ -43,7 +43,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: HopfAlgebrasWithBasis(QQ).example() # indirect doctest
             An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
         """
-        return "An example of Hopf algebra with basis: the group algebra of the %s over %s"%(self._group, self.base_ring())
+        return "An example of Hopf algebra with basis: the group algebra of the %s over %s" % (self._group, self.base_ring())
 
     @cached_method
     def one_basis(self):

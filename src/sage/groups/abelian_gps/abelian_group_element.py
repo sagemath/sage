@@ -97,16 +97,16 @@ class AbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(3,[2,3,4],names="abc"); G
+            sage: G = AbelianGroup(3, [2,3,4], names="abc"); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
-            sage: Gp = G.permutation_group(); Gp
+            sage: Gp = G.permutation_group(); Gp                                        # needs sage.groups
             Permutation Group with generators [(6,7,8,9), (3,4,5), (1,2)]
-            sage: a.as_permutation()
+            sage: a.as_permutation()                                                    # needs sage.libs.gap
             (1,2)
-            sage: ap = a.as_permutation(); ap
+            sage: ap = a.as_permutation(); ap                                           # needs sage.libs.gap
             (1,2)
-            sage: ap in Gp
+            sage: ap in Gp                                                              # needs sage.groups sage.libs.gap
             True
         """
         from sage.libs.gap.libgap import libgap
@@ -138,13 +138,14 @@ class AbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(2,[2,3], names="xy")
+            sage: # needs sage.libs.gap
+            sage: G = AbelianGroup(2, [2,3], names="xy")
             sage: x,y = G.gens()
             sage: x.word_problem([x,y])
             [[x, 1]]
             sage: y.word_problem([x,y])
             [[y, 1]]
-            sage: v = (y*x).word_problem([x,y]); v #random
+            sage: v = (y*x).word_problem([x,y]); v  # random
             [[x, 1], [y, 1]]
             sage: prod([x^i for x,i in v]) == y*x
             True

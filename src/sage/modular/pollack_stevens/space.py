@@ -189,6 +189,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
         """
         return PollackStevensModularSymbolspace(*key)
 
+
 PollackStevensModularSymbols = PollackStevensModularSymbols_factory('PollackStevensModularSymbols')
 
 

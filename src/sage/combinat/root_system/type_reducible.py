@@ -66,7 +66,7 @@ class CartanType(SageObject, CartanType_abstract):
         sage: t.index_set()
         (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
 
-        sage: t.dynkin_diagram()
+        sage: t.dynkin_diagram()                                                        # needs sage.graphs
         O---O---O---O
         1   2   3   4
         O=<=O---O---O---O=<=O
@@ -256,18 +256,18 @@ class CartanType(SageObject, CartanType_abstract):
         EXAMPLES::
 
             sage: ct = CartanType("A2","B2")
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # needs sage.graphs
             [ 2 -1| 0  0]
             [-1  2| 0  0]
             [-----+-----]
             [ 0  0| 2 -1]
             [ 0  0|-2  2]
-            sage: ct.cartan_matrix(subdivide=False)
+            sage: ct.cartan_matrix(subdivide=False)                                     # needs sage.graphs
             [ 2 -1  0  0]
             [-1  2  0  0]
             [ 0  0  2 -1]
             [ 0  0 -2  2]
-            sage: ct.index_set() == ct.cartan_matrix().index_set()
+            sage: ct.index_set() == ct.cartan_matrix().index_set()                      # needs sage.graphs
             True
         """
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
@@ -280,8 +280,7 @@ class CartanType(SageObject, CartanType_abstract):
 
         EXAMPLES::
 
-            sage: dd = CartanType("A2xB2xF4").dynkin_diagram()
-            sage: dd
+            sage: dd = CartanType("A2xB2xF4").dynkin_diagram(); dd                      # needs sage.graphs
             O---O
             1   2
             O=>=O
@@ -289,10 +288,11 @@ class CartanType(SageObject, CartanType_abstract):
             O---O=>=O---O
             5   6   7   8
             A2xB2xF4
-            sage: dd.edges(sort=True)
-            [(1, 2, 1), (2, 1, 1), (3, 4, 2), (4, 3, 1), (5, 6, 1), (6, 5, 1), (6, 7, 2), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
+            sage: dd.edges(sort=True)                                                   # needs sage.graphs
+            [(1, 2, 1), (2, 1, 1), (3, 4, 2), (4, 3, 1), (5, 6, 1),
+             (6, 5, 1), (6, 7, 2), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
 
-            sage: CartanType("F4xA2").dynkin_diagram()
+            sage: CartanType("F4xA2").dynkin_diagram()                                  # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             O---O
@@ -432,18 +432,17 @@ class CartanType(SageObject, CartanType_abstract):
 
         EXAMPLES::
 
-            sage: cd = CartanType("A2xB2xF4").coxeter_diagram()
-            sage: cd
+            sage: cd = CartanType("A2xB2xF4").coxeter_diagram(); cd                     # needs sage.graphs
             Graph on 8 vertices
-            sage: cd.edges(sort=True)
+            sage: cd.edges(sort=True)                                                   # needs sage.graphs
             [(1, 2, 3), (3, 4, 4), (5, 6, 3), (6, 7, 4), (7, 8, 3)]
 
-            sage: CartanType("F4xA2").coxeter_diagram().edges(sort=True)
+            sage: CartanType("F4xA2").coxeter_diagram().edges(sort=True)                # needs sage.graphs
             [(1, 2, 3), (2, 3, 4), (3, 4, 3), (5, 6, 3)]
 
-            sage: cd = CartanType("A1xH3").coxeter_diagram(); cd
+            sage: cd = CartanType("A1xH3").coxeter_diagram(); cd                        # needs sage.graphs
             Graph on 4 vertices
-            sage: cd.edges(sort=True)
+            sage: cd.edges(sort=True)                                                   # needs sage.graphs
             [(2, 3, 3), (3, 4, 5)]
         """
         from sage.graphs.graph import Graph

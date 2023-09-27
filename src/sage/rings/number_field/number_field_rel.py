@@ -281,7 +281,7 @@ class NumberField_relative(NumberField_generic):
         if names is not None:
             name = names
         if not isinstance(base, NumberField_base):
-            raise TypeError("base (=%s) must be a number field"%base)
+            raise TypeError("base (=%s) must be a number field" % base)
         if not isinstance(polynomial, polynomial_element.Polynomial):
             try:
                 polynomial = polynomial.polynomial(base)
@@ -313,7 +313,7 @@ class NumberField_relative(NumberField_generic):
         self._element_class = number_field_element.NumberFieldElement_relative
 
         if check and not self.pari_relative_polynomial().polisirreducible():
-            raise ValueError("defining polynomial (%s) must be irreducible"%polynomial)
+            raise ValueError("defining polynomial (%s) must be irreducible" % polynomial)
 
         names = (name,) + base.variable_names()
         self._assign_names(tuple(names), normalize=False)
@@ -463,7 +463,7 @@ class NumberField_relative(NumberField_generic):
             if to_K is not None:
                 to_K = RelativeNumberFieldHomomorphism_from_abs(self.Hom(K), to_K*to_abs)
             ans.append((K, from_K, to_K))
-        ans = Sequence(ans, immutable=True, cr=ans!=[])
+        ans = Sequence(ans, immutable=True, cr=bool(ans))
         return ans
 
     def is_absolute(self):
@@ -753,7 +753,7 @@ class NumberField_relative(NumberField_generic):
             Number Field in b with defining polynomial x^7 + 3
         """
 
-        return "Number Field in %s with defining polynomial %s over its base field"%(self.variable_name(), self.relative_polynomial())
+        return "Number Field in %s with defining polynomial %s over its base field" % (self.variable_name(), self.relative_polynomial())
 
     def _Hom_(self, codomain, category=None):
         """
@@ -798,7 +798,7 @@ class NumberField_relative(NumberField_generic):
             '( \\Bold{Q}[a]/(a^{3} - 2) )[b]/(b^{2} + b + a)'
         """
         latex_name = self.latex_variable_names()[0]
-        return "( %s )[%s]/(%s)"%(latex(self.base_field()), latex_name,
+        return "( %s )[%s]/(%s)" % (latex(self.base_field()), latex_name,
                               self.relative_polynomial()._latex_(latex_name))
 
     def _coerce_from_other_number_field(self, x):
@@ -884,6 +884,7 @@ class NumberField_relative(NumberField_generic):
 
         Examples from :trac:`4727`::
 
+            sage: # needs sage.symbolic
             sage: K.<j,b> = QQ[sqrt(-1), sqrt(2)]
             sage: j
             I
@@ -912,7 +913,8 @@ class NumberField_relative(NumberField_generic):
             sage: L(L)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert Number Field in a0 with defining polynomial x^2 + 1 over its base field to Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            TypeError: unable to convert Number Field in a0 with defining polynomial x^2 + 1 over its base field
+            to Number Field in a0 with defining polynomial x^2 + 1 over its base field
             sage: L in L
             False
 
@@ -1672,7 +1674,7 @@ class NumberField_relative(NumberField_generic):
             sage: k.<a> = NumberField(x^2 + 1); k
             Number Field in a with defining polynomial x^2 + 1
             sage: y = polygen(k)
-            sage: m.<b> = k.extension(y^2+3); m
+            sage: m.<b> = k.extension(y^2 + 3); m
             Number Field in b with defining polynomial x^2 + 3 over its base field
             sage: c = m.gen(); c # indirect doctest
             b
@@ -2075,7 +2077,7 @@ class NumberField_relative(NumberField_generic):
         # then it is most natural, so we put it first.
         put_natural_embedding_first(v)
 
-        self.__embeddings[K] = Sequence(v, cr=v!=[], immutable=True, check=False, universe=self.Hom(K))
+        self.__embeddings[K] = Sequence(v, cr=bool(v), immutable=True, check=False, universe=self.Hom(K))
         return self.__embeddings[K]
 
     def automorphisms(self):
@@ -2150,13 +2152,14 @@ class NumberField_relative(NumberField_generic):
 
         L = self.absolute_field('a')
         L_into_self, self_into_L = L.structure()
-        aas = L.automorphisms() # absolute automorphisms
+        aas = L.automorphisms()  # absolute automorphisms
 
         a = self_into_L(self.gen())
         abs_base_gens = [self_into_L(_) for _ in self.base_field().gens()]
-        v = sorted([ self.hom([ L_into_self(aa(a)) ]) for aa in aas if all(aa(g) == g for g in abs_base_gens) ])
+        v = sorted([self.hom([L_into_self(aa(a))]) for aa in aas
+                    if all(aa(g) == g for g in abs_base_gens)])
         put_natural_embedding_first(v)
-        self.__automorphisms = Sequence(v, cr=(v != []), immutable=True,
+        self.__automorphisms = Sequence(v, cr=bool(v), immutable=True,
                                         check=False, universe=self.Hom(self))
         return self.__automorphisms
 
@@ -2455,20 +2458,20 @@ class NumberField_relative(NumberField_generic):
 
         EXAMPLES::
 
-            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]
-            sage: R = P.order([a,b,c]); R
+            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]                             # needs sage.symbolic
+            sage: R = P.order([a,b,c]); R                                               # needs sage.symbolic
             Relative Order in Number Field in sqrt2
              with defining polynomial x^2 - 2 over its base field
 
         The base ring of an order in a relative extension is still `\ZZ`.::
 
-            sage: R.base_ring()
+            sage: R.base_ring()                                                         # needs sage.symbolic
             Integer Ring
 
         One must give enough generators to generate a ring of finite index
         in the maximal order::
 
-            sage: P.order([a, b])
+            sage: P.order([a, b])                                                       # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the rank of the span of gens is wrong
@@ -2574,7 +2577,7 @@ class NumberField_relative(NumberField_generic):
         # Now we should have a polynomial in the variable y.
         # Otherwise we're not in the base field.
         if r.type() != "t_POL" or str(r.variable()) != 'y':
-            raise ValueError("The element %s is not in the base field"%element)
+            raise ValueError("The element %s is not in the base field" % element)
         return self.base_field()(r, check=False)
 
     def relativize(self, alpha, names):
@@ -2709,7 +2712,7 @@ class NumberField_relative(NumberField_generic):
         if not is_NumberFieldIdeal(P):
             P = self.ideal(P)
         if not P.is_maximal():
-            raise ValueError("P (=%s) must be a nonzero prime."%P)
+            raise ValueError("P (=%s) must be a nonzero prime." % P)
         abs = self.absolute_field('a')
         from_abs = abs.structure()[0]
         return from_abs(abs.uniformizer(P.absolute_ideal(), others=others))
@@ -2728,5 +2731,6 @@ def NumberField_relative_v1(base_field, poly, name, latex_name, canonical_embedd
     """
     return NumberField(poly.change_ring(base_field), name, check=False,
                        embedding=canonical_embedding, latex_name=latex_name)
+
 
 NumberField_extension_v1 = NumberField_relative_v1  # historical reasons only

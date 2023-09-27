@@ -74,7 +74,7 @@ class PSage(Sage):
             A running non-blocking (parallel) instance of Sage (number ...)
 
         """
-        return 'A running non-blocking (parallel) instance of Sage (number %s)'%(self._number)
+        return 'A running non-blocking (parallel) instance of Sage (number %s)' % (self._number)
 
     def _unlock(self):
         self._locked = False
@@ -124,7 +124,7 @@ class PSage(Sage):
             pass
 
         if not (self._expect is None):
-            cmd = 'kill -9 %s'%self._expect.pid
+            cmd = 'kill -9 %s' % self._expect.pid
             os.system(cmd)
 
     def eval(self, x, strip=True, **kwds):
@@ -158,7 +158,7 @@ class PSage(Sage):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s=%s'%(var,value)
+        cmd = '%s=%s' % (var,value)
         self._send_nowait(cmd)
         time.sleep(0.02)
 

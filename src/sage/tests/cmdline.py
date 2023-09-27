@@ -72,7 +72,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
       should end with a newline.
 
     - ``timeout`` -- if the program produces no output for ``timeout``
-      seconds, a RuntimeError is raised.
+      seconds, a :class:`RuntimeError` is raised.
 
     - ``pydebug_ignore_warnings`` -- boolean. Set the PYTHONWARNINGS environment variable to ignore
       Python warnings when on a Python debug build (`--with-pydebug`, e.g. from building with
@@ -491,9 +491,8 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
         sage: (out, err, ret) = test_executable(["sage", "--cython"])
         sage: print(err)
-        Cython (http://cython.org) is a compiler for code written in the
-        Cython language.  Cython is based on Pyrex by Greg Ewing.
         ...
+        cython: error: cython: Need at least one source file
 
         sage: def has_tty():
         ....:     try:
