@@ -43,7 +43,7 @@ from sage.structure.richcmp import richcmp_method, richcmp
 
 def is_HeckeAlgebra(x):
     r"""
-    Return True if x is of type HeckeAlgebra.
+    Return ``True`` if x is of type HeckeAlgebra.
 
     EXAMPLES::
 
@@ -210,7 +210,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeAlgebra):
         In the last case, the parameter ``check`` controls whether or
         not to check that this element really does lie in the
         appropriate algebra. At present, setting ``check=True`` raises
-        a NotImplementedError unless x is a scalar (or a diagonal
+        a :class:`NotImplementedError` unless x is a scalar (or a diagonal
         matrix).
 
         EXAMPLES::
@@ -320,7 +320,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeAlgebra):
 
     def is_noetherian(self):
         """
-        Return True if this Hecke algebra is Noetherian as a ring. This is true
+        Return ``True`` if this Hecke algebra is Noetherian as a ring. This is true
         if and only if the base ring is Noetherian.
 
         EXAMPLES::
@@ -649,7 +649,6 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
             False
             sage: A == A
             True
-
         """
         if not isinstance(other, HeckeAlgebra_anemic):
             return NotImplemented
@@ -675,9 +674,9 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
             raise IndexError("Hecke operator T_%s not defined in the anemic Hecke algebra" % n)
         return self.module()._hecke_operator_class()(self, n)
 
-    def is_anemic(self):
+    def is_anemic(self) -> bool:
         """
-        Return True, since this is the anemic Hecke algebra.
+        Return ``True``, since this is the anemic Hecke algebra.
 
         EXAMPLES::
 
