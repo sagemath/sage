@@ -91,9 +91,9 @@ class CartanType(CartanType_standard_untwisted_affine):
         """
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (%s cm,0) -- (%s cm,0);\n"%(node_dist, node_dist*2.0)
-        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (%s cm,0) -- (%s cm,0);\n" % (node_dist, node_dist*2.0)
+        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual)
         ret += node(2*node_dist, 0, label(0))
         return ret

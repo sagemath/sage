@@ -1429,14 +1429,14 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             return sum([W.fundamental_invariants() for W in self.irreducible_components() ],tuple())
 
         I = [ str(p) for p in gap3('List(Invariants(%s),x->ApplyFunc(x,List([0..%s],i->Mvp(SPrint("x",i)))))' % (self._gap_group._name, self.rank()-1)) ]
-        P = PolynomialRing(QQ,['x%s'%i for i in range(self.rank())])
+        P = PolynomialRing(QQ,['x%s' % i for i in range(self.rank())])
         x = P.gens()
         for i in range(len(I)):
             I[i] = I[i].replace('^','**')
             I[i] = re.compile(r'E(\d\d*)').sub(r'E(\1)', I[i])
             I[i] = re.compile(r'(\d)E\(').sub(r'\1*E(', I[i])
             for j in range(len(x)):
-                I[i] = I[i].replace('x%s'%j,'*x[%s]'%j)
+                I[i] = I[i].replace('x%s' % j,'*x[%s]' % j)
             I[i] = I[i].replace("+*","+").replace("-*","-").replace("ER(5)","*(E(5)-E(5)**2-E(5)**3+E(5)**4)").lstrip("*")
         # sage_eval is used since eval kills the rational entries!
         I = [sage_eval(p, locals={'x': x}) for p in I]
@@ -1966,7 +1966,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             for w in W._conjugacy_classes:
                 if self in W._conjugacy_classes[w]:
                     return w
-            return W.conjugacy_classes_representatives()[ gap3("PositionClass(%s,%s)"%(W._gap_group._name,self)).sage()-1 ]
+            return W.conjugacy_classes_representatives()[ gap3("PositionClass(%s,%s)" % (W._gap_group._name,self)).sage()-1 ]
 
         def conjugacy_class(self):
             r"""

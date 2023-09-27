@@ -708,8 +708,8 @@ class DocTestController(SageObject):
         try:
             with open(filename) as stats_file:
                 self.baseline_stats.update(json.load(stats_file))
-        except Exception:
-            self.log("Error loading baseline stats from %s"%filename)
+        except Exception as e:
+            self.log("Error loading baseline stats from %s: %s" % (filename, e))
 
     def load_stats(self, filename):
         """
@@ -772,7 +772,7 @@ class DocTestController(SageObject):
         """
         from sage.misc.temporary_file import atomic_write
         with atomic_write(filename) as stats_file:
-            json.dump(self.stats, stats_file)
+            json.dump(self.stats, stats_file, sort_keys=True, indent=4)
 
     def log(self, s, end="\n"):
         """
@@ -1089,7 +1089,7 @@ class DocTestController(SageObject):
 
             def sort_key(source):
                 basename = source.basename
-                return -self.stats.get(basename, default).get('walltime'), basename
+                return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
 
     def run_doctests(self):
