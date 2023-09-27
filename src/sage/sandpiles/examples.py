@@ -163,15 +163,15 @@ class SandpileExamples():
             True
         """
         f = graphs.WheelGraph(n)
-        if n>2:
+        if n > 2:
             f.delete_edge(1,n-1)
             if deg_three_verts:
                 f.allow_multiple_edges(True)
                 f.add_edges([(0,1),(0,n-1)])
             return Sandpile(f,0)
-        elif n==1:
+        elif n == 1:
             return Sandpile(f,0)
-        elif n==2:
+        elif n == 2:
             if deg_three_verts:
                 return Sandpile({0:{1:3}, 1:{0:3}})
             else:
