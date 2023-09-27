@@ -451,15 +451,15 @@ def q_multinomial(seq, q=None, binomial_algorithm='auto'):
 gaussian_multinomial = q_multinomial
 
 
-def q_catalan_number(n, m=1, q=None):
+def q_catalan_number(n, q=None, m=1):
     """
     Return the `q`-Catalan number of index `n`.
 
     INPUT:
 
-    - ``m`` -- optional integer (default: 1) to get the ``m``-Fuss-Catalan numbers
-
     - ``q`` -- optional variable
+
+    - ``m`` -- optional integer (default: 1) to get the ``m``-Fuss-Catalan numbers
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
@@ -474,10 +474,10 @@ def q_catalan_number(n, m=1, q=None):
         q^12 + q^10 + q^9 + 2*q^8 + q^7 + 2*q^6 + q^5 + 2*q^4 + q^3 + q^2 + 1
 
         sage: p = ZZ['p'].0
-        sage: q_catalan_number(4,q=p)
+        sage: q_catalan_number(4, p)
         p^12 + p^10 + p^9 + 2*p^8 + p^7 + 2*p^6 + p^5 + 2*p^4 + p^3 + p^2 + 1
 
-        sage: q_catalan_number(3,m=2)
+        sage: q_catalan_number(3, m=2)
         q^12 + q^10 + q^9 + q^8 + q^7 + 2*q^6 + q^5 + q^4 + q^3 + q^2 + 1
 
     TESTS:
