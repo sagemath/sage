@@ -52,22 +52,19 @@ with 4 letters divided into 2 blocks::
      ((1,), (1, 2, 3)), ((1, 2), (2, 3)), ((1, 2, 3), (3,))]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Aaron Lauve       <lauve at math.luc.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from functools import reduce
-from itertools import chain
+from itertools import chain, product
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.cartesian_product import cartesian_product
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.tensor import tensor
 from sage.structure.unique_representation import UniqueRepresentation
@@ -672,7 +669,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             return {tuple([self]*k): 1}
 
         out = {}
-        for t in cartesian_product([_split_block(block, k) for block in self]):
+        for t in product(*[_split_block(block, k) for block in self]):
             tt = tuple([P([l for l in c if l]) for c in zip(*t)])
             out[tt] = out.get(tt, 0) + 1
         return out
@@ -711,8 +708,8 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         if not self:
             return set([self])
 
-        CP = cartesian_product([_refine_block(block, strong) for block in self])
-        return set(P(_concatenate(map(list,c))) for c in CP)
+        CP = product(*[_refine_block(block, strong) for block in self])
+        return set(P(_concatenate(map(list, c))) for c in CP)
 
     def is_finer(self, co):
         """
@@ -2892,16 +2889,16 @@ def _iterator_size(size, length=None, alphabet=None):
         max_p = max(alphabet)
         for alpha in IntegerListsLex(size, length=length, min_part=1,
                                      max_part=min(size, sum(alphabet))):
-            for p in cartesian_product([IntegerListsLex(a, min_slope=1,
-                                                        min_part=min_p,
-                                                        max_part=min(a, max_p))
-                                        for a in alpha]):
+            for p in product(*[IntegerListsLex(a, min_slope=1,
+                                               min_part=min_p,
+                                               max_part=min(a, max_p))
+                               for a in alpha]):
                 if frozenset(_concatenate(p)).issubset(frozenset(alphabet)):
                     yield tuple(frozenset(k) for k in p)
     else:
         for alpha in IntegerListsLex(size, length=length, min_part=1, max_part=size):
-            for p in cartesian_product([IntegerListsLex(a, min_slope=1,
-                                                        min_part=1) for a in alpha]):
+            for p in product(*[IntegerListsLex(a, min_slope=1,
+                                               min_part=1) for a in alpha]):
                 yield tuple(frozenset(k) for k in p)
 
 
@@ -2967,11 +2964,11 @@ def _iterator_order(A, d, lengths=None):
             yield ()
         else:
             for alpha in IntegerListsLex(d, length=k, min_part=1, max_part=n):
-                for co in cartesian_product([Subsets_sk(A, a) for a in alpha]):
+                for co in product(*[Subsets_sk(A, a) for a in alpha]):
                     yield tuple(frozenset(X) for X in co)
 
 
-def _descents(w):
+def _descents(w) -> list:
     r"""
     Return descent positions in the word ``w``.
 
@@ -2983,7 +2980,7 @@ def _descents(w):
         sage: _descents([])
         []
     """
-    return [j for j in range(len(w)-1) if w[j] > w[j+1]]
+    return [j for j in range(len(w) - 1) if w[j] > w[j + 1]]
 
 
 def _break_at_descents(alpha, weak=True):
