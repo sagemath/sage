@@ -1653,7 +1653,9 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "duplicate" in got:
-            # New warnings as of Sept '23, OS X 13.6, new command-line tools.
+            # New warnings as of Sept '23, OS X 13.6, new command-line
+            # tools. In particular, these seem to come from ld in
+            # Xcode 15.
             dup_rpath_regex = re.compile("ld: warning: duplicate -rpath .* ignored")
             dup_lib_regex = re.compile("ld: warning: ignoring duplicate libraries: .*")
             got = dup_rpath_regex.sub('', got)
