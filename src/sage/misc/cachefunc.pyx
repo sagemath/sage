@@ -50,7 +50,7 @@ be used::
     sage: cython('''cpdef test_funct(x): return -x''')
     sage: wrapped_funct = cached_function(test_funct, name='wrapped_funct')
     sage: wrapped_funct
-    Cached version of <built-in function test_funct>
+    Cached version of <cyfunction test_funct at ...>
     sage: wrapped_funct.__name__
     'wrapped_funct'
     sage: wrapped_funct(5)
@@ -82,9 +82,9 @@ approach is still needed for cpdef methods::
     sage: cython(os.linesep.join(cython_code))
     sage: O = MyClass()
     sage: O.direct_method
-    Cached version of <method 'direct_method' of '...MyClass' objects>
+    Cached version of <cyfunction MyClass.direct_method at ...>
     sage: O.wrapped_method
-    Cached version of <built-in function test_meth>
+    Cached version of <cyfunction test_meth at ...>
     sage: O.wrapped_method.__name__
     'wrapped_method'
     sage: O.wrapped_method(5)
@@ -270,6 +270,7 @@ Introspection works::
         "some doc for a wrapped cython method"
         return -x
     sage: print(sage_getsource(O.direct_method))
+    @cached_method
     def direct_method(self, x):
         "Some doc for direct method"
         return 2*x

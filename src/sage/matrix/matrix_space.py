@@ -1343,8 +1343,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
     def __len__(self):
         """
         Return number of elements of this matrix space if it fits in
-        an int; raise a TypeError if there are infinitely many
-        elements, and raise an OverflowError if there are finitely
+        an int; raise a :class:`TypeError` if there are infinitely many
+        elements, and raise an :class:`OverflowError` if there are finitely
         many but more than the size of an int.
 
         EXAMPLES::

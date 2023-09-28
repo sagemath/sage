@@ -487,7 +487,7 @@ class Permutation(CombinatorialElement):
             elif len(l) <= 1:
                 return Permutations()([])
             else:
-                raise ValueError("cannot convert l (= %s) to a Permutation"%l)
+                raise ValueError("cannot convert l (= %s) to a Permutation" % l)
 
         # otherwise, it gets processed by CombinatorialElement's __init__.
         return Permutations()(l, check=check)
@@ -548,10 +548,10 @@ class Permutation(CombinatorialElement):
             # Is the maximum element of the permutation the length of input,
             # or is some integer missing ?
             if int(lst[-1]) != len(lst):
-                raise ValueError("The permutation has length "+str(len(lst))+
-                                 " but its maximal element is "+
-                                 str(int(lst[-1]))+". Some element "+
-                                 "may be repeated, or an element is missing"+
+                raise ValueError("The permutation has length "+str(len(lst)) +
+                                 " but its maximal element is " +
+                                 str(int(lst[-1]))+". Some element " +
+                                 "may be repeated, or an element is missing" +
                                  ", but there is something wrong with its length.")
 
             # Do the elements appear only once ?
@@ -1517,8 +1517,8 @@ class Permutation(CombinatorialElement):
         iv = [0]*len(p)
         for i in range(len(p)):
             for pj in p:
-                if pj>i+1:
-                    iv[i]+=1
+                if pj > i+1:
+                    iv[i] += 1
                 elif pj == i+1:
                     break
         return iv
@@ -1631,7 +1631,7 @@ class Permutation(CombinatorialElement):
         p = self[:]
         n = len(p)
         return [tuple([i+1,j+1]) for i in range(n-1) for j in range(i+1,n)
-                if p[i]>p[j]]
+                if p[i] > p[j]]
 
     def stack_sort(self) -> Permutation:
         """
@@ -1756,7 +1756,7 @@ class Permutation(CombinatorialElement):
             elif orientation == "portrait":
                 r = lambda x,y : (-y,x)
             else:
-                raise ValueError("The value of 'orientation' must be either "+
+                raise ValueError("The value of 'orientation' must be either " +
                                  "'landscape' or 'portrait'.")
 
             p = self[:]
@@ -1769,7 +1769,7 @@ class Permutation(CombinatorialElement):
             return L.show(axes=False, **args)
 
         else:
-            raise ValueError("The value of 'representation' must be equal to "+
+            raise ValueError("The value of 'representation' must be equal to " +
                              "'cycles', 'chord-diagram' or 'braid'")
 
     def number_of_inversions(self) -> Integer:
@@ -2086,7 +2086,7 @@ class Permutation(CombinatorialElement):
             [1, 2, 3]
         """
         if i not in range(2, len(self)):
-            raise ValueError("i (= %s) must between 2 and n-1"%i)
+            raise ValueError("i (= %s) must between 2 and n-1" % i)
 
         state = self._icondition(i)
         if state[0] is None:
@@ -2833,7 +2833,7 @@ class Permutation(CombinatorialElement):
         """
         l = len(self._list)
         # choose the best implementations
-        if l<577:
+        if l < 577:
             return self._to_lehmer_code_small()
         else:
             return self.inverse().to_inversion_vector()
@@ -5600,7 +5600,7 @@ class Permutations(UniqueRepresentation, Parent):
         #Make sure that exactly one keyword was passed
         for key in kwargs:
             if key not in valid_args:
-                raise ValueError("unknown keyword argument: %s"%key)
+                raise ValueError("unknown keyword argument: %s" % key)
             if key not in [ 'avoiding' ]:
                 number_of_arguments += 1
 
@@ -5649,7 +5649,7 @@ class Permutations(UniqueRepresentation, Parent):
                             a = tuple(map(Permutation, a))
                             return StandardPermutations_avoiding_generic(n, a)
                         else:
-                            raise ValueError("do not know how to avoid %s"%a)
+                            raise ValueError("do not know how to avoid %s" % a)
                     else:
                         return StandardPermutations_n(n)
                 else:
@@ -6004,7 +6004,7 @@ class Permutations_mset(Permutations):
             sage: Permutations(['c','a','c'])
             Permutations of the multi-set ['c', 'a', 'c']
         """
-        return "Permutations of the multi-set %s"%list(self.mset)
+        return "Permutations of the multi-set %s" % list(self.mset)
 
     def __iter__(self):
         r"""
@@ -6344,7 +6344,7 @@ class Permutations_set(Permutations):
             sage: Permutations(['c','a','t'])
             Permutations of the set ['c', 'a', 't']
         """
-        return "Permutations of the set %s"%list(self._set)
+        return "Permutations of the set %s" % list(self._set)
 
     class Element(ClonableArray):
         """
@@ -7574,7 +7574,7 @@ def from_permutation_group_element(pge, parent=None):
         [2, 1, 4, 3]
     """
     if not isinstance(pge, PermutationGroupElement):
-        raise TypeError("pge (= %s) must be a PermutationGroupElement"%pge)
+        raise TypeError("pge (= %s) must be a PermutationGroupElement" % pge)
 
     if parent is None:
         parent = Permutations( len(pge.domain()) )
@@ -8827,7 +8827,7 @@ class CyclicPermutations(Permutations_mset):
             sage: CyclicPermutations(range(4))
             Cyclic permutations of [0, 1, 2, 3]
         """
-        return "Cyclic permutations of %s"%list(self.mset)
+        return "Cyclic permutations of %s" % list(self.mset)
 
     def __iter__(self, distinct=False):
         """

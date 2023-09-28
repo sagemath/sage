@@ -680,8 +680,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
     cdef long _hash_(self) except -1:
         """
-        Return hash of an immutable matrix. Raise a TypeError if input
-        matrix is mutable.
+        Return hash of an immutable matrix.
+
+        This raises a :class:`TypeError` if input matrix is mutable.
 
         EXAMPLES:
 
