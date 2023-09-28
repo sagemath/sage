@@ -45,13 +45,6 @@ jobs:
         with:
           gh-cli-version: 2.32.0
 
-      - name: Merge CI fixes from sagemath/sage
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          .ci/merge-fixes.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
-
       - name: Add prebuilt tree as a worktree
         id: worktree
         run: |
@@ -81,18 +74,12 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
 
-      - name: Download upstream artifact
-        uses: actions/download-artifact@v3
-        with:
-          path: upstream
-          name: upstream
-
-      - name: Apply CI fixes from sagemath/sage
-        # After applying the fixes, make sure all changes are marked as uncommitted changes.
+      - name: Merge CI fixes from sagemath/sage
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
-          if [ -r upstream/ci_fixes.patch ]; then
-            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
-          fi
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Incremental build, test changed files (sage -t --new)
         id: incremental
