@@ -1008,7 +1008,6 @@ class CohomologyRing_mod2(CohomologyRing):
         sage: x * Sq(3)
         h^{4,0}
     """
-
     def __init__(self, base_ring, cell_complex):
         """
         Initialize ``self``.
@@ -1217,7 +1216,7 @@ class CohomologyRing_mod2(CohomologyRing):
 
             INPUT:
 
-            - ``a`` - an element of the mod 2 Steenrod algebra
+            - ``a`` -- an element of the mod 2 Steenrod algebra
             - ``self_on_left`` -- ``True`` if we are computing ``self * a``,
               otherwise ``a * self``
 
@@ -1284,7 +1283,7 @@ class CohomologyRing_mod2(CohomologyRing):
         - ``deg_codomain`` -- the degree of the codomain in the
           cohomology ring
 
-        - ``side`` default ``'left'``) -- whether we are computing
+        - ``side`` -- (default ``'left'``) whether we are computing
           the action as a left module action or a right module
 
         We will write this with respect to the left action;
@@ -1440,8 +1439,8 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
             for l in sum_indices(k-1, i_k, S_k)]
 
 def is_GF2(R):
-    """
-    Return ``True`` iff ``R`` is isomorphic to the field GF(2).
+    r"""
+    Return ``True`` iff ``R`` is isomorphic to the field `\GF{2}`.
 
     EXAMPLES::
 
