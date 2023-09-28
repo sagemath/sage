@@ -20,14 +20,14 @@ AUTHOR:
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 
 # from sage.matrix.matrix2 cimport Matrix
-# 
+#
 # from sage.matrix.constructor import identity_matrix
 # from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 # from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 # from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
-# 
+#
 # from sage.libs.singular.function import singular_function, lib
-# 
+#
 # from cysignals.signals cimport sig_on, sig_off
 
 from sage.matrix.constructor import identity_matrix
