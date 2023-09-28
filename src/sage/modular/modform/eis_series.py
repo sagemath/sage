@@ -431,15 +431,15 @@ def eisenstein_series_lseries(weight, prec=53,
                    # Using a string for residues is a hack but it works well
                    # since this will make PARI/GP compute sqrt(pi) with the
                    # right precision.
-                   residues ='[sqrt(Pi)*(%s)]' % ((-1)**Integer(j/2)*bernoulli(j)/j),
+                   residues='[sqrt(Pi)*(%s)]' % ((-1)**Integer(j // 2) * bernoulli(j) / j),
                    prec=prec)
 
     s = 'coeff = %s;' % f.list()
-    L.init_coeffs('coeff[k+1]',pari_precode=s,
+    L.init_coeffs('coeff[k+1]', pari_precode=s,
                   max_imaginary_part=max_imaginary_part,
                   max_asymp_coeffs=max_asymp_coeffs)
     L.check_functional_equation()
-    L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)' % (j,f))
+    L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)' % (j, f))
     return L
 
 
