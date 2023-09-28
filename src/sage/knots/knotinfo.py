@@ -175,13 +175,14 @@ Using the ``column_type`` of a property::
 
 You can launch web-pages attached to the links::
 
-    sage: K.diagram()                 # not tested
+    sage: # not tested
+    sage: K.diagram()
     True
-    sage: L.diagram(single=True)      # not tested
+    sage: L.diagram(single=True)
     True
-    sage: L.knot_atlas_webpage()      # not tested
+    sage: L.knot_atlas_webpage()
     True
-    sage: K.knotilus_webpage()        # not tested
+    sage: K.knotilus_webpage()
     True
 
 and the description web-pages of the properties::
@@ -1487,15 +1488,15 @@ class KnotInfoBase(Enum):
 
         if skein_normalization:
             if not variab:
-                variab='A'
+                variab = 'A'
             from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
             R = LaurentPolynomialRing(ZZ, variab)
         else:
             if not variab:
                 if use_sqrt or self.is_knot() or puiseux:
-                    variab='t'
+                    variab = 't'
                 else:
-                    variab='x'
+                    variab = 'x'
             if puiseux:
                 from sage.rings.puiseux_series_ring import PuiseuxSeriesRing  # since PuiseuxPolynomial is not available, so far
                 R = PuiseuxSeriesRing(ZZ, variab)
@@ -2007,7 +2008,7 @@ class KnotInfoBase(Enum):
             s^-5
         """
         if not isinstance(use_item, KnotInfoColumns):
-            raise TypeError('%s must be an instance of %s' %(use_item, KnotInfoColumns))
+            raise TypeError('%s must be an instance of %s' % (use_item, KnotInfoColumns))
 
         if snappy:
             try:
@@ -2035,7 +2036,7 @@ class KnotInfoBase(Enum):
             elif use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
-        raise ValueError('Link construction using %s not possible' %use_item)
+        raise ValueError('Link construction using %s not possible' % use_item)
 
     @cached_method
     def is_unique(self):
@@ -2495,9 +2496,9 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             'Series of knots K6'
         """
         if self._is_knot:
-            return 'Series of knots %s' %(self._name())
+            return 'Series of knots %s' % (self._name())
         else:
-            return 'Series of links %s' %(self._name())
+            return 'Series of links %s' % (self._name())
 
     def __getitem__(self, item):
         r"""
@@ -2550,7 +2551,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             True
         """
         if self._name_unoriented:
-            if type(item) == str:
+            if isinstance(item, str):
                 # allow input as dual number according to naming
                 item = int(item, 2)
             return self[item]
@@ -2586,13 +2587,13 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         if is_knot:
             if cross_nr > 10:
-                res = 'K%s%s' %(cross_nr, alt)
+                res = 'K%s%s' % (cross_nr, alt)
             else:
-                res = 'K%s' %(cross_nr)
+                res = 'K%s' % (cross_nr)
         elif n_unori:
-            res = '%s' %(n_unori)
+            res = '%s' % (n_unori)
         else:
-            res = 'L%s%s' %(cross_nr, alt)
+            res = 'L%s%s' % (cross_nr, alt)
         return res
 
     def is_recoverable(self, unique=True, max_samples=8):

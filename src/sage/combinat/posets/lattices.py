@@ -993,7 +993,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             (False, 2)
         """
         if ((self.is_ranked() and len(self.meet_irreducibles()) == self.rank()) or
-            self.cardinality() == 0):
+                self.cardinality() == 0):
             return (True, None) if certificate else True
         if not certificate:
             return False
@@ -1081,7 +1081,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             (False, 6)
         """
         if ((self.is_ranked() and len(self.join_irreducibles()) == self.rank()) or
-            self.cardinality() == 0):
+                self.cardinality() == 0):
             return (True, None) if certificate else True
         if not certificate:
             return False
@@ -1250,8 +1250,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return ok
 
         if (self.is_graded() and
-         self.rank() == len(self.join_irreducibles()) ==
-         len(self.meet_irreducibles())):
+                self.rank() == len(self.join_irreducibles()) ==
+                len(self.meet_irreducibles())):
             return ok
 
         if not certificate:
@@ -1695,7 +1695,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         n = H.order()
         for e in range(n - 2, -1, -1):
             t = 0
-            for uc in H.neighbors_out(e):
+            for uc in H.neighbor_out_iterator(e):
                 t = jn[t, uc]
                 if t == n - 1:
                     break
@@ -1805,13 +1805,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return False
 
         for e1 in range(n - 1):
-            C = Counter(flatten([H.neighbors_out(e2) for e2 in H.neighbors_out(e1)]))
+            C = Counter(flatten([H.neighbors_out(e2) for e2 in H.neighbor_out_iterator(e1)]))
             for e3, c in C.items():
                 if c == 1 and len(H.closed_interval(e1, e3)) == 3:
                     if not certificate:
                         return False
-                    for e2 in H.neighbors_in(e3):
-                        if e2 in H.neighbors_out(e1):
+                    for e2 in H.neighbor_in_iterator(e3):
+                        if e2 in H.neighbor_out_iterator(e1):
                             break
                     return (False, (self._vertex_to_element(e1),
                                     self._vertex_to_element(e2),
@@ -1885,7 +1885,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         n = H.order() - 1
         for e in range(2, n + 1):
             t = n
-            for lc in H.neighbors_in(e):
+            for lc in H.neighbor_in_iterator(e):
                 t = mt[t, lc]
                 if t == 0:
                     break
@@ -1988,8 +1988,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
                 # Get elements more than B levels below it.
                 too_close = set(H.breadth_first_search(j,
-                                                      neighbors=H.neighbors_in,
-                                                      distance=B - 2))
+                                                       neighbors=H.neighbor_in_iterator,
+                                                       distance=B - 2))
                 elems = [e for e in H.order_ideal([j]) if e not in too_close]
 
                 achains = PairwiseCompatibleSubsets(elems,
@@ -2378,7 +2378,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() < 3:
             return (True, None)
         H = self._hasse_diagram
-        atoms = set(H.neighbors_out(0))
+        atoms = set(H.neighbor_out_iterator(0))
         for v in H:
             if H.in_degree(v) == 1 and v not in atoms:
                 return (False, self._vertex_to_element(v))
@@ -2436,7 +2436,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() < 3:
             return (True, None)
         H = self._hasse_diagram
-        coatoms = set(H.neighbors_in(n - 1))
+        coatoms = set(H.neighbor_in_iterator(n - 1))
         for v in H:
             if H.out_degree(v) == 1 and v not in coatoms:
                 return (False, self._vertex_to_element(v))
@@ -2649,7 +2649,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             for x in self.principal_lower_set(b):
                 for a in self:
                     if (self.join(x, self.meet(a, b)) !=
-                        self.meet(self.join(x, a), b)):
+                            self.meet(self.join(x, a), b)):
                         if certificate:
                             return (False, (x, a, b))
                         return False
@@ -3259,7 +3259,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         for i in range(n):
             for j in range(i):
                 if (o_meet(self[i], self[j]) not in self or
-                    o_join(self[i], self[j]) not in self):
+                        o_join(self[i], self[j]) not in self):
                     return False
         return True
 
@@ -3782,8 +3782,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     if certificate:
                         cert.append(e)
                     if i == 1 and o == 1:  # Remove inside the lattice
-                        lower = H.neighbors_in(e)[0]
-                        upper = H.neighbors_out(e)[0]
+                        lower = next(H.neighbor_in_iterator(e))
+                        upper = next(H.neighbor_out_iterator(e))
                         H.delete_vertex(e)
                         if upper not in H.depth_first_search(lower):
                             H.add_edge(lower, upper)
@@ -4125,9 +4125,12 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
         e = self._element_to_vertex(e)
         meetands = []
-        for a in H.neighbors_out(e):
-            above_a = list(H.depth_first_search(a))
-            go_up = lambda v: [v_ for v_ in H.neighbors_out(v) if v_ not in above_a]
+        for a in H.neighbor_out_iterator(e):
+            above_a = set(H.depth_first_search(a))
+
+            def go_up(v):
+                return [v_ for v_ in H.neighbor_out_iterator(v) if v_ not in above_a]
+
             result = None
             for v in H.depth_first_search(e, neighbors=go_up):
                 if H.out_degree(v) == 1 and next(H.neighbor_out_iterator(v)) in above_a:
@@ -4188,9 +4191,12 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
         e = self._element_to_vertex(e)
         joinands = []
-        for a in H.neighbors_in(e):
-            below_a = list(H.depth_first_search(a, neighbors=H.neighbors_in))
-            go_down = lambda v: [v_ for v_ in H.neighbors_in(v) if v_ not in below_a]
+        for a in H.neighbor_in_iterator(e):
+            below_a = set(H.depth_first_search(a, neighbors=H.neighbor_in_iterator))
+
+            def go_down(v):
+                return [v_ for v_ in H.neighbor_in_iterator(v) if v_ not in below_a]
+
             result = None
             for v in H.depth_first_search(e, neighbors=go_down):
                 if H.in_degree(v) == 1 and next(H.neighbor_in_iterator(v)) in below_a:
@@ -4200,7 +4206,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             joinands.append(result)
         return [self._vertex_to_element(v) for v in joinands]
 
-    def is_constructible_by_doublings(self, type):
+    def is_constructible_by_doublings(self, type) -> bool:
         r"""
         Return ``True`` if the lattice is constructible by doublings, and
         ``False`` otherwise.

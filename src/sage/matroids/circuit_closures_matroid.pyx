@@ -50,8 +50,8 @@ AUTHORS:
 TESTS::
 
     sage: from sage.matroids.advanced import *
-    sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())                    # optional - sage.rings.finite_rings
-    sage: TestSuite(M).run()                                                            # optional - sage.rings.finite_rings
+    sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())
+    sage: TestSuite(M).run()
 
 Methods
 =======
@@ -117,8 +117,8 @@ cdef class CircuitClosuresMatroid(Matroid):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())                # optional - sage.rings.finite_rings
-        sage: M                                                                         # optional - sage.rings.finite_rings
+        sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())
+        sage: M
         Matroid of rank 3 on 7 elements with circuit-closures
         {2: {{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
              {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
@@ -127,7 +127,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         ....:            circuit_closures={3: ['edfg', 'acdg', 'bcfg', 'cefh',
         ....:                 'afgh', 'abce', 'abdf', 'begh', 'bcdh', 'adeh'],
         ....:                              4: ['abcdefgh']})
-        sage: M.equals(matroids.named_matroids.P8())                                    # optional - sage.rings.finite_rings
+        sage: M.equals(matroids.named_matroids.P8())
         True
     """
 
@@ -140,8 +140,8 @@ cdef class CircuitClosuresMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())            # optional - sage.rings.finite_rings
-            sage: M                                                                     # optional - sage.rings.finite_rings
+            sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())
+            sage: M
             Matroid of rank 3 on 7 elements with circuit-closures
             {2: {{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
                  {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
@@ -152,7 +152,7 @@ cdef class CircuitClosuresMatroid(Matroid):
             ....:        circuit_closures={3: ['edfg', 'acdg', 'bcfg', 'cefh',
             ....:             'afgh', 'abce', 'abdf', 'begh', 'bcdh', 'adeh'],
             ....:                          4: ['abcdefgh']})
-            sage: M.equals(matroids.named_matroids.P8())                                # optional - sage.rings.finite_rings
+            sage: M.equals(matroids.named_matroids.P8())
             True
         """
         if M is not None:
@@ -348,17 +348,17 @@ cdef class CircuitClosuresMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())            # optional - sage.rings.finite_rings
-            sage: CC = M.circuit_closures()                                             # optional - sage.rings.finite_rings
-            sage: len(CC[2])                                                            # optional - sage.rings.finite_rings
+            sage: M = CircuitClosuresMatroid(matroids.named_matroids.Fano())
+            sage: CC = M.circuit_closures()
+            sage: len(CC[2])
             7
-            sage: len(CC[3])                                                            # optional - sage.rings.finite_rings
+            sage: len(CC[3])
             1
-            sage: len(CC[1])                                                            # optional - sage.rings.finite_rings
+            sage: len(CC[1])
             Traceback (most recent call last):
             ...
             KeyError: 1
-            sage: [sorted(X) for X in CC[3]]                                            # optional - sage.rings.finite_rings
+            sage: [sorted(X) for X in CC[3]]
             [['a', 'b', 'c', 'd', 'e', 'f', 'g']]
         """
         return self._circuit_closures
@@ -387,16 +387,16 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = CircuitClosuresMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
-            sage: M1 = CircuitClosuresMatroid(matroids.named_matroids.Fano())           # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.rings.finite_rings
+            sage: M1 = CircuitClosuresMatroid(matroids.named_matroids.Fano())
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1._is_isomorphic(M2)
             False
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.rings.finite_rings
+            sage: M1._is_isomorphic(M2, certificate=True)
             (False, None)
 
 
@@ -513,8 +513,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         N._groundset = self._groundset
         N._circuit_closures = self._circuit_closures
         N._matroid_rank = self._matroid_rank
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo=None):
@@ -539,8 +538,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -570,7 +568,7 @@ cdef class CircuitClosuresMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         import sage.matroids.unpickling
-        data = (self._groundset, self._circuit_closures, getattr(self, '__custom_name'))
+        data = (self._groundset, self._circuit_closures, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_circuit_closures_matroid, (version, data)
 

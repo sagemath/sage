@@ -280,7 +280,7 @@ class FMatrix(SageObject):
         n_vars = self.findcases()
         self._poly_ring = PolynomialRing(self._FR.field(), n_vars, var_prefix)
         if inject_variables:
-            print("creating variables %s%s..%s%s"%(var_prefix, 1, var_prefix, n_vars))
+            print("creating variables %s%s..%s%s" % (var_prefix, 1, var_prefix, n_vars))
             self._poly_ring.inject_variables(get_main_globals())
         self._idx_to_sextuple, self._fvars = self.findcases(output=True)
 
@@ -309,7 +309,7 @@ class FMatrix(SageObject):
             sage: FusionRing("B2", 1).get_fmatrix()
             F-Matrix factory for The Fusion Ring of Type B2 and level 1 with Integer Ring coefficients
         """
-        return "F-Matrix factory for %s"%self._FR
+        return "F-Matrix factory for %s" % self._FR
 
     def clear_equations(self):
         r"""
@@ -1229,11 +1229,6 @@ class FMatrix(SageObject):
         :meth:`shutdown_worker_pool` to close the pool and properly dispose
         of shared memory resources.
 
-        .. NOTE::
-
-            Python 3.8+ is required, since the ``multiprocessing.shared_memory``
-            module must be imported.
-
         INPUT:
 
         - ``processes`` -- an integer indicating the number of workers
@@ -1605,7 +1600,7 @@ class FMatrix(SageObject):
                 n = self.pool._processes
                 chunks = [[] for i in range(n)]
                 for i, eq_tup in enumerate(eqns):
-                    chunks[i%n].append(eq_tup)
+                    chunks[i % n].append(eq_tup)
                 eqns = chunks
             else:
                 eqns = [eqns]
@@ -1685,7 +1680,7 @@ class FMatrix(SageObject):
                 s = [v for v in eq.variables()]
             for x in s:
                 for y in s:
-                    if y!=x:
+                    if y != x:
                         G.add_edge(x, y)
         return G
 
@@ -1726,11 +1721,11 @@ class FMatrix(SageObject):
         if eqns is None:
             eqns = self.ideal_basis
         graph = self.equations_graph(eqns)
-        partition = {tuple(c): [] for c in graph.connected_components()}
+        partition = {tuple(c): [] for c in graph.connected_components(sort=True)}
         for eq_tup in eqns:
-            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0]))].append(eq_tup)
+            partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), len(graph.connected_components())))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
             print(graph.connected_components_sizes())
         return partition
 

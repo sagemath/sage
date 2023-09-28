@@ -242,7 +242,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
 
         """
         # This method is only required for the capital `C`
-        return "Cartesian products of %s"%(self.base_category()._repr_object_names())
+        return "Cartesian products of %s" % (self.base_category()._repr_object_names())
 
     def CartesianProducts(self):
         """
@@ -270,6 +270,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
             Integer Ring
         """
         return self.base_category().base_ring()
+
 
 # Moved to avoid circular imports
 lazy_import('sage.categories.sets_cat', 'cartesian_product')

@@ -8,6 +8,11 @@ on:
       - 'public/build/**-runci'
   pull_request:
     types:
+      # Defaults
+      - opened
+      - synchronize
+      - reopened
+      # When a CI label is added
       - labeled
   workflow_dispatch:
     # Allow to run manually
@@ -21,23 +26,36 @@ jobs:
   test:
     name: Conda
     runs-on: ${{ matrix.os }}
-    
-    # Run on push, workflow dispatch and when certain labels are added 
+
+    # Run on push, workflow dispatch and when certain labels are added or are present
     if: |
-      github.event.action != 'labeled' ||
-      github.event.label.name == 'c: packages: optional' || 
-      github.event.label.name == 'c: packages: standard' || 
-      github.event.label.name == 's: run conda ci'
+      github.event_name != 'pull_request' ||
+      ((github.event.action != 'labeled' &&
+         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
+          contains(github.event.pull_request.labels.*.name, 'c: packages: optional') ||
+          contains(github.event.pull_request.labels.*.name, 's: run conda ci'))) ||
+       (github.event.action == 'labeled' &&
+         (github.event.label.name == 'c: packages: optional' ||
+          github.event.label.name == 'c: packages: standard' ||
+          github.event.label.name == 's: run conda ci')))
 
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         python: ['3.9', '3.10', '3.11']
-        conda-env: [environment, environment-optional]
+        # Optional environment is disabled for now as its not yet working
+        # environment: [environment, environment-optional]
+        conda-env: [environment]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Check for Miniconda
         id: check_conda
@@ -87,9 +105,6 @@ jobs:
           echo "::remove-matcher owner=configure-system-package-warning::"
           echo "::remove-matcher owner=configure-system-package-error::"
 
-          # Manually install ptyprocess for now, until https://github.com/sagemath/sage/issues/32147 is fixed
-          pip install --no-build-isolation -v -v ptyprocess==0.5.1
-
       - name: Build
         shell: bash -l {0}
         run: |
@@ -100,19 +115,20 @@ jobs:
           SAGE_NUM_THREADS: 2
         
       - name: Verify dependencies
-        if: always()
+        if: success() || failure()
         shell: bash -l {0}
         run: pip check
 
       - name: Test
+        if: success() || failure()
         shell: bash -l {0}
         run: ./sage -t --all -p0
 
       - name: Print logs
+        if: always()
         run: |
           for file in $(find . -type f -name "*.log"); do
               echo "::group::$file"
               cat "$file"
               echo "::endgroup::"
           done
-        if: always()

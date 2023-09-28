@@ -45,7 +45,7 @@ def register_spawned_process(pid, cmd=''):
     # This is safe, since only this process writes to this file.
     try:
         with open(sage_spawned_process_file(), 'a') as o:
-            o.write('%s %s\n'%(pid, cmd))
+            o.write('%s %s\n' % (pid, cmd))
     except IOError:
         pass
     else:

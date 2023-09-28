@@ -133,7 +133,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             False
         """
         self._n = n
-        self._name = "Characteristic species of order %s"%n
+        self._name = "Characteristic species of order %s" % n
         self._state_info = [n]
         GenericCombinatorialSpecies.__init__(self, min=min, max=max, weight=weight)
 
