@@ -865,7 +865,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
+        assert (R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
         cat = GradedHopfAlgebras(R).Commutative().Cocommutative()
         if R in PrincipalIdealDomains():

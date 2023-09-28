@@ -1267,7 +1267,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         # Newton iteration
         # Todo: compute everything up to the adequate precision at each step
         b = ~dera
-        while(True):
+        while (True):
             na = a - selfa * b
             if na == a:
                 return a

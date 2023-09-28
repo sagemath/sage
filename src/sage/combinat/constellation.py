@@ -565,7 +565,7 @@ class Constellation_class(Element):
             True
         """
         if return_map:
-            if not(self.degree() == other.degree() and
+            if not (self.degree() == other.degree() and
                    self.length() == other.length()):
                 return False, None
             sn, sn_map = self.relabel(return_map=True)

@@ -141,7 +141,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         if len(crystals) == 0:
             raise ValueError("the direct sum is empty")
         else:
-            assert(crystal.cartan_type() == crystals[0].cartan_type() for crystal in crystals)
+            assert (crystal.cartan_type() == crystals[0].cartan_type() for crystal in crystals)
             self._cartan_type = crystals[0].cartan_type()
         if keepkey:
             self.module_generators = tuple([ self((i,b)) for i,B in enumerate(crystals)

@@ -4345,7 +4345,7 @@ class ClusterSeed(SageObject):
                     j = i.mutate(k, inplace=False)
                     Varj = tuple(sorted(j.cluster()))
                     covers.append((Vari, Varj))
-                    if not(Varj in known_clusters):
+                    if not (Varj in known_clusters):
                         known_clusters += [Varj]
                         stack.append(j)
 

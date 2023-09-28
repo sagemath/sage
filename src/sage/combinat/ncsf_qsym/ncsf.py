@@ -410,7 +410,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: TestSuite(NonCommutativeSymmetricFunctions(QQ)).run()
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings())  # side effect of this statement assures MRO exists for R
+        assert (R in Fields() or R in Rings())  # side effect of this statement assures MRO exists for R
         self._base = R  # Won't be needed once CategoryObject won't override base_ring
         cat = GradedHopfAlgebras(R).WithRealizations().Cocommutative()
         Parent.__init__(self, category=cat)

@@ -725,7 +725,7 @@ class ContinuedFraction_base(SageObject):
             # in order to find the nearest approximation we possibly need to
             # augment our precision on convergents.
             while True:
-                assert not(p_odd << (N+1) <= (2*m_odd-1) * q_odd) or not(p_even << (N+1) >= (2*m_even+1) * q_even)
+                assert not (p_odd << (N+1) <= (2*m_odd-1) * q_odd) or not (p_even << (N+1) >= (2*m_even+1) * q_even)
                 if p_odd << (N+1) <= (2*m_odd-1) * q_odd:
                     return R(sgn * m_even) >> N
                 if p_even << (N+1) >= (2*m_even+1) * q_even:

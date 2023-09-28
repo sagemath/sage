@@ -445,10 +445,10 @@ class Derangements(UniqueRepresentation, Parent):
         mark = [x < 0 for x in A]
         i, u = n, n
         while u >= 2:
-            if not(mark[i - 1]):
+            if not (mark[i - 1]):
                 while True:
                     j = randrange(1, i)
-                    if not(mark[j - 1]):
+                    if not (mark[j - 1]):
                         A[i - 1], A[j - 1] = A[j - 1], A[i - 1]
                         break
                 p = random()

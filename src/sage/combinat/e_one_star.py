@@ -287,7 +287,7 @@ class Face(SageObject):
         self._vector = (ZZ**len(v))(v)
         self._vector.set_immutable()
 
-        if not((t in ZZ) and 1 <= t <= len(v)):
+        if not ((t in ZZ) and 1 <= t <= len(v)):
             raise ValueError('the type must be an integer between 1 and len(v)')
         self._type = t
 

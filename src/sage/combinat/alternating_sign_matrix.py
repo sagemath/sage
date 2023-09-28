@@ -1823,7 +1823,7 @@ class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
             <class 'sage.combinat.alternating_sign_matrix.ContreTableaux_n'>
 
         """
-        assert(isinstance(n, (int, Integer)))
+        assert (isinstance(n, (int, Integer)))
         return ContreTableaux_n(n, **kwds)
 
 
@@ -1985,7 +1985,7 @@ class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
             <class 'sage.combinat.alternating_sign_matrix.TruncatedStaircases_nlastcolumn'>
 
         """
-        assert(isinstance(n, (int, Integer)))
+        assert (isinstance(n, (int, Integer)))
         return TruncatedStaircases_nlastcolumn(n, last_column, **kwds)
 
 

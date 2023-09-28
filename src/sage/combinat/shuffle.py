@@ -220,10 +220,10 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             [[2, 3, 4, 5], [2, 5, 3, 4], [5, 2, 3, 4], [2, 3, 5, 4],
              [1, 2, 3, 5], [1, 5, 2, 3], [5, 1, 2, 3], [1, 2, 5, 3]]
         """
-        assert(isinstance(l1, Iterable) and
+        assert (isinstance(l1, Iterable) and
                isinstance(l2, Iterable))
-        assert(all(isinstance(elem, Iterable) for elem in l1))
-        assert(all(isinstance(elem, Iterable) for elem in l2))
+        assert (all(isinstance(elem, Iterable) for elem in l1))
+        assert (all(isinstance(elem, Iterable) for elem in l2))
 
         if element_constructor is None:
             try:
@@ -361,7 +361,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
             [word: aabbb, word: baabb, word: ababb, word: bbaab, word: babab, word: abbab,
              word: bbbaa, word: bbaba, word: babba, word: abbba]
         """
-        assert(isinstance(l1, Iterable) and isinstance(l2, Iterable))
+        assert (isinstance(l1, Iterable) and isinstance(l2, Iterable))
 
         if element_constructor is None:
             try:

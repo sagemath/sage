@@ -292,7 +292,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
             # Check that the fundamental weights form the dual basis of the simple coroots
             for i in self.index_set():
-                assert(Lambda[i].is_dominant())
+                assert (Lambda[i].is_dominant())
                 for j in self.index_set():
                     tester.assertEqual(Lambda[j].scalar(alphacheck[i]), (1 if i == j else 0))
 
