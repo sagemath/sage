@@ -230,11 +230,11 @@ ARG EXTRA_CONFIGURE_ARGS=""
 EOF
 if [ ${WITH_SYSTEM_SPKG} = "force" ]; then
     cat <<EOF
-$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "********** configuring without forcing ***********"; cat config.log; ./configure --enable-build-as-root; cat config.log; exit 1) $ENDRUN
+$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "********** configuring without forcing ***********"; echo "::group::config.log"; cat config.log; echo "::endgroup::"; ./configure --enable-build-as-root; echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN
 EOF
 else
     cat <<EOF
-$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (cat config.log; exit 1) $ENDRUN
+$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN
 EOF
 fi
 cat <<EOF
