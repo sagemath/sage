@@ -32,6 +32,10 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      - name: Install git
+        run: sudo apt-get install git-core
+        if: ${{ github.event_name == 'pull_request' }}
+
       - name: Install GH CLI
         uses: dev-hanz-ops/install-gh-cli-action@v0.1.0
         if: ${{ github.event_name == 'pull_request' }}
