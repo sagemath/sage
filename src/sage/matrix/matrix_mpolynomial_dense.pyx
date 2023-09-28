@@ -656,13 +656,13 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
         n_rows, n_cols = self.dimensions()
         mat_l = identity_matrix(R, n_rows)
         mat_r = identity_matrix(R, n_cols)
-        res = self
-        for j, rw in enumerate(self.rows()):
+        res = self.__copy__()
+        for j, rw in enumerate(res.rows()):
             for t in R.gens():
                 n = min(mon.degree(t) for a in rw for cf, mon in a)
                 res.rescale_row(j, t ** -n)
                 mat_l.rescale_col(j, t ** n)
-        for j, cl in enumerate(self.columns()):
+        for j, cl in enumerate(res.columns()):
             for t in R.gens():
                 n = min(mon.degree(t) for a in cl for cf, mon in a)
                 res.rescale_col(j, t ** -n)

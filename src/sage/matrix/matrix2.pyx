@@ -15902,7 +15902,7 @@ cdef class Matrix(Matrix1):
             dd, uu, vv = mm.smith_form(transformation=True)
         else:
             dd = mm.smith_form(transformation=False)
-        d = dd.new_matrix(1,1,[t[0,0]]).block_sum(dd)
+        d = dd.new_matrix(1, 1, [t[0, 0]]).block_sum(dd)
         if transformation:
             u = uu.new_matrix(1, 1, [1]).block_sum(uu) * u
             v = v * vv.new_matrix(1, 1, [1]).block_sum(vv)
@@ -18121,9 +18121,9 @@ def _smith_diag(d, transformation=True):
     else:
         left = right = None
     for i in range(n):
-        I = ideal_or_fractional(R, dp[i,  i])
+        I0 = ideal_or_fractional(R, dp[i, i])
 
-        if I == ideal_or_fractional(R, 1):
+        if I0 == ideal_or_fractional(R, 1):
             if dp[i, i] != 1:
                 if transformation:
                     left.add_multiple_of_row(i, i, R(R(1) / (dp[i, i])) - 1)
@@ -18131,7 +18131,7 @@ def _smith_diag(d, transformation=True):
             continue
 
         for j in range(i + 1, n):
-            if dp[j, j] not in I:
+            if dp[j, j] not in I0:
                 t = ideal_or_fractional(R, [dp[i, i], dp[j, j]]).gens_reduced()
                 if len(t) > 1:
                     raise ArithmeticError
@@ -18215,9 +18215,9 @@ def _generic_clear_column(m):
     # [e,f]
     # is invertible over R
 
-    I = ideal_or_fractional(R, a[0, 0])  # need to make sure we change this when a[0,0] changes
+    I0 = ideal_or_fractional(R, a[0, 0])  # need to make sure we change this when a[0,0] changes
     for k in range(1, a.nrows()):
-        if a[k, 0] not in I:
+        if a[k, 0] not in I0:
             try:
                 v = ideal_or_fractional(R, a[0, 0], a[k, 0]).gens_reduced()
             except Exception as msg:
@@ -18257,7 +18257,7 @@ def _generic_clear_column(m):
             if newlmat.det() != 1:
                 raise ArithmeticError
             a = newlmat*a
-            I = ideal_or_fractional(R, a[0, 0])
+            I0 = ideal_or_fractional(R, a[0, 0])
             left_mat = newlmat*left_mat
             if left_mat * m != a:
                 raise ArithmeticError
