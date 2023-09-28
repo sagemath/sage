@@ -517,7 +517,7 @@ class TranspositionCipher(SymmetricKeyCipher):
         g = self.key()
         N = len(M)
         m = self.parent().block_length()
-        if not N%m == 0:
+        if not N % m == 0:
             raise TypeError("Argument M (= %s) must be a string of length k*%s." % (M, m))
         Melt = M._element_list # this uses the internal structure of string monoids
         # Caution: this is parsed as an outer loop in k and an inner loop in i:
@@ -572,7 +572,7 @@ class VigenereCipher(SymmetricKeyCipher):
         # This uses the internal structure of string monoids
         Melt = M._element_list
         Kelt = K._element_list
-        return S([ (Melt[i]+Kelt[i%m])%n for i in range(len(M)) ])
+        return S([ (Melt[i]+Kelt[i % m]) % n for i in range(len(M)) ])
 
     def inverse(self):
         E = self.parent()

@@ -273,7 +273,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
     #If the valuation of a prime in the resultant is small enough, we can say the
     #map is affine minimal at that prime without using the local minimality loop. See
     #Theorem 3.2.2 in [Molnar, M.Sc. thesis]
-    if d%2 == 0:
+    if d % 2 == 0:
         g = d
     else:
         g = 2*d
@@ -1106,7 +1106,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         rep = 2*CC.gen(0)
         from math import isnan
         if isnan(v0.abs()):
-            raise ValueError("invalid covariant: %s"%v0)
+            raise ValueError("invalid covariant: %s" % v0)
 
         # get orbit
         S = matrix(ZZ,2,2,[0,-1,1,0])
