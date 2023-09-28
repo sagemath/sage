@@ -306,6 +306,13 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                         pass
                     else:
                         return matrix_mpolynomial_dense.Matrix_mpolynomial_dense
+                elif isinstance(R, sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_mpair) and R.base_ring() in _Fields:
+                    try:
+                        from . import matrix_mpolynomial_dense
+                    except ImportError:
+                        pass
+                    else:
+                        return matrix_mpolynomial_dense.Matrix_laurent_mpolynomial_dense
 
             # The fallback
             from sage.matrix.matrix_generic_dense import Matrix_generic_dense
@@ -795,7 +802,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
         """
         return MatrixSpace(self._base, self.__ncols, self.__nrows,
-                self.__is_sparse, self.Element)
+                           self.__is_sparse, self.Element)
 
     @lazy_attribute
     def _copy_zero(self):
@@ -2179,7 +2186,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return self.__row_space
         except AttributeError:
             self.__row_space = sage.modules.free_module.FreeModule(self.base_ring(),
-                                                self.ncols(), sparse=self.is_sparse())
+                                                                   self.ncols(), sparse=self.is_sparse())
             return self.__row_space
 
     def column_space(self):
@@ -2197,7 +2204,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return self.__column_space
         except AttributeError:
             self.__column_space = sage.modules.free_module.FreeModule(self.base_ring(), self.nrows(),
-                                                                   sparse=self.is_sparse())
+                                                                      sparse=self.is_sparse())
             return self.__column_space
 
     def random_element(self, density=None, *args, **kwds):
@@ -2255,10 +2262,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Z = self.zero_matrix().__copy__()
         if density is None:
             Z.randomize(density=float(1), nonzero=kwds.pop('nonzero', False),
-                *args, **kwds)
+                        *args, **kwds)
         else:
             Z.randomize(density=density, nonzero=kwds.pop('nonzero', True),
-                *args, **kwds)
+                        *args, **kwds)
         return Z
 
     def _an_element_(self):
@@ -2582,13 +2589,13 @@ def _MatrixSpace_ZZ_2x2():
 
 
 register_unpickle_override('sage.matrix.matrix_modn_dense',
-    'Matrix_modn_dense', Matrix_modn_dense_double)
+                           'Matrix_modn_dense', Matrix_modn_dense_double)
 register_unpickle_override('sage.matrix.matrix_integer_2x2',
-    'Matrix_integer_2x2', Matrix_integer_dense)
+                           'Matrix_integer_2x2', Matrix_integer_dense)
 register_unpickle_override('sage.matrix.matrix_integer_2x2',
-    'MatrixSpace_ZZ_2x2_class', MatrixSpace)
+                           'MatrixSpace_ZZ_2x2_class', MatrixSpace)
 register_unpickle_override('sage.matrix.matrix_integer_2x2',
-    'MatrixSpace_ZZ_2x2', _MatrixSpace_ZZ_2x2)
+                           'MatrixSpace_ZZ_2x2', _MatrixSpace_ZZ_2x2)
 lazy_import('sage.matrix.matrix_gf2e_dense', 'unpickle_matrix_gf2e_dense_v0')
 register_unpickle_override('sage.matrix.matrix_mod2e_dense',
-    'unpickle_matrix_mod2e_dense_v0', unpickle_matrix_gf2e_dense_v0)
+                           'unpickle_matrix_mod2e_dense_v0', unpickle_matrix_gf2e_dense_v0)
