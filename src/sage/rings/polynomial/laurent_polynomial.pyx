@@ -1317,7 +1317,18 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         raise ArithmeticError("element is not a unit")
 
     def xgcd(self, other):
+        """
+        Extended `gcd` for univariate Laurent polynomial rings over a field.
+
+        EXAMPLES::
+
+            sage: S.<t> = LaurentPolynomialRing(QQ)
+            sage: (t^-2 + 1).xgcd(t^-3 + 1)
+            (1, 1/2*t^2 - 1/2*t^3 - 1/2*t^4, 1/2*t^3 + 1/2*t^4)
+        """
         R = self.parent()
+        if not R.is_exact() or not R.base_ring().is_field:
+            raise NotImplementedError("Not implemented")
         S = R.polynomial_ring()
         f, df = self.monomial_reduction()
         g, dg = other.monomial_reduction()
@@ -1335,49 +1346,13 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         EXAMPLES::
 
             sage: S.<t> = LaurentPolynomialRing(QQ)
-            sage: f = inverse_mod(t^2 + 1, t^3 + 1); f
-            -1/2*t^2 - 1/2*t + 1/2
-            sage: f * (t^2 + 1) % (t^3 + 1)
+            sage: f = inverse_mod(t^-2 + 1, t^-3 + 1); f
+            1/2*t^2 - 1/2*t^3 - 1/2*t^4
+            sage: f * (t^-2 + 1) + (1/2*t^4 + 1/2*t^3) * (t^-3 + 1)
             1
-            sage: f = t.inverse_mod((t + 1)^7); f
-            -t^6 - 7*t^5 - 21*t^4 - 35*t^3 - 35*t^2 - 21*t - 7
-            sage: (f * t) + (t + 1)^7
-            1
-            sage: t.inverse_mod(S.ideal((t + 1)^7)) == f
-            True
-
-        This also works over inexact rings, but note that due to rounding
-        error the product may not always exactly equal the constant
-        polynomial 1 and have extra terms with coefficients close to zero. ::
-
-            sage: # needs sage.modules
-            sage: R.<x> = RDF[]
-            sage: epsilon = RDF(1).ulp()*50   # Allow an error of up to 50 ulp
-            sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14
-            0.4*x^4 - 0.2*x^3 - 0.4*x^2 + 0.2*x + 0.8
-            sage: poly = f * (x^2 + 1) % (x^5 + x + 1)
-            sage: # Remove noisy zero terms:
-            sage: parent(poly)([0.0 if abs(c) <= epsilon else c
-            ....:               for c in poly.coefficients(sparse=False)])
-            1.0
-            sage: f = inverse_mod(x^3 - x + 1, x - 2); f
-            0.14285714285714285
-            sage: f * (x^3 - x + 1) % (x - 2)
-            1.0
-            sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; f = inverse_mod(g, m); f
-            -0.0319636125...*x^3 - 0.0383269759...*x^2 - 0.0463050900...*x + 0.346479687...
-            sage: poly = f*g % m
-            sage: # Remove noisy zero terms:
-            sage: parent(poly)([0.0 if abs(c) <= epsilon else c  # abs tol 1e-14
-            ....:               for c in poly.coefficients(sparse=False)])
-            1.0000000000000004
 
         ALGORITHM: Solve the system `as + mt = 1`, returning `s` as the inverse
         of `a` mod `m`.
-
-        Uses the Euclidean algorithm for exact rings, and solves a linear
-        system for the coefficients of `s` and `t` for inexact rings (as the
-        Euclidean algorithm may not converge in that case).
         """
         from sage.rings.ideal import is_Ideal
         if is_Ideal(m):
@@ -1393,41 +1368,15 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             u = a(r)
             if u.is_unit():
                 return a.parent()(~u)
-        if a.parent().is_exact():
-            # use xgcd
-            g, s, _ = a.xgcd(m)
-            if g == 1:
-                return s
-            elif g.is_unit():
-                return g.inverse_of_unit() * s
-            else:
-                raise ValueError("Impossible inverse modulo")
+        if not a.parent().is_exact():
+            raise NotImplementedError("Not implemented")
+        g, s, _ = a.xgcd(m)
+        if g == 1:
+            return s
+        elif g.is_unit():
+            return g.inverse_of_unit() * s
         else:
-            # xgcd may not converge for inexact rings.
-            # Instead solve for the coefficients of
-            # s (degree n-1) and t (degree n-2) in
-            #               as + mt = 1
-            # as a linear system.
-            from sage.matrix.constructor import matrix
-            from sage.modules.free_module_element import vector
-            a %= m
-            n = m.degree()
-            R = a.parent().base_ring()
-            M = matrix(R, 2*n-1)
-            # a_i s_j x^{i+j} terms
-            for i in range(n):
-                for j in range(n):
-                    M[i+j, j] = a[i]
-            # m_i t_j x^{i+j} terms
-            for i in range(n+1):
-                for j in range(n-1):
-                    M[i+j, j+n] = m[i]
-            v = vector(R, [R.one()] + [R.zero()]*(2*n-2))  # the constant polynomial 1
-            if M.is_invertible():
-                x = M.solve_right(v)  # there has to be a better way to solve
-                return a.parent()(list(x)[0:n])
-            else:
-                raise ValueError("Impossible inverse modulo")
+            raise ValueError("Impossible inverse modulo")
 
     def _fraction_pair(self):
         """

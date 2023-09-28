@@ -1784,21 +1784,25 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
              (f1 - 1, f2 - 1, f3 - 1),
              (f1 - 1, f2 + 1, f3 - 1),
              (f1 + 1, f2 - 1, f3 - 1)],
-            3: [(f1 - 1, f2 - 1, f3 - 1)]}
+            3: [(f1 - 1, f2 - 1, f3 - 1)],
+            4: []}
             sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
             sage: G.characteristic_varieties()
             {0: Ideal (0, 0) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
              1: Ideal (0, -2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
-             2: Ideal (f1 - 1, f2 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field}
+             2: Ideal (f1 - 1, f2 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             3: Ideal (0, 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field}
             sage: G.characteristic_varieties(ring=ZZ)
             {0: Ideal (0, 0) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
              1: Ideal (0, -2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
-             2: Ideal (f1 - 1, f2 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
+             2: Ideal (f1 - 1, f2 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             3: Ideal (0, 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
             sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
             sage: G.characteristic_varieties()
             {0: Ideal (0, 0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
              1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3, 1 - 2*f2 + 2*f2^2 - f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             2: Ideal (0, 1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
+             2: Ideal (0, 1) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             3: Ideal (0, 1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
             sage: G.characteristic_varieties(groebner=True)
             {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: [1]}
         """
@@ -1813,7 +1817,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         K = R.base_ring()
         id_rels = R.ideal(rels)
         res = dict()
-        for j in range(n + 1):
+        for j in range(n + 2):
             # J = id_rels + A.fitting_ideal(j)
             J = R.ideal(id_rels.gens() + A.fitting_ideal(j).gens())
             if j <= n1:
@@ -1824,9 +1828,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         if not groebner or not ring.is_field():
             return res
         if R.ngens() == 1:
-            res = {j: gcd(S(p) for p in res[j].gens()) for j in range(n + 1)}
+            res = {j: gcd(S(p) for p in res[j].gens()) for j in range(n + 2)}
             char_var = dict()
-            for j in range(n + 1):
+            strict = True
+            j = 0
+            while strict and j <= n + 1:
                 if res[j] == 0:
                     char_var[j] = [R(0)]
                 else:
@@ -1835,15 +1841,19 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                         char_var[j] = fct
                     else:
                         char_var[j] = [R(1)]
+                        strict = False
+                j += 1
             return char_var
         char_var = dict()
-        for j in range(n + 1):
+        strict = True
+        j = 0
+        while strict and j <= n + 1:
             LJ = res[j].minimal_associated_primes()
             fct = [id.groebner_basis() for id in LJ]
-            if fct != [(S.one(), )]:
-                char_var[j] = fct
-            else:
-                char_var[j] = [R(1)]
+            char_var[j] = fct
+            if not fct:
+                strict = False
+            j += 1
         return char_var
 
     def rewriting_system(self):
