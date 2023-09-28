@@ -32,9 +32,12 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
-      - name: Install git
-        run: sudo apt-get install git-core
-        if: ${{ github.event_name == 'pull_request' }}
+      - name: Update system packages
+        id: prepare
+        run: |
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
 
       - name: Install GH CLI
         uses: dev-hanz-ops/install-gh-cli-action@v0.1.0
@@ -48,13 +51,6 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-
-      - name: Update system packages
-        id: prepare
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
 
       - name: Add prebuilt tree as a worktree
         id: worktree
