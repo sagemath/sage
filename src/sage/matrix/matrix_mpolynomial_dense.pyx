@@ -669,3 +669,49 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
                 mat_r.rescale_row(j, t ** n)
         res = res.change_ring(R.polynomial_ring())
         return mat_l, res, mat_r
+
+    def _fitting_ideal(self, i):
+        r"""
+        Return the `i`-th Fitting ideal of the matrix. This is the ideal generated
+        by the `n - i` minors, where `n` is the number of columns.
+
+        INPUT:
+
+        ``i`` -- an integer
+
+        OUTPUT:
+
+        An ideal on the base ring.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = LaurentPolynomialRing(QQ)
+            sage: M = matrix(R, [[2*x^-1-z, 0, y-z^-2, 0], [0, z - y^-1, z - x, 0],[z - y, x^-2 - y, 0, z]])
+            sage: M
+            [-z + 2*x^-1           0    y - z^-2           0]
+            [          0    z - y^-1      -x + z           0]
+            [     -y + z   -y + x^-2           0           z]
+            sage: M.fitting_ideal(0)
+            Ideal (0) of Multivariate Laurent Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(1) == M._fitting_ideal(1)
+            True
+            sage: M.fitting_ideal(1).groebner_basis()
+            (x^4 - 2*x^3*y - x*z^3 - 4*x^2*y + 8*x*y^2 + 4*x*y*z + 2*z^2 - 8*y,
+            x*y*z^2 - x*z - 2*y*z + 2,
+            x^2*z - x*z^2 - 2*x + 2*z,
+            y^2*z + 1/4*x^2 - 1/2*x*y - 1/4*x*z - y + 1/2)
+            sage: M.fitting_ideal(2).groebner_basis()
+            (1,)
+            sage: M.fitting_ideal(3).groebner_basis()
+            (1,)
+            sage: M.fitting_ideal(4).groebner_basis()
+            (1,)
+            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
+            [True, True, True, True, True]
+
+        """
+        R = self.base_ring()
+        S = R.polynomial_ring()
+        A = self.laurent_matrix_reduction()[1].change_ring(S)
+        J = A._fitting_ideal(i)
+        return J.change_ring(R)
