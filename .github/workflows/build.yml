@@ -24,9 +24,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  get_ci_fixes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Store CI fixes in upstream artifact
+        run: |
+          mkdir -p upstream
+          git format-patch --stdout test_base > upstream/ci_fixes.patch
+      - uses: actions/upload-artifact@v3
+        with:
+          path: upstream
+          name: upstream
+
   build:
     runs-on: ubuntu-latest
     container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    needs: [get_ci_fixes]
     steps:
       - name: Checkout
         id: checkout
@@ -68,6 +89,19 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
 
+      - name: Download upstream artifact
+        uses: actions/download-artifact@v3
+        with:
+          path: upstream
+          name: upstream
+
+      - name: Apply CI fixes from sagemath/sage
+        # After applying the fixes, make sure all changes are marked as uncommitted changes.
+        run: |
+          if [ -r upstream/ci_fixes.patch ]; then
+            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
+          fi
+
       - name: Incremental build, test changed files (sage -t --new)
         id: incremental
         run: |
@@ -76,7 +110,7 @@ jobs:
           ./bootstrap && make build && ./sage -t --new -p2
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build and test modularized distributions
@@ -84,7 +118,7 @@ jobs:
         run: make V=0 tox && make pypi-wheels
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Set up node to install pyright
@@ -123,7 +157,7 @@ jobs:
           make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Pytest

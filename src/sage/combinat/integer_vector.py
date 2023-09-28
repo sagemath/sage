@@ -111,8 +111,8 @@ def is_gale_ryser(r,s):
     # builds the corresponding partitions, i.e.
     # removes the 0 and sorts the sequences
     from sage.combinat.partition import Partition
-    r2 = Partition(sorted([x for x in r if x>0], reverse=True))
-    s2 = Partition(sorted([x for x in s if x>0], reverse=True))
+    r2 = Partition(sorted([x for x in r if x > 0], reverse=True))
+    s2 = Partition(sorted([x for x in s if x > 0], reverse=True))
 
     # If the two sequences only contained zeroes
     if len(r2) == 0 and len(s2) == 0:
@@ -361,13 +361,13 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
 
     elif algorithm == "gale":
         from sage.numerical.mip import MixedIntegerLinearProgram
-        k1, k2=len(p1), len(p2)
+        k1, k2 = len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
         for (i,c) in enumerate(p1):
-            p.add_constraint(p.sum([b[i,j] for j in range(k2)]) ==c)
+            p.add_constraint(p.sum([b[i,j] for j in range(k2)]) == c)
         for (i,c) in enumerate(p2):
-            p.add_constraint(p.sum([b[j,i] for j in range(k1)]) ==c)
+            p.add_constraint(p.sum([b[j,i] for j in range(k1)]) == c)
         p.set_objective(None)
         p.solve()
         b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
