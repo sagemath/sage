@@ -140,6 +140,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
             return Unknown
         raise NotImplementedError("I don't know how to build a ({},{},1)-RBIBD!".format(v,3))
 
+
 def kirkman_triple_system(v,existence=False):
     r"""
     Return a Kirkman Triple System on `v` points.
@@ -437,6 +438,7 @@ def v_4_1_rbibd(v,existence=False):
     assert BIBD.is_resolvable()
     return BIBD
 
+
 def PBD_4_7(v,check=True, existence=False):
     r"""
     Return a `(v,\{4,7\})`-PBD
@@ -682,6 +684,7 @@ def PBD_4_7(v,check=True, existence=False):
                                   K=[4,7],
                                   check=check,
                                   copy=False)
+
 
 def PBD_4_7_from_Y(gdd,check=True):
     r"""
