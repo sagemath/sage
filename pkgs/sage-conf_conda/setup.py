@@ -3,6 +3,9 @@ import sys
 import shutil
 import sysconfig
 import platform
+import fnmatch
+
+from pathlib import Path
 
 from setuptools import setup
 from distutils.command.build_scripts import build_scripts as distutils_build_scripts
@@ -25,27 +28,28 @@ class build_py(setuptools_build_py):
         arch_tag = f'{system}-{machine}'
         # TODO: These two should be user-configurable with options passed to "setup.py install"
         SAGE_ROOT = os.path.join(DOT_SAGE, f'sage-{sage_version}-{arch_tag}-conda')
-        SAGE_LOCAL = os.path.join(SAGE_ROOT, 'local')
+
+        def ignore(path, names):
+            # exclude all embedded src trees
+            if fnmatch.fnmatch(path, f'*/build/pkgs/*'):
+                return ['src']
+            ### ignore more stuff --- .tox etc.
+            return [name for name in names
+                    if name in ('.tox',)]
+
         if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
             print(f'Reusing SAGE_ROOT={SAGE_ROOT}')
         else:
             # config.status and other configure output has to be writable.
             # So (until the Sage distribution supports VPATH builds - #21469), we have to make a copy of sage_root.
             try:
-                shutil.copytree('sage_root', SAGE_ROOT)  # will fail if already exists
-            except Exception:
-                raise DistutilsSetupError(f"the directory SAGE_ROOT={SAGE_ROOT} already exists but it is not configured.  Please remove it and try again.")
-            cmd = f"cd {SAGE_ROOT} && {SETENV} && ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --with-sage-venv --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc"
-            cmd += """
-                    --with-python=$CONDA_PREFIX/bin/python             \
-                    --prefix=$CONDA_PREFIX                             \
-                    --enable-system-site-packages                      \
-                    $(for pkg in $(./sage -package list :standard:     \
-                                     --exclude rpy2                    \
-                                     --has-file spkg-configure.m4      \
-                                     --has-file distros/conda.txt); do \
-                          echo --with-system-$pkg=force;               \
-                      done)"""
+                shutil.copytree('sage_root', SAGE_ROOT,
+                                ignore=ignore)  # will fail if already exists
+            except Exception as e:
+                raise DistutilsSetupError(f"the directory SAGE_ROOT={SAGE_ROOT} already exists but it is not configured.  Please remove it and try again. (Exception: {e})")
+            cmd = f"cd {SAGE_ROOT} && ./configure --enable-build-as-root --with-system-python3=force --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc"
+            cmd += ' --with-python=$CONDA_PREFIX/bin/python --prefix="$CONDA_PREFIX" --enable-system-site-packages'
+            cmd += ' $(for pkg in $(build/bin/sage-package list :standard: --exclude rpy2 --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)'
             print(f"Running {cmd}")
             sys.stdout.flush()
             if os.system(cmd) != 0:
