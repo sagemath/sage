@@ -93,13 +93,12 @@ REFERENCES:
 # *****************************************************************************
 
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
-import random
+from random import randint
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
-
+from sage.libs.gap.libgap import libgap
 from sage.rings.real_double import RDF
-from sage.interfaces.gap import gap
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.polygon", "polygon")
@@ -931,19 +930,19 @@ class CubeGroup(PermutationGroup_generic):
         """
         g = self.parse(mv)
         lst = self.facets(g)
-        line1 = "             +--------------+\n"
-        line2 = "             |%3d  %3d  %3d |\n"%(lst[0],lst[1],lst[2])
-        line3 = "             |%3d   top %3d |\n"%(lst[3],lst[4])
-        line4 = "             |%3d  %3d  %3d |\n"%(lst[5],lst[6],lst[7])
-        line5 = "+------------+--------------+-------------+------------+\n"
-        line6 = "|%3d %3d %3d |%3d  %3d  %3d |%3d  %3d %3d |%3d %3d %3d |\n"%(lst[8],lst[9],lst[10],lst[16],lst[17],lst[18],lst[24],lst[25],lst[26],lst[32],lst[33],lst[34])
-        line7 = "|%3d left%3d |%3d  front%3d |%3d right%3d |%3d rear%3d |\n"%(lst[11],lst[12],lst[19],lst[20],lst[27],lst[28],lst[35],lst[36])
-        line8 = "|%3d %3d %3d |%3d  %3d  %3d |%3d  %3d %3d |%3d %3d %3d |\n"%(lst[13],lst[14],lst[15],lst[21],lst[22],lst[23],lst[29],lst[30],lst[31],lst[37],lst[38],lst[39])
-        line9 = "+------------+--------------+-------------+------------+\n"
-        line10 = "             |%3d  %3d  %3d |\n"%(lst[40],lst[41],lst[42])
-        line11 = "             |%3d bottom%3d |\n"%(lst[43],lst[44])
-        line12 = "             |%3d  %3d  %3d |\n"%(lst[45],lst[46],lst[47])
-        line13 = "             +--------------+\n"
+        line1 = "             ┌──────────────┐\n"
+        line2 = "             │%3d  %3d  %3d │\n"%(lst[0],lst[1],lst[2])
+        line3 = "             │%3d   top %3d │\n"%(lst[3],lst[4])
+        line4 = "             │%3d  %3d  %3d │\n"%(lst[5],lst[6],lst[7])
+        line5 = "┌────────────┼──────────────┼─────────────┬────────────┐\n"
+        line6 = "│%3d %3d %3d │%3d  %3d  %3d │%3d  %3d %3d │%3d %3d %3d │\n"%(lst[8],lst[9],lst[10],lst[16],lst[17],lst[18],lst[24],lst[25],lst[26],lst[32],lst[33],lst[34])
+        line7 = "│%3d left%3d │%3d  front%3d │%3d right%3d │%3d rear%3d │\n"%(lst[11],lst[12],lst[19],lst[20],lst[27],lst[28],lst[35],lst[36])
+        line8 = "│%3d %3d %3d │%3d  %3d  %3d │%3d  %3d %3d │%3d %3d %3d │\n"%(lst[13],lst[14],lst[15],lst[21],lst[22],lst[23],lst[29],lst[30],lst[31],lst[37],lst[38],lst[39])
+        line9 = "└────────────┼──────────────┼─────────────┴────────────┘\n"
+        line10 = "             │%3d  %3d  %3d │\n"%(lst[40],lst[41],lst[42])
+        line11 = "             │%3d bottom%3d │\n"%(lst[43],lst[44])
+        line12 = "             │%3d  %3d  %3d │\n"%(lst[45],lst[46],lst[47])
+        line13 = "             └──────────────┘\n"
         return line1+line2+line3+line4+line5+line6+line7+line8+line9+line10+line11+line12+line13
 
     def plot_cube(self, mv, title=True, colors=[lpurple, yellow, red, green, orange, blue]):
@@ -1107,7 +1106,7 @@ class CubeGroup(PermutationGroup_generic):
             C = RubiksCube(g)
             return C.solve(algorithm)
 
-        hom = self._gap_().EpimorphismFromFreeGroup()
+        hom = libgap(self).EpimorphismFromFreeGroup()
         soln = hom.PreImagesRepresentative(str(g))
         sol = str(soln)
         names = self.gen_names()
@@ -1352,8 +1351,8 @@ class RubiksCube(SageObject):
             sage: C.cubie(0.15, 0.025, 0,0,0, C.colors*3)                               # needs sage.plot
             Graphics3d Object
         """
-        sides = cubie_face_list[x,y,z]
-        t = 2*size+gap
+        sides = cubie_face_list[x, y, z]
+        t = 2 * size + gap
         my_colors = [colors[sides[i]+6] for i in range(6)]
         if stickers:
             B = Box(size, size, size, color=(.1, .1, .1))
@@ -1377,7 +1376,7 @@ class RubiksCube(SageObject):
         side_colors = [Texture(color=c, ambient=.75) for c in self.colors]
         start_colors = sum([[c]*8 for c in side_colors], [])
         facets = self._group.facets(self._state)
-        facet_colors = [0]*48
+        facet_colors = [0] * 48
         for i in range(48):
             facet_colors[facets[i]-1] = start_colors[i]
         all_colors = side_colors + facet_colors
@@ -1493,7 +1492,7 @@ class RubiksCube(SageObject):
             return solver.solve(self._state, algorithm="gap")
 
         else:
-            raise ValueError("Unrecognized algorithm: %s" % algorithm)
+            raise ValueError(f"Unrecognized algorithm: {algorithm}")
 
     def scramble(self, moves=30):
         """
@@ -1522,7 +1521,7 @@ class RubiksCube(SageObject):
         all = []
         for i in range(moves):
             while move[0] == last_move[0]:
-                move = "RLUDBF"[random.randint(0,5)] + " '2"[random.randint(0,2)]
+                move = "RLUDBF"[randint(0, 5)] + " '2"[randint(0, 2)]
             last_move = move
             all.append(move)
         return self.move(' '.join(all))
