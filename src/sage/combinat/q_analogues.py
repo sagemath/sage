@@ -354,12 +354,12 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     # the algorithms
     while algorithm == 'naive':
-        denom = prod(one - q**i for i in range(1, k+1))
+        denom = prod(one - q**i for i in range(1, k + 1))
         if not denom:  # q is a root of unity, use the cyclotomic algorithm
             algorithm = 'cyclotomic'
             break
         else:
-            num = prod(one - q**i for i in range(n-k+1, n+1))
+            num = prod(one - q**i for i in range(n - k + 1, n + 1))
             try:
                 try:
                     return num // denom
@@ -459,7 +459,7 @@ def q_catalan_number(n, q=None, m=1):
 
     - ``q`` -- optional variable
 
-    - ``m`` -- optional integer (default: 1) to get the ``m``-Fuss-Catalan numbers
+    - ``m`` -- (optional integer) to get instead the ``m``-Fuss-Catalan numbers
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
