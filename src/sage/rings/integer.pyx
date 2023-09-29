@@ -2326,7 +2326,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         OUTPUT:
 
         If ``truncate_mode`` is 0 (default), then returns the exact n'th root
-        if ``self`` is an n'th power, or raises a ValueError if it is not.
+        if ``self`` is an n'th power, or raises a :class:`ValueError`
+        if it is not.
 
         If ``truncate_mode`` is 1, then if either ``n`` is odd or ``self`` is
         positive, returns a pair ``(root, exact_flag)`` where ``root`` is the

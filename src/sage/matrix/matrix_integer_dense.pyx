@@ -1712,8 +1712,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         Return a pair (F, C) such that the rows of C form a symplectic
         basis for self and ``F = C * self * C.transpose()``.
 
-        Raise a ValueError if self is not anti-symmetric, or self is not
-        alternating.
+        Raise a :class:`ValueError` if self is not anti-symmetric,
+        or self is not alternating.
 
         Anti-symmetric means that `M = -M^t`. Alternating means
         that the diagonal of `M` is identically zero.
