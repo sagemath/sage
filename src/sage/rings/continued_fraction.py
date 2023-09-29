@@ -700,7 +700,7 @@ class ContinuedFraction_base(SageObject):
         q_odd = self.denominator(2 * k + 1)
         m_even = (p_even << N) // q_even      # floor((2^N p_even) / q_even)
         m_odd = (p_odd << N + q_odd - 1) // q_odd  # ceil((2^N p_odd) / q_odd)
-        while (m_odd - m_even) > 1:
+        while m_odd - m_even > 1:
             k += 1
             p_even = self.numerator(2 * k)
             p_odd = self.numerator(2 * k + 1)

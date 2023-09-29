@@ -1087,13 +1087,13 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 iset = P.index_set() + ('delta',)
 
             return sum(cl*sym[iset.index(ml),iset.index(mr)]*cr
-                       for ml,cl in self for mr,cr in la)
+                       for ml, cl in self for mr, cr in la)
 
         #    # This should be in a method to_weight_lattice()
         #    alphac = self.simple_coroots()
         #    Lambda = self.fundamental_weights()
-        #    assert( t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set() ) )
-        #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set() )
+        #    assert t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set())
+        #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set())
 
         def to_weight_space(self, base_ring=None):
             r"""

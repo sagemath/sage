@@ -217,7 +217,7 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
     """
     if not (gcd(a, b) == 1 and a >= b):
         raise ValueError("the numbers a and b must be coprime with a>=b")
-    if not (a >= b * m):
+    if a < b * m:
         raise ValueError("the condition a>=b*m does not hold")
 
     def covers(p):
