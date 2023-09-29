@@ -1635,11 +1635,12 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         r"""
         TESTS::
 
-            sage: import os
+            sage: import os, tempfile
             sage: W = Words('ab')
-            sage: filename = os.path.join(tmp_dir(), 'test.sobj')
-            sage: W.save(filename)
-            sage: load(filename)
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     filename = os.path.join(d, 'test.sobj')
+            ....:     W.save(filename)
+            ....:     load(filename)
             Finite and infinite words over {'a', 'b'}
         """
         # add a default to support old pickles from #19619
@@ -2100,11 +2101,12 @@ class Words_n(Parent):
         r"""
         TESTS::
 
-            sage: import os
+            sage: import os, tempfile
             sage: W = Words('ab', 10)
-            sage: filename = os.path.join(tmp_dir(), 'test.sobj')
-            sage: W.save(filename)
-            sage: load(filename)
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     filename = os.path.join(d, 'test.sobj')
+            ....:     W.save(filename)
+            ....:     load(filename)
             Words of length 10 over {'a', 'b'}
         """
         # add a default to support old pickles from #19619

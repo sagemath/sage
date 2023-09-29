@@ -388,12 +388,12 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             err = True
         if err:
             raise ValueError(("the level of self (=%s) must be a divisor or multiple of "
-                "level (=%s) and t (=%s) must be a divisor of the quotient") % (self.level(), level, t))
+                              "level (=%s) and t (=%s) must be a divisor of the quotient") % (self.level(), level, t))
 
         eps = self.character()
         if not (eps is None) and level % eps.conductor() != 0:
             raise ArithmeticError("the conductor of the character of this space "
-                "(=%s) must be divisible by the level (=%s)" % (eps.conductor(), level))
+                                  "(=%s) must be divisible by the level (=%s)" % (eps.conductor(), level))
 
         if M is None:
             M = self.hecke_module_of_level(level)
