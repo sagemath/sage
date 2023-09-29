@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Difference Matrices
 
@@ -10,11 +11,11 @@ Functions
 ---------
 """
 
+from sage.arith.misc import divisors, is_prime_power
 from sage.misc.unknown import Unknown
 from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.arith.all import is_prime_power, divisors
 from .designs_pyx import is_difference_matrix
 from .database import DM as DM_constructions
 
@@ -146,12 +147,12 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     - ``existence`` (boolean) -- instead of building the design, return:
 
-        - ``True`` -- meaning that Sage knows how to build the design
+      - ``True`` -- meaning that Sage knows how to build the design
 
-        - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+      - ``Unknown`` -- meaning that Sage does not know how to build the
+        design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+      - ``False`` -- meaning that the design does not exist.
 
       .. NOTE::
 
@@ -218,7 +219,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         NotImplementedError: I don't know how to build a (10,9,1)-Difference Matrix!
     """
 
-    if lmbda == 1 and k is not None and k>g:
+    if lmbda == 1 and k is not None and k > g:
         if existence:
             return False
         raise EmptySetError("No ({},{},{})-Difference Matrix exists as k(={})>g(={})".format(g,k,lmbda,k,g))
@@ -232,8 +233,8 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
                 k = g
         elif existence:
             return True
-        F       = FiniteField(g,'x')
-        F_set   = list(F)
+        F = FiniteField(g,'x')
+        F_set = list(F)
         F_k_set = F_set[:k]
 
         G = F
@@ -248,7 +249,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         return i-1
 
     # From the database
-    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0]>=k:
+    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0] >= k:
         if existence:
             return True
         _,f = DM_constructions[g,lmbda]

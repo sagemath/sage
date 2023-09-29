@@ -44,7 +44,7 @@ method :meth:`realloc <sage.graphs.base.c_graph.CGraph.realloc>`.
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.integer cimport smallInteger
 from sage.arith.long cimport pyobject_to_long
 from libcpp.queue cimport priority_queue, queue
 from libcpp.stack cimport stack
@@ -1576,6 +1576,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         We check that the bug described in :trac:`8406` is gone::
 
+            sage: # needs sage.rings.finite_rings
             sage: G = Graph()
             sage: R.<a> = GF(3**3)
             sage: S.<x> = R[]
@@ -2107,9 +2108,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         Ensure that :trac:`13664` is fixed ::
 
-            sage: W = WeylGroup(["A",1])
-            sage: G = W.cayley_graph()
-            sage: Graph(G).degree()
+            sage: W = WeylGroup(["A",1])                                                # needs sage.combinat sage.groups
+            sage: G = W.cayley_graph()                                                  # needs sage.combinat sage.groups
+            sage: Graph(G).degree()                                                     # needs sage.combinat sage.groups
             [1, 1]
             sage: h = Graph()
             sage: h.add_edge(1,2,"a")
@@ -3751,7 +3752,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         # studied.
         cdef int x_int = self.get_vertex(x)
         cdef int y_int = self.get_vertex(y)
-        cdef int u = 0
         cdef int v = 0
         cdef int w = 0
         cdef int pred
@@ -3978,7 +3978,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         # studied.
         cdef int x_int = self.get_vertex(x)
         cdef int y_int = self.get_vertex(y)
-        cdef int u = 0
         cdef int v = 0
         cdef int w = 0
         cdef int pred
@@ -4408,9 +4407,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS::
 
-            sage: P = posets.PentagonPoset()
-            sage: H = P._hasse_diagram
-            sage: H._backend.is_connected()
+            sage: P = posets.PentagonPoset()                                            # needs sage.modules
+            sage: H = P._hasse_diagram                                                  # needs sage.modules
+            sage: H._backend.is_connected()                                             # needs sage.modules
             True
         """
         cdef int v_int
@@ -4550,7 +4549,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         At first, the following graph is acyclic::
 
             sage: D = DiGraph({ 0:[1,2,3], 4:[2,5], 1:[8], 2:[7], 3:[7], 5:[6,7], 7:[8], 6:[9], 8:[10], 9:[10] })
-            sage: D.plot(layout='circular').show()
+            sage: D.plot(layout='circular').show()                                      # needs sage.plot
             sage: D.is_directed_acyclic()
             True
 
@@ -4586,14 +4585,14 @@ cdef class CGraphBackend(GenericGraphBackend):
             ....:  return h
             ...
             sage: all( random_acyclic(100, .2).is_directed_acyclic()    # long time
-            ....:      for i in range(50))                              # long time
+            ....:      for i in range(50))
             True
 
         TESTS::
 
-            sage: m = Matrix(3,[0, 1, 1, 0, 0, 0, 0, 1, 0])
-            sage: g = DiGraph(m)
-            sage: g.is_directed_acyclic(certificate=True)
+            sage: m = Matrix(3,[0, 1, 1, 0, 0, 0, 0, 1, 0])                             # needs sage.modules
+            sage: g = DiGraph(m)                                                        # needs sage.modules
+            sage: g.is_directed_acyclic(certificate=True)                               # needs sage.modules
             (True, [0, 2, 1])
         """
         if not self._directed:
@@ -4680,7 +4679,6 @@ cdef class CGraphBackend(GenericGraphBackend):
                         # // answer = [u]
                         cycle = [self.vertex_label(u)]
 
-                        tmp = u
                         while u != uu:
                             u = parent.get(u, uu)
                             cycle.append(self.vertex_label(u))
@@ -4822,7 +4820,7 @@ cdef class Search_iterator:
 
         Immutable graphs (see :trac:`16019`)::
 
-            sage: DiGraph([[1,2]], immutable=True).connected_components()
+            sage: DiGraph([(1, 2)], immutable=True).connected_components(sort=True)
             [[1, 2]]
 
         """
@@ -4899,7 +4897,7 @@ cdef class Search_iterator:
             sage: next(g.breadth_first_search(0))
             0
         """
-        cdef int v_int, v_dist
+        cdef int v_int
         cdef int w_int
         cdef int l
         cdef CGraph cg = self.graph.cg()

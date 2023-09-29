@@ -777,7 +777,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         description += "which actually are integrated curves"
         return description
 
-
     def _element_constructor_(self, equations_rhs, velocities,
                  curve_parameter, initial_tangent_vector, chart=None,
                  name=None, latex_name=None, verbose=False, across_charts=False):
@@ -1220,7 +1219,6 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         description += "which actually are integrated autoparallel "
         description += "curves with respect to a certain affine connection"
         return description
-
 
     def _element_constructor_(self, affine_connection, curve_parameter,
                     initial_tangent_vector, chart=None, name=None,

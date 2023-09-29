@@ -27,8 +27,7 @@ in giac, but the mathematical computation  is not done. This class is mainly
 for cython users.  Here A is a Pygen element, and it is ready for any giac
 function.::
 
-    sage: from sage.libs.giac.giac import *     # random
-    //...
+    sage: from sage.libs.giac.giac import *
     sage: A = Pygen('2+2')
     sage: A
     2+2
@@ -152,9 +151,11 @@ import math
 # sage includes
 from sage.ext.stdsage cimport PY_NEW
 
-from sage.libs.gmp.mpz cimport mpz_t, mpz_init_set
+from sage.libs.gmp.mpz cimport mpz_set
 
-from sage.rings.all import ZZ, QQ, IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Matrix
@@ -1265,11 +1266,10 @@ cdef class Pygen(GiacMethods_base):
         GIAC_archive( <string>encstring23(filename), (<Pygen>self).gptr[0], context_ptr)
         sig_off()
 
-
-
     # NB: with giac <= 1.2.3-57 redim doesn't have a non evaluated for so Pygen('redim') fails.
     # hence replacement  for redim:
-    def redim(self,a,b=None):
+
+    def redim(self, a, b=None):
         """
         Increase the size of a matrix when possible, otherwise return self.
 
@@ -1408,7 +1408,7 @@ cdef class Pygen(GiacMethods_base):
             return result
 
         else:
-            raise TypeError("Cannot convert non giac integers to Integer")
+            raise TypeError("cannot convert non giac integers to Integer")
 
 
     def _rational_(self,Z=None):
@@ -1433,7 +1433,7 @@ cdef class Pygen(GiacMethods_base):
             # giac _RAT_
             return ZZ(self.numer()) / ZZ(self.denom())
         else:
-            raise TypeError("Cannot convert non giac _FRAC_ to QQ")
+            raise TypeError("cannot convert non giac _FRAC_ to QQ")
 
 
     def sage(self):
@@ -1676,11 +1676,11 @@ cdef class Pygen(GiacMethods_base):
                 xyplot=[[(u.real())._double,(u.im())._double] for u in l]
 
 
-        if (xyscat != []):
-            result=scatter_plot(xyscat)
+        if xyscat:
+            result = scatter_plot(xyscat)
 
         else:
-            result=line(xyplot)
+            result = line(xyplot)
         sig_off()
 
         return result
@@ -1694,11 +1694,11 @@ cdef class Pygen(GiacMethods_base):
     #
     # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def __richcmp__( self, other,op):
+    def __richcmp__(self, other, op):
         if not isinstance(other, Pygen):
-            other=Pygen(other)
+            other = Pygen(other)
         if not isinstance(self, Pygen):
-            self=Pygen(self)
+            self = Pygen(self)
         sig_on()
         result= giacgenrichcmp((<Pygen>self).gptr[0],(<Pygen>other).gptr[0], op, context_ptr )
         sig_off()
@@ -1707,10 +1707,11 @@ cdef class Pygen(GiacMethods_base):
     #
     # Some attributes of the gen class:
     #
+
     property _type:
         def __get__(self):
             sig_on()
-            result=self.gptr.type
+            result = self.gptr.type
             sig_off()
             return result
 
@@ -1722,40 +1723,35 @@ cdef class Pygen(GiacMethods_base):
             sig_off()
             return result
 
-
-
     property _val:  # immediate int (type _INT_)
         """
         immediate int value of an _INT_ type gen.
         """
         def __get__(self):
-            if(self._type == 0):
+            if self._type == 0:
                 sig_on()
-                result=self.gptr.val
+                result = self.gptr.val
                 sig_off()
                 return result
             else:
-                raise TypeError("Cannot convert non _INT_ giac gen")
-
+                raise TypeError("cannot convert non _INT_ giac gen")
 
     property _double:  # immediate double (type _DOUBLE_)
         """
         immediate conversion to float for a gen of _DOUBLE_ type.
         """
         def __get__(self):
-            if(self._type == 1):
+            if self._type == 1:
                 sig_on()
-                result=self.gptr._DOUBLE_val
+                result = self.gptr._DOUBLE_val
                 sig_off()
                 return result
             else:
-                raise TypeError("Cannot convert non _DOUBLE_ giac gen")
+                raise TypeError("cannot convert non _DOUBLE_ giac gen")
 
     property help:
         def __get__(self):
             return self._help()
-
-
 
     ###################################################
     # Add the others methods
@@ -1766,30 +1762,22 @@ cdef class Pygen(GiacMethods_base):
     #
     #     def __getattr__(self, name):
     #       return GiacMethods[str(name)](self)
-    ##
 
+    # test
 
-    #test
     def giacAiry_Ai(self, *args):
-        cdef gen result=GIAC_Airy_Ai(self.gptr[0], context_ptr)
+        cdef gen result = GIAC_Airy_Ai(self.gptr[0], context_ptr)
         return _wrap_gen(result)
 
     def giacifactor(self, *args):
         cdef gen result
         sig_on()
-        result=GIAC_eval(self.gptr[0], <int>1, context_ptr)
-        result=GIAC_ifactor(result, context_ptr)
+        result = GIAC_eval(self.gptr[0], <int>1, context_ptr)
+        result = GIAC_ifactor(result, context_ptr)
         sig_off()
         return _wrap_gen(result)
 
 
-
-
-
-
-
-
-##
 ################################################################
 #   A wrapper from a cpp element of type giac gen to create    #
 #   the Python object                                          #
@@ -2010,7 +1998,6 @@ class GiacFunctionNoEV(Pygen):
 # Some convenient settings
 ############################################################
 Pygen('printpow(1)').eval()  # default power is ^
-Pygen('add_language(1)').eval()  # Add the french keywords in the giac library language.
 # FIXME: print I for sqrt(-1) instead of i
 # GIAC_try_parse_i(False,context_ptr); (does not work??)
 

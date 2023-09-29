@@ -1,3 +1,4 @@
+# optional - sage.combinat sage.groups
 r"""
 Integer vectors modulo the action of a permutation group
 """
@@ -278,7 +279,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             Category of infinite enumerated quotients of sets
             sage: TestSuite(I).run()
         """
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth', category = InfiniteEnumeratedSets().Quotients())
+        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='breadth', category=InfiniteEnumeratedSets().Quotients())
         self._permgroup = G
         self.n = G.degree()
 
@@ -430,8 +431,8 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             False
         """
         if check:
-            assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector'%v
-            assert (self.n == len(v)), '%s should be of length %s'%(v, self.n)
+            assert isinstance(v, (ClonableIntArray, list)), '%s should be a list or a integer vector' % v
+            assert (self.n == len(v)), '%s should be of length %s' % (v, self.n)
             for p in v:
                 assert (p == NN(p)), 'Elements of %s should be integers' % v
         return is_canonical(self._sgs, self.element_class(self, list(v), check=False))
@@ -472,7 +473,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             if v.parent() is self:
                 return v
             else:
-                raise ValueError('%s should be a Python list of integer'%(v))
+                raise ValueError('%s should be a Python list of integer' % (v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -498,7 +499,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             sage: I.orbit([1,1,1,1])
             {[1, 1, 1, 1]}
         """
-        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s'%(v, self)
+        assert isinstance(v, (list, ClonableIntArray)), '%s should be a Python list or an element of %s' % (v, self)
         try:
             if v.parent() is self:
                 return orbit(self._sgs, v)
@@ -602,7 +603,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
             sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6, max_part=4)
         """
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth', category = (FiniteEnumeratedSets(), FiniteEnumeratedSets().Quotients()))
+        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='breadth', category=(FiniteEnumeratedSets(), FiniteEnumeratedSets().Quotients()))
         self._permgroup = G
         self.n = G.degree()
         self._sum = d
@@ -719,7 +720,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             if v.parent() is self:
                 return v
             else:
-                raise ValueError('%s should be a Python list of integer'%(v))
+                raise ValueError('%s should be a Python list of integer' % (v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -757,7 +758,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         else:
             SF = RecursivelyEnumeratedSet_forest((self([0]*(self.n), check=False),),
                               lambda x : [self(y, check=False) for y in canonical_children(self._sgs, x, self._max_part)],
-                              algorithm = 'breadth')
+                              algorithm='breadth')
             if self._sum is None:
                 return iter(SF)
             else:

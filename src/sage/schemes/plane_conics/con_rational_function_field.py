@@ -24,8 +24,8 @@ Create a conic::
 Points can be found using :meth:`has_rational_point`::
 
     sage: K.<t> = FractionField(QQ['t'])
-    sage: C = Conic([1,-t,t])
-    sage: C.has_rational_point(point = True)
+    sage: C = Conic([1, -t, t])
+    sage: C.has_rational_point(point=True)
     (True, (0 : 1 : 1))
 """
 
@@ -42,7 +42,8 @@ Points can be found using :meth:`has_rational_point`::
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import diagonal_matrix, matrix, block_matrix
 from sage.schemes.plane_conics.con_field import ProjectiveConic_field
-from sage.arith.all import lcm, gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
 from sage.rings.fraction_field import is_FractionField
 
@@ -126,18 +127,21 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
         and finite fields::
 
             sage: K.<t> = FractionField(PolynomialRing(QQ, 't'))
-            sage: C = Conic(K, [t^2-2, 2*t^3, -2*t^3-13*t^2-2*t+18])
+            sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True)
             (True, (-3 : (t + 1)/t : 1))
+
             sage: R.<t> = FiniteField(23)[]
-            sage: C = Conic([2, t^2+1, t^2+5])
+            sage: C = Conic([2, t^2 + 1, t^2 + 5])
             sage: C.has_rational_point()
             True
             sage: C.has_rational_point(point=True)
             (True, (5*t : 8 : 1))
+
+            sage: # needs sage.rings.number_field
             sage: F.<i> = QuadraticField(-1)
             sage: R.<t> = F[]
-            sage: C = Conic([1,i*t,-t^2+4])
+            sage: C = Conic([1, i*t, -t^2 + 4])
             sage: C.has_rational_point(point=True)
             (True, (-t - 2*i : -2*i : 1))
 
@@ -164,8 +168,8 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: F.<t1> = FractionField(QQ['t1'])
             sage: K.<t2> = FractionField(F['t2'])
             sage: a = K(1)
-            sage: b = 2*t2^2+2*t1*t2-t1^2
-            sage: c = -3*t2^4-4*t1*t2^3+8*t1^2*t2^2+16*t1^3-t2-48*t1^4
+            sage: b = 2*t2^2 + 2*t1*t2 - t1^2
+            sage: c = -3*t2^4 - 4*t1*t2^3 + 8*t1^2*t2^2 + 16*t1^3 - t2 - 48*t1^4
             sage: C = Conic([a,b,c])
             sage: C.has_rational_point()
             Traceback (most recent call last):
@@ -184,9 +188,9 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: Q.<Y> = E[]
             sage: F.<v> = E.extension(Y^2 - u^3 - 1)
             sage: R.<t> = F[]
-            sage: K = R.fraction_field()
-            sage: C = Conic(K, [u, v, 1])
-            sage: C.has_rational_point()
+            sage: K = R.fraction_field()                                                # needs sage.rings.function_field
+            sage: C = Conic(K, [u, v, 1])                                               # needs sage.rings.function_field
+            sage: C.has_rational_point()                                                # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError: has_rational_point not implemented for conics
@@ -198,19 +202,31 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
         over finite fields, due to :trac:`20003`::
 
             sage: K.<t> = PolynomialRing(GF(7))
-            sage: C = Conic([5*t^2+4, t^2+3*t+3, 6*t^2+3*t+2, 5*t^2+5, 4*t+3, 4*t^2+t+5])
+            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
+            ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
             sage: C.has_rational_point()
             Traceback (most recent call last):
             ...
             TypeError: self (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-2*t^2 - 3)*x^2 + (-t^3 + 3*t^2 - 2*t - 2)/(t + 3)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-2*t^2 - 3)*x^2 + (t^2 + 3*t + 3)*x*y + (-2*t^2 - 2)*y^2 + (-t^2 + 3*t + 2)*x*z + (-3*t + 3)*y*z + (-3*t^2 + t - 2)*z^2
+              From: Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    (-2*t^2 - 3)*x^2 + (-t^3 + 3*t^2 - 2*t - 2)/(t + 3)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z^2
+              To:   Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    (-2*t^2 - 3)*x^2 + (t^2 + 3*t + 3)*x*y + (-2*t^2 - 2)*y^2 + (-t^2 + 3*t + 2)*x*z + (-3*t + 3)*y*z + (-3*t^2 + t - 2)*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + (2*t - 2)/(t + 3)*y + (3*t^4 + 2*t^3 - 2*t^2 - 2*t + 3)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z : y + (-t^3 - t^2 + 3*t - 1)/(t^3 - 3*t^2 + 2*t + 2)*z : z)) domain must equal right (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by (-2*t^3 - t^2 + 3*t + 3)*x^2 + (t - 3)*y^2 + (-t^7 + 2*t^5 + t^4 + 2*t^3 + 3*t^2 - t - 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 7 defined by -2/(t^3 - 3*t^2 + 2*t + 2)*x^2 + 1/(t^3 + 3*t^2 - 2*t + 1)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^9 - 2*t^8 + t^7 - t^6 + 3*t^5 - 3*t^3 + t^2 - 2*t + 3)*z^2
+                    (x + (2*t - 2)/(t + 3)*y + (3*t^4 + 2*t^3 - 2*t^2 - 2*t + 3)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z
+                     : y + (-t^3 - t^2 + 3*t - 1)/(t^3 - 3*t^2 + 2*t + 2)*z : z))
+            domain must equal right (=Scheme morphism:
+              From: Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    (-2*t^3 - t^2 + 3*t + 3)*x^2 + (t - 3)*y^2 + (-t^7 + 2*t^5 + t^4 + 2*t^3 + 3*t^2 - t - 1)*z^2
+              To:   Projective Conic Curve over Fraction Field of Univariate
+                    Polynomial Ring in t over Finite Field of size 7 defined by
+                    -2/(t^3 - 3*t^2 + 2*t + 2)*x^2 + 1/(t^3 + 3*t^2 - 2*t + 1)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^9 - 2*t^8 + t^7 - t^6 + 3*t^5 - 3*t^3 + t^2 - 2*t + 3)*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    ((t^3 - 3*t^2 + 2*t + 2)*x : (t^2 - 2)*y : (t^5 - 3*t^4 + t^2 + 3*t + 3)*z)) codomain
+                    ((t^3 - 3*t^2 + 2*t + 2)*x : (t^2 - 2)*y : (t^5 - 3*t^4 + t^2 + 3*t + 3)*z))
+            codomain
 
 
 
@@ -361,7 +377,7 @@ for function field of characteristic 2.")
         EXAMPLES::
 
             sage: K.<t> = FractionField(PolynomialRing(QQ, 't'))
-            sage: C = Conic(K, [t^2-2, 2*t^3, -2*t^3-13*t^2-2*t+18])
+            sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C._reduce_conic()
             ([t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18], [t, 1, t])
         """
@@ -458,14 +474,15 @@ for function field of characteristic 2.")
         EXAMPLES::
 
             sage: K.<t> = FractionField(QQ['t'])
-            sage: C = Conic(K, [t^2-2, 2*t^3, -2*t^3-13*t^2-2*t+18])
+            sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True) # indirect test
             (True, (-3 : (t + 1)/t : 1))
 
         Different solubility certificates give different points::
 
+            sage: # needs sage.rings.number_field
             sage: K.<t> = PolynomialRing(QQ, 't')
-            sage: C = Conic(K, [t^2-2, 2*t, -2*t^3-13*t^2-2*t+18])
+            sage: C = Conic(K, [t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: supp = [[t^2 - 2], [t], [t^3 + 13/2*t^2 + t - 9]]
             sage: tbar1 = QQ.extension(supp[0][0], 'tbar').gens()[0]
             sage: tbar2 = QQ.extension(supp[1][0], 'tbar').gens()[0]

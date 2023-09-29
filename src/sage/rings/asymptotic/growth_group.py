@@ -381,7 +381,6 @@ class Variable(CachedRepresentation, SageObject):
             raise ValueError('Variable names %s are not pairwise distinct.' %
                              (var_bases,))
 
-
         self.var_bases = var_bases
         self.var_repr = var_repr
 
@@ -1679,7 +1678,6 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
     # enable the category framework for elements
     Element = GenericGrowthElement
 
-
     # set everything up to determine category
     from sage.categories.sets_cat import Sets
     from sage.categories.posets import Posets
@@ -2777,7 +2775,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
             sage: F == G
             False
         """
-        return type(self) == type(other) and self.var == other.var
+        return type(self) is type(other) and self.var == other.var
 
     def __ne__(self, other):
         r"""

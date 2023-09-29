@@ -9,22 +9,23 @@ AUTHORS:
   constraints and objective function (:trac:`16755`)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Risan <ptrrsn.1@gmail.com>
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.numerical.mip import MIPSolverException
-from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression, Constraint, Generator
+from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from .generic_backend cimport GenericBackend
 from copy import copy
+
 
 cdef class PPLBackend(GenericBackend):
 
@@ -257,9 +258,9 @@ cdef class PPLBackend(GenericBackend):
 
         - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
@@ -289,7 +290,7 @@ cdef class PPLBackend(GenericBackend):
             3
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -328,9 +329,9 @@ cdef class PPLBackend(GenericBackend):
 
         - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0)
 

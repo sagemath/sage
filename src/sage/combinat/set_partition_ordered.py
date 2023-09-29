@@ -24,8 +24,9 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.arith.all import factorial, multinomial
-from sage.categories.cartesian_product import cartesian_product
+from itertools import product
+
+from sage.arith.misc import factorial, multinomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.combinat import stirling_number2
@@ -452,7 +453,7 @@ class OrderedSetPartition(ClonableArray,
         if not self:
             return FiniteEnumeratedSet([self])
         return FiniteEnumeratedSet([par(sum((list(i) for i in C), []))
-                                    for C in cartesian_product([OrderedSetPartitions(X) for X in self])])
+                                    for C in product(*[OrderedSetPartitions(X) for X in self])])
 
     def is_finer(self, co2):
         """
@@ -548,7 +549,7 @@ class OrderedSetPartition(ClonableArray,
         result = [None] * len(grouping)
         j = 0
         for i in range(len(grouping)):
-            result[i] = set().union(*self[j:j+grouping[i]])
+            result[i] = set().union(*self[j:j + grouping[i]])
             j += grouping[i]
         return parent(self)(result)
 
@@ -636,7 +637,7 @@ class OrderedSetPartition(ClonableArray,
         result = [None] * len(comp)
         j = 0
         for i in range(len(comp)):
-            result[i] = set(xs[j:j+comp[i]])
+            result[i] = set(xs[j:j + comp[i]])
             j += comp[i]
         return OrderedSetPartitions(X)(result)
 
@@ -671,7 +672,7 @@ class OrderedSetPartition(ClonableArray,
             return FiniteEnumeratedSet([self])
         buo = OrderedSetPartition.bottom_up_osp
         return FiniteEnumeratedSet([par(sum((list(P) for P in C), []))
-                                    for C in cartesian_product([[buo(X, comp) for comp in Compositions(len(X))] for X in self])])
+                                    for C in product(*[[buo(X, comp) for comp in Compositions(len(X))] for X in self])])
 
     def is_strongly_finer(self, co2):
         r"""
@@ -779,7 +780,7 @@ class OrderedSetPartition(ClonableArray,
         # arbitrarily, and then concatenate the results.
         fattenings = [list(subcomp.fatter()) for subcomp in subcomps]
         return FiniteEnumeratedSet([OrderedSetPartition(sum([list(gg) for gg in fattening], []))
-            for fattening in cartesian_product(fattenings)])
+            for fattening in product(*fattenings)])
 
     @combinatorial_map(name='to packed word')
     def to_packed_word(self):
@@ -1114,6 +1115,13 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
              [{1, 3}, {2}],
              [{2, 3}, {1}],
              [{1, 2, 3}]]
+
+        TESTS:
+
+        Test for :issue:`35654`::
+
+            sage: OrderedSetPartitions(set(),[0,0,0]).list()
+            [[{}, {}, {}]]
         """
         for x in Compositions(len(self._set)):
             for z in OrderedSetPartitions(self._set, x):
@@ -1379,11 +1387,18 @@ def multiset_permutation_next_lex(l):
         [2, 1, 0, 0, 1]
         [2, 1, 0, 1, 0]
         [2, 1, 1, 0, 0]
+
+    TESTS:
+
+    Test for :issue:`35654`::
+
+        sage: multiset_permutation_next_lex([])
+        0
     """
     i = len(l) - 2
     while i >= 0 and l[i] >= l[i + 1]:
         i -= 1
-    if i == -1:
+    if i <= -1:
         return 0
     j = len(l) - 1
     while l[j] <= l[i]:

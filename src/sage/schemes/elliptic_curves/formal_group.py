@@ -15,8 +15,9 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 
 import sage.misc.misc as misc
-import sage.rings.all as rings
-from sage.rings.all import O
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.big_oh import O
 
 
 class EllipticCurveFormalGroup(SageObject):
@@ -29,7 +30,8 @@ class EllipticCurveFormalGroup(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: F = E.formal_group(); F
-            Formal Group associated to the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            Formal Group associated to the Elliptic Curve
+             defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: F == loads(dumps(F))
             True
         """
@@ -158,7 +160,7 @@ class EllipticCurveFormalGroup(SageObject):
             R = w.parent()
         except AttributeError:
             # No cached version available
-            R = rings.PowerSeriesRing(k, "t")
+            R = PowerSeriesRing(k, "t")
             w = R([k(0), k(0), k(0), k(1)], 4)
             cached_prec = 4
             self.__w = w
@@ -395,7 +397,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def inverse(self, prec=20):
         r"""
-        Return the formal group inverse law i(t), which satisfies F(t, i(t)) = 0.
+        Return the formal group inverse law `i(t)`, which satisfies `F(t, i(t)) = 0`.
 
         INPUT:
 
@@ -454,8 +456,8 @@ class EllipticCurveFormalGroup(SageObject):
 
         - ``prec`` -- integer (default: 10)
 
-        OUTPUT: a power series with given precision in R[['t1','t2']], where
-        the curve is defined over R.
+        OUTPUT: a power series with given precision in `R[[t_1,t_2]]`, where
+        the curve is defined over `R`.
 
         Return the formal power series
 
@@ -463,7 +465,7 @@ class EllipticCurveFormalGroup(SageObject):
 
             F(t_1, t_2) = t_1 + t_2 - a_1 t_1 t_2 - \cdots
 
-        to precision `O(t1,t2)^{prec}` of page 115 of [Sil2009]_.
+        to precision `O(t_1,t_2)^{prec}` of page 115 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if possible.
 
@@ -525,7 +527,7 @@ class EllipticCurveFormalGroup(SageObject):
         if prec <= 0:
             raise ValueError("The precision must be positive.")
 
-        R = rings.PowerSeriesRing(self.curve().base_ring(), 2, 't1,t2')
+        R = PowerSeriesRing(self.curve().base_ring(), 2, 't1,t2')
         t1, t2 = R.gens()
 
         if prec == 1:
@@ -550,7 +552,7 @@ class EllipticCurveFormalGroup(SageObject):
         # note that the following formula differs from the one in Silverman page 119.
         # See github issue 9646 for the explanation and justification.
         t3 = -t1 - t2 - \
-             (a1*lam + a3*lam2 + a2*nu + 2*a4*lam*nu + 3*a6*lam2*nu)/  \
+             (a1*lam + a3*lam2 + a2*nu + 2*a4*lam*nu + 3*a6*lam2*nu) /  \
              (1 + a2*lam + a4*lam2 + a6*lam3)
         inv = self.inverse(prec)
 
@@ -624,7 +626,7 @@ class EllipticCurveFormalGroup(SageObject):
         TESTS::
 
             sage: F = EllipticCurve(GF(17), [1, 1]).formal_group()
-            sage: F.mult_by_n(10, 50)  # long time (13s on sage.math, 2011)
+            sage: F.mult_by_n(10, 50)           # long time
             10*t + 5*t^5 + 7*t^7 + 13*t^9 + t^11 + 16*t^13 + 13*t^15 + 9*t^17 + 16*t^19 + 15*t^23 + 15*t^25 + 2*t^27 + 10*t^29 + 8*t^31 + 15*t^33 + 6*t^35 + 7*t^37 + 9*t^39 + 10*t^41 + 5*t^43 + 4*t^45 + 6*t^47 + 13*t^49 + O(t^50)
 
             sage: F = EllipticCurve(GF(101), [1, 1]).formal_group()
@@ -633,11 +635,11 @@ class EllipticCurveFormalGroup(SageObject):
 
             sage: P.<a1, a2, a3, a4, a6> = PolynomialRing(ZZ, 5)
             sage: E = EllipticCurve(list(P.gens()))
-            sage: E.formal().mult_by_n(2,prec=5)
+            sage: E.formal().mult_by_n(2, prec=5)
             2*t - a1*t^2 - 2*a2*t^3 + (a1*a2 - 7*a3)*t^4 + O(t^5)
 
             sage: E = EllipticCurve(QQ, [1,2,3,4,6])
-            sage: E.formal().mult_by_n(2,prec=5)
+            sage: E.formal().mult_by_n(2, prec=5)
             2*t - t^2 - 4*t^3 - 19*t^4 + O(t^5)
         """
         if self.curve().base_ring().is_field() and self.curve().base_ring().characteristic() == 0 and n != 0:
@@ -663,10 +665,9 @@ class EllipticCurveFormalGroup(SageObject):
             # express it in terms of the formal parameter
             return -Q[0] / Q[1]
 
-
         # Now the general case, not necessarily over a field.
 
-        R = rings.PowerSeriesRing(self.curve().base_ring(), "t")
+        R = PowerSeriesRing(self.curve().base_ring(), "t")
         t = R.gen()
 
         if n == 1:
@@ -744,7 +745,7 @@ class EllipticCurveFormalGroup(SageObject):
         fl = self.log(prec)
         F = fl.reverse()
 
-        S = rings.LaurentSeriesRing(k,'z')
+        S = LaurentSeriesRing(k,'z')
         z = S.gen()
         F = F(z + O(z**prec))
         wp = self.x()(F) + (a1**2 + 4*a2)/12
@@ -752,7 +753,7 @@ class EllipticCurveFormalGroup(SageObject):
         h = g.integral().integral()
         sigma_of_z = z.power_series() * h.exp()
 
-        T = rings.PowerSeriesRing(k,'t')
+        T = PowerSeriesRing(k,'t')
         fl = fl(T.gen()+O(T.gen()**prec))
         sigma_of_t = sigma_of_z(fl)
         return sigma_of_t

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Denis Simon's PARI scripts
 """
@@ -54,37 +55,41 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
     EXAMPLES::
 
         sage: import sage.schemes.elliptic_curves.gp_simon
-        sage: E=EllipticCurve('389a1')
+        sage: E = EllipticCurve('389a1')
         sage: sage.schemes.elliptic_curves.gp_simon.simon_two_descent(E)
         (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
 
     TESTS::
 
+        sage: # needs sage.rings.number_field
         sage: E = EllipticCurve('37a1').change_ring(QuadraticField(-11,'x'))
         sage: E.simon_two_descent()
         (1, 1, [(0 : 0 : 1)])
 
     An example with an elliptic curve defined over a relative number field::
 
+        sage: # needs sage.rings.number_field
         sage: F.<a> = QuadraticField(29)
         sage: x = QQ['x'].gen()
         sage: K.<b> = F.extension(x^2-1/2*a+1/2)
-        sage: E = EllipticCurve(K,[1, 0, 5/2*a + 27/2, 0, 0]) # long time (about 3 s)
+        sage: E = EllipticCurve(K,[1, 0, 5/2*a + 27/2, 0, 0])   # long time (about 3 s)
         sage: E.simon_two_descent(lim1=2, limtriv=3)
         (1, 1, ...)
 
     Check that :trac:`16022` is fixed::
 
+        sage: # needs sage.rings.number_field
         sage: K.<y> = NumberField(x^4 + x^2 - 7)
         sage: E = EllipticCurve(K, [1, 0, 5*y^2 + 16, 0, 0])
-        sage: E.simon_two_descent(lim1=2, limtriv=3)  # long time (about 3 s)
+        sage: E.simon_two_descent(lim1=2, limtriv=3)            # long time (about 3 s)
         (1, 1, ...)
 
     An example that checks that :trac:`9322` is fixed (it should take less than a second to run)::
 
-        sage: K.<w> = NumberField(x^2-x-232)
-        sage: E = EllipticCurve([2-w,18+3*w,209+9*w,2581+175*w,852-55*w])
-        sage: E.simon_two_descent()
+        sage: # needs sage.rings.number_field
+        sage: K.<w> = NumberField(x^2 - x - 232)
+        sage: E = EllipticCurve([2 - w, 18 + 3*w, 209 + 9*w, 2581 + 175*w, 852 - 55*w])
+        sage: E.simon_two_descent()                             # long time
         (0, 2, [])
     """
     init()
@@ -133,18 +138,18 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         if limtriv is None:
             limtriv = 2
 
-    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;'%(
+    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;' % (
        verbose, lim1, lim3, limtriv, maxprob, limbigprime))
 
     if verbose >= 2:
         print(cmd)
-    s = gp.eval('ans=%s;'%cmd)
+    s = gp.eval('ans=%s;' % cmd)
     if s.find(" *** ") != -1:
-        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program"%s)
+        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program" % s)
     if verbose > 0:
         print(s)
     v = gp.eval('ans')
-    if v=='ans': # then the call to ellQ_ellrank() or bnfellrank() failed
+    if v == 'ans': # then the call to ellQ_ellrank() or bnfellrank() failed
         raise RuntimeError("An error occurred while running Simon's 2-descent program")
     if verbose >= 2:
         print("v = %s" % v)

@@ -217,21 +217,20 @@ AUTHORS:
 - Dima Pasechnik      (2014-)    : supervision, minor fixes, duality
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.misc.cachefunc import cached_method
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 
 

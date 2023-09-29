@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Coalgebras
 """
@@ -10,7 +11,7 @@ Coalgebras
 # *****************************************************************************
 
 from .category_types import Category_over_base_ring
-from sage.categories.all import Modules
+from sage.categories.modules import Modules
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
@@ -66,6 +67,7 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
@@ -79,7 +81,6 @@ class Coalgebras(Category_over_base_ring):
             and Hopf algebras using the counit.
             """
 
-
         @abstract_method
         def coproduct(self, x):
             """
@@ -91,6 +92,7 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
@@ -109,6 +111,7 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
@@ -126,6 +129,7 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
@@ -292,6 +296,7 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.modules
                     sage: N = NonCommutativeSymmetricFunctions(QQ)
                     sage: S = N.complete()
                     sage: N.coproduct.__module__
@@ -307,6 +312,7 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.modules
                     sage: Sym = SymmetricFunctions(QQ)
                     sage: s = Sym.schur()
                     sage: f = s[2,1]
@@ -317,6 +323,7 @@ class Coalgebras(Category_over_base_ring):
 
                 ::
 
+                    sage: # needs sage.modules
                     sage: N = NonCommutativeSymmetricFunctions(QQ)
                     sage: N.counit.__module__
                     'sage.categories.coalgebras'
@@ -340,6 +347,7 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.modules
                     sage: Sym = SymmetricFunctions(QQ)
                     sage: m = Sym.monomial()
                     sage: f = m[2,1]
@@ -354,6 +362,7 @@ class Coalgebras(Category_over_base_ring):
 
                 ::
 
+                    sage: # needs sage.modules
                     sage: N = NonCommutativeSymmetricFunctions(QQ)
                     sage: R = N.ribbon()
                     sage: R.coproduct_by_coercion.__module__
@@ -375,16 +384,16 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: sp = SymmetricFunctions(QQ).sp()
-                    sage: sp.an_element()
+                    sage: sp = SymmetricFunctions(QQ).sp()                              # needs sage.modules
+                    sage: sp.an_element()                                               # needs sage.modules
                     2*sp[] + 2*sp[1] + 3*sp[2]
-                    sage: sp.counit(sp.an_element())
+                    sage: sp.counit(sp.an_element())                                    # needs sage.modules
                     2
 
-                    sage: o = SymmetricFunctions(QQ).o()
-                    sage: o.an_element()
+                    sage: o = SymmetricFunctions(QQ).o()                                # needs sage.modules
+                    sage: o.an_element()                                                # needs sage.modules
                     2*o[] + 2*o[1] + 3*o[2]
-                    sage: o.counit(o.an_element())
+                    sage: o.counit(o.an_element())                                      # needs sage.modules
                     -1
                 """
                 R = self.realization_of().a_realization()

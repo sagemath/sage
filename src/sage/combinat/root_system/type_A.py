@@ -22,10 +22,11 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: R = RootSystem(["A",3])
         sage: e = R.ambient_space(); e
         Ambient space of the Root system of type ['A', 3]
-        sage: TestSuite(e).run()
+        sage: TestSuite(e).run()                                                        # needs sage.graphs
 
     By default, this ambient space uses the barycentric projection for plotting::
 
+        sage: # needs sage.symbolic
         sage: L = RootSystem(["A",2]).ambient_space()
         sage: e = L.basis()
         sage: L._plot_projection(e[0])
@@ -253,22 +254,20 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
         EXAMPLES::
 
-            sage: a = CartanType(['A',3]).dynkin_diagram()
-            sage: a
+            sage: a = CartanType(['A',3]).dynkin_diagram(); a                           # needs sage.graphs
             O---O---O
             1   2   3
             A3
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
         TESTS::
 
-            sage: a = DynkinDiagram(['A',1])
-            sage: a
+            sage: a = DynkinDiagram(['A',1]); a                                         # needs sage.graphs
             O
             1
             A1
-            sage: a.vertices(sort=False), a.edges(sort=False)
+            sage: a.vertices(sort=False), a.edges(sort=False)                           # needs sage.graphs
             ([1], [])
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -335,7 +334,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             return ""
         if node is None:
             node = self._ascii_art_node
-        ret  = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
+        ret = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
         return ret
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Automorphism groups and canonical labels
 
@@ -116,9 +117,12 @@ from .data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 
 cdef inline int agcl_cmp(int a, int b):
-    if a < b: return -1
-    elif a == b: return 0
-    else: return 1
+    if a < b:
+        return -1
+    elif a == b:
+        return 0
+    else:
+        return 1
 
 # Functions
 
@@ -212,9 +216,10 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
     cdef int i, j
-    for i from 0 <= i < degree:
+    for i in range(degree):
         j = agcl_cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
-        if j != 0: return j
+        if j != 0:
+            return j
     return 0
 
 def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
@@ -278,8 +283,8 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     output = get_aut_gp_and_can_lab(<void *> perm, part, n, &all_children_are_equivalent_trivial, &refine_and_return_invariant_trivial, &compare_perms, 1, group, NULL, NULL)
     SC_order(output.group, 0, I.value)
     assert I == 1
-    r_inv = list(xrange(n))
-    for i from 0 <= i < n:
+    r_inv = list(range(n))
+    for i in range(n):
         r_inv[output.relabeling[i]] = i
     label = [perm[r_inv[i]] for i in range(n)]
     PS_dealloc(part)
@@ -393,9 +398,10 @@ cdef void deallocate_agcl_work_space(agcl_work_space *work_space):
 cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     PartitionStack *partition, int n,
     bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
-    int (*refine_and_return_invariant)\
-         (PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len),
-    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree),
+    int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
+                                       int *cells_to_refine_by, int ctrb_len),
+    int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
+                              int degree),
     bint canonical_label, StabilizerChain *input_group,
     agcl_work_space *work_space_prealloc, aut_gp_and_can_lab *output_prealloc) except NULL:
     """
@@ -479,7 +485,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
 
     cdef int i, j, k, ell, b
     cdef bint discrete, automorphism, update_label
-    cdef bint backtrack, new_vertex, narrow, mem_err = 0
+    cdef bint backtrack, new_vertex, mem_err = 0
 
     cdef aut_gp_and_can_lab *output
     cdef agcl_work_space *work_space

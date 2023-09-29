@@ -1,3 +1,4 @@
+# sage.doctest: needs primecountpy
 r"""
 Counting primes
 
@@ -32,10 +33,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.lazy_import import LazyImport
 from sage.rings.integer cimport Integer
 from sage.symbolic.function cimport BuiltinFunction
-from primecountpy.primecount import prime_pi as _prime_pi
-from primecountpy.primecount import phi as _phi
+
+_prime_pi = LazyImport('primecountpy.primecount', 'prime_pi', as_name='prime_pi')
+_phi = LazyImport('primecountpy.primecount', 'phi', as_name='_phi')
+
 
 cdef class PrimePi(BuiltinFunction):
     def __init__(self):
@@ -45,8 +49,8 @@ cdef class PrimePi(BuiltinFunction):
 
         INPUT:
 
-        - ``x`` - a real number
-        - ``prime_bound`` - (default 0) a real number < 2^32, ``prime_pi`` will
+        - ``x`` -- a real number
+        - ``prime_bound`` -- (default 0) a real number < 2^32; :func:`prime_pi` will
           make sure to use all the primes up to ``prime_bound`` (although,
           possibly more) in computing ``prime_pi``, this can potentially
           speedup the time of computation, at a cost to memory usage.
@@ -59,6 +63,7 @@ cdef class PrimePi(BuiltinFunction):
 
         These examples test common inputs::
 
+            sage: # needs sage.symbolic
             sage: prime_pi(7)
             4
             sage: prime_pi(100)
@@ -73,23 +78,25 @@ cdef class PrimePi(BuiltinFunction):
         The following test is to verify that :trac:`4670` has been essentially
         resolved::
 
-            sage: prime_pi(10^10)
+            sage: prime_pi(10^10)                                                       # needs sage.symbolic
             455052511
 
-        The ``prime_pi`` function also has a special plotting method, so it
+        The :func:`prime_pi` function also has a special plotting method, so it
         plots quickly and perfectly as a step function::
 
-            sage: P = plot(prime_pi, 50, 100)
+            sage: P = plot(prime_pi, 50, 100)                                           # needs sage.plot sage.symbolic
 
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
-                conversions={'mathematica':'PrimePi', 'pari':'primepi',
-                    'sympy':'primepi'})
+                                      conversions={'mathematica': 'PrimePi',
+                                                   'pari': 'primepi',
+                                                   'sympy': 'primepi'})
 
     def __call__(self, *args, coerce=True, hold=False):
         r"""
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: prime_pi.__call__(756)
             133
             sage: prime_pi.__call__(6574, 577)
@@ -104,8 +111,8 @@ cdef class PrimePi(BuiltinFunction):
             TypeError: Symbolic function prime_pi takes 1 or 2 arguments (3 given)
         """
         if len(args) > 2:
-            raise TypeError("Symbolic function %s takes 1 or 2"%self._name
-                    + " arguments (%s given)"%len(args))
+            raise TypeError(f"Symbolic function {self._name} takes 1 or 2"
+                            f" arguments ({len(args)} given)")
         return super(PrimePi, self).__call__(args[0], coerce=coerce, hold=hold)
 
     def _eval_(self, x):
@@ -127,7 +134,7 @@ cdef class PrimePi(BuiltinFunction):
 
         Make sure we actually compute correct results for 64-bit entries::
 
-            sage: for i in (32..42): prime_pi(2^i) # long time (13s on sage.math, 2011)
+            sage: for i in (32..42): prime_pi(2^i)      # long time (13s on sage.math, 2011)
             203280221
             393615806
             762939111
@@ -180,27 +187,28 @@ cdef class PrimePi(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: plot(prime_pi, 1, 100)
+            sage: plot(prime_pi, 1, 100)                                                # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: prime_pi.plot(1, 51, thickness=2, vertical_lines=False)
+            sage: prime_pi.plot(1, 51, thickness=2, vertical_lines=False)               # needs sage.plot sage.symbolic
             Graphics object consisting of 16 graphics primitives
         """
         from sage.plot.step import plot_step_function
         if xmax < xmin:
             return plot_step_function([], **kwds)
         if xmax < 2:
-            return plot_step_function([(xmin,0),(xmax,0)], **kwds)
+            return plot_step_function([(xmin, 0), (xmax, 0)], **kwds)
         y = self(xmin)
         v = [(xmin, y)]
         from sage.rings.fast_arith import prime_range
         for p in prime_range(xmin+1, xmax+1, py_ints=True):
             y += 1
-            v.append((p,y))
-        v.append((xmax,y))
+            v.append((p, y))
+        v.append((xmax, y))
         return plot_step_function(v, vertical_lines=vertical_lines, **kwds)
 
-########
+
 prime_pi = PrimePi()
+
 
 cpdef Integer legendre_phi(x, a):
     r"""
@@ -235,22 +243,26 @@ cpdef Integer legendre_phi(x, a):
     if not isinstance(a, Integer):
         a = Integer(a)
     if a < Integer(0):
-        raise ValueError("a (=%s) must be non-negative"%a)
+        raise ValueError("a (=%s) must be non-negative" % a)
     y = Integer(x)
 
     # legendre_phi(x, a) = 0 when x <= 0
-    if not y: return Integer(0)
+    if not y:
+        return Integer(0)
 
     # legendre_phi(x, 0) = x
-    if a == Integer(0): return Integer(y)
+    if a == Integer(0):
+        return Integer(y)
 
     # If a > prime_pi(2^32), we compute phi(x,a) = max(pi(x)-a+1,1)
     if a > Integer(203280221):
         ret = prime_pi(x)-a+Integer(1)
-        if ret < Integer(1): return Integer(1)
+        if ret < Integer(1):
+            return Integer(1)
         return ret
 
     # Deal with the general case
     return Integer(_phi(y, a))
+
 
 partial_sieve_function = legendre_phi

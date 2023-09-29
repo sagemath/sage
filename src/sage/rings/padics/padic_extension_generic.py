@@ -118,6 +118,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: K._extension_type()
             'Unramified'
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = Qp(5).extension(x^2 - 5)
             sage: L._extension_type()
             'Eisenstein'
@@ -138,7 +139,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
             7-adic Unramified Extension Ring in a defined by x^3 + 6*x^2 + 4
             sage: R1._latex_()
             '\\Bold{Z}_{7^{3}}'
-            sage: R2.<t> = R.ext(x^2+7)
+            sage: x = polygen(ZZ, 'x')
+            sage: R2.<t> = R.ext(x^2 + 7)
             sage: R2 #indirect doctest
             7-adic Eisenstein Extension Ring in t defined by x^2 + 7
             sage: R2._latex_()
@@ -510,7 +512,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c(R0) == R
             True
 
-        For a field, by default we return a fraction field functor.
+        For a field, by default we return a fraction field functor. ::
 
             sage: K.<a> = Qq(25, 8)
             sage: c, R = K.construction(); R

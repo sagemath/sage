@@ -486,7 +486,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 return self.domain().one()
             exp = s / self.value_group().gen()
             if exp not in ZZ:
-                raise NotImplementedError("s must be a multiple of %r but %r is not"%(self.value_group().gen(), s))
+                raise NotImplementedError("s must be a multiple of %r but %r is not" % (self.value_group().gen(), s))
             ret = self.domain()(self.uniformizer() ** ZZ(exp))
             return self.simplify(ret, error=s)
 
@@ -540,7 +540,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 return ret
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             if is_PolynomialRing(ret):
-                from sage.rings.function_field.all import FunctionField
+                from sage.rings.function_field.constructor import FunctionField
                 return FunctionField(ret.base_ring().fraction_field(), names=(ret.variable_name(),))
             return ret.fraction_field()
 
@@ -594,7 +594,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             extensions = self.extensions(ring)
             assert(extensions)
             if len(extensions) > 1:
-                raise ValueError("there is no unique extension of %r from %r to %r"%(self, self.domain(), ring))
+                raise ValueError("there is no unique extension of %r from %r to %r" % (self, self.domain(), ring))
             return extensions[0]
 
         def extensions(self, ring):
@@ -610,7 +610,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             """
             if ring is self.domain():
                 return [self]
-            raise NotImplementedError("extending %r from %r to %r not implemented"%(self, self.domain(), ring))
+            raise NotImplementedError("extending %r from %r to %r not implemented" % (self, self.domain(), ring))
 
         def restriction(self, ring):
             r"""
@@ -626,7 +626,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             """
             if ring is self.domain():
                 return self
-            raise NotImplementedError("restricting %r from %r to %r not implemented"%(self, self.domain(), ring))
+            raise NotImplementedError("restricting %r from %r to %r not implemented" % (self, self.domain(), ring))
 
         def change_domain(self, ring):
             r"""
@@ -649,7 +649,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 return self.extension(ring)
             if ring.is_subring(self.domain()):
                 return self.restriction(ring)
-            raise NotImplementedError("changing %r from %r to %r not implemented"%(self, self.domain(), ring))
+            raise NotImplementedError("changing %r from %r to %r not implemented" % (self, self.domain(), ring))
 
         def scale(self, scalar):
             r"""
@@ -732,11 +732,11 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
             for other in others + [self]:
                 if other.parent() is not self.parent():
-                    raise ValueError("all valuations must be valuations on %r but %r is a valuation on %r"%(self.domain(), other, other.domain()))
+                    raise ValueError("all valuations must be valuations on %r but %r is a valuation on %r" % (self.domain(), other, other.domain()))
                 if not other.is_discrete_valuation():
                     raise ValueError("all valuations must be discrete valuations but %r is not" % (other,))
                 if other.is_trivial():
-                    raise ValueError("all valuations must be non-trivial but %r is not"%(other,))
+                    raise ValueError("all valuations must be non-trivial but %r is not" % (other,))
 
             if len(others) == 0:
                 return self.uniformizer()
@@ -882,7 +882,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             ret = self.uniformizer()
             if self(ret) > other(ret):
                 return ret
-            raise NotImplementedError("weakly separating element for %r and %r"%(self, other))
+            raise NotImplementedError("weakly separating element for %r and %r" % (self, other))
 
         def shift(self, x, s):
             r"""

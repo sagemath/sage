@@ -803,7 +803,6 @@ class ModularFormsRing(Parent):
 
         return ret
 
-
     def gen_forms(self, maxweight=8, start_gens=[], start_weight=2):
         r"""
         Return a list of modular forms generating this ring (as an algebra over
@@ -1061,7 +1060,7 @@ class ModularFormsRing(Parent):
 
             # we may need to increase the precision of the cached cusp
             # generators
-            G =  []
+            G = []
             for j,f,F in self.__cached_cusp_gens:
                 if f.prec() >= working_prec:
                     f = F.qexp(working_prec).change_ring(self.base_ring())
@@ -1070,9 +1069,8 @@ class ModularFormsRing(Parent):
             k = 2
             G = []
 
-
         while k <= maxweight:
-            t = verbose("Looking for cusp generators in weight %s" % k)
+            t = verbose(f"Looking for cusp generators in weight {k}")
 
             kprec = self.modular_forms_of_weight(k).sturm_bound()
 

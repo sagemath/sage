@@ -23,7 +23,7 @@ REFERENCE:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from libc.string cimport memcmp
@@ -59,7 +59,7 @@ cdef class MatrixStruct:
             PS_dealloc(self.temp_col_ps)
             raise MemoryError
 
-        for i from 0 <= i < self.nsymbols:
+        for i in range(self.nsymbols):
             num_rows[i] = 0
         for row in self.matrix.rows():
             row = set(row.list())
@@ -67,11 +67,11 @@ cdef class MatrixStruct:
                 row.remove(0)
             for s in row:
                 num_rows[self.symbols.index(s)] += 1
-        for i from 0 <= i < self.nsymbols:
+        for i in range(self.nsymbols):
             S_temp = NonlinearBinaryCodeStruct( (self.degree, num_rows[i]) )
             self.symbol_structs.append(S_temp)
 
-        for i from 0 <= i < self.nsymbols:
+        for i in range(self.nsymbols):
             num_rows[i] = 0
         for row in self.matrix.rows():
             row_list = row.list()
@@ -118,7 +118,7 @@ cdef class MatrixStruct:
         cdef NonlinearBinaryCodeStruct S_temp
         for S in self.symbol_structs:
             S_temp = <NonlinearBinaryCodeStruct>S
-            for i from 0 <= i < S_temp.nwords:
+            for i in range(S_temp.nwords):
                 print(bitset_string(&S_temp.words[i]))
             print(self.symbols[j])
             print("")
@@ -158,7 +158,7 @@ cdef class MatrixStruct:
         cdef int i, n = self.degree
         cdef PartitionStack *part
         cdef NonlinearBinaryCodeStruct S_temp
-        for i from 0 <= i < self.nsymbols:
+        for i in range(self.nsymbols):
             S_temp = <NonlinearBinaryCodeStruct> self.symbol_structs[i]
             S_temp.first_time = 1
 
@@ -197,11 +197,11 @@ cdef class MatrixStruct:
         if self.output is NULL:
             self.run()
         generators = []
-        for i from 0 <= i < self.output.num_gens:
+        for i in range(self.output.num_gens):
             generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
         order = Integer()
         SC_order(self.output.group, 0, order.value)
-        base = [self.output.group.base_orbits[i][0] for i from 0 <= i < self.output.group.base_size]
+        base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
         return generators, order, base
 
     def canonical_relabeling(self):
@@ -222,7 +222,7 @@ cdef class MatrixStruct:
         cdef int i
         if self.output is NULL:
             self.run()
-        return [self.output.relabeling[i] for i from 0 <= i < self.degree]
+        return [self.output.relabeling[i] for i in range(self.degree)]
 
     def is_isomorphic(self, MatrixStruct other):
         """
@@ -237,12 +237,12 @@ cdef class MatrixStruct:
             [0, 2, 4, 1, 3, 5]
 
         """
-        cdef int i, j, n = self.degree
+        cdef int i, n = self.degree
         cdef int *output
         cdef int *ordering
         cdef PartitionStack *part
         cdef NonlinearBinaryCodeStruct S_temp
-        for i from 0 <= i < self.nsymbols:
+        for i in range(self.nsymbols):
             S_temp = self.symbol_structs[i]
             S_temp.first_time = 1
             S_temp = other.symbol_structs[i]
@@ -255,7 +255,7 @@ cdef class MatrixStruct:
             sig_free(ordering)
             sig_free(output)
             raise MemoryError
-        for i from 0 <= i < self.degree:
+        for i in range(self.degree):
             ordering[i] = i
 
         cdef bint isomorphic = double_coset(<void *> self, <void *> other, part, ordering, self.degree, &all_matrix_children_are_equivalent, &refine_matrix, &compare_matrices, NULL, NULL, output)
@@ -263,7 +263,7 @@ cdef class MatrixStruct:
         PS_dealloc(part)
         sig_free(ordering)
         if isomorphic:
-            output_py = [output[i] for i from 0 <= i < self.degree]
+            output_py = [output[i] for i in range(self.degree)]
         else:
             output_py = False
         sig_free(output)
@@ -271,7 +271,7 @@ cdef class MatrixStruct:
 
 cdef int refine_matrix(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
     cdef MatrixStruct M = <MatrixStruct> S
-    cdef int i, temp_inv, invariant = 1
+    cdef int temp_inv, invariant = 1
     cdef bint changed = 1
     while changed:
         PS_copy_from_to(PS, M.temp_col_ps)
@@ -290,7 +290,7 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
     cdef int i
     MM1 = Matrix(M1.base_ring(), M1.nrows(), M1.ncols(), sparse=M1.is_sparse())
     MM2 = Matrix(M2.base_ring(), M2.nrows(), M2.ncols(), sparse=M2.is_sparse())
-    for i from 0 <= i < degree:
+    for i in range(degree):
         MM1.set_column(i, M1.column(gamma_1[i]))
         MM2.set_column(i, M2.column(gamma_2[i]))
     rows1 = sorted(MM1.rows())
@@ -330,15 +330,13 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
         sage: import sage.groups.perm_gps.partn_ref.refinement_matrices
         sage: sage.groups.perm_gps.partn_ref.refinement_matrices.random_tests()  # long time (up to 30s on sage.math, 2011)
         All passed: ... random tests on ... matrices.
-
     """
-    from sage.misc.misc import walltime
     from sage.misc.prandom import random, randint
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-    from sage.arith.all import next_prime
-    cdef int h, i, j, nrows, k, num_tests = 0, num_matrices = 0
+    from sage.arith.misc import next_prime
+    cdef int i, j, nrows, num_tests = 0, num_matrices = 0
     cdef MatrixStruct M, N
     for m in range(n):
         p = random()*(density_range[1]-density_range[0]) + density_range[0]
@@ -350,7 +348,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
         M = MatrixStruct( MM )
         M.run()
 
-        for i from 0 <= i < perms_per_matrix:
+        for i in range(perms_per_matrix):
             perm = [a-1 for a in list(S.random_element())]
             NN = matrix(GF(nsymbols), nrows, ncols)
             for j from 0 <= j < ncols:

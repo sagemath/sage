@@ -1,14 +1,13 @@
 from libcpp.memory cimport unique_ptr, shared_ptr, make_shared
 
-from sage.rings.polynomial.multi_polynomial_ring_base cimport \
-                                                MPolynomialRing_base
+from sage.rings.polynomial.multi_polynomial_ring_base cimport MPolynomialRing_base, BooleanPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.structure.element cimport MonoidElement
 
 from sage.libs.polybori.decl cimport *
 
 
-cdef class BooleanPolynomialRing(MPolynomialRing_base):
+cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
     cdef PBRing _pbring
     cdef Py_ssize_t* pbind
     cdef public _monom_monoid
@@ -42,8 +41,9 @@ cdef class BooleanMonomialVariableIterator:
     cdef object parent
     cdef BooleanPolynomialRing _ring
     cdef BooleanMonomial obj
-    cdef PBMonomVarIter _iter
-    cdef PBMonomVarIter _end
+    cdef PBMonomIter _iter
+    cdef PBMonomIter _end
+    cdef Py_ssize_t* pbind
 
 cdef class BooleanMonomialIterator:
     cdef BooleanMonomial obj

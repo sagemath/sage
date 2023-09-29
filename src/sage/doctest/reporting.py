@@ -23,10 +23,16 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
-#       Copyright (C) 2013 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#       Copyright (C) 2012-2013 David Roe <roed.math@gmail.com>
+#                     2012      Robert Bradshaw <robertwb@gmail.com>
+#                     2012      William Stein <wstein@gmail.com>
+#                     2013      R. Andrew Ohana
+#                     2013      Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2013-2017 Volker Braun
+#                     2018      Julian Rüth
+#                     2018-2021 Sébastien Labbé
+#                     2020      Samuel Lelièvre
+#                     2022      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -258,7 +264,9 @@ class DocTestReporter(SageObject):
             Output so far...
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Or a process that returned a bad exit code::
 
@@ -269,7 +277,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Or a process that segfaulted::
 
@@ -281,7 +291,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Report a timeout with results and a ``SIGKILL``::
 
@@ -293,7 +305,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 1,
+                                        'walltime': 1000000.0}}
 
         This is an internal error since results is None::
 
@@ -304,12 +318,15 @@ class DocTestReporter(SageObject):
             All output
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 1,
+                                        'walltime': 1000000.0}}
 
         Or tell the user that everything succeeded::
 
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
@@ -317,7 +334,7 @@ class DocTestReporter(SageObject):
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
                 [... tests, ... s]
             sage: DTR.stats
-            {'sage.doctest.reporting': {'walltime': ...}}
+            {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
 
         Or inform the user that some doctests failed::
 
@@ -360,7 +377,8 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
@@ -411,7 +429,7 @@ class DocTestReporter(SageObject):
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s"%fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6)
+                stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
                 if not the_baseline_stats.get('failed', False):
                     self.error_status |= 4
             elif return_code:
@@ -427,7 +445,7 @@ class DocTestReporter(SageObject):
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6)
+                stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
                 if not the_baseline_stats.get('failed', False):
                     self.error_status |= (8 if return_code > 0 else 16)
             else:
@@ -483,9 +501,9 @@ class DocTestReporter(SageObject):
                     if hasattr(result_dict, 'tb'):
                         log(result_dict.tb)
                     if hasattr(result_dict, 'walltime'):
-                        stats[basename] = dict(failed=True, walltime=wall)
+                        stats[basename] = dict(failed=True, walltime=wall, ntests=ntests)
                     else:
-                        stats[basename] = dict(failed=True, walltime=1e6)
+                        stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
                     self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
@@ -497,9 +515,9 @@ class DocTestReporter(SageObject):
                         if not the_baseline_stats.get('failed', False):
                             self.error_status |= 1
                     if f or result_dict.err == 'tab':
-                        stats[basename] = dict(failed=True, walltime=wall)
+                        stats[basename] = dict(failed=True, walltime=wall, ntests=ntests)
                     else:
-                        stats[basename] = dict(walltime=wall)
+                        stats[basename] = dict(walltime=wall, ntests=ntests)
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 
@@ -555,7 +573,6 @@ class DocTestReporter(SageObject):
         except Exception:
             import traceback
             log(traceback.format_exc(), end="")
-
 
     def finalize(self):
         """

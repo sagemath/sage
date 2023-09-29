@@ -29,7 +29,7 @@ Modules with basis
 .. toctree::
    :maxdepth: 1
 
-   sage/modules/with_basis/__init__
+   sage/modules/with_basis/all
    sage/modules/with_basis/cell_module
    sage/modules/with_basis/indexed_element
    sage/modules/with_basis/invariant
@@ -99,13 +99,19 @@ Vectors
    :maxdepth: 1
 
    sage/modules/vector_integer_dense
+   sage/modules/vector_integer_sparse
    sage/modules/vector_mod2_dense
    sage/modules/vector_modn_dense
+   sage/modules/vector_modn_sparse
    sage/modules/vector_rational_dense
+   sage/modules/vector_rational_sparse
    sage/modules/vector_symbolic_dense
+   sage/modules/vector_symbolic_sparse
    sage/modules/vector_callable_symbolic_dense
    sage/modules/vector_double_dense
    sage/modules/vector_real_double_dense
+   sage/modules/vector_numpy_dense
+   sage/modules/vector_numpy_integer_dense
    sage/modules/vector_complex_double_dense
    sage/modules/complex_double_vector
    sage/modules/real_double_vector

@@ -956,19 +956,19 @@ class RibbonGraph(SageObject, UniqueRepresentation):
              [[25, 26]],
              [[27, 28]]]
         """
-        aux_sigma = [list(x) for  x in self._sigma.cycle_tuples(singletons=True)]
+        aux_sigma = [list(x) for x in self._sigma.cycle_tuples(singletons=True)]
 
         basis = [[list(x)] for x in self.reduced()._rho.cycle_tuples()]
 
-        #Now we define center as the set of edges that were contracted
-        #in reduced() this set is contractible and can be define as the
-        #complement of reduced_rho in rho
+        # Now we define center as the set of edges that were contracted
+        # in reduced() this set is contractible and can be define as the
+        # complement of reduced_rho in rho
 
         center = [list(x) for x in self._rho.cycle_tuples()
                   if (x not in self.reduced()._rho.cycle_tuples())]
 
-        #We define an auxiliary list 'vertices' that will contain the
-        #vertices (cycles of sigma) corresponding to each half edge.
+        # We define an auxiliary list 'vertices' that will contain the
+        # vertices (cycles of sigma) corresponding to each half edge.
 
         vertices = []
 
@@ -1221,7 +1221,7 @@ def bipartite_ribbon_graph(p, q):
         elif (i+1) % q != 0:
             k = (i+1) % q
         t = 0
-        if (i+1) %  q != 0:
+        if (i+1) % q != 0:
             t = 1
         aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() +1]
         rho += [aux_edge]

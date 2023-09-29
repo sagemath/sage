@@ -20,12 +20,14 @@ from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.misc.lazy_import import lazy_import
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.combinat.integer_vector import IntegerVector
-from sage.combinat.words.word import Word
 from sage.combinat.permutation import Permutation
+
+lazy_import('sage.combinat.words.word', 'Word')
 
 
 class WeightedIntegerVectors(Parent, UniqueRepresentation):
@@ -282,7 +284,8 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
             sage: TestSuite(C).run()
         """
         self._weights = weight
-        from sage.sets.all import Family, NonNegativeIntegers
+        from sage.sets.family import Family
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         # Use "partial" to make the basis function (with the weights
         # argument specified) pickleable.  Otherwise, it seems to
         # cause problems...
@@ -318,7 +321,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
                 and len(x) == len(self._weights)
                 and all(i in ZZ and i >= 0 for i in x))
 
-    def subset(self, size = None):
+    def subset(self, size=None):
         """
         EXAMPLES::
 

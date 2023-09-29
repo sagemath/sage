@@ -67,8 +67,10 @@ class HopfAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                An example of Hopf algebra with basis: the group algebra of the
+                 Dihedral group of order 6 as a permutation group over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, a.antipode()
                 (B[(1,2,3)], B[(1,3,2)])
@@ -77,7 +79,7 @@ class HopfAlgebras(Category_over_base_ring):
 
             TESTS::
 
-                sage: all(x.antipode() * x == A.one() for x in A.basis())
+                sage: all(x.antipode() * x == A.one() for x in A.basis())               # needs sage.groups
                 True
             """
             return self.parent().antipode(self)
@@ -135,9 +137,9 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = SteenrodAlgebra(3)
-                    sage: a = A.an_element()
-                    sage: a, a.antipode()
+                    sage: A = SteenrodAlgebra(3)                                        # needs sage.combinat sage.modules
+                    sage: a = A.an_element()                                            # needs sage.combinat sage.modules
+                    sage: a, a.antipode()                                               # needs sage.combinat sage.modules
                     (2 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
                 """
                 return self.parent().antipode(self)
@@ -204,6 +206,7 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: N = NonCommutativeSymmetricFunctions(QQ)
                     sage: R = N.ribbon()
                     sage: R.antipode_by_coercion.__module__

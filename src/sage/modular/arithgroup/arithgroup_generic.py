@@ -885,12 +885,12 @@ class ArithmeticSubgroup(Group):
 
     def generalised_level(self):
         r"""
-        Return the generalised level of self, i.e. the least common multiple of
+        Return the generalised level of ``self``, i.e., the least common multiple of
         the widths of all cusps.
 
-        If self is *even*, Wohlfart's theorem tells us that this is equal to
-        the (conventional) level of self when self is a congruence subgroup.
-        This can fail if self is odd, but the actual level is at most twice the
+        If ``self`` is *even*, Wohlfart's theorem tells us that this is equal to
+        the (conventional) level of ``self`` when ``self`` is a congruence subgroup.
+        This can fail if ``self`` is odd, but the actual level is at most twice the
         generalised level. See the paper by Kiming, Schuett and Verrill for
         more examples.
 
@@ -898,7 +898,8 @@ class ArithmeticSubgroup(Group):
 
             sage: Gamma0(18).generalised_level()
             18
-            sage: sage.modular.arithgroup.arithgroup_perm.HsuExample18().generalised_level()
+            sage: from sage.modular.arithgroup.arithgroup_perm import HsuExample18
+            sage: HsuExample18().generalised_level()
             24
 
         In the following example, the actual level is twice the generalised
@@ -971,7 +972,7 @@ class ArithmeticSubgroup(Group):
             sage: [n for n in [1..200] if Gamma0(n).genus() == 1]
             [11, 14, 15, 17, 19, 20, 21, 24, 27, 32, 36, 49]
         """
-        return ZZ(1 + (self.projective_index()) / ZZ(12)  - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
+        return ZZ(1 + (self.projective_index()) / ZZ(12) - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
 
     def farey_symbol(self):
         r"""

@@ -45,8 +45,8 @@ class KnotInfoColumnTypes(Enum):
         <KnotInfoColumnTypes.OnlyLinks: 'L'>,
         <KnotInfoColumnTypes.KnotsAndLinks: 'B'>]
     """
-    OnlyKnots =     'K'       # column that is only used in the KnotInfo table
-    OnlyLinks =     'L'       # column that is only used in the LinkInfo table
+    OnlyKnots = 'K'       # column that is only used in the KnotInfo table
+    OnlyLinks = 'L'       # column that is only used in the LinkInfo table
     KnotsAndLinks = 'B'       # column that is only used in both tables
 
 
@@ -262,7 +262,6 @@ class KnotInfoFilename(Enum):
         """
         return 'column_dict.sobj'
 
-
     def sobj_data(self, column):
         r"""
         Return the file name under which the data of the given
@@ -311,11 +310,8 @@ class KnotInfoFilename(Enum):
         else:
             return '%sdiagram_display.php?%s' %(self.url(), fname)
 
-
     knots = ['https://knotinfo.math.indiana.edu/', 'knotinfo_data_complete']
     links = ['https://linkinfo.sitehost.iu.edu/',  'linkinfo_data_complete']
-
-
 
 
 #----------------------------------------------------------------------------------------------------------------------------
@@ -406,7 +402,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
             self._create_data_sobj(sobj_path=sobj_path)
         return
 
-
     def version(self):
         r"""
         Return the version of the database currently installed on the device.
@@ -439,7 +434,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         from database_knotinfo import version
         return version()
 
-
     def demo_version(self):
         r"""
         Return whether the KnotInfo databases are installed completely or
@@ -457,7 +451,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
                 num_knots_file = os.path.join(self._sobj_path, self.filename.knots.num_knots(self.version()))
                 from builtins import FileNotFoundError
                 try:
-                    self._num_knots =  load(num_knots_file)
+                    self._num_knots = load(num_knots_file)
                 except FileNotFoundError:
                     self.create_filecache()
                 self._demo = False
@@ -482,7 +476,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         from database_knotinfo import link_list
         self._knot_list = link_list()
         return self._knot_list
-
 
     def link_list(self):
         r"""
@@ -557,8 +550,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         save(column_dict, '%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
 
-
-
     def _create_data_sobj(self, sobj_path=None):
         r"""
         Create ``sobj`` files containing the contents of the whole table.
@@ -591,15 +582,15 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         # ----------------------------------------------------------------
         # Columns that exist for knots and links
         # ----------------------------------------------------------------
-        column_dict =  load('%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
+        column_dict = load('%s/%s' %(sobj_path, self.filename.knots.sobj_column()))
         cols = KnotInfoColumns('ColsTemp', column_dict)
         for col in cols:
             val_list = []
 
-            if  col.column_type() != col.types.OnlyLinks:
-                for i in range(1 , len_knots):
+            if col.column_type() != col.types.OnlyLinks:
+                for i in range(1, len_knots):
                     if col.name == self._names_column:
-                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1 , 1]
+                        row_dict[self._knot_prefix + knot_list[i][col.name]] = [i - 1, 1]
 
                     val_list.append(knot_list[i][col.name])
 
@@ -621,7 +612,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         save(row_dict,    '%s/%s' %(sobj_path, self.filename.knots.sobj_row()))
 
-
     @cached_method
     def columns(self):
         r"""
@@ -638,7 +628,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         """
         column_dict = self.read_column_dict()
         return KnotInfoColumns('Columns', column_dict)
-
 
     # -------------------------------------------------------------------------------------------------------------
     # read the dictionary for the column names from sobj-file
@@ -717,7 +706,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         names = self.read(self.columns().name)
         return {k:names[v[0]] for k, v in row_dict.items()}
 
-
     # -------------------------------------------------------------------------------------------------------------
     # read the number of knots contained in the database (without proper links) from the according sobj-file.
     # -------------------------------------------------------------------------------------------------------------
@@ -740,7 +728,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         if not self._num_knots:
             self.demo_version()
         return self._num_knots
-
 
     # -------------------------------------------------------------------------------------------------------------
     # read an sobj-file obtained from KnotInfo database
@@ -803,7 +790,6 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         tester.assertTrue(all(L.is_recoverable(unique=False) for L, in sample))
 
 
-
 column_demo_sample = {
     'name':                 ['Name',                 KnotInfoColumnTypes.KnotsAndLinks],
     'name_unoriented':      ['Name - Unoriented',    KnotInfoColumnTypes.OnlyLinks],
@@ -825,6 +811,13 @@ column_demo_sample = {
     'kauffman_polynomial':  ['Kauffman',             KnotInfoColumnTypes.KnotsAndLinks],
     'khovanov_polynomial':  ['Khovanov',             KnotInfoColumnTypes.KnotsAndLinks],
     'khovanov_torsion_polynomial': ['Khovanov Torsion', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_unreduced_integral_polynomial': ['KH Unred Z Poly', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_reduced_integral_polynomial': ['KH Red Z Poly', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_reduced_rational_polynomial': ['KH Red Q Poly', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_reduced_mod2_polynomial': ['KH Red Mod2 Poly', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_odd_integral_polynomial': ['KH Odd Red Z Poly', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_odd_rational_polynomial': ['KH Odd Red Q Poly', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_odd_mod2_polynomial': ['KH Red Odd Mod2 Poly', KnotInfoColumnTypes.OnlyKnots],
     'determinant':          ['Determinant',          KnotInfoColumnTypes.KnotsAndLinks],
     'positive':             ['Positive',             KnotInfoColumnTypes.OnlyKnots],
     'fibered':              ['Fibered',              KnotInfoColumnTypes.OnlyKnots],
@@ -1147,5 +1140,82 @@ data_demo_sample = {
         'Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)+Q^(-3)+Qt^2',
         'Q^(-5)t^(-2)+Q^(-3)t^(-1)+Q^(-1)+Qt+Q^3t^2+Q^5t^3',
         'Q^(-19)t^(-6)+Q^(-15)t^(-4)+Q^(-11)t^(-2)',
-        'Q^(-15)t^(-6)+Q^(-11)t^(-4)+Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)']
+        'Q^(-15)t^(-6)+Q^(-11)t^(-4)+Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)'],
+    dc.khovanov_unreduced_integral_polynomial: [
+        '',
+        'q + q^(3) + t^(2) q^(5) + t^(3) q^(9) + t^(3) q^(7) T^(2)',
+        't^(-2) q^(-5) + t^(-1) q^(-1) + q^(-1) + q + t q + t^(2) q^(5) + t^(-1) q^(-3) T^(2) + t^(2) q^(3) T^(2)',
+        'q^(3) + q^(5) + t^(2) q^(7) + t^(3) q^(11) + t^(4) q^(11) + t^(5) q^(15) + t^(3) q^(9) T^(2) + t^(5) q^(13) T^(2)',
+        'q + q^(3) + t q^(3) + t^(2) q^(5) + t^(2) q^(7) + t^(3) q^(9) + t^(4) q^(9) + t^(5) q^(13) + t^(2) q^(5) T^(2) + t^(3) q^(7) T^(2) + t^(5) q^(11) T^(2)',
+        't^(-2) q^(-5) + t^(-1) q^(-1) + 2 q^(-1) + q + t q + t q^(3) + t^(2) q^(5) + t^(3) q^(5) + t^(4) q^(9) + t^(-1) q^(-3) T^(2) + t q T^(2) + t^(2) q^(3) T^(2) + t^(4) q^(7) T^(2)',
+        't^(-2) q^(-3) + t^(-1) q + 2 q + q^(3) + t q^(3) + t q^(5) + t^(2) q^(5) + t^(2) q^(7) + t^(3) q^(7) + t^(3) q^(9) + t^(4) q^(11) + t^(-1) q^(-1) T^(2) + t q^(3) T^(2) + t^(2) q^(5) T^(2) + t^(3) q^(7) T^(2) + t^(4) q^(9) T^(2)',
+        't^(-3) q^(-7) + t^(-2) q^(-5) + t^(-2) q^(-3) + t^(-1) q^(-3) + t^(-1) q^(-1) + 2 q^(-1) + 2 q + t q + t q^(3) + t^(2) q^(3) + t^(2) q^(5) + t^(3) q^(7) + t^(-2) q^(-5) T^(2) + t^(-1) q^(-3) T^(2) + q^(-1) T^(2) + t q T^(2) + t^(2) q^(3) T^(2) + t^(3) q^(5) T^(2)',
+        'q^(5) + q^(7) + t^(2) q^(9) + t^(3) q^(13) + t^(4) q^(13) + t^(5) q^(17) + t^(6) q^(17) + t^(7) q^(21) + t^(3) q^(11) T^(2) + t^(5) q^(15) T^(2) + t^(7) q^(19) T^(2)',
+        'q + q^(3) + t q^(3) + t^(2) q^(5) + t^(2) q^(7) + t^(3) q^(7) + t^(3) q^(9) + t^(4) q^(9) + t^(4) q^(11) + t^(5) q^(13) + t^(6) q^(13) + t^(7) q^(17) + t^(2) q^(5) T^(2) + t^(3) q^(7) T^(2) + t^(4) q^(9) T^(2) + t^(5) q^(11) T^(2) + t^(7) q^(15) T^(2)'],
+    dc.khovanov_reduced_integral_polynomial: [
+        '',
+        'q^(2) + t^(2) q^(6) + t^(3) q^(8)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 1 + t q^(2) + t^(2) q^(4)',
+        'q^(4) + t^(2) q^(8) + t^(3) q^(10) + t^(4) q^(12) + t^(5) q^(14)',
+        'q^(2) + t q^(4) + 2 t^(2) q^(6) + t^(3) q^(8) + t^(4) q^(10) + t^(5) q^(12)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 2 + 2 t q^(2) + t^(2) q^(4) + t^(3) q^(6) + t^(4) q^(8)',
+        't^(-2) q^(-2) + t^(-1) + 2 q^(2) + 2 t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + t^(4) q^(10)',
+        't^(-3) q^(-6) + 2 t^(-2) q^(-4) + 2 t^(-1) q^(-2) + 3 + 2 t q^(2) + 2 t^(2) q^(4) + t^(3) q^(6)',
+        'q^(6) + t^(2) q^(10) + t^(3) q^(12) + t^(4) q^(14) + t^(5) q^(16) + t^(6) q^(18) + t^(7) q^(20)',
+        'q^(2) + t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + 2 t^(4) q^(10) + t^(5) q^(12) + t^(6) q^(14) + t^(7) q^(16)'],
+    dc.khovanov_reduced_rational_polynomial: [
+        '',
+        ' q^(2) + t^(2) q^(6) + t^(3) q^(8)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 1 + t q^(2) + t^(2) q^(4)',
+        ' q^(4) + t^(2) q^(8) + t^(3) q^(10) + t^(4) q^(12) + t^(5) q^(14)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + t^(3) q^(8) + t^(4) q^(10) + t^(5) q^(12)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 2 + 2 t q^(2) + t^(2) q^(4) + t^(3) q^(6) + t^(4) q^(8)',
+        't^(-2) q^(-2) + t^(-1) + 2 q^(2) + 2 t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + t^(4) q^(10)',
+        't^(-3) q^(-6) + 2 t^(-2) q^(-4) + 2 t^(-1) q^(-2) + 3 + 2 t q^(2) + 2 t^(2) q^(4) + t^(3) q^(6)',
+        ' q^(6) + t^(2) q^(10) + t^(3) q^(12) + t^(4) q^(14) + t^(5) q^(16) + t^(6) q^(18) + t^(7) q^(20)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + 2 t^(4) q^(10) + t^(5) q^(12) + t^(6) q^(14) + t^(7) q^(16)'],
+    dc.khovanov_reduced_mod2_polynomial: [
+        '',
+        ' q^(2) + t^(2) q^(6) + t^(3) q^(8)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 1 + t q^(2) + t^(2) q^(4)',
+        ' q^(4) + t^(2) q^(8) + t^(3) q^(10) + t^(4) q^(12) + t^(5) q^(14)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + t^(3) q^(8) + t^(4) q^(10) + t^(5) q^(12)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 2 + 2 t q^(2) + t^(2) q^(4) + t^(3) q^(6) + t^(4) q^(8)',
+        't^(-2) q^(-2) + t^(-1) + 2 q^(2) + 2 t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + t^(4) q^(10)',
+        't^(-3) q^(-6) + 2 t^(-2) q^(-4) + 2 t^(-1) q^(-2) + 3 + 2 t q^(2) + 2 t^(2) q^(4) + t^(3) q^(6)',
+        ' q^(6) + t^(2) q^(10) + t^(3) q^(12) + t^(4) q^(14) + t^(5) q^(16) + t^(6) q^(18) + t^(7) q^(20)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + 2 t^(4) q^(10) + t^(5) q^(12) + t^(6) q^(14) + t^(7) q^(16)'],
+    dc.khovanov_odd_integral_polynomial: [
+        '',
+        'q^(2) + t^(2) q^(6) + t^(3) q^(8)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 1 + t q^(2) + t^(2) q^(4)',
+        'q^(4) + t^(2) q^(8) + t^(3) q^(10) + t^(4) q^(12) + t^(5) q^(14)',
+        'q^(2) + t q^(4) + 2 t^(2) q^(6) + t^(3) q^(8) + t^(4) q^(10) + t^(5) q^(12)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 2 + 2 t q^(2) + t^(2) q^(4) + t^(3) q^(6) + t^(4) q^(8)',
+        't^(-2) q^(-2) + t^(-1) + 2 q^(2) + 2 t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + t^(4) q^(10)',
+        't^(-3) q^(-6) + 2 t^(-2) q^(-4) + 2 t^(-1) q^(-2) + 3 + 2 t q^(2) + 2 t^(2) q^(4) + t^(3) q^(6)',
+        'q^(6) + t^(2) q^(10) + t^(3) q^(12) + t^(4) q^(14) + t^(5) q^(16) + t^(6) q^(18) + t^(7) q^(20)',
+        'q^(2) + t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + 2 t^(4) q^(10) + t^(5) q^(12) + t^(6) q^(14) + t^(7) q^(16)'],
+    dc.khovanov_odd_rational_polynomial: [
+        '',
+        ' q^(2) + t^(2) q^(6) + t^(3) q^(8)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 1 + t q^(2) + t^(2) q^(4)',
+        ' q^(4) + t^(2) q^(8) + t^(3) q^(10) + t^(4) q^(12) + t^(5) q^(14)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + t^(3) q^(8) + t^(4) q^(10) + t^(5) q^(12)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 2 + 2 t q^(2) + t^(2) q^(4) + t^(3) q^(6) + t^(4) q^(8)',
+        't^(-2) q^(-2) + t^(-1) + 2 q^(2) + 2 t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + t^(4) q^(10)',
+        't^(-3) q^(-6) + 2 t^(-2) q^(-4) + 2 t^(-1) q^(-2) + 3 + 2 t q^(2) + 2 t^(2) q^(4) + t^(3) q^(6)',
+        ' q^(6) + t^(2) q^(10) + t^(3) q^(12) + t^(4) q^(14) + t^(5) q^(16) + t^(6) q^(18) + t^(7) q^(20)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + 2 t^(4) q^(10) + t^(5) q^(12) + t^(6) q^(14) + t^(7) q^(16)'],
+    dc.khovanov_odd_mod2_polynomial: [
+        '',
+        ' q^(2) + t^(2) q^(6) + t^(3) q^(8)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 1 + t q^(2) + t^(2) q^(4)',
+        ' q^(4) + t^(2) q^(8) + t^(3) q^(10) + t^(4) q^(12) + t^(5) q^(14)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + t^(3) q^(8) + t^(4) q^(10) + t^(5) q^(12)',
+        't^(-2) q^(-4) + t^(-1) q^(-2) + 2 + 2 t q^(2) + t^(2) q^(4) + t^(3) q^(6) + t^(4) q^(8)',
+        't^(-2) q^(-2) + t^(-1) + 2 q^(2) + 2 t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + t^(4) q^(10)',
+        't^(-3) q^(-6) + 2 t^(-2) q^(-4) + 2 t^(-1) q^(-2) + 3 + 2 t q^(2) + 2 t^(2) q^(4) + t^(3) q^(6)',
+        ' q^(6) + t^(2) q^(10) + t^(3) q^(12) + t^(4) q^(14) + t^(5) q^(16) + t^(6) q^(18) + t^(7) q^(20)',
+        ' q^(2) + t q^(4) + 2 t^(2) q^(6) + 2 t^(3) q^(8) + 2 t^(4) q^(10) + t^(5) q^(12) + t^(6) q^(14) + t^(7) q^(16)']
 }

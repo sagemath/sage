@@ -32,10 +32,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ import unpickle_class_value
 
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 from sage.arith.power cimport generic_power_pos
 
 ZZ = IntegerRing()
@@ -1000,7 +997,7 @@ cdef class ntl_ZZX():
             sage: f.trace_list()
             [5, 0, -6, 0, 10]
 
-        The input polynomial must be monic or a ValueError is raised::
+        The input polynomial must be monic or a :class:`ValueError` is raised::
 
             sage: f = ntl.ZZX([1,2,0,3,0,2])
             sage: f.trace_list()

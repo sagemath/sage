@@ -50,6 +50,7 @@ class Nonexact:
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: R = QQ[[x]]
             sage: R.default_prec()
             20

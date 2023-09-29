@@ -16,10 +16,6 @@ The constant `e`
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.symbolic.expression cimport Expression
-from sage.symbolic.ring import SR
-
-
 # keep exp(1) for fast access
 # this is initialized in the constructor of the class E below to prevent
 # circular imports while loading the library
@@ -106,8 +102,8 @@ cdef class E(Expression):
             2.7182818284590452353602874714
             sage: e._real_double_(RDF)   # abs tol 5e-16
             2.718281828459045
-            sage: import sympy
-            sage: sympy.E == e # indirect doctest
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.E == e  # indirect doctest                                      # needs sympy
             True
 
         TESTS::
@@ -126,6 +122,8 @@ cdef class E(Expression):
             [e 0]
             [0 e]
         """
+        from sage.symbolic.ring import SR
+
         global exp_one
         exp_one = SR.one().exp()
         Expression.__init__(self, SR, exp_one)
@@ -171,7 +169,8 @@ cdef class E(Expression):
             try:
                 return right.exp()
             except AttributeError:
+                from sage.symbolic.ring import SR
                 return SR(right).exp()
         else:
+            from sage.symbolic.ring import SR
             return SR(left)**exp_one
-

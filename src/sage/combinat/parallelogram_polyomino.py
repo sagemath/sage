@@ -1024,44 +1024,44 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino([[0, 1], [1, 0]])
             sage: pp = ParallelogramPolyomino([[1], [1]])
 
-            sage: pp = ParallelogramPolyomino(
+            sage: pp = ParallelogramPolyomino(                # indirect doctest
             ....:     [[1, 0], [0, 1]]
-            ....: ) # indirect doctest
+            ....: )
             Traceback (most recent call last):
             ...
             ValueError: the lower and upper paths are crossing
 
-            sage: pp = ParallelogramPolyomino([[1], [0, 1]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[1], [0, 1]])  # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower and upper paths have different sizes (2 != 1)
 
-            sage: pp = ParallelogramPolyomino([[1], [0]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[1], [0]])     # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the two paths have distinct ends
 
-            sage: pp = ParallelogramPolyomino([[0], [1]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[0], [1]])     # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the two paths have distinct ends
 
-            sage: pp = ParallelogramPolyomino([[0], [0]]) # indirect doctest
+            sage: pp = ParallelogramPolyomino([[0], [0]])     # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to [0]
 
-            sage: pp = ParallelogramPolyomino([[], [0]])  # indirect doctest
+            sage: pp = ParallelogramPolyomino([[], [0]])      # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to []
 
-            sage: pp = ParallelogramPolyomino([[0], []])  # indirect doctest
+            sage: pp = ParallelogramPolyomino([[0], []])      # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to []
 
-            sage: pp = ParallelogramPolyomino([[], []])  # indirect doctest
+            sage: pp = ParallelogramPolyomino([[], []])       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the lower or the upper path can...t be equal to []
@@ -1173,7 +1173,7 @@ class ParallelogramPolyomino(ClonableList,
         if check:
             if not isinstance(value, (list, tuple)):
                 raise ValueError(
-                    "Value %s must be a list or a tuple." % value)
+                    "value %s must be a list or a tuple" % value)
             self.check()
         self._options = None
 
@@ -1330,7 +1330,7 @@ class ParallelogramPolyomino(ClonableList,
             return self._to_dyck_delest_viennot()
         if bijection == 'Delest-Viennot-beta':
             return self._to_dyck_delest_viennot_peaks_valleys()
-        raise ValueError("The given bijection is not valid.")
+        raise ValueError("the given bijection is not valid")
 
     @staticmethod
     def _from_dyck_word_delest_viennot(dyck):
@@ -1457,7 +1457,7 @@ class ParallelogramPolyomino(ClonableList,
             return ParallelogramPolyomino._from_dyck_word_delest_viennot(dyck)
         if bijection == 'Delest-Viennot-beta':
             return ParallelogramPolyomino._from_dyck_word_delest_viennot_peaks_valleys(dyck)
-        raise ValueError("The given bijection is not valid.")
+        raise ValueError("the given bijection is not valid")
 
     def _to_binary_tree_Aval_Boussicault(self, position=None):
         r"""
@@ -2652,7 +2652,7 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp.area()
             0
         """
-        return sum(h for h in self.heights())
+        return sum(self.heights())
 
     def _repr_(self) -> str:
         r"""
@@ -3703,14 +3703,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_diagram()
+            sage: pp._plot_diagram()                                                    # optional - sage.plot
             Graphics object consisting of 7 graphics primitives
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_diagram()
+            sage: pp._plot_diagram()                                                    # optional - sage.plot
             Graphics object consisting of 25 graphics primitives
         """
         G = Graphics()
@@ -3755,14 +3755,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_bounce(directions=[1])
+            sage: pp._plot_bounce(directions=[1])                                       # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_bounce(directions=[0,1])
+            sage: pp._plot_bounce(directions=[0,1])                                     # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
 
         """
@@ -3798,14 +3798,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_bounce_values()
+            sage: pp._plot_bounce_values()                                              # optional - sage.plot
             Graphics object consisting of 4 graphics primitives
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_bounce_values(bounce=1)
+            sage: pp._plot_bounce_values(bounce=1)                                      # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
         """
         G = Graphics()
@@ -3847,14 +3847,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino(
             ....:     [[0, 1, 1, 1, 1], [1, 1, 1, 1, 0]]
             ....: )
-            sage: pp._plot_tree()
+            sage: pp._plot_tree()                                                       # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
 
             sage: pp = ParallelogramPolyomino([
             ....:     [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             ....:     [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0]
             ....: ])
-            sage: pp._plot_tree()
+            sage: pp._plot_tree()                                                       # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         G = Graphics()
@@ -3869,17 +3869,17 @@ class ParallelogramPolyomino(ClonableList,
         EXAMPLES::
 
             sage: pp = ParallelogramPolyomino([[0,1],[1,0]])
-            sage: pp.plot()
+            sage: pp.plot()                                                             # optional - sage.plot
             Graphics object consisting of 4 graphics primitives
             sage: pp.set_options(
             ....:     drawing_components=dict(
-            ....:         diagram = True
-            ....:         , bounce_0 = True
-            ....:         , bounce_1 = True
-            ....:         , bounce_values = 0
+            ....:         diagram=True,
+            ....:         bounce_0=True,
+            ....:         bounce_1=True,
+            ....:         bounce_values=0,
             ....:     )
             ....: )
-            sage: pp.plot()
+            sage: pp.plot()                                                             # optional - sage.plot
             Graphics object consisting of 7 graphics primitives
         """
         G = Graphics()
@@ -4045,8 +4045,8 @@ class ParallelogramPolyominoesFactory(SetFactory):
             return ParallelogramPolyominoes_size(size, policy)
         if size is None:
             return ParallelogramPolyominoes_all(policy)
-        raise ValueError("Invalid argument for Parallelogram Polyominoes "
-                         "Factory.")
+        raise ValueError("invalid argument for Parallelogram Polyominoes "
+                         "Factory")
 
     @lazy_attribute
     def _default_policy(self):
@@ -4149,9 +4149,9 @@ class ParallelogramPolyominoes_size(
         EXAMPLES::
 
             sage: PPS = ParallelogramPolyominoes(3)
-            sage: ParallelogramPolyomino(
+            sage: ParallelogramPolyomino(                     # indirect doctest
             ....:     [[0, 1, 1], [1, 1, 0]]
-            ....: ) in PPS # indirect doctest
+            ....: ) in PPS
             True
         """
         if el.size() != self.size():
@@ -4322,9 +4322,9 @@ class ParallelogramPolyominoes_all(
         EXAMPLES::
 
             sage: PPS = ParallelogramPolyominoes()
-            sage: ParallelogramPolyomino(
+            sage: ParallelogramPolyomino(                     # indirect doctest
             ....:     [[0, 1, 1], [1, 1, 0]]
-            ....: ) in PPS # indirect doctest
+            ....: ) in PPS
             True
         """
         pass

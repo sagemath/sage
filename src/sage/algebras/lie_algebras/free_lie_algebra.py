@@ -265,7 +265,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
         """
         if k == 0:
             return 0
-        from sage.arith.all import moebius
+        from sage.arith.misc import moebius
         s = len(self.lie_algebra_generators())
         k = ZZ(k) # Make sure we have something that is in ZZ
         return sum(moebius(d) * s**(k // d) for d in k.divisors()) // k
@@ -713,7 +713,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
                 sage: Lyn([x, [y, [z, x]]]) # indirect doctest
                 [x, [[x, z], y]]
             """
-            assert l < r, "Order mismatch %s > %s"%(l, r)
+            assert l < r, "Order mismatch %s > %s" % (l, r)
 
             if self._is_basis_element(l, r):
                 # Compute the grade of the new element

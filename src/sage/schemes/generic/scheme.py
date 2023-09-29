@@ -96,7 +96,7 @@ class Scheme(Parent):
             sage: I = (x^2 - y^2)*R
             sage: RmodI = R.quotient(I)
             sage: X = Spec(RmodI)
-            sage: TestSuite(X).run()
+            sage: TestSuite(X).run()                                                    # needs sage.libs.singular
 
         """
         from sage.schemes.generic.morphism import is_SchemeMorphism
@@ -167,7 +167,7 @@ class Scheme(Parent):
             sage: S = Spec(ZZ)
             sage: f = S.identity_morphism()
             sage: from sage.schemes.generic.glue import GluedScheme
-            sage: T = GluedScheme(f,f)
+            sage: T = GluedScheme(f, f)
             sage: S.hom([1],T)
             Traceback (most recent call last):
             ...
@@ -216,16 +216,16 @@ class Scheme(Parent):
 
             sage: A(QQ)
             Set of rational points of Affine Space of dimension 2 over Rational Field
-            sage: A(RR)
-            Set of rational points of Affine Space of dimension 2 over Real Field
-            with 53 bits of precision
+            sage: A(RR)                                                                 # needs sage.rings.real_mpfr
+            Set of rational points of Affine Space of dimension 2
+             over Real Field with 53 bits of precision
 
         Space of dimension 2 over Rational Field::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: A(NumberField(x^2+1, 'a'))
-            Set of rational points of Affine Space of dimension 2 over Number Field
-            in a with defining polynomial x^2 + 1
+            sage: A(NumberField(x^2 + 1, 'a'))                                          # needs sage.rings.number_field
+            Set of rational points of Affine Space of dimension 2
+             over Number Field in a with defining polynomial x^2 + 1
             sage: A(GF(7))
             Traceback (most recent call last):
             ...
@@ -246,7 +246,7 @@ class Scheme(Parent):
         Check that :trac:`16832` is fixed::
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
-            sage: X=P.subscheme(x^2 - y^2)
+            sage: X = P.subscheme(x^2 - y^2)
             sage: X(P([4, 4, 1]))
             (4 : 4 : 1)
         """
@@ -287,11 +287,11 @@ class Scheme(Parent):
             Set of rational points of Projective Space of dimension 3 over Rational Field
             sage: P.point_homset(GF(11))
             Set of rational points of Projective Space of dimension 3 over
-            Finite Field of size 11
+             Finite Field of size 11
 
         TESTS::
 
-            sage: P = ProjectiveSpace(QQ,3)
+            sage: P = ProjectiveSpace(QQ, 3)
             sage: P.point_homset(GF(11))
             Traceback (most recent call last):
             ...
@@ -321,13 +321,13 @@ class Scheme(Parent):
 
         EXAMPLES::
 
-            sage: A2 = AffineSpace(QQ,2)
-            sage: A2.point([4,5])
+            sage: A2 = AffineSpace(QQ, 2)
+            sage: A2.point([4, 5])
             (4, 5)
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: E = EllipticCurve([t + 1, t, t, 0, 0])
-            sage: E.point([0, 0])
+            sage: E = EllipticCurve([t + 1, t, t, 0, 0])                                # needs sage.schemes
+            sage: E.point([0, 0])                                                       # needs sage.schemes
             (0 : 0 : 1)
         """
         # todo: update elliptic curve stuff to take point_homset as argument
@@ -506,7 +506,8 @@ class Scheme(Parent):
             sage: I = (x^2 - y^2)*R
             sage: X = Spec(R.quotient(I))
             sage: X.coordinate_ring()
-            Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 - y^2)
+            Quotient of Multivariate Polynomial Ring in x, y over Rational Field
+             by the ideal (x^2 - y^2)
         """
         try:
             return self._coordinate_ring
@@ -644,8 +645,8 @@ class Scheme(Parent):
             sage: S._Hom_(P).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
 
-            sage: E = EllipticCurve('37a1')
-            sage: Hom(E, E).__class__
+            sage: E = EllipticCurve('37a1')                                             # needs sage.schemes
+            sage: Hom(E, E).__class__                                                   # needs sage.schemes
             <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
 
             sage: Hom(Spec(ZZ), Spec(ZZ)).__class__
@@ -671,18 +672,19 @@ class Scheme(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.schemes
             sage: P.<x> = PolynomialRing(GF(3))
-            sage: C = HyperellipticCurve(x^3+x^2+1)
+            sage: C = HyperellipticCurve(x^3 + x^2 + 1)
             sage: C.count_points(4)
             [6, 12, 18, 96]
-            sage: C.base_extend(GF(9,'a')).count_points(2)
+            sage: C.base_extend(GF(9,'a')).count_points(2)                              # needs sage.rings.finite_rings
             [12, 96]
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4,'t'), 2)
-            sage: X = P.subscheme([y^2*z - x^3 - z^3])
-            sage: X.count_points(2)
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+            sage: X.count_points(2)                                                     # needs sage.rings.finite_rings
             [5, 17]
         """
         F = self.base_ring()
@@ -705,15 +707,14 @@ class Scheme(Parent):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4,'t'), 2)
-            sage: X = P.subscheme([y^2*z - x^3 - z^3])
-            sage: X.zeta_function()
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+            sage: X.zeta_function()                                                     # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
-
 
     def zeta_series(self, n, t):
         """
@@ -735,9 +736,9 @@ class Scheme(Parent):
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(GF(3))
-            sage: C = HyperellipticCurve(x^3+x^2+1)
+            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # needs sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: C.zeta_series(4,t)
+            sage: C.zeta_series(4, t)                                                   # needs sage.schemes
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
             sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
@@ -749,23 +750,24 @@ class Scheme(Parent):
         Nonetheless, since :trac:`15108` and :trac:`15148`, it supports
         hyperelliptic curves over non-prime fields::
 
-            sage: C.base_extend(GF(9,'a')).zeta_series(4,t)
+            sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # needs sage.rings.finite_rings sage.schemes
             1 + 12*t + 120*t^2 + 1092*t^3 + 9840*t^4 + O(t^5)
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4,'t'), 2)
-            sage: X = P.subscheme([y^2*z - x^3 - z^3])
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: X.zeta_series(2,t)
+            sage: X.zeta_series(2, t)                                                   # needs sage.libs.singular sage.rings.finite_rings
             1 + 5*t + 21*t^2 + O(t^3)
 
         TESTS::
 
             sage: P.<x> = PolynomialRing(ZZ)
-            sage: C = HyperellipticCurve(x^3+x+1)
+            sage: C = HyperellipticCurve(x^3 + x + 1)                                   # needs sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: C.zeta_series(4,t)
+            sage: C.zeta_series(4, t)                                                   # needs sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: zeta functions only defined for schemes
@@ -952,15 +954,16 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Point on Spectrum of Integer Ring defined by the Principal ideal (3) of Integer Ring
             sage: type(P)
             <class 'sage.schemes.generic.scheme.AffineScheme_with_category.element_class'>
-            sage: S(ZZ.ideal(next_prime(1000000)))
-            Point on Spectrum of Integer Ring defined by the Principal ideal (1000003) of Integer Ring
+            sage: S(ZZ.ideal(next_prime(1000000)))                                      # needs sage.libs.pari
+            Point on Spectrum of Integer Ring
+             defined by the Principal ideal (1000003) of Integer Ring
 
             sage: R.<x, y, z> = QQ[]
             sage: S = Spec(R)
             sage: P = S(R.ideal(x, y, z)); P
             Point on Spectrum of Multivariate Polynomial Ring
-            in x, y, z over Rational Field defined by the Ideal (x, y, z)
-            of Multivariate Polynomial Ring in x, y, z over Rational Field
+             in x, y, z over Rational Field defined by the Ideal (x, y, z)
+              of Multivariate Polynomial Ring in x, y, z over Rational Field
 
         This indicates the fix of :trac:`12734`::
 
@@ -990,7 +993,8 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
             sage: R = S.coordinate_ring()
             sage: S(R.ideal(0))
-            Point on Affine Space of dimension 1 over Integer Ring defined by the Ideal (0) of Multivariate Polynomial Ring in x over Integer Ring
+            Point on Affine Space of dimension 1 over Integer Ring
+             defined by the Ideal (0) of Multivariate Polynomial Ring in x over Integer Ring
 
         This explains why the following example raises an error rather
         than constructing the topological point defined by the prime
@@ -1201,14 +1205,13 @@ class AffineScheme(UniqueRepresentation, Scheme):
         We can construct a morphism to an affine curve (:trac:`7956`)::
 
             sage: S.<p,q> = QQ[]
-            sage: A1.<r> = AffineSpace(QQ,1)
-            sage: A1_emb = Curve(p-2)
-            sage: A1.hom([2,r],A1_emb)
+            sage: A1.<r> = AffineSpace(QQ, 1)
+            sage: A1_emb = Curve(p - 2)                                                 # needs sage.schemes
+            sage: A1.hom([2, r], A1_emb)                                                # needs sage.schemes
             Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
               To:   Affine Plane Curve over Rational Field defined by p - 2
-              Defn: Defined on coordinates by sending (r) to
-                    (2, r)
+              Defn: Defined on coordinates by sending (r) to (2, r)
         """
         from sage.categories.map import Map
         from sage.categories.rings import Rings

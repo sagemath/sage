@@ -29,6 +29,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.misc.cachefunc import cached_method
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutation
@@ -558,6 +559,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
                 c = C(c)
         return self._monomial(c)
 
+    @cached_method
     def one_basis(self):
         r"""
         Return the basis element indexing the identity.
@@ -575,6 +577,22 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         if self._k:
             return self._indices([0] * self._k)
         return self._indices([])
+
+    def degree_on_basis(self, alpha):
+        """
+        Return the degree of the basis element indexed by ``alpha``.
+
+        EXAMPLES::
+
+            sage: k = KeyPolynomials(QQ)
+            sage: k.degree_on_basis([2,1,0,2])
+            5
+
+            sage: k = KeyPolynomials(QQ, 5)
+            sage: k.degree_on_basis([2,1,0,2,0])
+            5
+        """
+        return ZZ(sum(alpha))
 
     def polynomial_ring(self):
         r"""
@@ -776,6 +794,7 @@ def divided_difference(f, i):
     si_f = f.subs({z[i]: z[i-1], z[i-1]: z[i]})
     return (si_f - f) // (z[i] - z[i-1])
 
+
 def isobaric_divided_difference(f, w):
     r"""
     Apply the isobaric divided difference operator `\pi_w` to the
@@ -820,6 +839,7 @@ def isobaric_divided_difference(f, w):
         si_fp = fp.subs({z[i]: z[i-1], z[i-1]: z[i]})
         f = (si_fp - fp) // (z[i] - z[i-1])
     return f
+
 
 def sorting_word(alpha):
     r"""

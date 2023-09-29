@@ -52,7 +52,7 @@ class Frobby:
         We compute the lcm of an ideal provided in Monos format. ::
 
             sage: frobby("analyze", input="vars x,y,z;[x^2,x*y];", # optional - frobby
-            ....:     options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
+            ....:     options=["lcm", "iformat monos", "oformat 4ti2"])
             ' 2 1 0\n\n2 generators\n3 variables\n'
 
 
@@ -123,7 +123,7 @@ class Frobby:
             True
 
         We see how it is much faster to compute this with frobby than the built-in
-        procedure for simplicial complexes.
+        procedure for simplicial complexes::
 
             sage: t=simplicial_complexes.PoincareHomologyThreeSphere() # optional - frobby
             sage: R=PolynomialRing(QQ,16,'x') # optional - frobby
@@ -168,14 +168,14 @@ class Frobby:
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('hilbert', input=frobby_input)
-        ring=monomial_ideal.ring()
-        lines=frobby_output.split('\n')
-        if lines[-1]=='':
+        ring = monomial_ideal.ring()
+        lines = frobby_output.split('\n')
+        if lines[-1] == '':
             lines.pop(-1)
-        if lines[-1]=='(coefficient)':
+        if lines[-1] == '(coefficient)':
             lines.pop(-1)
         lines.pop(0)
-        resul=0
+        resul = 0
         for l in lines:
             lis = [int(_) for _ in l.split()]
             resul += lis[0]+prod([ring.gen(i)**lis[i+1] for i in range(len(lis)-1)])
@@ -206,9 +206,9 @@ class Frobby:
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('assoprimes', input=frobby_input)
-        lines=frobby_output.split('\n')
+        lines = frobby_output.split('\n')
         lines.pop(0)
-        if lines[-1]=='':
+        if lines[-1] == '':
             lines.pop(-1)
         lists = [[int(_) for _ in a.split()] for a in lines]
 
@@ -276,9 +276,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings:  # optional - frobby
-            ....:     id0 = ring.ideal(0) # optional - frobby
-            ....:     decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
-            ....:     allOK = allOK and decom0 == [id0] # optional - frobby
+            ....:     id0 = ring.ideal(0)
+            ....:     decom0 = frobby.irreducible_decomposition(id0)
+            ....:     allOK = allOK and decom0 == [id0]
             sage: allOK # optional - frobby
             True
 
@@ -288,9 +288,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings: # optional - frobby
-            ....:     id1 = ring.ideal(1) # optional - frobby
-            ....:     decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
-            ....:     allOK = allOK and decom1 == [id1] # optional - frobby
+            ....:     id1 = ring.ideal(1)
+            ....:     decom1 = frobby.irreducible_decomposition(id1)
+            ....:     allOK = allOK and decom1 == [id1]
             sage: allOK # optional - frobby
             True
         """
@@ -334,10 +334,10 @@ class Frobby:
                 lines.pop(0)
                 matrices.append('1 '+str(ring.ngens())+'\n'+'0 '*ring.ngens()+'\n')
             else:
-                nrows=int(lines[0].split()[0])
-                nmatrix=lines.pop(0)+'\n'
+                nrows = int(lines[0].split()[0])
+                nmatrix = lines.pop(0)+'\n'
                 for i in range(nrows):
-                    nmatrix+=lines.pop(0)+'\n'
+                    nmatrix += lines.pop(0)+'\n'
                 matrices.append(nmatrix)
 
         def to_ideal(exps):
@@ -465,6 +465,7 @@ class Frobby:
             exponents = [exponents]
         strings = [str(exponents[var]) for var in range(len(exponents))]
         return ' '.join(strings) + '\n'
+
 
 # This singleton instance is what should be used outside this file.
 frobby = Frobby()

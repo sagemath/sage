@@ -82,7 +82,7 @@ cdef class _lazy_attribute():
         EXAMPLES::
 
             sage: from sage.misc.sageinspect import sage_getsourcelines
-            sage: g = lazy_attribute(banner)
+            sage: g = lazy_attribute(sage.misc.banner.banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
             'def banner():\n'
@@ -111,12 +111,12 @@ cdef class _lazy_attribute():
         if a is None: # when doing cls.x for cls a class and x a lazy attribute
             return self
         try:
-            # __cached_methods is supposed to be a public Cython attribute.
+            # _cached_methods is supposed to be a public Cython attribute.
             # Apparently, these are *not* subject to name mangling.
-            CM = getattr(a, '__cached_methods')
+            CM = getattr(a, '_cached_methods')
             if CM is None:
                 CM = {}
-                setattr(a, '__cached_methods', CM)
+                setattr(a, '_cached_methods', CM)
         except AttributeError as msg:
             CM = None
         if CM is not None:
@@ -354,9 +354,9 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
-        sage: P = MyParent(category=Rings())                                    # optional - sage.misc.cython
-        sage: P.element_class    # indirect doctest                             # optional - sage.misc.cython
+        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: P = MyParent(category=Rings())                                            # needs sage.misc.cython
+        sage: P.element_class    # indirect doctest                                     # needs sage.misc.cython
         <class '...MyElement'>
 
     .. rubric:: About descriptor specifications

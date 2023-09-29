@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Group-Divisible Designs (GDD)
 
@@ -31,7 +32,7 @@ Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.arith.all import is_prime_power
+from sage.arith.misc import is_prime_power
 from sage.misc.unknown    import Unknown
 from .incidence_structures import IncidenceStructure
 
@@ -97,15 +98,15 @@ def group_divisible_design(v,K,G,existence=False,check=False):
         if existence:
             return balanced_incomplete_block_design(v+1,k,existence=True)
         BIBD = balanced_incomplete_block_design(v+1,k)
-        groups = [[x for x in S if x!=v] for S in BIBD if v in S]
+        groups = [[x for x in S if x != v] for S in BIBD if v in S]
         d = {p:i for i,p in enumerate(sum(groups,[]))}
-        d[v]=v
+        d[v] = v
         BIBD.relabel(d)
         groups = [list(range((k-1)*i,(k-1)*(i+1))) for i in range(v//(k-1))]
         blocks = [S for S in BIBD if v not in S]
 
     # (v,{4},{2})-GDD
-    elif (v%2==0   and
+    elif (v % 2 == 0   and
           K == [4] and
           G == [2] and
           GDD_4_2(v//2,existence=True)):
@@ -114,20 +115,20 @@ def group_divisible_design(v,K,G,existence=False,check=False):
         return GDD_4_2(v//2,check=check)
 
     # From a TD(k,g)
-    elif (len(G)    == 1 and
-          len(K)    == 1 and
+    elif (len(G) == 1 and
+          len(K) == 1 and
           K[0]*G[0] == v):
         from .orthogonal_arrays import transversal_design
         return transversal_design(k=K[0],n=G[0],existence=existence)
 
     if blocks:
         return GroupDivisibleDesign(v,
-                                    groups = groups,
-                                    blocks = blocks,
-                                    G = G,
-                                    K = K,
-                                    check = check,
-                                    copy  = True)
+                                    groups=groups,
+                                    blocks=blocks,
+                                    G=G,
+                                    K=K,
+                                    check=check,
+                                    copy=True)
 
     if existence:
         return Unknown
@@ -171,7 +172,7 @@ def GDD_4_2(q,existence=False,check=True):
         ...
         NotImplementedError
     """
-    if q <=1 or q%6 != 1 or not is_prime_power(q):
+    if q <= 1 or q % 6 != 1 or not is_prime_power(q):
         if existence:
             return Unknown
         raise NotImplementedError
@@ -188,17 +189,17 @@ def GDD_4_2(q,existence=False,check=True):
                    for i in range((q - 1) // 6)]
 
     label = {p:i for i,p in enumerate(G)}
-    classes = [[[2*label[x[1]+g]+(x[0]+j)%2 for x in S]
+    classes = [[[2*label[x[1]+g]+(x[0]+j) % 2 for x in S]
                 for S in first_class]
                for g in G for j in range(2)]
 
     return GroupDivisibleDesign(2*q,
-                                groups = [[i,i+1] for i in range(0,2*q,2)],
-                                blocks = sum(classes,[]),
-                                K      = [4],
-                                G      = [2],
-                                check  = check,
-                                copy   = False)
+                                groups=[[i,i+1] for i in range(0,2*q,2)],
+                                blocks=sum(classes,[]),
+                                K=[4],
+                                G=[2],
+                                check=check,
+                                copy=False)
 
 class GroupDivisibleDesign(IncidenceStructure):
     r"""

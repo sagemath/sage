@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Examples of a finite dimensional Lie algebra with basis
 """
@@ -10,7 +11,7 @@ Examples of a finite dimensional Lie algebra with basis
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.categories.all import LieAlgebras
+from sage.categories.lie_algebras import LieAlgebras
 from sage.modules.free_module import FreeModule
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -362,7 +363,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: a, b, c = L.lie_algebra_generators()
                 sage: elt = 2*a + 2*b + 3*c
-                sage: elt.lift()
+                sage: elt.lift()                                                        # needs sage.combinat
                 2*b0 + 2*b1 + 3*b2
             """
             UEA = self.parent().universal_enveloping_algebra()
@@ -402,5 +403,6 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 {0: 2, 1: 2, 2: 3}
             """
             return self.value.monomial_coefficients(copy)
+
 
 Example = AbelianLieAlgebra

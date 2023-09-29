@@ -182,7 +182,6 @@ with C arguments).
 # ****************************************************************************
 
 cimport cpython
-from libc.string cimport memset
 from libc.limits cimport INT_MAX
 from libc.math cimport sqrt
 from libcpp.vector cimport vector
@@ -703,7 +702,7 @@ def tarjan_strongly_connected_components(G):
         sage: tarjan_strongly_connected_components(digraphs.Path(3))
         [[2], [1], [0]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
-        sage: D.connected_components()
+        sage: D.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
         sage: D.strongly_connected_components()
@@ -732,8 +731,8 @@ def tarjan_strongly_connected_components(G):
 
     Checking against NetworkX::
 
-        sage: import networkx
-        sage: for i in range(10):                          # long time
+        sage: import networkx                                                                       # needs networkx
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:      g = digraphs.RandomDirectedGNP(100,.05)
         ....:      h = g.networkx_graph()
         ....:      scc1 = g.strongly_connected_components()
@@ -783,7 +782,6 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef size_t v, w, i
     cdef size_t s_nscc = <size_t>nscc
-    cdef int tmp = nscc + 1
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
     cdef vector[int].iterator iter
@@ -827,7 +825,6 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     output.neighbors[0] = output.edges
 
     for v in range(1, s_nscc + 1):
-        degv = sons[v].size()
         output.neighbors[v] = output.neighbors[v - 1] + sons[v - 1].size()
         for i in range(sons[v].size()):
             output.neighbors[v][i] = sons[v][i]
@@ -1026,8 +1023,8 @@ def spectral_radius(G, prec=1e-10):
 
         sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(2,4),(3,4)])
         sage: e_min, e_max = spectral_radius(G, 1e-14)
-        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))
-        sage: e_min < e < e_max
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # needs sage.modules
+        sage: e_min < e < e_max                                                         # needs sage.modules
         True
 
         sage: G.spectral_radius()  # abs tol 1e-9
@@ -1035,6 +1032,7 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
+        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)
@@ -1063,7 +1061,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.add_edges([(0,0),(0,0),(0,1),(1,0)])
         sage: spectral_radius(G, 1e-14)  # abs tol 1e-14
         (2.414213562373094, 2.414213562373095)
-        sage: max(G.adjacency_matrix().eigenvalues(AA))
+        sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # needs sage.modules
         2.414213562373095?
 
     Some bipartite graphs::
@@ -1094,7 +1092,7 @@ def spectral_radius(G, prec=1e-10):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                      # needs sage.modules
         ....:     G = digraphs.RandomDirectedGNM(10,35)
         ....:     if not G.is_strongly_connected():
         ....:         continue

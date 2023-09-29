@@ -47,7 +47,6 @@ For an overview of graph data structures in sage, see
 Classes and methods
 -------------------
 """
-
 # ****************************************************************************
 #       Copyright (C) 2008 Robert L. Miller <rlmillster@gmail.com>
 #                     2018 Julian Rüth <julian.rueth@fsfe.org>
@@ -58,8 +57,7 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from .c_graph cimport CGraphBackend, CGraph
+from .c_graph cimport CGraphBackend
 
 
 cdef class GenericGraphBackend(SageObject):

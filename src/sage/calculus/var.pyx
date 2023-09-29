@@ -36,7 +36,7 @@ def var(*args, **kwds):
     If a single symbolic variable was created, the variable
     itself. Otherwise, a tuple of symbolic variables. The variable
     names are checked to be valid Python identifiers and a
-    ``ValueError`` is raised otherwise.
+    :class:`ValueError` is raised otherwise.
 
     EXAMPLES:
 
@@ -384,10 +384,12 @@ def clear_vars():
         sage: k
         15
     """
+    from sage.structure.element import Expression
+
     G = globals()
-    from sage.symbolic.ring import is_SymbolicVariable
     for i in list(range(65, 65 + 26)) + list(range(97, 97 + 26)):
-        if chr(i) in G and is_SymbolicVariable(G[chr(i)]):
+        chr_i = chr(i)
+        if chr_i in G and isinstance(G[chr_i], Expression) and G[chr_i].is_symbol():
             # We check to see if there is a corresponding pyobject
             # associated with the expression.  This will work for
             # constants which we want to keep, but will fail for

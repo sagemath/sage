@@ -1,13 +1,25 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``kenzo``
 """
+
+# ****************************************************************************
+#       Copyright (C) 2020 Travis Scrimshaw
+#                     2021 Matthias Koeppe
+#                     2021 Michael Orlitzky
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 from . import Feature, FeatureTestResult
 
 class Kenzo(Feature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``Kenzo``.
+    A :class:`~sage.features.Feature` describing the presence of :ref:`Kenzo <spkg_kenzo>`.
 
     EXAMPLES::
 
@@ -36,7 +48,10 @@ class Kenzo(Feature):
             sage: Kenzo()._is_present()  # optional - kenzo
             FeatureTestResult('kenzo', True)
         """
-        from sage.libs.ecl import ecl_eval
+        try:
+            from sage.libs.ecl import ecl_eval
+        except ImportError:
+            return FeatureTestResult(self, False, reason="sage.libs.ecl is not available")
         # Redirection of ECL and Maxima stdout to /dev/null
         # This is also done in the Maxima library, but we
         # also do it here for redundancy.

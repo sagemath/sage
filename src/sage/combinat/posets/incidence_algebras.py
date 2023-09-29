@@ -425,8 +425,9 @@ class IncidenceAlgebra(CombinatorialFreeModule):
                 raise ValueError("element is not invertible")
             inv = ~M
             L = self.parent()._linear_extension
-            return self.parent().sum_of_terms(((L[i], L[j]), inv[i, j])
-                                for i, j in inv.nonzero_positions(copy=False))
+            return self.parent().sum_of_terms(
+                ((L[i], L[j]), inv[i, j])
+                for i, j in inv.nonzero_positions(copy=False))
 
 
 class ReducedIncidenceAlgebra(CombinatorialFreeModule):

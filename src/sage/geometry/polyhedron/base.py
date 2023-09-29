@@ -21,7 +21,7 @@ Base class for polyhedra: Miscellaneous methods
 #       Copyright (C) 2019      Julian Ritter
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
-#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -124,8 +124,8 @@ class Polyhedron_base(Polyhedron_base7):
 
     ::
 
-        sage: p=polytopes.flow_polytope(digraphs.DeBruijn(3,2))                                     # optional - sage.graphs
-        sage: TestSuite(p).run()                                                                    # optional - sage.graphs
+        sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2))                       # needs sage.combinat sage.graphs
+        sage: TestSuite(p).run()
 
     ::
 
@@ -135,13 +135,14 @@ class Polyhedron_base(Polyhedron_base7):
 
     ::
 
-        sage: P = polytopes.permutahedron(3) * Polyhedron(rays=[[0,0,1],[0,1,1],[1,2,3]])           # optional - sage.combinat
-        sage: TestSuite(P).run()                                                                    # optional - sage.combinat
+        sage: P3 = polytopes.permutahedron(3)
+        sage: P = P3 * Polyhedron(rays=[[0,0,1], [0,1,1], [1,2,3]])
+        sage: TestSuite(P).run()
 
     ::
 
-        sage: P = polytopes.permutahedron(3)*Polyhedron(rays=[[0,0,1],[0,1,1]], lines=[[1,0,0]])    # optional - sage.combinat
-        sage: TestSuite(P).run()                                                                    # optional - sage.combinat
+        sage: P = P3 * Polyhedron(rays=[[0,0,1], [0,1,1]], lines=[[1,0,0]])
+        sage: TestSuite(P).run()
 
     ::
 
@@ -233,44 +234,46 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: p = polytopes.icosahedron()                                           # optional - sage.rings.number_field
-            sage: lp, x = p.to_linear_program(return_variable=True)                     # optional - sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
-            sage: lp.solve()                                                            # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron()
+            sage: lp, x = p.to_linear_program(return_variable=True)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()
             1/4*sqrt5 + 3/4
 
         Same example with floating point::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)      # optional - sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
-            sage: lp.solve()                                               # tol 1e-5   # optional - sage.rings.number_field
+            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()                                               # tol 1e-5   # needs sage.rings.number_field
             1.3090169943749475
 
         Same example with a specific floating point solver::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')      # optional - sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
-            sage: lp.solve()                                               # tol 1e-8   # optional - sage.rings.number_field
+            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()                                               # tol 1e-8   # needs sage.rings.number_field
             1.3090169943749475
 
         Irrational algebraic linear program over `AA`::
 
-            sage: p = polytopes.icosahedron(base_ring=AA)                               # optional - sage.rings.number_field
-            sage: lp, x = p.to_linear_program(return_variable=True)                     # optional - sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
-            sage: lp.solve()                                               # long time  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron(base_ring=AA)
+            sage: lp, x = p.to_linear_program(return_variable=True)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()                    # long time
             1.309016994374948?
 
         TESTS::
 
-            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # optional - sage.graphs
+            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # needs sage.combinat sage.graphs
             A 19-dimensional polyhedron in QQ^27
              defined as the convex hull of 1 vertex and 148 rays
-            sage: p.to_linear_program().polyhedron() == p                               # optional - sage.graphs
+            sage: p.to_linear_program().polyhedron() == p
             True
 
-            sage: p = polytopes.icosahedron()                                           # optional - sage.rings.number_field
-            sage: p.to_linear_program(solver='PPL')                                     # optional - sage.rings.number_field
+            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
+            sage: p.to_linear_program(solver='PPL')                                     # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -316,13 +319,14 @@ class Polyhedron_base(Polyhedron_base7):
 
         The boundary complex of the octahedron::
 
+            sage: # needs sage.graphs
             sage: oc = polytopes.octahedron()
             sage: sc_oc = oc.boundary_complex()
-            sage: fl_oc = oc.face_lattice()
-            sage: fl_sc = sc_oc.face_poset()
-            sage: [len(x) for x in fl_oc.level_sets()]
+            sage: fl_oc = oc.face_lattice()                                             # needs sage.combinat
+            sage: fl_sc = sc_oc.face_poset()                                            # needs sage.combinat
+            sage: [len(x) for x in fl_oc.level_sets()]                                  # needs sage.combinat
             [1, 6, 12, 8, 1]
-            sage: [len(x) for x in fl_sc.level_sets()]
+            sage: [len(x) for x in fl_sc.level_sets()]                                  # needs sage.combinat
             [6, 12, 8]
             sage: sc_oc.euler_characteristic()
             2
@@ -463,7 +467,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         EXAMPLES::
 
-            sage: q = Polyhedron(vertices = [[1,1,1,1],[-1,-1,1,1],[1,-1,-1,1],
+            sage: q = Polyhedron(vertices=[[1,1,1,1],[-1,-1,1,1],[1,-1,-1,1],
             ....:                            [-1,1,-1,1],[1,1,1,-1],[-1,-1,1,-1],
             ....:                            [1,-1,-1,-1],[-1,1,-1,-1],[0,0,10/13,-24/13],
             ....:                            [0,0,-10/13,-24/13]])
@@ -555,7 +559,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: V = P.Vrepresentation()
             sage: H = P.Hrepresentation()
             sage: parent = P.parent()
-            sage: for V1 in Permutations(V):                                    # optional - sage.combinat
+            sage: for V1 in Permutations(V):
             ....:     P1 = parent._element_constructor_(
             ....:         [V1, [], []], [H, []], Vrep_minimal=True, Hrep_minimal=True)
             ....:     assert P1.is_inscribed()
@@ -657,7 +661,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         EXAMPLES::
 
-            sage: S = Polyhedron(vertices = [[0, 0], [1, 0], [0, 1]])
+            sage: S = Polyhedron(vertices=[[0, 0], [1, 0], [0, 1]])
             sage: S.normal_fan()
             Rational polyhedral fan in 2-d lattice N
 
@@ -667,25 +671,27 @@ class Polyhedron_base(Polyhedron_base7):
 
         Currently, it is only possible to get the normal fan of a bounded rational polytope::
 
-            sage: P = Polyhedron(rays = [[1, 0], [0, 1]])
+            sage: P = Polyhedron(rays=[[1, 0], [0, 1]])
             sage: P.normal_fan()
             Traceback (most recent call last):
             ...
             NotImplementedError: the normal fan is only supported for polytopes (compact polyhedra).
 
-            sage: Q = Polyhedron(vertices = [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+            sage: Q = Polyhedron(vertices=[[1, 0, 0], [0, 1, 0], [0, 0, 1]])
             sage: Q.normal_fan()
             Traceback (most recent call last):
             ...
             ValueError: the normal fan is only defined for full-dimensional polytopes
 
-            sage: R = Polyhedron(vertices=[[0, 0], [AA(sqrt(2)), 0], [0, AA(sqrt(2))]])   # optional - sage.rings.number_field
-            sage: R.normal_fan()                                                          # optional - sage.rings.number_field
+            sage: R = Polyhedron(vertices=[[0, 0],                                      # needs sage.rings.number_field sage.symbolic
+            ....:                          [AA(sqrt(2)), 0],
+            ....:                          [0, AA(sqrt(2))]])
+            sage: R.normal_fan()                                                        # needs sage.rings.number_field sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: normal fan handles only polytopes over the rationals
 
-            sage: P = Polyhedron(vertices=[[0,0],[2,0],[0,2],[2,1],[1,2]])
+            sage: P = Polyhedron(vertices=[[0,0], [2,0], [0,2], [2,1], [1,2]])
             sage: P.normal_fan(direction=None)
             Traceback (most recent call last):
             ...
@@ -746,13 +752,14 @@ class Polyhedron_base(Polyhedron_base7):
 
         The polytope should contain the origin in the interior::
 
-            sage: P = Polyhedron(vertices = [[1/2, 1], [1, 1/2]])
+            sage: P = Polyhedron(vertices=[[1/2, 1], [1, 1/2]])
             sage: P.face_fan()
             Traceback (most recent call last):
             ...
-            ValueError: face fans are defined only for polytopes containing the origin as an interior point!
+            ValueError: face fans are defined only for polytopes
+            containing the origin as an interior point!
 
-            sage: Q = Polyhedron(vertices = [[-1, 1/2], [1, -1/2]])
+            sage: Q = Polyhedron(vertices=[[-1, 1/2], [1, -1/2]])
             sage: Q.contains([0,0])
             True
             sage: FF = Q.face_fan(); FF
@@ -760,8 +767,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         The polytope has to have rational coordinates::
 
-            sage: S = polytopes.dodecahedron()                                # optional - sage.rings.number_field
-            sage: S.face_fan()                                                # optional - sage.rings.number_field
+            sage: S = polytopes.dodecahedron()                                          # needs sage.rings.number_field
+            sage: S.face_fan()                                                          # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: face fan handles only polytopes over the rationals
@@ -852,8 +859,8 @@ class Polyhedron_base(Polyhedron_base7):
             sage: P.barycentric_subdivision()
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull
             of 6 vertices
-            sage: P = polytopes.regular_polygon(4, base_ring=QQ)                # optional - sage.rings.number_field
-            sage: P.barycentric_subdivision()                                   # optional - sage.rings.number_field
+            sage: P = polytopes.regular_polygon(4, base_ring=QQ)                        # needs sage.rings.number_field
+            sage: P.barycentric_subdivision()                                           # needs sage.rings.number_field
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 8
             vertices
 
@@ -965,17 +972,20 @@ class Polyhedron_base(Polyhedron_base7):
         `\pm 1` 2-dimensional square. The permutations are written in terms
         of the vertices of the square::
 
-            sage: square = Polyhedron(vertices=[[1,1],[-1,1],[-1,-1],[1,-1]], backend='normaliz') # optional - pynormaliz
-            sage: square.vertices() # optional - pynormaliz
+            sage: # optional - pynormaliz, needs sage.groups
+            sage: square = Polyhedron(vertices=[[1,1], [-1,1],
+            ....:                               [-1,-1], [1,-1]],
+            ....:                     backend='normaliz')
+            sage: square.vertices()
             (A vertex at (-1, -1),
-            A vertex at (-1, 1),
-            A vertex at (1, -1),
-            A vertex at (1, 1))
-            sage: aut_square = square.restricted_automorphism_group(output = 'permutation')       # optional - pynormaliz
-            sage: conj_reps = aut_square.conjugacy_classes_representatives()                      # optional - pynormaliz
-            sage: gens_dict = square.permutations_to_matrices(conj_reps);                         # optional - pynormaliz
-            sage: rotation_180 = aut_square([(0,3),(1,2)])                                        # optional - pynormaliz
-            sage: rotation_180,gens_dict[rotation_180]                                            # optional - pynormaliz
+             A vertex at (-1, 1),
+             A vertex at (1, -1),
+             A vertex at (1, 1))
+            sage: aut_square = square.restricted_automorphism_group(output='permutation')
+            sage: conj_reps = aut_square.conjugacy_classes_representatives()
+            sage: gens_dict = square.permutations_to_matrices(conj_reps)
+            sage: rotation_180 = aut_square([(0,3),(1,2)])
+            sage: rotation_180, gens_dict[rotation_180]
             (
                         [-1  0  0]
                         [ 0 -1  0]
@@ -984,11 +994,13 @@ class Polyhedron_base(Polyhedron_base7):
 
         This example tests the functionality for additional elements::
 
+            sage: # needs sage.groups sage.rings.real_mpfr
             sage: C = polytopes.cross_polytope(2)
-            sage: G = C.restricted_automorphism_group(output = 'permutation')
+            sage: G = C.restricted_automorphism_group(output='permutation')
             sage: conj_reps = G.conjugacy_classes_representatives()
-            sage: add_elt = G([(0,2,3,1)])
-            sage: dict = C.permutations_to_matrices(conj_reps,additional_elts = [add_elt])
+            sage: add_elt = G([(0, 2, 3, 1)])
+            sage: dict = C.permutations_to_matrices(conj_reps,
+            ....:                                   additional_elts=[add_elt])
             sage: dict[add_elt]
              [ 0  1  0]
              [-1  0  0]
@@ -1048,16 +1060,17 @@ class Polyhedron_base(Polyhedron_base7):
 
         EXAMPLES::
 
-            sage: Polyhedron([ (1/3,2/3), (2/3, 1/3) ]).bounding_box()
+            sage: Polyhedron([(1/3,2/3), (2/3, 1/3)]).bounding_box()
             ((1/3, 1/3), (2/3, 2/3))
-            sage: Polyhedron([ (1/3,2/3), (2/3, 1/3) ]).bounding_box(integral=True)
+            sage: Polyhedron([(1/3,2/3), (2/3, 1/3)]).bounding_box(integral=True)
             ((0, 0), (1, 1))
-            sage: Polyhedron([ (1/3,2/3), (2/3, 1/3) ]).bounding_box(integral_hull=True)
+            sage: Polyhedron([(1/3,2/3), (2/3, 1/3)]).bounding_box(integral_hull=True)
             (None, None)
-            sage: Polyhedron([ (1/3,2/3), (3/3, 4/3) ]).bounding_box(integral_hull=True)
+            sage: Polyhedron([(1/3,2/3), (3/3, 4/3)]).bounding_box(integral_hull=True)
             ((1, 1), (1, 1))
-            sage: polytopes.buckyball(exact=False).bounding_box()
-            ((-0.8090169944, -0.8090169944, -0.8090169944), (0.8090169944, 0.8090169944, 0.8090169944))
+            sage: polytopes.buckyball(exact=False).bounding_box()                       # needs sage.groups
+            ((-0.8090169944, -0.8090169944, -0.8090169944),
+             (0.8090169944, 0.8090169944, 0.8090169944))
 
         TESTS::
 
@@ -1135,38 +1148,39 @@ class Polyhedron_base(Polyhedron_base7):
 
         Non-pointed polyhedron::
 
+            sage: # optional - jupymake
             sage: P = Polyhedron(vertices=[[1, 0], [0, 1]], lines=[[1, 0]])
-            sage: PP = polymake(P)         # optional - jupymake
-            sage: PP.VERTICES              # optional - jupymake
+            sage: PP = polymake(P)
+            sage: PP.VERTICES
             1 0 1
             1 0 0
-            sage: PP.FACETS                # optional - jupymake
+            sage: PP.FACETS
             1 0 -1
             0 0 1
-            sage: PP.LINEALITY_SPACE       # optional - jupymake
+            sage: PP.LINEALITY_SPACE
             0 1 0
 
         Algebraic polyhedron::
 
-            sage: P = polytopes.dodecahedron(); P                                                             # optional - sage.rings.number_field
+            sage: P = polytopes.dodecahedron(); P                                       # needs sage.rings.number_field
             A 3-dimensional polyhedron
              in (Number Field in sqrt5 with defining polynomial x^2 - 5
                  with sqrt5 = 2.236067977499790?)^3
              defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP  # optional - jupymake  # optional - sage.rings.number_field
-            There may be a recompilation warning...
+            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.rings.number_field
+            Maybe recompile warning...
             Polytope<QuadraticExtension<Rational>>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                                  # optional - jupymake  # optional - sage.rings.number_field
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.rings.number_field
             1 -1+1r5 -4+2r5 0
 
         Floating-point polyhedron::
 
-            sage: P = polytopes.dodecahedron(exact=False); P
+            sage: P = polytopes.dodecahedron(exact=False); P                            # needs sage.groups
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - jupymake
+            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.groups
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0] # optional - jupymake
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.groups
             1 -0.472135955 0 -1.236067978
 
         """

@@ -268,10 +268,9 @@ from cysignals.memory cimport check_malloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, compute_out_neighborhood_cardinality, popcount32
-from libc.stdint cimport uint8_t, int8_t
+from libc.stdint cimport uint8_t
 from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
-from sage.misc.decorators import rename_keyword
 
 
 ###############
@@ -665,7 +664,7 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
         2
         sage: pw, L = path_decomposition(g, algorithm = "exponential"); pw
         2
-        sage: pw, L = path_decomposition(g, algorithm = "MILP"); pw
+        sage: pw, L = path_decomposition(g, algorithm="MILP"); pw                       # needs sage.numerical.mip
         2
 
     TESTS:
@@ -766,19 +765,22 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
     Comparison of methods::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
+
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
         2
         sage: vs,L = vertex_separation(G, algorithm="exponential"); vs
         2
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs
+        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # needs sage.numerical.mip
         2
+
         sage: G = graphs.Grid2dGraph(3,3)
         sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
         3
         sage: vs,L = vertex_separation(G, algorithm="exponential"); vs
         3
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs
+        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs                         # needs sage.numerical.mip
         3
 
     Digraphs with multiple strongly connected components::
@@ -805,7 +807,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
         sage: G = graphs.PetersenGraph()
-        sage: vs, L = vertex_separation(G, algorithm="MILP", solver="SCIP"); vs  # optional - pyscipopt
+        sage: vs, L = vertex_separation(G, algorithm="MILP", solver="SCIP"); vs     # optional - pyscipopt, needs sage.numerical.mip
         5
 
     TESTS:
@@ -954,8 +956,8 @@ def vertex_separation_exp(G, verbose=False):
     Graphs with non-integer vertices::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation_exp
-        sage: D=digraphs.DeBruijn(2,3)
-        sage: vertex_separation_exp(D)
+        sage: D = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: vertex_separation_exp(D)                                                  # needs sage.combinat
         (2, ['000', '001', '100', '010', '101', '011', '110', '111'])
 
     Given a too large graph::
@@ -985,7 +987,7 @@ def vertex_separation_exp(G, verbose=False):
 
     memset(neighborhoods, <uint8_t> -1, mem)
 
-    cdef int i, j, k
+    cdef int i, k
     for k in range(g.n):
         if verbose:
             print("Looking for a strategy of cost", str(k))
@@ -1210,6 +1212,7 @@ def width_of_path_decomposition(G, L):
 
     Path decomposition of a BalancedTree::
 
+        sage: # needs networkx
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = graphs.BalancedTree(3,2)
         sage: pw, L = vertex_separation.path_decomposition(G)
@@ -1305,9 +1308,9 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import _vertex_separation_MILP_formulation
-        sage: G = digraphs.DeBruijn(2,3)
-        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)
-        sage: p
+        sage: G = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)                    # needs sage.combinat sage.numerical.mip
+        sage: p                                                                         # needs sage.combinat sage.numerical.mip
         Mixed Integer Program (minimization, 193 variables, 449 constraints)
     """
     from sage.graphs.graph import Graph
@@ -1373,7 +1376,6 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
     return p, x, u, y, z
 
 
-@rename_keyword(deprecation=32222, verbosity='verbose')
 def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
                            *, integrality_tolerance=1e-3):
     r"""
@@ -1419,11 +1421,12 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
     Vertex separation of a De Bruijn digraph::
 
+        sage: # needs sage.combinat
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.DeBruijn(2,3)
-        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs
+        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # needs sage.numerical.mip
         2
-        sage: vs == vertex_separation.width_of_path_decomposition(G, L)
+        sage: vs == vertex_separation.width_of_path_decomposition(G, L)                 # needs sage.numerical.mip
         True
         sage: vse, Le = vertex_separation.vertex_separation(G); vse
         2
@@ -1432,7 +1435,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.Circuit(6)
-        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs
+        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # needs sage.numerical.mip
         1
 
     TESTS:
@@ -1440,7 +1443,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Comparison with exponential algorithm::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):
+        sage: for i in range(10):                                                       # needs sage.numerical.mip
         ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
         ....:     ve, le = vertex_separation.vertex_separation(G)
         ....:     vm, lm = vertex_separation.vertex_separation_MILP(G)
@@ -1450,7 +1453,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Comparison with different values of the integrality parameter::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):  # long time (11s on sage.math, 2012)
+        sage: for i in range(10):               # long time (11s on sage.math, 2012), needs sage.numerical.mip
         ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
         ....:     va, la = vertex_separation.vertex_separation_MILP(G, integrality=False)
         ....:     vb, lb = vertex_separation.vertex_separation_MILP(G, integrality=True)
@@ -1460,19 +1463,19 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Giving anything else than a Graph or a DiGraph::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: vertex_separation.vertex_separation_MILP([])
+        sage: vertex_separation.vertex_separation_MILP([])                              # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         ValueError: the first input parameter must be a Graph or a DiGraph
     """
     from sage.numerical.mip import MIPSolverException
 
-    p, x, u, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
+    p, _, _, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
     N = G.order()
     V = list(G)
 
     try:
-        obj = p.solve(log=verbose)
+        _ = p.solve(log=verbose)
     except MIPSolverException:
         if integrality:
             raise ValueError("unbounded or unexpected error")
@@ -1835,9 +1838,9 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
 
     # ==> Allocate local data structures
 
-    cdef bitset_s *loc_b_prefix         = bm_pool.rows[3 * level]
+    cdef bitset_s *loc_b_prefix = bm_pool.rows[3 * level]
     cdef bitset_s *loc_b_pref_and_neigh = bm_pool.rows[3 * level + 1]
-    cdef bitset_s *b_tmp                = bm_pool.rows[3 * level + 2]
+    cdef bitset_s *b_tmp = bm_pool.rows[3 * level + 2]
     bitset_copy(loc_b_prefix, b_prefix)
     bitset_copy(loc_b_pref_and_neigh, b_prefix_and_neighborhood)
 

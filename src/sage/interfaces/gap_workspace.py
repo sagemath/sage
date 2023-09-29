@@ -16,7 +16,8 @@ Support for (lib)GAP workspace files
 import os
 import time
 import hashlib
-from sage.env import DOT_SAGE, GAP_SO
+import subprocess
+from sage.env import DOT_SAGE, HOSTNAME, GAP_LIB_DIR, GAP_SHARE_DIR
 
 
 def gap_workspace_file(system="gap", name="workspace", dir=None):
@@ -59,11 +60,13 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    if GAP_SO:
-        h = hashlib.sha1(GAP_SO.encode('utf-8')).hexdigest()
-    else:
-        h = 'unknown'
-    return os.path.join(dir, '%s-%s-%s' % (system, name, h))
+    data = f'{GAP_LIB_DIR}:{GAP_SHARE_DIR}'
+    for path in GAP_LIB_DIR, GAP_SHARE_DIR:
+        sysinfo = os.path.join(path, "sysinfo.gap")
+        if os.path.exists(sysinfo):
+            data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')
+    h = hashlib.sha1(data.encode('utf-8')).hexdigest()
+    return os.path.join(dir, f'{system}-{name}-{HOSTNAME}-{h}')
 
 
 def prepare_workspace_dir(dir=None):

@@ -31,7 +31,7 @@ AUTHORS:
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.all import GradedHopfAlgebras
+from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.combinat.partition import Partition, Partitions, Partitions_all_bounded, PartitionsGreatestLE
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.realizations import Realizations, Category_realization_of_parent
@@ -127,7 +127,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         self.t = R(t)
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
         self._sym = Sym
-        if t==1:
+        if t == 1:
             self._quotient_basis = Sym.m()
         else:
             self._quotient_basis = Sym.hall_littlewood(t=self.t).P()
@@ -165,7 +165,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             sage: Q.a_realization()
             3-Bounded Quotient of Symmetric Functions over Rational Field with t=2 in the 3-bounded Hall-Littlewood P basis
         """
-        if self.t==1:
+        if self.t == 1:
             return self.kmonomial()
         else:
             return self.kHallLittlewoodP()
@@ -1167,7 +1167,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         mk = self._kBoundedRing.km()
         if la not in self._kbounded_partitions:
             return mk.zero()
-        if self.t==1:
+        if self.t == 1:
             return mk(la)
         else:
             HLP = self._kBoundedRing._quotient_basis

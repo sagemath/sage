@@ -200,20 +200,20 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
         Fprod._unsafe_mutate_truncate(prec)
         Dprod._unsafe_mutate_truncate(prec)
 
-
-    P = PowerSeriesRing(ZZ,var)
-    if cusp_only :
+    P = PowerSeriesRing(ZZ, var)
+    if cusp_only:
         for i in range(1,n+1) :
             for j in range(1, i) :
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
         return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]],cr=True)
     else :
-        for i in range(1,n+1) :
-            for j in range(i) :
+        for i in range(1,n+1):
+            for j in range(i):
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
         return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
+
 
 def _delta_poly(prec=10):
     """

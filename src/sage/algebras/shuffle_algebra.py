@@ -972,7 +972,7 @@ class DualPBWBasis(CombinatorialFreeModule):
             sage: S.expansion_on_basis(Word('abab'))
             2*B[aabb] + B[abab]
         """
-        from sage.arith.all import factorial
+        from sage.arith.misc import factorial
         if not w:
             return self._alg.one()
         if len(w) == 1:

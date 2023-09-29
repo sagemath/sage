@@ -99,7 +99,6 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/povray
    sage/interfaces/psage
    sage/interfaces/qepcad
-   sage/interfaces/qsieve
    sage/interfaces/r
    sage/interfaces/rubik
    sage/interfaces/sage0

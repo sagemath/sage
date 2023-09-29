@@ -232,7 +232,7 @@ class BaxterPermutations_size(BaxterPermutations):
         """
         if self._n == 0:
             return 1
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         return sum((binomial(self._n + 1, k) *
                     binomial(self._n + 1, k + 1) *
                     binomial(self._n + 1, k + 2)) //

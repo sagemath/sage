@@ -37,18 +37,17 @@ from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_field
-from sage.rings.fraction_field import FractionField_generic, FractionField_1poly_field
+from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-from sage.libs.pari.all import pari
 from sage.libs.gmp.all cimport *
 
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str, bytes_to_str
 
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular, MPolynomialRing_libsingular
+from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 
 ctypedef struct fraction "fractionObject":
     poly *numerator
@@ -526,6 +525,7 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
 
     TESTS::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 2)
         sage: P.<x,y,z> = K[]
         sage: f = a^21*x^2 + 1 # indirect doctest
@@ -1393,7 +1393,8 @@ cdef number *sa2si_NF(object elem, ring *_ring):
 
     TESTS::
 
-        sage: F = NumberField(x^3+x+1, 'a')
+        sage: x = polygen(ZZ, 'x')
+        sage: F = NumberField(x^3 + x + 1, 'a')
         sage: type(F)
         <class 'sage.rings.number_field.number_field.NumberField_absolute_with_category'>
         sage: R.<x,y,z> = F[]
@@ -1705,14 +1706,7 @@ cdef object si2sa_intvec(intvec *v):
 cdef extern from *: # hack to get at cython macro
     int unlikely(int)
 
-cdef extern from "dlfcn.h":
-    void *dlopen(char *, long)
-    char *dlerror()
-    void dlclose(void *handle)
-
-cdef extern from "dlfcn.h":
-    cdef long RTLD_LAZY
-    cdef long RTLD_GLOBAL
+from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
@@ -1768,8 +1762,6 @@ cdef init_libsingular():
 
     cdef void *handle = NULL
 
-    from sage.env import LIBSINGULAR_PATH
-    lib = str_to_bytes(LIBSINGULAR_PATH, FS_ENCODING, "surrogateescape")
 
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
@@ -1786,10 +1778,12 @@ cdef init_libsingular():
 
     import platform
     if not platform.system().startswith("CYGWIN"):
+        # reload the current module to force reload of libSingular (see #33446)
+        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
         handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
         if not handle:
             err = dlerror()
-            raise ImportError(f"cannot load Singular library from {LIBSINGULAR_PATH} ({err})")
+            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)

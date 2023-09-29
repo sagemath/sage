@@ -43,6 +43,10 @@ REFERENCES:
             University of New South Wales,
             1995
 
+.. [Ab2022] Willie Aboumrad,
+        *Quantum compution with anyons: an F-matrix and braid calculator*
+        (2022). https://arxiv.org/abs/2212.00831
+
 .. [AB2007] \M. Aschenbrenner, C. Hillar,
             *Finite generation of symmetric ideals*.
             Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
@@ -347,6 +351,10 @@ REFERENCES:
             *Characteristic polynomials of subspace arrangements and finite fields*.
             Advances in Mathematics, 122(2):193-233, 1996.
 
+.. [Ath2000] \C. A. Athanasiadis,
+            *Deformations of Coxeter hyperplane arrangements and their characteristic polynomials*.
+            Adv. Stud. Pure Math., 27, 2000.
+
 .. [Av2000] \D. Avis, *A revised implementation of the reverse search
             vertex enumeration algorithm.* Polytopes-combinatorics and
             computation. Birkhauser Basel, 2000.
@@ -624,7 +632,7 @@ REFERENCES:
                and variants*.
                :arxiv:`1810.00789`
 
-.. [BDKR2013] \D. Best, D.Z. Dokovic, H. Kharaghani and H. Ramp.
+.. [BDKR2013] \D. Best, D.Ž. Đoković, H. Kharaghani and H. Ramp.
               *Turyn-Type Sequences: Classification, Enumeration, and Construction*,
               Journal of Combinatorial Designs 21(1) (2013): 24-35.
               :doi:`10.1002/jcd.21318`
@@ -802,6 +810,14 @@ REFERENCES:
 .. [BHS2008] Robert Bradshaw, David Harvey and William
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
+
+.. [BHS2023] Jose Bastidas, Christophe Hohlweg, and Franco Saliola.
+             *The primitive Eulerian polynomial*.
+             Preprint, (2023) :arxiv:`2306.15556`.
+
+.. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
+              Ann. Math. (2) 192, No. 3, 821-891 (2020).
+              :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
               Palindromic Complexity of Infinite Words,
@@ -1092,6 +1108,9 @@ REFERENCES:
             complexes and combinatorics of simplicial manifolds,"
             *Uspekhi Mat. Nauk* 55 (2000), 171--172.
 
+.. [BP2014] \V. M. Bukhshtaber and T. E. Panov. "Toric Topology",
+            2014. :arxiv:`1210.2368`
+
 .. [BP2015] \P. Butera and M. Pernici "Sums of permanental minors
             using Grassmann algebra", International Journal of Graph
             Theory and its Applications, 1 (2015),
@@ -1118,6 +1137,10 @@ REFERENCES:
             die nach Isomorphismus verschiedenen Typen der allgemeinen
             Achtzelle (Oktatope)", Verhand. Konik. Akad. Wetenschap,
             Erste Sectie, 10 (1910)
+
+.. [BR1998] Georgia Benkart and Tom Roby. *Down-up algebras*.
+            J. Algebra, **209** no. 1 (1999), pp. 305-335.
+            :doi:`10.1006/jabr.1998.7511`.
 
 .. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
             :arxiv:`math/0006145v1`.
@@ -1180,6 +1203,9 @@ REFERENCES:
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
              vol 539, pages 27-52, 2011.
 
+.. [Bro2013] Francis Brown, *Single-valued motivic periods and multiple zeta
+             values*, Forum Math. Sigma 2 (2014), :doi:`10.1017/fms.2014.18`.
+
 .. [Bro2016] \A.E. Brouwer,
              Personal communication, 2016.
 
@@ -1215,6 +1241,11 @@ REFERENCES:
              for Hecke algebras of type* `A`.
              Proc. London Math. Soc. (3) **77** (1998), 551–581.
              :mathscinet:`MR1643413`
+
+.. [BS1969] \D. Blatt, G. Szekeres.
+            *A Skew Hadamard Matrix of Order 52*,
+            Canadian Journal of Mathematics 21 (1969): 1319-1322.
+            :doi:`10.4153/CJM-1969-144-2`
 
 .. [BS1996] Eric Bach, Jeffrey Shallit. *Algorithmic Number Theory,
             Vol. 1: Efficient Algorithms*. MIT Press, 1996. ISBN
@@ -1357,6 +1388,10 @@ REFERENCES:
              20(1.6):1-18, 2015. :doi:`10.1145/2780652` or
              [`<https://hal.inria.fr/hal-01182890>`_].
 
+.. [CS1999a] \D. Cohen and A. Suciu. *Characteristic varieties of arrangements*.
+             Math. Proc. Cambridge Philos. Soc.127 (1999), no.1, 33–-53.
+             :doi:`10.1017/S0305004199003576`.
+
 .. [CCLSV2005] \M. Chudnovsky, G. Cornuejols, X. Liu, P. Seymour, K. Vuskovic.
                *Recognizing berge graphs*.
                Combinatorica vol 25 (2005), n 2, pages 143--186.
@@ -1474,6 +1509,9 @@ REFERENCES:
 .. [Conr] Keith Conrad, "Artin-Hasse-Type Series and Roots of Unity",
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
+.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+               of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              "Directing Road Networks by Listing Strong Orientations.",
              Combinatorial Algorithms, Proceedings of 27th International Workshop,
@@ -1539,6 +1577,10 @@ REFERENCES:
             and Monographs*. American Mathematical Society,
             Providence, RI, 1999.
 
+.. [Cox1989] David A. Cox.
+         Primes of the form `x^2+ny^2`.
+         Wiley, 1989.
+
 .. [CK2008] Derek G. Corneil and Richard M. Krueger, *A Unified View
             of Graph Searching*, SIAM Jounal on Discrete Mathematics,
             22(4), 1259–-1276, 2008.
@@ -1596,6 +1638,10 @@ REFERENCES:
              \J. Algebr. Comb. **39** (2014) pp. 17-51.
              :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
 
+.. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
+            their representation theory*. J. Algebra. **228** no. 1, (2000),
+            pp. 286-310. :doi:`10.1006/jabr.1999.8263`
+
 .. [CM2012] \M. Cabanes, I. Marin, *On ternary quotients of cubic Hecke
              algebras*, Comm. Math. Phys. (2012), Volume 314, Issue 1,
              pp 57-92. :doi:`10.1007/s00220-012-1519-7`, :arxiv:`1010.1465`.
@@ -1634,6 +1680,11 @@ REFERENCES:
             https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/orange-spec.pdf
 
 .. [CrNa2020] \J.E. Cremona and F. Najman,  `\QQ`-curves over odd degree number fields, :arxiv:`2004.10054`.
+
+.. [CreSuth2023] \J.E. Cremona and A.V. Sutherland.
+                 *Computing the endomorphism ring of an elliptic curve
+                 over a number field*.
+                 :arxiv:`2301.11169`.
 
 .. [CoCo1] J.H. Conway, H.S.M. Coxeter
     *Triangulated polygons and frieze patterns*,
@@ -1794,6 +1845,11 @@ REFERENCES:
             *Tracking p-adic precision*,
             LMS J. Comput. Math. **17** (2014), 274-294.
 
+.. [Connell1999] Ian Connell.
+                 *Elliptic Curve Handbook*.
+                 Online lecture notes, available at
+                 https://git.hackade.org/ben/tinycrypt/raw/branch/master/docs/Elliptic%20Curve%20Handbook.pdf
+
 .. [CS1986] \J. Conway and N. Sloane. *Lexicographic codes:
             error-correcting codes from game theory*, IEEE
             Trans. Infor. Theory **32** (1986) 337-348.
@@ -1859,9 +1915,9 @@ REFERENCES:
 .. [CW2005] \J. E. Cremona and M. Watkins. Computing isogenies of elliptic
             curves. preprint, 2005.
 
-.. [CHW2015] Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation 
+.. [CHW2015] Cui, Shawn X.; Hong, Seung-Moon; Wang, Zhenghan Universal quantum computation
              with weakly integral anyons. Quantum Inf. Process. 14 (2015),
-             no. 8, 2687-2727. 
+             no. 8, 2687-2727.
 
 .. [CW2015] Cui, S. X. and Wang, Z. (2015). Universal quantum computation with
             metaplectic anyons. Journal of Mathematical Physics, 56(3), 032202.
@@ -1980,6 +2036,11 @@ REFERENCES:
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
 
+.. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
+             cryptosystems from supersingular elliptic curve isogenies. Journal
+             of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
+             https://eprint.iacr.org/2011/506.pdf
+
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
               Physics, Springer, 1996.
@@ -2000,6 +2061,11 @@ REFERENCES:
 .. [DGH2020] \C. Donnot, A. Genitrini and Y. Herida. Unranking Combinations
             Lexicographically: an efficient new strategy compared with others, 2020,
             https://hal.archives-ouvertes.fr/hal-02462764v1
+
+.. [DGK2014] \D. Đoković, O. Golubitsky and I.Kotsireas.
+            *Some New Orders of Hadamard and Skew-Hadamard Matrices*,
+            Journal of Combinatorial Designs 22(6) (2014): 270-277.
+            :doi:`10.1002/jcd.21358`
 
 .. [DGMPPS2019] \N. Datta, A. Ghoshal, D. Mukhopadhyay, S. Patranabis,
                 S. Picek, R. Sashukhan. "TRIFLE"
@@ -2041,17 +2107,58 @@ REFERENCES:
              and some constructions of de Luca and Rauzy*,
              Theoret. Comput. Sci.  255 (2001) 539--553.
 
-.. [Djo1992] \D. Đoković.
+.. [Djo1992a] \D. Đoković.
              *Construction of some new Hadamard matrices*,
              Bulletin of the Australian Mathematical Society 45(2) (1992): 327-332.
              :doi:`10.1017/S0004972700030185`
 
-.. [Djo1994] \D. Đoković.
+.. [Djo1992b] \D. Đoković.
+             *Skew Hadamard matrices of order 4 x 37 and 4 x 43*,
+             Journal of Combinatorial Theory, Series A 61(2) (1992): 319-321.
+             :doi:`10.1016/0097-3165(92)90029-T`
+
+.. [Djo1992c] \D. Đoković.
+             *Ten New Orders for Hadamard Matrices of Skew Type*,
+             Publikacije Elektrotehničkog fakulteta. Serija Matematika 2 (1992): 47-59.
+
+.. [Djo1994a] \D. Đoković.
              *Five New Orders for Hadamard Matrices of Skew Type*,
              Australasian Journal of Combinatorics  10 (1994): 259-264.
 
+.. [Djo1994b] \D. Đoković.
+             *Two Hadamard matrices of order 956 of Goethals-Seidel type*,
+             Combinatorica  14(3) (1994): 375-377.
+             :doi:`10.1007/BF01212983`
+
+.. [Djo2008a] \D. Đoković.
+            *Skew-Hadamard matrices of orders 188 and 388 exist*,
+            International Mathematical Forum 3 no.22 (2008): 1063-1068.
+            :arxiv:`0704.0640`
+
+.. [Djo2008b] \D. Đoković.
+            *Skew-Hadamard matrices of orders 436, 580 and 988 exist*,
+            Journal of Combinatorial Designs 16 (2008): 493-498.
+            :arxiv:`0706.1973`
+
+.. [Djo2008c] \D. Đoković.
+            *Hadamard matrices of order 764 exist*,
+            Combinatorica 28(4) (2008): 487-489.
+            :doi:`10.1007/s00493-008-2384-z`
+
+.. [Djo2023a]  \D. Đoković.
+            *Skew-Hadamard matrices of order 276*.
+            :arxiv:`10.48550/ARXIV.2301.02751`
+
+.. [Djo2023b] \D. Đoković, Email Communication. 26 January 2023.
+
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
+
+.. [DK2016] \D. Ðokovic, I. Kotsireas.
+            *A class of cyclic (v; k1, k2, k3; λ) difference families
+            with v = 3 (mod 4) a prime*,
+            Special Matrices 4(1) (2016): 317-325.
+            :doi:`10.1515/spma-2016-0029`
 
 .. [DLHK2007] \J. A. De Loera, D. C. Haws, M. Köppe, Ehrhart
               polynomials of matroid polytopes and
@@ -2200,7 +2307,7 @@ REFERENCES:
 .. [Dy1993] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
             intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
 
-.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and 
+.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
 .. _ref-E:
@@ -2397,6 +2504,11 @@ REFERENCES:
             code, by I.A.Faradjev (with contributions by A.E.Brouwer,
             D.V.Pasechnik). https://github.com/dimpase/coco
 
+.. [FKS2004] \R. J. Fletcher, C. Koukouvinos and J. Seberry.
+            *New skew-Hadamard matrices of order 4·59 and new D-optimal designs of order 2·59*,
+            Discrete Mathematics 286(3) (2004): 251-253.
+            :doi:`10.1016/j.disc.2004.05.009`
+
 .. [FL2001] David Forge and Michel Las Vergnas.
             *Orlik-Solomon type algebras*. European J. Combin.
             **22** (5), (2001). pp. 699-704.
@@ -2564,6 +2676,12 @@ REFERENCES:
             TR-737-05, (2005).
             ftp://ftp.cs.princeton.edu/reports/2005/737.pdf
 
+.. [Gek1988] \E.-U. Gekeler, On the coefficients of Drinfel'd modular
+             forms. Invent. Math. 93 (1988), no. 3, 667-700
+
+.. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
+             algebra, 1(141):187–203, 1991.
+
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
             submitted, 2012. Preprint:
@@ -2620,6 +2738,14 @@ REFERENCES:
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
 
+.. [Goff1999] Christopher Goff. *Isomorphic fusion algebras of twisted quantum
+              doubles of finite groups*. PhD Thesis,
+              University of California, Santa Cruz. 1999.
+
+.. [GoMa2010] Christopher Goff and Geoffrey Mason,
+            *Generalized twisted quantum doubles and the McKay correspondence*,
+            J. Algebra 324 (2010), no. 11, 3007–3016.
+
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
             Spectral cones in Euclidean Jordan algebras.
             Linear Algebra and its Applications, 509:286-305, 2016.
@@ -2668,6 +2794,10 @@ REFERENCES:
 
 .. [GL1996] \G. Golub and C. van Loan. *Matrix Computations*. 3rd
             edition, Johns Hopkins Univ. Press, 1996.
+
+.. [GL2019] \J. Grbić and A. Linton.
+            "Lowest-degree triple Massey products in moment-angle complexes",
+            2019. :arxiv:`1908.02222v2`
 
 .. [GrLe1996] \J. Graham and G.I. Lehrer
               *Cellular algebras*. Invent. Math. 123 (1996), 1–34.
@@ -2726,6 +2856,9 @@ REFERENCES:
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
+
+.. [Gos1998] \D. Goss. Basic structures of function field arithmetic. Springer,
+             1998.
 
 .. [Gor1980] Daniel Gorenstein, Finite Groups (New York: Chelsea
              Publishing, 1980)
@@ -2927,6 +3060,9 @@ REFERENCES:
 
 .. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
 
+.. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
+             LMS J. Comput. Math. **11** (2008), 40–59.
+
 .. [Harako2020] Shuichi Harako. *The second homology group of the commutative
                 case of Kontsevich's symplectic derivation Lie algebra*.
                 Preprint, 2020, :arxiv:`2006.06064`.
@@ -2988,8 +3124,9 @@ REFERENCES:
              with tunable clustering*, Phys. Rev. E (2002). vol 65, no 2, 026107.
              :doi:`10.1103/PhysRevE.65.026107`.
 
-.. [HKL2021] Clemens Heuberger, Daniel Krenn, Gabriel F. Lipnik, "Asymptotic
-             Analysis of `q`-Recursive Sequences", :arxiv:`2105.04334`, 2021.
+.. [HKL2022] Clemens Heuberger, Daniel Krenn, Gabriel F. Lipnik, "Asymptotic
+             Analysis of `q`-Recursive Sequences". Algorithmica **84** (2022),
+             2480–2532. :doi:`10.1007/s00453-022-00950-y`.
 
 .. [HKOTY1999] \G. Hatayama, A. Kuniba, M. Okado, T. Tagaki, and Y. Yamada,
                *Remarks on fermionic formula*. Contemp. Math., **248** (1999).
@@ -3207,6 +3344,11 @@ REFERENCES:
             Designs, Codes and Cryptography 8 (1996) 145-157.
             :doi:`10.1023/A:1018037025910`.
 
+.. [HMMS2019] June Huh, Jacob P. Matherne, Karola Mészáros, Avery St. Dizier.
+              *Logarithmic concavity of Schur and related polynomials*.
+              Trans. Am. Math. Soc. 375, No. 6, 4411-4427 (2022).
+              :arxiv:`1906.09633`, :doi:`10.1090/tran/8606`.
+
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
 
@@ -3415,7 +3557,7 @@ REFERENCES:
             :doi:`10.1016/j.bbr.2011.03.031`, :arxiv:`0909.2442`.
 
 .. [JS2021] \D. Jahn, C. Stump.
-            *Bruhat intervals, subword complexes and brick polyhedra for 
+            *Bruhat intervals, subword complexes and brick polyhedra for
             finite Coxeter groups*, 2021, :arxiv:`2103.03715`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
@@ -3631,6 +3773,11 @@ REFERENCES:
 .. [KMOY2007] \M. Kashiwara, K. C. Misra, M. Okado, D. Yamada.
               *Perfect crystals for* `U_q(D_4^{(3)})`, J. Algebra. **317** (2007).
 
+.. [Klaise2012] Janis Klaise.
+                *Orders in imaginary quadratic fields of small class number*
+                University of Warwick Undergraduate Masters thesis, unpublished (2012).
+                https://warwick.ac.uk/fac/cross_fac/complexity/people/students/dtc/students2013/klaise/janis_klaise_ug_report.pdf
+
 .. [KMR2012] \A. Kleshchev, A. Mathas, and A. Ram, *Universal Specht
              modules for cyclotomic Hecke algebras*,
              Proc. London Math. Soc. (2012) 105 (6): 1245-1289.
@@ -3830,6 +3977,7 @@ REFERENCES:
              set as the intersection of super greedy linear extensions. Order 4,
              293-311 (1987).
              :doi:`10.1007/BF00337892`
+
 .. [Kuh1987] \W. Kühnel, "Minimal triangulations of Kummer varieties",
              Abh. Math. Sem. Univ. Hamburg 57 (1987), 7-20.
 
@@ -4092,6 +4240,11 @@ REFERENCES:
              of a genus 2 Jacobian*, Mathematics of Computation 88 (2019),
              889-929. :doi:`10.1090/mcom/3358`.
 
+.. [Lon2013] \S. London,
+            *Constructing New Turyn Type Sequences, T-Sequences and Hadamard Matrices*.
+            PhD Thesis, University of Illinois at Chicago, 2013.
+            https://hdl.handle.net/10027/9916
+
 .. [LOS2012] \C. Lecouvey, M. Okado, M. Shimozono.
              "Affine crystals, one-dimensional sums and parabolic Lusztig
              `q`-analogues". Mathematische Zeitschrift. **271** (2012). Issue 3-4.
@@ -4330,6 +4483,10 @@ REFERENCES:
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
 
+.. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
+             in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
+             405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
+
 .. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
             Atoms, Journal of Algebraic Combinatorics, Vol. 29,
             (2009), No. 3, p.295-313. :arxiv:`0707.4267`
@@ -4446,6 +4603,9 @@ REFERENCES:
 .. [Mil1974] \J. W. Milnor and J. D. Stasheff, *Characteristic Classes*,
              University Press, Princeton and Tokyo, 1974.
 
+.. [Mil2006] \J. W. Milnor, *On Lattes maps*,
+             Dynamics on the Riemann sphere, Eur. Math. Soc., 9–43
+
 .. [Mil1978] \S. Milne, *A q-analog of restricted growth functions,
              Dobinsky’s equality and Charlier
              polynomials*. Trans. Amer. Math. Soc., 245 (1978),
@@ -4466,6 +4626,11 @@ REFERENCES:
 
 .. [Mit2008] \A. Mitra. *On the construction of M-sequences via primitive polynomials with a fast identification method*,
              International Journal of Electronics and Communication Engineering 2(9) (2008): 1991-1996.
+
+.. [Miy1991] \M. Miyamoto.
+            *A construction of Hadamard matrices*,
+            Journal of Combinatorial Theory, Series A 57(1) (1991): 86-108.
+            :doi:`10.1016/0097-3165(91)90008-5`
 
 .. [MKO1998] Hans Munthe--Kaas and Brynjulf Owren.
              *Computations in a free Lie algebra*. (1998).
@@ -4592,21 +4757,30 @@ REFERENCES:
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
 
+.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
+            of a finite rank two Drinfeld module. In Proceedings of the 2019
+            ACM on International Symposium on Symbolic and Algebraic
+            Computation, pages 307–314. ACM, 2019.
+
 .. [MSSY2001] Mateescu, A., Salomaa, A., Salomaa, K. and Yu, S., *A
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35
               (2001) 551-564.
+
+.. [MST2006] Barry Mazur, William Stein, John Tate.
+             *Computation of p-adic heights and log convergence*.
+             Doc. Math. 2006, Extra Vol., 577-614.
 
 .. [MSZ2013] Michael Maschler, Solan Eilon, and Zamir Shmuel. *Game
              Theory*. Cambridge: Cambridge University Press,
              (2013). ISBN 9781107005488.
 
-.. [MT1991] Mazur, B., & Tate, J. (1991). The `p`-adic sigma
-            function. Duke Mathematical Journal, 62(3), 663-688.
+.. [MT1991] Mazur, B., & Tate, J. (1991). *The `p`-adic sigma
+            function*. Duke Mathematical Journal, **62** (3), 663-688.
 
-.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum, On `p`-adic
-             analogues of the conjectures of Birch and
-             Swinnerton-Dyer, Inventiones Mathematicae 84, (1986),
-             1-48.
+.. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum,
+             *On `p`-adic analogues of the conjectures of Birch and
+             Swinnerton-Dyer*,
+             Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -4798,6 +4972,11 @@ REFERENCES:
              Electronic Journal of Linear Algebra, 34:444-458, 2018,
              :doi:`10.13001/1081-3810.3782`.
 
+.. [ORS2013] Peter Ozsvath, Jacob Rasmussen, Zoltan Szabo,
+             *Odd Khovanov homology*,
+             Algebraic & Geometric Topology 13 (2013) 1465–1488,
+             :doi:`10.2140/agt.2013.13.1465`.
+
 .. [ORV] Grigori Olshanski, Amitai Regev, Anatoly Vershik,
          *Frobenius-Schur functions*,
          :arxiv:`math/0110077v1`.
@@ -4928,6 +5107,11 @@ REFERENCES:
 
 .. [Pos2005] \A. Postnikov, Affine approach to quantum Schubert
              calculus, Duke Math. J. 128 (2005) 473-509
+
+.. [Pot1998] Potemine, I.Y.,
+             Minimal Terminal Q-Factorial Models of Drinfeld Coarse Moduli Schemes.
+             Mathematical Physics, Analysis and Geometry 1, 171-191 (1998).
+             :doi:`10.1023/A:1009724323513`
 
 .. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
              *Primer for the algebraic geometry of sandpiles*.
@@ -5172,6 +5356,8 @@ REFERENCES:
 .. [Ros2002] Rosenfeld, Vladimir Raphael, 2002: Enumerating De Bruijn
              Sequences. *Communications in Math. and in Computer Chem.*
 
+.. [Rosen2002] \M. Rosen. Number theory in function fields. Springer, 2022.
+
 .. [Rot2001] Gunter Rote, *Division-Free Algorithms for the
              Determinant and the Pfaffian: Algebraic and Combinatorial
              Approaches*, H. Alt (Ed.): Computational Discrete
@@ -5310,6 +5496,9 @@ REFERENCES:
 .. [Sch1996] \E. Schaefer. A simplified data encryption
              algorithm. Cryptologia, 20(1):77--84, 1996.
 
+.. [Scha1996] Richard D. Schaefer. *An Introduction to Nonassociative Algebras*.
+              Dover, New York, 1996.
+
 .. [Sch1999] Gilles Schaeffer, *Random Sampling of Large Planar Maps and Convex
              Polyhedra*, Annual ACM Symposium on Theory of Computing
              (Atlanta, GA, 1999). :doi:`10.1145/301250.301448`.
@@ -5344,6 +5533,10 @@ REFERENCES:
 .. [Sco1985] \R. Scott,
              *Wide-open encryption design offers flexible implementations*; in
              Cryptologia, (1985), pp. 75-91.
+
+.. [Seb1978] \J. Seberry.
+            *On Skew Hadamard Matrices*,
+            Ars Combinatoria 6 (1978): 255-276.
 
 .. [Seb2017] \J. Seberry,
              *Orthogonal designs: Hadamard matrices, quadratic forms and algebras*.
@@ -5479,6 +5672,10 @@ REFERENCES:
              Journal of Cryptology. 12. 193-196. 1999.
              :doi:`10.1007/s001459900052`.
 
+.. [Smi2023] \D. Smith, J. S. Myers, C. S. Kaplan and C. Goodman-Strauss,
+             *An aperiodic monotile*,
+             :arxiv:`2303.10798`
+
 .. [SP2010] Fernando Solano and Michal Pioro, *Lightpath Reconfiguration in WDM
             networks*, IEEE/OSA Journal of Optical Communication and Networking
             2(12):1010-1021, 2010. :doi:`10.1364/JOCN.2.001010`.
@@ -5492,6 +5689,21 @@ REFERENCES:
              Springer-Verlag New York, 1966.
              :doi:`10.1007/978-1-4684-9322-1`,
              ISBN 978-1-4684-9322-1.
+
+.. [Spe1975] \E. Spence.
+            *Hadamard matrices from relative difference sets*,
+            Journal of Combinatorial Theory, Series A 19(3) (1975): 287-300.
+            :doi:`10.1016/0097-3165(75)90054-0`
+
+.. [Spe1975b] \E. Spence.
+            *Skew-Hadamard Matrices of the Goethals-Seidel Type*,
+            Canadian Journal of Mathematics  27(3) (1975): 555-560.
+            :doi:`10.4153/cjm-1975-066-9`
+
+.. [Spe1977] \E. Spence.
+            *Skew-Hadamard matrices of order 2(q + 1)*,
+            Discrete Mathematics 18(1) (1977): 79-85.
+            :doi:`10.1016/0012-365X(77)90009-7`
 
 .. [Spe2013] \D. Speyer, *An infinitely generated upper cluster algebra*,
              :arxiv:`1305.6867`.
@@ -5633,11 +5845,6 @@ REFERENCES:
              matrices, and characteristic polynomials without division*
              :doi:`10.1023/A:1021878507303`
 
-.. [Spe1975] \E. Spence.
-            *Hadamard matrices from relative difference sets*,
-            Journal of Combinatorial Theory, Series A 19(3) (1975): 287-300.
-            :doi:`10.1016/0097-3165(75)90054-0`
-
 .. [ST1981] \J. J. Seidel and D. E. Taylor,
             *Two-graphs, a second survey*.
             Algebraic methods in graph theory, Vol. I, II (Szeged, 1978),
@@ -5764,10 +5971,21 @@ REFERENCES:
              isogenies of prime degree. Journal de Théorie des Nombres de Bordeaux,
              2012.
 
+.. [Suth2007] Andrew V. Sutherland, *Order Computations in Generic Groups*.
+              PhD Thesis, Massachusetts Institute of Technology,
+              June 2007.
+              https://math.mit.edu/~drew/sutherland-phd.pdf
+
 .. [Suth2008] Andrew V. Sutherland, *Structure computation and discrete
               logarithms in finite abelian p-groups*.
               Mathematics of Computation **80** (2011), pp. 477-500.
               :arxiv:`0809.3413v3`.
+
+.. [RouSuthZur2022] Jeremy Rouse, Andrew V. Sutherland, David Zureick-Brown.
+                    *`\ell`-adic images of Galois for elliptic curves over `\Q`* (and an appendix with John Voight).
+                    Forum of Mathematics, Sigma , Volume 10 , 2022.
+                    :doi: `10.1017/fms.2022.38`.
+                    :arxiv:`2106.11141`.
 
 .. [SV1970] \H. Schneider and M. Vidyasagar. Cross-positive matrices. SIAM
             Journal on Numerical Analysis, 7:508-519, 1970.
@@ -5841,6 +6059,15 @@ REFERENCES:
 .. [SZ2001] \M. Shimozono, M. Zabrocki,
             Hall-Littlewood vertex operators and generalized Kostka polynomials.
             Adv. Math. 158 (2001), no. 1, 66-85.
+
+.. [Sze1971] \G. Szekeres.
+            *Cyclotomy and complementary difference sets*,
+            Acta Arithmetica 18 (1971): 349-353.
+            :doi:`10.4064/aa-18-1-349-353`
+
+.. [Sze1988] \G. Szekeres.
+            *A note on skew type orthogonal ±1 matrices*,
+            Combinatorics, Colloquia Mathematica Societatis, Janos Bolyai, 52 (1988): 489-498.
 
 .. _ref-T:
 
@@ -5928,6 +6155,10 @@ REFERENCES:
 
 .. [TOPCOM] \J. Rambau, TOPCOM
             <http://www.rambau.wm.uni-bayreuth.de/TOPCOM/>.
+
+.. [TT2023] Tan Nhat Tran and Shuhei Tsujie.
+            *A type B analog of Ish arrangement*.
+            Preprint, :arxiv:`2304.12022`. (2023)
 
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.
@@ -6034,6 +6265,9 @@ REFERENCES:
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
 
+.. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
+            Fields. Birkh\"auser, 2006.
+
 .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure
             Appl. Alg. **94** (1994). no. 3, 341-352.
 
@@ -6052,6 +6286,11 @@ REFERENCES:
 
 .. [Wal1970] David W. Walkup, "The lower bound conjecture for 3- and
              4-manifolds", Acta Math. 125 (1970), 75-107.
+
+.. [Wal1970b] \J. Wallis.
+            *(v, k, λ) Configurations and Hadamard matrices*,
+            Journal of the Australian Mathematical Society 11(3) (1970): 297-309.
+            :doi:`10.1017/S1446788700006674`
 
 .. [Wal2001] Timothy Walsh, *Gray codes for involutions*, J. Combin.
              Math. Combin. Comput. **36** (2001), 95-118.
@@ -6078,6 +6317,11 @@ REFERENCES:
 
 .. [Watkins] Mark Watkins, *Hypergeometric motives over Q and their
              L-functions*, http://magma.maths.usyd.edu.au/~watkins/papers/known.pdf
+
+.. [Watkins2004] Mark Watkins.
+                 *Class numbers of imaginary quadratic fields*.
+                 Math. Comp. 73 (2004), 907-938.
+                 https://www.ams.org/journals/mcom/2004-73-246/S0025-5718-03-01517-5/
 
 .. [Wat2003] Joel Watson. *Strategy: an introduction to game
              theory*. WW Norton, 2002.
@@ -6121,6 +6365,11 @@ REFERENCES:
              American Journal of Mathematics,
              pages 150--168, 1932,
              `available on JSTOR <http://www.jstor.org/stable/2371086>`_
+
+.. [Whi1971] \A. Whiteman.
+            *An infinite family of skew Hadamard matrices*,
+            Pacific Journal of Mathematics 38(3) (1971): 817-822.
+            :doi:`10.2140/pjm.1971.38.817`
 
 .. [White2015] Noah White.
                *The monodromy of real Bethe vectors for the Gaudin model*.
@@ -6307,7 +6556,7 @@ REFERENCES:
             Combinatorics, 19(1), P53, 2012. :doi:`10.37236/2087`
 
 .. [Zie1959] \N. Zierler. *Linear Recurring Sequences*.
-             Journal of the Society for Industrial and Applied Mathematics 7(1) 
+             Journal of the Society for Industrial and Applied Mathematics 7(1)
              (1959): 31-48. :doi:`10.1137/0107003`
 
 .. [Zie1998] \G. M. Ziegler. *Shelling polyhedral 3-balls and

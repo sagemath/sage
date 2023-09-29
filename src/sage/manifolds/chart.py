@@ -2266,7 +2266,7 @@ class RealChart(Chart):
                 rlatex += r"\right]"
                 if bounds[1][1] == 'periodic':
                     rtxt += " (periodic)"
-                    rlatex += r"\mbox{(periodic)}"
+                    rlatex += r"\text{(periodic)}"
             else:
                 rtxt += ")"
                 rlatex += r"\right)"

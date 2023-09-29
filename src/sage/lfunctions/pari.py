@@ -22,7 +22,10 @@ from operator import index as PyNumber_Index
 from cypari2.gen import Gen
 from sage.libs.pari import pari
 from sage.structure.sage_object import SageObject
-from sage.rings.all import (ZZ, RealField, ComplexField, PowerSeriesRing)
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.power_series_ring import PowerSeriesRing
 
 
 class lfun_generic():

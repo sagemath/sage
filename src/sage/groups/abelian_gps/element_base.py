@@ -20,7 +20,8 @@ As always, elements are immutable once constructed.
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.misc.cachefunc import cached_method
-from sage.arith.all import GCD, LCM
+from sage.arith.misc import GCD
+from sage.arith.functions import lcm as LCM
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
@@ -47,9 +48,9 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
     EXAMPLES::
 
         sage: F = AbelianGroup(3,[7,8,9])
-        sage: Fd = F.dual_group(names="ABC")
-        sage: A,B,C = Fd.gens()
-        sage: A*B^-1 in Fd
+        sage: Fd = F.dual_group(names="ABC")                                            # needs sage.rings.number_field
+        sage: A,B,C = Fd.gens()                                                         # needs sage.rings.number_field
+        sage: A*B^-1 in Fd                                                              # needs sage.rings.number_field
         True
     """
 
@@ -60,19 +61,29 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: F = AbelianGroup(3,[7,8,9])
-            sage: Fd = F.dual_group(names="ABC")
-            sage: A,B,C = Fd.gens()
-            sage: A*B^-1 in Fd
+            sage: Fd = F.dual_group(names="ABC")                                        # needs sage.rings.number_field
+            sage: A,B,C = Fd.gens()                                                     # needs sage.rings.number_field
+            sage: A*B^-1 in Fd                                                          # needs sage.rings.number_field
+            True
+
+        Check that :issue:`35216` is fixed::
+
+            sage: M = AbelianGroup([3])
+            sage: M([5]) == M([2])
+            True
+            sage: M([3]).is_trivial()
             True
         """
         MultiplicativeGroupElement.__init__(self, parent)
         n = parent.ngens()
         if exponents == 1:
-            self._exponents = tuple( ZZ.zero() for i in range(n) )
+            self._exponents = tuple(ZZ.zero() for i in range(n))
         else:
-            self._exponents = tuple( ZZ(e) for e in exponents )
-            if len(self._exponents) != n:
-                raise IndexError('argument length (= %s) must be %s.'%(len(exponents), n))
+            if len(exponents) != n:
+                raise IndexError('argument length (= %s) must be %s'
+                                 % (len(exponents), n))
+            self._exponents = tuple(ZZ(e % o if o else e) for e, o in
+                                    zip(exponents, parent.gens_orders()))
 
     def __hash__(self):
         r"""
@@ -114,7 +125,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         TESTS::
 
             sage: F.<a,b,c> = AbelianGroup([7,8,9])
-            sage: libgap(a**2 * c) * libgap(b * c**2)
+            sage: libgap(a**2 * c) * libgap(b * c**2)                                   # needs sage.libs.gap
             f1^2*f2*f6
         """
         from sage.misc.misc_c import prod
@@ -136,6 +147,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: F = AbelianGroup(5,[2, 3, 5, 7, 8], names="abcde")
             sage: a,b,c,d,e = F.gens()
             sage: Ad = F.dual_group(names="ABCDE")
@@ -197,8 +209,8 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
             sage: a > b
             True
 
-            sage: Gd.<A,B> = G.dual_group()
-            sage: A > B
+            sage: Gd.<A,B> = G.dual_group()                                             # needs sage.rings.number_field
+            sage: A > B                                                                 # needs sage.rings.number_field
             True
         """
         return richcmp(self._exponents, other._exponents, op)
@@ -215,9 +227,9 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: F = AbelianGroup(3,[7,8,9])
-            sage: Fd = F.dual_group()
-            sage: A,B,C = Fd.gens()
-            sage: (B*C).order()
+            sage: Fd = F.dual_group()                                                   # needs sage.rings.number_field
+            sage: A,B,C = Fd.gens()                                                     # needs sage.rings.number_field
+            sage: (B*C).order()                                                         # needs sage.rings.number_field
             72
 
             sage: F = AbelianGroup(3,[7,8,9]); F
@@ -256,9 +268,8 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         G = left.parent()
         assert G is right.parent()
-        exponents = [ (x-y)%order if order!=0 else x-y
-                      for x, y, order in
-                      zip(left._exponents, right._exponents, G.gens_orders()) ]
+        exponents = [x - y for x, y in
+                     zip(left._exponents, right._exponents)]
         return G.element_class(G, exponents)
 
     def _mul_(left, right):
@@ -275,9 +286,8 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         G = left.parent()
         assert G is right.parent()
-        exponents = [ (x+y)%order if order!=0 else x+y
-                      for x, y, order in
-                      zip(left._exponents, right._exponents, G.gens_orders()) ]
+        exponents = [x + y for x, y in
+                     zip(left._exponents, right._exponents)]
         return G.element_class(G, exponents)
 
     def __pow__(self, n):
@@ -294,8 +304,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         if n != m:
             raise TypeError('argument n (= '+str(n)+') must be an integer.')
         G = self.parent()
-        exponents = [ (m*e) % order if order!=0 else m*e
-                      for e,order in zip(self._exponents, G.gens_orders()) ]
+        exponents = [m * e for e in self._exponents]
         return G.element_class(G, exponents)
 
     def __invert__(self):
@@ -319,8 +328,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
             (-1, 4)
         """
         G = self.parent()
-        exponents = [(-e) % order if order != 0 else -e
-                     for e, order in zip(self._exponents, G.gens_orders())]
+        exponents = [-e for e in self._exponents]
         return G.element_class(G, exponents)
 
     def is_trivial(self):

@@ -69,7 +69,8 @@ class PyPiVersion(object):
         Return the source url
         """
         for download in self.json['urls']:
-            if download['python_version'] == self.python_version:
+            if self.python_version in download['python_version']:
+                self.python_version = download['python_version']
                 return download['url']
         raise PyPiError('No %s url for %s found', self.python_version, self.name)
 
@@ -79,7 +80,8 @@ class PyPiVersion(object):
         Return the source tarball name
         """
         for download in self.json['urls']:
-            if download['python_version'] == self.python_version:
+            if self.python_version in download['python_version']:
+                self.python_version = download['python_version']
                 return download['filename']
         raise PyPiError('No %s url for %s found', self.python_version, self.name)
 

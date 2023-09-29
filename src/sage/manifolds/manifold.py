@@ -2724,8 +2724,9 @@ class TopologicalManifold(ManifoldSubset):
             chart.calculus_method().set_simplify_function(simplifying_func,
                                                           method=method)
 
-##############################################################################
-## Constructor function
+
+###########################################################
+# Constructor function
 
 _manifold_id = Integer(0)
 

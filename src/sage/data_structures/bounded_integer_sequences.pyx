@@ -110,9 +110,8 @@ AUTHORS:
 from cysignals.signals cimport sig_check, sig_on, sig_off
 from sage.data_structures.bitset_base cimport *
 
-from cpython.int cimport PyInt_FromSize_t
+from cpython.long cimport PyLong_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
-from sage.libs.gmp.mpn cimport mpn_rshift, mpn_lshift, mpn_copyi, mpn_ior_n, mpn_zero, mpn_copyd, mpn_cmp
 from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
@@ -296,7 +295,7 @@ cdef biseq_getitem_py(biseq_t S, mp_size_t index):
 
     """
     cdef size_t out = biseq_getitem(S, index)
-    return PyInt_FromSize_t(out)
+    return PyLong_FromSize_t(out)
 
 cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item):
     """
@@ -1212,7 +1211,7 @@ cdef class BoundedIntegerSequence:
             sage: T+None
             Traceback (most recent call last):
             ...
-            TypeError: Cannot concatenate bounded integer sequence and None
+            TypeError: cannot concatenate bounded integer sequence and None
 
         TESTS:
 
@@ -1228,7 +1227,7 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence myself, right, out
         if other is None or self is None:
-            raise TypeError('Cannot concatenate bounded integer sequence and None')
+            raise TypeError('cannot concatenate bounded integer sequence and None')
         myself = self  # may result in a type error
         right = other  #  --"--
         if right.data.itembitsize != myself.data.itembitsize:

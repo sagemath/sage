@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Contour plots
 """
@@ -848,9 +849,7 @@ def contour_plot(f, xrange, yrange, **options):
 
         sage: contour_plot(lambda x,y: 0, (-1,1), (-1,1),
         ....:              contours=[0], fill=False, cmap=['blue'])
-        ...
-        UserWarning: No contour levels were found within the data range.
-        Graphics object consisting of 1 graphics primitive
+        ...Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
@@ -874,8 +873,7 @@ def contour_plot(f, xrange, yrange, **options):
     Check that :trac:`18074` is fixed::
 
         sage: contour_plot(0, (0,1), (0,1))
-        ... UserWarning: No contour levels were found within the data range.
-        Graphics object consisting of 1 graphics primitive
+        ...Graphics object consisting of 1 graphics primitive
 
     Domain points in :trac:`11648` with complex output are now skipped::
 
@@ -1164,8 +1162,9 @@ def implicit_plot(f, xrange, yrange, **options):
 
     The same circle with different line and fill colors::
 
-        sage: implicit_plot(f, (-3,3), (-3,3), color='red', fill=True, fillcolor='green',
-        ....:                                  plot_points=500) # long time
+        sage: implicit_plot(f, (-3,3), (-3,3), color='red',  # long time
+        ....:               fill=True, fillcolor='green',
+        ....:               plot_points=500)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -1310,8 +1309,8 @@ def implicit_plot(f, xrange, yrange, **options):
     symbolic expression the user should increase the number of plot points to
     avoid artifacts::
 
-        sage: implicit_plot(lambda x, y: x^2 + y^2 - 2, (x,-3,3), (y,-3,3),
-        ....:               fill=True, plot_points=500) # long time
+        sage: implicit_plot(lambda x, y: x^2 + y^2 - 2, (x,-3,3),  # long time
+        ....:               (y,-3,3), fill=True, plot_points=500)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -1395,8 +1394,7 @@ def implicit_plot(f, xrange, yrange, **options):
 @options(plot_points=100, incol='blue', outcol=None, bordercol=None,
          borderstyle=None, borderwidth=None, frame=False, axes=True,
          legend_label=None, aspect_ratio=1, alpha=1)
-def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
-                borderstyle, borderwidth, alpha, **options):
+def region_plot(f, xrange, yrange, **options):
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
     and plots the region where f is True over the specified
@@ -1660,6 +1658,14 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     from warnings import warn
     import numpy
 
+    plot_points = options['plot_points']
+    incol = options.pop('incol')
+    outcol = options.pop('outcol')
+    bordercol = options.pop('bordercol')
+    borderstyle = options.pop('borderstyle')
+    borderwidth = options.pop('borderwidth')
+    alpha = options.pop('alpha')
+
     if not isinstance(f, (list, tuple)):
         f = [f]
 
@@ -1678,9 +1684,9 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     if neqs and not bordercol:
         bordercol = incol
     if not f:
-        return implicit_plot(feqs[0], xrange, yrange, plot_points=plot_points,
-                             fill=False, linewidth=borderwidth,
-                             linestyle=borderstyle, color=bordercol, **options)
+        return implicit_plot(feqs[0], xrange, yrange, fill=False,
+                             linewidth=borderwidth, linestyle=borderstyle,
+                             color=bordercol, **options)
     f_all, ranges = setup_for_eval_on_grid(feqs + f,
                                            [xrange, yrange],
                                            plot_points)

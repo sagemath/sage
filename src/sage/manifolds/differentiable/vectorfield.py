@@ -359,7 +359,6 @@ class VectorField(MultivectorField):
             resu.set_name(name=name, latex_name=latex_name)
         return resu
 
-
     @options(max_range=8, scale=1, color='blue')
     def plot(self, chart=None, ambient_coords=None, mapping=None,
              chart_domain=None, fixed_coords=None, ranges=None,
@@ -799,8 +798,8 @@ class VectorField(MultivectorField):
             list_xx = []
 
             while ind != ind_max:
-                for i in  range(ncp):
-                    xx[ind_coord[i]] = xmin[i] + ind[i]*step_tab[i]
+                for i in range(ncp):
+                    xx[ind_coord[i]] = xmin[i] + ind[i] * step_tab[i]
 
                 if chart_domain.valid_coordinates(*xx, tolerance=1e-13,
                                                   parameters=parameters):

@@ -205,28 +205,20 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
             return False
         else:
-            from sage.rings.real_mpfr import mpfr_prec_min
-
             from sage.rings.fraction_field import is_FractionField
-            from sage.rings.real_mpfi import is_RealIntervalField
-            from sage.rings.real_arb import RealBallField
-            from sage.rings.complex_arb import ComplexBallField
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-            from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
-            from sage.rings.complex_mpfr import ComplexField
+            from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
             from sage.rings.infinity import InfinityRing, UnsignedInfinityRing
             from sage.rings.real_lazy import RLF, CLF
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
-
-            from sage.interfaces.maxima import Maxima
+            from sage.rings.finite_rings.finite_field_base import FiniteField
 
             from .subring import GenericSymbolicSubring
 
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or is_LaurentPolynomialRing(R):
+            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or isinstance(R, LaurentPolynomialRing_generic):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing
@@ -234,8 +226,8 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
                                     sage.rings.abc.ComplexIntervalField,
                                     sage.rings.abc.RealBallField,
                                     sage.rings.abc.ComplexBallField,
-                                    sage.rings.abc.IntegerModRing))
-                  or is_FiniteField(R)):
+                                    sage.rings.abc.IntegerModRing,
+                                    FiniteField))):
                 return True
             elif isinstance(R, GenericSymbolicSubring):
                 return True
@@ -873,7 +865,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if isinstance(name, Expression):
             return name
-        if not isinstance(name, (basestring, list, tuple)):
+        if not isinstance(name, (str, list, tuple)):
             name = repr(name)
 
         is_multiple = False
@@ -1140,7 +1132,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             :doc:`subring`
         """
         if self is not SR:
-            raise NotImplementedError('Cannot create subring of %s.' % (self,))
+            raise NotImplementedError('cannot create subring of %s' % (self,))
         from .subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
@@ -1167,24 +1159,24 @@ cdef class NumpyToSRMorphism(Morphism):
 
     We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # needs numpy
         sage: f(x) = x^2
-        sage: f(numpy.int8('2'))
+        sage: f(numpy.int8('2'))                                                        # needs numpy
         4
-        sage: f(numpy.int32('3'))
+        sage: f(numpy.int32('3'))                                                       # needs numpy
         9
 
     Note that the answer is a Sage integer and not a numpy type::
 
-        sage: a = f(numpy.int8('2')).pyobject()
-        sage: type(a)
+        sage: a = f(numpy.int8('2')).pyobject()                                         # needs numpy
+        sage: type(a)                                                                   # needs numpy
         <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
 
         sage: cos(int('2'))
         cos(2)
-        sage: numpy.cos(int('2'))
+        sage: numpy.cos(int('2'))                                                       # needs numpy
         -0.4161468365471424
     """
     cdef _intermediate_ring
@@ -1200,6 +1192,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: import numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
             sage: f = NumpyToSRMorphism(numpy.float64)
@@ -1208,7 +1201,7 @@ cdef class NumpyToSRMorphism(Morphism):
             sage: _.parent()
             Symbolic Ring
 
-            sage: NumpyToSRMorphism(str)
+            sage: NumpyToSRMorphism(str)                                                # needs numpy
             Traceback (most recent call last):
             ...
             TypeError: <... 'str'> is not a numpy number type
@@ -1235,17 +1228,16 @@ cdef class NumpyToSRMorphism(Morphism):
         This should be called when coercing or converting a NumPy
         float or complex to the Symbolic Ring::
 
+            sage: # needs numpy
             sage: import numpy
             sage: SR(numpy.int32('1')).pyobject().parent()
             Integer Ring
             sage: SR(numpy.int64('-2')).pyobject().parent()
             Integer Ring
-
             sage: SR(numpy.float16('1')).pyobject().parent()
             Real Double Field
             sage: SR(numpy.float64('2.0')).pyobject().parent()
             Real Double Field
-
             sage: SR(numpy.complex64(1jr)).pyobject().parent()
             Complex Double Field
         """
@@ -1260,6 +1252,7 @@ cdef class UnderscoreSageMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sympy
             sage: import sympy
             sage: from sage.symbolic.ring import UnderscoreSageMorphism
             sage: b = sympy.var('b')
@@ -1282,9 +1275,9 @@ cdef class UnderscoreSageMorphism(Morphism):
         This should be called when coercing or converting a SymPy
         object to the Symbolic Ring::
 
-            sage: import sympy
-            sage: b = sympy.var('b')
-            sage: bool(SR(b) == SR(b._sage_()))
+            sage: import sympy                                                          # needs sympy
+            sage: b = sympy.var('b')                                                    # needs sympy
+            sage: bool(SR(b) == SR(b._sage_()))                                         # needs sympy
             True
         """
         return self.codomain()(a._sage_())

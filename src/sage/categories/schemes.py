@@ -140,7 +140,7 @@ class Schemes(Category):
         from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec
         from sage.categories.map import Map
-        from sage.categories.all import Rings
+        from sage.categories.rings import Rings
         if x in CommutativeRings():
             return Spec(x)
         elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
@@ -148,7 +148,7 @@ class Schemes(Category):
             A = Spec(x.codomain())
             return A.hom(x)
         else:
-            raise TypeError("No way to create an object or morphism in %s from %s"%(self, x))
+            raise TypeError("No way to create an object or morphism in %s from %s" % (self, x))
 
 
 #############################################################

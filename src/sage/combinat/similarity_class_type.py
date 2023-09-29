@@ -189,22 +189,22 @@ AUTHOR:
 # ****************************************************************************
 
 from itertools import chain, product
-from sage.misc.misc_c import prod
-from sage.arith.misc import factorial
-from sage.arith.all import moebius, divisors
+
+from sage.arith.misc import divisors, factorial, moebius
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.misc import IterableFunctionCall
+from sage.combinat.partition import Partitions, Partition
+from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
+from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.structure.element import Element, is_Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.partition import Partitions, Partition
-from sage.rings.fraction_field import FractionField
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.misc.cachefunc import cached_in_parent_method, cached_function
-from sage.combinat.misc import IterableFunctionCall
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 @cached_function
@@ -1430,7 +1430,7 @@ def input_parsing(data):
                     data = PrimarySimilarityClassType(*data)
                     case = 'pri'
                 except(TypeError, ValueError):
-                    raise ValueError("Expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
+                    raise ValueError("expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data
 
 

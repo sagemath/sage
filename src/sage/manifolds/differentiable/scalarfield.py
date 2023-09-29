@@ -38,13 +38,15 @@ REFERENCES:
 #******************************************************************************
 
 from __future__ import annotations
-from typing import Union, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Union
+
 from sage.manifolds.scalarfield import ScalarField
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.diff_form import DiffForm
-    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
     from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
 
 class DiffScalarField(ScalarField):
@@ -713,7 +715,7 @@ class DiffScalarField(ScalarField):
         """
         return self._tensor_type
 
-    def differential(self):
+    def differential(self) -> DiffForm:
         r"""
         Return the differential of ``self``.
 
@@ -816,7 +818,6 @@ class DiffScalarField(ScalarField):
     exterior_derivative = differential  # a scalar field being a 0-form
     derivative = differential  # allows one to use functional notation,
                                # e.g. diff(f) for f.differential()
-
 
     def lie_derivative(self, vector):
         r"""

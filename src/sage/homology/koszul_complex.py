@@ -14,7 +14,7 @@ Koszul Complexes
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.combination import rank
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex_class
@@ -108,12 +108,12 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
                 R = ()
             elements = R
             if not elements:
-                R = ZZ # default to ZZ as the base ring if no elements are given
+                R = ZZ  # default to ZZ as the base ring if no elements are given
             elif isinstance(R, Parent):
                 elements = ()
             else:
                 R = elements[0].parent()
-        elif R is None: # elements is not None
+        elif R is None:  # elements is not None
             R = elements[0].parent()
         return super(KoszulComplex, cls).__classcall__(cls, R, tuple(elements))
 
@@ -134,12 +134,12 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         diff = {}
         zero = R.zero()
         for i in I:
-            M = matrix(R, binomial(n,i), binomial(n,i+1), zero)
+            M = matrix(R, binomial(n, i), binomial(n, i+1), zero)
             j = 0
             for comb in itertools.combinations(I, i+1):
-                for k,val in enumerate(comb):
+                for k, val in enumerate(comb):
                     r = rank(comb[:k] + comb[k+1:], n, False)
-                    M[r,j] = (-1)**k * elements[val]
+                    M[r, j] = (-1)**k * elements[val]
                 j += 1
             M.set_immutable()
             diff[i+1] = M

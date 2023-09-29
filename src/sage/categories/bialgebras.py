@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Bialgebras
 """
@@ -10,7 +11,8 @@ Bialgebras
 # *****************************************************************************
 
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.all import Algebras, Coalgebras
+from sage.categories.algebras import Algebras
+from sage.categories.coalgebras import Coalgebras
 from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.lazy_import import LazyImport
 
@@ -67,6 +69,7 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: s([5]).is_primitive()
                 False
@@ -83,10 +86,10 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: s([5]).is_grouplike()
+                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
+                sage: s([5]).is_grouplike()                                             # needs sage.modules
                 False
-                sage: s([]).is_grouplike()
+                sage: s([]).is_grouplike()                                              # needs sage.modules
                 True
             """
             return self.coproduct() == self.tensor(self)

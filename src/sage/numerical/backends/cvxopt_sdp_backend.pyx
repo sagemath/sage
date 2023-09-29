@@ -20,7 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.numerical.sdp import SDPSolverException
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from .matrix_sdp_backend cimport MatrixSDPBackend
 
 

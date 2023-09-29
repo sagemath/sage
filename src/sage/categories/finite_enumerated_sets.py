@@ -61,7 +61,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             sage: FiniteEnumeratedSets()(GF(3))
             Finite Field of size 3
-            sage: Partitions(3)
+            sage: Partitions(3)                                                         # needs sage.combinat
             Partitions of the integer 3
 
         For now, lists, tuples, sets, Sets are coerced into finite
@@ -88,7 +88,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 sage: len(GF(5))
                 5
-                sage: len(MatrixSpace(GF(2), 3, 3))
+                sage: len(MatrixSpace(GF(2), 3, 3))                                     # needs sage.modules
                 512
             """
             return int(self.cardinality())
@@ -524,7 +524,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: C._last_from_unrank()
                 3
             """
-            return self.unrank(self.cardinality() -1)
+            return self.unrank(self.cardinality() - 1)
 
         def _test_enumerated_set_iter_cardinality(self, **options):
             """
@@ -590,17 +590,17 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             inherit various methods from `Sets.CartesianProducts`
             and not from :class:`EnumeratedSets.Finite`::
 
-                sage: C = cartesian_product([Partitions(10), Permutations(20)])
-                sage: C in EnumeratedSets().Finite()
+                sage: C = cartesian_product([Partitions(10), Permutations(20)])         # needs sage.combinat
+                sage: C in EnumeratedSets().Finite()                                    # needs sage.combinat
                 True
 
-                sage: C.random_element.__module__
+                sage: C.random_element.__module__                                       # needs sage.combinat
                 'sage.categories.sets_cat'
 
-                sage: C.cardinality.__module__
+                sage: C.cardinality.__module__                                          # needs sage.combinat
                 'sage.categories.sets_cat'
 
-                sage: C.__iter__.__module__
+                sage: C.__iter__.__module__                                             # needs sage.combinat
                 'sage.categories.sets_cat'
             """
             random_element = raw_getattr(Sets.CartesianProducts.ParentMethods, "random_element")
@@ -613,8 +613,9 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([Zmod(42), Partitions(10), IntegerRange(5)])
-                    sage: C.last()
+                    sage: C = cartesian_product([Zmod(42), Partitions(10),              # needs sage.combinat
+                    ....:                        IntegerRange(5)])
+                    sage: C.last()                                                      # needs sage.combinat
                     (41, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 4)
                 """
                 return self._cartesian_product_of_elements(
@@ -654,6 +655,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     152
                     153
 
+                    sage: # needs sage.combinat
                     sage: F1 = FiniteEnumeratedSet('abcdefgh')
                     sage: F2 = IntegerRange(250)
                     sage: F3 = Partitions(20)

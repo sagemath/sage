@@ -4,7 +4,8 @@ Examples of semigroups in cython
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.categories.all import Category, Semigroups
+from sage.categories.category import Category
+from sage.categories.semigroups import Semigroups
 from sage.categories.examples.semigroups import LeftZeroSemigroup as LeftZeroSemigroupPython
 from cpython.object cimport PyObject_RichCompare
 

@@ -273,7 +273,6 @@ for hints on how to do that).
         i = s.find('=')
         return s[i+1:].strip('\n')
 
-
     def console(self):
         matlab_console()
 
@@ -356,6 +355,7 @@ class MatlabElement(ExpectElement):
         P = self._check_valid()
         z = P(x)
         P.eval('{0}({1},{2}) = {3}'.format(self.name(), i, j, z.name()))
+
 
 # An instance
 matlab = Matlab()

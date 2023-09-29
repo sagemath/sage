@@ -43,7 +43,7 @@ Test that write errors to stderr are handled gracefully by GAP
 """
 
 from .all import *
-from sage.misc.misc import cputime, walltime
+from sage.misc.timing import cputime, walltime
 import sys
 
 def manyvars(s, num=70000, inlen=1, step=2000):
@@ -51,14 +51,14 @@ def manyvars(s, num=70000, inlen=1, step=2000):
     Test that > 65,000 variable names works in each system.
     """
     print("Testing -- %s" % s)
-    t = '"%s"'%('9'*int(inlen))
+    t = '"%s"' % ('9'*int(inlen))
     try:
         t = cputime()
         w = walltime()
         v = []
         for i in range(num):
-            if i%step==0:
-                sys.stdout.write('%s '%i)
+            if i % step == 0:
+                sys.stdout.write('%s ' % i)
                 sys.stdout.flush()
             v.append(s(t))
         print('\nsuccess -- time = cpu: %s, wall: %s' % (cputime(t),

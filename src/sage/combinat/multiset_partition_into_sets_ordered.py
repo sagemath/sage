@@ -45,29 +45,26 @@ Ordered multiset partitions into sets on the alphabet `\{1, 4\}` of order 3::
 Crystal of ordered multiset partitions into sets on the alphabet `\{1,2,3\}`
 with 4 letters divided into 2 blocks::
 
-    sage: crystals.Minimaj(3, 4, 2).list()
+    sage: crystals.Minimaj(3, 4, 2).list()                                              # optional - sage.modules
     [((2, 3, 1), (1,)), ((2, 3), (1, 2)), ((2, 3), (1, 3)), ((2, 1), (1, 2)),
      ((3, 1), (1, 2)), ((3, 1, 2), (2,)), ((3, 1), (1, 3)), ((3, 1), (2, 3)),
      ((3, 2), (2, 3)), ((2, 1), (1, 3)), ((2,), (1, 2, 3)), ((3,), (1, 2, 3)),
      ((1,), (1, 2, 3)), ((1, 2), (2, 3)), ((1, 2, 3), (3,))]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Aaron Lauve       <lauve at math.luc.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from functools import reduce
-from itertools import chain
+from itertools import chain, product
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.cartesian_product import cartesian_product
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.tensor import tensor
 from sage.structure.unique_representation import UniqueRepresentation
@@ -81,7 +78,7 @@ from sage.sets.set import Set_object
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 
 from sage.combinat.subset import Subsets_sk
 from sage.combinat.composition import Composition, Compositions, composition_iterator_fast
@@ -672,7 +669,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             return {tuple([self]*k): 1}
 
         out = {}
-        for t in cartesian_product([_split_block(block, k) for block in self]):
+        for t in product(*[_split_block(block, k) for block in self]):
             tt = tuple([P([l for l in c if l]) for c in zip(*t)])
             out[tt] = out.get(tt, 0) + 1
         return out
@@ -711,8 +708,8 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         if not self:
             return set([self])
 
-        CP = cartesian_product([_refine_block(block, strong) for block in self])
-        return set(P(_concatenate(map(list,c))) for c in CP)
+        CP = product(*[_refine_block(block, strong) for block in self])
+        return set(P(_concatenate(map(list, c))) for c in CP)
 
     def is_finer(self, co):
         """
@@ -803,7 +800,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             str_rep = '['
             for i in range(len(grouping)):
                 st = ",".join(str(k) for k in result[i])
-                str_rep += "{" + st+ "}"
+                str_rep += "{" + st + "}"
             str_rep = str_rep.replace("}{", "}, {") + "]"
             raise ValueError("%s is not a valid ordered multiset partition into sets" % (str_rep))
         else:
@@ -1554,7 +1551,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             constraints.pop("max_order", None)
         min_ord = constraints.get("min_order", 0)
         max_ord = constraints.get("max_order", infinity)
-        assert min_ord <= max_ord, "min_order=%s <= max_order=%s"%(min_ord, max_ord)
+        assert min_ord <= max_ord, "min_order=%s <= max_order=%s" % (min_ord, max_ord)
         if min_ord == max_ord:
             constraints["order"] = constraints.pop("min_order",
                                                    constraints.pop("max_order"))
@@ -2226,7 +2223,7 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
             'Ordered Multiset Partitions into Sets of multiset {{1, 1, 4}}'
         """
         ms_rep = "{{" + ", ".join(map(str, self._Xtup)) + "}}"
-        return "Ordered Multiset Partitions into Sets" + " of multiset %s"%ms_rep
+        return "Ordered Multiset Partitions into Sets" + " of multiset %s" % ms_rep
 
     def __contains__(self, x):
         """
@@ -2396,7 +2393,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
         cdict = dict(self.constraints)
         cdict.pop("weight", None)
         ms_rep = "{{" + ", ".join(map(str, self._Xtup)) + "}}"
-        base_repr = "Ordered Multiset Partitions into Sets" + " of multiset %s"%ms_rep
+        base_repr = "Ordered Multiset Partitions into Sets" + " of multiset %s" % ms_rep
         return base_repr + self._constraint_repr_(cdict)
 
 ###############
@@ -2441,7 +2438,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
             'Ordered Multiset Partitions into Sets of order 2 over alphabet {1, 3}'
         """
         A_rep = "Ordered Multiset Partitions into Sets of order " + str(self._order)
-        A_rep += " over alphabet {%s}"%(", ".join(map(str, sorted(self._alphabet))))
+        A_rep += " over alphabet {%s}" % (", ".join(map(str, sorted(self._alphabet))))
         return A_rep
 
     def _an_element_(self):
@@ -2583,7 +2580,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartit
         cdict.pop("alphabet", None)
         cdict.pop("order", None)
         base_repr = "Ordered Multiset Partitions into Sets of order " + str(self._order)
-        base_repr += " over alphabet {%s}"%(", ".join(map(str, sorted(self._alphabet))))
+        base_repr += " over alphabet {%s}" % (", ".join(map(str, sorted(self._alphabet))))
         return base_repr + self._constraint_repr_(cdict)
 
 ###############
@@ -2787,8 +2784,8 @@ def _base_iterator(constraints):
             if min_ord:
                 min_k = max(1, min_k, min_ord // len(A))
         if infinity not in (max_k, max_ord):
-            return chain(*(_iterator_order(A, ord, range(min_k, max_k+1)) \
-                        for ord in range(min_ord, max_ord+1)))
+            return chain(*(_iterator_order(A, ord, range(min_k, max_k + 1))
+                           for ord in range(min_ord, max_ord + 1)))
     # else
     return None
 
@@ -2892,16 +2889,16 @@ def _iterator_size(size, length=None, alphabet=None):
         max_p = max(alphabet)
         for alpha in IntegerListsLex(size, length=length, min_part=1,
                                      max_part=min(size, sum(alphabet))):
-            for p in cartesian_product([IntegerListsLex(a, min_slope=1,
-                                                        min_part=min_p,
-                                                        max_part=min(a, max_p))
-                                        for a in alpha]):
+            for p in product(*[IntegerListsLex(a, min_slope=1,
+                                               min_part=min_p,
+                                               max_part=min(a, max_p))
+                               for a in alpha]):
                 if frozenset(_concatenate(p)).issubset(frozenset(alphabet)):
                     yield tuple(frozenset(k) for k in p)
     else:
         for alpha in IntegerListsLex(size, length=length, min_part=1, max_part=size):
-            for p in cartesian_product([IntegerListsLex(a, min_slope=1,
-                                                        min_part=1) for a in alpha]):
+            for p in product(*[IntegerListsLex(a, min_slope=1,
+                                               min_part=1) for a in alpha]):
                 yield tuple(frozenset(k) for k in p)
 
 
@@ -2967,11 +2964,11 @@ def _iterator_order(A, d, lengths=None):
             yield ()
         else:
             for alpha in IntegerListsLex(d, length=k, min_part=1, max_part=n):
-                for co in cartesian_product([Subsets_sk(A, a) for a in alpha]):
+                for co in product(*[Subsets_sk(A, a) for a in alpha]):
                     yield tuple(frozenset(X) for X in co)
 
 
-def _descents(w):
+def _descents(w) -> list:
     r"""
     Return descent positions in the word ``w``.
 
@@ -2983,7 +2980,7 @@ def _descents(w):
         sage: _descents([])
         []
     """
-    return [j for j in range(len(w)-1) if w[j] > w[j+1]]
+    return [j for j in range(len(w) - 1) if w[j] > w[j + 1]]
 
 
 def _break_at_descents(alpha, weak=True):
@@ -3200,14 +3197,14 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
-        sage: list(crystals.Minimaj(2,3,2))
+        sage: list(crystals.Minimaj(2,3,2))                                             # optional - sage.modules
         [((2, 1), (1,)), ((2,), (1, 2)), ((1,), (1, 2)), ((1, 2), (2,))]
 
-        sage: b = crystals.Minimaj(3, 5, 2).an_element(); b
+        sage: b = crystals.Minimaj(3, 5, 2).an_element(); b                             # optional - sage.modules
         ((2, 3, 1), (1, 2))
-        sage: b.f(2)
+        sage: b.f(2)                                                                    # optional - sage.modules
         ((2, 3, 1), (1, 3))
-        sage: b.e(2)
+        sage: b.e(2)                                                                    # optional - sage.modules
     """
 
     def __init__(self, n, ell, k):
@@ -3216,17 +3213,17 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: B = crystals.Minimaj(2,3,2)
-            sage: TestSuite(B).run()
+            sage: B = crystals.Minimaj(2,3,2)                                           # optional - sage.modules
+            sage: TestSuite(B).run()                                                    # optional - sage.modules
 
-            sage: B = crystals.Minimaj(3, 5, 2)
-            sage: TestSuite(B).run()
+            sage: B = crystals.Minimaj(3, 5, 2)                                         # optional - sage.modules
+            sage: TestSuite(B).run()                                                    # optional - sage.modules
 
-            sage: list(crystals.Minimaj(2,6,3))
+            sage: list(crystals.Minimaj(2,6,3))                                         # optional - sage.modules
             [((1, 2), (2, 1), (1, 2))]
-            sage: list(crystals.Minimaj(2,5,2))  # blocks too fat for alphabet
+            sage: list(crystals.Minimaj(2,5,2))  # blocks too fat for alphabet          # optional - sage.modules
             []
-            sage: list(crystals.Minimaj(4,2,3))  # more blocks than letters
+            sage: list(crystals.Minimaj(4,2,3))  # more blocks than letters             # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: n (=4), ell (=2), and k (=3) must all be positive integers
@@ -3236,9 +3233,9 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         self.ell = ell
         self.k = k
         if not all([n in ZZ, ell in ZZ, k in ZZ]):
-            raise TypeError("n (=%s), ell (=%s), and k (=%s) must all be positive integers"%(n, ell, k))
+            raise TypeError("n (=%s), ell (=%s), and k (=%s) must all be positive integers" % (n, ell, k))
         if not all([n > 0, ell >= k, k > 0]):
-            raise ValueError("n (=%s), ell (=%s), and k (=%s) must all be positive integers"%(n, ell, k))
+            raise ValueError("n (=%s), ell (=%s), and k (=%s) must all be positive integers" % (n, ell, k))
         self._cartan_type = CartanType(['A',n-1])
         B = Letters(['A', n-1])
         T = tensor([B]*ell)
@@ -3259,7 +3256,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B = crystals.Minimaj(3,4,2); B
+            sage: B = crystals.Minimaj(3,4,2); B                                        # optional - sage.modules
             Minimaj Crystal of type A_2 of words of length 4 into 2 blocks
         """
         return ("Minimaj Crystal of type A_%s of words of length %s into %s blocks"
@@ -3271,14 +3268,14 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B = crystals.Minimaj(4,5,3)
-            sage: B.an_element()
+            sage: B = crystals.Minimaj(4,5,3)                                           # optional - sage.modules
+            sage: B.an_element()                                                        # optional - sage.modules
             ((2, 3, 1), (1,), (1,))
-            sage: B = crystals.Minimaj(2,2,1)
-            sage: B.an_element()
+            sage: B = crystals.Minimaj(2,2,1)                                           # optional - sage.modules
+            sage: B.an_element()                                                        # optional - sage.modules
             ((1, 2),)
-            sage: B = crystals.Minimaj(1,2,1)
-            sage: B.an_element()
+            sage: B = crystals.Minimaj(1,2,1)                                           # optional - sage.modules
+            sage: B.an_element()                                                        # optional - sage.modules
             Traceback (most recent call last):
             ...
             EmptySetError
@@ -3294,14 +3291,14 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B1 = crystals.Minimaj(4,5,3); b = B1.an_element(); b
+            sage: B1 = crystals.Minimaj(4,5,3); b = B1.an_element(); b                  # optional - sage.modules
             ((2, 3, 1), (1,), (1,))
-            sage: B1._element_constructor_(list(b))
+            sage: B1._element_constructor_(list(b))                                     # optional - sage.modules
             ((2, 3, 1), (1,), (1,))
-            sage: B1._element_constructor_([[1,2,3], [2], [2]])
+            sage: B1._element_constructor_([[1,2,3], [2], [2]])                         # optional - sage.modules
             ((3, 1, 2), (2,), (2,))
-            sage: B2 = crystals.Minimaj(5,5,3)
-            sage: B2._element_constructor_(b)
+            sage: B2 = crystals.Minimaj(5,5,3)                                          # optional - sage.modules
+            sage: B2._element_constructor_(b)                                           # optional - sage.modules
             ((2, 3, 1), (1,), (1,))
         """
         # Allow ``x`` to be either of:
@@ -3316,7 +3313,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             B,T = self._BT
             return self.element_class(self, (T(*[B(a) for a in _concatenate(t)]), breaks))
         else:
-            raise ValueError("cannot convert %s into an element of %s"%(x, self))
+            raise ValueError("cannot convert %s into an element of %s" % (x, self))
 
     def __contains__(self, x):
         """
@@ -3325,17 +3322,17 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B1 = crystals.Minimaj(2,5,3); b1 = B1.an_element(); b1
+            sage: B1 = crystals.Minimaj(2,5,3); b1 = B1.an_element(); b1                # optional - sage.modules
             ((1, 2), (2, 1), (1,))
-            sage: B2 = crystals.Minimaj(5,5,3); b2 = B2.an_element(); b2
+            sage: B2 = crystals.Minimaj(5,5,3); b2 = B2.an_element(); b2                # optional - sage.modules
             ((2, 3, 1), (1,), (1,))
-            sage: b2a = B2(((1,2), (1,), (1,2))); b2a
+            sage: b2a = B2(((1,2), (1,), (1,2))); b2a                                   # optional - sage.modules
             ((2, 1), (1,), (1, 2))
-            sage: b1 in B2
+            sage: b1 in B2                                                              # optional - sage.modules
             True
-            sage: b2 in B1
+            sage: b2 in B1                                                              # optional - sage.modules
             False
-            sage: b2a in B1
+            sage: b2a in B1                                                             # optional - sage.modules
             True
         """
         if isinstance(x, MinimajCrystal.Element):
@@ -3356,24 +3353,24 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: B = crystals.Minimaj(3,6,3)
-            sage: b = B.an_element(); b
+            sage: B = crystals.Minimaj(3,6,3)                                           # optional - sage.modules
+            sage: b = B.an_element(); b                                                 # optional - sage.modules
             ((3, 1, 2), (2, 1), (1,))
-            sage: t = b.to_tableaux_words(); t
+            sage: t = b.to_tableaux_words(); t                                          # optional - sage.modules
             [[1], [2, 1], [], [3, 2, 1]]
-            sage: B.from_tableau(t)
+            sage: B.from_tableau(t)                                                     # optional - sage.modules
             ((3, 1, 2), (2, 1), (1,))
-            sage: B.from_tableau(t) == b
+            sage: B.from_tableau(t) == b                                                # optional - sage.modules
             True
 
         TESTS::
 
-            sage: B = crystals.Minimaj(3,6,3)
-            sage: all(mu == B.from_tableau(mu.to_tableaux_words()) for mu in B)
+            sage: B = crystals.Minimaj(3,6,3)                                           # optional - sage.modules
+            sage: all(mu == B.from_tableau(mu.to_tableaux_words()) for mu in B)         # optional - sage.modules
             True
-            sage: t = B.an_element().to_tableaux_words()
-            sage: B1 = crystals.Minimaj(3,6,2)
-            sage: B1.from_tableau(t)
+            sage: t = B.an_element().to_tableaux_words()                                # optional - sage.modules
+            sage: B1 = crystals.Minimaj(3,6,2)                                          # optional - sage.modules
+            sage: B1.from_tableau(t)                                                    # optional - sage.modules
             Traceback (most recent call last):
             ...
             ValueError: ((3, 1, 2), (2, 1), (1,)) is not an element of
@@ -3393,8 +3390,8 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         Verifying Example 4.5 from [BCHOPSY2017]_::
 
-            sage: B = crystals.Minimaj(3, 4, 2) # for `Val_{4,1}^{(3)}`
-            sage: B.val()
+            sage: B = crystals.Minimaj(3, 4, 2) # for `Val_{4,1}^{(3)}`                 # optional - sage.modules
+            sage: B.val()                                                               # optional - sage.modules
             (q^2+q+1)*s[2, 1, 1] + q*s[2, 2]
         """
         H = [self._OMPs(list(b)) for b in self.highest_weight_vectors()]
@@ -3428,7 +3425,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: crystals.Minimaj(4,5,3).an_element()
+                sage: crystals.Minimaj(4,5,3).an_element()                              # optional - sage.modules
                 ((2, 3, 1), (1,), (1,))
             """
             return repr(self._minimaj_blocks_from_word_pair())
@@ -3439,11 +3436,11 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: b = crystals.Minimaj(4,5,3).an_element(); b
+                sage: b = crystals.Minimaj(4,5,3).an_element(); b                       # optional - sage.modules
                 ((2, 3, 1), (1,), (1,))
-                sage: b.value
+                sage: b.value                                                           # optional - sage.modules
                 ([1, 3, 2, 1, 1], (0, 1, 2, 5))
-                sage: list(b)
+                sage: list(b)                                                           # optional - sage.modules
                 [(2, 3, 1), (1,), (1,)]
             """
             return self._minimaj_blocks_from_word_pair().__iter__()
@@ -3454,9 +3451,9 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: b = crystals.Minimaj(4,5,3).an_element(); b
+                sage: b = crystals.Minimaj(4,5,3).an_element(); b                       # optional - sage.modules
                 ((2, 3, 1), (1,), (1,))
-                sage: latex(b)
+                sage: latex(b)                                                          # optional - sage.modules
                 \left(\left(2, 3, 1\right), \left(1\right), \left(1\right)\right)
             """
             return latex(self._minimaj_blocks_from_word_pair())
@@ -3468,10 +3465,10 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: B = crystals.Minimaj(4,5,3)
-                sage: b = B.an_element(); b.value
+                sage: B = crystals.Minimaj(4,5,3)                                       # optional - sage.modules
+                sage: b = B.an_element(); b.value                                       # optional - sage.modules
                 ([1, 3, 2, 1, 1], (0, 1, 2, 5))
-                sage: b._minimaj_blocks_from_word_pair()
+                sage: b._minimaj_blocks_from_word_pair()                                # optional - sage.modules
                 ((2, 3, 1), (1,), (1,))
             """
             return _to_minimaj_blocks(self.to_tableaux_words())
@@ -3483,15 +3480,15 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: B = crystals.Minimaj(4,5,3)
-                sage: b = B.an_element(); b
+                sage: B = crystals.Minimaj(4,5,3)                                       # optional - sage.modules
+                sage: b = B.an_element(); b                                             # optional - sage.modules
                 ((2, 3, 1), (1,), (1,))
-                sage: b.to_tableaux_words()
+                sage: b.to_tableaux_words()                                             # optional - sage.modules
                 [[1], [3], [2, 1, 1]]
 
-                sage: b = B([[1,3,4], [3], [3]]); b
+                sage: b = B([[1,3,4], [3], [3]]); b                                     # optional - sage.modules
                 ((4, 1, 3), (3,), (3,))
-                sage: b.to_tableaux_words()
+                sage: b.to_tableaux_words()                                             # optional - sage.modules
                 [[3, 1], [], [4, 3, 3]]
             """
             w, breaks = self.value
@@ -3504,10 +3501,10 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: B = crystals.Minimaj(4,3,2)
-                sage: b = B([[2,3], [3]]); b
+                sage: B = crystals.Minimaj(4,3,2)                                       # optional - sage.modules
+                sage: b = B([[2,3], [3]]); b                                            # optional - sage.modules
                 ((2, 3), (3,))
-                sage: [b.e(i) for i in range(1,4)]
+                sage: [b.e(i) for i in range(1,4)]                                      # optional - sage.modules
                 [((1, 3), (3,)), ((2,), (2, 3)), None]
             """
             P = self.parent()
@@ -3523,10 +3520,10 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: B = crystals.Minimaj(4,3,2)
-                sage: b = B([[2,3], [3]]); b
+                sage: B = crystals.Minimaj(4,3,2)                                       # optional - sage.modules
+                sage: b = B([[2,3], [3]]); b                                            # optional - sage.modules
                 ((2, 3), (3,))
-                sage: [b.f(i) for i in range(1,4)]
+                sage: [b.f(i) for i in range(1,4)]                                      # optional - sage.modules
                 [None, None, ((2, 3), (4,))]
             """
             P = self.parent()

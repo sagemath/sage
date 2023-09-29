@@ -22,15 +22,15 @@ The algorithm used in this file comes from
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.composition import Composition
+from sage.arith.misc import divisors, euler_phi, factorial, gcd
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.combinat.composition import Composition
+from sage.combinat.misc import DoublyLinkedList
+from sage.misc.misc_c import prod
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.arith.all import euler_phi, factorial, divisors, gcd
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.misc.misc_c import prod
-from sage.combinat.misc import DoublyLinkedList
 
 
 def Necklaces(content):
@@ -295,8 +295,7 @@ def _ffc(content, equality=False):
     if not e[0]:  # == 0
         dll.hide(0)
 
-    for x in _fast_fixed_content(a, e, 2, 1, k, r, 2, dll, equality=equality):
-        yield x
+    yield from _fast_fixed_content(a, e, 2, 1, k, r, 2, dll, equality=equality)
 
 
 def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
@@ -347,13 +346,13 @@ def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
                 sp = t + 1
 
             if j == a[t - p - 1]:
-                for x in _fast_fixed_content(a[:], content, t + 1, p,
-                                             k, r, sp, dll, equality=equality):
-                    yield x
+                yield from _fast_fixed_content(a[:], content, t + 1, p,
+                                               k, r, sp, dll,
+                                               equality=equality)
             else:
-                for x in _fast_fixed_content(a[:], content, t + 1, t,
-                                             k, r, sp, dll, equality=equality):
-                    yield x
+                yield from _fast_fixed_content(a[:], content, t + 1, t,
+                                               k, r, sp, dll,
+                                               equality=equality)
 
             if not content[j]:  # == 0
                 dll.unhide(j)
@@ -392,8 +391,7 @@ def _lfc(content, equality=False):
     if not content[0]:  # == 0
         dll.hide(0)
 
-    for z in _list_fixed_content(a, content, 2, 1, k, dll, equality=equality):
-        yield z
+    yield from _list_fixed_content(a, content, 2, 1, k, dll, equality=equality)
 
 
 def _list_fixed_content(a, content, t, p, k, dll, equality=False):
@@ -434,13 +432,11 @@ def _list_fixed_content(a, content, t, p, k, dll, equality=False):
                 dll.hide(j)
 
             if j == a[t - p - 1]:
-                for z in _list_fixed_content(a[:], content[:], t + 1, p,
-                                             k, dll, equality=equality):
-                    yield z
+                yield from _list_fixed_content(a[:], content[:], t + 1, p,
+                                               k, dll, equality=equality)
             else:
-                for z in _list_fixed_content(a[:], content[:], t + 1, t,
-                                             k, dll, equality=equality):
-                    yield z
+                yield from _list_fixed_content(a[:], content[:], t + 1, t,
+                                               k, dll, equality=equality)
 
             if not content[j]:  # == 0
                 dll.unhide(j)
@@ -519,13 +515,11 @@ def _simple_fixed_content(a, content, t, p, k, equality=False):
                 a[t - 1] = j
                 content[j] -= 1
                 if j == a[t - p - 1]:
-                    for z in _simple_fixed_content(a[:], content, t + 1, p,
-                                                   k, equality=equality):
-                        yield z
+                    yield from _simple_fixed_content(a[:], content, t + 1, p,
+                                                     k, equality=equality)
                 else:
-                    for z in _simple_fixed_content(a[:], content, t + 1, t,
-                                                   k, equality=equality):
-                        yield z
+                    yield from _simple_fixed_content(a[:], content, t + 1, t,
+                                                     k, equality=equality)
                 content[j] += 1
 
 

@@ -56,33 +56,25 @@ from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
 
-from sage.misc.randstate cimport randstate, current_randstate
-from sage.rings.finite_rings.finite_field_base cimport FiniteField
-from sage.rings.ring cimport Ring
+from sage.misc.randstate cimport current_randstate
 from .element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.richcmp cimport richcmp
-from sage.structure.element cimport Element, ModuleElement, RingElement
-import operator
 import sage.arith.all
-import sage.rings.finite_rings.finite_field_constructor as finite_field
 
-from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
-
+from sage.structure.element cimport Vector
 
 from sage.interfaces.abc import GapElement
 
 cdef object is_IntegerMod
 cdef object Integer
 cdef object Rational
-cdef object ConwayPolynomials
-cdef object conway_polynomial
 cdef object MPolynomial
 cdef object Polynomial
-cdef object FreeModuleElement
+
 
 cdef void late_import():
     """
@@ -91,11 +83,8 @@ cdef void late_import():
     global is_IntegerMod, \
            Integer, \
            Rational, \
-           ConwayPolynomials, \
-           conway_polynomial, \
            MPolynomial, \
-           Polynomial, \
-           FreeModuleElement
+           Polynomial
 
     if is_IntegerMod is not None:
         return
@@ -109,20 +98,12 @@ cdef void late_import():
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
 
-    import sage.databases.conway
-    ConwayPolynomials = sage.databases.conway.ConwayPolynomials
-
-    import sage.rings.finite_rings.finite_field_constructor
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
-
     import sage.rings.polynomial.multi_polynomial_element
     MPolynomial = sage.rings.polynomial.multi_polynomial_element.MPolynomial
 
     import sage.rings.polynomial.polynomial_element
     Polynomial = sage.rings.polynomial.polynomial_element.Polynomial
 
-    import sage.modules.free_module_element
-    FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
 cdef class Cache_givaro(Cache_base):
     def __init__(self, parent, unsigned int p, unsigned int k, modulus, repr="poly", cache=False):
@@ -398,7 +379,7 @@ cdef class Cache_givaro(Cache_base):
             return self.parent(eval(e.replace("^", "**"),
                                     self.parent.gens_dict()))
 
-        elif isinstance(e, FreeModuleElement):
+        elif isinstance(e, Vector):
             if self.parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ret = self._zero_element
@@ -1579,7 +1560,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         # TODO -- I'm sure this can be made vastly faster
         # using how elements are represented as a power of the generator ??
-        import sage.arith.all
 
         if self._multiplicative_order is not None:
             return self._multiplicative_order

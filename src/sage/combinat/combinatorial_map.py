@@ -227,7 +227,7 @@ class CombinatorialMap():
         """
         import types
         if not isinstance(f, types.FunctionType):
-            raise ValueError("Only plain functions are supported")
+            raise ValueError("only plain functions are supported")
         self._f = f
         self._order = order
         self._name = name
@@ -302,9 +302,9 @@ class CombinatorialMap():
             sage: p = Permutation([1,3,2,4])
             sage: cm = type(p).left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
-            sage: cm(p)
+            sage: cm(p)                                                                 # optional - sage.combinat
             [[1, 2, 4], [3]]
-            sage: cm(Permutation([4,3,2,1]))
+            sage: cm(Permutation([4,3,2,1]))                                            # optional - sage.combinat
             [[1], [2], [3], [4]]
         """
         if self._inst is not None:

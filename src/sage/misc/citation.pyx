@@ -23,7 +23,6 @@ systems['Mathematica'] = ['sage.interfaces.mathematica']
 systems['MuPAD'] = ['sage.interfaces.mupad']
 systems['Octave'] = ['sage.interfaces.octave']
 systems['povray'] = ['sage.interfaces.povray']
-systems['qsieve'] = ['sage.interfaces.qsieve']
 systems['Macaulay2'] = ['sage.interfaces.macaulay2']
 systems['mwrank'] = ['sage.interfaces.mwrank', 'sage.libs.eclib']
 systems['matlab'] = ['sage.interfaces.matlab']
@@ -72,9 +71,9 @@ def get_systems(cmd):
         sage: from sage.misc.citation import get_systems
         sage: get_systems('print("hello")')  # random (may print warning)
         []
-        sage: integrate(x^2, x)  # Priming coercion model
+        sage: integrate(x^2, x)  # Priming coercion model                               # needs sage.symbolic
         1/3*x^3
-        sage: get_systems('integrate(x^2, x)')
+        sage: get_systems('integrate(x^2, x)')                                          # needs sage.symbolic
         ['Maxima', 'ginac']
         sage: R.<x,y,z> = QQ[]
         sage: I = R.ideal(x^2+y^2, z^2+y)
@@ -92,7 +91,7 @@ def get_systems(cmd):
              "Rebuild Sage with the environment variable 'SAGE_PROFILE=yes' "
              "to enable profiling.")
 
-    if not isinstance(cmd, basestring):
+    if not isinstance(cmd, str):
         raise TypeError("command must be a string")
 
     from sage.repl.preparse import preparse

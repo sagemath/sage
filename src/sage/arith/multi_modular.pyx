@@ -1,3 +1,4 @@
+# sage.doctest: optional - primecountpy
 """
 Utility classes for multi-modular algorithms
 """
@@ -16,7 +17,7 @@ from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer cimport Integer, smallInteger
-from sage.arith.all import random_prime
+from sage.arith.misc import random_prime
 from types import GeneratorType
 from sage.ext.stdsage cimport PY_NEW
 from cpython.object cimport PyObject_RichCompare
@@ -185,7 +186,7 @@ cdef class MultiModularBasis_base():
     cdef mod_int _new_random_prime(self, set known_primes) except 1:
         """
         Choose a new random prime for inclusion in the list of moduli,
-        or raise a ``RuntimeError`` if there are no more primes.
+        or raise a :class:`RuntimeError` if there are no more primes.
 
         INPUT:
 
@@ -193,7 +194,6 @@ cdef class MultiModularBasis_base():
           the allowed interval; we will not return a prime in
           known_primes.
         """
-        cdef Py_ssize_t i
         cdef mod_int p
         while True:
             if len(known_primes) >= self._num_primes:
@@ -371,11 +371,10 @@ cdef class MultiModularBasis_base():
             return self.n
 
         # find new prime moduli
-        cdef int i
         new_moduli = []
         new_partial_products = []
-        cdef Integer M # keeps current height
-        cdef mod_int p # keeps current prime moduli
+        cdef Integer M  # keeps current height
+        cdef mod_int p  # keeps current prime moduli
 
         if self.n == 0:
             M = smallInteger(1)
@@ -392,7 +391,7 @@ cdef class MultiModularBasis_base():
             new_partial_products.append(M)
         mpz_clear(height)
         return self.extend_with_primes(new_moduli, new_partial_products,
-                check=False)
+                                       check=False)
 
     def _extend_moduli_to_count(self, int count):
         r"""
@@ -471,7 +470,7 @@ cdef class MultiModularBasis_base():
         Compute and store `\prod_j=1^{i-1} m_j^{-1} (mod m_i)` for i >= start.
         """
         if start == 0:
-            start = 1 # first one is trivial, never used
+            start = 1  # first one is trivial, never used
             self.C[0] = 1
         for i in range(start, self.n):
             self.C[i] = ai.c_inverse_mod_longlong(mpz_fdiv_ui(self.partial_products[i-1], self.moduli[i]), self.moduli[i])
@@ -484,7 +483,7 @@ cdef class MultiModularBasis_base():
         self._extend_moduli_to_height_c(height)
 
         cdef int count
-        count = self.n * mpz_sizeinbase(height, 2) / mpz_sizeinbase(self.partial_products[self.n-1], 2) # an estimate
+        count = self.n * mpz_sizeinbase(height, 2) / mpz_sizeinbase(self.partial_products[self.n-1], 2)  # an estimate
         count = max(min(count, self.n), 1)
         while count > 1 and mpz_cmp(height, self.partial_products[count-1]) < 0:
             count -= 1
@@ -569,7 +568,7 @@ cdef class MultiModularBasis_base():
             s = 1
             mpz_init_set_si(z, b[0])
             if b[0] == 0:
-                while s < len and b[s] == 0: # fast forward to first non-zero
+                while s < len and b[s] == 0:  # fast forward to first non-zero
                     s += 1
         else:
             s = 0
@@ -620,10 +619,10 @@ cdef class MultiModularBasis_base():
             if offset == 0:
                 mpz_set_si(z[j], b[0][j])
                 if b[0][j] == 0:
-                    while i < len and b[i][j] == 0: # fast forward to first non-zero
+                    while i < len and b[i][j] == 0:  # fast forward to first non-zero
                         i += 1
             while i < len:
-                mpz_set_si(u, ((b[i][j] + m[i] - mpz_fdiv_ui(z[j], m[i])) * self.C[i]) % m[i]) # u = ((b_i - z) * C_i) % m_i
+                mpz_set_si(u, ((b[i][j] + m[i] - mpz_fdiv_ui(z[j], m[i])) * self.C[i]) % m[i])  # u = ((b_i - z) * C_i) % m_i
                 mpz_mul(u, u, self.partial_products[i-1])
                 mpz_add(z[j], z[j], u)
                 i += 1
@@ -631,7 +630,6 @@ cdef class MultiModularBasis_base():
             # normalize to be between -prod/2 and prod/2.
             if mpz_cmp(z[j], self.half_product) > 0:
                 mpz_sub(z[j], z[j], self.product)
-
 
         cdef Integer zz
         zz = PY_NEW(Integer)
@@ -833,7 +831,7 @@ cdef class MultiModularBasis_base():
         """
         if isinstance(ix, slice):
             return self.__class__(self.list()[ix], l_bound = self._l_bound,
-                    u_bound = self._u_bound)
+                                  u_bound = self._u_bound)
 
         cdef Py_ssize_t i = ix
         if i != ix:
@@ -852,7 +850,7 @@ cdef class MultiModularBasis_base():
             sage: MultiModularBasis_base([10007])
             MultiModularBasis with moduli [10007]
         """
-        return "MultiModularBasis with moduli "+str(self.list())
+        return "MultiModularBasis with moduli " + str(self.list())
 
 
 cdef class MultiModularBasis(MultiModularBasis_base):

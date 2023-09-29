@@ -905,7 +905,6 @@ class FreeModuleBasis(Basis_abstract):
             aut.add_comp(self)[:] = mat
             fmodule.set_change_of_basis(basis, self, aut)
 
-
     def module(self):
         r"""
         Return the free module on which the basis is defined.

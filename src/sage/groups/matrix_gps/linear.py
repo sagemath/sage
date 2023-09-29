@@ -3,18 +3,18 @@ Linear Groups
 
 EXAMPLES::
 
-    sage: GL(4,QQ)
+    sage: GL(4, QQ)
     General Linear Group of degree 4 over Rational Field
-    sage: GL(1,ZZ)
+    sage: GL(1, ZZ)
     General Linear Group of degree 1 over Integer Ring
-    sage: GL(100,RR)
+    sage: GL(100, RR)
     General Linear Group of degree 100 over Real Field with 53 bits of precision
-    sage: GL(3,GF(49,'a'))
+    sage: GL(3, GF(49,'a'))                                                             # needs sage.rings.finite_rings
     General Linear Group of degree 3 over Finite Field in a of size 7^2
 
     sage: SL(2, ZZ)
     Special Linear Group of degree 2 over Integer Ring
-    sage: G = SL(2,GF(3)); G
+    sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
     sage: G.is_finite()
     True
@@ -23,7 +23,7 @@ EXAMPLES::
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
     )
-    sage: G = SL(6,GF(5))
+    sage: G = SL(6, GF(5))
     sage: G.gens()
     (
     [2 0 0 0 0 0]  [4 0 0 0 0 1]
@@ -59,12 +59,11 @@ REFERENCES: See [KL1990]_ and [Car1972]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.latex import latex
-from sage.groups.matrix_gps.named_group import (
-    normalize_args_vectorspace, NamedMatrixGroup_generic, NamedMatrixGroup_gap )
 from sage.categories.fields import Fields
 from sage.categories.groups import Groups
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.named_group import (
+    normalize_args_vectorspace, NamedMatrixGroup_generic)
+from sage.misc.latex import latex
 
 
 ###############################################################################
@@ -94,7 +93,7 @@ def GL(n, R, var='a'):
 
     EXAMPLES::
 
-        sage: G = GL(6,GF(5))
+        sage: G = GL(6, GF(5))
         sage: G.order()
         11064475422000000000000000
         sage: G.base_ring()
@@ -111,17 +110,18 @@ def GL(n, R, var='a'):
     Here is the Cayley graph of (relatively small) finite General Linear Group::
 
         sage: g = GL(2,3)
-        sage: d = g.cayley_graph(); d
+        sage: d = g.cayley_graph(); d                                                   # needs sage.graphs
         Digraph on 48 vertices
-        sage: d.plot(color_by_label=True, vertex_size=0.03, vertex_labels=False)  # long time
+        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.graphs sage.plot
+        ....:        vertex_labels=False)
         Graphics object consisting of 144 graphics primitives
-        sage: d.plot3d(color_by_label=True)  # long time
+        sage: d.plot3d(color_by_label=True)                     # long time             # needs sage.graphs sage.plot
         Graphics3d Object
 
     ::
 
-        sage: F = GF(3); MS = MatrixSpace(F,2,2)
-        sage: gens = [MS([[2,0],[0,1]]), MS([[2,1],[2,0]])]
+        sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
+        sage: gens = [MS([[2,0], [0,1]]), MS([[2,1], [2,0]])]
         sage: G = MatrixGroup(gens)
         sage: G.order()
         48
@@ -164,13 +164,19 @@ def GL(n, R, var='a'):
     name = 'General Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx = 'GL({0}, {1})'.format(degree, latex(ring))
     try:
-        cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
-        return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
-                                     category=cat)
-    except ValueError:
-        return LinearMatrixGroup_generic(degree, ring, False, name, ltx,
+        from .linear_gap import LinearMatrixGroup_gap
+    except ImportError:
+        pass
+    else:
+        try:
+            cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
+            return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
                                          category=cat)
+        except ValueError:
+            pass
 
+    return LinearMatrixGroup_generic(degree, ring, False, name, ltx,
+                                     category=cat)
 
 
 ###############################################################################
@@ -189,7 +195,7 @@ def SL(n, R, var='a'):
 
         This group is also available via ``groups.matrix.SL()``.
 
-   INPUT:
+    INPUT:
 
     - ``n`` -- a positive integer.
 
@@ -223,7 +229,7 @@ def SL(n, R, var='a'):
 
     Next we compute generators for `\mathrm{SL}_3(\ZZ)` ::
 
-        sage: G = SL(3,ZZ); G
+        sage: G = SL(3, ZZ); G
         Special Linear Group of degree 3 over Integer Ring
         sage: G.gens()
         (
@@ -249,13 +255,19 @@ def SL(n, R, var='a'):
     name = 'Special Linear Group of degree {0} over {1}'.format(degree, ring)
     ltx  = 'SL({0}, {1})'.format(degree, latex(ring))
     try:
-        cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
-        return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
-                                     category=cat)
-    except ValueError:
-        return LinearMatrixGroup_generic(degree, ring, True, name, ltx,
+        from .linear_gap import LinearMatrixGroup_gap
+    except ImportError:
+        pass
+    else:
+        try:
+            cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
+            return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
                                          category=cat)
+        except ValueError:
+            pass
 
+    return LinearMatrixGroup_generic(degree, ring, True, name, ltx,
+                                     category=cat)
 
 
 ########################################################################
@@ -265,7 +277,7 @@ def SL(n, R, var='a'):
 class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
     def _check_matrix(self, x, *args):
-        """a
+        r"""
         Check whether the matrix ``x`` is special linear.
 
         See :meth:`~sage.groups.matrix_gps.matrix_group._check_matrix`
@@ -273,7 +285,7 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: G = SL(2,GF(5))
+            sage: G = SL(2, GF(5))
             sage: G._check_matrix(G.an_element().matrix())
         """
         if self._special:
@@ -282,19 +294,3 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
         else:
             if x.determinant() == 0:
                 raise TypeError('matrix must non-zero determinant')
-
-
-class LinearMatrixGroup_gap(NamedMatrixGroup_gap, LinearMatrixGroup_generic, FinitelyGeneratedMatrixGroup_gap):
-    r"""
-    The general or special linear group in GAP.
-
-    TESTS:
-
-    Check that :trac:`20867` is fixed::
-
-        sage: from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
-        sage: G = GL(3,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
-        True
-    """
-    pass

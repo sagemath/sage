@@ -33,7 +33,7 @@ from .ntl_GF2X cimport ntl_GF2X
 from .ntl_GF2EContext cimport ntl_GF2EContext_class
 from .ntl_GF2EContext import ntl_GF2EContext
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 
 
 ##############################################################################

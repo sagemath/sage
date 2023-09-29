@@ -57,11 +57,9 @@ Derived Codes
     :meth:`~sage.coding.extended_code.ExtendedCode` @ Extended codes
     :meth:`~sage.coding.punctured_code.PuncturedCode` @ Puncturedcodes
 
-.. NOTE::
+To import these names into the global namespace, use::
 
-    To import these names into the global namespace, use:
-
-        sage: from sage.coding.codes_catalog import *
+    sage: from sage.coding.codes_catalog import *
 
 """
 #*****************************************************************************

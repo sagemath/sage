@@ -395,7 +395,7 @@ def ArithmeticSubgroup_Permutation(
                 S3 = L * ~R
         elif S2 is not None: # initialize from L,S2
             if S3 is None:
-                S3 =  ~S2 * ~L
+                S3 = ~S2 * ~L
             if R is None:
                 R = ~S2 * ~L * S2
         elif S3 is not None: # initialize from L,S3
@@ -1216,11 +1216,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             Looped multi-digraph on 2 vertices
         """
         from sage.graphs.digraph import DiGraph
-        res = DiGraph(multiedges=True,loops=True)
+        res = DiGraph(multiedges=True, loops=True)
         res.add_vertices(list(range(self.index())))
 
-
-        if right_cosets: # invert the permutations
+        if right_cosets:  # invert the permutations
             S2 = [None]*self.index()
             S3 = [None]*self.index()
             L = [None]*self.index()
@@ -1552,13 +1551,14 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: l
             [6, 3, 4, 8, 4, 8, 4, 12, 4, 6, 6, 8, 8]
         """
-        from sage.interfaces.gap import gap
-        P = self.perm_group()._gap_()
+        from sage.libs.gap.libgap import libgap
+        P = libgap(self.perm_group())
         for b in P.AllBlocks():
-            orbit = P.Orbit(b, gap.OnSets)
-            action = P.Action(orbit, gap.OnSets)
-            S2,S3,L,R = action.GeneratorsOfGroup()
+            orbit = P.Orbit(b, libgap.OnSets)
+            action = P.Action(orbit, libgap.OnSets)
+            S2, S3, L, R = action.GeneratorsOfGroup()
             yield ArithmeticSubgroup_Permutation(S2=S2, S3=S3, L=L, R=R, check=False)
+
 
 class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
     r"""
@@ -2636,6 +2636,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         return res
 
+
 def HsuExample10():
     r"""
     An example of an index 10 arithmetic subgroup studied by Tim Hsu.
@@ -2654,6 +2655,7 @@ def HsuExample10():
             L="(1,4)(2,5,9,10,8)(3,7,6)",
             R="(1,7,9,10,6)(2,3)(4,5,8)",
             relabel=False)
+
 
 def HsuExample18():
     r"""

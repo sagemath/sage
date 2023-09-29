@@ -34,7 +34,7 @@ from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 from sage.libs.gmp.mpz cimport *
 
 
@@ -264,9 +264,7 @@ cdef class ntl_ZZ_pX():
         if i < 0:
             r.set_from_int(0)
         else:
-            sig_on()
             r.x = ZZ_pX_coeff( self.x, i)
-            sig_off()
         return r
 
     cdef int getitem_as_int(ntl_ZZ_pX self, long i):
@@ -419,8 +417,8 @@ cdef class ntl_ZZ_pX():
         in ZZ_p[X] such that a = b*q + r, deg(r) < deg(b).  This
         function returns r.
 
-        If p is not prime this function may raise a RuntimeError due to division by a noninvertible
-        element of ZZ_p.
+        If p is not prime this function may raise a :class:`RuntimeError`
+        due to division by a noninvertible element of ZZ_p.
 
         EXAMPLES::
 
@@ -1238,7 +1236,7 @@ cdef class ntl_ZZ_pX():
             sage: f.trace_list()
             [5, 0, 14, 0, 10]
 
-        The input polynomial must be monic or a ValueError is raised::
+        The input polynomial must be monic or a :class:`ValueError` is raised::
 
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,0,3,0,2],c)

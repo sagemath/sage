@@ -4,8 +4,9 @@
 
 .. _constructions:
 
-Welcome to the Sage Constructions!
-==================================
+=============================
+Welcome to Sage Constructions
+=============================
 
 This document collects the answers to some questions along the line
 "How do I construct ... in Sage?" Though much of this material can

@@ -35,8 +35,8 @@ Check that unpicking old group algebra classes works::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import IntegerRing
-from sage.categories.all import Rings
+from sage.rings.integer_ring import IntegerRing
+from sage.categories.rings import Rings
 from sage.categories.magmas import Magmas
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.sets_cat import Sets
@@ -222,6 +222,7 @@ class GroupAlgebra_class(CombinatorialFreeModule):
             if hom_K is not None and hom_G is not None:
                 return SetMorphism(S.Hom(self, category=self.category() | S.category()),
                                    lambda x: self.sum_of_terms( (hom_G(g), hom_K(c)) for g,c in x ))
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.algebras.group_algebras', 'GroupAlgebra',  GroupAlgebra_class)

@@ -20,7 +20,7 @@ other classes implementing solvers.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from .generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):

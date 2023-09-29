@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Graphics arrays and insets
 
@@ -1207,7 +1207,7 @@ class GraphicsArray(MultiGraphics):
             sage: fig = Figure()
             sage: ax1 = G._add_subplot(fig, 0)
             sage: type(ax1)
-            <class 'matplotlib.axes._subplots.AxesSubplot'>
+            <class 'matplotlib.axes...'>
             sage: ax2 = G._add_subplot(fig, 1)
             sage: fig.get_axes() == [ax1, ax2]
             True

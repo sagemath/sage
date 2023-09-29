@@ -137,8 +137,8 @@ class FiniteField_givaro(FiniteField):
         from .finite_field_constructor import GF
         FiniteField.__init__(self, GF(p), name, normalize=False)
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if not is_Polynomial(modulus):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_givaro(self, p, k, modulus, repr, cache)
@@ -510,7 +510,7 @@ class FiniteField_givaro(FiniteField):
             Mod(1, 3)*a^4 + Mod(2, 3)*a^3 + Mod(2, 3)
         """
         f = pari(str(self.modulus()))
-        return f.subst('x', 'a') * pari("Mod(1,%s)"%self.characteristic())
+        return f.subst('x', 'a') * pari("Mod(1,%s)" % self.characteristic())
 
     def __iter__(self):
         """

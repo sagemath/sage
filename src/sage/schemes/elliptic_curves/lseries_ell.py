@@ -23,7 +23,8 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import RealField, RationalField
+from sage.rings.real_mpfr import RealField
+from sage.rings.rational_field import RationalField
 from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
 from sage.misc.verbose import verbose
@@ -41,7 +42,8 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: EllipticCurve([1..5]).lseries()
-            Complex L-series of the Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+            Complex L-series of the Elliptic Curve
+             defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
         """
         self.__E = E
 
@@ -96,7 +98,7 @@ class Lseries_ell(SageObject):
             sage: L._repr_()
             'Complex L-series of the Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
         """
-        return "Complex L-series of the %s"%self.__E
+        return "Complex L-series of the %s" % self.__E
 
     def dokchitser(self, prec=53,
                    max_imaginary_part=0,
@@ -659,17 +661,18 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
-            sage: E.lseries().deriv_at1()
+            sage: E.lseries().deriv_at1()                                               # needs sage.symbolic
             (0.3059866, 0.000801045)
-            sage: E.lseries().deriv_at1(100)
+            sage: E.lseries().deriv_at1(100)                                            # needs sage.symbolic
             (0.3059997738340523018204836833216764744526377745903, 1.52493e-45)
-            sage: E.lseries().deriv_at1(1000)
+            sage: E.lseries().deriv_at1(1000)                                           # needs sage.symbolic
             (0.305999773834052301820483683321676474452637774590771998..., 2.75031e-449)
 
         With less numerical precision, the error is bounded by numerical accuracy::
 
-            sage: L,err = E.lseries().deriv_at1(100, prec=64)
-            sage: L,err
+            sage: # needs sage.symbolic
+            sage: L, err = E.lseries().deriv_at1(100, prec=64)
+            sage: L, err
             (0.305999773834052302, 5.55318e-18)
             sage: parent(L)
             Real Field with 64 bits of precision
@@ -679,12 +682,12 @@ class Lseries_ell(SageObject):
         Rank 2 and rank 3 elliptic curves::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.lseries().deriv_at1()
+            sage: E.lseries().deriv_at1()                                               # needs sage.symbolic
             (0.0000000, 0.000000)
             sage: E = EllipticCurve((1, 0, 1, -131, 558))  # curve 59450i1
-            sage: E.lseries().deriv_at1()
+            sage: E.lseries().deriv_at1()                                               # needs sage.symbolic
             (-0.00010911444, 0.142428)
-            sage: E.lseries().deriv_at1(4000)
+            sage: E.lseries().deriv_at1(4000)                                           # needs sage.symbolic
             (6.990...e-50, 1.31318e-43)
         """
         sqrtN = sqrt(self.__E.conductor())
@@ -934,7 +937,8 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve("5077a")
             sage: E.lseries().zero_sums()
-            Zero sum estimator for L-function attached to Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
+            Zero sum estimator for L-function attached to
+             Elliptic Curve defined by y^2 + y = x^3 - 7*x + 6 over Rational Field
         """
         from sage.lfunctions.zero_sums import LFunctionZeroSum
         return LFunctionZeroSum(self.__E, N=N)

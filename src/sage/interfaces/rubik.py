@@ -45,18 +45,18 @@ import sage.features.rubiks
 
 # Can't seem to find consistency in letter ordering
 # between us and them... These are copied from the source.
-optimal_solver_tokens = ["UF", "UR", "UB", "UL", \
-                        "DF", "DR", "DB", "DL", \
-                        "FR", "FL", "BR", "BL", \
-                        "FU", "RU", "BU", "LU", \
-                        "FD", "RD", "BD", "LD", \
-                        "RF", "LF", "RB", "LB", \
-                        "UFR", "URB", "UBL", "ULF", \
-                        "DRF", "DFL", "DLB", "DBR", \
-                        "FRU", "RBU", "BLU", "LFU", \
-                        "RFD", "FLD", "LBD", "BRD", \
-                        "RUF", "BUR", "LUB", "FUL", \
-                        "FDR", "LDF", "BDL", "RDB"]
+optimal_solver_tokens = ["UF", "UR", "UB", "UL",
+                         "DF", "DR", "DB", "DL",
+                         "FR", "FL", "BR", "BL",
+                         "FU", "RU", "BU", "LU",
+                         "FD", "RD", "BD", "LD",
+                         "RF", "LF", "RB", "LB",
+                         "UFR", "URB", "UBL", "ULF",
+                         "DRF", "DFL", "DLB", "DBR",
+                         "FRU", "RBU", "BLU", "LFU",
+                         "RFD", "FLD", "LBD", "BRD",
+                         "RUF", "BUR", "LUB", "FUL",
+                         "FDR", "LDF", "BDL", "RDB"]
 
 # The input format.
 optimal_solver_format = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR"
@@ -309,17 +309,16 @@ class DikSolver:
             facet_colors[16+i*3] = i
         return "".join(str(c) for c in facet_colors)
 
-    facet_map = [      1,  2,  3,                                \
-                       4,  0,  5,                                \
-                       6,  7,  8,                                \
-           9, 10, 11, 17, 18, 19, 25, 26, 27, 33, 34, 35,        \
-          12,  0, 13, 20,  0, 21, 28,  0, 29, 36,  0, 37,        \
-          14, 15, 16, 22, 23, 24, 30, 31, 32, 38, 39, 40,        \
-                      41, 42, 43,                                \
-                      44,  0, 45,                                \
-                      46, 47, 48,                                \
+    facet_map = [      1,  2,  3,
+                       4,  0,  5,
+                       6,  7,  8,
+           9, 10, 11, 17, 18, 19, 25, 26, 27, 33, 34, 35,
+          12,  0, 13, 20,  0, 21, 28,  0, 29, 36,  0, 37,
+          14, 15, 16, 22, 23, 24, 30, 31, 32, 38, 39, 40,
+                      41, 42, 43,
+                      44,  0, 45,
+                      46, 47, 48,
             ]
-
 
     # to compensate for different face naming
     rot_map = dict(zip("BLURDF", "ULFRBD"))

@@ -33,5 +33,5 @@ def MonoidAlgebras(base_ring):
 
         sage: TestSuite(MonoidAlgebras(ZZ)).run()
     """
-    from sage.categories.all import Monoids
+    from sage.categories.monoids import Monoids
     return Monoids().Algebras(base_ring)

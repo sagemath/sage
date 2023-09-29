@@ -14,7 +14,6 @@ context class, and related utilities.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
 from cpython.complex cimport *
@@ -176,7 +175,7 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
             elif len(x) == 4:
                 MPF_set_tuple(re, x)
                 return 1
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             try:
                 st = libmp.from_str(x, opts.prec,
                     rndmode_to_python(opts.rounding))
@@ -480,7 +479,7 @@ cdef class Context:
             100
             sage: mp.prec = 53
         """
-        return libmp.prec_to_dps(global_opts.prec)
+        return prec_to_dps(global_opts.prec)
 
     dps = property(_get_dps, _set_dps, doc=_get_dps.__doc__)
     prec = property(_get_prec, _set_prec, doc=_get_dps.__doc__)
@@ -1007,7 +1006,7 @@ cdef class Context:
             if not p % q:
                 return p // q, 'Z'
             return rationallib.mpq((p,q)), 'Q'
-        if isinstance(x, basestring) and '/' in x:
+        if isinstance(x, str) and '/' in x:
             p, q = x.split('/')
             p = int(p)
             q = int(q)
@@ -2068,7 +2067,7 @@ cdef class mpf(mpf_base):
         """
         MPF_init(&self.value)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         MPF_clear(&self.value)
 
     def __neg__(s):
@@ -2359,7 +2358,7 @@ cdef class mpc(mpnumber):
         MPF_init(&self.re)
         MPF_init(&self.im)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         MPF_clear(&self.re)
         MPF_clear(&self.im)
 
@@ -2602,13 +2601,15 @@ def hypsum_internal(int p, int q, param_types, str ztype, coeffs, z,
         sage: print(mp.hyp1f1(1,2,3))
         6.36184564106256
 
-    TODO: convert mpf/mpc parameters to fixed-point numbers here
-    instead of converting to tuples within MPF_hypsum.
+    .. TODO::
+
+        convert mpf/mpc parameters to fixed-point numbers here
+        instead of converting to tuples within MPF_hypsum.
     """
     cdef mpf f
     cdef mpc c
     c = mpc.__new__(mpc)
-    have_complex, magn = MPF_hypsum(&c.re, &c.im, p, q, param_types, \
+    have_complex, magn = MPF_hypsum(&c.re, &c.im, p, q, param_types,
         ztype, coeffs, z, prec, wp, epsshift, magnitude_check, kwargs)
     if have_complex:
         v = c

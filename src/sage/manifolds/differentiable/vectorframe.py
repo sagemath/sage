@@ -764,7 +764,6 @@ class VectorFrame(FreeModuleBasis):
         # NB: set(self._restrictions.values()) is identical to
         #     self._subframes
 
-
     ###### Methods that must be redefined by derived classes of ######
     ###### FreeModuleBasis                                      ######
 
@@ -1776,7 +1775,6 @@ class CoordFrame(VectorFrame):
         # In the above:
         # - force_free=True ensures that a free module is constructed in case
         #   it is the first call to the vector field module on chart.domain()
-
 
     ###### Methods that must be redefined by derived classes of ######
     ###### FreeModuleBasis                                      ######

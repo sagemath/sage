@@ -2673,8 +2673,8 @@ def _add_strip(sub_tab, full_tab, length):
 
         sage: list(ShiftedPrimedTableaux([3,1], weight=(2,2)))  # indirect doctest
         [[(1, 1, 2), (2,)], [(1, 1, 2'), (2,)]]
-        sage: list(ShiftedPrimedTableaux([3,1], weight=(2,2),
-        ....:                            primed_diagonal=True))  # indirect doctest
+        sage: list(ShiftedPrimedTableaux([3,1], weight=(2,2),   # indirect doctest
+        ....:                            primed_diagonal=True))
         [[(1, 1, 2), (2,)],
          [(1, 1, 2), (2',)],
          [(1, 1, 2'), (2,)],

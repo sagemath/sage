@@ -370,6 +370,7 @@ class Gamma1_class(GammaH_class):
 
         Check that :trac:`18436` is fixed::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1)
             sage: G = DirichletGroup(13, base_ring=K)
             sage: Gamma1(13).dimension_modular_forms(2, G[1])

@@ -80,9 +80,9 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``binary`` - ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
 
@@ -116,7 +116,7 @@ cdef class GLPKBackend(GenericBackend):
             1.0
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -197,7 +197,7 @@ cdef class GLPKBackend(GenericBackend):
             42.0
         """
         cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
-        if  vtype == 0:
+        if vtype == 0:
             continuous = True
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
@@ -549,7 +549,7 @@ cdef class GLPKBackend(GenericBackend):
         cdef int * rows = <int *>sig_malloc((m + 1) * sizeof(int *))
         cdef int nrows = glp_get_num_rows(self.lp)
 
-        for i in xrange(m):
+        for i in range(m):
 
             c = constraints[i]
             if c < 0 or c >= nrows:
@@ -1012,10 +1012,14 @@ cdef class GLPKBackend(GenericBackend):
         (`get_col_dual` etc.) or tableau data (`get_row_stat` etc.),
         one needs to switch to "simplex_only" before solving.
 
-        GLPK also has an exact rational simplex solver.  The only
-        access to data is via double-precision floats, however. It
-        reconstructs rationals from doubles and also provides results
-        as doubles.
+        GLPK also has an exact rational simplex solver.  The only access
+        to data is via double-precision floats, which means that
+        rationals in the input data may be rounded before the exact
+        solver sees them. Thus, it is unreasonable to expect that
+        arbitrary LPs with rational coefficients are solved exactly.
+        Once the LP has been read into the backend, it reconstructs
+        rationals from doubles and does solve exactly over the rationals,
+        but results are returned as as doubles.
 
         EXAMPLES::
 
@@ -3129,7 +3133,7 @@ solver_parameter_names_dict = {
   'obj_ll': obj_ll, 'obj_lower_limit': obj_ll,
   'obj_ul': obj_ul, 'obj_upper_limit': obj_ul,
   'it_lim': it_lim, 'iteration_limit': it_lim,
-  'out_frq_simplex': out_frq_simplex, 'output_frequency_intopt': out_frq_simplex,
+  'out_frq_simplex': out_frq_simplex, 'output_frequency_simplex': out_frq_simplex,
   'out_dly_simplex': out_dly_simplex, 'output_delay_simplex': out_dly_simplex,
   'presolve_simplex': presolve_simplex
 }

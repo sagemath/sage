@@ -21,4 +21,3 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
     cdef list _int_to_el
     cdef dict _el_to_int
     cdef DisjointSet_of_integers _d
-

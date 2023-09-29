@@ -648,9 +648,9 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
     p = MixedIntegerLinearProgram(solver=solver, maximization=True)
 
     if binary:
-        present = p.new_variable(binary = True)
+        present = p.new_variable(binary=True)
     else:
-        present = p.new_variable(integer = True)
+        present = p.new_variable(integer=True)
 
     p.set_objective(p.sum([present[i] * seq[i][1] for i in range(len(seq))]))
     p.add_constraint(p.sum([present[i] * seq[i][0] for i in range(len(seq))]), max=max)

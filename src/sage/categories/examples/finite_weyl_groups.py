@@ -11,7 +11,7 @@ Examples of finite Weyl groups
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
-from sage.categories.all import FiniteWeylGroups
+from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.structure.unique_representation import UniqueRepresentation
 
 class SymmetricGroup(UniqueRepresentation, Parent):
@@ -59,7 +59,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         24
         sage: S.long_element()
         (3, 2, 1, 0)
-        sage: S.cayley_graph(side = "left").plot()
+        sage: S.cayley_graph(side="left").plot()                                        # needs sage.graphs sage.plot
         Graphics object consisting of 120 graphics primitives
 
     Alternatively, one could have implemented
@@ -91,7 +91,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             The symmetric group on {0, ..., 3}
 
         """
-        return "The symmetric group on {0, ..., %s}"%(self.n-1)
+        return "The symmetric group on {0, ..., %s}" % (self.n-1)
 
     @cached_method
     def one(self):
@@ -135,7 +135,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: FiniteWeylGroups().example().cartan_type()
+            sage: FiniteWeylGroups().example().cartan_type()                            # needs sage.modules
             ['A', 3] relabelled by {1: 0, 2: 1, 3: 2}
         """
         from sage.combinat.root_system.cartan_type import CartanType

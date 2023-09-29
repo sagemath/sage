@@ -1,7 +1,7 @@
 """
-Vectors over the symbolic ring
+Dense vectors over the symbolic ring
 
-Implements vectors over the symbolic ring.
+Implements dense vectors over the symbolic ring.
 
 AUTHORS:
 
@@ -55,7 +55,7 @@ Test pickling/unpickling::
 #*****************************************************************************
 
 from . import free_module_element
-from sage.symbolic.all import Expression
+from sage.symbolic.expression import Expression
 
 
 def apply_map(phi):
@@ -107,6 +107,7 @@ def apply_map(phi):
 
 class Vector_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
     pass
+
 
 # Add elementwise methods.
 for method in ['simplify', 'simplify_factorial',

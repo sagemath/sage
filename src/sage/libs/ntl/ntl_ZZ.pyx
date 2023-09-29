@@ -28,9 +28,8 @@ include 'decl.pxi'
 
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
-from cpython.int cimport PyInt_AS_LONG
 
 
 cdef make_ZZ(ZZ_c* x):
@@ -93,8 +92,8 @@ cdef class ntl_ZZ():
             v = str(v)
             if not v:
                 v = '0'
-            if not ((v[0].isdigit() or v[0] == '-') and \
-                    (v[1:-1].isdigit() or (len(v) <= 2)) and \
+            if not ((v[0].isdigit() or v[0] == '-') and
+                    (v[1:-1].isdigit() or (len(v) <= 2)) and
                     (v[-1].isdigit() or (v[-1].lower() in ['l','r']))):
                 raise ValueError("invalid integer: %s" % v)
             ccreadstr(self.x, v)

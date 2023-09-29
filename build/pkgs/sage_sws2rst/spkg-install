@@ -18,6 +18,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
 else
     sdh_pip_install .
 fi
+cd ..
 # For type=script packages, spkg-check is not run
 case "$SAGE_CHECK" in
     yes)
