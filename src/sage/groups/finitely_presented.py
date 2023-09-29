@@ -1817,8 +1817,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         id_rels = R.ideal(rels)
         res = dict()
         for j in range(n + 2):
-            # J = id_rels + A.fitting_ideal(j)
-            J = R.ideal(id_rels.gens() + A.fitting_ideal(j).gens())
+            J = id_rels + A.fitting_ideal(j)
+            # J = R.ideal(id_rels.gens() + A.fitting_ideal(j).gens())
             if j <= n1:
                 J1 = K.ideal([K(p.subs(eval_1)) for p in J.gens()])
                 if J1:
