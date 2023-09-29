@@ -206,13 +206,8 @@ class LaurentPolynomialIdeal(Ideal_generic):
 
     def gens_reduced(self):
         R = self.ring()
-        if R.ngens() > 1 or not R.base_ring().is_field():
-            return self.gens()
-        gns = self.gens()
-        res = R(0)
-        for p in gns:
-            res = res.gcd(p)
-        return (res, )
+        J = self.polynomial_ideal()
+        return tuple(R(p) for p in J.gens())
 
     # Operations on ideals
 

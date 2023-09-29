@@ -1762,9 +1762,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         OUTPUT:
 
-        If ``groebner`` is ``False`` a list of ideals defining the characteristic varieties.
-        If it is ``True``, a list of lists for Gröbner bases for the ideal of each irreducible
-        component.
+        A dictionary with keys the indices of the varieties. If ``groebner`` is ``False``
+        the values are the ideals defining the characteristic varieties.
+        If it is ``True``, lists for Gröbner bases for the ideal of each irreducible
+        component, stopping when the first time a characteristic variety is empty.
 
         EXAMPLES::
 
@@ -1772,39 +1773,37 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: G = FreeGroup(3) / L
             sage: G.characteristic_varieties(groebner=True)
             {0: [(0,)],
-            1: [(f1 - 1, f2 - 1, f3 - 1),
-             (f1*f3 + 1, f2 - 1),
-             (f1*f2 + 1, f3 - 1),
-             (f2*f3 + 1, f1 - 1),
-             (f2*f3 + 1, f1 - f2),
-             (f2*f3 + 1, f1 - f3),
-             (f1*f3 + 1, f2 - f3)],
-            2: [(f1 - 1, f2 - 1, f3 + 1),
-             (f3^2 + 1, f1 - f3, f2 - f3),
-             (f1 - 1, f2 - 1, f3 - 1),
-             (f1 - 1, f2 + 1, f3 - 1),
-             (f1 + 1, f2 - 1, f3 - 1)],
-            3: [(f1 - 1, f2 - 1, f3 - 1)],
-            4: []}
+             1: [(f1 - 1, f2 - 1, f3 - 1), (f1*f3 + 1, f2 - 1), (f1*f2 + 1, f3 - 1), (f2*f3 + 1, f1 - 1),
+                 (f2*f3 + 1, f1 - f2), (f2*f3 + 1, f1 - f3), (f1*f3 + 1, f2 - f3)],
+             2: [(f1 - 1, f2 - 1, f3 - 1), (f1 + 1, f2 - 1, f3 - 1), (f1 - 1, f2 - 1, f3 + 1),
+                 (f3^2 + 1, f1 - f3, f2 - f3), (f1 - 1, f2 + 1, f3 - 1)],
+             3: [(f1 - 1, f2 - 1, f3 - 1)],
+             4: []}
             sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
             sage: G.characteristic_varieties()
-            {0: Ideal (0, 0) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
-             1: Ideal (0, -2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
-             2: Ideal (f1 - 1, f2 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
-             3: Ideal (0, 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field}
+            {0: Ideal (0) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             1: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             2: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field}
             sage: G.characteristic_varieties(ring=ZZ)
-            {0: Ideal (0, 0) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
-             1: Ideal (0, -2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
-             2: Ideal (f1 - 1, f2 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
-             3: Ideal (0, 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
+            {0: Ideal (0) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             1: Ideal (2*f2 - 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             2: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
             sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
             sage: G.characteristic_varieties()
-            {0: Ideal (0, 0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3, 1 - 2*f2 + 2*f2^2 - f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             2: Ideal (0, 1) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             3: Ideal (0, 1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
+            {0: Ideal (0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             2: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             3: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
             sage: G.characteristic_varieties(groebner=True)
-            {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: [1]}
+            {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: []}
+            sage: G = FreeGroup(2)/[3 * (1, ), 2 * (2, )]
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [-1 + F1, 1 + F1, 1 - F1 + F1^2, 1 + F1 + F1^2], 1: [1 - F1 + F1^2],  2: []}
+            sage: G = FreeGroup(2)/[2 * (2, )]
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(f1 + 1,), (f1 - 1,)], 1: [(f1 + 1,), (f1 - 1, f2 - 1)], 2: []}
         """
         A, rels = self.abelian_alexander_matrix(ring=ring, simplified=True)
         R = A.base_ring()
@@ -1824,7 +1823,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                 J1 = K.ideal([K(p.subs(eval_1)) for p in J.gens()])
                 if J1:
                     J *= ideal_1
-            res[j] = J
+            res[j] = R.ideal(J.gens_reduced())
         if not groebner or not ring.is_field():
             return res
         if R.ngens() == 1:
@@ -1840,7 +1839,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                     if fct:
                         char_var[j] = fct
                     else:
-                        char_var[j] = [R(1)]
+                        char_var[j] = []
                         strict = False
                 j += 1
             return char_var

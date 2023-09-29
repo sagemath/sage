@@ -6,11 +6,11 @@ optimized for speed only some methods were added.
 
 AUTHOR:
 
-* Martin Albrecht <malb@informatik.uni-bremen.de>
+* Enrique Artal <artal@unizar.es>
 """
 
 # *****************************************************************************
-#       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
+#       Copyright (C) 2023 Enrique Artal <artal@unizar.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
