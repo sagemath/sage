@@ -170,6 +170,19 @@ class Timer:
 
         A float measuring the cputime in seconds of the sage process
         and all its subprocesses.
+
+        TESTS:
+
+        About all we can say for certain is that this will return a
+        nonnegative float::
+
+            sage: from sage.doctest.util import Timer
+            sage: cputime = Timer()._quick_cputime()
+            sage: cputime >= 0.0
+            True
+            sage: isinstance(cputime, float)
+            True
+
         """
         # Start by using os.times() to get the cputime for sage itself
         # and any subprocesses that have been wait()ed for and that
