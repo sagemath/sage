@@ -110,11 +110,39 @@ class Timer:
         Parse the ``/proc`` filesystem to get the cputime of the given
         ``pid``.
 
-        This also includes the times for child processes **that have
-        been ``wait()``ed for and terminated**. Specifically, pexpect
-        processes DO NOT fall into that category.
+        This also includes the times for child processes, but only
+        those that have been ``wait()``ed for and that have already
+        terminated. It is important to note that pexpect processes DO
+        NOT fall into that category.
 
-        Raises an ``OSError`` if anything goes wrong.
+        INPUT:
+
+        - ``pid`` -- nonnegative integer; the process identifier (PID)
+          of the process whose cputime you want
+
+        OUTPUT:
+
+        A nonnegative float representing the number of cpu-seconds
+        used by the process associated with ``pid``. An ``OSError`` is
+        raised if anything goes wrong, which typically happens on
+        platforms that don't store this information under ``/proc``.
+
+        TESTS:
+
+        About all we can say for certain is that this will return a
+        nonnegative float or raise an ``OSError``::
+
+            sage: from sage.doctest.util import Timer
+            sage: cputime = 0.0
+            sage: try:
+            ....:     cputime = Timer()._pid_cpu_seconds(1)
+            ....: except OSError:
+            ....:     pass
+            sage: cputime >= 0.0
+            True
+            sage: isinstance(cputime, float)
+            True
+
         """
         try:
             with open(f"/proc/{pid}/stat", "r") as statfile:
