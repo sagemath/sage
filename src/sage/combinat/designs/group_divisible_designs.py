@@ -113,7 +113,7 @@ def group_divisible_design(v, K, G, existence=False, check=False):
         return GDD_4_2(v // 2, check=check)
 
     # From a TD(k,g)
-    elif (len(G) == 1 == len(K) and K[0] * G[0] == v):
+    elif len(G) == 1 == len(K) and K[0] * G[0] == v:
         from .orthogonal_arrays import transversal_design
         return transversal_design(k=K[0], n=G[0], existence=existence)
 
@@ -176,8 +176,8 @@ def GDD_4_2(q, existence=False, check=True):
     if existence:
         return True
 
-    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-    G = GF(q, 'x')
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    G = FiniteField(q, 'x')
     w = G.primitive_element()
     e = w**((q - 1) // 3)
 
@@ -284,7 +284,7 @@ class GroupDivisibleDesign(IncidenceStructure):
                                     check=False,
                                     **kwds)
 
-        if (groups is None or (copy is False and self._point_to_index is None)):
+        if groups is None or (copy is False and self._point_to_index is None):
             self._groups = groups
         elif self._point_to_index is None:
             self._groups = [g[:] for g in groups]
