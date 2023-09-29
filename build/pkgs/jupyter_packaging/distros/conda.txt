@@ -1,1 +1,0 @@
-# jupyter-packaging  # only a build dependency, not needed at runtime; conda package does not support Python 3.11 as of 2023-05

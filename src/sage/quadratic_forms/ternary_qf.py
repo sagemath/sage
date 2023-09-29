@@ -153,7 +153,7 @@ class TernaryQF(SageObject):
             Multivariate Polynomial Ring in x, y, z over Integer Ring
         """
         (x,y,z) = polygens(ZZ,names)
-        return self._a * x**2 + self._b* y**2 + self._c * z**2 + self._t * x*y + self._s * x*z + self._r * y*z
+        return self._a * x**2 + self._b * y**2 + self._c * z**2 + self._t * x*y + self._s * x*z + self._r * y*z
 
     def _repr_(self):
         r"""
@@ -172,8 +172,8 @@ class TernaryQF(SageObject):
             [0 0 0]
         """
         rep = 'Ternary quadratic form with integer coefficients:\n'
-        rep+= '[' + str(self._a) + ' ' + str(self._b) + ' ' + str(self._c) + ']\n'
-        rep+= '[' + str(self._r) + ' ' + str(self._s) + ' ' + str(self._t) + ']'
+        rep += '[' + str(self._a) + ' ' + str(self._b) + ' ' + str(self._c) + ']\n'
+        rep += '[' + str(self._r) + ' ' + str(self._s) + ' ' + str(self._t) + ']'
         return rep
 
     def __call__(self, v):
@@ -721,7 +721,7 @@ class TernaryQF(SageObject):
             sage: Q.is_eisenstein_reduced()
             False
         """
-        [a,b,c,r,s,t]=[self._a,self._b,self._c,self._r,self._s,self._t]
+        [a,b,c,r,s,t] = [self._a,self._b,self._c,self._r,self._s,self._t]
 
         # cond 2
         if not (r > 0 and t > 0 and s > 0):
@@ -746,7 +746,7 @@ class TernaryQF(SageObject):
 
         # cond 6
         # r, s, t <= 0
-        if r<=0:
+        if r <= 0:
             if a == -t and s != 0:
                 return False
             if a == -s and t != 0:
@@ -824,17 +824,17 @@ class TernaryQF(SageObject):
         [a,b,c,r,s,t] = self.coefficients()
         while True:
 
-            r1=randint(0,p-1)
-            r2=randint(0,p-1)
-            alpha=(b*r1**2+t*r1+a) % p
+            r1 = randint(0,p-1)
+            r2 = randint(0,p-1)
+            alpha = (b*r1**2+t*r1+a) % p
             if alpha != 0:
 
-                beta=(2*b*r1*r2+t*r2+r*r1+s) % p
-                gamma=(b*r2**2+r*r2+c) % p
-                disc=beta**2-4*alpha*gamma
+                beta = (2*b*r1*r2+t*r2+r*r1+s) % p
+                gamma = (b*r2**2+r*r2+c) % p
+                disc = beta**2-4*alpha*gamma
                 if mod(disc, p).is_square():
 
-                    z=(-beta+mod(disc,p).sqrt().lift())*(2*alpha).inverse_mod(p)
+                    z = (-beta+mod(disc,p).sqrt().lift())*(2*alpha).inverse_mod(p)
                     # return vector((z,r1*z+r2,1))%p
                     return z % p, (r1*z+r2) % p, 1
 
@@ -858,7 +858,7 @@ class TernaryQF(SageObject):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
 
-        if p==2:
+        if p == 2:
 
             return _find_zeros_mod_p_2(self._a, self._b, self._c, self._r, self._s, self._t)
 

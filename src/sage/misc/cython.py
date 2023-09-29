@@ -21,6 +21,7 @@ AUTHORS:
 
 import builtins
 import os
+import re
 import sys
 import shutil
 
@@ -396,6 +397,12 @@ def cython(filename, verbose=0, compile_message=False,
         raise RuntimeError(cython_messages.strip())
 
     if verbose >= 0:
+        # triggered by Cython 3 with unpatched cysignals 1.11.2
+        cython_messages = re.sub(
+            "^.*The keyword 'nogil' should appear at the end of the function signature line. "
+            "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
+            "", cython_messages, 0, re.MULTILINE)
+
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
 
