@@ -1,0 +1,12 @@
+diff --git a/tools/cythonize.py b/tools/cythonize.py
+index 002b2fa..c04422e 100755
+--- a/tools/cythonize.py
++++ b/tools/cythonize.py
+@@ -47,6 +47,7 @@ def process_pyx(fromfile, tofile):
+     flags = ['-3', '--fast-fail']
+     if tofile.endswith('.cxx'):
+         flags.append('--cplus')
++    flags += ['--directive', 'legacy_implicit_noexcept=true']
+ 
+     subprocess.check_call(
+         [sys.executable, '-m', 'cython'] + flags + ["-o", tofile, fromfile])
