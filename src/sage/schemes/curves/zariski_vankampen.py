@@ -937,7 +937,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
 
     - ``vertical_regions`` -- dictionary with keys the vertices of ``dual_graph``
       to fix regions associated with vertical lines
-+
+
     OUTPUT: A geometric basis and a dictionnary.
 
     The geometric basis is formed by a list of sequences of paths. Each path is a
