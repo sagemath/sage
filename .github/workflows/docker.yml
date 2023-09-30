@@ -21,7 +21,6 @@ on:
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
-           "ubuntu-kinetic",
            "ubuntu-lunar",
            "ubuntu-mantic",
            "debian-buster-gcc_spkg",
@@ -179,6 +178,12 @@ jobs:
         run: |
           (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore && echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - build/bin/write-dockerfile.sh && git diff)
         if: inputs.upstream_artifact
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Try to login to ghcr.io
         if: inputs.docker_push_repository != ''

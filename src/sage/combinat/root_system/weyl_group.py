@@ -45,7 +45,7 @@ from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.interfaces.gap import gap
+from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
@@ -252,7 +252,6 @@ class WeylGroup_gens(UniqueRepresentation,
         # FinitelyGeneratedMatrixGroup_gap takes plain matrices as input
         gens_matrix = [self.morphism_matrix(self.domain().simple_reflection(i))
                        for i in self.index_set()]
-        from sage.libs.gap.libgap import libgap
         if not gens_matrix:
             libgap_group = libgap.Group([], matrix(ZZ, 1, 1, [1]))
         else:
@@ -435,8 +434,8 @@ class WeylGroup_gens(UniqueRepresentation,
             X.4     3 -1  1  . -1
             X.5     1  1  1  1  1
         """
-        gens_str = ', '.join(str(g.gap()) for g in self.gens())
-        ctbl = gap('CharacterTable(Group({0}))'.format(gens_str))
+        G = libgap.Group([libgap(g) for g in self.gens()])
+        ctbl = libgap.CharacterTable(G)
         return ctbl.Display()
 
     @cached_method

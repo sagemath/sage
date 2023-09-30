@@ -199,10 +199,11 @@ cdef class ParentWithGens(ParentWithBase):
 
     def hom(self, im_gens, codomain=None, base_map=None, category=None, check=True):
         r"""
-        Return the unique homomorphism from self to codomain that
+        Return the unique homomorphism from ``self`` to codomain that
         sends ``self.gens()`` to the entries of ``im_gens``
         and induces the map ``base_map`` on the base ring.
-        Raises a TypeError if there is no such homomorphism.
+
+        This raises a :class:`TypeError` if there is no such homomorphism.
 
         INPUT:
 
@@ -272,7 +273,8 @@ cdef class ParentWithGens(ParentWithBase):
               From: Integer Ring
               To:   Finite Field of size 5
 
-        There might not be a natural morphism, in which case a TypeError exception is raised.
+        There might not be a natural morphism, in which case a
+        :class:`TypeError` exception is raised.
 
         ::
 

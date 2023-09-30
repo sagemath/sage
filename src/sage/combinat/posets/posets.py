@@ -288,6 +288,7 @@ Classes and functions
 from __future__ import annotations
 from collections import defaultdict
 from copy import copy, deepcopy
+from itertools import product
 from typing import List
 
 from sage.misc.cachefunc import cached_method
@@ -5296,7 +5297,6 @@ class FinitePoset(UniqueRepresentation, Parent):
            Discrete Applied Mathematics 15 (1986) 105-110
            :doi:`10.1016/0166-218X(86)90023-5`
         """
-        from sage.misc.mrange import cartesian_product_iterator
         from sage.graphs.graph import Graph
         from sage.misc.flatten import flatten
         dg = self._hasse_diagram
@@ -5327,7 +5327,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                           if edge_color(x, y) == i0]
                 neigh1 = [z for z in prod_dg.neighbor_iterator(x)
                           if edge_color(x, z) == i1]
-                for x0, x1 in cartesian_product_iterator([neigh0, neigh1]):
+                for x0, x1 in product(neigh0, neigh1):
                     x2 = list(x0)
                     x2[i1] = x1[i1]
                     x2 = tuple(x2)

@@ -726,7 +726,7 @@ class CartanTypeFactory(SageObject):
             if len(t) == 2 and len(n) == 2:
                 from . import type_super_A
                 return type_super_A.CartanType(n[0], n[1])
-            raise ValueError("%s is not a valid super Cartan type"%t)
+            raise ValueError("%s is not a valid super Cartan type" % t)
 
         # As the Cartan type has not been recognised try subtypes - but check
         # for the error noted in trac:???
@@ -734,7 +734,7 @@ class CartanTypeFactory(SageObject):
         try:
             return type_reducible.CartanType([ CartanType(subtype) for subtype in t ])
         except (SyntaxError, ValueError):
-            raise ValueError("%s is not a valid Cartan type"%t)
+            raise ValueError("%s is not a valid Cartan type" % t)
 
     def _repr_(self):
         """
@@ -1083,7 +1083,7 @@ class CartanType_abstract():
             sage: CartanType(['B',2])._latex_draw_arrow_tip(1, 0, 180)
             '\\draw[shift={(1, 0)}, rotate=180] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);\n'
         """
-        return "\\draw[shift={(%s, %s)}, rotate=%s] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);\n"%(x, y, rot)
+        return "\\draw[shift={(%s, %s)}, rotate=%s] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);\n" % (x, y, rot)
 
     @abstract_method
     def rank(self):
@@ -2444,7 +2444,7 @@ class CartanType_standard(UniqueRepresentation, SageObject):
             'A3'
         """
         format = '%s%s' if compact else "['%s', %s]"
-        return format%(self.letter, self.n)
+        return format % (self.letter, self.n)
 
     def __len__(self):
         """
@@ -3037,7 +3037,7 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
             'A3|2'
         """
         formatstr = '%s%s|%s' if compact else "['%s', [%s, %s]]"
-        return formatstr%(self.letter, self.m, self.n)
+        return formatstr % (self.letter, self.m, self.n)
 
     def __len__(self):
         """

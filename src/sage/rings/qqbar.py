@@ -2113,28 +2113,6 @@ def is_AlgebraicField(F):
 QQbar = AlgebraicField()
 
 
-def is_AlgebraicField_common(F):
-    r"""
-    Check whether ``F`` is an :class:`~AlgebraicField_common` instance.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.AlgebraicField_common` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.qqbar import is_AlgebraicField_common
-        sage: [is_AlgebraicField_common(x) for x in [AA, QQbar, None, 0, "spam"]]
-        doctest:warning...
-        DeprecationWarning: is_AlgebraicField_common is deprecated;
-        use isinstance(..., sage.rings.abc.AlgebraicField_common) instead
-        See https://github.com/sagemath/sage/issues/32610 for details.
-        [True, True, False, False, False]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32610, 'is_AlgebraicField_common is deprecated; use isinstance(..., sage.rings.abc.AlgebraicField_common) instead')
-    return isinstance(F, AlgebraicField_common)
-
-
 def prec_seq():
     r"""
     Return a generator object which iterates over an infinite increasing

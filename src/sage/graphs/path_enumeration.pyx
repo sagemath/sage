@@ -31,8 +31,8 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
-from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
@@ -263,7 +263,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
     if report_edges and labels:
         path_with_labels = []
         for p in all_paths:
-            path_with_labels.extend(cartesian_product([edge_labels[e] for e in zip(p[:-1], p[1:])]))
+            path_with_labels.extend(product(*[edge_labels[e] for e in zip(p[:-1], p[1:])]))
         return path_with_labels
     elif use_multiedges and G.has_multiple_edges():
         multiple_all_paths = []
@@ -1586,7 +1586,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
                           neighbor in ending_vertices):
                         newpath = path + [neighbor]
                         if report_edges and labels:
-                            for p in cartesian_product([my_dict[e] for e in zip(newpath[:-1], newpath[1:])]):
+                            for p in product(*[my_dict[e] for e in zip(newpath[:-1], newpath[1:])]):
                                 yield list(p)
                         elif use_multiedges and self.has_multiple_edges():
                             m = prod(edge_multiplicity[e] for e in zip(newpath[:-1], newpath[1:]))
@@ -1610,7 +1610,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
         if path[-1] in ending_vertices:
             # yield good path
             if report_edges and labels:
-                for p in cartesian_product([my_dict[e] for e in zip(path[:-1], path[1:])]):
+                for p in product(*[my_dict[e] for e in zip(path[:-1], path[1:])]):
                     yield list(p)
             elif use_multiedges and self.has_multiple_edges():
                 m = prod(edge_multiplicity[e] for e in zip(path[:-1], path[1:]))

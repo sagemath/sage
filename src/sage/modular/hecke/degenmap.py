@@ -2,7 +2,7 @@
 Degeneracy maps
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -16,11 +16,10 @@ Degeneracy maps
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from . import morphism
+
 
 class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
     """
@@ -93,8 +92,8 @@ class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
         if t == 1:
             pow = ""
         else:
-            pow = "^%s"%t
-        name = "degeneracy map corresponding to f(q) |--> f(q%s)"%(pow)
+            pow = "^%s" % t
+        name = "degeneracy map corresponding to f(q) |--> f(q%s)" % (pow)
         morphism.HeckeModuleMorphism_matrix.__init__(self, H, matrix, name)
 
     def t(self):

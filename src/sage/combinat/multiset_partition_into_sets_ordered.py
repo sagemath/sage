@@ -52,22 +52,19 @@ with 4 letters divided into 2 blocks::
      ((1,), (1, 2, 3)), ((1, 2), (2, 3)), ((1, 2, 3), (3,))]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Aaron Lauve       <lauve at math.luc.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from functools import reduce
-from itertools import chain
+from itertools import chain, product
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.cartesian_product import cartesian_product
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.tensor import tensor
 from sage.structure.unique_representation import UniqueRepresentation
@@ -672,7 +669,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             return {tuple([self]*k): 1}
 
         out = {}
-        for t in cartesian_product([_split_block(block, k) for block in self]):
+        for t in product(*[_split_block(block, k) for block in self]):
             tt = tuple([P([l for l in c if l]) for c in zip(*t)])
             out[tt] = out.get(tt, 0) + 1
         return out
@@ -711,8 +708,8 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         if not self:
             return set([self])
 
-        CP = cartesian_product([_refine_block(block, strong) for block in self])
-        return set(P(_concatenate(map(list,c))) for c in CP)
+        CP = product(*[_refine_block(block, strong) for block in self])
+        return set(P(_concatenate(map(list, c))) for c in CP)
 
     def is_finer(self, co):
         """
@@ -803,7 +800,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             str_rep = '['
             for i in range(len(grouping)):
                 st = ",".join(str(k) for k in result[i])
-                str_rep += "{" + st+ "}"
+                str_rep += "{" + st + "}"
             str_rep = str_rep.replace("}{", "}, {") + "]"
             raise ValueError("%s is not a valid ordered multiset partition into sets" % (str_rep))
         else:
@@ -1554,7 +1551,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             constraints.pop("max_order", None)
         min_ord = constraints.get("min_order", 0)
         max_ord = constraints.get("max_order", infinity)
-        assert min_ord <= max_ord, "min_order=%s <= max_order=%s"%(min_ord, max_ord)
+        assert min_ord <= max_ord, "min_order=%s <= max_order=%s" % (min_ord, max_ord)
         if min_ord == max_ord:
             constraints["order"] = constraints.pop("min_order",
                                                    constraints.pop("max_order"))
@@ -2226,7 +2223,7 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
             'Ordered Multiset Partitions into Sets of multiset {{1, 1, 4}}'
         """
         ms_rep = "{{" + ", ".join(map(str, self._Xtup)) + "}}"
-        return "Ordered Multiset Partitions into Sets" + " of multiset %s"%ms_rep
+        return "Ordered Multiset Partitions into Sets" + " of multiset %s" % ms_rep
 
     def __contains__(self, x):
         """
@@ -2396,7 +2393,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
         cdict = dict(self.constraints)
         cdict.pop("weight", None)
         ms_rep = "{{" + ", ".join(map(str, self._Xtup)) + "}}"
-        base_repr = "Ordered Multiset Partitions into Sets" + " of multiset %s"%ms_rep
+        base_repr = "Ordered Multiset Partitions into Sets" + " of multiset %s" % ms_rep
         return base_repr + self._constraint_repr_(cdict)
 
 ###############
@@ -2441,7 +2438,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
             'Ordered Multiset Partitions into Sets of order 2 over alphabet {1, 3}'
         """
         A_rep = "Ordered Multiset Partitions into Sets of order " + str(self._order)
-        A_rep += " over alphabet {%s}"%(", ".join(map(str, sorted(self._alphabet))))
+        A_rep += " over alphabet {%s}" % (", ".join(map(str, sorted(self._alphabet))))
         return A_rep
 
     def _an_element_(self):
@@ -2583,7 +2580,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartit
         cdict.pop("alphabet", None)
         cdict.pop("order", None)
         base_repr = "Ordered Multiset Partitions into Sets of order " + str(self._order)
-        base_repr += " over alphabet {%s}"%(", ".join(map(str, sorted(self._alphabet))))
+        base_repr += " over alphabet {%s}" % (", ".join(map(str, sorted(self._alphabet))))
         return base_repr + self._constraint_repr_(cdict)
 
 ###############
@@ -2892,16 +2889,16 @@ def _iterator_size(size, length=None, alphabet=None):
         max_p = max(alphabet)
         for alpha in IntegerListsLex(size, length=length, min_part=1,
                                      max_part=min(size, sum(alphabet))):
-            for p in cartesian_product([IntegerListsLex(a, min_slope=1,
-                                                        min_part=min_p,
-                                                        max_part=min(a, max_p))
-                                        for a in alpha]):
+            for p in product(*[IntegerListsLex(a, min_slope=1,
+                                               min_part=min_p,
+                                               max_part=min(a, max_p))
+                               for a in alpha]):
                 if frozenset(_concatenate(p)).issubset(frozenset(alphabet)):
                     yield tuple(frozenset(k) for k in p)
     else:
         for alpha in IntegerListsLex(size, length=length, min_part=1, max_part=size):
-            for p in cartesian_product([IntegerListsLex(a, min_slope=1,
-                                                        min_part=1) for a in alpha]):
+            for p in product(*[IntegerListsLex(a, min_slope=1,
+                                               min_part=1) for a in alpha]):
                 yield tuple(frozenset(k) for k in p)
 
 
@@ -2967,11 +2964,11 @@ def _iterator_order(A, d, lengths=None):
             yield ()
         else:
             for alpha in IntegerListsLex(d, length=k, min_part=1, max_part=n):
-                for co in cartesian_product([Subsets_sk(A, a) for a in alpha]):
+                for co in product(*[Subsets_sk(A, a) for a in alpha]):
                     yield tuple(frozenset(X) for X in co)
 
 
-def _descents(w):
+def _descents(w) -> list:
     r"""
     Return descent positions in the word ``w``.
 
@@ -2983,7 +2980,7 @@ def _descents(w):
         sage: _descents([])
         []
     """
-    return [j for j in range(len(w)-1) if w[j] > w[j+1]]
+    return [j for j in range(len(w) - 1) if w[j] > w[j + 1]]
 
 
 def _break_at_descents(alpha, weak=True):
@@ -3236,9 +3233,9 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         self.ell = ell
         self.k = k
         if not all([n in ZZ, ell in ZZ, k in ZZ]):
-            raise TypeError("n (=%s), ell (=%s), and k (=%s) must all be positive integers"%(n, ell, k))
+            raise TypeError("n (=%s), ell (=%s), and k (=%s) must all be positive integers" % (n, ell, k))
         if not all([n > 0, ell >= k, k > 0]):
-            raise ValueError("n (=%s), ell (=%s), and k (=%s) must all be positive integers"%(n, ell, k))
+            raise ValueError("n (=%s), ell (=%s), and k (=%s) must all be positive integers" % (n, ell, k))
         self._cartan_type = CartanType(['A',n-1])
         B = Letters(['A', n-1])
         T = tensor([B]*ell)
@@ -3316,7 +3313,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             B,T = self._BT
             return self.element_class(self, (T(*[B(a) for a in _concatenate(t)]), breaks))
         else:
-            raise ValueError("cannot convert %s into an element of %s"%(x, self))
+            raise ValueError("cannot convert %s into an element of %s" % (x, self))
 
     def __contains__(self, x):
         """
