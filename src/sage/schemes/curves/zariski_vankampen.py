@@ -1207,51 +1207,59 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     else:
         arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
     x, y = f.parent().gens()
-    dic_vertical = dict()
+    dic_vertical = {f0: False for f0 in arrangement1}
     if vertical:
         for f0 in arrangement1:
-            vertical_asymptote = f0.degree(y) < f0.degree() and f0.degree() > 1
-            if vertical_asymptote:
-                dic_vertical = dict()
+            if f0.degree(y) < f0.degree() and f0.degree() > 1:
+                dic_vertical = {f0: False for f0 in arrangement1}
                 break
-            dic_vertical[f0] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
-    glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor()
-                  if f0 not in dic_vertical.keys())
+            else:
+                dic_vertical[f0] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
+    arrangement_h = ()
+    arrangement_v = ()
+    for f0 in arrangement1:
+        if dic_vertical[f0]:
+            arrangement_v += (f0, )
+        else:
+            arrangement_h += (f0, )
+    glist = tuple(_[0] for f0 in arrangement_h for _ in f0.factor())
     g = f.parent()(prod(glist))
     d = g.degree(y)
     if not dic_vertical:
         while not g.coefficient(y**d) in F:
             g = g.subs({x: x + y})
             d = g.degree(y)
-            arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
+            arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)
             glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     if d > 0:
         disc = discrim(glist)
     else:
         disc = []
     vertical_braid = dict()
-    transversal = []
-    for f0 in arrangement1:
-        if f0 in dic_vertical.keys():
-            pt = [j for j, t in enumerate(disc) if f0(x=t) == 0]
-            if pt:
-                vertical_braid[f0] = pt[0]
-            else:
-                transversal.append()
+    transversal = dict()
+    for f0 in arrangement_v:
+        pt = [j for j, t in enumerate(disc) if f0(x=t) == 0]
+        if pt:
+            vertical_braid[f0] = (disc.index(pt[0]), arrangement1.index(f0))
+        else:
+            transversal[f0] = arrangement1.index(f0)
     if not disc:
-        vertical_braids = {j: j for j, p in enumerate(transversal)}
+        vertical_braids = {i: j for i, (p, j) in enumerate(transversal)}
         if d > 1:
             result = [BraidGroup(d).one() for p in transversal]
         else:
             result = [() for p in transversal]
         p1 = F(0)
-        roots_base, strands = strand_components(g, arrangement1, p1)
+        if d > 0:
+            roots_base, strands = strand_components(g, arrangement_h, p1)
+        else:
+            strands = dict()
         return (result, strands, vertical_braids)
     V = corrected_voronoi_diagram(tuple(disc))
     G, E, p, EC, DG, VR = voronoi_cells(V)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
-    roots_base, strands = strand_components(g, arrangement1, p1)
+    roots_base, strands = strand_components(g, arrangement_h, p1)
     geombasis, vd = geometric_basis(G, E, EC, p, DG, VR)
     segs = set()
     for p in geombasis:
@@ -1291,15 +1299,14 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     vertical_braids = dict()
     r = len(result)
     t = 0
-    for j, f0 in enumerate(arrangement1):
-        if f0 in dic_vertical.keys():
+    for f0 in arrangement_v:
+        if f0 in vertical_braid.keys():
+            k, j = vertical_braid[f0]
+            vertical_braids[k] = j
+        else:
+            vertical_braids[r + t] = transversal[f0]
+            t += 1
             result.append(B.one())
-            if f0 in vertical_braid.keys():
-                k = vertical_braid[f0]
-                vertical_braids[k] = j
-            else:
-                vertical_braids[r + t] = j
-                t += 1
     return (result, strands, vertical_braids)
 
 
