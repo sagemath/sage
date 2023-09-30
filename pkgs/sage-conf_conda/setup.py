@@ -34,12 +34,12 @@ class build_py(setuptools_build_py):
             if os.system(cmd) != 0:
                 if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
                     print("Warning: A configuration has been written, but the configure script has exited with an error. "
-                          "Carefully check any error messages before continuing.")
+                          "Carefully check any messages above before continuing.")
                 else:
                     print(f"Error: The configure script has failed; this may be caused by missing build prerequisites.")
                     sys.stdout.flush()
                     PREREQ_SPKG = "_prereq bzip2 xz libffi"  # includes python3 SPKG_DEPCHECK packages
-                    os.system(f'cd {SAGE_ROOT} && export SYSTEM=$(build/bin/sage-guess-package-system 2>/dev/null) && export PACKAGES="$(build/bin/sage-get-system-packages $SYSTEM {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command $SYSTEM --verbose --sudo install $PACKAGES && echo ""')
+                    os.system(f'cd {SAGE_ROOT} && export PACKAGES="$(build/bin/sage-get-system-packages conda {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command conda --verbose --sudo install $PACKAGES && echo ""')
                     raise SetupError("configure failed")
 
         # In this mode, we never run "make".
