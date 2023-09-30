@@ -437,12 +437,12 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
                     if self.defining_polynomials()[i] != 0:
                         F = self.defining_polynomials()[i]
                 # find a point on which it doesn't vanish
-                l = list(PP.gens())
+                ll = list(PP.gens())
                 for i in range(n + 1):
-                    l[i] = 0
-                    while F(l) == 0:
-                        l[i] += 1
-                Q = PP(l)  # will be a point not on the curve
+                    ll[i] = 0
+                    while F(ll) == 0:
+                        ll[i] += 1
+                Q = PP(ll)  # will be a point not on the curve
             else:
                 # if the base ring is a finite field, iterate over all points in the ambient space and check which
                 # are on this curve
@@ -487,12 +487,12 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         # defining polynomials of this curve with the polynomials defining the inverse of the change of coordinates
         invcoords = [Q[i]*PP.gens()[j] + PP.gens()[i] for i in range(n + 1)]
         invcoords[j] = Q[j]*PP.gens()[j]
-        I = PP.coordinate_ring().ideal([f(invcoords) for f in self.defining_polynomials()])
-        J = I.elimination_ideal(PP.gens()[j])
+        id = PP.coordinate_ring().ideal([f(invcoords) for f in self.defining_polynomials()])
+        J = id.elimination_ideal(PP.gens()[j])
         K = Hom(PP.coordinate_ring(), PP2.coordinate_ring())
-        l = list(PP2.gens())
-        l.insert(j, 0)
-        phi = K(l)
+        ll = list(PP2.gens())
+        ll.insert(j, 0)
+        phi = K(ll)
         G = [phi(f) for f in J.gens()]
         C = PP2.curve(G)
         return tuple([psi, C])
@@ -1224,8 +1224,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         P = [0]*3
         P[i] = 1
         P = PP(P)
-        l = [0, 1, 2]
-        l.pop(i)
+        ll = [0, 1, 2]
+        ll.pop(i)
         # choose points forming a triangle with one vertex at P to map to the coordinate triangle
         good = False
         a = 0
@@ -1233,11 +1233,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             a = a + 1
             # find points to map to (1 : 0 : 0) and (0 : 1 : 0), not on the curve
             Px = [0]*3
-            Px[l[0]] = a
-            Px[l[1]] = 1
+            Px[ll[0]] = a
+            Px[ll[1]] = 1
             Py = [0]*3
-            Py[l[0]] = -a
-            Py[l[1]] = 1
+            Py[ll[0]] = -a
+            Py[ll[1]] = 1
             Py[i] = 1
             try:
                 Px = baseC(Px)
@@ -1277,11 +1277,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     if j == 0:
                         div_pow = min(e[1] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
-                            for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.dict().items()})
                     else:
                         div_pow = min(e[0] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
-                            for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.dict().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True
@@ -1645,9 +1645,9 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             False
         """
         singular.lib("sing.lib")
-        I = singular.simplify(self.defining_ideal(), 10)
-        L = singular.is_ci(I).sage()
-        return len(self.ambient_space().gens()) - len(I.sage().gens()) == L[-1]
+        id = singular.simplify(self.defining_ideal(), 10)
+        L = singular.is_ci(id).sage()
+        return len(self.ambient_space().gens()) - len(id.sage().gens()) == L[-1]
 
     def tangent_line(self, p):
         """

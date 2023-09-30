@@ -28,7 +28,7 @@ EXAMPLES::
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
     sage: braid_monodromy(f)
-    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0}, {})
+    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0}, {}, 3)
     sage: fundamental_group(f)
     Finitely presented group < x0 |  >
 """
@@ -1186,7 +1186,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0}, {})
+          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0}, {}, 4)
         sage: flist = (x^2 - y^3, x + 3*y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist)
         sage: bm1[0] == bm[0]
@@ -1194,9 +1194,9 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         sage: bm1[1]
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
-        ([], {}, {})
+        ([], {}, {}, 0)
         sage: braid_monodromy(x*y^2 - 1)
-        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {})
+        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {}, 3)
     """
     global roots_interval_cache
     F = fieldI(f.base_ring())
@@ -1244,7 +1244,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         else:
             transversal[f0] = arrangement1.index(f0)
     if not disc:
-        vertical_braids = {i: j for i, (p, j) in enumerate(transversal)}
+        vertical_braids = {i: j for i, j in enumerate(transversal)}
         if d > 1:
             result = [BraidGroup(d).one() for p in transversal]
         else:
@@ -1254,7 +1254,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             roots_base, strands = strand_components(g, arrangement_h, p1)
         else:
             strands = dict()
-        return (result, strands, vertical_braids)
+        return (result, strands, vertical_braids, d)
     V = corrected_voronoi_diagram(tuple(disc))
     G, E, p, EC, DG, VR = voronoi_cells(V)
     p0 = (p[0], p[1])
@@ -1307,7 +1307,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             vertical_braids[r + t] = transversal[f0]
             t += 1
             result.append(B.one())
-    return (result, strands, vertical_braids)
+    return (result, strands, vertical_braids, d)
 
 
 def conjugate_positive_form(braid):
@@ -1528,6 +1528,10 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         return None
     F = FreeGroup(d)
     Fv = FreeGroup(d + v)
+    if d == 0:
+        return Fv / []
+    if d == 1:
+        return Fv / [(1, j, -1, -j) for j in range(2, d + v + 1)]
     bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical0]
     if not puiseux:
         relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
@@ -1667,7 +1671,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
 
 
-def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False):
+def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, vertical=False):
     r"""
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information
@@ -1753,14 +1757,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         R = PolynomialRing(QQ, ('x', 'y'))
         f = R(1)
     x, y = R.gens()
-    F = R.base_ring()
     flist1 = [_ for _ in flist]
-    d = f.degree(y)
-    while not f.coefficient(y**d) in F:
-        flist1 = [g.subs({x: x + y}) for g in flist1]
-        f = prod(flist1)
-        d = f.degree(y)
+    d = f.degree()
+    vertical0 = bool(vertical)
     if projective:
+        vertical0 = False
         while f.degree(y) < f.degree():
             flist1 = [g.subs({x: x + y}) for g in flist]
             f = prod(flist1)
@@ -1768,7 +1769,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         bm = []
         dic = dict()
     else:
-        bm, dic, dv = braid_monodromy(f, flist1)
+        bm, dic, dv, d = braid_monodromy(f, flist1, vertical=vertical0)
     g = fundamental_group_from_braid_mon(bm, degree=d, simplified=False, projective=projective, puiseux=puiseux)
     if simplified:
         hom = g.simplification_isomorphism()
