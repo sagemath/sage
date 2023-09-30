@@ -525,15 +525,17 @@ class ModularAbelianVariety_abstract(Parent):
     def newform(self, names=None):
         """
         Return the newform `f` such that this abelian variety is isogenous to
-        the newform abelian variety `A_f`. If this abelian variety is not
-        simple, raise a ``ValueError``.
+        the newform abelian variety `A_f`.
+
+        If this abelian variety is not
+        simple, this raises a :class:`ValueError`.
 
         INPUT:
 
-        - ``names`` -- (default: None) If the newform has coefficients in a
-          number field, then a generator name must be specified.
+        - ``names`` -- (default: ``None``) If the newform has coefficients
+          in a number field, then a generator name must be specified.
 
-        OUTPUT: A newform `f` so that self is isogenous to `A_f`.
+        OUTPUT: A newform `f` so that ``self`` is isogenous to `A_f`.
 
         EXAMPLES::
 
@@ -3237,22 +3239,25 @@ class ModularAbelianVariety_abstract(Parent):
     def isogeny_number(self, none_if_not_known=False):
         """
         Return the number (starting at 0) of the isogeny class of new
-        simple abelian varieties that self is in. If self is not simple,
-        raises a :class:`ValueError` exception.
+        simple abelian varieties that ``self`` is in.
+
+        If ``self`` is not simple,
+        this raises a :class:`ValueError` exception.
 
         INPUT:
 
-        -  ``none_if_not_known`` -- bool (default: False); if
-           True then this function may return None instead of True of False if
-           we don't already know the isogeny number of self.
+        -  ``none_if_not_known`` -- bool (default: ``False``); if
+           ``True`` then this function may return ``None`` instead of ``True``
+           or ``False`` if
+           we do not already know the isogeny number of ``self``.
 
-        EXAMPLES: We test the none_if_not_known flag first::
+        EXAMPLES: We test the ``none_if_not_known`` flag first::
 
             sage: J0(33).isogeny_number(none_if_not_known=True) is None
             True
 
         Of course, `J_0(33)` is not simple, so this function
-        raises a ValueError::
+        raises a :class:`ValueError`::
 
             sage: J0(33).isogeny_number()
             Traceback (most recent call last):
