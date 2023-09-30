@@ -28,7 +28,7 @@ EXAMPLES::
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
     sage: braid_monodromy(f)
-    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0})
+    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0}, {})
     sage: fundamental_group(f)
     Finitely presented group < x0 |  >
 """
@@ -226,7 +226,7 @@ def corrected_voronoi_diagram(points):
 
     INPUT:
 
-    - ``points`` -- a list of complex numbers
+    - ``points`` -- a tuple of complex numbers
 
     OUTPUT:
 
@@ -371,7 +371,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
             print(prec)
 
 
-def voronoi_cells(V):
+def voronoi_cells(V, vertical_lines=[]):
     r"""
     Compute the graph, the boundary graph, a base point, a positive orientation
     of the boundary graph, and the dual graph of a corrected Voronoi diagram.
@@ -389,13 +389,16 @@ def voronoi_cells(V):
       of ``E``) with identical first and last elements)
     - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
       by the compact regions of ``V`` and the edges by their dual edges.
+    - ``vertical_regions`` -- dictionnary for the regions associated with vertical lines.
 
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import corrected_voronoi_diagram, voronoi_cells
         sage: points = (2, I, 0.000001, 0, 0.000001*I)
         sage: V = corrected_voronoi_diagram(points)
-        sage: G, E, p, EC, DG = voronoi_cells(V)
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V)
+        sage: VR == dict()
+        True
         sage: Gv = G.vertices(sort=True)
         sage: Ge = G.edges(sort=True)
         sage: len(Gv), len(Ge)
@@ -444,7 +447,10 @@ def voronoi_cells(V):
         sage: edg[-1] in Ge
         True
     """
-    compact_regions = [_ for _ in V.regions().values() if _.is_compact()]
+    regions = V.regions()
+    points = [p for p in V.regions().keys() if V.regions()[p].is_compact()]
+    compact_regions = [regions[p] for p in points]
+    vertical_regions = {j: regions[points[j]] for j in vertical_lines}
     non_compact_regions = [_ for _ in V.regions().values() if not _.is_compact()]
     G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format='list_of_edges')
     E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format='list_of_edges')
@@ -461,7 +467,7 @@ def voronoi_cells(V):
         regs = [v for v in DG.vertices(sort=True) if a in v[1] and b in v[1]]
         if len(regs) == 2:
             DG.add_edge(regs[0], regs[1], e)
-    return (G, E, p, EC, DG)
+    return (G, E, p, EC, DG, vertical_regions)
 
 
 def followstrand(f, factors, x0, x1, y0a, prec=53):
@@ -908,7 +914,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     return initialbraid * centralbraid * finalbraid
 
 
-def geometric_basis(G, E, EC0, p, dual_graph):
+def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -929,59 +935,48 @@ def geometric_basis(G, E, EC0, p, dual_graph):
       by a tuple whose first element is the an integer for the position and the
       second one is the cyclic ordered list of vertices in the region.
 
-    OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
-    Each path is a list of vertices, that form a closed path in ``G``, based at
-    ``p``, that goes to a region, surrounds it, and comes back by the same
-    path it came. The concatenation of all these paths is equivalent to ``E``.
+    - ``vertical_regions`` -- dictionary with keys the vertices of ``dual_graph``
+      to fix regions associated with vertical lines
++
+    OUTPUT: A geometric basis and a dictionnary.
+
+    The geometric basis is formed by a list of sequences of paths. Each path is a
+    ist of vertices, that form a closed path in ``G``, based at ``p``, that goes
+    to a region, surrounds it, and comes back by the same path it came. The
+    concatenation of all these paths is equivalent to ``E``.
+
+    The dictionnary fixes the positions of the generators associated with the vertical lines.
 
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, voronoi_cells
         sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
         sage: V = VoronoiDiagram(points)
-        sage: G, E, p, EC, DG = voronoi_cells(V)
-        sage: geometric_basis(G, E, EC, p, DG)
-        [[A vertex at (-2, -2),
-          A vertex at (2, -2),
-          A vertex at (2, 2),
-          A vertex at (1/2, 1/2),
-          A vertex at (1/2, -1/2),
-          A vertex at (2, -2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (2, -2),
-          A vertex at (1/2, -1/2),
-          A vertex at (1/2, 1/2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (1/2, -1/2),
-          A vertex at (2, -2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (2, -2),
-          A vertex at (1/2, -1/2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (1/2, 1/2),
-          A vertex at (2, 2),
-          A vertex at (-2, 2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (-2, 2),
-          A vertex at (-2, -2)]]
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V)
+        sage: geometric_basis(G, E, EC, p, DG, dict())
+        ([[A vertex at (-2, -2), A vertex at (2, -2), A vertex at (2, 2),
+           A vertex at (1/2, 1/2), A vertex at (1/2, -1/2),
+           A vertex at (2, -2), A vertex at (-2, -2)],
+          [A vertex at (-2, -2), A vertex at (2, -2), A vertex at (1/2, -1/2),
+           A vertex at (1/2, 1/2), A vertex at (-1/2, 1/2),
+           A vertex at (-1/2, -1/2), A vertex at (1/2, -1/2),
+           A vertex at (2, -2), A vertex at (-2, -2)],
+          [A vertex at (-2, -2), A vertex at (2, -2), A vertex at (1/2, -1/2),
+           A vertex at (-1/2, -1/2), A vertex at (-2, -2)],
+          [A vertex at (-2, -2), A vertex at (-1/2, -1/2),
+           A vertex at (-1/2, 1/2), A vertex at (1/2, 1/2),
+           A vertex at (2, 2), A vertex at (-2, 2), A vertex at (-1/2, 1/2),
+           A vertex at (-1/2, -1/2), A vertex at (-2, -2)],
+          [A vertex at (-2, -2), A vertex at (-1/2, -1/2),
+           A vertex at (-1/2, 1/2), A vertex at (-2, 2),
+           A vertex at (-2, -2)]], {})
     """
     i = EC0.index(p)
     EC = EC0[i:-1] + EC0[:i + 1]   # A counterclockwise eulerian circuit on the boundary, starting and ending at p
     if G.size() == E.size():
         if E.is_cycle():
-            return [EC]
+            vert_dict = vert_dict = {0: vertical_regions[p] for p in vertical_regions.keys()}
+            return [[EC], vert_dict]
     InternalEdges = [_ for _ in G.edges(sort=True) if _ not in E.edges(sort=True)]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
@@ -1066,9 +1061,18 @@ def geometric_basis(G, E, EC0, p, dual_graph):
         EC1 = list(EC[qi:] + EC[1:ri]) + list(reversed(cutpath))
         EC2 = cutpath + list(EC[ri + 1:qi + 1])
 
-    gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
-    gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
+    regs1 = [v[1] for v in Gd1.vertices()]
+    VR1 = {p: vertical_regions[p] for p in vertical_regions.keys() if p in regs1}
+    regs2 = [v[1] for v in Gd2.vertices()]
+    VR2 = {p: vertical_regions[p] for p in vertical_regions.keys() if p in regs2}
 
+    gb1, vd1 = geometric_basis(G1, E1, EC1, q, Gd1, VR1)
+    gb2, vd2 = geometric_basis(G2, E2, EC2, q, Gd2, VR2)
+
+    vd = {j: vd1[j] for j in vd1.keys()}
+    m = len(gb1)
+    for j in vd2.keys():
+        vd[j + m] = vd2[j]
     reverse_connecting = list(reversed(connecting_path))
     resul = [connecting_path + path + reverse_connecting
              for path in gb1 + gb2]
@@ -1082,7 +1086,7 @@ def geometric_basis(G, E, EC0, p, dual_graph):
                     i -= 1
             else:
                 i += 1
-    return resul
+    return (resul, vd)
 
 
 def strand_components(f, flist, p1):
@@ -1131,7 +1135,7 @@ def strand_components(f, flist, p1):
     return (roots_base, strands)
 
 
-def braid_monodromy(f, arrangement=()):
+def braid_monodromy(f, arrangement=(), vertical=False):
     r"""
     Compute the braid monodromy of a projection of the curve defined by
     a polynomial.
@@ -1144,6 +1148,12 @@ def braid_monodromy(f, arrangement=()):
     - ``arrangement`` -- an optional tuple of polynomials whose product
       equals ``f``.
 
+    - `vertical` .. boolean (default: ``False`). If set to ``True``, ``arrangements``
+      contains more than one polynomial, some of them is of degree `1` in `x`
+      and degree `0` in `y`, and none of the other components have vertical asymptotes,
+      then these components are marked and not used for
+      the computation of the braid monodromy.
+
     OUTPUT:
 
     A list of braids and a dictionary.
@@ -1151,12 +1161,15 @@ def braid_monodromy(f, arrangement=()):
     each of these paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``. The dictionary assigns each
     strand to the index of the corresponding factor in ``arrangement``.
+    If ``vertical`` is set to ``True`` only the vertical lines are not used
+    and the list of their indices are is the second element of the output.
 
     .. NOTE::
 
         The projection over the `x` axis is used if there are no vertical
         asymptotes. Otherwise, a linear change of variables is done to fall
-        into the previous case.
+        into the previous case except if the only vertical asymptotes are lines
+        and ``vertical=True``..
 
     .. TODO::
 
@@ -1173,7 +1186,7 @@ def braid_monodromy(f, arrangement=()):
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0})
+          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0}, {})
         sage: flist = (x^2 - y^3, x + 3*y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist)
         sage: bm1[0] == bm[0]
@@ -1181,9 +1194,9 @@ def braid_monodromy(f, arrangement=()):
         sage: bm1[1]
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
-        ([], {})
+        ([], {}, {})
         sage: braid_monodromy(x*y^2 - 1)
-        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0})
+        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {})
     """
     global roots_interval_cache
     F = fieldI(f.base_ring())
@@ -1194,29 +1207,52 @@ def braid_monodromy(f, arrangement=()):
     else:
         arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
     x, y = f.parent().gens()
-    glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor())
+    dic_vertical = dict()
+    if vertical:
+        for f0 in arrangement1:
+            vertical_asymptote = f0.degree(y) < f0.degree() and f0.degree() > 1
+            if vertical_asymptote:
+                dic_vertical = dict()
+                break
+            dic_vertical[f0] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
+    glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor()
+                  if f0 not in dic_vertical.keys())
     g = f.parent()(prod(glist))
     d = g.degree(y)
-    while not g.coefficient(y**d) in F:
-        g = g.subs({x: x + y})
-        d = g.degree(y)
-        arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
-        glist = tuple(f1.subs({x: x + y}) for f1 in glist)
+    if not dic_vertical:
+        while not g.coefficient(y**d) in F:
+            g = g.subs({x: x + y})
+            d = g.degree(y)
+            arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
+            glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     if d > 0:
         disc = discrim(glist)
     else:
         disc = []
-    if len(disc) == 0:
-        result = []
+    vertical_braid = dict()
+    transversal = []
+    for f0 in arrangement1:
+        if f0 in dic_vertical.keys():
+            pt = [j for j, t in enumerate(disc) if f0(x=t) == 0]
+            if pt:
+                vertical_braid[f0] = pt[0]
+            else:
+                transversal.append()
+    if not disc:
+        vertical_braids = {j: j for j, p in enumerate(transversal)}
+        if d > 1:
+            result = [BraidGroup(d).one() for p in transversal]
+        else:
+            result = [() for p in transversal]
         p1 = F(0)
         roots_base, strands = strand_components(g, arrangement1, p1)
-        return ([], strands)
+        return (result, strands, vertical_braids)
     V = corrected_voronoi_diagram(tuple(disc))
-    G, E, p, EC, DG = voronoi_cells(V)
+    G, E, p, EC, DG, VR = voronoi_cells(V)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
     roots_base, strands = strand_components(g, arrangement1, p1)
-    geombasis = geometric_basis(G, E, EC, p, DG)
+    geombasis, vd = geometric_basis(G, E, EC, p, DG, VR)
     segs = set()
     for p in geombasis:
         for s in zip(p[:-1], p[1:]):
@@ -1252,7 +1288,19 @@ def braid_monodromy(f, arrangement=()):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    return (result, strands)
+    vertical_braids = dict()
+    r = len(result)
+    t = 0
+    for j, f0 in enumerate(arrangement1):
+        if f0 in dic_vertical.keys():
+            result.append(B.one())
+            if f0 in vertical_braid.keys():
+                k = vertical_braid[f0]
+                vertical_braids[k] = j
+            else:
+                vertical_braids[r + t] = j
+                t += 1
+    return (result, strands, vertical_braids)
 
 
 def conjugate_positive_form(braid):
@@ -1713,7 +1761,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         bm = []
         dic = dict()
     else:
-        bm, dic = braid_monodromy(f, flist1)
+        bm, dic, dv = braid_monodromy(f, flist1)
     g = fundamental_group_from_braid_mon(bm, degree=d, simplified=False, projective=projective, puiseux=puiseux)
     if simplified:
         hom = g.simplification_isomorphism()
