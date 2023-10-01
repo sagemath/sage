@@ -336,8 +336,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         They are defined as:
         `G^*_k = \left(L^*_j\right)^2Q^*_{ii}-L^*_iL^*_jQ^*_{ij}+\left(L^*_i\right)^2Q^*_{jj}`
-        where {i, j, k} is some permutation of (0, 1, 2) and * is either
-        x (``component=1``) or y (``component=0``).
+        where `(i, j, k)` is some permutation of `(0, 1, 2)` and `*` is either
+        `x` (``component=1``) or `y` (``component=0``).
 
         INPUT:
 
@@ -345,7 +345,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``k`` -- Integer: 0, 1 or 2
 
-        OUTPUT: polynomial in terms of either y (``component=0``) or x (``component=1``)
+        OUTPUT: polynomial in terms of either `y` (``component=0``) or `x` (``component=1``)
 
         EXAMPLES::
 
@@ -875,11 +875,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         return [xFibers,yFibers]
 
     @cached_method
-    def degenerate_primes(self,check=True):
+    def degenerate_primes(self, check=True):
         r"""
-        Determine which primes `p` self has degenerate fibers over `GF(p)`.
+        Determine which primes `p` self has degenerate fibers over `\GF{p}`.
 
-        If check is False, then may return primes that do not have degenerate fibers.
+        If ``check`` is ``False``, then may return primes that do not have degenerate fibers.
         Raises an error if the surface is degenerate.
         Works only for ``ZZ`` or ``QQ``.
 
@@ -888,15 +888,15 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         ALGORITHM:
 
         `p` is a prime of bad reduction if and only if the defining
-        polynomials of self plus the G and H polynomials have a common
+        polynomials of ``self`` plus the G and H polynomials have a common
         zero. Or stated another way, `p` is a prime of bad reduction if
         and only if the radical of the ideal defined by the defining
-        polynomials of self plus the G and H polynomials is not
+        polynomials of ``self`` plus the G and H polynomials is not
         `(x_0,x_1,\ldots,x_N)`.  This happens if and only if some
         power of each `x_i` is not in the ideal defined by the
-        defining polynomials of self (with G and H). This last condition
+        defining polynomials of ``self`` (with G and H). This last condition
         is what is checked. The lcm of the coefficients of the monomials `x_i` in
-        a groebner basis is computed. This may return extra primes.
+        a Groebner basis is computed. This may return extra primes.
 
         OUTPUT: List of primes.
 
@@ -915,9 +915,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         PP = self.ambient_space()
         if PP.base_ring() != ZZ and PP.base_ring() != QQ:
             if PP.base_ring() in _NumberFields or isinstance(PP.base_ring(), sage.rings.abc.Order):
-                raise NotImplementedError("must be ZZ or QQ")
+                raise NotImplementedError("only implemented for ZZ and QQ")
             else:
-                raise TypeError("must be over a number field")
+                raise TypeError("must be over a number field or number field order")
         if self.is_degenerate():
             raise TypeError("surface is degenerate at all primes")
         RR = PP.coordinate_ring()
