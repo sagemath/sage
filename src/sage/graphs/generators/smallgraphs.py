@@ -455,8 +455,8 @@ def Cell600(embedding=1):
 
     EXAMPLES::
 
-        sage: # long time
-        sage: g = graphs.Cell600()                                                      # needs sage.rings.number_field
+        sage: # long time, needs sage.rings.number_field
+        sage: g = graphs.Cell600()
         sage: g.size()
         720
         sage: g.is_regular(12)
@@ -531,8 +531,8 @@ def Cell120():
 
     EXAMPLES::
 
-        sage: # long time
-        sage: g = graphs.Cell120()                                                      # needs sage.rings.number_field
+        sage: # long time, needs sage.rings.number_field
+        sage: g = graphs.Cell120()
         sage: g.size()
         1200
         sage: g.is_regular(4)
@@ -4754,18 +4754,19 @@ def MathonStronglyRegularGraph(t):
 
     EXAMPLES::
 
+        sage: # long time, needs sage.libs.gap
         sage: from sage.graphs.generators.smallgraphs import MathonStronglyRegularGraph
-        sage: G = MathonStronglyRegularGraph(0)         # long time                     # needs sage.libs.gap
-        sage: G.is_strongly_regular(parameters=True)   # long time
+        sage: G = MathonStronglyRegularGraph(0)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 243, 82, 72)
 
     TESTS::
 
-        sage: # long time
-        sage: G = graphs.MathonStronglyRegularGraph(1)                                  # needs sage.libs.gap
+        sage: # long time, needs sage.libs.gap
+        sage: G = graphs.MathonStronglyRegularGraph(1)
         sage: G.is_strongly_regular(parameters=True)
         (784, 270, 98, 90)
-        sage: G = graphs.MathonStronglyRegularGraph(2)                                  # needs sage.libs.gap
+        sage: G = graphs.MathonStronglyRegularGraph(2)
         sage: G.is_strongly_regular(parameters=True)
         (784, 297, 116, 110)
 
@@ -4790,11 +4791,11 @@ def JankoKharaghaniGraph(v):
     EXAMPLES::
 
         sage: g = graphs.JankoKharaghaniGraph(936)      # long time                     # needs sage.libs.pari
-        sage: g.is_strongly_regular(parameters=True)  # long time
+        sage: g.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.pari
         (936, 375, 150, 150)
 
-        sage: g = graphs.JankoKharaghaniGraph(1800)  # not tested (30s)
-        sage: g.is_strongly_regular(parameters=True)  # not tested (30s)
+        sage: g = graphs.JankoKharaghaniGraph(1800)     # not tested (30s)
+        sage: g.is_strongly_regular(parameters=True)    # not tested (30s)
         (1800, 1029, 588, 588)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -4881,8 +4882,8 @@ def JankoKharaghaniTonchevGraph():
 
     EXAMPLES::
 
-        sage: Gamma=graphs.JankoKharaghaniTonchevGraph()        # long time             # needs sage.libs.gap
-        sage: Gamma.is_strongly_regular(parameters=True)  # long time
+        sage: Gamma = graphs.JankoKharaghaniTonchevGraph()      # long time             # needs sage.libs.gap
+        sage: Gamma.is_strongly_regular(parameters=True)        # long time             # needs sage.libs.gap
         (324, 153, 72, 72)
     """
     from sage.misc.misc_c import prod
