@@ -414,7 +414,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.symbolic
+            sage: # needs sympy sage.modules sage.symbolic
             sage: predicate(x, y, z) = sqrt(x^2 + y^2 + z^2) < 12; predicate
             (x, y, z) |--> sqrt(x^2 + y^2 + z^2) < 12
             sage: SmallTriples = ConditionSet(ZZ^3, predicate); SmallTriples
@@ -427,10 +427,9 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             True
             sage: (5, 7, 9) in ST
             False
-
-            sage: Interval = ConditionSet(RR, x >= -7, x <= 4, vars=[x]); Interval      # needs sage.symbolic
+            sage: Interval = ConditionSet(RR, x >= -7, x <= 4, vars=[x]); Interval
             { x ∈ Real Field with 53 bits of precision : x >= -7, x <= 4 }
-            sage: Interval._sympy_()                                                    # needs sympy sage.symbolic
+            sage: Interval._sympy_()
             ConditionSet(x, (x >= -7) & (x <= 4),
                             SageSet(Real Field with 53 bits of precision))
 
