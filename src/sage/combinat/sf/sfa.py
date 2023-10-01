@@ -1702,7 +1702,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
                 sage: m.degree_negation(m(e[3]))
                 -m[1, 1, 1]
             """
-            return self.sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                        for lam, a in self(element) ])
 
     class ElementMethods:
@@ -1729,7 +1729,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
                 sage: parent(x) is m
                 True
             """
-            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                                 for lam, a in self ])
 
         def degree_zero_coefficient(self):
@@ -2279,9 +2279,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             known_cache_part = {}
             f = known_function(pn[i])
             for j in range(len_pn):
-                if lower_triangular and j>i:
+                if lower_triangular and j > i:
                     break
-                if upper_triangular and i>j:
+                if upper_triangular and i > j:
                     continue
                 value = f(pn[j])
                 if value != zero:
@@ -2711,7 +2711,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                 ext = self([])
             else:
                 ext = 0
-            return ext + self(sum([s([n]) for n in degrees if n!=0]))
+            return ext + self(sum([s([n]) for n in degrees if n != 0]))
 
         #For each k in nu, we compute the inner plethysm of
         #p_k with p_x
@@ -2719,7 +2719,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         #To get the final answer, we compute the inner tensor product
         #of all the symmetric functions in res
-        return self(reduce(lambda x, y: 0 if x==0 else x.itensor(y), res))
+        return self(reduce(lambda x, y: 0 if x == 0 else x.itensor(y), res))
 
     def _dual_basis_default(self):
         """

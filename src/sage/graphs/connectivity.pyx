@@ -1180,8 +1180,7 @@ def edge_connectivity(G,
             return 0
         elif vertices:
             return [0, [], [{}, {}]]
-        else:
-            return [0, []]
+        return [0, []]
 
     if implementation == "boost":
         from sage.graphs.base.boost_graph import edge_connectivity
@@ -1278,29 +1277,27 @@ def edge_connectivity(G,
     if value_only:
         return obj
 
+    val = [obj]
+    in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+
+    if g.is_directed():
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
     else:
-        val = [obj]
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
 
-        in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val.append(edges)
 
-        if g.is_directed():
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
-        else:
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
+    if vertices:
+        a = {}
+        b = {}
+        for v in g:
+            if in_set[0, v]:
+                a.add(v)
+            else:
+                b.add(v)
+        val.append([a, b])
 
-        val.append(edges)
-
-        if vertices:
-            a = {}
-            b = {}
-            for v in g:
-                if in_set[0, v]:
-                    a.add(v)
-                else:
-                    b.add(v)
-            val.append([a, b])
-
-        return val
+    return val
 
 
 def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0,
@@ -1506,8 +1503,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             return max(g.order() - 1, 0)
         elif not sets:
             return max(g.order() - 1, 0), []
-        else:
-            return max(g.order() - 1, 0), [], [[], []]
+        return max(g.order() - 1, 0), [], [[], []]
 
     if value_only:
         if G.is_directed():
@@ -3301,8 +3297,7 @@ cdef class TriconnectivitySPQR:
         cdef _LinkedListNode * head = _LinkedList_get_head(self.highpt[v])
         if head:
             return head.data
-        else:
-            return 0
+        return 0
 
     cdef __del_high(self, int e_index):
         """

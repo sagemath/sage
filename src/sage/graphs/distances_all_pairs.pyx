@@ -629,8 +629,7 @@ def is_distance_regular(G, parameters=False):
         bi[diameter] = None
         ci[0] = None
         return bi, ci
-    else:
-        return True
+    return True
 
 
 ###################################
@@ -1882,8 +1881,7 @@ def diameter(G, algorithm=None, source=None):
     if LB < 0 or LB > n:
         from sage.rings.infinity import Infinity
         return +Infinity
-    else:
-        return int(LB)
+    return int(LB)
 
 
 ###########
@@ -2722,8 +2720,7 @@ def floyd_warshall(gg, paths=True, distances=False):
     if not gverts:
         if distances and paths:
             return {}, {}
-        else:
-            return {}
+        return {}
 
     cdef unsigned int n = max(gverts) + 1
 

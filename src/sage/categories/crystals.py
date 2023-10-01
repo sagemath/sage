@@ -919,7 +919,7 @@ class Crystals(Category_singleton):
 
         def latex_file(self, filename):
             r"""
-            Export a file, suitable for pdflatex, to 'filename'.
+            Export a file, suitable for pdflatex, to ``filename``.
 
             This requires
             a proper installation of ``dot2tex`` in sage-python. For more
@@ -954,7 +954,7 @@ class Crystals(Category_singleton):
         def _latex_(self, **options):
             r"""
             Returns the crystal graph as a latex string. This can be exported
-            to a file with self.latex_file('filename').
+            to a file with ``self.latex_file('filename')``.
 
             EXAMPLES::
 
@@ -977,15 +977,9 @@ class Crystals(Category_singleton):
 
         def metapost(self, filename, thicklines=False, labels=True, scaling_factor=1.0, tallness=1.0):
             r"""
-            Use C.metapost("filename.mp",[options]), where options can be:
+            Export a file, suitable for MetaPost, to ``filename``.
 
-            thicklines = True (for thicker edges) labels = False (to suppress
-            labeling of the vertices) scaling_factor=value, where value is a
-            floating point number, 1.0 by default. Increasing or decreasing the
-            scaling factor changes the size of the image. tallness=1.0.
-            Increasing makes the image taller without increasing the width.
-
-            Root operators e(1) or f(1) move along red lines, e(2) or f(2)
+            Root operators `e(1)` or `f(1)` move along red lines, `e(2)` or `f(2)`
             along green. The highest weight is in the lower left. Vertices with
             the same weight are kept close together. The concise labels on the
             nodes are strings introduced by Berenstein and Zelevinsky and
@@ -994,19 +988,33 @@ class Crystals(Category_singleton):
 
             For Cartan types B2 or C2, the pattern has the form
 
-            a2 a3 a4 a1
+            `a_2 a_3 a_4 a_1`
 
-            where c\*a2 = a3 = 2\*a4 =0 and a1=0, with c=2 for B2, c=1 for C2.
-            Applying e(2) a1 times, e(1) a2 times, e(2) a3 times, e(1) a4 times
+            where `c*a_2 = a_3 = 2*a_4 = 0` and `a_1=0`, with `c=2` for B2, `c=1` for C2.
+            Applying `e(2)` `a_1` times, `e(1)` `a_2` times, `e(2)` `a_3` times, `e(1)` `a_4` times
             returns to the highest weight. (Observe that Littelmann writes the
-            roots in opposite of the usual order, so our e(1) is his e(2) for
+            roots in opposite of the usual order, so our `e(1)` is his `e(2)` for
             these Cartan types.) For type A2, the pattern has the form
 
-            a3 a2 a1
+            `a_3 a_2 a_1`
 
-            where applying e(1) a1 times, e(2) a2 times then e(3) a1 times
+            where applying `e(1)` `a_3` times, `e(2)` `a_2` times then `e(1)` `a_1` times
             returns to the highest weight. These data determine the vertex and
             may be translated into a Gelfand-Tsetlin pattern or tableau.
+
+            INPUT:
+
+            - ``filename`` -- name of the output file, e.g., ``'filename.mp'``
+
+            - ``thicklines`` -- (default: ``True``) for thicker edges
+
+            - ``labels`` -- (default: False) to suppress labeling of the vertices
+
+            - ``scaling_factor`` -- (default: ``1.0``) Increasing or decreasing the
+              scaling factor changes the size of the image
+
+            - ``tallness`` -- (default: ``1.0``) Increasing makes the image taller
+              without increasing the width
 
             EXAMPLES::
 
@@ -1450,7 +1458,7 @@ class Crystals(Category_singleton):
 
         def f_string(self, list):
             r"""
-            Applies `f_{i_r} \cdots f_{i_1}` to self for ``list`` as
+            Applies `f_{i_r} \cdots f_{i_1}` to ``self`` for ``list`` as
             `[i_1, ..., i_r]`
 
             EXAMPLES::
@@ -1470,7 +1478,7 @@ class Crystals(Category_singleton):
 
         def e_string(self, list):
             r"""
-            Applies `e_{i_r} \cdots e_{i_1}` to self for ``list`` as
+            Applies `e_{i_r} \cdots e_{i_1}` to ``self`` for ``list`` as
             `[i_1, ..., i_r]`
 
             EXAMPLES::
@@ -1562,11 +1570,11 @@ class Crystals(Category_singleton):
         def to_highest_weight(self, index_set=None):
             r"""
             Return the highest weight element `u` and a list `[i_1,...,i_k]`
-            such that `self = f_{i_1} ... f_{i_k} u`, where `i_1,...,i_k` are
+            such that ``self`` `= f_{i_1} ... f_{i_k} u`, where `i_1,...,i_k` are
             elements in ``index_set``.
 
-            By default the index set is assumed to be
-            the full index set of self.
+            By default the ``index_set`` is assumed to be
+            the full index set of ``self``.
 
             EXAMPLES::
 
@@ -1603,11 +1611,11 @@ class Crystals(Category_singleton):
         def to_lowest_weight(self, index_set=None):
             r"""
             Return the lowest weight element `u` and a list `[i_1,...,i_k]`
-            such that `self = e_{i_1} ... e_{i_k} u`, where `i_1,...,i_k` are
+            such that ``self`` `= e_{i_1} ... e_{i_k} u`, where `i_1,...,i_k` are
             elements in ``index_set``.
 
-            By default the index set is assumed to be the full index
-            set of self.
+            By default the ``index_set`` is assumed to be the full index
+            set of ``self``.
 
             EXAMPLES::
 

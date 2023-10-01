@@ -491,9 +491,8 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
         sage: (out, err, ret) = test_executable(["sage", "--cython"])
         sage: print(err)
-        Cython (http://cython.org) is a compiler for code written in the
-        Cython language.  Cython is based on Pyrex by Greg Ewing.
         ...
+        cython: error: cython: Need at least one source file
 
         sage: def has_tty():
         ....:     try:

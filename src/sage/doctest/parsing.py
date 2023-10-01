@@ -204,6 +204,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
+    if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
+        # Enforce two spaces before comment
+        first_line_sans_comments = first_line_sans_comments.rstrip() + "  "
 
     if return_string_sans_tags:
         # skip non-tag comments that precede the first tag comment
@@ -1214,6 +1217,12 @@ class SageDocTestParser(doctest.DocTestParser):
                         if extra:
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
+                                continue
+                            if any(tag in ['webbrowser'] for tag in extra):
+                                # never probe
+                                continue
+                            if any(tag in ['got', 'expected', 'nameerror'] for tag in extra):
+                                # never probe special tags added by sage-fixdoctests
                                 continue
                             if all(tag in persistent_optional_tags for tag in extra):
                                 # don't probe if test is only conditional

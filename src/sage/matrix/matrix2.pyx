@@ -89,6 +89,7 @@ from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
@@ -101,6 +102,8 @@ import sage.modules.free_module
 from . import berlekamp_massey
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.matrix.matrix_misc import permanental_minor_polynomial
+
+from sage.misc.misc_c import prod
 
 # used to deprecate only adjoint method
 from sage.misc.superseded import deprecated_function_alias
@@ -541,7 +544,7 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: matrix equation has no solutions
 
-        A ValueError is raised if the input is invalid::
+        A :class:`ValueError` is raised if the input is invalid::
 
             sage: A = matrix(QQ,4,2, [0, -1, 1, 0, -2, 2, 1, 0])
             sage: B = matrix(QQ,2,2, [1, 0, 1, -1])
@@ -2184,7 +2187,7 @@ cdef class Matrix(Matrix1):
         Compute the determinant of the upper-left level x level submatrix
         of self. Does not handle degenerate cases, level MUST be >= 2
         """
-        cdef Py_ssize_t n, i
+        cdef Py_ssize_t i
         if level == 2:
             return self.get_unsafe(0,0) * self.get_unsafe(1,1) - self.get_unsafe(0,1) * self.get_unsafe(1,0)
         else:
@@ -3316,8 +3319,7 @@ cdef class Matrix(Matrix1):
             3
         """
         if self.nrows() == 0 or self.ncols() == 0:
-            return ZZ(1)
-        R = self.base_ring()
+            return ZZ.one()
         x = self.list()
         try:
             d = x[0].denominator()
@@ -3905,7 +3907,7 @@ cdef class Matrix(Matrix1):
         """
         tm = verbose("computing right kernel matrix over a domain for %sx%s matrix"
                      % (self.nrows(), self.ncols()), level=1)
-        d, u, v = self.smith_form()
+        d, _, v = self.smith_form()
         basis = []
         cdef Py_ssize_t i, nrows = self._nrows
         for i in range(self._ncols):
@@ -6098,7 +6100,7 @@ cdef class Matrix(Matrix1):
         # subrings of fields of which an algebraic closure is implemented.
         if format is None:
             try:
-                F = self.base_ring().fraction_field().algebraic_closure()
+                self.base_ring().fraction_field().algebraic_closure()
                 return 'all'
             except (NotImplementedError, AttributeError):
                 return 'galois'
@@ -6922,7 +6924,6 @@ cdef class Matrix(Matrix1):
             from warnings import warn
             warn("Using generic algorithm for an inexact ring, which may result in garbage from numerical precision issues.")
 
-        V = []
         from sage.categories.homset import hom
         eigenspaces = self.eigenspaces_left(format='galois', algebraic_multiplicity=True)
         evec_list=[]
@@ -8068,7 +8069,7 @@ cdef class Matrix(Matrix1):
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
-        tm = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm'%(self._nrows, self._ncols, algorithm))
+        _ = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm))
         self.check_mutability()
         cdef Matrix A
 
@@ -8367,7 +8368,6 @@ cdef class Matrix(Matrix1):
         """
         if subdivide not in [True, False]:
             raise TypeError("subdivide must be True or False, not %s" % subdivide)
-        R = self.base_ring()
         ident = self.matrix_space(self.nrows(), self.nrows()).one()
         E = self.augment(ident)
         extended = E.echelon_form(**kwds)
@@ -12227,7 +12227,7 @@ cdef class Matrix(Matrix1):
         Returns a pair (F, C) such that the rows of C form a symplectic
         basis for self and F = C \* self \* C.transpose().
 
-        Raises a ValueError if not over a field, or self is not
+        Raises a :class:`ValueError` if not over a field, or self is not
         anti-symmetric, or self is not alternating.
 
         Anti-symmetric means that `M = -M^t`. Alternating means
@@ -15396,7 +15396,7 @@ cdef class Matrix(Matrix1):
         if p == 2:
             A = self.change_ring(CDF)
             A = A.conjugate().transpose() * A
-            U, S, V = A.SVD()
+            S = A.SVD()[1]
             return max(S.list()).real().sqrt()
 
         A = self.apply_map(abs, R=RDF)
@@ -15887,7 +15887,6 @@ cdef class Matrix(Matrix1):
             dd, uu, vv = mm.smith_form(transformation=True)
         else:
             dd = mm.smith_form(transformation=False)
-        mone = self.new_matrix(1, 1, [1])
         d = dd.new_matrix(1,1,[t[0,0]]).block_sum(dd)
         if transformation:
             u = uu.new_matrix(1,1,[1]).block_sum(uu) * u
@@ -15901,6 +15900,148 @@ cdef class Matrix(Matrix1):
             return dp, up*u, v*vp
         else:
             return dp
+
+    def fitting_ideal(self, i):
+        r"""
+        Return the `i`-th Fitting ideal of the matrix. This is the ideal generated
+        by the `n - i` minors, where `n` is the number of columns.
+
+        INPUT:
+
+        ``i`` -- an integer
+
+        OUTPUT:
+
+        An ideal on the base ring.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: M = matrix(R, [[2*x-z, 0, y-z^2, 1], [0, z - y, z - x, 0],[z - y, x^2 - y, 0, 0]])
+            sage: M
+            [ 2*x - z        0 -z^2 + y        1]
+            [       0   -y + z   -x + z        0]
+            [  -y + z  x^2 - y        0        0]
+            sage: [R.ideal(M.minors(i)) == M.fitting_ideal(4-i) for i in range(5)]
+            [True, True, True, True, True]
+            sage: M.fitting_ideal(0)
+            Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(1)
+            Ideal (2*x^4 - 3*x^3*z + x^2*z^2 + y^2*z^2 - 2*y*z^3 + z^4 - 2*x^2*y - y^3 + 3*x*y*z + 2*y^2*z - 2*y*z^2, -x^3 + x^2*z + x*y - y*z, y^2 - 2*y*z + z^2, x*y - x*z - y*z + z^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(3)
+            Ideal (2*x - z, -z^2 + y, 1, -y + z, -x + z, -y + z, x^2 - y) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(4)
+            Ideal (1) of Multivariate Polynomial Ring in x, y, z over Rational Field
+
+
+        If the base ring is a field, the Fitting ideals are zero under the corank::
+
+            sage: M = matrix(QQ, [[2,1,3,5],[4,2,6,6],[0,3,2,0]])
+            sage: M
+            [2 1 3 5]
+            [4 2 6 6]
+            [0 3 2 0]
+            sage: M.fitting_ideal(0)
+            Principal ideal (0) of Rational Field
+            sage: M.fitting_ideal(1)
+            Principal ideal (1) of Rational Field
+            sage: M.fitting_ideal(2)
+            Principal ideal (1) of Rational Field
+            sage: M.fitting_ideal(3)
+            Principal ideal (1) of Rational Field
+            sage: M.fitting_ideal(4)
+            Principal ideal (1) of Rational Field
+
+
+        In the case of principal ideal domains, it is given by the elementary
+        divisors::
+
+            sage: M = matrix([[2,1,3,5],[4,2,6,6],[0,3,2,0]])
+            sage: M
+            [2 1 3 5]
+            [4 2 6 6]
+            [0 3 2 0]
+            sage: M.fitting_ideal(0)
+            Principal ideal (0) of Integer Ring
+            sage: M.fitting_ideal(1)
+            Principal ideal (4) of Integer Ring
+            sage: M.fitting_ideal(2)
+            Principal ideal (1) of Integer Ring
+            sage: M.fitting_ideal(3)
+            Principal ideal (1) of Integer Ring
+            sage: M.fitting_ideal(4)
+            Principal ideal (1) of Integer Ring
+            sage: M.elementary_divisors()
+            [1, 1, 4]
+
+        This is also true for univariate polynomials over a field::
+
+            sage: R.<x> = QQ[]
+            sage: M = matrix(R,[[x^2-2*x+1, x-1,x^2-1],[0,x+1,1]])
+            sage: M.fitting_ideal(0)
+            Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+            sage: M.fitting_ideal(1)
+            Principal ideal (x - 1) of Univariate Polynomial Ring in x over Rational Field
+            sage: M.fitting_ideal(2)
+            Principal ideal (1) of Univariate Polynomial Ring in x over Rational Field
+            sage: M.smith_form()[0]
+            [    1     0     0]
+            [    0 x - 1     0]
+
+        """
+        R = self.base_ring()
+        if not R.is_exact():
+            raise NotImplementedError("Fitting ideals over non-exact rings not implemented at present")
+        n = self.ncols()
+        rank_minors = n - i
+        if rank_minors > self.nrows():
+            return R.ideal([R.zero()])
+        elif rank_minors <= 0:
+            return R.ideal([R.one()])
+        elif rank_minors == 1:
+            return R.ideal(self.coefficients())
+        if R in _Fields:
+            if self.rank() >= rank_minors:
+                return R.ideal([1])
+            else:
+                return R.ideal([0])
+        try:
+            elemdiv = self.elementary_divisors()
+            if rank_minors > len(elemdiv):
+                return R.ideal([0])
+            return R.ideal(prod(elemdiv[:rank_minors]))
+        except (TypeError, NotImplementedError, ArithmeticError):
+            pass
+        for (nr,r) in enumerate(self.rows()):
+            nz = [e for e in enumerate(r) if e[1]]
+            if len(nz) == 0:
+                N = self.delete_rows([nr])
+                return N.fitting_ideal(i)
+            elif len(nz) == 1:
+                N = self.delete_rows([nr])
+                F1 = N.fitting_ideal(i)
+                N = N.delete_columns([nz[0][0]])
+                F2 = N.fitting_ideal(i)
+                return F1 + nz[0][1]*F2
+        for (nc,c) in enumerate(self.columns()):
+            nz = [e for e in enumerate(c) if e[1]]
+            if len(nz) == 0:
+                N = self.delete_columns([nc])
+                return N.fitting_ideal(i - 1)
+            elif len(nz) == 1:
+                N = self.delete_columns([nc])
+                F1 = N.fitting_ideal(i-1)
+                N = N.delete_rows([nz[0][0]])
+                F2 = N.fitting_ideal(i)
+                return F1 + nz[0][1]*F2
+        if hasattr(self, '_fitting_ideal'):
+            try:
+                return self._fitting_ideal(i)
+            except NotImplementedError:
+                pass
+        return R.ideal(self.minors(rank_minors))
+
+
 
     def _hermite_form_euclidean(self, transformation=False, normalization=None):
         """
@@ -16081,18 +16222,17 @@ cdef class Matrix(Matrix1):
             sage: U * A == H
             True
         """
-        left, H, pivots = self._echelon_form_PID()
+        left, H, _ = self._echelon_form_PID()
         if not include_zero_rows:
             i = H.nrows() - 1
             while H.row(i) == 0:
                 i -= 1
-            H = H[:i+1]
+            H = H[:i + 1]
             if transformation:
-                left = left[:i+1]
+                left = left[:i + 1]
         if transformation:
             return H, left
-        else:
-            return H
+        return H
 
     def _echelon_form_PID(self):
         r"""

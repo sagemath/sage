@@ -555,8 +555,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
                 return 0
             elif hex_colors:
                 return dict()
-            else:
-                return []
+            return []
         # - Independent set
         if not g.size():
             if value_only:
@@ -1754,11 +1753,10 @@ def round_robin(n):
             g.set_edge_label(n - 1, i, i)
             for j in range(1, (n - 1) // 2 + 1):
                 g.set_edge_label(my_mod(i - j, n - 1), my_mod(i + j, n - 1), i)
-        return g
     else:
         g = round_robin(n + 1)
         g.delete_vertex(n)
-        return g
+    return g
 
 
 def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
