@@ -84,7 +84,7 @@ def frobenius_unram(self, arithmetic=True):
 
 @cython.binding(True)
 def norm_unram(self, base = None):
-    """
+    r"""
     Return the absolute or relative norm of this element.
 
     .. WARNING::
@@ -95,9 +95,9 @@ def norm_unram(self, base = None):
 
     INPUT:
 
-        ``base`` -- a subfield of the parent `L` of this element.
-                    The norm is the relative norm from ``L`` to ``base``.
-                    Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
+    ``base`` -- a subfield of the parent `L` of this element.
+                The norm is the relative norm from ``L`` to ``base``.
+                Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
@@ -171,7 +171,7 @@ def norm_unram(self, base = None):
 
 @cython.binding(True)
 def trace_unram(self, base = None):
-    """
+    r"""
     Return the absolute or relative trace of this element.
 
     If ``base`` is given then ``base`` must be a subfield of the
