@@ -278,7 +278,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         f = self._coerce_map_via([self._R], R)
         if f is not None:
             return f
-        if isinstance(R, LaurentPolynomialRing_generic) and self._R.has_coerce_map_from(R._R):
+        if (isinstance(R, LaurentPolynomialRing_generic)
+            and self._R.has_coerce_map_from(R._R)):
             return self._generic_coerce_map(R)
 
     def __eq__(self, right):
@@ -479,7 +480,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False, *args, **kwds):
+    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False,*args, **kwds):
         """
         EXAMPLES::
 
