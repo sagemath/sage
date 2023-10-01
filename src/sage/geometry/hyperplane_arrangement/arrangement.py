@@ -310,7 +310,7 @@ There are extensive methods for visualizing hyperplane arrangements in
 low dimensions.  See :meth:`~HyperplaneArrangementElement.plot` for
 details.
 
-For ordere hyperplane arrangements hyperplane sections and fundamental group are also defined.
+For ordered hyperplane arrangements hyperplane sections and fundamental group are also defined.
 
 TESTS::
 
@@ -514,7 +514,7 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        An integer.
+        A tuple.
 
         EXAMPLES::
 
