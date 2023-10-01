@@ -359,7 +359,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         elif (not isinstance(f, Polynomial)) or (parent is not f.parent()):
             if isinstance(f, dict):
                 v = min(f) if f else 0
-                f = {i-v: c for i, c in f.items()}
+                f = {i-v: c for i,c in f.items()}
                 n += v
             f = parent._R(f)
 
@@ -592,11 +592,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 elif e == 0:
                     var = ""
                 else:
-                    var = "*{}^{}".format(X, e)
-                s += "{}{}".format(x, var)
+                    var = "*{}^{}".format(X,e)
+                s += "{}{}".format(x,var)
                 first = False
         s = s.replace(" + -", " - ")
-        s = s.replace(" 1*", " ")
+        s = s.replace(" 1*"," ")
         s = s.replace(" -1*", " -")
         return s[1:]
 
@@ -653,19 +653,19 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 elif e == 0:
                     var = ""
                 elif e > 0:
-                    var = "|{}^{{{}}}".format(X, e)
+                    var = "|{}^{{{}}}".format(X,e)
                 if e >= 0:
-                    s += "{}{}".format(x, var)
-                else:  # negative e
+                    s += "{}{}".format(x,var)
+                else: # negative e
                     if e == -1:
                         s += "\\frac{{{}}}{{{}}}".format(x, X)
                     else:
-                        s += "\\frac{{{}}}{{{}^{{{}}}}}".format(x, X, -e)
+                        s += "\\frac{{{}}}{{{}^{{{}}}}}".format(x, X,-e)
                 first = False
         s = s.replace(" + -", " - ")
-        s = s.replace(" 1|", " ")
+        s = s.replace(" 1|"," ")
         s = s.replace(" -1|", " -")
-        s = s.replace("|", "")
+        s = s.replace("|","")
 
         return s[1:]
 
@@ -701,7 +701,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # degrees
         cdef long result = 0
         cdef long result_mon
-        cdef int i, j
+        cdef int i,j
         cdef long var_hash_name = hash(self.__u._parent._names[0])
         for i in range(self.__u.degree()+1):
             result_mon = hash(self.__u[i])
@@ -913,11 +913,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         j = i - self.__n
         if j >= 0:
             self.__u._unsafe_mutate(j, value)
-        else:  # off to the left
+        else: # off to the left
             if value != 0:
                 self.__n = self.__n + j
                 R = self._parent.base_ring()
-                coeffs = [value] + [R.zero() for _ in range(1, -j)] + self.__u.list()
+                coeffs = [value] + [R.zero() for _ in range(1,-j)] + self.__u.list()
                 self.__u = self.__u._parent(coeffs)
         self._normalize()
 
@@ -1282,7 +1282,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             Fraction Field of Univariate Polynomial Ring in t over Rational Field
         """
         cdef LaurentPolynomial_univariate ret
-        if self.__u.is_constant():  # this has a single term c*x^n
+        if self.__u.is_constant(): # this has a single term c*x^n
             ret = <LaurentPolynomial_univariate> self._new_c()
             if self.__u.is_unit():
                 ret.__u = self.__u.inverse_of_unit()
@@ -1680,6 +1680,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__n == 0 and self.__u.is_constant()
 
+
     def is_square(self, root=False):
         r"""
         Return whether this Laurent polynomial is a square.
@@ -1926,10 +1927,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         cdef list a = self.__u.list(copy=False)
         if n < 0:
-            v = [a[i] / (n + i + 1) for i in range(min(-1 - n, len(a)))] + [0]
+            v = [a[i]/(n+i+1) for i in range(min(-1-n,len(a)))] + [0]
         else:
             v = []
-        v += [a[i] / (n + i + 1) for i in range(max(-n, 0), len(a))]
+        v += [a[i]/(n+i+1) for i in range(max(-n,0), len(a))]
         try:
             u = self._parent._R(v)
         except TypeError:
@@ -1968,7 +1969,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         if kwds:
             f = self.subs(**kwds)
-            if x:  # If there are non-keyword arguments
+            if x: # If there are non-keyword arguments
                 return f(*x)
             else:
                 return f
