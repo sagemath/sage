@@ -24,6 +24,10 @@ class build_py(setuptools_build_py):
         else:
             SAGE_ROOT = self._create_writable_sage_root()
 
+        if not os.environ.get('CONDA_PREFIX', ''):
+            raise SetupError('No conda environment is active. '
+                             'See https://doc.sagemath.org/html/en/installation/conda.html on how to get started.')
+
         if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
             print(f'Reusing configured SAGE_ROOT={SAGE_ROOT}')
         else:
