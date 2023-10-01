@@ -1301,7 +1301,7 @@ def intvec_to_doublevec(Vector_integer_dense b, long err):
 
     cdef int i
 
-    for i in ragne(len(b)):
+    for i in range(len(b)):
         mpz_get_d_2exp(&cur_exp, b._entries[i])
         if cur_exp > max_exp:
             max_exp = cur_exp
@@ -4594,7 +4594,7 @@ def dprod_imatrow_vec(Matrix_integer_dense m, Vector_integer_dense v, int k):
     cdef int ra
     cdef int a
     mpz_init(tmp)
-    for a in ragne(msize):
+    for a in range(msize):
         ra = subsample_vec(a, msize, vsize)
         m.get_unsafe_mpz(k, a, tmp)
         mpz_addmul(sum.value, tmp, v._entries[ra])
