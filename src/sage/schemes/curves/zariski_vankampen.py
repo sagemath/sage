@@ -1225,7 +1225,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     glist = tuple(_[0] for f0 in arrangement_h for _ in f0.factor())
     g = f.parent()(prod(glist))
     d = g.degree(y)
-    if not dic_vertical:
+    if not arrangement_v:
         while not g.coefficient(y**d) in F:
             g = g.subs({x: x + y})
             d = g.degree(y)
@@ -1240,7 +1240,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     for f0 in arrangement_v:
         pt = [j for j, t in enumerate(disc) if f0(x=t) == 0]
         if pt:
-            vertical_braid[f0] = (disc.index(pt[0]), arrangement1.index(f0))
+            vertical_braid[f0] = (pt[0], arrangement1.index(f0))
         else:
             transversal[f0] = arrangement1.index(f0)
     if not disc:
@@ -1762,8 +1762,8 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     vertical0 = bool(vertical)
     if projective:
         vertical0 = False
-        while f.degree(y) < f.degree():
-            flist1 = [g.subs({x: x + y}) for g in flist]
+        while f.degree(y) < d:
+            flist1 = [g.subs({x: x + y}) for g in flist1]
             f = prod(flist1)
     if len(flist1) == 0:
         bm = []
@@ -1782,7 +1782,8 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     for i in range(len(flist1)):
         L = [j1 for j1 in dic.keys() if dic[j1] == i]
         dic1[i] = [hom(g.gen(j)) for j in L]
-    if not projective and f.degree(y) == f.degree():
+    # if not projective and f.degree(y) == f.degree():
+    if not projective:
         t = prod(hom(x) for x in g.gens()).inverse()
         dic1[len(flist1)] = [t]
     n = g1.ngens()

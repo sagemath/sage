@@ -58,14 +58,17 @@ AUTHORS:
 
 # Possible extensions:
 
+
 # from sage.categories.fields import Fields
 # from sage.categories.homset import Hom, End, hom
 # from sage.categories.number_fields import NumberFields
+from sage.categories.sets_cat import Sets
 from sage.combinat.permutation import Permutation
 from sage.groups.free_group import FreeGroup
 # from sage.interfaces.singular import singular
 # from sage.matrix.constructor import matrix, vector
 from sage.misc.cachefunc import cached_method
+# from sage.rings.infinity import infinity
 # from sage.misc.lazy_attribute import lazy_attribute
 # from sage.rings.number_field.number_field import NumberField
 # from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
@@ -74,7 +77,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 # from sage.rings.rational_field import QQ, is_RationalField
 # from sage.rings.rational_field import is_RationalField
-# from sage.rings.infinity import infinity
+from sage.rings.ring import _Fields
 from sage.schemes.affine.affine_space import AffineSpace
 # from sage.schemes.affine.affine_space import is_AffineSpace
 # from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
@@ -86,7 +89,7 @@ from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-from .affine_curve import AffinePlaneCurve
+from sage.schemes.curves.affine_curve import AffinePlaneCurve
 # from .closed_point import IntegralAffineCurveClosedPoint
 # from .curve import Curve_generic
 # from .point import (AffineCurvePoint_field,
@@ -218,7 +221,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             sage: A[0]
             Hyperplane x + 0*y + 1
         """
-        return self._hyperplanes
+        return self._curves
 
     def _repr_(self):
         r"""
@@ -525,9 +528,6 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
     """
     Curve arrangements.
 
-    # For more information on hyperplane arrangements, see
-    # :mod:`sage.geometry.hyperplane_arrangement.arrangement`.
-
     INPUT:
 
     - ``base_ring`` -- ring; the base ring
@@ -568,8 +568,6 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             # sage: K = HyperplaneArrangements(QQ)
             # sage: TestSuite(K).run()
         """
-        from sage.categories.sets_cat import Sets
-        from sage.rings.ring import _Fields
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
         super().__init__(category=Sets())
@@ -737,6 +735,25 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             warn('Input contained {0} curves, but only {1} are distinct.'.format(n, len(curves)))
         # argument checking (optional but recommended)
         return self.element_class(self, curves)
+
+    @cached_method
+    def ngens(self):
+        """
+        Return the number of linear variables.
+
+        OUTPUT:
+
+        An integer.
+
+        EXAMPLES::
+
+            sage: L.<x, y, z> = HyperplaneArrangements(QQ);  L
+            Hyperplane arrangements in 3-dimensional linear space
+             over Rational Field with coordinates x, y, z
+            sage: L.ngens()
+            3
+        """
+        return len(self._names)
 
     @cached_method
     def gens(self):
