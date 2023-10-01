@@ -9081,10 +9081,10 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         ::
 
-            sage: needs sage.rings.finite_rings
-            sage: P.<x,y,z> = ProjectiveSpace(GF(3^2,'t'),2)                            # needs sage.rings.finite_rings
-            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2, z^2 + y*z])           # needs sage.rings.finite_rings
-            sage: f.cyclegraph()                                                        # needs sage.graphs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(3^2,'t'),2)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, y^2, z^2 + y*z])
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 91 vertices
 
         ::
