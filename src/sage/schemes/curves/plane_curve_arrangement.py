@@ -145,6 +145,22 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             if not all(h.parent() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
 
+    def _first_ngens(self, n):
+        """
+        Workaround to support the construction with names.
+
+        INPUT/OUTPUT:
+
+        See :meth:`OrderedAffinePlaneCurveArrangements._first_ngens`.
+
+        EXAMPLES::
+
+            sage: a.<x,y,z> = hyperplane_arrangements.braid(3)   # indirect doctest     # needs sage.graphs
+            sage: (x, y) == a._first_ngens(2)                                           # needs sage.graphs
+            True
+        """
+        return self.parent()._first_ngens(n)
+
     def __getitem__(self, i):
         """
         Return the `i`-th curve.
