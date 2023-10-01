@@ -10,6 +10,7 @@ from pathlib import Path
 from setuptools import setup
 from distutils.command.build_scripts import build_scripts as distutils_build_scripts
 from setuptools.command.build_py import build_py as setuptools_build_py
+from setuptools.command.editable_wheel import editable_wheel as setuptools_editable_wheel
 from setuptools.errors import SetupError
 
 
@@ -75,7 +76,9 @@ class build_py(setuptools_build_py):
                 return ['src']
             ### ignore more stuff --- .tox etc.
             return [name for name in names
-                    if name in ('.tox', '.git', '__pycache__')]
+                    if name in ('.tox', '.git', '__pycache__',
+                                'prefix', 'local', 'venv', 'upstream',
+                                'config.status', 'config.log', 'logs')]
 
         if not os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
             # config.status and other configure output has to be writable.
@@ -99,6 +102,16 @@ class build_scripts(distutils_build_scripts):
         distutils_build_scripts.run(self)
 
 
+class editable_wheel(setuptools_editable_wheel):
+    r"""
+    Customized so that exceptions raised by our build_py
+    do not lead to the "Customization incompatible with editable install" message
+    """
+    _safely_run = setuptools_editable_wheel.run_command
+
+
 setup(
-    cmdclass=dict(build_py=build_py, build_scripts=build_scripts)
+    cmdclass=dict(build_py=build_py,
+                  build_scripts=build_scripts,
+                  editable_wheel=editable_wheel)
 )
