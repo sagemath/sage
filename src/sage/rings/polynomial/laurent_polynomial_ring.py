@@ -77,8 +77,6 @@ def is_LaurentPolynomialRing(R):
 
 
 _cache = {}
-
-
 def LaurentPolynomialRing(base_ring, *args, **kwds):
     r"""
     Return the globally unique univariate or multivariate Laurent polynomial
@@ -254,7 +252,6 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     _cache[R] = P
     return P
 
-
 def _split_dict_(D, indices, group_by=None):
     r"""
     Split the dictionary ``D`` by ``indices`` and ``group_by``.
@@ -330,13 +327,12 @@ def _split_dict_(D, indices, group_by=None):
         if not all(r == 0 for r in extract(K, remaining)):
             raise SplitDictError('split not possible')
         G = extract(K, group_by)
-        In = extract(K, indices)
-        result.setdefault(G, dict()).update({In: V})
+        I = extract(K, indices)
+        result.setdefault(G, dict()).update({I: V})
     if not group_by:
         return result.popitem()[1]
     else:
         return result
-
 
 def _split_laurent_polynomial_dict_(P, M, d):
     r"""
@@ -398,7 +394,6 @@ def _split_laurent_polynomial_dict_(P, M, d):
     except (ValueError, TypeError):
         pass
     return sum(P({k: 1}) * value(v, P) for k, v in D.items()).dict()
-
 
 def from_fraction_field(L, x):
     r"""
@@ -760,7 +755,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         P = parent(x)
         if P is self.polynomial_ring():
             from sage.rings.polynomial.polydict import ETuple
-            return self.element_class(self, x, mon=ETuple({}, int(self.ngens())))
+            return self.element_class( self, x, mon=ETuple({}, int(self.ngens())) )
 
         elif isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
