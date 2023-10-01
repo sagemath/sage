@@ -395,8 +395,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
         for c in islice(self.expansion(lift_mode=lift_mode), int(start), int(stop), int(k)):
             genpow = 1
             if not isinstance(c, list):
-                c = [c] # relevant for the case of base-rings, or one-step
-                # eisenstein extensions
+                c = [c]  # relevant for the case of base-rings, or one-step
+                # Eisenstein extensions
             for d in c:
                 ans += d * genpow * ppow
                 genpow *= unramified_generator
