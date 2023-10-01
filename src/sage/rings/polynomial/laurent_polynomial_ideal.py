@@ -26,8 +26,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
 from sage.arith.misc import GCD
 
-
-class LaurentPolynomialIdeal(Ideal_generic):
+class LaurentPolynomialIdeal( Ideal_generic ):
     def __init__(self, ring, gens, coerce=True, hint=None):
         r"""
         Create an ideal in a Laurent polynomial ring.
@@ -93,7 +92,7 @@ class LaurentPolynomialIdeal(Ideal_generic):
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
         self._poly_ring = ring.polynomial_ring()
-        self._poly_ideal = None  # Create only as needed
+        self._poly_ideal = None # Create only as needed
         self._saturated = False
         self._hint = self._poly_ring.ideal([f.monomial_reduction()[0] for f in self.gens()])
         # if hint is None:
@@ -169,11 +168,11 @@ class LaurentPolynomialIdeal(Ideal_generic):
             True
         """
         if op in (op_EQ, op_NE):
-            if set(self.gens()) == set(right_r.gens()):  # Early abort
+            if set(self.gens()) == set(right_r.gens()): # Early abort
                 return (op == op_EQ)
             return ((self.polynomial_ideal() == right_r.polynomial_ideal()) == (op == op_EQ))
         elif op == op_LE:
-            if all(f in right_r.gens() for f in self.gens()):  # Early abort
+            if all(f in right_r.gens() for f in self.gens()): # Early abort
                 return True
             return self.polynomial_ideal(saturate=False) <= right_r.polynomial_ideal()
         elif op == op_GE:
@@ -308,10 +307,10 @@ class LaurentPolynomialIdeal(Ideal_generic):
         else:
             R = ring.change_ring(new_base_ring)
         if forward_hint:
-            apply_to_hint = lambda x, f=f: x.map_coefficients(f)
+            apply_to_hint = lambda x,f=f: x.map_coefficients(f)
         else:
             apply_to_hint = None
-        return self.apply_map(lambda x, f=f:
+        return self.apply_map(lambda x,f=f:
                               x.map_coefficients(f, new_base_ring=new_base_ring),
                               new_ring=R, apply_to_hint=apply_to_hint)
 
@@ -429,17 +428,17 @@ class LaurentPolynomialIdeal(Ideal_generic):
         l2 = [f.__reduce__()[1][0] for f in gens]
         hint = self._hint
         l2 += list(hint.groebner_basis())
-        id = Q.ideal(l2)
+        I = Q.ideal(l2)
         if not saturate:
-            self._poly_ideal = id
-            self._hint = id
+            self._poly_ideal = I
+            self._hint = I
             return Q.ideal(l2)
         n = P.ngens()
-        id = id.saturation(Q.ideal([Q.monomial(*((1,) * n))]))[0]
-        self._poly_ideal = id
-        self._hint = id
+        I = I.saturation(Q.ideal([Q.monomial(*((1,) * n))]))[0]
+        self._poly_ideal = I
+        self._hint = I
         self._saturated = True
-        return id
+        return I
 
     def groebner_basis(self, saturate=True):
         """
@@ -453,8 +452,8 @@ class LaurentPolynomialIdeal(Ideal_generic):
             sage: (I + J).groebner_basis()
             (x - 1, y + 1)
         """
-        gb = self.polynomial_ideal(saturate=saturate).groebner_basis()
-        return tuple(self.ring()(x) for x in gb)
+        l = self.polynomial_ideal(saturate=saturate).groebner_basis()
+        return tuple(self.ring()(x) for x in l)
 
     def is_one(self):
         """
@@ -486,10 +485,10 @@ class LaurentPolynomialIdeal(Ideal_generic):
             True
         """
         if groebner_basis:
-            gb = self.groebner_basis()
+            l = self.groebner_basis()
         else:
-            gb = self.gens()
-        return all(not f or f.number_of_terms() == 2 for f in gb)
+            l = self.gens()
+        return all(not f or f.number_of_terms() == 2 for f in l)
 
     def associated_primes(self):
         """
@@ -509,9 +508,9 @@ class LaurentPolynomialIdeal(Ideal_generic):
              Ideal (z^2 - y, y*z + 2, y^2 + 2*z) of
               Multivariate Laurent Polynomial Ring in x, y, z over Rational Field)
         """
-        ap = self.polynomial_ideal(saturate=False).associated_primes()
-        ap2 = [self.ring().ideal(id.gens(), hint=id) for id in ap]
-        return tuple(id for id in ap2 if not id.is_one())
+        l = self.polynomial_ideal(saturate=False).associated_primes()
+        l2 = [self.ring().ideal(I.gens(), hint=I) for I in l]
+        return tuple(I for I in l2 if not I.is_one())
 
     def minimal_associated_primes(self, saturate=False):
         """
@@ -531,9 +530,9 @@ class LaurentPolynomialIdeal(Ideal_generic):
              Ideal (z^3 + 2, -z^2 + y) of
               Multivariate Laurent Polynomial Ring in x, y, z over Rational Field)
         """
-        ap = self.polynomial_ideal(saturate=saturate).minimal_associated_primes()
-        ap2 = [self.ring().ideal(id.gens(), hint=id) for id in ap]
-        return tuple(id for id in ap2 if not id.is_one())
+        l = self.polynomial_ideal(saturate=saturate).minimal_associated_primes()
+        l2 = [self.ring().ideal(I.gens(), hint=I) for I in l]
+        return tuple(I for I in l2 if not I.is_one())
 
     def radical(self):
         """
