@@ -54,7 +54,7 @@ def avg(X):
     return s / float(len(X))
 
 
-STD_SYSTEMS = ['sage', 'maxima', 'gap', 'gp', 'pari', 'python']
+STD_SYSTEMS = ['sage', 'maxima', 'libgap', 'gp', 'pari', 'python']
 OPT_SYSTEMS = ['magma', 'macaulay2', 'maple', 'mathematica']
 
 
@@ -1023,7 +1023,7 @@ class SquareInts(Benchmark):
 
             sage: from sage.tests.benchmark import SquareInts
             sage: B = SquareInts()
-            sage: isinstance(B.gap()[1], float)
+            sage: isinstance(B.libgap()[1], float)
             True
         """
         n = libgap('%s^%s' % (self.base, self.__ndigits))
@@ -1115,7 +1115,7 @@ class MatrixSquare(Benchmark):
 
             sage: from sage.tests.benchmark import MatrixSquare
             sage: B = MatrixSquare(3, QQ)
-            sage: isinstance(B.gap()[1], float)
+            sage: isinstance(B.libgap()[1], float)
             True
         """
         n = self.__n
@@ -1238,7 +1238,7 @@ class Fibonacci(Benchmark):
 
             sage: from sage.tests.benchmark import Fibonacci
             sage: B = Fibonacci(10)
-            sage: isinstance(B.gap()[1], float)
+            sage: isinstance(B.libgap()[1], float)
             True
         """
         n = libgap(self.__n)
@@ -1256,7 +1256,6 @@ class Fibonacci(Benchmark):
             sage: B = Fibonacci(10)
             sage: isinstance(B.mathematica()[1], float) # optional - mathematica
             True
-
         """
         n = mathematica(self.__n)
         t = walltime()
