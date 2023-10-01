@@ -9,14 +9,14 @@ AUTHOR:
 * Martin Albrecht <malb@informatik.uni-bremen.de>
 """
 
-# *****************************************************************************
+#*****************************************************************************
 #       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# *****************************************************************************
+#*****************************************************************************
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
@@ -101,8 +101,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             [     0 -x + y]
         """
         x = self.fetch('echelon_form_'+algorithm)
-        if x is not None:
-            return x
+        if x is not None: return x
 
         if algorithm == "frac":
             E = self.matrix_over_field()
@@ -117,8 +116,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         if algorithm == "frac":
             self.cache('pivots', E.pivots())
         elif algorithm == "bareiss":
-            l1 = E.swapped_columns()
-            self.cache('pivots', tuple(sorted(l1)))
+            l = E.swapped_columns()
+            self.cache('pivots', tuple(sorted(l)))
         elif algorithm == "row_reduction":
             pass
 
@@ -155,7 +154,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('pivots')
 
         if x is None:
-            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'" % self.parent())
+            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
         return x
 
     def echelonize(self, algorithm='row_reduction', **kwds):
@@ -263,7 +262,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             self.clear_cache()
 
             singular_bareiss = singular_function("bareiss")
-            E, ln = singular_bareiss(self.T)
+            E, l = singular_bareiss(self.T)
 
             m = len(E)
             n = len(E[0])
@@ -278,33 +277,33 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                     self.set_unsafe(r, c, R._zero_element)
 
             from sage.rings.integer_ring import ZZ
-            ln = [ZZ(e-1) for e in ln]
+            l = [ZZ(e-1) for e in l]
 
-            self.cache('in_echelon_form_bareiss', True)
+            self.cache('in_echelon_form_bareiss',True)
             self.cache('rank', len(E))
             self.cache('pivots', tuple(range(len(E))))
-            self.cache('swapped_columns', tuple(ln))
+            self.cache('swapped_columns', tuple(l))
 
         elif can_convert_to_singular(self.base_ring()):
 
             self.check_mutability()
             self.clear_cache()
 
-            E, ln = self.T._singular_().bareiss()._sage_(self.base_ring())
+            E,l = self.T._singular_().bareiss()._sage_(self.base_ring())
 
             # clear matrix
             for r from 0 <= r < self._nrows:
                 for c from 0 <= c < self._ncols:
-                    self.set_unsafe(r, c, R._zero_element)
+                    self.set_unsafe(r,c,R._zero_element)
 
             for r from 0 <= r < E.nrows():
                 for c from 0 <= c < E.ncols():
-                    self.set_unsafe(c, r,  E[r, c])
+                    self.set_unsafe(c,r, E[r,c])
 
-            self.cache('in_echelon_form_bareiss', True)
+            self.cache('in_echelon_form_bareiss',True)
             self.cache('rank', E.nrows())
             self.cache('pivots', tuple(range(E.nrows())))
-            self.cache('swapped_columns', ln)
+            self.cache('swapped_columns', l)
 
         else:
 
@@ -388,14 +387,14 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         if x is not None:
             return  # already known to be in echelon form
 
-        nr, nc = self.nrows(), self.ncols()
+        nr,nc = self.nrows(),self.ncols()
         F = self.base_ring().base_ring()
-        cdef Matrix d = matrix(F, nr, nc)
+        cdef Matrix d = matrix(F,nr,nc)
         start_row = 0
 
         for r from 0 <= r < nr:
             for c from 0 <= c < nc:
-                p = self.get_unsafe(r, c)
+                p = self.get_unsafe(r,c)
                 if p.is_constant():
                     d.set_unsafe(r, c, p.constant_coefficient())
 
@@ -405,25 +404,25 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                 if d.get_unsafe(rc, c):
                     r = rc
                     break
-            if r != -1:
-                a_inverse = ~self.get_unsafe(r, c)
-                self.rescale_row_c(r, a_inverse, c)
+            if r!=-1:
+                a_inverse = ~self.get_unsafe(r,c)
+                self.rescale_row_c(r, a_inverse , c)
                 self.swap_rows_c(r, start_row)
 
                 for i from 0 <= i < nr:
                     if i != start_row:
-                        minus_b = -self.get_unsafe(i, c)
+                        minus_b = -self.get_unsafe(i,c)
                         self.add_multiple_of_row(i, start_row, minus_b, 0)
 
-                start_row += 1
+                start_row +=1
 
                 d = d._parent(0)
                 for i from start_row <= i < nr:
                     for j from c+1 <= j < nc:
-                        if self.get_unsafe(i, j).is_constant():
-                            d.set_unsafe(i, j, self.get_unsafe(i, j).constant_coefficient())
+                        if self.get_unsafe(i,j).is_constant():
+                            d.set_unsafe(i,j, self.get_unsafe(i,j).constant_coefficient())
 
-        self.cache('in_echelon_form_row_reduction', True)
+        self.cache('in_echelon_form_row_reduction',True)
 
     def swapped_columns(self):
         """
@@ -500,7 +499,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                     N = self.__copy__()
                     for j in range(self.ncols()):
                         if j != ncoef:
-                            N.add_multiple_of_column(j, ncoef, -R(self[nrow, j] / coef))
+                            N.add_multiple_of_column(j, ncoef, -R(self[nrow,j] / coef))
                     return N.fitting_ideal(i)
         for (ncolumn, column) in enumerate(self.columns()):
             if not column:
