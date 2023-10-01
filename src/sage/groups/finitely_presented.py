@@ -1550,12 +1550,12 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             C = [rel]
             for j in range(len(rel) - 1):
                 C.append(rel[j + 1:] + rel[:j + 1])
-            C1 = [tuple(-j for j in reversed(l1)) for l1 in C]
+            C1 = [tuple(-j for j in reversed(l)) for l in C]
             C += C1
             C.sort()
             L1.append(C[0])
         L1.sort()
-        return F / L1
+        return F/L1
 
     def epimorphisms(self, H):
         r"""
