@@ -73,12 +73,13 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])                                        # needs sage.modules
+            sage: # needs sage.modules
+            sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])
             sage: R.<x,y> = QQ[]
-            sage: H = Hom(M, R, category=Sets())                                                    # needs sage.modules
-            sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)             # needs sage.modules
-            sage: Im = f.image()                                                                    # needs sage.modules
-            sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',                     # needs sage.modules
+            sage: H = Hom(M, R, category=Sets())
+            sage: f = H(lambda v: v[0]*x + v[1]*(x^2-y) + v[2]^2*(y+2) + v[3] - v[0]^2)
+            sage: Im = f.image()
+            sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
         """
         if not is_Parent(domain_subset):
@@ -198,14 +199,15 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])                         # needs sage.modules
+            sage: # needs sage.modules
+            sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
             sage: R.<x,y> = ZZ[]
-            sage: H = Hom(M, R, category=Sets())                                        # needs sage.modules
-            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))                  # needs sage.modules
-            sage: Im = f.image()                                                        # needs sage.modules
-            sage: p = Im.lift(Im.an_element()); p                                       # needs sage.modules
+            sage: H = Hom(M, R, category=Sets())
+            sage: f = H(lambda v: floor(v[0])*x + ceil(v[3] - v[0]^2))
+            sage: Im = f.image()
+            sage: p = Im.lift(Im.an_element()); p
             2*x - 4
-            sage: p.parent() is R                                                       # needs sage.modules
+            sage: p.parent() is R
             True
         """
         return x
@@ -278,7 +280,8 @@ class ImageSubobject(Parent):
             sage: Mod2.cardinality()
             Traceback (most recent call last):
             ...
-            NotImplementedError: cannot determine cardinality of a non-injective image of an infinite set
+            NotImplementedError: cannot determine cardinality of a
+            non-injective image of an infinite set
         """
         domain_cardinality = self._domain_subset.cardinality()
         if self._is_injective and self._is_injective != 'check':
