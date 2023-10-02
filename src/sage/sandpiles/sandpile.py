@@ -2256,14 +2256,14 @@ class Sandpile(DiGraph):
             while True:
                 i = X.get_random_element()
                 if V[i] != self.sink():
-                    st[V[i]]+=1
+                    st[V[i]] += 1
                     st = st.stabilize()
                 yield st
         elif isinstance(st,SandpileDivisor):
             alive = st.is_alive()
             while True:
                 i = X.get_random_element()
-                st[V[i]]+=1
+                st[V[i]] += 1
                 if alive:
                     yield st
                 else:
@@ -2965,7 +2965,7 @@ class SandpileConfig(dict):
                 c.reverse()
                 config = {}
                 for v in S.vertices(sort=True):
-                    if v!=S.sink():
+                    if v != S.sink():
                         config[v] = c.pop()
                 dict.__init__(self,config)
         else:
@@ -3045,22 +3045,22 @@ class SandpileConfig(dict):
             3
         """
         if name not in self.__dict__:
-            if name=='_deg':
+            if name == '_deg':
                 self._set_deg()
                 return self.__dict__[name]
-            if name=='_stabilize':
+            if name == '_stabilize':
                 self._set_stabilize()
                 return self.__dict__[name]
-            if name=='_equivalent_recurrent':
+            if name == '_equivalent_recurrent':
                 self._set_equivalent_recurrent()
                 return self.__dict__[name]
-            if name=='_is_recurrent':
+            if name == '_is_recurrent':
                 self._set_is_recurrent()
                 return self.__dict__[name]
-            if name=='_equivalent_superstable':
+            if name == '_equivalent_superstable':
                 self._set_equivalent_superstable()
                 return self.__dict__[name]
-            if name=='_is_superstable':
+            if name == '_is_superstable':
                 self._set_is_superstable()
                 return self.__dict__[name]
             else:
@@ -3323,7 +3323,7 @@ class SandpileConfig(dict):
             sage: d < c
             False
         """
-        return self<=other and self!=other
+        return self <= other and self != other
 
     def __ge__(self, other):
         r"""
@@ -3382,7 +3382,7 @@ class SandpileConfig(dict):
             sage: c > d
             False
         """
-        return self>=other and self!=other
+        return self >= other and self != other
 
     # recurrent power
     def __pow__(self, k):
@@ -3419,7 +3419,7 @@ class SandpileConfig(dict):
         if k == 0:
             return self._sandpile.identity()
         else:
-            if k<0:
+            if k < 0:
                 k = -k
                 for i in range(k):
                     result -= self
@@ -3599,7 +3599,7 @@ class SandpileConfig(dict):
             [2, 3]
         """
         return [v for v in self._vertices if
-                self[v]>=self._sandpile.out_degree(v)]
+                self[v] >= self._sandpile.out_degree(v)]
 
     def fire_unstable(self):
         r"""
@@ -3647,7 +3647,7 @@ class SandpileConfig(dict):
                 firing_vector[v] += dm[0]
                 for e in s.outgoing_edge_iterator(v):
                     if e[1] != s.sink():
-                        c[e[1]] += dm[0]* e[2]
+                        c[e[1]] += dm[0] * e[2]
             unstable = c.unstable()
         self._stabilize = [c, firing_vector]
 
@@ -3721,7 +3721,7 @@ class SandpileConfig(dict):
             sage: c.support()
             [1, 2]
         """
-        return [i for i in self if self[i] !=0]
+        return [i for i in self if self[i] != 0]
 
     def add_random(self, distrib=None):
         r"""
@@ -3797,7 +3797,7 @@ class SandpileConfig(dict):
             X = GeneralDiscreteDistribution(distrib)
             V = self._sandpile.vertices(sort=True)
             i = X.get_random_element()
-            if i!=self._sandpile._sink_ind:  # not the sink
+            if i != self._sandpile._sink_ind:  # not the sink
                 c[V[i]] += 1
         return c
 
@@ -4117,7 +4117,7 @@ class SandpileConfig(dict):
 
         - [Lev2014]_
         """
-        if v==self.sandpile().sink():
+        if v == self.sandpile().sink():
             return 1
         else:
             w = deepcopy(self)
@@ -4367,43 +4367,43 @@ class SandpileDivisor(dict):
             6
         """
         if name not in self.__dict__:
-            if name=='_deg':
+            if name == '_deg':
                 self._set_deg()
                 return self.__dict__[name]
-            if name=='_q_reduced':
+            if name == '_q_reduced':
                 self._set_q_reduced()
                 return self.__dict__[name]
-            if name=='_linear_system':
+            if name == '_linear_system':
                 self._set_linear_system()
                 return self.__dict__[name]
-            if name=='_effective_div':
+            if name == '_effective_div':
                 self._set_effective_div()
                 return self.__dict__[name]
-            if name=='_polytope':
+            if name == '_polytope':
                 self._set_polytope()
                 return self.__dict__[name]
-            if name=='_polytope_integer_pts':
+            if name == '_polytope_integer_pts':
                 self._set_polytope_integer_pts()
                 return self.__dict__[name]
-            if name=='_rank':
+            if name == '_rank':
                 self._set_rank()
                 return self.__dict__[name]
-            if name=='_rank_witness':
+            if name == '_rank_witness':
                 self._set_rank(True)
                 return self.__dict__[name]
-            if name=='_r_of_D':
+            if name == '_r_of_D':
                 self._set_r_of_D()
                 return self.__dict__[name]
-            if name=='_Dcomplex':
+            if name == '_Dcomplex':
                 self._set_Dcomplex()
                 return self.__dict__[name]
-            if name=='_life':
+            if name == '_life':
                 self._set_life()
                 return self.__dict__[name]
-            if name=='_stabilize':
+            if name == '_stabilize':
                 self._set_stabilize()
                 return self.__dict__[name]
-            if name=='_weierstrass_pts':
+            if name == '_weierstrass_pts':
                 self._set_weierstrass_pts()
                 return self.__dict__[name]
             else:
@@ -4869,7 +4869,7 @@ class SandpileDivisor(dict):
             [1, 2]
         """
         return [v for v in self._vertices if
-                self[v]>=self._sandpile.out_degree(v)]
+                self[v] >= self._sandpile.out_degree(v)]
 
     def fire_unstable(self):
         r"""
@@ -5120,9 +5120,9 @@ class SandpileDivisor(dict):
         lin_sys_mat = lin_sys + '.mat'
         lin_sys_rel = lin_sys + '.rel'
         lin_sys_rhs = lin_sys + '.rhs'
-        lin_sys_sign= lin_sys + '.sign'
-        lin_sys_zhom= lin_sys + '.zhom'
-        lin_sys_zinhom= lin_sys + '.zinhom'
+        lin_sys_sign = lin_sys + '.sign'
+        lin_sys_zhom = lin_sys + '.zhom'
+        lin_sys_zinhom = lin_sys + '.zinhom'
         lin_sys_log = lin_sys + '.log'
 
         with open(lin_sys_mat, 'w') as mat_file:
@@ -5423,11 +5423,11 @@ class SandpileDivisor(dict):
             while k >= 0:
                 rk += 1
                 try:
-                    d = next(i for i,j in enumerate(c) if i==j and i!=0)
+                    d = next(i for i,j in enumerate(c) if i == j and i != 0)
                 except Exception:
                     d = n - 1
                 k = k - d
-                if k >=0:
+                if k >= 0:
                     c[0] = n - 1 - d
                     b1 = [c[i] + n - d for i in range(1,d)]
                     b2 = [c[i] - d for i in range(d,n-1)]
@@ -5577,7 +5577,7 @@ class SandpileDivisor(dict):
             [(1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, 0, -1)]
       """
         s = self.sandpile()
-        if v=='sink':
+        if v == 'sink':
             v = s.sink()
         try:
             seq = self._weierstrass_rank_seq[v]
@@ -5585,11 +5585,11 @@ class SandpileDivisor(dict):
             D = deepcopy(self)
             verts = s.vertices(sort=True)
             Ei = s.zero_div()
-            Ei[verts.index(v)]=1
+            Ei[verts.index(v)] = 1
             Ei = SandpileDivisor(s,Ei)
             r = D.rank()
             seq = [r]
-            while r !=-1:
+            while r != -1:
                 D = D - Ei
                 r = D.rank()
                 seq.append(r)
@@ -5776,7 +5776,7 @@ class SandpileDivisor(dict):
             sage: S.vertices(sort=True)
             [0, 1, 2, 3]
         """
-        return [i for i in self if self[i] !=0]
+        return [i for i in self if self[i] != 0]
 
     def _set_Dcomplex(self):
         r"""
@@ -6001,7 +6001,7 @@ class SandpileDivisor(dict):
             firing_vector = self._sandpile.zero_div()
             E = deepcopy(self)
             unstable = E.unstable()
-            while unstable!=[]:
+            while unstable != []:
                 E = E.fire_unstable()
                 for v in unstable:
                     firing_vector[v] += 1
@@ -6174,23 +6174,23 @@ def triangle_sandpile(n):
     for i in range(n):
         for j in range(n-i):
             T[(i,j)] = {}
-            if i<n-j-1:
+            if i < n-j-1:
                 T[(i,j)][(i+1,j)] = 1
                 T[(i,j)][(i,j+1)] = 1
-            if i>0:
+            if i > 0:
                 T[(i,j)][(i-1,j+1)] = 1
                 T[(i,j)][(i-1,j)] = 1
-            if j>0:
+            if j > 0:
                 T[(i,j)][(i,j-1)] = 1
                 T[(i,j)][(i+1,j-1)] = 1
             d = len(T[(i,j)])
-            if d<6:
+            if d < 6:
                 T[(i,j)][(-1, -1)] = 6-d
     T = Sandpile(T, (-1, -1))
     pos = {}
     for x in T.nonsink_vertices():
         coords = list(x)
-        coords[0]+=QQ(1)/2*coords[1]
+        coords[0] += QQ(1)/2*coords[1]
         pos[x] = coords
     pos[(-1, -1)] = (-1,-1)
     T.set_pos(pos)
@@ -6368,11 +6368,11 @@ def firing_graph(S, eff):
     g.add_vertices(range(len(eff)))
     for i in g.vertices(sort=True):
         for v in eff[i]:
-            if eff[i][v]>=S.out_degree(v):
+            if eff[i][v] >= S.out_degree(v):
                 new_div = deepcopy(eff[i])
                 new_div[v] -= S.out_degree(v)
                 for oe in S.outgoing_edges(v):
-                    new_div[oe[1]]+=oe[2]
+                    new_div[oe[1]] += oe[2]
                 if new_div in eff:
                     g.add_edge((i,eff.index(new_div)))
     return g
@@ -6406,11 +6406,11 @@ def parallel_firing_graph(S, eff):
         new_edge = False
         new_div = deepcopy(eff[i])
         for v in eff[i]:
-            if eff[i][v]>=S.out_degree(v):
+            if eff[i][v] >= S.out_degree(v):
                 new_edge = True
                 new_div[v] -= S.out_degree(v)
                 for oe in S.outgoing_edges(v):
-                    new_div[oe[1]]+=oe[2]
+                    new_div[oe[1]] += oe[2]
         if new_edge and (new_div in eff):
             g.add_edge((i,eff.index(new_div)))
     return g
@@ -6586,16 +6586,16 @@ def wilmes_algorithm(M):
             U = identity_matrix(ZZ,k).block_sum(smith)
             L = U*L
             L[k] = -L[k]
-        if L[-1][-2]>0:
+        if L[-1][-2] > 0:
             L[-1] = -L[-1]
         for k in range(M.nrows()-2,-1,-1):
             for i in range(k+2,M.nrows()):
-                while L[k][i-1]>0:
+                while L[k][i-1] > 0:
                     L[k] = L[k] + L[i]
             v = -L[k+1]
             for i in range(k+2,M.nrows()):
                 v = abs(L[i,i-1])*v + v[i-1]*L[i]
-            while L[k,k]<=0 or L[k,-1]>0:
+            while L[k,k] <= 0 or L[k,-1] > 0:
                 L[k] = L[k] + v
         return L
     else:

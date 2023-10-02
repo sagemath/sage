@@ -107,6 +107,7 @@ Or the algebraic field::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
+from itertools import product
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
@@ -1122,11 +1123,10 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         iters = [self.support()] * n
         filtration = {}
-        from sage.categories.cartesian_product import cartesian_product
-        for degrees in cartesian_product(iters):
+        for degrees in product(*iters):
             deg = sum(degrees)
             filt_deg = filtration.get(deg, set())
-            for i in cartesian_product([indices.get(d) for d in degrees]):
+            for i in product(*[indices.get(d) for d in degrees]):
                 pow_i = T.index_map(*i)
                 if pow_i is not None:
                     filt_deg.add(pow_i)

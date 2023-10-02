@@ -189,6 +189,12 @@ export CFLAGS # Not exported by 'sage-env'.  LDFLAGS are exported above if
               # necessary.  We currently don't set (or modify) any other
               # environment variables, so don't have to export them here.
 
+# Workaround for build failure with Xcode 15, https://github.com/sagemath/sage/issues/36342
+case "$UNAME" in
+    Darwin*)
+        export gmp_cv_asm_underscore=yes
+        ;;
+esac
 
 ###############################################################################
 # Now configure ECM:
