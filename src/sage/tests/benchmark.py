@@ -1026,7 +1026,7 @@ class SquareInts(Benchmark):
             sage: isinstance(B.libgap()[1], float)
             True
         """
-        n = libgap('%s^%s' % (self.base, self.__ndigits))
+        n = libgap(self.base)**libgap(self.__ndigits)
         t = walltime()
         n**2
         return False, walltime(t)
@@ -1118,8 +1118,10 @@ class MatrixSquare(Benchmark):
             sage: isinstance(B.libgap()[1], float)
             True
         """
+        R = self.__R
         n = self.__n
-        m = libgap(str([list(range(n * k, n * (k + 1))) for k in range(n)]))
+        f = MatrixSpace(R, n)(list(range(n * n)))
+        m = libgap(f)
         t = walltime()
         m * m
         return False, walltime(t)
