@@ -170,7 +170,7 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
         :class:`exceptions.Warning`.
     """
     _check_issue_number(issue_number)
-    message += '\nSee https://github.com/sagemath/sage/issues/'+ str(issue_number) + ' for details.'
+    message += '\nSee https://github.com/sagemath/sage/issues/' + str(issue_number) + ' for details.'
 
     # Stack level 3 to get the line number of the code which called
     # the deprecated function which called this function.

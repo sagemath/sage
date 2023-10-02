@@ -714,7 +714,7 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ', '.join('%s%s' % (m+1, '' if e==1 else '^%s'%e)
+        return '%s' % ', '.join('%s%s' % (m+1, '' if e == 1 else '^%s' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_exp_high(self):
@@ -752,7 +752,7 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ','.join('%s%s' % (m+1, '' if e==1 else '^%s'%e)
+        return '%s' % ','.join('%s%s' % (m+1, '' if e == 1 else '^%s' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_compact_high(self):
@@ -770,9 +770,9 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()[::-1]         # reversed list of exponents
-        M=max(self)
-        return '%s' % ','.join('%s%s' % (M-m, '' if e==1 else '^%s'%e)
-                                 for (m,e) in enumerate(exp) if e>0)
+        M = max(self)
+        return '%s' % ','.join('%s%s' % (M-m, '' if e == 1 else '^%s' % e)
+                                 for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_diagram(self):
         r"""
@@ -946,7 +946,7 @@ class Partition(CombinatorialElement):
         if not self._list:
             return "{\\emptyset}"
         exp = self.to_exp()
-        return '%s' % ','.join('%s%s' % (m+1, '' if e==1 else '^{%s}'%e)
+        return '%s' % ','.join('%s%s' % (m+1, '' if e == 1 else '^{%s}' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _latex_exp_high(self):
@@ -964,8 +964,8 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
         exp = self.to_exp()[::-1]  # reversed list of exponents
         M = max(self)
-        return '%s' % ','.join('%s%s' % (M-m, '' if e==1 else '^{%s}'%e)
-                                 for (m,e) in enumerate(exp) if e>0)
+        return '%s' % ','.join('%s%s' % (M-m, '' if e == 1 else '^{%s}' % e)
+                                 for (m,e) in enumerate(exp) if e > 0)
 
     def ferrers_diagram(self):
         r"""
@@ -2068,11 +2068,11 @@ class Partition(CombinatorialElement):
         mu = self
         muconj = mu.conjugate()     # Naive implementation
         if len(mu) <= len(muconj):
-            a = [x for x in (val-i-1 for i, val in enumerate(mu)) if x>=0]
-            b = [x for x in (muconj[i]-i-1 for i in range(len(a))) if x>=0]
+            a = [x for x in (val-i-1 for i, val in enumerate(mu)) if x >= 0]
+            b = [x for x in (muconj[i]-i-1 for i in range(len(a))) if x >= 0]
         else:
-            b = [x for x in (val-i-1 for i, val in enumerate(muconj)) if x>=0]
-            a = [x for x in (mu[i]-i-1 for i in range(len(b))) if x>=0]
+            b = [x for x in (val-i-1 for i, val in enumerate(muconj)) if x >= 0]
+            a = [x for x in (mu[i]-i-1 for i in range(len(b))) if x >= 0]
         return (a,b)
 
     def frobenius_rank(self):
@@ -2742,11 +2742,11 @@ class Partition(CombinatorialElement):
 
         if row + 1 >= len(self) or col >= self[row+1]:
             raise ValueError('(row+1, col) must be inside the diagram')
-        g=self.initial_tableau().to_list()
-        a=g[row][col]
+        g = self.initial_tableau().to_list()
+        a = g[row][col]
         g[row][col:] = list(range(a+col+1,g[row+1][col]+1))
         g[row+1][:col+1] = list(range(a,a+col+1))
-        g=tableau.Tableau(g)
+        g = tableau.Tableau(g)
         g._garnir_cell = (row, col)
         return g
 
@@ -2808,26 +2808,26 @@ class Partition(CombinatorialElement):
 
         - [KMR2012]_
         """
-        (row,col)=cell
-        if row+1>=len(self) or col>=self[row+1]:
-            raise ValueError('(%s,%s)=(row+1,col) must be inside the diagram' %(row+1,col))
+        (row,col) = cell
+        if row+1 >= len(self) or col >= self[row+1]:
+            raise ValueError('(%s,%s)=(row+1,col) must be inside the diagram' % (row+1,col))
 
-        g=self.garnir_tableau(cell)   # start with the Garnir tableau and modify
+        g = self.garnir_tableau(cell)   # start with the Garnir tableau and modify
 
-        if e==0:
+        if e == 0:
             return g             # no more dominant tableau of the same residue
 
-        a=e*int((self[row]-col)/e)    # number of cells in the e-bricks in row `row`
-        b=e*int((col+1)/e)            # number of cells in the e-bricks in row `row+1`
+        a = e*int((self[row]-col)/e)    # number of cells in the e-bricks in row `row`
+        b = e*int((col+1)/e)            # number of cells in the e-bricks in row `row+1`
 
-        if a==0 or b==0:
+        if a == 0 or b == 0:
             return g
 
-        t=g.to_list()
-        m=g[row+1][0]                 # smallest  number in 0-Garnir belt
+        t = g.to_list()
+        m = g[row+1][0]                 # smallest  number in 0-Garnir belt
         # now we will put the number m,m+1,...,t[row+1][col] in order into t
-        t[row][col:a+col]=[m+col-b+1+i for i in range(a)]
-        t[row+1][col-b+1:col+1]=[m+a+col-b+1+i for i in range(b)]
+        t[row][col:a+col] = [m+col-b+1+i for i in range(a)]
+        t[row+1][col-b+1:col+1] = [m+a+col-b+1+i for i in range(b)]
         return tableau.StandardTableau(t)
 
     @cached_method
@@ -2855,11 +2855,11 @@ class Partition(CombinatorialElement):
             sage: Partition([4,2]).young_subgroup()                                     # optional - sage.groups
             Permutation Group with generators [(), (5,6), (3,4), (2,3), (1,2)]
         """
-        gens=[]
-        m=0
+        gens = []
+        m = 0
         for row in self:
             gens.extend([ (c,c+1) for c in range(m+1,m+row)])
-            m+=row
+            m += row
         gens.append(list(range(1,self.size() + 1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup( gens )
 
@@ -4604,9 +4604,9 @@ class Partition(CombinatorialElement):
         result = []
         while not p.is_empty():
             corners = p.corners()
-            c = p.content(corners[0][0],corners[0][1])%(k+1)
+            c = p.content(corners[0][0],corners[0][1]) % (k+1)
             result.append(Integer(c))
-            list = [x for x in corners if p.content(x[0],x[1])%(k+1) ==c]
+            list = [x for x in corners if p.content(x[0],x[1]) % (k+1) == c]
             for x in list:
                 p = p.remove_cell(x[0])
         return result
@@ -5333,7 +5333,7 @@ class Partition(CombinatorialElement):
         outside_contents = [self.content(*c) for c in self.outside_corners()]
         inside_contents = [self.content(*c) for c in self.corners()]
         return sum(abs(variable+c) for c in outside_contents)\
-                       -sum(abs(variable+c) for c in inside_contents)
+                       - sum(abs(variable+c) for c in inside_contents)
 
     def dual_equivalence_graph(self, directed=False, coloring=None):
         r"""
@@ -5873,7 +5873,7 @@ class Partitions(UniqueRepresentation, Parent):
                 ('parts_in' in kwargs or
                  'starting' in kwargs or
                  'ending' in kwargs)):
-                raise ValueError("the parameters 'parts_in', 'starting' and "+
+                raise ValueError("the parameters 'parts_in', 'starting' and " +
                                  "'ending' cannot be combined with anything else")
 
             if 'parts_in' in kwargs:
@@ -5888,7 +5888,7 @@ class Partitions(UniqueRepresentation, Parent):
                 return RestrictedPartitions_n(n, kwargs['restricted'])
 
             # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
-            kwargs['name'] = "Partitions of the integer %s satisfying constraints %s"%(n, ", ".join( ["%s=%s"%(key, kwargs[key]) for key in sorted(kwargs)] ))
+            kwargs['name'] = "Partitions of the integer %s satisfying constraints %s" % (n, ", ".join( ["%s=%s" % (key, kwargs[key]) for key in sorted(kwargs)] ))
 
             # min_part is at least 1, and it is 1 by default
             kwargs['min_part'] = max(1, kwargs.get('min_part', 1))
@@ -6329,7 +6329,7 @@ class Partitions_all(Partitions):
         beta.sort()  # put them into increasing order just in case
         offset = 0
         while offset < len(beta)-1 and beta[offset] == offset:
-            offset+=1
+            offset += 1
         beta = beta[offset:]
         mu = [beta[i]-offset-i for i in range(len(beta))]
         return self.element_class(self, list(reversed(mu)))
@@ -6432,7 +6432,7 @@ class Partitions_all(Partitions):
         """
         from .partition_tuple import PartitionTuple, PartitionTuples
         if quotient not in PartitionTuples():
-            raise ValueError('the quotient %s must be a tuple of partitions'%quotient)
+            raise ValueError('the quotient %s must be a tuple of partitions' % quotient)
         components = PartitionTuple(quotient).components()
         length = len(components)
         k = length*max(len(q) for q in components) + len(core)
@@ -6762,7 +6762,7 @@ class Partitions_n(Partitions):
                     rand -= d * cached_number_of_partitions(r)
                     if rand < 0:
                         break
-                    d +=1
+                    d += 1
                     r -= j
                 else:
                     continue
@@ -7754,7 +7754,7 @@ class PartitionsInBox(Partitions):
                     new_list += add(element)
                 l = new_list
 
-            return [self.element_class(self, [x for x in p if x!=0]) for p in l]
+            return [self.element_class(self, [x for x in p if x != 0]) for p in l]
 
     def cardinality(self):
         """

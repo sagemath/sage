@@ -678,7 +678,7 @@ cdef class lazy_list_generic():
             sage: from itertools import count
             sage: from sage.misc.lazy_list import lazy_list
             sage: iter(lazy_list(count()))
-            <generator object at 0x...>
+            <...generator object at 0x...>
 
         ::
 
