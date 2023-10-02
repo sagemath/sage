@@ -1,4 +1,4 @@
-$(PYTHON) cmake cython nbconvert ncurses
+ cmake cython nbconvert ncurses | $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

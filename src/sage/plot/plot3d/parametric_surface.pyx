@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Parametric surface
 
@@ -468,7 +468,8 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: M = MoebiusStrip(7,3,2)
             sage: M.bounding_box()
-            ((-10.0, -7.53907349250478..., -2.9940801852848145), (10.0, 7.53907349250478..., 2.9940801852848145))
+            ((-10.0, -7.53907349250478..., -2.9940801852848145),
+             (10.0, 7.53907349250478..., 2.9940801852848145))
         """
         # We must triangulate before computing the bounding box; otherwise
         # we'll get an empty bounding box, as the bounding box is computed
@@ -493,7 +494,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: def f(x,y): return x+y, sin(x)*sin(y), x*y                        # indirect doctests
             sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)))  # indirect doctests
             sage: P.show()                                                          # indirect doctests
-            sage: S = MoebiusStrip(1,.2)                                             # indirect doctests
+            sage: S = MoebiusStrip(1, .2)                                           # indirect doctests
             sage: S.show()                                                          # indirect doctests
         """
         cdef double u, v

@@ -39,11 +39,12 @@ Obtain the facets of a polyhedron::
 
 Obtain the Vrepresentation of a polyhedron as facet-incidences::
 
+    sage: # needs sage.combinat
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
-    sage: P = polytopes.associahedron(['A',3])                                   # optional - sage.combinat
-    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())  # optional - sage.combinat
-    sage: face_list.compute_dimension()                                          # optional - sage.combinat
+    sage: P = polytopes.associahedron(['A',3])
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
+    sage: face_list.compute_dimension()
     3
 
 Obtain the facets of a polyhedron as :class:`ListOfFaces` from a facet list::

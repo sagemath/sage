@@ -15,7 +15,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef characteristic(self)
 
     cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation)
-    cdef __exchange_value(self, long x, long y)
+    cdef _exchange_value_internal(self, long x, long y)
 
     cpdef representation(self, B=*, reduced=*, labels=*, order=*, lift_map=*)
     cpdef _current_rows_cols(self, B=*)

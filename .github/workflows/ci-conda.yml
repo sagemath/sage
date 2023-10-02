@@ -8,6 +8,11 @@ on:
       - 'public/build/**-runci'
   pull_request:
     types:
+      # Defaults
+      - opened
+      - synchronize
+      - reopened
+      # When a CI label is added
       - labeled
   workflow_dispatch:
     # Allow to run manually
@@ -21,13 +26,18 @@ jobs:
   test:
     name: Conda
     runs-on: ${{ matrix.os }}
-    
-    # Run on push, workflow dispatch and when certain labels are added 
+
+    # Run on push, workflow dispatch and when certain labels are added or are present
     if: |
-      github.event.action != 'labeled' ||
-      github.event.label.name == 'c: packages: optional' || 
-      github.event.label.name == 'c: packages: standard' || 
-      github.event.label.name == 's: run conda ci'
+      github.event_name != 'pull_request' ||
+      ((github.event.action != 'labeled' &&
+         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
+          contains(github.event.pull_request.labels.*.name, 'c: packages: optional') ||
+          contains(github.event.pull_request.labels.*.name, 's: run conda ci'))) ||
+       (github.event.action == 'labeled' &&
+         (github.event.label.name == 'c: packages: optional' ||
+          github.event.label.name == 'c: packages: standard' ||
+          github.event.label.name == 's: run conda ci')))
 
     strategy:
       fail-fast: false
@@ -39,7 +49,13 @@ jobs:
         conda-env: [environment]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Check for Miniconda
         id: check_conda
@@ -88,9 +104,6 @@ jobs:
           ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
           echo "::remove-matcher owner=configure-system-package-warning::"
           echo "::remove-matcher owner=configure-system-package-error::"
-
-          # Manually install ptyprocess for now, until https://github.com/sagemath/sage/issues/32147 is fixed
-          pip install --no-build-isolation -v -v ptyprocess==0.5.1
 
       - name: Build
         shell: bash -l {0}

@@ -1,1 +1,1 @@
-python3-vcversioner
+python3${PYTHON_MINOR}-vcversioner

@@ -450,7 +450,7 @@ class TamariIntervalPoset(Element,
         c1 = 'red'    # self.latex_options()["color_decreasing"]
         G = self.poset().hasse_diagram()
         G.set_pos(self._find_node_positions())
-        for a, b, c in G.edges(sort=False):
+        for a, b in G.edges(sort=False, labels=False):
             if a < b:
                 G.set_edge_label(a, b, 0)
             else:
