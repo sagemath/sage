@@ -2,7 +2,7 @@
 Plane curves
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,11 +18,10 @@ Plane curves
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from .constructor import Curve
 
-from .projective_curve import Hasse_bounds 
+from .projective_curve import Hasse_bounds
 
 from .plane_curve_arrangement import OrderedAffinePlaneCurveArrangements
-
