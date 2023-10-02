@@ -547,6 +547,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         L = self.defining_polynomials()
         return braid_monodromy(prod(L), arrangement=L, vertical=vertical)
 
+
 class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
     """
     Curve arrangements.

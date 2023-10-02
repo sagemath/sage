@@ -380,6 +380,8 @@ def voronoi_cells(V, vertical_lines=[]):
 
     - ``V`` -- a corrected Voronoi diagram
 
+    - ``vertical_lines`` -- list (default: `[]`) indices of the vertical lines
+
     OUTPUT:
 
     - ``G`` -- the graph of the 1-skeleton of ``V``
@@ -396,9 +398,7 @@ def voronoi_cells(V, vertical_lines=[]):
         sage: from sage.schemes.curves.zariski_vankampen import corrected_voronoi_diagram, voronoi_cells
         sage: points = (2, I, 0.000001, 0, 0.000001*I)
         sage: V = corrected_voronoi_diagram(points)
-        sage: G, E, p, EC, DG, VR = voronoi_cells(V)
-        sage: VR == dict()
-        True
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=(1,))
         sage: Gv = G.vertices(sort=True)
         sage: Ge = G.edges(sort=True)
         sage: len(Gv), len(Ge)
@@ -446,11 +446,18 @@ def voronoi_cells(V, vertical_lines=[]):
          (A vertex at (2000001/2000000, 500001/1000000), A vertex at (11/4, 4), None))
         sage: edg[-1] in Ge
         True
+        sage: VR
+        {1: (A vertex at (-49000001/14000000, 1000001/2000000),
+             A vertex at (1000001/2000000, 1000001/2000000),
+             A vertex at (2000001/2000000, 500001/1000000),
+             A vertex at (11/4, 4),
+             A vertex at (-4, 4),
+             A vertex at (-49000001/14000000, 1000001/2000000))}
     """
     regions = V.regions()
     points = [p for p in V.regions().keys() if V.regions()[p].is_compact()]
     compact_regions = [regions[p] for p in points]
-    vertical_regions = {j: regions[points[j]] for j in vertical_lines}
+    vertical_regions = dict()  # {j: regions[points[j]] for j in vertical_lines}
     non_compact_regions = [_ for _ in V.regions().values() if not _.is_compact()]
     G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format='list_of_edges')
     E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format='list_of_edges')
@@ -460,6 +467,8 @@ def voronoi_cells(V, vertical_lines=[]):
     DG = Graph()
     for i, reg in enumerate(compact_regions):
         Greg0 = orient_circuit(reg.graph().eulerian_circuit(), convex=True)
+        if i in vertical_lines:
+            vertical_regions[i] = Greg0
         # Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
         DG.add_vertex((i, Greg0))
     for e in G.edges(sort=True):
@@ -1209,9 +1218,9 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     x, y = f.parent().gens()
     dic_vertical = {j: False for j, f0 in enumerate(arrangement1)}
     if vertical:
-        for j, f0 in arrangement1:
+        for j, f0 in enumerate(arrangement1):
             if f0.degree(y) < f0.degree() and f0.degree() > 1:
-                dic_vertical = {j1: False for j1, f1 in arrangement1}
+                dic_vertical = {j1: False for j1, f1 in enumerate(arrangement1)}
                 break
             else:
                 dic_vertical[j] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
@@ -1232,7 +1241,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             g = g.subs({x: x + y})
             d = g.degree(y)
             arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)
-            arrangement1 = arrangement_h 
+            arrangement1 = arrangement_h
             glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     if d > 0:
         disc = discrim(glist)
@@ -1240,12 +1249,15 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         disc = []
     vertical_braid = dict()
     transversal = dict()
+    vl = []
     for f0 in arrangement_v:
         pt = [j for j, t in enumerate(disc) if f0(x=t) == 0]
         if pt:
             vertical_braid[f0] = (pt[0], arrangement1.index(f0))
+            vl.append(j)
         else:
             transversal[f0] = arrangement1.index(f0)
+    vl.sort()
     if not disc:
         vertical_braids = {i + d: transversal[f0] for i, f0 in enumerate(transversal)}
         if d > 1:
@@ -1263,7 +1275,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         else:
             strands1 = dict()
         return (result, strands1, vertical_braids, d)
-    V = corrected_voronoi_diagram(tuple(disc))
+    V = corrected_voronoi_diagram(tuple(disc), vertical_lines=vl)
     G, E, p, EC, DG, VR = voronoi_cells(V)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
