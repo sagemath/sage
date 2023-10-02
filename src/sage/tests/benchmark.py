@@ -25,7 +25,7 @@ from sage.interfaces.mathematica import mathematica
 from sage.interfaces.maxima import maxima
 from sage.interfaces.singular import singular
 from sage.libs.pari import pari
-from sage.lib.libgap import libgap
+from sage.libs.gap.libgap import libgap
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import log
 from sage.misc.timing import cputime, walltime
