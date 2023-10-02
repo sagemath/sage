@@ -220,7 +220,7 @@ def discrim(pols):
 
 @cached_function
 def corrected_voronoi_diagram(points):
-    r"""
+    r"""+
     Compute a Voronoi diagram of a set of points with rational coordinates.
     The given points are granted to lie one in each bounded region.
 
@@ -954,38 +954,44 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
     to a region, surrounds it, and comes back by the same path it came. The
     concatenation of all these paths is equivalent to ``E``.
 
-    The dictionnary fixes the positions of the generators associated with the vertical lines.
+    The dictionnary associates to each vertical line the index of the generator
+    of the geometric basis associated to it.
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, voronoi_cells
-        sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
-        sage: V = VoronoiDiagram(points)
-        sage: G, E, p, EC, DG, VR = voronoi_cells(V)
-        sage: geometric_basis(G, E, EC, p, DG, dict())
-        ([[A vertex at (-2, -2), A vertex at (2, -2), A vertex at (2, 2),
-           A vertex at (1/2, 1/2), A vertex at (1/2, -1/2),
-           A vertex at (2, -2), A vertex at (-2, -2)],
-          [A vertex at (-2, -2), A vertex at (2, -2), A vertex at (1/2, -1/2),
-           A vertex at (1/2, 1/2), A vertex at (-1/2, 1/2),
-           A vertex at (-1/2, -1/2), A vertex at (1/2, -1/2),
-           A vertex at (2, -2), A vertex at (-2, -2)],
-          [A vertex at (-2, -2), A vertex at (2, -2), A vertex at (1/2, -1/2),
-           A vertex at (-1/2, -1/2), A vertex at (-2, -2)],
-          [A vertex at (-2, -2), A vertex at (-1/2, -1/2),
-           A vertex at (-1/2, 1/2), A vertex at (1/2, 1/2),
-           A vertex at (2, 2), A vertex at (-2, 2), A vertex at (-1/2, 1/2),
-           A vertex at (-1/2, -1/2), A vertex at (-2, -2)],
-          [A vertex at (-2, -2), A vertex at (-1/2, -1/2),
-           A vertex at (-1/2, 1/2), A vertex at (-2, 2),
-           A vertex at (-2, -2)]], {})
+        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, corrected_voronoi_diagram, voronoi_cells
+        sage: points = (0, -1, I, 1, -I)
+        sage: V = corrected_voronoi_diagram(points)
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=[0, 1, 2, 3, 4])
+        sage: gb, vd = geometric_basis(G, E, EC, p, DG, VR)
+        sage: gb
+        [[A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (-5/2, 5/2),
+          A vertex at (-1/2, 1/2), A vertex at (-1/2, -1/2), A vertex at (1/2, -1/2),
+          A vertex at (1/2, 1/2), A vertex at (-1/2, 1/2), A vertex at (-5/2, 5/2),
+          A vertex at (5/2, 5/2), A vertex at (5/2, -5/2)],
+         [A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (-5/2, 5/2),
+          A vertex at (-1/2, 1/2), A vertex at (1/2, 1/2), A vertex at (5/2, 5/2),
+          A vertex at (5/2, -5/2)],
+         [A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (1/2, 1/2),
+          A vertex at (1/2, -1/2), A vertex at (5/2, -5/2)], [A vertex at (5/2, -5/2),
+          A vertex at (1/2, -1/2), A vertex at (-1/2, -1/2), A vertex at (-1/2, 1/2),
+          A vertex at (-5/2, 5/2), A vertex at (-5/2, -5/2), A vertex at (-1/2, -1/2),
+          A vertex at (1/2, -1/2), A vertex at (5/2, -5/2)],
+         [A vertex at (5/2, -5/2), A vertex at (1/2, -1/2), A vertex at (-1/2, -1/2),
+          A vertex at (-5/2, -5/2), A vertex at (5/2, -5/2)]]
+        sage: vd
+        {0: 0, 1: 3, 2: 1, 3: 2, 4: 4}
     """
     i = EC0.index(p)
-    EC = EC0[i:-1] + EC0[:i + 1]   # A counterclockwise eulerian circuit on the boundary, starting and ending at p
+    EC = EC0[i:-1] + EC0[:i + 1]  # A counterclockwise eulerian circuit on the boundary, starting and ending at p
     if G.size() == E.size():
         if E.is_cycle():
-            vert_dict = vert_dict = {0: vertical_regions[p] for p in vertical_regions.keys()}
-            return [[EC], vert_dict]
+            j = list(dual_graph.vertices())[0][0]
+            if j in vertical_regions:
+                vd = {j: 0}
+            else:
+                vd = dict()
+            return [EC], vd
     InternalEdges = [_ for _ in G.edges(sort=True) if _ not in E.edges(sort=True)]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
@@ -1070,18 +1076,18 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
         EC1 = list(EC[qi:] + EC[1:ri]) + list(reversed(cutpath))
         EC2 = cutpath + list(EC[ri + 1:qi + 1])
 
-    regs1 = [v[1] for v in Gd1.vertices()]
-    VR1 = {p: vertical_regions[p] for p in vertical_regions.keys() if p in regs1}
-    regs2 = [v[1] for v in Gd2.vertices()]
-    VR2 = {p: vertical_regions[p] for p in vertical_regions.keys() if p in regs2}
+    # regs1 = [v[1] for v in Gd1.vertices()]
+    # VR1 = {p: vertical_regions[p] for p in vertical_regions.keys() if p in regs1}
+    # regs2 = [v[1] for v in Gd2.vertices()]
+    # VR2 = {p: vertical_regions[p] for p in vertical_regions.keys() if p in regs2}
 
-    gb1, vd1 = geometric_basis(G1, E1, EC1, q, Gd1, VR1)
-    gb2, vd2 = geometric_basis(G2, E2, EC2, q, Gd2, VR2)
+    gb1, vd1 = geometric_basis(G1, E1, EC1, q, Gd1, vertical_regions)
+    gb2, vd2 = geometric_basis(G2, E2, EC2, q, Gd2, vertical_regions)
 
-    vd = {j: vd1[j] for j in vd1.keys()}
+    vd = {j: vd1[j] for j in vd1}
     m = len(gb1)
     for j in vd2.keys():
-        vd[j + m] = vd2[j]
+        vd[j] = vd2[j] + m
     reverse_connecting = list(reversed(connecting_path))
     resul = [connecting_path + path + reverse_connecting
              for path in gb1 + gb2]
@@ -1275,8 +1281,8 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         else:
             strands1 = dict()
         return (result, strands1, vertical_braids, d)
-    V = corrected_voronoi_diagram(tuple(disc), vertical_lines=vl)
-    G, E, p, EC, DG, VR = voronoi_cells(V)
+    V = corrected_voronoi_diagram(tuple(disc))
+    G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=vl)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
     roots_base, strands = strand_components(g, arrangement_h, p1)
@@ -1327,7 +1333,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     for f0 in arrangement_v:
         if f0 in vertical_braid.keys():
             k, j = vertical_braid[f0]
-            vertical_braids[k] = j
+            vertical_braids[j] = vd[k]
         else:
             vertical_braids[r + t] = transversal[f0]
             t += 1
