@@ -679,7 +679,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
 
     cdef int degree(self):
         """
-        Returns the (formal) degree of this polynomial.
+        Return the (formal) degree of this polynomial.
         """
         return len(self.coeffs) - 1
 
@@ -776,7 +776,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
 
     def get_msb_bit(self):
         """
-        Returns an approximation of the log2 of the maximum of the
+        Return an approximation of the log2 of the maximum of the
         absolute values of the coefficients, as an integer.
         """
         return self.scale_log2 + self.bitsize
@@ -1554,7 +1554,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 
     cdef int degree(self):
         """
-        Returns the (formal) degree of this polynomial.
+        Return the (formal) degree of this polynomial.
         """
         return len(self.coeffs) - 1
 
@@ -1642,7 +1642,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 
     def get_msb_bit(self):
         """
-        Returns an approximation of the log2 of the maximum of the
+        Return an approximation of the log2 of the maximum of the
         absolute values of the coefficients, as an integer.
         """
         return self.scale_log2 - 53 + self.bitsize
@@ -1818,15 +1818,17 @@ def max_abs_doublevec(Vector_real_double_dense c):
 
 def wordsize_rational(a, b, wordsize):
     """
-    Given rationals a and b, selects a de Casteljau split point r between
-    a and b.  An attempt is made to select an efficient split point
+    Given rationals a and b, select a de Casteljau split point r between
+    a and b.
+
+    An attempt is made to select an efficient split point
     (according to the criteria mentioned in the documentation
     for de_casteljau_intvec), with a bias towards split points near a.
 
     In full detail:
 
-    Takes as input two rationals, a and b, such that 0<=a<=1, 0<=b<=1,
-    and a!=b.  Returns rational r, such that a<=r<=b or b<=r<=a.
+    This takes as input two rationals, a and b, such that 0<=a<=1, 0<=b<=1,
+    and a!=b. This returns rational r, such that a<=r<=b or b<=r<=a.
     The denominator of r is a power of 2.  Let m be min(r, 1-r),
     nm be numerator(m), and dml be log2(denominator(m)).  The return value
     r is taken from the first of the following classes to have any
@@ -2550,14 +2552,14 @@ class bernstein_polynomial_factory:
 
     def lsign(self):
         """
-        Returns the sign of the first coefficient of this
+        Return the sign of the first coefficient of this
         Bernstein polynomial.
         """
         return self._sign(self.coeffs[0])
 
     def usign(self):
         """
-        Returns the sign of the last coefficient of this
+        Return the sign of the last coefficient of this
         Bernstein polynomial.
         """
         return self._sign(self.coeffs[-1])
@@ -3077,7 +3079,7 @@ cdef class ocean:
 
     def approx_bp(self, scale_log2):
         """
-        Returns an approximation to our Bernstein polynomial with the
+        Return an approximation to our Bernstein polynomial with the
         given scale_log2.
 
         EXAMPLES::
@@ -3830,10 +3832,10 @@ class warp_map:
 
 def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=False, wordsize=32, retval='rational', strategy=None, max_diameter=None):
     """
-    Compute the real roots of a given polynomial with exact
-    coefficients (integer, rational, and algebraic real coefficients
-    are supported).  Returns a list of pairs of a root and its
-    multiplicity.
+    Compute the real roots of a given polynomial with exact coefficients
+    (integer, rational, and algebraic real coefficients are supported).
+
+    This returns a list of pairs of a root and its multiplicity.
 
     The root itself can be returned in one of three different ways.
     If retval=='rational', then it is returned as a pair of rationals
@@ -4050,7 +4052,7 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
 
     cdef ocean oc
 
-    for (factor, exp) in factors:
+    for factor, exp in factors:
         if strategy=='warp':
             if factor.constant_coefficient() == 0:
                 x = factor.parent().gen()
@@ -4105,7 +4107,7 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
     while True:
         all_roots = copy(extra_roots)
 
-        for (oc, factor, exp) in oceans:
+        for oc, factor, exp in oceans:
             rel_roots = oc.roots()
 
             cur_roots = [oc.mapping.from_ocean(r) for r in rel_roots]
@@ -4162,7 +4164,7 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
         if ok:
             break
 
-        for (oc, factor, exp) in oceans:
+        for oc, factor, exp in oceans:
             oc.find_roots()
 
     if do_logging:
@@ -4467,7 +4469,7 @@ def bernstein_expand(Vector_integer_dense c, int d2):
     multiplies, but in this version all the multiplies are by single
     machine words).
 
-    Returns a pair consisting of the expanded polynomial, and the maximum
+    This returns a pair consisting of the expanded polynomial, and the maximum
     error E.  (So if an element of the returned polynomial is a, and the
     true value of that coefficient is b, then a <= b < a + E.)
 
