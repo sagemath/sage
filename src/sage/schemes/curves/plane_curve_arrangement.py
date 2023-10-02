@@ -63,16 +63,18 @@ AUTHORS:
 # from sage.categories.homset import Hom, End, hom
 # from sage.categories.number_fields import NumberFields
 from sage.categories.sets_cat import Sets
-from sage.combinat.permutation import Permutation
-from sage.groups.free_group import FreeGroup
+from sage.combinat.combination import Combinations
+# from sage.combinat.permutation import Permutation
+# from sage.groups.free_group import FreeGroup
 # from sage.interfaces.singular import singular
 # from sage.matrix.constructor import matrix, vector
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 # from sage.rings.infinity import infinity
 # from sage.misc.lazy_attribute import lazy_attribute
 # from sage.rings.number_field.number_field import NumberField
 # from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+# from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 # from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.qqbar import QQbar
 # from sage.rings.rational_field import QQ, is_RationalField
@@ -82,14 +84,14 @@ from sage.schemes.affine.affine_space import AffineSpace
 # from sage.schemes.affine.affine_space import is_AffineSpace
 # from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 # from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine_field
+from sage.schemes.curves.affine_curve import AffinePlaneCurve
+from sage.schemes.curves.constructor import Curve
 from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
-
-from sage.schemes.curves.affine_curve import AffinePlaneCurve
 # from .closed_point import IntegralAffineCurveClosedPoint
 # from .curve import Curve_generic
 # from .point import (AffineCurvePoint_field,
@@ -142,7 +144,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
                 raise ValueError("the curves must be given as a tuple")
             if not all(isinstance(h, AffinePlaneCurve) for h in curves):
                 raise ValueError("not all elements are curves")
-            if not all(h.parent() is self.parent().ambient_space() for h in curves):
+            if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
 
     def _first_ngens(self, n):
@@ -260,8 +262,8 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         if len(self) == 0:
             return 'Empty curve arrangement'
         elif len(self) < 5:
-            curves = ' | '.join(h._repr_linear(include_zero=False) for h in self._curves)
-            return 'Arrangement <{0}>'.format(curves)
+            curves = ', '.join(h._repr_() for h in self._curves)
+            return 'Arrangement ({0})'.format(curves)
         return 'Arrangement of {0} curves'.format(len(self))
 
     def _richcmp_(self, other, op):
@@ -415,7 +417,30 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         parent = self.parent().change_ring(base_ring)
         return parent(self)
 
-    def defining_polynomial(self):
+    def defining_polynomials(self):
+        r"""
+        Return the defining polynomials of ``A``.
+
+        # Let `A = (H_i)_i` be a hyperplane arrangement in a vector space `V`
+        # corresponding to the null spaces of `\alpha_{H_i} \in V^*`. Then
+        # the *defining polynomial* of `A` is given by
+        #
+        # .. MATH::
+        #
+        #     Q(A) = \prod_i \alpha_{H_i} \in S(V^*).
+
+        EXAMPLES::
+
+            # sage: H.<x,y,z> = HyperplaneArrangements(QQ)
+            # sage: A = H([2*x + y - z, -x - 2*y + z])
+            # sage: p = A.defining_polynomial(); p
+            # -2*x^2 - 5*x*y - 2*y^2 + 3*x*z + 3*y*z - z^2
+            # sage: p.factor()
+            # (-1) * (x + 2*y - z) * (2*x + y - z)
+        """
+        return tuple(h.defining_polynomial() for h in self)
+
+    def defining_polynomial(self, simplified=True):
         r"""
         Return the defining polynomial of ``A``.
 
@@ -436,107 +461,85 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             # sage: p.factor()
             # (-1) * (x + 2*y - z) * (2*x + y - z)
         """
-        S = self.parent().ambient_space()
-        return S.prod(h.defining_polynomial() for h in self)
+        return prod(self.defining_polynomials())
 
-    def fundamental_group(self, proj=False):
+    def have_common_factors(self):
+        L = [c.defining_polynomial() for c in self]
+        C = Combinations(L, 2)
+        for f1, f2 in C:
+            if f1.gcd(f2).degree() > 0:
+                return True
+        return False
+
+    def reduce(self):
+        P = self.parent()
+        L = [c.defining_polynomial().radical() for c in self]
+        return P(*L)
+
+    def fundamental_group(self, vertical=True):
         r"""
-        It computes the fundamental group of the complement of an affine
-        hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
-        arrangement in `\mathbb{CP}^n`, `n=1,2`, whose equations have
-        coefficients in a subfield of ``QQbar``
-
-        INPUT:
-
-        - ``proj`` -- (optional, default ``False``). It decides if it computes the
-          fundamental group of the complement in the affine or projective space
+        It computes the fundamental group of the complement of the union
+        of affine projective curves in `\mathbb{C}^2`.
 
         OUTPUT:
 
-        A group finitely presented with the assignation of each hyperplane to
-        a member of a group (meridian).
+        A group finitely presented with the assignation of each curve to
+        a set of meridians, including the line at infinity.
 
         EXAMPLES::
 
-            sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
-            sage: L = [y + x, y + x - 1]
-            sage: H = A(L)
-            sage: G, dic = H.fundamental_group(); G                                   # optional - sirocco
-            Finitely presented group < x0, x1 |  >
-            sage: L = [x, y, x + 1, y + 1, x - y]
-            sage: H = A(L); list(H)
-            [Hyperplane x + 0*y + 0,
-             Hyperplane 0*x + y + 0,
-             Hyperplane x + 0*y + 1,
-             Hyperplane 0*x + y + 1,
-             Hyperplane x - y + 0]
-            sage: G, dic = H.fundamental_group()                                      # optional - sirocco
-            sage: G.simplified()                                                        # optional - sirocco
-            Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1,
-                                       x2^-1*x0^-1*x2*x4*x0*x4^-1,
-                                       x0*x1*x3*x0^-1*x3^-1*x1^-1,
-                                       x0*x2*x4*x2^-1*x0^-1*x4^-1,
-                                       x0*x1^-1*x0^-1*x3^-1*x1*x3,
-                                       x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
-            sage: dic                                                                   # optional - sirocco
-                {0: [x2], 1: [x4], 2: [x1], 3: [x3], 4: [x0], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
-            sage: H=A(x,y,x+y)
-            sage: H._fundamental_group_()                                               # optional - sirocco
-            (Finitely presented group < x0, x1, x2 | x1*x2*x0*x2^-1*x1^-1*x0^-1, x1*x0^-1*x2^-1*x1^-1*x2*x0 >,
-             {0: [x0], 1: [x2], 2: [x1], 3: [x2^-1*x1^-1*x0^-1]})
-            sage: H._fundamental_group_(proj=True)                                      # optional - sirocco
-            (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
-            sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
-            sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
-            sage: G, dic = H._fundamental_group_(proj=True)                             # optional - sage.graphs, sirocco
-            sage: h = G.simplification_isomorphism()                                    # optional - sage.graphs, sirocco
-            sage: G.simplified()                                                        # optional - sage.graphs, sirocco
-            Finitely presented group < x0, x1, x3, x4, x5 | x0*x3*x0^-1*x3^-1,
-                                                            x1*x4*x1^-1*x4^-1,
-                                                            x1*x5*x1^-1*x0^-1*x5^-1*x0,
-                                                            x5*x3*x4*x3^-1*x5^-1*x4^-1,
-                                                            x5^-1*x1^-1*x0*x1*x5*x0^-1,
-                                                            x4*x5^-1*x4^-1*x3^-1*x5*x3 >
-            sage: {j: h(dic[j][0]) for j in dic.keys()}                                 # optional - sage.graphs, sirocco
-            {0: x5, 1: x0, 2: x1, 3: x3, 4: x4, 5: x0^-1*x5^-1*x4^-1*x1^-1*x3^-1}
+            # sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
+            # sage: L = [y + x, y + x - 1]
+            # sage: H = A(L)
+            # sage: G, dic = H.fundamental_group(); G                                   # optional - sirocco
+            # Finitely presented group < x0, x1 |  >
+            # sage: L = [x, y, x + 1, y + 1, x - y]
+            # sage: H = A(L); list(H)
+            # [Hyperplane x + 0*y + 0,
+            #  Hyperplane 0*x + y + 0,
+            #  Hyperplane x + 0*y + 1,
+            #  Hyperplane 0*x + y + 1,
+            #  Hyperplane x - y + 0]
+            # sage: G, dic = H.fundamental_group()                                      # optional - sirocco
+            # sage: G.simplified()                                                        # optional - sirocco
+            # Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1,
+            #                            x2^-1*x0^-1*x2*x4*x0*x4^-1,
+            #                            x0*x1*x3*x0^-1*x3^-1*x1^-1,
+            #                            x0*x2*x4*x2^-1*x0^-1*x4^-1,
+            #                            x0*x1^-1*x0^-1*x3^-1*x1*x3,
+            #                            x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
+            # sage: dic                                                                   # optional - sirocco
+            #     {0: [x2], 1: [x4], 2: [x1], 3: [x3], 4: [x0], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
+            # sage: H=A(x,y,x+y)
+            # sage: H._fundamental_group_()                                               # optional - sirocco
+            # (Finitely presented group < x0, x1, x2 | x1*x2*x0*x2^-1*x1^-1*x0^-1, x1*x0^-1*x2^-1*x1^-1*x2*x0 >,
+            #  {0: [x0], 1: [x2], 2: [x1], 3: [x2^-1*x1^-1*x0^-1]})
+            # sage: H._fundamental_group_(proj=True)                                      # optional - sirocco
+            # (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
+            # sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
+            # sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
+            # sage: G, dic = H._fundamental_group_(proj=True)                             # optional - sage.graphs, sirocco
+            # sage: h = G.simplification_isomorphism()                                    # optional - sage.graphs, sirocco
+            # sage: G.simplified()                                                        # optional - sage.graphs, sirocco
+            # Finitely presented group < x0, x1, x3, x4, x5 | x0*x3*x0^-1*x3^-1,
+            #                                                 x1*x4*x1^-1*x4^-1,
+            #                                                 x1*x5*x1^-1*x0^-1*x5^-1*x0,
+            #                                                 x5*x3*x4*x3^-1*x5^-1*x4^-1,
+            #                                                 x5^-1*x1^-1*x0*x1*x5*x0^-1,
+            #                                                 x4*x5^-1*x4^-1*x3^-1*x5*x3 >
+            # sage: {j: h(dic[j][0]) for j in dic.keys()}                                 # optional - sage.graphs, sirocco
+            # {0: x5, 1: x0, 2: x1, 3: x3, 4: x4, 5: x0^-1*x5^-1*x4^-1*x1^-1*x3^-1}
 
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
-        n = self.dimension()
-        r = len(self)
-        affine = n == 2 and not proj
-        projective = n == 3 and self.is_central() and proj
-        if (n == 1 and not proj) or (n == 2 and proj and self.is_central()):
-            r1 = r - proj
-            G = FreeGroup(r1) / []
-            dic = {j: (j,) for j in range(1, r)}
-            dic[r] = tuple(-j for j in reversed(range(1, r)))
-            return (G, dic)
-        casos = affine or projective
-        if not casos:
-            raise TypeError('The method does not apply')
         K = self.base_ring()
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
-        S = self.parent().ambient_space().symmetric_space()
-        if projective:
-            S = PolynomialRing(K, S.gens()[:-1])
-        infinity0 = [0, 0, 0, 1] == self[0].primitive().coefficients()
-        L = []
-        for h in self:
-            coeff = h.coefficients()
-            if projective:
-                coeff = (coeff[3], coeff[1], coeff[2])
-            V = (1,) + S.gens()
-            p = S.sum(V[i]*c for i, c in enumerate(coeff))
-            if p.degree() > 0:
-                L.append(p)
-        G, dic = fundamental_group_arrangement(L, puiseux=True, projective=projective and not infinity0, simplified=False)
-        if infinity0:
-            p = Permutation([r] + [j for j in range(1, r)])
-            dic = {j: dic[p(j + 1) - 1] for j in range(r)}
+        C = self.reduce()
+        L = C.defining_polynomials()
+        G, dic = fundamental_group_arrangement(L, puiseux=True, vertical=vertical)
         return (G, dic)
 
 
@@ -651,7 +654,7 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             sage: L.ambient_space()([(1,0), 0]) == x
             True
         """
-        return AffineSpace(self.base_ring(), self._names)
+        return AffineSpace(self.base_ring(), 2, self._names)
 
     def _repr_(self):
         """
@@ -720,36 +723,32 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
         #     ...
         #     ValueError: linear expression must be non-constant to define a hyperplane
        """
-        if len(args) == 1:
-            arg = args[0]
-            if isinstance(arg, OrderedAffinePlaneCurveArrangementsElement) and args[0].parent() is self:
-                # optimization if argument is already a hyperplane arrangement
-                return arg
-            if arg == 0 and not isinstance(arg, AffinePlaneCurve):
-                # zero = neutral element under addition = the empty hyperplane arrangement
-                args = []
+        if len(args) == 1 and not (isinstance(args[0], (tuple, list))):
+            arg = (args[0], )
+        elif len(args) == 1:
+            arg = tuple(args[0])
+        else:
+            arg = tuple(args)
         # process keyword arguments
-        warn_duplicates = kwds.pop('warn_duplicates', False)
         if len(kwds) > 0:
             raise ValueError('unknown keyword argument')
         # process positional arguments
         AA = self.ambient_space()
-        try:
-            curves = [AA(_) for _ in args]
-        except (TypeError, ValueError, AttributeError):
-            if len(args) > 1:
-                raise
-            arg = args[0]
-        curves0 = [h.primitive() for h in curves]
-        n = len(curves0)
+        R = AA.coordinate_ring()
         curves = ()
-        for h in curves0:
-            if h not in curves:
-                curves += (h, )
-        if warn_duplicates and n != len(curves):
-            from warnings import warn
-            warn('Input contained {0} curves, but only {1} are distinct.'.format(n, len(curves)))
-        # argument checking (optional but recommended)
+        for h in arg:
+            try:
+                ambient = h.ambient_space()
+                if ambient == AA:
+                    curves += (h, )
+                else:
+                    return None
+            except AttributeError:
+                try:
+                    h = R(h)
+                    curves += (Curve(h), )
+                except TypeError:
+                    return None
         return self.element_class(self, curves)
 
     @cached_method

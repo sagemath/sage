@@ -1768,9 +1768,12 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     if len(flist1) == 0:
         bm = []
         dic = dict()
+        dv = {j: j for j, f in flist}
+        d1 = 0
     else:
-        bm, dic, dv, d = braid_monodromy(f, flist1, vertical=vertical0)
-    g = fundamental_group_from_braid_mon(bm, degree=d, simplified=False, projective=projective, puiseux=puiseux)
+        bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical0)
+        vert_lines = []
+    g = fundamental_group_from_braid_mon(bm, degree=d1, simplified=False, projective=projective, puiseux=puiseux, vertical=vert_lines)
     if simplified:
         hom = g.simplification_isomorphism()
     else:
