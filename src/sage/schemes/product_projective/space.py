@@ -739,13 +739,13 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         except TypeError:
             raise TypeError("polynomials (=%s) must be elements of %s" % (polynomials,source_ring))
         for f in polynomials:
-            self._degree(f) #raises a ValueError if not multi-homogeneous
+            self._degree(f)  # raises a ValueError if not multi-homogeneous
         return polynomials
 
     def _check_satisfies_equations(self, v):
         """
-        Return True if ``v`` defines a point on the scheme this space; raise a
-        TypeError otherwise.
+        Return ``True`` if ``v`` defines a point on the scheme this space;
+        raise a :class:`TypeError` otherwise.
 
         EXAMPLES::
 

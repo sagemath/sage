@@ -611,16 +611,19 @@ class ModularAbelianVariety_abstract(Parent):
 
     def elliptic_curve(self):
         """
-        Return an elliptic curve isogenous to self. If self is not dimension 1
-        with rational base ring, raise a ValueError.
+        Return an elliptic curve isogenous to ``self``.
 
-        The elliptic curve is found by looking it up in the CremonaDatabase.
-        The CremonaDatabase contains all curves up to some large conductor.  If
-        a curve is not found in the CremonaDatabase, a RuntimeError will be
-        raised. In practice, only the most committed users will see this
-        RuntimeError.
+        If ``self`` is not dimension 1
+        with rational base ring, this raises a :class:`ValueError`.
 
-        OUTPUT: an elliptic curve isogenous to self.
+        The elliptic curve is found by looking it up in the
+        CremonaDatabase.  The CremonaDatabase contains all curves up
+        to some large conductor.  If a curve is not found in the
+        CremonaDatabase, a :class:`RuntimeError` will be raised. In
+        practice, only the most committed users will see this
+        :class:`RuntimeError`.
+
+        OUTPUT: an elliptic curve isogenous to ``self``.
 
         EXAMPLES::
 
@@ -4183,7 +4186,8 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         """
         Return space of modular symbols (with given sign) associated to
         this modular abelian variety, if it can be found by cutting down
-        using Hecke operators. Otherwise raise a RuntimeError exception.
+        using Hecke operators. Otherwise raise a :class:`RuntimeError`
+        exception.
 
         EXAMPLES::
 

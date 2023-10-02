@@ -1286,11 +1286,11 @@ class KleshchevPartitions(PartitionTuples):
                 return mu
 
             if KPmu._level != self._level or KPmu._e != self._e:
-                raise ValueError('%s is not an element of %s'%(mu, self))
+                raise ValueError('%s is not an element of %s' % (mu, self))
 
             if KPmu._convention[1] != self._convention[1]:
                 mu = [nu.conjugate() for nu in mu]
-                if self._level>1 and KPmu._convention[0] == self._convention[0]:
+                if self._level > 1 and KPmu._convention[0] == self._convention[0]:
                     mu = mu[::-1]
 
         return super()._element_constructor_(mu)
@@ -1483,7 +1483,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
             return 'Kleshchev partitions with e=%s' % (self._e)
 
         return 'Kleshchev partitions with e=%s and multicharge=(%s)' % (
-                        self._e,','.join('%s'%m for m in self._multicharge))
+                        self._e,','.join('%s' % m for m in self._multicharge))
 
     def __contains__(self, mu):
         """
@@ -1707,7 +1707,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
             return 'Kleshchev partitions with e=%s and size %s' % (self._e, self._size)
 
         return 'Kleshchev partitions with e=%s and multicharge=(%s) and size %s' % (
-            self._e,','.join('%s'%m for m in self._multicharge), self._size
+            self._e,','.join('%s' % m for m in self._multicharge), self._size
         )
 
     def __contains__(self, mu):

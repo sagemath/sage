@@ -649,7 +649,7 @@ cdef class SBox(SageObject):
         TESTS::
 
         Testing square SBoxes::
-        
+
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox(7,6,0,4,2,5,1,3)
             sage: S.difference_distribution_table()
