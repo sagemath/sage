@@ -86,6 +86,7 @@ from sage.schemes.affine.affine_space import AffineSpace
 # from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine_field
 from sage.schemes.curves.affine_curve import AffinePlaneCurve
 from sage.schemes.curves.constructor import Curve
+from sage.schemes.curves.zariski_vankampen import braid_monodromy
 from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -542,6 +543,9 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         G, dic = fundamental_group_arrangement(L, puiseux=True, vertical=vertical)
         return (G, dic)
 
+    def braid_monodromy(self, vertical=False):
+        L = self.defining_polynomials()
+        return braid_monodromy(prod(L), arrangement=L, vertical=vertical)
 
 class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
     """

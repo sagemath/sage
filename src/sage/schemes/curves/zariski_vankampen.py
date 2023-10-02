@@ -1207,21 +1207,23 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     else:
         arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
     x, y = f.parent().gens()
-    dic_vertical = {f0: False for f0 in arrangement1}
+    dic_vertical = {j: False for j, f0 in enumerate(arrangement1)}
     if vertical:
-        for f0 in arrangement1:
+        for j, f0 in arrangement1:
             if f0.degree(y) < f0.degree() and f0.degree() > 1:
-                dic_vertical = {f0: False for f0 in arrangement1}
+                dic_vertical = {j1: False for j1, f1 in arrangement1}
                 break
             else:
-                dic_vertical[f0] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
+                dic_vertical[j] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
     arrangement_h = ()
+    indices_h = ()
     arrangement_v = ()
-    for f0 in arrangement1:
-        if dic_vertical[f0]:
+    for j, f0 in enumerate(arrangement1):
+        if dic_vertical[j]:
             arrangement_v += (f0, )
         else:
             arrangement_h += (f0, )
+            indices_h += (j, )
     glist = tuple(_[0] for f0 in arrangement_h for _ in f0.factor())
     g = f.parent()(prod(glist))
     d = g.degree(y)
@@ -1230,6 +1232,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             g = g.subs({x: x + y})
             d = g.degree(y)
             arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)
+            arrangement1 = arrangement_h 
             glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     if d > 0:
         disc = discrim(glist)
@@ -1244,7 +1247,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         else:
             transversal[f0] = arrangement1.index(f0)
     if not disc:
-        vertical_braids = {i: j for i, j in enumerate(transversal)}
+        vertical_braids = {i + d: transversal[f0] for i, f0 in enumerate(transversal)}
         if d > 1:
             result = [BraidGroup(d).one() for p in transversal]
         else:
@@ -1252,14 +1255,24 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         p1 = F(0)
         if d > 0:
             roots_base, strands = strand_components(g, arrangement_h, p1)
+            strands1 = dict()
+            for j in range(d):
+                i = strands[j]
+                k = arrangement1.index(arrangement_h[i])
+                strands1[j] = k
         else:
-            strands = dict()
-        return (result, strands, vertical_braids, d)
+            strands1 = dict()
+        return (result, strands1, vertical_braids, d)
     V = corrected_voronoi_diagram(tuple(disc))
     G, E, p, EC, DG, VR = voronoi_cells(V)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
     roots_base, strands = strand_components(g, arrangement_h, p1)
+    strands1 = dict()
+    for j in range(d):
+        i = strands[j]
+        k = arrangement1.index(arrangement_h[i])
+        strands1[j] = k
     geombasis, vd = geometric_basis(G, E, EC, p, DG, VR)
     segs = set()
     for p in geombasis:
@@ -1307,7 +1320,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             vertical_braids[r + t] = transversal[f0]
             t += 1
             result.append(B.one())
-    return (result, strands, vertical_braids, d)
+    return (result, strands1, vertical_braids, d)
 
 
 def conjugate_positive_form(braid):
@@ -1738,8 +1751,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         (Finitely presented group <  |  >, {})
         sage: g, dic = fundamental_group_arrangement([x * y])
         sage: g.sorted_presentation(), dic
-        (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >,
-        {0: [x0, x1], 1: [x1^-1*x0^-1]})
+        (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >, {0: [x0, x1]})
         sage: fundamental_group_arrangement([y + x^2], projective=True)
         (Finitely presented group < x | x^2 >, {0: [x0, x0]})
 
@@ -1765,6 +1777,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         while f.degree(y) < d:
             flist1 = [g.subs({x: x + y}) for g in flist1]
             f = prod(flist1)
+    if not vertical0:
+        infinity = f.degree(y) == f.degree()
+    if vertical0:
+        flist_a = [g for g in flist1 if g.degree(y) < g.degree() > 1]
+        infinity = not flist_a
     if len(flist1) == 0:
         bm = []
         dic = dict()
@@ -1772,7 +1789,10 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         d1 = 0
     else:
         bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical0)
-        vert_lines = []
+    vert_lines = []
+    if vertical0:
+        for j in dv.keys():
+            dic[d + j] = dv[j]
     g = fundamental_group_from_braid_mon(bm, degree=d1, simplified=False, projective=projective, puiseux=puiseux, vertical=vert_lines)
     if simplified:
         hom = g.simplification_isomorphism()
@@ -1786,7 +1806,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         L = [j1 for j1 in dic.keys() if dic[j1] == i]
         dic1[i] = [hom(g.gen(j)) for j in L]
     # if not projective and f.degree(y) == f.degree():
-    if not projective:
+    if not projective and infinity:
         t = prod(hom(x) for x in g.gens()).inverse()
         dic1[len(flist1)] = [t]
     n = g1.ngens()
