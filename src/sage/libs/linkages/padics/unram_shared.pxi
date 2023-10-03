@@ -3,7 +3,7 @@ cimport cython
 @cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
-    Returns the image of this element under the Frobenius automorphism
+    Return the image of this element under the Frobenius automorphism
     applied to its parent.
 
     INPUT:
@@ -48,9 +48,9 @@ def frobenius_unram(self, arithmetic=True):
         ...
         NotImplementedError: Frobenius automorphism only implemented for unramified extensions
 
-    TESTS::
+    TESTS:
 
-    We check that :trac:`23575` is resolved:
+    We check that :trac:`23575` is resolved::
 
         sage: x = R.random_element()
         sage: x.frobenius(arithmetic=false).frobenius() == x
@@ -95,9 +95,9 @@ def norm_unram(self, base = None):
 
     INPUT:
 
-    ``base`` -- a subfield of the parent `L` of this element.
-                The norm is the relative norm from ``L`` to ``base``.
-                Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
+    - ``base`` -- a subfield of the parent `L` of this element.
+                  The norm is the relative norm from ``L`` to ``base``.
+                  Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
