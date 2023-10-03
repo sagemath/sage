@@ -65,8 +65,8 @@ class InlineFortran:
     def __init__(self, globals=None):
         # globals=None means: use user globals from REPL
         self.globs = globals
-        self.library_paths=[]
-        self.libraries=[]
+        self.library_paths = []
+        self.libraries = []
         self.verbose = False
 
     def __repr__(self):

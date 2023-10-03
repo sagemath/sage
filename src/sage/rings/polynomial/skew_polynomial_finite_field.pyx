@@ -629,7 +629,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^4 + 2*t*x^3 + 3*t^2*x^2 + (t^2 + t + 1)*x + 4*t + 3
             sage: iter = a.right_irreducible_divisors(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)   # random
             x + 2*t^2 + 4*t + 4
             sage: next(iter)   # random
@@ -664,7 +664,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^4 + 2*t*x^3 + 3*t^2*x^2 + (t^2 + t + 1)*x + 4*t + 3
             sage: iter = a.left_irreducible_divisors(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)  # random
             x + 3*t + 3
             sage: next(iter)  # random
@@ -1052,7 +1052,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^3 + (t^2 + 1)*x^2 + (2*t + 3)*x + t^2 + t + 2
             sage: iter = a.factorizations(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)   # random
             (x + 3*t^2 + 4*t) * (x + 2*t^2) * (x + 4*t^2 + 4*t + 2)
             sage: next(iter)   # random
