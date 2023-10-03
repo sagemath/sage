@@ -6383,3 +6383,40 @@ def dedekind_psi(N):
     """
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
+
+
+def number_of_irreducible_polynomials(q, n):
+    r"""
+    Return the number of irreducible polynomials of degree ``n``
+    over the finite field with ``q`` elements.
+
+    INPUT:
+
+    - ``q`` -- prime power
+    - ``n`` -- positive integer
+
+    OUTPUT: integer
+
+    EXAMPLES::
+
+        sage: number_of_irreducible_polynomials(2, 8)
+        30
+        sage: number_of_irreducible_polynomials(9, 9)
+        43046640
+
+    This function is *much* faster than enumerating the polynomials::
+
+        sage: num = number_of_irreducible_polynomials(101, 99)
+        sage: num.bit_length()
+        653
+
+    ALGORITHM:
+
+    Classical formula `\frac1n \sum_{d\mid n} \mu(n/d) q^d` using the
+    Möbius function `\mu`; see :func:`moebius`.
+    """
+    q, n = ZZ(q), ZZ(n)
+    r = ZZ.zero()
+    for d in n.divisors():
+        r += moebius(n//d) * q**d
+    return r // n
