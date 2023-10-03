@@ -2504,7 +2504,6 @@ Vmt_vectors = {
     (3 ,6 ) : ((0,1,3,7),                               _ref_Handbook),
     (3 ,26) : ((0,1,3,8),                               _ref_Handbook),
     (3 ,32) : ((0,1,3,9),                               _ref_Handbook),
-    (3 ,6 ) : ((0,1,3,7),                               _ref_Handbook),
     (3 ,14) : ((0,1,4,13),                              _ref_Handbook),
     (3 ,24) : ((0,1,3,15),                              _ref_Handbook),
     (3 ,34) : ((0,1,3,7),                               _ref_Handbook),
