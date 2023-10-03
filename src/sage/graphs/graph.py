@@ -4891,15 +4891,22 @@ class Graph(GenericGraph):
         return repr
 
     @doc_index("Algorithmically hard stuff")
-    def minor(self, H, solver=None, verbose=0, *, integrality_tolerance=1e-3):
+    def minor(self, H, solver=None, verbose=0, *, integrality_tolerance=1e-3, induced=False):
         r"""
-        Return the vertices of a minor isomorphic to `H` in the current graph.
+        Return the vertices of a minor isomorphic to `H` in the current graph for induced=False
 
         We say that a graph `G` has a `H`-minor (or that it has a graph
         isomorphic to `H` as a minor), if for all `h\in H`, there exist disjoint
         sets `S_h \subseteq V(G)` such that once the vertices of each `S_h` have
         been merged to create a new graph `G'`, this new graph contains `H` as a
         subgraph.
+
+        Returns an induced minor isomorphic to `H` if it exists for induced=True 
+
+        We say that a graph `G` has an induced `H`-minor (or that it has a
+        graph isomorphic to `H` as an induced minor), if `H` can be obtained
+        from an induced subgraph of `G` by contracting edges. Otherwise, `G` is
+        said to be `H`-induced minor-free. 
 
         For more information, see the :wikipedia:`Minor_(graph_theory)`.
 
@@ -4921,6 +4928,9 @@ class Graph(GenericGraph):
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
+
+        - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
+            induced minor isomorphic to `H` if it exists, and ``None`` otherwise.
 
         OUTPUT:
 
@@ -4979,149 +4989,6 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: This graph has no minor isomorphic to H !
-        """
-        self._scream_if_not_simple()
-        H._scream_if_not_simple()
-        from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-        p = MixedIntegerLinearProgram(solver=solver)
-
-        # We use frozenset((u, v)) to avoid confusion between (u, v) and (v, u)
-
-        # rs = Representative set of a vertex
-        # for h in H, v in G is such that rs[h,v] == 1 if and only if v
-        # is a representative of h in self
-        rs = p.new_variable(binary=True)
-
-        for v in self:
-            p.add_constraint(p.sum(rs[h, v] for h in H), max=1)
-
-        # We ensure that the set of representatives of a
-        # vertex h contains a tree, and thus is connected
-
-        # edges represents the edges of the tree
-        edges = p.new_variable(binary=True)
-
-        # there can be a edge for h between two vertices
-        # only if those vertices represent h
-        for u, v in self.edge_iterator(labels=None):
-            fuv = frozenset((u, v))
-            for h in H:
-                p.add_constraint(edges[h, fuv] - rs[h, u], max=0)
-                p.add_constraint(edges[h, fuv] - rs[h, v], max=0)
-
-        # The number of edges of the tree in h is exactly the cardinal
-        # of its representative set minus 1
-
-        for h in H:
-            p.add_constraint(p.sum(edges[h, frozenset(e)] for e in self.edge_iterator(labels=None))
-                             - p.sum(rs[h, v] for v in self), min=-1, max=-1)
-
-        # a tree  has no cycle
-        epsilon = 1/(5*Integer(self.order()))
-        r_edges = p.new_variable(nonnegative=True)
-
-        for h in H:
-            for u, v in self.edge_iterator(labels=None):
-                p.add_constraint(r_edges[h, (u, v)] + r_edges[h, (v, u)] - edges[h, frozenset((u, v))], min=0)
-
-            for v in self:
-                p.add_constraint(p.sum(r_edges[h, (u, v)] for u in self.neighbor_iterator(v)), max=1-epsilon)
-
-        # Once the representative sets are described, we must ensure
-        # there are arcs corresponding to those of H between them
-        h_edges = p.new_variable(nonnegative=True)
-
-        for h1, h2 in H.edge_iterator(labels=None):
-
-            for v1, v2 in self.edge_iterator(labels=None):
-                fv1v2 = frozenset((v1, v2))
-                p.add_constraint(h_edges[(h1, h2), fv1v2] - rs[h2, v2], max=0)
-                p.add_constraint(h_edges[(h1, h2), fv1v2] - rs[h1, v1], max=0)
-
-                p.add_constraint(h_edges[(h2, h1), fv1v2] - rs[h1, v2], max=0)
-                p.add_constraint(h_edges[(h2, h1), fv1v2] - rs[h2, v1], max=0)
-
-            p.add_constraint(p.sum(h_edges[(h1, h2), frozenset(e)] + h_edges[(h2, h1), frozenset(e)]
-                                   for e in self.edge_iterator(labels=None)), min=1)
-
-        p.set_objective(None)
-
-        try:
-            p.solve(log=verbose)
-        except MIPSolverException:
-            raise ValueError("This graph has no minor isomorphic to H !")
-
-        rs = p.get_values(rs, convert=bool, tolerance=integrality_tolerance)
-
-        rs_dict = {}
-        for h in H:
-            rs_dict[h] = [v for v in self if rs[h, v]]
-
-        return rs_dict
-
-    def induced_minor(self, H, solver=None, verbose=0, integrality_tolerance=1e-10):
-        r"""
-        Returns an induced minor isomorphic to `H` if it exists. 
-
-        We say that a graph `G` has an induced `H`-minor (or that it has a
-        graph isomorphic to `H` as an induced minor), if `H` can be obtained
-        from an induced subgraph of `G` by contracting edges. Otherwise, `G` is
-        said to be `H`-induced minor-free. 
-
-        For more information, see the :wikipedia:`Minor_(graph_theory)`.
-
-        INPUT:
-
-        - ``H`` -- The induced minor to find for in the current graph.
-
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        OUTPUT:
-
-        A dictionary associating to each vertex of `H` the set of vertices in
-        the current graph representing it. 
-
-        ALGORITHM:
-
-        Mixed Integer Linear Programming (MILP) is used to find the minor. The
-        algorithm is described in [KKT2006]_. 
-
-        COMPLEXITY:
-
-        Theoretically, when `H` is fixed, testing for the existence of a induced
-        minor of `H` is polynomial. The known algorithms are highly exponential in
-        `H`, though.
-
-        .. NOTE::
-
-            This function can be expected to be *very* slow, especially where
-            the induced minor does not exist.
-
-        EXAMPLES:
-
-        Trying to find an induced minor isomorphic to `K_4` in the `4\times 4` grid::
-
-            sage: # needs sage.numerical.mip
-            sage: g = graphs.GridGraph([4,4])
-            sage: h = graphs.CompleteGraph(4)
-            sage: L = g.induced_minor(h)
-            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))
-            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
-            sage: gg.is_isomorphic(h)
-            True
 
         Trying to find an induced minor for a graph with a C6 cycle::
 
@@ -5136,7 +5003,7 @@ class Graph(GenericGraph):
             ....:     random_cycle_vertex = random.choice(cycle_vertices)
             ....:     g.add_edge(random_cycle_vertex, vertex)
             sage: h = Graph([(i, (i + 1) % 5) for i in range(5)])                   # Create a graph with 5 vertices forming a C5 cycle
-            sage: L = g.induced_minor(h)                                            
+            sage: L = g.minor(h, induced=True))                                            
             sage: gg = g.subgraph(flatten(L.values(), max_level = 1))              
             sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]        
             sage: gg.is_isomorphic(h)
@@ -5148,7 +5015,7 @@ class Graph(GenericGraph):
             sage: g.add_edges([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
             sage: h = Graph()
             sage: h.add_edges([(9, 10), (9, 11), (9, 12), (9, 13)])
-            sage: l = g.induced_minor(h)
+            sage: l = g.minor(h, induced=True)
             Traceback (most recent call last):
             ...
             ValueError: This graph has no induced minor isomorphic to H !
@@ -5157,12 +5024,11 @@ class Graph(GenericGraph):
             sage: g.add_edges([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
             sage: h = Graph()
             sage: h.add_edges([(7, 8), (8, 9), (9, 10), (10, 11)])
-            sage: L = g.induced_minor(h)
+            sage: L = g.minor(h, induced=True)
             sage: gg = g.subgraph(flatten(L.values(), max_level = 1))
             sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
             sage: gg.is_isomorphic(h)
             True
-
         """
         self._scream_if_not_simple()
         H._scream_if_not_simple()
@@ -5227,27 +5093,26 @@ class Graph(GenericGraph):
 
             p.add_constraint(p.sum(h_edges[(h1, h2), frozenset(e)] + h_edges[(h2, h1), frozenset(e)]
                                    for e in self.edge_iterator(labels=None)), min=1)
-                       
-                
+
+        # if induced is True
         # condition for induced subgraph ensures that if there
         # doesnt exist an edge(h1, h2) in H then there should 
         # not be an edge between representative sets of h1 and h2 in G
-        for h1 in H:
-            for h2 in H:
-                if not h1 == h2 and not H.has_edge(h1, h2):
-                    for v1, v2 in self.edge_iterator(labels=None):
-                        expr2 = rs[h1, v1] + rs[h2, v2]
-                        p.add_constraint(expr2, max=1) 
-
+        if (induced):
+            for h1 in H:
+                for h2 in H:
+                    if not h1 == h2 and not H.has_edge(h1, h2):
+                        for v1, v2 in self.edge_iterator(labels=None):
+                            p.add_constraint(rs[h1, v1] + rs[h2, v2], max=1) 
 
         p.set_objective(None)
 
         try:
             p.solve(log=verbose)
         except MIPSolverException:
-            raise ValueError("This graph has no induced minor isomorphic to H !")
+            raise ValueError("This graph has no minor isomorphic to H !")
 
-        rs = p.get_values(rs)
+        rs = p.get_values(rs, convert=bool, tolerance=integrality_tolerance)
 
         rs_dict = {}
         for h in H:
