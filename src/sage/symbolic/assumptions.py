@@ -636,7 +636,7 @@ def assume(*args):
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no
-        attribute 'assume'
+        attribute 'assume'...
 
     Ensure that we can combine the two types of assumptions, as documented::
 
