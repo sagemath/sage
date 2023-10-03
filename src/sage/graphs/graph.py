@@ -4992,18 +4992,11 @@ class Graph(GenericGraph):
 
         Trying to find an induced minor for a graph with a C6 cycle::
 
-            sage: import random
-            sage: g = Graph()
-            sage: cycle_vertices = [g.add_vertex() for _ in range(6)]
-            sage: for i in range(6):                                                # Connect the vertices to form a C6 cycle
-            ....:     g.add_edge(cycle_vertices[i], cycle_vertices[(i + 1) % 6])
-            sage: num_additional_vertices = random.randint(10, 30)                  # Add a random number of additional vertices
-            sage: additional_vertices = [g.add_vertex() for _ in range(num_additional_vertices)]
-            sage: for vertex in additional_vertices:                                # Connect the additional vertices to the cycle randomly
-            ....:     random_cycle_vertex = random.choice(cycle_vertices)
-            ....:     g.add_edge(random_cycle_vertex, vertex)
-            sage: h = Graph([(i, (i + 1) % 5) for i in range(5)])                   # Create a graph with 5 vertices forming a C5 cycle
-            sage: L = g.minor(h, induced=True))                                            
+            sage: g = graphs.CycleGraph(6)              # Create a graph with 6 vertices forming a C6 cycle
+            sage: for i in random.randint(10, 30):
+            ....:     g.add_edge(random.randint(0, 5), i)
+            sage: h = graphs.CycleGraph(5)               # Create a graph with 5 vertices forming a C5 cycle
+            sage: L = g.minor(h, induced=True)                                           
             sage: gg = g.subgraph(flatten(L.values(), max_level = 1))              
             sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]        
             sage: gg.is_isomorphic(h)
