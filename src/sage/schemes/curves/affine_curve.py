@@ -1739,6 +1739,20 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         return Curve(I0, A)
 
+    def has_vertical_asymptote(self):
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        x, y = R.gens()
+        f = self.defining_polynomial().radical()
+        return f.degree(y) < f.degree() > 1
+
+    def is_vertical_line(self):
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        x, y = R.gens()
+        f = self.defining_polynomial().radical()
+        return f.degree(y) == 0 and f.degree() == 1
+
 
 class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
