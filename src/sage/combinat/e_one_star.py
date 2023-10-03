@@ -1418,7 +1418,7 @@ class E1Star(SageObject):
             raise ValueError("the substitution (%s) must be unimodular" % sigma)
 
         first_letter = sigma.codomain().alphabet()[0]
-        if not (first_letter in ZZ) or (first_letter < 1):
+        if first_letter not in ZZ or first_letter < 1:
             raise ValueError("the substitution (%s) must be defined on positive integers" % sigma)
 
         self._sigma = WordMorphism(sigma)
