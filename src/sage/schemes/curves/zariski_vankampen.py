@@ -866,8 +866,6 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     g = prod(glist)
     F1 = g.base_ring()
     x, y = g.parent().gens()
-    X0 = F1(x0)
-    X1 = F1(x1)
     intervals = {}
     if not precision1:  # new
         precision1 = {f: 53 for f in glist}  # new
@@ -876,7 +874,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
         if f.variables() == (y,):
             f0 = F1[y](f)
         else:
-            f0 = F1[y](f.subs({x: X0}))
+            f0 = F1[y](f.subs({x: F1(x0)}))
         y0sf = f0.roots(QQbar, multiplicities=False)
         y0s += list(y0sf)
         while True:
@@ -894,8 +892,8 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
     finalstrands = []
-    initialintervals = roots_interval_cached(g, X0)
-    finalintervals = roots_interval_cached(g, X1)
+    initialintervals = roots_interval_cached(g, x0)
+    finalintervals = roots_interval_cached(g, x1)
     I1 = QQbar.gen()
     for cs in complexstrands:
         ip = cs[0][1] + I1 * cs[0][2]
