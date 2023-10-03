@@ -220,7 +220,7 @@ def discrim(pols):
 
 @cached_function
 def corrected_voronoi_diagram(points):
-    r"""+
+    r"""
     Compute a Voronoi diagram of a set of points with rational coordinates.
     The given points are granted to lie one in each bounded region.
 
