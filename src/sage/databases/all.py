@@ -7,6 +7,8 @@ This file gathers together all the tables in Sage.
 
     * findstat -- The FindStat database (http://www.findstat.org/).
 
+    * hog -- The House of Graphs (https://houseofgraphs.org/)
+
     * JonesDatabase() -- returns the John Jones table of number fields
       with bounded ramification and degree <= 6.
 
@@ -62,6 +64,8 @@ lazy_import('sage.databases.stein_watkins',
 lazy_import('sage.databases.sloane', 'SloaneEncyclopedia')
 
 lazy_import('sage.databases.oeis', 'oeis')
+
+lazy_import('sage.databases.hog', 'hog')
 
 lazy_import('sage.databases.symbolic_data', 'SymbolicData')
 
