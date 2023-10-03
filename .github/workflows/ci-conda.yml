@@ -68,7 +68,7 @@ jobs:
           mamba-version: "*"
           channels: conda-forge,defaults
           channel-priority: true
-          activate-environment: sage-build
+          activate-environment: sage
           environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}.yml
 
       - name: Print Conda environment
