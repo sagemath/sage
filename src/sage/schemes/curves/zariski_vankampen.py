@@ -67,6 +67,7 @@ from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 # from sage.sets.set import Set
+from .constructor import Curve
 
 roots_interval_cache = dict()
 
@@ -1158,7 +1159,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``arrangement`` -- an optional tuple of polynomials whose product
+    - ``arrangement`` -- tuple (default: ``[]``). An optional tuple of polynomials whose product
       equals ``f``.
 
     - `vertical` .. boolean (default: ``False`). If set to ``True``, ``arrangements``
@@ -1169,25 +1170,22 @@ def braid_monodromy(f, arrangement=(), vertical=False):
 
     OUTPUT:
 
-    A list of braids and a dictionary.
+    A list of braids, two dictionaries, and the number
+    of strands of the braids (specially relevant if the list
+    pf braids is empty).
     The braids correspond to paths based in the same point;
     each of these paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``. The dictionary assigns each
     strand to the index of the corresponding factor in ``arrangement``.
     If ``vertical`` is set to ``True`` only the vertical lines are not used
-    and the list of their indices are is the second element of the output.
+    and the list of their indices are the second element of the output
 
     .. NOTE::
 
         The projection over the `x` axis is used if there are no vertical
         asymptotes. Otherwise, a linear change of variables is done to fall
         into the previous case except if the only vertical asymptotes are lines
-        and ``vertical=True``..
-
-    .. TODO::
-
-        Create a class ``arrangements_of_curves`` with a ``braid_monodromy``
-        method; it can be also a method for affine line arrangements.
+        and ``vertical=True``.
 
     EXAMPLES::
 
@@ -1210,6 +1208,9 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         ([], {}, {}, 0)
         sage: braid_monodromy(x*y^2 - 1)
         ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {}, 3)
+        sage: L = [x, y, x - 1, x -y]
+        sage: braid_monodromy(prod(L), arrangement=L, vertical=True)
+        ([s^2, 1], {0: 1, 1: 3}, {0: 0, 1: 2}, 2)
     """
     global roots_interval_cache
     F = fieldI(f.base_ring())
@@ -1220,14 +1221,10 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     else:
         arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
     x, y = f.parent().gens()
-    dic_vertical = {j: False for j, f0 in enumerate(arrangement1)}
-    if vertical:
-        for j, f0 in enumerate(arrangement1):
-            if f0.degree(y) < f0.degree() and f0.degree() > 1:
-                dic_vertical = {j1: False for j1, f1 in enumerate(arrangement1)}
-                break
-            else:
-                dic_vertical[j] = f0.degree(y) < f0.degree(x) and f0.degree(x) == 1
+    if not vertical or any([Curve(g).has_vertical_asymptote() for g in arrangement]):
+        dic_vertical = {j: False for j, f0 in enumerate(arrangement1)}
+    elif vertical:
+        dic_vertical = {j: Curve(f0).is_vertical_line() for j, f0 in enumerate(arrangement1)}
     arrangement_h = ()
     indices_h = ()
     arrangement_v = ()
@@ -1258,7 +1255,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         pt = [j for j, t in enumerate(disc) if f0(x=t) == 0]
         if pt:
             vertical_braid[f0] = (pt[0], arrangement1.index(f0))
-            vl.append(j)
+            vl.append(pt[0])
         else:
             transversal[f0] = arrangement1.index(f0)
     vl.sort()
@@ -1726,6 +1723,10 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
+    - ``vertical`` -- boolean (default: ``False``); if set to ``True``,
+      whenever no curve has vertical asymptotes the computation of braid
+      monodromy is simpler if some lines are vertical.
+
     OUTPUT:
 
     - A list of braids. The braids correspond to paths based in the same point;
@@ -1770,13 +1771,6 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >, {0: [x0, x1]})
         sage: fundamental_group_arrangement([y + x^2], projective=True)
         (Finitely presented group < x | x^2 >, {0: [x0, x0]})
-
-    .. TODO::
-
-        Create a class ``arrangements_of_curves`` with a ``fundamental_group``
-        method it can be also a method for affine or projective line
-        arrangements, even for hyperplane arrangements defined over a number
-        subfield of ``QQbar`` after applying a generic line section.
     """
     if len(flist) > 0:
         f = prod(flist)
@@ -1796,8 +1790,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     if not vertical0:
         infinity = f.degree(y) == f.degree()
     if vertical0:
-        flist_a = [g for g in flist1 if g.degree(y) < g.degree() > 1]
-        infinity = not flist_a
+        infinity = all([not Curve(g).has_vertical_asymptote() for g in flist1])
     if len(flist1) == 0:
         bm = []
         dic = dict()
