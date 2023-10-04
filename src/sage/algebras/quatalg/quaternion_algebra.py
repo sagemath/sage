@@ -1793,6 +1793,42 @@ class QuaternionOrder(Parent):
         else:
             raise NotImplementedError("ideal only implemented for quaternion algebras over QQ")
 
+    def basis_matrix(self):
+        r"""
+        Return the basis matrix of this quaternion order, for the
+        specific basis returned by :meth:`basis()`.
+
+        OUTPUT: matrix over `\QQ`
+
+        EXAMPLES::
+
+            sage: O = QuaternionAlgebra(-11,-1).maximal_order()
+            sage: O.basis()
+            (1/2 + 1/2*i, 1/2*j - 1/2*k, i, -k)
+            sage: O.basis_matrix()
+            [ 1/2  1/2    0    0]
+            [   0    0  1/2 -1/2]
+            [   0    1    0    0]
+            [   0    0    0   -1]
+
+        Note that the returned matrix is *not* necessarily the same as
+        the basis matrix of the :meth:`unit_ideal()`::
+
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O = Q.quaternion_order([j,i,-1,k])
+            sage: O.basis_matrix()
+            [ 0  0  1  0]
+            [ 0  1  0  0]
+            [-1  0  0  0]
+            [ 0  0  0  1]
+            sage: O.unit_ideal().basis_matrix()
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1]
+        """
+        return matrix(QQ, map(list, self.__basis))
+
     def __mul__(self, other):
         """
         Every order equals its own unit ideal. Overload ideal multiplication
@@ -2792,8 +2828,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         .. NOTE::
 
            Currently, `p` must satisfy a bunch of conditions, or a
-           ``NotImplementedError`` is raised.  In particular, `p` must be
-           odd and unramified in the quaternion algebra, must be
+           :class:`NotImplementedError` is raised.  In particular, `p` must
+           be odd and unramified in the quaternion algebra, must be
            coprime to the index of the right order in the maximal
            order, and also coprime to the normal of self.  (The Brandt
            modules code has a more general algorithm in some cases.)

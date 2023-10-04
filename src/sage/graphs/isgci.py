@@ -135,28 +135,28 @@ Predefined classes
 
    * - Apex
 
-     - :meth:`~Graph.is_apex()`,
-       :meth:`~Graph.apex_vertices()`
+     - :meth:`~sage.graphs.graph.Graph.is_apex`,
+       :meth:`~sage.graphs.graph.Graph.apex_vertices`
 
    * - AT_free
 
-     - :meth:`~Graph.is_asteroidal_triple_free`
+     - :meth:`~sage.graphs.graph.Graph.is_asteroidal_triple_free`
 
    * - Biconnected
 
-     - :meth:`~Graph.is_biconnected`,
-       :meth:`~GenericGraph.blocks_and_cut_vertices`,
-       :meth:`~GenericGraph.blocks_and_cuts_tree`
+     - :meth:`~sage.graphs.graph.Graph.is_biconnected`,
+       :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`,
+       :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
 
    * - BinaryTrees
 
      - :meth:`~sage.graphs.graph_generators.GraphGenerators.BalancedTree`,
-       :meth:`~Graph.is_tree`
+       :meth:`~sage.graphs.graph.Graph.is_tree`
 
    * - Bipartite
 
      - :meth:`~sage.graphs.graph_generators.GraphGenerators.BalancedTree`,
-       :meth:`~sage.graphs.graph.Graph.is_bipartite`
+       :meth:`~sage.graphs.generic_graph.GenericGraph.is_bipartite`
 
    * - Block
 
@@ -212,7 +212,7 @@ Predefined classes
 
    * - Polyhedral
 
-     - :meth:`~sage.graphs.generic_graph.Graph.is_polyhedral`
+     - :meth:`~sage.graphs.graph.Graph.is_polyhedral`
 
    * - Split
 

@@ -930,11 +930,11 @@ class Polyomino(SageObject):
             sage: (p + (3,4,5)).canonical()
             Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
         """
-        minxyz, maxxyz = self.bounding_box()
+        minxyz, _ = self.bounding_box()
         return self - minxyz
 
     def canonical_isometric_copies(self, orientation_preserving=True,
-            mod_box_isometries=False):
+                                   mod_box_isometries=False):
         r"""
         Return the list of image of ``self`` under isometries of the `n`-cube
         where the coordinates are all nonnegative and minimal.

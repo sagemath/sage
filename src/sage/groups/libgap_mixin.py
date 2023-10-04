@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Mix-in Class for GAP-based Groups
 
@@ -250,8 +251,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = SU(3,GF(2))
-            sage: len(G.conjugacy_classes_representatives())
+            sage: G = SU(3,GF(2))                                                       # needs sage.rings.finite_rings
+            sage: len(G.conjugacy_classes_representatives())                            # needs sage.rings.finite_rings
             16
 
             sage: G = GL(2,GF(3))
@@ -261,7 +262,7 @@ class GroupMixinLibGAP():
             [0 1], [1 1], [0 2], [1 2], [1 0], [1 2], [1 1], [0 1]
             )
 
-            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())
+            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())                  # needs sage.rings.finite_rings
             36
 
         ::
@@ -338,8 +339,8 @@ class GroupMixinLibGAP():
         EXAMPLES::
 
             sage: G = GL(2,GF(3))
-            sage: chi = G.class_function(range(8))
-            sage: list(chi)
+            sage: chi = G.class_function(range(8))                                      # needs sage.rings.number_field
+            sage: list(chi)                                                             # needs sage.rings.number_field
             [0, 1, 2, 3, 4, 5, 6, 7]
         """
         from sage.groups.class_function import ClassFunction_libgap
@@ -356,8 +357,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = SU(3, GF(2))
-            sage: G.center()
+            sage: G = SU(3, GF(2))                                                      # needs sage.rings.finite_rings
+            sage: G.center()                                                            # needs sage.rings.finite_rings
             Subgroup with 1 generators (
             [a 0 0]
             [0 a 0]
@@ -374,7 +375,7 @@ class GroupMixinLibGAP():
             [0 2 0]
             [0 0 2]
             ) of General Linear Group of degree 3 over Finite Field of size 3
-            sage: GU(3, GF(2)).center()
+            sage: GU(3, GF(2)).center()                                                 # needs sage.rings.finite_rings
             Subgroup with 1 generators (
             [a + 1     0     0]
             [    0 a + 1     0]
@@ -477,7 +478,8 @@ class GroupMixinLibGAP():
 
             sage: G = groups.matrix.GL(2, 2)
             sage: G.subgroups()
-            [Subgroup with 0 generators () of General Linear Group of degree 2 over Finite Field of size 2,
+            [Subgroup with 0 generators ()
+               of General Linear Group of degree 2 over Finite Field of size 2,
              Subgroup with 1 generators (
              [0 1]
              [1 0]
@@ -522,7 +524,8 @@ class GroupMixinLibGAP():
 
             sage: G = groups.matrix.GL(2,2)
             sage: G.conjugacy_classes_subgroups()
-            [Subgroup with 0 generators () of General Linear Group of degree 2 over Finite Field of size 2,
+            [Subgroup with 0 generators ()
+               of General Linear Group of degree 2 over Finite Field of size 2,
              Subgroup with 1 generators (
              [1 1]
              [0 1]
@@ -622,10 +625,10 @@ class GroupMixinLibGAP():
             [-2 -1  2]
             [ 0  0  1]
             ) of Matrix group over Rational Field with 2 generators (
-            [  0 1/2   0]  [  0 1/2   0]
-            [  2   0   0]  [ -2  -1   2]
-            [  0   0   1], [  0   0   1]
-            )
+              [  0 1/2   0]  [  0 1/2   0]
+              [  2   0   0]  [ -2  -1   2]
+              [  0   0   1], [  0   0   1]
+              )
             sage: GL(3,ZZ).intersection(G)
             Subgroup with 1 generators (
             [ 1  0  0]
@@ -633,11 +636,12 @@ class GroupMixinLibGAP():
             [ 0  0  1]
             ) of General Linear Group of degree 3 over Integer Ring
             sage: G.intersection(SL(3,ZZ))
-            Subgroup with 0 generators () of Matrix group over Rational Field with 2 generators (
-            [  0 1/2   0]  [  0 1/2   0]
-            [  2   0   0]  [ -2  -1   2]
-            [  0   0   1], [  0   0   1]
-            )
+            Subgroup with 0 generators ()
+              of Matrix group over Rational Field with 2 generators (
+              [  0 1/2   0]  [  0 1/2   0]
+              [  2   0   0]  [ -2  -1   2]
+              [  0   0   1], [  0   0   1]
+              )
         """
         G = self.gap()
         H = other.gap()
@@ -656,7 +660,7 @@ class GroupMixinLibGAP():
         EXAMPLES::
 
             sage: G = GL(2,2)
-            sage: G.irreducible_characters()
+            sage: G.irreducible_characters()                                            # needs sage.rings.number_field
             (Character of General Linear Group of degree 2 over Finite Field of size 2,
              Character of General Linear Group of degree 2 over Finite Field of size 2,
              Character of General Linear Group of degree 2 over Finite Field of size 2)
@@ -691,7 +695,7 @@ class GroupMixinLibGAP():
         EXAMPLES::
 
             sage: G = MatrixGroup(AlternatingGroup(4))
-            sage: G.character([1]*len(G.conjugacy_classes_representatives()))
+            sage: G.character([1]*len(G.conjugacy_classes_representatives()))           # needs sage.rings.number_field
             Character of Matrix group over Integer Ring with 12 generators
 
         ::
@@ -714,7 +718,7 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: MatrixGroup(SymmetricGroup(3)).trivial_character()
+            sage: MatrixGroup(SymmetricGroup(3)).trivial_character()                    # needs sage.rings.number_field
             Character of Matrix group over Integer Ring with 6 generators
 
         ::
@@ -742,10 +746,10 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: MatrixGroup(SymmetricGroup(2)).character_table()
+            sage: MatrixGroup(SymmetricGroup(2)).character_table()                      # needs sage.rings.number_field
             [ 1 -1]
             [ 1  1]
-            sage: MatrixGroup(SymmetricGroup(3)).character_table()
+            sage: MatrixGroup(SymmetricGroup(3)).character_table()                      # needs sage.rings.number_field
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
@@ -797,7 +801,7 @@ class GroupMixinLibGAP():
             True
 
             sage: F = GF(5); MS = MatrixSpace(F,2,2)
-            sage: gens = [MS([[1,2],[-1,1]]),MS([[1,1],[0,1]])]
+            sage: gens = [MS([[1,2],[-1,1]]), MS([[1,1],[0,1]])]
             sage: G = MatrixGroup(gens)
             sage: G.random_element()  # random
             [1 3]

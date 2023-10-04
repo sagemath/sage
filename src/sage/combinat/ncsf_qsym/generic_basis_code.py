@@ -796,7 +796,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
                 Generalize this to all graded vector spaces?
             """
-            return self.sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                        for lam, a in self(element) ],
                                      distinct=True)
 
@@ -840,7 +840,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
                 Generalize this to all graded vector spaces?
             """
-            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                                 for lam, a in self ],
                                               distinct=True)
 

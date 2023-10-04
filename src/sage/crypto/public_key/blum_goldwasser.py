@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Blum-Goldwasser Probabilistic Encryption
 
@@ -88,6 +89,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
     The following encryption/decryption example is taken from Example 8.57,
     pages 309--310 of [MvOV1996]_::
 
+        sage: # needs sage.symbolic
         sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
         sage: bg = BlumGoldwasser(); bg
         The Blum-Goldwasser public-key encryption scheme.
@@ -111,6 +113,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
     private key. Finally, compare the decrypted message with the original
     plaintext. ::
 
+        sage: # needs sage.libs.pari sage.symbolic
         sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
         sage: from sage.crypto.util import bin_to_ascii
         sage: bg = BlumGoldwasser()
@@ -124,10 +127,10 @@ class BlumGoldwasser(PublicKeyCryptosystem):
     If `(p, q, a, b)` is a private key, then `n = pq` is the corresponding
     public key. Furthermore, we have `\gcd(p, q) = ap + bq = 1`. ::
 
-        sage: p, q, a, b = prikey
-        sage: pubkey == p * q
+        sage: p, q, a, b = prikey                                                       # needs sage.symbolic
+        sage: pubkey == p * q                                                           # needs sage.symbolic
         True
-        sage: gcd(p, q) == a*p + b*q == 1
+        sage: gcd(p, q) == a*p + b*q == 1                                               # needs sage.symbolic
         True
     """
 
@@ -264,24 +267,25 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         Decrypt a longer ciphertext and convert the resulting plaintext
         into an ASCII string::
 
+            sage: # needs sage.libs.pari
             sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
             sage: from sage.crypto.util import bin_to_ascii
             sage: bg = BlumGoldwasser()
             sage: p = 78307; q = 412487
             sage: K = bg.private_key(p, q)
-            sage: C = ([[1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0], \
-            ....: [1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1], \
-            ....: [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0], \
-            ....: [0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1], \
-            ....: [1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0], \
-            ....: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1], \
-            ....: [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0], \
-            ....: [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1], \
-            ....: [0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0], \
-            ....: [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1], \
-            ....: [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1], \
-            ....: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0], \
-            ....: [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1]], 3479653279)
+            sage: C = ([[1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+            ....:       [1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+            ....:       [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+            ....:       [0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1],
+            ....:       [1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+            ....:       [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+            ....:       [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+            ....:       [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+            ....:       [0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0],
+            ....:       [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+            ....:       [1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            ....:       [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0],
+            ....:       [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1]], 3479653279)
             sage: P = bg.decrypt(C, K)
             sage: bin_to_ascii(flatten(P))
             'Blum-Goldwasser encryption'
@@ -415,13 +419,13 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: bg = BlumGoldwasser()
             sage: p = 499; q = 547; n = p * q
             sage: P = "10011100000100001100"
-            sage: C = bg.encrypt(P, n, seed=159201); C
+            sage: C = bg.encrypt(P, n, seed=159201); C                                  # needs sage.symbolic
             ([[0, 0, 1, 0], [0, 0, 0, 0], [1, 1, 0, 0], [1, 1, 1, 0], [0, 1, 0, 0]], 139680)
 
         Convert the ciphertext sub-blocks into a binary string::
 
             sage: bin = BinaryStrings()
-            sage: bin(flatten(C[0]))
+            sage: bin(flatten(C[0]))                                                    # needs sage.symbolic
             00100000110011100100
 
         Now encrypt an ASCII string. The result is random; no seed is
@@ -432,7 +436,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: bg = BlumGoldwasser()
             sage: K = 32300619509
             sage: P = "Blum-Goldwasser encryption"
-            sage: bg.encrypt(P, K)  # random
+            sage: bg.encrypt(P, K)  # random                                            # needs sage.symbolic
             ([[1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0], \
             [1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1], \
             [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0], \
@@ -554,9 +558,9 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
             sage: from sage.crypto.util import is_blum_prime
             sage: bg = BlumGoldwasser()
-            sage: P = primes_first_n(10); P
+            sage: P = primes_first_n(10); P                                             # needs sage.libs.pari
             [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-            sage: [is_blum_prime(_) for _ in P]
+            sage: [is_blum_prime(_) for _ in P]                                         # needs sage.libs.pari
             [False, True, False, True, True, False, False, True, True, False]
             sage: bg.private_key(19, 23)
             (19, 23, -6, 5)
@@ -566,6 +570,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         resulting private key `(p, q, a, b)` satisfies
         `\gcd(p, q) = ap + bq = 1`::
 
+            sage: # needs sage.libs.pari
             sage: from sage.crypto.util import random_blum_prime
             sage: p = random_blum_prime(10**4, 10**5)
             sage: q = random_blum_prime(10**4, 10**5)
@@ -628,9 +633,9 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
             sage: from sage.crypto.util import is_blum_prime
             sage: bg = BlumGoldwasser()
-            sage: P = primes_first_n(10); P
+            sage: P = primes_first_n(10); P                                             # needs sage.libs.pari
             [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-            sage: [is_blum_prime(_) for _ in P]
+            sage: [is_blum_prime(_) for _ in P]                                         # needs sage.libs.pari
             [False, True, False, True, True, False, False, True, True, False]
             sage: bg.public_key(3, 7)
             21
@@ -639,6 +644,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         public key corresponding to those two primes, and test that the
         public key factorizes into Blum primes::
 
+            sage: # needs sage.libs.pari
             sage: from sage.crypto.util import random_blum_prime
             sage: p = random_blum_prime(10**4, 10**5)
             sage: q = random_blum_prime(10**4, 10**5)
@@ -730,6 +736,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         Choosing a random pair of public and private keys. We then test to see
         if they satisfy the requirements of the Blum-Goldwasser scheme::
 
+            sage: # needs sage.libs.pari
             sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
             sage: from sage.crypto.util import is_blum_prime
             sage: bg = BlumGoldwasser()
@@ -754,7 +761,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
 
             sage: from sage.crypto.public_key.blum_goldwasser import BlumGoldwasser
             sage: bg = BlumGoldwasser()
-            sage: pubkey, privkey = bg.random_key(24, 30)
+            sage: pubkey, privkey = bg.random_key(24, 30)                               # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             ValueError: No Blum primes within the specified closed interval.

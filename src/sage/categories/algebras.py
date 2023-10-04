@@ -68,9 +68,9 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             sage: QQ['x'] in Algebras(QQ)
             True
 
-            sage: QQ^3 in Algebras(QQ)                                                  # optional - sage.modules
+            sage: QQ^3 in Algebras(QQ)                                                  # needs sage.modules
             False
-            sage: QQ['x'] in Algebras(CDF)
+            sage: QQ['x'] in Algebras(CDF)                                              # needs sage.rings.complex_double
             False
         """
         if super().__contains__(x):
@@ -154,15 +154,15 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: C = AlgebrasWithBasis(QQ).example()                               # optional - sage.combinat
-                sage: x = C(2); x                                                       # optional - sage.combinat
+                sage: # needs sage.combinat sage.modules
+                sage: C = AlgebrasWithBasis(QQ).example()
+                sage: x = C(2); x
                 2*B[word: ]
-                sage: y = C.algebra_generators().first(); y                             # optional - sage.combinat
+                sage: y = C.algebra_generators().first(); y
                 B[word: a]
-
-                sage: y._div_(x)                                                        # optional - sage.combinat
+                sage: y._div_(x)
                 1/2*B[word: a]
-                sage: x._div_(y)                                                        # optional - sage.combinat
+                sage: x._div_(y)
                 Traceback (most recent call last):
                 ...
                 ValueError: cannot invert self (= B[word: a])
@@ -182,6 +182,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs sage.modules
                     sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example(); A
                     An example of a finite dimensional algebra with basis:
                     the path algebra of the Kronecker quiver
@@ -215,9 +216,8 @@ class Algebras(CategoryWithAxiom_over_base_ring):
                 sage: C.extra_super_categories()
                 [Category of algebras over Rational Field]
                 sage: sorted(C.super_categories(), key=str)
-                [Category of Cartesian products of distributive magmas and additive magmas,
-                 Category of Cartesian products of monoids,
-                 Category of Cartesian products of vector spaces over Rational Field,
+                [Category of Cartesian products of monoids,
+                 Category of Cartesian products of unital algebras over Rational Field,
                  Category of algebras over Rational Field]
             """
             return [self.base_category()]
