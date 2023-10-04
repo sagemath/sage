@@ -34,10 +34,56 @@ const observer2 = new MutationObserver(callback);
 observer2.observe(document.getElementsByClassName("content")[0], { childList: true, subtree: true });
 
 
-// Run custom code once the kernel is ready
+// Listen to the kernel status changes
 // https://thebe.readthedocs.io/en/stable/events.html
 thebelab.on("status", function (evt, data) {
-  if (data.status === 'ready') {
+  if (data.status === 'building') {
+    const elements = document.querySelectorAll('.thebelab-cell');
+    elements.forEach(element => {
+      element.style.filter = 'opacity(50%)';
+    });
+    const element = document.getElementById("thebelab-activate-button");
+    element.innerHTML = "Building";
+    element.style.right = '.4rem';
+  }
+  else if (data.status === 'built') {
+    const elements = document.querySelectorAll('.thebelab-cell');
+    elements.forEach(element => {
+      element.style.filter = 'opacity(60%)';
+    });
+    const element = document.getElementById("thebelab-activate-button");
+    element.innerHTML = "Built";
+    element.style.right = '.4rem';
+  }
+  else if (data.status === 'launching') {
+    const elements = document.querySelectorAll('.thebelab-cell');
+    elements.forEach(element => {
+      element.style.filter = 'opacity(70%)';
+    });
+    const element = document.getElementById("thebelab-activate-button");
+    element.innerHTML = "Launching";
+    element.style.right = '.4rem';
+  }
+  else if (data.status === 'failed') {
+    const elements = document.querySelectorAll('.thebelab-cell');
+    elements.forEach(element => {
+      element.style.filter = 'opacity(50%)';
+    });
+    const element = document.getElementById("thebelab-activate-button");
+    element.innerHTML = 'Failed: ' + data.message;
+    element.style.right = '.4rem';
+    element.style.width = 'auto';
+    element.style.color = 'red';
+  }
+  else if (data.status === 'ready') {
+    const elements = document.querySelectorAll('.thebelab-cell');
+    elements.forEach(element => {
+      element.style.filter = 'opacity(100%)';
+    });
+    const element = document.getElementById("thebelab-activate-button");
+    element.innerHTML = "Ready";
+    element.style.right = null;
+    // Run custom code when the kernel is ready
     const kernel = data.kernel;
     kernel.requestExecute({code: "%display latex"});
   }
