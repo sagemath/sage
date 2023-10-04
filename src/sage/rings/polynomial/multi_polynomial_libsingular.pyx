@@ -4499,8 +4499,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         """
         global errorreported
-        if not self._parent._base.is_field():
-            raise NotImplementedError("Lifting of multivariate polynomials over non-fields is not implemented.")
 
         cdef ideal *fI = idInit(1,1)
         cdef ideal *_I
