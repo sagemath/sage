@@ -228,9 +228,9 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
             return IntegerVectorsModPermutationGroup_All(G, sgs=sgs)
         else:
             if sum is not None:
-                assert (sum == NN(sum))
+                assert sum == NN(sum)
             if max_part is not None:
-                assert (max_part == NN(max_part))
+                assert max_part == NN(max_part)
             return IntegerVectorsModPermutationGroup_with_constraints(G, sum, max_part, sgs=sgs)
 
 

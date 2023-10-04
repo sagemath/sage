@@ -914,7 +914,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         self._require_mutable()
         child_lst = [self.__class__(self.parent(), x) for x in child_list]
-        if not(len(child_lst) == 2):
+        if len(child_lst) != 2:
             raise ValueError("the list must have length 2")
         self.__init__(self.parent(), child_lst, check=False)
 
@@ -1873,7 +1873,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         labelled = self in LabelledBinaryTrees()
         labels = []
         t = self
-        while(t):
+        while t:
             border.append(t[1].left_border_symmetry())
             if labelled:
                 labels.append(t.label())
