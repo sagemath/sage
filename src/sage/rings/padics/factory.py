@@ -3231,10 +3231,9 @@ class pAdicExtension_class(UniqueFactory):
 
         sage: R = Zp(5,3)
         sage: S.<x> = ZZ[]
-        sage: W.<w> = pAdicExtension(R, x^4 - 15)
-        sage: W
+        sage: W.<w> = pAdicExtension(R, x^4 - 15); W                                    # needs sage.libs.ntl
         5-adic Eisenstein Extension Ring in w defined by x^4 - 15
-        sage: W.precision_cap()
+        sage: W.precision_cap()                                                         # needs sage.libs.ntl
         12
     """
     def create_key_and_extra_args(self, base, modulus, prec=None, print_mode=None,
