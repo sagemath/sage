@@ -1046,9 +1046,10 @@ REFERENCES:
              equations: I. Fibonacci and Lucas perfect powers." Annals
              of Math, 2006.
 
-.. [BMSS2006] Alin Bostan, Bruno Salvy, Francois Morain, Eric Schost. Fast
-              algorithms for computing isogenies between elliptic
+.. [BMSS2006] Alin Bostan, Bruno Salvy, François Morain, Éric Schost.
+              Fast algorithms for computing isogenies between elliptic
               curves. [Research Report] 2006, pp.28. <inria-00091441>
+              https://arxiv.org/pdf/cs/0609020.pdf
 
 .. [BN2010] \D. Bump and M. Nakasuji.
             Integration on `p`-adic groups and crystal bases.
