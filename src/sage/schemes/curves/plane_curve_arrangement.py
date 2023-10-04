@@ -85,7 +85,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         - ``curves`` -- a tuple of curves
 
         EXAMPLES::
-    
+
             sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: elt = H(x, y); elt
             Arrangement (Affine Plane Curve over Rational Field defined by x,
@@ -118,7 +118,9 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
             sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: h = H(y^2 - x, y^3 + 2 * x^2, x^4 + y^4 + 1); h
-            Affine Plane Curve over Rational Field defined by y^2 - x
+            Arrangement (Affine Plane Curve over Rational Field defined by y^2 - x,
+                         Affine Plane Curve over Rational Field defined by y^3 + 2*x^2,
+                         Affine Plane Curve over Rational Field defined by x^4 + y^4 + 1)
         """
         return self._curves[i]
 
@@ -188,6 +190,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
             sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
+            sage: h
             Arrangement of 5 curves
             sage: H(())
             Empty curve arrangement
@@ -205,16 +208,16 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
+        sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
         sage: H(x) == H(y)
         False
         sage: H(x) == H(2 * x)
         True
 
-
         TESTS::
 
-            sage: H(x) == 0
-            False
+        sage: H(x) == 0
+        False
         """
         return richcmp(self._curves, other._curves, op)
 
@@ -233,33 +236,14 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-        #     sage: H.<x,y> = HyperplaneArrangements(QQ)
-        #     sage: H1.<x,y> = OrderedHyperplaneArrangements(QQ)
-        #     sage: A = H([1,2,3], [0,1,1], [0,1,-1], [1,-1,0], [1,1,0])
-        #     sage: B = H([1,1,1], [1,-1,1], [1,0,-1])
-        #     sage: C = A.union(B); C
-        #     Arrangement of 8 hyperplanes of dimension 2 and rank 2
-        #     sage: C == A | B   # syntactic sugar
-        #     True
-        #     sage: A1 = H1(A)
-        #     sage: B1 = H1(B)
-        #     sage: C1 = A1.union(B1); C1
-        #     Arrangement of 8 hyperplanes of dimension 2 and rank 2
-        #     sage: [C1.hyperplanes().index(h) for h in C.hyperplanes()]
-        #     [0, 5, 6, 1, 2, 3, 7, 4]
-        #
-        # A single hyperplane is coerced into a hyperplane arrangement
-        # if necessary::
-        #
-        #     sage: A.union(x+y-1)
-        #     Arrangement of 6 hyperplanes of dimension 2 and rank 2
-        #     sage: A.add_hyperplane(x+y-1)    # alias
-        #     Arrangement of 6 hyperplanes of dimension 2 and rank 2
-        #
-        #     sage: P.<x,y> = HyperplaneArrangements(RR)
-        #     sage: C = P(2*x + 4*y + 5)
-        #     sage: C.union(A)
-        #     Arrangement of 6 hyperplanes of dimension 2 and rank 2
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
+            sage: C = Curve(x^8 - y^8 -x^4 * y^4)
+            sage: h1 = h.union(C); h1
+            Arrangement of 6 curves
+            sage: h1 == h1.union(C)
+            Repeated curve
+            True
         """
         P = self.parent()
         other_h = P(other)
@@ -277,23 +261,6 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
     __or__ = union
 
-    def plot(self, **kwds):
-        """
-        Plot an arrangement of curves.
-
-        OUTPUT:
-
-        A graphics object.
-
-        EXAMPLES::
-
-            # sage: L.<x, y> = HyperplaneArrangements(QQ)
-            # sage: L(x, y, x+y-2).plot()                                                 # needs sage.plot
-            # Graphics object consisting of 3 graphics primitives
-        """
-        from sage.geometry.hyperplane_arrangement.plot import plot
-        return plot(self, **kwds)
-
     def deletion(self, curves):
         r"""
         Return the curve arrangement obtained by removing ``h``.
@@ -309,15 +276,15 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: A = H([0,1,0], [1,0,1], [-1,0,1], [0,1,-1], [0,1,1]);  A
-            # Arrangement of 5 hyperplanes of dimension 2 and rank 2
-            # sage: A.deletion(x)
-            # Arrangement <y - 1 | y + 1 | x - y | x + y>
-            # sage: h = H([0,1,0], [0,1,1])
-            # sage: A.deletion(h)
-            # Arrangement <y - 1 | y + 1 | x - y>
-        """
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
+            sage: C = h[-1]
+            sage: h.deletion(C)
+            Arrangement (Affine Plane Curve over Rational Field defined by x*y,
+                         Affine Plane Curve over Rational Field defined by x + y + 1,
+                         Affine Plane Curve over Rational Field defined by -y^5 + x^3,
+                         Affine Plane Curve over Rational Field defined by x^5 + y^5 + x^2*y^2)
+            """
         parent = self.parent()
         curves = parent(curves)
         planes = list(self)
@@ -326,7 +293,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
                 planes.remove(curve)
             except ValueError:
                 raise ValueError('curve is not in the arrangement')
-        return parent(*planes)
+        return parent(planes)
 
     def change_ring(self, base_ring):
         """
@@ -344,57 +311,42 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: A = H([(1,1), 0], [(2,3), -1])
-            # sage: A.change_ring(FiniteField(2))
-            # Arrangement <y + 1 | x + y>
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 - x^3, x, y, y^2 + x * y + x^2)
+            sage: K.<a> = CyclotomicField(3)  # optional - sage.rings.number_field
+            sage: A.change_ring(K)            # optional - sage.rings.number_field
+            Arrangement (Affine Plane Curve over Cyclotomic Field of order 3 and degree 2 defined by -x^3 + y^2,
+                         Affine Plane Curve over Cyclotomic Field of order 3 and degree 2 defined by x,
+                         Affine Plane Curve over Cyclotomic Field of order 3 and degree 2 defined by y,
+                         Affine Plane Curve over Cyclotomic Field of order 3 and degree 2 defined by x^2 + x*y + y^2)
         """
         parent = self.parent().change_ring(base_ring)
-        return parent(self)
+        curves = tuple(c.change_ring(base_ring) for c in self)
+        return parent(curves)
 
     def defining_polynomials(self):
         r"""
-        Return the defining polynomials of ``A``.
-
-        # Let `A = (H_i)_i` be a hyperplane arrangement in a vector space `V`
-        # corresponding to the null spaces of `\alpha_{H_i} \in V^*`. Then
-        # the *defining polynomial* of `A` is given by
-        #
-        # .. MATH::
-        #
-        #     Q(A) = \prod_i \alpha_{H_i} \in S(V^*).
+        Return the defining polynomials of the elements of``self``.
 
         EXAMPLES::
 
-            # sage: H.<x,y,z> = HyperplaneArrangements(QQ)
-            # sage: A = H([2*x + y - z, -x - 2*y + z])
-            # sage: p = A.defining_polynomial(); p
-            # -2*x^2 - 5*x*y - 2*y^2 + 3*x*z + 3*y*z - z^2
-            # sage: p.factor()
-            # (-1) * (x + 2*y - z) * (2*x + y - z)
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 - x^3, x, y, y^2 + x * y + x^2)
+            sage: A.defining_polynomials()
+            (-x^3 + y^2, x, y, x^2 + x*y + y^2)
         """
         return tuple(h.defining_polynomial() for h in self)
 
     def defining_polynomial(self, simplified=True):
         r"""
-        Return the defining polynomial of ``A``.
-
-        # Let `A = (H_i)_i` be a hyperplane arrangement in a vector space `V`
-        # corresponding to the null spaces of `\alpha_{H_i} \in V^*`. Then
-        # the *defining polynomial* of `A` is given by
-        #
-        # .. MATH::
-        #
-        #     Q(A) = \prod_i \alpha_{H_i} \in S(V^*).
+        Return the defining polynomial of the union of the curves in ``self``.
 
         EXAMPLES::
 
-            # sage: H.<x,y,z> = HyperplaneArrangements(QQ)
-            # sage: A = H([2*x + y - z, -x - 2*y + z])
-            # sage: p = A.defining_polynomial(); p
-            # -2*x^2 - 5*x*y - 2*y^2 + 3*x*z + 3*y*z - z^2
-            # sage: p.factor()
-            # (-1) * (x + 2*y - z) * (2*x + y - z)
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y ** 2 + x ** 2, x, y)
+            sage: prod(A.defining_polynomials()) == A.defining_polynomial()
+            True
         """
         return prod(self.defining_polynomials())
 
@@ -494,13 +446,12 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
     EXAMPLES::
 
-        sage: H.<x,y> = HyperplaneArrangements(QQ)
-        sage: x
-        Hyperplane x + 0*y + 0
-        sage: x + y
-        Hyperplane x + y + 0
-        sage: H(x, y, x-1, y-1)
-        Arrangement <y - 1 | y | x - 1 | x>
+        sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+        sage: H(x, y^2, x-1, y-1)
+        Arrangement (Affine Plane Curve over Rational Field defined by x,
+                     Affine Plane Curve over Rational Field defined by y^2,
+                     Affine Plane Curve over Rational Field defined by x - 1,
+                     Affine Plane Curve over Rational Field defined by y - 1)
     """
     Element = OrderedAffinePlaneCurveArrangementsElement
 
@@ -510,21 +461,17 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
         TESTS::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: K = HyperplaneArrangements(QQ, names=('x', 'y'))
-            # sage: H is K
-            # True
-            # sage: type(K)
-            # <class 'sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangements_with_category'>
-            # sage: K.change_ring(RR).gen(0)
-            # Hyperplane 1.00000000000000*x + 0.000000000000000*y + 0.000000000000000
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: K = OrderedAffinePlaneCurveArrangements(QQ, names=('x', 'y'))
+            sage: H is K
+            True
+            sage: type(K)
+            <class 'sage.schemes.curves.plane_curve_arrangement.OrderedAffinePlaneCurveArrangements_with_category'>
 
         TESTS::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: TestSuite(H).run()
-            # sage: K = HyperplaneArrangements(QQ)
-            # sage: TestSuite(K).run()
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: TestSuite(H).run()
         """
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
@@ -542,9 +489,9 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            # sage: L.<x,y> = HyperplaneArrangements(QQ)
-            # sage: L.base_ring()
-            # Rational Field
+            sage: L.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: L.base_ring()
+            Rational Field
         """
         return self._base_ring
 
@@ -562,17 +509,17 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
         base ring.
 
         EXAMPLES::
-            #
-            # sage: L.<x,y> = HyperplaneArrangements(QQ)
-            # sage: L.gen(0)
-            # Hyperplane x + 0*y + 0
-            # sage: L.change_ring(RR).gen(0)
-            # Hyperplane 1.00000000000000*x + 0.000000000000000*y + 0.000000000000000
+
+            sage: L.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: L.gen(0)
+            x
+            sage: L.change_ring(RR).base_ring()
+            Real Field with 53 bits of precision
 
         TESTS::
 
-            # sage: L.change_ring(QQ) is L
-            # True
+            sage: L.change_ring(QQ) is L
+            True
         """
         return OrderedAffinePlaneCurveArrangements(base_ring, names=self._names)
 
@@ -581,17 +528,11 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
         """
         Return the ambient space.
 
-        # The ambient space is the parent of hyperplanes. That is, new
-        # hyperplanes are always constructed internally from the ambient
-        # space instance.
-
         EXAMPLES::
 
-            sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: L.ambient_space()([(1,0), 0])
-            Hyperplane x + 0*y + 0
-            sage: L.ambient_space()([(1,0), 0]) == x
-            True
+            sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Affine Space of dimension 2 over Rational Field
         """
         return AffineSpace(self.base_ring(), 2, self._names)
 
@@ -605,8 +546,8 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            # sage: L.<x, y> = HyperplaneArrangements(QQ);  L
-            # Hyperplane arrangements in 2-dimensional linear space over Rational Field with coordinates x, y
+            sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ);  L
+            Curve arrangements in Affine Space of dimension 2 over Rational Field
         """
         return 'Curve arrangements in {0}'.format(self.ambient_space())
 
@@ -616,51 +557,20 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``*args`` -- positional arguments, each defining a
-          hyperplane; alternatively, a single polytope or a single
-          hyperplane arrangement
-
-        - ``warn_duplicates`` -- boolean (optional, default: ``False``);
-          whether to issue a warning if duplicate hyperplanes were
-          passed -- note that duplicate hyperplanes are always removed,
-          whether or not there is a warning shown
-
+        - ``*args`` -- positional arguments, each defining a curve
 
         EXAMPLES::
 
-        #     sage: L.<x, y> = HyperplaneArrangements(QQ)
-        #     sage: L._element_constructor_(x, y)
-        #     Arrangement <y | x>
-        #     sage: L._element_constructor_([x, y])
-        #     Arrangement <y | x>
-        #     sage: L._element_constructor_([0, 1, 0], [0, 0, 1])
-        #     Arrangement <y | x>
-        #     sage: L._element_constructor_([[0, 1, 0], [0, 0, 1]])
-        #     Arrangement <y | x>
-        #
-        #     sage: L._element_constructor_(polytopes.hypercube(2))
-        #     Arrangement <-x + 1 | -y + 1 | y + 1 | x + 1>
-        #
-        #     sage: L(x, x, warn_duplicates=True)
-        #     doctest:...: UserWarning: Input contained 2 hyperplanes, but only 1 are distinct.
-        #     Arrangement <x>
-        #     sage: L(-x, x + y - 1, signed=False)
-        #     Arrangement <-x - y + 1 | x>
-        #
-        # TESTS::
-        #
-        #     sage: L()
-        #     Empty hyperplane arrangement of dimension 2
-        #     sage: L(0)        # zero is equivalent to no argument, Issue #8648
-        #     Empty hyperplane arrangement of dimension 2
-        #     sage: L(0*x)      # degenerate hyperplane is NOT allowed
-        #     Traceback (most recent call last):
-        #     ...
-        #     ValueError: linear expression must be non-constant to define a hyperplane
-        #     sage: L(0*x, y)   # ditto
-        #     Traceback (most recent call last):
-        #     ...
-        #     ValueError: linear expression must be non-constant to define a hyperplane
+            sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = L._element_constructor_(x, y); A
+            Arrangement (Affine Plane Curve over Rational Field defined by x,
+            Affine Plane Curve over Rational Field defined by y)
+            sage: L._element_constructor_([x, y]) == A
+            True
+            sage: L._element_constructor_(Curve(x), Curve(y)) == A
+            True
+            sage: L._element_constructor_(y, x) == A
+            False
        """
         if len(args) == 1 and not (isinstance(args[0], (tuple, list))):
             arg = (args[0], )
@@ -690,22 +600,33 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
                     return None
         return self.element_class(self, curves)
 
+    def _an_element_(self):
+        """
+        Dirty trick to avoid test run failure.
+
+       TEST::
+
+            sage: H.<t, s> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: H._an_element_()
+            Arrangement (Affine Plane Curve over Rational Field defined by t)
+        """
+        x = self.gen(0)
+        return self(x)
+
     @cached_method
     def ngens(self):
         """
-        Return the number of linear variables.
+        Return the number of variables, i.e. 2, kept for completness.
 
         OUTPUT:
 
-        An integer.
+        An integer (2).
 
         EXAMPLES::
 
-            sage: L.<x, y, z> = HyperplaneArrangements(QQ);  L
-            Hyperplane arrangements in 3-dimensional linear space
-             over Rational Field with coordinates x, y, z
+            sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: L.ngens()
-            3
+            2
         """
         return len(self._names)
 
@@ -720,11 +641,9 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            # sage: L = HyperplaneArrangements(QQ, ('x', 'y', 'z'))
-            # sage: L.gens()
-            # (Hyperplane x + 0*y + 0*z + 0,
-            #  Hyperplane 0*x + y + 0*z + 0,
-            #  Hyperplane 0*x + 0*y + z + 0)
+            sage: L = OrderedAffinePlaneCurveArrangements(QQ, ('x', 'y'))
+            sage: L.gens()
+            (x, y)
         """
         return self.ambient_space().gens()
 
@@ -738,41 +657,39 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
         OUTPUT:
 
-        A linear expression.
+        A variable.
 
         EXAMPLES::
 
-            # sage: L.<x, y, z> = HyperplaneArrangements(QQ);  L
-            # Hyperplane arrangements in
-            #  3-dimensional linear space over Rational Field with coordinates x, y, z
-            # sage: L.gen(0)
-            # Hyperplane x + 0*y + 0*z + 0
+            sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: L.gen(1)
+            y
         """
         return self.gens()[i]
 
-    def _coerce_map_from_(self, P):
-        """
-        Return whether there is a coercion.
-
-        TESTS::
-
-            sage: L.<x> = HyperplaneArrangements(QQ);  L
-            Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
-            sage: M.<y> = HyperplaneArrangements(RR);  M
-            Hyperplane arrangements in 1-dimensional linear space over Real Field with 53 bits of precision with coordinate y
-
-            sage: L.coerce_map_from(ZZ)
-            Coercion map:
-              From: Integer Ring
-              To:   Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
-            sage: M.coerce_map_from(L)
-            Coercion map:
-              From: Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
-              To:   Hyperplane arrangements in 1-dimensional linear space over Real Field with 53 bits of precision with coordinate y
-            sage: L.coerce_map_from(M)
-        """
-        if self.ambient_space().has_coerce_map_from(P):
-            return True
-        if isinstance(P, OrderedAffinePlaneCurveArrangements):
-            return self.base_ring().has_coerce_map_from(P.base_ring())
-        return super()._coerce_map_from_(P)
+    # def _coerce_map_from_(self, P):
+    #     """
+    #     Return whether there is a coercion.
+    #
+    #     TESTS::
+    #
+    #         sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ);  L
+    #         Curve arrangements in Affine Space of dimension 2 over Rational Field
+    #         sage: M.<x, y> = HyperplaneArrangements(RR);  M
+    #         Hyperplane arrangements in 2-dimensional linear space over Real Field with 53 bits of precision with coordinates x, y
+    #
+    #         sage: L.coerce_map_from(ZZ)
+    #         Coercion map:
+    #           From: Integer Ring
+    #           To:   Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
+    #         sage: M.coerce_map_from(L)
+    #         Coercion map:
+    #           From: Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
+    #           To:   Hyperplane arrangements in 1-dimensional linear space over Real Field with 53 bits of precision with coordinate y
+    #         sage: L.coerce_map_from(M)
+    #     """
+    #     if self.ambient_space().has_coerce_map_from(P):
+    #         return True
+    #     if isinstance(P, OrderedAffinePlaneCurveArrangements):
+    #         return self.base_ring().has_coerce_map_from(P.base_ring())
+    #     return super()._coerce_map_from_(P)
