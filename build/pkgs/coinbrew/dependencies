@@ -1,0 +1,1 @@
+git $(BLAS) readline zlib bzip2 pkgconf
