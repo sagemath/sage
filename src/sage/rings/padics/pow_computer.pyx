@@ -35,7 +35,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 import weakref
@@ -186,7 +186,6 @@ cdef class PowComputer_class(SageObject):
             59049
         """
         cdef Integer _n = Integer(n)
-        cdef Integer ans
         if _n < 0:
             if mpz_fits_ulong_p((<Integer>-_n).value) == 0:
                 raise ValueError("result too big")
@@ -210,7 +209,7 @@ cdef class PowComputer_class(SageObject):
 
         See pow_mpz_t_tmp_demo for an example of this phenomenon.
         """
-        ## READ THE DOCSTRING
+        # READ THE DOCSTRING
         raise NotImplementedError
 
     def _pow_mpz_t_tmp_demo(self, m, n):
@@ -319,7 +318,7 @@ cdef class PowComputer_class(SageObject):
             sage: PC = PowComputer(3, 5, 10); PC
             PowComputer for 3
         """
-        return "PowComputer for %s"%(self.prime)
+        return "PowComputer for %s" % (self.prime)
 
     def _prime(self):
         """
@@ -411,8 +410,7 @@ cdef class PowComputer_class(SageObject):
             sage: P(-2)
             1/9
         """
-        cdef Integer z, _n
-        cdef mpz_t tmp
+        cdef Integer _n
         if n is infinity:
             return Integer(0)
         if not isinstance(n, Integer):
@@ -496,12 +494,10 @@ cdef class PowComputer_base(PowComputer_class):
             sage: PC = PowComputer(5, 7, 10)
             sage: PC(3)
             125
-
         """
         PowComputer_class.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
 
         cdef Py_ssize_t i
-        cdef Integer x
 
         mpz_set_ui(self.small_powers[0], 1)
         if cache_limit > 0:
@@ -633,6 +629,7 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
     PC = PC_class(m, mpz_get_ui(cache_limit.value), mpz_get_ui(prec_cap.value), mpz_get_ui(prec_cap.value), in_field)
     pow_comp_cache[key] = weakref.ref(PC)
     return PC
+
 
 # To speed up the creation of PowComputers with the same m, we might eventually want to copy over data from an existing PowComputer.
 
