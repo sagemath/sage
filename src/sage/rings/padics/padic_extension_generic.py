@@ -376,7 +376,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         Return the order with the same defining polynomial.
 
-        Will raise a ValueError if the coefficients of the defining polynomial are not integral.
+        Will raise a :class:`ValueError` if the coefficients of the defining
+        polynomial are not integral.
 
         EXAMPLES::
 

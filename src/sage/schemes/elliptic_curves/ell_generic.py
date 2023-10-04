@@ -729,7 +729,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``all`` (bool, default False) -- if True, return a (possibly
           empty) list of all points; if False, return just one point,
-          or raise a ValueError if there are none.
+          or raise a :class:`ValueError` if there are none.
 
         - ``extend`` (bool, default False) --
 
