@@ -1002,6 +1002,11 @@ REFERENCES:
             group actions}, (preprint March 2003, available on
             Mitter's MIT website).
 
+.. [Boa1982] J. M. Boardman, "The eightfold way to BP-operations",
+             in *Current trends in algebraic topology*, pp. 187–226,
+             Canadian Mathematical Society Proceedings, 2, Part 1.
+             Providence 1982. ISBN 978-0-8218-6003-8.
+
 .. [Bond2007] P. Bonderson, Nonabelian anyons and interferometry,
               Dissertation (2007). https://thesis.library.caltech.edu/2447/
 
