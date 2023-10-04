@@ -232,7 +232,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
                     2*3^15 + 2*3^16 + 2*3^17 + 2*3^18 + 2*3^19 + 2*3^20 + O(3^21))
         """
         if not (is_Berkovich_Cp(domain) or domain is None):
-            raise TypeError('domain must be a Berkovich space over Cp, not %s' %domain)
+            raise TypeError('domain must be a Berkovich space over Cp, not %s' % domain)
 
         if isinstance(domain, Berkovich_Cp_Affine):
             if not isinstance(dynamical_system, DynamicalSystem_affine):
@@ -269,7 +269,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
                             raise ValueError('conflicting inputs for ideal and domain')
             else:
                 raise ValueError('base ring of domain of dynamical_system must be p-adic or a number field '
-                    'not %s' %morphism_domain.base_ring())
+                    'not %s' % morphism_domain.base_ring())
 
         if is_AffineSpace(morphism_domain):
             return DynamicalSystem_Berkovich_affine(dynamical_system, domain)
@@ -444,7 +444,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         domain_str = self._domain._repr_()
         return "Dynamical system of " + domain_str + " induced by the map" + \
-            "\n  Defn: %s"%('\n        '.join(self._system._repr_defn().split('\n')))
+            "\n  Defn: %s" % ('\n        '.join(self._system._repr_defn().split('\n')))
 
 
 class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
@@ -524,19 +524,19 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
         R = dynamical_system.base_ring()
         morphism_domain = dynamical_system.domain()
         if not is_ProjectiveSpace(morphism_domain):
-            raise TypeError('the domain of dynamical_system must be projective space, not %s' %morphism_domain)
+            raise TypeError('the domain of dynamical_system must be projective space, not %s' % morphism_domain)
         if morphism_domain.dimension_relative() != 1:
             raise ValueError('domain was not relative dimension 1')
         if not isinstance(R, pAdicBaseGeneric):
             if domain is None:
-                raise TypeError('dynamical system defined over %s, not p-adic, ' %morphism_domain.base_ring() +
+                raise TypeError('dynamical system defined over %s, not p-adic, ' % morphism_domain.base_ring() +
                     'and domain is None')
             if not isinstance(domain, Berkovich_Cp_Projective):
-                raise TypeError('domain was %s, not a projective Berkovich space over Cp' %domain)
+                raise TypeError('domain was %s, not a projective Berkovich space over Cp' % domain)
             if domain.base() != morphism_domain:
-                raise ValueError('base of domain was %s, with coordinate ring %s ' %(domain.base(),
-                    domain.base().coordinate_ring())+ 'while dynamical_system acts on %s, ' %morphism_domain +
-                        'with coordinate ring %s' %morphism_domain.coordinate_ring())
+                raise ValueError('base of domain was %s, with coordinate ring %s ' % (domain.base(),
+                    domain.base().coordinate_ring()) + 'while dynamical_system acts on %s, ' % morphism_domain +
+                        'with coordinate ring %s' % morphism_domain.coordinate_ring())
         else:
             domain = Berkovich_Cp_Projective(morphism_domain)
         return typecall(cls, dynamical_system, domain)
@@ -686,7 +686,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
             return DynamicalSystem_Berkovich(self._system.conjugate(M, adjugate=adjugate))
         from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
         if not (isinstance(new_ideal, NumberFieldFractionalIdeal) or new_ideal is None or new_ideal in ZZ):
-            raise TypeError('new_ideal must be an ideal of a number field, not %s' %new_ideal)
+            raise TypeError('new_ideal must be an ideal of a number field, not %s' % new_ideal)
         new_system = self._system.conjugate(M, adjugate=adjugate)
         system_domain = new_system.domain()
         if new_ideal is None:
@@ -1003,15 +1003,15 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
         R = dynamical_system.base_ring()
         morphism_domain = dynamical_system.domain()
         if not is_AffineSpace(morphism_domain):
-            raise TypeError('the domain of dynamical_system must be affine space, not %s' %morphism_domain)
+            raise TypeError('the domain of dynamical_system must be affine space, not %s' % morphism_domain)
         if morphism_domain.dimension_relative() != 1:
             raise ValueError('domain not relative dimension 1')
         if not isinstance(R, pAdicBaseGeneric):
             if domain is None:
-                raise TypeError('dynamical system defined over %s, not padic, ' %morphism_domain.base_ring() +
+                raise TypeError('dynamical system defined over %s, not padic, ' % morphism_domain.base_ring() +
                     'and domain was not specified')
             if not isinstance(domain, Berkovich_Cp_Affine):
-                raise TypeError('domain was %s, not an affine Berkovich space over Cp' %domain)
+                raise TypeError('domain was %s, not an affine Berkovich space over Cp' % domain)
         else:
             domain = Berkovich_Cp_Affine(morphism_domain.base_ring())
         return typecall(cls, dynamical_system, domain)
@@ -1080,6 +1080,6 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
             try:
                 x = self.domain()(x)
             except (TypeError, ValueError):
-                raise ValueError('action of dynamical system not defined on %s' %x)
+                raise ValueError('action of dynamical system not defined on %s' % x)
         proj_system = self.homogenize(1)
         return proj_system(x.as_projective_point()).as_affine_point()
