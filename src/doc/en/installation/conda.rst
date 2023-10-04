@@ -93,16 +93,13 @@ from source as follows:
 
 .. _sec-installation-conda-develop:
 
-Using conda to provide all dependencies for the Sage library (experimental)
+Using conda to provide all dependencies for the Sage library
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can build and install the Sage library from source, using conda to
 provide all of its dependencies. This bypasses most of the build
 system of the Sage distribution and is the fastest way to set up an
 environment for Sage development.
-
-Note that this is still an experimental feature and may not work as
-intended.
 
 Here we assume that you are using a git checkout.
 
