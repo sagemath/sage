@@ -4891,9 +4891,9 @@ class Graph(GenericGraph):
         return repr
 
     @doc_index("Algorithmically hard stuff")
-    def minor(self, H, solver=None, verbose=0, *, integrality_tolerance=1e-3, induced=False):
+    def minor(self, H, solver=None, verbose=0, induced=False, *, integrality_tolerance=1e-3):
         r"""
-        Return the vertices of a minor isomorphic to `H` in the current graph for induced=False
+        Return the vertices of a minor isomorphic to `H` in the current graph. 
 
         We say that a graph `G` has a `H`-minor (or that it has a graph
         isomorphic to `H` as a minor), if for all `h\in H`, there exist disjoint
@@ -4901,7 +4901,8 @@ class Graph(GenericGraph):
         been merged to create a new graph `G'`, this new graph contains `H` as a
         subgraph.
 
-        Returns an induced minor isomorphic to `H` if it exists for induced=True 
+        When parameter ``induced`` is ``True``, this method returns an induced minor 
+        isomorphic to `H`, if it exists.
 
         We say that a graph `G` has an induced `H`-minor (or that it has a
         graph isomorphic to `H` as an induced minor), if `H` can be obtained
@@ -4930,7 +4931,7 @@ class Graph(GenericGraph):
           :meth:`MixedIntegerLinearProgram.get_values`.
 
         - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
-            induced minor isomorphic to `H` if it exists, and ``None`` otherwise.
+            induced minor isomorphic to `H` if it exists, and ``ValueError`` otherwise.
 
         OUTPUT:
 
@@ -5004,19 +5005,22 @@ class Graph(GenericGraph):
 
         TESTS::
 
-            sage: g = Graph()
-            sage: g.add_edges([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
-            sage: h = Graph()
-            sage: h.add_edges([(9, 10), (9, 11), (9, 12), (9, 13)])
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
             sage: l = g.minor(h, induced=True)
             Traceback (most recent call last):
             ...
             ValueError: This graph has no induced minor isomorphic to H !
+            
+            sage: # induced minor does not exist, but minor does 
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
+            sage: l = g.minor(h, induced=False)
+            sage: print("minor exists")
+            minor exists
 
-            sage: g = Graph()
-            sage: g.add_edges([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
-            sage: h = Graph()
-            sage: h.add_edges([(7, 8), (8, 9), (9, 10), (10, 11)])
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(7, 8), (8, 9), (9, 10), (10, 11)])
             sage: L = g.minor(h, induced=True)
             sage: gg = g.subgraph(flatten(L.values(), max_level = 1))
             sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
@@ -5091,12 +5095,11 @@ class Graph(GenericGraph):
         # condition for induced subgraph ensures that if there
         # doesnt exist an edge(h1, h2) in H then there should 
         # not be an edge between representative sets of h1 and h2 in G
-        if (induced):
-            for h1 in H:
-                for h2 in H:
-                    if not h1 == h2 and not H.has_edge(h1, h2):
-                        for v1, v2 in self.edge_iterator(labels=None):
-                            p.add_constraint(rs[h1, v1] + rs[h2, v2], max=1) 
+        if induced:
+            for h1, h2 in H.complement().edge_iterator(labels=False):
+                for v1, v2 in self.edge_iterator(labels=False):
+                    p.add_constraint(rs[h1, v1] + rs[h2, v2], max=1)
+                    p.add_constraint(rs[h2, v1] + rs[h1, v2], max=1)
 
         p.set_objective(None)
 
