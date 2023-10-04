@@ -79,7 +79,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
+from copy import copy, deepcopy
 
 from sage.structure.sequence import Sequence
 
@@ -1432,7 +1432,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: negphi.rational_maps()
             ((x^2 + (-a)*x - 2)/(x + (-a)), (-x^2*y + (2*a)*x*y - y)/(x^2 + (-2*a)*x - 1))
         """
-        output = copy(self)
+        output = deepcopy(self)
         output._set_post_isomorphism(negation_morphism(output._codomain))
         return output
 
@@ -3313,13 +3313,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             NotImplemented
         """
         if isinstance(left, WeierstrassIsomorphism) and isinstance(right, EllipticCurveIsogeny):
-            result = copy(right)
+            result = deepcopy(right)
             result._set_post_isomorphism(left)
             return result
 
         if isinstance(left, EllipticCurveIsogeny) and isinstance(right, WeierstrassIsomorphism):
             assert isinstance(left, EllipticCurveIsogeny)
-            result = copy(left)
+            result = deepcopy(left)
             result._set_pre_isomorphism(right)
             return result
 
