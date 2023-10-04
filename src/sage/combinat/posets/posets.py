@@ -8825,7 +8825,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().is_induced_subposet('junk')
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'subposet'
+            AttributeError: 'str' object has no attribute 'subposet'...
         """
         if (not self._is_facade or (isinstance(other, FinitePoset) and
                                     not other._is_facade)):

@@ -2362,7 +2362,7 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
             sage: F, g, h = S.field_extension('b')                                      # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            AttributeError: 'PolynomialQuotientRing_generic_with_category' object has no attribute 'field_extension'
+            AttributeError: 'PolynomialQuotientRing_generic_with_category' object has no attribute 'field_extension'...
 
         Over a finite field, the corresponding field extension is not a
         number field::

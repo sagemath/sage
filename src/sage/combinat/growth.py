@@ -371,7 +371,7 @@ compute the labels belonging to a filling::
     sage: GrowthDiagram(RulePascal(), [3,1,2])
     Traceback (most recent call last):
     ...
-    AttributeError: 'RulePascal' object has no attribute 'forward_rule'
+    AttributeError: 'RulePascal' object has no attribute 'forward_rule'...
 
 We now re-implement the rule where we provide the dual graded graphs::
 

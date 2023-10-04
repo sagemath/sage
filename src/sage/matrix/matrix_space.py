@@ -1619,7 +1619,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS[2]
             Traceback (most recent call last):
             ...
-            AttributeError: 'MatrixSpace_with_category' object has no attribute 'list'
+            AttributeError: 'MatrixSpace_with_category' object has no attribute 'list'...
         """
         if isinstance(x, (integer.Integer, int)):
             return self.list()[x]

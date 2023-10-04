@@ -1572,7 +1572,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
             Traceback (most recent call last):
             ...
             AttributeError: 'GenericGrowthGroup_with_category.element_class' object
-            has no attribute 'is_one'
+            has no attribute 'is_one'...
         """
         if self.is_one():
             return tuple()

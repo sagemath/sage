@@ -597,7 +597,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U.Element
             Traceback (most recent call last):
             ...
-            AttributeError: 'DisjointUnionEnumeratedSets_with_category' object has no attribute 'Element'
+            AttributeError: 'DisjointUnionEnumeratedSets_with_category' object has no attribute 'Element'...
         """
         if not self._facade:
             return ElementWrapper
