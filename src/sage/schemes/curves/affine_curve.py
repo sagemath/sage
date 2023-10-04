@@ -1719,7 +1719,6 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
              defined by: -2*y + z + 1, x + y + z
             sage: _ == C.tangent_line(p)
             True
-
         """
         A = self.ambient_space()
         R = A.coordinate_ring()
@@ -1739,7 +1738,25 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         return Curve(I0, A)
 
+
+class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
+    """
+    Affine plane curves over fields.
+    """
+    _point = AffinePlaneCurvePoint_field
+
     def has_vertical_asymptote(self):
+        """
+        Check if the curve is not a line and has vertical asymptotes.
+
+        EXAMPLES::
+
+            sage: A2.<x,y> = AffineSpace(2, QQ)
+            sage: Curve(x).has_vertical_asymptote()
+            False
+            sage: Curve(y^2 * x + x + y).has_vertical_asymptote()
+            True
+        """
         A = self.ambient_space()
         R = A.coordinate_ring()
         x, y = R.gens()
@@ -1747,18 +1764,24 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         return f.degree(y) < f.degree() > 1
 
     def is_vertical_line(self):
+        """
+        Check if the curve is a vertical line.
+
+        EXAMPLES::
+
+            sage: A2.<x,y,z> = AffineSpace(2, QQ)
+            sage: Curve(x - 1).is_vertical_line()
+            True
+            sage: Curve(x - y).is_vertical_line()
+            False
+            sage: Curve(y^2 * x + x + y).has_vertical_asymptote()
+            False
+        """
         A = self.ambient_space()
         R = A.coordinate_ring()
         x, y = R.gens()
         f = self.defining_polynomial().radical()
         return f.degree(y) == 0 and f.degree() == 1
-
-
-class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
-    """
-    Affine plane curves over fields.
-    """
-    _point = AffinePlaneCurvePoint_field
 
     @cached_method
     def fundamental_group(self, simplified=True, puiseux=False):

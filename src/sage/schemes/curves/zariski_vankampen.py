@@ -1145,7 +1145,7 @@ def strand_components(f, flist, p1):
         rt = h1.roots(QQbar, multiplicities=False)
         roots_base += [(_, i) for _ in rt]
     roots_base.sort()
-    strands = {i: par[1] for i, par in enumerate(roots_base)}  # quitar +1 despues de revision
+    strands = {i: par[1] for i, par in enumerate(roots_base)}
     return (roots_base, strands)
 
 
@@ -1486,7 +1486,8 @@ def relation(x, b):
     return x * b / x
 
 
-def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
+def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False,
+                                     vertical=[]):
     r"""
     Return a presentation of the fundamental group computed from
     a braid monodromy.
@@ -1525,6 +1526,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
 
     EXAMPLES::
 
+        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
         sage: B.<s0, s1, s2> = BraidGroup(4)
         sage: bm = [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1,
@@ -1539,9 +1541,9 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
         Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
                                                 x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
-        sage: fundamental_group_from_braid_mon([]) is None      # optional - sirocco
+        sage: fundamental_group_from_braid_mon([]) is None
         True
-        sage: fundamental_group_from_braid_mon([], degree=2)    # optional - sirocco
+        sage: fundamental_group_from_braid_mon([], degree=2)
         Finitely presented group < x0, x1 |  >
     """
     vertical0 = sorted(vertical)
@@ -1771,6 +1773,24 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >, {0: [x0, x1]})
         sage: fundamental_group_arrangement([y + x^2], projective=True)
         (Finitely presented group < x | x^2 >, {0: [x0, x0]})
+        sage: L = [x, y, x - 1, x -y]
+        sage: fundamental_group_arrangement(L)
+        (Finitely presented group < x0, x1, x2, x3 |
+                                    x2*x3^-1*x2^-1*x3,
+                                    x0*x1*x3*x0^-1*x3^-1*x1^-1,
+                                    x3*x0*x1*x3^-1*x1^-1*x0^-1,
+                                    x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
+         {0: [x1], 1: [x3], 2: [x2], 3: [x0],
+          4: [x3^-1*x2^-1*x1^-1*x0^-1]})
+        sage: fundamental_group_arrangement(L, vertical=True)
+        (Finitely presented group < x0, x1, x2, x3 |
+                                    x1*x0*x1^-1*x0^-1,
+                                    x2*x0*x2^-1*x0^-1,
+                                    x2*x1*x2^-1*x1^-1,
+                                    x3*x0*x3^-1*x0^-1,
+                                    x3*x1*x3^-1*x1^-1 >,
+         {0: [x2], 1: [x0], 2: [x3], 3: [x1],
+          4: [x3^-1*x2^-1*x1^-1*x0^-1]})
     """
     if len(flist) > 0:
         f = prod(flist)
@@ -1788,7 +1808,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
             flist1 = [g.subs({x: x + y}) for g in flist1]
             f = prod(flist1)
     if not vertical0:
-        infinity = f.degree(y) == f.degree()
+        infinity = all([g.degree(y) == g.degree() or Curve(g).is_vertical_line() for g in flist1])
     if vertical0:
         infinity = all([not Curve(g).has_vertical_asymptote() for g in flist1])
     if len(flist1) == 0:
@@ -1798,10 +1818,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         d1 = 0
     else:
         bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical0)
-    vert_lines = []
+    vert_lines = list(dv.values())
+    vert_lines.sort()
     if vertical0:
-        for j in dv.keys():
-            dic[d + j] = dv[j]
+        for j in dv:
+            dic[d1 + j] = dv[j]
     g = fundamental_group_from_braid_mon(bm, degree=d1, simplified=False, projective=projective, puiseux=puiseux, vertical=vert_lines)
     if simplified:
         hom = g.simplification_isomorphism()
@@ -1814,7 +1835,6 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     for i in range(len(flist1)):
         L = [j1 for j1 in dic.keys() if dic[j1] == i]
         dic1[i] = [hom(g.gen(j)) for j in L]
-    # if not projective and f.degree(y) == f.degree():
     if not projective and infinity:
         t = prod(hom(x) for x in g.gens()).inverse()
         dic1[len(flist1)] = [t]

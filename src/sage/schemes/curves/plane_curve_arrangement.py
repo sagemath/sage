@@ -3,41 +3,32 @@ r"""
 Affine Plane Curve Arrangements
 
 We create an :class:`OrderedAffinePlaneCurveArrangements`
-object
-# to define the variables `x`, `y`, `z`::
-#
-#     sage: H.<x,y,z> = HyperplaneArrangements(QQ)
-#     sage: h = 3*x + 2*y - 5*z - 7;  h
-#     Hyperplane 3*x + 2*y - 5*z - 7
-#     sage: h.normal()
-#     (3, 2, -5)
-#     sage: h.constant_term()
-#     -7
+object following the properties of :class:`HyperplaneArrangements`
+
+    sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+    sage: C = H(3*x + 2*y - x^2 + y^3 - 7);  C
+    Arrangement (Affine Plane Curve over Rational Field defined by y^3 - x^2 + 3*x + 2*y - 7)
 
 The individual curves will be in  :class:`AffinePlaneCurve`::
 
-    # sage: -2*h
-    # Hyperplane -6*x - 4*y + 10*z + 14
-    # sage: x, y, z
-    # (Hyperplane x + 0*y + 0*z + 0,
-    #  Hyperplane 0*x + y + 0*z + 0,
-    #  Hyperplane 0*x + 0*y + z + 0)
+    sage: C[0].parent()
+    <class 'sage.schemes.curves.affine_curve.IntegralAffinePlaneCurve_with_category'>
 
 The default base field is `\QQ`, the rational numbers.
 Number fields are also possible (also with fixed embeddings in ``QQbar``)::
 
-    # sage: # needs sage.rings.number_field
-    # sage: x = polygen(QQ, 'x')
-    # sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5, embedding=1.90)
-    # sage: H.<y,z> = HyperplaneArrangements(NF)
-    # sage: A = H([[(-a**3 + 3*a, -a**2 + 4), 1], [(a**3 - 4*a, -1), 1],
-    # ....:        [(0, 2*a**2 - 6), 1], [(-a**3 + 4*a, -1), 1],
-    # ....:        [(a**3 - 3*a, -a**2 + 4), 1]])
-    # sage: A
-    # Arrangement of 5 hyperplanes of dimension 2 and rank 2
-    # sage: A.base_ring()
-    # Number Field in a with defining polynomial x^4 - 5*x^2 + 5
-    #  with a = 1.902113032590308?
+    sage: # needs sage.rings.number_field
+    sage: x = polygen(QQ, 'x')
+    sage: NF.<a> = NumberField(x^4 - 5 * x^2 + 5, embedding=1.90)
+    sage: H.<y,z> = OrderedAffinePlaneCurveArrangements(NF)
+    sage: A = H(y^2 - a * z, y^2 + a * z); A
+    Arrangement (Affine Plane Curve over Number Field in a with defining polynomial
+                 x^4 - 5*x^2 + 5 with a = 1.902113032590308? defined by y^2 + (-a)*z,
+                 Affine Plane Curve over Number Field in a with defining polynomial
+                 x^4 - 5*x^2 + 5 with a = 1.902113032590308? defined by y^2 + a*z)
+    sage: A.base_ring()
+    Number Field in a with defining polynomial x^4 - 5*x^2 + 5
+    with a = 1.902113032590308?
 
 
 AUTHORS:
@@ -46,8 +37,7 @@ AUTHORS:
 """
 
 # *****************************************************************************
-#       Copyright (C) 2013 David Perkinson <davidp@reed.edu>
-#                          Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2023 Enrique Artal <artal@unizar.es>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,34 +46,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-# Possible extensions:
-
-
-# from sage.categories.fields import Fields
-# from sage.categories.homset import Hom, End, hom
-# from sage.categories.number_fields import NumberFields
 from sage.categories.sets_cat import Sets
 from sage.combinat.combination import Combinations
-# from sage.combinat.permutation import Permutation
-# from sage.groups.free_group import FreeGroup
-# from sage.interfaces.singular import singular
-# from sage.matrix.constructor import matrix, vector
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-# from sage.rings.infinity import infinity
-# from sage.misc.lazy_attribute import lazy_attribute
-# from sage.rings.number_field.number_field import NumberField
-# from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
-# from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-# from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.qqbar import QQbar
-# from sage.rings.rational_field import QQ, is_RationalField
-# from sage.rings.rational_field import is_RationalField
 from sage.rings.ring import _Fields
 from sage.schemes.affine.affine_space import AffineSpace
-# from sage.schemes.affine.affine_space import is_AffineSpace
-# from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
-# from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine_field
 from sage.schemes.curves.affine_curve import AffinePlaneCurve
 from sage.schemes.curves.constructor import Curve
 from sage.schemes.curves.zariski_vankampen import braid_monodromy
@@ -92,16 +61,6 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
-
-# from .closed_point import IntegralAffineCurveClosedPoint
-# from .curve import Curve_generic
-# from .point import (AffineCurvePoint_field,
-#                     AffinePlaneCurvePoint_field,
-#                     AffinePlaneCurvePoint_finite_field,
-#                     IntegralAffineCurvePoint,
-#                     IntegralAffineCurvePoint_finite_field,
-#                     IntegralAffinePlaneCurvePoint,
-#                     IntegralAffinePlaneCurvePoint_finite_field)
 
 
 class OrderedAffinePlaneCurveArrangementsElement(Element):
@@ -123,20 +82,15 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         - ``parent`` -- the parent :class:`HyperplaneArrangements`
 
-        - ``hyperplanes`` -- a tuple of hyperplanes
+        - ``curves`` -- a tuple of curves
 
-        - ``check`` -- boolean (optional; default ``True``); whether
-          to check input
-
-        - ``backend`` -- string (optional; default: ``None``); the backend to
-          use for the related polyhedral objects
-
-        # EXAMPLES::
-        #
-        #     sage: H.<x,y> = HyperplaneArrangements(QQ)
-        #     sage: elt = H(x, y); elt
-        #     Arrangement <y | x>
-        #     sage: TestSuite(elt).run()
+        EXAMPLES::
+    
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: elt = H(x, y); elt
+            Arrangement (Affine Plane Curve over Rational Field defined by x,
+                         Affine Plane Curve over Rational Field defined by y)
+            sage: TestSuite(elt).run()
         """
         super().__init__(parent)
         self._curves = curves
@@ -147,22 +101,6 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
                 raise ValueError("not all elements are curves")
             if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
-
-    def _first_ngens(self, n):
-        """
-        Workaround to support the construction with names.
-
-        INPUT/OUTPUT:
-
-        See :meth:`OrderedAffinePlaneCurveArrangements._first_ngens`.
-
-        EXAMPLES::
-
-            sage: a.<x,y,z> = hyperplane_arrangements.braid(3)   # indirect doctest     # needs sage.graphs
-            sage: (x, y) == a._first_ngens(2)                                           # needs sage.graphs
-            True
-        """
-        return self.parent()._first_ngens(n)
 
     def __getitem__(self, i):
         """
@@ -178,13 +116,9 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: h = x|y;  h
-            # Arrangement <y | x>
-            # sage: h[0]
-            # Hyperplane 0*x + y + 0
-            # sage: h[1]
-            # Hyperplane x + 0*y + 0
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H(y^2 - x, y^3 + 2 * x^2, x^4 + y^4 + 1); h
+            Affine Plane Curve over Rational Field defined by y^2 - x
         """
         return self._curves[i]
 
@@ -192,9 +126,8 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         r"""
         TESTS::
 
-            sage: H.<x,y> = HyperplaneArrangements(QQ)
-            sage: h = x|y; h
-            Arrangement <y | x>
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H((x * y, x + y +1))
             sage: len_dict = {h: len(h)}
         """
         return hash(self.curves())
@@ -209,12 +142,12 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: A = H([1,1,0], [2,3,-1], [4,5,3])
-            # sage: A.n_hyperplanes()
-            # 3
-            # sage: len(A)    # equivalent
-            # 3
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H((x * y, x + y +1))
+            sage: h.n_curves()
+            2
+            sage: len(h)    # equivalent
+            2
         """
         return len(self._curves)
 
@@ -226,19 +159,20 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        An tuple.
+        A tuple.
 
         EXAMPLES::
 
-            sage: H.<x,y> = HyperplaneArrangements(QQ)
-            sage: A = H([1,1,0], [2,3,-1], [4,5,3])
-            sage: A.hyperplanes()
-            (Hyperplane x + 0*y + 1, Hyperplane 3*x - y + 2, Hyperplane 5*x + 3*y + 4)
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H((x * y, x + y + 1))
+            sage: h.curves()
+            (Affine Plane Curve over Rational Field defined by x*y,
+             Affine Plane Curve over Rational Field defined by x + y + 1)
 
         Note that the hyperplanes can be indexed as if they were a list::
 
-            sage: A[0]
-            Hyperplane x + 0*y + 1
+            sage: h[1]
+            Affine Plane Curve over Rational Field defined by x + y + 1
         """
         return self._curves
 
@@ -252,13 +186,11 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-            # sage: H.<x,y> = HyperplaneArrangements(QQ)
-            # sage: H(x, y, x-1, y-1)
-            # Arrangement <y - 1 | y | x - 1 | x>
-            # sage: x | y | x - 1 | y - 1 | x + y | x - y
-            # Arrangement of 6 hyperplanes of dimension 2 and rank 2
-            # sage: H()
-            # Empty hyperplane arrangement of dimension 2
+            sage: H.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
+            Arrangement of 5 curves
+            sage: H(())
+            Empty curve arrangement
         """
         if len(self) == 0:
             return 'Empty curve arrangement'
@@ -269,18 +201,20 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
     def _richcmp_(self, other, op):
         """
-        Compare two hyperplane arrangements.
+        Compare two curve arrangements.
 
         EXAMPLES::
 
-            # sage: H.<x,y,z> = HyperplaneArrangements(QQ)
-            # sage: H(x) == H(y)
-            # False
+        sage: H(x) == H(y)
+        False
+        sage: H(x) == H(2 * x)
+        True
+
 
         TESTS::
 
-            # sage: H(x) == 0
-            # False
+            sage: H(x) == 0
+            False
         """
         return richcmp(self._curves, other._curves, op)
 
@@ -290,7 +224,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         INPUT:
 
-        - ``other`` -- a curvee arrangement or something that can
+        - ``other`` -- a curve arrangement or something that can
           be converted into a curve arrangement
 
         OUTPUT:
