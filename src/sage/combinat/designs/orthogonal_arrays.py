@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 r"""
 Orthogonal arrays (OA)
 

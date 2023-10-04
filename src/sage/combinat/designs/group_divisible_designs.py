@@ -257,6 +257,7 @@ class GroupDivisibleDesign(IncidenceStructure):
 
     With unspecified groups::
 
+        sage: # needs sage.schemes
         sage: D = designs.transversal_design(4,3).relabel(list('abcdefghiklm'),inplace=False).blocks()
         sage: GDD = GroupDivisibleDesign('abcdefghiklm',None,D)
         sage: sorted(GDD.groups())
@@ -321,8 +322,9 @@ class GroupDivisibleDesign(IncidenceStructure):
 
         Non-integer ground set::
 
-            sage: TD=designs.transversal_design(5,5)
-            sage: TD.relabel({i:chr(97+i) for i in range(25)})
+            sage: # needs sage.schemes
+            sage: TD = designs.transversal_design(5,5)
+            sage: TD.relabel({i: chr(97+i) for i in range(25)})
             sage: TD.groups()
             [['a', 'b', 'c', 'd', 'e'],
              ['f', 'g', 'h', 'i', 'j'],

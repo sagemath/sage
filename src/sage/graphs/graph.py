@@ -783,10 +783,10 @@ class Graph(GenericGraph):
 
     #. A Seidel adjacency matrix::
 
-          sage: from sage.combinat.matrices.hadamard_matrix import (                    # needs sage.modules
+          sage: from sage.combinat.matrices.hadamard_matrix import (                    # needs sage.combinat sage.modules
           ....:  regular_symmetric_hadamard_matrix_with_constant_diagonal as rshcd)
-          sage: m = rshcd(16,1) - matrix.identity(16)                                   # needs sage.modules
-          sage: Graph(m,                                                                # needs sage.modules
+          sage: m = rshcd(16,1) - matrix.identity(16)                                   # needs sage.combinat sage.modules
+          sage: Graph(m,                                                                # needs sage.combinat sage.modules
           ....:       format="seidel_adjacency_matrix").is_strongly_regular(parameters=True)
           (16, 6, 2, 2)
 
@@ -2463,7 +2463,7 @@ class Graph(GenericGraph):
 
         Comparison of algorithms::
 
-            sage: for i in range(10): # long time
+            sage: for i in range(10):           # long time                             # needs networkx
             ....:     G = graphs.RandomBarabasiAlbert(50,2)
             ....:     bm = G.is_triangle_free(algorithm='matrix')
             ....:     bb = G.is_triangle_free(algorithm='bitset')
@@ -3334,15 +3334,15 @@ class Graph(GenericGraph):
         divided by 2. Anything less, though, is impossible.
 
             sage: g = graphs.RandomGNP(40, .4)
-            sage: mad = g.maximum_average_degree()
+            sage: mad = g.maximum_average_degree()                                      # needs sage.numerical.mip
 
         Hence this is possible ::
 
-            sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))
+            sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))              # needs sage.numerical.mip
 
         While this is not::
 
-            sage: try:
+            sage: try:                                                                  # needs sage.numerical.mip
             ....:     g.bounded_outdegree_orientation(integer_ceil(mad/2-1))
             ....:     print("Error")
             ....: except ValueError:
@@ -3746,7 +3746,7 @@ class Graph(GenericGraph):
             3
             sage: G.chromatic_number(algorithm="MILP")
             3
-            sage: G.chromatic_number(algorithm="CP")
+            sage: G.chromatic_number(algorithm="CP")                                    # needs sage.libs.flint
             3
             sage: G.chromatic_number(algorithm="parallel")
             3
@@ -3786,7 +3786,7 @@ class Graph(GenericGraph):
             0
             sage: G.chromatic_number(algorithm="MILP")
             0
-            sage: G.chromatic_number(algorithm="CP")
+            sage: G.chromatic_number(algorithm="CP")                                    # needs sage.libs.flint
             0
             sage: G.chromatic_number(algorithm="parallel")
             0
@@ -3801,7 +3801,7 @@ class Graph(GenericGraph):
 
             sage: G = graphs.RandomGNP(15, .2)
             sage: algorithms = ['DLX', 'MILP', 'CP', 'parallel']
-            sage: len(set([G.chromatic_number(algorithm=algo) for algo in algorithms])) == 1
+            sage: len(set([G.chromatic_number(algorithm=algo) for algo in algorithms])) == 1        # needs sage.libs.flint
             True
         """
         self._scream_if_not_simple(allow_multiple_edges=True)
@@ -4166,7 +4166,7 @@ class Graph(GenericGraph):
         Same test with the Linear Program formulation::
 
            sage: g = graphs.PappusGraph()
-           sage: g.matching(algorithm="LP", value_only=True)
+           sage: g.matching(algorithm="LP", value_only=True)                            # needs sage.numerical.mip
            9
 
         .. PLOT::
@@ -4182,7 +4182,7 @@ class Graph(GenericGraph):
             sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
             sage: sorted(g.matching())                                                  # needs sage.networkx
             [(0, 1, 0), (2, 3, -5)]
-            sage: sorted(g.matching(algorithm="LP"))
+            sage: sorted(g.matching(algorithm="LP"))                                    # needs sage.numerical.mip
             [(0, 1, 0), (2, 3, -5)]
 
         When ``use_edge_labels`` is set to ``True``, with Edmonds' algorithm and
@@ -4191,7 +4191,7 @@ class Graph(GenericGraph):
             sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
             sage: g.matching(use_edge_labels=True)                                      # needs sage.networkx
             [(1, 2, 999)]
-            sage: g.matching(algorithm="LP", use_edge_labels=True)
+            sage: g.matching(algorithm="LP", use_edge_labels=True)                      # needs sage.numerical.mip
             [(1, 2, 999)]
 
         With loops and multiedges::
@@ -5088,18 +5088,20 @@ class Graph(GenericGraph):
 
         .. NOTE::
 
-            If you want to compute many convex hulls, keep this object in memory
-            ! When it is created, it builds a table of useful information to
+            If you want to compute many convex hulls, keep this object in memory!
+            When it is created, it builds a table of useful information to
             compute convex hulls. As a result ::
 
+                sage: # needs sage.numerical.mip
                 sage: g = graphs.PetersenGraph()
                 sage: g.convexity_properties().hull([1, 3])
                 [1, 2, 3]
                 sage: g.convexity_properties().hull([3, 7])
                 [2, 3, 7]
 
-            Is a terrible waste of computations, while ::
+            is a terrible waste of computations, while ::
 
+                sage: # needs sage.numerical.mip
                 sage: g = graphs.PetersenGraph()
                 sage: CP = g.convexity_properties()
                 sage: CP.hull([1, 3])
@@ -5107,7 +5109,7 @@ class Graph(GenericGraph):
                 sage: CP.hull([3, 7])
                 [2, 3, 7]
 
-            Makes perfect sense.
+            makes perfect sense.
         """
         from sage.graphs.convexity_properties import ConvexityProperties
         return ConvexityProperties(self)
@@ -5846,7 +5848,7 @@ class Graph(GenericGraph):
         The graph of eight-bit strings, adjacent if different in an odd number
         of bits::
 
-            sage: # long time
+            sage: # long time, needs sage.symbolic
             sage: G = graphs.CubeGraph(8)
             sage: H = G.distance_graph([1,3,5,7])
             sage: degrees = [0]*sum([binomial(8,j) for j in [1,3,5,7]])
@@ -7500,7 +7502,7 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: C = Graph('DJ{')
-            sage: C.cliques_vertex_clique_number()
+            sage: C.cliques_vertex_clique_number()                                      # needs sage.plot
             {0: 2, 1: 4, 2: 4, 3: 4, 4: 4}
             sage: E = C.cliques_maximal(); E
             [[0, 4], [1, 2, 3, 4]]
@@ -7510,12 +7512,12 @@ class Graph(GenericGraph):
             sage: F = graphs.Grid2dGraph(2,3)
             sage: F.cliques_vertex_clique_number(algorithm="networkx")                  # needs networkx
             {(0, 0): 2, (0, 1): 2, (0, 2): 2, (1, 0): 2, (1, 1): 2, (1, 2): 2}
-            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])
+            sage: F.cliques_vertex_clique_number(vertices=[(0, 1), (1, 2)])             # needs sage.plot
             {(0, 1): 2, (1, 2): 2}
 
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])                                                 # needs sage.plot
-            sage: G.cliques_vertex_clique_number()
+            sage: G.cliques_vertex_clique_number()                                      # needs sage.plot
             {0: 3, 1: 3, 2: 3, 3: 3}
         """
         if algorithm == "cliquer":
@@ -8283,9 +8285,9 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: H = graphs.HerschelGraph()
-            sage: H.is_inscribable()               # long time (> 1 sec)
+            sage: H.is_inscribable()            # long time (> 1 sec)                   # needs sage.numerical.mip
             False
-            sage: H.planar_dual().is_inscribable() # long time (> 1 sec)
+            sage: H.planar_dual().is_inscribable()      # long time (> 1 sec)           # needs sage.numerical.mip
             True
 
             sage: C = graphs.CubeGraph(3)
@@ -8929,8 +8931,8 @@ class Graph(GenericGraph):
             [[(-2, 1, 'x'), (-1, 2, 'y')], [(-2, 2, 'b'), (-1, 1, 'a')]]
 
             sage: G = graphs.CompleteGraph(8)
-            sage: mpc = G.matching_polynomial().coefficients(sparse=False)[0]
-            sage: len(list(G.perfect_matchings())) == mpc
+            sage: mpc = G.matching_polynomial().coefficients(sparse=False)[0]           # needs sage.libs.flint
+            sage: len(list(G.perfect_matchings())) == mpc                               # needs sage.libs.flint
             True
 
             sage: G = graphs.PetersenGraph().copy(immutable=True)
@@ -9049,15 +9051,15 @@ class Graph(GenericGraph):
             True
             sage: graphs.WheelGraph(5).has_perfect_matching()                           # needs networkx
             False
-            sage: graphs.PetersenGraph().has_perfect_matching(algorithm="LP_matching")
+            sage: graphs.PetersenGraph().has_perfect_matching(algorithm="LP_matching")  # needs sage.numerical.mip
             True
-            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm="LP_matching")
+            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm="LP_matching")    # needs sage.numerical.mip
             True
             sage: graphs.WheelGraph(5).has_perfect_matching(algorithm="LP_matching")
             False
-            sage: graphs.PetersenGraph().has_perfect_matching(algorithm="LP_matching")
+            sage: graphs.PetersenGraph().has_perfect_matching(algorithm="LP_matching")  # needs sage.numerical.mip
             True
-            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm="LP_matching")
+            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm="LP_matching")    # needs sage.numerical.mip
             True
             sage: graphs.WheelGraph(5).has_perfect_matching(algorithm="LP_matching")
             False
@@ -9156,7 +9158,7 @@ class Graph(GenericGraph):
 
         Using a different base ring::
 
-            sage: H.effective_resistance(1, 5, base_ring=RDF)   # abs tol 1e-14         # needs sage.modules
+            sage: H.effective_resistance(1, 5, base_ring=RDF)   # abs tol 1e-14         # needs numpy sage.modules
             1.2000000000000000
             sage: H.effective_resistance(1, 1, base_ring=RDF)                           # needs sage.modules
             0.0
@@ -9189,7 +9191,7 @@ class Graph(GenericGraph):
             2/3
             sage: G = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(1,2),(2,3),(3,4),(4,5),(5,1)])
             sage: r = G.effective_resistance(0,3)
-            sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)
+            sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)             # needs sage.libs.pari
             True
             sage: G = graphs.PathGraph(4)
             sage: G.delete_edge(2,3)
@@ -9303,7 +9305,7 @@ class Graph(GenericGraph):
 
         A different base ring::
 
-            sage: H.effective_resistance_matrix(base_ring=RDF)[0, 0].parent()           # needs sage.modules
+            sage: H.effective_resistance_matrix(base_ring=RDF)[0, 0].parent()           # needs numpy sage.modules
             Real Double Field
 
         .. SEEALSO::

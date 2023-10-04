@@ -1507,7 +1507,7 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: BipartiteGraph(graphs.CubeGraph(3)).matching_polynomial()
+            sage: BipartiteGraph(graphs.CubeGraph(3)).matching_polynomial()             # needs sage.libs.flint
             x^8 - 12*x^6 + 42*x^4 - 44*x^2 + 9
 
         ::
@@ -1530,14 +1530,15 @@ class BipartiteGraph(Graph):
         polynomial::
 
             sage: g = graphs.RandomTree(20)
-            sage: p = g.characteristic_polynomial()
-            sage: p == BipartiteGraph(g).matching_polynomial(algorithm='rook')
+            sage: p = g.characteristic_polynomial()                                     # needs sage.modules
+            sage: p == BipartiteGraph(g).matching_polynomial(algorithm='rook')          # needs sage.modules
             True
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: g = BipartiteGraph(matrix.ones(4, 3))
-            sage: g.matching_polynomial()
+            sage: g.matching_polynomial()                                               # needs sage.libs.flint
             x^7 - 12*x^5 + 36*x^3 - 24*x
             sage: g.matching_polynomial(algorithm="rook")
             x^7 - 12*x^5 + 36*x^3 - 24*x
@@ -2138,7 +2139,7 @@ class BipartiteGraph(Graph):
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')            # needs networkx
             4
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')
+            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')     # needs sage.numerical.mip
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Eppstein')
             Traceback (most recent call last):
@@ -2156,7 +2157,7 @@ class BipartiteGraph(Graph):
             2
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')           # needs networkx
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='LP')
+            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='LP')    # needs sage.numerical.mip
             2
 
         With multiedges enabled::
@@ -2302,7 +2303,7 @@ class BipartiteGraph(Graph):
 
         The two algorithms should return the same result::
 
-           sage: # needs numpy
+           sage: # needs networkx numpy
            sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))
            sage: vc1 = g.vertex_cover(algorithm="Konig")
            sage: vc2 = g.vertex_cover(algorithm="Cliquer")
