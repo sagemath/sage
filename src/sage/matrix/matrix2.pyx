@@ -106,7 +106,7 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 from sage.misc.misc_c import prod
 
 # used to deprecate only adjoint method
-from sage.misc.superseded import deprecated_function_alias
+from sage.misc.superseded import deprecation, deprecated_function_alias
 
 
 # temporary hack to silence the warnings from #34806
@@ -146,21 +146,28 @@ cdef class Matrix(Matrix1):
         Used to compute `A \backslash B`, i.e., the backslash solver
         operator.
 
+        DEPRECATED
+
         EXAMPLES::
 
             sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
             sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
             sage: C = A._backslash_(B); C
+            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             [  -1    1]
             [13/5 -3/5]
             [-4/5  9/5]
             sage: A*C == B
             True
             sage: A._backslash_(B) == A \ B
+            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             True
             sage: A._backslash_(B) == A.solve_right(B)
             True
         """
+        deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')
         return self.solve_right(B)
 
     def subs(self, *args, **kwds):
@@ -462,7 +469,7 @@ cdef class Matrix(Matrix1):
 
         .. NOTE::
 
-            In Sage one can also write ``A \ B`` for
+            DEPRECATED. In Sage one can also write ``A \ B`` for
             ``A.solve_right(B)``, that is, Sage implements "the
             MATLAB/Octave backslash operator".
 
@@ -506,7 +513,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 3, [1,2,3,-1,2,5,2,3,1])
             sage: b = vector(QQ,[1,2,3])
-            sage: x = A \ b; x
+            sage: x = A.solve_right(b); x
             (-13/12, 23/12, -7/12)
             sage: A * x
             (1, 2, 3)
@@ -525,7 +532,7 @@ cdef class Matrix(Matrix1):
         Another nonsingular example::
 
             sage: A = matrix(QQ,2,3, [1,2,3,2,4,6]); v = vector([-1/2,-1])
-            sage: x = A \ v; x
+            sage: x = A.solve_right(v); x
             (-1/2, 0, 0)
             sage: A*x == v
             True
@@ -533,13 +540,13 @@ cdef class Matrix(Matrix1):
         Same example but over `\ZZ`::
 
             sage: A = matrix(ZZ,2,3, [1,2,3,2,4,6]); v = vector([-1,-2])
-            sage: A \ v
+            sage: A.solve_right(v)
             (-1, 0, 0)
 
         An example in which there is no solution::
 
             sage: A = matrix(QQ,2,3, [1,2,3,2,4,6]); v = vector([1,1])
-            sage: A \ v
+            sage: A.solve_right(v)
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
@@ -564,24 +571,24 @@ cdef class Matrix(Matrix1):
             sage: A*X == B
             True
 
-        We illustrate left associativity, etc., of the backslash operator.
+        We illustrate left associativity, etc., of the ``solve_right`` operator.
 
         ::
 
             sage: A = matrix(QQ, 2, [1,2,3,4])
-            sage: A \ A
+            sage: A.solve_right(A)
             [1 0]
             [0 1]
-            sage: A \ A \ A
+            sage: (A.solve_right(A)).solve_right(A)
             [1 2]
             [3 4]
-            sage: A.parent()(1) \ A
+            sage: A.parent()(1).solve_right(A)
             [1 2]
             [3 4]
-            sage: A \ (A \ A)
+            sage: A.solve_right(A.solve_right(A))
             [  -2    1]
             [ 3/2 -1/2]
-            sage: X = A \ (A - 2); X
+            sage: X = A.solve_right(A - 2); X
             [ 5 -2]
             [-3  2]
             sage: A * X
@@ -593,7 +600,7 @@ cdef class Matrix(Matrix1):
             sage: x = polygen(QQ, 'x')
             sage: A = matrix(2, [x,2*x,-5*x^2+1,3])
             sage: v = vector([3,4*x - 2])
-            sage: X = A \ v
+            sage: X = A.solve_right(v)
             sage: X
             ((-4/5*x^2 + 2/5*x + 9/10)/(x^3 + 1/10*x), (19/10*x^2 - 1/5*x - 3/10)/(x^3 + 1/10*x))
             sage: A * X == v
@@ -635,7 +642,7 @@ cdef class Matrix(Matrix1):
             [    2 + O(5^4)     5 + O(5^5)     4 + O(5^4)]
             [    1 + O(5^4)     1 + O(5^4)     2 + O(5^4)]
             sage: v = vector(k, 3, [1,2,3])
-            sage: x = a \ v; x
+            sage: x = a.solve_right(v); x
             (4 + 5 + 5^2 + 3*5^3 + O(5^4), 2 + 5 + 3*5^2 + 5^3 + O(5^4), 1 + 5 + O(5^4))
             sage: a * x == v
             True

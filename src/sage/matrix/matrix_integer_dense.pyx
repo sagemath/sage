@@ -4138,7 +4138,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         .. NOTE::
 
-           In Sage one can also write ``A \ B`` for
+           DEPRECATED. In Sage one can also write ``A \ B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the
            MATLAB/Octave backslash operator".
 
@@ -4162,7 +4162,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: a = matrix(ZZ, 2, [0, -1, 1, 0])
             sage: v = vector(ZZ, [2, 3])
-            sage: a \ v
+            sage: a.solve_right(v)
             (3, -2)
 
         Note that the output vector or matrix is always over
@@ -4170,7 +4170,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         ::
 
-            sage: parent(a\v)
+            sage: parent(a.solve_right(v))
             Vector space of dimension 2 over Rational Field
 
         We solve a bigger system where the answer is over the rationals.
@@ -4179,7 +4179,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: a = matrix(ZZ, 3, 3, [1,2,3,4, 5, 6, 8, -2, 3])
             sage: v = vector(ZZ, [1,2,3])
-            sage: w = a \ v; w
+            sage: w = a.solve_right(v); w
             (2/15, -4/15, 7/15)
             sage: parent(w)
             Vector space of dimension 3 over Rational Field
@@ -4193,7 +4193,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: a = matrix(ZZ, 3, 3, [1,2,3,4, 5, 6, 8, -2, 3])
             sage: b = matrix(ZZ, 3, 2, [1,5, 2, -3, 3, 0])
-            sage: w = a \ b; w
+            sage: w = a.solve_right(b); w
             [ 2/15 -19/5]
             [-4/15 -27/5]
             [ 7/15 98/15]
@@ -4214,7 +4214,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: n = 100
             sage: a = random_matrix(ZZ,n)
             sage: v = vector(ZZ,n,range(n))
-            sage: x = a \ v
+            sage: x = a.solve_right(v)
             sage: a * x == v
             True
 
