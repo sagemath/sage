@@ -127,6 +127,7 @@ Elements of given depth iterator::
 
 Graded components (set of elements of the same depth)::
 
+    sage: # needs sage.combinat
     sage: sorted(R.graded_component(0))
     [[1, 2, 3, 4, 5]]
     sage: sorted(R.graded_component(1))
@@ -394,9 +395,10 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A recursive set given by a graded relation::
 
-        sage: f = lambda a: [a+1, a+I]
-        sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-        sage: C
+        sage: # needs sage.symbolic
+        sage: def f(a):
+        ....:     return [a + 1, a + I]
+        sage: C = RecursivelyEnumeratedSet([0], f, structure='graded'); C
         A recursively enumerated set with a graded structure (breadth first search)
         sage: it = iter(C)
         sage: [next(it) for _ in range(7)]
@@ -880,6 +882,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         We compute all the permutations of 3::
 
+            sage: # needs sage.combinat
             sage: seeds = [Permutation([1,2,3])]
             sage: succ = attrcall("permutohedron_succ")
             sage: R = RecursivelyEnumeratedSet(seeds, succ)
@@ -954,7 +957,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
             sage: child = lambda i: [(i+3) % 10, (i+8) % 10]
             sage: R = RecursivelyEnumeratedSet([0], child)
-            sage: R.to_digraph()
+            sage: R.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 10 vertices
 
         Digraph of an recursively enumerated set with a symmetric structure of
@@ -963,20 +966,21 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: succ = lambda a: [(a[0]-1,a[1]), (a[0],a[1]-1), (a[0]+1,a[1]), (a[0],a[1]+1)]
             sage: seeds = [(0,0)]
             sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric')
-            sage: C.to_digraph(max_depth=3)
+            sage: C.to_digraph(max_depth=3)                                             # needs sage.graphs
             Looped multi-digraph on 41 vertices
 
         The ``max_depth`` argument can be given at the creation of the set::
 
-            sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric', max_depth=2)
-            sage: C.to_digraph()
+            sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric',
+            ....:                              max_depth=2)
+            sage: C.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 25 vertices
 
         Digraph of an recursively enumerated set with a graded structure::
 
             sage: f = lambda a: [a+1, a+I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: C.to_digraph(max_depth=4)
+            sage: C.to_digraph(max_depth=4)                                             # needs sage.graphs
             Looped multi-digraph on 21 vertices
         """
         successors = self.successors
@@ -1125,7 +1129,9 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         Gaussian integers::
 
-            sage: f = lambda a: [a+1, a+I]
+            sage: # needs sage.symbolic
+            sage: def f(a):
+            ....:     return [a + 1, a + I]
             sage: S = RecursivelyEnumeratedSet([0], f, structure='symmetric')
             sage: it = S.graded_component_iterator()
             sage: [sorted(next(it)) for _ in range(7)]
@@ -1142,6 +1148,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         Note that interrupting the computation (``KeyboardInterrupt`` for
         instance) breaks the iterator::
 
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:     sleep(0.05r)
             ....:     return [a-1,a+1]
@@ -1411,7 +1418,9 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         EXAMPLES::
 
-            sage: f = lambda a: [a+1, a+I]
+            sage: # needs sage.symbolic
+            sage: def f(a):
+            ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
             sage: for i in range(5): sorted(C.graded_component(i))
             [0]
@@ -1424,6 +1433,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         We make sure that :trac:`21312` is fixed::
 
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:    sleep(0.1r)
             ....:    return [a+1, a+I]
