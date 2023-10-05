@@ -211,12 +211,15 @@ class HoG:
         meaningful) name (key ``invariantName``), and a type (key
         ``typeName``). The type is one of ``b`` (boolean), ``i``
         (integer) and ``r`` (float).
-        
+
         EXAMPLES::
 
             sage: # optional -- internet
             sage: hog.invariants()[43]
-            {'definition': 'The number of spanning trees of a graph. A <i>spanning tree</i> of a graph is a subgraph that is a tree and which contains all vertices of that graph and some (or all) of the edges.',
+            {'definition': 'The number of spanning trees of a graph.
+             A <i>spanning tree</i> of a graph is a subgraph that is
+             a tree and which contains all vertices of that graph
+             and some (or all) of the edges.',
              'invariantId': 43,
              'invariantName': 'Number of Spanning Trees',
              'keyword': 'NumberOfSpanningTrees',
@@ -240,7 +243,10 @@ class HoG:
             The House of Graphs (https://houseofgraphs.org/)
             sage: h.online_update(invariants=True)
             sage: h._invar[13]
-            {'definition': 'The <i>domination number</i> of a graph <i>G</i> is the minimum cardinality of a set of vertices such that every vertices is either in the set or is a neighbor of a vertex in the set.',
+            {'definition': 'The <i>domination number</i> of a graph
+             <i>G</i> is the minimum cardinality of a set of
+             vertices such that every vertices is either in the set
+             or is a neighbor of a vertex in the set.',
              'invariantId': 13,
              'invariantName': 'Domination Number',
              'keyword': 'DominationNumber',
@@ -370,43 +376,55 @@ class HoGGraph(SageObject, UniqueRepresentation):
             js_response = requests.get(url)
             js_response.raise_for_status()
             self._data = js_response.json()
+
         elif target == "invariants":
+            # Fetch the invariants of self.
             url = hog_api_url + "graphs/" + self._id + "/invariants"
             js_response = requests.get(url)
             js_response.raise_for_status()
-            l = js_response.json()['_embedded']['graphInvariantModelList']
+            ll = js_response.json()['_embedded']['graphInvariantModelList']
+
+            # Cast the invariants into the appropriate types.
             def invar_from_entry(i):
                 ident = int(i["entity"]["invariantId"])
                 itype = hog.invariant_types[hog.invariants()[ident]["typeName"]]
                 return itype(i["entity"]["invariantValue"])
             self._invar = {int(i["entity"]["invariantId"]):
                            invar_from_entry(i)
-                           for i in l if i["entity"]["invariantStatus"] == 2}
+                           for i in ll if i["entity"]["invariantStatus"] == 2}
+            # invariantStatus == 2 means that the invariant has
+            # been computed on the HoS server. Other statuses
+            # mean uncomputed invariants.
+
         elif target == "embeddings":
             url = hog_api_url + "graphs/" + self._id + "/embedding"
             js_response = requests.get(url)
             js_response.raise_for_status()
-            l = js_response.json()['_embedded']['embeddingModelList']
+            ll = js_response.json()['_embedded']['embeddingModelList']
             edict = {emb["entity"]["embeddingId"]: emb["entity"]["embedding"]
-                     for emb in l}
+                     for emb in ll}
             self._embeds = edict
 
     def to_graph(self, embedding=None):
         r"""
         Return the actual graph (a :cls:``Graph`` object) underlying
         the HoG graph ``self``.
-        
+
         This forgets all the information downloaded from HoG except
         the graph itself and its standard embedding (in the
         2-dimensional plane). Optionally, a different embedding can
         be provided through the optional ``embedding`` parameter.
-        
+
         EXAMPLES::
-        
+
             sage: # optional -- internet
-            sage: s = hog("26")
+            sage: s = hog("660")
             sage: s.to_graph()
-            Graph on 7 vertices
+            Graph on 10 vertices
+            sage: s.all_embeddings()
+            {...}
+            sage: s.to_graph(embedding=21566)
+            Graph on 10 vertices
         """
         AM = self.data()["adjacencyMatrix"]
         AM = matrix(ZZ, [[int(i) for i in r] for r in AM])
@@ -418,11 +436,11 @@ class HoGGraph(SageObject, UniqueRepresentation):
         r"""
         Return the graph invariants of HoG graph ``self``,
         retrieved from the HoG database.
-        
+
         Use ``hog.invariants()`` for the meanings of these invariants.
 
         EXAMPLES:
-        
+
         Let us compute the domination number (HoG invariant 13)
         of the Petersen graph (HoG graph 660)::
 
@@ -444,16 +462,16 @@ class HoGGraph(SageObject, UniqueRepresentation):
         given in the HoG database. This is a dictionary of points in
         the plane (provided as pairs of coordinates), indexed by
         vertices of ``self``.
-        
+
         Note that HoG might have several embeddings of ``self`` in
         the database; they can all be retrieved using the
         :meth:`all_embeddings` method.
-        
+
         Of course, these embeddings are not guaranteed to be
         planar, even when the graph is planar.
-        
+
         EXAMPLES::
-        
+
             sage: # optional -- internet
             sage: hog(660).embedding()
             {0: [-0.5053758991724633, -0.46544052312593087],
@@ -477,11 +495,11 @@ class HoGGraph(SageObject, UniqueRepresentation):
         r"""
         Return a dictionary containing all embeddings of ``self``
         known to the HoG database.
-        
+
         This includes the standard embedding (:meth:``embedding``).
-        
+
         EXAMPLES::
-        
+
             sage: # optional -- internet
             sage: hog(660).all_embeddings()[21566]
             [[-0.8775468891588245, 0.2732669045189495],
@@ -614,7 +632,7 @@ class HoGGraph(SageObject, UniqueRepresentation):
     def name(self) -> str:
         r"""
         Return the name of the graph ``self``.
-        
+
         This is not a unique identifier.
 
         OUTPUT:
