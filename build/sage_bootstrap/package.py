@@ -303,7 +303,7 @@ class Package(object):
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 
-    VERSION_PATCHLEVEL = re.compile('(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
+    VERSION_PATCHLEVEL = re.compile(r'(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
 
     def _init_version(self):
         try:
