@@ -81,7 +81,6 @@ from sage.arith.misc import (
     prime_factors,
     prime_range,
     valuation,
-    number_of_irreducible_polynomials,
 )
 
 lazy_import("sage.arith.misc", ("Sigma", "Moebius", "Euler_Phi"), deprecation=30322)

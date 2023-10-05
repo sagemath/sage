@@ -974,3 +974,41 @@ def q_stirling_number2(n, k, q=None):
         return parent(q)(0)
     return (q**(k-1)*q_stirling_number2(n - 1, k - 1, q=q) +
             q_int(k, q=q) * q_stirling_number2(n - 1, k, q=q))
+
+
+def number_of_irreducible_polynomials(q, n):
+    r"""
+    Return the number of irreducible polynomials of degree ``n``
+    over the finite field with ``q`` elements.
+
+    INPUT:
+
+    - ``q`` -- prime power
+    - ``n`` -- positive integer
+
+    OUTPUT: integer
+
+    EXAMPLES::
+
+        sage: number_of_irreducible_polynomials(2, 8)
+        30
+        sage: number_of_irreducible_polynomials(9, 9)
+        43046640
+
+    This function is *much* faster than enumerating the polynomials::
+
+        sage: num = number_of_irreducible_polynomials(101, 99)
+        sage: num.bit_length()
+        653
+
+    ALGORITHM:
+
+    Classical formula `\frac1n \sum_{d\mid n} \mu(n/d) q^d` using the
+    Möbius function `\mu`; see :func:`moebius`.
+    """
+    from sage.arith.misc import moebius
+    q, n = ZZ(q), ZZ(n)
+    r = ZZ.zero()
+    for d in n.divisors():
+        r += moebius(n//d) * q**d
+    return r // n
