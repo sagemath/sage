@@ -2552,28 +2552,28 @@ def random_rref_matrix(parent, num_pivots):
         # Keep track of the non-pivot columns by using the pivot_index, start at the first column to
         # the right of the initial pivot column, go until the first column to the left of the next
         # pivot column.
-        for pivot_index in range(num_pivots-1):
-            for non_pivot_column_index in range(pivots[pivot_index]+1, pivots[pivot_index+1]):
+        for pivot_index in range(num_pivots - 1):
+            for non_pivot_column_index in range(pivots[pivot_index] + 1, pivots[pivot_index + 1]):
                 entry_generator1 = pd.RealDistribution("beta", [6, 4])
                 # Experimental distribution used to generate the values.
-                for non_pivot_column_entry in range(pivot_index+1):
-                    sign1 = (2*randint(0,1)-1)
-                    return_matrix[non_pivot_column_entry,non_pivot_column_index]=sign1*int(entry_generator1.get_random_element()*((1-non_pivot_column_entry/return_matrix.ncols())*7))
+                for non_pivot_column_entry in range(pivot_index + 1):
+                    sign1 = (2 * randint(0, 1) - 1)
+                    return_matrix[non_pivot_column_entry, non_pivot_column_index] = sign1 * int(entry_generator1.get_random_element() * ((1 - non_pivot_column_entry / return_matrix.ncols()) * 7))
         # Use index to fill entries of the columns to the right of the last pivot column.
-        for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
-            entry_generator2=pd.RealDistribution("beta",[2.6,4])
+        for rest_non_pivot_column in range(pivots[num_pivots - 1] + 1, num_col):
+            entry_generator2 = pd.RealDistribution("beta", [2.6, 4])
             # experimental distribution to generate small values.
             for rest_entries in range(num_pivots):
-                sign2=(2*randint(0,1)-1)
-                return_matrix[rest_entries,rest_non_pivot_column]=sign2*int(entry_generator2.get_random_element()*5)
+                sign2 = (2 * randint(0, 1) - 1)
+                return_matrix[rest_entries, rest_non_pivot_column] = sign2 * int(entry_generator2.get_random_element() * 5)
     else:
-        for pivot_index in range(num_pivots-1):
-            for non_pivot_column_index in range(pivots[pivot_index]+1,pivots[pivot_index+1]):
-                for non_pivot_column_entry in range(pivot_index+1):
-                        return_matrix[non_pivot_column_entry,non_pivot_column_index]=ring.random_element()
-        for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
+        for pivot_index in range(num_pivots - 1):
+            for non_pivot_column_index in range(pivots[pivot_index] + 1, pivots[pivot_index + 1]):
+                for non_pivot_column_entry in range(pivot_index + 1):
+                    return_matrix[non_pivot_column_entry, non_pivot_column_index] = ring.random_element()
+        for rest_non_pivot_column in range(pivots[num_pivots - 1] + 1, num_col):
             for rest_entries in range(num_pivots):
-                return_matrix[rest_entries,rest_non_pivot_column]=ring.random_element()
+                return_matrix[rest_entries, rest_non_pivot_column] = ring.random_element()
     return return_matrix
 
 
