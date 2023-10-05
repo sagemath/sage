@@ -208,16 +208,16 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-        sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
-        sage: H(x) == H(y)
-        False
-        sage: H(x) == H(2 * x)
-        True
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: H(x) == H(y)
+            False
+            sage: H(x) == H(2 * x)
+            True
 
         TESTS::
 
-        sage: H(x) == 0
-        False
+            sage: H(x) == 0
+            False
         """
         return richcmp(self._curves, other._curves, op)
 
@@ -351,6 +351,16 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         return prod(self.defining_polynomials())
 
     def have_common_factors(self):
+        r"""
+        Check if th curves have common factors.
+
+        EXAMPLES::
+
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(x * y, x^2 + x* y^3)
+            sage: A.have_common_factors()
+            True
+        """
         L = [c.defining_polynomial() for c in self]
         C = Combinations(L, 2)
         for f1, f2 in C:
@@ -359,14 +369,31 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         return False
 
     def reduce(self):
+        r"""
+        Replace the curves by their reduction.
+
+        EXAMPLES::
+
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2, (x + y)^3 * (x^2 + x * y + y^2))
+            sage: A.reduce()
+            Arrangement (Affine Plane Curve over Rational Field defined by y,
+            Affine Plane Curve over Rational Field defined by x^3 + 2*x^2*y + 2*x*y^2 + y^3)
+        """
         P = self.parent()
         L = [c.defining_polynomial().radical() for c in self]
         return P(*L)
 
-    def fundamental_group(self, vertical=True):
+    def fundamental_group(self, vertical=False):
         r"""
         It computes the fundamental group of the complement of the union
-        of affine projective curves in `\mathbb{C}^2`.
+        of affine plane curves in `\mathbb{C}^2`.
+
+        INPUT:
+
+        - ``vertical`` -- boolean (default: False). If it is ``True``, there
+          are no vertical asymptotes, and there are vertical lines, then a
+          simplified braid braid_monodromy is used.
 
         OUTPUT:
 
@@ -375,47 +402,19 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
-            # sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
-            # sage: L = [y + x, y + x - 1]
-            # sage: H = A(L)
-            # sage: G, dic = H.fundamental_group(); G                                   # optional - sirocco
-            # Finitely presented group < x0, x1 |  >
-            # sage: L = [x, y, x + 1, y + 1, x - y]
-            # sage: H = A(L); list(H)
-            # [Hyperplane x + 0*y + 0,
-            #  Hyperplane 0*x + y + 0,
-            #  Hyperplane x + 0*y + 1,
-            #  Hyperplane 0*x + y + 1,
-            #  Hyperplane x - y + 0]
-            # sage: G, dic = H.fundamental_group()                                      # optional - sirocco
-            # sage: G.simplified()                                                        # optional - sirocco
-            # Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1,
-            #                            x2^-1*x0^-1*x2*x4*x0*x4^-1,
-            #                            x0*x1*x3*x0^-1*x3^-1*x1^-1,
-            #                            x0*x2*x4*x2^-1*x0^-1*x4^-1,
-            #                            x0*x1^-1*x0^-1*x3^-1*x1*x3,
-            #                            x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
-            # sage: dic                                                                   # optional - sirocco
-            #     {0: [x2], 1: [x4], 2: [x1], 3: [x3], 4: [x0], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
-            # sage: H=A(x,y,x+y)
-            # sage: H._fundamental_group_()                                               # optional - sirocco
-            # (Finitely presented group < x0, x1, x2 | x1*x2*x0*x2^-1*x1^-1*x0^-1, x1*x0^-1*x2^-1*x1^-1*x2*x0 >,
-            #  {0: [x0], 1: [x2], 2: [x1], 3: [x2^-1*x1^-1*x0^-1]})
-            # sage: H._fundamental_group_(proj=True)                                      # optional - sirocco
-            # (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
-            # sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
-            # sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
-            # sage: G, dic = H._fundamental_group_(proj=True)                             # optional - sage.graphs, sirocco
-            # sage: h = G.simplification_isomorphism()                                    # optional - sage.graphs, sirocco
-            # sage: G.simplified()                                                        # optional - sage.graphs, sirocco
-            # Finitely presented group < x0, x1, x3, x4, x5 | x0*x3*x0^-1*x3^-1,
-            #                                                 x1*x4*x1^-1*x4^-1,
-            #                                                 x1*x5*x1^-1*x0^-1*x5^-1*x0,
-            #                                                 x5*x3*x4*x3^-1*x5^-1*x4^-1,
-            #                                                 x5^-1*x1^-1*x0*x1*x5*x0^-1,
-            #                                                 x4*x5^-1*x4^-1*x3^-1*x5*x3 >
-            # sage: {j: h(dic[j][0]) for j in dic.keys()}                                 # optional - sage.graphs, sirocco
-            # {0: x5, 1: x0, 2: x1, 3: x3, 4: x4, 5: x0^-1*x5^-1*x4^-1*x1^-1*x3^-1}
+            sage: # needs sirocco
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: A.fundamental_group()
+            (Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
+                                                     x1*x0*x1^-1*x0^-1,
+                                                     (x0*x2)^2*(x0^-1*x2^-1)^2 >,
+             {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0],
+              3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]})
+            sage: A.fundamental_group(vertical=True)
+            (Finitely presented group < x0, x1, x2 | x1*x0^-1*x1^-1*x0,
+                                                     x2*x1*x2^-1*x1^-1, x2*x0*x2^-1*x0^-1 >,
+             {0: [x1], 1: [x0], 2: [x2], 3: [x2^-1*x1^-2*x0^-1]})
 
         .. WARNING::
 
@@ -430,8 +429,44 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         return (G, dic)
 
     def braid_monodromy(self, vertical=False):
+        r"""
+        It computes the braid monodromy of the complement of the union
+        of affine plane curves in `\mathbb{C}^2`. If there are vertical
+        asymptotes a change of variable is done.
+
+        INPUT:
+
+        - ``vertical`` -- boolean (default: False). If it is ``True``, there
+          are no vertical asymptotes, and there are vertical lines, then a
+          simplified braid braid_monodromy is computed.
+
+        OUTPUT:
+
+        A braid monodromy with dictionnaries identifying strans with components
+        and braids with vertical lines..
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: A.braid_monodromy()
+            ([s1*s0*(s1*s2*s1)^2*s2*(s1^-1*s2^-1)^2*s1^-1*s0^-1*s1^-1,
+              s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+              s1*s0*s1*s2*(s1*s2^-1)^2*s0*s1*s2*s1*s0*s2^-1*s1^-3*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+              s1*s0*s1*s2*s1*s2^-1*s1^4*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+              s1*s0*s1*s2*s1*s2^-1*s1^-1*s2*s0^-1*s1^-1],
+              {0: 2, 1: 1, 2: 0, 3: 0}, {})
+            sage: A.braid_monodromy(vertical=True)
+            ([s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0],
+             {0: 1, 1: 0, 2: 0}, {1: 2})
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
         L = self.defining_polynomials()
-        return braid_monodromy(prod(L), arrangement=L, vertical=vertical)
+        return braid_monodromy(prod(L), arrangement=L, vertical=vertical)[:-1]
 
 
 class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
@@ -604,7 +639,7 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
         """
         Dirty trick to avoid test run failure.
 
-       TEST::
+        TESTS::
 
             sage: H.<t, s> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: H._an_element_()
