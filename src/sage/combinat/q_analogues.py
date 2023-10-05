@@ -976,28 +976,36 @@ def q_stirling_number2(n, k, q=None):
             q_int(k, q=q) * q_stirling_number2(n - 1, k, q=q))
 
 
-def number_of_irreducible_polynomials(q, n):
+def number_of_irreducible_polynomials(n, q=None):
     r"""
-    Return the number of irreducible polynomials of degree ``n``
-    over the finite field with ``q`` elements.
+    Return the number of monic irreducible polynomials of degree ``n``
+    over the finite field with ``q`` elements. If ``q`` is not given,
+    the result is returned as a polynomial in `\QQ[q]`.
 
     INPUT:
 
-    - ``q`` -- prime power
     - ``n`` -- positive integer
+    - ``q`` -- ``None`` (default) or a prime power
 
     OUTPUT: integer
 
     EXAMPLES::
 
-        sage: number_of_irreducible_polynomials(2, 8)
+        sage: number_of_irreducible_polynomials(8, q=2)
         30
-        sage: number_of_irreducible_polynomials(9, 9)
+        sage: number_of_irreducible_polynomials(9, q=9)
         43046640
+
+    ::
+
+        sage: poly = number_of_irreducible_polynomials(12); poly
+        1/12*q^12 - 1/12*q^6 - 1/12*q^4 + 1/12*q^2
+        sage: poly(5) == number_of_irreducible_polynomials(12, q=5)
+        True
 
     This function is *much* faster than enumerating the polynomials::
 
-        sage: num = number_of_irreducible_polynomials(101, 99)
+        sage: num = number_of_irreducible_polynomials(99, q=101)
         sage: num.bit_length()
         653
 
@@ -1006,9 +1014,14 @@ def number_of_irreducible_polynomials(q, n):
     Classical formula `\frac1n \sum_{d\mid n} \mu(n/d) q^d` using the
     Möbius function `\mu`; see :func:`moebius`.
     """
+    n = ZZ(n)
+    if n <= 0:
+        raise ValueError('n must be positive')
+    if q is None:
+        q = ZZ['q'].gen()
+    R = parent(q)
     from sage.arith.misc import moebius
-    q, n = ZZ(q), ZZ(n)
-    r = ZZ.zero()
-    for d in n.divisors():
-        r += moebius(n//d) * q**d
-    return r // n
+    r = sum((moebius(n//d) * q**d for d in ZZ(n).divisors()), R.zero())
+    if R is ZZ:
+        return r // n
+    return r / n
