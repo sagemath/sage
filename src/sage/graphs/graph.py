@@ -4931,7 +4931,7 @@ class Graph(GenericGraph):
           :meth:`MixedIntegerLinearProgram.get_values`.
 
         - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
-            induced minor isomorphic to `H` if it exists, and ``ValueError`` otherwise.
+            induced minor isomorphic to `H` if it exists, and ``:class:`ValueError``` otherwise.
 
         OUTPUT:
 
@@ -5004,20 +5004,15 @@ class Graph(GenericGraph):
             True
 
         TESTS::
-
+            
+            sage: # a graph `g` may have minor but no induced minor isomorphic to given graph `h`
             sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
             sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
+            sage: l = g.minor(h, induced=False)
             sage: l = g.minor(h, induced=True)
             Traceback (most recent call last):
             ...
             ValueError: This graph has no induced minor isomorphic to H !
-            
-            sage: # induced minor does not exist, but minor does 
-            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
-            sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
-            sage: l = g.minor(h, induced=False)
-            sage: print("minor exists")
-            minor exists
 
             sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
             sage: h = Graph([(7, 8), (8, 9), (9, 10), (10, 11)])
@@ -5106,7 +5101,10 @@ class Graph(GenericGraph):
         try:
             p.solve(log=verbose)
         except MIPSolverException:
-            raise ValueError("This graph has no minor isomorphic to H !")
+            if induced: 
+                raise ValueError("This graph has no induced minor isomorphic to H !")
+            else:
+                raise ValueError("This graph has no minor isomorphic to H !")
 
         rs = p.get_values(rs, convert=bool, tolerance=integrality_tolerance)
 
