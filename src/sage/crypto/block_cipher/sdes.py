@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 r"""
 Simplified DES
 

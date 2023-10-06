@@ -607,13 +607,13 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Find the first letter in that doesn't commute with s.
         try:
-            (j, t) = next((i, x) for (i, x) in enumerate(self) if m[s, x] >= 3)
+            j, t = next((i, x) for i, x in enumerate(self) if m[s, x] >= 3)
         except StopIteration:
             return True
 
         u = self.clone()
         u._set_list(self[j:])
-        x, y = u.coset_decomposition({s, t})
+        x, _ = u.coset_decomposition({s, t})
         return len(x) != m[s, t] - 1
 
     ###########################################################################

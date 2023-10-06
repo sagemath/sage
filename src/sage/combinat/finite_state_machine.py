@@ -5754,7 +5754,7 @@ class FiniteStateMachine(SageObject):
                 state.transitions,
                 key=lambda t: t.word_in)
 
-            for key, transition_class in transition_classes_by_word_in:
+            for _, transition_class in transition_classes_by_word_in:
                 if len(transition_class) > 1:
                     return False
         return True
@@ -6446,14 +6446,14 @@ class FiniteStateMachine(SageObject):
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(current),))
-            pos, states = next(iter(current.items()))
+            _, states = next(iter(current.items()))
             if len(states) > 1:
                 raise RuntimeError("Process has branched "
                                    "(visiting %s states in branch). The "
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(states),))
-            state, branch = next(iter(states.items()))
+            _, branch = next(iter(states.items()))
             if len(branch.outputs) > 1:
                 raise RuntimeError("Process has branched. "
                                    "(%s different outputs in branch). The "
@@ -8216,7 +8216,7 @@ class FiniteStateMachine(SageObject):
         for state_result in result.iter_states():
             state = state_result.label()[0]
             if state.is_final:
-                accept, state_to, output = self.process(
+                accept, _, output = self.process(
                     state.final_word_out,
                     initial_state=self.state(state_result.label()[1]))
                 if not accept:
@@ -11809,7 +11809,7 @@ class Automaton(FiniteStateMachine):
         if kwargs['always_include_output']:
             return super()._process_convert_output_(
                 output_data, **kwargs)
-        accept_input, current_state, output = output_data
+        accept_input, current_state, _ = output_data
         if kwargs['full_output']:
             return (accept_input, current_state)
         else:
@@ -13769,8 +13769,8 @@ class _FSMTapeCacheDetectAll_(_FSMTapeCache_):
             next(it_word)
 
         # check letters not already cached
-        for letter_in_word in it_word:
-            successful, letter_on_track = self.read(track_number)
+        for _ in it_word:
+            successful, _ = self.read(track_number)
             if not successful:
                 return False
         return True

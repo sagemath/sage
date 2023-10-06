@@ -36,6 +36,7 @@ AUTHORS:
 # ****************************************************************************
 
 import os
+from numbers import Integral
 from collections.abc import Iterable
 from math import isnan
 import sage.misc.verbose
@@ -1104,8 +1105,8 @@ class Graphics(WithEqualityById, SageObject):
         Compute and return other + this graphics object.
 
         This only works when other is a Python int equal to 0. In all other
-        cases a TypeError is raised. The main reason for this function is
-        to make summing a list of graphics objects easier.
+        cases a :class:`TypeError` is raised. The main reason for this
+        function is to make summing a list of graphics objects easier.
 
         EXAMPLES::
 
@@ -2874,6 +2875,11 @@ class Graphics(WithEqualityById, SageObject):
                 weight=lopts.pop('font_weight', 'medium'),
                 variant=lopts.pop('font_variant', 'normal'))
             color = lopts.pop('back_color', 'white')
+            if 'loc' in lopts:
+                loc = lopts['loc']
+                if isinstance(loc, Integral):
+                    # matplotlib 3.8 doesn't support sage integers
+                    lopts['loc'] = int(loc)
             leg = subplot.legend(prop=prop, **lopts)
             if leg is None:
                 from warnings import warn

@@ -6,18 +6,19 @@ These are `n \times n` unitary matrices with entries in
 
 EXAMPLES::
 
-    sage: G = SU(3,5)                                                                   # optional - sage.rings.finite_rings
-    sage: G.order()                                                                     # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: G = SU(3,5)
+    sage: G.order()
     378000
-    sage: G                                                                             # optional - sage.rings.finite_rings
+    sage: G
     Special Unitary Group of degree 3 over Finite Field in a of size 5^2
-    sage: G.gens()                                                                      # optional - sage.rings.finite_rings
+    sage: G.gens()
     (
     [      a       0       0]  [4*a   4   1]
     [      0 2*a + 2       0]  [  4   4   0]
     [      0       0     3*a], [  1   0   0]
     )
-    sage: G.base_ring()                                                                 # optional - sage.rings.finite_rings
+    sage: G.base_ring()
     Finite Field in a of size 5^2
 
 AUTHORS:
@@ -76,7 +77,7 @@ def finite_field_sqrt(ring):
     EXAMPLES::
 
         sage: from sage.groups.matrix_gps.unitary import finite_field_sqrt
-        sage: finite_field_sqrt(GF(4, 'a'))                                             # optional - sage.rings.finite_rings
+        sage: finite_field_sqrt(GF(4, 'a'))                                             # needs sage.rings.finite_rings
         2
     """
     if not isinstance(ring, FiniteField):
@@ -99,7 +100,7 @@ def _UG(n, R, special, var='a', invariant_form=None):
 
     TESTS::
 
-        sage: GU(3,25).order()  # indirect doctest                                      # optional - sage.rings.finite_rings
+        sage: GU(3,25).order()  # indirect doctest                                      # needs sage.rings.finite_rings
         3961191000000
     """
     prefix = 'General'
@@ -192,9 +193,9 @@ def GU(n, R, var='a', invariant_form=None):
 
     EXAMPLES::
 
-        sage: G = GU(3, 7); G                                                           # optional - sage.rings.finite_rings
+        sage: G = GU(3, 7); G                                                           # needs sage.rings.finite_rings
         General Unitary Group of degree 3 over Finite Field in a of size 7^2
-        sage: G.gens()                                                                  # optional - sage.rings.finite_rings
+        sage: G.gens()                                                                  # needs sage.rings.finite_rings
         (
         [  a   0   0]  [6*a   6   1]
         [  0   1   0]  [  6   6   0]
@@ -203,10 +204,10 @@ def GU(n, R, var='a', invariant_form=None):
         sage: GU(2, QQ)
         General Unitary Group of degree 2 over Rational Field
 
-        sage: G = GU(3, 5, var='beta')                                                  # optional - sage.rings.finite_rings
-        sage: G.base_ring()                                                             # optional - sage.rings.finite_rings
+        sage: G = GU(3, 5, var='beta')                                                  # needs sage.rings.finite_rings
+        sage: G.base_ring()                                                             # needs sage.rings.finite_rings
         Finite Field in beta of size 5^2
-        sage: G.gens()                                                                  # optional - sage.rings.finite_rings
+        sage: G.gens()                                                                  # needs sage.rings.finite_rings
         (
         [  beta      0      0]  [4*beta      4      1]
         [     0      1      0]  [     4      4      0]
@@ -215,27 +216,28 @@ def GU(n, R, var='a', invariant_form=None):
 
     Using the ``invariant_form`` option::
 
-        sage: UCF = UniversalCyclotomicField(); e5 = UCF.gen(5)                         # optional - sage.rings.number_field
-        sage: m = matrix(UCF, 3, 3, [[1,e5,0], [e5.conjugate(),2,0], [0,0,1]])          # optional - sage.rings.number_field
-        sage: G  = GU(3, UCF)                                                           # optional - sage.rings.number_field
-        sage: Gm = GU(3, UCF, invariant_form=m)                                         # optional - sage.rings.number_field
-        sage: G == Gm                                                                   # optional - sage.rings.number_field
+        sage: # needs sage.libs.gap sage.rings.number_field
+        sage: UCF = UniversalCyclotomicField(); e5 = UCF.gen(5)
+        sage: m = matrix(UCF, 3, 3, [[1,e5,0], [e5.conjugate(),2,0], [0,0,1]])
+        sage: G  = GU(3, UCF)
+        sage: Gm = GU(3, UCF, invariant_form=m)
+        sage: G == Gm
         False
-        sage: G.invariant_form()                                                        # optional - sage.rings.number_field
+        sage: G.invariant_form()
         [1 0 0]
         [0 1 0]
         [0 0 1]
-        sage: Gm.invariant_form()                                                       # optional - sage.rings.number_field
+        sage: Gm.invariant_form()
         [     1   E(5)      0]
         [E(5)^4      2      0]
         [     0      0      1]
-        sage: pm = Permutation((1,2,3)).to_matrix()                                     # optional - sage.combinat sage.rings.number_field
-        sage: g = G(pm); g in G; g                                                      # optional - sage.combinat sage.rings.number_field
+        sage: pm = Permutation((1,2,3)).to_matrix()
+        sage: g = G(pm); g in G; g                                                      # needs sage.combinat
         True
         [0 0 1]
         [1 0 0]
         [0 1 0]
-        sage: Gm(pm)                                                                    # optional - sage.combinat sage.rings.number_field
+        sage: Gm(pm)                                                                    # needs sage.combinat
         Traceback (most recent call last):
         ...
         TypeError: matrix must be unitary with respect to the hermitian form
@@ -243,7 +245,7 @@ def GU(n, R, var='a', invariant_form=None):
         [E(5)^4      2      0]
         [     0      0      1]
 
-        sage: GU(3, 3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])                      # optional - sage.rings.number_field
+        sage: GU(3, 3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])                      # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
@@ -255,8 +257,8 @@ def GU(n, R, var='a', invariant_form=None):
 
     TESTS::
 
-        sage: TestSuite(G).run()                                                        # optional - sage.rings.number_field
-        sage: groups.matrix.GU(2, 3)                                                    # optional - sage.groups sage.rings.finite_rings
+        sage: TestSuite(G).run()                                                        # needs sage.libs.gap sage.rings.number_field
+        sage: groups.matrix.GU(2, 3)                                                    # needs sage.groups sage.rings.finite_rings
         General Unitary Group of degree 2 over Finite Field in a of size 3^2
     """
     return _UG(n, R, False, var=var, invariant_form=invariant_form)
@@ -305,35 +307,36 @@ def SU(n, R, var='a', invariant_form=None):
 
     EXAMPLES::
 
-        sage: SU(3,5)                                                                   # optional - sage.rings.finite_rings
+        sage: SU(3,5)                                                                   # needs sage.rings.finite_rings
         Special Unitary Group of degree 3 over Finite Field in a of size 5^2
-        sage: SU(3, GF(5))                                                              # optional - sage.rings.finite_rings
+        sage: SU(3, GF(5))                                                              # needs sage.rings.finite_rings
         Special Unitary Group of degree 3 over Finite Field in a of size 5^2
         sage: SU(3, QQ)
         Special Unitary Group of degree 3 over Rational Field
 
     Using the ``invariant_form`` option::
 
-        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()                                  # optional - sage.rings.number_field
-        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3.conjugate(),2,0], [0,0,1]])           # optional - sage.rings.number_field
-        sage: G  = SU(3, CF3)                                                           # optional - sage.rings.number_field
-        sage: Gm = SU(3, CF3, invariant_form=m)                                         # optional - sage.rings.number_field
-        sage: G == Gm                                                                   # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
+        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3.conjugate(),2,0], [0,0,1]])
+        sage: G  = SU(3, CF3)
+        sage: Gm = SU(3, CF3, invariant_form=m)
+        sage: G == Gm
         False
-        sage: G.invariant_form()                                                        # optional - sage.rings.number_field
+        sage: G.invariant_form()
         [1 0 0]
         [0 1 0]
         [0 0 1]
-        sage: Gm.invariant_form()                                                       # optional - sage.rings.number_field
+        sage: Gm.invariant_form()
         [         1      zeta3          0]
         [-zeta3 - 1          2          0]
         [         0          0          1]
-        sage: pm = Permutation((1,2,3)).to_matrix()                                     # optional - sage.combinat sage.rings.number_field
-        sage: G(pm)                                                                     # optional - sage.combinat sage.rings.number_field
+        sage: pm = Permutation((1,2,3)).to_matrix()
+        sage: G(pm)                                                                     # needs sage.combinat
         [0 0 1]
         [1 0 0]
         [0 1 0]
-        sage: Gm(pm)                                                                    # optional - sage.combinat sage.rings.number_field
+        sage: Gm(pm)                                                                    # needs sage.combinat
         Traceback (most recent call last):
         ...
         TypeError: matrix must be unitary with respect to the hermitian form
@@ -341,15 +344,15 @@ def SU(n, R, var='a', invariant_form=None):
         [-zeta3 - 1          2          0]
         [         0          0          1]
 
-        sage: SU(3, 5, invariant_form=[[1,0,0], [0,2,0], [0,0,3]])                      # optional - sage.rings.finite_rings
+        sage: SU(3, 5, invariant_form=[[1,0,0], [0,2,0], [0,0,3]])                      # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
 
     TESTS::
 
-        sage: TestSuite(Gm).run()                                                       # optional - sage.rings.number_field
-        sage: groups.matrix.SU(2, 3)                                                    # optional - sage.rings.finite_rings
+        sage: TestSuite(Gm).run()                                                       # needs sage.rings.number_field
+        sage: groups.matrix.SU(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
         Special Unitary Group of degree 2 over Finite Field in a of size 3^2
     """
     return _UG(n, R, True, var=var, invariant_form=invariant_form)
@@ -365,20 +368,21 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
 
     EXAMPLES::
 
-        sage: G = GU(3, GF(7)); G                                                       # optional - sage.rings.finite_rings
+        sage: G = GU(3, GF(7)); G                                                       # needs sage.rings.finite_rings
         General Unitary Group of degree 3 over Finite Field in a of size 7^2
-        sage: latex(G)                                                                  # optional - sage.rings.finite_rings
+        sage: latex(G)                                                                  # needs sage.rings.finite_rings
         \text{GU}_{3}(\Bold{F}_{7^{2}})
 
-        sage: G = SU(3, GF(5));  G                                                      # optional - sage.rings.finite_rings
+        sage: G = SU(3, GF(5));  G                                                      # needs sage.rings.finite_rings
         Special Unitary Group of degree 3 over Finite Field in a of size 5^2
-        sage: latex(G)                                                                  # optional - sage.rings.finite_rings
+        sage: latex(G)                                                                  # needs sage.rings.finite_rings
         \text{SU}_{3}(\Bold{F}_{5^{2}})
 
-        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()                                  # optional - sage.rings.number_field
-        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3.conjugate(),2,0], [0,0,1]])          # optional - sage.rings.number_field
-        sage: G = SU(3, CF3, invariant_form=m)                                          # optional - sage.rings.number_field
-        sage: latex(G)                                                                  # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
+        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3.conjugate(),2,0], [0,0,1]])
+        sage: G = SU(3, CF3, invariant_form=m)
+        sage: latex(G)
         \text{SU}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to positive definite hermitian form }\left(\begin{array}{rrr}
         1 & \zeta_{3} & 0 \\
         -\zeta_{3} - 1 & 2 & 0 \\
@@ -420,10 +424,11 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: G = GU(2, GF(5))                                                      # optional - sage.rings.finite_rings
-            sage: G._check_matrix(G.an_element().matrix())                              # optional - sage.rings.finite_rings
-            sage: G = SU(2, GF(5))                                                      # optional - sage.rings.finite_rings
-            sage: G._check_matrix(G.an_element().matrix())                              # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: G = GU(2, GF(5))
+            sage: G._check_matrix(G.an_element().matrix())
+            sage: G = SU(2, GF(5))
+            sage: G._check_matrix(G.an_element().matrix())
         """
         if self._special and x.determinant() != 1:
             raise TypeError('matrix must have determinant one')

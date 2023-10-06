@@ -36,6 +36,7 @@ from sage.structure.richcmp cimport (richcmp,
                                      richcmp_not_equal, rich_to_bool)
 
 from sage.structure.parent cimport Parent
+from sage.structure.element cimport Vector
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
@@ -50,15 +51,10 @@ from sage.interfaces.abc import GapElement
 
 
 cdef object is_IntegerMod
-cdef object IntegerModRing_generic
 cdef object Integer
 cdef object Rational
-cdef object is_Polynomial
-cdef object ConwayPolynomials
-cdef object conway_polynomial
 cdef object MPolynomial
 cdef object Polynomial
-cdef object FreeModuleElement
 cdef object GF
 cdef object GF2, GF2_0, GF2_1
 
@@ -69,15 +65,10 @@ cdef int late_import() except -1:
     imports.
     """
     global is_IntegerMod, \
-           IntegerModRing_generic, \
            Integer, \
            Rational, \
-           is_Polynomial, \
-           ConwayPolynomials, \
-           conway_polynomial, \
            MPolynomial, \
            Polynomial, \
-           FreeModuleElement, \
            GF, \
            GF2, GF2_0, GF2_1
 
@@ -87,29 +78,14 @@ cdef int late_import() except -1:
     import sage.rings.finite_rings.integer_mod
     is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
 
-    import sage.rings.finite_rings.integer_mod_ring
-    IntegerModRing_generic = sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic
-
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
-
-    import sage.rings.polynomial.polynomial_element
-    is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
-
-    import sage.databases.conway
-    ConwayPolynomials = sage.databases.conway.ConwayPolynomials
-
-    import sage.rings.finite_rings.conway_polynomials
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
 
     import sage.rings.polynomial.multi_polynomial_element
     MPolynomial = sage.rings.polynomial.multi_polynomial_element.MPolynomial
 
     import sage.rings.polynomial.polynomial_element
     Polynomial = sage.rings.polynomial.polynomial_element.Polynomial
-
-    import sage.modules.free_module_element
-    FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
     import sage.rings.finite_rings.finite_field_constructor
     GF = sage.rings.finite_rings.finite_field_constructor.FiniteField
@@ -313,7 +289,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         elif isinstance(e, str):
             return self._parent(eval(e.replace("^","**"),self._parent.gens_dict()))
 
-        elif isinstance(e, FreeModuleElement):
+        elif isinstance(e, Vector):
             if self._parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ztmp = Integer(e.list(),2)

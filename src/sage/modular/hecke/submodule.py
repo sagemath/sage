@@ -29,7 +29,7 @@ from . import module
 
 def is_HeckeSubmodule(x):
     r"""
-    Return True if x is of type HeckeSubmodule.
+    Return ``True`` if x is of type HeckeSubmodule.
 
     EXAMPLES::
 
@@ -91,8 +91,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         self.__ambient = ambient
         self.__submodule = submodule
-        module.HeckeModule_free_module.__init__(self,
-                                  ambient.base_ring(), ambient.level(), ambient.weight())
+        module.HeckeModule_free_module.__init__(self, ambient.base_ring(),
+                                                ambient.level(),
+                                                ambient.weight())
         if not (dual_free_module is None):
             if not is_FreeModule(dual_free_module):
                 raise TypeError("dual_free_module must be a free module")
@@ -446,10 +447,12 @@ class HeckeSubmodule(module.HeckeModule_free_module):
     @cached_method
     def dual_free_module(self, bound=None, anemic=True, use_star=True):
         r"""
-        Compute embedded dual free module if possible. In general this won't be
-        possible, e.g., if this space is not Hecke equivariant, possibly if it
-        is not cuspidal, or if the characteristic is not 0. In all these cases
-        we raise a RuntimeError exception.
+        Compute embedded dual free module if possible.
+
+        In general this will not be possible, e.g., if this space is
+        not Hecke equivariant, possibly if it is not cuspidal, or if
+        the characteristic is not 0. In all these cases we raise a
+        :class:`RuntimeError` exception.
 
         If use_star is True (which is the default), we also use the +/-
         eigenspaces for the star operator to find the dual free module of self.
@@ -587,7 +590,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             return V2
 
         raise RuntimeError("Computation of embedded dual vector space failed "
-            "(cut down to rank %s, but should have cut down to rank %s)." % (V.rank(), self.rank()))
+                           "(cut down to rank %s, but should have cut down to rank %s)." % (V.rank(), self.rank()))
 
     def free_module(self):
         """

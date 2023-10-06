@@ -117,7 +117,7 @@ cdef class Functor(SageObject):
         Functor from Category of rings to Category of fields
         sage: F(ZZ)
         Rational Field
-        sage: F(GF(2))                                                                  # optional - sage.rings.finite_rings
+        sage: F(GF(2))
         Finite Field of size 2
 
     Functors are not only about the objects of a category, but also about
@@ -175,7 +175,7 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))                                                              # optional - sage.rings.finite_rings
+            sage: F(GF(2))
             Finite Field of size 2
 
         """
@@ -250,14 +250,15 @@ cdef class Functor(SageObject):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.categories.functor import Functor
             sage: F = Functor(Rings(), Fields())
-            sage: k.<a> = GF(25)                                                        # optional - sage.rings.finite_rings
-            sage: f = k.hom([-a - 4])                                                   # optional - sage.rings.finite_rings
-            sage: R.<t> = k[]                                                           # optional - sage.rings.finite_rings
-            sage: fR = R.hom(f, R)                                                      # optional - sage.rings.finite_rings
-            sage: fF = F(fR)         # indirect doctest                                 # optional - sage.rings.finite_rings
-            sage: fF                                                                    # optional - sage.rings.finite_rings
+            sage: k.<a> = GF(25)
+            sage: f = k.hom([-a - 4])
+            sage: R.<t> = k[]
+            sage: fR = R.hom(f, R)
+            sage: fF = F(fR)         # indirect doctest
+            sage: fF
             Ring endomorphism of Fraction Field of
              Univariate Polynomial Ring in t over Finite Field in a of size 5^2
               Defn: Induced from base ring by
@@ -266,7 +267,7 @@ cdef class Functor(SageObject):
                       Defn: Induced from base ring by
                             Ring endomorphism of Finite Field in a of size 5^2
                               Defn: a |--> 4*a + 1
-            sage: fF((a^2+a)*t^2/(a*t - a^2))                                           # optional - sage.rings.finite_rings
+            sage: fF((a^2+a)*t^2/(a*t - a^2))
             ((4*a + 2)*t^2)/(t + a + 4)
         """
         try:
@@ -338,13 +339,13 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
             sage: F(ZZ)
             Rational Field
-            sage: F(GF(2))                                                              # optional - sage.rings.finite_rings
+            sage: F(GF(2))
             Finite Field of size 2
 
         Two subclasses::
 
             sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
-            sage: F1(GF(5))  # indirect doctest                                         # optional - sage.rings.finite_rings
+            sage: F1(GF(5))  # indirect doctest
             Finite Field of size 5
             sage: F1(ZZ)
             Traceback (most recent call last):
@@ -372,10 +373,10 @@ cdef class Functor(SageObject):
             ....:   def _apply_functor(self, R):
             ....:       return MatrixSpace(R, self._m, self._n)
             sage: F = IllFunctor(2, 2)
-            sage: F(QQ)                                                                 # optional - sage.modules
+            sage: F(QQ)                                                                 # needs sage.modules
             Full MatrixSpace of 2 by 2 dense matrices over Rational Field
             sage: F = IllFunctor(2, 3)
-            sage: F(QQ)                                                                 # optional - sage.modules
+            sage: F(QQ)                                                                 # needs sage.modules
             Traceback (most recent call last):
             ...
             TypeError: Functor from Category of rings to Category of rings
@@ -468,7 +469,7 @@ class ForgetfulFunctor_generic(Functor):
         The forgetful functor
          from Category of finite enumerated fields
            to Category of fields
-        sage: F(GF(3))                                                                  # optional - sage.rings.finite_rings
+        sage: F(GF(3))
         Finite Field of size 3
 
     """

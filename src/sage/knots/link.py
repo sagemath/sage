@@ -726,7 +726,7 @@ class Link(SageObject):
                             C1[C1.index(-a)] = newedge + 1
                             C2 = newPD[newPD.index(tails[-b])]
                             C2[C2.index(-b)] = newedge + 2
-                            newPD.append([newedge + 2, newedge +1, newedge + 3, newedge]) # D
+                            newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge]) # D
                             newPD.append([newedge + 3, -a, -b, newedge]) # E
                             self._braid = Link(newPD).braid()
                             return self._braid
@@ -2054,7 +2054,7 @@ class Link(SageObject):
                 gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
                 l = len(gens)
                 if l:
-                    coeff[(h,d)]=l
+                    coeff[(h,d)] = l
         return L(coeff)
 
     def determinant(self):
@@ -4051,7 +4051,7 @@ class Link(SageObject):
             achp = L.is_amphicheiral(positive=True)
             if ach is None and achp is None:
                 if unique:
-                    raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' %non_unique_hint)
+                    raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' % non_unique_hint)
             elif L.is_amphicheiral() or L.is_amphicheiral(positive=True):
                 chiral = False
 
@@ -4068,7 +4068,7 @@ class Link(SageObject):
                     # polynomial does not distinguish mirror images (see the above
                     # example ``k11m``).
                     if unique:
-                        raise NotImplementedError('mirror type of this link cannot be uniquely determined%s' %non_unique_hint)
+                        raise NotImplementedError('mirror type of this link cannot be uniquely determined%s' % non_unique_hint)
                     mirrored = '?'
                 elif L in lm:
                     mirrored = True
@@ -4117,7 +4117,7 @@ class Link(SageObject):
                 if set(list(S)) == set(l):
                     return answer_unori(S)
 
-            raise NotImplementedError('this link cannot be uniquely determined%s' %non_unique_hint)
+            raise NotImplementedError('this link cannot be uniquely determined%s' % non_unique_hint)
 
         self_m = self.mirror_image()
         ls, proved_s = self._knotinfo_matching_list()

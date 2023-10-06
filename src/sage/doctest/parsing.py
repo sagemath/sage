@@ -204,6 +204,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
+    if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
+        # Enforce two spaces before comment
+        first_line_sans_comments = first_line_sans_comments.rstrip() + "  "
 
     if return_string_sans_tags:
         # skip non-tag comments that precede the first tag comment
@@ -1215,6 +1218,12 @@ class SageDocTestParser(doctest.DocTestParser):
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
                                 continue
+                            if any(tag in ['webbrowser'] for tag in extra):
+                                # never probe
+                                continue
+                            if any(tag in ['got', 'expected', 'nameerror'] for tag in extra):
+                                # never probe special tags added by sage-fixdoctests
+                                continue
                             if all(tag in persistent_optional_tags for tag in extra):
                                 # don't probe if test is only conditional
                                 # on file-level or block-level tags
@@ -1631,6 +1640,17 @@ class SageOutputChecker(doctest.OutputChecker):
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True
 
+        if "Overriding pythran description" in got:
+            # Some signatures changed in numpy-1.25.x that may yet be
+            # reverted, but which pythran would otherwise warn about.
+            # Pythran has a special case for numpy.random that hides
+            # the warning -- I guess until we know if the changes will
+            # be reverted -- but only in v0.14.0 of pythran. Ignoring
+            # This warning allows us to support older pythran with e.g.
+            # numpy-1.25.2.
+            pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
+            got = pythran_numpy_warning_regex.sub('', got)
+            did_fixup = True
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):

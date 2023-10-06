@@ -246,38 +246,6 @@ class IntegerModFactory(UniqueFactory):
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
 
 
-def is_IntegerModRing(x):
-    """
-    Return ``True`` if ``x`` is an integer modulo ring.
-
-    This function is deprecated.  Use :func:`isinstance` with
-    :class:`sage.rings.abc.IntegerModRing` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-        sage: R = IntegerModRing(17)
-        sage: is_IntegerModRing(R)
-        doctest:warning...
-        DeprecationWarning: the function is_IntegerModRing is deprecated.
-        Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
-        See https://github.com/sagemath/sage/issues/32606 for details.
-        True
-        sage: is_IntegerModRing(GF(13))
-        True
-        sage: is_IntegerModRing(GF(4, 'a'))                                             # needs sage.rings.finite_rings
-        False
-        sage: is_IntegerModRing(10)
-        False
-        sage: is_IntegerModRing(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32606, "the function is_IntegerModRing is deprecated. "
-                "Use isinstance(..., sage.rings.abc.IntegerModRing) instead.")
-    return isinstance(x, IntegerModRing_generic)
-
-
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.category import JoinCategory
@@ -1600,7 +1568,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R = Integers(12345678900)
             sage: R
             Ring of integers modulo 12345678900
-            sage: gap(R) # indirect doctest                                             # needs sage.libs.gap
+            sage: gap(R)  # indirect doctest                                            # needs sage.libs.gap
             (Integers mod 12345678900)
         """
         return 'ZmodnZ({})'.format(self.order())

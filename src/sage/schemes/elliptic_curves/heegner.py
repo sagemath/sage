@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Heegner points on elliptic curves over the rational numbers
 
@@ -95,6 +95,7 @@ The above is consistent with the following analytic computation::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 import sage.rings.abc
 import sage.rings.number_field.number_field_element
@@ -568,7 +569,7 @@ class RingClassField(SageObject):
     def is_subfield(self, M):
         """
         Return ``True`` if this ring class field is a subfield of the ring class field `M`.
-        If `M` is not a ring class field, then a TypeError is raised.
+        If `M` is not a ring class field, then a :class:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -724,7 +725,7 @@ class GaloisGroup(SageObject):
             sage: G(alpha)
             Class field automorphism defined by 14*x^2 - 10*x*y + 25*y^2
 
-        A TypeError is raised when the coercion is not possible::
+        A :class:`TypeError` is raised when the coercion is not possible::
 
             sage: G(0)
             Traceback (most recent call last):
@@ -2654,9 +2655,9 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
 
         EXAMPLES::
 
-            sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')           # optional - sage.plot
+            sage: heegner_points(389,-7,5).plot(pointsize=50, rgbcolor='red')           # needs sage.plot
             Graphics object consisting of 12 graphics primitives
-            sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')        # optional - sage.plot
+            sage: heegner_points(53,-7,15).plot(pointsize=50, rgbcolor='purple')        # needs sage.plot
             Graphics object consisting of 48 graphics primitives
         """
         return sum(z.plot(*args, **kwds) for z in self)
@@ -4285,7 +4286,7 @@ class KolyvaginPoint(HeegnerPoint):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-11).kolyvagin_point()
-            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()              # optional - sage.plot
+            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()              # needs sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         if self.conductor() != 1:
@@ -4340,7 +4341,7 @@ class KolyvaginPoint(HeegnerPoint):
         the case of conductor 1, computed using prec bits of
         precision, then approximated using some algorithm (e.g.,
         continued fractions).  If the precision is not enough to
-        determine a point on the curve, then a RuntimeError is raised.
+        determine a point on the curve, then a :class:`RuntimeError` is raised.
         Even if the precision determines a point, there is no guarantee
         that it is correct.
 
@@ -5513,11 +5514,10 @@ class HeegnerQuatAlg(SageObject):
             X = I.cyclic_right_subideals(p, alpha_quaternions[i])
             J_lists.append(dict(enumerate(X)))
 
-        ans = [0]*B.dimension()
-        from sage.misc.mrange import cartesian_product_iterator
-        for v in cartesian_product_iterator([range(1,p+1) for p,_ in F]):
+        ans = [0] * B.dimension()
+        for v in product(*[range(1, p + 1) for p, _ in F]):
             J = J_lists[0][v[0]]
-            for i in range(1,len(J_lists)):
+            for i in range(1, len(J_lists)):
                 J = J.intersection(J_lists[i][v[i]])
             J_theta = tuple(J.theta_series_vector(bound))
             d = theta_dict[J_theta]
