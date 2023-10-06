@@ -4931,7 +4931,7 @@ class Graph(GenericGraph):
           :meth:`MixedIntegerLinearProgram.get_values`.
 
         - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
-            induced minor isomorphic to `H` if it exists, and ``:class:`ValueError``` otherwise.
+            induced minor isomorphic to `H` if it exists, and :class:`ValueError` otherwise.
 
         OUTPUT:
 
