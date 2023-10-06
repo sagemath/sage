@@ -4893,7 +4893,7 @@ class Graph(GenericGraph):
     @doc_index("Algorithmically hard stuff")
     def minor(self, H, solver=None, verbose=0, induced=False, *, integrality_tolerance=1e-3):
         r"""
-        Return the vertices of a minor isomorphic to `H` in the current graph. 
+        Return the vertices of a minor isomorphic to `H` in the current graph.
 
         We say that a graph `G` has a `H`-minor (or that it has a graph
         isomorphic to `H` as a minor), if for all `h\in H`, there exist disjoint
@@ -4907,7 +4907,7 @@ class Graph(GenericGraph):
         We say that a graph `G` has an induced `H`-minor (or that it has a
         graph isomorphic to `H` as an induced minor), if `H` can be obtained
         from an induced subgraph of `G` by contracting edges. Otherwise, `G` is
-        said to be `H`-induced minor-free. 
+        said to be `H`-induced minor-free.
 
         For more information, see the :wikipedia:`Minor_(graph_theory)`.
 
@@ -4931,7 +4931,7 @@ class Graph(GenericGraph):
           :meth:`MixedIntegerLinearProgram.get_values`.
 
         - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
-            induced minor isomorphic to `H` if it exists, and :class:`ValueError` otherwise.
+          induced minor isomorphic to `H` if it exists, and :class:`ValueError` otherwise.
 
         OUTPUT:
 
@@ -4997,9 +4997,9 @@ class Graph(GenericGraph):
             sage: for i in random.randint(10, 30):
             ....:     g.add_edge(random.randint(0, 5), i)
             sage: h = graphs.CycleGraph(5)               # Create a graph with 5 vertices forming a C5 cycle
-            sage: L = g.minor(h, induced=True)                                           
-            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))              
-            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]        
+            sage: L = g.minor(h, induced=True)                             
+            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))             
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
             sage: gg.is_isomorphic(h)
             True
 
