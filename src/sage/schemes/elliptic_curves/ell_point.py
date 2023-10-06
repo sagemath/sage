@@ -1931,7 +1931,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         P = self
         E = P.curve()
 
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         K = E.base_ring()
@@ -2139,7 +2139,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # check for same curve
         E = P.curve()
         O = E(0)
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         # set q to be the order of the base field

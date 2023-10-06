@@ -406,17 +406,17 @@ class IsogenyClass_EC(SageObject):
         """
         from sage.graphs.graph import Graph
 
-        if not self.E.base_field() is QQ:
+        if self.E.base_field() is not QQ:
             M = self.matrix(fill=False)
             n = len(self)
             G = Graph(M, format='weighted_adjacency_matrix')
             D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
             G.set_vertices(D)
-            if self._qfmat: # i.e. self.E.has_rational_cm():
+            if self._qfmat:  # i.e. self.E.has_rational_cm():
                 for i in range(n):
                     for j in range(n):
-                        if M[i,j]:
-                            G.set_edge_label(i,j,str(self._qfmat[i][j]))
+                        if M[i, j]:
+                            G.set_edge_label(i, j, str(self._qfmat[i][j]))
             G.relabel(list(range(1, n + 1)))
             return G
 
