@@ -159,7 +159,7 @@ jobs:
           docker rmi $(docker image ls -aq)
           echo "Largest packages:"
           dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 50
-          sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
+          sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono|google-cloud-cli|microsoft-edge|azure-cli|temurin|llvm-|powershell|llvm-|r-base|postgresql)') || echo "(error ignored)"
           df -h
         if: inputs.free_disk_space
       - name: Download upstream artifact
