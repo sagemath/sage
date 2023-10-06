@@ -217,7 +217,7 @@ def make_parser():
         type=str, default=[':all-or-nothing:'], nargs='*',
         help=('package name or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:); '
-              'default: :all:'))
+              'default: :all: (or nothing when --include-dependencies or --exclude-dependencies is given'))
     parser_list.add_argument(
         '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
         help=('only include packages that have this file in their metadata directory '
