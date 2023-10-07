@@ -5,6 +5,7 @@
 /local
 /logs
 /upstream
+/coin_pkgs
 
 # Autotools generated files
 /aclocal.m4
