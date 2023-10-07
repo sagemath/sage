@@ -403,15 +403,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
         """
         A = self.function_ring()
         K = self.base_over_constants_field()
-        charpoly_coeffs_K = self._frobenius_crystalline_matrix() \
-                           .charpoly(var).coefficients(sparse=False)
+        charpoly_K = self._frobenius_crystalline_matrix() \
+                     .charpoly(var).coefficients(sparse=False)
 
         # The above line obtains the char poly with coefficients in K[T]
         # This maps them into A = Fq[T]
-        def coeff_A(coeff):
-            return A([K(x).vector()[0] for x in coeff])
 
-        coeffs_A = [coeff_A(c) for c in charpoly_coeffs_K]
+        coeffs_A = [A([x.in_base() for x in coeff]) for coeff in charpoly_K]
         return PolynomialRing(A, name=var)(coeffs_A)
 
     def _frobenius_charpoly_gekeler(self, var):
@@ -495,7 +493,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sol = list(sys.solve_right(vec))
         # The system is solved over L, but the coefficients should all be in Fq
         # We project back into Fq here.
-        sol_Fq = [K(x).vector()[0] for x in sol]
+        sol_Fq = [x.in_base() for x in sol]
         char_poly = []
         for i in range(r):
             char_poly.append([sol_Fq[block_shifts[i] + j]
@@ -593,7 +591,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             self._frobenius_trace = -self._frobenius_charpoly \
                                     .coefficients(sparse=False)[-2]
         self._frobenius_trace = self._frobenius_crystalline_matrix().trace()
-        self._frobenius_trace = A([K(x).vector()[0] for x in self._frobenius_trace])
+        self._frobenius_trace = A([x.in_base() for x in self._frobenius_trace])
         return self._frobenius_trace
 
     def invert(self, ore_pol):
