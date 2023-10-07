@@ -935,7 +935,7 @@ class sage__rings__polynomial__pbori(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.polynomial.pbori',
                              [PythonModule('sage.rings.polynomial.pbori.pbori')],
-                             spkg='sagemath_brial', type='standard')
+                             spkg='sagemath_brial', type='experimental')
 
 
 class sage__rings__real_double(PythonModule):
