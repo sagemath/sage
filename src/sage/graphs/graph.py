@@ -4997,8 +4997,8 @@ class Graph(GenericGraph):
             sage: for i in random.randint(10, 30):
             ....:     g.add_edge(random.randint(0, 5), i)
             sage: h = graphs.CycleGraph(5)               # Create a graph with 5 vertices forming a C5 cycle
-            sage: L = g.minor(h, induced=True)                             
-            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))             
+            sage: L = g.minor(h, induced=True)                       
+            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))         
             sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
             sage: gg.is_isomorphic(h)
             True
