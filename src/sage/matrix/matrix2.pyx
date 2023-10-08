@@ -6021,7 +6021,7 @@ cdef class Matrix(Matrix1):
             x^3 - 12*x^2 - 18*x
         """
         i = int(i)
-        t=int(t)
+        t = int(t)
         if self.nrows() != self.ncols():
             raise ArithmeticError("self must be a square matrix")
         n = self.nrows()
