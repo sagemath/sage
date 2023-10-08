@@ -335,7 +335,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
     Comparison of algorithms::
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
-        sage: for i in range(2):  # long time
+        sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth(G, algorithm="exponential")
         ....:     vm, lm = cutwidth(G, algorithm="MILP", solver='GLPK')

@@ -402,7 +402,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
         if analytic_type <= AT("weak"):
             if analytic_type <= AT("holo"):
                 if analytic_type <= AT("cusp"):
-                    if analytic_type <=AT([]):
+                    if analytic_type <= AT([]):
                         raise ValueError("Analytic type Zero is not valid for forms rings.")
                     else:
                         from .graded_ring import CuspFormsRing
@@ -420,7 +420,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
         if analytic_type <= AT(["weak", "quasi"]):
             if analytic_type <= AT(["holo", "quasi"]):
                 if analytic_type <= AT(["cusp", "quasi"]):
-                    if analytic_type <=AT(["quasi"]):
+                    if analytic_type <= AT(["quasi"]):
                         raise ValueError("Analytic type Zero is not valid for forms rings.")
                     else:
                         from .graded_ring import QuasiCuspFormsRing

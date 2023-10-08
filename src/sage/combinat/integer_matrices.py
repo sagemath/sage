@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Counting, generating, and manipulating non-negative integer matrices
 

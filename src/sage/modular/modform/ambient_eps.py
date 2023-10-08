@@ -118,9 +118,9 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
         if not dirichlet.is_DirichletCharacter(character):
-            raise TypeError("character (=%s) must be a Dirichlet character"%character)
+            raise TypeError("character (=%s) must be a Dirichlet character" % character)
         if base_ring is None:
-            base_ring=character.base_ring()
+            base_ring = character.base_ring()
         if character.base_ring() != base_ring:
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
@@ -152,10 +152,10 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             Modforms of level 8
         """
         if self._eis_only:
-            return "Modular Forms space of character %s and weight %s over %s" %(
+            return "Modular Forms space of character %s and weight %s over %s" % (
                         self.character()._repr_short_(), self.weight(), self.base_ring())
         else:
-            return "Modular Forms space of dimension %s, character %s and weight %s over %s"%(
+            return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
             self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
 
     @cached_method

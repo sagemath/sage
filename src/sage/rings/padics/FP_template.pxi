@@ -142,7 +142,7 @@ cdef class FPElement(pAdicTemplateElement):
             self._set_infinity()
         else:
             self.ordp = val
-            if isinstance(x,FPElement) and x.parent() is self.parent():
+            if isinstance(x, FPElement) and x.parent() is self.parent():
                 ccopy(self.unit, (<FPElement>x).unit, self.prime_pow)
             else:
                 cconv(self.unit, x, self.prime_pow.ram_prec_cap, val, self.prime_pow)
@@ -584,7 +584,6 @@ cdef class FPElement(pAdicTemplateElement):
         q._normalize()
         return q, r
 
-
     def __pow__(FPElement self, _right, dummy): # NOTE: dummy ignored, always use self.prime_pow.ram_prec_cap
         """
         Exponentiation by an integer
@@ -624,8 +623,8 @@ cdef class FPElement(pAdicTemplateElement):
                 _right = -_right
             exact_exp = True
         elif self.parent() is _right.parent():
-            ## For extension elements, we need to switch to the
-            ## fraction field sometimes in highly ramified extensions.
+            # For extension elements, we need to switch to the
+            # fraction field sometimes in highly ramified extensions.
             exact_exp = (<FPElement>_right)._is_exact_zero()
             pright = _right
         else:
@@ -665,7 +664,7 @@ cdef class FPElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
-        """
+        r"""
         Multiplies self by `\pi^{shift}`.
 
         Negative shifts may truncate the result if the parent is not a
@@ -718,7 +717,7 @@ cdef class FPElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
-        """
+        r"""
         Divides by `\pi^{shift}`.
 
         Positive shifts may truncate the result if the parent is not a
@@ -772,7 +771,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     def _repr_(self, mode=None, do_latex=False):
         """
-        Returns a string representation of this element.
+        Return a string representation of this element.
 
         INPUT:
 
@@ -794,7 +793,7 @@ cdef class FPElement(pAdicTemplateElement):
         return self.parent()._printer.repr_gen(self, do_latex, mode=mode)
 
     def add_bigoh(self, absprec):
-        """
+        r"""
         Return a new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
@@ -1221,7 +1220,7 @@ cdef class FPElement(pAdicTemplateElement):
             ValueError: unit part of 0 and infinity not defined
         """
         if p is not None and p != self.parent().prime():
-            raise ValueError('Ring (%s) residue field of the wrong characteristic.'%self.parent())
+            raise ValueError('Ring (%s) residue field of the wrong characteristic.' % self.parent())
         if huge_val(self.ordp):
             raise ValueError("unit part of 0 and infinity not defined")
         cdef Integer valuation = PY_NEW(Integer)
@@ -1659,7 +1658,7 @@ cdef class pAdicConvert_FP_QQ(RingMap):
             1/5
         """
         cdef Rational ans = Rational.__new__(Rational)
-        cdef FPElement x =  _x
+        cdef FPElement x = _x
         if very_pos_val(x.ordp):
             mpq_set_ui(ans.value, 0, 1)
         elif very_neg_val(x.ordp):
@@ -2139,6 +2138,7 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
+
 
 def unpickle_fpe_v2(cls, parent, unit, ordp):
     """
