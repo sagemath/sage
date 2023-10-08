@@ -221,7 +221,7 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 
 # base ring imports
 import sage.rings.abc
-import sage.structure
+import sage.structure.element
 
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
@@ -950,7 +950,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                     raise
             return new_MP(self, _p)
 
-        if isinstance(element, sage.structure.Element) and isinstance(element.parent(), BooleanPolynomialRing_base):
+        if isinstance(element, sage.structure.element.Element) and isinstance(element.parent(), BooleanPolynomialRing_base):
             if element.constant():
                 if element:
                     return self._one_element
