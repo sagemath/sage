@@ -384,7 +384,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         L = [c.defining_polynomial().radical() for c in self]
         return P(*L)
 
-    def fundamental_group(self, vertical=False):
+    def fundamental_group(self, simplified=True, vertical=False):
         r"""
         It computes the fundamental group of the complement of the union
         of affine plane curves in `\mathbb{C}^2`.
@@ -425,7 +425,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             raise TypeError('the base field is not in QQbar')
         C = self.reduce()
         L = C.defining_polynomials()
-        G, dic = fundamental_group_arrangement(L, puiseux=True, vertical=vertical)
+        G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical)
         return (G, dic)
 
     def braid_monodromy(self, vertical=False):
