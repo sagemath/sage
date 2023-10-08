@@ -79,6 +79,9 @@ from source as follows:
     ``environment-3.11-linux.yml`` to create an environment with all standard and optional
     packages recognized by sage.
 
+    A different Python version can be selected by replacing ``3.11`` by ``3.9``
+    or ``3.10`` in these commands.
+
   - Then the SageMath distribution will be built using the compilers provided by Conda
     and using many packages installed by Conda::
 
@@ -133,7 +136,7 @@ Here we assume that you are using a git checkout.
   - Verify that Sage has been installed::
 
       $ sage -c 'print(version())'
-      SageMath version 9.6.beta5, Release Date: 2022-03-12
+      SageMath version 10.2.beta4, Release Date: 2023-09-24
 
 Note that ``make`` is not used at all. All dependencies
 (including all Python packages) are provided by conda.
