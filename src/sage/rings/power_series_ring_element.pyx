@@ -1510,21 +1510,21 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-          - ``prec`` - integer (default: None): if not None and the series
-            has infinite precision, truncates series at precision
-            prec.
+          - ``prec`` - integer (default: ``None``): if not ``None``
+            and the series has infinite precision, truncates series at
+            precision prec.
 
-          - ``extend`` - bool (default: False); if True, return a square
+          - ``extend`` - bool (default: ``False``); if ``True``, return a square
             root in an extension ring, if necessary. Otherwise, raise
-            a ValueError if the square root is not in the base power series
-            ring. For example, if ``extend`` is True the square root of a
-            power series with odd degree leading coefficient is
-            defined as an element of a formal extension ring.
+            a :class:`ValueError` if the square root is not in the
+            base power series ring. For example, if ``extend`` is ``True``
+            the square root of a power series with odd degree leading
+            coefficient is defined as an element of a formal extension ring.
 
-          - ``name`` - string; if ``extend`` is True, you must also specify the print
+          - ``name`` - string; if ``extend`` is ``True``, you must also specify the print
             name of the formal square root.
 
-          - ``all`` - bool (default: False); if True, return all square
+          - ``all`` - bool (default: ``False``); if ``True``, return all square
             roots of self, instead of just one.
 
         ALGORITHM: Newton's method

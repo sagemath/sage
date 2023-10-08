@@ -1068,7 +1068,7 @@ class Equation(Hrepresentation):
         have_A = not self.A().is_zero()
         if have_A:
             s += repr(self.A()) + ' x '
-        if self.b()>=0:
+        if self.b() >= 0:
             if have_A:
                 s += '+'
         else:

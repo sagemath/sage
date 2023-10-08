@@ -73,9 +73,19 @@ SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.
     done
     for pkgname in $(sage-package list --has-file spkg-configure.m4 | sort); do
         echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])"
-        spkg_configures="$spkg_configures
-SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
+        config="SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
+        if grep -q SAGE_PYTHON_PACKAGE_CHECK build/pkgs/$pkgname/spkg-configure.m4; then
+            spkg_configures_python="$spkg_configures_python
+$config"
+        else
+            spkg_configures="$spkg_configures
+$config"
+        fi
     done >> m4/sage_spkg_configures.m4
+    cat >> m4/sage_spkg_configures.m4 <<EOF
+$spkg_configures
+$spkg_configures_python
+EOF
     for pkgname in $(sage-package list | sort); do
         DIR=build/pkgs/$pkgname
         pkgtype="$(cat $DIR/type)"
@@ -102,10 +112,10 @@ SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
                 echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(ENABLE_SYSTEM_SITE_PACKAGES=yes sage-get-system-packages install-requires-toml ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions_toml.m4
             fi
         fi
-        spkg_configures="$spkg_configures
+        spkg_finalizes="$spkg_finalizes
 SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     done
-    echo "$spkg_configures" >> m4/sage_spkg_configures.m4
+    echo "$spkg_finalizes" >> m4/sage_spkg_configures.m4
     for a in m4/sage_spkg_versions.m4 m4/sage_spkg_versions_toml.m4; do
         echo 'changequote(>>>`<<<, >>>'"'"'<<<)dnl' >> $a
     done

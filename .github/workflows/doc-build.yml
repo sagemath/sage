@@ -2,7 +2,11 @@ name: Build documentation
 
 on:
   pull_request:
+  merge_group:
   push:
+    branches:
+      - master
+      - develop
   workflow_dispatch:
     # Allow to run manually
 
@@ -26,7 +30,9 @@ jobs:
       - name: Store CI fixes in upstream artifact
         run: |
           mkdir -p upstream
-          git format-patch --stdout test_base > upstream/ci_fixes.patch
+          if git format-patch --stdout test_base > ci_fixes.patch; then
+            cp ci_fixes.patch upstream/
+          fi
       - uses: actions/upload-artifact@v3
         with:
           path: upstream

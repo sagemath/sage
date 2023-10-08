@@ -126,7 +126,7 @@ def canonical_parameters(group, level, weight, base_ring):
         group = arithgroup.Gamma0(m)
 
     if not isinstance(base_ring, CommutativeRing):
-        raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)
+        raise TypeError("base_ring (=%s) must be a commutative ring" % base_ring)
 
     # it is *very* important to include the level as part of the data
     # that defines the key, since Dirichlet characters of different

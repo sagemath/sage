@@ -173,8 +173,8 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         sage: T1 = TotallyOrderedFiniteSet([3,2,5,1])
         sage: T1(3) < T1(1)
         False
-        sage: T2 = TotallyOrderedFiniteSet([3,var('x')])
-        sage: T2(3) < T2(var('x'))
+        sage: T2 = TotallyOrderedFiniteSet([3, x])                                      # needs sage.symbolic
+        sage: T2(3) < T2(x)                                                             # needs sage.symbolic
         3 < x
 
     To make the above example work, you should set the argument facade to

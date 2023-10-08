@@ -20,11 +20,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from .pow_computer_ext import PowComputer_ext_maker
-from .pow_computer_flint import PowComputer_flint_maker
-from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
+
+lazy_import('sage.rings.padics.pow_computer_ext', 'PowComputer_ext_maker')
+lazy_import('sage.rings.padics.pow_computer_flint', 'PowComputer_flint_maker')
+lazy_import('sage.libs.ntl.ntl_ZZ_pX', 'ntl_ZZ_pX')
 
 from .unramified_extension_generic import UnramifiedExtensionGeneric
 from .eisenstein_extension_generic import EisensteinExtensionGeneric
@@ -47,13 +49,21 @@ from .generic_nodes import pAdicCappedRelativeRingGeneric, \
 #from padic_general_extension_capped_relative_element import pAdicGeneralExtensionCappedRelativeElement
 #from padic_general_extension_lazy_element import pAdicGeneralExtensionRelaxedElement
 
-from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
-from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
-from .padic_ZZ_pX_CA_element import pAdicZZpXCAElement
-from .qadic_flint_CR import qAdicCappedRelativeElement
-from .qadic_flint_CA import qAdicCappedAbsoluteElement
-from .qadic_flint_FM import qAdicFixedModElement
-from .qadic_flint_FP import qAdicFloatingPointElement
+try:
+    from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
+    from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
+    from .padic_ZZ_pX_CA_element import pAdicZZpXCAElement
+except ImportError:
+    pass
+
+try:
+    from .qadic_flint_CR import qAdicCappedRelativeElement
+    from .qadic_flint_CA import qAdicCappedAbsoluteElement
+    from .qadic_flint_FM import qAdicFixedModElement
+    from .qadic_flint_FP import qAdicFloatingPointElement
+except ImportError:
+    pass
+
 
 def _make_integral_poly(exact_modulus, p, prec):
     """
