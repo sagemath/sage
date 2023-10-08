@@ -554,7 +554,7 @@ However, the following may look suspicious at first::
     sage: Magmas.Unital.Associative
     Traceback (most recent call last):
     ...
-    AttributeError: type object 'Magmas.Unital' has no attribute 'Associative'
+    AttributeError: type object 'Magmas.Unital' has no attribute 'Associative'...
 
 The purpose of this section is to explain the design of the code
 layout and the rationale for this mismatch.
@@ -769,7 +769,7 @@ also want the axiom to be only available if meaningful::
     sage: Semirings().NoZeroDivisors()
     Traceback (most recent call last):
     ...
-    AttributeError: 'Semirings_with_category' object has no attribute 'NoZeroDivisors'
+    AttributeError: 'Semirings_with_category' object has no attribute 'NoZeroDivisors'...
 
 Concretely, this is to be implemented by defining the new axiom in the
 (``SubcategoryMethods`` nested class of the) appropriate category with

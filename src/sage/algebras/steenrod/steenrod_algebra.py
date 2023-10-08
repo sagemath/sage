@@ -1080,7 +1080,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: a.antipode() # not defined
             Traceback (most recent call last):
             ...
-            AttributeError: 'CombinatorialFreeModule_with_category.element_class' object has no attribute 'antipode'
+            AttributeError: 'CombinatorialFreeModule_with_category.element_class' object has no attribute 'antipode'...
             sage: A(a).antipode() # convert to elt of A, then compute antipode
             Sq(2,1) + Sq(5)
 
