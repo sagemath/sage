@@ -43,7 +43,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.10', '3.11', '3.12']
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
         conda-env: [environment]
