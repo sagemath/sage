@@ -84,7 +84,7 @@ cdef class FMElement(pAdicTemplateElement):
             polyt = type(self.prime_pow.modulus)
             self.value = <celement>polyt.__new__(polyt)
         cconstruct(self.value, self.prime_pow)
-        if isinstance(x,FMElement) and x.parent() is self.parent():
+        if isinstance(x, FMElement) and x.parent() is self.parent():
             cshift_notrunc(self.value, (<FMElement>x).value, 0, 0, self.prime_pow, False)
         else:
             cconv(self.value, x, self.prime_pow.ram_prec_cap, 0, self.prime_pow)
@@ -346,7 +346,6 @@ cdef class FMElement(pAdicTemplateElement):
         creduce(q.value, q.value, pcap, q.prime_pow)
         return q, r
 
-
     def __pow__(FMElement self, _right, dummy): # NOTE: dummy ignored, always use self.prime_pow.ram_prec_cap
         """
         Exponentiation by an integer
@@ -381,7 +380,7 @@ cdef class FMElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
-        """
+        r"""
         Multiplies self by `\pi^{shift}`.
 
         If shift < -self.valuation(), digits will be truncated.  See
@@ -428,7 +427,7 @@ cdef class FMElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
-        """
+        r"""
         Divides by `\pi^{shift}`, and truncates.
 
         Note that this operation will insert arbitrary digits (in
@@ -462,7 +461,7 @@ cdef class FMElement(pAdicTemplateElement):
         return ans
 
     def add_bigoh(self, absprec):
-        """
+        r"""
         Return a new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
@@ -1541,6 +1540,7 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
+
 
 def unpickle_fme_v2(cls, parent, value):
     """

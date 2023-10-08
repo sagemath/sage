@@ -225,12 +225,12 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         exp = p
         a = self.gen()
         if not arithmetic:
-            exp = p**(self.absolute_degree()-1)
+            exp = p**(self.absolute_degree() - 1)
         approx = (self(a.residue()**exp)).lift_to_precision(self.precision_cap()) #first approximation
         f = self.defining_polynomial()
         g = f.derivative()
-        while(f(approx) != 0): #hensel lift frobenius(a)
-            approx = approx - f(approx)/g(approx)
+        while f(approx) != 0:  # hensel lift frobenius(a)
+            approx = approx - f(approx) / g(approx)
         return approx
 
     def uniformizer_pow(self, n):

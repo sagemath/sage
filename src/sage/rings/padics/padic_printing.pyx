@@ -928,7 +928,6 @@ cdef class pAdicPrinter_class(SageObject):
             sage: repr(R(0,10))
             '...0000000000'
         """
-        cdef Py_ssize_t i
         s = ""
         if self.show_prec == "dots":
             unknown_digit = "?"
@@ -1063,10 +1062,8 @@ cdef class pAdicPrinter_class(SageObject):
         """
         cdef Integer lift_z, pprec
         cdef int ZZ_pEX
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         cdef long val
-        #cdef bint ellipsis = 0
-        cdef ellipsis_unram
         cdef bint integral
         var_name = self.latex_var_name if do_latex else self.var_name
         if self.base:
@@ -1200,10 +1197,10 @@ cdef class pAdicPrinter_class(SageObject):
                                     s += " - "
                                     s += self._var(var_name, i, do_latex)
                                 else:
-                                    s += " - %s"%(arep)
+                                    s += " - %s" % (arep)
                                     s += self._dot_var(var_name, i, do_latex)
                             elif a == pk:
-                                if s != "":
+                                if s:
                                     s += " + "
                                 s += self._var(var_name, i, do_latex)
                             else:
@@ -1211,9 +1208,9 @@ cdef class pAdicPrinter_class(SageObject):
                                 v, u = a.val_unit(self.prime_pow.prime)
                                 arep = self._terse_frac(a, v, u, ram_name, do_latex)
                                 if s == "":
-                                    s = "%s"%arep
+                                    s = "%s" % arep
                                 else:
-                                    s += " + %s"%arep
+                                    s += " + %s" % arep
                                 s += self._dot_var(var_name, i, do_latex)
                     if ellipsis:
                         s += self._plus_ellipsis(do_latex)

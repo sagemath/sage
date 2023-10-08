@@ -1237,7 +1237,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef long self_ordp = self.valuation_c()
         cdef long self_relprec = self.absprec - self_ordp
         cdef long threshold # e / (p-1)
-        cdef long prime_long
         cdef mpz_t tmp, tmp2
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
             threshold = 0
@@ -1399,7 +1398,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         cdef pAdicZZpXCAElement right = <pAdicZZpXCAElement>_right
         cdef pAdicZZpXCAElement ans
-        cdef long tmpL
         cdef ZZ_pX_c tmpP
         if self.absprec == 0 or right.absprec == 0:
             return self._new_c(0)
@@ -1441,7 +1439,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         cdef pAdicZZpXCAElement right = <pAdicZZpXCAElement>_right
         cdef pAdicZZpXCAElement ans
-        cdef long tmpL
         cdef ZZ_pX_c tmpP
         if self.absprec == 0 or right.absprec == 0:
             return self._new_c(0)
@@ -1824,7 +1821,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             True
         """
         cdef pAdicZZpXCAElement ans
-        cdef long aprec, rprec
+        cdef long aprec
         if absprec is not None and not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if absprec is None:
@@ -1977,9 +1974,9 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef ZZ_pX_Modulus_c* m = self.prime_pow.get_modulus_capdiv(self.absprec)
         cdef ZZ_pX_c x
         ZZ_pX_SetX(x)
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         zero = int(0)
-        for i from 0 <= i < n:
+        for i in range(n):
             curlist = cur.list()
             L.extend(curlist + [zero]*(n - len(curlist)))
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
@@ -2071,7 +2068,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef long ordp = self.valuation_c()
         cdef long rp = self.absprec - ordp
         cdef long goal
-        if n is not None: goal = self.absprec - n
+        if n is not None:
+            goal = self.absprec - n
         cdef pAdicZZpXCAElement v
         if n is None:
             L = []
@@ -2084,7 +2082,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         else:
             v = self._new_c(rp)
         cdef pAdicZZpXCAElement u = self.unit_part()
-        if u is self: u = self.__copy__()
+        if u is self:
+            u = self.__copy__()
         while not ZZ_pX_IsZero(u.value):
             v = self._new_c(rp)
             self.prime_pow.teichmuller_set_c(&v.value, &u.value, rp)
@@ -2092,7 +2091,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 L.append(v)
             elif rp == goal:
                 return v
-            if rp == 1: break
+            if rp == 1:
+                break
             ZZ_pX_sub(u.value, u.value, v.value)
             rp -= 1
             if self.prime_pow.e == 1:
@@ -2318,6 +2318,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^5)
         """
         return self.ext_p_list_precs(pos, self.absprec)
+
 
 def make_ZZpXCAElement(parent, value, absprec, version):
     """

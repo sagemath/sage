@@ -681,7 +681,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         for the poset as it contains duplicate elements
     """
     # Avoiding some errors from the user when data should be a pair
-    if not(element_labels is None or isinstance(element_labels, (dict, list))):
+    if not (element_labels is None or isinstance(element_labels, (dict, list))):
         raise TypeError("element_labels should be a dict or a list if "
                         "different from None. (Did you intend data to be "
                         "equal to a pair ?)")
@@ -5219,7 +5219,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             ...
             TypeError: the Rees product is defined only for graded posets
         """
-        if not(self.is_graded() and other.is_graded()):
+        if not (self.is_graded() and other.is_graded()):
             raise TypeError('the Rees product is defined only for graded posets')
 
         rk0 = self.rank_function()

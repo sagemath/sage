@@ -150,49 +150,49 @@ def sl2z_word_problem(A):
     output = []
 
     # If A00 is zero
-    if A[0,0]==0:
-        c=A[1,1]
+    if A[0,0] == 0:
+        c = A[1,1]
         if c != 1:
-            A=A*Lm**(c-1)*Rm*Lmi
+            A = A*Lm**(c-1)*Rm*Lmi
             output.extend([(0,1-c),(1,-1),(0,1)])
         else:
-            A=A*Rm*Lmi
+            A = A*Rm*Lmi
             output.extend([(1,-1),(0,1)])
 
-    if A[0,0]<0:   # Make sure A00 is positive
-        A=SL2Z(-1)*A
+    if A[0,0] < 0:   # Make sure A00 is positive
+        A = SL2Z(-1)*A
         output.extend([(1,-1), (0,1), (1,-1), (0,1), (1,-1), (0,1)])
 
-    if A[0,1]<0:   # if A01 is negative make it positive
-        n=(-A[0,1]/A[0,0]).ceil()  #n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
-        A=A*Lm**n
+    if A[0,1] < 0:   # if A01 is negative make it positive
+        n = (-A[0,1]/A[0,0]).ceil()  #n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
+        A = A*Lm**n
         output.append((0, -n))
     # At this point A00>0 and A01>=0
-    while not (A[0,0]==0 or A[0,1]==0):
-        if A[0,0]>A[0,1]:
-            n=(A[0,0]/A[0,1]).floor()
-            A=A*SL2Z([1,0,-n,1])
+    while not (A[0,0] == 0 or A[0,1] == 0):
+        if A[0,0] > A[0,1]:
+            n = (A[0,0]/A[0,1]).floor()
+            A = A*SL2Z([1,0,-n,1])
             output.append((1, n))
 
         else:      # A[0,0]<=A[0,1]
-            n=(A[0,1]/A[0,0]).floor()
-            A=A*SL2Z([1,-n,0,1])
+            n = (A[0,1]/A[0,0]).floor()
+            A = A*SL2Z([1,-n,0,1])
             output.append((0, n))
 
-    if A==SL2Z(1):
+    if A == SL2Z(1):
         pass       # done, so don't add R^0
-    elif A[0,0]==0:
-        c=A[1,1]
+    elif A[0,0] == 0:
+        c = A[1,1]
         if c != 1:
-            A=A*Lm**(c-1)*Rm*Lmi
+            A = A*Lm**(c-1)*Rm*Lmi
             output.extend([(0,1-c),(1,-1),(0, 1)])
         else:
-            A=A*Rm*Lmi
+            A = A*Rm*Lmi
             output.extend([(1,-1),(0,1)])
     else:
-        c=A[1,0]
+        c = A[1,0]
         if c:
-            A=A*Rm**(-c)
+            A = A*Rm**(-c)
             output.append((1,c))
 
     output.reverse()
@@ -255,7 +255,7 @@ def word_of_perms(w, p1, p2):
     m = [p1.order(),p2.order()]
 
     for i,j in w:
-        M *= p[i]**(j%m[i])
+        M *= p[i]**(j % m[i])
 
     return M
 
@@ -586,11 +586,11 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             'Arithmetic subgroup of index 24'
         """
         if self.index() < 20:
-            return "Arithmetic subgroup with permutations of right cosets\n S2=%s\n S3=%s\n L=%s\n R=%s" %(
+            return "Arithmetic subgroup with permutations of right cosets\n S2=%s\n S3=%s\n L=%s\n R=%s" % (
                 self.S2(), self.S3(), self.L(), self.R())
 
         else:
-            return "Arithmetic subgroup of index %d" %self.index()
+            return "Arithmetic subgroup of index %d" % self.index()
 
     #
     # Attribute access
@@ -1002,13 +1002,13 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         l_cycle_length = [None]*self.index()
         for c in l.cycle_tuples(singletons=True):
             for i in c:
-                l_cycle_length[i-1]=len(c)
+                l_cycle_length[i-1] = len(c)
 
         r = G.R()
         r_cycle_length = [None]*self.index()
         for c in r.cycle_tuples(singletons=True):
             for i in c:
-                r_cycle_length[i-1]=len(c)
+                r_cycle_length[i-1] = len(c)
 
         return (l_cycle_length, r_cycle_length)
 
@@ -1484,7 +1484,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             s = l**20 * r**onefifth * l**(-4) * ~r
 
             #Congruence if the seven permutations below are trivial:
-            rel =~a*~r*a*r
+            rel = ~a*~r*a*r
             if not rel.is_one():
                 verbose("Failed relation B1")
                 return False

@@ -3140,7 +3140,7 @@ class RealChart(Chart):
         elif not isinstance(ambient_coords, tuple):
             ambient_coords = tuple(ambient_coords)
         nca = len(ambient_coords)
-        if nca != 2 and nca !=3:
+        if nca != 2 and nca != 3:
             raise ValueError("bad number of ambient coordinates: {}".format(nca))
         if ranges is None:
             ranges = {}

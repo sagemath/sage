@@ -344,7 +344,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     Minimum connected dominating sets of the Peterson graph::
 
         sage: G = graphs.PetersenGraph()
-        sage: G.dominating_set(total=True, value_only=True)
+        sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
         sage: sorted(G.dominating_sets(k=1, connected=True))
         [[0, 1, 2, 6],
@@ -361,7 +361,8 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     Subgraph induced by the dominating set is connected::
 
         sage: G = graphs.PetersenGraph()
-        sage: all(G.subgraph(vertices=dom).is_connected() for dom in G.dominating_set(k=1, connected=True))
+        sage: all(G.subgraph(vertices=dom).is_connected()
+        ....:     for dom in G.dominating_set(k=1, connected=True))
         True
 
     Minimum distance-k connected dominating sets of the Tietze graph::
@@ -375,7 +376,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     TESTS::
 
         sage: g = Graph([(0, 1)])
-        sage: next(g.dominating_sets(k=-1))                                             # needs sage.numerical.mip
+        sage: next(g.dominating_sets(k=-1))
         Traceback (most recent call last):
         ...
         ValueError: the domination distance must be a non-negative integer
