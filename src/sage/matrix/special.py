@@ -2555,22 +2555,22 @@ def random_rref_matrix(parent, num_pivots):
                     # Experimental distribution used to generate the values.
                     for non_pivot_column_entry in range(pivot_index+1):
                         sign1 = (2*randint(0,1)-1)
-                        return_matrix[non_pivot_column_entry,non_pivot_column_index]=sign1*int(entry_generator1.get_random_element()*((1-non_pivot_column_entry/return_matrix.ncols())*7))
+                        return_matrix[non_pivot_column_entry,non_pivot_column_index] = sign1*int(entry_generator1.get_random_element()*((1-non_pivot_column_entry/return_matrix.ncols())*7))
             # Use index to fill entries of the columns to the right of the last pivot column.
             for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
-                entry_generator2=pd.RealDistribution("beta",[2.6,4])
+                entry_generator2 = pd.RealDistribution("beta",[2.6,4])
                 # experimental distribution to generate small values.
                 for rest_entries in range(num_pivots):
-                    sign2=(2*randint(0,1)-1)
-                    return_matrix[rest_entries,rest_non_pivot_column]=sign2*int(entry_generator2.get_random_element()*5)
+                    sign2 = (2*randint(0,1)-1)
+                    return_matrix[rest_entries,rest_non_pivot_column] = sign2*int(entry_generator2.get_random_element()*5)
         else:
             for pivot_index in range(num_pivots-1):
                 for non_pivot_column_index in range(pivots[pivot_index]+1,pivots[pivot_index+1]):
                     for non_pivot_column_entry in range(pivot_index+1):
-                            return_matrix[non_pivot_column_entry,non_pivot_column_index]=ring.random_element()
+                            return_matrix[non_pivot_column_entry,non_pivot_column_index] = ring.random_element()
             for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
                 for rest_entries in range(num_pivots):
-                    return_matrix[rest_entries,rest_non_pivot_column]=ring.random_element()
+                    return_matrix[rest_entries,rest_non_pivot_column] = ring.random_element()
     return return_matrix
 
 
@@ -2750,40 +2750,40 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
                 while row_index < rows:
                     # To each row in a pivot column add a scalar multiple of the pivot row.
                     # for full rank, square matrices, using only this row operation preserves the determinant of 1.
-                    if pivots!=row_index:
+                    if pivots != row_index:
                     # To ensure a leading one is not removed by the addition of the pivot row by its
                     # additive inverse.
-                        matrix_copy=matrix.with_added_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
+                        matrix_copy = matrix.with_added_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
                         tries += 1
                         # Range for scalar multiples determined experimentally.
                     if max(map(abs,matrix_copy.list())) < upper_bound:
                     # Continue if the largest entry after a row operation is within the bound.
-                        matrix=matrix_copy
-                        row_index+=1
+                        matrix = matrix_copy
+                        row_index += 1
                         tries = 0
                     if tries > max_tries: # to prevent endless unsuccessful row adding
                         raise ValueError("tried "+str(max_tries)+" times to get row number "+str(row_index)+". Try bigger upper_bound?")
             # The leading one in row one has not been altered, so add a scalar multiple of a random row
             # to row one.
-            row1=0
-            if rows>1:
-                while row1<1:
-                    matrix_copy=matrix.with_added_multiple_of_row(0,randint(1,rows-1),randint(-3,3))
+            row1 = 0
+            if rows > 1:
+                while row1 < 1:
+                    matrix_copy = matrix.with_added_multiple_of_row(0,randint(1,rows-1),randint(-3,3))
                     if max(map(abs,matrix_copy.list())) < upper_bound:
-                        matrix=matrix_copy
-                        row1+=1
+                        matrix = matrix_copy
+                        row1 += 1
     # If the matrix generated over a different ring, random elements from the designated ring are used as and
     # the routine is run similarly to the size unchecked version for rationals and integers.
     else:
         for pivots in range(rank-1,-1,-1):
-            row_index=0
-            while row_index<rows:
-                if pivots==row_index:
-                    row_index+=1
-                if pivots!=row_index and row_index!=rows:
+            row_index = 0
+            while row_index < rows:
+                if pivots == row_index:
+                    row_index += 1
+                if pivots != row_index and row_index != rows:
                     matrix.add_multiple_of_row(row_index,matrix.pivot_rows()[pivots],ring.random_element())
-                    row_index+=1
-        if rows>1:
+                    row_index += 1
+        if rows > 1:
             matrix.add_multiple_of_row(0,randint(1,rows-1),ring.random_element())
     return matrix
 
@@ -2911,7 +2911,7 @@ def random_subspaces_matrix(parent, rank=None):
         left_nullity_generator = pd.RealDistribution("beta", [1.4, 5.5])
         nullity = int(left_nullity_generator.get_random_element()*(rows-1) + 1)
         rank = rows - nullity
-    if rank<0:
+    if rank < 0:
         raise ValueError("matrices must have rank zero or greater.")
     if rank > rows or rank > columns:
         raise ValueError("rank cannot exceed the number of rows or columns.")
@@ -3028,16 +3028,16 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     Billy Wonderly (2010-07)
     """
 
-    ring=parent.base_ring()
-    size=parent.nrows()
-    if parent.nrows()!=parent.ncols():
+    ring = parent.base_ring()
+    size = parent.nrows()
+    if parent.nrows() != parent.ncols():
         raise TypeError("a unimodular matrix must be square.")
-    if upper_bound is not None and (ring!=ZZ and ring!=QQ):
+    if upper_bound is not None and (ring != ZZ and ring != QQ):
         raise TypeError("only matrices over ZZ or QQ can have size control.")
     if upper_bound is None:
         # random_echelonizable_matrix() always returns a determinant one matrix if given full rank.
         return random_matrix(ring, size, algorithm='echelonizable', rank=size)
-    elif upper_bound is not None and (ring==ZZ or ring==QQ):
+    elif upper_bound is not None and (ring == ZZ or ring == QQ):
         return random_matrix(ring, size,algorithm='echelonizable',rank=size, upper_bound=upper_bound, max_tries=max_tries)
 
 
@@ -3226,7 +3226,7 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         up_bound = up_bound + dimensions[row_index]
         for entry in range(low_bound,up_bound):
             diagonal_matrix[entry, entry] = eigenvalues[row_index]
-        low_bound=low_bound+dimensions[row_index]
+        low_bound = low_bound+dimensions[row_index]
     # Create a matrix to hold each of the eigenvectors as its columns, begin with an identity matrix so that after row and column
     # operations the resulting matrix will be unimodular.
     eigenvector_matrix = matrix(QQ, size, size, 1)
@@ -3234,13 +3234,13 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     lower_limit = 0
     #run the routine over the necessary number of columns corresponding eigenvalue dimension.
     for dimension_index in range(len(dimensions)-1):
-        upper_limit=upper_limit+dimensions[dimension_index]
-        lowest_index_row_with_one=size-dimensions[dimension_index]
+        upper_limit = upper_limit+dimensions[dimension_index]
+        lowest_index_row_with_one = size-dimensions[dimension_index]
         #assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
         for eigen_ones in range(lower_limit,upper_limit):
-            eigenvector_matrix[lowest_index_row_with_one,eigen_ones]=1
-            lowest_index_row_with_one+=1
-        lower_limit=lower_limit+dimensions[dimension_index]
+            eigenvector_matrix[lowest_index_row_with_one,eigen_ones] = 1
+            lowest_index_row_with_one += 1
+        lower_limit = lower_limit+dimensions[dimension_index]
     #Create a list to give the eigenvalue dimension corresponding to each column.
     dimension_check = []
     for i in range(len(dimensions)):
@@ -3248,14 +3248,14 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
             dimension_check.append(dimensions[i])
     #run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
     for dimension_multiplicity in range(max(dimensions),min(dimensions),-1):
-        highest_one_row=size-dimension_multiplicity
-        highest_one_column=0
+        highest_one_row = size-dimension_multiplicity
+        highest_one_column = 0
         #find the column with the protected one in the lowest indexed row.
-        while eigenvector_matrix[highest_one_row,highest_one_column]==0:
-            highest_one_column+=1
+        while eigenvector_matrix[highest_one_row,highest_one_column] == 0:
+            highest_one_column += 1
         #dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
         for bottom_entry_filler in range(len(dimension_check)):
-            if dimension_check[bottom_entry_filler]<dimension_multiplicity and eigenvector_matrix[highest_one_row,bottom_entry_filler]==0:
+            if dimension_check[bottom_entry_filler] < dimension_multiplicity and eigenvector_matrix[highest_one_row,bottom_entry_filler] == 0:
                 # randint range determined experimentally to keep entries manageable.
                 eigenvector_matrix.add_multiple_of_column(bottom_entry_filler,highest_one_column,randint(-4,4))
     #Fill remaining rows using scalar row addition.

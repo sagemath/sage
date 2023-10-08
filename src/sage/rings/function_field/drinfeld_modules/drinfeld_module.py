@@ -1394,9 +1394,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if n % q == 0:
             return self.goss_polynomial(n // q)**q
         # General case
-        pol = sum(self._compute_coefficient_exp(i+1)
-                  *self._compute_goss_polynomial(n - q**(i+1), q, poly_ring, X)
-                  for i in range(0, (n.log(q).n()).floor()))
+        pol = sum(self._compute_coefficient_exp(i + 1)
+                  * self._compute_goss_polynomial(n - q**(i+1), q, poly_ring, X)
+                  for i in range((n.log(q).n()).floor()))
         return X*(self._compute_goss_polynomial(n - 1, q, poly_ring, X) + pol)
 
     def goss_polynomial(self, n, var='X'):
