@@ -355,7 +355,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
 
         """
         from sage.misc.latex import latex
-        return r"\mathrm{GL}\left("+ latex(self._vmodule)+ r"\right)"
+        return r"\mathrm{GL}\left(" + latex(self._vmodule) + r"\right)"
 
     def base_module(self):
         r"""

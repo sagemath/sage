@@ -1,4 +1,4 @@
-# optional - sage.combinat sage.modules sage.groups
+# sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
 Symmetric Group Algebra
 """

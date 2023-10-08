@@ -1598,7 +1598,7 @@ def _vizing_edge_coloring(g):
        True
        sage: all(g.has_edge(e) for C in colors for e in C)
        True
-       sage: all(len(Graph(C).matching()) == len(C) for C in colors)
+       sage: all(len(Graph(C).matching()) == len(C) for C in colors)                    # needs networkx
        True
     """
     # This implementation was discussed in github issue #34809
@@ -2237,7 +2237,7 @@ cdef class Test:
         TESTS::
 
             sage: from sage.graphs.graph_coloring import Test
-            sage: Test().random(1)
+            sage: Test().random(1)                                                      # needs sage.libs.flint
         """
         self.random_all_graph_colorings(tests)
 
@@ -2256,7 +2256,7 @@ cdef class Test:
         TESTS::
 
             sage: from sage.graphs.graph_coloring import Test
-            sage: Test().random_all_graph_colorings(1)
+            sage: Test().random_all_graph_colorings(1)                                  # needs sage.libs.flint
         """
         from sage.graphs.generators.random import RandomGNP
         cdef set S

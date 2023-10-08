@@ -137,13 +137,13 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         try:
             a0fac = K(1/a0den)
         except ZeroDivisionError:
-            raise ValueError("The denominator of -B_k/(2*k) (=%s) must be invertible in the ring %s"%(a0den, K))
+            raise ValueError("The denominator of -B_k/(2*k) (=%s) must be invertible in the ring %s" % (a0den, K))
     elif normalization == 'constant':
         a0num = a0.numerator()
         try:
             a0fac = K(1/a0num)
         except ZeroDivisionError:
-            raise ValueError("The numerator of -B_k/(2*k) (=%s) must be invertible in the ring %s"%(a0num, K))
+            raise ValueError("The numerator of -B_k/(2*k) (=%s) must be invertible in the ring %s" % (a0num, K))
     elif normalization == 'integral':
         a0fac = None
     else:
@@ -155,7 +155,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         # The following is *dramatically* faster than doing the more natural
         # "R(ls)" would be:
         E = ZZ[var](ls, prec=prec, check=False).change_ring(QQ)
-        if len(ls)>0:
+        if len(ls) > 0:
             E._unsafe_mutate(0, a0)
         return R(E, prec)
         # The following is an older slower alternative to the above three lines:
@@ -431,15 +431,15 @@ def eisenstein_series_lseries(weight, prec=53,
                    # Using a string for residues is a hack but it works well
                    # since this will make PARI/GP compute sqrt(pi) with the
                    # right precision.
-                   residues='[sqrt(Pi)*(%s)]'%((-1)**Integer(j/2)*bernoulli(j)/j),
+                   residues='[sqrt(Pi)*(%s)]' % ((-1)**Integer(j // 2) * bernoulli(j) / j),
                    prec=prec)
 
-    s = 'coeff = %s;'%f.list()
-    L.init_coeffs('coeff[k+1]',pari_precode=s,
+    s = 'coeff = %s;' % f.list()
+    L.init_coeffs('coeff[k+1]', pari_precode=s,
                   max_imaginary_part=max_imaginary_part,
                   max_asymp_coeffs=max_asymp_coeffs)
     L.check_functional_equation()
-    L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)'%(j,f))
+    L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)' % (j, f))
     return L
 
 

@@ -359,8 +359,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def _check_satisfies_equations(self, v):
         """
-        Return True if ``v`` defines a point on the scheme; raise a
-        TypeError otherwise.
+        Return ``True`` if ``v`` defines a point on the scheme; raise a
+        :class:`TypeError` otherwise.
 
         EXAMPLES::
 
