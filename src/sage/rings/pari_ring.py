@@ -123,7 +123,7 @@ class Pari(RingElement):
             sage: a^2
             9
         """
-        if not(other in PariRing()):
+        if not (other in PariRing()):
             other = Pari(other)
         return self.__class__(self.__x ** other.__x, parent=_inst)
 

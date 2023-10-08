@@ -700,7 +700,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         if len(support) < len(red):  # There should be no repetitions
             return False
 
-        if not(self._min_length <= len(support) and
+        if not (self._min_length <= len(support) and
                len(support) <= self._max_length and
                self._min_support.issubset(support) and
                support.issubset(self._max_support)):

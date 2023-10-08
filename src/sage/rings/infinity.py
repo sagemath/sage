@@ -1865,11 +1865,11 @@ def test_signed_infinity(pos_inf):
     assert InfinityRing(pos_inf) is infinity, msg
     assert InfinityRing(-pos_inf) is minus_infinity, msg
     assert infinity == pos_inf, msg
-    assert not(infinity > pos_inf), msg
-    assert not(infinity < pos_inf), msg
+    assert not (infinity > pos_inf), msg
+    assert not (infinity < pos_inf), msg
     assert minus_infinity == -pos_inf, msg
-    assert not(minus_infinity > -pos_inf), msg
-    assert not(minus_infinity < -pos_inf), msg
+    assert not (minus_infinity > -pos_inf), msg
+    assert not (minus_infinity < -pos_inf), msg
     assert pos_inf > -pos_inf, msg
     assert infinity > -pos_inf, msg
     assert pos_inf > minus_infinity, msg

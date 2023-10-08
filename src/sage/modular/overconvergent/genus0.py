@@ -387,7 +387,7 @@ class OverconvergentModularFormsSpace(Module):
                 pi = p
                 e = d
             if not e.is_integral():
-                raise ValueError("no element of base ring (=%s) has normalised valuation %s" % (self.base_ring(), radius * 12 /(p-1)))
+                raise ValueError("no element of base ring (=%s) has normalised valuation %s" % (self.base_ring(), radius * 12 / (p-1)))
             self._radius = radius
             self._const = pi ** ZZ(e)
 
@@ -1250,7 +1250,7 @@ class OverconvergentModularFormsSpace(Module):
             xyring = PolynomialRing(self.base_ring(), ["x","y"], 2)
             x,y = xyring.gens()
             cc = self.prime() ** (-12/(self.prime() - 1))
-            bigI = x*SmiH(y*cc)- y*cc*SmiH(x)
+            bigI = x*SmiH(y*cc) - y*cc*SmiH(x)
             smallI = xyring(bigI / (x - cc*y))
             r = matrix(ZZ, self.prime(), self.prime())
             for i in range(self.prime()):

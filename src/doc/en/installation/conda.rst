@@ -90,16 +90,13 @@ from source as follows:
 
 .. _sec-installation-conda-develop:
 
-Using conda to provide all dependencies for the Sage library (experimental)
+Using conda to provide all dependencies for the Sage library
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can build and install the Sage library from source, using conda to
 provide all of its dependencies. This bypasses most of the build
 system of the Sage distribution and is the fastest way to set up an
 environment for Sage development.
-
-Note that this is still an experimental feature and may not work as
-intended.
 
 Here we assume that you are using a git checkout.
 
@@ -128,22 +125,10 @@ Here we assume that you are using a git checkout.
     This will use Python 3.11. You can change the Python version by using one 
     of the other environment files, e.g. ``src/environment-3.10-linux.yml``.
 
-  - Run the ``configure`` script::
-
-      $ ./bootstrap
-      $ ./configure --with-python=$CONDA_PREFIX/bin/python             \
-                    --prefix=$CONDA_PREFIX                             \
-                    $(for pkg in $(./sage -package list :standard:     \
-                                     --exclude rpy2                    \
-                                     --has-file spkg-configure.m4      \
-                                     --has-file distros/conda.txt); do \
-                          echo --with-system-$pkg=force;               \
-                      done)
-
   - Install the build prerequisites and the Sage library::
 
-      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf ./pkgs/sage-setup
-      $ pip install --no-build-isolation -v -v --editable ./src
+      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda ./pkgs/sage-setup
+      $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
   - Verify that Sage has been installed::
 
@@ -174,3 +159,11 @@ To build the documentation, use::
 
   $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
   $ sage --docbuild all html
+
+.. NOTE::
+
+   The switch ``--config-settings editable_mode=compat`` restores the
+   `legacy setuptools implementation of editable installations
+   <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_.
+   Adventurous developers may omit this switch to try the modern,
+   PEP-660 implementation of editable installations, see :issue:`34209`.

@@ -568,7 +568,7 @@ cdef list ccoefficients(mpz_t x, long valshift, long prec, PowComputer_ prime_po
         return [ansq]
 
 cdef int cteichmuller(mpz_t out, mpz_t value, long prec, PowComputer_ prime_pow) except -1:
-    """
+    r"""
     Teichmuller lifting.
 
     INPUT:

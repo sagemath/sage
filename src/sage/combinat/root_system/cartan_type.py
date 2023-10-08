@@ -2129,7 +2129,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         annihilator_basis = m.integer_kernel().gens()
         if len(annihilator_basis) != 1:
             raise ValueError("the kernel is not 1 dimensional")
-        assert(all(coef > 0 for coef in annihilator_basis[0]))
+        assert (all(coef > 0 for coef in annihilator_basis[0]))
 
         return Family(dict((i,annihilator_basis[0][i])for i in self.index_set()))
 
@@ -2711,7 +2711,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
             False
 
         """
-        assert(letter in ['A', 'B', 'C', 'BC', 'D', 'E', 'F', 'G'])
+        assert (letter in ['A', 'B', 'C', 'BC', 'D', 'E', 'F', 'G'])
         self.letter = letter
         self.n = n
         self.affine = affine

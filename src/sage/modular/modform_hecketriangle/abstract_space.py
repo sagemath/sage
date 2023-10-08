@@ -535,7 +535,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             False
         """
 
-        return ((self.AT("holo") <= self._analytic_type) and (self.weight()==QQ(0)) and (self.ep()==ZZ(1)))
+        return ((self.AT("holo") <= self._analytic_type) and (self.weight() == QQ(0)) and (self.ep() == ZZ(1)))
 
     def element_from_coordinates(self, vec):
         r"""
@@ -633,7 +633,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             ValueError: QuasiMeromorphicModularForms(n=6, k=4, ep=1) over Integer Ring already is homogeneous with degree (4, 1) != (5, 1)!
         """
 
-        if (k==self._weight and ep==self._ep):
+        if (k == self._weight and ep == self._ep):
             return self
         else:
             raise ValueError("{} already is homogeneous with degree ({}, {}) != ({}, {})!".format(self, self._weight, self._ep, k, ep))
@@ -829,7 +829,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (order_inf > 0 and order_1 > 0):
             new_space = self.extend_type("cusp")
-        elif (order_inf >=0 and order_1 >= 0):
+        elif (order_inf >= 0 and order_1 >= 0):
             new_space = self.extend_type("holo")
         else:
             new_space = self.extend_type("weak")
@@ -981,7 +981,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             # The first term is zero only up to numerical errors,
             # so we manually have to remove it
             if (not d.parent().is_exact()):
-                temp_reminder=temp_reminder.truncate_neg(-temp_exp+1)
+                temp_reminder = temp_reminder.truncate_neg(-temp_exp+1)
 
         return fab_pol.polynomial()
 
@@ -1214,7 +1214,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         (x,y,z,d) = self.rat_field().gens()
         n = self._group.n()
 
-        if (n ==infinity):
+        if (n == infinity):
             order_1 = ZZ(order_1)
             order_inf = self._l1 - order_1
             finf_pol = d*(x-y**2)
@@ -2538,7 +2538,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         k = ZZ(k)
-        if k>=0 and k < self.dimension():
+        if k >= 0 and k < self.dimension():
             return self.gens()[k]
         else:
             raise ValueError("Invalid index: k={} does not satisfy 0 <= k <= {}!".format(k, self.dimension()))
