@@ -51,6 +51,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Check for Miniconda
         id: check_conda
         run: echo ::set-output name=installed::$CONDA
@@ -98,9 +104,6 @@ jobs:
           ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
           echo "::remove-matcher owner=configure-system-package-warning::"
           echo "::remove-matcher owner=configure-system-package-error::"
-
-          # Manually install ptyprocess for now, until https://github.com/sagemath/sage/issues/32147 is fixed
-          pip install --no-build-isolation -v -v ptyprocess==0.5.1
 
       - name: Build
         shell: bash -l {0}

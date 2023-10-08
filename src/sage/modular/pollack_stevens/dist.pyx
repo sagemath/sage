@@ -853,7 +853,7 @@ cdef class Dist_vector(Dist):
             sage: QQ(d)
             4/3
 
-        We get a TypeError if there is more than 1 moment::
+        We get a :class:`TypeError` if there is more than 1 moment::
 
             sage: D = Symk(1); d = D([1,2]); d
             (1, 2)

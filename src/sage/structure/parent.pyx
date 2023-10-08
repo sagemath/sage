@@ -1345,7 +1345,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         r"""
         Return the unique homomorphism from self to codomain that
         sends ``self.gens()`` to the entries of ``im_gens``.
-        Raises a TypeError if there is no such homomorphism.
+
+        This raises a :class:`TypeError` if there is no such homomorphism.
 
         INPUT:
 

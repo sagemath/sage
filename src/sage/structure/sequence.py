@@ -501,7 +501,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         else:
             y = self.__universe(value)
         list.__setitem__(self, n, y)
-        self.__hash=None
+        self.__hash = None
 
     def __getitem__(self, n):
         """
@@ -889,7 +889,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             self.__hash = self._Sequence__hash
             return self.__hash
         else:
-            raise AttributeError("'Sequence_generic' object has no attribute '%s'"%name)
+            raise AttributeError("'Sequence_generic' object has no attribute '%s'" % name)
 
 
 seq = Sequence

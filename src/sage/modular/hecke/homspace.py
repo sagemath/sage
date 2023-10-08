@@ -3,7 +3,7 @@
 r"""
 Hom spaces between Hecke modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,9 +15,8 @@ Hom spaces between Hecke modules
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.homset import HomsetWithBase
@@ -27,7 +26,7 @@ from .module import is_HeckeModule
 
 def is_HeckeModuleHomspace(x):
     r"""
-    Return True if x is a space of homomorphisms in the category of Hecke modules.
+    Return ``True`` if x is a space of homomorphisms in the category of Hecke modules.
 
     EXAMPLES::
 
