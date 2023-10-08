@@ -243,7 +243,7 @@ class Combinations_mset(Parent):
             sage: c != Combinations([1,2,3,3])
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def __repr__(self):
         """
@@ -396,7 +396,7 @@ class Combinations_msetk(Parent):
             sage: c != Combinations((1,2,2,3), 2)
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def __repr__(self):
         """

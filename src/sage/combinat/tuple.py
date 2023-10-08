@@ -16,12 +16,10 @@ Tuples
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from itertools import product, combinations_with_replacement
 
 from sage.arith.misc import binomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation

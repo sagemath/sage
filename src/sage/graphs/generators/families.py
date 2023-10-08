@@ -2206,11 +2206,11 @@ def LCFGraph(n, shift_list, repeats):
     INPUT:
 
 
-    -  ``n`` - the number of nodes.
+    -  ``n`` -- the number of nodes.
 
-    -  ``shift_list`` - a list of integer shifts mod n.
+    -  ``shift_list`` -- a list of integer shifts mod `n`.
 
-    -  ``repeats`` - the number of times to repeat the
+    -  ``repeats`` -- the number of times to repeat the
        process.
 
 
@@ -3842,22 +3842,26 @@ def MathonPseudocyclicMergingGraph(M, t):
 
         sage: from sage.graphs.generators.families import MathonPseudocyclicMergingGraph as mer
         sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme as ES
-        sage: G = mer(ES(3), 0)                 # long time                             # needs sage.libs.gap
-        sage: G.is_strongly_regular(parameters=True)    # long time
+
+        sage: # long time, needs sage.libs.gap
+        sage: G = mer(ES(3), 0)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 243, 82, 72)
-        sage: G = mer(ES(3), 1)                 # long time                             # needs sage.libs.gap
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = mer(ES(3), 1)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 270, 98, 90)
-        sage: G = mer(ES(3), 2)                 # long time                             # needs sage.libs.gap
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = mer(ES(3), 2)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 297, 116, 110)
-        sage: G = mer(ES(2), 2)                                                         # needs sage.libs.gap
+        sage: G = mer(ES(2), 2)
         Traceback (most recent call last):
         ...
         AssertionError...
-        sage: M = ES(3)                                                                 # needs sage.libs.gap
-        sage: M = [M[1],M[0],M[2],M[3]]                                                 # needs sage.libs.gap
-        sage: G = mer(M, 2)                                                             # needs sage.libs.gap
+
+        sage: # needs sage.libs.gap
+        sage: M = ES(3)
+        sage: M = [M[1],M[0],M[2],M[3]]
+        sage: G = mer(M, 2)
         Traceback (most recent call last):
         ...
         AssertionError...
@@ -4115,9 +4119,9 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     INPUT:
 
-    - ``n`` (integer)-- a prime power
+    - ``n`` (integer) -- a prime power
 
-    - ``d`` (integer)-- must be odd if `n` is odd
+    - ``d`` (integer) -- must be odd if `n` is odd
 
     - ``Phi`` is an optional parameter of the construction; it must be either
 
@@ -4135,7 +4139,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
       - ``'random'`` -- `\Sigma` is generated at random.
 
-    - ``verbose`` (Boolean) -- default is False. If ``True``, print progress information
+    - ``verbose`` (Boolean) -- default is ``False``. If ``True``, print progress information
 
     .. SEEALSO::
 

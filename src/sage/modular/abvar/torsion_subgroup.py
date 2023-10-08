@@ -222,7 +222,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             n = O[0]
             self._order = n
             return n
-        raise RuntimeError("Unable to compute order of torsion subgroup (it is in %s)"%O)
+        raise RuntimeError("Unable to compute order of torsion subgroup (it is in %s)" % O)
 
     def lattice(self):
         """
@@ -701,7 +701,7 @@ class QQbarTorsionSubgroup(Module):
             sage: J0(23).qbar_torsion_subgroup()._repr_()                               # needs sage.rings.number_field
             'Group of all torsion points in QQbar on Abelian variety J0(23) of dimension 2'
         """
-        return 'Group of all torsion points in QQbar on %s'%self.__abvar
+        return 'Group of all torsion points in QQbar on %s' % self.__abvar
 
     def field_of_definition(self):
         """

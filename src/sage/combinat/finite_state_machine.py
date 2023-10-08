@@ -1566,7 +1566,7 @@ class FSMState(SageObject):
             sage: A.is_final
             False
         """
-        return (self.final_word_out is not None)
+        return self.final_word_out is not None
 
     @is_final.setter
     def is_final(self, is_final):
@@ -9623,7 +9623,7 @@ class FiniteStateMachine(SageObject):
             return final_word_out
 
         for state in self.iter_states():
-            assert(not in_progress)
+            assert not in_progress
             # trailing_letters is an infinite iterator additionally
             # marking positions
             trailing_letters = itertools.cycle(enumerate(letters))

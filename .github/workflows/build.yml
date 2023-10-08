@@ -2,8 +2,11 @@ name: Build & Test
 
 on:
   pull_request:
+  merge_group:
   push:
-    branches: ['**']
+    branches:
+      - master
+      - develop
     # Ignore pushes on tags to prevent two uploads of codecov reports
     tags-ignore: ['**']
   workflow_dispatch:
@@ -38,7 +41,9 @@ jobs:
       - name: Store CI fixes in upstream artifact
         run: |
           mkdir -p upstream
-          git format-patch --stdout test_base > upstream/ci_fixes.patch
+          if git format-patch --stdout test_base > ci_fixes.patch; then
+            cp ci_fixes.patch upstream/
+          fi
       - uses: actions/upload-artifact@v3
         with:
           path: upstream

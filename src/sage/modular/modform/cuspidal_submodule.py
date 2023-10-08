@@ -92,7 +92,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             True
         """
         from sage.misc.verbose import verbose
-        verbose('creating cuspidal submodule of %s'%ambient_space)
+        verbose('creating cuspidal submodule of %s' % ambient_space)
         d = ambient_space._dim_cuspidal()
         V = ambient_space.module()
         G = [V.gen(i) for i in range(d)]
@@ -123,7 +123,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             sage: S = CuspForms(Gamma1(3),6); S._repr_()
             'Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3 for Congruence Subgroup Gamma1(3) of weight 6 over Rational Field'
         """
-        return "Cuspidal subspace of dimension %s of %s"%(self.dimension(), self.ambient_module())
+        return "Cuspidal subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
     def is_cuspidal(self):
         """
@@ -409,7 +409,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         else:
             prec = Integer(prec)
 
-        chars=self.group().characters_mod_H(sign=-1, galois_orbits=True)
+        chars = self.group().characters_mod_H(sign=-1, galois_orbits=True)
 
         B = []
         dim = 0
@@ -500,7 +500,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             [ 0  0  0  0  0 -1  0]
             [ 0  0  0  0  0  0 -1]
         """
-        chars=self.group().characters_mod_H(sign=-1, galois_orbits=True)
+        chars = self.group().characters_mod_H(sign=-1, galois_orbits=True)
         A = Matrix(QQ, 0, 0)
         for c in chars:
             chi = c.minimize_base_ring()
@@ -543,7 +543,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             True
 
         """
-        chars=self.group().characters_mod_H(sign=-1, galois_orbits=True)
+        chars = self.group().characters_mod_H(sign=-1, galois_orbits=True)
         A = Matrix(QQ, 0, 0)
         for c in chars:
             chi = c.minimize_base_ring()

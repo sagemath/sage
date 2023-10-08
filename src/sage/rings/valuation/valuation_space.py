@@ -592,7 +592,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 Rational Field
             """
             extensions = self.extensions(ring)
-            assert(extensions)
+            assert extensions
             if len(extensions) > 1:
                 raise ValueError("there is no unique extension of %r from %r to %r" % (self, self.domain(), ring))
             return extensions[0]
@@ -756,7 +756,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                     factor = ret
                     ret = delta
                     while any(other(ret) >= 0 for other in others[:i]):
-                        assert(others[i](ret) < 0)
+                        assert others[i](ret) < 0
                         ret *= factor
                 else:  # others[i](ret) > 0
                     # construct an element which approximates a unit with respect to others[i]
@@ -801,16 +801,16 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             numerator = self._weakly_separating_element(other)
             n = self(numerator)
             nn = other(numerator)
-            assert(n > 0)
-            assert(nn is not infinity)
-            if (nn < 0):
+            assert n > 0
+            assert nn is not infinity
+            if nn < 0:
                 return numerator
 
             denominator = other._weakly_separating_element(self)
             d = self(denominator)
             dd = other(denominator)
-            assert(dd > 0)
-            assert(d is not infinity)
+            assert dd > 0
+            assert d is not infinity
             if d < 0:
                 # The following may fail if denominator is not
                 # invertible in the domain, but we don't have a better
@@ -828,11 +828,11 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 # a/b > d/n and b/a > nn/dd
                 # which is
                 # dd/nn > a/b > d/n
-                assert(dd/nn > d/n)
+                assert dd / nn > d / n
                 from sage.rings.continued_fraction import continued_fraction
                 ab_cf = []
-                dn_cf = continued_fraction(d/n)
-                ddnn_cf = continued_fraction(dd/nn)
+                dn_cf = continued_fraction(d / n)
+                ddnn_cf = continued_fraction(dd / nn)
                 for i, (x,y) in enumerate(zip(dn_cf, ddnn_cf)):
                     if x == y:
                         ab_cf.append(x)
@@ -851,8 +851,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 a,b = ab.numerator(), ab.denominator()
 
             ret = self.domain()(numerator**a / denominator**b)
-            assert(self(ret) > 0)
-            assert(other(ret) < 0)
+            assert (self(ret) > 0)
+            assert (other(ret) < 0)
             return ret
 
         def _weakly_separating_element(self, other):

@@ -255,7 +255,7 @@ Distribution of avalanche sizes::
     ....:     m, f = m.stabilize(True)
     ....:     a.append(sum(f.values()))
 
-    sage: # needs sage.plot sage.symbolic
+    sage: # needs sage.plot
     sage: p = list_plot([[log(i + 1), log(a.count(i))]
     ....:                for i in [0..max(a)] if a.count(i)])
     sage: p.axes_labels(['log(N)', 'log(D(N))'])
@@ -2753,7 +2753,7 @@ class Sandpile(DiGraph):
         EXAMPLES::
 
             sage: S = Sandpile({0: {}, 1: {2: 2}, 2: {0: 4, 1: 1}}, 0)
-            sage: Z = S.solve()                                                         # needs sage.libs.singular
+            sage: Z = S.solve(); Z                                                      # needs sage.libs.singular
             [[-0.707107000000000 + 0.707107000000000*I,
               0.707107000000000 - 0.707107000000000*I],
              [-0.707107000000000 - 0.707107000000000*I,
@@ -3786,7 +3786,7 @@ class SandpileConfig(dict):
             ....:     m, f = m.stabilize(True)
             ....:     a.append(sum(f.values()))
 
-            sage: # needs sage.plot sage.symbolic
+            sage: # needs sage.plot
             sage: p = list_plot([[log(i + 1), log(a.count(i))]
             ....:                for i in [0..max(a)] if a.count(i)])
             sage: p.axes_labels(['log(N)', 'log(D(N))'])

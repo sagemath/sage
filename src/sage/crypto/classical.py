@@ -3645,7 +3645,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         """
         S = self.key_space()
         n = S.ngens()
-        return S([ (-i)%(n) for i in K._element_list ])
+        return S([ (-i) % (n) for i in K._element_list ])
 
     def encoding(self, M):
         """

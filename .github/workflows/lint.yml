@@ -1,6 +1,12 @@
 name: Lint
 
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - master
+      - develop
+  pull_request: 
+  merge_group:
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch

@@ -2,7 +2,7 @@
 """
 Dancing links C++ wrapper
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,13 +14,14 @@ Dancing links C++ wrapper
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # OneExactCover and AllExactCovers are almost exact copies of the
 # functions with the same name in sage/combinat/dlx.py by Tom Boothby.
 
 from .dancing_links import dlx_solver
+
 
 def DLXCPP(rows):
     """
@@ -86,6 +87,7 @@ def DLXCPP(rows):
     while x.search():
         yield x.get_solution()
 
+
 def AllExactCovers(M):
     """
     Solves the exact cover problem on the matrix M (treated as a dense
@@ -112,6 +114,7 @@ def AllExactCovers(M):
         rows.append(row)
     for s in DLXCPP(rows):
         yield [M.row(i) for i in s]
+
 
 def OneExactCover(M):
     """

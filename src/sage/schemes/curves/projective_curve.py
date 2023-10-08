@@ -2010,7 +2010,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         .. note::
 
             The Brill-Noether package does not always work (i.e., the
-            'bn' algorithm. When it fails a RuntimeError exception is
+            'bn' algorithm. When it fails a :class:`RuntimeError` exception is
             raised.
         """
         f = self.defining_polynomial()._singular_()
@@ -2151,7 +2151,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         .. NOTE::
 
            The Brill-Noether package does not always work (i.e., the 'bn'
-           algorithm. When it fails a RuntimeError exception is raised.
+           algorithm. When it fails a :class:`RuntimeError` exception is raised.
 
         EXAMPLES::
 

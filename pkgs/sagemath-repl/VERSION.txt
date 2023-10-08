@@ -1,1 +1,1 @@
-../../src/VERSION.txt
+10.2.beta6

@@ -322,7 +322,7 @@ def walsh_matrix(m0):
     if m > 1:
         row2 = [x.list() for x in walsh_matrix(m-1).augment(walsh_matrix(m-1)).rows()]
         return matrix(GF(2), m, 2**m, [[0]*2**(m-1) + [1]*2**(m-1)] + row2)
-    raise ValueError("%s must be an integer > 0."%m0)
+    raise ValueError("%s must be an integer > 0." % m0)
 
 ##################### main constructions #####################
 
@@ -357,7 +357,7 @@ def DuadicCodeEvenPair(F,S1,S2):
     from .cyclic_code import CyclicCode
     n = len(S1) + len(S2) + 1
     if not _is_a_splitting(S1,S2,n):
-        raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
+        raise TypeError("%s, %s must be a splitting of %s." % (S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
     FF = GF(q**k,"z")
@@ -407,7 +407,7 @@ def DuadicCodeOddPair(F,S1,S2):
     from .cyclic_code import CyclicCode
     n = len(S1) + len(S2) + 1
     if not _is_a_splitting(S1,S2,n):
-        raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
+        raise TypeError("%s, %s must be a splitting of %s." % (S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
     FF = GF(q**k,"z")

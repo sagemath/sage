@@ -501,7 +501,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
                     raise ValueError("{} is normal to {}".format(u.display(), self._name))
                 rig.append(u)
                 l2 += 1
-        if l1+l2!=self._codim:
+        if l1+l2 != self._codim:
             raise ValueError("length of the transverse must be {}".format(self._codim))
         self._transverse['normal'] = tuple(nor)
         self._transverse['rigging'] = tuple(rig)
@@ -559,12 +559,12 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         else:
             rad = [rad]
         if name in self._screens:
-            if list(screen)==self._screens[name]._screen and list(rad)==self._screens[name]._rad:
+            if list(screen) == self._screens[name]._screen and list(rad) == self._screens[name]._rad:
                 return self._screens[name]
             else:
                 raise ValueError("a different screen distribution with the "
                                  "same name had already been set")
-        if len(screen)+len(rad)!=self._dim:
+        if len(screen)+len(rad) != self._dim:
             raise ValueError("total length screen+rad must be {}".format(self._dim))
         frame = self.default_frame()
         im = self.immersion()
@@ -626,7 +626,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             submanifold S embedded in 4-dimensional differentiable manifold M
 
         """
-        if self._induced_metric is None or self._induced_metric._components=={}:
+        if self._induced_metric is None or self._induced_metric._components == {}:
             self._induced_metric = self.metric()
             self._induced_metric.set(
                                self.immersion().pullback(self.ambient_metric()))
@@ -742,7 +742,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             rig = self._transverse['rigging']
         else:
             raise ValueError("set first a screen distribution")
-        if self._codim==1:
+        if self._codim == 1:
             xi = rad[0]
             v = rig[0]
             g = self.ambient_metric()
@@ -834,7 +834,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         self.set_change_of_frame(f.along(self.immersion()), e.along(
                   self.immersion()), GLHPhi(A.along(self.immersion())))
         b = e.dual_basis()
-        if self._codim==1:
+        if self._codim == 1:
             if not self._adapted_frame:
                 e[self._dim-self._sindex].set_name('N')
             else:
@@ -894,7 +894,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         """
         e = self._adapted_frame_(screen).along(self.immersion())
         b = e.dual_basis()
-        if self._codim==1:
+        if self._codim == 1:
             if not self._adapted_frame:
                 e[self._dim-self._sindex].set_name('N')
             else:
@@ -960,7 +960,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         """
         if self._ambient._dim-self._dim != 1:
-            raise ValueError("'second_fundamental_form' is defined"+
+            raise ValueError("'second_fundamental_form' is defined" +
                                       " only for hypersurfaces.")
         if screen is None:
             screen = self.default_screen()
@@ -1019,7 +1019,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: U1 = S.projection(U)             # long time
 
         """
-        if tensor.tensor_type()[0]!=1:
+        if tensor.tensor_type()[0] != 1:
             raise NotImplementedError("``projection`` is implemented only for "
                                       "tensors with 1 as contravariant order")
         return TangentTensor(tensor, self.immersion(), screen)
@@ -1062,8 +1062,8 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: U1 = S.screen_projection(U);     # long time
 
         """
-        if tensor.tensor_type()[0]!=1:
-            raise NotImplementedError("``projection`` is implemented only for "+
+        if tensor.tensor_type()[0] != 1:
+            raise NotImplementedError("``projection`` is implemented only for " +
                                       "tensors with 1 as contravariant order")
         frame = self.adapted_frame(screen)
         T = tensor.copy()
@@ -1300,7 +1300,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         """
         if self._codim != 1:
-            raise ValueError("'principal directions' is defined"+
+            raise ValueError("'principal directions' is defined" +
                                       " only for hypersurfaces.")
         if screen is None:
             screen = self.default_screen()
@@ -1317,7 +1317,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             for eigen_vector in eigen_space[1]:
                 v = self._ambient.vector_field(name="e_{}".format(next(counter))
                                                             ).along(self.immersion())
-                v[frame, :] = [elt for elt in eigen_vector]+ [0]
+                v[frame, :] = [elt for elt in eigen_vector] + [0]
                 res.append((TangentTensor(v, self.immersion()), self.scalar_field(
                   {chart: eigen_space[0] for chart in self.top_charts()})))
                 #res[-1][0].set_name("e_{}".format(next(counter)))
@@ -1368,7 +1368,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         """
         if self._codim != 1:
-            raise ValueError("'mean_curvature' is defined"+
+            raise ValueError("'mean_curvature' is defined" +
                     " only for hypersurfaces.")
         if screen is None:
             screen = self.default_screen()
@@ -1651,7 +1651,7 @@ class Screen(VectorFieldModule):
 
         """
         rad = [elt.along(self._domain.immersion()) for elt in self._rad]
-        if self._domain._codim==1:
+        if self._domain._codim == 1:
             xi = rad[0]
             xi.set_name(name='xi', latex_name=r'\xi')
             return xi
@@ -1696,7 +1696,7 @@ class Screen(VectorFieldModule):
         """
         im = self._domain.immersion()
         rig = [elt.along(im) for elt in self._domain._transverse['rigging']]
-        if self._domain._codim!=1:
+        if self._domain._codim != 1:
             return rig
         xi = self.normal_tangent_vector()
         v = rig[0]

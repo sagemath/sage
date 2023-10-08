@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-symbolics
-"""
+r"""
 Symbolic Series
 
 Symbolic series are special kinds of symbolic expressions that are

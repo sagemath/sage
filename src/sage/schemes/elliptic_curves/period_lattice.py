@@ -815,14 +815,14 @@ class PeriodLattice_ell(PeriodLattice):
         """
         return self.real_flag != 0
 
-    def is_rectangular(self):
+    def is_rectangular(self) -> bool:
         r"""
         Return ``True`` if this period lattice is rectangular.
 
         .. NOTE::
 
-            Only defined for real lattices; a :class:`RuntimeError` is raised for
-            non-real lattices.
+            Only defined for real lattices; a :class:`RuntimeError`
+            is raised for non-real lattices.
 
         EXAMPLES::
 
@@ -866,8 +866,8 @@ class PeriodLattice_ell(PeriodLattice):
 
         .. NOTE::
 
-            Only defined for real lattices; a :class:`RuntimeError` is raised for
-            non-real lattices.
+            Only defined for real lattices; a :class:`RuntimeError`
+            is raised for non-real lattices.
 
         EXAMPLES::
 

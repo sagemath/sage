@@ -4843,7 +4843,7 @@ class GenericGraph(GenericGraph_pyx):
             [(0, 2, 10), (1, 2, 1)]
             sage: Graph(g.min_spanning_tree(algorithm='Prim_Boost', weight_function=weight)).edges(sort=True)
             [(0, 2, 10), (1, 2, 1)]
-            sage: Graph(g.min_spanning_tree(algorithm='NetworkX', weight_function=weight)).edges(sort=True)   # needs networkx
+            sage: Graph(g.min_spanning_tree(algorithm='NetworkX', weight_function=weight)).edges(sort=True)             # needs networkx
             [(0, 2, 10), (1, 2, 1)]
 
         If the graph is directed, it is transformed into an undirected graph::
@@ -20923,7 +20923,7 @@ class GenericGraph(GenericGraph_pyx):
 
         The following illustrates the format of a position dictionary::
 
-            sage: G.get_pos() # currently random across platforms, see #9593            # needs sage.plot
+            sage: G.get_pos()  # currently random across platforms, see #9593           # needs sage.plot
             {0: [1.17..., -0.855...],
              1: [1.81..., -0.0990...],
              2: [1.35..., 0.184...],
@@ -23186,9 +23186,9 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        We get a KeyError when given an invalid partition (:trac:`6087`)::
+        We get a :class:`KeyError` when given an invalid partition (:trac:`6087`)::
 
-            sage: g=graphs.CubeGraph(3)
+            sage: g = graphs.CubeGraph(3)
             sage: g.relabel()
             sage: g.automorphism_group(partition=[[0,1,2],[3,4,5]],algorithm='sage')    # needs sage.groups
             Traceback (most recent call last):

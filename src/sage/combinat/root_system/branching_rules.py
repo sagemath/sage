@@ -1126,7 +1126,7 @@ class BranchingRule(SageObject):
             sage: b1 != b2
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def __mul__(self, other):
         """

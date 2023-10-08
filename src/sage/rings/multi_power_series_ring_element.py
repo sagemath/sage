@@ -1955,7 +1955,7 @@ class MPowerSeries(PowerSeries):
         if x.is_zero():
             return exp_c
         val = x.valuation()
-        assert(val >= 1)
+        assert (val >= 1)
 
         prec = min(prec, self.prec())
         if is_Infinite(prec):
@@ -2052,7 +2052,7 @@ class MPowerSeries(PowerSeries):
         if x.is_zero():
             return log_c
         val = x.valuation()
-        assert(val >= 1)
+        assert (val >= 1)
 
         prec = min(prec, self.prec())
         if is_Infinite(prec):
