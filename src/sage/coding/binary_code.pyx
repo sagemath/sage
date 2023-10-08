@@ -3666,10 +3666,9 @@ cdef class BinaryCodeClassifier:
                     if Theta.wd_min_cell_rep[Theta.wd_find(i)] == i:
                         state = 11
                         continue
-                else:
-                    if Theta.col_min_cell_rep[Theta.col_find(tvc)] == tvc:
-                        state = 11
-                        continue
+                elif Theta.col_min_cell_rep[Theta.col_find(tvc)] == tvc:
+                    state = 11
+                    continue
 
                 # Otherwise, proceed to where zeta meets nu:
                 k = h

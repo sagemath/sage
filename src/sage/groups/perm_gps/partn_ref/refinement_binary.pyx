@@ -477,11 +477,11 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
     def run(self, partition=None):
         """
         Perform the canonical labeling and automorphism group computation,
-        storing results to self.
+        storing results to ``self``.
 
         INPUT:
 
-        - partition -- an optional list of lists partition of the columns.
+        - ``partition`` -- an optional list of lists partition of the columns.
           default is the unit partition.
 
         EXAMPLES::
