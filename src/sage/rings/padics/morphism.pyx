@@ -157,7 +157,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             sage: Frob._repr_short()
             'Frob'
         """
-        name = self.domain().variable_name()
         if self._power == 0:
             s = "Identity"
         elif self._power == 1:

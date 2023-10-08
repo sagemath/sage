@@ -1579,7 +1579,7 @@ class Permutation(CombinatorialElement):
             i, j = 0, 0
             ivC = []
             lA, lB = len(A), len(B)
-            while(i < lA and j < lB):
+            while i < lA and j < lB:
                 if B[j] < A[i]:
                     C.append(B[j])
                     ivC.append(ivB[j] + lA - i)
@@ -2267,7 +2267,7 @@ class Permutation(CombinatorialElement):
         """
         n = self.size()
         if n == 0:
-            return([[]])
+            return [[]]
 
         from bisect import insort, bisect
 
@@ -5396,7 +5396,7 @@ def _tableau_contribution(T):
         3
     """
     from sage.combinat.tableau import StandardTableaux
-    return(StandardTableaux(T.shape()).cardinality())
+    return (StandardTableaux(T.shape()).cardinality())
 
 ################################################################
 # Parent classes

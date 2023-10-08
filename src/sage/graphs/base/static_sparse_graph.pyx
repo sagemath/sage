@@ -925,7 +925,7 @@ def triangles_count(G):
         sage: from sage.graphs.base.static_sparse_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
-        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)           # needs sage.symbolic
         True
     """
     from sage.rings.integer import Integer
@@ -1023,8 +1023,8 @@ def spectral_radius(G, prec=1e-10):
 
         sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(2,4),(3,4)])
         sage: e_min, e_max = spectral_radius(G, 1e-14)
-        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # needs sage.modules
-        sage: e_min < e < e_max                                                         # needs sage.modules
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # needs sage.modules sage.rings.number_field
+        sage: e_min < e < e_max                                                         # needs sage.modules sage.rings.number_field sage.symbolic
         True
 
         sage: G.spectral_radius()  # abs tol 1e-9
@@ -1041,8 +1041,8 @@ def spectral_radius(G, prec=1e-10):
         sage: p = G.adjacency_matrix(sparse=True).charpoly()
         sage: p
         x^201 - x^199 - 1
-        sage: r = p.roots(AA, multiplicities=False)[0]
-        sage: e_min < r < e_max
+        sage: r = p.roots(AA, multiplicities=False)[0]                                  # needs sage.rings.number_field
+        sage: e_min < r < e_max                                                         # needs sage.rings.number_field
         True
 
     A much larger example::
@@ -1061,7 +1061,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.add_edges([(0,0),(0,0),(0,1),(1,0)])
         sage: spectral_radius(G, 1e-14)  # abs tol 1e-14
         (2.414213562373094, 2.414213562373095)
-        sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # needs sage.modules
+        sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # needs sage.modules sage.rings.number_field
         2.414213562373095?
 
     Some bipartite graphs::
@@ -1092,7 +1092,7 @@ def spectral_radius(G, prec=1e-10):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):                                                      # needs sage.modules
+        sage: for _ in range(100):                                                      # needs sage.modules sage.rings.number_field
         ....:     G = digraphs.RandomDirectedGNM(10,35)
         ....:     if not G.is_strongly_connected():
         ....:         continue

@@ -1283,7 +1283,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         p = self.prime()
         r = ZZ(x.norm().valuation(p) / 2)
         y = x / p**r
-        if p==2 and y.trace().valuation(2) < 1:
+        if p == 2 and y.trace().valuation(2) < 1:
             raise ValueError("%s not congruent mod %s to an elt of Qp" % (x, self.ideal(level)))
         Y = (y.trace() / 2) % self.ideal(level).smallest_integer()
         X = p**r * Y

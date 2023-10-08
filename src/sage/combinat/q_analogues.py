@@ -67,10 +67,9 @@ def q_int(n, q=None):
 
         sage: q_int(0, 3r)
         0
-
     """
     if n not in ZZ:
-        raise ValueError('%s must be an integer' % n)
+        raise ValueError(f'{n} must be an integer')
 
     if q is None:
         q = ZZ['q'].gen()
@@ -78,7 +77,7 @@ def q_int(n, q=None):
         return parent(q)(0)
     if n > 0:
         return sum(q**i for i in range(n))
-    return -q**n*sum(q**i for i in range(-n))
+    return -q**n * sum(q**i for i in range(-n))
 
 
 def q_factorial(n, q=None):
@@ -211,7 +210,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         2
         sage: q_binomial(4,2,3.14)
         152.030056160000
-        sage: R = GF(25, 't')
+        sage: R = GF((5, 2), 't')
         sage: t = R.gen(0)
         sage: q_binomial(6, 3, t)
         2*t + 3
@@ -355,12 +354,12 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     # the algorithms
     while algorithm == 'naive':
-        denom = prod(one - q**i for i in range(1, k+1))
+        denom = prod(one - q**i for i in range(1, k + 1))
         if not denom:  # q is a root of unity, use the cyclotomic algorithm
             algorithm = 'cyclotomic'
             break
         else:
-            num = prod(one - q**i for i in range(n-k+1, n+1))
+            num = prod(one - q**i for i in range(n - k + 1, n + 1))
             try:
                 try:
                     return num // denom
@@ -452,9 +451,15 @@ def q_multinomial(seq, q=None, binomial_algorithm='auto'):
 gaussian_multinomial = q_multinomial
 
 
-def q_catalan_number(n, q=None):
+def q_catalan_number(n, q=None, m=1):
     """
     Return the `q`-Catalan number of index `n`.
+
+    INPUT:
+
+    - ``q`` -- optional variable
+
+    - ``m`` -- (optional integer) to get instead the ``m``-Fuss-Catalan numbers
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
@@ -467,9 +472,15 @@ def q_catalan_number(n, q=None):
         sage: from sage.combinat.q_analogues import q_catalan_number
         sage: q_catalan_number(4)
         q^12 + q^10 + q^9 + 2*q^8 + q^7 + 2*q^6 + q^5 + 2*q^4 + q^3 + q^2 + 1
+
         sage: p = ZZ['p'].0
-        sage: q_catalan_number(4,p)
+        sage: q_catalan_number(4, p)
         p^12 + p^10 + p^9 + 2*p^8 + p^7 + 2*p^6 + p^5 + 2*p^4 + p^3 + p^2 + 1
+
+        sage: q_catalan_number(3, m=2)
+        q^12 + q^10 + q^9 + q^8 + q^7 + 2*q^6 + q^5 + q^4 + q^3 + q^2 + 1
+
+    TESTS:
 
     The `q`-Catalan number of index `n` is only defined for `n` a
     nonnegative integer (:trac:`11411`)::
@@ -479,8 +490,6 @@ def q_catalan_number(n, q=None):
         ...
         ValueError: argument (-2) must be a nonnegative integer
 
-    TESTS::
-
         sage: q_catalan_number(3).parent()
         Univariate Polynomial Ring in q over Integer Ring
         sage: q_catalan_number(0).parent()
@@ -489,10 +498,12 @@ def q_catalan_number(n, q=None):
     if n in ZZ:
         if n in {0, 1}:
             return q_int(1, q)
-        elif n >= 2:
-            return (prod(q_int(j, q) for j in range(n + 2, 2 * n + 1)) //
-                    prod(q_int(j, q) for j in range(2, n + 1)))
-    raise ValueError("argument (%s) must be a nonnegative integer" % n)
+        if n >= 2:
+            return (prod(q_int(j, q)
+                         for j in range(m * n + 2, (m + 1) * n + 1)) //
+                    prod(q_int(j, q)
+                         for j in range(2, n + 1)))
+    raise ValueError(f"argument ({n}) must be a nonnegative integer")
 
 
 def qt_catalan_number(n):
@@ -800,7 +811,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
        Mathematical Society 101, no. 4 (1987): 771-775.
        :doi:`10.1090/S0002-9939-1987-0911049-8`
 
-    .. [Delsarte48] \S. Delsarte, *Fonctions de Möbius Sur Les Groupes Abeliens
+    .. [Delsarte48] \S. Delsarte, *Fonctions de Möbius Sur Les Groupes Abéliens
        Finis*, Annals of Mathematics, second series, Vol. 45, No. 3, (Jul 1948),
        pp. 600-609. http://www.jstor.org/stable/1969047
 
@@ -822,7 +833,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
 
     if algorithm == 'delsarte':
         def F(args):
-            prd = lambda j: prod(args[j]-q**i for i in range(mu_c[j+1],mu_c[j]))
+            prd = lambda j: prod(args[j]-q**i for i in range(mu_c[j+1], mu_c[j]))
             F1 = prod(args[i]**mu_c[i+1] * prd(i) for i in range(k-1))
             return F1 * prod(args[k-1]-q**i for i in range(mu_c[k-1]))
 
@@ -866,7 +877,7 @@ def q_stirling_number1(n, k, q=None):
         q^3 + 3*q^2 + 4*q + 3
 
         sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)
-        ....:     for k in range(1,7))
+        ....:     for k in range(1,6))
         True
 
         sage: x = polygen(QQ['q'],'x')

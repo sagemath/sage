@@ -292,11 +292,11 @@ class Subwords_w(Parent):
             sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
-            ....:       assert(not w)
+            ....:       assert not w
             sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
-            ....:       assert(not w)
+            ....:       assert not w
         """
         return self._build(elt for elt in self._w if prandom.randint(0, 1))
 
@@ -465,11 +465,11 @@ class Subwords_wk(Subwords_w):
             sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
-            ....:       assert(not w)
+            ....:       assert not w
             sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
-            ....:       assert(not w)
+            ....:       assert not w
         """
         sample = prandom.sample(self._w, self._k)
         if self._build is list:

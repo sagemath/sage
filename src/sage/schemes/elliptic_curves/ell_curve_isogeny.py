@@ -69,7 +69,10 @@ AUTHORS:
   use of univariate vs. bivariate polynomials and rational functions.
 
 - Lorenz Panny (2022-04): major cleanup of code and documentation
+
 - Lorenz Panny (2022): inseparable duals
+
+- Rémy Oudompheng (2023): implementation of the BMSS algorithm
 """
 
 # ****************************************************************************
@@ -79,7 +82,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
+from copy import copy, deepcopy
 
 from sage.structure.sequence import Sequence
 
@@ -1432,7 +1435,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: negphi.rational_maps()
             ((x^2 + (-a)*x - 2)/(x + (-a)), (-x^2*y + (2*a)*x*y - y)/(x^2 + (-2*a)*x - 1))
         """
-        output = copy(self)
+        output = deepcopy(self)
         output._set_post_isomorphism(negation_morphism(output._codomain))
         return output
 
@@ -3313,18 +3316,92 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             NotImplemented
         """
         if isinstance(left, WeierstrassIsomorphism) and isinstance(right, EllipticCurveIsogeny):
-            result = copy(right)
+            result = deepcopy(right)
             result._set_post_isomorphism(left)
             return result
 
         if isinstance(left, EllipticCurveIsogeny) and isinstance(right, WeierstrassIsomorphism):
             assert isinstance(left, EllipticCurveIsogeny)
-            result = copy(left)
+            result = deepcopy(left)
             result._set_pre_isomorphism(right)
             return result
 
         return NotImplemented
 
+
+def compute_isogeny_bmss(E1, E2, l):
+    r"""
+    Compute the kernel polynomial of the unique normalized isogeny
+    of degree ``l`` between ``E1`` and ``E2``.
+
+    Both curves must be given in short Weierstrass form, and the
+    characteristic must be either `0` or no smaller than `4l+4`.
+
+    ALGORITHM: [BMSS2006]_, algorithm *fastElkies'*.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_bmss
+        sage: E1 = EllipticCurve(GF(167), [153, 112])
+        sage: E2 = EllipticCurve(GF(167), [56, 40])
+        sage: compute_isogeny_bmss(E1, E2, 13)
+        x^6 + 139*x^5 + 73*x^4 + 139*x^3 + 120*x^2 + 88*x
+    """
+    # Original author of this function: Rémy Oudompheng.
+    # https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332
+    # Released under the MIT license: https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/LICENSE
+    # Slightly adjusted for inclusion in the Sage library.
+    if E1.a1() or E1.a2() or E1.a3():
+        raise ValueError('E1 must be a short Weierstrass curve')
+    if E2.a1() or E2.a2() or E2.a3():
+        raise ValueError('E2 must be a short Weierstrass curve')
+    char = E1.base_ring().characteristic()
+    if char != 0 and char < 4*l + 4:
+        raise ValueError('characteristic must be at least 4*degree+4')
+    Rx, x = E1.base_ring()["x"].objgen()
+    # Compute C = 1/(1 + Ax^4 + Bx^6) mod x^4l
+    A, B = E1.a4(), E1.a6()
+    C = (1 + A * x**4 + B * x**6).inverse_series_trunc(4 * l)
+    # Solve differential equation
+    # The number of terms doubles at each iteration.
+    # S'^2 = G(x,S) = (1 + A2 S^4 + B2 S^6) / (1 + Ax^4 + Bx^6)
+    # S = x + O(x^2)
+    A2, B2 = E2.a4(), E2.a6()
+    S = x + (A2 - A) / 10 * x**5 + (B2 - B) / 14 * x**7
+    sprec = 8
+    while sprec < 4 * l:
+        assert sprec % 2 == 0
+        if sprec > 2 * l:
+            sprec = 2 * l
+        # s1 => s1 + x^k s2
+        # 2 s1' s2' - dG/dS(x, s1) s2 = G(x, s1) - s1'2
+        s1 = S
+        ds1 = s1.derivative()
+        s1pows = [1, s1]
+        while len(s1pows) < 7:
+            s1pows.append(s1._mul_trunc_(s1pows[-1], 2 * sprec))
+        GS = C * (1 + A2 * s1pows[4] + B2 * s1pows[6])
+        dGS = C * (4 * A2 * s1pows[3] + 6 * B2 * s1pows[5])
+        # s2' = (dGS / 2s1') s2 + (G(x, s1) - s1'2) / (2s1')
+        denom = (2 * ds1).inverse_series_trunc(2 * sprec)
+        a = dGS._mul_trunc_(denom, 2 * sprec)
+        b = (GS - ds1**2)._mul_trunc_(denom, 2 * sprec)
+        s2 = a.add_bigoh(2 * sprec).solve_linear_de(prec=2 * sprec, b=b, f0=0)
+        S = s1 + Rx(s2)
+        sprec = 2 * sprec
+    # Reconstruct:
+    # S = x * T(x^2)
+    # Compute U = 1/T^2
+    # Reconstruct N(1/x) / D(1/x) = U
+    T = Rx([S[2 * i + 1] for i in range(2 * l)])
+    U = T._mul_trunc_(T, 2 * l).inverse_series_trunc(2 * l)
+    _, Q = Rx(U).rational_reconstruction(x ** (2 * l), l, l)
+    Q = Q.add_bigoh((l + 1) // 2)
+    if not Q.is_square():
+        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {l}")
+    Q = Q.sqrt()
+    ker = Rx(Q).reverse(degree=l//2)
+    return ker.monic()
 
 def compute_isogeny_stark(E1, E2, ell):
     r"""
@@ -3437,10 +3514,11 @@ def compute_isogeny_stark(E1, E2, ell):
 from sage.misc.superseded import deprecated_function_alias
 compute_isogeny_starks = deprecated_function_alias(34871, compute_isogeny_stark)
 
-def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="stark"):
+
+def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
     r"""
-    Return the kernel polynomial of an isogeny of degree ``ell``
-    from ``E1`` to ``E2``.
+    Return the kernel polynomial of a cyclic, separable, normalized
+    isogeny of degree ``ell`` from ``E1`` to ``E2``.
 
     INPUT:
 
@@ -3450,7 +3528,9 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="stark"):
 
     - ``ell``       -- the degree of an isogeny from ``E1`` to ``E2``
 
-    - ``algorithm`` -- currently only ``"stark"`` (default) is implemented
+    - ``algorithm`` -- ``None`` (default, choose automatically) or
+                       ``"bmss"`` (:func:`compute_isogeny_bmss`) or
+                       ``"stark"`` (:func:`compute_isogeny_stark`)
 
     OUTPUT:
 
@@ -3507,9 +3587,19 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="stark"):
         from sage.misc.superseded import deprecation
         deprecation(34871, 'The "starks" algorithm is being renamed to "stark".')
         algorithm = 'stark'
-    if algorithm != "stark":
-        raise NotImplementedError(f'unknown algorithm {algorithm}')
-    return compute_isogeny_stark(E1, E2, ell).radical()
+
+    if algorithm is None:
+        char = E1.base_ring().characteristic()
+        if char != 0 and char < 4*ell + 4:
+            raise NotImplementedError(f'no algorithm for computing kernel polynomial from domain and codomain is implemented for degree {ell} and characteristic {char}')
+        algorithm = 'stark' if ell < 10 else 'bmss'
+
+    if algorithm == 'bmss':
+        return compute_isogeny_bmss(E1, E2, ell)
+    if algorithm == 'stark':
+        return compute_isogeny_stark(E1, E2, ell).radical()
+
+    raise NotImplementedError(f'unknown algorithm {algorithm}')
 
 def compute_intermediate_curves(E1, E2):
     r"""

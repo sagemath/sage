@@ -240,9 +240,9 @@ class PseudolineArrangement:
             self._n = max(map(max, seq)) + 1
             if (self._n * (self._n-1))/2 != len(seq):
                 raise ValueError(
-                    "A line is numbered "+str(self._n-1)+" but the number"+
-                    " of transpositions is different from binomial("+
-                    str(self._n-1)+",2). Are the lines numbered from 0 to n-1?"+
+                    "A line is numbered "+str(self._n-1)+" but the number" +
+                    " of transpositions is different from binomial(" +
+                    str(self._n-1)+",2). Are the lines numbered from 0 to n-1?" +
                     " Are they really non-parallel? Please check the documentation.")
 
             self._permutations = [[] for i in range(self._n)]
@@ -258,12 +258,12 @@ class PseudolineArrangement:
             self._n = len(seq)
             self._permutations = [list(_) for _ in seq]
 
-            if max(map(max, seq)) != self._n -1 :
+            if max(map(max, seq)) != self._n - 1 :
                 raise ValueError("Are the lines really numbered from 0 to n-1?")
 
         # Felsner encoding
         elif (encoding == "Felsner" or
-            (encoding == "auto" and len(seq[0]) == len(seq) -1)):
+            (encoding == "auto" and len(seq[0]) == len(seq) - 1)):
 
             seq = deepcopy(seq)
             self._n = len(seq)
@@ -339,14 +339,14 @@ class PseudolineArrangement:
             k = 0
             while i != perm[perm[i][0]][0]:
                 i = perm[i][0]
-                k+= 1
+                k += 1
 
                 if k > self._n:
                     raise ValueError(
-                        "It looks like the data does not correspond to a"+
-                        "pseudoline arrangement. We have found k>2 lines"+
-                        "such that the ith line meets the (i+1)th before"+
-                        " the (i-1)th (this creates a cyclic dependency)"+
+                        "It looks like the data does not correspond to a" +
+                        "pseudoline arrangement. We have found k>2 lines" +
+                        "such that the ith line meets the (i+1)th before" +
+                        " the (i-1)th (this creates a cyclic dependency)" +
                         " which is totally impossible.")
 
             t.append((i, perm[i][0]))
@@ -446,10 +446,10 @@ class PseudolineArrangement:
 
             if abs(iy-jy) != 1:
                 raise ValueError(
-                    "There has been a problem while plotting the figure. It "+
-                    "seems that the lines are not correctly ordered. Please "+
+                    "There has been a problem while plotting the figure. It " +
+                    "seems that the lines are not correctly ordered. Please " +
                     "check the pseudolines modules documentation, there is a "
-                    +"warning about that. ")
+                    + "warning about that. ")
 
             lines[i].append((x+2,jy))
             lines[j].append((x+2,iy))

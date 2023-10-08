@@ -217,10 +217,10 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             'Dynamical System of Projective Space of dimension 1 over Rational Field\n
               Defn: Defined on coordinates by sending (x : y) to\n        (x^3 : x*y^2)'
         """
-        s = "%s of %s"%(self._repr_type(), self.domain())
+        s = "%s of %s" % (self._repr_type(), self.domain())
         d = self._repr_defn()
         if d != '':
-            s += "\n  Defn: %s"%('\n        '.join(self._repr_defn().split('\n')))
+            s += "\n  Defn: %s" % ('\n        '.join(self._repr_defn().split('\n')))
         return s
 
     def as_scheme_morphism(self):

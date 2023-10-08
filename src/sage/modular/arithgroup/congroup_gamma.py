@@ -73,7 +73,7 @@ class Gamma_class(CongruenceSubgroup):
             sage: Gamma(133)._repr_()
             'Congruence Subgroup Gamma(133)'
         """
-        return "Congruence Subgroup Gamma(%s)"%self.level()
+        return "Congruence Subgroup Gamma(%s)" % self.level()
 
     def _latex_(self):
         r"""
@@ -86,7 +86,7 @@ class Gamma_class(CongruenceSubgroup):
             sage: latex(Gamma(20))
             \Gamma(20)
         """
-        return "\\Gamma(%s)"%self.level()
+        return "\\Gamma(%s)" % self.level()
 
     def __reduce__(self):
         """
@@ -154,7 +154,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         N = self.level()
         # don't need to check d == 1 as this is automatic from det
-        return ((a%N == 1) and (b%N == 0) and (c%N == 0))
+        return ((a % N == 1) and (b % N == 0) and (c % N == 0))
 
     def ncusps(self):
         r"""
@@ -170,9 +170,9 @@ class Gamma_class(CongruenceSubgroup):
             432345564227567616
         """
         n = self.level()
-        if n==1:
+        if n == 1:
             return ZZ(1)
-        if n==2:
+        if n == 2:
             return ZZ(3)
         return prod([p**(2*e) - p**(2*e-2) for (p,e) in n.factor()])//2
 
@@ -200,18 +200,18 @@ class Gamma_class(CongruenceSubgroup):
         n = self.level()
         C = [QQ(x) for x in range(n)]
 
-        n0=n//2
-        n1=(n+1)//2
+        n0 = n//2
+        n1 = (n+1)//2
 
         for r in range(1, n1):
-            if r > 1 and gcd(r,n)==1:
+            if r > 1 and gcd(r,n) == 1:
                 C.append(ZZ(r)/ZZ(n))
-            if n0==n/2 and gcd(r,n0)==1:
+            if n0 == n/2 and gcd(r,n0) == 1:
                 C.append(ZZ(r)/ZZ(n0))
 
         for s in range(2,n1):
             for r in range(1, 1+n):
-                if GCD_list([s,r,n])==1:
+                if GCD_list([s,r,n]) == 1:
                     # GCD_list is ~40x faster than gcd, since gcd wastes loads
                     # of time initialising a Sequence type.
                     u,v = _lift_pair(r,s,n)
