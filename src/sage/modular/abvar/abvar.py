@@ -525,15 +525,17 @@ class ModularAbelianVariety_abstract(Parent):
     def newform(self, names=None):
         """
         Return the newform `f` such that this abelian variety is isogenous to
-        the newform abelian variety `A_f`. If this abelian variety is not
-        simple, raise a ``ValueError``.
+        the newform abelian variety `A_f`.
+
+        If this abelian variety is not
+        simple, this raises a :class:`ValueError`.
 
         INPUT:
 
-        - ``names`` -- (default: None) If the newform has coefficients in a
-          number field, then a generator name must be specified.
+        - ``names`` -- (default: ``None``) If the newform has coefficients
+          in a number field, then a generator name must be specified.
 
-        OUTPUT: A newform `f` so that self is isogenous to `A_f`.
+        OUTPUT: A newform `f` so that ``self`` is isogenous to `A_f`.
 
         EXAMPLES::
 
@@ -580,9 +582,11 @@ class ModularAbelianVariety_abstract(Parent):
     def newform_label(self):
         """
         Return the label [level][isogeny class][group] of the newform
-        `f` such that this abelian variety is isogenous to the
-        newform abelian variety `A_f`. If this abelian variety is
-        not simple, raise a ValueError.
+        `f` such that this abelian variety is isogenous to the newform
+        abelian variety `A_f`.
+
+        If this abelian variety is not simple, this raises
+        a :class:`ValueError`.
 
         OUTPUT: string
 
@@ -687,8 +691,10 @@ class ModularAbelianVariety_abstract(Parent):
     def _isogeny_to_newform_abelian_variety(self):
         r"""
         Return an isogeny from self to an abelian variety `A_f`
-        attached to a newform. If self is not simple (so that no such
-        isogeny exists), raise a ValueError.
+        attached to a newform.
+
+        If self is not simple (so that no such
+        isogeny exists), this raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -733,13 +739,12 @@ class ModularAbelianVariety_abstract(Parent):
         """
         Given self and other, if both are simple, and correspond to the
         same newform with the same congruence subgroup, return an isogeny.
-        Otherwise, raise a ValueError.
+
+        Otherwise, this raises a :class:`ValueError`.
 
         INPUT:
 
-
-        -  ``self, other`` - modular abelian varieties
-
+        - ``self, other`` -- modular abelian varieties
 
         OUTPUT: an isogeny
 
@@ -3183,7 +3188,7 @@ class ModularAbelianVariety_abstract(Parent):
         `(t,N)`, where `N` is the ambient level and
         `t` is an integer that divides the quotient of `N`
         by the newform level. This function returns the tuple
-        `(t,N)`, or raises a ValueError if self isn't simple.
+        `(t,N)`, or raises a :class:`ValueError` if self is not simple.
 
         .. note::
 
@@ -3234,24 +3239,25 @@ class ModularAbelianVariety_abstract(Parent):
     def isogeny_number(self, none_if_not_known=False):
         """
         Return the number (starting at 0) of the isogeny class of new
-        simple abelian varieties that self is in. If self is not simple,
-        raises a ValueError exception.
+        simple abelian varieties that ``self`` is in.
+
+        If ``self`` is not simple,
+        this raises a :class:`ValueError` exception.
 
         INPUT:
 
+        -  ``none_if_not_known`` -- bool (default: ``False``); if
+           ``True`` then this function may return ``None`` instead of ``True``
+           or ``False`` if
+           we do not already know the isogeny number of ``self``.
 
-        -  ``none_if_not_known`` - bool (default: False); if
-           True then this function may return None instead of True of False if
-           we don't already know the isogeny number of self.
-
-
-        EXAMPLES: We test the none_if_not_known flag first::
+        EXAMPLES: We test the ``none_if_not_known`` flag first::
 
             sage: J0(33).isogeny_number(none_if_not_known=True) is None
             True
 
         Of course, `J_0(33)` is not simple, so this function
-        raises a ValueError::
+        raises a :class:`ValueError`::
 
             sage: J0(33).isogeny_number()
             Traceback (most recent call last):

@@ -121,7 +121,8 @@ if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0
 fi
-export SAGE_ENV_SOURCED="$SAGE_ENV_VERSION"
+# Set SAGE_ENV_SOURCED to the appropriate value at the end of this file, once
+# $SAGE_LOCAL, $SAGE_VENV, $SAGE_SRC have been set.
 
 # The compilers are set in order of priority by
 # 1) environment variables
@@ -643,3 +644,7 @@ fi
 # our doctests predictable (which was the status quo with earlier
 # versions of debugpy).
 export PYDEVD_DISABLE_FILE_VALIDATION=1
+
+# Finally, set SAGE_ENV_SOURCED as evidence that this script has been
+# run successfully.
+export SAGE_ENV_SOURCED="6:$SAGE_LOCAL:$SAGE_VENV:$SAGE_SRC"

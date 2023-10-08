@@ -354,9 +354,9 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: C = cartesian_product([ZZ, QQ, CC])
-                sage: e = C.random_element()
-                sage: len(e)
+                sage: C = cartesian_product([ZZ, QQ, CC])                               # needs sage.rings.real_mpfr
+                sage: e = C.random_element()                                            # needs sage.rings.real_mpfr
+                sage: len(e)                                                            # needs sage.rings.real_mpfr
                 3
             """
             return len(self.value)
@@ -368,7 +368,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: A = cartesian_product([ZZ, RR])
-                sage: A((1, 1.23)).cartesian_factors()
+                sage: A((1, 1.23)).cartesian_factors()                                  # needs sage.rings.real_mpfr
                 (1, 1.23000000000000)
                 sage: type(_)
                 <... 'tuple'>

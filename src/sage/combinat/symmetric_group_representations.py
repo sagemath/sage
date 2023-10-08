@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
 Representations of the Symmetric Group
 
@@ -627,7 +628,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
             [ 1/2  1/2]
         """
         from copy import copy
-        if not(1 <= i < sum(self._partition)):
+        if not (1 <= i < sum(self._partition)):
             raise TypeError
         Y = self._yang_baxter_graph
         index_lookup = {b: a for a, b in enumerate(list(Y))}

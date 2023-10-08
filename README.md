@@ -14,12 +14,32 @@
 
 https://www.sagemath.org
 
+[Sage Documentation](https://doc.sagemath.org/html/en/index.html)
+
 The Sage Library is free software released under the
 GNU General Public Licence GPLv2+, and included packages
 have [compatible software licenses](./COPYING.txt).
 [Over 800 people](https://www.sagemath.org/development-map.html)
 have contributed code to Sage. In many cases, documentation
 for modules and functions list the authors.
+
+Table of Contents
+-----------------
+
+* [Getting Started](#getting-started)
+* [Supported Platforms](#supported-platforms)
+* [\[Windows\] Preparing the Platform Libraries](#windows-preparing-the-platform)
+* [\[macOS\] Preparing the Platform Libraries](#macos-preparing-the-platform)
+* [Instructions to Build from Source](#instructions-to-build-from-source)
+* [SageMath Docker Images](#sagemath-docker-images)
+* [Troubleshooting](#troubleshooting)
+* [Contributing to Sage](#contributing-to-sage)
+* [Directory Layout](#directory-layout)
+* [Build System](#build-system)
+* [Relocation](#relocation)
+* [Redistribution](#redistribution)
+* [Build System](#build-system)
+* [Changes to Included Software](#changes-to-included-software)
 
 Getting Started
 ---------------
@@ -47,7 +67,7 @@ macOS, and Windows (using Windows Subsystem for Linux or
 virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
-can be found in the section "Availability and installation help" of the
+can be found in the section _Availability and installation help_ of the
 [release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
 
 We highly appreciate contributions to Sage that fix portability bugs
@@ -64,13 +84,13 @@ your Windows. Make sure you allocate WSL sufficient RAM; 5GB is known to work, w
 2GB might be not enough for building Sage from source. 
 Then all instructions for installation in Linux apply.
 
-As an alternative, you can also run Linux on Windows using Docker (see
-below) or other virtualization solutions.
+As an alternative, you can also run Linux on Windows using Docker ([see
+below](#sagemath-docker-images)) or other virtualization solutions.
 
 [macOS] Preparing the Platform
 ------------------------------
 
-If your Mac uses the Apple Silicon (M1, arm64) architecture:
+If your Mac uses the Apple Silicon (M1, M2, arm64) architecture:
 
 - If you set up your Mac by transfering files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
@@ -116,6 +136,7 @@ The instructions cover all of Linux, macOS, and WSL.
 More details, providing a background for these instructions, can be found
 in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
 in the Installation Guide.
+
 
 1.  Decide on the source/build directory (`SAGE_ROOT`):
 
