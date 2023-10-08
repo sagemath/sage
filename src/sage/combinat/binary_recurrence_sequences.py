@@ -539,7 +539,7 @@ class BinaryRecurrenceSequence(SageObject):
             [1]
 
         If the sequence is degenerate, and there are no ``p`` th powers, returns `[]`.  Otherwise, if
-        there are many ``p`` th powers, raises ``ValueError``.
+        there are many ``p`` th powers, raises :class:`ValueError`.
 
         ::
 

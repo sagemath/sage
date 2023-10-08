@@ -1574,7 +1574,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
 
         - If it exists the unique skew-partitions with row lengths ``rowL``
           and column lengths ``colL``.
-        - Raise a ``ValueError`` if ``rowL`` and ``colL`` are not compatible.
+        - Raise a :class:`ValueError` if ``rowL`` and ``colL`` are not compatible.
 
         EXAMPLES::
 
@@ -1604,7 +1604,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
         .. WARNING::
 
             If some rows and columns have length zero, there is no way to retrieve
-            unambiguously the skew partition. We therefore raise a ``ValueError``.
+            unambiguously the skew partition. We therefore raise
+            a :class:`ValueError`.
             For examples here are two skew partitions with the same row and column
             lengths::
 
