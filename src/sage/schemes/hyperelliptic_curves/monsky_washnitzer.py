@@ -687,11 +687,11 @@ def transpose_list(input):
 
 
 def helper_matrix(Q):
-    """
+    r"""
     Compute the (constant) matrix used to calculate the linear
     combinations of the `d(x^i y^j)` needed to eliminate the
-    negative powers of `y` in the cohomology (i.e. in
-    reduce_negative()).
+    negative powers of `y` in the cohomology (i.e., in
+    :func:`reduce_negative`).
 
     INPUT:
 
@@ -725,14 +725,14 @@ def helper_matrix(Q):
 
 def lift(x):
     r"""
-    Try to call ``x.lift()``, presumably from the `p`-adics to ``ZZ``.
+    Try to call ``x.lift()``, presumably from the `p`-adics to `\ZZ`.
 
     If this fails, it assumes the input is a power series, and tries to
-    lift it to a power series over ``QQ``.
+    lift it to a power series over `\QQ`.
 
     This function is just a very kludgy solution to the problem of
-    trying to make the reduction code (below) work over both Zp and
-    Zp[[t]].
+    trying to make the reduction code (below) work over both `\ZZ_p` and
+    `\ZZ_p[[t]]`.
 
     EXAMPLES::
 
@@ -766,7 +766,7 @@ def reduce_negative(Q, p, coeffs, offset, exact_form=None):
     - ``Q`` -- cubic polynomial
 
     - ``coeffs`` -- list of length 3 lists. The
-      `i^{th}` list [a, b, c] represents
+      `i`-th list ``[a, b, c]`` represents
       `y^{2(i - offset)} (a + bx + cx^2) dx/y`.
 
     - ``offset`` -- nonnegative integer
@@ -869,7 +869,7 @@ def reduce_positive(Q, p, coeffs, offset, exact_form=None):
     - ``Q`` -- cubic polynomial
 
     - ``coeffs`` -- list of length 3 lists. The
-      `i^{th}` list [a, b, c] represents
+      `i`-th list [a, b, c] represents
       `y^{2(i - offset)} (a + bx + cx^2) dx/y`.
 
     - ``offset`` -- nonnegative integer
@@ -963,7 +963,7 @@ def reduce_zero(Q, coeffs, offset, exact_form=None):
     - ``Q`` -- cubic polynomial
 
     - ``coeffs`` -- list of length 3 lists. The
-      `i^{th}` list [a, b, c] represents
+      `i`-th list [a, b, c] represents
       `y^{2(i - offset)} (a + bx + cx^2) dx/y`.
 
     - ``offset`` -- nonnegative integer
@@ -1015,7 +1015,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
     - ``Q`` -- cubic polynomial
 
     - ``coeffs`` -- list of length 3 lists. The
-      `i^{th}` list [a, b, c] represents
+      `i`-th list [a, b, c] represents
       `y^{2(i - offset)} (a + bx + cx^2) dx/y`.
 
     - ``offset`` -- nonnegative integer
@@ -1091,7 +1091,7 @@ def frobenius_expansion_by_newton(Q, p, M):
     coefficient ring of `Q`.)
 
     `F_0` and `F_1` are computed in the
-    SpecialCubicQuotientRing associated to `Q`, so all powers
+    :class:`SpecialCubicQuotientRing` associated to `Q`, so all powers
     of `x^j` for `j \geq 3` are reduced to powers of
     `T`.
 
@@ -1109,7 +1109,7 @@ def frobenius_expansion_by_newton(Q, p, M):
     OUTPUT:
 
     - ``F0, F1`` -- elements of
-      SpecialCubicQuotientRing(Q), as described above
+      ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
 
@@ -1264,7 +1264,7 @@ def frobenius_expansion_by_series(Q, p, M):
     and `R` is the coefficient ring of `Q`.)
 
     `F_0` and `F_1` are computed in the
-    SpecialCubicQuotientRing associated to `Q`, so all powers
+    :class:`SpecialCubicQuotientRing` associated to `Q`, so all powers
     of `x^j` for `j \geq 3` are reduced to powers of
     `T`.
 
@@ -1297,7 +1297,7 @@ def frobenius_expansion_by_series(Q, p, M):
     OUTPUT:
 
     - ``F0, F1`` -- elements of
-      SpecialCubicQuotientRing(Q), as described above
+      ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
 
