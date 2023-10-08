@@ -1187,7 +1187,7 @@ def hyperbolicity(G,
     Comparison of results::
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
-        sage: for i in range(10): # long time
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:     G = graphs.RandomBarabasiAlbert(100,2)
         ....:     d1,_,_ = hyperbolicity(G, algorithm='basic')
         ....:     d2,_,_ = hyperbolicity(G, algorithm='CCL')
@@ -1201,7 +1201,7 @@ def hyperbolicity(G,
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: import random
         sage: random.seed()
-        sage: for i in range(10): # long time
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:     n = random.randint(2, 20)
         ....:     m = random.randint(0, n*(n-1) / 2)
         ....:     G = graphs.RandomGNM(n, m)

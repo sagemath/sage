@@ -175,6 +175,16 @@ build/bin/sage-build-env-config
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
 
+/pkgs/sage-conf_pypi/sage_root/config.log
+/pkgs/sage-conf_pypi/sage_root/config.status
+/pkgs/sage-conf_pypi/sage_root/local/
+/pkgs/sage-conf_pypi/sage_root/logs/
+/pkgs/sage-conf_pypi/sage_root/prefix
+/pkgs/sage-conf_pypi/sage_root/src/bin/sage-env-config
+/pkgs/sage-conf_pypi/sage_root/src/bin/sage-src-env-config
+/pkgs/sage-conf_pypi/sage_root/upstream/
+/pkgs/sage-conf_pypi/sage_root/venv
+
 /pkgs/sagemath-objects/setup.cfg
 /pkgs/sagemath-bliss/setup.cfg
 /pkgs/sagemath-coxeter3/setup.cfg
