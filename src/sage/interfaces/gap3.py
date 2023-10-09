@@ -45,7 +45,7 @@ Sage assumes that GAP3 can be launched with the command ``gap3``; that is,
 Sage assumes that the command ``gap3`` is in your ``PATH``. If this is not
 the case, then you can start GAP3 using the following command::
 
-    sage: gap3 = Gap3(command='/usr/local/bin/gap3')               #not tested
+    sage: gap3 = Gap3(command='/usr/local/bin/gap3')            # not tested
 
 Functionality and Examples
 --------------------------
@@ -114,7 +114,7 @@ The interface to GAP3 offers the following functionality.
 
     ::
 
-        sage: gap3.interact()                              #not tested
+        sage: gap3.interact()                            # not tested
 
           --> Switching to Gap3 <--
 
@@ -122,7 +122,7 @@ The interface to GAP3 offers the following functionality.
 
 #.  You can start a new GAP3 session as follows::
 
-        sage: gap3.console()                               #not tested
+        sage: gap3.console()                             # not tested
 
                      ########            Lehrstuhl D fuer Mathematik
                    ###    ####           RWTH Aachen
@@ -150,7 +150,7 @@ The interface to GAP3 offers the following functionality.
 
 #.  The interface also has access to the GAP3 help system::
 
-        sage: gap3.help('help', pager=False)               #not tested
+        sage: gap3.help('help', pager=False)             # not tested
         Help _______________________________________________________...
 
         This  section describes  together with  the following sections the   GAP
@@ -521,13 +521,13 @@ class Gap3(Gap_generic):
 
             sage: # optional - gap3
             sage: t = gap3.cputime()
-            sage: t  #random
+            sage: t  # random
             0.02
             sage: gap3.SymmetricGroup(5).Size()
             120
-            sage: gap3.cputime()  #random
+            sage: gap3.cputime()  # random
             0.14999999999999999
-            sage: gap3.cputime(t)  #random
+            sage: gap3.cputime(t)  # random
             0.13
         """
         if t is not None:
@@ -541,7 +541,7 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: gap3.console()                               #not tested
+            sage: gap3.console()                             # not tested
 
                          ########            Lehrstuhl D fuer Mathematik
                        ###    ####           RWTH Aachen
@@ -886,7 +886,7 @@ def gap3_console():
 
     EXAMPLES::
 
-        sage: gap3.console()                               #not tested
+        sage: gap3.console()                             # not tested
 
                      ########            Lehrstuhl D fuer Mathematik
                    ###    ####           RWTH Aachen
