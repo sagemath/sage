@@ -178,7 +178,7 @@ Load a GAP3 package::
 
     sage: # optional - gap3
     sage: gap3.load_package("chevie")
-    sage: gap3.version() # random
+    sage: gap3.version() # random  # not tested
     'lib: v3r4p4 1997/04/18, src: v3r4p0 1994/07/10, sys: usg gcc ansi'
 
 Working with GAP3 lists. Note that GAP3 lists are 1-indexed::
@@ -302,11 +302,12 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: gap3 = Gap3()                            #optional - gap3
+            sage: # optional - gap3
+            sage: gap3 = Gap3()
             sage: gap3.is_running()
             False
-            sage: gap3._start()                            #optional - gap3
-            sage: gap3.is_running()                        #optional - gap3
+            sage: gap3._start()
+            sage: gap3.is_running()
             True
         """
         self.__gap3_command_string = command
@@ -341,18 +342,20 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: gap3 = Gap3()                            #optional - gap3
+            sage: # optional - gap3
+            sage: gap3 = Gap3()
             sage: gap3.is_running()
             False
-            sage: gap3._start()                            #optional - gap3
-            sage: gap3.is_running()                        #optional - gap3
+            sage: gap3._start()
+            sage: gap3.is_running()
             True
 
         Check that :trac:`23142` is fixed::
 
-            sage: gap3.eval("1+1")                         #optional - gap3
+            sage: # optional - gap3
+            sage: gap3.eval("1+1")
             '2'
-            sage: gap3.quit()                              #optional - gap3
+            sage: gap3.quit()
         """
         Expect._start(self)
         # The -p command-line option to GAP3 produces the following
@@ -504,7 +507,7 @@ class Gap3(Gap_generic):
                 E.expect_list(self._compiled_small_pattern)
 
         # merge the help text into one string and print it.
-        helptext = "".join(helptext).strip()
+        helptext = "".join(bytes_to_str(line) for line in helptext).strip()
         if pager is True:
             from sage.misc.pager import pager as pag
             pag()(helptext)
@@ -513,8 +516,9 @@ class Gap3(Gap_generic):
 
     def cputime(self, t=None):
         r"""
-        Returns the amount of CPU time that the GAP session has used in
-        seconds. If ``t`` is not None, then it returns the difference
+        Return the amount of CPU time that the GAP session has used in seconds.
+
+        If ``t`` is not None, then it returns the difference
         between the current CPU time and ``t``.
 
         EXAMPLES::
