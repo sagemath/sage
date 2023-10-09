@@ -34,8 +34,7 @@ permissions:
 
 jobs:
 
-  # The default platform used by build.yml etc.
-
+  # standard-pre for the default platform (used by build.yml etc.)
   default-pre:
     uses: ./.github/workflows/docker.yml
     with:
@@ -49,6 +48,7 @@ jobs:
         ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
+  # standard for the default platform (used by build.yml etc.)
   default:
     if: ${{ success() || failure() }}
     needs: [default-pre]
