@@ -152,5 +152,6 @@ for python_version in 3.9 3.10 3.11; do
                 done
             fi
         done
-    ) 4>> src/environment-dev-$python_version.yml 5>> src/environment-optional-$python_version.yml
+    #) 4>> src/environment-dev-$python_version.yml 5>> src/environment-optional-$python_version.yml
+    ) 4>> /dev/null 5>> src/environment-optional-$python_version.yml
 done

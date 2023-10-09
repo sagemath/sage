@@ -34,5 +34,6 @@
         "sagemath",
         "Cython"
     ],
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "esbonio.sphinx.confDir": ""
 }

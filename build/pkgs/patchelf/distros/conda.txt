@@ -1,1 +1,2 @@
-patchelf
+# Not available on macos
+# patchelf

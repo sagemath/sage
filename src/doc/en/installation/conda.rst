@@ -170,3 +170,10 @@ To build the documentation, use::
    <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_.
    Adventurous developers may omit this switch to try the modern,
    PEP-660 implementation of editable installations, see :issue:`34209`.
+
+.. NOTE::
+
+  You can update the conda lock files by running
+  ``.github/workflows/conda-lock-update.ps1`` or by running
+  ``conda-lock --platform linux-64 --filename src/environment-dev-3.11-linux.yml --lockfile src/environment-dev-3.11-linux.lock``
+  manually.
