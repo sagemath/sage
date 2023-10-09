@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.modules
 r"""
 Finite lattices and semilattices
 
@@ -2293,9 +2293,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             False
 
             sage: D6 = posets.DiamondPoset(6)
-            sage: D6.is_orthocomplemented()
+            sage: D6.is_orthocomplemented()                                             # needs sage.groups
             True
-            sage: D6.is_orthocomplemented(unique=True)
+            sage: D6.is_orthocomplemented(unique=True)                                  # needs sage.groups
             False
 
             sage: hexagon = LatticePoset({0:[1, 2], 1:[3], 2:[4], 3:[5], 4:[5]})
@@ -2453,8 +2453,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         Canonical example is the lattice of partitions of finite set
         ordered by refinement::
 
-            sage: L = posets.SetPartitions(4)
-            sage: L.is_geometric()
+            sage: L = posets.SetPartitions(4)                                           # needs sage.combinat
+            sage: L.is_geometric()                                                      # needs sage.combinat
             True
 
         Smallest example of geometric lattice that is not modular::
@@ -2754,8 +2754,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_upper_semimodular()
             False
 
-            sage: L = LatticePoset(posets.IntegerPartitions(4))
-            sage: L.is_upper_semimodular()
+            sage: L = LatticePoset(posets.IntegerPartitions(4))                         # needs sage.combinat
+            sage: L.is_upper_semimodular()                                              # needs sage.combinat
             True
 
             sage: L = LatticePoset({1:[2, 3, 4], 2: [5], 3:[5, 6], 4:[6], 5:[7], 6:[7]})
@@ -4021,21 +4021,21 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         EXAMPLES::
 
             sage: N5 = posets.PentagonPoset()
-            sage: N5.is_subdirectly_reducible()
+            sage: N5.is_subdirectly_reducible()                                         # needs sage.combinat
             False
 
             sage: hex = LatticePoset({1: [2, 3], 2: [4], 3: [5], 4: [6], 5: [6]})
-            sage: hex.is_subdirectly_reducible()
+            sage: hex.is_subdirectly_reducible()                                        # needs sage.combinat
             True
 
-            sage: hex.is_subdirectly_reducible(certificate=True)
+            sage: hex.is_subdirectly_reducible(certificate=True)                        # needs sage.combinat
             (True,
              (Finite lattice containing 5 elements, Finite lattice containing 5 elements))
 
-            sage: N5.is_subdirectly_reducible(certificate=True)
+            sage: N5.is_subdirectly_reducible(certificate=True)                         # needs sage.combinat
             (False, (2, 3))
-            sage: res, cert = hex.is_subdirectly_reducible(certificate=True)
-            sage: cert[0].is_isomorphic(N5)
+            sage: res, cert = hex.is_subdirectly_reducible(certificate=True)            # needs sage.combinat
+            sage: cert[0].is_isomorphic(N5)                                             # needs sage.combinat
             True
 
         .. SEEALSO::
@@ -4241,7 +4241,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: posets.PentagonPoset().is_constructible_by_doublings('interval')
             True
 
-            sage: posets.DiamondPoset(5).is_constructible_by_doublings('any')
+            sage: posets.DiamondPoset(5).is_constructible_by_doublings('any')           # needs sage.combinat
             False
 
         After doubling both upper and lower pseudo-interval a lattice is
@@ -5006,7 +5006,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: Arr = H(a-b, b-c, c-d, d-a)
             sage: P = LatticePoset(Arr.intersection_poset())
             sage: FY = P.feichtner_yuzvinsky_ring([P.top(),5,1,2,3,4])
-            sage: FY.defining_ideal().groebner_basis()
+            sage: FY.defining_ideal().groebner_basis()                                  # needs sage.libs.singular
             [h0^2 - h0*h1, h1^2, h2, h3, h4, h5]
 
         TESTS::

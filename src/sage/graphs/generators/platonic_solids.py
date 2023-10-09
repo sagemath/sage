@@ -142,7 +142,7 @@ def OctahedralGraph():
     Construct and show an Octahedral graph::
 
         sage: g = graphs.OctahedralGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several octahedral graphs in a Sage graphics array They will be drawn
     differently due to the use of the spring-layout algorithm::
