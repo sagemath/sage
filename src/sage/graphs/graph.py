@@ -4901,7 +4901,7 @@ class Graph(GenericGraph):
         been merged to create a new graph `G'`, this new graph contains `H` as a
         subgraph.
 
-        When parameter ``induced`` is ``True``, this method returns an induced minor 
+        When parameter ``induced`` is ``True``, this method returns an induced minor
         isomorphic to `H`, if it exists.
 
         We say that a graph `G` has an induced `H`-minor (or that it has a
@@ -4931,7 +4931,8 @@ class Graph(GenericGraph):
           :meth:`MixedIntegerLinearProgram.get_values`.
 
         - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
-          induced minor isomorphic to `H` if it exists, and :class:`ValueError` otherwise.
+          induced minor isomorphic to `H` if it exists, and raises a
+          :class:`ValueError` otherwise.
 
         OUTPUT:
 
@@ -4991,21 +4992,24 @@ class Graph(GenericGraph):
             ...
             ValueError: This graph has no minor isomorphic to H !
 
-        Trying to find an induced minor for a graph with a C6 cycle::
+        Trying to find an induced minor isomorphic to `C_5` in a graph
+        containing an induced `C_6`::
 
-            sage: g = graphs.CycleGraph(6)              # Create a graph with 6 vertices forming a C6 cycle
-            sage: for i in random.randint(10, 30):
-            ....:     g.add_edge(random.randint(0, 5), i)
-            sage: h = graphs.CycleGraph(5)               # Create a graph with 5 vertices forming a C5 cycle
-            sage: L = g.minor(h, induced=True)                       
-            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))         
-            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
+            sage: g = graphs.CycleGraph(6)
+            sage: for i in range(randint(10, 30)):
+            ....:     g.add_edge(randint(0, 5), g.add_vertex())
+            sage: h = graphs.CycleGraph(5)
+            sage: L = g.minor(h, induced=True)
+            sage: gg = g.subgraph(flatten(L.values(), max_level=1))
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l) > 1]
             sage: gg.is_isomorphic(h)
             True
 
         TESTS::
             
-            sage: # a graph `g` may have minor but no induced minor isomorphic to given graph `h`
+        A graph `g` may have a minor isomorphic to a given graph `h` but no
+        induced minor isomorphic to `h`::
+
             sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
             sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
             sage: l = g.minor(h, induced=False)
@@ -5014,11 +5018,14 @@ class Graph(GenericGraph):
             ...
             ValueError: This graph has no induced minor isomorphic to H !
 
+        Checking that the returned induced minor is isomorphic to the given
+        graph::
+
             sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
             sage: h = Graph([(7, 8), (8, 9), (9, 10), (10, 11)])
             sage: L = g.minor(h, induced=True)
-            sage: gg = g.subgraph(flatten(L.values(), max_level = 1))
-            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l)>1]
+            sage: gg = g.subgraph(flatten(L.values(), max_level=1))
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l) > 1]
             sage: gg.is_isomorphic(h)
             True
         """
