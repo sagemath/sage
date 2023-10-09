@@ -30,6 +30,9 @@ cdef extern from "flint_wrap.h":
     void fmpq_poly_canonicalise(fmpq_poly_t)
     int fmpq_poly_is_canonical(const fmpq_poly_t)
 
+    void _fmpq_poly_set_length(fmpq_poly_t, slong)
+    void _fmpq_poly_normalise(fmpq_poly_t)
+
     # Polynomial parameters
     slong fmpq_poly_degree(const fmpq_poly_t)
     ulong fmpq_poly_length(const fmpq_poly_t)
@@ -46,10 +49,7 @@ cdef extern from "flint_wrap.h":
     void fmpq_poly_set_ui(fmpq_poly_t, ulong)
     void fmpq_poly_set_fmpz(fmpq_poly_t, const fmpz_t)
     void fmpq_poly_set_fmpq(fmpq_poly_t, const fmpq_t)
-    void fmpq_poly_set_mpz(fmpq_poly_t, const mpz_t)
-    void fmpq_poly_set_mpq(fmpq_poly_t, const mpq_t)
     void fmpq_poly_set_fmpz_poly(fmpq_poly_t, const fmpz_poly_t)
-    void fmpq_poly_set_array_mpq(fmpq_poly_t, const mpq_t *, slong)
 
     void fmpq_poly_set_str(fmpq_poly_t, const char *)
     char *fmpq_poly_get_str(const fmpq_poly_t)
@@ -67,7 +67,6 @@ cdef extern from "flint_wrap.h":
     void fmpq_poly_reverse(fmpq_poly_t, const fmpq_poly_t, slong)
 
     void fmpq_poly_get_coeff_fmpq(fmpq_t, const fmpq_poly_t, slong)
-    void fmpq_poly_get_coeff_mpq(mpq_t, const fmpq_poly_t, slong)
     void fmpq_poly_get_coeff_si(slong, const fmpq_poly_t, slong)
     void fmpq_poly_get_coeff_ui(ulong, const fmpq_poly_t, slong)
 
@@ -75,8 +74,6 @@ cdef extern from "flint_wrap.h":
     void fmpq_poly_set_coeff_ui(fmpq_poly_t, slong, ulong)
     void fmpq_poly_set_coeff_fmpz(fmpq_poly_t, slong, const fmpz_t)
     void fmpq_poly_set_coeff_fmpq(fmpq_poly_t, slong, const fmpq_t)
-    void fmpq_poly_set_coeff_mpz(fmpq_poly_t, slong, const mpz_t)
-    void fmpq_poly_set_coeff_mpq(fmpq_poly_t, slong, const mpq_t)
 
     # Comparison
     int fmpq_poly_equal(const fmpq_poly_t, const fmpq_poly_t)
@@ -100,8 +97,6 @@ cdef extern from "flint_wrap.h":
             fmpq_poly_t, const fmpq_poly_t, const fmpz_t)
     void fmpq_poly_scalar_mul_fmpq(
             fmpq_poly_t, const fmpq_poly_t, const fmpq_t)
-    void fmpq_poly_scalar_mul_mpz(fmpq_poly_t, const fmpq_poly_t, const mpz_t)
-    void fmpq_poly_scalar_mul_mpq(fmpq_poly_t, const fmpq_poly_t, const mpq_t)
 
     void fmpq_poly_scalar_div_si(fmpq_poly_t, const fmpq_poly_t, slong)
     void fmpq_poly_scalar_div_ui(fmpq_poly_t, const fmpq_poly_t, ulong)
@@ -109,8 +104,6 @@ cdef extern from "flint_wrap.h":
             fmpq_poly_t, const fmpq_poly_t, const fmpz_t)
     void fmpq_poly_scalar_div_fmpq(
             fmpq_poly_t, const fmpq_poly_t, const fmpq_t)
-    void fmpq_poly_scalar_div_mpz(fmpq_poly_t, const fmpq_poly_t, const mpz_t)
-    void fmpq_poly_scalar_div_mpq(fmpq_poly_t, const fmpq_poly_t, const mpq_t)
 
     # Multiplication
     void fmpq_poly_mul(fmpq_poly_t, const fmpq_poly_t, const fmpq_poly_t)
@@ -155,8 +148,6 @@ cdef extern from "flint_wrap.h":
     # Evaluation
     void fmpq_poly_evaluate_fmpz(fmpq_t, const fmpq_poly_t, const fmpz_t)
     void fmpq_poly_evaluate_fmpq(fmpq_t, const fmpq_poly_t, const fmpq_t)
-    void fmpq_poly_evaluate_mpz(mpq_t, const fmpq_poly_t, const mpz_t)
-    void fmpq_poly_evaluate_mpq(mpq_t, const fmpq_poly_t, const mpq_t)
 
     # Composition
     void fmpq_poly_compose(fmpq_poly_t, const fmpq_poly_t, const fmpq_poly_t)
@@ -189,3 +180,11 @@ cdef extern from "flint_wrap.h":
 # since the fmpq_poly header seems to be lacking this inline function
 cdef inline sage_fmpq_poly_max_limbs(const fmpq_poly_t poly) noexcept:
     return _fmpz_vec_max_limbs(fmpq_poly_numref(poly), fmpq_poly_length(poly))
+
+# functions removed from flint but still needed in sage
+cdef void fmpq_poly_scalar_mul_mpz(fmpq_poly_t, const fmpq_poly_t, const mpz_t)
+cdef void fmpq_poly_scalar_mul_mpq(fmpq_poly_t, const fmpq_poly_t, const mpq_t)
+cdef void fmpq_poly_set_coeff_mpq(fmpq_poly_t, slong, const mpq_t)
+cdef void fmpq_poly_get_coeff_mpq(mpq_t, const fmpq_poly_t, slong)
+cdef void fmpq_poly_set_mpz(fmpq_poly_t, const mpz_t)
+cdef void fmpq_poly_set_mpq(fmpq_poly_t, const mpq_t)

@@ -1,4 +1,4 @@
-# distutils: libraries = ARB_LIBRARY
+# distutils: libraries = flint
 r"""
 Arbitrary precision complex ball matrices using Arb
 

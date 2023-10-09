@@ -1,4 +1,4 @@
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = arf.h
 
 from sage.libs.arb.types cimport *
@@ -30,7 +30,6 @@ cdef extern from "arb_wrap.h":
     void arf_set_ui(arf_t y, unsigned long x)
     void arf_set_si(arf_t y, long x)
     void arf_set_mpfr(arf_t y, const mpfr_t x)
-    # void arf_set_fmpr(arf_t y, const fmpr_t x)
     void arf_set_d(arf_t y, double x)
     void arf_swap(arf_t y, arf_t x)
     void arf_init_set_ui(arf_t y, unsigned long x)
@@ -46,7 +45,6 @@ cdef extern from "arb_wrap.h":
     int arf_set_round_fmpz_2exp(arf_t y, const fmpz_t x, const fmpz_t e, long prec, arf_rnd_t rnd)
     void arf_get_fmpz_2exp(fmpz_t m, fmpz_t e, const arf_t x)
     double arf_get_d(const arf_t x, arf_rnd_t rnd)
-    # void arf_get_fmpr(fmpr_t y, const arf_t x)
     int arf_get_mpfr(mpfr_t y, const arf_t x, mpfr_rnd_t rnd)
     void arf_get_fmpz(fmpz_t z, const arf_t x, arf_rnd_t rnd)
     long arf_get_si(const arf_t x, arf_rnd_t rnd)

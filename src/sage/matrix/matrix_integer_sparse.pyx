@@ -847,6 +847,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             sage: matrix(ZZ, 1, 1, sparse=True)._charpoly_linbox()
             x
         """
+        cdef mpz_t tmp
         if self._nrows != self._ncols:
             raise ArithmeticError('only valid for square matrix')
 
@@ -869,7 +870,8 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         cdef size_t i
         fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+            tmp = p[0][i].get_mpz_const()
+            fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
         _fmpz_poly_set_length(g._poly, p.size())
 
         del M
@@ -966,9 +968,11 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
+        cdef mpz_t tmp
         fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+            tmp = p[0][i].get_mpz_const()
+            fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
         _fmpz_poly_set_length(g._poly, p.size())
 
         del M

@@ -222,7 +222,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         cdef unsigned long n
         cdef Rational c
         cdef list L1
-        cdef mpq_t * L2
+        cdef fmpq_t q
 
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
@@ -253,14 +253,11 @@ cdef class Polynomial_rational_flint(Polynomial):
             L1 = [e if isinstance(e, Rational) else Rational(e) for e in x]
             n  = <unsigned long> len(x)
             sig_on()
-            L2 = <mpq_t *> check_allocarray(n, sizeof(mpq_t))
+            fmpq_poly_fit_length(self._poly, n)
             for deg from 0 <= deg < n:
-                mpq_init(L2[deg])
-                mpq_set(L2[deg], (<Rational> L1[deg]).value)
-            fmpq_poly_set_array_mpq(self._poly, L2, n)
-            for deg from 0 <= deg < n:
-                mpq_clear(L2[deg])
-            sig_free(L2)
+                fmpq_init_set_readonly(q, (<Rational> L1[deg]).value)
+                fmpq_poly_set_coeff_fmpq(self._poly, deg, q)
+                fmpq_clear_readonly(q)
             sig_off()
 
 #           deg = 0
@@ -435,6 +432,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         utmost care.
         """
         cdef bint do_sig = _do_sig(self._poly)
+        cdef fmpz_t tmpfz
 
         if isinstance(value, int):
             if do_sig: sig_str("FLINT exception")
@@ -442,7 +440,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             if do_sig: sig_off()
         elif isinstance(value, Integer):
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_set_coeff_mpz(self._poly, n, (<Integer> value).value)
+            fmpz_init_set_readonly(tmpfz, (<Integer> value).value)
+            fmpq_poly_set_coeff_fmpz(self._poly, n, tmpfz)
+            fmpz_clear_readonly(tmpfz)
             if do_sig: sig_off()
         elif isinstance(value, Rational):
             if do_sig: sig_str("FLINT exception")
@@ -492,7 +492,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         cdef Polynomial_rational_flint f
         cdef Rational r
         cdef fmpz_t tmpfz
-        cdef fmpq_t tmpfq
+        cdef fmpq_t tmpfq, tmpfq1
         cdef RealBall arb_a, arb_z
         cdef ComplexBall acb_a, acb_z
 
@@ -508,13 +508,23 @@ cdef class Polynomial_rational_flint(Polynomial):
             elif isinstance(a, Rational):
                 r = Rational.__new__(Rational)
                 sig_str("FLINT exception")
-                fmpq_poly_evaluate_mpq(r.value, self._poly, (<Rational> a).value)
+                fmpq_init_set_readonly(tmpfq, (<Rational> a).value)
+                fmpq_init(tmpfq1)
+                fmpq_poly_evaluate_fmpq(tmpfq1, self._poly, tmpfq)
+                fmpq_get_mpq(r.value, tmpfq1)
+                fmpq_clear(tmpfq1)
+                fmpq_clear_readonly(tmpfq)
                 sig_off()
                 return r
             elif isinstance(a, Integer):
                 r = Rational.__new__(Rational)
                 sig_str("FLINT exception")
-                fmpq_poly_evaluate_mpz(r.value, self._poly, (<Integer> a).value)
+                fmpz_init_set_readonly(tmpfz, (<Integer> a).value)
+                fmpq_init(tmpfq)
+                fmpq_poly_evaluate_fmpz(tmpfq, self._poly, tmpfz)
+                fmpq_get_mpq(r.value, tmpfq)
+                fmpq_clear(tmpfq)
+                fmpz_clear_readonly(tmpfz)
                 sig_off()
                 return r
             elif isinstance(a, int):
@@ -1321,6 +1331,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         cdef Polynomial_rational_flint res
         cdef bint do_sig
+        cdef fmpq_t tmpfq
 
         if right == 0:
             raise ZeroDivisionError("division by zero polynomial")
@@ -1331,8 +1342,9 @@ cdef class Polynomial_rational_flint(Polynomial):
                 do_sig = _do_sig(self._poly)
 
                 if do_sig: sig_str("FLINT exception")
-                fmpq_poly_scalar_div_mpq(res._poly, self._poly,
-                                                  (<Rational> QQ(right)).value)
+                fmpq_init_set_readonly(tmpfq, (<Rational> QQ(right)).value)
+                fmpq_poly_scalar_div_fmpq(res._poly, self._poly, tmpfq)
+                fmpq_clear_readonly(tmpfq)
                 if do_sig: sig_off()
                 return res
 

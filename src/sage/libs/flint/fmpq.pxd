@@ -12,6 +12,8 @@ cdef extern from "flint_wrap.h":
     fmpz * fmpq_denref(fmpq_t)
     void fmpq_init(fmpq_t)
     void fmpq_clear(fmpq_t)
+    void fmpq_init_set_readonly(fmpq_t, const mpq_t)
+    void fmpq_clear_readonly(fmpq_t)
     void fmpq_one(fmpq_t)
     void fmpq_zero(fmpq_t)
     bint fmpq_is_zero(fmpq_t)

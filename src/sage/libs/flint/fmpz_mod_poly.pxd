@@ -67,13 +67,6 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_poly_get_coeff_fmpz(fmpz_t x, const fmpz_mod_poly_t poly,
                                              slong n, const fmpz_mod_ctx_t ctx)
 
-    void fmpz_mod_poly_set_coeff_mpz(fmpz_mod_poly_t poly,
-                             slong n, const mpz_t x, const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_get_coeff_mpz(mpz_t x,
-                 const fmpz_mod_poly_t poly, slong n, const fmpz_mod_ctx_t ctx)
-
-
     void _fmpz_mod_poly_shift_left(fmpz * res, const fmpz * poly,
                                                            slong len, slong n)
 
@@ -194,14 +187,6 @@ cdef extern from "flint_wrap.h":
                              const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
                                                      const fmpz_mod_ctx_t ctx)
 
-    void fmpz_mod_poly_div_basecase(fmpz_mod_poly_t Q,
-                            const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_div_newton_n_preinv(fmpz_mod_poly_t Q,
-                         const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                         const fmpz_mod_poly_t Binv, const fmpz_mod_ctx_t ctx)
-
     void fmpz_mod_poly_divrem_newton_n_preinv(fmpz_mod_poly_t Q,
           fmpz_mod_poly_t R, const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
                          const fmpz_mod_poly_t Binv, const fmpz_mod_ctx_t ctx)
@@ -211,10 +196,6 @@ cdef extern from "flint_wrap.h":
 
     void fmpz_mod_poly_rem_basecase(fmpz_mod_poly_t R,
                             const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_divrem_divconquer(fmpz_mod_poly_t Q,
-        fmpz_mod_poly_t R, const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
                                                      const fmpz_mod_ctx_t ctx)
 
     void fmpz_mod_poly_divrem(fmpz_mod_poly_t Q, fmpz_mod_poly_t R,
@@ -254,39 +235,12 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_poly_make_monic_f(fmpz_t f, fmpz_mod_poly_t res,
                          const fmpz_mod_poly_t poly, const fmpz_mod_ctx_t ctx)
 
-    void fmpz_mod_poly_gcd_euclidean(fmpz_mod_poly_t G,
-                             const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_gcd_euclidean_f(fmpz_t f, fmpz_mod_poly_t G,
-                             const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
     void fmpz_mod_poly_gcd_f(fmpz_t f, fmpz_mod_poly_t G, const fmpz_mod_poly_t A,
                              const fmpz_mod_poly_t B, const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_gcd_hgcd(fmpz_mod_poly_t G,
-                             const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
 
     void fmpz_mod_poly_gcd(fmpz_mod_poly_t G, const fmpz_mod_poly_t A,
                              const fmpz_mod_poly_t B, const fmpz_mod_ctx_t ctx)
 
-
-    void fmpz_mod_poly_xgcd_euclidean(fmpz_mod_poly_t G,
-                             fmpz_mod_poly_t S, fmpz_mod_poly_t T,
-                             const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_xgcd_euclidean_f(fmpz_t f, fmpz_mod_poly_t G,
-                             fmpz_mod_poly_t S, fmpz_mod_poly_t T,
-                             const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_xgcd_hgcd(fmpz_mod_poly_t G, fmpz_mod_poly_t S,
-          fmpz_mod_poly_t T, const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
-                                                     const fmpz_mod_ctx_t ctx)
 
     void fmpz_mod_poly_xgcd(fmpz_mod_poly_t G, fmpz_mod_poly_t S, fmpz_mod_poly_t T,
                              const fmpz_mod_poly_t A, const fmpz_mod_poly_t B,
@@ -359,14 +313,6 @@ cdef extern from "flint_wrap.h":
 
     void fmpz_mod_poly_evaluate_fmpz_vec(fmpz * ys,
                         const fmpz_mod_poly_t poly, const fmpz * xs, slong n,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_compose_horner(fmpz_mod_poly_t res,
-                    const fmpz_mod_poly_t poly1, const fmpz_mod_poly_t poly2,
-                                                     const fmpz_mod_ctx_t ctx)
-
-    void fmpz_mod_poly_compose_divconquer(fmpz_mod_poly_t res,
-                     const fmpz_mod_poly_t poly1, const fmpz_mod_poly_t poly2,
                                                      const fmpz_mod_ctx_t ctx)
 
     void fmpz_mod_poly_compose(fmpz_mod_poly_t res, const fmpz_mod_poly_t poly1,

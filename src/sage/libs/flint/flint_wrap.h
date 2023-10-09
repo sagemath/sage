@@ -47,6 +47,7 @@
 #include <flint/fq.h>
 #include <flint/fq_nmod.h>
 #include <flint/nmod_poly.h>
+#include <flint/nmod_poly_factor.h>
 #include <flint/nmod_vec.h>
 #include <flint/padic.h>
 #include <flint/padic_poly.h>

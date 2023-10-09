@@ -49,11 +49,7 @@ cdef extern from "flint_wrap.h":
 
     #* Scalar multiplication and division ****************************************/
     void fmpz_poly_q_scalar_mul_si(fmpz_poly_q_t rop, const fmpz_poly_q_t op, long x)
-    void fmpz_poly_q_scalar_mul_mpz(fmpz_poly_q_t rop, const fmpz_poly_q_t op, const mpz_t x)
-    void fmpz_poly_q_scalar_mul_mpq(fmpz_poly_q_t rop, const fmpz_poly_q_t op, const mpq_t x)
     void fmpz_poly_q_scalar_div_si(fmpz_poly_q_t rop, const fmpz_poly_q_t op, long x)
-    void fmpz_poly_q_scalar_div_mpz(fmpz_poly_q_t rop, const fmpz_poly_q_t op, const mpz_t x)
-    void fmpz_poly_q_scalar_div_mpq(fmpz_poly_q_t rop, const fmpz_poly_q_t op, const mpq_t x)
 
     #* Multiplication and division ***********************************************/
     void fmpz_poly_q_mul(fmpz_poly_q_t rop, 
@@ -66,9 +62,6 @@ cdef extern from "flint_wrap.h":
 
     #* Derivative ****************************************************************/
     void fmpz_poly_q_derivative(fmpz_poly_q_t rop, const fmpz_poly_q_t op)
-
-    #* Evaluation ****************************************************************/
-    int fmpz_poly_q_evaluate(mpq_t rop, const fmpz_poly_q_t f, const mpq_t a)
 
     #* Input and output **********************************************************/
     int fmpz_poly_q_set_str(fmpz_poly_q_t rop, const char *s)

@@ -19,8 +19,6 @@ MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace('${prefix}', SAGE_LOCAL)
 # Delete this line if your ECL can load Kenzo without further prodding.
 KENZO_FAS = "@SAGE_KENZO_FAS@".replace('${prefix}', SAGE_LOCAL)
 
-ARB_LIBRARY = "@SAGE_ARB_LIBRARY@"
-
 NTL_INCDIR = "@NTL_INCDIR@"
 NTL_LIBDIR = "@NTL_LIBDIR@"
 

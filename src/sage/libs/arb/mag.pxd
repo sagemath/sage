@@ -1,4 +1,4 @@
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = mag.h
 
 from sage.libs.arb.types cimport *
@@ -27,13 +27,11 @@ cdef extern from "arb_wrap.h":
     # void mag_randtest(mag_t x, flint_rand_t state, long expbits)
     # void mag_randtest_special(mag_t x, flint_rand_t state, long expbits)
     void mag_set_d(mag_t y, double x)
-    # void mag_set_fmpr(mag_t y, const fmpr_t x)
     void mag_set_ui(mag_t y, unsigned long x)
     void mag_set_fmpz(mag_t y, const fmpz_t x)
     void mag_set_d_2exp_fmpz(mag_t z, double x, const fmpz_t y)
     void mag_set_fmpz_2exp_fmpz(mag_t z, const fmpz_t x, const fmpz_t y)
     void mag_set_ui_2exp_si(mag_t z, unsigned long x, long y)
-    # void mag_get_fmpr(fmpr_t y, const mag_t x)
     void mag_get_fmpq(fmpq_t y, const mag_t x)
     void mag_set_ui_lower(mag_t z, unsigned long x)
     void mag_set_fmpz_lower(mag_t z, const fmpz_t x)

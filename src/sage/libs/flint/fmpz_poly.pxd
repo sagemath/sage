@@ -28,7 +28,6 @@ cdef extern from "flint_wrap.h":
     void fmpz_poly_set_ui(fmpz_poly_t, ulong)
     void fmpz_poly_set_si(fmpz_poly_t, slong)
     void fmpz_poly_set_fmpz(fmpz_poly_t, const fmpz_t)
-    void fmpz_poly_set_mpz(fmpz_poly_t, const mpz_t)
     int fmpz_poly_set_str(fmpz_poly_t, const char *)
 
     char *fmpz_poly_get_str(const fmpz_poly_t)
@@ -70,7 +69,6 @@ cdef extern from "flint_wrap.h":
     # Scalar multiplication and division
     void fmpz_poly_scalar_mul_fmpz(
             fmpz_poly_t, const fmpz_poly_t, const fmpz_t)
-    void fmpz_poly_scalar_mul_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
     void fmpz_poly_scalar_mul_si(fmpz_poly_t, const fmpz_poly_t, slong)
     void fmpz_poly_scalar_mul_ui(fmpz_poly_t, const fmpz_poly_t, ulong)
     void fmpz_poly_scalar_mul_2exp(fmpz_poly_t, const fmpz_poly_t, ulong)
@@ -310,12 +308,14 @@ cdef extern from "flint_wrap.h":
             fmpz_poly_t,
                     const fmpz_poly_t, const fmpz_t, const nmod_poly_t, int)
 
-    # Some functions for backwards compatibility
-    void fmpz_poly_scalar_mul_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
-    void fmpz_poly_scalar_divexact_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
-    void fmpz_poly_scalar_fdiv_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
-    void fmpz_poly_set_coeff_mpz(fmpz_poly_t, slong, const mpz_t)
-    void fmpz_poly_get_coeff_mpz(mpz_t, const fmpz_poly_t, slong)
+
+# functions removed from flint but still needed in sage
+cdef void fmpz_poly_scalar_mul_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
+cdef void fmpz_poly_scalar_divexact_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
+cdef void fmpz_poly_scalar_fdiv_mpz(fmpz_poly_t, const fmpz_poly_t, const mpz_t)
+cdef void fmpz_poly_set_coeff_mpz(fmpz_poly_t, slong, const mpz_t)
+cdef void fmpz_poly_get_coeff_mpz(mpz_t, const fmpz_poly_t, slong)
+cdef void fmpz_poly_set_mpz(fmpz_poly_t, const mpz_t)
 
 
 # Wrapper Cython class

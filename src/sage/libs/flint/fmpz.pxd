@@ -16,6 +16,9 @@ cdef extern from "flint_wrap.h":
     void fmpz_init_set(fmpz_t, fmpz_t)
     void fmpz_init_set_ui(fmpz_t, ulong)
 
+    void fmpz_init_set_readonly(fmpz_t, const mpz_t)
+    void fmpz_clear_readonly(fmpz_t)
+
     # Conversion
     void fmpz_set(fmpz_t f, fmpz_t g)
     void fmpz_set_ui(fmpz_t, ulong)
