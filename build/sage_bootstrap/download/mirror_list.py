@@ -53,18 +53,18 @@ class MirrorList(object):
             try:
                 with open(os.path.join(upstream_d, fname), 'r') as f:
                     for line in f:
+                        line = line.strip()
+                        if line.startswith('#'):
+                            continue
+                        if not line:
+                            continue
                         line = line.replace('${SAGE_ROOT}', SAGE_ROOT)
                         line = line.replace('${SAGE_DISTFILES}', SAGE_DISTFILES)
                         if '${SAGE_SERVER}' in line:
                             SAGE_SERVER = os.environ.get("SAGE_SERVER", "")
                             if not SAGE_SERVER:
                                 continue
-                            line = line.replace('${SAGE_SERVER}',)
-                        line = line.strip()
-                        if line.startswith('#'):
-                            continue
-                        if not line:
-                            continue
+                            line = line.replace('${SAGE_SERVER}', SAGE_SERVER)
                         if line.endswith('mirror_list'):
                             cache_filename = os.path.join(SAGE_DISTFILES, line.rpartition('/')[2])
                             self.sources.append(MirrorList_from_url(line, cache_filename))
