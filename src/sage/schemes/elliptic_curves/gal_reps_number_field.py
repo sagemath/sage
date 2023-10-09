@@ -432,7 +432,7 @@ def _non_surjective(E, patience=100):
 
     - ``list`` -- A list of primes where mod-`p` representation is very likely
       not surjective. At any prime not in this list, the representation is
-      definitely surjective. If E has CM, a ValueError is raised.
+      definitely surjective. If E has CM, a :class:`ValueError` is raised.
 
     EXAMPLES::
 

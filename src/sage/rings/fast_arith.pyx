@@ -233,7 +233,7 @@ cdef class arith_int:
             return self.abs_int(a)
         if a<0: a=-a
         if b<0: b=-b
-        while(b):
+        while b:
             c = a % b
             a = b
             b = c
@@ -261,7 +261,7 @@ cdef class arith_int:
         if b<0: b = -b; qsign = -1
 
         p = 1; q = 0; r = 0; s = 1
-        while (b):
+        while b:
             c = a % b; quot = a/b
             a = b; b = c
             new_r = p - quot*r
@@ -360,13 +360,15 @@ cdef class arith_llong:
 
     cdef long long c_gcd_longlong(self, long long a, long long b) except -1:
         cdef long long c
-        if a==0:
+        if a == 0:
             return self.abs_longlong(b)
-        if b==0:
+        if b == 0:
             return self.abs_longlong(a)
-        if a<0: a=-a
-        if b<0: b=-b
-        while(b):
+        if a < 0:
+            a = -a
+        if b < 0:
+            b = -b
+        while b:
             c = a % b
             a = b
             b = c
@@ -396,7 +398,7 @@ cdef class arith_llong:
         if b<0: b = -b; qsign = -1
 
         p = 1; q = 0; r = 0; s = 1
-        while (b):
+        while b:
             c = a % b; quot = a/b
             a = b; b = c
             new_r = p - quot*r

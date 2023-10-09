@@ -197,7 +197,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         pAdicZZpXElement.__init__(self, parent)
         if empty:
             return
-        cdef mpz_t tmp
         cdef ZZ_c tmp_z
         cdef Integer tmp_Int
         cdef Py_ssize_t i
@@ -241,7 +240,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             poly = x.polynomial().list()
             x = sum([poly[i].lift() * (z ** i) for i in range(len(poly))], parent.zero())
         elif isinstance(x, ntl_ZZ_p):
-            ctx_prec = ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
+            ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
             if ZZ_IsOne(tmp_z):
                 x = x.lift()
                 tmp_Int = Integer.__new__(Integer)
@@ -613,12 +612,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         if n < 0:
             return self._lshift_c(-n)
-        elif n == 0:
+        if n == 0:
             return self
         cdef pAdicZZpXFMElement ans = self._new_c()
-        cdef Py_ssize_t i
-        cdef long topcut, rem
-        cdef ntl_ZZ holder
         if n < self.prime_pow.ram_prec_cap:
             if self.prime_pow.e == 1:
                 ZZ_pX_right_pshift(ans.value, self.value, self.prime_pow.pow_ZZ_tmp(n)[0], self.prime_pow.get_top_context().x)
@@ -1034,9 +1030,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef ZZ_pX_Modulus_c* m = self.prime_pow.get_top_modulus()
         cdef ZZ_pX_c x
         ZZ_pX_SetX(x)
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         zero = int(0)
-        for i from 0 <= i < n:
+        for i in range(n):
             curlist = cur.list()
             L.extend(curlist + [zero]*(n - len(curlist)))
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
@@ -1443,7 +1439,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef long ordp = self.valuation_c()
         cdef long rp = self.prime_pow.ram_prec_cap - ordp
         cdef long goal
-        if n is not None: goal = self.ram_prec_cap - n
+        if n is not None:
+            goal = self.ram_prec_cap - n
         cdef pAdicZZpXFMElement v
         if n is None:
             L = []
@@ -1454,15 +1451,18 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         else:
             v = self._new_c()
         cdef pAdicZZpXFMElement u = self.unit_part()
-        if u is self: u = self.__copy__()
+        if u is self:
+            u = self.__copy__()
         while u.valuation_c() < rp:
-            if n is None: v = self._new_c()
+            if n is None:
+                v = self._new_c()
             self.prime_pow.teichmuller_set_c(&v.value, &u.value, self.prime_pow.ram_prec_cap)
             if n is None:
                 L.append(v)
             elif rp == goal:
                 return v
-            if rp == 1: break
+            if rp == 1:
+                break
             ZZ_pX_sub(u.value, u.value, v.value)
             rp -= 1
             if self.prime_pow.e == 1:

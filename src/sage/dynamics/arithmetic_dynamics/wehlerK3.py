@@ -364,8 +364,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         i = Indices[0]
         j = Indices[1]
 
-        return (self._Lcoeff(component, j)**2) * (self._Qcoeff(component, i, i)) - (self._Lcoeff(component, i))* \
-            (self._Lcoeff(component, j)) * (self._Qcoeff(component, i, j)) + (self._Lcoeff( component, i)**2)* \
+        return (self._Lcoeff(component, j)**2) * (self._Qcoeff(component, i, i)) - (self._Lcoeff(component, i)) * \
+            (self._Lcoeff(component, j)) * (self._Qcoeff(component, i, j)) + (self._Lcoeff( component, i)**2) * \
             (self._Qcoeff( component, j, j))
 
     @cached_method
@@ -668,11 +668,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             - 168*y0*y1^2*y2^3 - 122*y1^3*y2^3 + 14*y0^2*y2^4 + 8*y0*y1*y2^4 - 112*y1^2*y2^4 + y2^6
         """
         return ((self._Lcoeff(i, 0))**2)*(self._Qcoeff(i, 1, 2))**2 + \
-            ((self._Lcoeff(i, 1))**2)*(self._Qcoeff(i, 0, 2)**2)+ \
-            ((self._Lcoeff(i, 2))**2)*(self._Qcoeff(i, 0, 1)**2)- \
+            ((self._Lcoeff(i, 1))**2)*(self._Qcoeff(i, 0, 2)**2) + \
+            ((self._Lcoeff(i, 2))**2)*(self._Qcoeff(i, 0, 1)**2) - \
             2*(self._Lcoeff(i, 0))*(self._Lcoeff(i, 1))*(self._Qcoeff(i, 0, 2))*(self._Qcoeff(i, 1, 2))\
-            -2*(self._Lcoeff(i, 0))*(self._Lcoeff(i, 2))*(self._Qcoeff(i, 0, 1))*(self._Qcoeff(i, 1, 2))\
-            -2*(self._Lcoeff(i, 1))*(self._Lcoeff(i, 2))*(self._Qcoeff(i, 0, 1))*(self._Qcoeff(i, 0, 2)) + \
+            - 2*(self._Lcoeff(i, 0))*(self._Lcoeff(i, 2))*(self._Qcoeff(i, 0, 1))*(self._Qcoeff(i, 1, 2))\
+            - 2*(self._Lcoeff(i, 1))*(self._Lcoeff(i, 2))*(self._Qcoeff(i, 0, 1))*(self._Qcoeff(i, 0, 2)) + \
              4*(self._Lcoeff(i, 0))*(self._Lcoeff(i, 1))*(self._Qcoeff(i, 0, 1))*(self._Qcoeff(i, 2, 2)) + \
              4*(self._Lcoeff(i, 0))*(self._Lcoeff(i, 2))*(self._Qcoeff(i, 0, 2))*(self._Qcoeff(i, 1, 1)) + \
              4*(self._Lcoeff(i, 1))*(self._Lcoeff(i, 2))*(self._Qcoeff(i, 1, 2))*(self._Qcoeff(i, 0, 0)) - \
@@ -1104,7 +1104,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 try:
                     P = self(list(P))
                 except (TypeError, NotImplementedError, AttributeError):
-                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self))
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self))
         pt = list(P[0]) + [0, 0, 0]
         if P[1][0] != 0:
             [a,b,c] = [P[1][0]*self.Gpoly(1, 0)(*pt),
@@ -1134,11 +1134,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         #Define the blow-up map with (s0,s1) the new `\mathbb{P}^1` coordinates
         #so that the points on the fiber come in pairs on the lines defined by `(s0,s1)`
         #this allows us to extend the involution to degenerate fibers
-        if P[0][0]!= 0:
+        if P[0][0] != 0:
             t1 = BR(P[0][1]/P[0][0])
             t = w1 - t1
             phi = R.hom([s0, s0*w1, s1*t + s0*P[0][2]/P[0][0], z0, z1, z2], S)
-        elif P[0][1]!= 0:
+        elif P[0][1] != 0:
             t1 = BR(P[0][0]/P[0][1])
             t = w1 - t1
             phi = R.hom([s0*w1, s0, s1*t + s0*P[0][2]/P[0][1], z0, z1, z2], S)
@@ -1215,7 +1215,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             for i in range(2, len(T)):
                 e = 0
                 if newT[i] != 0:
-                    while (newT[i]/s**e).subs({s:0})==0:
+                    while (newT[i]/s**e).subs({s:0}) == 0:
                         e += 1
                     maxexp.append(e)
             e = min(maxexp)
@@ -1346,7 +1346,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 try:
                     P = self(list(P))
                 except (TypeError, NotImplementedError, AttributeError):
-                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self))
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self))
         pt = [0, 0, 0] + list(P[1])
         if P[0][0] != 0:
             [a, b, c] = [P[0][0]*self.Gpoly(0, 0)(*pt),
@@ -1380,7 +1380,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             t1 = BR(P[1][1]/P[1][0])
             t = w1 - t1
             phi = R.hom([z0, z1, z2, s0, s0*w1, s1*t + s0*P[1][2]/P[1][0]], S)
-        elif P[1][1]!= 0:
+        elif P[1][1] != 0:
             t1 = BR(P[1][0]/P[1][1])
             t = w1 - t1
             phi = R.hom([z0, z1, z2, s0*w1, s0, s1*t + s0*P[1][2]/P[1][1]], S)
@@ -1624,7 +1624,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             0.89230705169161608922595928129
         """
         if not (v == 0 or v.is_prime()):
-            raise ValueError("invalid valuation (= %s) entered"%v)
+            raise ValueError("invalid valuation (= %s) entered" % v)
         R = RealField(prec)
         if v == 0:
             K = R
@@ -1763,7 +1763,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             newQ = copy(Q)
             newQ.scale_by([1/Q[0][l], 1])
 
-            if PK[1][i].abs()<= PK[1][k].abs():
+            if PK[1][i].abs() <= PK[1][k].abs():
                 A = Rx(W.Gpoly(1, k))(tuple(newQ[0]))*PK[1][i]/PK[1][k]
             else:
                 A = -Rx(W.Gpoly(1, i))(tuple(newQ[0]))*PK[1][k]/PK[1][i]
@@ -2024,11 +2024,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             P0 = [Zero, Zero, Zero] + P
         Points = []
 
-        if (self.Gpoly(component,0)(P0)!= 0):
+        if (self.Gpoly(component,0)(P0) != 0):
              #We are using the quadratic formula, we need this check to ensure that the points
              #will be rational
-            T0 = (self.Hpoly(component, 0, 1)(P0)**2 -4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 1)(P0))
-            T1 = (self.Hpoly(component, 0, 2)(P0)**2 -4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 2)(P0))
+            T0 = (self.Hpoly(component, 0, 1)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 1)(P0))
+            T1 = (self.Hpoly(component, 0, 2)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 2)(P0))
             if (T0.is_square() and T1.is_square()):
                 T0 = T0.sqrt()
                 T1 = T1.sqrt()

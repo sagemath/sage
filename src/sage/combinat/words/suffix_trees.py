@@ -1366,7 +1366,7 @@ class ImplicitSuffixTree(SageObject):
             ('explicit', 1)
         """
         trans = self._find_transition(node, self._letters[i])
-        while (trans[0][1] is not None and trans[0][1] - trans[0][0] + 1 <= j - i):
+        while trans[0][1] is not None and trans[0][1] - trans[0][0] + 1 <= j - i:
             node = trans[1]
             i += trans[0][1] - trans[0][0] + 1
             if i == j:

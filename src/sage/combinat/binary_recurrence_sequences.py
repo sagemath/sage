@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Binary Recurrence Sequences
 
@@ -705,7 +706,7 @@ class BinaryRecurrenceSequence(SageObject):
 
                             #CRT by hand to gain speed
                             for i in list(cong):
-                                if not (i % modu in cong1):        #congruence in cong is inconsistent with any in cong1
+                                if i % modu not in cong1:        #congruence in cong is inconsistent with any in cong1
                                     cong.remove(i)            #remove that congruence
                                     killed_something = True
 

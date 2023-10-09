@@ -948,11 +948,12 @@ cdef class RelaxedElement(pAdicGenericElement):
         return Integer(self._precrel + self._valuation)
 
     def precision_relative(self):
-        """
+        r"""
         Return the relative precision of this element.
 
         This is the power of `p` modulo which the unit part of this
         element is known.
+
         For unbounded nonzero elements, this methods return `+\infty`.
 
         EXAMPLES::
@@ -3056,7 +3057,6 @@ cdef class RelaxedElement_sub(RelaxedElementWithDigits):
         return 0
 
 
-
 # Multiplication
 
 cdef class RelaxedElement_mul(RelaxedElementWithDigits):
@@ -3684,7 +3684,7 @@ cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
             p = self.prime_pow.prime
             size = mpz_sizeinbase(p.value, 2)
             i = size - 2
-            self._xns = [ ]
+            self._xns = []
             while i >= 0:
                 xn = element_class_mul(parent, xn, xn)
                 self._xns.append(xn)
@@ -3801,7 +3801,7 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
         self._next = maxordp
         cdef cdigit digit
         if digits is not None:
-            digits = [ Integer(d) for d in digits ]
+            digits = [Integer(d) for d in digits]
             for d in digits:
                 digit_set_sage(digit, d)
                 element_iadd_digit(self._digits, digit, self._precrel)
@@ -3828,7 +3828,7 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
             sage: x == loads(dumps(x))  # indirect doctest
             True
         """
-        digits = [ ]
+        digits = []
         for i in range(self._initialprecrel):
             digits.append(digit_get_sage(element_get_digit(self._digits, i)))
         definition = None
@@ -3932,6 +3932,7 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
                 self._precrel += 1
         self._next = svenext
         return error
+
 
 def unpickle_unknown(uid, cls, parent, valuation, digits, definition):
     r"""
@@ -4084,7 +4085,7 @@ cdef class ExpansionIter():
                 self._next_smallest()
         elif self.mode == teichmuller_mode:
             self.tail = elt
-            self.coefficients = { }
+            self.coefficients = {}
             while self.current < self.start:
                 self._next_teichmuller()
 
