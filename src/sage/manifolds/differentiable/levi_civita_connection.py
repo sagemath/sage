@@ -520,7 +520,7 @@ class LeviCivitaConnection(AffineConnection):
                             for i,j,k in local_list_ijk:
                                 rsum = 0
                                 for s in manif.irange():
-                                    if ginv[i,s, chart]!=0:
+                                    if ginv[i,s, chart] != 0:
                                         rsum += ginv[i,s, chart] * (
                                                         gg[s,k, chart].diff(j)
                                                       + gg[j,s, chart].diff(k)

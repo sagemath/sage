@@ -146,7 +146,7 @@ class SL2Z_class(Gamma0_class):
             sage: latex(SL2Z)
             \mbox{\rm SL}_2(\Bold{Z})
         """
-        return "\\mbox{\\rm SL}_2(%s)"%(ZZ._latex_())
+        return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
     def is_subgroup(self, right):
         """

@@ -1,4 +1,4 @@
-# optional - sage.combinat sage.groups
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Integer vectors modulo the action of a permutation group
 """
@@ -27,7 +27,7 @@ from sage.combinat.integer_vector import IntegerVectors
 
 class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     r"""
-    Returns an enumerated set containing integer vectors which are
+    Return an enumerated set containing integer vectors which are
     maximal in their orbit under the action of the permutation group
     ``G`` for the lexicographic order.
 
@@ -137,7 +137,9 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         [[6, 0, 0], [5, 1, 0], [5, 0, 1], [4, 2, 0], [4, 1, 1],
          [4, 0, 2], [3, 3, 0], [3, 2, 1], [3, 1, 2], [2, 2, 2]]
         sage: I.category()
-        Join of Category of finite enumerated sets and Category of subquotients of finite sets and Category of quotients of sets
+        Join of Category of finite enumerated sets
+            and Category of subquotients of finite sets
+            and Category of quotients of sets
 
     To get the orbit of any integer vector `v` under the action of the group,
     use the method :meth:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup_All.orbit`;
@@ -156,9 +158,9 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     Let us check that canonical integer vectors of the symmetric group
     are just sorted list of integers::
 
-        sage: I = IntegerVectorsModPermutationGroup(SymmetricGroup(5)) # long time
-        sage: p = iter(I) # long time
-        sage: for i in range(100): # long time
+        sage: I = IntegerVectorsModPermutationGroup(SymmetricGroup(5))  # long time
+        sage: p = iter(I)                                               # long time
+        sage: for i in range(100):                                      # long time
         ....:     v = list(next(p))
         ....:     assert sorted(v, reverse=True) == v
 
@@ -166,8 +168,8 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     symmetric group `S_n` whose entries sum to `d` than partitions of
     `d` of at most `n` parts::
 
-        sage: I = IntegerVectorsModPermutationGroup(SymmetricGroup(5)) # long time
-        sage: for i in range(10): # long time
+        sage: I = IntegerVectorsModPermutationGroup(SymmetricGroup(5))  # long time
+        sage: for i in range(10):                                       # long time
         ....:     d1 = I.subset(i).cardinality()
         ....:     d2 = Partitions(i, max_length=5).cardinality()
         ....:     print(d1)
@@ -187,11 +189,12 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     group ``G`` acting on a list of length `n`, all integer vectors of
     length `n` are canonical::
 
-        sage: G = PermutationGroup([[(6,)]]) # long time
-        sage: G.cardinality() # long time
+        sage: # long time
+        sage: G = PermutationGroup([[(6,)]])
+        sage: G.cardinality()
         1
-        sage: I = IntegerVectorsModPermutationGroup(G) # long time
-        sage: for i in range(10): # long time
+        sage: I = IntegerVectorsModPermutationGroup(G)
+        sage: for i in range(10):
         ....:     d1 = I.subset(i).cardinality()
         ....:     d2 = IntegerVectors(i,6).cardinality()
         ....:     print(d1)
@@ -225,9 +228,9 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
             return IntegerVectorsModPermutationGroup_All(G, sgs=sgs)
         else:
             if sum is not None:
-                assert (sum == NN(sum))
+                assert sum == NN(sum)
             if max_part is not None:
-                assert (max_part == NN(max_part))
+                assert max_part == NN(max_part)
             return IntegerVectorsModPermutationGroup_with_constraints(G, sum, max_part, sgs=sgs)
 
 
@@ -245,9 +248,9 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     EXAMPLES::
 
-        sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]))
-        sage: I
-        Integer vectors of length 4 enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
+        sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]])); I
+        Integer vectors of length 4 enumerated up to the action of
+         Permutation Group with generators [(1,2,3,4)]
         sage: I.cardinality()
         +Infinity
         sage: TestSuite(I).run()
@@ -274,7 +277,8 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
             sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]))
             sage: I
-            Integer vectors of length 4 enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
+            Integer vectors of length 4 enumerated up to the action of
+             Permutation Group with generators [(1,2,3,4)]
             sage: I.category()
             Category of infinite enumerated quotients of sets
             sage: TestSuite(I).run()
@@ -575,10 +579,13 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     EXAMPLES::
 
-        sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), max_part=1)
+        sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+        ....:                                       max_part=1)
         sage: I.list()
-        [[0, 0, 0, 0], [1, 0, 0, 0], [1, 1, 0, 0], [1, 0, 1, 0], [1, 1, 1, 0], [1, 1, 1, 1]]
-        sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=6, max_part=4)
+        [[0, 0, 0, 0], [1, 0, 0, 0], [1, 1, 0, 0], [1, 0, 1, 0], [1, 1, 1, 0],
+         [1, 1, 1, 1]]
+        sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+        ....:                                       sum=6, max_part=4)
         sage: I.list()
         [[4, 2, 0, 0], [4, 1, 1, 0], [4, 1, 0, 1], [4, 0, 2, 0], [4, 0, 1, 1],
          [4, 0, 0, 2], [3, 3, 0, 0], [3, 2, 1, 0], [3, 2, 0, 1], [3, 1, 2, 0],
@@ -641,7 +648,9 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     def roots(self):
         r"""
-        Returns the root of generation of ``self``.This method is
+        Return the root of generation of ``self``.
+
+        This method is
         required to build the tree structure of ``self`` which
         inherits from the class
         :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
@@ -656,7 +665,9 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     def children(self, x):
         r"""
-        Returns the list of children of the element ``x``. This method
+        Return the list of children of the element ``x``.
+
+        This method
         is required to build the tree structure of ``self`` which
         inherits from the class
         :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
@@ -671,7 +682,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     def permutation_group(self):
         r"""
-        Returns the permutation group given to define ``self``.
+        Return the permutation group given to define ``self``.
 
         EXAMPLES::
 
@@ -766,7 +777,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     def is_canonical(self, v, check=True):
         r"""
-        Returns ``True`` if the integer list ``v`` is maximal in its
+        Return ``True`` if the integer list ``v`` is maximal in its
         orbit under the action of the permutation group given to
         define ``self``.  Such integer vectors are said to be
         canonical. A vector `v` is canonical if and only if
@@ -777,7 +788,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
-            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), max_part=3)
+            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       max_part=3)
             sage: I.is_canonical([3,0,0,0])
             True
             sage: I.is_canonical([1,0,2,0])
@@ -798,11 +810,16 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6); S.ambient()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6)
+            sage: S.ambient()
             Integer vectors that sum to 6
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6, max_part=12); S.ambient()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       6, max_part=12)
+            sage: S.ambient()
             Integer vectors that sum to 6 with constraints: max_part=12
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), max_part=12); S.ambient()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       max_part=12)
+            sage: S.ambient()
             Integer vectors with constraints: max_part=12
         """
         if self._sum is not None:
@@ -819,12 +836,14 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), max_part=1)
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       max_part=1)
             sage: v = S.lift([1,0,1,0]); v
             [1, 0, 1, 0]
             sage: v in IntegerVectors(2,4,max_part=1)
             True
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=6)
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=6)
             sage: v = S.lift(S.list()[5]); v
             [4, 1, 1, 0]
             sage: v in IntegerVectors(n=6)
@@ -847,7 +866,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=2, max_part=1)
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=2, max_part=1)
             sage: S.retract([1,1,0,0])
             [1, 1, 0, 0]
             sage: S.retract([1,0,1,0])
@@ -873,22 +893,35 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     def an_element(self):
         r"""
-        Returns an element of ``self`` or raises an EmptySetError when
-        ``self`` is empty.
+        Return an element of ``self``.
+
+        Raises an :class:`EmptySetError` when ``self`` is empty.
 
         EXAMPLES::
 
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=0, max_part=1); S.an_element()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=0, max_part=1)
+            sage: S.an_element()
             [0, 0, 0, 0]
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=1, max_part=1); S.an_element()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=1, max_part=1)
+            sage: S.an_element()
             [1, 0, 0, 0]
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=2, max_part=1); S.an_element()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=2, max_part=1)
+            sage: S.an_element()
             [1, 1, 0, 0]
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=3, max_part=1); S.an_element()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=3, max_part=1)
+            sage: S.an_element()
             [1, 1, 1, 0]
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=4, max_part=1); S.an_element()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=4, max_part=1)
+            sage: S.an_element()
             [1, 1, 1, 1]
-            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=5, max_part=1); S.an_element()
+            sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),
+            ....:                                       sum=5, max_part=1)
+            sage: S.an_element()
             Traceback (most recent call last):
             ...
             EmptySetError
@@ -905,12 +938,12 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     def orbit(self, v):
         r"""
-        Returns the orbit of the vector ``v`` under the action of the
+        Return the orbit of the vector ``v`` under the action of the
         permutation group defining ``self``. The result is a set.
 
         INPUT:
 
-        - ``v`` - an element of ``self`` or any list of length the
+        - ``v`` -- an element of ``self`` or any list of length the
           degree of the permutation group.
 
         EXAMPLES:
@@ -918,7 +951,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         We convert the result in a list in increasing lexicographic
         order, to get a reproducible doctest::
 
-            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),4)
+            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 4)
             sage: I.orbit([1,1,1,1])
             {[1, 1, 1, 1]}
             sage: sorted(I.orbit([3,0,0,1]))
@@ -952,7 +985,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         def check(self):
             r"""
-            Checks that ``self`` meets the constraints of being an element of ``self.parent()``.
+            Check that ``self`` meets the constraints of being an element of ``self.parent()``.
 
             EXAMPLES::
 

@@ -972,8 +972,8 @@ class GraphDatabase(SQLDatabase):
         EXAMPLES::
 
             sage: D = GraphDatabase()
-            sage: q = D.query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5])
-            sage: q.show()
+            sage: q = D.query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5])          # needs sage.symbolic
+            sage: q.show()                                                              # needs sage.symbolic
             Graph6               Num Vertices         Degree Sequence
             ------------------------------------------------------------
             @                    1                    [0]
@@ -1109,7 +1109,7 @@ class GraphDatabase(SQLDatabase):
         EXAMPLES::
 
             sage: D = GraphDatabase()
-            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=5, max_degree=3)
+            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=5, max_degree=3)                                    # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: not available in Jupyter notebook

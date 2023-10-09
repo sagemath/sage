@@ -3137,7 +3137,7 @@ class MonomialGrowthElement(GenericGrowthElement):
                 return ((e, coefficient),)
 
         if var.startswith('exp('):
-            assert(var[-1] == ')')
+            assert (var[-1] == ')')
             v = var[4:-1]
         else:
             v = 'log(%s)' % (var,)
@@ -3207,7 +3207,7 @@ class MonomialGrowthElement(GenericGrowthElement):
             x^(log(2))
         """
         var = str(self.parent()._var_)
-        if not(var.startswith('log(') and self.exponent.is_one()):
+        if not (var.startswith('log(') and self.exponent.is_one()):
             raise ValueError('Variable %s is not a log of something.' % (var,))
         new_var = var[4:-1]
         if base == 'e':

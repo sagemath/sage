@@ -2294,7 +2294,7 @@ def szeged_index(G, algorithm=None):
 
     Check that both algorithms return same value::
 
-        sage: # long time
+        sage: # long time, needs networkx
         sage: G = graphs.RandomBarabasiAlbert(100, 2)
         sage: a = szeged_index(G, algorithm='low')
         sage: b = szeged_index(G, algorithm='high')

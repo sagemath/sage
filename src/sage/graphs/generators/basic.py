@@ -43,7 +43,7 @@ def BullGraph():
 
         sage: g = graphs.BullGraph(); g
         Bull graph: Graph on 5 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     The bull graph has 5 vertices and 5 edges. Its radius is 2, its
     diameter 3, and its girth 3. The bull graph is planar with chromatic
@@ -66,10 +66,13 @@ def BullGraph():
     `x` is a variable, `A` the adjacency matrix of the graph, and `I`
     the identity matrix of the same dimensions as `A`::
 
+        sage: # needs sage.libs.flint
         sage: chrompoly = g.chromatic_polynomial()
         sage: x = chrompoly.parent()('x')
         sage: x * (x - 2) * (x - 1)^3 == chrompoly
         True
+
+        sage: # needs sage.libs.flint sage.modules
         sage: charpoly = g.characteristic_polynomial()
         sage: M = g.adjacency_matrix(); M
         [0 1 1 0 0]
@@ -79,7 +82,7 @@ def BullGraph():
         [0 0 1 0 0]
         sage: Id = identity_matrix(ZZ, M.nrows())
         sage: D = x*Id - M
-        sage: D.determinant() == charpoly
+        sage: D.determinant() == charpoly                                               # needs sage.symbolic
         True
         sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
         True
@@ -108,7 +111,7 @@ def ButterflyGraph():
 
         sage: G = graphs.ButterflyGraph(); G
         Butterfly graph: Graph on 5 vertices
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs sage.plot
         sage: G.is_planar()
         True
         sage: G.order()
@@ -170,7 +173,7 @@ def CircularLadderGraph(n):
     Construct and show a circular ladder graph with 26 nodes::
 
         sage: g = graphs.CircularLadderGraph(13)
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several circular ladder graphs in a Sage graphics array::
 
@@ -212,7 +215,7 @@ def ClawGraph():
 
     Show a Claw graph::
 
-        sage: (graphs.ClawGraph()).show()  # long time
+        sage: (graphs.ClawGraph()).show()       # long time                             # needs sage.plot
 
     Inspect a Claw graph::
 
@@ -500,7 +503,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
     Notice here how the spring-layout tends to center the nodes of `n1`::
 
         sage: spring_med.show()                 # long time                             # needs networkx
-        sage: posdict_med.show()  # long time
+        sage: posdict_med.show()                # long time                             # needs sage.plot
 
     View many complete bipartite graphs with a Sage Graphics Array, with this
     constructor (i.e., the position dictionary filled)::
@@ -659,7 +662,7 @@ def DiamondGraph():
     Construct and show a diamond graph::
 
         sage: g = graphs.DiamondGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1)}
     edges = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
@@ -681,7 +684,7 @@ def GemGraph():
     Construct and show a gem graph::
 
         sage: g = graphs.GemGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0.5, 0), 1: (0, 0.75), 2: (0.25, 1), 3: (0.75, 1), 4: (1, 0.75)}
     edges = [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (2, 3), (3, 4)]
@@ -703,7 +706,7 @@ def ForkGraph():
     Construct and show a fork graph::
 
         sage: g = graphs.ForkGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0, 0), 1: (1, 0), 2: (0, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 2), (2, 3), (3, 1), (2, 4)]
@@ -723,7 +726,7 @@ def DartGraph():
     Construct and show a dart graph::
 
         sage: g = graphs.DartGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1), 4: (0, 0)}
     edges = [(0, 1), (0, 2), (1, 4), (2, 4), (0, 4), (3, 4)]
@@ -748,7 +751,7 @@ def EmptyGraph():
         sage: empty1 = graphs.EmptyGraph()
         sage: empty1.add_vertex()
         0
-        sage: empty1.show()  # long time
+        sage: empty1.show()                     # long time                             # needs sage.plot
 
     Use for loops to build a graph from an empty graph::
 
@@ -764,7 +767,7 @@ def EmptyGraph():
         ....:     empty2.add_edge(i,i+1)  # add edges {[0:1],[1:2],[2:3]}
         sage: for i in range(1, 4):
         ....:     empty2.add_edge(4,i)  # add edges {[1:4],[2:4],[3:4]}
-        sage: empty2.show()  # long time
+        sage: empty2.show()                     # long time                             # needs sage.plot
     """
     return Graph(sparse=True)
 
@@ -896,7 +899,7 @@ def Grid2dGraph(p, q, set_positions=True):
     Construct and show a grid 2d graph Rows = `5`, Columns = `7`::
 
         sage: g = graphs.Grid2dGraph(5,7)
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS:
 
@@ -950,14 +953,14 @@ def GridGraph(dim_list):
     EXAMPLES::
 
         sage: G = graphs.GridGraph([2,3,4])
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs sage.plot
 
     ::
 
         sage: C = graphs.CubeGraph(4)
         sage: G = graphs.GridGraph([2,2,2,2])
-        sage: C.show()  # long time
-        sage: G.show()  # long time
+        sage: C.show()                          # long time                             # needs sage.plot
+        sage: G.show()                          # long time                             # needs sage.plot
 
     TESTS:
 
@@ -1064,7 +1067,7 @@ def HouseGraph():
     Construct and show a house graph::
 
         sage: g = graphs.HouseGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
@@ -1092,7 +1095,7 @@ def HouseXGraph():
     Construct and show a house X graph::
 
         sage: g = graphs.HouseXGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
@@ -1116,7 +1119,7 @@ def LadderGraph(n):
     Construct and show a ladder graph with 14 nodes::
 
         sage: g = graphs.LadderGraph(7)
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several ladder graphs in a Sage graphics array::
 
@@ -1179,26 +1182,26 @@ def PathGraph(n, pos=None):
     ::
 
         sage: p = graphs.PathGraph(10)
-        sage: p.show()  # long time
+        sage: p.show()                          # long time                             # needs sage.plot
 
     'circle': `10 < n < 41`
 
     ::
 
         sage: q = graphs.PathGraph(25)
-        sage: q.show()  # long time
+        sage: q.show()                          # long time                             # needs sage.plot
 
     'line': `n \geq 41`
 
     ::
 
         sage: r = graphs.PathGraph(55)
-        sage: r.show()  # long time
+        sage: r.show()                          # long time                             # needs sage.plot
 
     Override the default drawing::
 
         sage: s = graphs.PathGraph(5,'circle')
-        sage: s.show()  # long time
+        sage: s.show()                          # long time                             # needs sage.plot
     """
     G = Graph(n, name="Path graph")
 
