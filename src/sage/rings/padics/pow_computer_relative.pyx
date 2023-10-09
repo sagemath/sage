@@ -150,14 +150,16 @@ cdef class PowComputer_relative(PowComputer_class):
             Relative PowComputer for modulus x^3 + 5*x + a*5
 
         """
-        return "Relative PowComputer for modulus %s"%(self.modulus,)
+        return "Relative PowComputer for modulus %s" % (self.modulus,)
 
     cdef unsigned long capdiv(self, unsigned long n):
         r"""
         Return `\lceil n/e \rceil`.
         """
-        if self.e == 1: return n
-        if n == 0: return 0
+        if self.e == 1:
+            return n
+        if n == 0:
+            return 0
         return (n - 1)/self.e + 1
 
     def polynomial(self, n=None, var='x'):

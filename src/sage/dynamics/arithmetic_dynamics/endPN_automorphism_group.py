@@ -100,7 +100,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
 
     F = R.base_ring()
 
-    if F != QQ and F!= ZZ:
+    if F != QQ and F != ZZ:
         raise TypeError("coefficient ring is not the rational numbers or the integers")
 
     z = R.gen(0)
@@ -227,7 +227,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                     elements.append(matrix(F, 2, [zeta, alpha*(1-zeta), 0, 1]))
     factors = (f2 - z*g2).factor()
     L1 = NumberField(z**2 + 1,'i')
-    i=L1.gen(0)
+    i = L1.gen(0)
     L2 = NumberField(z**2 + 3,'isqrt3')
     isqrt3 = L2.gen(0)
     for psi in factors:
@@ -310,7 +310,7 @@ def height_bound(polynomial):
         413526
     """
     # first check that polynomial is over QQ or ZZ
-    K=polynomial.parent()
+    K = polynomial.parent()
 
     if K.is_field():
         R = K.ring()
@@ -318,7 +318,7 @@ def height_bound(polynomial):
         R = K
     F = R.base_ring()
 
-    if F != QQ and F!= ZZ:
+    if F != QQ and F != ZZ:
         raise TypeError("coefficient ring is not the rational numbers or the integers")
 
     # scale polynomial so that it has integer coefficients with gcd 1
@@ -672,7 +672,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
 
     F = R.base_ring()
 
-    if F != QQ and F!= ZZ:
+    if F != QQ and F != ZZ:
         raise TypeError("coefficient ring is not the rational numbers or the integers")
 
     z = R.gen(0)
@@ -739,7 +739,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
     # the only possible groups are C_n, D_2n for n|6 or n|4
     # all of these groups have order dividing 24
     while (congruence < (2*MaxH**2)) and len(elements) < gcd(orderaut + [24]):
-        if badprimes%p != 0:  #prime of good reduction
+        if badprimes % p != 0:  #prime of good reduction
             # compute automorphisms mod p
             phi_p = f.change_ring(GF(p))/g.change_ring(GF(p))
             sorted_automorphisms = automorphism_group_FF(phi_p)
@@ -797,7 +797,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                             # if an element of Aut_{F_p} has been lifted to QQ
                             # remove that element from Aut_{F_p} so we don't
                             # attempt to lift that element again unnecessarily
-                            automorphisms=remove_redundant_automorphisms(automorphisms,
+                            automorphisms = remove_redundant_automorphisms(automorphisms,
                                 orderelts, primepowers, temp)
                             if order == 4: #have some elements of order 4
                                 # so possible aut group is Z/4 or D_4
@@ -808,7 +808,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                                 badorders.append(4)
                     else: #no elements of order d in some F_v
                         for m in divisors(N):
-                            if m%order == 0:
+                            if m % order == 0:
                                 badorders.append(m)
                                 #no elements of that order or any order that
                                 # is a multiple of it
@@ -880,12 +880,12 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
 
     if not return_functions:
         if absolute:
-            R=G[1][0].parent()
+            R = G[1][0].parent()
             if R.is_field():
                 R = R.ring()
             G[1] = [matrix(R.base_ring(),[[R(g.numerator())[1],R(g.numerator())[0]],[R(g.denominator())[1],R(g.denominator())[0]]]) for g in G[1]]
         else:
-            R=G[0].parent()
+            R = G[0].parent()
             if R.is_field():
                 R = R.ring()
             G = [matrix(R.base_ring(),[[R(g.numerator())[1],R(g.numerator())[0]],[R(g.denominator())[1],R(g.denominator())[0]]]) for g in G]
@@ -941,7 +941,7 @@ def field_descent(sigma, y):
     if not remainder.is_constant():
         return
     else:
-        x = x+ F(remainder)
+        x = x + F(remainder)
 
     steps = 1
     while not quotient.is_constant():
@@ -949,7 +949,7 @@ def field_descent(sigma, y):
         if not remainder.is_constant():
             return
         else:
-            x = x+ F(remainder)*a**(steps)
+            x = x + F(remainder)*a**(steps)
             steps += 1
 
     return x + F(quotient)*a**(steps)
@@ -1125,12 +1125,12 @@ def three_stable_points(rational_function, invariant_list):
 
         b = (T[0][0]*T[1][0]*T[2][1]*T[t[0]][0]*T[t[1]][1]*T[t[2]][0] -
             T[0][0]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][0]*T[t[2]][0] -
-            T[0][0]*T[1][1]*T[2][0]*T[t[0]][0]*T[t[1]][0] *T[t[2]][1] +
+            T[0][0]*T[1][1]*T[2][0]*T[t[0]][0]*T[t[1]][0] * T[t[2]][1] +
             T[0][0]*T[1][1]*T[2][0]*T[t[0]][1]*T[t[1]][0]*T[t[2]][0] +
             T[0][1]*T[1][0]*T[2][0]*T[t[0]][0]*T[t[1]][0]*T[t[2]][1] -
             T[0][1]*T[1][0]*T[2][0]*T[t[0]][0]*T[t[1]][1]*T[t[2]][0])
 
-        c = (T[0][0]*T[1][1]*T[2][1]*T[t[0]][1]*T[t[1]][0] *T[t[2]][1]-
+        c = (T[0][0]*T[1][1]*T[2][1]*T[t[0]][1]*T[t[1]][0] * T[t[2]][1] -
             T[0][0]*T[1][1]*T[2][1]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0] -
             T[0][1]*T[1][0]*T[2][1]*T[t[0]][0]*T[t[1]][1]*T[t[2]][1] +
             T[0][1]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0] +
@@ -1138,10 +1138,10 @@ def three_stable_points(rational_function, invariant_list):
             T[0][1]*T[1][1]*T[2][0]*T[t[0]][1]*T[t[1]][0]*T[t[2]][1])
 
         d = (T[0][0]*T[1][0]*T[2][1]*T[t[0]][0]*T[t[1]][1]*T[t[2]][1] -
-            T[0][0]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][0] *T[t[2]][1]-
+            T[0][0]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][0] * T[t[2]][1] -
             T[0][0]*T[1][1]*T[2][0]*T[t[0]][0]*T[t[1]][1]*T[t[2]][1] +
             T[0][0]*T[1][1]*T[2][0]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0] +
-            T[0][1]*T[1][0]*T[2][0]*T[t[0]][1]*T[t[1]][0] *T[t[2]][1]-
+            T[0][1]*T[1][0]*T[2][0]*T[t[0]][1]*T[t[1]][0] * T[t[2]][1] -
             T[0][1]*T[1][0]*T[2][0]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0])
 
         if a*d - b*c != 0:
@@ -1240,9 +1240,9 @@ def automorphism_group_FF_alg2(rational_function):
             y = fix.roots(multiplicities=False)[0]
             preimage = R(f(z) - y*g(z))
             minimal_preimage = R(prod(x[0] for x in preimage.factor()))
-            if minimal_preimage.degree() + bool(preimage.degree()<D) >= 3:
+            if minimal_preimage.degree() + bool(preimage.degree() < D) >= 3:
                 T_poly = minimal_preimage
-                infinity_check = bool(preimage.degree()<D)
+                infinity_check = bool(preimage.degree() < D)
             else:
                 preimage2 = R(phi(phi(z)).numerator() - y*phi(phi(z)).denominator())
                 T_poly = R(prod(x[0] for x in preimage2.factor() ) )
@@ -1377,7 +1377,7 @@ def order_p_automorphisms(rational_function, pre_image):
 
     elif r2 < r:
 
-        if case=='fix':
+        if case == 'fix':
             T = [x[0] for x in pre_image]
         elif case == 'F-pre_images':
             T = [x for x in pre_image[0][1]]
@@ -1623,11 +1623,11 @@ def automorphism_group_FF_alg3(rational_function):
     # An F-rational fixed point has orbit length 1 or p under the action of an element of
     # order p. An F-quadratic fixed point has orbit length p. The set of F-rational
     # pre-images of fixed points decomposes as a union of orbits of length p.
-    if n1%p == 1 and n2%p == 0 and sum(len(x[1]) for x in pre_images)%p == 0:
+    if n1 % p == 1 and n2 % p == 0 and sum(len(x[1]) for x in pre_images) % p == 0:
         # Compute total number of distinct fixed points as a final check for order p auts
         factor_list = fix.factor()
         n = sum(x[0].degree() for x in factor_list) + bool(fix.degree() < D+1)
-        if n%p == 1:
+        if n % p == 1:
             automorphisms = automorphisms + order_p_automorphisms(phi, pre_images)
 
     # nontrivial elements with order prime to p #
@@ -1716,7 +1716,7 @@ def which_group(list_of_elements):
     if is_Matrix(list_of_elements[-1]):
         R = PolynomialRing(list_of_elements[-1].base_ring(),'z')
         z = R.gen(0)
-        G=[(t[0,0]*z+t[0,1])/(t[1,0]*z+t[1,1]) for t in list_of_elements]
+        G = [(t[0,0]*z+t[0,1])/(t[1,0]*z+t[1,1]) for t in list_of_elements]
     else:
         G = list_of_elements
 
@@ -1765,7 +1765,7 @@ def which_group(list_of_elements):
                 return 'Cyclic of order {0}'.format(n)
             if len(H) > max_reg_cyclic[0] and gcd(len(H), p) != p:
                 max_reg_cyclic = [len(H), g, H]
-            discard = list(set(discard +H)) # adjoin all new elements to discard
+            discard = list(set(discard + H)) # adjoin all new elements to discard
 
     n_reg = max_reg_cyclic[0]
     # Test for dihedral subgroup. A subgroup of index 2 is always normal, so the

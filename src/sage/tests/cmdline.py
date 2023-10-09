@@ -231,75 +231,49 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
     Test ``sage-run`` on a Python file, both with an absolute and with a relative path::
 
-        sage: dir = tmp_dir(); name = 'python_test_file.py'
-        sage: fullname = os.path.join(dir, name)
-        sage: F = open(fullname, 'w')
-        sage: _ = F.write("print(3^33)\n")
-        sage: F.close()
-        sage: (out, err, ret) = test_executable(["sage", fullname])
-        sage: print(out)
-        34
-        sage: err
-        ''
-        sage: ret
-        0
-        sage: (out, err, ret) = test_executable(["sage", name], cwd=dir)
-        sage: print(out)
-        34
-        sage: err
-        ''
-        sage: ret
-        0
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as dir:
+        ....:     name = 'python_test_file.py'
+        ....:     fullname = os.path.join(dir, name)
+        ....:     with open(fullname, 'w') as F:
+        ....:         _ = F.write("print(3^33)\n")
+        ....:     test_executable(["sage", fullname])
+        ....:     test_executable(["sage", name], cwd=dir)
+        ('34\n', '', 0)
+        ('34\n', '', 0)
 
     The same as above, but now with a ``.sage`` file.  This indirectly
     also tests the preparser::
 
-        sage: dir = tmp_dir(); name = 'sage_test_file.sage'
-        sage: fullname = os.path.join(dir, name)
-        sage: F = open(fullname, 'w')
-        sage: _ = F.write("k.<a> = GF(5^3); print(a^124)\n")
-        sage: F.close()
-        sage: (out, err, ret) = test_executable([           # long time
-        ....:     "sage", fullname])
-        sage: print(out)                                    # long time
-        1
-        sage: err                                           # long time
-        ''
-        sage: ret                                           # long time
-        0
-        sage: (out, err, ret) = test_executable([           # long time
-        ....:     "sage", name], cwd=dir)
-        sage: print(out)                                    # long time
-        1
-        sage: err                                           # long time
-        ''
-        sage: ret                                           # long time
-        0
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as dir:  # long time
+        ....:     name = 'sage_test_file.sage'
+        ....:     fullname = os.path.join(dir, name)
+        ....:     with open(fullname, 'w') as F:
+        ....:         _ = F.write("k.<a> = GF(5^3); print(a^124)\n")
+        ....:     test_executable(["sage", fullname])
+        ....:     test_executable(["sage", name], cwd=dir)
+        ('1\n', '', 0)
+        ('1\n', '', 0)
 
     Test running a ``.spyx`` file::
 
-        sage: dir = tmp_dir(); name = 'sage_test_file.spyx'
-        sage: fullname = os.path.join(dir, name)
-        sage: F = open(fullname, 'w')
-        sage: _ = F.write("from cysignals.signals cimport *\nfrom sage.rings.integer cimport Integer\ncdef long i, s = 0\nsig_on()\nfor i in range(1000): s += i\nsig_off()\nprint(Integer(s))")
-        sage: F.close()
-        sage: (out, err, ret) = test_executable([           # long time
-        ....:     "sage", fullname], pydebug_ignore_warnings=True)
-        sage: print(out)                                    # long time
-        499500
-        sage: import re                                     # long time
-        sage: bool(re.match('Compiling.*spyx.*', err))      # long time
-        True
-        sage: ret                                           # long time
-        0
-        sage: (out, err, ret) = test_executable([           # long time
-        ....:     "sage", name], cwd=dir, pydebug_ignore_warnings=True)
-        sage: print(out)                                    # long time
-        499500
-        sage: bool(re.match('Compiling.*spyx.*', err))      # long time
-        True
-        sage: ret                                           # long time
-        0
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as dir:  # long time
+        ....:     name = 'sage_test_file.spyx'
+        ....:     fullname = os.path.join(dir, name)
+        ....:     with open(fullname, 'w') as F:
+        ....:         _ = F.write("from cysignals.signals cimport *\n")
+        ....:         _ = F.write("from sage.rings.integer cimport Integer\n")
+        ....:         _ = F.write("cdef long i, s = 0\n")
+        ....:         _ = F.write("sig_on()\n")
+        ....:         _ = F.write("for i in range(5): s += i\n")
+        ....:         _ = F.write("sig_off()\n")
+        ....:         _ = F.write("print(Integer(s))")
+        ....:     test_executable(["sage", fullname], pydebug_ignore_warnings=True)
+        ....:     test_executable(["sage", name], cwd=dir, pydebug_ignore_warnings=True)
+        ('10\n', 'Compiling .../sage_test_file.spyx...\n', 0)
+        ('10\n', 'Compiling sage_test_file.spyx...\n', 0)
 
     Testing ``sage --preparse FILE`` and ``sage -t FILE``.  First create
     a file and preparse it::

@@ -147,7 +147,7 @@ class Gamma0_class(GammaH_class):
             sage: Gamma0(98)._repr_()
             'Congruence Subgroup Gamma0(98)'
         """
-        return "Congruence Subgroup Gamma0(%s)"%self.level()
+        return "Congruence Subgroup Gamma0(%s)" % self.level()
 
     def __reduce__(self):
         """
@@ -171,7 +171,7 @@ class Gamma0_class(GammaH_class):
             sage: latex(Gamma0(20))
             \Gamma_0(20)
         """
-        return "\\Gamma_0(%s)"%self.level()
+        return "\\Gamma_0(%s)" % self.level()
 
     @cached_method
     def _generators_for_H(self):
@@ -364,10 +364,10 @@ class Gamma0_class(GammaH_class):
             # reasons, which aren't the ones the Farey symbol code gives
             return [ self([0,-1,1,0]), self([1,1,0,1]) ]
 
-        elif algorithm=="farey":
+        elif algorithm == "farey":
             return self.farey_symbol().generators()
 
-        elif algorithm=="todd-coxeter":
+        elif algorithm == "todd-coxeter":
             from sage.modular.modsym.p1list import P1List
             from .congroup import generators_helper
             level = self.level()
@@ -507,7 +507,7 @@ class Gamma0_class(GammaH_class):
             [1, 1, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0]
         """
         n = self.level()
-        if n%4 == 0:
+        if n % 4 == 0:
             return ZZ(0)
         return prod([ 1 + kronecker_symbol(-4, p) for p, _ in n.factor()])
 

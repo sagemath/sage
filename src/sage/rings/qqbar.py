@@ -3399,7 +3399,7 @@ class AlgebraicGenerator(SageObject):
                 continue
             if self is u.child1:
                 return u.child1_poly(poly)
-            assert(self is u.child2)
+            assert (self is u.child2)
             return u.child2_poly(poly)
         return None
 
@@ -3447,7 +3447,7 @@ class AlgebraicGenerator(SageObject):
             return elt.field_element_value()
         gen = elt.generator()
         sp = gen.super_poly(self)
-        assert(not(sp is None))
+        assert (not (sp is None))
         return self._field(elt.field_element_value().polynomial()(sp))
 
 
@@ -7543,7 +7543,7 @@ class ANRoot(ANDescr):
             my_factor = find_zero_result(find_fn, qpf)
 
             # Factoring always returns monic polynomials over the rationals
-            assert(my_factor.is_monic())
+            assert (my_factor.is_monic())
 
             if my_factor.degree() == 1:
                 return ANRational(-my_factor[0])
@@ -7586,7 +7586,7 @@ class ANRoot(ANDescr):
                 return ip(self_val)
             my_factor = find_zero_result(find_fn, fpf)
 
-            assert(my_factor.is_monic())
+            assert (my_factor.is_monic())
 
             if my_factor.degree() == 1:
                 return ANExtensionElement(gen, -my_factor[0])
@@ -7751,7 +7751,7 @@ class ANExtensionElement(ANDescr):
             ({call: {atomic:QQbar}({binop:+ {atomic:1} {atomic:I}})}, True)
         """
         if self._generator is QQbar_I_generator:
-            assert(is_qqbar)
+            assert (is_qqbar)
             re, im = self._value.list()
             im_part = sib.prod([sib(im, True), sib.name('I')], simplify=True)
             v = sib.sum([sib(re, True), im_part], simplify=True)

@@ -487,7 +487,7 @@ cdef class SymmetricReductionStrategy:
         p = p / p.lc()
         if (self._min_lm is None) or (p.lm() < self._min_lm):
             self._min_lm = p.lm()
-        while (i < l) and (self._lengths[i] < newLength):
+        while i < l and self._lengths[i] < newLength:
             i += 1
         self._lm.insert(i, p)
         self._lengths.insert(i, newLength)
@@ -514,7 +514,7 @@ cdef class SymmetricReductionStrategy:
                     self._lm.pop(i)
                     self._lengths.pop(i)
                     j = 0
-                    while (j < i) and (self._lengths[j] < q_len):
+                    while j < i and self._lengths[j] < q_len:
                         j += 1
                     self._lm.insert(j, q)
                     self._lengths.insert(j, q_len)
