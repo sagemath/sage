@@ -256,7 +256,7 @@ class PadicValuationFactory(UniqueFactory):
         else:
             raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r" % (v, v.domain(), G.parent()))
 
-        assert(v.domain() is G.parent())
+        assert (v.domain() is G.parent())
 
         # To obtain uniqueness of p-adic valuations, we need a canonical
         # description of v. We consider all extensions of vK to L and select
@@ -397,11 +397,11 @@ class PadicValuationFactory(UniqueFactory):
         R = key[0]
         parent = DiscretePseudoValuationSpace(R)
         if isinstance(R, pAdicGeneric):
-            assert(len(key) == 1)
+            assert (len(key) == 1)
             return parent.__make_element_class__(pAdicValuation_padic)(parent)
         elif R is ZZ or R is QQ:
             prime = key[1]
-            assert(len(key) == 2)
+            assert (len(key) == 2)
             return parent.__make_element_class__(pAdicValuation_int)(parent, prime)
         else:
             v = key[1]
@@ -1281,7 +1281,7 @@ class pAdicValuation_int(pAdicValuation_base):
                     if self._relative_size(rational) < self._relative_size(best):
                         best = rational
 
-        assert(self(x-best) > error)
+        assert (self(x-best) > error)
 
         return best
 

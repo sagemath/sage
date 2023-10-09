@@ -1371,8 +1371,8 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(2,3,6000000)
         [1, 1, 2, 3]
 
-    You will get a ValueError exception if the input is invalid.  Note
-    that here gcd(15,6,24)=3::
+    You will get a :class:`ValueError` exception if the input is invalid.
+    Note that here gcd(15,6,24)=3::
 
         sage: lift_to_sl2z(15,6,24)
         Traceback (most recent call last):

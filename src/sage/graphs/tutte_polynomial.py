@@ -562,7 +562,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: R = PolynomialRing(ZZ, 'x')
         sage: R((-1)^5*x*T(1-x,0)).factor()                                             # needs sage.symbolic
         (x - 2) * (x - 1) * x * (x^3 - 9*x^2 + 29*x - 32)
-        sage: G.chromatic_polynomial().factor()
+        sage: G.chromatic_polynomial().factor()                                         # needs sage.libs.flint
         (x - 2) * (x - 1) * x * (x^3 - 9*x^2 + 29*x - 32)
 
     TESTS:
@@ -580,7 +580,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: g.add_edges([(0,1,1),(1,5,2),(5,3,3),(5,2,4),(2,4,5),(0,2,6),(0,3,7),(0,4,8),(0,5,9)])
         sage: g.tutte_polynomial()(1,1)
         52
-        sage: g.spanning_trees_count()
+        sage: g.spanning_trees_count()                                                  # needs sage.modules
         52
     """
     R = ZZ['x, y']
