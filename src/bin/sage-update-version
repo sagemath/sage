@@ -104,8 +104,6 @@ EOF
 ) > "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases"
 rm -f "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases.tmp"
 
-exit
-
 # Regenerate auto-generated files tarball
 "$SAGE_ROOT/bootstrap" -s
 
@@ -125,6 +123,7 @@ git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
     "$SAGE_ROOT/build/pkgs/*/install-requires.txt" \
     "$SAGE_ROOT"/pkgs/*/VERSION.txt \
+    "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases" \
     || die "Error committing to the repository."
 
 git tag -a "$SAGE_VERSION" -m "$SAGE_VERSION_BANNER" \
