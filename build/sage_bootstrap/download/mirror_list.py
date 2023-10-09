@@ -19,7 +19,7 @@ import logging
 log = logging.getLogger()
 
 from sage_bootstrap.compat import urllib, urlparse
-from sage_bootstrap.env import SAGE_DISTFILES
+from sage_bootstrap.env import SAGE_DISTFILES, SAGE_ROOT
 
 from fcntl import flock, LOCK_SH, LOCK_EX
 from errno import ENOLCK
@@ -41,16 +41,60 @@ class MirrorListException(RuntimeError):
     pass
         
 
-MIRRORLIST_FILENAME = os.path.join(SAGE_DISTFILES, 'mirror_list')
-
-
 class MirrorList(object):
-    
-    URL = 'http://www.sagemath.org/mirror_list'
-    MAXAGE = 24*60*60   # seconds
 
     def __init__(self):
-        self.filename = MIRRORLIST_FILENAME
+        self.sources = []
+        upstream_d = os.path.join(SAGE_ROOT, '.upstream.d')
+        for fname in sorted(os.listdir(upstream_d)):
+            if '~' in fname or '#' in fname:
+                # Ignore auto-save and backup files
+                continue
+            try:
+                with open(os.path.join(upstream_d, fname), 'r') as f:
+                    for line in f:
+                        line = line.replace('${SAGE_ROOT}', SAGE_ROOT)
+                        line = line.replace('${SAGE_DISTFILES}', SAGE_DISTFILES)
+                        if '${SAGE_SERVER}' in line:
+                            SAGE_SERVER = os.environ.get("SAGE_SERVER", "")
+                            if not SAGE_SERVER:
+                                continue
+                            line = line.replace('${SAGE_SERVER}',)
+                        line = line.strip()
+                        if line.startswith('#'):
+                            continue
+                        if not line:
+                            continue
+                        if line.endswith('mirror_list'):
+                            cache_filename = os.path.join(SAGE_DISTFILES, line.rpartition('/')[2])
+                            self.sources.append(MirrorList_from_url(line, cache_filename))
+                        else:
+                            self.sources.append([line])
+            except IOError:
+                # Silently ignore files that do not exist
+                pass
+
+    def __iter__(self):
+        """
+        Iterate through the list of mirrors.
+
+        This is the main entry point into the mirror list. Every
+        script should just use this function to try mirrors in order
+        of preference. This will not just yield the official mirrors,
+        but also urls for packages that are currently being tested.
+        """
+        for source in self.sources:
+            for mirror in source:
+                yield mirror
+
+
+class MirrorList_from_url(object):
+    
+    MAXAGE = 24*60*60   # seconds
+
+    def __init__(self, url, filename):
+        self.url = url
+        self.filename = filename
         self._mirrors = None
 
     @property
