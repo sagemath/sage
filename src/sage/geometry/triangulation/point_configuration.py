@@ -287,7 +287,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             out = next(PointConfiguration._TOPCOM_exec('points2placingtriang',
                                                   '[[0,1],[1,1]]', verbose=False))
             PointConfiguration._have_TOPCOM_cached = True
-            assert out=='{{0,1}}',\
+            assert out == '{{0,1}}',\
                 'TOPCOM ran but did not produce the correct output!'
         except pexpect.ExceptionPexpect:
             PointConfiguration._have_TOPCOM_cached = False
@@ -320,7 +320,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             defined_affine = True
         if star is not None and star not in ZZ:
             star_point = tuple(star)
-            if len(star_point)<len(points[0]):
+            if len(star_point) < len(points[0]):
                 star_point = tuple(star)+(1,)
             star = points.index(star_point)
         return super().__classcall__(cls, points, connected, fine,
@@ -530,8 +530,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             s += ' affine'
         else:
             s += ' projective'
-        s += " %s-space over %s"%(self.ambient_dim(),self.base_ring())
-        if len(self)==1:
+        s += " %s-space over %s" % (self.ambient_dim(),self.base_ring())
+        if len(self) == 1:
             s += ' consisting of '+str(len(self))+' point. '
         else:
             s += ' consisting of '+str(len(self))+' points. '
@@ -683,7 +683,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             if self._star is not None:
                 o = self._star
-                if not all( t.count(o)>0 for t in triangulation):
+                if not all( t.count(o) > 0 for t in triangulation):
                     continue
 
             yield self(triangulation)
@@ -1228,7 +1228,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         d = [ self.face_codimension(i) for i in range(self.n_points()) ]
 
-        return tuple( tuple(i for i in range(self.n_points()) if d[i]==codim )
+        return tuple( tuple(i for i in range(self.n_points()) if d[i] == codim )
                       for codim in range(self.dim()+1) )
 
     def exclude_points(self, point_idx_list):
@@ -1408,12 +1408,12 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             independent_k = []
             for idx in possible_dependency:
                 rk = matrix([ U[i] for i in idx ]).rank()
-                if rk==k:
+                if rk == k:
                     independent_k.append(idx)
                 else:
                     supports_k.append(idx)
                     yield idx
-        assert independent_k==[]  # there are no independent (self.dim()+3)-tuples
+        assert independent_k == []  # there are no independent (self.dim()+3)-tuples
 
     def circuits(self):
         r"""
@@ -1476,9 +1476,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         for support in self.circuits_support():
             m = matrix([ U[i] for i in support ]).transpose()
             ker = m.right_kernel().basis()[0]
-            assert len(ker)==len(support)
-            Cplus = [ support[i] for i in range(len(support)) if ker[i]>0 ]
-            Cminus = [ support[i] for i in range(len(support)) if ker[i]<0 ]
+            assert len(ker) == len(support)
+            Cplus = [ support[i] for i in range(len(support)) if ker[i] > 0 ]
+            Cminus = [ support[i] for i in range(len(support)) if ker[i] < 0 ]
             Czero = set( range(n) ).difference(support)
             Circuits += ( (tuple(Cplus), tuple(Czero), tuple(Cminus)), )
         self._circuits = Circuits
@@ -1627,7 +1627,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         basepts = [ b[1:] for b in basepts ]           # undecorate
 
         def make_cotriang(basepts):
-            if len(basepts)==0:
+            if len(basepts) == 0:
                 return [frozenset()]
             triangulation = set()
             for tail in make_cotriang(basepts[1:]):
@@ -1782,7 +1782,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.farthest_point([pc.point(0)])
             P(1, 1)
         """
-        if len(points)==0:
+        if len(points) == 0:
             return self.point(0)
         if among is None:
             among = self.points()
@@ -1795,7 +1795,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 d_max = min(self.distance(p,q) for q in points)
                 continue
             d = min(self.distance(p,q) for q in points)
-            if d>d_max:
+            if d > d_max:
                 p_max = p
         return p_max
 

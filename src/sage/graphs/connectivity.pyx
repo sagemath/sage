@@ -1078,8 +1078,9 @@ def edge_connectivity(G,
         sage: for u,v in tree.edge_iterator(labels=None):
         ....:      tree.set_edge_label(u, v, random())
         sage: minimum = min(tree.edge_labels())
-        sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False, use_edge_labels=True)
-        sage: l == minimum
+        sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False,              # needs sage.numerical.mip
+        ....:                                      use_edge_labels=True)
+        sage: l == minimum                                                              # needs sage.numerical.mip
         True
 
     When ``value_only=True`` and ``implementation="sage"``, this function is
@@ -1102,12 +1103,14 @@ def edge_connectivity(G,
     We check that the result with Boost is the same as the result without Boost::
 
         sage: g = graphs.RandomGNP(15, .3)
-        sage: edge_connectivity(g, implementation="boost") == edge_connectivity(g, implementation="sage")
+        sage: (edge_connectivity(g, implementation="boost")                             # needs sage.numerical.mip
+        ....:    == edge_connectivity(g, implementation="sage"))
         True
 
     Boost interface also works with directed graphs::
 
-        sage: edge_connectivity(digraphs.Circuit(10), implementation="boost", vertices=True)
+        sage: edge_connectivity(digraphs.Circuit(10), implementation="boost",
+        ....:                   vertices=True)
         [1, [(0, 1)], [{0}, {1, 2, 3, 4, 5, 6, 7, 8, 9}]]
 
     However, the Boost algorithm is not reliable if the input is directed
@@ -1128,7 +1131,7 @@ def edge_connectivity(G,
 
     Checking that the two implementations agree::
 
-        sage: for i in range(10):
+        sage: for i in range(10):                                                       # needs sage.numerical.mip
         ....:     g = graphs.RandomGNP(30, 0.3)
         ....:     e1 = edge_connectivity(g, implementation="boost")
         ....:     e2 = edge_connectivity(g, implementation="sage")

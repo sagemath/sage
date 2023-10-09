@@ -5938,15 +5938,15 @@ class FiniteWord_class(Word_class):
             w_isolated = word_from_letter[l_isolated]  # the word associated to the isolated letter
             w_running = word_from_letter[l_running]  # the word associated to the running letter
             min_run = minimal_run[l_running]
-            if (prefix_letter == l_isolated) or (prefix_length <= min_run):
+            if prefix_letter == l_isolated or prefix_length <= min_run:
                 desubstitued_word = W()
             else:
                 desubstitued_word = w_running ** (prefix_length - min_run)
             for i in runs[l_running]:
                 desubstitued_word = desubstitued_word + w_isolated + w_running ** (i - min_run)
-            if (current_run_length > 0):
+            if current_run_length > 0:
                 desubstitued_word = desubstitued_word + w_isolated
-                if (previous_letter == l_running) and (current_run_length > min_run):
+                if previous_letter == l_running and current_run_length > min_run:
                     desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
             return desubstitued_word.sturmian_desubstitute_as_possible()
 
@@ -6064,7 +6064,7 @@ class FiniteWord_class(Word_class):
 
         -   Thierry Monteil
         """
-        if (self.parent().alphabet().cardinality() != 2):
+        if self.parent().alphabet().cardinality() != 2:
             raise TypeError('your word must be defined on a binary alphabet')
         a, b = self.parent().alphabet()
         mini = 0
@@ -6077,10 +6077,10 @@ class FiniteWord_class(Word_class):
             if i == b:
                 height = height - 1
                 mini = min(mini, height)
-        return (maxi - mini <= 2)
+        return maxi - mini <= 2
 
     # TODO.
-    # 1. Those three swap functions should use the cmp of python.
+    # 1. Those three swap functions should use the cmp of python
     # 2. The actual code should then be copied as is in the Word_over_Alphabet
     # and continue to use the parent cmp
     # 3. Once Word can define Words over alphabet, the examples
@@ -7213,10 +7213,10 @@ class CallableFromListOfWords(tuple):
         """
         j = i
         for c in self:
-            if (j - c.length() < 0):
+            if j < c.length():
                 return c[j]
             j -= c.length()
-        raise IndexError("index (=%s) out of range" % i)
+        raise IndexError(f"index (={i}) out of range")
 
 
 class Factorization(list):

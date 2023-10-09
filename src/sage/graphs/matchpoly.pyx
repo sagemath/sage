@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs
 """
 Matching polynomial
 
