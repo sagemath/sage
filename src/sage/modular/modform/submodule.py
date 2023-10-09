@@ -61,7 +61,7 @@ class ModularFormsSubmodule(ModularFormsSpace,
           sage: ModularForms(Gamma1(13),2).eisenstein_subspace()._repr_()
           'Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field'
         """
-        return "Modular Forms subspace of dimension %s of %s"%(self.dimension(), self.ambient_module())
+        return "Modular Forms subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
     def _compute_coefficients(self, element, X):
         """

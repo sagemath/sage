@@ -191,8 +191,7 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         raise TypeError("unrecognized Eisenstein type")
 
     cdef long i
-    cdef ZZ_pX_c tmp, modup, into_multiplier, shift_seed_inv
-    cdef ZZ_c a
+    cdef ZZ_pX_c into_multiplier, shift_seed_inv
     # We obtain successive p/x^(2^i) by squaring and then dividing by p.  So we need one extra digit of precision.
     prime_pow.restore_top_context()
     #cdef ntl_ZZ_pContext_class cup = prime_pow.get_context(prime_pow.prec_cap + low_length)
@@ -320,7 +319,6 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
     cdef ZZ_pX_c low_part
     cdef ZZ_pX_c shifted_high_part
     cdef ZZ_pX_c powerx
-    cdef ZZ_pX_c shifter
     cdef ZZ_pX_c lowshift
     cdef ZZ_pX_c highshift
     cdef ZZ_pX_c working, working2
@@ -354,7 +352,6 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
     else:
         raise TypeError("inconsistent type")
 
-    cdef ntl_ZZ_pX printer
     if n < 0:
         if fm:
             c = self.get_top_context()
@@ -478,7 +475,6 @@ cdef class PowComputer_ext(PowComputer_class):
             raise MemoryError("out of memory allocating power storing")
 
         cdef Py_ssize_t i
-        cdef Integer x
 
         ZZ_conv_from_int(self.small_powers[0], 1)
 
@@ -1574,7 +1570,6 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
             self.cleanup_ext()
             raise MemoryError("out of memory allocating moduli")
 
-        cdef ntl_ZZ_pX printer
         cdef Py_ssize_t i
         cdef ZZ_pX_c tmp, pol
         if isinstance(poly, ntl_ZZ_pX):

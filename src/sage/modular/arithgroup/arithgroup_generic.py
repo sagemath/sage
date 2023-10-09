@@ -1020,7 +1020,7 @@ class ArithmeticSubgroup(Group):
             [0 1], [ 0 -1], [-2  1], [ 0 -1], [-2  3], [ 2 -1], [2 1]
             ]
         """
-        if algorithm=="farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
         elif algorithm == "todd-coxeter":
             return self.todd_coxeter()[1]
@@ -1252,7 +1252,7 @@ class ArithmeticSubgroup(Group):
             if k > 1:
                 return self.nregcusps()
             else: # k = 1
-                return ZZ(self.nregcusps()/ ZZ(2))
+                return ZZ(self.nregcusps() / ZZ(2))
 
     def as_permutation_group(self):
         r"""
@@ -1279,7 +1279,7 @@ class ArithmeticSubgroup(Group):
             sage: P.an_element() in G
             True
         """
-        _,_,l_edges,s2_edges=self.todd_coxeter()
+        _,_,l_edges,s2_edges = self.todd_coxeter()
         n = len(l_edges)
         s3_edges = [None] * n
         r_edges = [None] * n
@@ -1289,10 +1289,10 @@ class ArithmeticSubgroup(Group):
             r_edges[ii] = s2_edges[i]
         if self.is_even():
             from sage.modular.arithgroup.arithgroup_perm import EvenArithmeticSubgroup_Permutation
-            g=EvenArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
+            g = EvenArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
         else:
             from sage.modular.arithgroup.arithgroup_perm import OddArithmeticSubgroup_Permutation
-            g=OddArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
+            g = OddArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
         g.relabel()
         return g
 

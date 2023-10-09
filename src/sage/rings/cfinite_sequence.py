@@ -155,7 +155,7 @@ def CFiniteSequences(base_ring, names=None, category=None):
         raise NotImplementedError("Multidimensional o.g.f. not implemented.")
     if category is None:
         category = Fields()
-    if not(base_ring in (QQ, ZZ)):
+    if not (base_ring in (QQ, ZZ)):
         raise ValueError("O.g.f. base not rational.")
     polynomial_ring = PolynomialRing(base_ring, names)
     return CFiniteSequences_generic(polynomial_ring, category)
@@ -301,7 +301,7 @@ class CFiniteSequence(FieldElement,
         """
 
         br = ogf.base_ring()
-        if not(br in (QQ, ZZ)):
+        if not (br in (QQ, ZZ)):
             br = QQ  # if the base ring of the o.g.f is not QQ, we force it to QQ and see if the o.g.f converts nicely
 
         # trying to figure out the ogf variables

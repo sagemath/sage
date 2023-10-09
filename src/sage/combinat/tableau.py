@@ -4507,7 +4507,7 @@ class SemistandardTableau(Tableau):
             # check that SST is strictly increasing in columns
             # we know that len(rnext) <= len(rcur) as the SST cannot have
             # more columns in the next row than the current row.
-            assert (len(rnext) <= len(rcur))
+            assert len(rnext) <= len(rcur)
 
             for cix in range(len(rnext)):
                 if rnext[cix] <= rcur[cix]:
@@ -6408,7 +6408,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
         from sage.combinat.partition import Partitions
         # Iterates through with maximum entry as order
         i = 1
-        while(True):
+        while True:
             for part in Partitions(self.size):
                 if i != 1:
                     for k in range(1, self.size+1):
@@ -6508,7 +6508,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
         # Iterates through with maximum entry as order
         i = 1
         n = sum(self.shape)
-        while(True):
+        while True:
             if i != 1:
                 for k in range(1, n+1):
                     for c in integer_vectors_nk_fast_iter(n - k, i-1):

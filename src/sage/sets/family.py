@@ -17,8 +17,8 @@ TESTS:
 
 Check :trac:`12482` (shall be run in a fresh session)::
 
-    sage: P = Partitions(3)
-    sage: Family(P, lambda x: x).category()
+    sage: P = Partitions(3)                                                             # needs sage.combinat
+    sage: Family(P, lambda x: x).category()                                             # needs sage.combinat
     Category of finite enumerated sets
 """
 
@@ -1069,7 +1069,7 @@ class LazyFamily(AbstractFamily):
 
             Check that using a class as the function is correctly handled::
 
-                sage: Family(NonNegativeIntegers(), PerfectMatchings)
+                sage: Family(NonNegativeIntegers(), PerfectMatchings)                   # needs sage.combinat
                 Lazy family (<class 'sage.combinat.perfect_matching.PerfectMatchings'>(i))_{i in Non negative integers}
         """
         if self.function_name is not None:

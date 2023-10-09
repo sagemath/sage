@@ -80,9 +80,9 @@ def triangulation_render_2d(triangulation, **kwds):
 
     tmp_lines = []
     for t in triangulation:
-        if len(t)>=2:
+        if len(t) >= 2:
             tmp_lines.append([t[0], t[1]])
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_lines.append([t[0], t[2]])
             tmp_lines.append([t[1], t[2]])
     all_lines = []
@@ -103,7 +103,7 @@ def triangulation_render_2d(triangulation, **kwds):
 
     plot_triangs = sum([ polygon2d([coord[t[0]], coord[t[1]], coord[t[2]]],
                                    zorder=0, rgbcolor=(0.8, 1, 0.8), **kwds)
-                         for t in triangulation if len(t)>=3 ])
+                         for t in triangulation if len(t) >= 3 ])
 
     return \
         plot_points + \
@@ -142,12 +142,12 @@ def triangulation_render_3d(triangulation, **kwds):
 
     tmp_lines = []
     for t in triangulation:
-        if len(t)>=2:
+        if len(t) >= 2:
             tmp_lines.append([t[0], t[1]])
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_lines.append([t[0], t[2]])
             tmp_lines.append([t[1], t[2]])
-        if len(t)>=4:
+        if len(t) >= 4:
             tmp_lines.append([t[0], t[3]])
             tmp_lines.append([t[1], t[3]])
             tmp_lines.append([t[2], t[3]])
@@ -175,9 +175,9 @@ def triangulation_render_3d(triangulation, **kwds):
 
     tmp_triangs = []
     for t in triangulation:
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_triangs.append([t[0], t[1], t[2]])
-        if len(t)>=4:
+        if len(t) >= 4:
             tmp_triangs.append([t[0], t[1], t[3]])
             tmp_triangs.append([t[0], t[2], t[3]])
             tmp_triangs.append([t[1], t[2], t[3]])
@@ -265,7 +265,7 @@ class Triangulation(Element):
         except TypeError:
             triangulation = tuple( self.point_configuration().int_to_simplex(i)
                                    for i in triangulation )
-        assert not check or all( len(t)==self.point_configuration().dim()+1
+        assert not check or all( len(t) == self.point_configuration().dim()+1
                                  for t in triangulation)
         self._triangulation = triangulation
 
@@ -924,4 +924,4 @@ class Triangulation(Element):
         """
         vertices = [Set(_) for _ in list(self)]
         return Graph([vertices,
-                  lambda x,y: len(x-y)==1])
+                  lambda x,y: len(x-y) == 1])

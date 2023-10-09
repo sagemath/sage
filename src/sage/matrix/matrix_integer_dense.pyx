@@ -1706,14 +1706,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     def symplectic_form(self):
         r"""
-        Find a symplectic basis for self if self is an anti-symmetric,
+        Find a symplectic basis for ``self`` if ``self`` is an anti-symmetric,
         alternating matrix.
 
         Return a pair (F, C) such that the rows of C form a symplectic
-        basis for self and ``F = C * self * C.transpose()``.
+        basis for ``self`` and ``F = C * self * C.transpose()``.
 
-        Raise a ValueError if self is not anti-symmetric, or self is not
-        alternating.
+        Raise a :class:`ValueError` if ``self`` is not anti-symmetric,
+        or ``self`` is not alternating.
 
         Anti-symmetric means that `M = -M^t`. Alternating means
         that the diagonal of `M` is identically zero.
@@ -1722,7 +1722,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         `e_1, \ldots, e_j, f_1, \ldots f_j, z_1, \dots, z_k`
         such that
 
-        -  `z_i M v^t` = 0 for all vectors `v`
+        -  `z_i M v^t = 0` for all vectors `v`
 
         -  `e_i M {e_j}^t = 0` for all `i, j`
 

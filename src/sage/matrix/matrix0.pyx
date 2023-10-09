@@ -393,7 +393,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         This function gets called when you're about to change this matrix.
 
-        If self is immutable, a ValueError is raised, since you should
+        If self is immutable, a :class:`ValueError` is raised, since you should
         never change a mutable matrix.
 
         If self is mutable, the cache of results about self is deleted.
@@ -406,10 +406,10 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j):
         """
         This function gets called when you're about to set the i,j entry of
-        this matrix. If i or j is out of range, an IndexError exception is
-        raised.
+        this matrix. If i or j is out of range, an :class:`IndexError`
+        exception is raised.
 
-        If self is immutable, a ValueError is raised, since you should
+        If self is immutable, a :class:`ValueError` is raised, since you should
         never change a mutable matrix.
 
         If self is mutable, the cache of results about self is deleted.
