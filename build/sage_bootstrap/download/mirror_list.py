@@ -200,8 +200,6 @@ class MirrorList(object):
             pass
         for mirror in self.mirrors:
             yield mirror
-        # If all else fails: Try the packages we host ourselves
-        yield 'http://sagepad.org/'
 
     @property
     def fastest(self):
