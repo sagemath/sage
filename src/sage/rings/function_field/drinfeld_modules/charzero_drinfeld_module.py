@@ -3,7 +3,7 @@ r"""
 Complex Drinfeld module
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.complex_drinfeld_module.DrinfeldModule_charzero`,
+:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero`,
 which inherits
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
@@ -33,14 +33,12 @@ lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 class DrinfeldModule_charzero(DrinfeldModule):
     r"""
-    This class implements complex Drinfeld `\mathbb{F}_q[T]`-modules.
+    This class implements Drinfeld `\mathbb{F}_q[T]`-modules defined
+    over fields of `\mathbb{F}_q[T]`-characteristic zero.
 
-    A *complex Drinfeld module* is a Drinfeld module whose base field
-    contains `\mathbb{F}_q(T)` and can be embedded in
-    `\mathbb{C}_{\infty}`, the completion of an algebraic closure of
-    `\mathbb{F}_q((1/T))` (the completion of `\mathbb{F}_q(T)`).
-
-    For general definitions and help on Drinfeld modules, see class
+    Recall that the `\mathbb{F}_q[T]`-*characteristic* is defined as the
+    kernel of the underlying structure morphism. For general definitions
+    and help on Drinfeld modules, see class
     :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
     .. RUBRIC:: Construction:
@@ -60,14 +58,14 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         sage: isinstance(phi, DrinfeldModule)
         True
-        sage: from sage.rings.function_field.drinfeld_modules.complex_drinfeld_module import DrinfeldModule_charzero
+        sage: from sage.rings.function_field.drinfeld_modules.charzero_drinfeld_module import DrinfeldModule_charzero
         sage: isinstance(phi, DrinfeldModule_charzero)
         True
 
     .. RUBRIC:: Logarithm and exponential
 
     It is possible to calculate the logarithm and the exponential of
-    any complex Drinfeld modules::
+    any Drinfeld modules of characteristic zero::
 
         sage: A = GF(2)['T']
         sage: K.<T> = Frac(A)
