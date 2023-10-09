@@ -4165,7 +4165,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Nsubcone = subcone.sublattice()
 
         extra_ray = None
-        if Ncone.dimension()-Nsubcone.dimension()==1:
+        if Ncone.dimension()-Nsubcone.dimension() == 1:
             extra_ray = set(self.rays().set() - subcone.rays().set()).pop()
 
         Q = Ncone.quotient(Nsubcone, positive_point=extra_ray)
@@ -4262,7 +4262,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Msupercone = supercone.orthogonal_sublattice()
 
         extra_ray = None
-        if Mcone.dimension()-Msupercone.dimension()==1:
+        if Mcone.dimension()-Msupercone.dimension() == 1:
             extra_ray = set(supercone.rays().set() - self.rays().set()).pop()
 
         Q = Mcone.quotient(Msupercone, positive_dual_point=extra_ray)
@@ -4391,7 +4391,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             origin = self.nrays() # last one in pc
             pc = PointConfiguration(tuple(self.rays()) + (N(0),), star=origin)
             triangulation = pc.triangulate()
-            subcones = ( Cone(( self.ray(i) for i in simplex if i!=origin ),
+            subcones = ( Cone(( self.ray(i) for i in simplex if i != origin ),
                               lattice=N, check=False)
                          for simplex in triangulation )
             gens = set()

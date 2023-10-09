@@ -2099,10 +2099,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             basis = [self.gen()**i*self.base_ring().gen()**j
                 for i in range(self.degree())
                 for j in range(self.base_ring().degree())]
-            assert(len(basis) == isomorphic_ring.degree())
+            assert (len(basis) == isomorphic_ring.degree())
             from sage.matrix.constructor import matrix
             A = matrix([to_isomorphic_ring(b)._vector_() for b in basis])
-            assert(A.is_square())
+            assert (A.is_square())
             # solve x*A = (0,1,0,…,0)
             x = A.solve_left(A.column_space().basis()[1])
             primitive_element = sum(c*b for c,b in zip(x.list(), basis))

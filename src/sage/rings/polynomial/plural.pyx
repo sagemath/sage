@@ -2107,7 +2107,7 @@ cdef class NCPolynomial_plural(RingElement):
             raise TypeError("The input degrees must be a dictionary of variables to exponents.")
 
         # Extract the monomials that match the specifications
-        while(p):
+        while p:
             flag = 0
             for i from 0<=i<gens:
                 if exps[i] != -1 and p_GetExp(p,i+1,r)!=exps[i]:
@@ -2179,7 +2179,7 @@ cdef class NCPolynomial_plural(RingElement):
         if mon._parent is not self._parent:
             raise TypeError("mon must have same parent as self")
 
-        while(p):
+        while p:
             if p_ExpVectorEqual(p, m, r) == 1:
                 return si2sa(p_GetCoeff(p, r), r, (<NCPolynomialRing_plural>self._parent)._base)
             p = pNext(p)
@@ -2363,7 +2363,7 @@ cdef class NCPolynomial_plural(RingElement):
             i += 1
         p_Setm(m, r)
 
-        while(p):
+        while p:
             if p_ExpVectorEqual(p, m, r) == 1:
                 p_Delete(&m,r)
                 return si2sa(p_GetCoeff(p, r), r, (<NCPolynomialRing_plural>self._parent)._base)

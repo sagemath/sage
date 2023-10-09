@@ -1267,14 +1267,14 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         # Newton iteration
         # Todo: compute everything up to the adequate precision at each step
         b = ~dera
-        while(True):
+        while True:
             na = a - selfa * b
             if na == a:
                 return a
             a = na
             selfa = self(a)
             dera = der(a)
-            b *= 2 - dera*b
+            b *= 2 - dera * b
 
     def _factor_of_degree(self, deg):
         """

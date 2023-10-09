@@ -277,7 +277,7 @@ def _dump_code_in_leon_format(C):
     from sage.misc.temporary_file import tmp_filename
     F = C.base_ring()
     p = F.order()  # must be prime and <11
-    s = "LIBRARY code;\n"+"code=seq(%s,%s,%s,seq(\n"%(p,C.dimension(),C.length())
+    s = "LIBRARY code;\n"+"code=seq(%s,%s,%s,seq(\n" % (p,C.dimension(),C.length())
     Gr = [str(r)[1:-1].replace(" ","") for r in C.generator_matrix().rows()]
     s += ",\n".join(Gr) + "\n));\nFINISH;"
     file_loc = tmp_filename()
@@ -605,25 +605,25 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         n = len(G.columns())
         Cp = C.dual_code()
         wts = C.weight_distribution()
-        d = min([i for i in range(1,len(wts)) if wts[i]!=0])
-        if t>=d:
+        d = min([i for i in range(1,len(wts)) if wts[i] != 0])
+        if t >= d:
             return 0
-        nonzerowts = [i for i in range(len(wts)) if wts[i]!=0 and i<=n and i>=d]
-        if mode=="verbose":
+        nonzerowts = [i for i in range(len(wts)) if wts[i] != 0 and i <= n and i >= d]
+        if mode == "verbose":
             for w in nonzerowts:
                 print("The weight w={} codewords of C* form a t-(v,k,lambda) design, where\n \
                         t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
                             w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
         wtsp = Cp.weight_distribution()
-        dp = min([i for i in range(1,len(wtsp)) if wtsp[i]!=0])
-        nonzerowtsp = [i for i in range(len(wtsp)) if wtsp[i]!=0 and i<=n-t and i>=dp]
-        s = len([i for i in range(1,n) if wtsp[i]!=0 and i<=n-t and i>0])
-        if mode=="verbose":
+        dp = min([i for i in range(1,len(wtsp)) if wtsp[i] != 0])
+        nonzerowtsp = [i for i in range(len(wtsp)) if wtsp[i] != 0 and i <= n-t and i >= dp]
+        s = len([i for i in range(1,n) if wtsp[i] != 0 and i <= n-t and i > 0])
+        if mode == "verbose":
             for w in nonzerowtsp:
                 print("The weight w={} codewords of C* form a t-(v,k,lambda) design, where\n \
                         t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
                             w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
-        if s<=d-t:
+        if s <= d-t:
             des = [[t,(n,w,wts[w]*binomial(w,t)//binomial(n,t))] for w in nonzerowts]
             ans = ans + ["weights from C: ",nonzerowts,"designs from C: ",des]
             desp = [[t,(n,w,wtsp[w]*binomial(w,t)//binomial(n,t))] for w in nonzerowtsp]
@@ -672,20 +672,20 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         J = range(1,n+1)
         Cp = self.dual_code()
         dp = Cp.minimum_distance()
-        if i<d:
+        if i < d:
             return 0
-        if i>n-dp and i<=n:
-            return binomial(n,i)*(q**(i+k-n) -1)//(q-1)
+        if i > n-dp and i <= n:
+            return binomial(n,i)*(q**(i+k-n) - 1)//(q-1)
         from sage.combinat.set_partition import SetPartitions
         P = SetPartitions(J,2).list()
         b = QQ(0)
         for p in P:
             p = list(p)
             S = p[0]
-            if len(S)==n-i:
+            if len(S) == n-i:
                 C_S = self.shortened(S)
                 k_S = C_S.dimension()
-                b = b + (q**(k_S) -1)//(q-1)
+                b = b + (q**(k_S) - 1)//(q-1)
         return b
 
     @cached_method
@@ -827,7 +827,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         k = C.dimension()
         n = C.length()
         q = (C.base_ring()).order()
-        return q**(n-k)*prod([1-x/j for j in Sd if j>0])
+        return q**(n-k)*prod([1-x/j for j in Sd if j > 0])
 
     def chinen_polynomial(self):
         """
@@ -955,7 +955,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         V = VectorSpace(QQ,n+1)
         S = V(A).nonzero_positions()
         S0 = [S[i] for i in range(1,len(S))]
-        if len(S)>1:
+        if len(S) > 1:
             return GCD(S0)
         return 1
 
@@ -1220,7 +1220,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         q0 = F0.order()
         a = q.log(q0)  # test if F/F0 is a field extension
         if not isinstance(a, Integer):
-            raise ValueError("Base field must be an extension of given field %s"%F0)
+            raise ValueError("Base field must be an extension of given field %s" % F0)
         n = len(G.columns())
         k = len(G.rows())
         G0 = [[x**q0 for x in g.list()] for g in G.rows()]
@@ -1302,7 +1302,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         B2 = NonlinearBinaryCodeStruct(CW2)
         ans = B1.is_isomorphic(B2)
         if ans is not False:
-            if algorithm=="verbose":
+            if algorithm == "verbose":
                 Sn = SymmetricGroup(n)
                 return True, Sn([i+1 for i in ans])**(-1)
             return True
@@ -1640,28 +1640,28 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             GapPackage("guava", spkg="gap_packages").require()
             libgap.LoadPackage('guava')
             wts = self.weight_distribution()                          # bottleneck 1
-            nonzerowts = [i for i in range(len(wts)) if wts[i]!=0]
+            nonzerowts = [i for i in range(len(wts)) if wts[i] != 0]
             Sn = libgap.SymmetricGroup(n)
             Sn_sage = SymmetricGroup(n)
             Gp = Sn               # initializing G in gap
             C = libgap(G).GeneratorMatCode(libgap.GF(q))
             eltsC = C.Elements()
-            if algorithm=="gap+verbose":
+            if algorithm == "gap+verbose":
                 print("\n Minimum distance: %s \n Weight distribution: \n %s" % (nonzerowts[1], wts))
             stop = 0                                          # only stop if all gens are autos
             for i in range(1,len(nonzerowts)):
                 if stop == 1:
                     break
                 wt = nonzerowts[i]
-                if algorithm=="gap+verbose":
+                if algorithm == "gap+verbose":
                     size = Gp.Size()
                     print("\n Using the %s codewords of weight %s \n Supergroup size: \n %s\n " % (wts[wt], wt, size))
-                Cwt=filter(lambda c: c.WeightCodeword()==wt, eltsC)   # bottleneck 2 (repeated
-                matCwt=list(map(lambda c: c.VectorCodeword(), Cwt))            # for each i until stop = 1)
+                Cwt = filter(lambda c: c.WeightCodeword() == wt, eltsC)   # bottleneck 2 (repeated
+                matCwt = list(map(lambda c: c.VectorCodeword(), Cwt))            # for each i until stop = 1)
                 if len(matCwt) > 0:
                     A = libgap(matCwt).MatrixAutomorphisms()
                     Gp = A.Intersection2(Gp)  #  bottleneck 3
-                    if Gp.Size()==1:
+                    if Gp.Size() == 1:
                         return PermutationGroup([()])
                     gens = Gp.GeneratorsOfGroup()
                     stop = 1                    # get ready to stop
@@ -1671,7 +1671,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                             break
             G = PermutationGroup(list(map(Sn_sage, gens)))
             return G
-        if algorithm=="partition":
+        if algorithm == "partition":
             if q == 2:
                 from sage.groups.perm_gps.partn_ref.refinement_binary import LinearBinaryCodeStruct
                 B = LinearBinaryCodeStruct(G)
@@ -1703,7 +1703,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 else:
                     return PermutationGroup([])
             return AutGp
-        if algorithm=="codecan":
+        if algorithm == "codecan":
             gens, _ = self.automorphism_group_gens("permutational")
             return PermutationGroup([x.get_perm() for x in gens])
         raise NotImplementedError("The only algorithms implemented currently are 'gap', 'gap+verbose', and 'partition'.")
@@ -1866,17 +1866,17 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 algorithm = "gap"
         F = self.base_ring()
         n = self.length()
-        if algorithm=="gap":
+        if algorithm == "gap":
             from sage.libs.gap.libgap import libgap
             Gmat = self.generator_matrix()
             q = self.base_ring().order()
             z = 0*libgap.Z(q)*([0]*self.length())     # GAP zero vector
-            w=libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q),z)
+            w = libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q),z)
             return w.sage()
-        elif algorithm=="binary":
+        elif algorithm == "binary":
             from sage.coding.binary_code import weight_dist
             return weight_dist(self.generator_matrix())
-        elif algorithm=="leon":
+        elif algorithm == "leon":
             if not(F.order() in [2,3,5,7]):
                 raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
             # The GAP command DirectoriesPackageLibrary tells the location of the latest
@@ -2030,8 +2030,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         if d == 1 or dperp == 1:
             print("\n WARNING: There is no guarantee this function works when the minimum distance")
             print("            of the code or of the dual code equals 1.\n")
-        RT = PolynomialRing(QQ,"%s"%name)
-        R = PolynomialRing(QQ,3,"xy%s"%name)
+        RT = PolynomialRing(QQ,"%s" % name)
+        R = PolynomialRing(QQ,3,"xy%s" % name)
         x,y,T = R.gens()
         we = self.weight_enumerator()
         A = R(we)
@@ -2380,9 +2380,9 @@ class LinearCode(AbstractLinearCode):
         """
         R = self.base_ring()
         if R in Fields():
-            return "[%s, %s] linear code over GF(%s)"%(self.length(), self.dimension(), R.cardinality())
+            return "[%s, %s] linear code over GF(%s)" % (self.length(), self.dimension(), R.cardinality())
         else:
-            return "[%s, %s] linear code over %s"%(self.length(), self.dimension(), R)
+            return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
 
     def _latex_(self):
         r"""

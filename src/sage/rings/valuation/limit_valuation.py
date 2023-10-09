@@ -531,7 +531,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                           check=False,
                           principal_part_bound=1 if self._approximation.E() * self._approximation.F() == self._approximation.phi().degree() else None,
                           report_degree_bounds_and_caches=True)
-        assert(len(approximations) == 1)
+        assert (len(approximations) == 1)
         self._approximation, _, _, self._next_coefficients, self._next_valuations = approximations[0]
 
     def _improve_approximation_for_call(self, f):
@@ -669,7 +669,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             return R
         else:
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            assert(is_PolynomialRing(R))
+            assert (is_PolynomialRing(R))
             return R.base_ring()
 
     def _ge_(self, other):
@@ -787,7 +787,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             # phi of the initial approximant must be good enough to separate it
             # from any other approximant of an extension
             ret = self._initial_approximation.phi()
-            assert(self(ret) > other(ret))  # I could not come up with an example where this fails
+            assert (self(ret) > other(ret))  # I could not come up with an example where this fails
             return ret
         else:
             # if the valuations are sane, it should be possible to separate
