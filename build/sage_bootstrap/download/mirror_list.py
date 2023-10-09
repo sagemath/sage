@@ -199,7 +199,9 @@ class MirrorList(object):
         except KeyError:
             pass
         for mirror in self.mirrors:
-            yield mirror
+            if not mirror.endswith('/'):
+                mirror += '/'
+            yield mirror + '/'.join(['spkg', 'upstream', '${SPKG}'])
 
     @property
     def fastest(self):
