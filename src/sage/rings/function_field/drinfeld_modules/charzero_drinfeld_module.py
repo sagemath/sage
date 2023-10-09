@@ -74,6 +74,22 @@ class DrinfeldModule_charzero(DrinfeldModule):
         z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
         sage: phi.logarithm()
         z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
+
+    .. RUBRIC:: Goss polynomials
+
+    Goss polynomials are a sequence of polynomials related with the
+    analytic theory of Drinfeld module. They provide a function field
+    analogue of certain classical trigonometric functions::
+
+        sage: A = GF(2)['T']
+        sage: K.<T> = Frac(A)
+        sage: phi = DrinfeldModule(A, [T, 1])
+        sage: phi.goss_polynomial(1)
+        X
+        sage: phi.goss_polynomial(2)
+        X^2
+        sage: phi.goss_polynomial(3)
+        X^3 + (1/(T^2 + T))*X^2
     """
     @cached_method
     def _compute_coefficient_exp(self, k):
