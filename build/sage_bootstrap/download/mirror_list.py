@@ -51,7 +51,12 @@ class MirrorList(object):
 
     def __init__(self):
         self.filename = MIRRORLIST_FILENAME
-        self.mirrors = None
+        self._mirrors = None
+
+    @property
+    def mirrors(self):
+        if self._mirrors is not None:
+            return self._mirrors
 
         try:
             self.mirrorfile = open(self.filename, 'r+t')
@@ -67,8 +72,10 @@ class MirrorList(object):
                 # process while we waited for the lock?  Check again.
                 if self._must_refresh():
                     self._refresh()
-            if self.mirrors is None:
-                self.mirrors = self._load()
+            if self._mirrors is None:
+                self._mirrors = self._load()
+
+        return self._mirrors
 
     def _load(self, mirror_list=None):
         """
@@ -147,7 +154,7 @@ class MirrorList(object):
             log.info('Cannot time mirrors via proxy, using default order')
         else:
             timed_mirrors.sort()
-            self.mirrors = [m[1] for m in timed_mirrors]
+            self._mirrors = [m[1] for m in timed_mirrors]
         log.info('Fastest mirror: ' + self.fastest)
 
     def _age(self):
@@ -176,12 +183,12 @@ class MirrorList(object):
         """
         log.info('Downloading the Sage mirror list')
         try:
-            with contextlib.closing(urllib.urlopen(self.URL)) as f:
+            with contextlib.closing(urllib.urlopen(self.url)) as f:
                 mirror_list = f.read().decode("ascii")
         except IOError:
             log.critical('Downloading the mirror list failed, using cached version')
         else:
-            self.mirrors = self._load(mirror_list)
+            self._mirrors = self._load(mirror_list)
             self._rank_mirrors()
             self._save()
 
