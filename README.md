@@ -1,3 +1,5 @@
+This is to test the merge queue feature.
+
 <a href="https://sagemath.org">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/doc/common/static/logo_sagemath_white.svg">
