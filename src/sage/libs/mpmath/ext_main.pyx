@@ -744,7 +744,7 @@ cdef class Context:
         faster and produces more accurate results than the builtin
         Python function :func:`sum`.
 
-        With squared=True each term is squared, and with absolute=True
+        With ``squared=True`` each term is squared, and with ``absolute=True``
         the absolute value of each term is used.
 
         TESTS ::
@@ -856,7 +856,7 @@ cdef class Context:
                 MPF_clear(&sim)
                 return +unknown
         except KeyboardInterrupt:
-            raise KeyboardInterrupt('Ctlr-C has been pressed')
+            raise KeyboardInterrupt('Ctrl-C pressed while running fsum')
 
     def fdot(ctx, A, B=None, bint conjugate=False):
         r"""
