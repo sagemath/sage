@@ -65,7 +65,7 @@ Infinite Polynomial Rings
 Boolean Polynomials
 -------------------
 
-.. only:: feature_sage_rings_polynomial_pbori
+.. ONLY:: feature_sage_rings_polynomial_pbori
 
    .. toctree::
       :maxdepth: 1

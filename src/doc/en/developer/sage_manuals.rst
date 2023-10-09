@@ -175,7 +175,7 @@ For every dynamically detectable feature such as :class:`graphviz
 <~sage.features.graphviz.Graphviz>` or :class:`sage.symbolic
 <sage.features.sagemath.sage__symbolic>` (see :mod:`sage.features`),
 Sage defines a Sphinx tag that can be used with the `Sphinx
-directive ".. only::"
+directive ".. ONLY::"
 <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags>`_.
 Because Sphinx tags have to use Python identifier syntax, Sage uses
 the format ``feature_``, followed by the feature name where dots are
@@ -184,13 +184,13 @@ the previous examples would look as follows:
 
 .. CODE-BLOCK:: rest
 
-  .. only:: feature_graphviz
+  .. ONLY:: feature_graphviz
 
 and:
 
 .. CODE-BLOCK:: rest
 
-  .. only:: feature_sage_symbolic
+  .. ONLY:: feature_sage_symbolic
 
 .. _section-building-manuals:
 
