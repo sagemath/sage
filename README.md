@@ -321,13 +321,13 @@ in the Installation Guide.
 
     Notable options for Sage developers are the following:
 
-    - Use the option `--config-cache` to have ``configure``
+    - Use the option `--config-cache` to have `configure`
       keep a disk cache of configuration values. This gives a nice speedup
       when trying out ticket branches that make package upgrades, which
       involves automatic re-runs of the configuration step.
 
     - Use the option `--enable-ccache` to have Sage install and use the
-      optional package ``ccache``, which is preconfigured to keep a
+      optional package `ccache`, which is preconfigured to keep a
       disk cache of object files created from source files. This can give
       a great speedup when switching between different branches, at the
       expense of disk space use.
