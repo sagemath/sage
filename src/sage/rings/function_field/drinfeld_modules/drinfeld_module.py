@@ -626,8 +626,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
         if not category._characteristic:
-            from .complex_drinfeld_module import DrinfeldModule_complex
-            return DrinfeldModule_complex(gen, category)
+            from .charzero_drinfeld_module import DrinfeldModule_charzero
+            return DrinfeldModule_charzero(gen, category)
         return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):

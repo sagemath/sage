@@ -3,7 +3,7 @@ r"""
 Complex Drinfeld module
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.complex_drinfeld_module.DrinfeldModule_complex`,
+:class:`sage.rings.function_fields.drinfeld_module.complex_drinfeld_module.DrinfeldModule_charzero`,
 which inherits
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
@@ -31,7 +31,7 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
-class DrinfeldModule_complex(DrinfeldModule):
+class DrinfeldModule_charzero(DrinfeldModule):
     r"""
     This class implements complex Drinfeld `\mathbb{F}_q[T]`-modules.
 
@@ -46,7 +46,7 @@ class DrinfeldModule_complex(DrinfeldModule):
     .. RUBRIC:: Construction:
 
     The user does not ever need to directly call
-    ``DrinfeldModule_complex`` --- the metaclass ``DrinfeldModule`` is
+    ``DrinfeldModule_charzero`` --- the metaclass ``DrinfeldModule`` is
     responsible for instantiating the right class depending on the
     input::
 
@@ -60,8 +60,8 @@ class DrinfeldModule_complex(DrinfeldModule):
 
         sage: isinstance(phi, DrinfeldModule)
         True
-        sage: from sage.rings.function_field.drinfeld_modules.complex_drinfeld_module import DrinfeldModule_complex
-        sage: isinstance(phi, DrinfeldModule_complex)
+        sage: from sage.rings.function_field.drinfeld_modules.complex_drinfeld_module import DrinfeldModule_charzero
+        sage: isinstance(phi, DrinfeldModule_charzero)
         True
 
     .. RUBRIC:: Logarithm and exponential
