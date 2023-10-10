@@ -103,6 +103,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.misc.cachefunc import cached_method
+from copy import copy
 
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
@@ -212,6 +213,14 @@ class Stream():
             False
         """
         return False
+
+    def replace(self, stream, sub):
+        """
+        Return ``self`` except with ``stream`` replaced by ``sub``.
+
+        The default is to return ``self``.
+        """
+        return self
 
 
 class Stream_inexact(Stream):
@@ -596,7 +605,6 @@ class Stream_exact(Stream):
         The convention for ``order`` is different to the one in
         :class:`sage.rings.lazy_series_ring.LazySeriesRing`, where
         the input is shifted to have the prescribed order.
-
     """
     def __init__(self, initial_coefficients, constant=None, degree=None, order=None):
         """
@@ -1038,6 +1046,142 @@ class Stream_function(Stream_inexact):
         return isinstance(other, type(self)) and self.get_coefficient == other.get_coefficient
 
 
+class Stream_taylor(Stream_inexact):
+    r"""
+    Class that returns a stream for the Taylor series of a function.
+
+    INPUT:
+
+    - ``function`` -- a function that has a ``derivative`` method and takes
+      a single input
+    - ``is_sparse`` -- boolean; specifies whether the stream is sparse
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_taylor
+        sage: g(x) = sin(x)
+        sage: f = Stream_taylor(g, False)
+        sage: f[3]
+        -1/6
+        sage: [f[i] for i in range(10)]
+        [0, 1, 0, -1/6, 0, 1/120, 0, -1/5040, 0, 1/362880]
+
+        sage: g(y) = cos(y)
+        sage: f = Stream_taylor(g, False)
+        sage: n = f.iterate_coefficients()
+        sage: [next(n) for _ in range(10)]
+        [1, 0, -1/2, 0, 1/24, 0, -1/720, 0, 1/40320, 0]
+
+        sage: g(z) = 1 / (1 - 2*z)
+        sage: f = Stream_taylor(g, True)
+        sage: [f[i] for i in range(4)]
+        [1, 2, 4, 8]
+    """
+    def __init__(self, function, is_sparse):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: f = Stream_taylor(polygen(QQ, 'x')^3, False)
+            sage: TestSuite(f).run(skip="_test_pickling")
+        """
+        self._func = function
+        super().__init__(is_sparse, False)
+        self._approximate_order = 0
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: x = polygen(QQ, 'x')
+            sage: f = Stream_taylor(x^3 + x - 2, True)
+            sage: g = Stream_taylor(x^3 + x - 2, False)
+            sage: hash(f) == hash(g)
+            True
+        """
+        # We don't hash the function as it might not be hashable.
+        return hash(type(self))
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: x = polygen(QQ, 'x')
+            sage: fun = x^2
+            sage: f = Stream_taylor(x^2, True)
+            sage: g = Stream_taylor(x^2, False)
+            sage: h = Stream_taylor((x^3 + x^2) / (x + 1), False)
+            sage: f == g
+            True
+            sage: f == h
+            True
+
+            sage: F(y) = cos(y)^2 + sin(y)^2 + y
+            sage: G(y) = y + 1
+            sage: f = Stream_taylor(F, True)
+            sage: g = Stream_taylor(G, False)
+            sage: f == g
+            True
+        """
+        # The bool call is needed when passing functions in SR
+        return isinstance(other, type(self)) and bool(self._func == other._func)
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: g(x) = exp(x)
+            sage: f = Stream_taylor(g, True)
+            sage: f.get_coefficient(5)
+            1/120
+        """
+        if n == 0:
+            return self._func(ZZ.zero())
+        from sage.functions.other import factorial
+        return self._func.derivative(n)(ZZ.zero()) / factorial(n)
+
+    def iterate_coefficients(self):
+        """
+        A generator for the coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: x = polygen(QQ, 'x')
+            sage: f = Stream_taylor(x^3, False)
+            sage: it = f.iterate_coefficients()
+            sage: [next(it) for _ in range(10)]
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+        """
+        cur = self._func
+        n = 0
+        denom = 1
+        while True:
+            yield cur(ZZ.zero()) / denom
+            cur = cur.derivative()
+            n += 1
+            denom *= n
+
+
 class Stream_uninitialized(Stream_inexact):
     r"""
     Coefficient stream for an uninitialized series.
@@ -1134,6 +1278,128 @@ class Stream_uninitialized(Stream_inexact):
         return result
 
 
+class Stream_functional_equation(Stream_inexact):
+    r"""
+    Coefficient stream defined by a functional equation `F = 0`.
+
+    INPUT:
+
+    - ``approximate_order`` -- integer; a lower bound for the order
+      of the stream
+    - ``F`` -- the stream for the equation using ``uninitialized``
+    - ``uninitialized`` -- the uninitialized stream
+    - ``initial_values`` -- the initial values
+
+    Instances of this class are always dense.
+
+    EXAMPLES::
+    """
+    def __init__(self, approximate_order, F, uninitialized, initial_values, true_order=False):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: C = Stream_uninitialized(0)
+            sage: TestSuite(C).run(skip="_test_pickling")
+        """
+        if approximate_order is None:
+            raise ValueError("the valuation must be specified for undefined series")
+        if initial_values is None:
+            initial_values = []
+        self._start = approximate_order
+        for i, val in enumerate(initial_values):
+            if val:
+                approximate_order += i
+                true_order = True
+                break
+        else:
+            approximate_order += len(initial_values)
+        super().__init__(False, true_order)
+        self._F = F
+        self._initial_values = initial_values
+        self._approximate_order = approximate_order
+        self._uninitialized = uninitialized
+        self._uninitialized._approximate_order = approximate_order
+        self._uninitialized._target = self
+
+    def iterate_coefficients(self):
+        """
+        A generator for the coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: from sage.data_structures.stream import Stream_exact
+            sage: z = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(0)
+            sage: C._target
+            sage: C._target = z
+            sage: n = C.iterate_coefficients()
+            sage: [next(n) for _ in range(10)]
+            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+        """
+        yield from self._initial_values
+
+        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+        P = InfinitePolynomialRing(ZZ, 'x')
+        x = P.gen()
+        PFF = P.fraction_field()
+
+        def get_coeff(n):
+            # Check against the initial values first
+            i = n - self._start
+            if n < len(self._initial_values):
+                return P(self._initial_values[n])
+
+            # We are always a dense implementation
+            # Check to see if we have already computed the value
+            if n < self._approximate_order:
+                return P.zero()
+            if self._true_order:
+                i = n - self._approximate_order
+                if i < len(self._cache):
+                    return P(self._cache[i])
+
+            return x[i]
+
+        sf = Stream_function(get_coeff, is_sparse=False, approximate_order=self._start, true_order=True)
+        self._F = self._F.replace(self._uninitialized, sf)
+
+        n = self._start
+        offset = len(self._initial_values) - self._start
+        while True:
+            coeff = self._F[n]
+            if coeff.parent() is PFF:
+                coeff = coeff.numerator()
+
+            V = coeff.variables()
+            if not V:
+                if coeff:
+                    raise ValueError(f"no solution from degree {n} as {coeff} == 0")
+                yield ZZ.zero()
+                n += 1
+                continue
+
+            if len(V) > 1:
+                # Substitute for known variables
+                coeff = coeff.subs({x[i]: val for i, val in enumerate(sf._cache)})
+                V = coeff.variables()
+                if len(V) > 1:
+                    raise ValueError(f"unable to determine a unique solution from degree {n}")
+
+            # single variable to solve for
+            hc = coeff.homogeneous_components()
+            if not set(hc).issubset([0,1]):
+                raise ValueError(f"unable to determine a unique solution from degree {n}")
+            val = -hc.get(0, P.zero()).lc() / hc[1].lc()
+            # Update the cache
+            sf._cache[n + offset] = val
+            yield val
+            n += 1
+
+
 class Stream_unary(Stream_inexact):
     r"""
     Base class for unary operators on coefficient streams.
@@ -1225,6 +1491,26 @@ class Stream_unary(Stream_inexact):
         """
         return self._series.is_uninitialized()
 
+    def replace(self, stream, sub):
+        r"""
+        Return ``self`` except with ``stream`` replaced by ``sub``.
+
+        .. WARNING::
+
+            This does not update the approximate order or the cache.
+        """
+        if self._series == stream:
+            ret = copy(self)
+            ret._series = sub
+        else:
+            temp = self._series.replace(stream, sub)
+            if temp == self._series:
+                ret = self
+            else:
+                ret = copy(self)
+                ret._series = temp
+        return ret
+
 
 class Stream_binary(Stream_inexact):
     """
@@ -1247,7 +1533,6 @@ class Stream_binary(Stream_inexact):
         sage: [h[i] for i in range(10)]
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     """
-
     def __init__(self, left, right, is_sparse):
         """
         Initialize ``self``.
@@ -1330,6 +1615,35 @@ class Stream_binary(Stream_inexact):
             False
         """
         return self._left.is_uninitialized() or self._right.is_uninitialized()
+
+    def replace(self, stream, sub):
+        r"""
+        Return ``self`` except with ``stream`` replaced by ``sub``.
+
+        .. WARNING::
+
+            This does not update the approximate order or the cache.
+        """
+        if self._left == stream:
+            ret = copy(self)
+            ret._left = sub
+        else:
+            temp = self._left.replace(stream, sub)
+            if temp == self._left:
+                ret = self
+            else:
+                ret = copy(self)
+                ret._left = temp
+        # It is possible that both the left and right are the same stream
+        if self._right == stream:
+            ret = copy(ret)
+            ret._right = sub
+        else:
+            temp = ret._right.replace(stream, sub)
+            if not (temp == self._right):
+                ret = copy(ret)
+                ret._right = temp
+        return ret
 
 
 class Stream_binaryCommutative(Stream_binary):
@@ -3055,6 +3369,26 @@ class Stream_shift(Stream):
             True
         """
         return self._series.is_uninitialized()
+
+    def replace(self, stream, sub):
+        r"""
+        Return ``self`` except with ``stream`` replaced by ``sub``.
+
+        .. WARNING::
+
+            This does not update the approximate order.
+        """
+        if self._series == stream:
+            ret = copy(self)
+            ret._series = sub
+        else:
+            temp = self._series.replace(stream, sub)
+            if temp == self._series:
+                ret = self
+            else:
+                ret = copy(self)
+                ret._series = temp
+        return ret
 
 
 class Stream_truncated(Stream_unary):

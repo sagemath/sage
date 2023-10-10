@@ -87,7 +87,10 @@ from sage.data_structures.stream import (
     Stream_function,
     Stream_iterator,
     Stream_exact,
-    Stream_uninitialized
+    Stream_uninitialized,
+    Stream_sub,
+    Stream_taylor,
+    Stream_functional_equation
 )
 
 from types import GeneratorType
@@ -1792,6 +1795,43 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise TypeError("the base ring is not a field")
         return R
 
+    def taylor(self, f):
+        r"""
+        Return the Taylor expansion of the function ``f``.
+
+        INPUT:
+
+        - ``f`` -- a function such that one of the following works:
+
+          * the substitution `f(z)`, where `z` is generator of ``self``
+          * `f` is a function of a single variable with no poles and has a
+            ``derivative`` method
+        """
+        try:
+            return f(self.gen())
+        except (ValueError, TypeError):
+            pass
+        stream = Stream_taylor(f, self.is_sparse())
+        return self.element_class(self, stream)
+
+    def functional_equation(self, left, right, series, initial_values):
+        r"""
+        Define the lazy undefined ``series`` that solves the functional
+        equation ``left == right`` with ``initial_values``.
+        """
+        if not isinstance(series._coeff_stream, Stream_uninitialized) or series._coeff_stream._target is not None:
+            raise ValueError("series already defined")
+
+        left = self(left)
+        right = self(right)
+        cs = series._coeff_stream
+        ao = cs._approximate_order
+        R = self.base_ring()
+        initial_values = [R(val) for val in initial_values]
+        F = Stream_sub(left._coeff_stream, right._coeff_stream, self.is_sparse())
+        ret = Stream_functional_equation(ao, F, cs, initial_values)
+        series._coeff_stream = ret
+
     # === special functions ===
 
     def q_pochhammer(self, q=None):
@@ -2502,6 +2542,63 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sum_gens = PR.sum(PR.gens())
             elts.extend([(z-3)*(2+z)**2, (1 - 2*z**3)/(1 - z + 3*z**2), self(lambda n: sum_gens**n)])
         return elts
+
+    def taylor(self, f):
+        r"""
+        Return the Taylor expansion of the function ``f``.
+
+        INPUT:
+
+        - ``f`` -- a function such that one of the following works:
+
+          * the substitution `f(z_1, \ldots, z_n)`, where `(z_1, \ldots, z_n)`
+            are the generators of ``self``
+          * `f` is a function of a single variable with no poles and has a
+            ``derivative`` method
+        """
+        try:
+            return f(*self.gens())
+        except (ValueError, TypeError):
+            pass
+        if self._arity != 1:
+            raise NotImplementedError("only implemented generically for one variable")
+        stream = Stream_taylor(f, self.is_sparse())
+        return self.element_class(self, stream)
+
+    def functional_equation(self, left, right, series, initial_values):
+        r"""
+        Define the lazy undefined ``series`` that solves the functional
+        equation ``left == right`` with ``initial_values``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(0)
+            sage: F = diff(f, 2)
+            sage: L.functional_equation(-F, f, f, [1, 0])
+            sage: f
+            1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
+            sage: cos(z)
+            1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
+            sage: F
+            -1 + 1/2*z^2 - 1/24*z^4 + 1/720*z^6 + O(z^7)
+        """
+        if self._arity != 1:
+            raise NotImplementedError("only implemented for one variable")
+
+        if not isinstance(series._coeff_stream, Stream_uninitialized) or series._coeff_stream._target is not None:
+            raise ValueError("series already defined")
+
+        left = self(left)
+        right = self(right)
+        cs = series._coeff_stream
+        ao = cs._approximate_order
+        R = self.base_ring()
+        initial_values = [R(val) for val in initial_values]
+        F = Stream_sub(left._coeff_stream, right._coeff_stream, self.is_sparse())
+        ret = Stream_functional_equation(ao, F, cs, initial_values)
+        series._coeff_stream = ret
+
 
 ######################################################################
 
