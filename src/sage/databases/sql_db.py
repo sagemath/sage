@@ -1026,16 +1026,19 @@ class SQLDatabase(SageObject):
         NOTE: The values of ``display_cols`` are always concatenated in
         intersections and unions.
 
-        Of course, we can save the database to file::
+        Of course, we can save the database to file. Here we use a
+        temporary directory that we clean up afterwards::
 
-            sage: replace_with_your_own_filepath = tmp_dir()
-            sage: D.save(replace_with_your_own_filepath + 'simon.db')
+            sage: import tempfile
+            sage: d = tempfile.TemporaryDirectory()
+            sage: dbpath = os.path.join(d.name, 'simon.db')
+            sage: D.save(dbpath)
 
         Now the database's hard link is to this file, and not the temporary db
         file. For example, let's say we open the same file with another class
         instance. We can load the file as an immutable database::
 
-            sage: E = SQLDatabase(replace_with_your_own_filepath + 'simon.db')
+            sage: E = SQLDatabase(dbpath)
             sage: E.show('simon')
             graph6               vertices             edges
             ------------------------------------------------------------
@@ -1062,6 +1065,11 @@ class SQLDatabase(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: Cannot drop tables from a read only database.
+
+        Call ``cleanup()`` on the temporary directory to, well, clean it up::
+
+            sage: d.cleanup()
+
         """
         if filename is None:
             if read_only is None:
@@ -1111,10 +1119,12 @@ class SQLDatabase(SageObject):
 
         EXAMPLES::
 
-            sage: replace_with_filepath = tmp_dir() + 'test.db'
-            sage: SD = SQLDatabase(replace_with_filepath, False)
-            sage: SD.create_table('simon', {'n':{'sql':'INTEGER', 'index':True}})
-            sage: print(SD)
+            sage: import tempfile
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     dbpath = os.path.join(d, "test.db")
+            ....:     SD = SQLDatabase(dbpath, False)
+            ....:     SD.create_table('simon', {'n':{'sql':'INTEGER', 'index':True}})
+            ....:     print(SD)
             table simon:
                 column n: index: True; primary_key: False; sql: INTEGER;
                     unique: False;
@@ -1182,10 +1192,12 @@ class SQLDatabase(SageObject):
             sage: MonicPolys = SQLDatabase()
             sage: MonicPolys.create_table('simon', {'n':{'sql':'INTEGER', 'index':True}})
             sage: for n in range(20): MonicPolys.add_row('simon', (n,))
-            sage: tmp = tmp_dir() # replace with your own file path
-            sage: MonicPolys.save(tmp+'sage.db')
-            sage: N = SQLDatabase(tmp+'sage.db')
-            sage: N.show('simon')
+            sage: import tempfile
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     dbpath = os.path.join(d, "sage.db")
+            ....:     MonicPolys.save(dbpath)
+            ....:     N = SQLDatabase(dbpath)
+            ....:     N.show('simon')
             n
             --------------------
             0

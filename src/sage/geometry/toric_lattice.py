@@ -582,9 +582,9 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         def make_name(N1, N2, use_latex=False):
             if use_latex:
-                return latex(N1)+ r' \oplus ' +latex(N2)
+                return latex(N1) + r' \oplus ' + latex(N2)
             else:
-                return N1._name+ '+' +N2._name
+                return N1._name + '+' + N2._name
 
         rank = self.rank() + other.rank()
         name = make_name(self, other, False)
@@ -1492,7 +1492,7 @@ class ToricLattice_quotient(FGP_Module_class):
             return
 
         self._flip_sign_of_generator = False
-        assert self.is_torsion_free() and self.ngens()==1, \
+        assert self.is_torsion_free() and self.ngens() == 1, \
             'You may only specify a positive direction in the codimension one case.'
         quotient_generator = self.gen(0)
         lattice = self.V().ambient_module()
@@ -1500,16 +1500,16 @@ class ToricLattice_quotient(FGP_Module_class):
             assert positive_point in lattice, 'positive_point must be a lattice point.'
             point_quotient = self(positive_point)
             scalar_product = quotient_generator.vector()[0] * point_quotient.vector()[0]
-            if scalar_product==0:
+            if scalar_product == 0:
                 raise ValueError(str(positive_point)+' is zero in the quotient.')
         elif (positive_point is None) and (positive_dual_point is not None):
             assert positive_dual_point in lattice.dual(), 'positive_dual_point must be a dual lattice point.'
             scalar_product = quotient_generator.lift() * positive_dual_point
-            if scalar_product==0:
+            if scalar_product == 0:
                 raise ValueError(str(positive_dual_point)+' is zero on the lift of the quotient generator.')
         else:
             raise ValueError('You may not specify both positive_point and positive_dual_point.')
-        self._flip_sign_of_generator = (scalar_product<0)
+        self._flip_sign_of_generator = (scalar_product < 0)
 
     def gens(self):
         """
@@ -1529,7 +1529,7 @@ class ToricLattice_quotient(FGP_Module_class):
         """
         gens = self.smith_form_gens()
         if self._flip_sign_of_generator:
-            assert len(gens)==1
+            assert len(gens) == 1
             return (-gens[0],)
         else:
             return gens

@@ -397,7 +397,7 @@ class Homspace(HomsetWithBase):
             sage: End(J)._repr_()
             'Endomorphism ring of Abelian variety J0(11) of dimension 1'
         """
-        return "Space of homomorphisms from %s to %s"%\
+        return "Space of homomorphisms from %s to %s" %\
                (self.domain(), self.codomain())
 
     def _get_matrix(self, g):
@@ -501,7 +501,7 @@ class Homspace(HomsetWithBase):
         """
         self.calculate_generators()
         if i > self.ngens():
-            raise ValueError("self only has %s generators"%self.ngens())
+            raise ValueError("self only has %s generators" % self.ngens())
         return self.element_class(self, self._gens[i])
 
     def ngens(self):

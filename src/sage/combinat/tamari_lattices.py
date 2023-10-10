@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.modules
 r"""
 Generalized Tamari lattices
 
@@ -87,7 +87,7 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
         sage: paths_in_triangle(3,2,5,3)
         [(1, 0, 1, 0, 0), (1, 1, 0, 0, 0)]
     """
-    if not(b >= j and j * a >= i * b and i >= 0):
+    if not (b >= j and j * a >= i * b and i >= 0):
         raise ValueError("the endpoint is not valid")
 
     if i == 0:
@@ -215,9 +215,9 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
     .. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
        *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
     """
-    if not(gcd(a, b) == 1 and a >= b):
+    if not (gcd(a, b) == 1 and a >= b):
         raise ValueError("the numbers a and b must be coprime with a>=b")
-    if not(a >= b * m):
+    if a < b * m:
         raise ValueError("the condition a>=b*m does not hold")
 
     def covers(p):

@@ -15,6 +15,201 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.misc.unknown import Unknown
 
+def is_covering_array(array, strength=None, levels=None, verbose=False, parameters=False):
+    r"""
+    Check if the input is a covering array with given strength.
+
+    See :mod:`sage.combinat.designs.covering_array` for a definition.
+
+    INPUT:
+
+    - ``array`` -- the Covering Array to be tested.
+
+    - ``strength`` (integer) -- the parameter `t` of the covering array,
+      such that in any selection of `t` columns of the array, every `t`
+      -tuple appears at least once. If set to None then all t > 0 are
+      tested to and the maximal strength is used.
+
+    - ``levels`` -- the number of symbols that appear in ``array``.
+      If set to None, then each unique entry in ``array`` is counted.
+
+    - ``verbose`` (boolean) -- whether to display some information about
+      the covering array.
+
+    - ``parameters`` (boolean) -- whether to return the parameters of
+      the Covering Array. If set to ``True``, the function returns a
+      pair ``(boolean_answer,(N,t,k,v))``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: C = [[1, 1, 1, 0],
+        ....:      [1, 1, 0, 0],
+        ....:      [0, 0, 0]]
+        sage: is_covering_array(C)
+        Traceback (most recent call last):
+        ...
+        ValueError: Not all rows are the same length, row 2 is not the same length as row 0
+
+        sage: C = [[0, 1, 1],
+        ....:      [1, 1, 0],
+        ....:      [1, 0, 1],
+        ....:      [0, 0, 0,]]
+        sage: is_covering_array(C,strength=4)
+        Traceback (most recent call last):
+        ...
+        ValueError: Strength must be equal or less than number of columns
+
+        sage: C = [[0, 1, 1],
+        ....:      [1, 1, 1],
+        ....:      [1, 0, 1]]
+        sage: is_covering_array(C,verbose=True)
+        A 3 by 3 Covering Array with strength 0 with entries from a symbol set of size 2
+        True
+
+        sage: C = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ....:      [0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+        ....:      [0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+        ....:      [1, 0, 1, 1, 0, 1, 1, 0, 0, 1],
+        ....:      [1, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+        ....:      [1, 1, 1, 0, 1, 1, 0, 1, 2, 0]]
+        sage: is_covering_array(C,levels=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: Array should contain integer symbols from 0 to 1
+
+        sage: C = [[1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2],
+        ....:      [1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2],
+        ....:      [1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1, 0],
+        ....:      [0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2, 1],
+        ....:      [2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2, 2],
+        ....:      [1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1, 2],
+        ....:      [1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2, 1],
+        ....:      [2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0, 2],
+        ....:      [1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2, 0],
+        ....:      [0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0, 2],
+        ....:      [1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0, 0],
+        ....:      [0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1, 0],
+        ....:      [0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1, 1],
+        ....:      [2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1, 1],
+        ....:      [2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0, 1],
+        ....:      [2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2, 0],
+        ....:      [0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1, 2],
+        ....:      [1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1, 1],
+        ....:      [2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2, 1],
+        ....:      [2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1, 2],
+        ....:      [1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0, 1],
+        ....:      [2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1, 0],
+        ....:      [0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0, 1],
+        ....:      [2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0, 0],
+        ....:      [0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2, 0],
+        ....:      [0, 0, 2, 0, 2, 1, 2, 2, 1, 0, 2, 2, 2],
+        ....:      [1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2],
+        ....:      [1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0],
+        ....:      [0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0],
+        ....:      [0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0, 1],
+        ....:      [2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1, 0],
+        ....:      [0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2, 1],
+        ....:      [2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1, 2],
+        ....:      [1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1, 1],
+        ....:      [2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2, 1],
+        ....:      [2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0, 2],
+        ....:      [1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1, 0],
+        ....:      [0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1, 1],
+        ....:      [2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1, 1],
+        ....:      [2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0, 1],
+        ....:      [2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0, 0],
+        ....:      [0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2, 0],
+        ....:      [0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0, 2],
+        ....:      [1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 0],
+        ....:      [0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2],
+        ....:      [1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2, 1],
+        ....:      [2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2, 2],
+        ....:      [1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1, 2],
+        ....:      [1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0, 1],
+        ....:      [2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2, 0],
+        ....:      [0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2, 2],
+        ....:      [1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2, 2],
+        ....:      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        sage: is_covering_array(C,parameters=True)
+        (True, (53, 3, 13, 3))
+
+        sage: C = [[1, 0, 1, 1, 2, 0, 2, 2],
+        ....:      [2, 1, 0, 1, 1, 2, 0, 2],
+        ....:      [2, 2, 1, 0, 1, 1, 2, 0],
+        ....:      [0, 2, 2, 1, 0, 1, 1, 2],
+        ....:      [2, 0, 2, 2, 1, 0, 1, 1],
+        ....:      [1, 2, 0, 2, 2, 1, 0, 1],
+        ....:      [1, 1, 2, 0, 2, 2, 1, 0],
+        ....:      [0, 1, 1, 2, 0, 2, 2, 1]]
+        sage: is_covering_array(C,strength=2,parameters=True)
+        (False, (8, 0, 8, 3))
+
+    """
+    from itertools import product, combinations
+
+    if levels is None:
+        symbol_list = list({x for l in array for x in l})
+        levels = len(symbol_list)
+    else:
+        symbol_list = range(levels)
+
+    number_rows = len(array)
+    number_columns = len(array[0])
+
+    for row in array:
+        if len(row) != number_columns:
+            raise ValueError("Not all rows are the same length, row {} is not the same length as row 0".format(array.index(row)))
+        else:
+            for entry in row:
+                if int(entry) != entry or entry < -1 or entry >= levels:
+                    raise ValueError("Array should contain integer symbols from 0 to {}".format(levels-1))
+
+    result = True
+
+    # If strength t is inputted, check that for every selection of t
+    # columns, each v^t t-tuple is found in some row.
+    if strength:
+        if strength > number_columns:
+            raise ValueError("Strength must be equal or less than number of columns")
+        wstrength = strength
+        for comb in combinations(range(number_columns), wstrength):
+            existing_ttuples = set(tuple([row[ti] for ti in comb]) for row in array)
+            if len(existing_ttuples) != levels ** wstrength:
+                wstrength = 0
+                result = False
+                break
+
+    # If no strength t is inputted, starting at t=1 check all t until
+    # one of the v^t t-tuples does not appear.
+    else:
+        wstrength = 1
+        finished = False
+        do_iterate = True
+        while finished is False:
+            for comb in combinations(range(number_columns), wstrength):
+                tuple_dictionary = {item: 0 for item in product(symbol_list, repeat=wstrength)}
+                for row in array:
+                    tuple_dictionary[tuple([row[ti] for ti in comb])] += 1
+                if 0 in tuple_dictionary.values():
+                    wstrength -= 1
+                    finished = True
+                    break
+                elif do_iterate and any(value < levels for value in tuple_dictionary.values()):
+                    do_iterate = False
+                    finished = True
+            if finished is False and wstrength < number_columns and do_iterate:
+                wstrength += 1
+
+    if verbose:
+            print('A {} by {} Covering Array with strength {} with entries from a symbol set of size {}'.format(number_rows, number_columns, wstrength, levels))
+
+    if parameters:
+        return (result, (number_rows, wstrength, number_columns, levels))
+    else:
+        return result
+
+
 def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="OA"):
     r"""
     Check that the integer matrix `OA` is an `OA(k,n,t)`.

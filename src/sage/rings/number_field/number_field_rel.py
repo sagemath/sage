@@ -1358,7 +1358,7 @@ class NumberField_relative(NumberField_generic):
 
         try:
             return self.__is_CM_extension
-        except(AttributeError):
+        except (AttributeError):
             pass
 
         if self.relative_degree() == 2:
