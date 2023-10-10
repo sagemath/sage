@@ -141,12 +141,12 @@ cdef class IndependentSets:
         Compute the number of matchings, and check with Sage's implementation::
 
             sage: from sage.graphs.independent_sets import IndependentSets
-            sage: from sage.graphs.matchpoly import matching_polynomial
+            sage: from sage.graphs.matchpoly import matching_polynomial                 # needs sage.libs.flint
             sage: def check_matching(G):
             ....:     number_of_matchings = sum(map(abs, matching_polynomial(G).coefficients(sparse=False)))
             ....:     if number_of_matchings != IndependentSets(G.line_graph()).cardinality():
             ....:         raise ValueError("something goes wrong")
-            sage: for i in range(30):
+            sage: for i in range(30):                                                   # needs sage.libs.flint
             ....:     check_matching(graphs.RandomGNP(11, .3))
 
         Compare the result with the output of :meth:`subgraph_search`::

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Substitutions over unit cube faces (Rauzy fractals)
 
@@ -287,7 +288,7 @@ class Face(SageObject):
         self._vector = (ZZ**len(v))(v)
         self._vector.set_immutable()
 
-        if not((t in ZZ) and 1 <= t <= len(v)):
+        if not ((t in ZZ) and 1 <= t <= len(v)):
             raise ValueError('the type must be an integer between 1 and len(v)')
         self._type = t
 
@@ -1418,8 +1419,8 @@ class E1Star(SageObject):
             raise ValueError("the substitution (%s) must be unimodular" % sigma)
 
         first_letter = sigma.codomain().alphabet()[0]
-        if not (first_letter in ZZ) or (first_letter < 1):
-            raise ValueError("the substitution (%s) must be defined on positive integers" % sigma)
+        if first_letter not in ZZ or first_letter < 1:
+            raise ValueError(f"the substitution ({sigma}) must be defined on positive integers")
 
         self._sigma = WordMorphism(sigma)
         self._d = self._sigma.domain().alphabet().cardinality()

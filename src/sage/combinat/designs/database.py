@@ -1466,8 +1466,8 @@ def OA_17_560():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_17_560
-        sage: OA = OA_17_560()                                                          # needs sage.rings.finite_rings
-        sage: is_orthogonal_array(OA,17,560,2)                                          # needs sage.rings.finite_rings
+        sage: OA = OA_17_560()                                                          # needs sage.rings.finite_rings sage.schemes
+        sage: is_orthogonal_array(OA,17,560,2)                                          # needs sage.rings.finite_rings sage.schemes
         True
 
     The design is available from the general constructor::
@@ -3846,13 +3846,13 @@ def DM_57_8_1():
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: from sage.combinat.designs.database import DM_57_8_1
-        sage: G,M = DM_57_8_1()                                                         # needs sage.rings.finite_rings
-        sage: is_difference_matrix(M,G,8,1)                                             # needs sage.rings.finite_rings
+        sage: G,M = DM_57_8_1()                                                         # needs sage.rings.finite_rings sage.schemes
+        sage: is_difference_matrix(M,G,8,1)                                             # needs sage.rings.finite_rings sage.schemes
         True
 
     Can be obtained from the constructor::
 
-        sage: _ = designs.difference_matrix(57,8)                                       # needs sage.rings.finite_rings
+        sage: _ = designs.difference_matrix(57,8)                                       # needs sage.rings.finite_rings sage.schemes
     """
     M = orthogonal_array(8,8)
     M = [R for R in M if any(x != R[0] for x in R)] # removing the 0..0, 1..1, 7..7 rows.
