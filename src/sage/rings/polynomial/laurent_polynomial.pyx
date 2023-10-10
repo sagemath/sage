@@ -2083,7 +2083,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: p.divides(q)
             Traceback (most recent call last):
             ...
-            NotImplementedError: divisibility test only implemented for Laurent polynomials over an integral domain
+            NotImplementedError: divisibility test only implemented for polynomials over an integral domain
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
@@ -2092,9 +2092,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
         """
-        if not self._parent.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for Laurent polynomials over an integral domain")
-
         R = self._parent.polynomial_ring()
         p = R(self.polynomial_construction()[0])
         q = R(other.polynomial_construction()[0])

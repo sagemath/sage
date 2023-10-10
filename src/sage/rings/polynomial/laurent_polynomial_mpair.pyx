@@ -1858,12 +1858,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     def divides(self, other):
         """
         Check if `self` divides `other`
+
+        EXAMPLES::
+
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)
+            sage: f1 = x^-2*y^3 - 9 - 1/14*x^-1*y - 1/3*x^-1
+            sage: h = 3*x^-1 - 3*x^-2*y - 1/2*x^-3*y^2 - x^-3*y + x^-3
+            sage: f2 = f1 * h
+            sage: f3 = f2 + x * y
+            sage: f1.divides(f2)
+            True
+            sage: f1.divides(f3)
+            False
         """
         R = self._parent.polynomial_ring()
-        if not R.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
-        if other.parent() != R:
-            return None
         p = R(self.monomial_reduction()[0])
         q = R(other.monomial_reduction()[0])
         return p.divides(q)
