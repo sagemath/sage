@@ -655,14 +655,14 @@ class SymmetricIdeal(Ideal_generic):
         from sage.combinat.permutation import Permutation
         from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
         RStrat = SymmetricReductionStrategy(self.ring(),OUT.gens(),tailreduce=tailreduce)
-        while (OUT != newOUT):
+        while OUT != newOUT:
             OUT = newOUT
             PermutedGens = list(OUT.gens())
             if not (report is None):
                 print("Apply permutations")
-            for i in range(1,N):
-                for j in range(i+1,N+1):
-                    P = Permutation(((i,j)))
+            for i in range(1, N):
+                for j in range(i + 1, N + 1):
+                    P = Permutation(((i, j)))
                     for X in OUT.gens():
                         p = RStrat.reduce(X**P,report=report)
                         if p._p != 0:

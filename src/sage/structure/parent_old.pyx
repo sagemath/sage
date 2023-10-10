@@ -221,11 +221,12 @@ cdef class Parent(parent.Parent):
         Given a list v of rings, try to coerce x canonically into each
         one in turn.  Return the __call__ coercion of the result into
         self of the first canonical coercion that succeeds.  Raise a
-        TypeError if none of them succeed.
+        :class:`TypeError` if none of them succeed.
 
         INPUT:
-             x -- Python object
-             v -- parent object or list (iterator) of parent objects
+
+        - x -- Python object
+        - v -- parent object or list (iterator) of parent objects
         """
         deprecation(33464, "usage of _coerce_try is deprecated")
         check_old_coerce(self)

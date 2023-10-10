@@ -226,7 +226,7 @@ class BinaryStringMonoid(StringMonoid_class):
             n = ord(S[i])
             bits = []
             for i in range(8):
-                bits.append(n%2)
+                bits.append(n % 2)
                 n = n >> 1
             if not padic:
                 bits.reverse()

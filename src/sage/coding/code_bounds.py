@@ -361,7 +361,7 @@ def gilbert_lower_bound(n, q, d):
         128/7
     """
     _check_n_q_d(n, q, d, field_based=False)
-    ans=q**n/volume_hamming(n,q,d-1)
+    ans = q**n/volume_hamming(n,q,d-1)
     return ans
 
 def plotkin_upper_bound(n,q,d, algorithm=None):
@@ -389,16 +389,16 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
         return QQ(libgap.UpperBoundPlotkin(n, d, q))
     else:
         t = 1 - 1/q
-        if (q==2) and (n == 2*d) and (d%2 == 0):
+        if (q == 2) and (n == 2*d) and (d % 2 == 0):
             return 4*d
-        elif (q==2) and (n == 2*d + 1) and (d%2 == 1):
+        elif (q == 2) and (n == 2*d + 1) and (d % 2 == 1):
             return 4*d + 4
         elif d > t*n:
             return int(d/( d - t*n))
         elif d < t*n + 1:
             fact = (d-1) / t
             from sage.rings.real_mpfr import RR
-            if RR(fact)==RR(int(fact)):
+            if RR(fact) == RR(int(fact)):
                 fact = int(fact) + 1
             return int(d/( d - t * fact)) * q**(n - fact)
 
@@ -487,7 +487,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
     def get_list(n,d,q):
         I = []
         for i in range(1,int(r*n)+1):
-            if i**2-2*r*n*i+r*n*d>0:
+            if i**2-2*r*n*i+r*n*d > 0:
                 I.append(i)
         return I
     I = get_list(n,d,q)

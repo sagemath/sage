@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Symmetric Functions
 
@@ -1439,21 +1440,21 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] < w[-1])
+                    return w[0] < w[-1]
             elif comparison == 0:
                 def check_word(w):
                     if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] == w[-1])
+                    return w[0] == w[-1]
             elif comparison == 1:
                 def check_word(w):
                     if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] > w[-1])
+                    return w[0] > w[-1]
 
             def coeff_of_m_mu_in_result(mu):
                 # Compute the coefficient of the monomial symmetric

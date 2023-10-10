@@ -2706,7 +2706,7 @@ cdef class RingElement(ModuleElement):
             sage: 2r^(1/2)                                                              # needs sage.symbolic
             sqrt(2)
 
-        Exponent overflow should throw an OverflowError (:trac:`2956`)::
+        Exponent overflow should throw an :class:`OverflowError` (:trac:`2956`)::
 
             sage: K.<x,y> = AA[]                                                        # needs sage.rings.number_field
             sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
