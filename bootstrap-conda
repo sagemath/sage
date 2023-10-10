@@ -81,14 +81,13 @@ unset ENABLE_SYSTEM_SITE_PACKAGES
 [ -n "$BOOTSTRAP_VERBOSE" ] && echo "## Translated to system:" && set | grep SYSTEM_PACKAGES=
 
 echo >&2 $0:$LINENO: generate conda environment files
-for python_version in 3.9 3.10 3.11; do
+
     (
         echo "name: sage-build"
         echo "channels:"
         echo "  - conda-forge"
         echo "  - nodefaults"
         echo "dependencies:"
-        echo "  - python=$python_version"
         for pkg in $SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
@@ -96,38 +95,38 @@ for python_version in 3.9 3.10 3.11; do
         for pkg in $BOOTSTRAP_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > environment-$python_version.yml
+    ) > environment-template.yml
     (
-        sed 's/name: sage-build/name: sage/' environment-$python_version.yml
+        sed 's/name: sage-build/name: sage/' environment-template.yml
         echo "  # Additional packages providing all dependencies for the Sage library"
         for pkg in $SAGELIB_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > src/environment-$python_version.yml
+    ) > src/environment-template.yml
 
     (
-        cat environment-$python_version.yml
+        cat environment-template.yml
         echo "  # optional packages"
         for pkg in $OPTIONAL_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > environment-optional-$python_version.yml
+    ) > environment-optional-template.yml
 
     (
-        sed 's/name: sage/name: sage-dev/' src/environment-$python_version.yml
+        sed 's/name: sage/name: sage-dev/' src/environment-template.yml
         echo "  # Additional dev tools"
         for pkg in $DEVELOP_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > src/environment-dev-$python_version.yml
+    ) > src/environment-dev-template.yml
 
     (
-        cat src/environment-$python_version.yml
+        cat src/environment-template.yml
         echo "  # optional packages"
         for pkg in $OPTIONAL_SYSTEM_PACKAGES $SAGELIB_OPTIONAL_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > src/environment-optional-$python_version.yml
+    ) > src/environment-optional-template.yml
 
     (
         echo >&4 "  - pip:"
@@ -152,6 +151,12 @@ for python_version in 3.9 3.10 3.11; do
                 done
             fi
         done
-    #) 4>> src/environment-dev-$python_version.yml 5>> src/environment-optional-$python_version.yml
-    ) 4>> /dev/null 5>> src/environment-optional-$python_version.yml
+    #) 4>> src/environment-dev-template.yml 5>> src/environment-optional-template.yml
+    ) 4>> /dev/null 5>> src/environment-optional-template.yml
+
+for f in environment environment-optional src/environment src/environment-optional src/environment-dev; do
+    for python_version in 3.9 3.10 3.11; do
+        sed -E 's/^( *- *)python *$/\1python='$python_version'/' $f-template.yml > $f-$python_version.yml
+    done
+    rm -f $f-template.yml
 done
