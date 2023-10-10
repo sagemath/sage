@@ -18,9 +18,8 @@ jobs:
 
   release_dist:
 
-    # This job, in contrast to "dist" in ci-macos.yml,
-    # does not use "configure --enable-download-from-upstream-url"
-    # (the default since #32390).
+    # This job first checks whether "configure --enable-download-from-upstream-url"
+    # (the default since #32390) is needed.
     #
     # In this way, we check that all necessary package tarballs
     # have already been uploaded to the Sage server at the time
@@ -37,12 +36,19 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
-      - name: make dist
+      - name: make dist (--disable-download-from-upstream-url)
         run: |
-          ./bootstrap -D && ./configure && make dist
+          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
+        env:
+          MAKE: make -j8
+      - name: make dist (--enable-download-from-upstream-url)
+        if: failure()
+        run: |
+          ./configure && make dist
         env:
           MAKE: make -j8
       - uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           path: |
             dist/*.tar.gz
@@ -53,7 +59,7 @@ jobs:
 
     needs: release_dist
     runs-on: ubuntu-latest
-    if: github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && ! contains(github.ref, 'beta') && !contains(github.ref, 'rc')
+    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     steps:
       - uses: actions/download-artifact@v3
         with:
