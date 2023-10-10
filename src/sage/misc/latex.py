@@ -1104,44 +1104,47 @@ class Latex(LatexCall):
         else:
             filename = os.path.splitext(filename)[0]  # get rid of extension
 
-        base = TemporaryDirectory()
-        orig_base, filename = os.path.split(os.path.abspath(filename))
-        if len(filename.split()) > 1:
-            raise ValueError("filename must contain no spaces")
-        if debug is None:
-            debug = self.__debug
-        x = self._latex_preparse(x, locals)
-        O = open(os.path.join(base, filename + ".tex"), 'w')
-        if self.__slide:
-            O.write(SLIDE_HEADER)
-            O.write(MACROS)
-            O.write('\\begin{document}\n\n')
-        else:
-            O.write(LATEX_HEADER)
-            O.write(MACROS)
-            O.write('\\begin{document}\n')
-
-        O.write(x)
-        if self.__slide:
-            O.write('\n\n\\end{document}')
-        else:
-            O.write('\n\n\\end{document}\n')
-
-        O.close()
-        if engine is None:
-            if self.__engine is None:
-                engine = _Latex_prefs._option["engine"]
-            else:
-                engine = self.__engine
-        e = _run_latex_(os.path.join(base, filename + ".tex"), debug=debug,
-                        density=density, engine=engine, png=True)
         result = None
-        if e.find("Error") == -1:
-            shutil.copy(os.path.join(base, filename + ".png"),
-                        os.path.join(orig_base, filename + ".png"))
-            result = ''
+        with TemporaryDirectory() as base:
+            orig_base, filename = os.path.split(os.path.abspath(filename))
+            if len(filename.split()) > 1:
+                raise ValueError("filename must contain no spaces")
+            if debug is None:
+                debug = self.__debug
+            x = self._latex_preparse(x, locals)
+            O = open(os.path.join(base, filename + ".tex"), 'w')
+            if self.__slide:
+                O.write(SLIDE_HEADER)
+                O.write(MACROS)
+                O.write('\\begin{document}\n\n')
+            else:
+                O.write(LATEX_HEADER)
+                O.write(MACROS)
+                O.write('\\begin{document}\n')
 
-        base.cleanup()
+            O.write(x)
+            if self.__slide:
+                O.write('\n\n\\end{document}')
+            else:
+                O.write('\n\n\\end{document}\n')
+
+            O.close()
+            if engine is None:
+                if self.__engine is None:
+                    engine = _Latex_prefs._option["engine"]
+                else:
+                    engine = self.__engine
+            e = _run_latex_(os.path.join(base, filename + ".tex"),
+                            debug=debug,
+                            density=density,
+                            engine=engine,
+                            png=True)
+
+            if e.find("Error") == -1:
+                shutil.copy(os.path.join(base, filename + ".png"),
+                            os.path.join(orig_base, filename + ".png"))
+                result = ''
+
         return result
 
     def blackboard_bold(self, t=None):
@@ -1920,30 +1923,27 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if pdflatex or (viewer == "pdf" and engine == "latex"):
         engine = "pdflatex"
     # command line or notebook with viewer
-    tmp = TemporaryDirectory()
-    tex_file = os.path.join(tmp, "sage.tex")
-    with open(tex_file, 'w') as file:
-        file.write(s)
-    suffix = _run_latex_(tex_file, debug=debug, engine=engine, png=False)
-    if suffix == "pdf":
-        from sage.misc.viewer import pdf_viewer
-        viewer = pdf_viewer()
-    elif suffix == "dvi":
-        from sage.misc.viewer import dvi_viewer
-        viewer = dvi_viewer()
-    else:
-        print("Latex error")
-        tmp.cleanup()
-        return
-    output_file = os.path.join(tmp, "sage." + suffix)
-    # this should get changed if we switch the stuff in misc.viewer to
-    # producing lists
-    if debug:
-        print('viewer: "{}"'.format(viewer))
-    call('%s %s' % (viewer, output_file), shell=True,
-         stdout=PIPE, stderr=PIPE)
-
-    tmp.cleanup()
+    with TemporaryDirectory() as tmp:
+        tex_file = os.path.join(tmp, "sage.tex")
+        with open(tex_file, 'w') as file:
+            file.write(s)
+        suffix = _run_latex_(tex_file, debug=debug, engine=engine, png=False)
+        if suffix == "pdf":
+            from sage.misc.viewer import pdf_viewer
+            viewer = pdf_viewer()
+        elif suffix == "dvi":
+            from sage.misc.viewer import dvi_viewer
+            viewer = dvi_viewer()
+        else:
+            print("Latex error")
+            return
+        output_file = os.path.join(tmp, "sage." + suffix)
+        # this should get changed if we switch the stuff in misc.viewer to
+        # producing lists
+        if debug:
+            print('viewer: "{}"'.format(viewer))
+        call('%s %s' % (viewer, output_file), shell=True,
+             stdout=PIPE, stderr=PIPE)
     return
 
 
@@ -1995,22 +1995,21 @@ def png(x, filename, density=150, debug=False,
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
-    tmp = TemporaryDirectory()
-    tex_file = os.path.join(tmp, "sage.tex")
-    png_file = os.path.join(tmp, "sage.png")
-    # write latex string to file
-    with open(tex_file, 'w') as file:
-        file.write(s)
-    # run latex on the file, producing png output to png_file
-    e = _run_latex_(tex_file, density=density, debug=debug,
-                    png=True, engine=engine)
-    if e.find("Error") == -1:
-        # if no errors, copy png_file to the appropriate place
-        shutil.copy(png_file, abs_path_to_png)
-    else:
-        print("Latex error")
+    with TemporaryDirectory() as tmp:
+        tex_file = os.path.join(tmp, "sage.tex")
+        png_file = os.path.join(tmp, "sage.png")
+        # write latex string to file
+        with open(tex_file, 'w') as file:
+            file.write(s)
+        # run latex on the file, producing png output to png_file
+        e = _run_latex_(tex_file, density=density, debug=debug,
+                        png=True, engine=engine)
+        if e.find("Error") == -1:
+            # if no errors, copy png_file to the appropriate place
+            shutil.copy(png_file, abs_path_to_png)
+        else:
+            print("Latex error")
 
-    tmp.cleanup()
     if debug:
         return s
     return
