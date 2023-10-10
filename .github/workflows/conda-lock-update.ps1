@@ -7,7 +7,9 @@ $rootDir = Join-Path -Path $scriptDir -ChildPath ..\..\
 
 $platforms = @{
     "linux-64" = "linux"
+    "linux-aarch64" = "linux-aarch"
     "osx-64" = "macos"
+    "osx-arm64" = "macos-arm"
 }
 $pythons = "3.9", "3.10", "3.11"
 $tags = "", "-dev"
