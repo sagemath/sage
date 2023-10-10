@@ -90,6 +90,28 @@ class DrinfeldModule_charzero(DrinfeldModule):
         X^2
         sage: phi.goss_polynomial(3)
         X^3 + (1/(T^2 + T))*X^2
+
+    .. RUBRIC:: Base fields of `\mathbb{F}_q[T]`-characteristic zero
+
+    The base fields need not only be fraction fields of polynomials
+    ring. In the following example, we construct a Drinfeld module over
+    `\mathbb{F}_q((1/T))`, the completion of the rational function field
+    at the place `1/T`::
+
+        sage: A.<T> = GF(2)[]
+        sage: L.<s> = LaurentSeriesRing(GF(2))  # s = 1/T
+        sage: phi = DrinfeldModule(A, [1/s, s + s^2 + s^5 + O(s^6), 1+1/s])
+        sage: phi(T)
+        (s^-1 + 1)*t^2 + (s + s^2 + s^5 + O(s^6))*t + s^-1
+
+    One can also construct Drinfeld modules over SageMath's global
+    function fields::
+
+        sage: A.<T> = GF(5)[]
+        sage: K.<z> = FunctionField(GF(5))  # z = T
+        sage: phi = DrinfeldModule(A, [z, 1, z^2])
+        sage: phi(T)
+        z^2*t^2 + t + z
     """
     @cached_method
     def _compute_coefficient_exp(self, k):
