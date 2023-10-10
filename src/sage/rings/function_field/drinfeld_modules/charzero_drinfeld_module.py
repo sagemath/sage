@@ -1,6 +1,6 @@
 # sage.doctest: optional - sage.rings.finite_rings
 r"""
-Complex Drinfeld module
+Drinfeld modules over rings of characteristic zero
 
 This module provides the class
 :class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero`,
