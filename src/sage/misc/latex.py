@@ -30,9 +30,9 @@ import random
 import re
 import shutil
 from subprocess import call, PIPE
+from tempfile import TemporaryDirectory
 
 from sage.misc.cachefunc import cached_function, cached_method
-from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
 from sage.misc.lazy_import import lazy_import
@@ -1103,7 +1103,8 @@ class Latex(LatexCall):
             filename = 'sage%s' % random.randint(1, 100)  # to defeat browser caches
         else:
             filename = os.path.splitext(filename)[0]  # get rid of extension
-        base = tmp_dir()
+
+        base = TemporaryDirectory()
         orig_base, filename = os.path.split(os.path.abspath(filename))
         if len(filename.split()) > 1:
             raise ValueError("filename must contain no spaces")
@@ -1134,13 +1135,14 @@ class Latex(LatexCall):
                 engine = self.__engine
         e = _run_latex_(os.path.join(base, filename + ".tex"), debug=debug,
                         density=density, engine=engine, png=True)
+        result = None
         if e.find("Error") == -1:
             shutil.copy(os.path.join(base, filename + ".png"),
                         os.path.join(orig_base, filename + ".png"))
-            shutil.rmtree(base)
-            return ''
-        else:
-            return
+            result = ''
+
+        base.cleanup()
+        return result
 
     def blackboard_bold(self, t=None):
         r"""nodetex
@@ -1918,7 +1920,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if pdflatex or (viewer == "pdf" and engine == "latex"):
         engine = "pdflatex"
     # command line or notebook with viewer
-    tmp = tmp_dir('sage_viewer')
+    tmp = TemporaryDirectory()
     tex_file = os.path.join(tmp, "sage.tex")
     with open(tex_file, 'w') as file:
         file.write(s)
@@ -1931,6 +1933,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         viewer = dvi_viewer()
     else:
         print("Latex error")
+        tmp.cleanup()
         return
     output_file = os.path.join(tmp, "sage." + suffix)
     # this should get changed if we switch the stuff in misc.viewer to
@@ -1939,6 +1942,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         print('viewer: "{}"'.format(viewer))
     call('%s %s' % (viewer, output_file), shell=True,
          stdout=PIPE, stderr=PIPE)
+
+    tmp.cleanup()
     return
 
 
@@ -1990,7 +1995,7 @@ def png(x, filename, density=150, debug=False,
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
-    tmp = tmp_dir('sage_viewer')
+    tmp = TemporaryDirectory()
     tex_file = os.path.join(tmp, "sage.tex")
     png_file = os.path.join(tmp, "sage.png")
     # write latex string to file
@@ -2004,6 +2009,8 @@ def png(x, filename, density=150, debug=False,
         shutil.copy(png_file, abs_path_to_png)
     else:
         print("Latex error")
+
+    tmp.cleanup()
     if debug:
         return s
     return
