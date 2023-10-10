@@ -205,6 +205,16 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         return (g in self.polynomial_ideal())
 
     def gens_reduced(self):
+        """
+       A reduced system of generators.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = LaurentPolynomialRing(QQ)
+            sage: J = P.ideal([x^2 - y^-2, x * y^3 + 2 * y^2+ y])
+            sage: J.gens_reduced()
+            (x + 6*y + 5, 3*y^2 + 4*y + 1)
+        """
         R = self.ring()
         J = self.polynomial_ideal()
         return tuple(R(p) for p in J.gens())

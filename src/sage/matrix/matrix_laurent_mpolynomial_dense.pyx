@@ -1,12 +1,9 @@
 """
-Dense matrices over multivariate polynomials over fields
-
-This implementation inherits from Matrix_generic_dense, i.e. it is not
-optimized for speed only some methods were added.
+Dense matrices over multivariate polynomials over fields.
 
 AUTHOR:
 
-* Enrique Artal <artal@unizar.es>
+- Enrique Artal (2023-??): initial version
 """
 
 # *****************************************************************************
