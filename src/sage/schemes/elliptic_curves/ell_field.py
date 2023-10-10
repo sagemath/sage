@@ -2048,3 +2048,72 @@ def compute_model(E, name):
         return E.montgomery_model()
 
     raise NotImplementedError(f'cannot compute {name} model')
+
+def point_of_order(E, l):
+    r"""
+    Given an elliptic curve `E` over a finite field or a number field
+    and an integer `\ell \geq 1`, construct a point of order `\ell` on `E`,
+    possibly defined over an extension of the base field of `E`.
+
+    Currently only prime values of `\ell` are supported.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import point_of_order
+        sage: E = EllipticCurve(GF(101), [1,2,3,4,5])
+        sage: P = point_of_order(E, 5); P
+        (50*Y^5 + 48*Y^4 + 26*Y^3 + 37*Y^2 + 48*Y + 15 : 25*Y^5 + 31*Y^4 + 79*Y^3 + 39*Y^2 + 3*Y + 20 : 1)
+        sage: P.base_ring()
+        Finite Field in Y of size 101^6
+        sage: P.order()
+        5
+        sage: P.curve().a_invariants()
+        (1, 2, 3, 4, 5)
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import point_of_order
+        sage: E = EllipticCurve(QQ, [7,7])
+        sage: P = point_of_order(E, 3); P  # random
+        (x : -Y : 1)
+        sage: P.base_ring()
+        Number Field in Y with defining polynomial Y^2 - x^3 - 7*x - 7 over its base field
+        sage: P.order()
+        3
+        sage: P.curve().a_invariants()
+        (0, 0, 0, 7, 7)
+    """
+    # Construct the field extension defined by the given polynomial,
+    # in such a way that the result is recognized by Sage as a field.
+    def ffext(poly):
+        rng = poly.parent()
+        fld = rng.base_ring()
+        if fld in FiniteFields():
+            # Workaround: .extension() would return a PolynomialQuotientRing
+            # rather than another FiniteField.
+            return poly.splitting_field(rng.variable_name())
+        return fld.extension(poly, rng.variable_name())
+
+    l = ZZ(l)
+    if l == 1:
+        return E(0)
+
+    if not l.is_prime():
+        raise NotImplementedError('composite orders are currently unsupported')
+
+    xpoly = E.division_polynomial(l)
+    if xpoly.degree() < 1:  # supersingular and l == p
+        raise ValueError('curve does not have any points of the specified order')
+
+    mu = xpoly.factor()[0][0]
+    FF = ffext(mu)
+    xx = mu.any_root(ring=FF, assume_squarefree=True)
+
+    Y = polygen(FF, 'Y')
+    ypoly = E.defining_polynomial()(xx, Y, 1)
+    if ypoly.is_irreducible():
+        FF = ffext(ypoly)
+        xx = FF(xx)
+
+    EE = E.change_ring(FF)
+    return EE.lift_x(xx)

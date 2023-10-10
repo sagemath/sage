@@ -430,7 +430,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         Load the Gap package with the given name.
 
-        If loading fails, raise a RuntimeError exception.
+        If loading fails, raise a :class:`RuntimeError` exception.
 
         TESTS::
 

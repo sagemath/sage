@@ -2256,7 +2256,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         If the upper and lower bounds given by Simon two-descent are
         the same, then the rank has been uniquely identified and we
-        return this. Otherwise, we raise a ValueError with an error
+        return this. Otherwise, we raise a :class:`ValueError` with an error
         message specifying the upper and lower bounds.
 
         .. NOTE::

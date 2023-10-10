@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Parallelogram Polyominoes
 =========================
@@ -253,7 +253,7 @@ class LocalOptions:
             sage: o["size"]=-6
 
         """
-        assert(key in self._available_options)
+        assert (key in self._available_options)
         if value == "?":
             res = "Current value : " + str(self._options[key])
             option_key = self._available_options[key]
@@ -263,9 +263,9 @@ class LocalOptions:
         else:
             available_options = self._available_options
             if "values" in available_options:
-                assert(value in self._available_options[key]["values"])
+                assert (value in self._available_options[key]["values"])
             if "checker" in available_options:
-                assert(available_options["checker"](value))
+                assert (available_options["checker"](value))
             self._options[key] = value
 
     def __call__(self, *get_values, **options):
@@ -450,7 +450,7 @@ class LocalOptions:
             sage: e.options(delim='p'); e
             p
         """
-        assert(option in self._available_options)
+        assert (option in self._available_options)
         if dispatch_to[-1] == "_":
             dispatch_to = dispatch_to[:-1]
         f = getattr(obj, dispatch_to + "_" + str(self._options[option]))

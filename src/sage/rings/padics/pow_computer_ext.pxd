@@ -105,4 +105,3 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
 #    cdef context_dict #currently using a dict, optimize for speed later
 #    cdef modulus_dict #currently using a dict, optimize for speed later
 #
-
