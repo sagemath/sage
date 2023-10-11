@@ -30,22 +30,22 @@ class build_py(setuptools_build_py):
 
         if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
             print(f'Reusing configured SAGE_ROOT={SAGE_ROOT}')
-        else:
-            cmd = f"cd {SAGE_ROOT} && ./configure --enable-build-as-root --with-system-python3=force --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc"
-            cmd += ' --with-python=$CONDA_PREFIX/bin/python --prefix="$CONDA_PREFIX"'
-            cmd += ' $(for pkg in $(PATH="build/bin:$PATH" build/bin/sage-package list :standard: --exclude rpy2 --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)'
-            print(f"Running {cmd}")
-            sys.stdout.flush()
-            if os.system(cmd) != 0:
-                if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
-                    print("Warning: A configuration has been written, but the configure script has exited with an error. "
-                          "Carefully check any messages above before continuing.")
-                else:
-                    print(f"Error: The configure script has failed; this may be caused by missing build prerequisites.")
-                    sys.stdout.flush()
-                    PREREQ_SPKG = "_prereq bzip2 xz libffi"  # includes python3 SPKG_DEPCHECK packages
-                    os.system(f'cd {SAGE_ROOT} && export PACKAGES="$(build/bin/sage-get-system-packages conda {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command conda --verbose --sudo install $PACKAGES && echo ""')
-                    raise SetupError("configure failed")
+
+        cmd = f"cd {SAGE_ROOT} && ./configure --enable-build-as-root --with-system-python3=force --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc"
+        cmd += ' --with-python=$CONDA_PREFIX/bin/python --prefix="$CONDA_PREFIX"'
+        cmd += ' $(for pkg in $(PATH="build/bin:$PATH" build/bin/sage-package list :standard: --exclude rpy2 --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)'
+        print(f"Running {cmd}")
+        sys.stdout.flush()
+        if os.system(cmd) != 0:
+            if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
+                print("Warning: A configuration has been written, but the configure script has exited with an error. "
+                      "Carefully check any messages above before continuing.")
+            else:
+                print(f"Error: The configure script has failed; this may be caused by missing build prerequisites.")
+                sys.stdout.flush()
+                PREREQ_SPKG = "_prereq bzip2 xz libffi"  # includes python3 SPKG_DEPCHECK packages
+                os.system(f'cd {SAGE_ROOT} && export PACKAGES="$(build/bin/sage-get-system-packages conda {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command conda --verbose --sudo install $PACKAGES && echo ""')
+                raise SetupError("configure failed")
 
         # In this mode, we never run "make".
 
