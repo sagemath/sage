@@ -321,7 +321,15 @@ sdh_store_wheel() {
     mkdir -p "${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}" && \
         $sudo mv "$wheel" "${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}/" || \
         sdh_die "Error storing $wheel"
-    wheel="${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}/${wheel##*/}"
+    wheel="${SAGE_SPKG_WHEELS}/${wheel##*/}"
+    if [ -n "${SAGE_SPKG_SCRIPTS}" -a -n "${PKG_BASE}" ]; then
+        wheel_basename="${wheel##*/}"
+        distname="${wheel_basename%%-*}"
+        # Record name and wheel file location
+        mkdir -p ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}
+        echo "${distname} @ file://${wheel}" >> ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt
+    fi
+    wheel="${SAGE_DESTDIR}${wheel}"
 }
 
 sdh_store_and_pip_install_wheel() {
@@ -373,11 +381,6 @@ sdh_store_and_pip_install_wheel() {
     fi
     $sudo sage-pip-install $root $pip_options "$wheel" || \
         sdh_die "Error installing ${wheel##*/}"
-    if [ -n "${SAGE_PKG_DIR}" ]; then
-        # Record name of installed distribution name for uninstallation.
-        wheel=${wheel##*/}
-        echo "${wheel%%-*}" >> ${SAGE_PKG_DIR}/spkg-requirements.txt
-    fi
 }
 
 sdh_pip_uninstall() {
