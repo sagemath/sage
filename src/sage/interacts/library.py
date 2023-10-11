@@ -1337,25 +1337,28 @@ def simpson_integration(
 
     html(r'Integral value to seven decimal places is: $\displaystyle\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x} = %.6f$' %
          (interval[0],interval[1],
-         N(numeric_value,digits=7)))
+          N(numeric_value,digits=7)))
 
     if output_form == 'traditional':
         sum_formula_html = r"\frac{d}{3} \cdot \left[ f(x_0) + %s + f(x_{%s})\right]" % (
-            ' + '.join([ r"%s \cdot f(x_{%s})" % (i % 2*(-2)+4, i+1) for i in range(0,n-1)]),
+            ' + '.join(r"%s \cdot f(x_{%s})" % (i % 2 * (-2) + 4, i + 1)
+                       for i in range(0,n-1)),
             n
             )
 
         sum_placement_html = r"\frac{%.2f}{3} \cdot \left[ f(%.2f) +  %s + f(%.2f)\right]" % (
             dx,
             N(xs[0],digits=5),
-            ' + '.join([ r"%s \cdot f(%.2f)" % (i % 2*(-2)+4, N(xk, digits=5)) for i, xk in enumerate(xs[1:-1])]),
+            ' + '.join(r"%s \cdot f(%.2f)" % (i % 2 * (-2) + 4, N(xk, digits=5))
+                       for i, xk in enumerate(xs[1:-1])),
             N(xs[n],digits=5)
             )
 
         sum_values_html = r"\frac{%.2f}{3} \cdot \left[ %s %s %s\right]" % (
             dx,
             "%.2f + " % N(ys[0],digits=5),
-            ' + '.join([ r"%s \cdot %.2f" % (i % 2*(-2)+4, N(yk, digits=5)) for i, yk in enumerate(ys[1:-1])]),
+            ' + '.join(r"%s \cdot %.2f" % (i % 2 * (-2) + 4, N(yk, digits=5))
+                       for i, yk in enumerate(ys[1:-1])),
             " + %.2f" % N(ys[n],digits=5)
             )
 
@@ -1376,12 +1379,12 @@ def simpson_integration(
                 ))
     elif output_form == 'table':
         s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
-        for i in range(0,n+1):
+        for i in range(n + 1):
             if i == 0 or i == n:
                 j = 1
             else:
-                j = (i+1) % 2*(-2)+4
-            s.append([i, xs[i], ys[i],j,N(j*ys[i])])
+                j = (i + 1) % 2*(-2) + 4
+            s.append([i, xs[i], ys[i], j, N(j*ys[i])])
         s.append(['', '', '', r'$\sum$', '$%s$' % latex(3/dx*approx)])
         pretty_print(table(s, header_row=True))
         html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$' %
