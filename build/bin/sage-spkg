@@ -704,9 +704,7 @@ unset SAGE_DESTDIR_LOCAL
 # removed by sage-spkg-uninstall
 INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
 
-if [ -f spkg-requirements.txt ]; then
-    INSTALLED_SCRIPTS="$INSTALLED_SCRIPTS piprm-requirements.txt"
-else
+if [ ! -f $INSTALLED_SCRIPTS_DEST/spkg-requirements.txt ]; then
     # No packages to uninstall with pip, so remove the prepared uninstall script
     rm -f spkg-piprm spkg-piprm.in
 fi
