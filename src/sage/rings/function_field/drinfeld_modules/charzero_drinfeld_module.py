@@ -327,8 +327,9 @@ class DrinfeldModule_charzero(DrinfeldModule):
         def coeff_log(k):
             # Return the k-th coefficient of the logarithm
             k = ZZ(k)
-            if k.is_power_of(q):
-                return self._compute_coefficient_log(k.log(q))
+            v, u = k.val_unit(q)
+            if u == 1:
+                return self._compute_coefficient_log(v)
             else:
                 return self._base.zero()
         return L(coeff_log, valuation=1)
