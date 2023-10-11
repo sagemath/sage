@@ -340,7 +340,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
              (b^6 : -b^6 : 1)]
         """
         if F is None:
-            if not self.base_ring() in Fields():
+            if self.base_ring() not in Fields():
                 raise TypeError("curve must be defined over a field")
             F = self.base_ring()
         elif F not in Fields():
