@@ -1141,7 +1141,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Compute the hash value of ``self``.
 
         If this simplicial complex is immutable, it computes the hash value
-        based upon the facets. Otherwise it raises a ``ValueError``.
+        based upon the facets. Otherwise it raises a :class`ValueError`.
 
         EXAMPLES::
 
@@ -1268,7 +1268,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
     def __call__(self, simplex):
         """
         If ``simplex`` is a simplex in this complex, return it.
-        Otherwise, raise a ``ValueError``.
+
+        Otherwise, this raises a :class:`ValueError`.
 
         EXAMPLES::
 
