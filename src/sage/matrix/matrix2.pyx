@@ -3649,7 +3649,8 @@ cdef class Matrix(Matrix1):
         for i from 0 <= i <= n:
             # Finally, set v[i] = c[n,i]
             o = c.get_unsafe(n,i)
-            Py_INCREF(o); PyList_SET_ITEM(v, i, o)
+            Py_INCREF(o)
+            PyList_SET_ITEM(v, i, o)
 
         R = self._base_ring[var]    # polynomial ring over the base ring
         return R(v)
@@ -4561,7 +4562,8 @@ cdef class Matrix(Matrix1):
         # Third: generic first, if requested explicitly
         #   then try specialized class methods, and finally
         #   delegate to ad-hoc methods in greater generality
-        M = None; format = ''
+        M = None
+        format = ''
 
         if algorithm == 'generic':
             format, M = self._right_kernel_matrix_over_field()
@@ -6025,7 +6027,8 @@ cdef class Matrix(Matrix1):
             sage: t.charpoly()                                                          # needs sage.libs.pari
             x^3 - 12*x^2 - 18*x
         """
-        i = int(i); t=int(t)
+        i = int(i)
+        t = int(t)
         if self.nrows() != self.ncols():
             raise ArithmeticError("self must be a square matrix")
         n = self.nrows()
@@ -11035,7 +11038,8 @@ cdef class Matrix(Matrix1):
         R = self.base_ring()
         if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
             Q, R = self.transpose().QR()
-            m = R.nrows(); n = R.ncols()
+            m = R.nrows()
+            n = R.ncols()
             if m > n:
                 Q = Q[0:m, 0:n]
                 R = R[0:n, 0:n]
@@ -14250,8 +14254,11 @@ cdef class Matrix(Matrix1):
                 # a 1x1 pivot, but this time we need to swap
                 # rows/columns k and r.
                 d.append( one_by_one_space(A_rr) )
-                A.swap_columns_c(k,r); A.swap_rows_c(k,r)
-                p_k = p[k]; p[k] = p[r]; p[r] = p_k
+                A.swap_columns_c(k, r)
+                A.swap_rows_c(k, r)
+                p_k = p[k]
+                p[k] = p[r]
+                p[r] = p_k
                 _block_ldlt_pivot1x1(A,k)
                 k += 1
                 continue
@@ -14260,8 +14267,11 @@ cdef class Matrix(Matrix1):
             # or Step (6) in B&K, where we perform a 2x2 pivot.  See
             # pivot1x1() for an explanation of why it's OK to permute
             # the entries of "L" here as well.
-            A.swap_columns_c(k+1,r); A.swap_rows_c(k+1,r)
-            p_k = p[k+1]; p[k+1] = p[r]; p[r] = p_k
+            A.swap_columns_c(k+1, r)
+            A.swap_rows_c(k+1, r)
+            p_k = p[k+1]
+            p[k+1] = p[r]
+            p[r] = p_k
 
             # The top-left 2x2 submatrix (starting at position k,k) is
             # now our pivot.
