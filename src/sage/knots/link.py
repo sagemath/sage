@@ -3099,7 +3099,8 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
+        - ``n`` -- the number of colors to consider (if ommitted the
+          value of the determinant of ``self`` will be taken)
 
         EXAMPLES:
 
