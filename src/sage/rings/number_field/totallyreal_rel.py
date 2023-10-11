@@ -12,7 +12,7 @@ fields of `F = \QQ(\sqrt{2})` of discriminant `\le 2000`.
 
 ::
 
-    sage: ZZx = ZZ['x']
+    sage: ZZx.<x> = ZZ[]
     sage: F.<t> = NumberField(x^2 - 2)
     sage: enumerate_totallyreal_fields_rel(F, 2, 2000)
     [[1600, x^4 - 6*x^2 + 4, xF^2 + xF - 1]]
@@ -300,7 +300,7 @@ class tr_data_rel:
             import numpy
             for i in range(len(anm1s)):
                 Q = [[v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
-                pari_string = '['+';'.join([','.join(["%s"%ii for ii in row]) for row in zip(*Q)])+']'
+                pari_string = '['+';'.join([','.join(["%s" % ii for ii in row]) for row in zip(*Q)])+']'
                 adj = pari(pari_string).qflll()[self.d]
                 anm1s[i] += sum([m*Z_Fbasis[ii]*int(adj[ii])//int(adj[self.d]) for ii in range(self.d)])
 
@@ -322,7 +322,7 @@ class tr_data_rel:
             # currently unknown; e.g., if k == -1, then we can iterate
             # over polynomials, and if k == n-1, then we have finished iterating.
             if a[len(a)-1] != 1:
-                raise ValueError("a[len(a)-1](=%s) must be 1 so polynomial is monic"%a[len(a)-1])
+                raise ValueError("a[len(a)-1](=%s) must be 1 so polynomial is monic" % a[len(a)-1])
 
             raise NotImplementedError("These have not been checked.")
 
@@ -699,7 +699,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     EXAMPLES::
 
-        sage: ZZx = ZZ['x']
+        sage: ZZx.<x> = ZZ[]
         sage: F.<t> = NumberField(x^2 - 2)
         sage: enumerate_totallyreal_fields_rel(F, 1, 2000)
         [[1, [-2, 0, 1], xF - 1]]

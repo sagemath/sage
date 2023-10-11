@@ -89,11 +89,11 @@ def is_FreeGroup(x):
     EXAMPLES::
 
         sage: from sage.groups.free_group import is_FreeGroup
-        sage: is_FreeGroup('a string')
+        sage: is_FreeGroup('a string')                                                  # needs sage.combinat
         False
         sage: is_FreeGroup(FreeGroup(0))
         True
-        sage: is_FreeGroup(FreeGroup(index_set=ZZ))
+        sage: is_FreeGroup(FreeGroup(index_set=ZZ))                                     # needs sage.combinat
         True
     """
     if isinstance(x, FreeGroup_class):
@@ -213,20 +213,20 @@ class FreeGroupElement(ElementLibGAP):
                 l = x.Tietze()
             except AttributeError:
                 l = list(x)
-            if len(l)>0:
+            if len(l) > 0:
                 if min(l) < -parent.ngens() or parent.ngens() < max(l):
                     raise ValueError('generators not in the group')
             if 0 in l:
                 raise ValueError('zero does not denote a generator')
-            i=0
-            while i<len(l)-1:
-                if l[i]==-l[i+1]:
+            i = 0
+            while i < len(l)-1:
+                if l[i] == -l[i+1]:
                     l.pop(i)
                     l.pop(i)
-                    if i>0:
-                        i=i-1
+                    if i > 0:
+                        i = i-1
                 else:
-                    i=i+1
+                    i = i+1
             AbstractWordTietzeWord = libgap.eval('AbstractWordTietzeWord')
             x = AbstractWordTietzeWord(l, parent.gap().GeneratorsOfGroup())
         ElementLibGAP.__init__(self, parent, x)
@@ -645,9 +645,9 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
     We give two examples using the ``index_set`` option::
 
-        sage: FreeGroup(index_set=ZZ)
+        sage: FreeGroup(index_set=ZZ)                                                   # needs sage.combinat
         Free group indexed by Integer Ring
-        sage: FreeGroup(index_set=ZZ, abelian=True)
+        sage: FreeGroup(index_set=ZZ, abelian=True)                                     # needs sage.combinat
         Free abelian group indexed by Integer Ring
 
     TESTS::
@@ -788,7 +788,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G._repr_()
             'Free Group on generators {a, b}'
         """
-        return 'Free Group on generators {'+ ', '.join(self.variable_names()) + '}'
+        return 'Free Group on generators {' + ', '.join(self.variable_names()) + '}'
 
     def rank(self):
         """
@@ -870,10 +870,10 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
-        if len(args)!=1:
+        if len(args) != 1:
             return self.element_class(self, *args, **kwds)
         x = args[0]
-        if x==1 or x == [] or x == ():
+        if x == 1 or x == [] or x == ():
             return self.one()
         try:
             P = x.parent()
@@ -885,7 +885,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
                 return self([i.sign()*(self._names.index(P._names[abs(i)-1])+1)
                              for i in x.Tietze()])
             else:
-                raise ValueError('generators of %s not in the group'%x)
+                raise ValueError('generators of %s not in the group' % x)
         return self.element_class(self, x, **kwds)
 
     def abelian_invariants(self):

@@ -93,6 +93,7 @@ Comprehensive Module List
     sage/combinat/designs/resolvable_bibd
     sage/combinat/designs/group_divisible_designs
     sage/combinat/designs/block_design
+    sage/combinat/designs/covering_array
     sage/combinat/designs/covering_design
     sage/combinat/designs/database
     sage/combinat/designs/design_catalog
@@ -143,7 +144,6 @@ Comprehensive Module List
     sage/combinat/integer_vector_weighted
     sage/combinat/integer_vectors_mod_permgroup
     sage/combinat/interval_posets
-    sage/combinat/k_regular_sequence
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
     sage/combinat/key_polynomial
@@ -206,6 +206,7 @@ Comprehensive Module List
     sage/combinat/quickref
     sage/combinat/ranker
     sage/combinat/recognizable_series
+    sage/combinat/regular_sequence
     sage/combinat/restricted_growth
     sage/combinat/ribbon
     sage/combinat/ribbon_shaped_tableau

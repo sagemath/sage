@@ -56,9 +56,15 @@ Sage example in ./recequadiff.tex, line 431::
 
 Sage example in ./recequadiff.tex, line 459::
 
-  sage: desolve(y == x*diff(y,x)-diff(y,x)^2, y,
-  ....:         contrib_ode=True, show_method=True)
-  [[y(x) == -_C^2 + _C*x, y(x) == 1/4*x^2], 'clairault']
+  sage: diffeq = y == x*diff(y,x)-diff(y,x)^2
+  sage: solution,method = desolve(diffeq,
+  ....:                           y,
+  ....:                           contrib_ode=True,
+  ....:                           show_method=True)
+  sage: solution
+  [y(x) == -_C^2 + _C*x, y(x) == 1/4*x^2]
+  sage: method in ["clairaut", "clairault"]
+  True
 
 Sage example in ./recequadiff.tex, line 487::
 

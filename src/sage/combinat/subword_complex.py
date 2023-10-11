@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Subword complex
 
@@ -1131,7 +1132,6 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         SimplicialComplex.__init__(self, maximal_faces=Fs,
                                    maximality_check=False,
                                    category=cat)
-        self.__custom_name = 'Subword complex'
         self._W = W
         try:
             T = W.coxeter_matrix().coxeter_type()

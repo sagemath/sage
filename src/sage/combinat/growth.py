@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs
 
@@ -1128,7 +1128,7 @@ class GrowthDiagram(SageObject):
             sage: G1 == G2
             False
         """
-        return (type(self) == type(other) and
+        return (type(self) is type(other) and
                 self.rule == other.rule and
                 self._lambda == other._lambda and
                 self._mu == other._mu and

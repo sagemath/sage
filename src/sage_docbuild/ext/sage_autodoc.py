@@ -73,6 +73,7 @@ def getdoc(obj, *args, **kwargs):
     return sage_getdoc_original(obj)
 # ------------------------------------------------------------------
 
+
 if TYPE_CHECKING:
     from sphinx.ext.autodoc.directive import DocumenterBridge
 

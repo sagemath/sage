@@ -1033,7 +1033,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
                 assert not F.is_constant()
                 return F.is_irreducible()
             else:
-                assert(self(f) <= 0)  # f is monic
+                assert (self(f) <= 0)  # f is monic
                 # f is not minimal:
                 # Let g be f stripped of its leading term, i.e., g = f - x^n.
                 # Then g and f are equivalent with respect to this valuation

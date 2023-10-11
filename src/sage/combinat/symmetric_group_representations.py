@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
 Representations of the Symmetric Group
 
@@ -576,7 +577,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         # construct a dictionary pairing vertices with tableau
         t = StandardTableaux(self._partition).last()
         tableau_dict = {self._yang_baxter_graph.root(): t}
-        for (u, w, (i, beta)) in self._yang_baxter_graph._edges_in_bfs():
+        for u, w, (i, _) in self._yang_baxter_graph._edges_in_bfs():
             # TODO: improve the following
             si = PermutationConstructor((i, i + 1))
             tableau_dict[w] = Tableau([[si(b) for b in row]
@@ -627,7 +628,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
             [ 1/2  1/2]
         """
         from copy import copy
-        if not(1 <= i < sum(self._partition)):
+        if not (1 <= i < sum(self._partition)):
             raise TypeError
         Y = self._yang_baxter_graph
         index_lookup = {b: a for a, b in enumerate(list(Y))}

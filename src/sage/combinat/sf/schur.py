@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Schur symmetric functions
 """
@@ -715,7 +716,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         quotient = ZZq((prod(1-q_lim**(n+j-i)
                                              for (i, j) in partition.cells()))
                                     / prod(1-q_lim**h for h in partition.hooks()))
-                        return (power * quotient.subs({q_lim: q}))
+                        return power * quotient.subs({q_lim: q})
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
 

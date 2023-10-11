@@ -1,4 +1,4 @@
-symengine $(PYTHON) | cmake cython $(PYTHON_TOOLCHAIN)
+symengine  | cmake cython $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

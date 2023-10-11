@@ -8,7 +8,7 @@ long_description_content_type = text/x-rst
 include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.8, <3.12
+python_requires = >=3.9, <3.12
 install_requires =
 
 py_modules =
@@ -17,6 +17,7 @@ py_modules =
     sage.version
     sage.misc.all__sagemath_environment
     sage.misc.package
+    sage.misc.package_dir
     sage.misc.temporary_file
     sage.misc.viewer
 

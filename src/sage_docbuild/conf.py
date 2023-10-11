@@ -374,8 +374,7 @@ mathjax3_config = {
 if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes':
     mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 else:
-    mathjax_path = 'mathjax/tex-chtml.js'
-    html_common_static_path += [MATHJAX_DIR]
+    mathjax_path = os.path.join(MATHJAX_DIR, 'tex-chtml.js')
 
 # A list of glob-style patterns that should be excluded when looking for source
 # files. They are matched against the source file names relative to the
@@ -692,6 +691,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
 
+
 dangling_debug = False
 
 def debug_inf(app, message):
@@ -817,6 +817,7 @@ def find_sage_dangling_links(app, env, node, contnode):
     newnode.append(contnode)
     return newnode
 
+
 # lists of basic Python class which are documented as functions
 base_class_as_func = [
     'bool', 'complex', 'dict', 'file', 'float',
@@ -842,6 +843,7 @@ def nitpick_patch_config(app):
     """
     app.config.values['nitpicky'] = (False, 'sage')
     app.config.values['nitpick_ignore'] = ([], 'sage')
+
 
 skip_picklability_check_modules = [
     #'sage.misc.test_nested_class', # for test only

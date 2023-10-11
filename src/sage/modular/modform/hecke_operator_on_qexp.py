@@ -14,11 +14,13 @@ Hecke operators on `q`-expansions
 from sage.arith.misc import divisors, gcd
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.power_series_ring_element import is_PowerSeries
+
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
 from .element import is_ModularFormElement
@@ -81,9 +83,9 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
         if not (is_PowerSeries(f) or is_ModularFormElement(f)):
-            raise TypeError("f (=%s) must be a power series or modular form"%f)
+            raise TypeError("f (=%s) must be a power series or modular form" % f)
         if not is_DirichletCharacter(eps):
-            raise TypeError("eps (=%s) must be a Dirichlet character"%eps)
+            raise TypeError("eps (=%s) must be a Dirichlet character" % eps)
         k = Integer(k)
         n = Integer(n)
     v = []
@@ -213,7 +215,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
         Full MatrixSpace of 0 by 0 dense matrices over Cyclotomic Field of order 12 and degree 4
     """
     if not isinstance(B, (list, tuple)):
-        raise TypeError("B (=%s) must be a list or tuple"%B)
+        raise TypeError("B (=%s) must be a list or tuple" % B)
     if len(B) == 0:
         if eps is None:
             R = CyclotomicField(1)

@@ -412,7 +412,7 @@ class Gap(Parent):
 
     def load_package(self, pkg):
         """
-        If loading fails, raise a RuntimeError exception.
+        If loading fails, raise a :class:`RuntimeError` exception.
 
         TESTS::
 

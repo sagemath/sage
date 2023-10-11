@@ -129,25 +129,26 @@ cpdef factor_aurifeuillian(n, check=True):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
-        sage: fa(2^6 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(2^6 + 1)
         [5, 13]
-        sage: fa(2^58 + 1)                                                              # optional - sage.libs.pari
+        sage: fa(2^58 + 1)
         [536838145, 536903681]
-        sage: fa(3^3 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(3^3 + 1)
         [4, 1, 7]
-        sage: fa(5^5 - 1)                                                               # optional - sage.libs.pari
+        sage: fa(5^5 - 1)
         [4, 11, 71]
-        sage: prod(_) == 5^5 - 1                                                        # optional - sage.libs.pari
+        sage: prod(_) == 5^5 - 1
         True
-        sage: fa(2^4 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(2^4 + 1)
         [17]
-        sage: fa((6^2*3)^3 + 1)                                                         # optional - sage.libs.pari
+        sage: fa((6^2*3)^3 + 1)
         [109, 91, 127]
 
     TESTS::
 
-        sage: for n in [2,3,5,6,30,31,33]:                                              # optional - sage.libs.pari
+        sage: for n in [2,3,5,6,30,31,33]:                                              # needs sage.libs.pari
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s

@@ -2,8 +2,11 @@ name: Build & Test
 
 on:
   pull_request:
+  merge_group:
   push:
-    branches: ['**']
+    branches:
+      - master
+      - develop
     # Ignore pushes on tags to prevent two uploads of codecov reports
     tags-ignore: ['**']
   workflow_dispatch:
@@ -24,13 +27,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  get_ci_fixes:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Store CI fixes in upstream artifact
+        run: |
+          mkdir -p upstream
+          if git format-patch --stdout test_base > ci_fixes.patch; then
+            cp ci_fixes.patch upstream/
+          fi
+      - uses: actions/upload-artifact@v3
+        with:
+          path: upstream
+          name: upstream
+
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    needs: [get_ci_fixes]
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
       - name: Update system packages
         id: prepare
@@ -68,6 +94,19 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
 
+      - name: Download upstream artifact
+        uses: actions/download-artifact@v3
+        with:
+          path: upstream
+          name: upstream
+
+      - name: Apply CI fixes from sagemath/sage
+        # After applying the fixes, make sure all changes are marked as uncommitted changes.
+        run: |
+          if [ -r upstream/ci_fixes.patch ]; then
+            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
+          fi
+
       - name: Incremental build, test changed files (sage -t --new)
         id: incremental
         run: |
@@ -76,7 +115,7 @@ jobs:
           ./bootstrap && make build && ./sage -t --new -p2
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build and test modularized distributions
@@ -84,7 +123,7 @@ jobs:
         run: make V=0 tox && make pypi-wheels
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Set up node to install pyright
@@ -103,15 +142,27 @@ jobs:
         run: pyright
         working-directory: ./worktree-image
 
-      - name: Build (fallback to non-incremental)
-        id: build
+      - name: Clean (fallback to non-incremental)
+        id: clean
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
         working-directory: ./worktree-image
         env:
           MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Build
+        # This step is needed because building the modularized distributions installs some optional packages,
+        # so the editable install of sagelib needs to build the corresponding optional extension modules.
+        id: build
+        if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
+        run: |
+          make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Pytest
@@ -125,14 +176,14 @@ jobs:
           COLUMNS: 120
 
       - name: Test all files (sage -t --all --long)
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
           ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image/src
 
       - name: Prepare coverage results
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.build.outcome == 'success'
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
@@ -140,7 +191,7 @@ jobs:
         working-directory: ./worktree-image
 
       - name: Upload coverage to codecov
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: always() && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
           files: ./worktree-image/coverage.xml

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.padics
+# sage.doctest: needs sage.rings.padics
 """
 Local Generic Element
 
@@ -394,8 +394,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
         unramified_generator = self.parent()(self.parent().residue_field().gen()).lift_to_precision()
         for c in islice(self.expansion(lift_mode=lift_mode), int(start), int(stop), int(k)):
             genpow = 1
-            if not isinstance(c, list): c = [c] # relevant for the case of base-rings, or one-step
-                                                # eisenstein extensions
+            if not isinstance(c, list):
+                c = [c]  # relevant for the case of base-rings, or one-step
+                # Eisenstein extensions
             for d in c:
                 ans += d * genpow * ppow
                 genpow *= unramified_generator
