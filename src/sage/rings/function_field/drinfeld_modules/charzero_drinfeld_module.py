@@ -224,8 +224,9 @@ class DrinfeldModule_charzero(DrinfeldModule):
         def coeff_exp(k):
             # Return the k-th coefficient of the exponential.
             k = ZZ(k)
-            if k.is_power_of(q):
-                return self._compute_coefficient_exp(k.log(q))
+            v, u = k.val_unit(q)
+            if u == 1:
+                return self._compute_coefficient_exp(v)
             else:
                 return zero
         return L(coeff_exp, valuation=1)
