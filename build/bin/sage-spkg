@@ -567,24 +567,6 @@ for script in $WRAPPED_SCRIPTS; do
     fi
 done
 
-
-# When there is no spkg-install, assume the "spkg" is a tarball not
-# specifically made for Sage.  Since we want it to be as easy as
-# possible to install such a package, we "guess" spkg-install.
-if [ ! -f spkg-install ]; then
-    echo '#!/usr/bin/env bash' > spkg-install
-    if [ -x configure ]; then
-        echo './configure --prefix="$SAGE_INST_LOCAL" && make && $SAGE_SUDO make install' >> spkg-install
-    elif [ -f setup.py ]; then
-        echo 'python setup.py install' >> spkg-install
-    else
-        echo >&2 "Error: There is no spkg-install script, no setup.py, and no configure"
-        echo >&2 "script, so I do not know how to install $PKG_SRC."
-        exit 1
-    fi
-    chmod +x spkg-install
-fi
-
 echo "****************************************************"
 echo "Host system:"
 uname -a
