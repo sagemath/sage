@@ -54,6 +54,8 @@ jobs:
         id: worktree
         run: |
           git config --global --add safe.directory $(pwd)
+          git config --global user.email "ci-sage@example.com"
+          git config --global user.name "Build & Test workflow"
           .ci/retrofit-worktree.sh worktree-image /sage
           # Keep track of changes to built HTML
           new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
