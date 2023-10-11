@@ -142,6 +142,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         From an element of the Coxeter group it is possible to recover
         the image by the standard section to the Artin group::
 
+            sage: # needs sage.rings.number_field
             sage: B(b1)
             s1*s2*s3*s2
             sage: A(c0)
