@@ -15310,7 +15310,7 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.rings.finite_rings.integer_mod.IntegerMod_int' object
-            has no attribute 'conjugate'
+            has no attribute 'conjugate'...
         """
         # limited testing on a 1000 x 1000 matrix over CC:
         #   transpose is fast, conjugate is slow

@@ -1234,7 +1234,7 @@ class RESetMapReduce():
             sage: S.print_communication_statistics()
             Traceback (most recent call last):
             ...
-            AttributeError: 'RESetMPExample' object has no attribute '_stats'
+            AttributeError: 'RESetMPExample' object has no attribute '_stats'...
 
             sage: S.finish()
 

@@ -167,7 +167,7 @@ def Set(X=None, category=None):
         sage: sorted(B.list(), key=repr)
         Traceback (most recent call last):
         ...
-        AttributeError: 'Set_object_with_category' object has no attribute 'list'
+        AttributeError: 'Set_object_with_category' object has no attribute 'list'...
         sage: type(B)
         <class 'sage.sets.set.Set_object_with_category'>
 

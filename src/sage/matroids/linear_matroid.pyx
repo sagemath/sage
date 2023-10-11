@@ -1134,7 +1134,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.matroids.basis_matroid.BasisMatroid' object
-            has no attribute 'base_ring'
+            has no attribute 'base_ring'...
             sage: from sage.matroids.advanced import *
             sage: M4 = BinaryMatroid(Matrix(M1))
             sage: M5 = LinearMatroid(reduced_matrix=Matrix(GF(2), [[-1, 0, 1],

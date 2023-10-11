@@ -13712,7 +13712,7 @@ cdef get_dynamic_class_for_function(unsigned serial):
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.symbolic.expression.Expression' object has no
-        attribute 'argp1'
+        attribute 'argp1'...
         sage: t = (e + 1).op[0]; t
         tfunc(x)
         sage: t
