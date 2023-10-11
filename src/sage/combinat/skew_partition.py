@@ -1005,11 +1005,11 @@ class SkewPartition(CombinatorialElement):
             True
         """
         N = len(self[0])
-        mu_betas = [x - j for (j, x) in enumerate(self[1])]
+        mu_betas = [x - j for j, x in enumerate(self[1])]
         mu_betas.extend([- j for j in range(len(self[1]), N)])
         res = 0
         for i, x in enumerate(self[0]):
-            if not x - i in mu_betas:
+            if (x - i) not in mu_betas:
                 res += 1
         return res
 

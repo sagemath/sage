@@ -4201,8 +4201,9 @@ class Partition(CombinatorialElement):
             sage: all(Partitions().from_zero_one(mu.zero_one_sequence()) == mu for n in range(10) for mu in Partitions(n))
             True
         """
-        tmp = [self[i]-i for i in range(len(self))]
-        return ([Integer(not (i in tmp)) for i in range(-len(self)+1,self.get_part(0)+1)])
+        tmp = set(self[i] - i for i in range(len(self)))
+        return [Integer(i not in tmp)
+                for i in range(-len(self) + 1, self.get_part(0) + 1)]
 
     def core(self, length):
         r"""
