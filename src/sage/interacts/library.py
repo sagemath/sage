@@ -1383,7 +1383,7 @@ def simpson_integration(
             if i == 0 or i == n:
                 j = 1
             else:
-                j = (i + 1) % 2*(-2) + 4
+                j = (i + 1) % 2 * (-2) + 4
             s.append([i, xs[i], ys[i], j, N(j*ys[i])])
         s.append(['', '', '', r'$\sum$', '$%s$' % latex(3/dx*approx)])
         pretty_print(table(s, header_row=True))
