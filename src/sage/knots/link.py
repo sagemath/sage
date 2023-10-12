@@ -3139,10 +3139,11 @@ class Link(SageObject):
 
         .. SEEALSO:: :meth:`colorings` and :meth:`coloring_maps`
         """
-        try:
+        M = self._coloring_matrix(n=n)
+        if M.base_ring().is_field():
             return self._coloring_matrix(n=n).nullity() > 1
-        except NotImplementedError:
-            M = self._coloring_matrix(n=n)
+        else:
+            # nullity is not implemented in this case
             return M.right_kernel_matrix().dimensions()[0] > 1
 
     def colorings(self, n=None):
