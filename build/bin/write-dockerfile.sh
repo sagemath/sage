@@ -223,6 +223,7 @@ $ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.
 $ADD m4 ./m4
 $ADD pkgs pkgs
 $ADD build ./build
+$ADD .upstream.d ./.upstream.d
 ARG BOOTSTRAP=./bootstrap
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
