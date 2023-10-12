@@ -14,6 +14,8 @@ context class, and related utilities.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import numbers
+
 from cpython.long cimport *
 from cpython.float cimport *
 from cpython.complex cimport *
@@ -160,6 +162,11 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
         MPF_div(re, re, im, opts)
         #MPF_set_tuple(re, libmp.from_rational(p, q, opts.prec,
         #    rndmode_to_python(opts.rounding)))
+        return 1
+    if isinstance(x, numbers.Rational):
+        p, q = x.numerator, x.denominator
+        MPF_set_tuple(re, libmp.from_rational(p, q, opts.prec,
+                                              rndmode_to_python(opts.rounding)))
         return 1
     if hasattr(x, '_mpi_'):
         a, b = x._mpi_
