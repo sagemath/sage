@@ -11,22 +11,10 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.libs.flint.types cimport slong
+from .types cimport slong, thread_pool_entry_t, thread_pool_t
 
 # flint/thread_pool.h
 cdef extern from "flint/thread_pool.h":
-    ctypedef struct thread_pool_entry_struct:
-        pass
-
-    ctypedef thread_pool_entry_struct thread_pool_entry_t[1]
-
-    ctypedef struct thread_pool_struct:
-        pass
-
-    ctypedef thread_pool_struct thread_pool_t[1]
-    ctypedef int thread_pool_handle
-
-
     extern thread_pool_t global_thread_pool
     extern int global_thread_pool_initialized
 

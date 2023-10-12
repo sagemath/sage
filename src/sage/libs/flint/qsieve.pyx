@@ -5,8 +5,10 @@ been absorbed into flint.
 """
 
 from cysignals.signals cimport sig_on, sig_off
-from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz
-from sage.libs.flint.fmpz_factor cimport *
+from .types cimport fmpz_t
+from .fmpz cimport fmpz_init, fmpz_set_mpz
+from .fmpz_factor cimport fmpz_factor_init, fmpz_factor_clear
+from .fmpz_factor_extra cimport fmpz_factor_to_pairlist
 from sage.rings.integer cimport Integer
 
 
