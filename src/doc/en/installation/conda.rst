@@ -134,8 +134,9 @@ Here we assume that you are using a git checkout.
     installed. You can use the additional option ``python=3.9`` in the above
     ``env create`` command to select another Python version (here 3.9).
 
-  - Install the build prerequisites and the Sage library::
+  - Bootstrap the source tree and install the build prerequisites and the Sage library::
 
+      $ ./bootstrap
       $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda ./pkgs/sage-setup
       $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
@@ -158,7 +159,7 @@ suffices to restart Sage.
 
 After editing any Cython files, rebuild the Sage library using::
 
-  $ pip install --no-build-isolation -v -v --editable src
+  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
 
 In order to update the conda environment later, you can run::
 
