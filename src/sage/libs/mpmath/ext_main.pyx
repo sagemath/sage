@@ -2144,6 +2144,8 @@ cdef class mpf(mpf_base):
         """
         return binop(OP_RICHCMP+op, self, other, global_opts)
 
+    def __round__(self, *args):
+        return round(float(self), *args)
 
 
 cdef class constant(mpf_base):
