@@ -3584,10 +3584,6 @@ def CRT_basis(moduli):
       `a_i` is congruent to 1 modulo `m_i` and to 0 modulo `m_j` for
       `j\not=i`.
 
-    .. note::
-
-       The pairwise coprimality of the input is not checked.
-
     EXAMPLES::
 
         sage: a1 = ZZ(mod(42,5))
@@ -3610,7 +3606,14 @@ def CRT_basis(moduli):
     if n == 0:
         return []
     M = prod(moduli)
-    return [((xgcd(m,M//m)[2])*(M//m)) % M for m in moduli]
+    cs = []
+    for m in moduli:
+        Mm = M // m
+        d, _, v = xgcd(m, Mm)
+        if not d.is_one():
+            raise ValueError('moduli must be coprime')
+        cs.append((v * Mm) % M)
+    return cs
 
 
 def CRT_vectors(X, moduli):
