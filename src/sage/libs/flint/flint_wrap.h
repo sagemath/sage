@@ -53,7 +53,6 @@
 #include <flint/fq_poly.h>
 #include <flint/fq_nmod_mat.h>
 #include <flint/calcium.h>
-#include <flint/fft_small.h>
 #include <flint/fmpz_vec.h>
 #include <flint/fexpr_builtin.h>
 #include <flint/ca_poly.h>
