@@ -107,20 +107,19 @@ jobs:
             (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
           fi
 
-      - name: Incremental build, test changed files (sage -t --new)
+      - name: Incremental build
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./bootstrap && make build && ./sage -t --new -p2
+          ./bootstrap && make build
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Build and test modularized distributions
+      - name: Build modularized distributions
         if: always() && steps.worktree.outcome == 'success'
-        run: make V=0 tox && make pypi-wheels
+        run: make V=0 tox && make SAGE_CHECK=no pypi-wheels
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -160,6 +159,25 @@ jobs:
         if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
         run: |
           make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      # Testing
+
+      - name: Test changed files (sage -t --new)
+        run: |
+          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
+          ./sage -t --new -p2
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      - name: Test modularized distributions
+        if: always() && steps.worktree.outcome == 'success'
+        run: make V=0 tox && make pypi-wheels-check
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
