@@ -26,6 +26,7 @@ from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.nmod_poly cimport *
+from sage.libs.flint.nmod_poly_factor cimport *
 from sage.libs.flint.ulong_extras cimport *
 
 from cypari2.paridecl cimport (GEN, cgetg, t_POL, set_gel, gel, stoi, lg,

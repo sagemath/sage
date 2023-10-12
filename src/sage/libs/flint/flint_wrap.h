@@ -39,7 +39,6 @@
 #include <flint/fmpzi.h>
 #include <flint/mpoly.h>
 #include <flint/mpfr_mat.h>
-#include <flint/gr_implementing.h>
 #include <flint/nmod_poly.h>
 #include <flint/long_extras.h>
 #include <flint/partitions.h>
@@ -69,7 +68,6 @@
 #include <flint/nmod.h>
 #include <flint/ca_mat.h>
 #include <flint/fq_zech_vec.h>
-#include <flint/gr_domains.h>
 #include <flint/arb.h>
 #include <flint/nf_elem.h>
 #include <flint/fmpz_poly.h>
@@ -136,7 +134,6 @@
 #include <flint/acf.h>
 #include <flint/gr_special.h>
 #include <flint/arf.h>
-#include <flint/threading.h>
 #include <flint/fq_zech_mat.h>
 #include <flint/gr_mat.h>
 #include <flint/arb_fmpz_poly.h>
