@@ -47,24 +47,27 @@ jobs:
       tox_packages_factors: >-
           ["${{ github.event.inputs.packages || 'standard' }}"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-    permissions:
-      packages: write
+      image_artifact: image
 
   test-modularized:
     runs-on: ubuntu-latest
     needs: [build]
-    container: ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal' }}-${{ github.event.inputs.packages || 'packages' }}-with-targets:${{ github.sha }}
     strategy:
       fail-fast: false
       matrix:
         distribution: ${{ fromJson('["sagemath_categories", "sagemath_modules"]') }}
+    env:
+      IMAGE_ARTIFACT_NAME: image-commit-${{ github.sha }}-tox-docker-ubuntu-focal-standard
     steps:
+      - name: Download image artifact
+        uses: actions/download-artifact@v3
+        with:
+          path: image.tar.gz
+          name: ${{ env.IMAGE_ARTIFACT_NAME }}
+      - name: Load image
+        run: docker load --input image.tar.gz
       - name: Test
-        run: make V=0 tox && make ${{ matrix.distribution }}-check
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+        run: docker run ghcr.io/${{ github.repository }}/sage-ubuntu-focal-standard-with-targets:${{ github.sha }} "make -j2 V=0 tox && make -j2 ${{ matrix.distribution }}-check"
 
   test-new:
     needs: [build]

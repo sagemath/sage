@@ -219,7 +219,7 @@ $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-
 $ADD config/config.rpath config/config.rpath
 $ADD src/doc/bootstrap src/doc/bootstrap
 $ADD src/bin src/bin
-$ADD src/*.m4 src/VERSION.txt src/
+$ADD src/*.m4 src/VERSION.txt src/MANIFEST.in src/
 $ADD m4 ./m4
 $ADD pkgs pkgs
 $ADD build ./build
