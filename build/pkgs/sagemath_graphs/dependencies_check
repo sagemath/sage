@@ -1,3 +1,1 @@
-tox sagemath_repl sagemath_modules sagemath_pari
-
-# sagemath_modules sagemath_pari - for testing the extra
+../sagemath_categories/dependencies_check

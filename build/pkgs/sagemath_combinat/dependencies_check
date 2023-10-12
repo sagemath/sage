@@ -1,1 +1,1 @@
-tox sagemath_repl sagemath_graphs sagemath_modules
+../sagemath_categories/dependencies_check
