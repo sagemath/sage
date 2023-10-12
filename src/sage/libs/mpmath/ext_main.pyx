@@ -1600,6 +1600,8 @@ cdef class mpnumber:
             mpf('3.0')
         """
         return binop(OP_DIV, self, other, global_opts)
+    __div__ = __truediv__
+    __rdiv__ = __truediv__
 
     def __mod__(self, other):
         """
