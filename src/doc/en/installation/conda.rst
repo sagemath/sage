@@ -158,7 +158,7 @@ suffices to restart Sage.
 
 After editing any Cython files, rebuild the Sage library using::
 
-  $ pip install --no-build-isolation -v -v --editable src
+  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
 
 In order to update the conda environment later, you can run::
 
