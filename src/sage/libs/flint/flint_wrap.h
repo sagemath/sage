@@ -105,7 +105,6 @@
 #include <flint/bool_mat.h>
 #include <flint/fmpq_poly.h>
 #include <flint/fexpr.h>
-#include <flint/machine_vectors.h>
 #include <flint/mag.h>
 #include <flint/fmpz_mpoly_factor.h>
 #include <flint/mpfr_vec.h>
