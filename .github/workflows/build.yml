@@ -15,7 +15,11 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-focal-standard'
+        default: 'ubuntu-focal'
+      packages:
+        description: 'Platform'
+        required: true
+        default: 'standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -27,28 +31,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  get_ci_fixes:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      - name: Merge CI fixes from sagemath/sage
-        run: |
-          .ci/merge-fixes.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - name: Store CI fixes in upstream artifact
-        run: |
-          mkdir -p upstream
-          if git format-patch --stdout test_base > ci_fixes.patch; then
-            cp ci_fixes.patch upstream/
-          fi
-      - uses: actions/upload-artifact@v3
-        with:
-          path: upstream
-          name: upstream
-
   changed_files:
     runs-on: ubuntu-latest
     name: List changed packages
@@ -75,89 +57,45 @@ jobs:
           cat $GITHUB_OUTPUT
 
   build:
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from published Docker image
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets"
+      targets: "SAGE_CHECK=no build pypi-wheels"
+      tox_system_factors: >-
+        ["${{ github.event.inputs.platform || 'ubuntu-focal' }}"]
+      tox_packages_factors: >-
+          ["${{ github.event.inputs.packages || 'standard' }}"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+    permissions:
+      packages: write
+
+  test-modularized:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
-    needs: [get_ci_fixes]
+    needs: [build]
+    container: ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal' }}-${{ github.event.inputs.packages || 'packages' }}-with-targets:${{ github.sha }}
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution: ${{ fromJson('["sagemath_repl", "sagemath_categories"]') }}
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-
-      - name: Update system packages
-        id: prepare
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
-
-      - name: Add prebuilt tree as a worktree
-        id: worktree
-        run: |
-          set -ex
-          git config --global --add safe.directory $(pwd)
-          .ci/retrofit-worktree.sh worktree-image /sage
-
-      - name: Download upstream artifact
-        uses: actions/download-artifact@v3
-        with:
-          path: upstream
-          name: upstream
-
-      - name: Apply CI fixes from sagemath/sage
-        # After applying the fixes, make sure all changes are marked as uncommitted changes.
-        run: |
-          if [ -r upstream/ci_fixes.patch ]; then
-            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
-          fi
-
-      - name: Incremental build
-        id: incremental
-        run: |
-          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make build
+      - name: Test
+        run: make V=0 tox && make ${{ matrix.distribution }}-check
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Build modularized distributions
-        if: always() && steps.worktree.outcome == 'success'
-        run: make V=0 tox && make SAGE_CHECK=no pypi-wheels
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      - name: Static code check with pyright
-        if: always() && steps.worktree.outcome == 'success'
-        run: ./sage -tox -e pyright
-        working-directory: ./worktree-image
-
-      - name: Clean (fallback to non-incremental)
-        id: clean
-        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
-        run: |
-          set -ex
-          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
-
-      - name: Build
-        # This step is needed because building the modularized distributions installs some optional packages,
-        # so the editable install of sagelib needs to build the corresponding optional extension modules.
-        id: build
-        if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
-        run: |
-          make build
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      # Testing
-
+  test-new:
+    needs: [build]
+    runs-on: ubuntu-latest
+    container: ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal' }}-${{ github.event.inputs.packages || 'packages' }}-with-targets:${{ github.sha }}
+    steps:
       - name: Test changed files (sage -t --new)
         if: always() && steps.build.outcome == 'success'
         run: |
@@ -168,14 +106,11 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Test modularized distributions
-        if: always() && steps.build.outcome == 'success'
-        run: make V=0 tox && make pypi-wheels-check
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
+  test:
+    needs: [build]
+    runs-on: ubuntu-latest
+    container: ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal' }}-${{ github.event.inputs.packages || 'packages' }}-with-targets:${{ github.sha }}
+    steps:
       - name: Pytest
         if: contains(github.ref, 'pytest')
         run: |
@@ -187,14 +122,12 @@ jobs:
           COLUMNS: 120
 
       - name: Test all files (sage -t --all --long)
-        if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
           ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image/src
 
       - name: Prepare coverage results
-        if: always() && steps.build.outcome == 'success'
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
@@ -202,7 +135,6 @@ jobs:
         working-directory: ./worktree-image
 
       - name: Upload coverage to codecov
-        if: always() && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
           files: ./worktree-image/coverage.xml
