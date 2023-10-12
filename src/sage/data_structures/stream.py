@@ -1289,12 +1289,13 @@ class Stream_functional_equation(Stream_inexact):
     - ``F`` -- the stream for the equation using ``uninitialized``
     - ``uninitialized`` -- the uninitialized stream
     - ``initial_values`` -- the initial values
+    - ``R`` -- the base ring
 
     Instances of this class are always dense.
 
     EXAMPLES::
     """
-    def __init__(self, approximate_order, F, uninitialized, initial_values, true_order=False):
+    def __init__(self, approximate_order, F, uninitialized, initial_values, R, true_order=False):
         """
         Initialize ``self``.
 
@@ -1313,11 +1314,14 @@ class Stream_functional_equation(Stream_inexact):
             if val:
                 approximate_order += i
                 true_order = True
+                initial_values = initial_values[i:]
                 break
         else:
             approximate_order += len(initial_values)
+            initial_values = []
         super().__init__(False, true_order)
         self._F = F
+        self._base = R
         self._initial_values = initial_values
         self._approximate_order = approximate_order
         self._uninitialized = uninitialized
@@ -1343,59 +1347,55 @@ class Stream_functional_equation(Stream_inexact):
         yield from self._initial_values
 
         from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        P = InfinitePolynomialRing(ZZ, 'x')
+        P = InfinitePolynomialRing(self._base, 'x')
         x = P.gen()
         PFF = P.fraction_field()
+        offset = self._approximate_order
 
         def get_coeff(n):
-            # Check against the initial values first
-            i = n - self._start
-            if n < len(self._initial_values):
-                return P(self._initial_values[n])
+            return x[n-offset]
 
-            # We are always a dense implementation
-            # Check to see if we have already computed the value
-            if n < self._approximate_order:
-                return P.zero()
-            if self._true_order:
-                i = n - self._approximate_order
-                if i < len(self._cache):
-                    return P(self._cache[i])
-
-            return x[i]
-
-        sf = Stream_function(get_coeff, is_sparse=False, approximate_order=self._start, true_order=True)
+        sf = Stream_function(get_coeff, is_sparse=False, approximate_order=offset, true_order=True)
         self._F = self._F.replace(self._uninitialized, sf)
 
-        n = self._start
-        offset = len(self._initial_values) - self._start
+        n = self._F._approximate_order
+        data = list(self._initial_values)
         while True:
             coeff = self._F[n]
             if coeff.parent() is PFF:
                 coeff = coeff.numerator()
-
+            else:
+                coeff = P(coeff)
             V = coeff.variables()
-            if not V:
-                if coeff:
-                    raise ValueError(f"no solution from degree {n} as {coeff} == 0")
-                yield ZZ.zero()
-                n += 1
-                continue
 
             if len(V) > 1:
                 # Substitute for known variables
-                coeff = coeff.subs({x[i]: val for i, val in enumerate(sf._cache)})
+                coeff = coeff.subs({str(x[i]): val for i, val in enumerate(data)})
                 V = coeff.variables()
                 if len(V) > 1:
-                    raise ValueError(f"unable to determine a unique solution from degree {n}")
+                    raise ValueError(f"unable to determine a unique solution in degree {n}")
+
+            if not V:
+                if coeff:
+                    raise ValueError(f"no solution in degree {n} as {coeff} == 0")
+                i = n - self._start
+                #print(i, len(data))
+                if i < len(data):
+                    # We already know this coefficient
+                    yield data[n - self._start]
+                else:
+                    yield self._base.zero()
+                    data.append(self._base.zero())
+                n += 1
+                continue
 
             # single variable to solve for
             hc = coeff.homogeneous_components()
             if not set(hc).issubset([0,1]):
-                raise ValueError(f"unable to determine a unique solution from degree {n}")
+                raise ValueError(f"unable to determine a unique solution in degree {n}")
             val = -hc.get(0, P.zero()).lc() / hc[1].lc()
             # Update the cache
-            sf._cache[n + offset] = val
+            data.append(val)
             yield val
             n += 1
 

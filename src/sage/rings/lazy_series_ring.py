@@ -1818,6 +1818,19 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         r"""
         Define the lazy undefined ``series`` that solves the functional
         equation ``left == right`` with ``initial_values``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: f = L.undefined(-1)
+            sage: L.functional_equation(f, 2+z*f(z^2), f, [5])
+            sage: f
+            5*z^-1 + 5 + 2*z + 2*z^2 + 2*z^4 + O(z^6)
+
+            sage: f = L.undefined(-2)
+            sage: L.functional_equation(f, 2+z*f(z^2), f, [5])
+            sage: f
+            <repr(...) failed: ValueError: no solution in degree 1 as 2 == 0>
         """
         if not isinstance(series._coeff_stream, Stream_uninitialized) or series._coeff_stream._target is not None:
             raise ValueError("series already defined")
@@ -1829,7 +1842,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         R = self.base_ring()
         initial_values = [R(val) for val in initial_values]
         F = Stream_sub(left._coeff_stream, right._coeff_stream, self.is_sparse())
-        ret = Stream_functional_equation(ao, F, cs, initial_values)
+        ret = Stream_functional_equation(ao, F, cs, initial_values, R)
         series._coeff_stream = ret
 
     # === special functions ===
@@ -2582,6 +2595,46 @@ class LazyPowerSeriesRing(LazySeriesRing):
             1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
             sage: F
             -1 + 1/2*z^2 - 1/24*z^4 + 1/720*z^6 + O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(0)
+            sage: L.functional_equation(2*z*f(z^3) + z*f^3 - 3*f + 3, 0, f, [])
+            sage: f
+            1 + z + z^2 + 2*z^3 + 5*z^4 + 11*z^5 + 28*z^6 + O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(SR)
+            sage: G = L.undefined(0)
+            sage: L.functional_equation(diff(G) - exp(-G(-z)), 0, G, [ln(2)])
+            sage: G
+            log(2) + z + 1/2*z^2 + (-1/12*z^4) + 1/45*z^6 + O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(RR)
+            sage: G = L.undefined(0)
+            sage: L.functional_equation(diff(G) - exp(-G(-z)), 0, G, [log(2)])
+            sage: G
+            0.693147180559945 + 1.00000000000000*z + 0.500000000000000*z^2 - 0.0833333333333333*z^4 + 0.0222222222222222*z^6 + O(1.00000000000000*z^7)
+
+        We solve the recurrence relation in (3.12) of Prellberg and Brak
+        :doi:`10.1007/BF02183685`::
+
+            sage: q,y = QQ['q,y'].fraction_field().gens()
+            sage: L.<x> = LazyPowerSeriesRing(q.parent())
+            sage: R = L.undefined()
+            sage: L.functional_equation((1-q*x)*R - (y*q*x+y)*R(q*x) - q*x*R*R(q*x) - x*y*q, 0, R, [0])
+            sage: R[0]
+            0
+            sage: R[1]
+            q*y/(-q*y + 1)
+            sage: R[2]
+            (-q^3*y^2 - q^2*y)/(-q^3*y^2 + q^2*y + q*y - 1)
+            sage: R[3].factor()
+            (-1) * y * q^3 * (q*y - 1)^-2 * (q^2*y - 1)^-1 * (q^3*y - 1)^-1
+             * (q^4*y^3 + q^3*y^2 + q^2*y^2 - q^2*y - q*y - 1)
+
+            sage: Rp = L.undefined(1)
+            sage: L.functional_equation((1-q*x)*Rp, (y*q*x+y)*Rp(q*x) + q*x*Rp*Rp(q*x) + x*y*q, Rp, [])
+            sage: all(R[n] == Rp[n] for n in range(10))
+            True
         """
         if self._arity != 1:
             raise NotImplementedError("only implemented for one variable")
@@ -2596,7 +2649,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         R = self.base_ring()
         initial_values = [R(val) for val in initial_values]
         F = Stream_sub(left._coeff_stream, right._coeff_stream, self.is_sparse())
-        ret = Stream_functional_equation(ao, F, cs, initial_values)
+        ret = Stream_functional_equation(ao, F, cs, initial_values, R)
         series._coeff_stream = ret
 
 
