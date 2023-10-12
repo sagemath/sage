@@ -468,6 +468,8 @@ wheels:
 	$(MAKE_REC) SAGE_EDITABLE=no SAGE_WHEELS=yes $(WHEEL_PACKAGES)
 	@echo "Built wheels are in venv/var/lib/sage/wheels/"
 
+pypi-wheels-check: $(PYPI_WHEEL_PACKAGES:%=%-check)
+
 #==============================================================================
 # Setting SAGE_CHECK... variables
 #==============================================================================
