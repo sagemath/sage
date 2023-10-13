@@ -25,11 +25,17 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     steps:
-      - name: Install git
-        uses: ConorMacBride/install-package@v1.1.0
-        with:
-          brew: git
-          apt: git
+      - name: Install git (macos)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install git
+
+      - name: Install git (linux)
+        if: runner.os == 'Linux'
+        run: |
+          apt update
+          apt install -y git
 
       - name: Checkout
         id: checkout
