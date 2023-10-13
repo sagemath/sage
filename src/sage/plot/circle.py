@@ -406,6 +406,10 @@ def circle(center, radius, **options):
         sage: P = circle((1,1), 1)
         sage: P.aspect_ratio()
         1.0
+
+    Verify that :trac:`36153` does not arise::
+
+        sage: C = circle((1,1), 1, legend_label="test")
     """
     from sage.plot.all import Graphics
 

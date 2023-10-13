@@ -524,10 +524,15 @@ def polygon2d(points, **options):
         sage: polygon2d([[1,2], [5,6], [5,0]]).aspect_ratio()
         1.0
 
+    TESTS:
+
+    Verify that :trac:`36153` does not arise::
+
+        sage: P = polygon2d([[1,2], [5,6], [5,0]], legend_label="test")
+
     AUTHORS:
 
     - David Joyner (2006-04-14): the long list of examples above.
-
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics
