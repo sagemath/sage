@@ -224,15 +224,8 @@ cdef extern from "arb_wrap.h":
 
     void arb_lambertw(arb_t res, const arb_t x, int flags, long prec)
 
-    void arb_rising_ui_bs(arb_t z, const arb_t x, unsigned long n, long prec)
-    void arb_rising_ui_rs(arb_t z, const arb_t x, unsigned long n, unsigned long step, long prec)
-    void arb_rising_ui_rec(arb_t z, const arb_t x, unsigned long n, long prec)
-    void arb_rising_ui(arb_t z, const arb_t x, unsigned long n, long prec)
     void arb_rising(arb_t z, const arb_t x, const arb_t n, long prec)
     void arb_rising_fmpq_ui(arb_t z, const fmpq_t x, unsigned long n, long prec)
-    void arb_rising2_ui_bs(arb_t u, arb_t v, const arb_t x, unsigned long n, long prec)
-    void arb_rising2_ui_rs(arb_t u, arb_t v, const arb_t x, unsigned long n, unsigned long step, long prec)
-    void arb_rising2_ui(arb_t u, arb_t v, const arb_t x, unsigned long n, long prec)
     void arb_fac_ui(arb_t z, unsigned long n, long prec)
     void arb_bin_ui(arb_t z, const arb_t n, unsigned long k, long prec)
     void arb_bin_uiui(arb_t z, unsigned long n, unsigned long k, long prec)

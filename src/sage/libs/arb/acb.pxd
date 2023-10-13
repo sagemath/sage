@@ -152,10 +152,6 @@ cdef extern from "arb_wrap.h":
     void acb_sech(acb_t s, const acb_t z, long prec)
     void acb_csch(acb_t c, const acb_t z, long prec)
 
-    void acb_rising_ui_bs(acb_t z, const acb_t x, unsigned long n, long prec)
-    void acb_rising_ui_rs(acb_t z, const acb_t x, unsigned long n, unsigned long step, long prec)
-    void acb_rising_ui_rec(acb_t z, const acb_t x, unsigned long n, long prec)
-    void acb_rising_ui(acb_t z, const acb_t x, unsigned long n, long prec)
     void acb_rising(acb_t z, const acb_t x, const acb_t n, long prec)
 
     void acb_gamma(acb_t y, const acb_t x, long prec)
