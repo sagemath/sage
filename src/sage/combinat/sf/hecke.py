@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hecke Character Basis
 
@@ -191,7 +192,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             return self([1])
         q = self.q
         if q**n == self.base_ring().one():
-            raise ValueError("the parameter q=%s must not be a %s root of unity"%(q,n))
+            raise ValueError("the parameter q=%s must not be a %s root of unity" % (q,n))
         out = n * self([n]) - sum((q**i-1) * self._p_to_qbar_on_generator(i)
                                   * self([n-i]) for i in range(1,n) if q**i != 1)
         return out*(q-1) / (q**n-1)

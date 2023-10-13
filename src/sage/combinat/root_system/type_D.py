@@ -296,9 +296,9 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             return ret
         rt_most = (self.n-2) * node_dist
         center_point = rt_most - node_dist
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%center_point
-        ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n"%(center_point, rt_most)
-        ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n"%(center_point, rt_most)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % center_point
+        ret += "\\draw (%s cm,0) -- (%s cm,0.7 cm);\n" % (center_point, rt_most)
+        ret += "\\draw (%s cm,0) -- (%s cm,-0.7 cm);\n" % (center_point, rt_most)
         for i in range(self.n-2):
             ret += node(i*node_dist, 0, label(i+1))
         ret += node(rt_most, 0.7, label(self.n), 'right=3pt')
@@ -343,8 +343,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             ret = "{}   {}\n".format(node(label(1)), node(label(2)))
             return ret + "{!s:4}{!s:4}".format(label(1), label(2))
         ret = (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
-        ret += ((4*(n-3))*" " +"|\n")*2
-        ret += "---".join(node(label(i)) for i in range(1, n)) +"\n"
+        ret += ((4*(n-3))*" " + "|\n")*2
+        ret += "---".join(node(label(i)) for i in range(1, n)) + "\n"
         ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret
 

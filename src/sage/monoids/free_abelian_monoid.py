@@ -204,7 +204,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __repr__(self):
         n = self.__ngens
-        return "Free abelian monoid on %s generators %s"%(n,self.gens())
+        return "Free abelian monoid on %s generators %s" % (n,self.gens())
 
     def __call__(self, x):
         """

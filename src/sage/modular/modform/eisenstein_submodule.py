@@ -37,7 +37,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
             True
         """
         from sage.misc.verbose import verbose
-        verbose('creating eisenstein submodule of %s'%ambient_space)
+        verbose('creating eisenstein submodule of %s' % ambient_space)
         d = ambient_space._dim_eisenstein()
         V = ambient_space.module()
         n = V.dimension()

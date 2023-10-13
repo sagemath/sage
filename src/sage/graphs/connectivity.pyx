@@ -1078,8 +1078,9 @@ def edge_connectivity(G,
         sage: for u,v in tree.edge_iterator(labels=None):
         ....:      tree.set_edge_label(u, v, random())
         sage: minimum = min(tree.edge_labels())
-        sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False, use_edge_labels=True)
-        sage: l == minimum
+        sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False,              # needs sage.numerical.mip
+        ....:                                      use_edge_labels=True)
+        sage: l == minimum                                                              # needs sage.numerical.mip
         True
 
     When ``value_only=True`` and ``implementation="sage"``, this function is
@@ -1102,12 +1103,14 @@ def edge_connectivity(G,
     We check that the result with Boost is the same as the result without Boost::
 
         sage: g = graphs.RandomGNP(15, .3)
-        sage: edge_connectivity(g, implementation="boost") == edge_connectivity(g, implementation="sage")
+        sage: (edge_connectivity(g, implementation="boost")                             # needs sage.numerical.mip
+        ....:    == edge_connectivity(g, implementation="sage"))
         True
 
     Boost interface also works with directed graphs::
 
-        sage: edge_connectivity(digraphs.Circuit(10), implementation="boost", vertices=True)
+        sage: edge_connectivity(digraphs.Circuit(10), implementation="boost",
+        ....:                   vertices=True)
         [1, [(0, 1)], [{0}, {1, 2, 3, 4, 5, 6, 7, 8, 9}]]
 
     However, the Boost algorithm is not reliable if the input is directed
@@ -1128,7 +1131,7 @@ def edge_connectivity(G,
 
     Checking that the two implementations agree::
 
-        sage: for i in range(10):
+        sage: for i in range(10):                                                       # needs sage.numerical.mip
         ....:     g = graphs.RandomGNP(30, 0.3)
         ....:     e1 = edge_connectivity(g, implementation="boost")
         ....:     e2 = edge_connectivity(g, implementation="sage")
@@ -1177,8 +1180,7 @@ def edge_connectivity(G,
             return 0
         elif vertices:
             return [0, [], [{}, {}]]
-        else:
-            return [0, []]
+        return [0, []]
 
     if implementation == "boost":
         from sage.graphs.base.boost_graph import edge_connectivity
@@ -1275,29 +1277,27 @@ def edge_connectivity(G,
     if value_only:
         return obj
 
+    val = [obj]
+    in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+
+    if g.is_directed():
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
     else:
-        val = [obj]
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
 
-        in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val.append(edges)
 
-        if g.is_directed():
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
-        else:
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
+    if vertices:
+        a = {}
+        b = {}
+        for v in g:
+            if in_set[0, v]:
+                a.add(v)
+            else:
+                b.add(v)
+        val.append([a, b])
 
-        val.append(edges)
-
-        if vertices:
-            a = {}
-            b = {}
-            for v in g:
-                if in_set[0, v]:
-                    a.add(v)
-                else:
-                    b.add(v)
-            val.append([a, b])
-
-        return val
+    return val
 
 
 def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0,
@@ -1503,8 +1503,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             return max(g.order() - 1, 0)
         elif not sets:
             return max(g.order() - 1, 0), []
-        else:
-            return max(g.order() - 1, 0), [], [[], []]
+        return max(g.order() - 1, 0), [], [[], []]
 
     if value_only:
         if G.is_directed():
@@ -3298,8 +3297,7 @@ cdef class TriconnectivitySPQR:
         cdef _LinkedListNode * head = _LinkedList_get_head(self.highpt[v])
         if head:
             return head.data
-        else:
-            return 0
+        return 0
 
     cdef __del_high(self, int e_index):
         """
