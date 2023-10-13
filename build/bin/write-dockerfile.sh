@@ -213,16 +213,34 @@ cat <<EOF
 
 FROM with-system-packages as bootstrapped
 #:bootstrapping:
-RUN if [ -d /sage ]; then echo "### Incremental build from \$(cat /sage/VERSION.txt)" && mv /sage /sage-old && mkdir /sage && for a in local logs; do if [ -d /sage-old/\$a ]; then mv /sage-old/\$a /sage; fi; done; rm -rf /sage-old; else mkdir -p /sage; fi
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
+$ADD config/config.rpath /new/config/config.rpath
+$ADD src/doc/bootstrap /new/src/doc/bootstrap
+$ADD src/bin /new/src/bin
+$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt /new/src/
+$ADD m4 /new/m4
+$ADD pkgs /new/pkgs
+$ADD build /new/build
+$ADD .ci /new/.ci
+$ADD .upstream.d /new/.upstream.d
+RUN if [ -d /sage ]; then                                               \
+        echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
+        if command -v git; then                                         \
+            (cd /new &&                                                 \
+             echo /src >> .gitignore &&                                 \
+             ./.ci/retrofit-worktree.sh worktree-image /sage);          \
+        else                                                            \
+            for a in local logs; do                                     \
+                if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi;       \
+            done;                                                       \
+            rm -rf /sage;                                               \
+            mv /new /sage;                                              \
+        fi;                                                             \
+    else                                                                \
+        mv /new /sage;                                                  \
+    fi
 WORKDIR /sage
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
-$ADD config/config.rpath config/config.rpath
-$ADD src/doc/bootstrap src/doc/bootstrap
-$ADD src/bin src/bin
-$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt src/
-$ADD m4 ./m4
-$ADD pkgs pkgs
-$ADD build ./build
+
 ARG BOOTSTRAP=./bootstrap
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
@@ -268,7 +286,17 @@ ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
-$ADD src src
+$ADD .gitignore /new
+$ADD src /new/src
+RUN if command -v git; then                             \
+        rm -f /sage/.git &&                             \
+        cd /new &&                                      \
+        ./.ci/retrofit-worktree.sh worktree-pre /sage;  \
+    else                                                \
+        rm -rf /sage/src;                               \
+        mv /new/src /sage/src;                          \
+    fi
+
 ARG TARGETS="build"
 $RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN
 
