@@ -555,6 +555,9 @@ cdef extern from "flint_wrap.h":
     void arb_max(arb_t z, const arb_t x, const arb_t y, long prec)
     # Sets *z* respectively to the minimum and the maximum of *x* and *y*.
 
+    void arb_minmax(arb_t z1, arb_t z2, const arb_t x, const arb_t y, long prec)
+    # Sets *z1* and *z2* respectively to the minimum and the maximum of *x* and *y*.
+
     void arb_add(arb_t z, const arb_t x, const arb_t y, long prec)
 
     void arb_add_arf(arb_t z, const arb_t x, const arf_t y, long prec)
@@ -1485,3 +1488,5 @@ cdef extern from "flint_wrap.h":
     # Calls :func:`arb_get_unique_fmpz` elementwise and returns nonzero if
     # all entries can be rounded uniquely to integers. If any entry in *vec*
     # cannot be rounded uniquely to an integer, returns zero.
+
+from .arb_macros cimport *

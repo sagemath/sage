@@ -26,6 +26,7 @@ from cysignals.memory cimport sig_free
 from sage.arith.long cimport pyobject_to_long
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.libs.flint.fmpz cimport *
+from sage.libs.flint.fmpz_poly cimport *
 from sage.structure.sage_object cimport SageObject
 from sage.rings.integer cimport Integer
 

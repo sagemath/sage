@@ -545,3 +545,5 @@ cdef extern from "flint_wrap.h":
 
     void arb_mat_add_error_mag(arb_mat_t mat, const mag_t err)
     # Adds *err* in-place to the radii of the entries of *mat*.
+
+from .arb_mat_macros cimport *

@@ -1,3 +1,7 @@
+from .types cimport n_factor_t
+from .ulong_extras cimport n_factor_init, n_factor
+
+
 def n_factor_to_list(unsigned long n, int proved):
     """
     A wrapper around ``n_factor``.

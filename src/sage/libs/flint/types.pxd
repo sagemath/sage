@@ -23,22 +23,6 @@ ctypedef mp_limb_t flint_bitcnt_t
 
 
 cdef extern from "flint_wrap.h":
-    # flint/d_mat.h
-    ctypedef struct d_mat_struct:
-        double * entries
-        slong r
-        slong c
-        double ** rows
-
-    ctypedef d_mat_struct d_mat_t[1]
-
-
-    # flint/flint.h
-    ctypedef void* flint_rand_t
-    cdef long FLINT_BITS
-    cdef long FLINT_D_BITS
-
-
     # flint/fmpz.h
     ctypedef slong fmpz
     ctypedef fmpz fmpz_t[1]
@@ -70,6 +54,144 @@ cdef extern from "flint_wrap.h":
     ctypedef fmpz_multi_CRT_struct fmpz_multi_CRT_t[1]
 
 
+    # flint/fmpq.h
+    ctypedef struct fmpq:
+        pass
+
+    ctypedef fmpq fmpq_t[1]
+
+
+    # flint/arith.h
+    ctypedef struct trig_prod_struct:
+        pass
+    ctypedef trig_prod_struct trig_prod_t[1]
+
+
+    # flint/ulong_extras.pxd
+    ctypedef struct n_ecm_s:
+        pass
+    ctypedef n_ecm_s n_ecm_t[1];
+
+
+    # flint/arf.h
+    ctypedef struct arf_struct:
+        pass
+    ctypedef arf_struct arf_t[1]
+    ctypedef arf_struct * arf_ptr
+    ctypedef const arf_struct * arf_srcptr
+    cdef enum arf_rnd_t:
+        ARF_RND_DOWN
+        ARF_RND_UP
+        ARF_RND_FLOOR
+        ARF_RND_CEIL
+        ARF_RND_NEAR
+    long ARF_PREC_EXACT
+
+
+    # flint/arb_types.h
+    ctypedef struct mag_struct:
+        pass
+    ctypedef mag_struct mag_t[1]
+    ctypedef mag_struct * mag_ptr
+    ctypedef const mag_struct * mag_srcptr
+
+    ctypedef struct arb_struct:
+        pass
+    ctypedef arb_struct arb_t[1]
+    ctypedef arb_struct * arb_ptr
+    ctypedef const arb_struct * arb_srcptr
+
+    ctypedef struct arb_mat_struct:
+        arb_ptr entries
+        slong r
+        slong c
+        arb_ptr * rows
+    ctypedef arb_mat_struct arb_mat_t[1]
+
+    ctypedef struct arb_poly_struct:
+        pass
+    ctypedef arb_poly_struct[1] arb_poly_t
+    ctypedef arb_poly_struct * arb_poly_ptr
+    ctypedef const arb_poly_struct * arb_poly_srcptr
+
+
+    # flint/arb_calc.h
+    ctypedef int (*arb_calc_func_t)(arb_ptr out, const arb_t inp,
+                                    void * param, slong order, slong prec)
+
+
+    # flint/acb.h
+    ctypedef struct acb_struct:
+        pass
+    ctypedef acb_struct[1] acb_t
+    ctypedef acb_struct * acb_ptr
+    ctypedef const acb_struct * acb_srcptr
+
+
+
+    # flint/acb_mat.h
+    ctypedef struct acb_mat_struct:
+        pass
+    ctypedef acb_mat_struct[1] acb_mat_t
+
+
+    # flint/acb_modular.h
+    ctypedef struct psl2z_struct:
+        fmpz a
+        fmpz b
+        fmpz c
+        fmpz d
+    ctypedef psl2z_struct psl2z_t[1];
+
+
+    # flint/acb_poly.h
+    ctypedef struct acb_poly_struct:
+        pass
+    ctypedef acb_poly_struct[1] acb_poly_t
+    ctypedef acb_poly_struct * acb_poly_ptr
+    ctypedef const acb_poly_struct * acb_poly_srcptr
+
+    # flint/acb_calc.h
+    ctypedef struct acb_calc_integrate_opt_struct:
+        long deg_limit
+        long eval_limit
+        long depth_limit
+        bint use_heap
+        int verbose
+    ctypedef acb_calc_integrate_opt_struct acb_calc_integrate_opt_t[1]
+    ctypedef int (*acb_calc_func_t)(acb_ptr out,
+            const acb_t inp, void * param, long order, long prec)
+
+    # flint/d_mat.h
+    ctypedef struct d_mat_struct:
+        double * entries
+        slong r
+        slong c
+        double ** rows
+
+    ctypedef d_mat_struct d_mat_t[1]
+
+
+    # flint/flint.h
+    ctypedef void* flint_rand_t
+    cdef long FLINT_BITS
+    cdef long FLINT_D_BITS
+
+
+    # flint/limb_types.h
+    ctypedef struct n_factor_t:
+        int num
+        unsigned long exp[15]
+        unsigned long p[15]
+
+    ctypedef struct n_primes_struct:
+        pass
+
+    ctypedef n_primes_struct n_primes_t[1]
+
+    long FLINT_MAX_FACTORS_IN_LIMB
+
+
     # flint/fmpz_factor.h
     ctypedef struct ecm_s:
         pass
@@ -78,11 +200,6 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/fmpz_mod.h
-    ctypedef struct fmpz_mod_ctx_struct:
-        pass
-
-    ctypedef fmpz_mod_ctx_struct fmpz_mod_ctx_t[1]
-
     ctypedef struct fmpz_mod_discrete_log_pohlig_hellman_entry_struct:
         pass
 
@@ -152,6 +269,25 @@ cdef extern from "flint_wrap.h":
     ctypedef fmpzi_struct fmpzi_t[1]
 
 
+    # flint/fmpz_poly.h
+    ctypedef struct fmpz_poly_powers_precomp_struct:
+        fmpz ** powers
+        slong len
+
+    ctypedef fmpz_poly_powers_precomp_struct fmpz_poly_powers_precomp_t[1]
+
+    ctypedef struct fmpz_poly_mul_precache_struct:
+       mp_limb_t ** jj
+       slong n
+       slong len2
+       slong loglen
+       slong bits2
+       slong limbs
+       fmpz_poly_t poly2
+
+    ctypedef fmpz_poly_mul_precache_struct fmpz_poly_mul_precache_t[1]
+
+
     # flint/fmpz_mod_types.h
     ctypedef struct fmpz_mod_ctx_struct:
         pass
@@ -199,18 +335,17 @@ cdef extern from "flint_wrap.h":
     ctypedef fmpz_mod_mpoly_factor_struct fmpz_mod_mpoly_factor_t[1]
 
 
-    # flint/fmpq.h
-    ctypedef struct fmpq:
-        pass
-
-    ctypedef fmpq fmpq_t[1]
-
-
     # flint/fmpq_poly.h
     ctypedef struct fmpq_poly_struct:
         pass
 
     ctypedef fmpq_poly_struct fmpq_poly_t[1]
+
+    ctypedef struct fmpq_poly_powers_precomp_struct:
+        fmpq_poly_struct * powers
+        slong len
+
+    ctypedef fmpq_poly_powers_precomp_struct fmpq_poly_powers_precomp_t[1]
 
 
     # flint/fmpq_mat.h
@@ -221,11 +356,6 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/fmpz_mod_poly.h:
-    ctypedef struct fmpz_mod_poly_struct:
-        pass
-
-    ctypedef fmpz_mod_poly_struct fmpz_mod_poly_t[1]
-
     ctypedef struct fmpz_mod_poly_res_struct:
         pass
 
@@ -263,22 +393,6 @@ cdef extern from "flint_wrap.h":
         mp_limb_t n
         mp_limb_t ninv
         mp_bitcnt_t norm
-
-    ctypedef struct nmod_poly_struct:
-        mp_limb_t *coeffs
-        long alloc
-        long length
-        nmod_t mod
-
-    ctypedef nmod_poly_struct nmod_poly_t[1]
-
-    ctypedef struct nmod_poly_factor_struct:
-        nmod_poly_t p
-        long *exp
-        long num
-        long alloc
-
-    ctypedef nmod_poly_factor_struct nmod_poly_factor_t[1]
 
     ctypedef struct nmod_poly_multi_crt_struct:
         pass
@@ -366,13 +480,6 @@ cdef extern from "flint_wrap.h":
     ctypedef nmod_poly_t fq_nmod_t
 
 
-    # flint/ulong_extras.h
-    ctypedef struct n_factor_t:
-        int num
-        unsigned long exp[15]
-        unsigned long p[15]
-
-
     # flint/padic.h
     ctypedef struct padic_struct:
         fmpz u
@@ -439,3 +546,9 @@ cdef extern from "flint_wrap.h":
 
     ctypedef thread_pool_struct thread_pool_t[1]
     ctypedef int thread_pool_handle
+
+
+    # flint/bernoulli.h
+    ctypedef struct bernoulli_rev_struct:
+        pass
+    ctypedef bernoulli_rev_struct bernoulli_rev_t[1]

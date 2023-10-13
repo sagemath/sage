@@ -372,7 +372,7 @@ cdef extern from "flint_wrap.h":
     # It returns 0 if the leading coefficient of *poly* cannot be
     # proved nonzero or if the size of the output matrix does not match.
 
-    int ca_mat_eigenvalues(ca_vec_t lambda, unsigned long * exp, const ca_mat_t mat, ca_ctx_t ctx)
+    int ca_mat_eigenvalues(ca_vec_t lmbda, unsigned long * exp, const ca_mat_t mat, ca_ctx_t ctx)
     # Attempts to compute all complex eigenvalues of the given matrix *mat*.
     # On success, returns 1 and sets *lambda* to the distinct eigenvalues
     # with corresponding multiplicities in *exp*.
@@ -391,7 +391,7 @@ cdef extern from "flint_wrap.h":
     # If the return value is not ``T_TRUE``, the values in *D* and *P*
     # are arbitrary.
 
-    int ca_mat_jordan_blocks(ca_vec_t lambda, long * num_blocks, long * block_lambda, long * block_size, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_jordan_blocks(ca_vec_t lmbda, long * num_blocks, long * block_lambda, long * block_size, const ca_mat_t A, ca_ctx_t ctx)
     # Computes the blocks of the Jordan canonical form of *A*.
     # On success, returns 1 and sets *lambda* to the unique eigenvalues
     # of *A*, sets *num_blocks* to the number of Jordan blocks,
@@ -404,13 +404,13 @@ cdef extern from "flint_wrap.h":
     # The Jordan form is unique up to the ordering of blocks, which
     # is arbitrary.
 
-    void ca_mat_set_jordan_blocks(ca_mat_t mat, const ca_vec_t lambda, long num_blocks, long * block_lambda, long * block_size, ca_ctx_t ctx)
+    void ca_mat_set_jordan_blocks(ca_mat_t mat, const ca_vec_t lmbda, long num_blocks, long * block_lambda, long * block_size, ca_ctx_t ctx)
     # Sets *mat* to the concatenation of the Jordan blocks
     # given in *lambda*, *num_blocks*, *block_lambda* and *block_size*.
     # See :func:`ca_mat_jordan_blocks` for an explanation of these
     # variables.
 
-    int ca_mat_jordan_transformation(ca_mat_t mat, const ca_vec_t lambda, long num_blocks, long * block_lambda, long * block_size, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_jordan_transformation(ca_mat_t mat, const ca_vec_t lmbda, long num_blocks, long * block_lambda, long * block_size, const ca_mat_t A, ca_ctx_t ctx)
     # Given the precomputed Jordan block decomposition
     # (*lambda*, *num_blocks*, *block_lambda*, *block_size*) of the
     # square matrix *A*, computes the corresponding transformation

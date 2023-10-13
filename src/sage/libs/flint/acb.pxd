@@ -917,3 +917,5 @@ cdef extern from "flint_wrap.h":
     # Sorts the vector of complex numbers based on the real and imaginary parts.
     # This is intended to reveal structure when printing a set of complex numbers,
     # not to apply an order relation in a rigorous way.
+
+from .acb_macros cimport *

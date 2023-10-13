@@ -131,7 +131,7 @@ cdef extern from "flint_wrap.h":
 
     int acb_poly_overlaps(const acb_poly_t poly1, const acb_poly_t poly2)
     # Returns nonzero iff *poly1* overlaps with *poly2*. The underscore
-    # function requires that *len1* ist at least as large as *len2*.
+    # function requires that *len1* is at least as large as *len2*.
 
     int acb_poly_get_unique_fmpz_poly(fmpz_poly_t z, const acb_poly_t x)
     # If *x* contains a unique integer polynomial, sets *z* to that value and returns
@@ -588,7 +588,7 @@ cdef extern from "flint_wrap.h":
     # The underscore method supports aliasing and allows the input to be
     # shorter than the output, but requires the lengths to be nonzero.
 
-    void _acb_poly_sin_cos_series(acb_ptr s, acb_ptr c, const acb_srcptr h, long hlen, long n, long prec)
+    void _acb_poly_sin_cos_series(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
     void acb_poly_sin_cos_series(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
     # Sets *s* and *c* to the power series sine and cosine of *h*, computed
     # simultaneously.
@@ -615,7 +615,7 @@ cdef extern from "flint_wrap.h":
     # The underscore version does not support aliasing, and requires
     # the lengths to be nonzero.
 
-    void _acb_poly_sin_cos_pi_series(acb_ptr s, acb_ptr c, const acb_srcptr h, long hlen, long n, long prec)
+    void _acb_poly_sin_cos_pi_series(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
 
     void acb_poly_sin_cos_pi_series(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
 
@@ -633,15 +633,15 @@ cdef extern from "flint_wrap.h":
     # Compute the respective trigonometric functions of the input
     # multiplied by `\pi`.
 
-    void _acb_poly_sinh_cosh_series_basecase(acb_ptr s, acb_ptr c, const acb_srcptr h, long hlen, long n, long prec)
+    void _acb_poly_sinh_cosh_series_basecase(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
 
     void acb_poly_sinh_cosh_series_basecase(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
 
-    void _acb_poly_sinh_cosh_series_exponential(acb_ptr s, acb_ptr c, const acb_srcptr h, long hlen, long n, long prec)
+    void _acb_poly_sinh_cosh_series_exponential(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
 
     void acb_poly_sinh_cosh_series_exponential(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
 
-    void _acb_poly_sinh_cosh_series(acb_ptr s, acb_ptr c, const acb_srcptr h, long hlen, long n, long prec)
+    void _acb_poly_sinh_cosh_series(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
 
     void acb_poly_sinh_cosh_series(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
 
@@ -900,3 +900,5 @@ cdef extern from "flint_wrap.h":
     # If this function returns zero, then the signs of the imaginary parts
     # are not known for certain, based on the accuracy of the inputs
     # and the working precision *prec*.
+
+from .acb_poly_macros cimport *

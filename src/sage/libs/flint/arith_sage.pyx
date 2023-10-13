@@ -15,8 +15,10 @@ FLINT Arithmetic Functions
 
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.libs.flint.types cimport *
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
+from sage.libs.flint.arith cimport *
 
 
 from sage.rings.integer cimport Integer

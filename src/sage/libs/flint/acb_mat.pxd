@@ -466,7 +466,7 @@ cdef extern from "flint_wrap.h":
     # No assumptions are made about the structure of *A* or the
     # quality of the given approximations.
 
-    void acb_mat_eig_enclosure_rump(acb_t lambda, acb_mat_t J, acb_mat_t R, const acb_mat_t A, const acb_t lambda_approx, const acb_mat_t R_approx, long prec)
+    void acb_mat_eig_enclosure_rump(acb_t lmbda, acb_mat_t J, acb_mat_t R, const acb_mat_t A, const acb_t lambda_approx, const acb_mat_t R_approx, long prec)
     # Given an *n* by *n* matrix  *A* and an approximate
     # eigenvalue-eigenvector pair *lambda_approx* and *R_approx* (where
     # *R_approx* is an *n* by 1 matrix), computes an enclosure
@@ -568,3 +568,5 @@ cdef extern from "flint_wrap.h":
     # call :func:`acb_mat_eig_simple_vdhoeven_mourrain` hoping that the
     # eigenvalues are actually simple. It then uses the *rump* algorithm as
     # a fallback.
+
+from .acb_mat_macros cimport *

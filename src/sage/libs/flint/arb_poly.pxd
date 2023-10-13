@@ -135,7 +135,7 @@ cdef extern from "flint_wrap.h":
 
     int arb_poly_overlaps(const arb_poly_t poly1, const arb_poly_t poly2)
     # Returns nonzero iff *poly1* overlaps with *poly2*. The underscore
-    # function requires that *len1* ist at least as large as *len2*.
+    # function requires that *len1* is at least as large as *len2*.
 
     int arb_poly_get_unique_fmpz_poly(fmpz_poly_t z, const arb_poly_t x)
     # If *x* contains a unique integer polynomial, sets *z* to that value and returns

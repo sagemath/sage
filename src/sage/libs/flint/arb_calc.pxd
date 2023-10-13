@@ -75,7 +75,7 @@ cdef extern from "flint_wrap.h":
     # represented exactly as floating-point numbers in memory.
     # Do not pass `1 \pm 2^{-10^{100}}` as input.
 
-    int arb_calc_refine_root_bisect(arf_interval_t r, arb_calc_func_t func, void * param, const arf_interval_t start, long iter, long prec)
+    int arb_calc_refine_root_bisect(arf_interval_t r, arb_calc_func_t func, void * param, const arf_interval_t start, long it, long prec)
     # Given an interval *start* known to contain a single root of *func*,
     # refines it using *iter* bisection steps. The algorithm can
     # return a failure code if the sign of the function at an evaluation

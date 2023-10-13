@@ -384,3 +384,5 @@ cdef extern from "flint_wrap.h":
     void fmpq_mat_minpoly(fmpq_poly_t pol, const fmpq_mat_t mat)
     # Set ``pol`` to the minimal polynomial of the given `n\times n`
     # matrix. If ``mat`` is not square, an exception is raised.
+
+from .fmpq_mat_macros cimport *

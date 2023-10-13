@@ -985,3 +985,5 @@ cdef extern from "flint_wrap.h":
     # See "Faster Algorithms for Integer Lattice Basis Reduction." Technical
     # Report 249. Zurich, Switzerland: Department Informatik, ETH. July 30,
     # 1996.
+
+from .fmpz_mat_macros cimport *
