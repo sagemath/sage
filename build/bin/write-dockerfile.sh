@@ -228,7 +228,7 @@ $ADD .ci /new/.ci
 $ADD .upstream.d /new/.upstream.d
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
-        tar --create --listed-incremental=/tmp/sage.snar --file /dev/null /sage && \
+        tar --create --listed-incremental=/sage.snar --file /dev/null /sage && \
         if command -v git; then                                         \
             (cd /new &&                                                 \
              echo /src >> .gitignore &&                                 \

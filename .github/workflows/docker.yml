@@ -256,7 +256,7 @@ jobs:
         if: always() && inputs.image_artifact
         run: |
           for tag in $(cat .tox/$TOX_ENV/Dockertags); do
-              docker run $tag tar cf - --listed-incremental=/tmp/sage.snar /sage > "$tag-incremental.tar"
+              docker run $tag tar cf - --listed-incremental=/sage.snar /sage > "$tag-incremental.tar"
           done
       - name: Upload incremental tar archives as an artifact
         if: always() && inputs.image_artifact
