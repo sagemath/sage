@@ -1277,6 +1277,28 @@ class Stream_uninitialized(Stream_inexact):
         self._initializing = False
         return result
 
+    def replace(self, stream, sub):
+        r"""
+        Return ``self`` except with ``stream`` replaced by ``sub``.
+
+        .. WARNING::
+
+            This does not update the approximate order or the cache.
+        """
+        if self._target is None:
+            return self
+        if self._target == stream:
+            ret = copy(self)
+            ret._target = sub
+        else:
+            temp = self._target.replace(stream, sub)
+            if temp == self._target:
+                ret = self
+            else:
+                ret = copy(self)
+                ret._target = temp
+        return ret
+
 
 class Stream_functional_equation(Stream_inexact):
     r"""
@@ -1347,7 +1369,7 @@ class Stream_functional_equation(Stream_inexact):
         yield from self._initial_values
 
         from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        P = InfinitePolynomialRing(self._base, 'x')
+        P = InfinitePolynomialRing(self._base, names=('FESDUMMY',))
         x = P.gen()
         PFF = P.fraction_field()
         offset = self._approximate_order
@@ -1368,24 +1390,22 @@ class Stream_functional_equation(Stream_inexact):
                 coeff = P(coeff)
             V = coeff.variables()
 
+            # Substitute for known variables
+            if V:
+                # The infinite polynomial ring is very brittle with substitutions
+                #   and variable comparisons
+                sub = {str(x[i]): val for i, val in enumerate(data)
+                       if any(str(x[i]) == str(va) for va in V)}
+                if sub:
+                    coeff = coeff.subs(sub)
+                    V = P(coeff).variables()
+
             if len(V) > 1:
-                # Substitute for known variables
-                coeff = coeff.subs({str(x[i]): val for i, val in enumerate(data)})
-                V = coeff.variables()
-                if len(V) > 1:
-                    raise ValueError(f"unable to determine a unique solution in degree {n}")
+                raise ValueError(f"unable to determine a unique solution in degree {n}")
 
             if not V:
                 if coeff:
-                    raise ValueError(f"no solution in degree {n} as {coeff} == 0")
-                i = n - self._start
-                #print(i, len(data))
-                if i < len(data):
-                    # We already know this coefficient
-                    yield data[n - self._start]
-                else:
-                    yield self._base.zero()
-                    data.append(self._base.zero())
+                    raise ValueError(f"no solution in degree {n} as {coeff} != 0")
                 n += 1
                 continue
 
@@ -1393,6 +1413,8 @@ class Stream_functional_equation(Stream_inexact):
             hc = coeff.homogeneous_components()
             if not set(hc).issubset([0,1]):
                 raise ValueError(f"unable to determine a unique solution in degree {n}")
+            if str(hc[1].lm()) != str(x[len(data)]):
+                raise ValueError(f"the solutions to the coefficients must be computed in order")
             val = -hc.get(0, P.zero()).lc() / hc[1].lc()
             # Update the cache
             data.append(val)
