@@ -1,6 +1,8 @@
 # Deprecated header file; use sage/libs/flint/arb.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 
+from sage.libs.flint.types cimport arb_struct, arb_t, arb_ptr, arb_srcptr
+
 from sage.libs.flint.arb cimport (
     arb_midref,
     arb_radref,
@@ -21,6 +23,7 @@ from sage.libs.flint.arb cimport (
     arb_get_str,
     arb_zero,
     arb_one,
+    arb_dump_str,
     arb_pos_inf,
     arb_neg_inf,
     arb_zero_pm_inf,

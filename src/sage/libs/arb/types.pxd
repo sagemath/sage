@@ -3,10 +3,9 @@
 
 from sage.libs.flint.types cimport (
     mag_struct,
-    mag_struct mag_t,
+    mag_t,
     mag_ptr,
     mag_srcptr,
-    MAG_BITS,
     arf_struct,
     arf_t,
     arf_ptr,
@@ -22,7 +21,7 @@ from sage.libs.flint.types cimport (
     arb_t,
     arb_ptr,
     arb_srcptr,
-    acb_struct
+    acb_struct,
     acb_t,
     acb_ptr,
     acb_srcptr,
@@ -39,4 +38,3 @@ from sage.libs.flint.types cimport (
     arb_poly_t,
     arb_poly_ptr,
     arb_poly_srcptr)
-

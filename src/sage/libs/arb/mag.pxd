@@ -1,7 +1,10 @@
 # Deprecated header file; use sage/libs/flint/mag.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 
+from sage.libs.flint.types cimport mag_t
+
 from sage.libs.flint.mag cimport (
+    MAG_BITS,
     mag_init,
     mag_clear,
     mag_init_set,

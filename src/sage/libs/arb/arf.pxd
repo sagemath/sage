@@ -1,6 +1,8 @@
 # Deprecated header file; use sage/libs/flint/arf.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 
+from sage.libs.flint.types cimport arf_t
+
 from sage.libs.flint.arf cimport (
     arf_init,
     arf_clear,

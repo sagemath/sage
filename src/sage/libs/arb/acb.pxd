@@ -1,6 +1,8 @@
 # Deprecated header file; use sage/libs/flint/acb.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 
+from sage.libs.flint.types cimport acb_struct, acb_t, acb_ptr, acb_srcptr
+
 from sage.libs.flint.acb cimport (
     acb_realref,
     acb_imagref,
