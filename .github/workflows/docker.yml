@@ -252,13 +252,15 @@ jobs:
              cat .tox/$TOX_ENV/Dockertags
           fi
         if: always()
-      - name: Save docker images as a tar archive
-        if: ${{ inputs.image_artifact }}
+      - name: Save build as incremental tar archives
+        if: always() && inputs.image_artifact
         run: |
-          docker save $(cat .tox/$TOX_ENV/Dockertags) -o images.tar.gz
-      - name: Upload docker image archive as an artifact
-        if: ${{ inputs.image_artifact }}
+          for tag in $(cat .tox/$TOX_ENV/Dockertags); do
+              docker run $tag tar cf - --listed-incremental=/tmp/sage.snar /sage > "$tag-incremental.tar"
+          done
+      - name: Upload incremental tar archives as an artifact
+        if: always() && inputs.image_artifact
         uses: actions/upload-artifact@v3
         with:
-          path: images.tar.gz
+          path: "*-incremental.tar"
           name: ${{ env.IMAGE_ARTIFACT_NAME }}

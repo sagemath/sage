@@ -71,11 +71,11 @@ jobs:
         ["${{ github.event.inputs.platform || 'ubuntu-focal' }}"]
       tox_packages_factors: >-
           ["${{ github.event.inputs.packages || 'standard' }}"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
       image_artifact: image
 
   test-modularized:
     runs-on: ubuntu-latest
+    container: ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal' }}-${{ github.event.inputs.packages || 'packages' }}-with-targets:${{ github.sha }}
     needs: [build]
     strategy:
       fail-fast: false
@@ -84,12 +84,13 @@ jobs:
     env:
       IMAGE_ARTIFACT_NAME: image-commit-${{ github.sha }}-tox-docker-ubuntu-focal-standard
     steps:
-      - name: Download image artifact
+      - name: Download incremental tar archive artifact
         uses: actions/download-artifact@v3
         with:
-          path: image.tar.gz
           name: ${{ env.IMAGE_ARTIFACT_NAME }}
-      - name: Load image
-        run: docker load --input image.tar.gz
+      - name: Update from incremental tar archive
+        run: |
+          (cd / && tar xf -) < *-incremental.tar
       - name: Test
-        run: docker run ghcr.io/${{ github.repository }}/sage-ubuntu-focal-standard-with-targets:${{ github.sha }} "make -j2 V=0 tox && make -j2 ${{ matrix.distribution }}-check"
+        run: |
+          make -j2 V=0 tox-ensure && make -j2 ${{ matrix.distribution }}-check"
