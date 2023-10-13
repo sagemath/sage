@@ -31,22 +31,28 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     steps:
+      - name: Install git
+        uses: ConorMacBride/install-package@v1.1.0
+        with:
+          brew: git
+          apt: git
+  
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
 
-      - name: Update system packages
-        id: prepare
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
-
       - name: Install GH CLI
         uses: dev-hanz-ops/install-gh-cli-action@v0.1.0
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' || github.event.repository.fork }}
         with:
           gh-cli-version: 2.32.0
+
+      - name: Merge CI fixes from sagemath/sage
+        if: ${{ github.event_name == 'pull_request' || github.event.repository.fork }}
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Add prebuilt tree as a worktree
         id: worktree
@@ -76,13 +82,6 @@ jobs:
           rm -rf worktree-image && ln -s /sage worktree-image
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
-
-      - name: Merge CI fixes from sagemath/sage
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          .ci/merge-fixes.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Incremental build, test changed files (sage -t --new)
         id: incremental
