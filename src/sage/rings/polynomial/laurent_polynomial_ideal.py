@@ -94,11 +94,11 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         self._poly_ring = ring.polynomial_ring()
         self._poly_ideal = None  # Create only as needed
         self._saturated = False
-        self._hint = self._poly_ring.ideal([f.monomial_reduction()[0] for f in self.gens()])
-        # if hint is None:
-        #     self._hint = self._poly_ring.zero_ideal()
-        # else:
-        #     self._hint = hint.change_ring(self._poly_ring)
+        # self._hint = self._poly_ring.ideal([f.monomial_reduction()[0] for f in self.gens()])
+        if hint is None:
+            self._hint = self._poly_ring.zero_ideal()
+        else:
+            self._hint = hint.change_ring(self._poly_ring)
 
     def set_hint(self, hint):
         """

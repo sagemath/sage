@@ -1325,17 +1325,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: S.<t> = LaurentPolynomialRing(QQ)
             sage: (t^-2 + 1).xgcd(t^-3 + 1)
             (1, 1/2*t^2 - 1/2*t^3 - 1/2*t^4, 1/2*t^3 + 1/2*t^4)
-            sage: R.<x> = LaurentPolynomialRing(ZZ)
-            sage: f = 2*x^-2 - x^-1 + 4 + x + 139*x^2 - 5*x^3
-            sage: g = -2 - x + 5*x^2 + 4*x^3 - x^4 + x^5
-            sage: f.xgcd(g)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: only implemented when the base ring is an exact field
         """
         R = self.parent()
-        if not R.is_exact() or not R.base_ring().is_field():
-            raise NotImplementedError("only implemented when the base ring is an exact field")
         S = R.polynomial_ring()
         f, df = self.monomial_reduction()
         g, dg = other.monomial_reduction()

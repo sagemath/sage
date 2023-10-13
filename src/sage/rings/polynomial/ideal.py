@@ -85,3 +85,18 @@ class Ideal_1poly_field(Ideal_pid):
         gb = self.gens_reduced()
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
         return PolynomialSequence_generic([gb], self.ring(), immutable=True)
+
+    def change_ring(self, R):
+        """
+        Coerce an ideal into a new ring.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
+            sage: I = P.ideal([x + y])
+            sage: Q.<x,y,z> = LaurentPolynomialRing(QQ, 3)
+            sage: I.change_ring(Q)
+            Ideal (x + y) of Multivariate Laurent Polynomial Ring in x, y, z
+             over Rational Field
+        """
+        return R.ideal(self.gens())
