@@ -29,18 +29,18 @@ cdef extern from "flint_wrap.h":
     void _d_vec_zero(double * vec, slong len)
     # Zeros the entries of ``(vec, len)``.
 
-    int _d_vec_equal(const double * vec1, const double * vec2, slong len)
+    bint _d_vec_equal(const double * vec1, const double * vec2, slong len)
     # Compares two vectors of the given length and returns `1` if they are
     # equal, otherwise returns `0`.
 
-    int _d_vec_is_zero(const double * vec, slong len)
+    bint _d_vec_is_zero(const double * vec, slong len)
     # Returns `1` if ``(vec, len)`` is zero, and `0` otherwise.
 
-    int _d_vec_is_approx_zero(const double * vec, slong len, double eps)
+    bint _d_vec_is_approx_zero(const double * vec, slong len, double eps)
     # Returns `1` if the entries of ``(vec, len)`` are zero to within
     # ``eps``, and `0` otherwise.
 
-    int _d_vec_approx_equal(const double * vec1, const double * vec2, slong len, double eps)
+    bint _d_vec_approx_equal(const double * vec1, const double * vec2, slong len, double eps)
     # Compares two vectors of the given length and returns `1` if their entries
     # are within ``eps`` of each other, otherwise returns `0`.
 

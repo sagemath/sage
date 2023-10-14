@@ -67,14 +67,14 @@ cdef extern from "flint_wrap.h":
     void fmpz_mpoly_gen(fmpz_mpoly_t A, slong var, const fmpz_mpoly_ctx_t ctx)
     # Set *A* to the variable of index *var*, where `var = 0` corresponds to the variable with the most significance with respect to the ordering.
 
-    int fmpz_mpoly_is_gen(const fmpz_mpoly_t A, slong var, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_gen(const fmpz_mpoly_t A, slong var, const fmpz_mpoly_ctx_t ctx)
     # If `var \ge 0`, return `1` if *A* is equal to the `var`-th generator, otherwise return `0`.
     # If `var < 0`, return `1` if the polynomial is equal to any generator, otherwise return `0`.
 
     void fmpz_mpoly_set(fmpz_mpoly_t A, const fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx)
     # Set *A* to *B*.
 
-    int fmpz_mpoly_equal(const fmpz_mpoly_t A, const fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_equal(const fmpz_mpoly_t A, const fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to *B*, else return `0`.
 
     void fmpz_mpoly_swap(fmpz_mpoly_t poly1, fmpz_mpoly_t poly2, const fmpz_mpoly_ctx_t ctx)
@@ -90,7 +90,7 @@ cdef extern from "flint_wrap.h":
     # values of the coefficients of *A*. If all of the coefficients are
     # positive, `b` is returned, otherwise `-b` is returned.
 
-    int fmpz_mpoly_is_fmpz(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_fmpz(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is a constant, else return `0`.
 
     void fmpz_mpoly_get_fmpz(fmpz_t c, const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
@@ -108,15 +108,15 @@ cdef extern from "flint_wrap.h":
     void fmpz_mpoly_one(fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     # Set *A* to the constant `1`.
 
-    int fmpz_mpoly_equal_fmpz(const fmpz_mpoly_t A, const fmpz_t c, const fmpz_mpoly_ctx_t ctx)
-    int fmpz_mpoly_equal_ui(const fmpz_mpoly_t A, ulong c, const fmpz_mpoly_ctx_t ctx)
-    int fmpz_mpoly_equal_si(const fmpz_mpoly_t A, slong c, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_equal_fmpz(const fmpz_mpoly_t A, const fmpz_t c, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_equal_ui(const fmpz_mpoly_t A, ulong c, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_equal_si(const fmpz_mpoly_t A, slong c, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to the constant *c*, else return `0`.
 
-    int fmpz_mpoly_is_zero(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_zero(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is the constant `0`, else return `0`.
 
-    int fmpz_mpoly_is_one(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_one(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is the constant `1`, else return `0`.
 
     int fmpz_mpoly_degrees_fit_si(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
@@ -175,7 +175,7 @@ cdef extern from "flint_wrap.h":
     # Return `1` (resp. `-1`, or `0`) if *A* is after (resp. before, same as) *B* in some arbitrary but fixed total ordering of the polynomials.
     # This ordering agrees with the usual ordering of monomials when *A* and *B* are both monomials.
 
-    int fmpz_mpoly_is_fmpz_poly(const fmpz_mpoly_t A, slong var, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_fmpz_poly(const fmpz_mpoly_t A, slong var, const fmpz_mpoly_ctx_t ctx)
     # Return whether *A* is a univariate polynomial in the variable with index *var*.
 
     int fmpz_mpoly_get_fmpz_poly(fmpz_poly_t A, const fmpz_mpoly_t B, slong var, const fmpz_mpoly_ctx_t ctx)
@@ -189,7 +189,7 @@ cdef extern from "flint_wrap.h":
     fmpz * fmpz_mpoly_term_coeff_ref(fmpz_mpoly_t A, slong i, const fmpz_mpoly_ctx_t ctx)
     # Return a reference to the coefficient of index *i* of *A*.
 
-    int fmpz_mpoly_is_canonical(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_canonical(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is in canonical form. Otherwise, return `0`.
     # To be in canonical form, all of the terms must have nonzero coefficient, and the terms must be sorted from greatest to least.
 
@@ -447,7 +447,7 @@ cdef extern from "flint_wrap.h":
     # If *A* is a perfect square return `1` and set *Q* to the square root
     # with positive leading coefficient. Otherwise return `0` and set *Q* to zero.
 
-    int fmpz_mpoly_is_square(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_is_square(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     # Return `1` if *A* is a perfect square, otherwise return `0`.
 
     void fmpz_mpoly_univar_init(fmpz_mpoly_univar_t A, const fmpz_mpoly_ctx_t ctx)
@@ -670,11 +670,11 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to the primitive part of the reduction (remainder of multivariate
     # quasidivision with remainder) with respect to the polynomials *vec*.
 
-    int fmpz_mpoly_vec_is_groebner(const fmpz_mpoly_vec_t G, const fmpz_mpoly_vec_t F, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_vec_is_groebner(const fmpz_mpoly_vec_t G, const fmpz_mpoly_vec_t F, const fmpz_mpoly_ctx_t ctx)
     # If *F* is *NULL*, checks if *G* is a Gröbner basis. If *F* is not *NULL*,
     # checks if *G* is a Gröbner basis for *F*.
 
-    int fmpz_mpoly_vec_is_autoreduced(const fmpz_mpoly_vec_t F, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_vec_is_autoreduced(const fmpz_mpoly_vec_t F, const fmpz_mpoly_ctx_t ctx)
     # Checks whether the vector *F* is autoreduced (or inter-reduced).
 
     void fmpz_mpoly_vec_autoreduction(fmpz_mpoly_vec_t H, const fmpz_mpoly_vec_t F, const fmpz_mpoly_ctx_t ctx)

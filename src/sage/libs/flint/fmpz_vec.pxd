@@ -142,11 +142,11 @@ cdef extern from "flint_wrap.h":
     # Takes the absolute value of entries in ``(vec2, len2)`` and places the
     # result into ``vec1``.
 
-    int _fmpz_vec_equal(const fmpz * vec1, const fmpz * vec2, slong len)
+    bint _fmpz_vec_equal(const fmpz * vec1, const fmpz * vec2, slong len)
     # Compares two vectors of the given length and returns `1` if they are
     # equal, otherwise returns `0`.
 
-    int _fmpz_vec_is_zero(const fmpz * vec, slong len)
+    bint _fmpz_vec_is_zero(const fmpz * vec, slong len)
     # Returns `1` if ``(vec, len)`` is zero, and `0` otherwise.
 
     void _fmpz_vec_max(fmpz * vec1, const fmpz * vec2, const fmpz * vec3, slong len)

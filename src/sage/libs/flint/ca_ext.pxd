@@ -50,7 +50,7 @@ cdef extern from "flint_wrap.h":
     ulong ca_ext_hash(const ca_ext_t x, ca_ctx_t ctx)
     # Returns a hash of the structural representation of *x*.
 
-    int ca_ext_equal_repr(const ca_ext_t x, const ca_ext_t y, ca_ctx_t ctx)
+    bint ca_ext_equal_repr(const ca_ext_t x, const ca_ext_t y, ca_ctx_t ctx)
     # Tests *x* and *y* for structural equality, returning 0 (false) or 1 (true).
 
     int ca_ext_cmp_repr(const ca_ext_t x, const ca_ext_t y, ca_ctx_t ctx)

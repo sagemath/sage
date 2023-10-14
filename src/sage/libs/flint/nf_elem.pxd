@@ -99,21 +99,21 @@ cdef extern from "flint_wrap.h":
     # Set the `i`-th coefficient of the denominator of `a` to the given integer
     # `d`.
 
-    int _nf_elem_equal(const nf_elem_t a, const nf_elem_t b, const nf_t nf)
+    bint _nf_elem_equal(const nf_elem_t a, const nf_elem_t b, const nf_t nf)
     # Return `1` if the given number field elements are equal in the given
     # number field ``nf``. This function does \emph{not} assume `a` and `b`
     # are canonicalised.
 
-    int nf_elem_equal(const nf_elem_t a, const nf_elem_t b, const nf_t nf)
+    bint nf_elem_equal(const nf_elem_t a, const nf_elem_t b, const nf_t nf)
     # Return `1` if the given number field elements are equal in the given
     # number field ``nf``. This function assumes `a` and `b` \emph{are}
     # canonicalised.
 
-    int nf_elem_is_zero(const nf_elem_t a, const nf_t nf)
+    bint nf_elem_is_zero(const nf_elem_t a, const nf_t nf)
     # Return `1` if the given number field element is equal to zero,
     # otherwise return `0`.
 
-    int nf_elem_is_one(const nf_elem_t a, const nf_t nf)
+    bint nf_elem_is_one(const nf_elem_t a, const nf_t nf)
     # Return `1` if the given number field element is equal to one,
     # otherwise return `0`.
 

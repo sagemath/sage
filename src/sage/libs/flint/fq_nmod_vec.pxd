@@ -46,11 +46,11 @@ cdef extern from "flint_wrap.h":
     void _fq_nmod_vec_neg(fq_nmod_struct * vec1, const fq_nmod_struct * vec2, slong len2, const fq_nmod_ctx_t ctx)
     # Negates ``(vec2, len2)`` and places it into ``vec1``.
 
-    int _fq_nmod_vec_equal(const fq_nmod_struct * vec1, const fq_nmod_struct * vec2, slong len, const fq_nmod_ctx_t ctx)
+    bint _fq_nmod_vec_equal(const fq_nmod_struct * vec1, const fq_nmod_struct * vec2, slong len, const fq_nmod_ctx_t ctx)
     # Compares two vectors of the given length and returns `1` if they are
     # equal, otherwise returns `0`.
 
-    int _fq_nmod_vec_is_zero(const fq_nmod_struct * vec, slong len, const fq_nmod_ctx_t ctx)
+    bint _fq_nmod_vec_is_zero(const fq_nmod_struct * vec, slong len, const fq_nmod_ctx_t ctx)
     # Returns `1` if ``(vec, len)`` is zero, and `0` otherwise.
 
     void _fq_nmod_vec_add(fq_nmod_struct * res, const fq_nmod_struct * vec1, const fq_nmod_struct * vec2, slong len2, const fq_nmod_ctx_t ctx)

@@ -66,14 +66,14 @@ cdef extern from "flint_wrap.h":
     # Ensures that the matrix `A` is reduced modulo `p^N`,
     # without assuming that it is necessarily in canonical form.
 
-    int padic_mat_is_empty(const padic_mat_t A)
+    bint padic_mat_is_empty(const padic_mat_t A)
     # Returns whether the matrix `A` is empty, that is,
     # whether it has zero rows or zero columns.
 
-    int padic_mat_is_square(const padic_mat_t A)
+    bint padic_mat_is_square(const padic_mat_t A)
     # Returns whether the matrix `A` is square.
 
-    int padic_mat_is_canonical(const padic_mat_t A, const padic_ctx_t p)
+    bint padic_mat_is_canonical(const padic_mat_t A, const padic_ctx_t p)
     # Returns whether the matrix `A` is in canonical form.
 
     void padic_mat_set(padic_mat_t B, const padic_mat_t A, const padic_ctx_t p)
@@ -108,10 +108,10 @@ cdef extern from "flint_wrap.h":
     void padic_mat_set_entry_padic(padic_mat_t rop, slong i, slong j, const padic_t op, const padic_ctx_t ctx)
     # Sets the entry in position `(i, j)` in the matrix to ``rop``.
 
-    int padic_mat_equal(const padic_mat_t A, const padic_mat_t B)
+    bint padic_mat_equal(const padic_mat_t A, const padic_mat_t B)
     # Returns whether the two matrices `A` and `B` are equal.
 
-    int padic_mat_is_zero(const padic_mat_t A)
+    bint padic_mat_is_zero(const padic_mat_t A)
     # Returns whether the matrix `A` is zero.
 
     int padic_mat_fprint(FILE * file, const padic_mat_t A, const padic_ctx_t ctx)

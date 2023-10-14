@@ -74,10 +74,10 @@ cdef extern from "flint_wrap.h":
     # Set the words of ``(exp2, N)`` to the words of ``(exp3, N)``
     # multiplied by ``c``.
 
-    int mpoly_monomial_is_zero(const ulong * exp, slong N)
+    bint mpoly_monomial_is_zero(const ulong * exp, slong N)
     # Return 1 if ``(exp, N)`` is zero.
 
-    int mpoly_monomial_equal(const ulong * exp2, const ulong * exp3, slong N)
+    bint mpoly_monomial_equal(const ulong * exp2, const ulong * exp3, slong N)
     # Return 1 if the monomials ``(exp2, N)`` and ``(exp3, N)`` are equal.
 
     void mpoly_get_cmpmask(ulong * cmpmask, slong N, ulong bits, const mpoly_ctx_t mctx)
@@ -86,10 +86,10 @@ cdef extern from "flint_wrap.h":
     # to be compared. Any function that compares monomials should use this
     # comparison mask.
 
-    int mpoly_monomial_lt(const ulong * exp2, const ulong * exp3, slong N, const ulong * cmpmask)
+    bint mpoly_monomial_lt(const ulong * exp2, const ulong * exp3, slong N, const ulong * cmpmask)
     # Return 1 if ``(exp2, N)`` is less than ``(exp3, N)``.
 
-    int mpoly_monomial_gt(const ulong * exp2, const ulong * exp3, slong N, const ulong * cmpmask)
+    bint mpoly_monomial_gt(const ulong * exp2, const ulong * exp3, slong N, const ulong * cmpmask)
     # Return 1 if ``(exp2, N)`` is greater than ``(exp3, N)``.
 
     int mpoly_monomial_cmp(const ulong * exp2, const ulong * exp3, slong N, const ulong * cmpmask)

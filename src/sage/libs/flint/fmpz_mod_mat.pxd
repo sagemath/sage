@@ -50,10 +50,10 @@ cdef extern from "flint_wrap.h":
     # Swaps two matrices by swapping the individual entries rather than swapping
     # the contents of the structs.
 
-    int fmpz_mod_mat_is_empty(const fmpz_mod_mat_t mat)
+    bint fmpz_mod_mat_is_empty(const fmpz_mod_mat_t mat)
     # Return `1` if ``mat`` has either zero rows or columns.
 
-    int fmpz_mod_mat_is_square(const fmpz_mod_mat_t mat)
+    bint fmpz_mod_mat_is_square(const fmpz_mod_mat_t mat)
     # Return `1` if ``mat`` has the same number of rows and columns.
 
     void _fmpz_mod_mat_reduce(fmpz_mod_mat_t mat)
@@ -90,7 +90,7 @@ cdef extern from "flint_wrap.h":
     # bracket followed by a space separated list of coefficients followed
     # by a closing square bracket.
 
-    int fmpz_mod_mat_is_zero(const fmpz_mod_mat_t mat)
+    bint fmpz_mod_mat_is_zero(const fmpz_mod_mat_t mat)
     # Return `1` if ``mat`` is the zero matrix.
 
     void fmpz_mod_mat_set(fmpz_mod_mat_t B, const fmpz_mod_mat_t A)

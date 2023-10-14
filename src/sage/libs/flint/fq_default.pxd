@@ -101,7 +101,7 @@ cdef extern from "flint_wrap.h":
     void fq_default_clear(fq_default_t rop, const fq_default_ctx_t ctx)
     # Clears the element ``rop``.
 
-    int fq_default_is_invertible(const fq_default_t op, const fq_default_ctx_t ctx)
+    bint fq_default_is_invertible(const fq_default_t op, const fq_default_ctx_t ctx)
     # Return ``1`` if ``op`` is an invertible element.
 
     void fq_default_add(fq_default_t rop, const fq_default_t op1, const fq_default_t op2, const fq_default_ctx_t ctx)
@@ -164,7 +164,7 @@ cdef extern from "flint_wrap.h":
     # this computes the root by raising ``op1`` to `p^{d-1}` where
     # `d` is the degree of the extension.
 
-    int fq_default_is_square(const fq_default_t op, const fq_default_ctx_t ctx)
+    bint fq_default_is_square(const fq_default_t op, const fq_default_ctx_t ctx)
     # Return ``1`` if ``op`` is a square.
 
     int fq_default_fprint_pretty(FILE *file, const fq_default_t op, const fq_default_ctx_t ctx)
@@ -268,13 +268,13 @@ cdef extern from "flint_wrap.h":
     # The representatives are taken in `(\mathbb{Z}/p\mathbb{Z})[x]/h(x)` where
     # `h(x)` is the defining polynomial in ``ctx``.
 
-    int fq_default_is_zero(const fq_default_t op, const fq_default_ctx_t ctx)
+    bint fq_default_is_zero(const fq_default_t op, const fq_default_ctx_t ctx)
     # Returns whether ``op`` is equal to zero.
 
-    int fq_default_is_one(const fq_default_t op, const fq_default_ctx_t ctx)
+    bint fq_default_is_one(const fq_default_t op, const fq_default_ctx_t ctx)
     # Returns whether ``op`` is equal to one.
 
-    int fq_default_equal(const fq_default_t op1, const fq_default_t op2, const fq_default_ctx_t ctx)
+    bint fq_default_equal(const fq_default_t op1, const fq_default_t op2, const fq_default_ctx_t ctx)
     # Returns whether ``op1`` and ``op2`` are equal.
 
     void fq_default_trace(fmpz_t rop, const fq_default_t op, const fq_default_ctx_t ctx)

@@ -62,7 +62,7 @@ cdef extern from "flint_wrap.h":
     void nmod_mat_zero(nmod_mat_t mat)
     # Sets all entries of the matrix ``mat`` to zero.
 
-    int nmod_mat_is_zero(const nmod_mat_t mat)
+    bint nmod_mat_is_zero(const nmod_mat_t mat)
     # Returns `1` if all entries of the matrix ``mat`` are zero.
 
     void nmod_mat_window_init(nmod_mat_t window, const nmod_mat_t mat, slong r1, slong c1, slong r2, slong c2)
@@ -143,11 +143,11 @@ cdef extern from "flint_wrap.h":
     # it will have ones on the main diagonal, otherwise it will have random
     # nonzero entries on the main diagonal.
 
-    int nmod_mat_equal(const nmod_mat_t mat1, const nmod_mat_t mat2)
+    bint nmod_mat_equal(const nmod_mat_t mat1, const nmod_mat_t mat2)
     # Returns nonzero if ``mat1`` and ``mat2`` have the same dimensions and elements,
     # and zero otherwise. The moduli are ignored.
 
-    int nmod_mat_is_zero_row(const nmod_mat_t mat, slong i)
+    bint nmod_mat_is_zero_row(const nmod_mat_t mat, slong i)
     # Returns a non-zero value if row `i` of ``mat`` is zero.
 
     void nmod_mat_transpose(nmod_mat_t B, const nmod_mat_t A)

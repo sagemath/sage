@@ -185,7 +185,7 @@ cdef extern from "flint_wrap.h":
     # up to *den_bits* in size. This function requires that *x* is an
     # element of an absolute number field.
 
-    int ca_equal_repr(const ca_t x, const ca_t y, ca_ctx_t ctx)
+    bint ca_equal_repr(const ca_t x, const ca_t y, ca_ctx_t ctx)
     # Returns whether *x* and *y* have identical representation. For field
     # elements, this checks if *x* and *y* belong to the same formal field
     # (with generators having identical representation) and are represented by
@@ -208,28 +208,28 @@ cdef extern from "flint_wrap.h":
     ulong ca_hash_repr(const ca_t x, ca_ctx_t ctx)
     # Hashes the representation of *x*.
 
-    int ca_is_unknown(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_unknown(const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is Unknown.
 
-    int ca_is_special(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_special(const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is a special value or metavalue
     # (not a field element).
 
-    int ca_is_qq_elem(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_qq_elem(const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is represented as an element of the
     # rational field `\mathbb{Q}`.
 
-    int ca_is_qq_elem_zero(const ca_t x, ca_ctx_t ctx)
-    int ca_is_qq_elem_one(const ca_t x, ca_ctx_t ctx)
-    int ca_is_qq_elem_integer(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_qq_elem_zero(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_qq_elem_one(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_qq_elem_integer(const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is represented as the element 0, 1 or
     # any integer in the rational field `\mathbb{Q}`.
 
-    int ca_is_nf_elem(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_nf_elem(const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is represented as an element of a univariate
     # algebraic number field `\mathbb{Q}(a)`.
 
-    int ca_is_cyclotomic_nf_elem(slong * p, ulong * q, const ca_t x, ca_ctx_t ctx)
+    bint ca_is_cyclotomic_nf_elem(slong * p, ulong * q, const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is represented as an element of a univariate
     # cyclotomic field, i.e. `\mathbb{Q}(a)` where *a* is a root of unity.
     # If *p* and *q* are not *NULL* and *x* is represented as an
@@ -244,7 +244,7 @@ cdef extern from "flint_wrap.h":
     # cyclotomic fields count; the return value is 0 if *x*
     # is represented as a rational number.
 
-    int ca_is_generic_elem(const ca_t x, ca_ctx_t ctx)
+    bint ca_is_generic_elem(const ca_t x, ca_ctx_t ctx)
     # Returns whether *x* is represented as a generic field element;
     # i.e. it is not a special value, not represented as
     # an element of the rational field, and not represented as

@@ -100,11 +100,11 @@ cdef extern from "flint_wrap.h":
     void dirichlet_char_index(dirichlet_char_t x, const dirichlet_group_t G, ulong j)
     # Sets *x* to the character whose *log* has lexicographic index *j*.
 
-    int dirichlet_char_eq(const dirichlet_char_t x, const dirichlet_char_t y)
+    bint dirichlet_char_eq(const dirichlet_char_t x, const dirichlet_char_t y)
 
     int dirichlet_char_eq_deep(const dirichlet_group_t G, const dirichlet_char_t x, const dirichlet_char_t y)
 
-    int dirichlet_char_is_principal(const dirichlet_group_t G, const dirichlet_char_t chi)
+    bint dirichlet_char_is_principal(const dirichlet_group_t G, const dirichlet_char_t chi)
 
     ulong dirichlet_conductor_ui(const dirichlet_group_t G, ulong a)
 
@@ -118,9 +118,9 @@ cdef extern from "flint_wrap.h":
 
     ulong dirichlet_order_char(const dirichlet_group_t G, const dirichlet_char_t x)
 
-    int dirichlet_char_is_real(const dirichlet_group_t G, const dirichlet_char_t chi)
+    bint dirichlet_char_is_real(const dirichlet_group_t G, const dirichlet_char_t chi)
 
-    int dirichlet_char_is_primitive(const dirichlet_group_t G, const dirichlet_char_t chi)
+    bint dirichlet_char_is_primitive(const dirichlet_group_t G, const dirichlet_char_t chi)
 
     ulong dirichlet_pairing(const dirichlet_group_t G, ulong m, ulong n)
 

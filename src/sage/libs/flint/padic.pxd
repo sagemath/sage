@@ -149,14 +149,14 @@ cdef extern from "flint_wrap.h":
     # Sets the `p`-adic number ``rop`` to one, reduced modulo the
     # precision of ``rop``.
 
-    int padic_is_zero(const padic_t op)
+    bint padic_is_zero(const padic_t op)
     # Returns whether ``op`` is equal to zero.
 
-    int padic_is_one(const padic_t op)
+    bint padic_is_one(const padic_t op)
     # Returns whether ``op`` is equal to one, that is, whether
     # `u = 1` and `v = 0`.
 
-    int padic_equal(const padic_t op1, const padic_t op2)
+    bint padic_equal(const padic_t op1, const padic_t op2)
     # Returns whether ``op1`` and ``op2`` are equal, that is,
     # whether `u_1 = u_2` and `v_1 = v_2`.
 

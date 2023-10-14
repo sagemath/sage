@@ -96,10 +96,10 @@ cdef extern from "flint_wrap.h":
     truth_t _ca_vec_check_is_zero(ca_srcptr vec, slong len, ca_ctx_t ctx)
     # Returns whether *vec* is the zero vector.
 
-    int _ca_vec_is_fmpq_vec(ca_srcptr vec, slong len, ca_ctx_t ctx)
+    bint _ca_vec_is_fmpq_vec(ca_srcptr vec, slong len, ca_ctx_t ctx)
     # Checks if all elements of *vec* are structurally rational numbers.
 
-    int _ca_vec_fmpq_vec_is_fmpz_vec(ca_srcptr vec, slong len, ca_ctx_t ctx)
+    bint _ca_vec_fmpq_vec_is_fmpz_vec(ca_srcptr vec, slong len, ca_ctx_t ctx)
     # Assuming that all elements of *vec* are structurally rational numbers,
     # checks if all elements are integers.
 

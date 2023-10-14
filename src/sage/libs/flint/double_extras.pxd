@@ -42,7 +42,7 @@ cdef extern from "flint_wrap.h":
     # However, accuracy may be worse depending on compiler flags and
     # the accuracy of the system libm functions.
 
-    int d_is_nan(double x)
+    bint d_is_nan(double x)
     # Returns a nonzero integral value if ``x`` is ``D_NAN``, and otherwise
     # returns 0.
 

@@ -58,27 +58,27 @@ cdef extern from "flint_wrap.h":
     # Removes the highest possible power of ``p`` from ``f`` and
     # returns the exponent.
 
-    int fq_nmod_poly_is_irreducible(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_irreducible(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
 
-    int fq_nmod_poly_is_irreducible_ddf(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_irreducible_ddf(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses fast distinct-degree factorisation.
 
-    int fq_nmod_poly_is_irreducible_ben_or(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_irreducible_ben_or(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses Ben-Or's irreducibility test.
 
-    int _fq_nmod_poly_is_squarefree(const fq_nmod_struct * f, slong len, const fq_nmod_ctx_t ctx)
+    bint _fq_nmod_poly_is_squarefree(const fq_nmod_struct * f, slong len, const fq_nmod_ctx_t ctx)
     # Returns 1 if ``(f, len)`` is squarefree, and 0 otherwise. As a
     # special case, the zero polynomial is not considered squarefree.
     # There are no restrictions on the length.
 
-    int fq_nmod_poly_is_squarefree(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_squarefree(const fq_nmod_poly_t f, const fq_nmod_ctx_t ctx)
     # Returns 1 if ``f`` is squarefree, and 0 otherwise. As a special
     # case, the zero polynomial is not considered squarefree.
 
-    int fq_nmod_poly_factor_equal_deg_prob(fq_nmod_poly_t factor, flint_rand_t state, const fq_nmod_poly_t pol, slong d, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_factor_equal_deg_prob(fq_nmod_poly_t factor, flint_rand_t state, const fq_nmod_poly_t pol, slong d, const fq_nmod_ctx_t ctx)
     # Probabilistic equal degree factorisation of ``pol`` into
     # irreducible factors of degree ``d``. If it passes, a factor is
     # placed in factor and 1 is returned, otherwise 0 is returned and

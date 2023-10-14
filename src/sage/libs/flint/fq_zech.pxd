@@ -212,7 +212,7 @@ cdef extern from "flint_wrap.h":
     # this computes the root by raising ``op1`` to `p^{d-1}` where
     # `d` is the degree of the extension.
 
-    int fq_zech_is_square(const fq_zech_t op, const fq_zech_ctx_t ctx)
+    bint fq_zech_is_square(const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Return ``1`` if ``op`` is a square.
 
     int fq_zech_fprint_pretty(FILE *file, const fq_zech_t op, const fq_zech_ctx_t ctx)
@@ -311,19 +311,19 @@ cdef extern from "flint_wrap.h":
     # Convert a column vector ``col`` of length ``degree(ctx)`` to
     # an element of ``ctx``.
 
-    int fq_zech_is_zero(const fq_zech_t op, const fq_zech_ctx_t ctx)
+    bint fq_zech_is_zero(const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Returns whether ``op`` is equal to zero.
 
-    int fq_zech_is_one(const fq_zech_t op, const fq_zech_ctx_t ctx)
+    bint fq_zech_is_one(const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Returns whether ``op`` is equal to one.
 
-    int fq_zech_equal(const fq_zech_t op1, const fq_zech_t op2, const fq_zech_ctx_t ctx)
+    bint fq_zech_equal(const fq_zech_t op1, const fq_zech_t op2, const fq_zech_ctx_t ctx)
     # Returns whether ``op1`` and ``op2`` are equal.
 
-    int fq_zech_is_invertible(const fq_zech_t op, const fq_zech_ctx_t ctx)
+    bint fq_zech_is_invertible(const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Returns whether ``op`` is an invertible element.
 
-    int fq_zech_is_invertible_f(fq_zech_t f, const fq_zech_t op, const fq_zech_ctx_t ctx)
+    bint fq_zech_is_invertible_f(fq_zech_t f, const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Returns whether ``op`` is an invertible element.  If it is not,
     # then ``f`` is set of a factor of the modulus.  Since the
     # modulus for an ``fq_zech_ctx_t`` is always irreducible, then
@@ -366,7 +366,7 @@ cdef extern from "flint_wrap.h":
     # primitivity of the generator, but can be used to check that other elements
     # are primitive.
 
-    int fq_zech_is_primitive(const fq_zech_t op, const fq_zech_ctx_t ctx)
+    bint fq_zech_is_primitive(const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Returns whether ``op`` is primitive, i.e., whether it is a
     # generator of the multiplicative group of ``ctx``.
 

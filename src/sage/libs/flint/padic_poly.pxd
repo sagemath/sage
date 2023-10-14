@@ -168,14 +168,14 @@ cdef extern from "flint_wrap.h":
     # Note that this operation can take linear time in the length
     # of the polynomial.
 
-    int padic_poly_equal(const padic_poly_t poly1, const padic_poly_t poly2)
+    bint padic_poly_equal(const padic_poly_t poly1, const padic_poly_t poly2)
     # Returns whether the two polynomials ``poly1`` and ``poly2``
     # are equal.
 
-    int padic_poly_is_zero(const padic_poly_t poly)
+    bint padic_poly_is_zero(const padic_poly_t poly)
     # Returns whether the polynomial ``poly`` is the zero polynomial.
 
-    int padic_poly_is_one(const padic_poly_t poly)
+    bint padic_poly_is_one(const padic_poly_t poly)
     # Returns whether the polynomial ``poly`` is equal
     # to the constant polynomial~`1`, taking the precision
     # of the polynomial into account.
@@ -346,7 +346,7 @@ cdef extern from "flint_wrap.h":
     int _padic_poly_print_pretty(const fmpz *poly, slong val, slong len, const char *var, const padic_ctx_t ctx)
     int padic_poly_print_pretty(const padic_poly_t poly, const char *var, const padic_ctx_t ctx)
 
-    int _padic_poly_is_canonical(const fmpz *op, slong val, slong len, const padic_ctx_t ctx)
-    int padic_poly_is_canonical(const padic_poly_t op, const padic_ctx_t ctx)
-    int _padic_poly_is_reduced(const fmpz *op, slong val, slong len, slong N, const padic_ctx_t ctx)
-    int padic_poly_is_reduced(const padic_poly_t op, const padic_ctx_t ctx)
+    bint _padic_poly_is_canonical(const fmpz *op, slong val, slong len, const padic_ctx_t ctx)
+    bint padic_poly_is_canonical(const padic_poly_t op, const padic_ctx_t ctx)
+    bint _padic_poly_is_reduced(const fmpz *op, slong val, slong len, slong N, const padic_ctx_t ctx)
+    bint padic_poly_is_reduced(const padic_poly_t op, const padic_ctx_t ctx)

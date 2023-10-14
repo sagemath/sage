@@ -58,29 +58,29 @@ cdef extern from "flint_wrap.h":
     void d_mat_print(const d_mat_t mat)
     # Prints the given matrix to the stream ``stdout``.
 
-    int d_mat_equal(const d_mat_t mat1, const d_mat_t mat2)
+    bint d_mat_equal(const d_mat_t mat1, const d_mat_t mat2)
     # Returns a non-zero value if ``mat1`` and ``mat2`` have
     # the same dimensions and entries, and zero otherwise.
 
-    int d_mat_approx_equal(const d_mat_t mat1, const d_mat_t mat2, double eps)
+    bint d_mat_approx_equal(const d_mat_t mat1, const d_mat_t mat2, double eps)
     # Returns a non-zero value if ``mat1`` and ``mat2`` have
     # the same dimensions and entries within ``eps`` of each other,
     # and zero otherwise.
 
-    int d_mat_is_zero(const d_mat_t mat)
+    bint d_mat_is_zero(const d_mat_t mat)
     # Returns a non-zero value if all entries ``mat`` are zero, and
     # otherwise returns zero.
 
-    int d_mat_is_approx_zero(const d_mat_t mat, double eps)
+    bint d_mat_is_approx_zero(const d_mat_t mat, double eps)
     # Returns a non-zero value if all entries ``mat`` are zero to within
     # ``eps`` and otherwise returns zero.
 
-    int d_mat_is_empty(const d_mat_t mat)
+    bint d_mat_is_empty(const d_mat_t mat)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns
     # zero.
 
-    int d_mat_is_square(const d_mat_t mat)
+    bint d_mat_is_square(const d_mat_t mat)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

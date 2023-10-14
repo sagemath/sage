@@ -38,7 +38,7 @@ cdef extern from "flint_wrap.h":
     void mpfr_mat_zero(mpfr_mat_t mat)
     # Set ``mat`` to the zero matrix.
 
-    int mpfr_mat_equal(const mpfr_mat_t mat1, const mpfr_mat_t mat2)
+    bint mpfr_mat_equal(const mpfr_mat_t mat1, const mpfr_mat_t mat2)
     # Return `1` if the two given matrices are equal, otherwise return `0`.
 
     void mpfr_mat_randtest(mpfr_mat_t mat, flint_rand_t state)

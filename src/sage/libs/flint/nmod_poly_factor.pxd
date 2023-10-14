@@ -55,30 +55,30 @@ cdef extern from "flint_wrap.h":
     # Removes the highest possible power of ``p`` from ``f`` and
     # returns the exponent.
 
-    int nmod_poly_is_irreducible(const nmod_poly_t f)
+    bint nmod_poly_is_irreducible(const nmod_poly_t f)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
 
-    int nmod_poly_is_irreducible_ddf(const nmod_poly_t f)
+    bint nmod_poly_is_irreducible_ddf(const nmod_poly_t f)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses fast distinct-degree factorisation.
 
-    int nmod_poly_is_irreducible_rabin(const nmod_poly_t f)
+    bint nmod_poly_is_irreducible_rabin(const nmod_poly_t f)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses Rabin irreducibility test.
 
-    int _nmod_poly_is_squarefree(mp_srcptr f, slong len, nmod_t mod)
+    bint _nmod_poly_is_squarefree(mp_srcptr f, slong len, nmod_t mod)
     # Returns 1 if ``(f, len)`` is squarefree, and 0 otherwise. As a
     # special case, the zero polynomial is not considered squarefree.
     # There are no restrictions on the length.
 
-    int nmod_poly_is_squarefree(const nmod_poly_t f)
+    bint nmod_poly_is_squarefree(const nmod_poly_t f)
     # Returns 1 if ``f`` is squarefree, and 0 otherwise. As a special
     # case, the zero polynomial is not considered squarefree.
 
     void nmod_poly_factor_squarefree(nmod_poly_factor_t res, const nmod_poly_t f)
     # Sets ``res`` to a square-free factorization of ``f``.
 
-    int nmod_poly_factor_equal_deg_prob(nmod_poly_t factor, flint_rand_t state, const nmod_poly_t pol, slong d)
+    bint nmod_poly_factor_equal_deg_prob(nmod_poly_t factor, flint_rand_t state, const nmod_poly_t pol, slong d)
     # Probabilistic equal degree factorisation of ``pol`` into
     # irreducible factors of degree ``d``. If it passes, a factor is
     # placed in factor and 1 is returned, otherwise 0 is returned and

@@ -24,10 +24,10 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_set_fmpz(fmpz_t a, const fmpz_t b, const fmpz_mod_ctx_t ctx)
     # Set ``a`` to ``b`` after reduction modulo the modulus.
 
-    int fmpz_mod_is_canonical(const fmpz_t a, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_is_canonical(const fmpz_t a, const fmpz_mod_ctx_t ctx)
     # Return ``1`` if `a` is in the canonical range `[0,n)` and ``0`` otherwise.
 
-    int fmpz_mod_is_one(const fmpz_t a, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_is_one(const fmpz_t a, const fmpz_mod_ctx_t ctx)
     # Return ``1`` if `a` is `1` modulo `n` and return ``0`` otherwise.
 
     void fmpz_mod_add(fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_mod_ctx_t ctx)

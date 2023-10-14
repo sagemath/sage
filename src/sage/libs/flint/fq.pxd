@@ -185,7 +185,7 @@ cdef extern from "flint_wrap.h":
     # this computes the root by raising ``op1`` to `p^{d-1}` where
     # `d` is the degree of the extension.
 
-    int fq_is_square(const fq_t op, const fq_ctx_t ctx)
+    bint fq_is_square(const fq_t op, const fq_ctx_t ctx)
     # Return ``1`` if ``op`` is a square.
 
     int fq_fprint_pretty(FILE *file, const fq_t op, const fq_ctx_t ctx)
@@ -285,19 +285,19 @@ cdef extern from "flint_wrap.h":
     void fq_set_fmpz_mod_mat(fq_t a, const fmpz_mod_mat_t col, const fq_ctx_t ctx)
     # Convert a column vector ``col`` of length ``degree(ctx)`` to an element of ``ctx``.
 
-    int fq_is_zero(const fq_t op, const fq_ctx_t ctx)
+    bint fq_is_zero(const fq_t op, const fq_ctx_t ctx)
     # Returns whether ``op`` is equal to zero.
 
-    int fq_is_one(const fq_t op, const fq_ctx_t ctx)
+    bint fq_is_one(const fq_t op, const fq_ctx_t ctx)
     # Returns whether ``op`` is equal to one.
 
-    int fq_equal(const fq_t op1, const fq_t op2, const fq_ctx_t ctx)
+    bint fq_equal(const fq_t op1, const fq_t op2, const fq_ctx_t ctx)
     # Returns whether ``op1`` and ``op2`` are equal.
 
-    int fq_is_invertible(const fq_t op, const fq_ctx_t ctx)
+    bint fq_is_invertible(const fq_t op, const fq_ctx_t ctx)
     # Returns whether ``op`` is an invertible element.
 
-    int fq_is_invertible_f(fq_t f, const fq_t op, const fq_ctx_t ctx)
+    bint fq_is_invertible_f(fq_t f, const fq_t op, const fq_ctx_t ctx)
     # Returns whether ``op`` is an invertible element.  If it is not,
     # then ``f`` is set of a factor of the modulus.
 
@@ -349,7 +349,7 @@ cdef extern from "flint_wrap.h":
     # This function can also be used to check primitivity of a generator of
     # a finite field whose defining polynomial is not primitive.
 
-    int fq_is_primitive(const fq_t op, const fq_ctx_t ctx)
+    bint fq_is_primitive(const fq_t op, const fq_ctx_t ctx)
     # Returns whether ``op`` is primitive, i.e., whether it is a
     # generator of the multiplicative group of ``ctx``.
 

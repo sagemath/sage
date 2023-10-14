@@ -132,25 +132,25 @@ cdef extern from "flint_wrap.h":
     # Generates a random complex number, with very high probability of
     # generating integers and half-integers.
 
-    int acb_is_zero(const acb_t z)
+    bint acb_is_zero(const acb_t z)
     # Returns nonzero iff *z* is zero.
 
-    int acb_is_one(const acb_t z)
+    bint acb_is_one(const acb_t z)
     # Returns nonzero iff *z* is exactly 1.
 
-    int acb_is_finite(const acb_t z)
+    bint acb_is_finite(const acb_t z)
     # Returns nonzero iff *z* certainly is finite.
 
-    int acb_is_exact(const acb_t z)
+    bint acb_is_exact(const acb_t z)
     # Returns nonzero iff *z* is exact.
 
-    int acb_is_int(const acb_t z)
+    bint acb_is_int(const acb_t z)
     # Returns nonzero iff *z* is an exact integer.
 
-    int acb_is_int_2exp_si(const acb_t x, slong e)
+    bint acb_is_int_2exp_si(const acb_t x, slong e)
     # Returns nonzero iff *z* exactly equals `n 2^e` for some integer *n*.
 
-    int acb_equal(const acb_t x, const acb_t y)
+    bint acb_equal(const acb_t x, const acb_t y)
     # Returns nonzero iff *x* and *y* are identical as sets, i.e.
     # if the real and imaginary parts are equal as balls.
     # Note that this is not the same thing as testing whether both
@@ -160,19 +160,19 @@ cdef extern from "flint_wrap.h":
     # quantity, use :func:`acb_overlaps` or :func:`acb_contains`,
     # depending on the circumstance.
 
-    int acb_equal_si(const acb_t x, slong y)
+    bint acb_equal_si(const acb_t x, slong y)
     # Returns nonzero iff *x* is equal to the integer *y*.
 
-    int acb_eq(const acb_t x, const acb_t y)
+    bint acb_eq(const acb_t x, const acb_t y)
     # Returns nonzero iff *x* and *y* are certainly equal, as determined
     # by testing that :func:`arb_eq` holds for both the real and imaginary
     # parts.
 
-    int acb_ne(const acb_t x, const acb_t y)
+    bint acb_ne(const acb_t x, const acb_t y)
     # Returns nonzero iff *x* and *y* are certainly not equal, as determined
     # by testing that :func:`arb_ne` holds for either the real or imaginary parts.
 
-    int acb_overlaps(const acb_t x, const acb_t y)
+    bint acb_overlaps(const acb_t x, const acb_t y)
     # Returns nonzero iff *x* and *y* have some point in common.
 
     void acb_union(acb_t z, const acb_t x, const acb_t y, slong prec)
@@ -196,21 +196,21 @@ cdef extern from "flint_wrap.h":
     void acb_get_mag_lower(mag_t u, const acb_t x)
     # Sets *u* to a lower bound for the absolute value of *x*.
 
-    int acb_contains_fmpq(const acb_t x, const fmpq_t y)
+    bint acb_contains_fmpq(const acb_t x, const fmpq_t y)
 
-    int acb_contains_fmpz(const acb_t x, const fmpz_t y)
+    bint acb_contains_fmpz(const acb_t x, const fmpz_t y)
 
-    int acb_contains(const acb_t x, const acb_t y)
+    bint acb_contains(const acb_t x, const acb_t y)
     # Returns nonzero iff *y* is contained in *x*.
 
-    int acb_contains_zero(const acb_t x)
+    bint acb_contains_zero(const acb_t x)
     # Returns nonzero iff zero is contained in *x*.
 
-    int acb_contains_int(const acb_t x)
+    bint acb_contains_int(const acb_t x)
     # Returns nonzero iff the complex interval represented by *x* contains
     # an integer.
 
-    int acb_contains_interior(const acb_t x, const acb_t y)
+    bint acb_contains_interior(const acb_t x, const acb_t y)
     # Tests if *y* is contained in the interior of *x*.
     # This predicate always evaluates to false if *x* and *y* are both
     # real-valued, since an imaginary part of 0 is not considered contained in
@@ -248,7 +248,7 @@ cdef extern from "flint_wrap.h":
     # Sets *y* to a a copy of *x* with both the real and imaginary
     # parts trimmed (see :func:`arb_trim`).
 
-    int acb_is_real(const acb_t x)
+    bint acb_is_real(const acb_t x)
     # Returns nonzero iff the imaginary part of *x* is zero.
     # It does not test whether the real part of *x* also is finite.
 
@@ -840,10 +840,10 @@ cdef extern from "flint_wrap.h":
     void _acb_vec_zero(acb_ptr A, slong n)
     # Sets all entries in *vec* to zero.
 
-    int _acb_vec_is_zero(acb_srcptr vec, slong len)
+    bint _acb_vec_is_zero(acb_srcptr vec, slong len)
     # Returns nonzero iff all entries in *x* are zero.
 
-    int _acb_vec_is_real(acb_srcptr v, slong len)
+    bint _acb_vec_is_real(acb_srcptr v, slong len)
     # Returns nonzero iff all entries in *x* have zero imaginary part.
 
     void _acb_vec_set(acb_ptr res, acb_srcptr vec, slong len)

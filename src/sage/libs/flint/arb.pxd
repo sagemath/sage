@@ -414,30 +414,30 @@ cdef extern from "flint_wrap.h":
     # To be conservative, zero is returned when *x* is non-finite, even if it
     # is an "exact" infinity.
 
-    int arb_is_zero(const arb_t x)
+    bint arb_is_zero(const arb_t x)
     # Returns nonzero iff the midpoint and radius of *x* are both zero.
 
-    int arb_is_nonzero(const arb_t x)
+    bint arb_is_nonzero(const arb_t x)
     # Returns nonzero iff zero is not contained in the interval represented
     # by *x*.
 
-    int arb_is_one(const arb_t f)
+    bint arb_is_one(const arb_t f)
     # Returns nonzero iff *x* is exactly 1.
 
-    int arb_is_finite(const arb_t x)
+    bint arb_is_finite(const arb_t x)
     # Returns nonzero iff the midpoint and radius of *x* are both finite
     # floating-point numbers, i.e. not infinities or NaN.
 
-    int arb_is_exact(const arb_t x)
+    bint arb_is_exact(const arb_t x)
     # Returns nonzero iff the radius of *x* is zero.
 
-    int arb_is_int(const arb_t x)
+    bint arb_is_int(const arb_t x)
     # Returns nonzero iff *x* is an exact integer.
 
-    int arb_is_int_2exp_si(const arb_t x, slong e)
+    bint arb_is_int_2exp_si(const arb_t x, slong e)
     # Returns nonzero iff *x* exactly equals `n 2^e` for some integer *n*.
 
-    int arb_equal(const arb_t x, const arb_t y)
+    bint arb_equal(const arb_t x, const arb_t y)
     # Returns nonzero iff *x* and *y* are equal as balls, i.e. have both the
     # same midpoint and radius.
     # Note that this is not the same thing as testing whether both
@@ -447,37 +447,37 @@ cdef extern from "flint_wrap.h":
     # quantity, use :func:`arb_overlaps` or :func:`arb_contains`,
     # depending on the circumstance.
 
-    int arb_equal_si(const arb_t x, slong y)
+    bint arb_equal_si(const arb_t x, slong y)
     # Returns nonzero iff *x* is equal to the integer *y*.
 
-    int arb_is_positive(const arb_t x)
+    bint arb_is_positive(const arb_t x)
 
-    int arb_is_nonnegative(const arb_t x)
+    bint arb_is_nonnegative(const arb_t x)
 
-    int arb_is_negative(const arb_t x)
+    bint arb_is_negative(const arb_t x)
 
-    int arb_is_nonpositive(const arb_t x)
+    bint arb_is_nonpositive(const arb_t x)
     # Returns nonzero iff all points *p* in the interval represented by *x*
     # satisfy, respectively, `p > 0`, `p \ge 0`, `p < 0`, `p \le 0`.
     # If *x* contains NaN, returns zero.
 
-    int arb_overlaps(const arb_t x, const arb_t y)
+    bint arb_overlaps(const arb_t x, const arb_t y)
     # Returns nonzero iff *x* and *y* have some point in common.
     # If either *x* or *y* contains NaN, this function always returns nonzero
     # (as a NaN could be anything, it could in particular contain any
     # number that is included in the other operand).
 
-    int arb_contains_arf(const arb_t x, const arf_t y)
+    bint arb_contains_arf(const arb_t x, const arf_t y)
 
-    int arb_contains_fmpq(const arb_t x, const fmpq_t y)
+    bint arb_contains_fmpq(const arb_t x, const fmpq_t y)
 
-    int arb_contains_fmpz(const arb_t x, const fmpz_t y)
+    bint arb_contains_fmpz(const arb_t x, const fmpz_t y)
 
-    int arb_contains_si(const arb_t x, slong y)
+    bint arb_contains_si(const arb_t x, slong y)
 
-    int arb_contains_mpfr(const arb_t x, const mpfr_t y)
+    bint arb_contains_mpfr(const arb_t x, const mpfr_t y)
 
-    int arb_contains(const arb_t x, const arb_t y)
+    bint arb_contains(const arb_t x, const arb_t y)
     # Returns nonzero iff the given number (or ball) *y* is contained in
     # the interval represented by *x*.
     # If *x* contains NaN, this function always returns nonzero (as it
@@ -485,37 +485,37 @@ cdef extern from "flint_wrap.h":
     # the points included in *y*).
     # If *y* contains NaN and *x* does not, it always returns zero.
 
-    int arb_contains_int(const arb_t x)
+    bint arb_contains_int(const arb_t x)
     # Returns nonzero iff the interval represented by *x* contains an integer.
 
-    int arb_contains_zero(const arb_t x)
+    bint arb_contains_zero(const arb_t x)
 
-    int arb_contains_negative(const arb_t x)
+    bint arb_contains_negative(const arb_t x)
 
-    int arb_contains_nonpositive(const arb_t x)
+    bint arb_contains_nonpositive(const arb_t x)
 
-    int arb_contains_positive(const arb_t x)
+    bint arb_contains_positive(const arb_t x)
 
-    int arb_contains_nonnegative(const arb_t x)
+    bint arb_contains_nonnegative(const arb_t x)
     # Returns nonzero iff there is any point *p* in the interval represented
     # by *x* satisfying, respectively, `p = 0`, `p < 0`, `p \le 0`, `p > 0`, `p \ge 0`.
     # If *x* contains NaN, returns nonzero.
 
-    int arb_contains_interior(const arb_t x, const arb_t y)
+    bint arb_contains_interior(const arb_t x, const arb_t y)
     # Tests if *y* is contained in the interior of *x*; that is, contained
     # in *x* and not touching either endpoint.
 
-    int arb_eq(const arb_t x, const arb_t y)
+    bint arb_eq(const arb_t x, const arb_t y)
 
-    int arb_ne(const arb_t x, const arb_t y)
+    bint arb_ne(const arb_t x, const arb_t y)
 
-    int arb_lt(const arb_t x, const arb_t y)
+    bint arb_lt(const arb_t x, const arb_t y)
 
-    int arb_le(const arb_t x, const arb_t y)
+    bint arb_le(const arb_t x, const arb_t y)
 
-    int arb_gt(const arb_t x, const arb_t y)
+    bint arb_gt(const arb_t x, const arb_t y)
 
-    int arb_ge(const arb_t x, const arb_t y)
+    bint arb_ge(const arb_t x, const arb_t y)
     # Respectively performs the comparison `x = y`, `x \ne y`,
     # `x < y`, `x \le y`, `x > y`, `x \ge y` in a mathematically meaningful way.
     # If the comparison `t \, (\operatorname{op}) \, u` holds for all
@@ -1432,10 +1432,10 @@ cdef extern from "flint_wrap.h":
     void _arb_vec_zero(arb_ptr vec, slong n)
     # Sets all entries in *vec* to zero.
 
-    int _arb_vec_is_zero(arb_srcptr vec, slong len)
+    bint _arb_vec_is_zero(arb_srcptr vec, slong len)
     # Returns nonzero iff all entries in *x* are zero.
 
-    int _arb_vec_is_finite(arb_srcptr x, slong len)
+    bint _arb_vec_is_finite(arb_srcptr x, slong len)
     # Returns nonzero iff all entries in *x* certainly are finite.
 
     void _arb_vec_set(arb_ptr res, arb_srcptr vec, slong len)

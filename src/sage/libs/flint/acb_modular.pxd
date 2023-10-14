@@ -27,7 +27,7 @@ cdef extern from "flint_wrap.h":
     void psl2z_one(psl2z_t g)
     # Sets *g* to the identity element.
 
-    int psl2z_is_one(const psl2z_t g)
+    bint psl2z_is_one(const psl2z_t g)
     # Returns nonzero iff *g* is the identity element.
 
     void psl2z_print(const psl2z_t g)
@@ -36,7 +36,7 @@ cdef extern from "flint_wrap.h":
     void psl2z_fprint(FILE * file, const psl2z_t g)
     # Prints *g* to the stream *file*.
 
-    int psl2z_equal(const psl2z_t f, const psl2z_t g)
+    bint psl2z_equal(const psl2z_t f, const psl2z_t g)
     # Returns nonzero iff *f* and *g* are equal.
 
     void psl2z_mul(psl2z_t h, const psl2z_t f, const psl2z_t g)
@@ -46,7 +46,7 @@ cdef extern from "flint_wrap.h":
     void psl2z_inv(psl2z_t h, const psl2z_t g)
     # Sets *h* to the inverse of *g*.
 
-    int psl2z_is_correct(const psl2z_t g)
+    bint psl2z_is_correct(const psl2z_t g)
     # Returns nonzero iff *g* contains correct data, i.e.
     # satisfying `ad-bc = 1`, `c \ge 0`, and `d > 0` if `c = 0`.
 
@@ -97,7 +97,7 @@ cdef extern from "flint_wrap.h":
     # but it is up to the user to verify a posteriori that `w` is close enough
     # to the fundamental domain.
 
-    int acb_modular_is_in_fundamental_domain(const acb_t z, const arf_t tol, slong prec)
+    bint acb_modular_is_in_fundamental_domain(const acb_t z, const arf_t tol, slong prec)
     # Returns nonzero if it is certainly true that `|z| \ge 1 - \varepsilon` and
     # `|\operatorname{Re}(z)| \le 1/2 + \varepsilon` where `\varepsilon` is
     # specified by *tol*. Returns zero if this is false or cannot be determined.

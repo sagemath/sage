@@ -157,30 +157,30 @@ cdef extern from "flint_wrap.h":
     # Sets the coefficient of `X^n` in the polynomial to `x`,
     # assuming `n \geq 0`.
 
-    int fq_nmod_poly_equal(const fq_nmod_poly_t poly1, const fq_nmod_poly_t poly2, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_equal(const fq_nmod_poly_t poly1, const fq_nmod_poly_t poly2, const fq_nmod_ctx_t ctx)
     # Returns nonzero if the two polynomials ``poly1`` and ``poly2``
     # are equal, otherwise return zero.
 
-    int fq_nmod_poly_equal_trunc(const fq_nmod_poly_t poly1, const fq_nmod_poly_t poly2, slong n, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_equal_trunc(const fq_nmod_poly_t poly1, const fq_nmod_poly_t poly2, slong n, const fq_nmod_ctx_t ctx)
     # Notionally truncate ``poly1`` and ``poly2`` to length `n` and
     # return nonzero if they are equal, otherwise return zero.
 
-    int fq_nmod_poly_is_zero(const fq_nmod_poly_t poly, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_zero(const fq_nmod_poly_t poly, const fq_nmod_ctx_t ctx)
     # Returns whether the polynomial ``poly`` is the zero polynomial.
 
-    int fq_nmod_poly_is_one(const fq_nmod_poly_t op, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_one(const fq_nmod_poly_t op, const fq_nmod_ctx_t ctx)
     # Returns whether the polynomial ``poly`` is equal
     # to the constant polynomial `1`.
 
-    int fq_nmod_poly_is_gen(const fq_nmod_poly_t op, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_gen(const fq_nmod_poly_t op, const fq_nmod_ctx_t ctx)
     # Returns whether the polynomial ``poly`` is equal
     # to the polynomial `x`.
 
-    int fq_nmod_poly_is_unit(const fq_nmod_poly_t op, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_is_unit(const fq_nmod_poly_t op, const fq_nmod_ctx_t ctx)
     # Returns whether the polynomial ``poly`` is a unit in the polynomial
     # ring `\mathbf{F}_q[X]`, i.e. if it has degree `0` and is non-zero.
 
-    int fq_nmod_poly_equal_fq_nmod(const fq_nmod_poly_t poly, const fq_nmod_t c, const fq_nmod_ctx_t ctx)
+    bint fq_nmod_poly_equal_fq_nmod(const fq_nmod_poly_t poly, const fq_nmod_t c, const fq_nmod_ctx_t ctx)
     # Returns whether the polynomial ``poly`` is equal the (constant)
     # `\mathbf{F}_q` element ``c``
 

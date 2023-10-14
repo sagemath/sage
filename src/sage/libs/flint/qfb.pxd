@@ -45,7 +45,7 @@ cdef extern from "flint_wrap.h":
     void qfb_set(qfb_t f, qfb_t g)
     # Set the binary quadratic form `f` to be equal to `g`.
 
-    int qfb_equal(qfb_t f, qfb_t g)
+    bint qfb_equal(qfb_t f, qfb_t g)
     # Returns `1` if `f` and `g` are identical binary quadratic forms,
     # otherwise returns `0`.
 
@@ -61,7 +61,7 @@ cdef extern from "flint_wrap.h":
     # Set `r` to a reduced form equivalent to the binary quadratic form `f`
     # of discriminant `D`.
 
-    int qfb_is_reduced(qfb_t r)
+    bint qfb_is_reduced(qfb_t r)
     # Returns `1` if `q` is a reduced binary quadratic form, otherwise
     # returns `0`. Note that this only tests for definite quadratic
     # forms, so a form `r = (a,b,c)` is reduced if and only if `|b| \le a \le
@@ -106,7 +106,7 @@ cdef extern from "flint_wrap.h":
     void qfb_inverse(qfb_t r, qfb_t f)
     # Set `r` to the inverse of the binary quadratic form `f`.
 
-    int qfb_is_principal_form(qfb_t f, fmpz_t D)
+    bint qfb_is_principal_form(qfb_t f, fmpz_t D)
     # Return `1` if `f` is the reduced principal form of discriminant `D`,
     # i.e. the identity in the form class group, else `0`.
 
@@ -114,7 +114,7 @@ cdef extern from "flint_wrap.h":
     # Set `f` to the principal form of discriminant `D`, i.e. the identity in
     # the form class group.
 
-    int qfb_is_primitive(qfb_t f)
+    bint qfb_is_primitive(qfb_t f)
     # Return `1` if `f` is primitive, i.e. the greatest common divisor of its
     # three coefficients is `1`. Otherwise the function returns `0`.
 

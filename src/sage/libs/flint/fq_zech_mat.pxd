@@ -139,23 +139,23 @@ cdef extern from "flint_wrap.h":
     # otherwise it will have random nonzero entries on the main
     # diagonal.
 
-    int fq_zech_mat_equal(const fq_zech_mat_t mat1, const fq_zech_mat_t mat2, const fq_zech_ctx_t ctx)
+    bint fq_zech_mat_equal(const fq_zech_mat_t mat1, const fq_zech_mat_t mat2, const fq_zech_ctx_t ctx)
     # Returns nonzero if mat1 and mat2 have the same dimensions and elements,
     # and zero otherwise.
 
-    int fq_zech_mat_is_zero(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
+    bint fq_zech_mat_is_zero(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
     # Returns a non-zero value if all entries ``mat`` are zero, and
     # otherwise returns zero.
 
-    int fq_zech_mat_is_one(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
+    bint fq_zech_mat_is_one(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
     # Returns a non-zero value if all entries ``mat`` are zero except the
     # diagonal entries which must be one, otherwise returns zero.
 
-    int fq_zech_mat_is_empty(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
+    bint fq_zech_mat_is_empty(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns zero.
 
-    int fq_zech_mat_is_square(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
+    bint fq_zech_mat_is_square(const fq_zech_mat_t mat, const fq_zech_ctx_t ctx)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

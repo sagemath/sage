@@ -25,11 +25,11 @@ cdef extern from "flint_wrap.h":
     void bool_mat_clear(bool_mat_t mat)
     # Clears the matrix, deallocating all entries.
 
-    int bool_mat_is_empty(const bool_mat_t mat)
+    bint bool_mat_is_empty(const bool_mat_t mat)
     # Returns nonzero iff the number of rows or the number of columns in *mat*
     # is zero. Note that this does not depend on the entry values of *mat*.
 
-    int bool_mat_is_square(const bool_mat_t mat)
+    bint bool_mat_is_square(const bool_mat_t mat)
     # Returns nonzero iff the number of rows is equal to the number of columns in *mat*.
 
     void bool_mat_set(bool_mat_t dest, const bool_mat_t src)
@@ -41,7 +41,7 @@ cdef extern from "flint_wrap.h":
     void bool_mat_fprint(FILE * file, const bool_mat_t mat)
     # Prints each entry in the matrix to the stream *file*.
 
-    int bool_mat_equal(const bool_mat_t mat1, const bool_mat_t mat2)
+    bint bool_mat_equal(const bool_mat_t mat1, const bool_mat_t mat2)
     # Returns nonzero iff the matrices have the same dimensions
     # and identical entries.
 
@@ -51,16 +51,16 @@ cdef extern from "flint_wrap.h":
     int bool_mat_all(const bool_mat_t mat)
     # Returns nonzero iff all entries of *mat* are nonzero.
 
-    int bool_mat_is_diagonal(const bool_mat_t A)
+    bint bool_mat_is_diagonal(const bool_mat_t A)
     # Returns nonzero iff `i \ne j \implies \bar{A_{ij}}`.
 
-    int bool_mat_is_lower_triangular(const bool_mat_t A)
+    bint bool_mat_is_lower_triangular(const bool_mat_t A)
     # Returns nonzero iff `i < j \implies \bar{A_{ij}}`.
 
-    int bool_mat_is_transitive(const bool_mat_t mat)
+    bint bool_mat_is_transitive(const bool_mat_t mat)
     # Returns nonzero iff `A_{ij} \wedge A_{jk} \implies A_{ik}`.
 
-    int bool_mat_is_nilpotent(const bool_mat_t A)
+    bint bool_mat_is_nilpotent(const bool_mat_t A)
     # Returns nonzero iff some positive matrix power of `A` is zero.
 
     void bool_mat_randtest(bool_mat_t mat, flint_rand_t state)

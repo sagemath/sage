@@ -152,30 +152,30 @@ cdef extern from "flint_wrap.h":
     # Sets ``mat`` to a Hilbert matrix of the given size. That is,
     # the entry at row `i` and column `j` is set to `1/(i+j+1)`.
 
-    int fmpq_mat_equal(const fmpq_mat_t mat1, const fmpq_mat_t mat2)
+    bint fmpq_mat_equal(const fmpq_mat_t mat1, const fmpq_mat_t mat2)
     # Returns nonzero if ``mat1`` and ``mat2`` have the same shape and
     # all their entries agree, and returns zero otherwise. Assumes the
     # entries in both ``mat1`` and ``mat2`` are in canonical form.
 
-    int fmpq_mat_is_integral(const fmpq_mat_t mat)
+    bint fmpq_mat_is_integral(const fmpq_mat_t mat)
     # Returns nonzero if all entries in ``mat`` are integer-valued, and
     # returns zero otherwise. Assumes that the entries in ``mat``
     # are in canonical form.
 
-    int fmpq_mat_is_zero(const fmpq_mat_t mat)
+    bint fmpq_mat_is_zero(const fmpq_mat_t mat)
     # Returns nonzero if all entries in ``mat`` are zero, and returns
     # zero otherwise.
 
-    int fmpq_mat_is_one(const fmpq_mat_t mat)
+    bint fmpq_mat_is_one(const fmpq_mat_t mat)
     # Returns nonzero if ``mat`` ones along the diagonal and zeros elsewhere,
     # and returns zero otherwise.
 
-    int fmpq_mat_is_empty(const fmpq_mat_t mat)
+    bint fmpq_mat_is_empty(const fmpq_mat_t mat)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns
     # zero.
 
-    int fmpq_mat_is_square(const fmpq_mat_t mat)
+    bint fmpq_mat_is_square(const fmpq_mat_t mat)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

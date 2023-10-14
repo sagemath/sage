@@ -127,14 +127,14 @@ cdef extern from "flint_wrap.h":
     # If the element ``op`` lies in `\mathbf{Q}_p`, sets ``rop``
     # to its value and returns `1`;  otherwise, returns `0`.
 
-    int qadic_is_zero(const qadic_t op)
+    bint qadic_is_zero(const qadic_t op)
     # Returns whether ``op`` is equal to zero.
 
-    int qadic_is_one(const qadic_t op)
+    bint qadic_is_one(const qadic_t op)
     # Returns whether ``op`` is equal to one in the given
     # context.
 
-    int qadic_equal(const qadic_t op1, const qadic_t op2)
+    bint qadic_equal(const qadic_t op1, const qadic_t op2)
     # Returns whether ``op1`` and ``op2`` are equal.
 
     void qadic_add(qadic_t rop, const qadic_t op1, const qadic_t op2, const qadic_ctx_t ctx)

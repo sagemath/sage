@@ -528,14 +528,14 @@ cdef extern from "flint_wrap.h":
     # ``n_prime_pi_bounds()``, and estimate `\ln \ln n` to the nearest
     # integer; this function is nearly constant.
 
-    int n_is_oddprime_small(ulong n)
+    bint n_is_oddprime_small(ulong n)
     # Returns `1` if `n` is an odd prime smaller than
     # ``FLINT_ODDPRIME_SMALL_CUTOFF``. Expects `n`
     # to be odd and smaller than the cutoff.
     # This function merely uses a lookup table with one bit allocated for each
     # odd number up to the cutoff.
 
-    int n_is_oddprime_binary(ulong n)
+    bint n_is_oddprime_binary(ulong n)
     # This function performs a simple binary search through
     # the table of cached primes for `n`. If it exists in the array it returns
     # `1`, otherwise `0`. For the algorithm to operate correctly
@@ -545,7 +545,7 @@ cdef extern from "flint_wrap.h":
     # refine our search with a simple binary algorithm, taking
     # the top or bottom of the current interval as necessary.
 
-    int n_is_prime_pocklington(ulong n, ulong iterations)
+    bint n_is_prime_pocklington(ulong n, ulong iterations)
     # Tests if `n` is a prime using the Pocklington--Lehmer primality
     # test. If `1` is returned `n` has been proved prime. If `0` is returned
     # `n` is composite. However `-1` may be returned if nothing was proved
@@ -565,7 +565,7 @@ cdef extern from "flint_wrap.h":
     # https://mathworld.wolfram.com/PocklingtonsTheorem.html
     # for a description of the algorithm.
 
-    int n_is_prime_pseudosquare(ulong n)
+    bint n_is_prime_pseudosquare(ulong n)
     # Tests if `n` is a prime according to Theorem 2.7 [LukPatWil1996]_.
     # We first factor `N` using trial division up to some limit `B`.
     # In fact, the number of primes used in the trial factoring is at
@@ -591,7 +591,7 @@ cdef extern from "flint_wrap.h":
     # composite prime. However in that case an error is printed, as
     # that would be of independent interest.
 
-    int n_is_prime(ulong n)
+    bint n_is_prime(ulong n)
     # Tests if `n` is a prime. This first sieves for small prime factors,
     # then simply calls :func:`n_is_probabprime`. This has been checked
     # against the tables of Feitsma and Galway
@@ -602,7 +602,7 @@ cdef extern from "flint_wrap.h":
     # primality. This is likely to be significantly slower for prime
     # inputs.
 
-    int n_is_strong_probabprime_precomp(ulong n, double npre, ulong a, ulong d)
+    bint n_is_strong_probabprime_precomp(ulong n, double npre, ulong a, ulong d)
     # Tests if `n` is a strong probable prime to the base `a`. We
     # require that `d` is set to the largest odd factor of `n - 1` and
     # ``npre`` is a precomputed inverse of `n` computed with
@@ -615,7 +615,7 @@ cdef extern from "flint_wrap.h":
     # A description of strong probable primes is given here:
     # https://mathworld.wolfram.com/StrongPseudoprime.html
 
-    int n_is_strong_probabprime2_preinv(ulong n, ulong ninv, ulong a, ulong d)
+    bint n_is_strong_probabprime2_preinv(ulong n, ulong ninv, ulong a, ulong d)
     # Tests if `n` is a strong probable prime to the base `a`. We require
     # that `d` is set to the largest odd factor of `n - 1` and ``npre``
     # is a precomputed inverse of `n` computed with :func:`n_preinvert_limb`.
@@ -626,13 +626,13 @@ cdef extern from "flint_wrap.h":
     # A description of strong probable primes is given here:
     # https://mathworld.wolfram.com/StrongPseudoprime.html
 
-    int n_is_probabprime_fermat(ulong n, ulong i)
+    bint n_is_probabprime_fermat(ulong n, ulong i)
     # Returns `1` if `n` is a base `i` Fermat probable prime. Requires
     # `1 < i < n` and that `i` does not divide `n`.
     # By Fermat's Little Theorem if `i^{n-1}` is not congruent to `1`
     # then `n` is not prime.
 
-    int n_is_probabprime_fibonacci(ulong n)
+    bint n_is_probabprime_fibonacci(ulong n)
     # Let `F_j` be the `j`\th element of the Fibonacci sequence
     # `0, 1, 1, 2, 3, 5, \dotsc`, starting at `j = 0`. Then if `n` is prime
     # we have `F_{n - (n/5)} = 0 \pmod n`, where `(n/5)` is the Jacobi
@@ -640,7 +640,7 @@ cdef extern from "flint_wrap.h":
     # For further details, see  pp. 142 [CraPom2005]_.
     # We require that `n` is not divisible by `2` or `5`.
 
-    int n_is_probabprime_BPSW(ulong n)
+    bint n_is_probabprime_BPSW(ulong n)
     # Implements a Baillie--Pomerance--Selfridge--Wagstaff probable primality
     # test. This is a variant of the usual BPSW test (which only uses strong
     # base-2 probable prime and Lucas-Selfridge tests, see Baillie and
@@ -653,12 +653,12 @@ cdef extern from "flint_wrap.h":
     # Up to `2^{64}` the test we use has been checked against tables of
     # pseudoprimes. Thus it is a primality test up to this limit.
 
-    int n_is_probabprime_lucas(ulong n)
+    bint n_is_probabprime_lucas(ulong n)
     # For details on Lucas pseudoprimes, see [pp. 143] [CraPom2005]_.
     # We implement a variant of the Lucas pseudoprime test similar to that
     # described by Baillie and Wagstaff [BaiWag1980]_.
 
-    int n_is_probabprime(ulong n)
+    bint n_is_probabprime(ulong n)
     # Tests if `n` is a probable prime. Up to ``FLINT_ODDPRIME_SMALL_CUTOFF``
     # this algorithm uses :func:`n_is_oddprime_small` which uses a lookup table.
     # Next it calls :func:`n_compute_primes` with the maximum table size and
@@ -709,14 +709,14 @@ cdef extern from "flint_wrap.h":
     # The remainder is computed by subtracting the square of the computed square
     # root from `a`.
 
-    int n_is_square(ulong x)
+    bint n_is_square(ulong x)
     # Returns `1` if `x` is a square, otherwise `0`.
     # This code first checks if `x` is a square modulo `64`,
     # `63 = 3 \times 3 \times 7` and `65 = 5 \times 13`, using lookup tables,
     # and if so it then takes a square root and checks that the square of this
     # equals the original value.
 
-    int n_is_perfect_power235(ulong n)
+    bint n_is_perfect_power235(ulong n)
     # Returns `1` if `n` is a perfect square, cube or fifth power.
     # This function uses a series of modular tests to reject most
     # non 235-powers. Each modular test returns a value from 0 to 7
@@ -729,7 +729,7 @@ cdef extern from "flint_wrap.h":
     # root can be taken, if indicated, to determine whether the power
     # of that root is exactly equal to `n`.
 
-    int n_is_perfect_power(ulong * root, ulong n)
+    bint n_is_perfect_power(ulong * root, ulong n)
     # If `n = r^k`, return `k` and set ``root`` to `r`. Note that `0` and
     # `1` are considered squares. No guarantees are made about `r` or `k`
     # being the minimum possible value.
@@ -1007,7 +1007,7 @@ cdef extern from "flint_wrap.h":
     # of `\mu(n)` for every multiple of a prime `p` and setting `\mu(n) = 0`
     # for every multiple of `p^2`.
 
-    int n_is_squarefree(ulong n)
+    bint n_is_squarefree(ulong n)
     # Returns `0` if `n` is divisible by some perfect square, and `1` otherwise.
     # This simply amounts to testing whether `\mu(n) \neq 0`. As special
     # cases, `1` is considered squarefree and `0` is not considered squarefree.

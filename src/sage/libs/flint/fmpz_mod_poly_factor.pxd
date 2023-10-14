@@ -49,18 +49,18 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_poly_factor_pow(fmpz_mod_poly_factor_t fac, slong exp, const fmpz_mod_ctx_t ctx)
     # Raises ``fac`` to the power ``exp``.
 
-    int fmpz_mod_poly_is_irreducible(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_is_irreducible(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
 
-    int fmpz_mod_poly_is_irreducible_ddf(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_is_irreducible_ddf(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses fast distinct-degree factorisation.
 
-    int fmpz_mod_poly_is_irreducible_rabin(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_is_irreducible_rabin(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses Rabin irreducibility test.
 
-    int fmpz_mod_poly_is_irreducible_rabin_f(fmpz_t r, const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_is_irreducible_rabin_f(fmpz_t r, const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
     # Either sets `r` to `1` and returns 1 if the polynomial ``f`` is
     # irreducible or `0` otherwise, or sets `r` to a nontrivial factor of
     # `p`.
@@ -68,26 +68,26 @@ cdef extern from "flint_wrap.h":
     # `\mathbb{Z}/p\mathbb{Z}`, even for composite `f`, or it finds a factor
     # of `p`.
 
-    int _fmpz_mod_poly_is_squarefree(const fmpz * f, slong len, const fmpz_mod_ctx_t ctx)
+    bint _fmpz_mod_poly_is_squarefree(const fmpz * f, slong len, const fmpz_mod_ctx_t ctx)
     # Returns 1 if ``(f, len)`` is squarefree, and 0 otherwise. As a
     # special case, the zero polynomial is not considered squarefree.
     # There are no restrictions on the length.
 
-    int _fmpz_mod_poly_is_squarefree_f(fmpz_t fac, const fmpz * f, slong len, const fmpz_mod_ctx_t ctx)
+    bint _fmpz_mod_poly_is_squarefree_f(fmpz_t fac, const fmpz * f, slong len, const fmpz_mod_ctx_t ctx)
     # If `fac` returns with the value `1` then the function operates as per
     # :func:`_fmpz_mod_poly_is_squarefree`, otherwise `f` is set to a nontrivial
     # factor of `p`.
 
-    int fmpz_mod_poly_is_squarefree(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_is_squarefree(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
     # Returns 1 if ``f`` is squarefree, and 0 otherwise. As a special
     # case, the zero polynomial is not considered squarefree.
 
-    int fmpz_mod_poly_is_squarefree_f(fmpz_t fac, const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_is_squarefree_f(fmpz_t fac, const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
     # If `fac` returns with the value `1` then the function operates as per
     # :func:`fmpz_mod_poly_is_squarefree`, otherwise `f` is set to a nontrivial
     # factor of `p`.
 
-    int fmpz_mod_poly_factor_equal_deg_prob(fmpz_mod_poly_t factor, flint_rand_t state, const fmpz_mod_poly_t pol, slong d, const fmpz_mod_ctx_t ctx)
+    bint fmpz_mod_poly_factor_equal_deg_prob(fmpz_mod_poly_t factor, flint_rand_t state, const fmpz_mod_poly_t pol, slong d, const fmpz_mod_ctx_t ctx)
     # Probabilistic equal degree factorisation of ``pol`` into
     # irreducible factors of degree ``d``. If it passes, a factor is
     # placed in ``factor`` and 1 is returned, otherwise 0 is returned and

@@ -62,55 +62,55 @@ cdef extern from "flint_wrap.h":
     # Prints each entry in the matrix with the specified number of decimal
     # digits to the stream *file*.
 
-    int acb_mat_equal(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_equal(const acb_mat_t mat1, const acb_mat_t mat2)
     # Returns whether the matrices have the same dimensions and identical
     # intervals as entries.
 
-    int acb_mat_overlaps(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_overlaps(const acb_mat_t mat1, const acb_mat_t mat2)
     # Returns whether the matrices have the same dimensions
     # and each entry in *mat1* overlaps with the corresponding entry in *mat2*.
 
-    int acb_mat_contains(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_contains(const acb_mat_t mat1, const acb_mat_t mat2)
 
-    int acb_mat_contains_fmpz_mat(const acb_mat_t mat1, const fmpz_mat_t mat2)
+    bint acb_mat_contains_fmpz_mat(const acb_mat_t mat1, const fmpz_mat_t mat2)
 
-    int acb_mat_contains_fmpq_mat(const acb_mat_t mat1, const fmpq_mat_t mat2)
+    bint acb_mat_contains_fmpq_mat(const acb_mat_t mat1, const fmpq_mat_t mat2)
     # Returns whether the matrices have the same dimensions and each entry
     # in *mat2* is contained in the corresponding entry in *mat1*.
 
-    int acb_mat_eq(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_eq(const acb_mat_t mat1, const acb_mat_t mat2)
     # Returns whether *mat1* and *mat2* certainly represent the same matrix.
 
-    int acb_mat_ne(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_ne(const acb_mat_t mat1, const acb_mat_t mat2)
     # Returns whether *mat1* and *mat2* certainly do not represent the same matrix.
 
-    int acb_mat_is_real(const acb_mat_t mat)
+    bint acb_mat_is_real(const acb_mat_t mat)
     # Returns whether all entries in *mat* have zero imaginary part.
 
-    int acb_mat_is_empty(const acb_mat_t mat)
+    bint acb_mat_is_empty(const acb_mat_t mat)
     # Returns whether the number of rows or the number of columns in *mat* is zero.
 
-    int acb_mat_is_square(const acb_mat_t mat)
+    bint acb_mat_is_square(const acb_mat_t mat)
     # Returns whether the number of rows is equal to the number of columns in *mat*.
 
-    int acb_mat_is_exact(const acb_mat_t mat)
+    bint acb_mat_is_exact(const acb_mat_t mat)
     # Returns whether all entries in *mat* have zero radius.
 
-    int acb_mat_is_zero(const acb_mat_t mat)
+    bint acb_mat_is_zero(const acb_mat_t mat)
     # Returns whether all entries in *mat* are exactly zero.
 
-    int acb_mat_is_finite(const acb_mat_t mat)
+    bint acb_mat_is_finite(const acb_mat_t mat)
     # Returns whether all entries in *mat* are finite.
 
-    int acb_mat_is_triu(const acb_mat_t mat)
+    bint acb_mat_is_triu(const acb_mat_t mat)
     # Returns whether *mat* is upper triangular; that is, all entries
     # below the main diagonal are exactly zero.
 
-    int acb_mat_is_tril(const acb_mat_t mat)
+    bint acb_mat_is_tril(const acb_mat_t mat)
     # Returns whether *mat* is lower triangular; that is, all entries
     # above the main diagonal are exactly zero.
 
-    int acb_mat_is_diag(const acb_mat_t mat)
+    bint acb_mat_is_diag(const acb_mat_t mat)
     # Returns whether *mat* is a diagonal matrix; that is, all entries
     # off the main diagonal are exactly zero.
 

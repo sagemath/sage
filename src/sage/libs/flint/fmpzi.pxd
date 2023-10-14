@@ -30,13 +30,13 @@ cdef extern from "flint_wrap.h":
 
     void fmpzi_randtest(fmpzi_t res, flint_rand_t state, mp_bitcnt_t bits)
 
-    int fmpzi_equal(const fmpzi_t x, const fmpzi_t y)
+    bint fmpzi_equal(const fmpzi_t x, const fmpzi_t y)
 
-    int fmpzi_is_zero(const fmpzi_t x)
+    bint fmpzi_is_zero(const fmpzi_t x)
 
-    int fmpzi_is_one(const fmpzi_t x)
+    bint fmpzi_is_one(const fmpzi_t x)
 
-    int fmpzi_is_unit(const fmpzi_t x)
+    bint fmpzi_is_unit(const fmpzi_t x)
 
     slong fmpzi_canonical_unit_i_pow(const fmpzi_t x)
 

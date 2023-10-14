@@ -68,20 +68,20 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_gen(nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the variable of index *var*, where `var = 0` corresponds to the variable with the most significance with respect to the ordering.
 
-    int nmod_mpoly_is_gen(const nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_is_gen(const nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
     # If `var \ge 0`, return `1` if *A* is equal to the `var`-th generator, otherwise return `0`.
     # If `var < 0`, return `1` if the polynomial is equal to any generator, otherwise return `0`.
 
     void nmod_mpoly_set(nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Set *A* to *B*.
 
-    int nmod_mpoly_equal(const nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_equal(const nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to *B*, else return `0`.
 
     void nmod_mpoly_swap(nmod_mpoly_t A, nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Efficiently swap *A* and *B*.
 
-    int nmod_mpoly_is_ui(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_is_ui(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is a constant, else return `0`.
 
     ulong nmod_mpoly_get_ui(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
@@ -97,13 +97,13 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_one(nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the constant `1`.
 
-    int nmod_mpoly_equal_ui(const nmod_mpoly_t A, ulong c, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_equal_ui(const nmod_mpoly_t A, ulong c, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to the constant *c*, else return `0`.
 
-    int nmod_mpoly_is_zero(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_is_zero(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is the constant `0`, else return `0`.
 
-    int nmod_mpoly_is_one(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_is_one(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is the constant `1`, else return `0`.
 
     int nmod_mpoly_degrees_fit_si(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
@@ -157,7 +157,7 @@ cdef extern from "flint_wrap.h":
     mp_limb_t * nmod_mpoly_term_coeff_ref(nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Return a reference to the coefficient of index *i* of *A*.
 
-    int nmod_mpoly_is_canonical(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_is_canonical(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is in canonical form. Otherwise, return `0`.
     # To be in canonical form, all of the terms must have nonzero coefficients, and the terms must be sorted from greatest to least.
 
@@ -361,7 +361,7 @@ cdef extern from "flint_wrap.h":
     int nmod_mpoly_sqrt(nmod_mpoly_t Q, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # If `Q^2=A` has a solution, set *Q* to a solution and return `1`, otherwise return `0` and set *Q* to zero.
 
-    int nmod_mpoly_is_square(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    bint nmod_mpoly_is_square(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is a perfect square, otherwise return `0`.
 
     int nmod_mpoly_quadratic_root(nmod_mpoly_t Q, const nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)

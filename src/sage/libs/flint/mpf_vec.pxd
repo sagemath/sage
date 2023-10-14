@@ -35,14 +35,14 @@ cdef extern from "flint_wrap.h":
     # Export the array of ``len`` entries starting at the pointer ``vec``
     # to an array of mpfs ``appv``.
 
-    int _mpf_vec_equal(const mpf * vec1, const mpf * vec2, slong len)
+    bint _mpf_vec_equal(const mpf * vec1, const mpf * vec2, slong len)
     # Compares two vectors of the given length and returns `1` if they are
     # equal, otherwise returns `0`.
 
-    int _mpf_vec_is_zero(const mpf * vec, slong len)
+    bint _mpf_vec_is_zero(const mpf * vec, slong len)
     # Returns `1` if ``(vec, len)`` is zero, and `0` otherwise.
 
-    int _mpf_vec_approx_equal(const mpf * vec1, const mpf * vec2, slong len, flint_bitcnt_t bits)
+    bint _mpf_vec_approx_equal(const mpf * vec1, const mpf * vec2, slong len, flint_bitcnt_t bits)
     # Compares two vectors of the given length and returns `1` if the first
     # ``bits`` bits of their entries are equal, otherwise returns `0`.
 

@@ -40,7 +40,7 @@ cdef extern from "flint_wrap.h":
     flint_bitcnt_t _nmod_vec_max_bits(mp_srcptr vec, slong len)
     # Returns the maximum number of bits of any entry in the vector.
 
-    int _nmod_vec_equal(mp_srcptr vec, mp_srcptr vec2, slong len)
+    bint _nmod_vec_equal(mp_srcptr vec, mp_srcptr vec2, slong len)
     # Returns~`1` if ``(vec, len)`` is equal to ``(vec2, len)``,
     # otherwise returns~`0`.
 

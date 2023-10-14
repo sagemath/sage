@@ -65,10 +65,10 @@ cdef extern from "flint_wrap.h":
     # coprime and that the denominator is positive.  The canonical form of the
     # zero polynomial is a zero numerator polynomial and a one denominator.
 
-    int _fmpq_poly_is_canonical(const fmpz * poly, const fmpz_t den, slong len)
+    bint _fmpq_poly_is_canonical(const fmpz * poly, const fmpz_t den, slong len)
     # Returns whether the polynomial is in canonical form.
 
-    int fmpq_poly_is_canonical(const fmpq_poly_t poly)
+    bint fmpq_poly_is_canonical(const fmpq_poly_t poly)
     # Returns whether the polynomial is in canonical form.
 
     slong fmpq_poly_degree(const fmpq_poly_t poly)
@@ -234,15 +234,15 @@ cdef extern from "flint_wrap.h":
     void fmpq_poly_set_coeff_fmpq(fmpq_poly_t poly, slong n, const fmpq_t x)
     # Sets the `n`\th coefficient in ``poly`` to the rational `x`.
 
-    int fmpq_poly_equal(const fmpq_poly_t poly1, const fmpq_poly_t poly2)
+    bint fmpq_poly_equal(const fmpq_poly_t poly1, const fmpq_poly_t poly2)
     # Returns `1` if ``poly1`` is equal to ``poly2``,
     # otherwise returns `0`.
 
-    int _fmpq_poly_equal_trunc(const fmpz * poly1, const fmpz_t den1, slong len1, const fmpz * poly2, const fmpz_t den2, slong len2, slong n)
+    bint _fmpq_poly_equal_trunc(const fmpz * poly1, const fmpz_t den1, slong len1, const fmpz * poly2, const fmpz_t den2, slong len2, slong n)
     # Returns `1` if ``poly1`` and ``poly2`` notionally truncated to length
     # `n` are equal, otherwise returns `0`.
 
-    int fmpq_poly_equal_trunc(const fmpq_poly_t poly1, const fmpq_poly_t poly2, slong n)
+    bint fmpq_poly_equal_trunc(const fmpq_poly_t poly1, const fmpq_poly_t poly2, slong n)
     # Returns `1` if ``poly1`` and ``poly2`` notionally truncated to length
     # `n` are equal, otherwise returns `0`.
 
@@ -259,14 +259,14 @@ cdef extern from "flint_wrap.h":
     # then, in case of a tie, by the individual coefficients from highest
     # to lowest.
 
-    int fmpq_poly_is_one(const fmpq_poly_t poly)
+    bint fmpq_poly_is_one(const fmpq_poly_t poly)
     # Returns `1` if ``poly`` is the constant polynomial `1`, otherwise
     # returns `0`.
 
-    int fmpq_poly_is_zero(const fmpq_poly_t poly)
+    bint fmpq_poly_is_zero(const fmpq_poly_t poly)
     # Returns `1` if ``poly`` is the zero polynomial, otherwise returns `0`.
 
-    int fmpq_poly_is_gen(const fmpq_poly_t poly)
+    bint fmpq_poly_is_gen(const fmpq_poly_t poly)
     # Returns `1` if ``poly`` is the degree `1` polynomial `x`, otherwise returns
     # `0`.
 
@@ -1174,11 +1174,11 @@ cdef extern from "flint_wrap.h":
     # Sets ``res`` to the primitive part, with non-negative leading
     # coefficient, of ``poly``.
 
-    int _fmpq_poly_is_monic(const fmpz * poly, const fmpz_t den, slong len)
+    bint _fmpq_poly_is_monic(const fmpz * poly, const fmpz_t den, slong len)
     # Returns whether the polynomial ``(poly, den, len)`` is monic.
     # The zero polynomial is not monic by definition.
 
-    int fmpq_poly_is_monic(const fmpq_poly_t poly)
+    bint fmpq_poly_is_monic(const fmpq_poly_t poly)
     # Returns whether the polynomial ``poly`` is monic. The zero
     # polynomial is not monic by definition.
 
@@ -1192,7 +1192,7 @@ cdef extern from "flint_wrap.h":
     # ``poly`` is non-zero.  If ``poly`` is the zero polynomial, sets
     # ``res`` to zero.
 
-    int fmpq_poly_is_squarefree(const fmpq_poly_t poly)
+    bint fmpq_poly_is_squarefree(const fmpq_poly_t poly)
     # Returns whether the polynomial ``poly`` is square-free.  A non-zero
     # polynomial is defined to be square-free if it has no non-unit square
     # factors.  We also define the zero polynomial to be square-free.

@@ -31,7 +31,7 @@ cdef extern from "flint_wrap.h":
     # Puts the numerator and denominator of *x* in canonical form by removing
     # common content and making the leading term of the denominator positive.
 
-    int fmpz_mpoly_q_is_canonical(const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_q_is_canonical(const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)
     # Returns whether *x* is in canonical form.
     # In addition to verifying that the numerator and denominator
     # have no common content and that the leading term of the denominator
@@ -40,10 +40,10 @@ cdef extern from "flint_wrap.h":
     # (these properties should normally hold; verifying them
     # provides an extra consistency check for test code).
 
-    int fmpz_mpoly_q_is_zero(const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_q_is_zero(const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)
     # Returns whether *x* is the constant 0.
 
-    int fmpz_mpoly_q_is_one(const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_q_is_one(const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)
     # Returns whether *x* is the constant 1.
 
     void fmpz_mpoly_q_used_vars(int * used, const fmpz_mpoly_q_t f, const fmpz_mpoly_ctx_t ctx)
@@ -72,7 +72,7 @@ cdef extern from "flint_wrap.h":
     # have up to *length* terms, coefficients up to size *coeff_bits*, and
     # exponents strictly smaller than *exp_bound*.
 
-    int fmpz_mpoly_q_equal(const fmpz_mpoly_q_t x, const fmpz_mpoly_q_t y, const fmpz_mpoly_ctx_t ctx)
+    bint fmpz_mpoly_q_equal(const fmpz_mpoly_q_t x, const fmpz_mpoly_q_t y, const fmpz_mpoly_ctx_t ctx)
     # Returns whether *x* and *y* are equal.
 
     void fmpz_mpoly_q_neg(fmpz_mpoly_q_t res, const fmpz_mpoly_q_t x, const fmpz_mpoly_ctx_t ctx)

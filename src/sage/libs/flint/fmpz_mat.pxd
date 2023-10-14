@@ -204,35 +204,35 @@ cdef extern from "flint_wrap.h":
     # In case of success, returns a positive number.  In case of failure,
     # returns a non-positive value.
 
-    int fmpz_mat_equal(const fmpz_mat_t mat1, const fmpz_mat_t mat2)
+    bint fmpz_mat_equal(const fmpz_mat_t mat1, const fmpz_mat_t mat2)
     # Returns a non-zero value if ``mat1`` and ``mat2`` have
     # the same dimensions and entries, and zero otherwise.
 
-    int fmpz_mat_is_zero(const fmpz_mat_t mat)
+    bint fmpz_mat_is_zero(const fmpz_mat_t mat)
     # Returns a non-zero value if all entries ``mat`` are zero, and
     # otherwise returns zero.
 
-    int fmpz_mat_is_one(const fmpz_mat_t mat)
+    bint fmpz_mat_is_one(const fmpz_mat_t mat)
     # Returns a non-zero value if ``mat`` is the unit matrix or the truncation
     # of a unit matrix, and otherwise returns zero.
 
-    int fmpz_mat_is_empty(const fmpz_mat_t mat)
+    bint fmpz_mat_is_empty(const fmpz_mat_t mat)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns
     # zero.
 
-    int fmpz_mat_is_square(const fmpz_mat_t mat)
+    bint fmpz_mat_is_square(const fmpz_mat_t mat)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 
-    int fmpz_mat_is_zero_row(const fmpz_mat_t mat, slong i)
+    bint fmpz_mat_is_zero_row(const fmpz_mat_t mat, slong i)
     # Returns a non-zero value if row `i` of ``mat`` is zero.
 
-    int fmpz_mat_equal_col(fmpz_mat_t M, slong m, slong n)
+    bint fmpz_mat_equal_col(fmpz_mat_t M, slong m, slong n)
     # Returns `1` if columns `m` and `n` of the matrix `M` are equal, otherwise
     # returns `0`.
 
-    int fmpz_mat_equal_row(fmpz_mat_t M, slong m, slong n)
+    bint fmpz_mat_equal_row(fmpz_mat_t M, slong m, slong n)
     # Returns `1` if rows `m` and `n` of the matrix `M` are equal, otherwise
     # returns `0`.
 
@@ -761,7 +761,7 @@ cdef extern from "flint_wrap.h":
     # the reduced row echelon form of the whole of ``A``. This procedure is
     # described in [Stein2007]_.
 
-    int fmpz_mat_is_in_rref_with_rank(const fmpz_mat_t A, const fmpz_t den, slong rank)
+    bint fmpz_mat_is_in_rref_with_rank(const fmpz_mat_t A, const fmpz_t den, slong rank)
     # Checks that the matrix `A/den` is in reduced row echelon form of rank
     # ``rank``, returns 1 if so and 0 otherwise.
 
@@ -877,7 +877,7 @@ cdef extern from "flint_wrap.h":
     # Aliasing of ``H`` and ``A`` is allowed. The size of ``H`` must be
     # the same as that of ``A``.
 
-    int fmpz_mat_is_in_hnf(const fmpz_mat_t A)
+    bint fmpz_mat_is_in_hnf(const fmpz_mat_t A)
     # Checks that the given matrix is in Hermite normal form, returns 1 if so and
     # 0 otherwise.
 
@@ -910,7 +910,7 @@ cdef extern from "flint_wrap.h":
     # Aliasing of ``S`` and ``A`` is allowed. The size of ``S`` must be
     # the same as that of ``A``.
 
-    int fmpz_mat_is_in_snf(const fmpz_mat_t A)
+    bint fmpz_mat_is_in_snf(const fmpz_mat_t A)
     # Checks that the given matrix is in Smith normal form, returns 1 if so and 0
     # otherwise.
 
@@ -921,7 +921,7 @@ cdef extern from "flint_wrap.h":
     # ``A`` and ``B`` are allowed to be the same object if ``A`` is a
     # square matrix.
 
-    int fmpz_mat_is_hadamard(const fmpz_mat_t H)
+    bint fmpz_mat_is_hadamard(const fmpz_mat_t H)
     # Returns nonzero iff `H` is a Hadamard matrix, meaning
     # that it is a square matrix, only has entries that are `\pm 1`,
     # and satisfies `H^T = n H^{-1}` where `n` is the matrix size.
@@ -955,14 +955,14 @@ cdef extern from "flint_wrap.h":
     # matrix ``A`` using the Cholesky decomposition process. (Sets ``R``
     # such that `A = RR^{T}` where ``R`` is a lower triangular matrix.)
 
-    int fmpz_mat_is_reduced(const fmpz_mat_t A, double delta, double eta)
-    int fmpz_mat_is_reduced_gram(const fmpz_mat_t A, double delta, double eta)
+    bint fmpz_mat_is_reduced(const fmpz_mat_t A, double delta, double eta)
+    bint fmpz_mat_is_reduced_gram(const fmpz_mat_t A, double delta, double eta)
     # Returns a non-zero value if the basis ``A`` is LLL-reduced with factor
     # (``delta``, ``eta``), and otherwise returns zero.
     # The second version assumes ``A`` is the Gram matrix of the basis.
 
-    int fmpz_mat_is_reduced_with_removal(const fmpz_mat_t A, double delta, double eta, const fmpz_t gs_B, int newd)
-    int fmpz_mat_is_reduced_gram_with_removal(const fmpz_mat_t A, double delta, double eta, const fmpz_t gs_B, int newd)
+    bint fmpz_mat_is_reduced_with_removal(const fmpz_mat_t A, double delta, double eta, const fmpz_t gs_B, int newd)
+    bint fmpz_mat_is_reduced_gram_with_removal(const fmpz_mat_t A, double delta, double eta, const fmpz_t gs_B, int newd)
     # Returns a non-zero value if the basis ``A`` is LLL-reduced with factor
     # (``delta``, ``eta``) for each of the first ``newd`` vectors and the squared
     # Gram-Schmidt length of each of the remaining `i`-th vectors

@@ -57,25 +57,25 @@ cdef extern from "flint_wrap.h":
     void mpf_mat_print(const mpf_mat_t mat)
     # Prints the given matrix to the stream ``stdout``.
 
-    int mpf_mat_equal(const mpf_mat_t mat1, const mpf_mat_t mat2)
+    bint mpf_mat_equal(const mpf_mat_t mat1, const mpf_mat_t mat2)
     # Returns a non-zero value if ``mat1`` and ``mat2`` have
     # the same dimensions and entries, and zero otherwise.
 
-    int mpf_mat_approx_equal(const mpf_mat_t mat1, const mpf_mat_t mat2, flint_bitcnt_t bits)
+    bint mpf_mat_approx_equal(const mpf_mat_t mat1, const mpf_mat_t mat2, flint_bitcnt_t bits)
     # Returns a non-zero value if ``mat1`` and ``mat2`` have
     # the same dimensions and the first ``bits`` bits of their entries
     # are equal, and zero otherwise.
 
-    int mpf_mat_is_zero(const mpf_mat_t mat)
+    bint mpf_mat_is_zero(const mpf_mat_t mat)
     # Returns a non-zero value if all entries ``mat`` are zero, and
     # otherwise returns zero.
 
-    int mpf_mat_is_empty(const mpf_mat_t mat)
+    bint mpf_mat_is_empty(const mpf_mat_t mat)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns
     # zero.
 
-    int mpf_mat_is_square(const mpf_mat_t mat)
+    bint mpf_mat_is_square(const mpf_mat_t mat)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

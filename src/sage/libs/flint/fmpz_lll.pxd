@@ -197,18 +197,18 @@ cdef extern from "flint_wrap.h":
     # transformations, while ``gs_B`` and ``fl`` have the same role as in
     # the previous routines. The function is optimised for factoring polynomials.
 
-    int fmpz_lll_is_reduced_d(const fmpz_mat_t B, const fmpz_lll_t fl)
-    int fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl, flint_bitcnt_t prec)
-    int fmpz_lll_is_reduced_d_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl, const fmpz_t gs_B, int newd)
-    int fmpz_lll_is_reduced_mpfr_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl, const fmpz_t gs_B, int newd, flint_bitcnt_t prec)
+    bint fmpz_lll_is_reduced_d(const fmpz_mat_t B, const fmpz_lll_t fl)
+    bint fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl, flint_bitcnt_t prec)
+    bint fmpz_lll_is_reduced_d_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl, const fmpz_t gs_B, int newd)
+    bint fmpz_lll_is_reduced_mpfr_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl, const fmpz_t gs_B, int newd, flint_bitcnt_t prec)
     # A non-zero return indicates the matrix is definitely reduced, that is, that
     # * :func:`fmpz_mat_is_reduced` or :func:`fmpz_mat_is_reduced_gram` (for the first two)
     # * :func:`fmpz_mat_is_reduced_with_removal` or :func:`fmpz_mat_is_reduced_gram_with_removal` (for the last two)
     # return non-zero. A zero return value is inconclusive.
     # The `_d` variants are performed in machine precision, while the `_mpfr` uses a precision of `prec` bits.
 
-    int fmpz_lll_is_reduced(const fmpz_mat_t B, const fmpz_lll_t fl, flint_bitcnt_t prec)
-    int fmpz_lll_is_reduced_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl, const fmpz_t gs_B, int newd, flint_bitcnt_t prec)
+    bint fmpz_lll_is_reduced(const fmpz_mat_t B, const fmpz_lll_t fl, flint_bitcnt_t prec)
+    bint fmpz_lll_is_reduced_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl, const fmpz_t gs_B, int newd, flint_bitcnt_t prec)
     # The return from these functions is always conclusive: the functions
     # * :func:`fmpz_mat_is_reduced` or :func:`fmpz_mat_is_reduced_gram`
     # * :func:`fmpz_mat_is_reduced_with_removal` or :func:`fmpz_mat_is_reduced_gram_with_removal`

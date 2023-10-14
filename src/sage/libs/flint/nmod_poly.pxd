@@ -71,9 +71,9 @@ cdef extern from "flint_wrap.h":
     flint_bitcnt_t nmod_poly_max_bits(const nmod_poly_t poly)
     # Returns the maximum number of bits of any coefficient of ``poly``.
 
-    int nmod_poly_is_unit(const nmod_poly_t poly)
+    bint nmod_poly_is_unit(const nmod_poly_t poly)
 
-    int nmod_poly_is_monic(const nmod_poly_t poly)
+    bint nmod_poly_is_monic(const nmod_poly_t poly)
 
     void nmod_poly_set(nmod_poly_t a, const nmod_poly_t b)
     # Sets ``a`` to a copy of ``b``.
@@ -234,32 +234,32 @@ cdef extern from "flint_wrap.h":
     # :func:`nmod_poly_print`. If a polynomial in the correct format is read, a
     # positive value is returned, otherwise a non-positive value is returned.
 
-    int nmod_poly_equal(const nmod_poly_t a, const nmod_poly_t b)
+    bint nmod_poly_equal(const nmod_poly_t a, const nmod_poly_t b)
     # Returns `1` if the polynomials are equal, otherwise `0`.
 
-    int nmod_poly_equal_nmod(const nmod_poly_t poly, ulong cst)
+    bint nmod_poly_equal_nmod(const nmod_poly_t poly, ulong cst)
     # Returns `1` if the polynomial ``poly`` is constant, equal to ``cst``,
     # otherwise `0`.
     # ``cst`` is assumed to be already reduced, i.e. less than the modulus of
     # ``poly``.
 
-    int nmod_poly_equal_ui(const nmod_poly_t poly, ulong cst)
+    bint nmod_poly_equal_ui(const nmod_poly_t poly, ulong cst)
     # Returns `1` if the polynomial ``poly`` is constant and equal to ``cst`` up to
     # reduction modulo the modulus of ``poly``, otherwise returns `0`.
 
-    int nmod_poly_equal_trunc(const nmod_poly_t poly1, const nmod_poly_t poly2, slong n)
+    bint nmod_poly_equal_trunc(const nmod_poly_t poly1, const nmod_poly_t poly2, slong n)
     # Notionally truncate ``poly1`` and ``poly2`` to length `n` and return
     # `1` if the truncations are equal, otherwise return `0`.
 
-    int nmod_poly_is_zero(const nmod_poly_t poly)
+    bint nmod_poly_is_zero(const nmod_poly_t poly)
     # Returns `1` if the polynomial ``poly`` is the zero polynomial,
     # otherwise returns `0`.
 
-    int nmod_poly_is_one(const nmod_poly_t poly)
+    bint nmod_poly_is_one(const nmod_poly_t poly)
     # Returns `1` if the polynomial ``poly`` is the constant polynomial 1,
     # otherwise returns `0`.
 
-    int nmod_poly_is_gen(const nmod_poly_t poly)
+    bint nmod_poly_is_gen(const nmod_poly_t poly)
 
     void _nmod_poly_shift_left(mp_ptr res, mp_srcptr poly, slong len, slong k)
     # Sets ``(res, len + k)`` to ``(poly, len)`` shifted left by

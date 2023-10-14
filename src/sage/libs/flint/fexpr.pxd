@@ -57,12 +57,12 @@ cdef extern from "flint_wrap.h":
     # structure itself. Add ``sizeof(fexpr_struct)`` to get the size of
     # the object as a whole.
 
-    int fexpr_equal(const fexpr_t a, const fexpr_t b)
+    bint fexpr_equal(const fexpr_t a, const fexpr_t b)
     # Checks if *a* and *b* are exactly equal as expressions.
 
-    int fexpr_equal_si(const fexpr_t expr, slong c)
+    bint fexpr_equal_si(const fexpr_t expr, slong c)
 
-    int fexpr_equal_ui(const fexpr_t expr, ulong c)
+    bint fexpr_equal_ui(const fexpr_t expr, ulong c)
     # Checks if *expr* is an atomic integer exactly equal to *c*.
 
     ulong fexpr_hash(const fexpr_t expr)
@@ -74,25 +74,25 @@ cdef extern from "flint_wrap.h":
     # instance, to maintain sorted arrays of expressions for binary
     # search; the sort order has no mathematical significance.
 
-    int fexpr_is_integer(const fexpr_t expr)
+    bint fexpr_is_integer(const fexpr_t expr)
     # Returns whether *expr* is an atomic integer
 
-    int fexpr_is_symbol(const fexpr_t expr)
+    bint fexpr_is_symbol(const fexpr_t expr)
     # Returns whether *expr* is an atomic symbol.
 
-    int fexpr_is_string(const fexpr_t expr)
+    bint fexpr_is_string(const fexpr_t expr)
     # Returns whether *expr* is an atomic string.
 
-    int fexpr_is_atom(const fexpr_t expr)
+    bint fexpr_is_atom(const fexpr_t expr)
     # Returns whether *expr* is any atom.
 
     void fexpr_zero(fexpr_t res)
     # Sets *res* to the atomic integer 0.
 
-    int fexpr_is_zero(const fexpr_t expr)
+    bint fexpr_is_zero(const fexpr_t expr)
     # Returns whether *expr* is the atomic integer 0.
 
-    int fexpr_is_neg_integer(const fexpr_t expr)
+    bint fexpr_is_neg_integer(const fexpr_t expr)
     # Returns whether *expr* is any negative atomic integer.
 
     void fexpr_set_si(fexpr_t res, slong c)
@@ -108,11 +108,11 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to the builtin symbol with internal index *id*
     # (see :ref:`fexpr-builtin`).
 
-    int fexpr_is_builtin_symbol(const fexpr_t expr, slong id)
+    bint fexpr_is_builtin_symbol(const fexpr_t expr, slong id)
     # Returns whether *expr* is the builtin symbol with index *id*
     # (see :ref:`fexpr-builtin`).
 
-    int fexpr_is_any_builtin_symbol(const fexpr_t expr)
+    bint fexpr_is_any_builtin_symbol(const fexpr_t expr)
     # Returns whether *expr* is any builtin symbol
     # (see :ref:`fexpr-builtin`).
 
@@ -193,11 +193,11 @@ cdef extern from "flint_wrap.h":
     # This function can also be called when *view* refers to the function *f*,
     # in which case it will make *view* point to `e_1`.
 
-    int fexpr_is_builtin_call(const fexpr_t expr, slong id)
+    bint fexpr_is_builtin_call(const fexpr_t expr, slong id)
     # Returns whether *expr* has the form `f(\ldots)` where *f* is
     # a builtin function defined by *id* (see :ref:`fexpr-builtin`).
 
-    int fexpr_is_any_builtin_call(const fexpr_t expr)
+    bint fexpr_is_any_builtin_call(const fexpr_t expr)
     # Returns whether *expr* has the form `f(\ldots)` where *f* is
     # any builtin function (see :ref:`fexpr-builtin`).
 
@@ -217,7 +217,7 @@ cdef extern from "flint_wrap.h":
     # Creates the function call `f(x_1,\ldots,x_n)`, where *f* defines
     # a builtin symbol.
 
-    int fexpr_contains(const fexpr_t expr, const fexpr_t x)
+    bint fexpr_contains(const fexpr_t expr, const fexpr_t x)
     # Returns whether *expr* contains the expression *x* as a subexpression
     # (this includes the case where *expr* and *x* are equal).
 
@@ -267,7 +267,7 @@ cdef extern from "flint_wrap.h":
     # Constructs an arithmetic expression with given arguments.
     # No simplifications whatsoever are performed.
 
-    int fexpr_is_arithmetic_operation(const fexpr_t expr)
+    bint fexpr_is_arithmetic_operation(const fexpr_t expr)
     # Returns whether *expr* is of the form `f(e_1,\ldots,e_n)`
     # where *f* is one of the arithmetic operators ``Pos``, ``Neg``,
     # ``Add``, ``Sub``, ``Mul``, ``Div``.

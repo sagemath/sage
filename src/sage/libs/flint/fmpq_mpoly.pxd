@@ -67,20 +67,20 @@ cdef extern from "flint_wrap.h":
     void fmpq_mpoly_gen(fmpq_mpoly_t A, slong var, const fmpq_mpoly_ctx_t ctx)
     # Set *A* to the variable of index *var*, where ``var = 0`` corresponds to the variable with the most significance with respect to the ordering.
 
-    int fmpq_mpoly_is_gen(const fmpq_mpoly_t A, slong var, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_is_gen(const fmpq_mpoly_t A, slong var, const fmpq_mpoly_ctx_t ctx)
     # If `var \ge 0`, return `1` if *A* is equal to the `var`-th generator, otherwise return `0`.
     # If `var < 0`, return `1` if the polynomial is equal to any generator, otherwise return `0`.
 
     void fmpq_mpoly_set(fmpq_mpoly_t A, const fmpq_mpoly_t B, const fmpq_mpoly_ctx_t ctx)
     # Set *A* to *B*.
 
-    int fmpq_mpoly_equal(const fmpq_mpoly_t A, const fmpq_mpoly_t B, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_equal(const fmpq_mpoly_t A, const fmpq_mpoly_t B, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to *B*, else return `0`.
 
     void fmpq_mpoly_swap(fmpq_mpoly_t A, fmpq_mpoly_t B, const fmpq_mpoly_ctx_t ctx)
     # Efficiently swap *A* and *B*.
 
-    int fmpq_mpoly_is_fmpq(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_is_fmpq(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is a constant, else return `0`.
 
     void fmpq_mpoly_get_fmpq(fmpq_t c, const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
@@ -99,16 +99,16 @@ cdef extern from "flint_wrap.h":
     void fmpq_mpoly_one(fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
     # Set *A* to the constant `1`.
 
-    int fmpq_mpoly_equal_fmpq(const fmpq_mpoly_t A, const fmpq_t c, const fmpq_mpoly_ctx_t ctx)
-    int fmpq_mpoly_equal_fmpz(const fmpq_mpoly_t A, const fmpz_t c, const fmpq_mpoly_ctx_t ctx)
-    int fmpq_mpoly_equal_ui(const fmpq_mpoly_t A, ulong c, const fmpq_mpoly_ctx_t ctx)
-    int fmpq_mpoly_equal_si(const fmpq_mpoly_t A, slong c, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_equal_fmpq(const fmpq_mpoly_t A, const fmpq_t c, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_equal_fmpz(const fmpq_mpoly_t A, const fmpz_t c, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_equal_ui(const fmpq_mpoly_t A, ulong c, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_equal_si(const fmpq_mpoly_t A, slong c, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to the constant *c*, else return `0`.
 
-    int fmpq_mpoly_is_zero(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_is_zero(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to the constant `0`, else return `0`.
 
-    int fmpq_mpoly_is_one(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_is_one(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to the constant `1`, else return `0`.
 
     int fmpq_mpoly_degrees_fit_si(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
@@ -171,7 +171,7 @@ cdef extern from "flint_wrap.h":
     fmpz * fmpq_mpoly_zpoly_term_coeff_ref(fmpq_mpoly_t A, slong i, const fmpq_mpoly_ctx_t ctx)
     # Return a reference to the coefficient of index *i* of the integer polynomial of *A*.
 
-    int fmpq_mpoly_is_canonical(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_is_canonical(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is in canonical form. Otherwise, return `0`.
     # An ``fmpq_mpoly_t`` is represented as the product of an ``fmpq_t content`` and an ``fmpz_mpoly_t zpoly``.
     # The representation is considered canonical when either
@@ -388,7 +388,7 @@ cdef extern from "flint_wrap.h":
     # If *A* is a perfect square return `1` and set *Q* to the square root
     # with positive leading coefficient. Otherwise return `0` and set *Q* to zero.
 
-    int fmpq_mpoly_is_square(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
+    bint fmpq_mpoly_is_square(const fmpq_mpoly_t A, const fmpq_mpoly_ctx_t ctx)
     # Return `1` if *A* is a perfect square, otherwise return `0`.
 
     void fmpq_mpoly_univar_init(fmpq_mpoly_univar_t A, const fmpq_mpoly_ctx_t ctx)

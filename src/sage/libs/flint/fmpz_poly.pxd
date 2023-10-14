@@ -235,26 +235,26 @@ cdef extern from "flint_wrap.h":
     # the current length of ``poly`` then the polynomial is extended and
     # zero coefficients inserted if necessary.
 
-    int fmpz_poly_equal(const fmpz_poly_t poly1, const fmpz_poly_t poly2)
+    bint fmpz_poly_equal(const fmpz_poly_t poly1, const fmpz_poly_t poly2)
     # Returns `1` if ``poly1`` is equal to ``poly2``, otherwise
     # returns `0`.  The polynomials are assumed to be normalised.
 
-    int fmpz_poly_equal_trunc(const fmpz_poly_t poly1, const fmpz_poly_t poly2, slong n)
+    bint fmpz_poly_equal_trunc(const fmpz_poly_t poly1, const fmpz_poly_t poly2, slong n)
     # Return `1` if ``poly1`` and ``poly2``, notionally truncated to
     # length `n` are equal, otherwise return `0`.
 
-    int fmpz_poly_is_zero(const fmpz_poly_t poly)
+    bint fmpz_poly_is_zero(const fmpz_poly_t poly)
     # Returns `1` if the polynomial is zero and `0` otherwise.
     # This function is implemented as a macro.
 
-    int fmpz_poly_is_one(const fmpz_poly_t poly)
+    bint fmpz_poly_is_one(const fmpz_poly_t poly)
     # Returns `1` if the polynomial is one and `0` otherwise.
 
-    int fmpz_poly_is_unit(const fmpz_poly_t poly)
+    bint fmpz_poly_is_unit(const fmpz_poly_t poly)
     # Returns `1` if the polynomial is the constant polynomial `\pm 1`,
     # and `0` otherwise.
 
-    int fmpz_poly_is_gen(const fmpz_poly_t poly)
+    bint fmpz_poly_is_gen(const fmpz_poly_t poly)
     # Returns `1` if the polynomial is the degree `1` polynomial `x`, and `0`
     # otherwise.
 
@@ -1036,10 +1036,10 @@ cdef extern from "flint_wrap.h":
     # and normalises the result to have non-negative leading coefficient.
     # If ``poly`` is zero, sets ``res`` to zero.
 
-    int _fmpz_poly_is_squarefree(const fmpz * poly, slong len)
+    bint _fmpz_poly_is_squarefree(const fmpz * poly, slong len)
     # Returns whether the polynomial ``(poly, len)`` is square-free.
 
-    int fmpz_poly_is_squarefree(const fmpz_poly_t poly)
+    bint fmpz_poly_is_squarefree(const fmpz_poly_t poly)
     # Returns whether the polynomial ``poly`` is square-free.  A non-zero
     # polynomial is defined to be square-free if it has no non-unit square
     # factors.  We also define the zero polynomial to be square-free.

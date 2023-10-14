@@ -417,26 +417,26 @@ cdef extern from "flint_wrap.h":
     # Returns a negative value if `\lvert f\rvert < \lvert 2g\rvert`, positive value if
     # `\lvert 2g\rvert < \lvert f \rvert`, otherwise returns `0`.
 
-    int fmpz_equal(const fmpz_t f, const fmpz_t g)
+    bint fmpz_equal(const fmpz_t f, const fmpz_t g)
 
-    int fmpz_equal_ui(const fmpz_t f, ulong g)
+    bint fmpz_equal_ui(const fmpz_t f, ulong g)
 
-    int fmpz_equal_si(const fmpz_t f, slong g)
+    bint fmpz_equal_si(const fmpz_t f, slong g)
     # Returns `1` if `f` is equal to `g`, otherwise returns `0`.
 
-    int fmpz_is_zero(const fmpz_t f)
+    bint fmpz_is_zero(const fmpz_t f)
     # Returns `1` if `f` is `0`, otherwise returns `0`.
 
-    int fmpz_is_one(const fmpz_t f)
+    bint fmpz_is_one(const fmpz_t f)
     # Returns `1` if `f` is equal to one, otherwise returns `0`.
 
-    int fmpz_is_pm1(const fmpz_t f)
+    bint fmpz_is_pm1(const fmpz_t f)
     # Returns `1` if `f` is equal to one or minus one, otherwise returns `0`.
 
-    int fmpz_is_even(const fmpz_t f)
+    bint fmpz_is_even(const fmpz_t f)
     # Returns whether the integer `f` is even.
 
-    int fmpz_is_odd(const fmpz_t f)
+    bint fmpz_is_odd(const fmpz_t f)
     # Returns whether the integer `f` is odd.
 
     void fmpz_neg(fmpz_t f1, const fmpz_t f2)
@@ -642,7 +642,7 @@ cdef extern from "flint_wrap.h":
     # the difference `g - f^2`.  If `g` is negative, an exception is raised.
     # The behaviour is undefined if `f` and `r` are aliases.
 
-    int fmpz_is_square(const fmpz_t f)
+    bint fmpz_is_square(const fmpz_t f)
     # Returns nonzero if `f` is a perfect square and zero otherwise.
 
     int fmpz_root(fmpz_t r, const fmpz_t f, slong n)
@@ -651,7 +651,7 @@ cdef extern from "flint_wrap.h":
     # exception is raised. The function returns `1` if the root was exact,
     # otherwise `0`.
 
-    int fmpz_is_perfect_power(fmpz_t root, const fmpz_t f)
+    bint fmpz_is_perfect_power(fmpz_t root, const fmpz_t f)
     # If `f` is a perfect power `r^k` set ``root`` to `r` and return `k`,
     # otherwise return `0`. Note that `-1, 0, 1` are all considered perfect
     # powers. No guarantee is made about `r` or `k` being the smallest
@@ -917,17 +917,17 @@ cdef extern from "flint_wrap.h":
     void fmpz_multi_CRT_clear(fmpz_multi_CRT_t P)
     # Free all space used by ``CRT``.
 
-    int fmpz_is_strong_probabprime(const fmpz_t n, const fmpz_t a)
+    bint fmpz_is_strong_probabprime(const fmpz_t n, const fmpz_t a)
     # Returns `1` if `n` is a strong probable prime to base `a`, otherwise it
     # returns `0`.
 
-    int fmpz_is_probabprime_lucas(const fmpz_t n)
+    bint fmpz_is_probabprime_lucas(const fmpz_t n)
     # Performs a Lucas probable prime test with parameters chosen by Selfridge's
     # method `A` as per [BaiWag1980]_.
     # Return `1` if `n` is a Lucas probable prime, otherwise return `0`. This
     # function declares some composites probably prime, but no primes composite.
 
-    int fmpz_is_probabprime_BPSW(const fmpz_t n)
+    bint fmpz_is_probabprime_BPSW(const fmpz_t n)
     # Perform a Baillie-PSW probable prime test with parameters chosen by
     # Selfridge's method `A` as per [BaiWag1980]_.
     # Return `1` if `n` is a Lucas probable prime, otherwise return `0`.
@@ -935,7 +935,7 @@ cdef extern from "flint_wrap.h":
     # infinitely many probably exist. The test will declare no primes
     # composite.
 
-    int fmpz_is_probabprime(const fmpz_t p)
+    bint fmpz_is_probabprime(const fmpz_t p)
     # Performs some trial division and then some probabilistic primality tests.
     # If `p` is definitely composite, the function returns `0`, otherwise it
     # is declared probably prime, i.e. prime for most practical purposes, and
@@ -944,7 +944,7 @@ cdef extern from "flint_wrap.h":
     # Subsequent calls to the same function do not increase the probability of
     # the number being prime.
 
-    int fmpz_is_prime_pseudosquare(const fmpz_t n)
+    bint fmpz_is_prime_pseudosquare(const fmpz_t n)
     # Return `0` is `n` is composite. If `n` is too large (greater than about
     # `94` bits) the function fails silently and returns `-1`, otherwise, if
     # `n` is proven prime by the pseudosquares method, return `1`.
@@ -973,7 +973,7 @@ cdef extern from "flint_wrap.h":
     # composite prime. However in that case an error is printed, as
     # that would be of independent interest.
 
-    int fmpz_is_prime_pocklington(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pm1, slong num_pm1)
+    bint fmpz_is_prime_pocklington(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pm1, slong num_pm1)
     # Applies the Pocklington primality test. The test computes a product
     # `F` of prime powers which divide `n - 1`.
     # The function then returns either `0` if `n` is definitely composite
@@ -1001,7 +1001,7 @@ cdef extern from "flint_wrap.h":
     # be produced (and hence on the length of the array that needs to be
     # supplied).
 
-    int fmpz_is_prime_morrison(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pp1, slong num_pp1)
+    bint fmpz_is_prime_morrison(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pp1, slong num_pp1)
     # Applies the Morrison `p + 1` primality test. The test computes a
     # product `F` of primes which divide `n + 1`.
     # The function then returns either `0` if `n` is definitely composite
@@ -1030,7 +1030,7 @@ cdef extern from "flint_wrap.h":
     # be produced (and hence on the length of the array that needs to be
     # supplied).
 
-    int fmpz_is_prime(const fmpz_t n)
+    bint fmpz_is_prime(const fmpz_t n)
     # Attempts to prove `n` prime.  If `n` is proven prime, the function
     # returns `1`. If `n` is definitely composite, the function returns `0`.
     # This function calls :func:`n_is_prime` for `n` that fits in a single word.

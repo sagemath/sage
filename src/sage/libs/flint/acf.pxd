@@ -33,7 +33,7 @@ cdef extern from "flint_wrap.h":
     void acf_set(acf_t z, const acf_t x)
     # Sets *z* to the value *x*.
 
-    int acf_equal(const acf_t x, const acf_t y)
+    bint acf_equal(const acf_t x, const acf_t y)
     # Returns whether *x* and *y* are equal.
 
     int acf_add(acf_t res, const acf_t x, const acf_t y, slong prec, arf_rnd_t rnd)

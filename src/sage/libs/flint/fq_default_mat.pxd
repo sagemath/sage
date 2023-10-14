@@ -161,23 +161,23 @@ cdef extern from "flint_wrap.h":
     # otherwise it will have random nonzero entries on the main
     # diagonal.
 
-    int fq_default_mat_equal(const fq_default_mat_t mat1, const fq_default_mat_t mat2, const fq_default_ctx_t ctx)
+    bint fq_default_mat_equal(const fq_default_mat_t mat1, const fq_default_mat_t mat2, const fq_default_ctx_t ctx)
     # Returns nonzero if mat1 and mat2 have the same dimensions and elements,
     # and zero otherwise.
 
-    int fq_default_mat_is_zero(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
+    bint fq_default_mat_is_zero(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Returns a non-zero value if all entries of ``mat`` are zero, and
     # otherwise returns zero.
 
-    int fq_default_mat_is_one(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
+    bint fq_default_mat_is_one(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Returns a non-zero value if all diagonal entries of ``mat`` are one and
     # all other entries are zero, and otherwise returns zero.
 
-    int fq_default_mat_is_empty(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
+    bint fq_default_mat_is_empty(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns zero.
 
-    int fq_default_mat_is_square(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
+    bint fq_default_mat_is_square(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

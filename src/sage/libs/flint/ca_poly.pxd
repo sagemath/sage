@@ -72,7 +72,7 @@ cdef extern from "flint_wrap.h":
     # Prints a decimal representation of *poly* with precision specified by *digits*.
     # The coefficients are comma-separated and the whole list is enclosed in square brackets.
 
-    int ca_poly_is_proper(const ca_poly_t poly, ca_ctx_t ctx)
+    bint ca_poly_is_proper(const ca_poly_t poly, ca_ctx_t ctx)
     # Checks that *poly* represents an element of `\mathbb{C}[X]` with
     # well-defined degree. This returns 1 if the leading coefficient
     # of *poly* is nonzero and all coefficients of *poly* are

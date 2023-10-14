@@ -94,29 +94,29 @@ cdef extern from "flint_wrap.h":
     # having the element 1 on the main diagonal and zeros elsewhere.
     # If ``mat`` is nonsquare, it is set to the truncation of a unit matrix.
 
-    int nmod_poly_mat_equal(const nmod_poly_mat_t mat1, const nmod_poly_mat_t mat2)
+    bint nmod_poly_mat_equal(const nmod_poly_mat_t mat1, const nmod_poly_mat_t mat2)
     # Returns nonzero if ``mat1`` and ``mat2`` have the same shape and
     # all their entries agree, and returns zero otherwise.
 
-    int nmod_poly_mat_equal_nmod_mat(const nmod_poly_mat_t pmat, const nmod_mat_t cmat)
+    bint nmod_poly_mat_equal_nmod_mat(const nmod_poly_mat_t pmat, const nmod_mat_t cmat)
     # Returns nonzero if ``pmat`` is a constant matrix with the same dimensions
     # and entries as ``cmat``; returns zero otherwise.
 
-    int nmod_poly_mat_is_zero(const nmod_poly_mat_t mat)
+    bint nmod_poly_mat_is_zero(const nmod_poly_mat_t mat)
     # Returns nonzero if all entries in ``mat`` are zero, and returns
     # zero otherwise.
 
-    int nmod_poly_mat_is_one(const nmod_poly_mat_t mat)
+    bint nmod_poly_mat_is_one(const nmod_poly_mat_t mat)
     # Returns nonzero if all entry of ``mat`` on the main diagonal
     # are the constant polynomial 1 and all remaining entries are zero,
     # and returns zero otherwise. The matrix need not be square.
 
-    int nmod_poly_mat_is_empty(const nmod_poly_mat_t mat)
+    bint nmod_poly_mat_is_empty(const nmod_poly_mat_t mat)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns
     # zero.
 
-    int nmod_poly_mat_is_square(const nmod_poly_mat_t mat)
+    bint nmod_poly_mat_is_square(const nmod_poly_mat_t mat)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

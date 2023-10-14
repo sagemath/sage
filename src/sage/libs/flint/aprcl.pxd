@@ -12,11 +12,11 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    int aprcl_is_prime(const fmpz_t n)
+    bint aprcl_is_prime(const fmpz_t n)
     # Tests `n` for primality using the APRCL test.
     # This is the same as :func:`aprcl_is_prime_jacobi`.
 
-    int aprcl_is_prime_jacobi(const fmpz_t n)
+    bint aprcl_is_prime_jacobi(const fmpz_t n)
     # If `n` is prime returns 1; otherwise returns 0. The algorithm is well described
     # in "Implementation of a New Primality Test" by H. Cohen and A.K. Lenstra and
     # "A Course in Computational Algebraic Number Theory" by H. Cohen.
@@ -25,7 +25,7 @@ cdef extern from "flint_wrap.h":
     # To handle this condition, the :func:`_aprcl_is_prime_jacobi` function
     # can be used.
 
-    int aprcl_is_prime_gauss(const fmpz_t n)
+    bint aprcl_is_prime_gauss(const fmpz_t n)
     # If `n` is prime returns 1; otherwise returns 0.
     # Uses the cyclotomic primality testing algorithm described in
     # "Four primality testing algorithms" by Rene Schoof.
@@ -46,10 +46,10 @@ cdef extern from "flint_wrap.h":
     # ``PRIME``, ``COMPOSITE`` and ``PROBABPRIME``
     # (if we cannot prove primality).
 
-    int aprcl_is_prime_gauss_min_R(const fmpz_t n, ulong R)
+    bint aprcl_is_prime_gauss_min_R(const fmpz_t n, ulong R)
     # Same as :func:`aprcl_is_prime_gauss` with fixed minimum value of `R`.
 
-    int aprcl_is_prime_final_division(const fmpz_t n, const fmpz_t s, ulong r)
+    bint aprcl_is_prime_final_division(const fmpz_t n, const fmpz_t s, ulong r)
     # Returns 0 if for some `a = n^k \bmod s`, where `k \in [1, r - 1]`,
     # we have that `a \mid n`; otherwise returns 1.
 
@@ -99,7 +99,7 @@ cdef extern from "flint_wrap.h":
     slong unity_zp_is_unity(unity_zp f)
     # If `f = \zeta^h` returns h; otherwise returns -1.
 
-    int unity_zp_equal(unity_zp f, unity_zp g)
+    bint unity_zp_equal(unity_zp f, unity_zp g)
     # Returns nonzero if `f = g` reduced by the `p^{exp}`-th cyclotomic
     # polynomial.
 
@@ -227,16 +227,16 @@ cdef extern from "flint_wrap.h":
     # Swaps `f` and `g`. `f` and `g` must be initialized with
     # same `p`, `q` and `n`.
 
-    int unity_zpq_equal(const unity_zpq f, const unity_zpq g)
+    bint unity_zpq_equal(const unity_zpq f, const unity_zpq g)
     # Returns nonzero if `f = g`.
 
     slong unity_zpq_p_unity(const unity_zpq f)
     # If `f = \zeta_p^x` returns `x \in [0, p - 1]`; otherwise returns `p`.
 
-    int unity_zpq_is_p_unity(const unity_zpq f)
+    bint unity_zpq_is_p_unity(const unity_zpq f)
     # Returns nonzero if `f = \zeta_p^x`.
 
-    int unity_zpq_is_p_unity_generator(const unity_zpq f)
+    bint unity_zpq_is_p_unity_generator(const unity_zpq f)
     # Returns nonzero if `f` is a generator of the cyclic group `\langle\zeta_p\rangle`.
 
     void unity_zpq_coeff_set_fmpz(unity_zpq f, slong i, slong j, const fmpz_t x)

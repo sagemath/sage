@@ -34,30 +34,30 @@ cdef extern from "flint_wrap.h":
     void arf_nan(arf_t res)
     # Sets *res* respectively to 0, 1, `+\infty`, `-\infty`, NaN.
 
-    int arf_is_zero(const arf_t x)
+    bint arf_is_zero(const arf_t x)
 
-    int arf_is_one(const arf_t x)
+    bint arf_is_one(const arf_t x)
 
-    int arf_is_pos_inf(const arf_t x)
+    bint arf_is_pos_inf(const arf_t x)
 
-    int arf_is_neg_inf(const arf_t x)
+    bint arf_is_neg_inf(const arf_t x)
 
-    int arf_is_nan(const arf_t x)
+    bint arf_is_nan(const arf_t x)
     # Returns nonzero iff *x* respectively equals 0, 1, `+\infty`, `-\infty`, NaN.
 
-    int arf_is_inf(const arf_t x)
+    bint arf_is_inf(const arf_t x)
     # Returns nonzero iff *x* equals either `+\infty` or `-\infty`.
 
-    int arf_is_normal(const arf_t x)
+    bint arf_is_normal(const arf_t x)
     # Returns nonzero iff *x* is a finite, nonzero floating-point value, i.e.
     # not one of the special values 0, `+\infty`, `-\infty`, NaN.
 
-    int arf_is_special(const arf_t x)
+    bint arf_is_special(const arf_t x)
     # Returns nonzero iff *x* is one of the special values
     # 0, `+\infty`, `-\infty`, NaN, i.e. not a finite, nonzero
     # floating-point value.
 
-    int arf_is_finite(const arf_t x)
+    bint arf_is_finite(const arf_t x)
     # Returns nonzero iff *x* is a finite floating-point value,
     # i.e. not one of the values `+\infty`, `-\infty`, NaN.
     # (Note that this is not equivalent to the negation of
@@ -176,10 +176,10 @@ cdef extern from "flint_wrap.h":
     # This method aborts if *x* is infinite or NaN, or if the exponent of *x*
     # is so large that allocating memory for the result fails.
 
-    int arf_equal(const arf_t x, const arf_t y)
-    int arf_equal_si(const arf_t x, slong y)
-    int arf_equal_ui(const arf_t x, ulong y)
-    int arf_equal_d(const arf_t x, double y)
+    bint arf_equal(const arf_t x, const arf_t y)
+    bint arf_equal_si(const arf_t x, slong y)
+    bint arf_equal_ui(const arf_t x, ulong y)
+    bint arf_equal_d(const arf_t x, double y)
     # Returns nonzero iff *x* and *y* are exactly equal. NaN is not
     # treated specially, i.e. NaN compares as equal to itself.
     # For comparison with a *double*, the values -0 and +0 are
@@ -224,10 +224,10 @@ cdef extern from "flint_wrap.h":
     # of the mantissa of *x*, i.e. the minimum precision sufficient to represent
     # *x* exactly. Returns 0 if *x* is a special value.
 
-    int arf_is_int(const arf_t x)
+    bint arf_is_int(const arf_t x)
     # Returns nonzero iff *x* is integer-valued.
 
-    int arf_is_int_2exp_si(const arf_t x, slong e)
+    bint arf_is_int_2exp_si(const arf_t x, slong e)
     # Returns nonzero iff *x* equals `n 2^e` for some integer *n*.
 
     void arf_abs_bound_lt_2exp_fmpz(fmpz_t res, const arf_t x)

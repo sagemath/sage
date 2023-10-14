@@ -71,25 +71,25 @@ cdef extern from "flint_wrap.h":
     # having the element 1 on the main diagonal and zeros elsewhere.
     # If ``mat`` is nonsquare, it is set to the truncation of a unit matrix.
 
-    int fmpz_poly_mat_equal(const fmpz_poly_mat_t mat1, const fmpz_poly_mat_t mat2)
+    bint fmpz_poly_mat_equal(const fmpz_poly_mat_t mat1, const fmpz_poly_mat_t mat2)
     # Returns nonzero if ``mat1`` and ``mat2`` have the same shape and
     # all their entries agree, and returns zero otherwise.
 
-    int fmpz_poly_mat_is_zero(const fmpz_poly_mat_t mat)
+    bint fmpz_poly_mat_is_zero(const fmpz_poly_mat_t mat)
     # Returns nonzero if all entries in ``mat`` are zero, and returns
     # zero otherwise.
 
-    int fmpz_poly_mat_is_one(const fmpz_poly_mat_t mat)
+    bint fmpz_poly_mat_is_one(const fmpz_poly_mat_t mat)
     # Returns nonzero if all entries of ``mat`` on the main diagonal
     # are the constant polynomial 1 and all remaining entries are zero,
     # and returns zero otherwise. The matrix need not be square.
 
-    int fmpz_poly_mat_is_empty(const fmpz_poly_mat_t mat)
+    bint fmpz_poly_mat_is_empty(const fmpz_poly_mat_t mat)
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns
     # zero.
 
-    int fmpz_poly_mat_is_square(const fmpz_poly_mat_t mat)
+    bint fmpz_poly_mat_is_square(const fmpz_poly_mat_t mat)
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 

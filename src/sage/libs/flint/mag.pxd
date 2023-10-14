@@ -41,16 +41,16 @@ cdef extern from "flint_wrap.h":
     void mag_inf(mag_t res)
     # Sets *res* to positive infinity.
 
-    int mag_is_special(const mag_t x)
+    bint mag_is_special(const mag_t x)
     # Returns nonzero iff *x* is zero or positive infinity.
 
-    int mag_is_zero(const mag_t x)
+    bint mag_is_zero(const mag_t x)
     # Returns nonzero iff *x* is zero.
 
-    int mag_is_inf(const mag_t x)
+    bint mag_is_inf(const mag_t x)
     # Returns nonzero iff *x* is positive infinity.
 
-    int mag_is_finite(const mag_t x)
+    bint mag_is_finite(const mag_t x)
     # Returns nonzero iff *x* is not positive infinity (since there is no
     # NaN value, this function is exactly the logical negation of :func:`mag_is_inf`).
 
@@ -109,7 +109,7 @@ cdef extern from "flint_wrap.h":
     # abort will be raised. If the exponent otherwise is too large or too small,
     # the available memory could be exhausted resulting in undefined behavior.
 
-    int mag_equal(const mag_t x, const mag_t y)
+    bint mag_equal(const mag_t x, const mag_t y)
     # Returns nonzero iff *x* and *y* have the same value.
 
     int mag_cmp(const mag_t x, const mag_t y)
@@ -224,7 +224,7 @@ cdef extern from "flint_wrap.h":
     void mag_fast_zero(mag_t res)
     # Sets *res* to zero.
 
-    int mag_fast_is_zero(const mag_t x)
+    bint mag_fast_is_zero(const mag_t x)
     # Returns nonzero iff *x* to zero.
 
     void mag_fast_mul(mag_t res, const mag_t x, const mag_t y)

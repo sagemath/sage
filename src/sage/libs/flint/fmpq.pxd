@@ -36,11 +36,11 @@ cdef extern from "flint_wrap.h":
     # and denominator given explicitly as ``fmpz_t`` variables. Aliasing
     # of ``num`` and ``den`` is not allowed.
 
-    int fmpq_is_canonical(const fmpq_t x)
+    bint fmpq_is_canonical(const fmpq_t x)
     # Returns nonzero if ``fmpq_t`` x is in canonical form
     # (as produced by ``fmpq_canonicalise``), and zero otherwise.
 
-    int _fmpq_is_canonical(const fmpz_t num, const fmpz_t den)
+    bint _fmpq_is_canonical(const fmpz_t num, const fmpz_t den)
     # Does the same thing as ``fmpq_is_canonical``, but for numerator
     # and denominator given explicitly as ``fmpz_t`` variables.
 
@@ -63,16 +63,16 @@ cdef extern from "flint_wrap.h":
     void fmpq_one(fmpq_t res)
     # Sets the value of ``res`` to `1`.
 
-    int fmpq_is_zero(const fmpq_t res)
+    bint fmpq_is_zero(const fmpq_t res)
     # Returns nonzero if ``res`` has value 0, and returns zero otherwise.
 
-    int fmpq_is_one(const fmpq_t res)
+    bint fmpq_is_one(const fmpq_t res)
     # Returns nonzero if ``res`` has value `1`, and returns zero otherwise.
 
-    int fmpq_is_pm1(const fmpq_t res)
+    bint fmpq_is_pm1(const fmpq_t res)
     # Returns nonzero if ``res`` has value `\pm{1}` and zero otherwise.
 
-    int fmpq_equal(const fmpq_t x, const fmpq_t y)
+    bint fmpq_equal(const fmpq_t x, const fmpq_t y)
     # Returns nonzero if ``x`` and ``y`` are equal, and zero otherwise.
     # Assumes that ``x`` and ``y`` are both in canonical form.
 
@@ -87,10 +87,10 @@ cdef extern from "flint_wrap.h":
     int fmpq_cmp_si(const fmpq_t x, slong y)
     # Returns negative if `x < y`, zero if `x = y`, and positive if `x > y`.
 
-    int fmpq_equal_ui(fmpq_t x, ulong y)
+    bint fmpq_equal_ui(fmpq_t x, ulong y)
     # Returns `1` if `x = y`, otherwise returns `0`.
 
-    int fmpq_equal_si(fmpq_t x, slong y)
+    bint fmpq_equal_si(fmpq_t x, slong y)
     # Returns `1` if `x = y`, otherwise returns `0`.
 
     void fmpq_height(fmpz_t height, const fmpq_t x)

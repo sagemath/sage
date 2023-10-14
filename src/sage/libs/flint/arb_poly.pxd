@@ -48,11 +48,11 @@ cdef extern from "flint_wrap.h":
     # so the return value of this function is effectively
     # an upper bound.
 
-    int arb_poly_is_zero(const arb_poly_t poly)
+    bint arb_poly_is_zero(const arb_poly_t poly)
 
-    int arb_poly_is_one(const arb_poly_t poly)
+    bint arb_poly_is_one(const arb_poly_t poly)
 
-    int arb_poly_is_x(const arb_poly_t poly)
+    bint arb_poly_is_x(const arb_poly_t poly)
     # Returns 1 if *poly* is exactly the polynomial 0, 1 or *x*
     # respectively. Returns 0 otherwise.
 
@@ -120,20 +120,20 @@ cdef extern from "flint_wrap.h":
     void arb_poly_randtest(arb_poly_t poly, flint_rand_t state, slong len, slong prec, slong mag_bits)
     # Creates a random polynomial with length at most *len*.
 
-    int arb_poly_contains(const arb_poly_t poly1, const arb_poly_t poly2)
+    bint arb_poly_contains(const arb_poly_t poly1, const arb_poly_t poly2)
 
-    int arb_poly_contains_fmpz_poly(const arb_poly_t poly1, const fmpz_poly_t poly2)
+    bint arb_poly_contains_fmpz_poly(const arb_poly_t poly1, const fmpz_poly_t poly2)
 
-    int arb_poly_contains_fmpq_poly(const arb_poly_t poly1, const fmpq_poly_t poly2)
+    bint arb_poly_contains_fmpq_poly(const arb_poly_t poly1, const fmpq_poly_t poly2)
     # Returns nonzero iff *poly1* contains *poly2*.
 
-    int arb_poly_equal(const arb_poly_t A, const arb_poly_t B)
+    bint arb_poly_equal(const arb_poly_t A, const arb_poly_t B)
     # Returns nonzero iff *A* and *B* are equal as polynomial balls, i.e. all
     # coefficients have equal midpoint and radius.
 
-    int _arb_poly_overlaps(arb_srcptr poly1, slong len1, arb_srcptr poly2, slong len2)
+    bint _arb_poly_overlaps(arb_srcptr poly1, slong len1, arb_srcptr poly2, slong len2)
 
-    int arb_poly_overlaps(const arb_poly_t poly1, const arb_poly_t poly2)
+    bint arb_poly_overlaps(const arb_poly_t poly1, const arb_poly_t poly2)
     # Returns nonzero iff *poly1* overlaps with *poly2*. The underscore
     # function requires that *len1* is at least as large as *len2*.
 

@@ -187,7 +187,7 @@ cdef extern from "flint_wrap.h":
 
     truth_t gr_generic_vec_equal(gr_srcptr vec1, gr_srcptr vec2, slong len, gr_ctx_t ctx)
 
-    int gr_generic_vec_is_zero(gr_srcptr vec, slong len, gr_ctx_t ctx)
+    bint gr_generic_vec_is_zero(gr_srcptr vec, slong len, gr_ctx_t ctx)
 
     int gr_generic_vec_dot(gr_ptr res, gr_srcptr initial, int subtract, gr_srcptr vec1, gr_srcptr vec2, slong len, gr_ctx_t ctx)
 

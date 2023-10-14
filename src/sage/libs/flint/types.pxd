@@ -44,7 +44,8 @@ cdef extern from "flint_wrap.h":
 
     ctypedef struct fmpz_comb_temp_struct:
         slong Alen, Tlen
-        fmpz * A, * T
+        fmpz * A
+        fmpz * T
 
     ctypedef fmpz_comb_temp_struct fmpz_comb_temp_t[1]
 
@@ -177,7 +178,6 @@ cdef extern from "flint_wrap.h":
         pass
     ctypedef flint_rand_s flint_rand_t[1]
 
-    ctypedef void* flint_rand_t
     cdef long FLINT_BITS
     cdef long FLINT_D_BITS
 

@@ -48,26 +48,26 @@ cdef extern from "flint_wrap.h":
     slong qqbar_degree(const qqbar_t x)
     # Returns the degree of *x*, i.e. the degree of the minimal polynomial.
 
-    int qqbar_is_rational(const qqbar_t x)
+    bint qqbar_is_rational(const qqbar_t x)
     # Returns whether *x* is a rational number.
 
-    int qqbar_is_integer(const qqbar_t x)
+    bint qqbar_is_integer(const qqbar_t x)
     # Returns whether *x* is an integer (an element of `\mathbb{Z}`).
 
-    int qqbar_is_algebraic_integer(const qqbar_t x)
+    bint qqbar_is_algebraic_integer(const qqbar_t x)
     # Returns whether *x* is an algebraic integer, i.e. whether its minimal
     # polynomial has leading coefficient 1.
 
-    int qqbar_is_zero(const qqbar_t x)
-    int qqbar_is_one(const qqbar_t x)
-    int qqbar_is_neg_one(const qqbar_t x)
+    bint qqbar_is_zero(const qqbar_t x)
+    bint qqbar_is_one(const qqbar_t x)
+    bint qqbar_is_neg_one(const qqbar_t x)
     # Returns whether *x* is the number `0`, `1`, `-1`.
 
-    int qqbar_is_i(const qqbar_t x)
-    int qqbar_is_neg_i(const qqbar_t x)
+    bint qqbar_is_i(const qqbar_t x)
+    bint qqbar_is_neg_i(const qqbar_t x)
     # Returns whether *x* is the imaginary unit `i` (respectively `-i`).
 
-    int qqbar_is_real(const qqbar_t x)
+    bint qqbar_is_real(const qqbar_t x)
     # Returns whether *x* is a real number.
 
     void qqbar_height(fmpz_t res, const qqbar_t x)
@@ -141,10 +141,10 @@ cdef extern from "flint_wrap.h":
     # with height (measured in bits) up to *bits*. Since all algebraic numbers
     # of degree 1 are real, *deg* must be at least 2.
 
-    int qqbar_equal(const qqbar_t x, const qqbar_t y)
+    bint qqbar_equal(const qqbar_t x, const qqbar_t y)
     # Returns whether *x* and *y* are equal.
 
-    int qqbar_equal_fmpq_poly_val(const qqbar_t x, const fmpq_poly_t f, const qqbar_t y)
+    bint qqbar_equal_fmpq_poly_val(const qqbar_t x, const fmpq_poly_t f, const qqbar_t y)
     # Returns whether *x* is equal to `f(y)`. This function is more efficient
     # than evaluating `f(y)` and comparing the results.
 
@@ -398,7 +398,7 @@ cdef extern from "flint_wrap.h":
     void qqbar_root_of_unity(qqbar_t res, slong p, ulong q)
     # Sets *res* to the root of unity `e^{2 \pi i p / q}`.
 
-    int qqbar_is_root_of_unity(slong * p, ulong * q, const qqbar_t x)
+    bint qqbar_is_root_of_unity(slong * p, ulong * q, const qqbar_t x)
     # If *x* is not a root of unity, returns 0.
     # If *x* is a root of unity, returns 1.
     # If *p* and *q* are not *NULL* and *x* is a root of unity,

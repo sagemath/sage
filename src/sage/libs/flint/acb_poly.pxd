@@ -51,11 +51,11 @@ cdef extern from "flint_wrap.h":
     # so the return value of this function is effectively
     # an upper bound.
 
-    int acb_poly_is_zero(const acb_poly_t poly)
+    bint acb_poly_is_zero(const acb_poly_t poly)
 
-    int acb_poly_is_one(const acb_poly_t poly)
+    bint acb_poly_is_one(const acb_poly_t poly)
 
-    int acb_poly_is_x(const acb_poly_t poly)
+    bint acb_poly_is_x(const acb_poly_t poly)
     # Returns 1 if *poly* is exactly the polynomial 0, 1 or *x*
     # respectively. Returns 0 otherwise.
 
@@ -117,19 +117,19 @@ cdef extern from "flint_wrap.h":
     void acb_poly_randtest(acb_poly_t poly, flint_rand_t state, slong len, slong prec, slong mag_bits)
     # Creates a random polynomial with length at most *len*.
 
-    int acb_poly_equal(const acb_poly_t A, const acb_poly_t B)
+    bint acb_poly_equal(const acb_poly_t A, const acb_poly_t B)
     # Returns nonzero iff *A* and *B* are identical as interval polynomials.
 
-    int acb_poly_contains(const acb_poly_t poly1, const acb_poly_t poly2)
+    bint acb_poly_contains(const acb_poly_t poly1, const acb_poly_t poly2)
 
-    int acb_poly_contains_fmpz_poly(const acb_poly_t poly1, const fmpz_poly_t poly2)
+    bint acb_poly_contains_fmpz_poly(const acb_poly_t poly1, const fmpz_poly_t poly2)
 
-    int acb_poly_contains_fmpq_poly(const acb_poly_t poly1, const fmpq_poly_t poly2)
+    bint acb_poly_contains_fmpq_poly(const acb_poly_t poly1, const fmpq_poly_t poly2)
     # Returns nonzero iff *poly2* is contained in *poly1*.
 
-    int _acb_poly_overlaps(acb_srcptr poly1, slong len1, acb_srcptr poly2, slong len2)
+    bint _acb_poly_overlaps(acb_srcptr poly1, slong len1, acb_srcptr poly2, slong len2)
 
-    int acb_poly_overlaps(const acb_poly_t poly1, const acb_poly_t poly2)
+    bint acb_poly_overlaps(const acb_poly_t poly1, const acb_poly_t poly2)
     # Returns nonzero iff *poly1* overlaps with *poly2*. The underscore
     # function requires that *len1* is at least as large as *len2*.
 
@@ -138,7 +138,7 @@ cdef extern from "flint_wrap.h":
     # nonzero. Otherwise (if *x* represents no integers or more than one integer),
     # returns zero, possibly partially modifying *z*.
 
-    int acb_poly_is_real(const acb_poly_t poly)
+    bint acb_poly_is_real(const acb_poly_t poly)
     # Returns nonzero iff all coefficients in *poly* have zero imaginary part.
 
     void acb_poly_set_fmpz_poly(acb_poly_t poly, const fmpz_poly_t re, slong prec)

@@ -28,7 +28,7 @@ cdef extern from "flint_wrap.h":
     # Brings ``rop`` into canonical form, only assuming that
     # the denominator is non-zero.
 
-    int fmpz_poly_q_is_canonical(const fmpz_poly_q_t op)
+    bint fmpz_poly_q_is_canonical(const fmpz_poly_q_t op)
     # Checks whether the rational function ``op`` is in
     # canonical form.
 
@@ -62,14 +62,14 @@ cdef extern from "flint_wrap.h":
     # Sets the element ``rop`` to the multiplicative inverse of ``op``.
     # Assumes that the element ``op`` is non-zero.
 
-    int fmpz_poly_q_is_zero(const fmpz_poly_q_t op)
+    bint fmpz_poly_q_is_zero(const fmpz_poly_q_t op)
     # Returns whether the element ``op`` is zero.
 
-    int fmpz_poly_q_is_one(const fmpz_poly_q_t op)
+    bint fmpz_poly_q_is_one(const fmpz_poly_q_t op)
     # Returns whether the element ``rop`` is equal to the constant
     # polynomial `1`.
 
-    int fmpz_poly_q_equal(const fmpz_poly_q_t op1, const fmpz_poly_q_t op2)
+    bint fmpz_poly_q_equal(const fmpz_poly_q_t op1, const fmpz_poly_q_t op2)
     # Returns whether the two elements ``op1`` and ``op2`` are equal.
 
     void fmpz_poly_q_add(fmpz_poly_q_t rop, const fmpz_poly_q_t op1, const fmpz_poly_q_t op2)

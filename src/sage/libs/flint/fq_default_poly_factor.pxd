@@ -67,10 +67,10 @@ cdef extern from "flint_wrap.h":
     slong fq_default_poly_factor_exp(fq_default_poly_factor_t fac, slong i, const fq_default_ctx_t ctx)
     # Return the exponent of factor ``i`` of ``fac``.
 
-    int fq_default_poly_is_irreducible(const fq_default_poly_t f, const fq_default_ctx_t ctx)
+    bint fq_default_poly_is_irreducible(const fq_default_poly_t f, const fq_default_ctx_t ctx)
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
 
-    int fq_default_poly_is_squarefree(const fq_default_poly_t f, const fq_default_ctx_t ctx)
+    bint fq_default_poly_is_squarefree(const fq_default_poly_t f, const fq_default_ctx_t ctx)
     # Returns 1 if ``f`` is squarefree, and 0 otherwise. As a special
     # case, the zero polynomial is not considered squarefree.
 
