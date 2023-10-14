@@ -526,7 +526,7 @@ def polygon2d(points, **options):
 
     TESTS:
 
-    Verify that :trac:`36153` does not arise::
+    Verify that :issue:`36153` does not arise::
 
         sage: P = polygon2d([[1,2], [5,6], [5,0]], legend_label="test")
 

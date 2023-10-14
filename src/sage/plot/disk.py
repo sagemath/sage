@@ -347,7 +347,7 @@ def disk(point, radius, angle, **options):
         ...
         ValueError: the center point of a plotted disk should have two or three coordinates
 
-    Verify that :trac:`36153` is fixed::
+    Verify that :issue:`36153` is fixed::
 
         sage: D = disk((0, 0), 5, (0, pi/2), legend_label="test")
     """

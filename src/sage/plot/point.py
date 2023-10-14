@@ -580,7 +580,7 @@ def point2d(points, **options):
        sage: point2d(iter([]))
        Graphics object consisting of 0 graphics primitives
 
-    Verify that :trac:`36153` does not arise::
+    Verify that :issue:`36153` does not arise::
 
         sage: P = point((0.5, 0.5), legend_label="test")
     """

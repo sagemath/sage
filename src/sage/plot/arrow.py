@@ -644,7 +644,7 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
     TESTS:
 
-    Verify that :trac:`36153` is fixed::
+    Verify that :issue:`36153` is fixed::
 
         sage: A = arrow2d((-1,-1), (2,3), legend_label="test")
     """

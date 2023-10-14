@@ -347,7 +347,7 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     TESTS:
 
-    Verify that :trac:`36153` does not arise::
+    Verify that :issue:`36153` does not arise::
 
         sage: E = ellipse((0,0), 2, 1, legend_label="test")
     """
