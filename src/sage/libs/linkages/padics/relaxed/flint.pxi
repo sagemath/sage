@@ -19,6 +19,7 @@ AUTHOR:
 from sage.libs.flint.types cimport flint_rand_t
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 
 cdef extern from "sage/libs/linkages/padics/relaxed/flint_helper.c":
     cdef void flint_randseed(flint_rand_t state, ulong seed1, ulong seed2)

@@ -25,6 +25,7 @@ import sage.libs.ntl.all as ntl
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.nmod_poly_factor cimport *
 from sage.libs.flint.ulong_extras cimport *
