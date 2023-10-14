@@ -4502,8 +4502,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             ValueError: polynomial is not in the ideal
-            sage: f.lift(I)
-            [1, x2]
             sage: A.<x,y> = PolynomialRing(ZZ,2,order='degrevlex')
             sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
             sage: f = x*y^13 + y^12
