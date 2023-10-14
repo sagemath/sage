@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_nmod_mat_init(fq_nmod_mat_t mat, long rows, long cols, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_init(fq_nmod_mat_t mat, slong rows, slong cols, const fq_nmod_ctx_t ctx)
     # Initialises ``mat`` to a ``rows``-by-``cols`` matrix with
     # coefficients in `\mathbf{F}_{q}` given by ``ctx``. All elements
     # are set to zero.
@@ -30,17 +30,17 @@ cdef extern from "flint_wrap.h":
     # Sets ``mat`` to a copy of ``src``. It is assumed
     # that ``mat`` and ``src`` have identical dimensions.
 
-    fq_nmod_struct * fq_nmod_mat_entry(const fq_nmod_mat_t mat, long i, long j)
+    fq_nmod_struct * fq_nmod_mat_entry(const fq_nmod_mat_t mat, slong i, slong j)
     # Directly accesses the entry in ``mat`` in row `i` and column `j`,
     # indexed from zero. No bounds checking is performed.
 
-    void fq_nmod_mat_entry_set(fq_nmod_mat_t mat, long i, long j, const fq_nmod_t x, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_entry_set(fq_nmod_mat_t mat, slong i, slong j, const fq_nmod_t x, const fq_nmod_ctx_t ctx)
     # Sets the entry in ``mat`` in row `i` and column `j` to ``x``.
 
-    long fq_nmod_mat_nrows(const fq_nmod_mat_t mat, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_nrows(const fq_nmod_mat_t mat, const fq_nmod_ctx_t ctx)
     # Returns the number of rows in ``mat``.
 
-    long fq_nmod_mat_ncols(const fq_nmod_mat_t mat, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_ncols(const fq_nmod_mat_t mat, const fq_nmod_ctx_t ctx)
     # Returns the number of columns in ``mat``.
 
     void fq_nmod_mat_swap(fq_nmod_mat_t mat1, fq_nmod_mat_t mat2, const fq_nmod_ctx_t ctx)
@@ -57,20 +57,20 @@ cdef extern from "flint_wrap.h":
     void fq_nmod_mat_one(fq_nmod_mat_t mat, const fq_nmod_ctx_t ctx)
     # Sets all diagonal entries of ``mat`` to 1 and all other entries to 0.
 
-    void fq_nmod_mat_swap_rows(fq_nmod_mat_t mat, long * perm, long r, long s, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_swap_rows(fq_nmod_mat_t mat, slong * perm, slong r, slong s, const fq_nmod_ctx_t ctx)
     # Swaps rows ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fq_nmod_mat_swap_cols(fq_nmod_mat_t mat, long * perm, long r, long s, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_swap_cols(fq_nmod_mat_t mat, slong * perm, slong r, slong s, const fq_nmod_ctx_t ctx)
     # Swaps columns ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
 
-    void fq_nmod_mat_invert_rows(fq_nmod_mat_t mat, long * perm, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_invert_rows(fq_nmod_mat_t mat, slong * perm, const fq_nmod_ctx_t ctx)
     # Swaps rows ``i`` and ``r - i`` of ``mat`` for ``0 <= i < r/2``, where
     # ``r`` is the number of rows of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fq_nmod_mat_invert_cols(fq_nmod_mat_t mat, long * perm, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_invert_cols(fq_nmod_mat_t mat, slong * perm, const fq_nmod_ctx_t ctx)
     # Swaps columns ``i`` and ``c - i`` of ``mat`` for ``0 <= i < c/2``, where
     # ``c`` is the number of columns of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
@@ -107,7 +107,7 @@ cdef extern from "flint_wrap.h":
     # In case of success, returns a positive value.  In case of failure,
     # returns a non-positive value.
 
-    void fq_nmod_mat_window_init(fq_nmod_mat_t window, const fq_nmod_mat_t mat, long r1, long c1, long r2, long c2, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_window_init(fq_nmod_mat_t window, const fq_nmod_mat_t mat, slong r1, slong c1, slong r2, slong c2, const fq_nmod_ctx_t ctx)
     # Initializes the matrix ``window`` to be an ``r2 - r1`` by
     # ``c2 - c1`` submatrix of ``mat`` whose ``(0,0)`` entry
     # is the ``(r1, c1)`` entry of ``mat``.  The memory for the
@@ -122,7 +122,7 @@ cdef extern from "flint_wrap.h":
     # Sets the elements of ``mat`` to random elements of
     # `\mathbf{F}_{q}`, given by ``ctx``.
 
-    int fq_nmod_mat_randpermdiag(fq_nmod_mat_t mat, flint_rand_t state, fq_nmod_struct * diag, long n, const fq_nmod_ctx_t ctx)
+    int fq_nmod_mat_randpermdiag(fq_nmod_mat_t mat, flint_rand_t state, fq_nmod_struct * diag, slong n, const fq_nmod_ctx_t ctx)
     # Sets ``mat`` to a random permutation of the diagonal matrix
     # with `n` leading entries given by the vector ``diag``. It is
     # assumed that the main diagonal of ``mat`` has room for at
@@ -130,7 +130,7 @@ cdef extern from "flint_wrap.h":
     # Returns `0` or `1`, depending on whether the permutation is even
     # or odd respectively.
 
-    void fq_nmod_mat_randrank(fq_nmod_mat_t mat, flint_rand_t state, long rank, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_randrank(fq_nmod_mat_t mat, flint_rand_t state, slong rank, const fq_nmod_ctx_t ctx)
     # Sets ``mat`` to a random sparse matrix with the given rank,
     # having exactly as many non-zero elements as the rank, with the
     # non-zero elements being uniformly random elements of
@@ -138,7 +138,7 @@ cdef extern from "flint_wrap.h":
     # The matrix can be transformed into a dense matrix with unchanged
     # rank by subsequently calling :func:`fq_nmod_mat_randops`.
 
-    void fq_nmod_mat_randops(fq_nmod_mat_t mat, long count, flint_rand_t state, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_randops(fq_nmod_mat_t mat, slong count, flint_rand_t state, const fq_nmod_ctx_t ctx)
     # Randomises ``mat`` by performing elementary row or column
     # operations. More precisely, at most ``count`` random additions
     # or subtractions of distinct rows and columns will be performed.
@@ -206,14 +206,14 @@ cdef extern from "flint_wrap.h":
     # Sets `D = C + AB`. `C` and `D` may be aliased with each other but
     # not with `A` or `B`.
 
-    void fq_nmod_mat_mul_vec(fq_nmod_struct * c, const fq_nmod_mat_t A, const fq_nmod_struct * b, long blen, const fq_nmod_ctx_t ctx)
-    void fq_nmod_mat_mul_vec_ptr(fq_nmod_struct * const * c, const fq_nmod_mat_t A, const fq_nmod_struct * const * b, long blen, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_mul_vec(fq_nmod_struct * c, const fq_nmod_mat_t A, const fq_nmod_struct * b, slong blen, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_mul_vec_ptr(fq_nmod_struct * const * c, const fq_nmod_mat_t A, const fq_nmod_struct * const * b, slong blen, const fq_nmod_ctx_t ctx)
     # Compute a matrix-vector product of ``A`` and ``(b, blen)`` and store the result in ``c``.
     # The vector ``(b, blen)`` is either truncated or zero-extended to the number of columns of ``A``.
     # The number entries written to ``c`` is always equal to the number of rows of ``A``.
 
-    void fq_nmod_mat_vec_mul(fq_nmod_struct * c, const fq_nmod_struct * a, long alen, const fq_nmod_mat_t B, const fq_nmod_ctx_t ctx)
-    void fq_nmod_mat_vec_mul_ptr(fq_nmod_struct * const * c, const fq_nmod_struct * const * a, long alen, const fq_nmod_mat_t B, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_vec_mul(fq_nmod_struct * c, const fq_nmod_struct * a, slong alen, const fq_nmod_mat_t B, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_vec_mul_ptr(fq_nmod_struct * const * c, const fq_nmod_struct * const * a, slong alen, const fq_nmod_mat_t B, const fq_nmod_ctx_t ctx)
     # Compute a vector-matrix product of ``(a, alen)`` and ``B`` and and store the result in ``c``.
     # The vector ``(a, alen)`` is either truncated or zero-extended to the number of rows of ``B``.
     # The number entries written to ``c`` is always equal to the number of columns of ``B``.
@@ -223,7 +223,7 @@ cdef extern from "flint_wrap.h":
     # returns `0` and sets the elements of `B` to undefined values.
     # `A` and `B` must be square matrices with the same dimensions.
 
-    long fq_nmod_mat_lu(long * P, fq_nmod_mat_t A, int rank_check, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_lu(slong * P, fq_nmod_mat_t A, int rank_check, const fq_nmod_ctx_t ctx)
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`.
     # If `A` is a nonsingular square matrix, it will be overwritten with
@@ -240,26 +240,26 @@ cdef extern from "flint_wrap.h":
     # if `A` is detected to be rank-deficient.
     # This function calls ``fq_nmod_mat_lu_recursive``.
 
-    long fq_nmod_mat_lu_classical(long * P, fq_nmod_mat_t A, int rank_check, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_lu_classical(slong * P, fq_nmod_mat_t A, int rank_check, const fq_nmod_ctx_t ctx)
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`. The behavior of this
     # function is identical to that of ``fq_nmod_mat_lu``. Uses Gaussian
     # elimination.
 
-    long fq_nmod_mat_lu_recursive(long * P, fq_nmod_mat_t A, int rank_check, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_lu_recursive(slong * P, fq_nmod_mat_t A, int rank_check, const fq_nmod_ctx_t ctx)
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`. The behavior of this
     # function is identical to that of ``fq_nmod_mat_lu``. Uses recursive
     # block decomposition, switching to classical Gaussian elimination
     # for sufficiently small blocks.
 
-    long fq_nmod_mat_rref(fq_nmod_mat_t A, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_rref(fq_nmod_mat_t A, const fq_nmod_ctx_t ctx)
     # Puts `A` in reduced row echelon form and returns the rank of `A`.
     # The rref is computed by first obtaining an unreduced row echelon
     # form via LU decomposition and then solving an additional
     # triangular system.
 
-    long fq_nmod_mat_reduce_row(fq_nmod_mat_t A, long * P, long * L, long n, const fq_nmod_ctx_t ctx)
+    slong fq_nmod_mat_reduce_row(fq_nmod_mat_t A, slong * P, slong * L, slong n, const fq_nmod_ctx_t ctx)
     # Reduce row n of the matrix `A`, assuming the prior rows are in Gauss
     # form. However those rows may not be in order. The entry `i` of the array
     # `P` is the row of `A` which has a pivot in the `i`-th column. If no such
@@ -343,7 +343,7 @@ cdef extern from "flint_wrap.h":
     # valid solutions is given.
     # There are no restrictions on the shape of `A` and it may be singular.
 
-    void fq_nmod_mat_similarity(fq_nmod_mat_t M, long r, fq_nmod_t d, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mat_similarity(fq_nmod_mat_t M, slong r, fq_nmod_t d, const fq_nmod_ctx_t ctx)
     # Applies a similarity transform to the `n\times n` matrix `M` in-place.
     # If `P` is the `n\times n` identity matrix the zero entries of whose row
     # `r` (`0`-indexed) have been replaced by `d`, this transform is equivalent

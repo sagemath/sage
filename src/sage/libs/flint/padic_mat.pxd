@@ -18,37 +18,37 @@ cdef extern from "flint_wrap.h":
     # The return value can be used as an argument to
     # the functions in the ``fmpz_mat`` module.
 
-    fmpz * padic_mat_entry(const padic_mat_t A, long i, long j)
+    fmpz * padic_mat_entry(const padic_mat_t A, slong i, slong j)
     # Returns a pointer to unit part of the entry in position `(i, j)`.
     # Note that this is not necessarily a unit.
     # The return value can be used as an argument to
     # the functions in the ``fmpz`` module.
 
-    long padic_mat_val(const padic_mat_t A)
+    slong padic_mat_val(const padic_mat_t A)
     # Allow access (as L-value or R-value) to ``val`` field of `A`.
     # This function is implemented as a macro.
 
-    long padic_mat_prec(const padic_mat_t A)
+    slong padic_mat_prec(const padic_mat_t A)
     # Allow access (as L-value or R-value) to ``prec`` field of `A`.
     # This function is implemented as a macro.
 
-    long padic_mat_get_val(const padic_mat_t A)
+    slong padic_mat_get_val(const padic_mat_t A)
     # Returns the valuation of the matrix.
 
-    long padic_mat_get_prec(const padic_mat_t A)
+    slong padic_mat_get_prec(const padic_mat_t A)
     # Returns the `p`-adic precision of the matrix.
 
-    long padic_mat_nrows(const padic_mat_t A)
+    slong padic_mat_nrows(const padic_mat_t A)
     # Returns the number of rows of the matrix `A`.
 
-    long padic_mat_ncols(const padic_mat_t A)
+    slong padic_mat_ncols(const padic_mat_t A)
     # Returns the number of columns of the matrix `A`.
 
-    void padic_mat_init(padic_mat_t A, long r, long c)
+    void padic_mat_init(padic_mat_t A, slong r, slong c)
     # Initialises the matrix `A` as a zero matrix with the specified numbers
     # of rows and columns and precision ``PADIC_DEFAULT_PREC``.
 
-    void padic_mat_init2(padic_mat_t A, long r, long c, long prec)
+    void padic_mat_init2(padic_mat_t A, slong r, slong c, slong prec)
     # Initialises the matrix `A` as a zero matrix with the specified numbers
     # of rows and columns and the given precision.
 
@@ -102,10 +102,10 @@ cdef extern from "flint_wrap.h":
     # Sets the rational matrix `B` to the `p`-adic matrices `A`;
     # no reduction takes place.
 
-    void padic_mat_get_entry_padic(padic_t rop, const padic_mat_t op, long i, long j, const padic_ctx_t ctx)
+    void padic_mat_get_entry_padic(padic_t rop, const padic_mat_t op, slong i, slong j, const padic_ctx_t ctx)
     # Sets ``rop`` to the entry in position `(i, j)` in the matrix ``op``.
 
-    void padic_mat_set_entry_padic(padic_mat_t rop, long i, long j, const padic_t op, const padic_ctx_t ctx)
+    void padic_mat_set_entry_padic(padic_mat_t rop, slong i, slong j, const padic_t op, const padic_ctx_t ctx)
     # Sets the entry in position `(i, j)` in the matrix to ``rop``.
 
     int padic_mat_equal(const padic_mat_t A, const padic_mat_t B)

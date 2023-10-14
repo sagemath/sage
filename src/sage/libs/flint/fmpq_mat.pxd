@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fmpq_mat_init(fmpq_mat_t mat, long rows, long cols)
+    void fmpq_mat_init(fmpq_mat_t mat, slong rows, slong cols)
     # Initialises a matrix with the given number of rows and columns for use.
 
     void fmpq_mat_init_set(fmpq_mat_t mat1, const fmpq_mat_t mat2)
@@ -30,28 +30,28 @@ cdef extern from "flint_wrap.h":
     # Swaps two matrices by swapping the individual entries rather than swapping
     # the contents of the structs.
 
-    fmpq * fmpq_mat_entry(const fmpq_mat_t mat, long i, long j)
+    fmpq * fmpq_mat_entry(const fmpq_mat_t mat, slong i, slong j)
     # Gives a reference to the entry at row ``i`` and column ``j``.
     # The reference can be passed as an input or output variable to any
     # ``fmpq`` function for direct manipulation of the matrix element.
     # No bounds checking is performed.
 
-    fmpz * fmpq_mat_entry_num(const fmpq_mat_t mat, long i, long j)
+    fmpz * fmpq_mat_entry_num(const fmpq_mat_t mat, slong i, slong j)
     # Gives a reference to the numerator of the entry at row ``i`` and
     # column ``j``. The reference can be passed as an input or output
     # variable to any ``fmpz`` function for direct manipulation of the
     # matrix element. No bounds checking is performed.
 
-    fmpz * fmpq_mat_entry_den(const fmpq_mat_t mat, long i, long j)
+    fmpz * fmpq_mat_entry_den(const fmpq_mat_t mat, slong i, slong j)
     # Gives a reference to the denominator of the entry at row ``i`` and
     # column ``j``. The reference can be passed as an input or output
     # variable to any ``fmpz`` function for direct manipulation of the
     # matrix element. No bounds checking is performed.
 
-    long fmpq_mat_nrows(const fmpq_mat_t mat)
+    slong fmpq_mat_nrows(const fmpq_mat_t mat)
     # Return the number of rows of the matrix ``mat``.
 
-    long fmpq_mat_ncols(const fmpq_mat_t mat)
+    slong fmpq_mat_ncols(const fmpq_mat_t mat)
     # Return the number of columns of the matrix ``mat``.
 
     void fmpq_mat_set(fmpq_mat_t dest, const fmpq_mat_t src)
@@ -71,20 +71,20 @@ cdef extern from "flint_wrap.h":
     # Sets the matrix ``rop`` to the transpose of the matrix ``op``,
     # assuming that their dimensions are compatible.
 
-    void fmpq_mat_swap_rows(fmpq_mat_t mat, long * perm, long r, long s)
+    void fmpq_mat_swap_rows(fmpq_mat_t mat, slong * perm, slong r, slong s)
     # Swaps rows ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fmpq_mat_swap_cols(fmpq_mat_t mat, long * perm, long r, long s)
+    void fmpq_mat_swap_cols(fmpq_mat_t mat, slong * perm, slong r, slong s)
     # Swaps columns ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
 
-    void fmpq_mat_invert_rows(fmpq_mat_t mat, long * perm)
+    void fmpq_mat_invert_rows(fmpq_mat_t mat, slong * perm)
     # Swaps rows ``i`` and ``r - i`` of ``mat`` for ``0 <= i < r/2``, where
     # ``r`` is the number of rows of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fmpq_mat_invert_cols(fmpq_mat_t mat, long * perm)
+    void fmpq_mat_invert_cols(fmpq_mat_t mat, slong * perm)
     # Swaps columns ``i`` and ``c - i`` of ``mat`` for ``0 <= i < c/2``, where
     # ``c`` is the number of columns of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
@@ -131,7 +131,7 @@ cdef extern from "flint_wrap.h":
     # This is equivalent to applying ``fmpq_randtest`` to all entries
     # in the matrix.
 
-    void fmpq_mat_window_init(fmpq_mat_t window, const fmpq_mat_t mat, long r1, long c1, long r2, long c2)
+    void fmpq_mat_window_init(fmpq_mat_t window, const fmpq_mat_t mat, slong r1, slong c1, slong r2, slong c2)
     # Initializes the matrix ``window`` to be an ``r2 - r1`` by
     # ``c2 - c1`` submatrix of ``mat`` whose ``(0,0)`` entry
     # is the ``(r1, c1)`` entry of ``mat``. The memory for the
@@ -260,18 +260,18 @@ cdef extern from "flint_wrap.h":
     # an integer matrix. This function works efficiently by clearing
     # denominators of ``B``.
 
-    void fmpq_mat_mul_fmpq_vec(fmpq * c, const fmpq_mat_t A, const fmpq * b, long blen)
-    void fmpq_mat_mul_fmpz_vec(fmpq * c, const fmpq_mat_t A, const fmpz * b, long blen)
-    void fmpq_mat_mul_fmpq_vec_ptr(fmpq * const * c, const fmpq_mat_t A, const fmpq * const * b, long blen)
-    void fmpq_mat_mul_fmpz_vec_ptr(fmpq * const * c, const fmpq_mat_t A, const fmpz * const * b, long blen)
+    void fmpq_mat_mul_fmpq_vec(fmpq * c, const fmpq_mat_t A, const fmpq * b, slong blen)
+    void fmpq_mat_mul_fmpz_vec(fmpq * c, const fmpq_mat_t A, const fmpz * b, slong blen)
+    void fmpq_mat_mul_fmpq_vec_ptr(fmpq * const * c, const fmpq_mat_t A, const fmpq * const * b, slong blen)
+    void fmpq_mat_mul_fmpz_vec_ptr(fmpq * const * c, const fmpq_mat_t A, const fmpz * const * b, slong blen)
     # Compute a matrix-vector product of ``A`` and ``(b, blen)`` and store the result in ``c``.
     # The vector ``(b, blen)`` is either truncated or zero-extended to the number of columns of ``A``.
     # The number entries written to ``c`` is always equal to the number of rows of ``A``.
 
-    void fmpq_mat_fmpq_vec_mul(fmpq * c, const fmpq * a, long alen, const fmpq_mat_t B)
-    void fmpq_mat_fmpz_vec_mul(fmpq * c, const fmpz * a, long alen, const fmpq_mat_t B)
-    void fmpq_mat_fmpq_vec_mul_ptr(fmpq * const * c, const fmpq * const * a, long alen, const fmpq_mat_t B)
-    void fmpq_mat_fmpz_vec_mul_ptr(fmpq * const * c, const fmpz * const * a, long alen, const fmpq_mat_t B)
+    void fmpq_mat_fmpq_vec_mul(fmpq * c, const fmpq * a, slong alen, const fmpq_mat_t B)
+    void fmpq_mat_fmpz_vec_mul(fmpq * c, const fmpz * a, slong alen, const fmpq_mat_t B)
+    void fmpq_mat_fmpq_vec_mul_ptr(fmpq * const * c, const fmpq * const * a, slong alen, const fmpq_mat_t B)
+    void fmpq_mat_fmpz_vec_mul_ptr(fmpq * const * c, const fmpz * const * a, slong alen, const fmpq_mat_t B)
     # Compute a vector-matrix product of ``(a, alen)`` and ``B`` and and store the result in ``c``.
     # The vector ``(a, alen)`` is either truncated or zero-extended to the number of rows of ``B``.
     # The number entries written to ``c`` is always equal to the number of columns of ``B``.
@@ -331,7 +331,7 @@ cdef extern from "flint_wrap.h":
     # Sets ``B`` to the inverse matrix of ``A`` and returns nonzero.
     # Returns zero if ``A`` is singular. ``A`` must be a square matrix.
 
-    int fmpq_mat_pivot(long * perm, fmpq_mat_t mat, long r, long c)
+    int fmpq_mat_pivot(slong * perm, fmpq_mat_t mat, slong r, slong c)
     # Helper function for row reduction. Returns 1 if the entry of ``mat``
     # at row `r` and column `c` is nonzero. Otherwise searches for a nonzero
     # entry in the same column among rows `r+1, r+2, \ldots`. If a nonzero
@@ -339,18 +339,18 @@ cdef extern from "flint_wrap.h":
     # entries in ``perm`` (unless ``NULL``) and returns -1. If no
     # nonzero pivot entry is found, leaves the inputs unchanged and returns 0.
 
-    long fmpq_mat_rref_classical(fmpq_mat_t B, const fmpq_mat_t A)
+    slong fmpq_mat_rref_classical(fmpq_mat_t B, const fmpq_mat_t A)
     # Sets ``B`` to the reduced row echelon form of ``A`` and returns
     # the rank. Performs Gauss-Jordan elimination directly over the rational
     # numbers. This algorithm is usually inefficient and is mainly intended
     # to be used for testing purposes.
 
-    long fmpq_mat_rref_fraction_free(fmpq_mat_t B, const fmpq_mat_t A)
+    slong fmpq_mat_rref_fraction_free(fmpq_mat_t B, const fmpq_mat_t A)
     # Sets ``B`` to the reduced row echelon form of ``A`` and returns
     # the rank. Clears denominators and performs fraction-free Gauss-Jordan
     # elimination using ``fmpz_mat`` functions.
 
-    long fmpq_mat_rref(fmpq_mat_t B, const fmpq_mat_t A)
+    slong fmpq_mat_rref(fmpq_mat_t B, const fmpq_mat_t A)
     # Sets ``B`` to the reduced row echelon form of ``A`` and returns
     # the rank. This function automatically chooses between the classical and
     # fraction-free algorithms depending on the size of the matrix.
@@ -361,7 +361,7 @@ cdef extern from "flint_wrap.h":
     # `S' = \{b_1, b_2, \ldots ,b_n\}` (as the columns of the `m \times n` matrix
     # ``B``) that spans the same subspace of `\mathbb{Q}^m` as `S`.
 
-    void fmpq_mat_similarity(fmpq_mat_t A, long r, fmpq_t d)
+    void fmpq_mat_similarity(fmpq_mat_t A, slong r, fmpq_t d)
     # Applies a similarity transform to the `n\times n` matrix `M` in-place.
     # If `P` is the `n\times n` identity matrix the zero entries of whose row
     # `r` (`0`-indexed) have been replaced by `d`, this transform is equivalent
@@ -377,7 +377,7 @@ cdef extern from "flint_wrap.h":
     # Set ``pol`` to the characteristic polynomial of the given `n\times n`
     # matrix. If ``mat`` is not square, an exception is raised.
 
-    long _fmpq_mat_minpoly(fmpz * coeffs, fmpz_t den, const fmpq_mat_t mat)
+    slong _fmpq_mat_minpoly(fmpz * coeffs, fmpz_t den, const fmpq_mat_t mat)
     # Set ``(coeffs, den)`` to the minimal polynomial of the given
     # `n\times n` matrix and return the length of the polynomial.
 

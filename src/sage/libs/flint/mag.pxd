@@ -21,13 +21,13 @@ cdef extern from "flint_wrap.h":
     void mag_swap(mag_t x, mag_t y)
     # Swaps *x* and *y* efficiently.
 
-    mag_ptr _mag_vec_init(long n)
+    mag_ptr _mag_vec_init(slong n)
     # Allocates a vector of length *n*. All entries are set to zero.
 
-    void _mag_vec_clear(mag_ptr v, long n)
+    void _mag_vec_clear(mag_ptr v, slong n)
     # Clears a vector of length *n*.
 
-    long mag_allocated_bytes(const mag_t x)
+    slong mag_allocated_bytes(const mag_t x)
     # Returns the total number of bytes heap-allocated internally by this object.
     # The count excludes the size of the structure itself. Add
     # ``sizeof(mag_struct)`` to get the size of the object as a whole.
@@ -62,7 +62,7 @@ cdef extern from "flint_wrap.h":
 
     void mag_set_d(mag_t res, double x)
 
-    void mag_set_ui(mag_t res, unsigned long x)
+    void mag_set_ui(mag_t res, ulong x)
 
     void mag_set_fmpz(mag_t res, const fmpz_t x)
     # Sets *res* to an upper bound for `|x|`. The operation may be inexact
@@ -70,7 +70,7 @@ cdef extern from "flint_wrap.h":
 
     void mag_set_d_lower(mag_t res, double x)
 
-    void mag_set_ui_lower(mag_t res, unsigned long x)
+    void mag_set_ui_lower(mag_t res, ulong x)
 
     void mag_set_fmpz_lower(mag_t res, const fmpz_t x)
     # Sets *res* to a lower bound for `|x|`.
@@ -80,7 +80,7 @@ cdef extern from "flint_wrap.h":
 
     void mag_set_fmpz_2exp_fmpz(mag_t res, const fmpz_t x, const fmpz_t y)
 
-    void mag_set_ui_2exp_si(mag_t res, unsigned long x, long y)
+    void mag_set_ui_2exp_si(mag_t res, ulong x, slong y)
     # Sets *res* to an upper bound for `|x| \cdot 2^y`.
 
     void mag_set_d_2exp_fmpz_lower(mag_t res, double x, const fmpz_t y)
@@ -116,7 +116,7 @@ cdef extern from "flint_wrap.h":
     # Returns negative, zero, or positive, depending on whether *x*
     # is smaller, equal, or larger than *y*.
 
-    int mag_cmp_2exp_si(const mag_t x, long y)
+    int mag_cmp_2exp_si(const mag_t x, slong y)
     # Returns negative, zero, or positive, depending on whether *x*
     # is smaller, equal, or larger than `2^y`.
 
@@ -152,26 +152,26 @@ cdef extern from "flint_wrap.h":
     # values with :func:`mag_dump_file` make sure to insert a whitespace to
     # separate consecutive values.
 
-    void mag_randtest(mag_t res, flint_rand_t state, long expbits)
+    void mag_randtest(mag_t res, flint_rand_t state, slong expbits)
     # Sets *res* to a random finite value, with an exponent up to *expbits* bits large.
 
-    void mag_randtest_special(mag_t res, flint_rand_t state, long expbits)
+    void mag_randtest_special(mag_t res, flint_rand_t state, slong expbits)
     # Like :func:`mag_randtest`, but also sometimes sets *res* to infinity.
 
     void mag_add(mag_t res, const mag_t x, const mag_t y)
 
-    void mag_add_ui(mag_t res, const mag_t x, unsigned long y)
+    void mag_add_ui(mag_t res, const mag_t x, ulong y)
     # Sets *res* to an upper bound for `x + y`.
 
     void mag_add_lower(mag_t res, const mag_t x, const mag_t y)
 
-    void mag_add_ui_lower(mag_t res, const mag_t x, unsigned long y)
+    void mag_add_ui_lower(mag_t res, const mag_t x, ulong y)
     # Sets *res* to a lower bound for `x + y`.
 
     void mag_add_2exp_fmpz(mag_t res, const mag_t x, const fmpz_t e)
     # Sets *res* to an upper bound for `x + 2^e`.
 
-    void mag_add_ui_2exp_si(mag_t res, const mag_t x, unsigned long y, long e)
+    void mag_add_ui_2exp_si(mag_t res, const mag_t x, ulong y, slong e)
     # Sets *res* to an upper bound for `x + y 2^e`.
 
     void mag_sub(mag_t res, const mag_t x, const mag_t y)
@@ -180,21 +180,21 @@ cdef extern from "flint_wrap.h":
     void mag_sub_lower(mag_t res, const mag_t x, const mag_t y)
     # Sets *res* to a lower bound for `\max(x-y, 0)`.
 
-    void mag_mul_2exp_si(mag_t res, const mag_t x, long y)
+    void mag_mul_2exp_si(mag_t res, const mag_t x, slong y)
 
     void mag_mul_2exp_fmpz(mag_t res, const mag_t x, const fmpz_t y)
     # Sets *res* to `x \cdot 2^y`. This operation is exact.
 
     void mag_mul(mag_t res, const mag_t x, const mag_t y)
 
-    void mag_mul_ui(mag_t res, const mag_t x, unsigned long y)
+    void mag_mul_ui(mag_t res, const mag_t x, ulong y)
 
     void mag_mul_fmpz(mag_t res, const mag_t x, const fmpz_t y)
     # Sets *res* to an upper bound for `xy`.
 
     void mag_mul_lower(mag_t res, const mag_t x, const mag_t y)
 
-    void mag_mul_ui_lower(mag_t res, const mag_t x, unsigned long y)
+    void mag_mul_ui_lower(mag_t res, const mag_t x, ulong y)
 
     void mag_mul_fmpz_lower(mag_t res, const mag_t x, const fmpz_t y)
     # Sets *res* to a lower bound for `xy`.
@@ -204,7 +204,7 @@ cdef extern from "flint_wrap.h":
 
     void mag_div(mag_t res, const mag_t x, const mag_t y)
 
-    void mag_div_ui(mag_t res, const mag_t x, unsigned long y)
+    void mag_div_ui(mag_t res, const mag_t x, ulong y)
 
     void mag_div_fmpz(mag_t res, const mag_t x, const fmpz_t y)
     # Sets *res* to an upper bound for `x / y`.
@@ -233,18 +233,18 @@ cdef extern from "flint_wrap.h":
     void mag_fast_addmul(mag_t z, const mag_t x, const mag_t y)
     # Sets *z* to an upper bound for `z + xy`.
 
-    void mag_fast_add_2exp_si(mag_t res, const mag_t x, long e)
+    void mag_fast_add_2exp_si(mag_t res, const mag_t x, slong e)
     # Sets *res* to an upper bound for `x + 2^e`.
 
-    void mag_fast_mul_2exp_si(mag_t res, const mag_t x, long e)
+    void mag_fast_mul_2exp_si(mag_t res, const mag_t x, slong e)
     # Sets *res* to an upper bound for `x 2^e`.
 
-    void mag_pow_ui(mag_t res, const mag_t x, unsigned long e)
+    void mag_pow_ui(mag_t res, const mag_t x, ulong e)
 
     void mag_pow_fmpz(mag_t res, const mag_t x, const fmpz_t e)
     # Sets *res* to an upper bound for `x^e`.
 
-    void mag_pow_ui_lower(mag_t res, const mag_t x, unsigned long e)
+    void mag_pow_ui_lower(mag_t res, const mag_t x, ulong e)
 
     void mag_pow_fmpz_lower(mag_t res, const mag_t x, const fmpz_t e)
     # Sets *res* to a lower bound for `x^e`.
@@ -264,7 +264,7 @@ cdef extern from "flint_wrap.h":
     void mag_hypot(mag_t res, const mag_t x, const mag_t y)
     # Sets *res* to an upper bound for `\sqrt{x^2 + y^2}`.
 
-    void mag_root(mag_t res, const mag_t x, unsigned long n)
+    void mag_root(mag_t res, const mag_t x, ulong n)
     # Sets *res* to an upper bound for `x^{1/n}`.
 
     void mag_log(mag_t res, const mag_t x)
@@ -281,7 +281,7 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to a lower bound for `-\log(\min(1,x))`, i.e. a lower
     # bound for `|\log(x)|` for `x \le 1`.
 
-    void mag_log_ui(mag_t res, unsigned long n)
+    void mag_log_ui(mag_t res, ulong n)
     # Sets *res* to an upper bound for `\log(n)`.
 
     void mag_log1p(mag_t res, const mag_t x)
@@ -304,13 +304,13 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to an upper bound for `\exp(x) - 1`. The bound is computed
     # accurately for small *x*.
 
-    void mag_exp_tail(mag_t res, const mag_t x, unsigned long N)
+    void mag_exp_tail(mag_t res, const mag_t x, ulong N)
     # Sets *res* to an upper bound for `\sum_{k=N}^{\infty} x^k / k!`.
 
-    void mag_binpow_uiui(mag_t res, unsigned long m, unsigned long n)
+    void mag_binpow_uiui(mag_t res, ulong m, ulong n)
     # Sets *res* to an upper bound for `(1 + 1/m)^n`.
 
-    void mag_geom_series(mag_t res, const mag_t x, unsigned long N)
+    void mag_geom_series(mag_t res, const mag_t x, ulong N)
     # Sets *res* to an upper bound for `\sum_{k=N}^{\infty} x^k`.
 
     void mag_const_pi(mag_t res)
@@ -332,20 +332,20 @@ cdef extern from "flint_wrap.h":
     void mag_sinh_lower(mag_t res, const mag_t x)
     # Sets *res* to an upper or lower bound for `\cosh(x)` or `\sinh(x)`.
 
-    void mag_fac_ui(mag_t res, unsigned long n)
+    void mag_fac_ui(mag_t res, ulong n)
     # Sets *res* to an upper bound for `n!`.
 
-    void mag_rfac_ui(mag_t res, unsigned long n)
+    void mag_rfac_ui(mag_t res, ulong n)
     # Sets *res* to an upper bound for `1/n!`.
 
-    void mag_bin_uiui(mag_t res, unsigned long n, unsigned long k)
+    void mag_bin_uiui(mag_t res, ulong n, ulong k)
     # Sets *res* to an upper bound for the binomial coefficient `{n \choose k}`.
 
-    void mag_bernoulli_div_fac_ui(mag_t res, unsigned long n)
+    void mag_bernoulli_div_fac_ui(mag_t res, ulong n)
     # Sets *res* to an upper bound for `|B_n| / n!` where `B_n` denotes
     # a Bernoulli number.
 
-    void mag_polylog_tail(mag_t res, const mag_t z, long s, unsigned long d, unsigned long N)
+    void mag_polylog_tail(mag_t res, const mag_t z, slong s, ulong d, ulong N)
     # Sets *res* to an upper bound for
     # .. math ::
     # \sum_{k=N}^{\infty} \frac{z^k \log^d(k)}{k^s}.
@@ -354,7 +354,7 @@ cdef extern from "flint_wrap.h":
     # real or complex, the user can simply
     # substitute any convenient integer `s'` such that `s' \le \operatorname{Re}(s)`.
 
-    void mag_hurwitz_zeta_uiui(mag_t res, unsigned long s, unsigned long a)
+    void mag_hurwitz_zeta_uiui(mag_t res, ulong s, ulong a)
     # Sets *res* to an upper bound for `\zeta(s,a) = \sum_{k=0}^{\infty} (k+a)^{-s}`.
     # We use the formula
     # .. math ::

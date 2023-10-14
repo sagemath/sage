@@ -84,26 +84,26 @@ cdef extern from "flint_wrap.h":
     int gr_lambertw_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t k, gr_ctx_t ctx)
 
     int gr_fac(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
-    int gr_fac_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_fac_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     int gr_fac_fmpz(gr_ptr res, const fmpz_t x, gr_ctx_t ctx)
-    int gr_fac_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_fac_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Factorial `x!`. The *vec* version writes the first *len*
     # consecutive values `1, 1, 2, 6, \ldots, (len-1)!`
     # to the preallocated vector *res*.
 
     int gr_rfac(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
-    int gr_rfac_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_rfac_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     int gr_rfac_fmpz(gr_ptr res, const fmpz_t x, gr_ctx_t ctx)
-    int gr_rfac_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_rfac_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Reciprocal factorial. The *vec* version writes the first *len*
     # consecutive values `1, 1, 1/2, 1/6, \ldots, 1/(len-1)!`
     # to the preallocated vector *res*.
 
     int gr_bin(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_bin_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_bin_uiui(gr_ptr res, unsigned long x, unsigned long y, gr_ctx_t ctx)
-    int gr_bin_vec(gr_ptr res, gr_srcptr x, long len, gr_ctx_t ctx)
-    int gr_bin_ui_vec(gr_ptr res, unsigned long x, long len, gr_ctx_t ctx)
+    int gr_bin_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_bin_uiui(gr_ptr res, ulong x, ulong y, gr_ctx_t ctx)
+    int gr_bin_vec(gr_ptr res, gr_srcptr x, slong len, gr_ctx_t ctx)
+    int gr_bin_ui_vec(gr_ptr res, ulong x, slong len, gr_ctx_t ctx)
     # Binomial coefficient `{x \choose y}`. The *vec* versions write the
     # first *len* consecutive values `{x \choose 0}, {x \choose 1}, \ldots, {x \choose len-1}`
     # to the preallocated vector *res*.
@@ -112,9 +112,9 @@ cdef extern from "flint_wrap.h":
     # call :func:`gr_mat_pascal` than to call these functions repeatedly.
 
     int gr_rising(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_rising_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
+    int gr_rising_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
     int gr_falling(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_falling_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
+    int gr_falling_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
     # Rising and falling factorials `x (x+1) \cdots (x+y-1)`
     # and `x (x-1) \cdots (x-y+1)`, or their generalizations
     # to non-integer `y` via the gamma function.
@@ -137,34 +137,34 @@ cdef extern from "flint_wrap.h":
     # Beta function `B(x,y)`.
 
     int gr_doublefac(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
-    int gr_doublefac_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_doublefac_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     # Double factorial `x!!`.
 
     int gr_harmonic(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
-    int gr_harmonic_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_harmonic_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     # Harmonic number `H_x`.
 
-    int gr_bernoulli_ui(gr_ptr res, unsigned long n, gr_ctx_t ctx)
+    int gr_bernoulli_ui(gr_ptr res, ulong n, gr_ctx_t ctx)
     int gr_bernoulli_fmpz(gr_ptr res, const fmpz_t n, gr_ctx_t ctx)
-    int gr_bernoulli_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_bernoulli_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Bernoulli numbers `B_n`.
 
-    int gr_eulernum_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_eulernum_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     int gr_eulernum_fmpz(gr_ptr res, const fmpz_t x, gr_ctx_t ctx)
-    int gr_eulernum_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_eulernum_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Euler numbers `E_n`.
 
-    int gr_fib_ui(gr_ptr res, unsigned long n, gr_ctx_t ctx)
+    int gr_fib_ui(gr_ptr res, ulong n, gr_ctx_t ctx)
     int gr_fib_fmpz(gr_ptr res, const fmpz_t n, gr_ctx_t ctx)
-    int gr_fib_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_fib_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Fibonacci numbers `F_n`.
 
-    int gr_stirling_s1u_uiui(gr_ptr res, unsigned long x, unsigned long y, gr_ctx_t ctx)
-    int gr_stirling_s1_uiui(gr_ptr res, unsigned long x, unsigned long y, gr_ctx_t ctx)
-    int gr_stirling_s2_uiui(gr_ptr res, unsigned long x, unsigned long y, gr_ctx_t ctx)
-    int gr_stirling_s1u_ui_vec(gr_ptr res, unsigned long x, long len, gr_ctx_t ctx)
-    int gr_stirling_s1_ui_vec(gr_ptr res, unsigned long x, long len, gr_ctx_t ctx)
-    int gr_stirling_s2_ui_vec(gr_ptr res, unsigned long x, long len, gr_ctx_t ctx)
+    int gr_stirling_s1u_uiui(gr_ptr res, ulong x, ulong y, gr_ctx_t ctx)
+    int gr_stirling_s1_uiui(gr_ptr res, ulong x, ulong y, gr_ctx_t ctx)
+    int gr_stirling_s2_uiui(gr_ptr res, ulong x, ulong y, gr_ctx_t ctx)
+    int gr_stirling_s1u_ui_vec(gr_ptr res, ulong x, slong len, gr_ctx_t ctx)
+    int gr_stirling_s1_ui_vec(gr_ptr res, ulong x, slong len, gr_ctx_t ctx)
+    int gr_stirling_s2_ui_vec(gr_ptr res, ulong x, slong len, gr_ctx_t ctx)
     # Stirling numbers `S(x,y)`: unsigned of the first kind,
     # signed of the first kind, and second kind. The *vec* versions
     # write the *len* consecutive values `S(x,0), S(x,1), \ldots, S(x, len-1)`
@@ -173,14 +173,14 @@ cdef extern from "flint_wrap.h":
     # it is more efficient to
     # call :func:`gr_mat_stirling` than to call these functions repeatedly.
 
-    int gr_bellnum_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_bellnum_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     int gr_bellnum_fmpz(gr_ptr res, const fmpz_t x, gr_ctx_t ctx)
-    int gr_bellnum_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_bellnum_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Bell numbers `B_n`.
 
-    int gr_partitions_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_partitions_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     int gr_partitions_fmpz(gr_ptr res, const fmpz_t x, gr_ctx_t ctx)
-    int gr_partitions_vec(gr_ptr res, long len, gr_ctx_t ctx)
+    int gr_partitions_vec(gr_ptr res, slong len, gr_ctx_t ctx)
     # Partition numbers `p(n)`.
 
     int gr_erf(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
@@ -218,8 +218,8 @@ cdef extern from "flint_wrap.h":
     int gr_hermite_h(gr_ptr res, gr_srcptr n, gr_srcptr z, gr_ctx_t ctx)
     int gr_legendre_p(gr_ptr res, gr_srcptr n, gr_srcptr m, gr_srcptr z, int type, gr_ctx_t ctx)
     int gr_legendre_q(gr_ptr res, gr_srcptr n, gr_srcptr m, gr_srcptr z, int type, gr_ctx_t ctx)
-    int gr_spherical_y_si(gr_ptr res, long n, long m, gr_srcptr theta, gr_srcptr phi, gr_ctx_t ctx)
-    int gr_legendre_p_root_ui(gr_ptr root, gr_ptr weight, unsigned long n, unsigned long k, gr_ctx_t ctx)
+    int gr_spherical_y_si(gr_ptr res, slong n, slong m, gr_srcptr theta, gr_srcptr phi, gr_ctx_t ctx)
+    int gr_legendre_p_root_ui(gr_ptr root, gr_ptr weight, ulong n, ulong k, gr_ctx_t ctx)
 
     int gr_bessel_j(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
     int gr_bessel_y(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
@@ -253,7 +253,7 @@ cdef extern from "flint_wrap.h":
     int gr_hypgeom_pfq(gr_ptr res, const gr_vec_t a, const gr_vec_t b, gr_srcptr z, int flags, gr_ctx_t ctx)
 
     int gr_zeta(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
-    int gr_zeta_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
+    int gr_zeta_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
     int gr_hurwitz_zeta(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
     int gr_polygamma(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
     int gr_polylog(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
@@ -263,11 +263,11 @@ cdef extern from "flint_wrap.h":
     int gr_dirichlet_eta(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
     int gr_riemann_xi(gr_ptr res, gr_srcptr x, gr_ctx_t ctx)
     int gr_zeta_zero(gr_ptr res, const fmpz_t n, gr_ctx_t ctx)
-    int gr_zeta_zero_vec(gr_ptr res, const fmpz_t n, long len, gr_ctx_t ctx)
+    int gr_zeta_zero_vec(gr_ptr res, const fmpz_t n, slong len, gr_ctx_t ctx)
     int gr_zeta_nzeros(gr_ptr res, gr_srcptr t, gr_ctx_t ctx)
 
     int gr_dirichlet_chi_fmpz(gr_ptr res, const dirichlet_group_t G, const dirichlet_char_t chi, const fmpz_t n, gr_ctx_t ctx)
-    int gr_dirichlet_chi_vec(gr_ptr res, const dirichlet_group_t G, const dirichlet_char_t chi, long len, gr_ctx_t ctx)
+    int gr_dirichlet_chi_vec(gr_ptr res, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, gr_ctx_t ctx)
     int gr_dirichlet_l(gr_ptr res, const dirichlet_group_t G, const dirichlet_char_t chi, gr_srcptr s, gr_ctx_t ctx)
     int gr_dirichlet_l_all(gr_vec_t res, const dirichlet_group_t G, gr_srcptr s, gr_ctx_t ctx)
     int gr_dirichlet_hardy_theta(gr_ptr res, const dirichlet_group_t G, const dirichlet_char_t chi, gr_srcptr t, gr_ctx_t ctx)
@@ -302,11 +302,11 @@ cdef extern from "flint_wrap.h":
     int gr_modular_lambda(gr_ptr res, gr_srcptr tau, gr_ctx_t ctx)
     int gr_modular_delta(gr_ptr res, gr_srcptr tau, gr_ctx_t ctx)
 
-    int gr_hilbert_class_poly(gr_ptr res, long D, gr_srcptr x, gr_ctx_t ctx)
+    int gr_hilbert_class_poly(gr_ptr res, slong D, gr_srcptr x, gr_ctx_t ctx)
 
-    int gr_eisenstein_e(gr_ptr res, unsigned long n, gr_srcptr tau, gr_ctx_t ctx)
-    int gr_eisenstein_g(gr_ptr res, unsigned long n, gr_srcptr tau, gr_ctx_t ctx)
-    int gr_eisenstein_g_vec(gr_ptr res, gr_srcptr tau, long len, gr_ctx_t ctx)
+    int gr_eisenstein_e(gr_ptr res, ulong n, gr_srcptr tau, gr_ctx_t ctx)
+    int gr_eisenstein_g(gr_ptr res, ulong n, gr_srcptr tau, gr_ctx_t ctx)
+    int gr_eisenstein_g_vec(gr_ptr res, gr_srcptr tau, slong len, gr_ctx_t ctx)
 
     int gr_elliptic_invariants(gr_ptr res1, gr_ptr res2, gr_srcptr tau, gr_ctx_t ctx)
     int gr_elliptic_roots(gr_ptr res1, gr_ptr res2, gr_ptr res3, gr_srcptr tau, gr_ctx_t ctx)

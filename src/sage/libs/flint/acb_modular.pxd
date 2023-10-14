@@ -50,13 +50,13 @@ cdef extern from "flint_wrap.h":
     # Returns nonzero iff *g* contains correct data, i.e.
     # satisfying `ad-bc = 1`, `c \ge 0`, and `d > 0` if `c = 0`.
 
-    void psl2z_randtest(psl2z_t g, flint_rand_t state, long bits)
+    void psl2z_randtest(psl2z_t g, flint_rand_t state, slong bits)
     # Sets *g* to a random element of `\text{PSL}(2, \mathbb{Z})`
     # with entries of bit length at most *bits*
     # (or 1, if *bits* is not positive). We first generate *a* and *d*, compute
     # their Bezout coefficients, divide by the GCD, and then correct the signs.
 
-    void acb_modular_transform(acb_t w, const psl2z_t g, const acb_t z, long prec)
+    void acb_modular_transform(acb_t w, const psl2z_t g, const acb_t z, slong prec)
     # Applies the modular transformation *g* to the complex number *z*,
     # evaluating
     # .. math ::
@@ -64,7 +64,7 @@ cdef extern from "flint_wrap.h":
 
     void acb_modular_fundamental_domain_approx_d(psl2z_t g, double x, double y, double one_minus_eps)
 
-    void acb_modular_fundamental_domain_approx_arf(psl2z_t g, const arf_t x, const arf_t y, const arf_t one_minus_eps, long prec)
+    void acb_modular_fundamental_domain_approx_arf(psl2z_t g, const arf_t x, const arf_t y, const arf_t one_minus_eps, slong prec)
     # Attempts to determine a modular transformation *g* that maps the
     # complex number `x+yi` to the fundamental domain or just
     # slightly outside the fundamental domain, where the target tolerance
@@ -81,7 +81,7 @@ cdef extern from "flint_wrap.h":
     # but it is up to the user to verify a posteriori that *g* maps `x+yi`
     # close enough to the fundamental domain.
 
-    void acb_modular_fundamental_domain_approx(acb_t w, psl2z_t g, const acb_t z, const arf_t one_minus_eps, long prec)
+    void acb_modular_fundamental_domain_approx(acb_t w, psl2z_t g, const acb_t z, const arf_t one_minus_eps, slong prec)
     # Attempts to determine a modular transformation *g* that maps the
     # complex number `z` to the fundamental domain or just
     # slightly outside the fundamental domain, where the target tolerance
@@ -97,12 +97,12 @@ cdef extern from "flint_wrap.h":
     # but it is up to the user to verify a posteriori that `w` is close enough
     # to the fundamental domain.
 
-    int acb_modular_is_in_fundamental_domain(const acb_t z, const arf_t tol, long prec)
+    int acb_modular_is_in_fundamental_domain(const acb_t z, const arf_t tol, slong prec)
     # Returns nonzero if it is certainly true that `|z| \ge 1 - \varepsilon` and
     # `|\operatorname{Re}(z)| \le 1/2 + \varepsilon` where `\varepsilon` is
     # specified by *tol*. Returns zero if this is false or cannot be determined.
 
-    void acb_modular_fill_addseq(long * tab, long len)
+    void acb_modular_fill_addseq(slong * tab, slong len)
     # Builds a near-optimal addition sequence for a sequence of integers
     # which is assumed to be reasonably dense.
     # As input, the caller should set each entry in *tab* to `-1` if
@@ -170,11 +170,11 @@ cdef extern from "flint_wrap.h":
     # and his "`\varepsilon`" differs from ours by a constant
     # offset in the phase).
 
-    void acb_modular_addseq_theta(long * exponents, long * aindex, long * bindex, long num)
+    void acb_modular_addseq_theta(slong * exponents, slong * aindex, slong * bindex, slong num)
     # Constructs an addition sequence for the first *num* squares and triangular
     # numbers interleaved (excluding zero), i.e. 1, 2, 4, 6, 9, 12, 16, 20, 25, 30 etc.
 
-    void acb_modular_theta_sum(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, const acb_t w, int w_is_unit, const acb_t q, long len, long prec)
+    void acb_modular_theta_sum(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, const acb_t w, int w_is_unit, const acb_t q, slong len, slong prec)
     # Simultaneously computes the first *len* coefficients of each of the
     # formal power series
     # .. math ::
@@ -245,9 +245,9 @@ cdef extern from "flint_wrap.h":
     # This function does not permit aliasing between input and output
     # arguments.
 
-    void acb_modular_theta_const_sum_basecase(acb_t theta2, acb_t theta3, acb_t theta4, const acb_t q, long N, long prec)
+    void acb_modular_theta_const_sum_basecase(acb_t theta2, acb_t theta3, acb_t theta4, const acb_t q, slong N, slong prec)
 
-    void acb_modular_theta_const_sum_rs(acb_t theta2, acb_t theta3, acb_t theta4, const acb_t q, long N, long prec)
+    void acb_modular_theta_const_sum_rs(acb_t theta2, acb_t theta3, acb_t theta4, const acb_t q, slong N, slong prec)
     # Computes the truncated theta constant sums
     # `\theta_2 = \sum_{k(k+1) < N} q^{k(k+1)}`,
     # `\theta_3 = \sum_{k^2 < N} q^{k^2}`,
@@ -256,7 +256,7 @@ cdef extern from "flint_wrap.h":
     # The *rs* version uses rectangular splitting.
     # The algorithms are described in [EHJ2016]_.
 
-    void acb_modular_theta_const_sum(acb_t theta2, acb_t theta3, acb_t theta4, const acb_t q, long prec)
+    void acb_modular_theta_const_sum(acb_t theta2, acb_t theta3, acb_t theta4, const acb_t q, slong prec)
     # Computes the respective theta constants by direct summation
     # (without applying modular transformations). This function
     # selects an appropriate *N*, calls either
@@ -264,38 +264,38 @@ cdef extern from "flint_wrap.h":
     # :func:`acb_modular_theta_const_sum_rs` or depending on *N*,
     # and adds a bound for the truncation error.
 
-    void acb_modular_theta_notransform(acb_t theta1, acb_t theta2, acb_t theta3, acb_t theta4, const acb_t z, const acb_t tau, long prec)
+    void acb_modular_theta_notransform(acb_t theta1, acb_t theta2, acb_t theta3, acb_t theta4, const acb_t z, const acb_t tau, slong prec)
     # Evaluates the Jacobi theta functions `\theta_i(z,\tau)`, `i = 1, 2, 3, 4`
     # simultaneously. This function does not move `\tau` to the fundamental domain.
     # This is generally worse than :func:`acb_modular_theta`, but can
     # be slightly better for moderate input.
 
-    void acb_modular_theta(acb_t theta1, acb_t theta2, acb_t theta3, acb_t theta4, const acb_t z, const acb_t tau, long prec)
+    void acb_modular_theta(acb_t theta1, acb_t theta2, acb_t theta3, acb_t theta4, const acb_t z, const acb_t tau, slong prec)
     # Evaluates the Jacobi theta functions `\theta_i(z,\tau)`, `i = 1, 2, 3, 4`
     # simultaneously. This function moves `\tau` to the fundamental domain
     # and then also reduces `z` modulo `\tau`
     # before calling :func:`acb_modular_theta_sum`.
 
-    void acb_modular_theta_jet_notransform(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, const acb_t z, const acb_t tau, long len, long prec)
+    void acb_modular_theta_jet_notransform(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, const acb_t z, const acb_t tau, slong len, slong prec)
 
-    void acb_modular_theta_jet(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, const acb_t z, const acb_t tau, long len, long prec)
+    void acb_modular_theta_jet(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, const acb_t z, const acb_t tau, slong len, slong prec)
     # Evaluates the Jacobi theta functions along with their derivatives
     # with respect to *z*, writing the first *len* coefficients in the power
     # series `\theta_i(z+x,\tau) \in \mathbb{C}[[x]]` to
     # each respective output variable. The *notransform* version does not
     # move `\tau` to the fundamental domain or reduce `z` during the computation.
 
-    void _acb_modular_theta_series(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, acb_srcptr z, long zlen, const acb_t tau, long len, long prec)
+    void _acb_modular_theta_series(acb_ptr theta1, acb_ptr theta2, acb_ptr theta3, acb_ptr theta4, acb_srcptr z, slong zlen, const acb_t tau, slong len, slong prec)
 
-    void acb_modular_theta_series(acb_poly_t theta1, acb_poly_t theta2, acb_poly_t theta3, acb_poly_t theta4, const acb_poly_t z, const acb_t tau, long len, long prec)
+    void acb_modular_theta_series(acb_poly_t theta1, acb_poly_t theta2, acb_poly_t theta3, acb_poly_t theta4, const acb_poly_t z, const acb_t tau, slong len, slong prec)
     # Evaluates the respective Jacobi theta functions of the power series *z*,
     # truncated to length *len*. Either of the output variables can be *NULL*.
 
-    void acb_modular_addseq_eta(long * exponents, long * aindex, long * bindex, long num)
+    void acb_modular_addseq_eta(slong * exponents, slong * aindex, slong * bindex, slong num)
     # Constructs an addition sequence for the first *num* generalized pentagonal
     # numbers (excluding zero), i.e. 1, 2, 5, 7, 12, 15, 22, 26, 35, 40 etc.
 
-    void acb_modular_eta_sum(acb_t eta, const acb_t q, long prec)
+    void acb_modular_eta_sum(acb_t eta, const acb_t q, slong prec)
     # Evaluates the Dedekind eta function
     # without the leading 24th root, i.e.
     # .. math :: \exp(-\pi i \tau/12) \eta(\tau) = \sum_{n=-\infty}^{\infty} (-1)^n q^{(3n^2-n)/2}
@@ -316,13 +316,13 @@ cdef extern from "flint_wrap.h":
     # \eta\left(\frac{a\tau+b}{c\tau+d}\right) = \varepsilon (a,b,c,d)
     # \sqrt{c\tau+d} \eta(\tau).
 
-    void acb_modular_eta(acb_t r, const acb_t tau, long prec)
+    void acb_modular_eta(acb_t r, const acb_t tau, slong prec)
     # Computes the Dedekind eta function `\eta(\tau)` given `\tau` in the upper
     # half-plane. This function applies the functional equation to move
     # `\tau` to the fundamental domain before calling
     # :func:`acb_modular_eta_sum`.
 
-    void acb_modular_j(acb_t r, const acb_t tau, long prec)
+    void acb_modular_j(acb_t r, const acb_t tau, slong prec)
     # Computes Klein's j-invariant `j(\tau)` given `\tau` in the upper
     # half-plane. The function is normalized so that `j(i) = 1728`.
     # We first move `\tau` to the fundamental domain, which does not change
@@ -330,13 +330,13 @@ cdef extern from "flint_wrap.h":
     # `j(\tau) = 32 (\theta_2^8+\theta_3^8+\theta_4^8)^3 / (\theta_2 \theta_3 \theta_4)^8` where
     # `\theta_i = \theta_i(0,\tau)`.
 
-    void acb_modular_lambda(acb_t r, const acb_t tau, long prec)
+    void acb_modular_lambda(acb_t r, const acb_t tau, slong prec)
     # Computes the lambda function
     # `\lambda(\tau) = \theta_2^4(0,\tau) / \theta_3^4(0,\tau)`, which
     # is invariant under modular transformations `(a, b; c, d)`
     # where `a, d` are odd and `b, c` are even.
 
-    void acb_modular_delta(acb_t r, const acb_t tau, long prec)
+    void acb_modular_delta(acb_t r, const acb_t tau, slong prec)
     # Computes the modular discriminant `\Delta(\tau) = \eta(\tau)^{24}`,
     # which transforms as
     # .. math ::
@@ -344,7 +344,7 @@ cdef extern from "flint_wrap.h":
     # The modular discriminant is sometimes defined with an extra factor
     # `(2\pi)^{12}`, which we omit in this implementation.
 
-    void acb_modular_eisenstein(acb_ptr r, const acb_t tau, long len, long prec)
+    void acb_modular_eisenstein(acb_ptr r, const acb_t tau, slong len, slong prec)
     # Computes simultaneously the first *len* entries in the sequence
     # of Eisenstein series `G_4(\tau), G_6(\tau), G_8(\tau), \ldots`,
     # defined by
@@ -357,17 +357,17 @@ cdef extern from "flint_wrap.h":
     # domain using theta functions, and then compute the Eisenstein series
     # of higher index using a recurrence relation.
 
-    void acb_modular_elliptic_k(acb_t w, const acb_t m, long prec)
+    void acb_modular_elliptic_k(acb_t w, const acb_t m, slong prec)
 
-    void acb_modular_elliptic_k_cpx(acb_ptr w, const acb_t m, long len, long prec)
+    void acb_modular_elliptic_k_cpx(acb_ptr w, const acb_t m, slong len, slong prec)
 
-    void acb_modular_elliptic_e(acb_t w, const acb_t m, long prec)
+    void acb_modular_elliptic_e(acb_t w, const acb_t m, slong prec)
 
-    void acb_modular_elliptic_p(acb_t wp, const acb_t z, const acb_t tau, long prec)
+    void acb_modular_elliptic_p(acb_t wp, const acb_t z, const acb_t tau, slong prec)
 
-    void acb_modular_elliptic_p_zpx(acb_ptr wp, const acb_t z, const acb_t tau, long len, long prec)
+    void acb_modular_elliptic_p_zpx(acb_ptr wp, const acb_t z, const acb_t tau, slong len, slong prec)
 
-    void acb_modular_hilbert_class_poly(fmpz_poly_t res, long D)
+    void acb_modular_hilbert_class_poly(fmpz_poly_t res, slong D)
     # Sets *res* to the Hilbert class polynomial of discriminant *D*,
     # defined as
     # .. math ::

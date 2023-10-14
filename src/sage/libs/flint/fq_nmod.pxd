@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_nmod_ctx_init(fq_nmod_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    void fq_nmod_ctx_init(fq_nmod_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Initialises the context for prime `p` and extension degree `d`,
     # with name ``var`` for the generator.  By default, it will try
     # use a Conway polynomial; if one is not available, a random
@@ -21,7 +21,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that the string ``var`` is a null-terminated string
     # of length at least one.
 
-    int _fq_nmod_ctx_init_conway(fq_nmod_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    int _fq_nmod_ctx_init_conway(fq_nmod_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Attempts to initialise the context for prime `p` and extension
     # degree `d`, with name ``var`` for the generator using a Conway
     # polynomial for the modulus.
@@ -32,7 +32,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that the string ``var`` is a null-terminated string
     # of length at least one.
 
-    void fq_nmod_ctx_init_conway(fq_nmod_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    void fq_nmod_ctx_init_conway(fq_nmod_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Initialises the context for prime `p` and extension degree `d`,
     # with name ``var`` for the generator using a Conway polynomial
     # for the modulus.
@@ -54,7 +54,7 @@ cdef extern from "flint_wrap.h":
     const nmod_poly_struct* fq_nmod_ctx_modulus(const fq_nmod_ctx_t ctx)
     # Returns a pointer to the modulus in the context.
 
-    long fq_nmod_ctx_degree(const fq_nmod_ctx_t ctx)
+    slong fq_nmod_ctx_degree(const fq_nmod_ctx_t ctx)
     # Returns the degree of the field extension
     # `[\mathbf{F}_{q} : \mathbf{F}_{p}]`, which
     # is equal to `\log_{p} q`.
@@ -91,15 +91,15 @@ cdef extern from "flint_wrap.h":
     void fq_nmod_clear(fq_nmod_t rop, const fq_nmod_ctx_t ctx)
     # Clears the element ``rop``.
 
-    void _fq_nmod_sparse_reduce(mp_limb_t * R, long lenR, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_sparse_reduce(mp_limb_t * R, slong lenR, const fq_nmod_ctx_t ctx)
     # Reduces ``(R, lenR)`` modulo the polynomial `f` given by the
     # modulus of ``ctx``.
 
-    void _fq_nmod_dense_reduce(mp_limb_t * R, long lenR, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_dense_reduce(mp_limb_t * R, slong lenR, const fq_nmod_ctx_t ctx)
     # Reduces ``(R, lenR)`` modulo the polynomial `f` given by the
     # modulus of ``ctx`` using Newton division.
 
-    void _fq_nmod_reduce(mp_limb_t * r, long lenR, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_reduce(mp_limb_t * r, slong lenR, const fq_nmod_ctx_t ctx)
     # Reduces ``(R, lenR)`` modulo the polynomial `f` given by the
     # modulus of ``ctx``.  Does either sparse or dense reduction
     # based on ``ctx->sparse_modulus``.
@@ -128,11 +128,11 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
-    void fq_nmod_mul_si(fq_nmod_t rop, const fq_nmod_t op, long x, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mul_si(fq_nmod_t rop, const fq_nmod_t op, slong x, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
-    void fq_nmod_mul_ui(fq_nmod_t rop, const fq_nmod_t op, unsigned long x, const fq_nmod_ctx_t ctx)
+    void fq_nmod_mul_ui(fq_nmod_t rop, const fq_nmod_t op, ulong x, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
@@ -140,7 +140,7 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the square of ``op``,
     # reducing the output in the given context.
 
-    void _fq_nmod_inv(mp_ptr * rop, mp_srcptr * op, long len, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_inv(mp_ptr * rop, mp_srcptr * op, slong len, const fq_nmod_ctx_t ctx)
     # Sets ``(rop, d)`` to the inverse of the non-zero element
     # ``(op, len)``.
 
@@ -152,7 +152,7 @@ cdef extern from "flint_wrap.h":
     # of ``ctx``.  If ``op`` is not invertible, then ``f`` is
     # set to a factor of the modulus; otherwise, it is set to one.
 
-    void _fq_nmod_pow(mp_limb_t * rop, const mp_limb_t * op, long len, const fmpz_t e, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_pow(mp_limb_t * rop, const mp_limb_t * op, slong len, const fmpz_t e, const fq_nmod_ctx_t ctx)
     # Sets ``(rop, 2*d-1)`` to ``(op,len)`` raised to the power `e`,
     # reduced modulo `f(X)`, the modulus of ``ctx``.
     # Assumes that `e \geq 0` and that ``len`` is positive and at most `d`.
@@ -167,7 +167,7 @@ cdef extern from "flint_wrap.h":
     # Note that for any input ``op``, ``rop`` is set to `1`
     # whenever `e = 0`.
 
-    void fq_nmod_pow_ui(fq_nmod_t rop, const fq_nmod_t op, const unsigned long e, const fq_nmod_ctx_t ctx)
+    void fq_nmod_pow_ui(fq_nmod_t rop, const fq_nmod_t op, const ulong e, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to ``op`` raised to the power `e`.
     # Currently assumes that `e \geq 0`.
     # Note that for any input ``op``, ``rop`` is set to `1`
@@ -232,11 +232,11 @@ cdef extern from "flint_wrap.h":
     void fq_nmod_set(fq_nmod_t rop, const fq_nmod_t op, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to ``op``.
 
-    void fq_nmod_set_si(fq_nmod_t rop, const long x, const fq_nmod_ctx_t ctx)
+    void fq_nmod_set_si(fq_nmod_t rop, const slong x, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to ``x``, considered as an element of
     # `\mathbf{F}_p`.
 
-    void fq_nmod_set_ui(fq_nmod_t rop, const unsigned long x, const fq_nmod_ctx_t ctx)
+    void fq_nmod_set_ui(fq_nmod_t rop, const ulong x, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to ``x``, considered as an element of
     # `\mathbf{F}_p`.
 
@@ -295,7 +295,7 @@ cdef extern from "flint_wrap.h":
     int fq_nmod_cmp(const fq_nmod_t a, const fq_nmod_t b, const fq_nmod_ctx_t ctx)
     # Return ``1`` (resp. ``-1``, or ``0``) if ``a`` is after (resp. before, same as) ``b`` in some arbitrary but fixed total ordering of the elements.
 
-    void _fq_nmod_trace(fmpz_t rop, const mp_limb_t * op, long len, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_trace(fmpz_t rop, const mp_limb_t * op, slong len, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to the trace of the non-zero element ``(op, len)``
     # in `\mathbf{F}_{q}`.
 
@@ -308,7 +308,7 @@ cdef extern from "flint_wrap.h":
     # `a` is equal to `\sum_{i=0}^{d-1} \Sigma^i (a)`, where `d =
     # \log_{p} q`.
 
-    void _fq_nmod_norm(fmpz_t rop, const mp_limb_t * op, long len, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_norm(fmpz_t rop, const mp_limb_t * op, slong len, const fq_nmod_ctx_t ctx)
     # Sets ``rop`` to the norm of the non-zero element ``(op, len)``
     # in `\mathbf{F}_{q}`.
 
@@ -322,12 +322,12 @@ cdef extern from "flint_wrap.h":
     # `d = \text{dim}_{\mathbf{F}_p}(\mathbf{F}_q)`.
     # Algorithm selection is automatic depending on the input.
 
-    void _fq_nmod_frobenius(mp_limb_t * rop, const mp_limb_t * op, long len, long e, const fq_nmod_ctx_t ctx)
+    void _fq_nmod_frobenius(mp_limb_t * rop, const mp_limb_t * op, slong len, slong e, const fq_nmod_ctx_t ctx)
     # Sets ``(rop, 2d-1)`` to the image of ``(op, len)`` under the
     # Frobenius operator raised to the e-th power, assuming that neither
     # ``op`` nor ``e`` are zero.
 
-    void fq_nmod_frobenius(fq_nmod_t rop, const fq_nmod_t op, long e, const fq_nmod_ctx_t ctx)
+    void fq_nmod_frobenius(fq_nmod_t rop, const fq_nmod_t op, slong e, const fq_nmod_ctx_t ctx)
     # Evaluates the homomorphism `\Sigma^e` at ``op``.
     # Recall that `\mathbf{F}_q / \mathbf{F}_p` is Galois with Galois group
     # `\langle \sigma \rangle`, which is also isomorphic to

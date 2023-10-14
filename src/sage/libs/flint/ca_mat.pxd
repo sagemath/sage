@@ -12,11 +12,11 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    ca_ptr ca_mat_entry_ptr(ca_mat_t mat, long i, long j)
+    ca_ptr ca_mat_entry_ptr(ca_mat_t mat, slong i, slong j)
     # Returns a pointer to the entry at row *i* and column *j*.
     # Equivalent to :macro:`ca_mat_entry` but implemented as a function.
 
-    void ca_mat_init(ca_mat_t mat, long r, long c, ca_ctx_t ctx)
+    void ca_mat_init(ca_mat_t mat, slong r, slong c, ca_ctx_t ctx)
     # Initializes the matrix, setting it to the zero matrix with *r* rows
     # and *c* columns.
 
@@ -26,7 +26,7 @@ cdef extern from "flint_wrap.h":
     void ca_mat_swap(ca_mat_t mat1, ca_mat_t mat2, ca_ctx_t ctx)
     # Efficiently swaps *mat1* and *mat2*.
 
-    void ca_mat_window_init(ca_mat_t window, const ca_mat_t mat, long r1, long c1, long r2, long c2, ca_ctx_t ctx)
+    void ca_mat_window_init(ca_mat_t window, const ca_mat_t mat, slong r1, slong c1, slong r2, slong c2, ca_ctx_t ctx)
     # Initializes *window* to a window matrix into the submatrix of *mat*
     # starting at the corner at row *r1* and column *c1* (inclusive) and ending
     # at row *r2* and column *c2* (exclusive).
@@ -50,14 +50,14 @@ cdef extern from "flint_wrap.h":
     # but may result in a different internal representation depending on the
     # settings of the context objects.
 
-    void ca_mat_randtest(ca_mat_t mat, flint_rand_t state, long depth, long bits, ca_ctx_t ctx)
+    void ca_mat_randtest(ca_mat_t mat, flint_rand_t state, slong depth, slong bits, ca_ctx_t ctx)
     # Sets *mat* to a random matrix with entries having complexity up to
     # *depth* and *bits* (see :func:`ca_randtest`).
 
-    void ca_mat_randtest_rational(ca_mat_t mat, flint_rand_t state, long bits, ca_ctx_t ctx)
+    void ca_mat_randtest_rational(ca_mat_t mat, flint_rand_t state, slong bits, ca_ctx_t ctx)
     # Sets *mat* to a random rational matrix with entries up to *bits* bits in size.
 
-    void ca_mat_randops(ca_mat_t mat, flint_rand_t state, long count, ca_ctx_t ctx)
+    void ca_mat_randops(ca_mat_t mat, flint_rand_t state, slong count, ca_ctx_t ctx)
     # Randomizes *mat* in-place by performing elementary row or column operations.
     # More precisely, at most count random additions or subtractions of distinct
     # rows and columns will be performed. This leaves the rank (and for square matrices,
@@ -66,7 +66,7 @@ cdef extern from "flint_wrap.h":
     void ca_mat_print(const ca_mat_t mat, ca_ctx_t ctx)
     # Prints *mat* to standard output. The entries are printed on separate lines.
 
-    void ca_mat_printn(const ca_mat_t mat, long digits, ca_ctx_t ctx)
+    void ca_mat_printn(const ca_mat_t mat, slong digits, ca_ctx_t ctx)
     # Prints a decimal representation of *mat* with precision specified by *digits*.
     # The entries are comma-separated with square brackets and comma separation
     # for the rows.
@@ -150,13 +150,13 @@ cdef extern from "flint_wrap.h":
     # or in `\mathbb{Q}`.
     # The default version chooses an algorithm automatically.
 
-    void ca_mat_mul_si(ca_mat_t B, const ca_mat_t A, long c, ca_ctx_t ctx)
+    void ca_mat_mul_si(ca_mat_t B, const ca_mat_t A, slong c, ca_ctx_t ctx)
     void ca_mat_mul_fmpz(ca_mat_t B, const ca_mat_t A, const fmpz_t c, ca_ctx_t ctx)
     void ca_mat_mul_fmpq(ca_mat_t B, const ca_mat_t A, const fmpq_t c, ca_ctx_t ctx)
     void ca_mat_mul_ca(ca_mat_t B, const ca_mat_t A, const ca_t c, ca_ctx_t ctx)
     # Sets *B* to *A* multiplied by the scalar *c*.
 
-    void ca_mat_div_si(ca_mat_t B, const ca_mat_t A, long c, ca_ctx_t ctx)
+    void ca_mat_div_si(ca_mat_t B, const ca_mat_t A, slong c, ca_ctx_t ctx)
     void ca_mat_div_fmpz(ca_mat_t B, const ca_mat_t A, const fmpz_t c, ca_ctx_t ctx)
     void ca_mat_div_fmpq(ca_mat_t B, const ca_mat_t A, const fmpq_t c, ca_ctx_t ctx)
     void ca_mat_div_ca(ca_mat_t B, const ca_mat_t A, const ca_t c, ca_ctx_t ctx)
@@ -173,16 +173,16 @@ cdef extern from "flint_wrap.h":
     void ca_mat_sqr(ca_mat_t B, const ca_mat_t A, ca_ctx_t ctx)
     # Sets *B* to the square of *A*.
 
-    void ca_mat_pow_ui_binexp(ca_mat_t B, const ca_mat_t A, unsigned long exp, ca_ctx_t ctx)
+    void ca_mat_pow_ui_binexp(ca_mat_t B, const ca_mat_t A, ulong exp, ca_ctx_t ctx)
     # Sets *B* to *A* raised to the power *exp*, evaluated using
     # binary exponentiation.
 
-    void _ca_mat_ca_poly_evaluate(ca_mat_t res, ca_srcptr poly, long len, const ca_mat_t A, ca_ctx_t ctx)
+    void _ca_mat_ca_poly_evaluate(ca_mat_t res, ca_srcptr poly, slong len, const ca_mat_t A, ca_ctx_t ctx)
     void ca_mat_ca_poly_evaluate(ca_mat_t res, const ca_poly_t poly, const ca_mat_t A, ca_ctx_t ctx)
     # Sets *res* to `f(A)` where *f* is the polynomial given by *poly*
     # and *A* is a square matrix. Uses the Paterson-Stockmeyer algorithm.
 
-    truth_t ca_mat_find_pivot(long * pivot_row, ca_mat_t mat, long start_row, long end_row, long column, ca_ctx_t ctx)
+    truth_t ca_mat_find_pivot(slong * pivot_row, ca_mat_t mat, slong start_row, slong end_row, slong column, ca_ctx_t ctx)
     # Attempts to find a nonzero entry in *mat* with column index *column*
     # and row index between *start_row* (inclusive) and *end_row* (exclusive).
     # If the return value is ``T_TRUE``, such an element exists,
@@ -194,9 +194,9 @@ cdef extern from "flint_wrap.h":
     # This function is destructive: any elements that are nontrivially
     # zero but can be certified zero will be overwritten by exact zeros.
 
-    int ca_mat_lu_classical(long * rank, long * P, ca_mat_t LU, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
-    int ca_mat_lu_recursive(long * rank, long * P, ca_mat_t LU, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
-    int ca_mat_lu(long * rank, long * P, ca_mat_t LU, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
+    int ca_mat_lu_classical(slong * rank, slong * P, ca_mat_t LU, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
+    int ca_mat_lu_recursive(slong * rank, slong * P, ca_mat_t LU, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
+    int ca_mat_lu(slong * rank, slong * P, ca_mat_t LU, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
     # Computes a generalized LU decomposition `A = PLU` of a given
     # matrix *A*, writing the rank of *A* to *rank*.
     # If *A* is a nonsingular square matrix, *LU* will be set to
@@ -221,14 +221,14 @@ cdef extern from "flint_wrap.h":
     # The *recursive* version uses a block recursive algorithm
     # to take advantage of fast matrix multiplication.
 
-    int ca_mat_fflu(long * rank, long * P, ca_mat_t LU, ca_t den, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
+    int ca_mat_fflu(slong * rank, slong * P, ca_mat_t LU, ca_t den, const ca_mat_t A, int rank_check, ca_ctx_t ctx)
     # Similar to :func:`ca_mat_lu`, but computes a fraction-free
     # LU decomposition using the Bareiss algorithm.
     # The denominator is written to *den*.
     # Note that despite being "fraction-free", this algorithm may
     # introduce fractions due to incomplete symbolic simplifications.
 
-    truth_t ca_mat_nonsingular_lu(long * P, ca_mat_t LU, const ca_mat_t A, ca_ctx_t ctx)
+    truth_t ca_mat_nonsingular_lu(slong * P, ca_mat_t LU, const ca_mat_t A, ca_ctx_t ctx)
     # Wrapper for :func:`ca_mat_lu`.
     # If *A* can be proved to be invertible/nonsingular, returns ``T_TRUE`` and sets *P* and *LU* to a LU decomposition `A = PLU`.
     # If *A* can be proved to be singular, returns ``T_FALSE``.
@@ -237,7 +237,7 @@ cdef extern from "flint_wrap.h":
     # LU factorization is not completed and the values of
     # *P* and *LU* are arbitrary.
 
-    truth_t ca_mat_nonsingular_fflu(long * P, ca_mat_t LU, ca_t den, const ca_mat_t A, ca_ctx_t ctx)
+    truth_t ca_mat_nonsingular_fflu(slong * P, ca_mat_t LU, ca_t den, const ca_mat_t A, ca_ctx_t ctx)
     # Wrapper for :func:`ca_mat_fflu`.
     # Similar to :func:`ca_mat_nonsingular_lu`, but computes a fraction-free
     # LU decomposition using the Bareiss algorithm.
@@ -276,20 +276,20 @@ cdef extern from "flint_wrap.h":
     # way to benefit from fast matrix multiplication. The default versions
     # choose an algorithm automatically.
 
-    void ca_mat_solve_fflu_precomp(ca_mat_t X, const long * perm, const ca_mat_t A, const ca_t den, const ca_mat_t B, ca_ctx_t ctx)
-    void ca_mat_solve_lu_precomp(ca_mat_t X, const long * P, const ca_mat_t LU, const ca_mat_t B, ca_ctx_t ctx)
+    void ca_mat_solve_fflu_precomp(ca_mat_t X, const slong * perm, const ca_mat_t A, const ca_t den, const ca_mat_t B, ca_ctx_t ctx)
+    void ca_mat_solve_lu_precomp(ca_mat_t X, const slong * P, const ca_mat_t LU, const ca_mat_t B, ca_ctx_t ctx)
     # Solves `AX = B` given the precomputed nonsingular LU decomposition `A = PLU`
     # or fraction-free LU decomposition with denominator *den*.
     # The matrices `X` and `B` are allowed to be aliased with each other,
     # but `X` is not allowed to be aliased with `LU`.
 
-    int ca_mat_rank(long * rank, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_rank(slong * rank, const ca_mat_t A, ca_ctx_t ctx)
     # Computes the rank of the matrix *A*. If successful, returns 1 and
     # writes the rank to ``rank``. If unsuccessful, returns 0.
 
-    int ca_mat_rref_fflu(long * rank, ca_mat_t R, const ca_mat_t A, ca_ctx_t ctx)
-    int ca_mat_rref_lu(long * rank, ca_mat_t R, const ca_mat_t A, ca_ctx_t ctx)
-    int ca_mat_rref(long * rank, ca_mat_t R, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_rref_fflu(slong * rank, ca_mat_t R, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_rref_lu(slong * rank, ca_mat_t R, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_rref(slong * rank, ca_mat_t R, const ca_mat_t A, ca_ctx_t ctx)
     # Computes the reduced row echelon form (rref) of a given matrix.
     # On success, sets *R* to the rref of *A*, writes the rank to
     # *rank*, and returns 1. On failure to certify the correct rank,
@@ -372,7 +372,7 @@ cdef extern from "flint_wrap.h":
     # It returns 0 if the leading coefficient of *poly* cannot be
     # proved nonzero or if the size of the output matrix does not match.
 
-    int ca_mat_eigenvalues(ca_vec_t lmbda, unsigned long * exp, const ca_mat_t mat, ca_ctx_t ctx)
+    int ca_mat_eigenvalues(ca_vec_t lmbda, ulong * exp, const ca_mat_t mat, ca_ctx_t ctx)
     # Attempts to compute all complex eigenvalues of the given matrix *mat*.
     # On success, returns 1 and sets *lambda* to the distinct eigenvalues
     # with corresponding multiplicities in *exp*.
@@ -391,7 +391,7 @@ cdef extern from "flint_wrap.h":
     # If the return value is not ``T_TRUE``, the values in *D* and *P*
     # are arbitrary.
 
-    int ca_mat_jordan_blocks(ca_vec_t lmbda, long * num_blocks, long * block_lambda, long * block_size, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_jordan_blocks(ca_vec_t lmbda, slong * num_blocks, slong * block_lambda, slong * block_size, const ca_mat_t A, ca_ctx_t ctx)
     # Computes the blocks of the Jordan canonical form of *A*.
     # On success, returns 1 and sets *lambda* to the unique eigenvalues
     # of *A*, sets *num_blocks* to the number of Jordan blocks,
@@ -404,13 +404,13 @@ cdef extern from "flint_wrap.h":
     # The Jordan form is unique up to the ordering of blocks, which
     # is arbitrary.
 
-    void ca_mat_set_jordan_blocks(ca_mat_t mat, const ca_vec_t lmbda, long num_blocks, long * block_lambda, long * block_size, ca_ctx_t ctx)
+    void ca_mat_set_jordan_blocks(ca_mat_t mat, const ca_vec_t lmbda, slong num_blocks, slong * block_lambda, slong * block_size, ca_ctx_t ctx)
     # Sets *mat* to the concatenation of the Jordan blocks
     # given in *lambda*, *num_blocks*, *block_lambda* and *block_size*.
     # See :func:`ca_mat_jordan_blocks` for an explanation of these
     # variables.
 
-    int ca_mat_jordan_transformation(ca_mat_t mat, const ca_vec_t lmbda, long num_blocks, long * block_lambda, long * block_size, const ca_mat_t A, ca_ctx_t ctx)
+    int ca_mat_jordan_transformation(ca_mat_t mat, const ca_vec_t lmbda, slong num_blocks, slong * block_lambda, slong * block_size, const ca_mat_t A, ca_ctx_t ctx)
     # Given the precomputed Jordan block decomposition
     # (*lambda*, *num_blocks*, *block_lambda*, *block_size*) of the
     # square matrix *A*, computes the corresponding transformation

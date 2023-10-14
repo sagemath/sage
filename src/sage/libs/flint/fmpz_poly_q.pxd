@@ -32,16 +32,16 @@ cdef extern from "flint_wrap.h":
     # Checks whether the rational function ``op`` is in
     # canonical form.
 
-    void fmpz_poly_q_randtest(fmpz_poly_q_t poly, flint_rand_t state, long len1, flint_bitcnt_t bits1, long len2, flint_bitcnt_t bits2)
+    void fmpz_poly_q_randtest(fmpz_poly_q_t poly, flint_rand_t state, slong len1, flint_bitcnt_t bits1, slong len2, flint_bitcnt_t bits2)
     # Sets ``poly`` to a random rational function.
 
-    void fmpz_poly_q_randtest_not_zero(fmpz_poly_q_t poly, flint_rand_t state, long len1, flint_bitcnt_t bits1, long len2, flint_bitcnt_t bits2)
+    void fmpz_poly_q_randtest_not_zero(fmpz_poly_q_t poly, flint_rand_t state, slong len1, flint_bitcnt_t bits1, slong len2, flint_bitcnt_t bits2)
     # Sets ``poly`` to a random non-zero rational function.
 
     void fmpz_poly_q_set(fmpz_poly_q_t rop, const fmpz_poly_q_t op)
     # Sets the element ``rop`` to the same value as the element ``op``.
 
-    void fmpz_poly_q_set_si(fmpz_poly_q_t rop, long op)
+    void fmpz_poly_q_set_si(fmpz_poly_q_t rop, slong op)
     # Sets the element ``rop`` to the value given by the ``slong``
     # ``op``.
 
@@ -84,7 +84,7 @@ cdef extern from "flint_wrap.h":
     void fmpz_poly_q_submul(fmpz_poly_q_t rop, const fmpz_poly_q_t op1, const fmpz_poly_q_t op2)
     # Subtracts the product of ``op1`` and ``op2`` from ``rop``.
 
-    void fmpz_poly_q_scalar_mul_si(fmpz_poly_q_t rop, const fmpz_poly_q_t op, long x)
+    void fmpz_poly_q_scalar_mul_si(fmpz_poly_q_t rop, const fmpz_poly_q_t op, slong x)
     # Sets ``rop`` to the product of the rational function ``op``
     # and the ``slong`` integer `x`.
 
@@ -96,7 +96,7 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the product of the rational function ``op``
     # and the ``fmpq_t`` rational `x`.
 
-    void fmpz_poly_q_scalar_div_si(fmpz_poly_q_t rop, const fmpz_poly_q_t op, long x)
+    void fmpz_poly_q_scalar_div_si(fmpz_poly_q_t rop, const fmpz_poly_q_t op, slong x)
     # Sets ``rop`` to the quotient of the rational function ``op``
     # and the ``slong`` integer `x`.
 
@@ -114,7 +114,7 @@ cdef extern from "flint_wrap.h":
     void fmpz_poly_q_div(fmpz_poly_q_t rop, const fmpz_poly_q_t op1, const fmpz_poly_q_t op2)
     # Sets ``rop`` to the quotient of ``op1`` and ``op2``.
 
-    void fmpz_poly_q_pow(fmpz_poly_q_t rop, const fmpz_poly_q_t op, unsigned long exp)
+    void fmpz_poly_q_pow(fmpz_poly_q_t rop, const fmpz_poly_q_t op, ulong exp)
     # Sets ``rop`` to the ``exp``-th power of ``op``.
     # The corner case of ``exp == 0`` is handled by setting ``rop`` to
     # the constant function `1`.  Note that this includes the case `0^0 = 1`.

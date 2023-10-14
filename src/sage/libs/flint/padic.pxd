@@ -16,25 +16,25 @@ cdef extern from "flint_wrap.h":
     # Returns the unit part of the `p`-adic number as a FLINT integer, which
     # can be used as an operand for the ``fmpz`` functions.
 
-    long padic_val(const padic_t op)
+    slong padic_val(const padic_t op)
     # Returns the valuation part of the `p`-adic number.
     # Note that this function is implemented as a macro and that
     # the expression ``padic_val(op)`` can be used as both an
     # *lvalue* and an *rvalue*.
 
-    long padic_get_val(const padic_t op)
+    slong padic_get_val(const padic_t op)
     # Returns the valuation part of the `p`-adic number.
 
-    long padic_prec(const padic_t op)
+    slong padic_prec(const padic_t op)
     # Returns the precision of the `p`-adic number.
     # Note that this function is implemented as a macro and that
     # the expression ``padic_prec(op)`` can be used as both an
     # *lvalue* and an *rvalue*.
 
-    long padic_get_prec(const padic_t op)
+    slong padic_get_prec(const padic_t op)
     # Returns the precision of the `p`-adic number.
 
-    void padic_ctx_init(padic_ctx_t ctx, const fmpz_t p, long min, long max, padic_print_mode mode)
+    void padic_ctx_init(padic_ctx_t ctx, const fmpz_t p, slong min, slong max, padic_print_mode mode)
     # Initialises the context ``ctx`` with the given data.
     # Assumes that `p` is a prime.  This is not verified but the subsequent
     # behaviour is undefined if `p` is a composite number.
@@ -55,7 +55,7 @@ cdef extern from "flint_wrap.h":
     void padic_ctx_clear(padic_ctx_t ctx)
     # Clears all memory that has been allocated as part of the context.
 
-    int _padic_ctx_pow_ui(fmpz_t rop, unsigned long e, const padic_ctx_t ctx)
+    int _padic_ctx_pow_ui(fmpz_t rop, ulong e, const padic_ctx_t ctx)
     # Sets ``rop`` to `p^e` as efficiently as possible, where
     # ``rop`` is expected to be an uninitialised ``fmpz_t``.
     # If the return value is non-zero, it is the responsibility of
@@ -65,7 +65,7 @@ cdef extern from "flint_wrap.h":
     # Initialises the `p`-adic number with the precision set to
     # ``PADIC_DEFAULT_PREC``, which is defined as `20`.
 
-    void padic_init2(padic_t rop, long N)
+    void padic_init2(padic_t rop, slong N)
     # Initialises the `p`-adic number ``rop`` with precision `N`.
 
     void padic_clear(padic_t rop)
@@ -101,11 +101,11 @@ cdef extern from "flint_wrap.h":
     void padic_set(padic_t rop, const padic_t op, const padic_ctx_t ctx)
     # Sets ``rop`` to the `p`-adic number ``op``.
 
-    void padic_set_si(padic_t rop, long op, const padic_ctx_t ctx)
+    void padic_set_si(padic_t rop, slong op, const padic_ctx_t ctx)
     # Sets the `p`-adic number ``rop`` to the
     # ``slong`` integer ``op``.
 
-    void padic_set_ui(padic_t rop, unsigned long op, const padic_ctx_t ctx)
+    void padic_set_ui(padic_t rop, ulong op, const padic_ctx_t ctx)
     # Sets the `p`-adic number ``rop`` to the ``ulong``
     # integer ``op``.
 
@@ -160,13 +160,13 @@ cdef extern from "flint_wrap.h":
     # Returns whether ``op1`` and ``op2`` are equal, that is,
     # whether `u_1 = u_2` and `v_1 = v_2`.
 
-    long * _padic_lifts_exps(long *n, long N)
+    slong * _padic_lifts_exps(slong *n, slong N)
     # Given a positive integer `N` define the sequence
     # `a_0 = N, a_1 = \lceil a_0/2\rceil, \dotsc, a_{n-1} = \lceil a_{n-2}/2\rceil = 1`.
     # Then `n = \lceil\log_2 N\rceil + 1`.
     # This function sets `n` and allocates and returns the array `a`.
 
-    void _padic_lifts_pows(fmpz *pow, const long *a, long n, const fmpz_t p)
+    void _padic_lifts_pows(fmpz *pow, const slong *a, slong n, const fmpz_t p)
     # Given an array `a` as computed above, this function
     # computes the corresponding powers of `p`, that is,
     # ``pow[i]`` is equal to `p^{a_i}`.
@@ -183,13 +183,13 @@ cdef extern from "flint_wrap.h":
     void padic_mul(padic_t rop, const padic_t op1, const padic_t op2, const padic_ctx_t ctx)
     # Sets ``rop`` to the product of ``op1`` and ``op2``.
 
-    void padic_shift(padic_t rop, const padic_t op, long v, const padic_ctx_t ctx)
+    void padic_shift(padic_t rop, const padic_t op, slong v, const padic_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `p^v`.
 
     void padic_div(padic_t rop, const padic_t op1, const padic_t op2, const padic_ctx_t ctx)
     # Sets ``rop`` to the quotient of ``op1`` and ``op2``.
 
-    void _padic_inv_precompute(padic_inv_t S, const fmpz_t p, long N)
+    void _padic_inv_precompute(padic_inv_t S, const fmpz_t p, slong N)
     # Pre-computes some data and allocates temporary space for
     # `p`-adic inversion using Hensel lifting.
 
@@ -208,7 +208,7 @@ cdef extern from "flint_wrap.h":
     # this function to avoid repeated memory allocations, as used
     # e.g. by the function :func:`padic_log`.
 
-    void _padic_inv(fmpz_t rop, const fmpz_t op, const fmpz_t p, long N)
+    void _padic_inv(fmpz_t rop, const fmpz_t op, const fmpz_t p, slong N)
     # Sets ``rop`` to the inverse of ``op`` modulo `p^N`,
     # assuming that ``op`` is a unit and `N \geq 1`.
     # In the current implementation, allows aliasing, but this might
@@ -232,7 +232,7 @@ cdef extern from "flint_wrap.h":
     # `u \bmod 8` is a square in `\mathbf{Z} / 8 \mathbf{Z}`,
     # for `p = 2`.
 
-    void padic_pow_si(padic_t rop, const padic_t op, long e, const padic_ctx_t ctx)
+    void padic_pow_si(padic_t rop, const padic_t op, slong e, const padic_ctx_t ctx)
     # Sets ``rop`` to ``op`` raised to the power `e`,
     # which is defined as one whenever `e = 0`.
     # Assumes that some computations involving `e` and the
@@ -242,7 +242,7 @@ cdef extern from "flint_wrap.h":
     # then `x^e = p^{ev} u^e` is defined modulo `p^{N + (e - 1) v}`,
     # which is a precision loss in case `v < 0`.
 
-    long _padic_exp_bound(long v, long N, const fmpz_t p)
+    slong _padic_exp_bound(slong v, slong N, const fmpz_t p)
     # Returns an integer `i` such that for all `j \geq i` we have
     # `\operatorname{ord}_p(x^j / j!) \geq N`, where `\operatorname{ord}_p(x) = v`.
     # When `p` is a word-sized prime,
@@ -251,9 +251,9 @@ cdef extern from "flint_wrap.h":
     # Assumes that `v < N`.  Moreover, `v` has to be at least `2` or `1`,
     # depending on whether `p` is `2` or odd.
 
-    void _padic_exp_rectangular(fmpz_t rop, const fmpz_t u, long v, const fmpz_t p, long N)
-    void _padic_exp_balanced(fmpz_t rop, const fmpz_t u, long v, const fmpz_t p, long N)
-    void _padic_exp(fmpz_t rop, const fmpz_t u, long v, const fmpz_t p, long N)
+    void _padic_exp_rectangular(fmpz_t rop, const fmpz_t u, slong v, const fmpz_t p, slong N)
+    void _padic_exp_balanced(fmpz_t rop, const fmpz_t u, slong v, const fmpz_t p, slong N)
+    void _padic_exp(fmpz_t rop, const fmpz_t u, slong v, const fmpz_t p, slong N)
     # Sets ``rop`` to the `p`-exponential function evaluated at
     # `x = p^v u`, reduced modulo `p^N`.
     # Assumes that `x \neq 0`, that `\operatorname{ord}_p(x) < N` and that
@@ -284,7 +284,7 @@ cdef extern from "flint_wrap.h":
     # with the valuation and hence the rate of convergence, which
     # results in a quasi-linear algorithm in `N`, for fixed `p`.
 
-    long _padic_log_bound(long v, long N, const fmpz_t p)
+    slong _padic_log_bound(slong v, slong N, const fmpz_t p)
     # Returns `b` such that for all `i \geq b` we have
     # .. math ::
     # i v - \operatorname{ord}_p(i) \geq N
@@ -293,10 +293,10 @@ cdef extern from "flint_wrap.h":
     # odd or `p = 2`, respectively, and also that `N < 2^{f-2}`
     # where `f` is ``FLINT_BITS``.
 
-    void _padic_log(fmpz_t z, const fmpz_t y, long v, const fmpz_t p, long N)
-    void _padic_log_rectangular(fmpz_t z, const fmpz_t y, long v, const fmpz_t p, long N)
-    void _padic_log_satoh(fmpz_t z, const fmpz_t y, long v, const fmpz_t p, long N)
-    void _padic_log_balanced(fmpz_t z, const fmpz_t y, long v, const fmpz_t p, long N)
+    void _padic_log(fmpz_t z, const fmpz_t y, slong v, const fmpz_t p, slong N)
+    void _padic_log_rectangular(fmpz_t z, const fmpz_t y, slong v, const fmpz_t p, slong N)
+    void _padic_log_satoh(fmpz_t z, const fmpz_t y, slong v, const fmpz_t p, slong N)
+    void _padic_log_balanced(fmpz_t z, const fmpz_t y, slong v, const fmpz_t p, slong N)
     # Computes
     # .. math ::
     # z = - \sum_{i = 1}^{\infty} \frac{y^i}{i} \pmod{p^N},
@@ -344,7 +344,7 @@ cdef extern from "flint_wrap.h":
     # the `p`-adic number ``op``, and if so sets ``rop`` to its
     # value.
 
-    void _padic_teichmuller(fmpz_t rop, const fmpz_t op, const fmpz_t p, long N)
+    void _padic_teichmuller(fmpz_t rop, const fmpz_t op, const fmpz_t p, slong N)
     # Computes the Teichm\"uller lift of the `p`-adic unit ``op``,
     # assuming that `N \geq 1`.
     # Supports aliasing between ``rop`` and ``op``.
@@ -356,12 +356,12 @@ cdef extern from "flint_wrap.h":
     # a `(p-1)`-st root of unity.
     # If ``op`` has negative valuation, raises an ``abort`` signal.
 
-    unsigned long padic_val_fac_ui_2(unsigned long n)
+    ulong padic_val_fac_ui_2(ulong n)
     # Computes the `2`-adic valuation of `n!`.
     # Note that since `n` fits into an ``ulong``, so does
     # `\operatorname{ord}_2(n!)` since `\operatorname{ord}_2(n!) \leq (n - 1) / (p - 1) = n - 1`.
 
-    unsigned long padic_val_fac_ui(unsigned long n, const fmpz_t p)
+    ulong padic_val_fac_ui(ulong n, const fmpz_t p)
     # Computes the `p`-adic valuation of `n!`.
     # Note that since `n` fits into an ``ulong``, so does
     # `\operatorname{ord}_p(n!)` since `\operatorname{ord}_p(n!) \leq (n - 1) / (p - 1)`.
@@ -378,13 +378,13 @@ cdef extern from "flint_wrap.h":
     # the string ``str`` is large enough to hold the representation and
     # it is also the return value.
 
-    int _padic_fprint(FILE * file, const fmpz_t u, long v, const padic_ctx_t ctx)
+    int _padic_fprint(FILE * file, const fmpz_t u, slong v, const padic_ctx_t ctx)
     int padic_fprint(FILE * file, const padic_t op, const padic_ctx_t ctx)
     # Prints the string representation of the `p`-adic number ``op``
     # to the stream ``file``.
     # In the current implementation, always returns `1`.
 
-    int _padic_print(const fmpz_t u, long v, const padic_ctx_t ctx)
+    int _padic_print(const fmpz_t u, slong v, const padic_ctx_t ctx)
     int padic_print(const padic_t op, const padic_ctx_t ctx)
     # Prints the string representation of the `p`-adic number ``op``
     # to the stream ``stdout``.

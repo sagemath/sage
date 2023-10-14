@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_default_mat_init(fq_default_mat_t mat, long rows, long cols, const fq_default_ctx_t ctx)
+    void fq_default_mat_init(fq_default_mat_t mat, slong rows, slong cols, const fq_default_ctx_t ctx)
     # Initialises ``mat`` to a ``rows``-by-``cols`` matrix with
     # coefficients in `\mathbf{F}_{q}` given by ``ctx``. All elements
     # are set to zero.
@@ -30,21 +30,21 @@ cdef extern from "flint_wrap.h":
     # Sets ``mat`` to a copy of ``src``. It is assumed
     # that ``mat`` and ``src`` have identical dimensions.
 
-    void fq_default_mat_entry(fq_default_t val, const fq_default_mat_t mat, long i, long j, const fq_default_ctx_t ctx)
+    void fq_default_mat_entry(fq_default_t val, const fq_default_mat_t mat, slong i, slong j, const fq_default_ctx_t ctx)
     # Directly accesses the entry in ``mat`` in row `i` and column `j`,
     # indexed from zero by setting ``val`` to the value of that entry. No bounds
     # checking is performed.
 
-    void fq_default_mat_entry_set(fq_default_mat_t mat, long i, long j, const fq_default_t x, const fq_default_ctx_t ctx)
+    void fq_default_mat_entry_set(fq_default_mat_t mat, slong i, slong j, const fq_default_t x, const fq_default_ctx_t ctx)
     # Sets the entry in ``mat`` in row `i` and column `j` to ``x``.
 
-    void fq_default_mat_entry_set_fmpz(fq_default_mat_t mat, long i, long j, const fmpz_t x, const fq_default_ctx_t ctx)
+    void fq_default_mat_entry_set_fmpz(fq_default_mat_t mat, slong i, slong j, const fmpz_t x, const fq_default_ctx_t ctx)
     # Sets the entry in ``mat`` in row `i` and column `j` to ``x``.
 
-    long fq_default_mat_nrows(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
+    slong fq_default_mat_nrows(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Returns the number of rows in ``mat``.
 
-    long fq_default_mat_ncols(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
+    slong fq_default_mat_ncols(const fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Returns the number of columns in ``mat``.
 
     void fq_default_mat_swap(fq_default_mat_t mat1, fq_default_mat_t mat2, const fq_default_ctx_t ctx)
@@ -57,20 +57,20 @@ cdef extern from "flint_wrap.h":
     void fq_default_mat_one(fq_default_mat_t mat, const fq_default_ctx_t ctx)
     # Sets the diagonal entries of ``mat`` to 1 and all other entries to 0.
 
-    void fq_default_mat_swap_rows(fq_default_mat_t mat, long * perm, long r, long s, const fq_default_ctx_t ctx)
+    void fq_default_mat_swap_rows(fq_default_mat_t mat, slong * perm, slong r, slong s, const fq_default_ctx_t ctx)
     # Swaps rows ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fq_default_mat_swap_cols(fq_default_mat_t mat, long * perm, long r, long s, const fq_default_ctx_t ctx)
+    void fq_default_mat_swap_cols(fq_default_mat_t mat, slong * perm, slong r, slong s, const fq_default_ctx_t ctx)
     # Swaps columns ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
 
-    void fq_default_mat_invert_rows(fq_default_mat_t mat, long * perm, const fq_default_ctx_t ctx)
+    void fq_default_mat_invert_rows(fq_default_mat_t mat, slong * perm, const fq_default_ctx_t ctx)
     # Swaps rows ``i`` and ``r - i`` of ``mat`` for ``0 <= i < r/2``, where
     # ``r`` is the number of rows of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fq_default_mat_invert_cols(fq_default_mat_t mat, long * perm, const fq_default_ctx_t ctx)
+    void fq_default_mat_invert_cols(fq_default_mat_t mat, slong * perm, const fq_default_ctx_t ctx)
     # Swaps columns ``i`` and ``c - i`` of ``mat`` for ``0 <= i < c/2``, where
     # ``c`` is the number of columns of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
@@ -111,7 +111,7 @@ cdef extern from "flint_wrap.h":
     # In case of success, returns a positive value.  In case of failure,
     # returns a non-positive value.
 
-    void fq_default_mat_window_init(fq_default_mat_t window, const fq_default_mat_t mat, long r1, long c1, long r2, long c2, const fq_default_ctx_t ctx)
+    void fq_default_mat_window_init(fq_default_mat_t window, const fq_default_mat_t mat, slong r1, slong c1, slong r2, slong c2, const fq_default_ctx_t ctx)
     # Initializes the matrix ``window`` to be an ``r2 - r1`` by
     # ``c2 - c1`` submatrix of ``mat`` whose ``(0,0)`` entry
     # is the ``(r1, c1)`` entry of ``mat``.  The memory for the
@@ -126,7 +126,7 @@ cdef extern from "flint_wrap.h":
     # Sets the elements of ``mat`` to random elements of
     # `\mathbf{F}_{q}`, given by ``ctx``.
 
-    int fq_default_mat_randpermdiag(fq_mat_t mat, flint_rand_t state, fq_struct * diag, long n, const fq_ctx_t ctx)
+    int fq_default_mat_randpermdiag(fq_mat_t mat, flint_rand_t state, fq_struct * diag, slong n, const fq_ctx_t ctx)
     # Sets ``mat`` to a random permutation of the diagonal matrix
     # with `n` leading entries given by the vector ``diag``. It is
     # assumed that the main diagonal of ``mat`` has room for at
@@ -134,7 +134,7 @@ cdef extern from "flint_wrap.h":
     # Returns `0` or `1`, depending on whether the permutation is even
     # or odd respectively.
 
-    void fq_default_mat_randrank(fq_default_mat_t mat, flint_rand_t state, long rank, const fq_default_ctx_t ctx)
+    void fq_default_mat_randrank(fq_default_mat_t mat, flint_rand_t state, slong rank, const fq_default_ctx_t ctx)
     # Sets ``mat`` to a random sparse matrix with the given rank,
     # having exactly as many non-zero elements as the rank, with the
     # non-zero elements being uniformly random elements of
@@ -142,7 +142,7 @@ cdef extern from "flint_wrap.h":
     # The matrix can be transformed into a dense matrix with unchanged
     # rank by subsequently calling :func:`fq_default_mat_randops`.
 
-    void fq_default_mat_randops(fq_default_mat_t mat, long count, flint_rand_t state, const fq_default_ctx_t ctx)
+    void fq_default_mat_randops(fq_default_mat_t mat, slong count, flint_rand_t state, const fq_default_ctx_t ctx)
     # Randomises ``mat`` by performing elementary row or column
     # operations. More precisely, at most ``count`` random additions
     # or subtractions of distinct rows and columns will be performed.
@@ -204,7 +204,7 @@ cdef extern from "flint_wrap.h":
     # returns `0` and sets the elements of `B` to undefined values.
     # `A` and `B` must be square matrices with the same dimensions.
 
-    long fq_default_mat_lu(long * P, fq_default_mat_t A, int rank_check, const fq_default_ctx_t ctx)
+    slong fq_default_mat_lu(slong * P, fq_default_mat_t A, int rank_check, const fq_default_ctx_t ctx)
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`.
     # If `A` is a nonsingular square matrix, it will be overwritten with
@@ -221,7 +221,7 @@ cdef extern from "flint_wrap.h":
     # if `A` is detected to be rank-deficient.
     # This function calls ``fq_default_mat_lu_recursive``.
 
-    long fq_default_mat_rref(fq_default_mat_t A, const fq_default_ctx_t ctx)
+    slong fq_default_mat_rref(fq_default_mat_t A, const fq_default_ctx_t ctx)
     # Puts `A` in reduced row echelon form and returns the rank of `A`.
     # The rref is computed by first obtaining an unreduced row echelon
     # form via LU decomposition and then solving an additional
@@ -256,7 +256,7 @@ cdef extern from "flint_wrap.h":
     # valid solutions is given.
     # There are no restrictions on the shape of `A` and it may be singular.
 
-    void fq_default_mat_similarity(fq_default_mat_t M, long r, fq_default_t d, const fq_default_ctx_t ctx)
+    void fq_default_mat_similarity(fq_default_mat_t M, slong r, fq_default_t d, const fq_default_ctx_t ctx)
     # Applies a similarity transform to the `n\times n` matrix `M` in-place.
     # If `P` is the `n\times n` identity matrix the zero entries of whose row
     # `r` (`0`-indexed) have been replaced by `d`, this transform is equivalent

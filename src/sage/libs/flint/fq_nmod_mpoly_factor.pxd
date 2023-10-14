@@ -21,17 +21,17 @@ cdef extern from "flint_wrap.h":
     void fq_nmod_mpoly_factor_swap(fq_nmod_mpoly_factor_t f, fq_nmod_mpoly_factor_t g, const fq_nmod_mpoly_ctx_t ctx)
     # Efficiently swap *f* and *g*.
 
-    long fq_nmod_mpoly_factor_length(const fq_nmod_mpoly_factor_t f, const fq_nmod_mpoly_ctx_t ctx)
+    slong fq_nmod_mpoly_factor_length(const fq_nmod_mpoly_factor_t f, const fq_nmod_mpoly_ctx_t ctx)
     # Return the length of the product in *f*.
 
     void fq_nmod_mpoly_factor_get_constant_fq_nmod(fq_nmod_t c, const fq_nmod_mpoly_factor_t f, const fq_nmod_mpoly_ctx_t ctx)
     # Set `c` to the constant of *f*.
 
-    void fq_nmod_mpoly_factor_get_base(fq_nmod_mpoly_t p, const fq_nmod_mpoly_factor_t f, long i, const fq_nmod_mpoly_ctx_t ctx)
-    void fq_nmod_mpoly_factor_swap_base(fq_nmod_mpoly_t p, const fq_nmod_mpoly_factor_t f, long i, const fq_nmod_mpoly_ctx_t ctx)
+    void fq_nmod_mpoly_factor_get_base(fq_nmod_mpoly_t p, const fq_nmod_mpoly_factor_t f, slong i, const fq_nmod_mpoly_ctx_t ctx)
+    void fq_nmod_mpoly_factor_swap_base(fq_nmod_mpoly_t p, const fq_nmod_mpoly_factor_t f, slong i, const fq_nmod_mpoly_ctx_t ctx)
     # Set (resp. swap) *B* to (resp. with) the base of the term of index *i* in *A*.
 
-    long fq_nmod_mpoly_factor_get_exp_si(fq_nmod_mpoly_factor_t f, long i, const fq_nmod_mpoly_ctx_t ctx)
+    slong fq_nmod_mpoly_factor_get_exp_si(fq_nmod_mpoly_factor_t f, slong i, const fq_nmod_mpoly_ctx_t ctx)
     # Return the exponent of the term of index *i* in *A*. It is assumed to fit an ``slong``.
 
     void fq_nmod_mpoly_factor_sort(fq_nmod_mpoly_factor_t f, const fq_nmod_mpoly_ctx_t ctx)

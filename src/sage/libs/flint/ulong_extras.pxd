@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    unsigned long n_randlimb(flint_rand_t state)
+    ulong n_randlimb(flint_rand_t state)
     # Returns a uniformly pseudo random limb.
     # The algorithm generates two random half limbs `s_j`, `j = 0, 1`,
     # by iterating respectively `v_{i+1} = (v_i a + b) \bmod{p_j}` for
@@ -21,31 +21,31 @@ cdef extern from "flint_wrap.h":
     # and ``p_0 = nextprime(2^16)`` on a 32-bit machine and
     # ``p_1 = nextprime(p_0)``.
 
-    unsigned long n_randbits(flint_rand_t state, unsigned int bits)
+    ulong n_randbits(flint_rand_t state, unsigned int bits)
     # Returns a uniformly pseudo random number with the given number of
     # bits. The most significant bit is always set, unless zero is passed,
     # in which case zero is returned.
 
-    unsigned long n_randtest_bits(flint_rand_t state, int bits)
+    ulong n_randtest_bits(flint_rand_t state, int bits)
     # Returns a uniformly pseudo random number with the given number of
     # bits. The most significant bit is always set, unless zero is passed,
     # in which case zero is returned. The probability of a value with a
     # sparse binary representation being returned is increased. This
     # function is intended for use in test code.
 
-    unsigned long n_randint(flint_rand_t state, unsigned long limit)
+    ulong n_randint(flint_rand_t state, ulong limit)
     # Returns a uniformly pseudo random number up to but not including
     # the given limit. If zero is passed as a parameter, an entire random
     # limb is returned.
 
-    unsigned long n_urandint(flint_rand_t state, unsigned long limit)
+    ulong n_urandint(flint_rand_t state, ulong limit)
     # Returns a uniformly pseudo random number up to but not including
     # the given limit. If zero is passed as a parameter, an entire
     # random limb is returned. This function provides somewhat better
     # randomness as compared to :func:`n_randint`, especially for larger
     # values of limit.
 
-    unsigned long n_randtest(flint_rand_t state)
+    ulong n_randtest(flint_rand_t state)
     # Returns a pseudo random number with a random number of bits,
     # from `0` to ``FLINT_BITS``.  The probability of the special
     # values `0`, `1`, ``COEFF_MAX`` and ``WORD_MAX`` is increased
@@ -53,50 +53,50 @@ cdef extern from "flint_wrap.h":
     # This random function is mainly used for testing purposes.
     # This function is intended for use in test code.
 
-    unsigned long n_randtest_not_zero(flint_rand_t state)
+    ulong n_randtest_not_zero(flint_rand_t state)
     # As for :func:`n_randtest`, but does not return `0`.
     # This function is intended for use in test code.
 
-    unsigned long n_randprime(flint_rand_t state, unsigned long bits, int proved)
+    ulong n_randprime(flint_rand_t state, ulong bits, int proved)
     # Returns a random prime number ``(proved = 1)`` or probable prime
     # ``(proved = 0)``
     # with ``bits`` bits, where ``bits`` must be at least 2 and
     # at most ``FLINT_BITS``.
 
-    unsigned long n_randtest_prime(flint_rand_t state, int proved)
+    ulong n_randtest_prime(flint_rand_t state, int proved)
     # Returns a random prime number ``(proved = 1)`` or probable
     # prime ``(proved = 0)``
     # with size randomly chosen between 2 and ``FLINT_BITS`` bits.
     # This function is intended for use in test code.
 
-    unsigned long n_pow(unsigned long n, unsigned long exp)
+    ulong n_pow(ulong n, ulong exp)
     # Returns ``n^exp``. No checking is done for overflow. The exponent
     # may be zero. We define `0^0 = 1`.
     # The algorithm simply uses a for loop. Repeated squaring is
     # unlikely to speed up this algorithm.
 
-    unsigned long n_flog(unsigned long n, unsigned long b)
+    ulong n_flog(ulong n, ulong b)
     # Returns `\lfloor\log_b n\rfloor`.
     # Assumes that `n \geq 1` and `b \geq 2`.
 
-    unsigned long n_clog(unsigned long n, unsigned long b)
+    ulong n_clog(ulong n, ulong b)
     # Returns `\lceil\log_b n\rceil`.
     # Assumes that `n \geq 1` and `b \geq 2`.
 
-    unsigned long n_clog_2exp(unsigned long n, unsigned long b)
+    ulong n_clog_2exp(ulong n, ulong b)
     # Returns `\lceil\log_b 2^n\rceil`.
     # Assumes that `b \geq 2`.
 
-    unsigned long n_revbin(unsigned long n, unsigned long b)
+    ulong n_revbin(ulong n, ulong b)
     # Returns the binary reverse of `n`, assuming it is `b` bits in length,
     # e.g. ``n_revbin(10110, 6)`` will return ``110100``.
 
-    int n_sizeinbase(unsigned long n, int base)
+    int n_sizeinbase(ulong n, int base)
     # Returns the exact number of digits needed to represent `n` as a
     # string in base ``base`` assumed to be between 2 and 36.
     # Returns 1 when `n = 0`.
 
-    unsigned long n_preinvert_limb_prenorm(unsigned long n)
+    ulong n_preinvert_limb_prenorm(ulong n)
     # Computes an approximate inverse ``invxl`` of the limb ``xl``,
     # with an implicit leading~`1`. More formally it computes::
     # invxl = (B^2 - B*x - 1)/x = (B^2 - 1)/x - B
@@ -119,19 +119,19 @@ cdef extern from "flint_wrap.h":
     # then from the theorem, we have `0 \leq n - q_1 d < 3 d`, i.e. the
     # quotient is out by at most `2` and is always either correct or too small.
 
-    unsigned long n_preinvert_limb(unsigned long n)
+    ulong n_preinvert_limb(ulong n)
     # Returns a precomputed inverse of `n`, as defined in [GraMol2010]_.
     # This precomputed inverse can be used with all of the functions that
     # take a precomputed inverse whose names are suffixed by ``_preinv``.
     # We require `n > 0`.
 
-    double n_precompute_inverse(unsigned long n)
+    double n_precompute_inverse(ulong n)
     # Returns a precomputed inverse of `n` with double precision value `1/n`.
     # This precomputed inverse can be used with all of the functions that
     # take a precomputed inverse whose names are suffixed by ``_precomp``.
     # We require `n > 0`.
 
-    unsigned long n_mod_precomp(unsigned long a, unsigned long n, double ninv)
+    ulong n_mod_precomp(ulong a, ulong n, double ninv)
     # Returns `a \bmod{n}` given a precomputed inverse of `n` computed
     # by :func:`n_precompute_inverse`. We require ``n < 2^FLINT_D_BITS``
     # and ``a < 2^(FLINT_BITS-1)`` and `0 \leq a < n^2`.
@@ -159,7 +159,7 @@ cdef extern from "flint_wrap.h":
     # subtracting 1 from the quotient. Then the quotient we have computed is
     # either exactly what we are after, or one too small.
 
-    unsigned long n_mod2_precomp(unsigned long a, unsigned long n, double ninv)
+    ulong n_mod2_precomp(ulong a, ulong n, double ninv)
     # Returns `a \bmod{n}` given a precomputed inverse of `n` computed by
     # :func:`n_precompute_inverse`. There are no restrictions on `a` or
     # on `n`.
@@ -173,7 +173,7 @@ cdef extern from "flint_wrap.h":
     # negative or positive, so the quotient we compute may be one
     # out in either direction.
 
-    unsigned long n_divrem2_preinv(unsigned long * q, unsigned long a, unsigned long n, unsigned long ninv)
+    ulong n_divrem2_preinv(ulong * q, ulong a, ulong n, ulong ninv)
     # Returns `a \bmod{n}` and sets `q` to the quotient of `a` by `n`, given a
     # precomputed inverse of `n` computed by :func:`n_preinvert_limb()`. There are
     # no restrictions on `a` and the only restriction on `n` is that it be
@@ -182,7 +182,7 @@ cdef extern from "flint_wrap.h":
     # `n` is normalised and `a` is shifted into two limbs to compensate. Then
     # their algorithm is applied verbatim and the remainder shifted back.
 
-    unsigned long n_div2_preinv(unsigned long a, unsigned long n, unsigned long ninv)
+    ulong n_div2_preinv(ulong a, ulong n, ulong ninv)
     # Returns the Euclidean quotient of `a` by `n` given a precomputed inverse of
     # `n` computed by :func:`n_preinvert_limb`. There are no restrictions on `a`
     # and the only restriction on `n` is that it be nonzero.
@@ -190,7 +190,7 @@ cdef extern from "flint_wrap.h":
     # `n` is normalised and `a` is shifted into two limbs to compensate. Then
     # their algorithm is applied verbatim.
 
-    unsigned long n_mod2_preinv(unsigned long a, unsigned long n, unsigned long ninv)
+    ulong n_mod2_preinv(ulong a, ulong n, ulong ninv)
     # Returns `a \bmod{n}` given a precomputed inverse of `n` computed by
     # :func:`n_preinvert_limb()`. There are no restrictions on `a` and the only
     # restriction on `n` is that it be nonzero.
@@ -198,7 +198,7 @@ cdef extern from "flint_wrap.h":
     # `n` is normalised and `a` is shifted into two limbs to compensate. Then
     # their algorithm is applied verbatim and the result shifted back.
 
-    unsigned long n_divrem2_precomp(unsigned long * q, unsigned long a, unsigned long n, double npre)
+    ulong n_divrem2_precomp(ulong * q, ulong a, ulong n, double npre)
     # Returns `a \bmod{n}` given a precomputed inverse of `n` computed by
     # :func:`n_precompute_inverse` and sets `q` to the quotient. There
     # are no restrictions on `a` or on `n`.
@@ -207,7 +207,7 @@ cdef extern from "flint_wrap.h":
     # cases to deal with the case where `a` is already reduced modulo
     # `n` and where `n` is `64` bits and `a` is not reduced modulo `n`.
 
-    unsigned long n_ll_mod_preinv(unsigned long a_hi, unsigned long a_lo, unsigned long n, unsigned long ninv)
+    ulong n_ll_mod_preinv(ulong a_hi, ulong a_lo, ulong n, ulong ninv)
     # Returns `a \bmod{n}` given a precomputed inverse of `n` computed by
     # :func:`n_preinvert_limb`. There are no restrictions on `a`, which
     # will be two limbs ``(a_hi, a_lo)``, or on `n`.
@@ -218,7 +218,7 @@ cdef extern from "flint_wrap.h":
     # :func:`n_mod2_preinv` and then the algorithm of Granlund and
     # Möller [GraMol2010]_ is used again to reduce modulo `n`.
 
-    unsigned long n_lll_mod_preinv(unsigned long a_hi, unsigned long a_mi, unsigned long a_lo, unsigned long n, unsigned long ninv)
+    ulong n_lll_mod_preinv(ulong a_hi, ulong a_mi, ulong a_lo, ulong n, ulong ninv)
     # Returns `a \bmod{n}`, where `a` has three limbs ``(a_hi, a_mi, a_lo)``,
     # given a precomputed inverse of `n` computed by :func:`n_preinvert_limb`.
     # It is assumed that ``a_hi`` is reduced modulo `n`. There are no
@@ -227,7 +227,7 @@ cdef extern from "flint_wrap.h":
     # Möller [GraMol2010]_ to first reduce the top two limbs
     # modulo `n`, then does the same on the bottom two limbs.
 
-    unsigned long n_mulmod_precomp(unsigned long a, unsigned long b, unsigned long n, double ninv)
+    ulong n_mulmod_precomp(ulong a, ulong b, ulong n, double ninv)
     # Returns `a b \bmod{n}` given a precomputed inverse of `n`
     # computed by :func:`n_precompute_inverse`. We require
     # ``n < 2^FLINT_D_BITS`` and `0 \leq a, b < n`.
@@ -247,19 +247,19 @@ cdef extern from "flint_wrap.h":
     # computed integer quotient is at most two above and one below the quotient
     # we are after.
 
-    unsigned long n_mulmod2_preinv(unsigned long a, unsigned long b, unsigned long n, unsigned long ninv)
+    ulong n_mulmod2_preinv(ulong a, ulong b, ulong n, ulong ninv)
     # Returns `a b \bmod{n}` given a precomputed inverse of `n` computed by
     # :func:`n_preinvert_limb`. There are no restrictions on `a`, `b` or
     # on `n`. This is implemented by multiplying using :func:`umul_ppmm` and
     # then reducing using :func:`n_ll_mod_preinv`.
 
-    unsigned long n_mulmod2(unsigned long a, unsigned long b, unsigned long n)
+    ulong n_mulmod2(ulong a, ulong b, ulong n)
     # Returns `a b \bmod{n}`. There are no restrictions on `a`, `b` or
     # on `n`. This is implemented by multiplying using :func:`umul_ppmm` and
     # then reducing using :func:`n_ll_mod_preinv` after computing a precomputed
     # inverse.
 
-    unsigned long n_mulmod_preinv(unsigned long a, unsigned long b, unsigned long n, unsigned long ninv, unsigned long norm)
+    ulong n_mulmod_preinv(ulong a, ulong b, ulong n, ulong ninv, ulong norm)
     # Returns `a b \pmod{n}` given a precomputed inverse of `n` computed by
     # :func:`n_preinvert_limb`, assuming `a` and `b` are reduced modulo `n`
     # and `n` is normalised, i.e. with most significant bit set. There are
@@ -272,12 +272,12 @@ cdef extern from "flint_wrap.h":
     # reducing it.
     # The algorithm used is that of Granlund and Möller [GraMol2010]_.
 
-    unsigned long n_gcd(unsigned long x, unsigned long y)
+    ulong n_gcd(ulong x, ulong y)
     # Returns the greatest common divisor `g` of `x` and `y`. No assumptions
     # are made about the values `x` and `y`.
     # This function wraps GMP's ``mpn_gcd_1``.
 
-    unsigned long n_gcdinv(unsigned long * a, unsigned long x, unsigned long y)
+    ulong n_gcdinv(ulong * a, ulong x, ulong y)
     # Returns the greatest common divisor `g` of `x` and `y` and computes
     # `a` such that `0 \leq a < y` and `a x = \gcd(x, y) \bmod{y}`, when
     # this is defined. We require `x < y`.
@@ -286,7 +286,7 @@ cdef extern from "flint_wrap.h":
     # This is merely an adaption of the extended Euclidean algorithm
     # computing just one cofactor and reducing it modulo `y`.
 
-    unsigned long n_xgcd(unsigned long * a, unsigned long * b, unsigned long x, unsigned long y)
+    ulong n_xgcd(ulong * a, ulong * b, ulong x, ulong y)
     # Returns the greatest common divisor `g` of `x` and `y` and unsigned
     # values `a` and `b` such that `a x - b y = g`. We require `x \geq y`.
     # We claim that computing the extended greatest common divisor via the
@@ -305,25 +305,25 @@ cdef extern from "flint_wrap.h":
     # See the documentation of :func:`n_gcd` for a description of the
     # branching in the algorithm, which is faster than using division.
 
-    int n_jacobi(mp_limb_signed_t x, unsigned long y)
+    int n_jacobi(mp_limb_signed_t x, ulong y)
     # Computes the Jacobi symbol `\left(\frac{x}{y}\right)` for any `x` and odd `y`.
 
-    int n_jacobi_unsigned(unsigned long x, unsigned long y)
+    int n_jacobi_unsigned(ulong x, ulong y)
     # Computes the Jacobi symbol, allowing `x` to go up to a full limb.
 
-    unsigned long n_addmod(unsigned long a, unsigned long b, unsigned long n)
+    ulong n_addmod(ulong a, ulong b, ulong n)
     # Returns `(a + b) \bmod{n}`.
 
-    unsigned long n_submod(unsigned long a, unsigned long b, unsigned long n)
+    ulong n_submod(ulong a, ulong b, ulong n)
     # Returns `(a - b) \bmod{n}`.
 
-    unsigned long n_invmod(unsigned long x, unsigned long y)
+    ulong n_invmod(ulong x, ulong y)
     # Returns the inverse of `x` modulo `y`, if it exists. Otherwise an exception
     # is thrown.
     # This is merely an adaption of the extended Euclidean algorithm
     # with appropriate normalisation.
 
-    unsigned long n_powmod_precomp(unsigned long a, mp_limb_signed_t exp, unsigned long n, double npre)
+    ulong n_powmod_precomp(ulong a, mp_limb_signed_t exp, ulong n, double npre)
     # Returns ``a^exp`` modulo `n` given a precomputed inverse of `n`
     # computed by :func:`n_precompute_inverse`. We require `n < 2^{53}`
     # and `0 \leq a < n`. There are no restrictions on ``exp``, i.e.
@@ -331,7 +331,7 @@ cdef extern from "flint_wrap.h":
     # This is implemented as a standard binary powering algorithm using
     # repeated squaring and reducing modulo `n` at each step.
 
-    unsigned long n_powmod_ui_precomp(unsigned long a, unsigned long exp, unsigned long n, double npre)
+    ulong n_powmod_ui_precomp(ulong a, ulong exp, ulong n, double npre)
     # Returns ``a^exp`` modulo `n` given a precomputed inverse of `n`
     # computed by :func:`n_precompute_inverse`. We require `n < 2^{53}`
     # and `0 \leq a < n`. The exponent ``exp`` is unsigned and so
@@ -339,14 +339,14 @@ cdef extern from "flint_wrap.h":
     # This is implemented as a standard binary powering algorithm using
     # repeated squaring and reducing modulo `n` at each step.
 
-    unsigned long n_powmod(unsigned long a, mp_limb_signed_t exp, unsigned long n)
+    ulong n_powmod(ulong a, mp_limb_signed_t exp, ulong n)
     # Returns ``a^exp`` modulo `n`. We require ``n < 2^FLINT_D_BITS``
     # and `0 \leq a < n`. There are no restrictions on ``exp``, i.e.
     # it can be negative.
     # This is implemented by precomputing an inverse and calling the
     # ``precomp`` version of this function.
 
-    unsigned long n_powmod2_preinv(unsigned long a, mp_limb_signed_t exp, unsigned long n, unsigned long ninv)
+    ulong n_powmod2_preinv(ulong a, mp_limb_signed_t exp, ulong n, ulong ninv)
     # Returns ``(a^exp) % n`` given a precomputed inverse of `n` computed
     # by :func:`n_preinvert_limb`. We require `0 \leq a < n`, but there are no
     # restrictions on `n` or on ``exp``, i.e. it can be negative.
@@ -355,7 +355,7 @@ cdef extern from "flint_wrap.h":
     # If ``exp`` is negative but `a` is not invertible modulo `n`, an
     # exception is raised.
 
-    unsigned long n_powmod2(unsigned long a, mp_limb_signed_t exp, unsigned long n)
+    ulong n_powmod2(ulong a, mp_limb_signed_t exp, ulong n)
     # Returns ``(a^exp) % n``. We require `0 \leq a < n`, but there are
     # no restrictions on `n` or on ``exp``, i.e. it can be negative.
     # This is implemented by precomputing an inverse limb and calling the
@@ -363,7 +363,7 @@ cdef extern from "flint_wrap.h":
     # If ``exp`` is negative but `a` is not invertible modulo `n`, an
     # exception is raised.
 
-    unsigned long n_powmod2_ui_preinv(unsigned long a, unsigned long exp, unsigned long n, unsigned long ninv)
+    ulong n_powmod2_ui_preinv(ulong a, ulong exp, ulong n, ulong ninv)
     # Returns ``(a^exp) % n`` given a precomputed inverse of `n` computed
     # by :func:`n_preinvert_limb`. We require `0 \leq a < n`, but there are no
     # restrictions on `n`. The exponent ``exp`` is unsigned and so can be
@@ -371,14 +371,14 @@ cdef extern from "flint_wrap.h":
     # This is implemented as a standard binary powering algorithm using
     # repeated squaring and reducing modulo `n` at each step.
 
-    unsigned long n_powmod2_fmpz_preinv(unsigned long a, const fmpz_t exp, unsigned long n, unsigned long ninv)
+    ulong n_powmod2_fmpz_preinv(ulong a, const fmpz_t exp, ulong n, ulong ninv)
     # Returns ``(a^exp) % n`` given a precomputed inverse of `n` computed
     # by :func:`n_preinvert_limb`. We require `0 \leq a < n`, but there are no
     # restrictions on `n`. The exponent ``exp`` must not be negative.
     # This is implemented as a standard binary powering algorithm using
     # repeated squaring and reducing modulo `n` at each step.
 
-    unsigned long n_sqrtmod(unsigned long a, unsigned long p)
+    ulong n_sqrtmod(ulong a, ulong p)
     # If `p` is prime, compute a square root of `a` modulo `p` if `a` is a
     # quadratic residue modulo `p`, otherwise return `0`.
     # If `p` is not prime the result is with high probability `0`, indicating
@@ -386,7 +386,7 @@ cdef extern from "flint_wrap.h":
     # result is meaningless.
     # Assumes that `a` is reduced modulo `p`.
 
-    long n_sqrtmod_2pow(unsigned long ** sqrt, unsigned long a, long exp)
+    slong n_sqrtmod_2pow(ulong ** sqrt, ulong a, slong exp)
     # Computes all the square roots of ``a`` modulo ``2^exp``. The roots
     # are stored in an array which is created and whose address is stored in
     # the location pointed to by ``sqrt``. The array of roots is allocated
@@ -396,7 +396,7 @@ cdef extern from "flint_wrap.h":
     # returned by the function and the location ``sqrt`` points to is set to
     # NULL.
 
-    long n_sqrtmod_primepow(unsigned long ** sqrt, unsigned long a, unsigned long p, long exp)
+    slong n_sqrtmod_primepow(ulong ** sqrt, ulong a, ulong p, slong exp)
     # Computes all the square roots of ``a`` modulo ``p^exp``. The roots
     # are stored in an array which is created and whose address is stored in
     # the location pointed to by ``sqrt``. The array of roots is allocated
@@ -406,7 +406,7 @@ cdef extern from "flint_wrap.h":
     # returned by the function and the location ``sqrt`` points to is set to
     # NULL.
 
-    long n_sqrtmodn(unsigned long ** sqrt, unsigned long a, n_factor_t * fac)
+    slong n_sqrtmodn(ulong ** sqrt, ulong a, n_factor_t * fac)
     # Computes all the square roots of ``a`` modulo ``m`` given the
     # factorisation of ``m`` in ``fac``. The roots are stored in an array
     # which is created and whose address is stored in the location pointed to by
@@ -435,41 +435,41 @@ cdef extern from "flint_wrap.h":
     void n_primes_clear(n_primes_t it)
     # Clears memory allocated by the prime number iterator ``iter``.
 
-    unsigned long n_primes_next(n_primes_t it)
+    ulong n_primes_next(n_primes_t it)
     # Returns the next prime number and advances the state of ``iter``.
     # The first call returns 2.
     # Small primes are looked up from ``flint_small_primes``.
     # When this table is exhausted, primes are generated in blocks
     # by calling :func:`n_primes_sieve_range`.
 
-    void n_primes_jump_after(n_primes_t it, unsigned long n)
+    void n_primes_jump_after(n_primes_t it, ulong n)
     # Changes the state of ``iter`` to start generating primes
     # after `n` (excluding `n` itself).
 
-    void n_primes_extend_small(n_primes_t it, unsigned long bound)
+    void n_primes_extend_small(n_primes_t it, ulong bound)
     # Extends the table of small primes in ``iter`` to contain
     # at least two primes larger than or equal to ``bound``.
 
-    void n_primes_sieve_range(n_primes_t it, unsigned long a, unsigned long b)
+    void n_primes_sieve_range(n_primes_t it, ulong a, ulong b)
     # Sets the block endpoints of ``iter`` to the smallest and
     # largest odd numbers between `a` and `b` inclusive, and
     # sieves to mark all odd primes in this range.
     # The iterator state is changed to point to the first
     # number in the sieved range.
 
-    void n_compute_primes(unsigned long num_primes)
+    void n_compute_primes(ulong num_primes)
     # Precomputes at least ``num_primes`` primes and their ``double``
     # precomputed inverses and stores them in an internal cache.
     # Assuming that FLINT has been built with support for thread-local storage,
     # each thread has its own cache.
 
-    const unsigned long * n_primes_arr_readonly(unsigned long num_primes)
+    const ulong * n_primes_arr_readonly(ulong num_primes)
     # Returns a pointer to a read-only array of the first ``num_primes``
     # prime numbers. The computed primes are cached for repeated calls.
     # The pointer is valid until the user calls :func:`n_cleanup_primes`
     # in the same thread.
 
-    const double * n_prime_inverses_arr_readonly(unsigned long n)
+    const double * n_prime_inverses_arr_readonly(ulong n)
     # Returns a pointer to a read-only array of inverses of the first
     # ``num_primes`` prime numbers. The computed primes are cached for
     # repeated calls. The pointer is valid until the user calls
@@ -480,19 +480,19 @@ cdef extern from "flint_wrap.h":
     # This will invalidate any pointers returned by
     # :func:`n_primes_arr_readonly` or :func:`n_prime_inverses_arr_readonly`.
 
-    unsigned long n_nextprime(unsigned long n, int proved)
+    ulong n_nextprime(ulong n, int proved)
     # Returns the next prime after `n`. Assumes the result will fit in an
     # ``ulong``. If proved is `0`, i.e. false, the prime is not
     # proven prime, otherwise it is.
 
-    unsigned long n_prime_pi(unsigned long n)
+    ulong n_prime_pi(ulong n)
     # Returns the value of the prime counting function `\pi(n)`, i.e. the
     # number of primes less than or equal to `n`. The invariant
     # ``n_prime_pi(n_nth_prime(n)) == n``.
     # Currently, this function simply extends the table of cached primes up to
     # an upper limit and then performs a binary search.
 
-    void n_prime_pi_bounds(unsigned long *lo, unsigned long *hi, unsigned long n)
+    void n_prime_pi_bounds(ulong *lo, ulong *hi, ulong n)
     # Calculates lower and upper bounds for the value of the prime counting
     # function ``lo <= pi(n) <= hi``. If ``lo`` and ``hi`` point to
     # the same location, the high value will be stored.
@@ -505,13 +505,13 @@ cdef extern from "flint_wrap.h":
     # approximation to `\ln n`, taking care to use a value too
     # small or too large to maintain the inequality.
 
-    unsigned long n_nth_prime(unsigned long n)
+    ulong n_nth_prime(ulong n)
     # Returns the `n`\th prime number `p_n`, using the mathematical indexing
     # convention `p_1 = 2, p_2 = 3, \dotsc`.
     # This function simply ensures that the table of cached primes is large
     # enough and then looks up the entry.
 
-    void n_nth_prime_bounds(unsigned long *lo, unsigned long *hi, unsigned long n)
+    void n_nth_prime_bounds(ulong *lo, ulong *hi, ulong n)
     # Calculates lower and upper bounds for the  `n`\th prime number `p_n` ,
     # ``lo <= p_n <= hi``. If ``lo`` and ``hi`` point to the same
     # location, the high value will be stored. Note that this function will
@@ -528,14 +528,14 @@ cdef extern from "flint_wrap.h":
     # ``n_prime_pi_bounds()``, and estimate `\ln \ln n` to the nearest
     # integer; this function is nearly constant.
 
-    int n_is_oddprime_small(unsigned long n)
+    int n_is_oddprime_small(ulong n)
     # Returns `1` if `n` is an odd prime smaller than
     # ``FLINT_ODDPRIME_SMALL_CUTOFF``. Expects `n`
     # to be odd and smaller than the cutoff.
     # This function merely uses a lookup table with one bit allocated for each
     # odd number up to the cutoff.
 
-    int n_is_oddprime_binary(unsigned long n)
+    int n_is_oddprime_binary(ulong n)
     # This function performs a simple binary search through
     # the table of cached primes for `n`. If it exists in the array it returns
     # `1`, otherwise `0`. For the algorithm to operate correctly
@@ -545,7 +545,7 @@ cdef extern from "flint_wrap.h":
     # refine our search with a simple binary algorithm, taking
     # the top or bottom of the current interval as necessary.
 
-    int n_is_prime_pocklington(unsigned long n, unsigned long iterations)
+    int n_is_prime_pocklington(ulong n, ulong iterations)
     # Tests if `n` is a prime using the Pocklington--Lehmer primality
     # test. If `1` is returned `n` has been proved prime. If `0` is returned
     # `n` is composite. However `-1` may be returned if nothing was proved
@@ -565,7 +565,7 @@ cdef extern from "flint_wrap.h":
     # https://mathworld.wolfram.com/PocklingtonsTheorem.html
     # for a description of the algorithm.
 
-    int n_is_prime_pseudosquare(unsigned long n)
+    int n_is_prime_pseudosquare(ulong n)
     # Tests if `n` is a prime according to Theorem 2.7 [LukPatWil1996]_.
     # We first factor `N` using trial division up to some limit `B`.
     # In fact, the number of primes used in the trial factoring is at
@@ -591,7 +591,7 @@ cdef extern from "flint_wrap.h":
     # composite prime. However in that case an error is printed, as
     # that would be of independent interest.
 
-    int n_is_prime(unsigned long n)
+    int n_is_prime(ulong n)
     # Tests if `n` is a prime. This first sieves for small prime factors,
     # then simply calls :func:`n_is_probabprime`. This has been checked
     # against the tables of Feitsma and Galway
@@ -602,7 +602,7 @@ cdef extern from "flint_wrap.h":
     # primality. This is likely to be significantly slower for prime
     # inputs.
 
-    int n_is_strong_probabprime_precomp(unsigned long n, double npre, unsigned long a, unsigned long d)
+    int n_is_strong_probabprime_precomp(ulong n, double npre, ulong a, ulong d)
     # Tests if `n` is a strong probable prime to the base `a`. We
     # require that `d` is set to the largest odd factor of `n - 1` and
     # ``npre`` is a precomputed inverse of `n` computed with
@@ -615,7 +615,7 @@ cdef extern from "flint_wrap.h":
     # A description of strong probable primes is given here:
     # https://mathworld.wolfram.com/StrongPseudoprime.html
 
-    int n_is_strong_probabprime2_preinv(unsigned long n, unsigned long ninv, unsigned long a, unsigned long d)
+    int n_is_strong_probabprime2_preinv(ulong n, ulong ninv, ulong a, ulong d)
     # Tests if `n` is a strong probable prime to the base `a`. We require
     # that `d` is set to the largest odd factor of `n - 1` and ``npre``
     # is a precomputed inverse of `n` computed with :func:`n_preinvert_limb`.
@@ -626,13 +626,13 @@ cdef extern from "flint_wrap.h":
     # A description of strong probable primes is given here:
     # https://mathworld.wolfram.com/StrongPseudoprime.html
 
-    int n_is_probabprime_fermat(unsigned long n, unsigned long i)
+    int n_is_probabprime_fermat(ulong n, ulong i)
     # Returns `1` if `n` is a base `i` Fermat probable prime. Requires
     # `1 < i < n` and that `i` does not divide `n`.
     # By Fermat's Little Theorem if `i^{n-1}` is not congruent to `1`
     # then `n` is not prime.
 
-    int n_is_probabprime_fibonacci(unsigned long n)
+    int n_is_probabprime_fibonacci(ulong n)
     # Let `F_j` be the `j`\th element of the Fibonacci sequence
     # `0, 1, 1, 2, 3, 5, \dotsc`, starting at `j = 0`. Then if `n` is prime
     # we have `F_{n - (n/5)} = 0 \pmod n`, where `(n/5)` is the Jacobi
@@ -640,7 +640,7 @@ cdef extern from "flint_wrap.h":
     # For further details, see  pp. 142 [CraPom2005]_.
     # We require that `n` is not divisible by `2` or `5`.
 
-    int n_is_probabprime_BPSW(unsigned long n)
+    int n_is_probabprime_BPSW(ulong n)
     # Implements a Baillie--Pomerance--Selfridge--Wagstaff probable primality
     # test. This is a variant of the usual BPSW test (which only uses strong
     # base-2 probable prime and Lucas-Selfridge tests, see Baillie and
@@ -653,12 +653,12 @@ cdef extern from "flint_wrap.h":
     # Up to `2^{64}` the test we use has been checked against tables of
     # pseudoprimes. Thus it is a primality test up to this limit.
 
-    int n_is_probabprime_lucas(unsigned long n)
+    int n_is_probabprime_lucas(ulong n)
     # For details on Lucas pseudoprimes, see [pp. 143] [CraPom2005]_.
     # We implement a variant of the Lucas pseudoprime test similar to that
     # described by Baillie and Wagstaff [BaiWag1980]_.
 
-    int n_is_probabprime(unsigned long n)
+    int n_is_probabprime(ulong n)
     # Tests if `n` is a probable prime. Up to ``FLINT_ODDPRIME_SMALL_CUTOFF``
     # this algorithm uses :func:`n_is_oddprime_small` which uses a lookup table.
     # Next it calls :func:`n_compute_primes` with the maximum table size and
@@ -674,14 +674,14 @@ cdef extern from "flint_wrap.h":
     # and Galway and up to the accuracy of those tables, this is an exhaustive
     # check up to `2^{64}`, i.e. there are no counterexamples.
 
-    unsigned long n_CRT(unsigned long r1, unsigned long m1, unsigned long r2, unsigned long m2)
+    ulong n_CRT(ulong r1, ulong m1, ulong r2, ulong m2)
     # Use the Chinese Remainder Theorem to return the unique value
     # `0 \le x < M` congruent to `r_1` modulo `m_1` and `r_2` modulo `m_2`,
     # where `M = m_1 \times m_2` is assumed to fit a ulong.
     # It is assumed that `m_1` and `m_2` are positive integers greater
     # than `1` and coprime. It is assumed that `0 \le r_1 < m_1` and `0 \le r_2 < m_2`.
 
-    unsigned long n_sqrt(unsigned long a)
+    ulong n_sqrt(ulong a)
     # Computes the integer truncation of the square root of `a`.
     # The implementation uses a call to the IEEE floating point sqrt function.
     # The integer itself is represented by the nearest double and its square
@@ -694,7 +694,7 @@ cdef extern from "flint_wrap.h":
     # precision float provided the square root itself can be represented
     # in a single float, i.e. for `a < 281474976710656 = 2^{46}`.
 
-    unsigned long n_sqrtrem(unsigned long * r, unsigned long a)
+    ulong n_sqrtrem(ulong * r, ulong a)
     # Computes the integer truncation of the square root of `a`.
     # The integer itself is represented by the nearest double and its square
     # root is computed to the nearest place. If `a` is one below a square, the
@@ -709,14 +709,14 @@ cdef extern from "flint_wrap.h":
     # The remainder is computed by subtracting the square of the computed square
     # root from `a`.
 
-    int n_is_square(unsigned long x)
+    int n_is_square(ulong x)
     # Returns `1` if `x` is a square, otherwise `0`.
     # This code first checks if `x` is a square modulo `64`,
     # `63 = 3 \times 3 \times 7` and `65 = 5 \times 13`, using lookup tables,
     # and if so it then takes a square root and checks that the square of this
     # equals the original value.
 
-    int n_is_perfect_power235(unsigned long n)
+    int n_is_perfect_power235(ulong n)
     # Returns `1` if `n` is a perfect square, cube or fifth power.
     # This function uses a series of modular tests to reject most
     # non 235-powers. Each modular test returns a value from 0 to 7
@@ -729,12 +729,12 @@ cdef extern from "flint_wrap.h":
     # root can be taken, if indicated, to determine whether the power
     # of that root is exactly equal to `n`.
 
-    int n_is_perfect_power(unsigned long * root, unsigned long n)
+    int n_is_perfect_power(ulong * root, ulong n)
     # If `n = r^k`, return `k` and set ``root`` to `r`. Note that `0` and
     # `1` are considered squares. No guarantees are made about `r` or `k`
     # being the minimum possible value.
 
-    unsigned long n_rootrem(unsigned long* remainder, unsigned long n, unsigned long root)
+    ulong n_rootrem(ulong* remainder, ulong n, ulong root)
     # This function uses the Newton iteration method to calculate the nth root of
     # a number.
     # First approximation is calculated by an algorithm mentioned in this
@@ -743,7 +743,7 @@ cdef extern from "flint_wrap.h":
     # Returns the integer part of ``n ^ 1/root``. Remainder is set as
     # ``n - base^root``. In case `n < 1` or ``root < 1``, `0` is returned.
 
-    unsigned long n_cbrt(unsigned long n)
+    ulong n_cbrt(ulong n)
     # This function returns the integer truncation of the cube root of `n`.
     # First approximation is calculated by an algorithm mentioned in this
     # article: https://en.wikipedia.org/wiki/Fast_inverse_square_root .
@@ -754,16 +754,16 @@ cdef extern from "flint_wrap.h":
     # `x \leftarrow x - (x\cdot x\cdot x - a)\cdot x/(2\cdot x\cdot x\cdot x + a)` for getting a good estimate,
     # as mentioned in the paper by W. Kahan [Kahan1991]_ .
 
-    unsigned long n_cbrt_newton_iteration(unsigned long n)
+    ulong n_cbrt_newton_iteration(ulong n)
     # This function returns the integer truncation of the cube root of `n`.
     # Makes use of Newton iterations to get a close value, and then adjusts the
     # estimate so as to get the correct value.
 
-    unsigned long n_cbrt_binary_search(unsigned long n)
+    ulong n_cbrt_binary_search(ulong n)
     # This function returns the integer truncation of the cube root of `n`.
     # Uses binary search to get the correct value.
 
-    unsigned long n_cbrt_chebyshev_approx(unsigned long n)
+    ulong n_cbrt_chebyshev_approx(ulong n)
     # This function returns the integer truncation of the cube root of `n`.
     # The number is first expressed in the form ``x * 2^exp``. This ensures
     # `x` is in the range [0.5, 1]. Cube root of x is calculated using
@@ -772,14 +772,14 @@ cdef extern from "flint_wrap.h":
     # https://mpmath.org, using the function chebyfit. x is multiplied
     # by ``2^exp`` and the cube root of 1, 2 or 4 (according to ``exp%3``).
 
-    unsigned long n_cbrtrem(unsigned long* remainder, unsigned long n)
+    ulong n_cbrtrem(ulong* remainder, ulong n)
     # This function returns the integer truncation of the cube root of `n`.
     # Remainder is set as `n` minus the cube of the value returned.
 
     void n_factor_init(n_factor_t * factors)
     # Initializes factors.
 
-    int n_remove(unsigned long * n, unsigned long p)
+    int n_remove(ulong * n, ulong p)
     # Removes the highest possible power of `p` from `n`, replacing
     # `n` with the quotient. The return value is the highest
     # power of `p` that divided `n`. Assumes `n` is not `0`.
@@ -790,7 +790,7 @@ cdef extern from "flint_wrap.h":
     # proceeds down the power tree again removing powers of `p`
     # until none remain.
 
-    int n_remove2_precomp(unsigned long * n, unsigned long p, double ppre)
+    int n_remove2_precomp(ulong * n, ulong p, double ppre)
     # Removes the highest possible power of `p` from `n`, replacing
     # `n` with the quotient. The return value is the highest
     # power of `p` that divided `n`. Assumes `n` is not `0`. We require
@@ -800,7 +800,7 @@ cdef extern from "flint_wrap.h":
     # `p` we make repeated use of :func:`n_divrem2_precomp` until division
     # by `p` is no longer possible.
 
-    void n_factor_insert(n_factor_t * factors, unsigned long p, unsigned long exp)
+    void n_factor_insert(n_factor_t * factors, ulong p, ulong exp)
     # Inserts the given prime power factor ``p^exp`` into
     # the ``n_factor_t`` ``factors``. See the documentation for
     # :func:`n_factor_trial` for a description of the ``n_factor_t`` type.
@@ -811,7 +811,7 @@ cdef extern from "flint_wrap.h":
     # There is no test code for this function other than its use by
     # the various factoring functions, which have test code.
 
-    unsigned long n_factor_trial_range(n_factor_t * factors, unsigned long n, unsigned long start, unsigned long num_primes)
+    ulong n_factor_trial_range(n_factor_t * factors, ulong n, ulong start, ulong num_primes)
     # Trial factor `n` with the first ``num_primes`` primes, but
     # starting at the prime with index start (counting from zero).
     # One requires an initialised ``n_factor_t`` structure, but factors
@@ -833,12 +833,12 @@ cdef extern from "flint_wrap.h":
     # :func:`n_compute_primes` are utilised with the :func:`n_remove2_precomp`
     # function.
 
-    unsigned long n_factor_trial(n_factor_t * factors, unsigned long n, unsigned long num_primes)
+    ulong n_factor_trial(n_factor_t * factors, ulong n, ulong num_primes)
     # This function calls :func:`n_factor_trial_range`, with the value of
     # `0` for ``start``. By default this adds factors to an already existing
     # ``n_factor_t`` or to a newly initialised one.
 
-    unsigned long n_factor_power235(unsigned long *exp, unsigned long n)
+    ulong n_factor_power235(ulong *exp, ulong n)
     # Returns `0` if `n` is not a perfect square, cube or fifth power.
     # Otherwise it returns the root and sets ``exp`` to either `2`,
     # `3` or `5` appropriately.
@@ -853,18 +853,18 @@ cdef extern from "flint_wrap.h":
     # root can be taken, if indicated, to determine whether the power
     # of that root is exactly equal to `n`.
 
-    unsigned long n_factor_one_line(unsigned long n, unsigned long iters)
+    ulong n_factor_one_line(ulong n, ulong iters)
     # This implements Bill Hart's one line factoring algorithm [Har2012]_.
     # It is a variant of Fermat's algorithm which cycles through a large number
     # of multipliers instead of incrementing the square root. It is faster than
     # SQUFOF for `n` less than about `2^{40}`.
 
-    unsigned long n_factor_lehman(unsigned long n)
+    ulong n_factor_lehman(ulong n)
     # Lehman's factoring algorithm. Currently works up to `10^{16}`, but is
     # not particularly efficient and so is not used in the general factor
     # function. Always returns a factor of `n`.
 
-    unsigned long n_factor_SQUFOF(unsigned long n, unsigned long iters)
+    ulong n_factor_SQUFOF(ulong n, ulong iters)
     # Attempts to split `n` using the given number of iterations
     # of SQUFOF. Simply set ``iters`` to ``WORD(0)`` for maximum
     # persistence.
@@ -879,7 +879,7 @@ cdef extern from "flint_wrap.h":
     # If SQUFOF fails to factor `n` we return `0`, however with
     # ``iters`` large enough this should never happen.
 
-    void n_factor(n_factor_t * factors, unsigned long n, int proved)
+    void n_factor(n_factor_t * factors, ulong n, int proved)
     # Factors `n` with no restrictions on `n`. If the prime factors are
     # required to be checked with a primality test, one may set
     # ``proved`` to `1`, otherwise set it to `0`, and they will only be
@@ -906,7 +906,7 @@ cdef extern from "flint_wrap.h":
     # ``FLINT_FACTOR_SQUFOF_ITERS``. If that fails an error results and
     # the program aborts. However this should not happen in practice.
 
-    unsigned long n_factor_trial_partial(n_factor_t * factors, unsigned long n, unsigned long * prod, unsigned long num_primes, unsigned long limit)
+    ulong n_factor_trial_partial(n_factor_t * factors, ulong n, ulong * prod, ulong num_primes, ulong limit)
     # Attempts trial factoring of `n` with the first ``num_primes primes``,
     # but stops when the product of prime factors so far exceeds ``limit``.
     # One requires an initialised ``n_factor_t`` structure, but factors
@@ -929,7 +929,7 @@ cdef extern from "flint_wrap.h":
     # :func:`n_compute_primes` are utilised with the :func:`n_remove2_precomp`
     # function.
 
-    unsigned long n_factor_partial(n_factor_t * factors, unsigned long n, unsigned long limit, int proved)
+    ulong n_factor_partial(n_factor_t * factors, ulong n, ulong limit, int proved)
     # Factors `n`, but stops when the product of prime factors so far
     # exceeds ``limit``.
     # One requires an initialised ``n_factor_t`` structure, but factors
@@ -944,7 +944,7 @@ cdef extern from "flint_wrap.h":
     # The factors are proved prime if ``proved`` is `1`, otherwise
     # they are merely probably prime.
 
-    unsigned long n_factor_pp1(unsigned long n, unsigned long B1, unsigned long c)
+    ulong n_factor_pp1(ulong n, ulong B1, ulong c)
     # Factors `n` using Williams' `p + 1` factoring algorithm, with prime
     # limit set to `B1`. We require `c` to be set to a random value. Each
     # trial of the algorithm with a different value of `c` gives another
@@ -955,7 +955,7 @@ cdef extern from "flint_wrap.h":
     # If the algorithm succeeds, it returns the factor, otherwise it
     # returns `0` or `1` (the trivial factors modulo `n`).
 
-    unsigned long n_factor_pp1_wrapper(unsigned long n)
+    ulong n_factor_pp1_wrapper(ulong n)
     # A simple wrapper around ``n_factor_pp1`` which works in the range
     # `31`-`64` bits. Below this point, trial factoring will always succeed.
     # This function mainly exists for ``n_factor`` and is tuned to minimise
@@ -989,7 +989,7 @@ cdef extern from "flint_wrap.h":
     # is successful. In such a case, 1 is returned. Otherwise, 0 is returned. Factor
     # discovered is not necessarily prime.
 
-    int n_moebius_mu(unsigned long n)
+    int n_moebius_mu(ulong n)
     # Computes the Moebius function `\mu(n)`, which is defined as `\mu(n) = 0`
     # if `n` has a prime factor of multiplicity greater than `1`, `\mu(n) = -1`
     # if `n` has an odd number of distinct prime factors, and `\mu(n) = 1` if
@@ -1001,28 +1001,28 @@ cdef extern from "flint_wrap.h":
     # For larger `n`, we first check if `n` is divisible by a small odd square
     # and otherwise call ``n_factor()`` and count the factors.
 
-    void n_moebius_mu_vec(int * mu, unsigned long len)
+    void n_moebius_mu_vec(int * mu, ulong len)
     # Computes `\mu(n)` for ``n = 0, 1, ..., len - 1``. This
     # is done by sieving over each prime in the range, flipping the sign
     # of `\mu(n)` for every multiple of a prime `p` and setting `\mu(n) = 0`
     # for every multiple of `p^2`.
 
-    int n_is_squarefree(unsigned long n)
+    int n_is_squarefree(ulong n)
     # Returns `0` if `n` is divisible by some perfect square, and `1` otherwise.
     # This simply amounts to testing whether `\mu(n) \neq 0`. As special
     # cases, `1` is considered squarefree and `0` is not considered squarefree.
 
-    unsigned long n_euler_phi(unsigned long n)
+    ulong n_euler_phi(ulong n)
     # Computes the Euler totient function `\phi(n)`, counting the number of
     # positive integers less than or equal to `n` that are coprime to `n`.
 
-    unsigned long n_factorial_fast_mod2_preinv(unsigned long n, unsigned long p, unsigned long pinv)
+    ulong n_factorial_fast_mod2_preinv(ulong n, ulong p, ulong pinv)
     # Returns `n! \bmod p` given a precomputed inverse of `p` as computed
     # by :func:`n_preinvert_limb`. `p` is not required to be a prime, but
     # no special optimisations are made for composite `p`.
     # Uses fast multipoint evaluation, running in about `O(n^{1/2})` time.
 
-    unsigned long n_factorial_mod2_preinv(unsigned long n, unsigned long p, unsigned long pinv)
+    ulong n_factorial_mod2_preinv(ulong n, ulong p, ulong pinv)
     # Returns `n! \bmod p` given a precomputed inverse of `p` as computed
     # by :func:`n_preinvert_limb`. `p` is not required to be a prime, but
     # no special optimisations are made for composite `p`.
@@ -1030,15 +1030,15 @@ cdef extern from "flint_wrap.h":
     # if `n` is not too large, and calls the fast algorithm for extremely
     # large `n`.
 
-    unsigned long n_primitive_root_prime_prefactor(unsigned long p, n_factor_t * factors)
+    ulong n_primitive_root_prime_prefactor(ulong p, n_factor_t * factors)
     # Returns a primitive root for the multiplicative subgroup of `\mathbb{Z}/p\mathbb{Z}`
     # where `p` is prime given the factorisation (``factors``) of `p - 1`.
 
-    unsigned long n_primitive_root_prime(unsigned long p)
+    ulong n_primitive_root_prime(ulong p)
     # Returns a primitive root for the multiplicative subgroup of `\mathbb{Z}/p\mathbb{Z}`
     # where `p` is prime.
 
-    unsigned long n_discrete_log_bsgs(unsigned long b, unsigned long a, unsigned long n)
+    ulong n_discrete_log_bsgs(ulong b, ulong a, ulong n)
     # Returns the discrete logarithm of `b` with  respect to `a` in the
     # multiplicative subgroup of `\mathbb{Z}/n\mathbb{Z}` when `\mathbb{Z}/n\mathbb{Z}`
     # is cyclic. That is,

@@ -12,11 +12,11 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    gr_ptr gr_mat_entry_ptr(gr_mat_t mat, long i, long j, gr_ctx_t ctx)
+    gr_ptr gr_mat_entry_ptr(gr_mat_t mat, slong i, slong j, gr_ctx_t ctx)
     # Function returning a pointer to the entry at row *i* and column
     # *j* of the matrix *mat*. The indices must be in bounds.
 
-    void gr_mat_init(gr_mat_t mat, long rows, long cols, gr_ctx_t ctx)
+    void gr_mat_init(gr_mat_t mat, slong rows, slong cols, gr_ctx_t ctx)
     # Initializes *mat* to a matrix with the given number of rows and
     # columns.
 
@@ -33,7 +33,7 @@ cdef extern from "flint_wrap.h":
     # Performs a deep swap of *mat1* and *mat2*, swapping the individual
     # entries rather than the top-level structures.
 
-    void gr_mat_window_init(gr_mat_t window, const gr_mat_t mat, long r1, long c1, long r2, long c2, gr_ctx_t ctx)
+    void gr_mat_window_init(gr_mat_t window, const gr_mat_t mat, slong r1, slong c1, slong r2, slong c2, gr_ctx_t ctx)
     # Initializes *window* to a window matrix into the submatrix of *mat*
     # starting at the corner at row *r1* and column *c1* (inclusive) and ending
     # at row *r2* and column *c2* (exclusive).
@@ -74,8 +74,8 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to the value of *mat*.
 
     int gr_mat_set_scalar(gr_mat_t res, gr_srcptr c, gr_ctx_t ctx)
-    int gr_mat_set_ui(gr_mat_t res, unsigned long c, gr_ctx_t ctx)
-    int gr_mat_set_si(gr_mat_t res, long c, gr_ctx_t ctx)
+    int gr_mat_set_ui(gr_mat_t res, ulong c, gr_ctx_t ctx)
+    int gr_mat_set_si(gr_mat_t res, slong c, gr_ctx_t ctx)
     int gr_mat_set_fmpz(gr_mat_t res, const fmpz_t c, gr_ctx_t ctx)
     int gr_mat_set_fmpq(gr_mat_t res, const fmpq_t c, gr_ctx_t ctx)
     # Set *res* to the scalar matrix with *c* on the main diagonal
@@ -88,20 +88,20 @@ cdef extern from "flint_wrap.h":
     int gr_mat_transpose(gr_mat_t B, const gr_mat_t A, gr_ctx_t ctx)
     # Sets *B* to the transpose of *A*.
 
-    int gr_mat_swap_rows(gr_mat_t mat, long * perm, long r, long s, gr_ctx_t ctx)
+    int gr_mat_swap_rows(gr_mat_t mat, slong * perm, slong r, slong s, gr_ctx_t ctx)
     # Swaps rows ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    int gr_mat_swap_cols(gr_mat_t mat, long * perm, long r, long s, gr_ctx_t ctx)
+    int gr_mat_swap_cols(gr_mat_t mat, slong * perm, slong r, slong s, gr_ctx_t ctx)
     # Swaps columns ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
 
-    int gr_mat_invert_rows(gr_mat_t mat, long * perm, gr_ctx_t ctx)
+    int gr_mat_invert_rows(gr_mat_t mat, slong * perm, gr_ctx_t ctx)
     # Swaps rows ``i`` and ``r - i`` of ``mat`` for ``0 <= i < r/2``, where
     # ``r`` is the number of rows of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    int gr_mat_invert_cols(gr_mat_t mat, long * perm, gr_ctx_t ctx)
+    int gr_mat_invert_cols(gr_mat_t mat, slong * perm, gr_ctx_t ctx)
     # Swaps columns ``i`` and ``c - i`` of ``mat`` for ``0 <= i < c/2``, where
     # ``c`` is the number of columns of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
@@ -141,7 +141,7 @@ cdef extern from "flint_wrap.h":
     int gr_mat_submul_scalar(gr_mat_t res, const gr_mat_t mat, gr_srcptr c, gr_ctx_t ctx)
     int gr_mat_div_scalar(gr_mat_t res, const gr_mat_t mat, gr_srcptr c, gr_ctx_t ctx)
 
-    int _gr_mat_gr_poly_evaluate(gr_mat_t res, gr_srcptr poly, long len, const gr_mat_t mat, gr_ctx_t ctx)
+    int _gr_mat_gr_poly_evaluate(gr_mat_t res, gr_srcptr poly, slong len, const gr_mat_t mat, gr_ctx_t ctx)
     int gr_mat_gr_poly_evaluate(gr_mat_t res, const gr_poly_t poly, const gr_mat_t mat, gr_ctx_t ctx)
     # Sets *res* to the matrix obtained by evaluating the
     # scalar polynomial *poly* with matrix argument *mat*.
@@ -162,9 +162,9 @@ cdef extern from "flint_wrap.h":
     # Set *res* to the product `AD` or `DA` respectively, where `D` is
     # a diagonal matrix represented as a vector of entries.
 
-    int gr_mat_find_nonzero_pivot_large_abs(long * pivot_row, gr_mat_t mat, long start_row, long end_row, long column, gr_ctx_t ctx)
-    int gr_mat_find_nonzero_pivot_generic(long * pivot_row, gr_mat_t mat, long start_row, long end_row, long column, gr_ctx_t ctx)
-    int gr_mat_find_nonzero_pivot(long * pivot_row, gr_mat_t mat, long start_row, long end_row, long column, gr_ctx_t ctx)
+    int gr_mat_find_nonzero_pivot_large_abs(slong * pivot_row, gr_mat_t mat, slong start_row, slong end_row, slong column, gr_ctx_t ctx)
+    int gr_mat_find_nonzero_pivot_generic(slong * pivot_row, gr_mat_t mat, slong start_row, slong end_row, slong column, gr_ctx_t ctx)
+    int gr_mat_find_nonzero_pivot(slong * pivot_row, gr_mat_t mat, slong start_row, slong end_row, slong column, gr_ctx_t ctx)
     # Attempts to find a nonzero element in column number *column*
     # of the matrix *mat* in a row between *start_row* (inclusive)
     # and *end_row* (exclusive).
@@ -175,9 +175,9 @@ cdef extern from "flint_wrap.h":
     # This function may be destructive: any elements that are nontrivially
     # zero but can be certified zero may be overwritten by exact zeros.
 
-    int gr_mat_lu_classical(long * rank, long * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
-    int gr_mat_lu_recursive(long * rank, long * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
-    int gr_mat_lu(long * rank, long * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
+    int gr_mat_lu_classical(slong * rank, slong * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
+    int gr_mat_lu_recursive(slong * rank, slong * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
+    int gr_mat_lu(slong * rank, slong * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
     # Computes a generalized LU decomposition `A = PLU` of a given
     # matrix *A*, writing the rank of *A* to *rank*.
     # If *A* is a nonsingular square matrix, *LU* will be set to
@@ -204,7 +204,7 @@ cdef extern from "flint_wrap.h":
     # The *recursive* version uses a block recursive algorithm
     # to take advantage of fast matrix multiplication.
 
-    int gr_mat_fflu(long * rank, long * P, gr_mat_t LU, gr_ptr den, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
+    int gr_mat_fflu(slong * rank, slong * P, gr_mat_t LU, gr_ptr den, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
     # Similar to :func:`gr_mat_lu`, but computes a fraction-free
     # LU decomposition using the Bareiss algorithm.
     # The denominator is written to *den*.
@@ -233,8 +233,8 @@ cdef extern from "flint_wrap.h":
     # Solves `AX = B`. If *A* is not invertible,
     # returns ``GR_DOMAIN`` even if the system has a solution.
 
-    int gr_mat_nonsingular_solve_fflu_precomp(gr_mat_t X, const long * perm, const gr_mat_t LU, const gr_mat_t B, gr_ctx_t ctx)
-    int gr_mat_nonsingular_solve_lu_precomp(gr_mat_t X, const long * perm, const gr_mat_t LU, const gr_mat_t B, gr_ctx_t ctx)
+    int gr_mat_nonsingular_solve_fflu_precomp(gr_mat_t X, const slong * perm, const gr_mat_t LU, const gr_mat_t B, gr_ctx_t ctx)
+    int gr_mat_nonsingular_solve_lu_precomp(gr_mat_t X, const slong * perm, const gr_mat_t LU, const gr_mat_t B, gr_ctx_t ctx)
     # Solves `AX = B` given a precomputed FFLU or LU factorization of *A*.
 
     int gr_mat_nonsingular_solve_den_fflu(gr_mat_t X, gr_ptr den, const gr_mat_t A, const gr_mat_t B, gr_ctx_t ctx)
@@ -283,9 +283,9 @@ cdef extern from "flint_wrap.h":
     # the square matrix *mat*.
     # If the matrix is not square, ``GR_DOMAIN`` is returned.
 
-    int gr_mat_rank_fflu(long * rank, const gr_mat_t mat, gr_ctx_t ctx)
-    int gr_mat_rank_lu(long * rank, const gr_mat_t mat, gr_ctx_t ctx)
-    int gr_mat_rank(long * rank, const gr_mat_t mat, gr_ctx_t ctx)
+    int gr_mat_rank_fflu(slong * rank, const gr_mat_t mat, gr_ctx_t ctx)
+    int gr_mat_rank_lu(slong * rank, const gr_mat_t mat, gr_ctx_t ctx)
+    int gr_mat_rank(slong * rank, const gr_mat_t mat, gr_ctx_t ctx)
     # Sets *res* to the rank of *mat*.
     # The default method returns ``GR_DOMAIN`` if the element ring
     # is not an integral domain, in which case the usual rank is
@@ -294,14 +294,14 @@ cdef extern from "flint_wrap.h":
     # encounter an impossible inverse in the execution of the
     # respective algorithms.
 
-    int gr_mat_rref_lu(long * rank, gr_mat_t R, const gr_mat_t A, gr_ctx_t ctx)
-    int gr_mat_rref_fflu(long * rank, gr_mat_t R, const gr_mat_t A, gr_ctx_t ctx)
-    int gr_mat_rref(long * rank, gr_mat_t R, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_rref_lu(slong * rank, gr_mat_t R, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_rref_fflu(slong * rank, gr_mat_t R, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_rref(slong * rank, gr_mat_t R, const gr_mat_t A, gr_ctx_t ctx)
     # Sets *R* to the reduced row echelon form of *A*, also setting
     # *rank* to its rank.
 
-    int gr_mat_rref_den_fflu(long * rank, gr_mat_t R, gr_ptr den, const gr_mat_t A, gr_ctx_t ctx)
-    int gr_mat_rref_den(long * rank, gr_mat_t R, gr_ptr den, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_rref_den_fflu(slong * rank, gr_mat_t R, gr_ptr den, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_rref_den(slong * rank, gr_mat_t R, gr_ptr den, const gr_mat_t A, gr_ctx_t ctx)
     # Like *rref*, but computes the reduced row echelon multiplied
     # by a common (not necessarily minimal) denominator which is written
     # to *den*. This can be used to compute the rref over an integral
@@ -405,7 +405,7 @@ cdef extern from "flint_wrap.h":
     # Compute the minimal polynomial of the matrix *mat*.
     # The algorithm assumes that the coefficient ring is a field.
 
-    int gr_mat_apply_row_similarity(gr_mat_t M, long r, gr_ptr d, gr_ctx_t ctx)
+    int gr_mat_apply_row_similarity(gr_mat_t M, slong r, gr_ptr d, gr_ctx_t ctx)
     # Applies an elementary similarity transform to the `n\times n` matrix `M`
     # in-place.
     # If `P` is the `n\times n` identity matrix the zero entries of whose row
@@ -442,9 +442,9 @@ cdef extern from "flint_wrap.h":
     # with corresponding multiplicities, which can be computed
     # with :func:`gr_mat_eigenvalues`.
 
-    int gr_mat_set_jordan_blocks(gr_mat_t mat, const gr_vec_t lmbda, long num_blocks, long * block_lambda, long * block_size, gr_ctx_t ctx)
-    int gr_mat_jordan_blocks(gr_vec_t lmbda, long * num_blocks, long * block_lambda, long * block_size, const gr_mat_t A, gr_ctx_t ctx)
-    int gr_mat_jordan_transformation(gr_mat_t mat, const gr_vec_t lmbda, long num_blocks, long * block_lambda, long * block_size, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_set_jordan_blocks(gr_mat_t mat, const gr_vec_t lmbda, slong num_blocks, slong * block_lambda, slong * block_size, gr_ctx_t ctx)
+    int gr_mat_jordan_blocks(gr_vec_t lmbda, slong * num_blocks, slong * block_lambda, slong * block_size, const gr_mat_t A, gr_ctx_t ctx)
+    int gr_mat_jordan_transformation(gr_mat_t mat, const gr_vec_t lmbda, slong num_blocks, slong * block_lambda, slong * block_size, const gr_mat_t A, gr_ctx_t ctx)
     int gr_mat_jordan_form(gr_mat_t J, gr_mat_t P, const gr_mat_t A, gr_ctx_t ctx)
 
     int gr_mat_exp_jordan(gr_mat_t res, const gr_mat_t A, gr_ctx_t ctx)
@@ -471,18 +471,18 @@ cdef extern from "flint_wrap.h":
     int gr_mat_randtest(gr_mat_t res, flint_rand_t state, gr_ctx_t ctx)
     # Sets *res* to a random matrix. The distribution is nonuniform.
 
-    int gr_mat_randops(gr_mat_t mat, flint_rand_t state, long count, gr_ctx_t ctx)
+    int gr_mat_randops(gr_mat_t mat, flint_rand_t state, slong count, gr_ctx_t ctx)
     # Randomises *mat* in-place by performing elementary row or column
     # operations. More precisely, at most *count* random additions or
     # subtractions of distinct rows and columns will be performed.
 
-    int gr_mat_randpermdiag(int * parity, gr_mat_t mat, flint_rand_t state, gr_ptr diag, long n, gr_ctx_t ctx)
+    int gr_mat_randpermdiag(int * parity, gr_mat_t mat, flint_rand_t state, gr_ptr diag, slong n, gr_ctx_t ctx)
     # Sets mat to a random permutation of the diagonal matrix with *n* leading entries given by
     # the vector ``diag``. Returns ``GR_DOMAIN`` if the main diagonal of ``mat``
     # does not have room for at least *n* entries.
     # The parity (0 or 1) of the permutation is written to ``parity``.
 
-    int gr_mat_randrank(gr_mat_t mat, flint_rand_t state, long rank, gr_ctx_t ctx)
+    int gr_mat_randrank(gr_mat_t mat, flint_rand_t state, slong rank, gr_ctx_t ctx)
     # Sets ``mat`` to a random sparse matrix with the given rank, having exactly as many
     # non-zero elements as the rank. The matrix can be transformed into a dense matrix
     # with unchanged rank by subsequently calling :func:`gr_mat_randops`.
@@ -527,7 +527,7 @@ cdef extern from "flint_wrap.h":
     # known to exist but for which this construction fails are
     # 92, 116, 156, ... (OEIS A046116).
 
-    int gr_mat_reduce_row(long * column, gr_mat_t A, long * P, long * L, long m, gr_ctx_t ctx)
+    int gr_mat_reduce_row(slong * column, gr_mat_t A, slong * P, slong * L, slong m, gr_ctx_t ctx)
     # Reduce row n of the matrix `A`, assuming the prior rows are in Gauss
     # form. However those rows may not be in order. The entry `i` of the array
     # `P` is the row of `A` which has a pivot in the `i`-th column. If no such

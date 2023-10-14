@@ -21,17 +21,17 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_mpoly_factor_swap(fmpz_mod_mpoly_factor_t f, fmpz_mod_mpoly_factor_t g, const fmpz_mod_mpoly_ctx_t ctx)
     # Efficiently swap *f* and *g*.
 
-    long fmpz_mod_mpoly_factor_length(const fmpz_mod_mpoly_factor_t f, const fmpz_mod_mpoly_ctx_t ctx)
+    slong fmpz_mod_mpoly_factor_length(const fmpz_mod_mpoly_factor_t f, const fmpz_mod_mpoly_ctx_t ctx)
     # Return the length of the product in *f*.
 
     void fmpz_mod_mpoly_factor_get_constant_fmpz(fmpz_t c, const fmpz_mod_mpoly_factor_t f, const fmpz_mod_mpoly_ctx_t ctx)
     # Set *c* to the constant of *f*.
 
-    void fmpz_mod_mpoly_factor_get_base(fmpz_mod_mpoly_t B, const fmpz_mod_mpoly_factor_t f, long i, const fmpz_mod_mpoly_ctx_t ctx)
-    void fmpz_mod_mpoly_factor_swap_base(fmpz_mod_mpoly_t B, fmpz_mod_mpoly_factor_t f, long i, const fmpz_mod_mpoly_ctx_t ctx)
+    void fmpz_mod_mpoly_factor_get_base(fmpz_mod_mpoly_t B, const fmpz_mod_mpoly_factor_t f, slong i, const fmpz_mod_mpoly_ctx_t ctx)
+    void fmpz_mod_mpoly_factor_swap_base(fmpz_mod_mpoly_t B, fmpz_mod_mpoly_factor_t f, slong i, const fmpz_mod_mpoly_ctx_t ctx)
     # Set (resp. swap) *B* to (resp. with) the base of the term of index *i* in  *f*.
 
-    long fmpz_mod_mpoly_factor_get_exp_si(fmpz_mod_mpoly_factor_t f, long i, const fmpz_mod_mpoly_ctx_t ctx)
+    slong fmpz_mod_mpoly_factor_get_exp_si(fmpz_mod_mpoly_factor_t f, slong i, const fmpz_mod_mpoly_ctx_t ctx)
     # Return the exponent of the term of index *i* in *f*. It is assumed to fit an ``slong``.
 
     void fmpz_mod_mpoly_factor_sort(fmpz_mod_mpoly_factor_t f, const fmpz_mod_mpoly_ctx_t ctx)

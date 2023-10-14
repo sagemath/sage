@@ -30,7 +30,7 @@ cdef extern from "flint_wrap.h":
     # is returned by the function and any coefficients beyond this point are
     # not touched.
 
-    void fft_combine_limbs(mp_limb_t * res, mp_limb_t ** poly, long length, mp_size_t coeff_limbs, mp_size_t output_limbs, mp_size_t total_limbs)
+    void fft_combine_limbs(mp_limb_t * res, mp_limb_t ** poly, slong length, mp_size_t coeff_limbs, mp_size_t output_limbs, mp_size_t total_limbs)
     # Evaluate the polynomial ``poly`` of the given ``length`` at
     # ``B^coeff_limbs``, where ``B = 2^FLINT_BITS``, and add the
     # result to the integer ``(res, total_limbs)`` throwing away any bits
@@ -40,7 +40,7 @@ cdef extern from "flint_wrap.h":
     # If the integer is initially zero the result will just be the evaluation
     # of the polynomial.
 
-    void fft_combine_bits(mp_limb_t * res, mp_limb_t ** poly, long length, flint_bitcnt_t bits, mp_size_t output_limbs, mp_size_t total_limbs)
+    void fft_combine_bits(mp_limb_t * res, mp_limb_t ** poly, slong length, flint_bitcnt_t bits, mp_size_t output_limbs, mp_size_t total_limbs)
     # Evaluate the polynomial ``poly`` of the given ``length`` at
     # ``2^bits`` and add the result to the integer
     # ``(res, total_limbs)`` throwing away any bits that exceed the given
@@ -385,7 +385,7 @@ cdef extern from "flint_wrap.h":
     # require that ``depth`` and ``w`` have been selected as per the
     # wrapper ``fft_mulmod_2expp1`` below.
 
-    long fft_adjust_limbs(mp_size_t limbs)
+    slong fft_adjust_limbs(mp_size_t limbs)
     # Given a number of limbs, returns a new number of limbs (no more than
     # the next power of 2) which will work with the Nussbaumer code. It is only
     # necessary to make this adjustment if
@@ -421,7 +421,7 @@ cdef extern from "flint_wrap.h":
     # The main integer multiplication routine. Sets ``(r1, n1 + n2)`` to
     # ``(i1, n1)`` times ``(i2, n2)``. We require ``n1 >= n2 > 0``.
 
-    void fft_convolution(mp_limb_t ** ii, mp_limb_t ** jj, long depth, long limbs, long trunc, mp_limb_t ** t1, mp_limb_t ** t2, mp_limb_t ** s1, mp_limb_t ** tt)
+    void fft_convolution(mp_limb_t ** ii, mp_limb_t ** jj, slong depth, slong limbs, slong trunc, mp_limb_t ** t1, mp_limb_t ** t2, mp_limb_t ** s1, mp_limb_t ** tt)
     # Perform an FFT convolution of ``ii`` with ``jj``, both of length
     # ``4*n`` where ``n = 2^depth``. Assume that all but the first
     # ``trunc`` coefficients of the output (placed in ``ii``) are zero.
@@ -430,11 +430,11 @@ cdef extern from "flint_wrap.h":
     # limbs of space and ``tt`` must have ``2*(limbs + 1)`` of free
     # space.
 
-    void fft_precache(mp_limb_t ** jj, long depth, long limbs, long trunc, mp_limb_t ** t1, mp_limb_t ** t2, mp_limb_t ** s1)
+    void fft_precache(mp_limb_t ** jj, slong depth, slong limbs, slong trunc, mp_limb_t ** t1, mp_limb_t ** t2, mp_limb_t ** s1)
     # Precompute the FFT of ``jj`` for use with precache functions. The
     # parameters are as for ``fft_convolution``.
 
-    void fft_convolution_precache(mp_limb_t ** ii, mp_limb_t ** jj, long depth, long limbs, long trunc, mp_limb_t ** t1, mp_limb_t ** t2, mp_limb_t ** s1, mp_limb_t ** tt)
+    void fft_convolution_precache(mp_limb_t ** ii, mp_limb_t ** jj, slong depth, slong limbs, slong trunc, mp_limb_t ** t1, mp_limb_t ** t2, mp_limb_t ** s1, mp_limb_t ** tt)
     # As per ``fft_convolution`` except that it is assumed ``fft_precache`` has
     # been called on ``jj`` with the same parameters. This will then run faster
     # than if ``fft_convolution`` had been run with the original ``jj``.

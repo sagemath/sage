@@ -12,13 +12,13 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    fmpz * fmpz_mod_mat_entry(const fmpz_mod_mat_t mat, long i, long j)
+    fmpz * fmpz_mod_mat_entry(const fmpz_mod_mat_t mat, slong i, slong j)
     # Return a reference to the element at row ``i`` and column ``j`` of ``mat``.
 
-    void fmpz_mod_mat_set_entry(fmpz_mod_mat_t mat, long i, long j, const fmpz_t val)
+    void fmpz_mod_mat_set_entry(fmpz_mod_mat_t mat, slong i, slong j, const fmpz_t val)
     # Set the entry at row ``i`` and column ``j`` of ``mat`` to ``val``.
 
-    void fmpz_mod_mat_init(fmpz_mod_mat_t mat, long rows, long cols, const fmpz_t n)
+    void fmpz_mod_mat_init(fmpz_mod_mat_t mat, slong rows, slong cols, const fmpz_t n)
     # Initialise ``mat`` as a matrix with the given number of ``rows`` and
     # ``cols`` and modulus ``n``.
 
@@ -29,9 +29,9 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_mat_clear(fmpz_mod_mat_t mat)
     # Clear ``mat`` and release any memory it used.
 
-    long fmpz_mod_mat_nrows(const fmpz_mod_mat_t mat)
+    slong fmpz_mod_mat_nrows(const fmpz_mod_mat_t mat)
 
-    long fmpz_mod_mat_ncols(const fmpz_mod_mat_t mat)
+    slong fmpz_mod_mat_ncols(const fmpz_mod_mat_t mat)
     # Return the number of columns of ``mat``.
 
     void _fmpz_mod_mat_set_mod(fmpz_mod_mat_t mat, const fmpz_t n)
@@ -64,7 +64,7 @@ cdef extern from "flint_wrap.h":
     # Generate a random matrix with the existing dimensions and entries in
     # `[0, n)` where ``n`` is the modulus.
 
-    void fmpz_mod_mat_window_init(fmpz_mod_mat_t window, const fmpz_mod_mat_t mat, long r1, long c1, long r2, long c2)
+    void fmpz_mod_mat_window_init(fmpz_mod_mat_t window, const fmpz_mod_mat_t mat, slong r1, slong c1, slong r2, slong c2)
     # Initializes the matrix ``window`` to be an ``r2 - r1`` by
     # ``c2 - c1`` submatrix of ``mat`` whose ``(0, 0)`` entry
     # is the ``(r1, c1)`` entry of ``mat``. The memory for the
@@ -114,10 +114,10 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_mat_neg(fmpz_mod_mat_t B, const fmpz_mod_mat_t A)
     # Set ``B`` to `-A`.
 
-    void fmpz_mod_mat_scalar_mul_si(fmpz_mod_mat_t B, const fmpz_mod_mat_t A, long c)
+    void fmpz_mod_mat_scalar_mul_si(fmpz_mod_mat_t B, const fmpz_mod_mat_t A, slong c)
     # Set ``B`` to `cA` where ``c`` is a constant.
 
-    void fmpz_mod_mat_scalar_mul_ui(fmpz_mod_mat_t B, const fmpz_mod_mat_t A, unsigned long c)
+    void fmpz_mod_mat_scalar_mul_ui(fmpz_mod_mat_t B, const fmpz_mod_mat_t A, ulong c)
     # Set ``B`` to `cA` where ``c`` is a constant.
 
     void fmpz_mod_mat_scalar_mul_fmpz(fmpz_mod_mat_t B, const fmpz_mod_mat_t A, fmpz_t c)
@@ -127,7 +127,7 @@ cdef extern from "flint_wrap.h":
     # Set ``C`` to ``A\times B``. The number of rows of ``B`` must match the
     # number of columns of ``A``.
 
-    void _fmpz_mod_mat_mul_classical_threaded_pool_op(fmpz_mod_mat_t D, const fmpz_mod_mat_t C, const fmpz_mod_mat_t A, const fmpz_mod_mat_t B, int op, thread_pool_handle * threads, long num_threads)
+    void _fmpz_mod_mat_mul_classical_threaded_pool_op(fmpz_mod_mat_t D, const fmpz_mod_mat_t C, const fmpz_mod_mat_t A, const fmpz_mod_mat_t B, int op, thread_pool_handle * threads, slong num_threads)
     # Set ``D`` to ``A\times B + op*C`` where ``op`` is ``+1``, ``-1`` or ``0``.
 
     void _fmpz_mod_mat_mul_classical_threaded_op(fmpz_mod_mat_t D, const fmpz_mod_mat_t C, const fmpz_mod_mat_t A, const fmpz_mod_mat_t B, int op)
@@ -140,14 +140,14 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_mat_sqr(fmpz_mod_mat_t B, const fmpz_mod_mat_t A)
     # Set ``B`` to ``A^2``. The matrix ``A`` must be square.
 
-    void fmpz_mod_mat_mul_fmpz_vec(fmpz * c, const fmpz_mod_mat_t A, const fmpz * b, long blen)
-    void fmpz_mod_mat_mul_fmpz_vec_ptr(fmpz * const * c, const fmpz_mod_mat_t A, const fmpz * const * b, long blen)
+    void fmpz_mod_mat_mul_fmpz_vec(fmpz * c, const fmpz_mod_mat_t A, const fmpz * b, slong blen)
+    void fmpz_mod_mat_mul_fmpz_vec_ptr(fmpz * const * c, const fmpz_mod_mat_t A, const fmpz * const * b, slong blen)
     # Compute a matrix-vector product of ``A`` and ``(b, blen)`` and store the result in ``c``.
     # The vector ``(b, blen)`` is either truncated or zero-extended to the number of columns of ``A``.
     # The number entries written to ``c`` is always equal to the number of rows of ``A``.
 
-    void fmpz_mod_mat_fmpz_vec_mul(fmpz * c, const fmpz * a, long alen, const fmpz_mod_mat_t B)
-    void fmpz_mod_mat_fmpz_vec_mul_ptr(fmpz * const * c, const fmpz * const * a, long alen, const fmpz_mod_mat_t B)
+    void fmpz_mod_mat_fmpz_vec_mul(fmpz * c, const fmpz * a, slong alen, const fmpz_mod_mat_t B)
+    void fmpz_mod_mat_fmpz_vec_mul_ptr(fmpz * const * c, const fmpz * const * a, slong alen, const fmpz_mod_mat_t B)
     # Compute a vector-matrix product of ``(a, alen)`` and ``B`` and and store the result in ``c``.
     # The vector ``(a, alen)`` is either truncated or zero-extended to the number of rows of ``B``.
     # The number entries written to ``c`` is always equal to the number of columns of ``B``.
@@ -155,7 +155,7 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_mat_trace(fmpz_t trace, const fmpz_mod_mat_t mat)
     # Set ``trace`` to the trace of the matrix ``mat``.
 
-    long fmpz_mod_mat_rref(long * perm, fmpz_mod_mat_t mat)
+    slong fmpz_mod_mat_rref(slong * perm, fmpz_mod_mat_t mat)
     # Uses Gauss-Jordan elimination to set ``mat`` to its reduced row echelon
     # form and returns the rank of ``mat``.
     # If ``perm`` is non-``NULL``, the permutation of
@@ -169,7 +169,7 @@ cdef extern from "flint_wrap.h":
     # algorithm used here.
     # `mat` must have at least as many rows as columns.
 
-    long fmpz_mod_mat_howell_form(fmpz_mod_mat_t mat)
+    slong fmpz_mod_mat_howell_form(fmpz_mod_mat_t mat)
     # Transforms `mat` into the Howell form of `mat`.  For a definition of the
     # Howell form see [StoMul1998]_. The Howell form is computed by first
     # putting `mat` into strong echelon form and then ordering the rows.
@@ -181,7 +181,7 @@ cdef extern from "flint_wrap.h":
     # `A` and `B` must be square matrices with the same dimensions.
     # The modulus is assumed to be prime.
 
-    long fmpz_mod_mat_lu(long * P, fmpz_mod_mat_t A, int rank_check)
+    slong fmpz_mod_mat_lu(slong * P, fmpz_mod_mat_t A, int rank_check)
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`.
     # If `A` is a nonsingular square matrix, it will be overwritten with
@@ -231,7 +231,7 @@ cdef extern from "flint_wrap.h":
     # There are no restrictions on the shape of `A` and it may be singular.
     # The modulus is assumed to be prime.
 
-    void fmpz_mod_mat_similarity(fmpz_mod_mat_t M, long r, fmpz_t d)
+    void fmpz_mod_mat_similarity(fmpz_mod_mat_t M, slong r, fmpz_t d)
     # Applies a similarity transform to the `n\times n` matrix `M` in-place.
     # If `P` is the `n\times n` identity matrix the zero entries of whose row
     # `r` (`0`-indexed) have been replaced by `d`, this transform is equivalent

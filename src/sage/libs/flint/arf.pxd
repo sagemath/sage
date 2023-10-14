@@ -18,7 +18,7 @@ cdef extern from "flint_wrap.h":
     void arf_clear(arf_t x)
     # Clears the variable *x*, freeing or recycling its allocated memory.
 
-    long arf_allocated_bytes(const arf_t x)
+    slong arf_allocated_bytes(const arf_t x)
     # Returns the total number of bytes heap-allocated internally by this object.
     # The count excludes the size of the structure itself. Add
     # ``sizeof(arf_struct)`` to get the size of the object as a whole.
@@ -69,9 +69,9 @@ cdef extern from "flint_wrap.h":
 
     void arf_set_fmpz(arf_t res, const fmpz_t x)
 
-    void arf_set_ui(arf_t res, unsigned long x)
+    void arf_set_ui(arf_t res, ulong x)
 
-    void arf_set_si(arf_t res, long x)
+    void arf_set_si(arf_t res, slong x)
 
     void arf_set_mpfr(arf_t res, const mpfr_t x)
 
@@ -81,31 +81,31 @@ cdef extern from "flint_wrap.h":
     void arf_swap(arf_t x, arf_t y)
     # Swaps *x* and *y* efficiently.
 
-    void arf_init_set_ui(arf_t res, unsigned long x)
+    void arf_init_set_ui(arf_t res, ulong x)
 
-    void arf_init_set_si(arf_t res, long x)
+    void arf_init_set_si(arf_t res, slong x)
     # Initializes *res* and sets it to *x* in a single operation.
 
-    int arf_set_round(arf_t res, const arf_t x, long prec, arf_rnd_t rnd)
+    int arf_set_round(arf_t res, const arf_t x, slong prec, arf_rnd_t rnd)
 
-    int arf_set_round_si(arf_t res, long x, long prec, arf_rnd_t rnd)
+    int arf_set_round_si(arf_t res, slong x, slong prec, arf_rnd_t rnd)
 
-    int arf_set_round_ui(arf_t res, unsigned long x, long prec, arf_rnd_t rnd)
+    int arf_set_round_ui(arf_t res, ulong x, slong prec, arf_rnd_t rnd)
 
-    int arf_set_round_mpz(arf_t res, const mpz_t x, long prec, arf_rnd_t rnd)
+    int arf_set_round_mpz(arf_t res, const mpz_t x, slong prec, arf_rnd_t rnd)
 
-    int arf_set_round_fmpz(arf_t res, const fmpz_t x, long prec, arf_rnd_t rnd)
+    int arf_set_round_fmpz(arf_t res, const fmpz_t x, slong prec, arf_rnd_t rnd)
     # Sets *res* to *x*, rounded to *prec* bits in the direction
     # specified by *rnd*.
 
-    void arf_set_si_2exp_si(arf_t res, long m, long e)
+    void arf_set_si_2exp_si(arf_t res, slong m, slong e)
 
-    void arf_set_ui_2exp_si(arf_t res, unsigned long m, long e)
+    void arf_set_ui_2exp_si(arf_t res, ulong m, slong e)
 
     void arf_set_fmpz_2exp(arf_t res, const fmpz_t m, const fmpz_t e)
     # Sets *res* to `m \cdot 2^e`.
 
-    int arf_set_round_fmpz_2exp(arf_t res, const fmpz_t x, const fmpz_t e, long prec, arf_rnd_t rnd)
+    int arf_set_round_fmpz_2exp(arf_t res, const fmpz_t x, const fmpz_t e, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x \cdot 2^e`, rounded to *prec* bits in the direction
     # specified by *rnd*.
 
@@ -149,7 +149,7 @@ cdef extern from "flint_wrap.h":
     # memory available on the machine, resulting in swapping. It is recommended
     # to check that *x* is within a reasonable range before calling this method.
 
-    long arf_get_si(const arf_t x, arf_rnd_t rnd)
+    slong arf_get_si(const arf_t x, arf_rnd_t rnd)
     # Returns *x* rounded to the nearest integer in the direction specified by
     # *rnd*. If *rnd* is *ARF_RND_NEAR*, rounds to the nearest even integer
     # in case of a tie. Aborts if *x* is infinite, NaN, or the value is
@@ -157,7 +157,7 @@ cdef extern from "flint_wrap.h":
 
     int arf_get_fmpz_fixed_fmpz(fmpz_t res, const arf_t x, const fmpz_t e)
 
-    int arf_get_fmpz_fixed_si(fmpz_t res, const arf_t x, long e)
+    int arf_get_fmpz_fixed_si(fmpz_t res, const arf_t x, slong e)
     # Converts *x* to a mantissa with predetermined exponent, i.e. sets *res* to
     # an integer *y* such that `y \times 2^e \approx x`, truncating if necessary.
     # Returns 0 if exact and 1 if truncation occurred.
@@ -177,8 +177,8 @@ cdef extern from "flint_wrap.h":
     # is so large that allocating memory for the result fails.
 
     int arf_equal(const arf_t x, const arf_t y)
-    int arf_equal_si(const arf_t x, long y)
-    int arf_equal_ui(const arf_t x, unsigned long y)
+    int arf_equal_si(const arf_t x, slong y)
+    int arf_equal_ui(const arf_t x, ulong y)
     int arf_equal_d(const arf_t x, double y)
     # Returns nonzero iff *x* and *y* are exactly equal. NaN is not
     # treated specially, i.e. NaN compares as equal to itself.
@@ -187,9 +187,9 @@ cdef extern from "flint_wrap.h":
 
     int arf_cmp(const arf_t x, const arf_t y)
 
-    int arf_cmp_si(const arf_t x, long y)
+    int arf_cmp_si(const arf_t x, slong y)
 
-    int arf_cmp_ui(const arf_t x, unsigned long y)
+    int arf_cmp_ui(const arf_t x, ulong y)
 
     int arf_cmp_d(const arf_t x, double y)
     # Returns negative, zero, or positive, depending on whether *x* is
@@ -198,16 +198,16 @@ cdef extern from "flint_wrap.h":
 
     int arf_cmpabs(const arf_t x, const arf_t y)
 
-    int arf_cmpabs_ui(const arf_t x, unsigned long y)
+    int arf_cmpabs_ui(const arf_t x, ulong y)
 
     int arf_cmpabs_d(const arf_t x, double y)
 
     int arf_cmpabs_mag(const arf_t x, const mag_t y)
     # Compares the absolute values of *x* and *y*.
 
-    int arf_cmp_2exp_si(const arf_t x, long e)
+    int arf_cmp_2exp_si(const arf_t x, slong e)
 
-    int arf_cmpabs_2exp_si(const arf_t x, long e)
+    int arf_cmpabs_2exp_si(const arf_t x, slong e)
     # Compares *x* (respectively its absolute value) with `2^e`.
 
     int arf_sgn(const arf_t x)
@@ -219,7 +219,7 @@ cdef extern from "flint_wrap.h":
     void arf_max(arf_t res, const arf_t a, const arf_t b)
     # Sets *res* respectively to the minimum and the maximum of *a* and *b*.
 
-    long arf_bits(const arf_t x)
+    slong arf_bits(const arf_t x)
     # Returns the number of bits needed to represent the absolute value
     # of the mantissa of *x*, i.e. the minimum precision sufficient to represent
     # *x* exactly. Returns 0 if *x* is a special value.
@@ -227,7 +227,7 @@ cdef extern from "flint_wrap.h":
     int arf_is_int(const arf_t x)
     # Returns nonzero iff *x* is integer-valued.
 
-    int arf_is_int_2exp_si(const arf_t x, long e)
+    int arf_is_int_2exp_si(const arf_t x, slong e)
     # Returns nonzero iff *x* equals `n 2^e` for some integer *n*.
 
     void arf_abs_bound_lt_2exp_fmpz(fmpz_t res, const arf_t x)
@@ -238,7 +238,7 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to the smallest integer *b* such that `|x| \le 2^b`.
     # If *x* is zero, infinity or NaN, the result is undefined.
 
-    long arf_abs_bound_lt_2exp_si(const arf_t x)
+    slong arf_abs_bound_lt_2exp_si(const arf_t x)
     # Returns the smallest integer *b* such that `|x| < 2^b`, clamping
     # the result to lie between -*ARF_PREC_EXACT* and *ARF_PREC_EXACT*
     # inclusive. If *x* is zero, -*ARF_PREC_EXACT* is returned,
@@ -260,16 +260,16 @@ cdef extern from "flint_wrap.h":
     # Initializes *res* and sets it to an upper bound for *x*.
     # Assumes that the exponent of *res* is small (this function is unsafe).
 
-    void arf_mag_set_ulp(mag_t res, const arf_t x, long prec)
+    void arf_mag_set_ulp(mag_t res, const arf_t x, slong prec)
     # Sets *res* to the magnitude of the unit in the last place (ulp) of *x*
     # at precision *prec*.
 
-    void arf_mag_add_ulp(mag_t res, const mag_t x, const arf_t y, long prec)
+    void arf_mag_add_ulp(mag_t res, const mag_t x, const arf_t y, slong prec)
     # Sets *res* to an upper bound for the sum of *x* and the
     # magnitude of the unit in the last place (ulp) of *y*
     # at precision *prec*.
 
-    void arf_mag_fast_add_ulp(mag_t res, const mag_t x, const arf_t y, long prec)
+    void arf_mag_fast_add_ulp(mag_t res, const mag_t x, const arf_t y, slong prec)
     # Sets *res* to an upper bound for the sum of *x* and the
     # magnitude of the unit in the last place (ulp) of *y*
     # at precision *prec*. Assumes that all exponents are small.
@@ -289,22 +289,22 @@ cdef extern from "flint_wrap.h":
     void arf_init_neg_mag_shallow(arf_t z, const mag_t x)
     # Initializes *z* shallowly to the negation of *x*.
 
-    void arf_randtest(arf_t res, flint_rand_t state, long bits, long mag_bits)
+    void arf_randtest(arf_t res, flint_rand_t state, slong bits, slong mag_bits)
     # Generates a finite random number whose mantissa has precision at most
     # *bits* and whose exponent has at most *mag_bits* bits. The
     # values are distributed non-uniformly: special bit patterns are generated
     # with high probability in order to allow the test code to exercise corner
     # cases.
 
-    void arf_randtest_not_zero(arf_t res, flint_rand_t state, long bits, long mag_bits)
+    void arf_randtest_not_zero(arf_t res, flint_rand_t state, slong bits, slong mag_bits)
     # Identical to :func:`arf_randtest`, except that zero is never produced
     # as an output.
 
-    void arf_randtest_special(arf_t res, flint_rand_t state, long bits, long mag_bits)
+    void arf_randtest_special(arf_t res, flint_rand_t state, slong bits, slong mag_bits)
     # Identical to :func:`arf_randtest`, except that the output occasionally
     # is set to an infinity or NaN.
 
-    void arf_urandom(arf_t res, flint_rand_t state, long bits, arf_rnd_t rnd)
+    void arf_urandom(arf_t res, flint_rand_t state, slong bits, arf_rnd_t rnd)
     # Sets *res* to a uniformly distributed random number in the interval
     # `[0, 1]`. The method uses rounding from integers to floats based on the
     # rounding mode *rnd*.
@@ -315,18 +315,18 @@ cdef extern from "flint_wrap.h":
     void arf_print(const arf_t x)
     # Prints *x* as an integer mantissa and exponent.
 
-    void arf_printd(const arf_t x, long d)
+    void arf_printd(const arf_t x, slong d)
     # Prints *x* as a decimal floating-point number, rounding to *d* digits.
     # Rounding is faithful (at most 1 ulp error).
 
-    char * arf_get_str(const arf_t x, long d)
+    char * arf_get_str(const arf_t x, slong d)
     # Returns *x* as a decimal floating-point number, rounding to *d* digits.
     # Rounding is faithful (at most 1 ulp error).
 
     void arf_fprint(FILE * file, const arf_t x)
     # Prints *x* as an integer mantissa and exponent to the stream *file*.
 
-    void arf_fprintd(FILE * file, const arf_t y, long d)
+    void arf_fprintd(FILE * file, const arf_t y, slong d)
     # Prints *x* as a decimal floating-point number to the stream *file*,
     # rounding to *d* digits.
     # Rounding is faithful (at most 1 ulp error).
@@ -358,76 +358,76 @@ cdef extern from "flint_wrap.h":
     void arf_neg(arf_t res, const arf_t x)
     # Sets *res* to `-x` exactly.
 
-    int arf_neg_round(arf_t res, const arf_t x, long prec, arf_rnd_t rnd)
+    int arf_neg_round(arf_t res, const arf_t x, slong prec, arf_rnd_t rnd)
     # Sets *res* to `-x`.
 
-    int arf_add(arf_t res, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_add(arf_t res, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_add_si(arf_t res, const arf_t x, long y, long prec, arf_rnd_t rnd)
+    int arf_add_si(arf_t res, const arf_t x, slong y, slong prec, arf_rnd_t rnd)
 
-    int arf_add_ui(arf_t res, const arf_t x, unsigned long y, long prec, arf_rnd_t rnd)
+    int arf_add_ui(arf_t res, const arf_t x, ulong y, slong prec, arf_rnd_t rnd)
 
-    int arf_add_fmpz(arf_t res, const arf_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_add_fmpz(arf_t res, const arf_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x + y`.
 
-    int arf_add_fmpz_2exp(arf_t res, const arf_t x, const fmpz_t y, const fmpz_t e, long prec, arf_rnd_t rnd)
+    int arf_add_fmpz_2exp(arf_t res, const arf_t x, const fmpz_t y, const fmpz_t e, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x + y 2^e`.
 
-    int arf_sub(arf_t res, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_sub(arf_t res, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_sub_si(arf_t res, const arf_t x, long y, long prec, arf_rnd_t rnd)
+    int arf_sub_si(arf_t res, const arf_t x, slong y, slong prec, arf_rnd_t rnd)
 
-    int arf_sub_ui(arf_t res, const arf_t x, unsigned long y, long prec, arf_rnd_t rnd)
+    int arf_sub_ui(arf_t res, const arf_t x, ulong y, slong prec, arf_rnd_t rnd)
 
-    int arf_sub_fmpz(arf_t res, const arf_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_sub_fmpz(arf_t res, const arf_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x - y`.
 
-    void arf_mul_2exp_si(arf_t res, const arf_t x, long e)
+    void arf_mul_2exp_si(arf_t res, const arf_t x, slong e)
 
     void arf_mul_2exp_fmpz(arf_t res, const arf_t x, const fmpz_t e)
     # Sets *res* to `x 2^e` exactly.
 
-    int arf_mul(arf_t res, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_mul(arf_t res, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_mul_ui(arf_t res, const arf_t x, unsigned long y, long prec, arf_rnd_t rnd)
+    int arf_mul_ui(arf_t res, const arf_t x, ulong y, slong prec, arf_rnd_t rnd)
 
-    int arf_mul_si(arf_t res, const arf_t x, long y, long prec, arf_rnd_t rnd)
+    int arf_mul_si(arf_t res, const arf_t x, slong y, slong prec, arf_rnd_t rnd)
 
-    int arf_mul_mpz(arf_t res, const arf_t x, const mpz_t y, long prec, arf_rnd_t rnd)
+    int arf_mul_mpz(arf_t res, const arf_t x, const mpz_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_mul_fmpz(arf_t res, const arf_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_mul_fmpz(arf_t res, const arf_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x \cdot y`.
 
-    int arf_addmul(arf_t z, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_addmul(arf_t z, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_addmul_ui(arf_t z, const arf_t x, unsigned long y, long prec, arf_rnd_t rnd)
+    int arf_addmul_ui(arf_t z, const arf_t x, ulong y, slong prec, arf_rnd_t rnd)
 
-    int arf_addmul_si(arf_t z, const arf_t x, long y, long prec, arf_rnd_t rnd)
+    int arf_addmul_si(arf_t z, const arf_t x, slong y, slong prec, arf_rnd_t rnd)
 
-    int arf_addmul_mpz(arf_t z, const arf_t x, const mpz_t y, long prec, arf_rnd_t rnd)
+    int arf_addmul_mpz(arf_t z, const arf_t x, const mpz_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_addmul_fmpz(arf_t z, const arf_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_addmul_fmpz(arf_t z, const arf_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
     # Performs a fused multiply-add `z = z + x \cdot y`, updating *z* in-place.
 
-    int arf_submul(arf_t z, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_submul(arf_t z, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_submul_ui(arf_t z, const arf_t x, unsigned long y, long prec, arf_rnd_t rnd)
+    int arf_submul_ui(arf_t z, const arf_t x, ulong y, slong prec, arf_rnd_t rnd)
 
-    int arf_submul_si(arf_t z, const arf_t x, long y, long prec, arf_rnd_t rnd)
+    int arf_submul_si(arf_t z, const arf_t x, slong y, slong prec, arf_rnd_t rnd)
 
-    int arf_submul_mpz(arf_t z, const arf_t x, const mpz_t y, long prec, arf_rnd_t rnd)
+    int arf_submul_mpz(arf_t z, const arf_t x, const mpz_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_submul_fmpz(arf_t z, const arf_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_submul_fmpz(arf_t z, const arf_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
     # Performs a fused multiply-subtract `z = z - x \cdot y`, updating *z* in-place.
 
-    int arf_fma(arf_t res, const arf_t x, const arf_t y, const arf_t z, long prec, arf_rnd_t rnd)
+    int arf_fma(arf_t res, const arf_t x, const arf_t y, const arf_t z, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x \cdot y + z`. This is equivalent to an *addmul* except
     # that *res* and *z* can be separate variables.
 
-    int arf_sosq(arf_t res, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_sosq(arf_t res, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x^2 + y^2`, rounded to *prec* bits in the direction specified by *rnd*.
 
-    int arf_sum(arf_t res, arf_srcptr terms, long len, long prec, arf_rnd_t rnd)
+    int arf_sum(arf_t res, arf_srcptr terms, slong len, slong prec, arf_rnd_t rnd)
     # Sets *res* to the sum of the array *terms* of length *len*, rounded to
     # *prec* bits in the direction specified by *rnd*. The sum is computed as if
     # done without any intermediate rounding error, with only a single rounding
@@ -436,52 +436,52 @@ cdef extern from "flint_wrap.h":
     # the terms are far apart. Warning: this function is implemented naively,
     # and the running time is quadratic with respect to *len* in the worst case.
 
-    void arf_approx_dot(arf_t res, const arf_t initial, int subtract, arf_srcptr x, long xstep, arf_srcptr y, long ystep, long len, long prec, arf_rnd_t rnd)
+    void arf_approx_dot(arf_t res, const arf_t initial, int subtract, arf_srcptr x, slong xstep, arf_srcptr y, slong ystep, slong len, slong prec, arf_rnd_t rnd)
     # Computes an approximate dot product, with the same meaning of
     # the parameters as :func:`arb_dot`.
     # This operation is not correctly rounded: the final rounding is done
     # in the direction ``rnd`` but intermediate roundings are
     # implementation-defined.
 
-    int arf_div(arf_t res, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_div(arf_t res, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_div_ui(arf_t res, const arf_t x, unsigned long y, long prec, arf_rnd_t rnd)
+    int arf_div_ui(arf_t res, const arf_t x, ulong y, slong prec, arf_rnd_t rnd)
 
-    int arf_ui_div(arf_t res, unsigned long x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_ui_div(arf_t res, ulong x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_div_si(arf_t res, const arf_t x, long y, long prec, arf_rnd_t rnd)
+    int arf_div_si(arf_t res, const arf_t x, slong y, slong prec, arf_rnd_t rnd)
 
-    int arf_si_div(arf_t res, long x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_si_div(arf_t res, slong x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_div_fmpz(arf_t res, const arf_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_div_fmpz(arf_t res, const arf_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_fmpz_div(arf_t res, const fmpz_t x, const arf_t y, long prec, arf_rnd_t rnd)
+    int arf_fmpz_div(arf_t res, const fmpz_t x, const arf_t y, slong prec, arf_rnd_t rnd)
 
-    int arf_fmpz_div_fmpz(arf_t res, const fmpz_t x, const fmpz_t y, long prec, arf_rnd_t rnd)
+    int arf_fmpz_div_fmpz(arf_t res, const fmpz_t x, const fmpz_t y, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x / y`, rounded to *prec* bits in the direction specified by *rnd*,
     # returning nonzero iff the operation is inexact. The result is NaN if *y* is zero.
 
-    int arf_sqrt(arf_t res, const arf_t x, long prec, arf_rnd_t rnd)
+    int arf_sqrt(arf_t res, const arf_t x, slong prec, arf_rnd_t rnd)
 
-    int arf_sqrt_ui(arf_t res, unsigned long x, long prec, arf_rnd_t rnd)
+    int arf_sqrt_ui(arf_t res, ulong x, slong prec, arf_rnd_t rnd)
 
-    int arf_sqrt_fmpz(arf_t res, const fmpz_t x, long prec, arf_rnd_t rnd)
+    int arf_sqrt_fmpz(arf_t res, const fmpz_t x, slong prec, arf_rnd_t rnd)
     # Sets *res* to `\sqrt{x}`. The result is NaN if *x* is negative.
 
-    int arf_rsqrt(arf_t res, const arf_t x, long prec, arf_rnd_t rnd)
+    int arf_rsqrt(arf_t res, const arf_t x, slong prec, arf_rnd_t rnd)
     # Sets *res* to `1/\sqrt{x}`. The result is NaN if *x* is
     # negative, and `+\infty` if *x* is zero.
 
-    int arf_root(arf_t res, const arf_t x, unsigned long k, long prec, arf_rnd_t rnd)
+    int arf_root(arf_t res, const arf_t x, ulong k, slong prec, arf_rnd_t rnd)
     # Sets *res* to `x^{1/k}`. The result is NaN if *x* is negative.
     # Warning: this function is a wrapper around the MPFR root function.
     # It gets slow and uses much memory for large *k*.
     # Consider working with :func:`arb_root_ui` for large *k* instead of using this
     # function directly.
 
-    int arf_complex_mul(arf_t e, arf_t f, const arf_t a, const arf_t b, const arf_t c, const arf_t d, long prec, arf_rnd_t rnd)
+    int arf_complex_mul(arf_t e, arf_t f, const arf_t a, const arf_t b, const arf_t c, const arf_t d, slong prec, arf_rnd_t rnd)
 
-    int arf_complex_mul_fallback(arf_t e, arf_t f, const arf_t a, const arf_t b, const arf_t c, const arf_t d, long prec, arf_rnd_t rnd)
+    int arf_complex_mul_fallback(arf_t e, arf_t f, const arf_t a, const arf_t b, const arf_t c, const arf_t d, slong prec, arf_rnd_t rnd)
     # Computes the complex product `e + fi = (a + bi)(c + di)`, rounding both
     # `e` and `f` correctly to *prec* bits in the direction specified by *rnd*.
     # The first bit in the return code indicates inexactness of `e`, and the
@@ -493,12 +493,12 @@ cdef extern from "flint_wrap.h":
     # The *fallback* version is implemented naively, for testing purposes.
     # No squaring optimization is implemented.
 
-    int arf_complex_sqr(arf_t e, arf_t f, const arf_t a, const arf_t b, long prec, arf_rnd_t rnd)
+    int arf_complex_sqr(arf_t e, arf_t f, const arf_t a, const arf_t b, slong prec, arf_rnd_t rnd)
     # Computes the complex square `e + fi = (a + bi)^2`. This function has
     # identical semantics to :func:`arf_complex_mul` (with `c = a, b = d`),
     # but is faster.
 
-    int _arf_get_integer_mpn(mp_ptr y, mp_srcptr xp, mp_size_t xn, long exp)
+    int _arf_get_integer_mpn(mp_ptr y, mp_srcptr xp, mp_size_t xn, slong exp)
     # Given a floating-point number *x* represented by *xn* limbs at *xp*
     # and an exponent *exp*, writes the integer part of *x* to
     # *y*, returning whether the result is inexact.
@@ -507,7 +507,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that ``xp[0]`` is nonzero and that the
     # top bit of ``xp[xn-1]`` is set.
 
-    int _arf_set_mpn_fixed(arf_t z, mp_srcptr xp, mp_size_t xn, mp_size_t fixn, int negative, long prec, arf_rnd_t rnd)
+    int _arf_set_mpn_fixed(arf_t z, mp_srcptr xp, mp_size_t xn, mp_size_t fixn, int negative, slong prec, arf_rnd_t rnd)
     # Sets *z* to the fixed-point number having *xn* total limbs and *fixn*
     # fractional limbs, negated if *negative* is set, rounding *z* to *prec*
     # bits in the direction *rnd* and returning whether the result is inexact.
@@ -515,18 +515,18 @@ cdef extern from "flint_wrap.h":
     # that the bit shift would overflow an *slong*, but otherwise no
     # assumptions are made about the input.
 
-    int _arf_set_round_ui(arf_t z, unsigned long x, int sgnbit, long prec, arf_rnd_t rnd)
+    int _arf_set_round_ui(arf_t z, ulong x, int sgnbit, slong prec, arf_rnd_t rnd)
     # Sets *z* to the integer *x*, negated if *sgnbit* is 1, rounded to *prec*
     # bits in the direction specified by *rnd*. There are no assumptions on *x*.
 
-    int _arf_set_round_uiui(arf_t z, long * fix, mp_limb_t hi, mp_limb_t lo, int sgnbit, long prec, arf_rnd_t rnd)
+    int _arf_set_round_uiui(arf_t z, slong * fix, mp_limb_t hi, mp_limb_t lo, int sgnbit, slong prec, arf_rnd_t rnd)
     # Sets the mantissa of *z* to the two-limb mantissa given by *hi* and *lo*,
     # negated if *sgnbit* is 1, rounded to *prec* bits in the direction specified
     # by *rnd*. Requires that not both *hi* and *lo* are zero.
     # Writes the exponent shift to *fix* without writing the exponent of *z*
     # directly.
 
-    int _arf_set_round_mpn(arf_t z, long * exp_shift, mp_srcptr x, mp_size_t xn, int sgnbit, long prec, arf_rnd_t rnd)
+    int _arf_set_round_mpn(arf_t z, slong * exp_shift, mp_srcptr x, mp_size_t xn, int sgnbit, slong prec, arf_rnd_t rnd)
     # Sets the mantissa of *z* to the mantissa given by the *xn* limbs in *x*,
     # negated if *sgnbit* is 1, rounded to *prec* bits in the direction
     # specified by *rnd*. Returns the inexact flag. Requires that *xn* is positive

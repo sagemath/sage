@@ -33,7 +33,7 @@ cdef extern from "flint_wrap.h":
     # set to `GRAM` or `Z\_BASIS` and ``fl->gt`` is set to `APPROX` or `EXACT`
     # in a pseudo random way.
 
-    double fmpz_lll_heuristic_dot(const double * vec1, const double * vec2, long len2, const fmpz_mat_t B, long k, long j, long exp_adj)
+    double fmpz_lll_heuristic_dot(const double * vec1, const double * vec2, slong len2, const fmpz_mat_t B, slong k, slong j, slong exp_adj)
     # Computes the dot product of two vectors of doubles ``vec1`` and
     # ``vec2``, which are respectively ``double`` approximations (up to
     # scaling by a power of 2) to rows ``k`` and ``j`` in the exact integer
@@ -187,7 +187,7 @@ cdef extern from "flint_wrap.h":
     # ``fl->gt`` == `APPROX`, and finally to the mpf version
     # (:func:`fmpz_lll_mpf_with_removal`) if needed.
 
-    int fmpz_lll_with_removal_ulll(fmpz_mat_t FM, fmpz_mat_t UM, long new_size, const fmpz_t gs_B, const fmpz_lll_t fl)
+    int fmpz_lll_with_removal_ulll(fmpz_mat_t FM, fmpz_mat_t UM, slong new_size, const fmpz_t gs_B, const fmpz_lll_t fl)
     # ULLL is a new style of LLL which adjoins an identity matrix to the
     # input lattice ``FM``, then scales the lattice down to ``new_size``
     # bits and reduces this augmented lattice. This tends to be more stable
@@ -214,7 +214,7 @@ cdef extern from "flint_wrap.h":
     # * :func:`fmpz_mat_is_reduced_with_removal` or :func:`fmpz_mat_is_reduced_gram_with_removal`
     # are optimzied by calling the above heuristics first and returning right away if they give a conclusive answer.
 
-    void fmpz_lll_storjohann_ulll(fmpz_mat_t FM, long new_size, const fmpz_lll_t fl)
+    void fmpz_lll_storjohann_ulll(fmpz_mat_t FM, slong new_size, const fmpz_lll_t fl)
     # Performs ULLL using :func:`fmpz_mat_lll_storjohann` as the LLL function.
 
     void fmpz_lll(fmpz_mat_t B, fmpz_mat_t U, const fmpz_lll_t fl)

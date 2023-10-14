@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    long gr_ctx_sizeof_elem(gr_ctx_t ctx)
+    slong gr_ctx_sizeof_elem(gr_ctx_t ctx)
     # Return ``sizeof(type)`` where ``type`` is the underlying C
     # type for elements of *ctx*.
 
@@ -64,11 +64,11 @@ cdef extern from "flint_wrap.h":
     # Free the single heap-allocated element *x* of *ctx* which should
     # have been created with :func:`gr_heap_init`.
 
-    gr_ptr gr_heap_init_vec(long len, gr_ctx_t ctx)
+    gr_ptr gr_heap_init_vec(slong len, gr_ctx_t ctx)
     # Return a pointer to a new heap-allocated vector of *len*
     # initialized elements.
 
-    void gr_heap_clear_vec(gr_ptr x, long len, gr_ctx_t ctx)
+    void gr_heap_clear_vec(gr_ptr x, slong len, gr_ctx_t ctx)
     # Clear the *len* elements in the heap-allocated vector *len* and
     # free the vector itself.
 
@@ -100,8 +100,8 @@ cdef extern from "flint_wrap.h":
     int gr_set_str(gr_ptr res, const char * x, gr_ctx_t ctx)
     # Sets *res* to the string description in *x*.
 
-    int gr_write_n(gr_stream_t out, gr_srcptr x, long n, gr_ctx_t ctx)
-    int gr_get_str_n(char ** s, gr_srcptr x, long n, gr_ctx_t ctx)
+    int gr_write_n(gr_stream_t out, gr_srcptr x, slong n, gr_ctx_t ctx)
+    int gr_get_str_n(char ** s, gr_srcptr x, slong n, gr_ctx_t ctx)
     # String conversion where real and complex numbers may be rounded
     # to *n* digits.
 
@@ -115,16 +115,16 @@ cdef extern from "flint_wrap.h":
     # unambiguously to *ctx*.  The ``GR_UNABLE`` flag is returned
     # if the conversion is not implemented.
 
-    int gr_set_ui(gr_ptr res, unsigned long x, gr_ctx_t ctx)
-    int gr_set_si(gr_ptr res, long x, gr_ctx_t ctx)
+    int gr_set_ui(gr_ptr res, ulong x, gr_ctx_t ctx)
+    int gr_set_si(gr_ptr res, slong x, gr_ctx_t ctx)
     int gr_set_fmpz(gr_ptr res, const fmpz_t x, gr_ctx_t ctx)
     int gr_set_fmpq(gr_ptr res, const fmpq_t x, gr_ctx_t ctx)
     int gr_set_d(gr_ptr res, double x, gr_ctx_t ctx)
     # Sets *res* to the value *x*. If no reasonable conversion to the
     # domain *ctx* is possible, returns ``GR_DOMAIN``.
 
-    int gr_get_si(long * res, gr_srcptr x, gr_ctx_t ctx)
-    int gr_get_ui(unsigned long * res, gr_srcptr x, gr_ctx_t ctx)
+    int gr_get_si(slong * res, gr_srcptr x, gr_ctx_t ctx)
+    int gr_get_ui(ulong * res, gr_srcptr x, gr_ctx_t ctx)
     int gr_get_fmpz(fmpz_t res, gr_srcptr x, gr_ctx_t ctx)
     int gr_get_fmpq(fmpq_t res, gr_srcptr x, gr_ctx_t ctx)
     int gr_get_d(double * res, gr_srcptr x, gr_ctx_t ctx)
@@ -183,8 +183,8 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to `-x`.
 
     int gr_add(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_add_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_add_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_add_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_add_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_add_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_add_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_add_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -192,8 +192,8 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to `x + y`.
 
     int gr_sub(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_sub_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_sub_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_sub_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_sub_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_sub_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_sub_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_sub_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -201,8 +201,8 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to `x - y`.
 
     int gr_mul(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_mul_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_mul_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_mul_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_mul_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_mul_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_mul_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_mul_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -210,8 +210,8 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to `x \cdot y`.
 
     int gr_addmul(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_addmul_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_addmul_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_addmul_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_addmul_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_addmul_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_addmul_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_addmul_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -221,8 +221,8 @@ cdef extern from "flint_wrap.h":
     # allocating a temporary variable, without intermediate rounding, etc.
 
     int gr_submul(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_submul_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_submul_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_submul_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_submul_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_submul_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_submul_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_submul_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -239,15 +239,15 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to `x ^ 2`. The default implementation multiplies *x*
     # with itself.
 
-    int gr_mul_2exp_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_mul_2exp_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_mul_2exp_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     # Sets *res* to `x \cdot 2^y`. This may perform `x \cdot 2^{-y}`
     # when *y* is negative, allowing exact division by powers of two
     # even if `2^{y}` is not representable.
 
     int gr_div(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_div_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_div_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_div_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_div_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_div_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_div_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_div_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -279,8 +279,8 @@ cdef extern from "flint_wrap.h":
     # Returns whether *x* divides *y*.
 
     int gr_divexact(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_divexact_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_divexact_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_divexact_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_divexact_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_divexact_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_divexact_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
     int gr_other_divexact(gr_ptr res, gr_srcptr x, gr_ctx_t x_ctx, gr_srcptr y, gr_ctx_t ctx)
@@ -302,8 +302,8 @@ cdef extern from "flint_wrap.h":
     # Euclidean division with remainder.
 
     int gr_pow(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
-    int gr_pow_ui(gr_ptr res, gr_srcptr x, unsigned long y, gr_ctx_t ctx)
-    int gr_pow_si(gr_ptr res, gr_srcptr x, long y, gr_ctx_t ctx)
+    int gr_pow_ui(gr_ptr res, gr_srcptr x, ulong y, gr_ctx_t ctx)
+    int gr_pow_si(gr_ptr res, gr_srcptr x, slong y, gr_ctx_t ctx)
     int gr_pow_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
     int gr_pow_fmpq(gr_ptr res, gr_srcptr x, const fmpq_t y, gr_ctx_t ctx)
     int gr_pow_other(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t y_ctx, gr_ctx_t ctx)
@@ -412,11 +412,11 @@ cdef extern from "flint_wrap.h":
 
     int gr_ctx_fq_prime(fmpz_t p, gr_ctx_t ctx)
 
-    int gr_ctx_fq_degree(long * deg, gr_ctx_t ctx)
+    int gr_ctx_fq_degree(slong * deg, gr_ctx_t ctx)
 
     int gr_ctx_fq_order(fmpz_t q, gr_ctx_t ctx)
 
-    int gr_fq_frobenius(gr_ptr res, gr_srcptr x, long e, gr_ctx_t ctx)
+    int gr_fq_frobenius(gr_ptr res, gr_srcptr x, slong e, gr_ctx_t ctx)
 
     int gr_fq_multiplicative_order(fmpz_t res, gr_srcptr x, gr_ctx_t ctx)
 

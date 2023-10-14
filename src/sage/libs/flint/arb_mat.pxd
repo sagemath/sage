@@ -12,19 +12,19 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void arb_mat_init(arb_mat_t mat, long r, long c)
+    void arb_mat_init(arb_mat_t mat, slong r, slong c)
     # Initializes the matrix, setting it to the zero matrix with *r* rows
     # and *c* columns.
 
     void arb_mat_clear(arb_mat_t mat)
     # Clears the matrix, deallocating all entries.
 
-    long arb_mat_allocated_bytes(const arb_mat_t x)
+    slong arb_mat_allocated_bytes(const arb_mat_t x)
     # Returns the total number of bytes heap-allocated internally by this object.
     # The count excludes the size of the structure itself. Add
     # ``sizeof(arb_mat_struct)`` to get the size of the object as a whole.
 
-    void arb_mat_window_init(arb_mat_t window, const arb_mat_t mat, long r1, long c1, long r2, long c2)
+    void arb_mat_window_init(arb_mat_t window, const arb_mat_t mat, slong r1, slong c1, slong r2, slong c2)
     # Initializes *window* to a window matrix into the submatrix of *mat*
     # starting at the corner at row *r1* and column *c1* (inclusive) and ending
     # at row *r2* and column *c2* (exclusive).
@@ -36,19 +36,19 @@ cdef extern from "flint_wrap.h":
 
     void arb_mat_set_fmpz_mat(arb_mat_t dest, const fmpz_mat_t src)
 
-    void arb_mat_set_round_fmpz_mat(arb_mat_t dest, const fmpz_mat_t src, long prec)
+    void arb_mat_set_round_fmpz_mat(arb_mat_t dest, const fmpz_mat_t src, slong prec)
 
-    void arb_mat_set_fmpq_mat(arb_mat_t dest, const fmpq_mat_t src, long prec)
+    void arb_mat_set_fmpq_mat(arb_mat_t dest, const fmpq_mat_t src, slong prec)
     # Sets *dest* to *src*. The operands must have identical dimensions.
 
-    void arb_mat_randtest(arb_mat_t mat, flint_rand_t state, long prec, long mag_bits)
+    void arb_mat_randtest(arb_mat_t mat, flint_rand_t state, slong prec, slong mag_bits)
     # Sets *mat* to a random matrix with up to *prec* bits of precision
     # and with exponents of width up to *mag_bits*.
 
-    void arb_mat_printd(const arb_mat_t mat, long digits)
+    void arb_mat_printd(const arb_mat_t mat, slong digits)
     # Prints each entry in the matrix with the specified number of decimal digits.
 
-    void arb_mat_fprintd(FILE * file, const arb_mat_t mat, long digits)
+    void arb_mat_fprintd(FILE * file, const arb_mat_t mat, slong digits)
     # Prints each entry in the matrix with the specified number of decimal
     # digits to the stream *file*.
 
@@ -114,10 +114,10 @@ cdef extern from "flint_wrap.h":
     void arb_mat_indeterminate(arb_mat_t mat)
     # Sets all entries in the matrix to indeterminate (NaN).
 
-    void arb_mat_hilbert(arb_mat_t mat, long prec)
+    void arb_mat_hilbert(arb_mat_t mat, slong prec)
     # Sets *mat* to the Hilbert matrix, which has entries `A_{j,k} = 1/(j+k+1)`.
 
-    void arb_mat_pascal(arb_mat_t mat, int triangular, long prec)
+    void arb_mat_pascal(arb_mat_t mat, int triangular, slong prec)
     # Sets *mat* to a Pascal matrix, whose entries are binomial coefficients.
     # If *triangular* is 0, constructs a full symmetric matrix
     # with the rows of Pascal's triangle as successive antidiagonals.
@@ -130,7 +130,7 @@ cdef extern from "flint_wrap.h":
     # case, the user may wish to create the matrix at slightly higher precision
     # and then round it to the final precision.
 
-    void arb_mat_stirling(arb_mat_t mat, int kind, long prec)
+    void arb_mat_stirling(arb_mat_t mat, int kind, slong prec)
     # Sets *mat* to a Stirling matrix, whose entries are Stirling numbers.
     # If *kind* is 0, the entries are set to the unsigned Stirling numbers
     # of the first kind. If *kind* is 1, the entries are set to the signed
@@ -141,7 +141,7 @@ cdef extern from "flint_wrap.h":
     # case, the user may wish to create the matrix at slightly higher precision
     # and then round it to the final precision.
 
-    void arb_mat_dct(arb_mat_t mat, int type, long prec)
+    void arb_mat_dct(arb_mat_t mat, int type, slong prec)
     # Sets *mat* to the DCT (discrete cosine transform) matrix of order *n*
     # where *n* is the smallest dimension of *mat* (if *mat* is not square,
     # the matrix is extended periodically along the larger dimension).
@@ -161,7 +161,7 @@ cdef extern from "flint_wrap.h":
     # Sets *b* to an upper bound for the infinity norm (i.e. the largest
     # absolute value row sum) of *A*.
 
-    void arb_mat_frobenius_norm(arb_t res, const arb_mat_t A, long prec)
+    void arb_mat_frobenius_norm(arb_t res, const arb_mat_t A, slong prec)
     # Sets *res* to the Frobenius norm (i.e. the square root of the sum
     # of squares of entries) of *A*.
 
@@ -172,20 +172,20 @@ cdef extern from "flint_wrap.h":
     # Sets *dest* to the exact negation of *src*. The operands must have
     # the same dimensions.
 
-    void arb_mat_add(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, long prec)
+    void arb_mat_add(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, slong prec)
     # Sets res to the sum of *mat1* and *mat2*. The operands must have the same dimensions.
 
-    void arb_mat_sub(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, long prec)
+    void arb_mat_sub(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, slong prec)
     # Sets *res* to the difference of *mat1* and *mat2*. The operands must have
     # the same dimensions.
 
-    void arb_mat_mul_classical(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, long prec)
+    void arb_mat_mul_classical(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    void arb_mat_mul_threaded(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, long prec)
+    void arb_mat_mul_threaded(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    void arb_mat_mul_block(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, long prec)
+    void arb_mat_mul_block(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    void arb_mat_mul(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, long prec)
+    void arb_mat_mul(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, slong prec)
     # Sets *res* to the matrix product of *mat1* and *mat2*. The operands must have
     # compatible dimensions for matrix multiplication.
     # The *classical* version performs matrix multiplication in the trivial way.
@@ -197,19 +197,19 @@ cdef extern from "flint_wrap.h":
     # computation over the number of threads returned by *flint_get_num_threads()*.
     # The default version chooses an algorithm automatically.
 
-    void arb_mat_mul_entrywise(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, long prec)
+    void arb_mat_mul_entrywise(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, slong prec)
     # Sets *C* to the entrywise product of *A* and *B*.
     # The operands must have the same dimensions.
 
-    void arb_mat_sqr_classical(arb_mat_t B, const arb_mat_t A, long prec)
+    void arb_mat_sqr_classical(arb_mat_t B, const arb_mat_t A, slong prec)
 
-    void arb_mat_sqr(arb_mat_t res, const arb_mat_t mat, long prec)
+    void arb_mat_sqr(arb_mat_t res, const arb_mat_t mat, slong prec)
 
-    void arb_mat_pow_ui(arb_mat_t res, const arb_mat_t mat, unsigned long exp, long prec)
+    void arb_mat_pow_ui(arb_mat_t res, const arb_mat_t mat, ulong exp, slong prec)
     # Sets *res* to *mat* raised to the power *exp*. Requires that *mat*
     # is a square matrix.
 
-    void _arb_mat_addmul_rad_mag_fast(arb_mat_t C, mag_srcptr A, mag_srcptr B, long ar, long ac, long bc)
+    void _arb_mat_addmul_rad_mag_fast(arb_mat_t C, mag_srcptr A, mag_srcptr B, slong ar, slong ac, slong bc)
     # Helper function for matrix multiplication.
     # Adds to the radii of *C* the matrix product of the matrices represented
     # by *A* and *B*, where *A* is a linear array of coefficients in row-major
@@ -217,40 +217,40 @@ cdef extern from "flint_wrap.h":
     # This function assumes that all exponents are small and is unsafe
     # for general use.
 
-    void arb_mat_approx_mul(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, long prec)
+    void arb_mat_approx_mul(arb_mat_t res, const arb_mat_t mat1, const arb_mat_t mat2, slong prec)
     # Approximate matrix multiplication. The input radii are ignored and
     # the output matrix is set to an approximate floating-point result.
     # The radii in the output matrix will *not* necessarily be zeroed.
 
-    void arb_mat_scalar_mul_2exp_si(arb_mat_t B, const arb_mat_t A, long c)
+    void arb_mat_scalar_mul_2exp_si(arb_mat_t B, const arb_mat_t A, slong c)
     # Sets *B* to *A* multiplied by `2^c`.
 
-    void arb_mat_scalar_addmul_si(arb_mat_t B, const arb_mat_t A, long c, long prec)
+    void arb_mat_scalar_addmul_si(arb_mat_t B, const arb_mat_t A, slong c, slong prec)
 
-    void arb_mat_scalar_addmul_fmpz(arb_mat_t B, const arb_mat_t A, const fmpz_t c, long prec)
+    void arb_mat_scalar_addmul_fmpz(arb_mat_t B, const arb_mat_t A, const fmpz_t c, slong prec)
 
-    void arb_mat_scalar_addmul_arb(arb_mat_t B, const arb_mat_t A, const arb_t c, long prec)
+    void arb_mat_scalar_addmul_arb(arb_mat_t B, const arb_mat_t A, const arb_t c, slong prec)
     # Sets *B* to `B + A \times c`.
 
-    void arb_mat_scalar_mul_si(arb_mat_t B, const arb_mat_t A, long c, long prec)
+    void arb_mat_scalar_mul_si(arb_mat_t B, const arb_mat_t A, slong c, slong prec)
 
-    void arb_mat_scalar_mul_fmpz(arb_mat_t B, const arb_mat_t A, const fmpz_t c, long prec)
+    void arb_mat_scalar_mul_fmpz(arb_mat_t B, const arb_mat_t A, const fmpz_t c, slong prec)
 
-    void arb_mat_scalar_mul_arb(arb_mat_t B, const arb_mat_t A, const arb_t c, long prec)
+    void arb_mat_scalar_mul_arb(arb_mat_t B, const arb_mat_t A, const arb_t c, slong prec)
     # Sets *B* to `A \times c`.
 
-    void arb_mat_scalar_div_si(arb_mat_t B, const arb_mat_t A, long c, long prec)
+    void arb_mat_scalar_div_si(arb_mat_t B, const arb_mat_t A, slong c, slong prec)
 
-    void arb_mat_scalar_div_fmpz(arb_mat_t B, const arb_mat_t A, const fmpz_t c, long prec)
+    void arb_mat_scalar_div_fmpz(arb_mat_t B, const arb_mat_t A, const fmpz_t c, slong prec)
 
-    void arb_mat_scalar_div_arb(arb_mat_t B, const arb_mat_t A, const arb_t c, long prec)
+    void arb_mat_scalar_div_arb(arb_mat_t B, const arb_mat_t A, const arb_t c, slong prec)
     # Sets *B* to `A / c`.
 
-    int arb_mat_lu_classical(long * perm, arb_mat_t LU, const arb_mat_t A, long prec)
+    int arb_mat_lu_classical(slong * perm, arb_mat_t LU, const arb_mat_t A, slong prec)
 
-    int arb_mat_lu_recursive(long * perm, arb_mat_t LU, const arb_mat_t A, long prec)
+    int arb_mat_lu_recursive(slong * perm, arb_mat_t LU, const arb_mat_t A, slong prec)
 
-    int arb_mat_lu(long * perm, arb_mat_t LU, const arb_mat_t A, long prec)
+    int arb_mat_lu(slong * perm, arb_mat_t LU, const arb_mat_t A, slong prec)
     # Given an `n \times n` matrix `A`, computes an LU decomposition `PLU = A`
     # using Gaussian elimination with partial pivoting.
     # The input and output matrices can be the same, performing the
@@ -270,17 +270,17 @@ cdef extern from "flint_wrap.h":
     # way to benefit from fast matrix multiplication. The default version
     # chooses an algorithm automatically.
 
-    void arb_mat_solve_tril_classical(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, long prec)
+    void arb_mat_solve_tril_classical(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, slong prec)
 
-    void arb_mat_solve_tril_recursive(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, long prec)
+    void arb_mat_solve_tril_recursive(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, slong prec)
 
-    void arb_mat_solve_tril(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, long prec)
+    void arb_mat_solve_tril(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, slong prec)
 
-    void arb_mat_solve_triu_classical(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, long prec)
+    void arb_mat_solve_triu_classical(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, slong prec)
 
-    void arb_mat_solve_triu_recursive(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, long prec)
+    void arb_mat_solve_triu_recursive(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, slong prec)
 
-    void arb_mat_solve_triu(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, long prec)
+    void arb_mat_solve_triu(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, slong prec)
     # Solves the lower triangular system `LX = B` or the upper triangular system
     # `UX = B`, respectively. If *unit* is set, the main diagonal of *L* or *U*
     # is taken to consist of all ones, and in that case the actual entries on
@@ -290,16 +290,16 @@ cdef extern from "flint_wrap.h":
     # way to benefit from fast matrix multiplication. The default versions
     # choose an algorithm automatically.
 
-    void arb_mat_solve_lu_precomp(arb_mat_t X, const long * perm, const arb_mat_t LU, const arb_mat_t B, long prec)
+    void arb_mat_solve_lu_precomp(arb_mat_t X, const slong * perm, const arb_mat_t LU, const arb_mat_t B, slong prec)
     # Solves `AX = B` given the precomputed nonsingular LU decomposition `A = PLU`.
     # The matrices `X` and `B` are allowed to be aliased with each other,
     # but `X` is not allowed to be aliased with `LU`.
 
-    int arb_mat_solve(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, long prec)
+    int arb_mat_solve(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    int arb_mat_solve_lu(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, long prec)
+    int arb_mat_solve_lu(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    int arb_mat_solve_precond(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, long prec)
+    int arb_mat_solve_precond(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, slong prec)
     # Solves `AX = B` where `A` is a nonsingular `n \times n` matrix
     # and `X` and `B` are `n \times m` matrices.
     # If `m > 0` and `A` cannot be inverted numerically (indicating either that
@@ -323,7 +323,7 @@ cdef extern from "flint_wrap.h":
     # For example, the *lu* solver often performs better for ill-conditioned
     # systems where use of very high precision is unavoidable.
 
-    int arb_mat_solve_preapprox(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, const arb_mat_t R, const arb_mat_t T, long prec)
+    int arb_mat_solve_preapprox(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, const arb_mat_t R, const arb_mat_t T, slong prec)
     # Solves `AX = B` where `A` is a nonsingular `n \times n` matrix
     # and `X` and `B` are `n \times m` matrices, given an approximation
     # `R` of the matrix inverse of `A`, and given the approximation `T`
@@ -335,7 +335,7 @@ cdef extern from "flint_wrap.h":
     # value guarantees that `A` is invertible and that the exact solution
     # matrix is contained in the output.
 
-    int arb_mat_inv(arb_mat_t X, const arb_mat_t A, long prec)
+    int arb_mat_inv(arb_mat_t X, const arb_mat_t A, slong prec)
     # Sets `X = A^{-1}` where `A` is a square matrix, computed by solving
     # the system `AX = I`.
     # If `A` cannot be inverted numerically (indicating either that
@@ -344,11 +344,11 @@ cdef extern from "flint_wrap.h":
     # A nonzero return value guarantees that the matrix is invertible
     # and that the exact inverse is contained in the output.
 
-    void arb_mat_det_lu(arb_t det, const arb_mat_t A, long prec)
+    void arb_mat_det_lu(arb_t det, const arb_mat_t A, slong prec)
 
-    void arb_mat_det_precond(arb_t det, const arb_mat_t A, long prec)
+    void arb_mat_det_precond(arb_t det, const arb_mat_t A, slong prec)
 
-    void arb_mat_det(arb_t det, const arb_mat_t A, long prec)
+    void arb_mat_det(arb_t det, const arb_mat_t A, slong prec)
     # Sets *det* to the determinant of the matrix *A*.
     # The *lu* version uses Gaussian elimination with partial pivoting. If at
     # some point an invertible pivot element cannot be found, the elimination is
@@ -364,17 +364,17 @@ cdef extern from "flint_wrap.h":
     # versions and additionally handles small or triangular matrices
     # by direct formulas.
 
-    void arb_mat_approx_solve_triu(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, long prec)
+    void arb_mat_approx_solve_triu(arb_mat_t X, const arb_mat_t U, const arb_mat_t B, int unit, slong prec)
 
-    void arb_mat_approx_solve_tril(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, long prec)
+    void arb_mat_approx_solve_tril(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, int unit, slong prec)
 
-    int arb_mat_approx_lu(long * P, arb_mat_t LU, const arb_mat_t A, long prec)
+    int arb_mat_approx_lu(slong * P, arb_mat_t LU, const arb_mat_t A, slong prec)
 
-    void arb_mat_approx_solve_lu_precomp(arb_mat_t X, const long * perm, const arb_mat_t A, const arb_mat_t B, long prec)
+    void arb_mat_approx_solve_lu_precomp(arb_mat_t X, const slong * perm, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    int arb_mat_approx_solve(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, long prec)
+    int arb_mat_approx_solve(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, slong prec)
 
-    int arb_mat_approx_inv(arb_mat_t X, const arb_mat_t A, long prec)
+    int arb_mat_approx_inv(arb_mat_t X, const arb_mat_t A, slong prec)
     # These methods perform approximate solving *without any error control*.
     # The radii in the input matrices are ignored, the computations are done
     # numerically with floating-point arithmetic (using ordinary
@@ -387,9 +387,9 @@ cdef extern from "flint_wrap.h":
     # for doing ordinary numerical linear algebra in applications where
     # error bounds are not needed.
 
-    int _arb_mat_cholesky_banachiewicz(arb_mat_t A, long prec)
+    int _arb_mat_cholesky_banachiewicz(arb_mat_t A, slong prec)
 
-    int arb_mat_cho(arb_mat_t L, const arb_mat_t A, long prec)
+    int arb_mat_cho(arb_mat_t L, const arb_mat_t A, slong prec)
     # Computes the Cholesky decomposition of *A*, returning nonzero iff
     # the symmetric matrix defined by the lower triangular part of *A*
     # is certainly positive definite.
@@ -401,12 +401,12 @@ cdef extern from "flint_wrap.h":
     # The underscore method computes *L* from *A* in-place, leaving the
     # strict upper triangular region undefined.
 
-    void arb_mat_solve_cho_precomp(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, long prec)
+    void arb_mat_solve_cho_precomp(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, slong prec)
     # Solves `AX = B` given the precomputed Cholesky decomposition `A = L L^T`.
     # The matrices *X* and *B* are allowed to be aliased with each other,
     # but *X* is not allowed to be aliased with *L*.
 
-    int arb_mat_spd_solve(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, long prec)
+    int arb_mat_spd_solve(arb_mat_t X, const arb_mat_t A, const arb_mat_t B, slong prec)
     # Solves `AX = B` where *A* is a symmetric positive definite matrix
     # and *X* and *B* are `n \times m` matrices, using Cholesky decomposition.
     # If `m > 0` and *A* cannot be factored using Cholesky decomposition
@@ -417,14 +417,14 @@ cdef extern from "flint_wrap.h":
     # triangular part of *A* is invertible and that the exact solution matrix
     # is contained in the output.
 
-    void arb_mat_inv_cho_precomp(arb_mat_t X, const arb_mat_t L, long prec)
+    void arb_mat_inv_cho_precomp(arb_mat_t X, const arb_mat_t L, slong prec)
     # Sets `X = A^{-1}` where `A` is a symmetric positive definite matrix
     # whose Cholesky decomposition *L* has been computed with
     # :func:`arb_mat_cho`.
     # The inverse is calculated using the method of [Kri2013]_ which is more
     # efficient than solving `AX = I` with :func:`arb_mat_solve_cho_precomp`.
 
-    int arb_mat_spd_inv(arb_mat_t X, const arb_mat_t A, long prec)
+    int arb_mat_spd_inv(arb_mat_t X, const arb_mat_t A, slong prec)
     # Sets `X = A^{-1}` where *A* is a symmetric positive definite matrix.
     # It is calculated using the method of [Kri2013]_ which computes fewer
     # intermediate results than solving `AX = I` with :func:`arb_mat_spd_solve`.
@@ -436,11 +436,11 @@ cdef extern from "flint_wrap.h":
     # triangular part of *A* is invertible and that the exact inverse
     # is contained in the output.
 
-    int _arb_mat_ldl_inplace(arb_mat_t A, long prec)
+    int _arb_mat_ldl_inplace(arb_mat_t A, slong prec)
 
-    int _arb_mat_ldl_golub_and_van_loan(arb_mat_t A, long prec)
+    int _arb_mat_ldl_golub_and_van_loan(arb_mat_t A, slong prec)
 
-    int arb_mat_ldl(arb_mat_t res, const arb_mat_t A, long prec)
+    int arb_mat_ldl(arb_mat_t res, const arb_mat_t A, slong prec)
     # Computes the `LDL^T` decomposition of *A*, returning nonzero iff
     # the symmetric matrix defined by the lower triangular part of *A*
     # is certainly positive definite.
@@ -456,34 +456,34 @@ cdef extern from "flint_wrap.h":
     # strict upper triangular region undefined.
     # The default method uses algorithm 4.1.2 from [GVL1996]_.
 
-    void arb_mat_solve_ldl_precomp(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, long prec)
+    void arb_mat_solve_ldl_precomp(arb_mat_t X, const arb_mat_t L, const arb_mat_t B, slong prec)
     # Solves `AX = B` given the precomputed `A = LDL^T` decomposition
     # encoded by *L*.  The matrices *X* and *B* are allowed to be aliased
     # with each other, but *X* is not allowed to be aliased with *L*.
 
-    void arb_mat_inv_ldl_precomp(arb_mat_t X, const arb_mat_t L, long prec)
+    void arb_mat_inv_ldl_precomp(arb_mat_t X, const arb_mat_t L, slong prec)
     # Sets `X = A^{-1}` where `A` is a symmetric positive definite matrix
     # whose `LDL^T` decomposition encoded by *L* has been computed with
     # :func:`arb_mat_ldl`.
     # The inverse is calculated using the method of [Kri2013]_ which is more
     # efficient than solving `AX = I` with :func:`arb_mat_solve_ldl_precomp`.
 
-    void _arb_mat_charpoly(arb_ptr poly, const arb_mat_t mat, long prec)
+    void _arb_mat_charpoly(arb_ptr poly, const arb_mat_t mat, slong prec)
 
-    void arb_mat_charpoly(arb_poly_t poly, const arb_mat_t mat, long prec)
+    void arb_mat_charpoly(arb_poly_t poly, const arb_mat_t mat, slong prec)
     # Sets *poly* to the characteristic polynomial of *mat* which must be
     # a square matrix. If the matrix has *n* rows, the underscore method
     # requires space for `n + 1` output coefficients.
     # Employs a division-free algorithm using `O(n^4)` operations.
 
-    void _arb_mat_companion(arb_mat_t mat, arb_srcptr poly, long prec)
+    void _arb_mat_companion(arb_mat_t mat, arb_srcptr poly, slong prec)
 
-    void arb_mat_companion(arb_mat_t mat, const arb_poly_t poly, long prec)
+    void arb_mat_companion(arb_mat_t mat, const arb_poly_t poly, slong prec)
     # Sets the *n* by *n* matrix *mat* to the companion matrix of the polynomial
     # *poly* which must have degree *n*.
     # The underscore method reads `n + 1` input coefficients.
 
-    void arb_mat_exp_taylor_sum(arb_mat_t S, const arb_mat_t A, long N, long prec)
+    void arb_mat_exp_taylor_sum(arb_mat_t S, const arb_mat_t A, slong N, slong prec)
     # Sets *S* to the truncated exponential Taylor series `S = \sum_{k=0}^{N-1} A^k / k!`.
     # Uses rectangular splitting to compute the sum using `O(\sqrt{N})`
     # matrix multiplications. The recurrence relation for factorials
@@ -493,7 +493,7 @@ cdef extern from "flint_wrap.h":
     # The scalars could be reduced by doing more divisions, but this
     # appears to be slower in most cases.
 
-    void arb_mat_exp(arb_mat_t B, const arb_mat_t A, long prec)
+    void arb_mat_exp(arb_mat_t B, const arb_mat_t A, slong prec)
     # Sets *B* to the exponential of the matrix *A*, defined by the Taylor series
     # .. math ::
     # \exp(A) = \sum_{k=0}^{\infty} \frac{A^k}{k!}.
@@ -510,13 +510,13 @@ cdef extern from "flint_wrap.h":
     # Truncation error is not added to entries whose values are determined
     # by the sparsity structure of `A`.
 
-    void arb_mat_trace(arb_t trace, const arb_mat_t mat, long prec)
+    void arb_mat_trace(arb_t trace, const arb_mat_t mat, slong prec)
     # Sets *trace* to the trace of the matrix, i.e. the sum of entries on the
     # main diagonal of *mat*. The matrix is required to be square.
 
-    void _arb_mat_diag_prod(arb_t res, const arb_mat_t mat, long a, long b, long prec)
+    void _arb_mat_diag_prod(arb_t res, const arb_mat_t mat, slong a, slong b, slong prec)
 
-    void arb_mat_diag_prod(arb_t res, const arb_mat_t mat, long prec)
+    void arb_mat_diag_prod(arb_t res, const arb_mat_t mat, slong prec)
     # Sets *res* to the product of the entries on the main diagonal of *mat*.
     # The underscore method computes the product of the entries between
     # index *a* inclusive and *b* exclusive (the indices must be in range).
@@ -533,11 +533,11 @@ cdef extern from "flint_wrap.h":
     # entry of *src* is not certainly zero.
     # This the complement of :func:`arb_mat_entrywise_is_zero`.
 
-    long arb_mat_count_is_zero(const arb_mat_t mat)
+    slong arb_mat_count_is_zero(const arb_mat_t mat)
     # Returns the number of entries of *mat* that are certainly zero
     # according to :func:`arb_is_zero`.
 
-    long arb_mat_count_not_is_zero(const arb_mat_t mat)
+    slong arb_mat_count_not_is_zero(const arb_mat_t mat)
     # Returns the number of entries of *mat* that are not certainly zero.
 
     void arb_mat_get_mid(arb_mat_t B, const arb_mat_t A)

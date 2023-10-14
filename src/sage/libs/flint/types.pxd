@@ -173,6 +173,10 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/flint.h
+    ctypedef struct flint_rand_s:
+        pass
+    ctypedef flint_rand_s flint_rand_t[1]
+
     ctypedef void* flint_rand_t
     cdef long FLINT_BITS
     cdef long FLINT_D_BITS
@@ -535,6 +539,31 @@ cdef extern from "flint_wrap.h":
     ctypedef padic_poly_t qadic_t
 
 
+    # flint/qsieve.h
+    ctypedef struct prime_t:
+        pass
+
+    ctypedef struct fac_t:
+        pass
+
+    ctypedef struct la_col_t:
+        pass
+
+    ctypedef struct hash_t:
+        pass
+
+    ctypedef struct relation_t:
+        pass
+
+    ctypedef struct qs_poly_s:
+        pass
+    ctypedef qs_poly_s qs_poly_t[1]
+
+    ctypedef struct qs_s:
+        pass
+    ctypedef qs_s qs_t[1];
+
+
     # flint/thread_pool.h
     ctypedef struct thread_pool_entry_struct:
         pass
@@ -552,3 +581,93 @@ cdef extern from "flint_wrap.h":
     ctypedef struct bernoulli_rev_struct:
         pass
     ctypedef bernoulli_rev_struct bernoulli_rev_t[1]
+
+
+    # flint/nf.h
+    ctypedef struct nf_struct:
+        pass
+    ctypedef nf_struct nf_t[1]
+
+
+    # flint/nf_elem.h
+    ctypedef struct lnf_elem_struct:
+        pass
+    ctypedef lnf_elem_struct lnf_elem_t[1]
+
+    ctypedef struct qnf_elem_struct:
+        pass
+    ctypedef qnf_elem_struct qnf_elem_t[1]
+
+    ctypedef union nf_elem_struct:
+        fmpq_poly_t elem
+        lnf_elem_t lelem
+        qnf_elem_t qelem
+    ctypedef nf_elem_struct nf_elem_t[1]
+
+
+    # flint/ca.h
+    ctypedef union ca_elem_struct:
+        fmpq q
+        nf_elem_struct nf
+        fmpz_mpoly_q_struct * mpoly_q
+
+    ctypedef struct ca_struct:
+        ulong field
+        ca_elem_struct elem
+
+    ctypedef ca_struct ca_t[1]
+    ctypedef ca_struct * ca_ptr
+    ctypedef const ca_struct * ca_srcptr
+
+    ctypedef struct ca_ext_qqbar:
+        pass
+
+    ctypedef struct ca_ext_func_data:
+        pass
+
+    ctypedef struct ca_ext_struct:
+        pass
+
+    ctypedef ca_ext_struct ca_ext_t[1]
+    ctypedef ca_ext_struct * ca_ext_ptr
+    ctypedef const ca_ext_struct * ca_ext_srcptr
+
+    ctypedef struct ca_ext_cache_struct:
+        pass
+
+    ctypedef ca_ext_cache_struct ca_ext_cache_t[1]
+
+    ctypedef struct ca_field_struct:
+        pass
+
+    ctypedef ca_field_struct ca_field_t[1]
+    ctypedef ca_field_struct * ca_field_ptr
+    ctypedef const ca_field_struct * ca_field_srcptr
+
+    ctypedef struct ca_field_cache_struct:
+        pass
+
+    ctypedef ca_field_cache_struct ca_field_cache_t[1];
+
+    cdef enum:
+        CA_OPT_VERBOSE
+        CA_OPT_PRINT_FLAGS
+        CA_OPT_MPOLY_ORD
+        CA_OPT_PREC_LIMIT
+        CA_OPT_QQBAR_DEG_LIMIT
+        CA_OPT_LOW_PREC
+        CA_OPT_SMOOTH_LIMIT
+        CA_OPT_LLL_PREC
+        CA_OPT_POW_LIMIT
+        CA_OPT_USE_GROEBNER
+        CA_OPT_GROEBNER_LENGTH_LIMIT
+        CA_OPT_GROEBNER_POLY_LENGTH_LIMIT
+        CA_OPT_GROEBNER_POLY_BITS_LIMIT
+        CA_OPT_VIETA_LIMIT
+        CA_OPT_TRIG_FORM
+        CA_OPT_NUM_OPTIONS
+
+    ctypedef struct ca_ctx_struct:
+        pass
+
+    ctypedef ca_ctx_struct ca_ctx_t[1]

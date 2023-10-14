@@ -12,12 +12,12 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void acb_hypgeom_rising_ui_forward(acb_t res, const acb_t x, unsigned long n, long prec)
-    void acb_hypgeom_rising_ui_bs(acb_t res, const acb_t x, unsigned long n, long prec)
-    void acb_hypgeom_rising_ui_rs(acb_t res, const acb_t x, unsigned long n, unsigned long m, long prec)
-    void acb_hypgeom_rising_ui_rec(acb_t res, const acb_t x, unsigned long n, long prec)
-    void acb_hypgeom_rising_ui(acb_t res, const acb_t x, unsigned long n, long prec)
-    void acb_hypgeom_rising(acb_t res, const acb_t x, const acb_t n, long prec)
+    void acb_hypgeom_rising_ui_forward(acb_t res, const acb_t x, ulong n, slong prec)
+    void acb_hypgeom_rising_ui_bs(acb_t res, const acb_t x, ulong n, slong prec)
+    void acb_hypgeom_rising_ui_rs(acb_t res, const acb_t x, ulong n, ulong m, slong prec)
+    void acb_hypgeom_rising_ui_rec(acb_t res, const acb_t x, ulong n, slong prec)
+    void acb_hypgeom_rising_ui(acb_t res, const acb_t x, ulong n, slong prec)
+    void acb_hypgeom_rising(acb_t res, const acb_t x, const acb_t n, slong prec)
     # Computes the rising factorial `(x)_n`.
     # The *forward* version uses the forward recurrence.
     # The *bs* version uses binary splitting.
@@ -29,10 +29,10 @@ cdef extern from "flint_wrap.h":
     # The default versions (*rising_ui* and *rising_ui*) choose an algorithm
     # automatically and may additionally fall back on the gamma function.
 
-    void acb_hypgeom_rising_ui_jet_powsum(acb_ptr res, const acb_t x, unsigned long n, long len, long prec)
-    void acb_hypgeom_rising_ui_jet_bs(acb_ptr res, const acb_t x, unsigned long n, long len, long prec)
-    void acb_hypgeom_rising_ui_jet_rs(acb_ptr res, const acb_t x, unsigned long n, unsigned long m, long len, long prec)
-    void acb_hypgeom_rising_ui_jet(acb_ptr res, const acb_t x, unsigned long n, long len, long prec)
+    void acb_hypgeom_rising_ui_jet_powsum(acb_ptr res, const acb_t x, ulong n, slong len, slong prec)
+    void acb_hypgeom_rising_ui_jet_bs(acb_ptr res, const acb_t x, ulong n, slong len, slong prec)
+    void acb_hypgeom_rising_ui_jet_rs(acb_ptr res, const acb_t x, ulong n, ulong m, slong len, slong prec)
+    void acb_hypgeom_rising_ui_jet(acb_ptr res, const acb_t x, ulong n, slong len, slong prec)
     # Computes the jet of the rising factorial `(x)_n`, truncated to length *len*.
     # In other words, constructs the polynomial `(X + x)_n \in \mathbb{R}[X]`,
     # truncated if `\operatorname{len} < n + 1` (and zero-extended
@@ -44,7 +44,7 @@ cdef extern from "flint_wrap.h":
     # parameter *m* which can be set to zero to choose automatically.
     # The default version chooses an algorithm automatically.
 
-    void acb_hypgeom_log_rising_ui(acb_ptr res, const acb_t x, unsigned long n, long prec)
+    void acb_hypgeom_log_rising_ui(acb_ptr res, const acb_t x, ulong n, slong prec)
     # Computes the log-rising factorial `\log \, (x)_n = \sum_{k=0}^{n-1} \log(x+k)`.
     # This first computes the ordinary rising factorial and then determines
     # the branch correction `2 \pi i m` with respect to the principal
@@ -52,12 +52,12 @@ cdef extern from "flint_wrap.h":
     # floating-point arithmetic if this is safe; otherwise,
     # a direct computation of `\sum_{k=0}^{n-1} \arg(x+k)` is used as a fallback.
 
-    void acb_hypgeom_log_rising_ui_jet(acb_ptr res, const acb_t x, unsigned long n, long len, long prec)
+    void acb_hypgeom_log_rising_ui_jet(acb_ptr res, const acb_t x, ulong n, slong len, slong prec)
     # Computes the jet of the log-rising factorial `\log \, (x)_n`,
     # truncated to length *len*.
 
-    void acb_hypgeom_gamma_stirling_sum_horner(acb_t s, const acb_t z, long N, long prec)
-    void acb_hypgeom_gamma_stirling_sum_improved(acb_t s, const acb_t z, long N, long K, long prec)
+    void acb_hypgeom_gamma_stirling_sum_horner(acb_t s, const acb_t z, slong N, slong prec)
+    void acb_hypgeom_gamma_stirling_sum_improved(acb_t s, const acb_t z, slong N, slong K, slong prec)
     # Sets *res* to the final sum in the Stirling series for the gamma function
     # truncated before the term with index *N*, i.e. computes
     # `\sum_{n=1}^{N-1} B_{2n} / (2n(2n-1) z^{2n-1})`.
@@ -67,38 +67,38 @@ cdef extern from "flint_wrap.h":
     # using a splitting parameter *K* (which can be set to 0 to use a default
     # value).
 
-    void acb_hypgeom_gamma_stirling(acb_t res, const acb_t x, int reciprocal, long prec)
+    void acb_hypgeom_gamma_stirling(acb_t res, const acb_t x, int reciprocal, slong prec)
     # Sets *res* to the gamma function of *x* computed using the Stirling
     # series together with argument reduction. If *reciprocal* is set,
     # the reciprocal gamma function is computed instead.
 
-    int acb_hypgeom_gamma_taylor(acb_t res, const acb_t x, int reciprocal, long prec)
+    int acb_hypgeom_gamma_taylor(acb_t res, const acb_t x, int reciprocal, slong prec)
     # Attempts to compute the gamma function of *x* using Taylor series
     # together with argument reduction. This is only supported if *x* and *prec*
     # are both small enough. If successful, returns 1; otherwise, does nothing
     # and returns 0. If *reciprocal* is set, the reciprocal gamma function is
     # computed instead.
 
-    void acb_hypgeom_gamma(acb_t res, const acb_t x, long prec)
+    void acb_hypgeom_gamma(acb_t res, const acb_t x, slong prec)
     # Sets *res* to the gamma function of *x* computed using a default
     # algorithm choice.
 
-    void acb_hypgeom_rgamma(acb_t res, const acb_t x, long prec)
+    void acb_hypgeom_rgamma(acb_t res, const acb_t x, slong prec)
     # Sets *res* to the reciprocal gamma function of *x* computed using a default
     # algorithm choice.
 
-    void acb_hypgeom_lgamma(acb_t res, const acb_t x, long prec)
+    void acb_hypgeom_lgamma(acb_t res, const acb_t x, slong prec)
     # Sets *res* to the principal branch of the log-gamma function of *x*
     # computed using a default algorithm choice.
 
-    void acb_hypgeom_pfq_bound_factor(mag_t C, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, unsigned long n)
+    void acb_hypgeom_pfq_bound_factor(mag_t C, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, ulong n)
     # Computes a factor *C* such that
     # `\left|\sum_{k=n}^{\infty} T(k)\right| \le C |T(n)|`.
     # See :ref:`algorithms_hypergeometric_convergent`.
     # As currently implemented, the bound becomes infinite when `n` is
     # too small, even if the series converges.
 
-    long acb_hypgeom_pfq_choose_n(acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long prec)
+    slong acb_hypgeom_pfq_choose_n(acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong prec)
     # Heuristically attempts to choose a number of terms *n* to
     # sum of a hypergeometric series at a working precision of *prec* bits.
     # Uses double precision arithmetic internally. As currently implemented,
@@ -110,15 +110,15 @@ cdef extern from "flint_wrap.h":
     # This function will also attempt to pick a reasonable
     # truncation point for divergent series.
 
-    void acb_hypgeom_pfq_sum_forward(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+    void acb_hypgeom_pfq_sum_forward(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong n, slong prec)
 
-    void acb_hypgeom_pfq_sum_rs(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+    void acb_hypgeom_pfq_sum_rs(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong n, slong prec)
 
-    void acb_hypgeom_pfq_sum_bs(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+    void acb_hypgeom_pfq_sum_bs(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong n, slong prec)
 
-    void acb_hypgeom_pfq_sum_fme(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+    void acb_hypgeom_pfq_sum_fme(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong n, slong prec)
 
-    void acb_hypgeom_pfq_sum(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+    void acb_hypgeom_pfq_sum(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong n, slong prec)
     # Computes `s = \sum_{k=0}^{n-1} T(k)` and `t = T(n)`.
     # Does not allow aliasing between input and output variables.
     # We require `n \ge 0`.
@@ -132,13 +132,13 @@ cdef extern from "flint_wrap.h":
     # The default version automatically chooses an algorithm
     # depending on the inputs.
 
-    void acb_hypgeom_pfq_sum_bs_invz(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t w, long n, long prec)
+    void acb_hypgeom_pfq_sum_bs_invz(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t w, slong n, slong prec)
 
-    void acb_hypgeom_pfq_sum_invz(acb_t s, acb_t t, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, const acb_t w, long n, long prec)
+    void acb_hypgeom_pfq_sum_invz(acb_t s, acb_t t, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, const acb_t w, slong n, slong prec)
     # Like :func:`acb_hypgeom_pfq_sum`, but taking advantage of
     # `w = 1/z` possibly having few bits.
 
-    void acb_hypgeom_pfq_direct(acb_t res, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, long n, long prec)
+    void acb_hypgeom_pfq_direct(acb_t res, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, slong n, slong prec)
     # Computes
     # .. math ::
     # {}_pf_{q}(z)
@@ -149,13 +149,13 @@ cdef extern from "flint_wrap.h":
     # If  `n < 0`, this function chooses a number of terms automatically
     # using :func:`acb_hypgeom_pfq_choose_n`.
 
-    void acb_hypgeom_pfq_series_sum_forward(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, long p, const acb_poly_struct * b, long q, const acb_poly_t z, int regularized, long n, long len, long prec)
+    void acb_hypgeom_pfq_series_sum_forward(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, slong p, const acb_poly_struct * b, slong q, const acb_poly_t z, int regularized, slong n, slong len, slong prec)
 
-    void acb_hypgeom_pfq_series_sum_bs(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, long p, const acb_poly_struct * b, long q, const acb_poly_t z, int regularized, long n, long len, long prec)
+    void acb_hypgeom_pfq_series_sum_bs(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, slong p, const acb_poly_struct * b, slong q, const acb_poly_t z, int regularized, slong n, slong len, slong prec)
 
-    void acb_hypgeom_pfq_series_sum_rs(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, long p, const acb_poly_struct * b, long q, const acb_poly_t z, int regularized, long n, long len, long prec)
+    void acb_hypgeom_pfq_series_sum_rs(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, slong p, const acb_poly_struct * b, slong q, const acb_poly_t z, int regularized, slong n, slong len, slong prec)
 
-    void acb_hypgeom_pfq_series_sum(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, long p, const acb_poly_struct * b, long q, const acb_poly_t z, int regularized, long n, long len, long prec)
+    void acb_hypgeom_pfq_series_sum(acb_poly_t s, acb_poly_t t, const acb_poly_struct * a, slong p, const acb_poly_struct * b, slong q, const acb_poly_t z, int regularized, slong n, slong len, slong prec)
     # Computes `s = \sum_{k=0}^{n-1} T(k)` and `t = T(n)` given parameters
     # and argument that are power series.
     # Does not allow aliasing between input and output variables.
@@ -166,7 +166,7 @@ cdef extern from "flint_wrap.h":
     # binary splitting, rectangular splitting, and an automatic algorithm
     # choice.
 
-    void acb_hypgeom_pfq_series_direct(acb_poly_t res, const acb_poly_struct * a, long p, const acb_poly_struct * b, long q, const acb_poly_t z, int regularized, long n, long len, long prec)
+    void acb_hypgeom_pfq_series_direct(acb_poly_t res, const acb_poly_struct * a, slong p, const acb_poly_struct * b, slong q, const acb_poly_t z, int regularized, slong n, slong len, slong prec)
     # Computes `{}_pf_{q}(z)` directly using the defining series, given
     # parameters and argument that are power series.
     # The result is a power series of length *len*.
@@ -177,17 +177,17 @@ cdef extern from "flint_wrap.h":
     # If *regularized* is set, the regularized hypergeometric function
     # is computed instead.
 
-    void acb_hypgeom_u_asymp(acb_t res, const acb_t a, const acb_t b, const acb_t z, long n, long prec)
+    void acb_hypgeom_u_asymp(acb_t res, const acb_t a, const acb_t b, const acb_t z, slong n, slong prec)
     # Sets *res* to `U^{*}(a,b,z)` computed using *n* terms of the asymptotic series,
     # with a rigorous bound for the error included in the output.
     # We require `n \ge 0`.
 
-    int acb_hypgeom_u_use_asymp(const acb_t z, long prec)
+    int acb_hypgeom_u_use_asymp(const acb_t z, slong prec)
     # Heuristically determines whether the asymptotic series can be used
     # to evaluate `U(a,b,z)` to *prec* accurate bits (assuming that *a* and *b*
     # are small).
 
-    void acb_hypgeom_pfq(acb_t res, acb_srcptr a, long p, acb_srcptr b, long q, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_pfq(acb_t res, acb_srcptr a, slong p, acb_srcptr b, slong q, const acb_t z, int regularized, slong prec)
     # Computes the generalized hypergeometric function `{}_pF_{q}(z)`,
     # or the regularized version if *regularized* is set.
     # This function automatically delegates to a specialized implementation
@@ -199,7 +199,7 @@ cdef extern from "flint_wrap.h":
     # done ahead of time by the user in applications where duplicate
     # parameters are likely to occur.
 
-    void acb_hypgeom_u_1f1_series(acb_poly_t res, const acb_poly_t a, const acb_poly_t b, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_u_1f1_series(acb_poly_t res, const acb_poly_t a, const acb_poly_t b, const acb_poly_t z, slong len, slong prec)
     # Computes `U(a,b,z)` as a power series truncated to length *len*,
     # given `a, b, z \in \mathbb{C}[[x]]`.
     # If `b[0] \in \mathbb{Z}`, it computes one extra derivative and removes
@@ -207,38 +207,38 @@ cdef extern from "flint_wrap.h":
     # As currently implemented, the output is indeterminate if `b` is nonexact
     # and contains an integer.
 
-    void acb_hypgeom_u_1f1(acb_t res, const acb_t a, const acb_t b, const acb_t z, long prec)
+    void acb_hypgeom_u_1f1(acb_t res, const acb_t a, const acb_t b, const acb_t z, slong prec)
     # Computes `U(a,b,z)` as a sum of two convergent hypergeometric series.
     # If `b \in \mathbb{Z}`, it computes
     # the limit value via :func:`acb_hypgeom_u_1f1_series`.
     # As currently implemented, the output is indeterminate if `b` is nonexact
     # and contains an integer.
 
-    void acb_hypgeom_u(acb_t res, const acb_t a, const acb_t b, const acb_t z, long prec)
+    void acb_hypgeom_u(acb_t res, const acb_t a, const acb_t b, const acb_t z, slong prec)
     # Computes `U(a,b,z)` using an automatic algorithm choice. The
     # function :func:`acb_hypgeom_u_asymp` is used
     # if `a` or `a-b+1` is a nonpositive integer (in which
     # case the asymptotic series terminates), or if *z* is sufficiently large.
     # Otherwise :func:`acb_hypgeom_u_1f1` is used.
 
-    void acb_hypgeom_m_asymp(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_m_asymp(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_m_1f1(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_m_1f1(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_m(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_m(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, slong prec)
     # Computes the confluent hypergeometric function
     # `M(a,b,z) = {}_1F_1(a,b,z)`, or
     # `\mathbf{M}(a,b,z) = \frac{1}{\Gamma(b)} {}_1F_1(a,b,z)` if *regularized*
     # is set.
 
-    void acb_hypgeom_1f1(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_1f1(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, slong prec)
     # Alias for :func:`acb_hypgeom_m`.
 
-    void acb_hypgeom_0f1_asymp(acb_t res, const acb_t a, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_0f1_asymp(acb_t res, const acb_t a, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_0f1_direct(acb_t res, const acb_t a, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_0f1_direct(acb_t res, const acb_t a, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_0f1(acb_t res, const acb_t a, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_0f1(acb_t res, const acb_t a, const acb_t z, int regularized, slong prec)
     # Computes the confluent hypergeometric function
     # `{}_0F_1(a,z)`, or `\frac{1}{\Gamma(a)} {}_0F_1(a,z)` if *regularized*
     # is set, using asymptotic expansions, direct summation,
@@ -258,11 +258,11 @@ cdef extern from "flint_wrap.h":
     # the error function evaluated at the midpoint of *z*. Uses
     # the first derivative.
 
-    void acb_hypgeom_erf_1f1a(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_erf_1f1a(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_erf_1f1b(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_erf_1f1b(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_erf_asymp(acb_t res, const acb_t z, int complementary, long prec, long prec2)
+    void acb_hypgeom_erf_asymp(acb_t res, const acb_t z, int complementary, slong prec, slong prec2)
     # Computes the error function respectively using
     # .. math ::
     # \operatorname{erf}(z) &= \frac{2z}{\sqrt{\pi}}
@@ -278,42 +278,42 @@ cdef extern from "flint_wrap.h":
     # It also takes an extra flag *complementary*, computing the complementary
     # error function if set.
 
-    void acb_hypgeom_erf(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_erf(acb_t res, const acb_t z, slong prec)
     # Computes the error function using an automatic algorithm choice.
     # If *z* is too small to use the asymptotic expansion, a working precision
     # sufficient to circumvent cancellation in the hypergeometric series is
     # determined automatically, and a bound for the propagated error is
     # computed with :func:`acb_hypgeom_erf_propagated_error`.
 
-    void _acb_hypgeom_erf_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_erf_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_erf_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_erf_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the error function of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_erfc(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_erfc(acb_t res, const acb_t z, slong prec)
     # Computes the complementary error function
     # `\operatorname{erfc}(z) = 1 - \operatorname{erf}(z)`.
     # This function avoids catastrophic cancellation for large positive *z*.
 
-    void _acb_hypgeom_erfc_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_erfc_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_erfc_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_erfc_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the complementary error function of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_erfi(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_erfi(acb_t res, const acb_t z, slong prec)
     # Computes the imaginary error function
     # `\operatorname{erfi}(z) = -i\operatorname{erf}(iz)`. This is a trivial wrapper
     # of :func:`acb_hypgeom_erf`.
 
-    void _acb_hypgeom_erfi_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_erfi_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_erfi_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_erfi_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the imaginary error function of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_fresnel(acb_t res1, acb_t res2, const acb_t z, int normalized, long prec)
+    void acb_hypgeom_fresnel(acb_t res1, acb_t res2, const acb_t z, int normalized, slong prec)
     # Sets *res1* to the Fresnel sine integral `S(z)` and *res2* to
     # the Fresnel cosine integral `C(z)`. Optionally, just a single function
     # can be computed by passing *NULL* as the other output variable.
@@ -322,15 +322,15 @@ cdef extern from "flint_wrap.h":
     # *normalized* is 1 (the latter is the Abramowitz & Stegun convention).
     # `C(z)` is defined analogously.
 
-    void _acb_hypgeom_fresnel_series(acb_ptr res1, acb_ptr res2, acb_srcptr z, long zlen, int normalized, long len, long prec)
+    void _acb_hypgeom_fresnel_series(acb_ptr res1, acb_ptr res2, acb_srcptr z, slong zlen, int normalized, slong len, slong prec)
 
-    void acb_hypgeom_fresnel_series(acb_poly_t res1, acb_poly_t res2, const acb_poly_t z, int normalized, long len, long prec)
+    void acb_hypgeom_fresnel_series(acb_poly_t res1, acb_poly_t res2, const acb_poly_t z, int normalized, slong len, slong prec)
     # Sets *res1* to the Fresnel sine integral and *res2* to the Fresnel
     # cosine integral of the power series *z*, truncated to length *len*.
     # Optionally, just a single function can be computed by passing *NULL*
     # as the other output variable.
 
-    void acb_hypgeom_bessel_j_asymp(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_j_asymp(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the Bessel function of the first kind
     # via :func:`acb_hypgeom_u_asymp`.
     # For all complex `\nu, z`, we have
@@ -347,17 +347,17 @@ cdef extern from "flint_wrap.h":
     # `A_{\pm} = (\pm i)^{n} (2 \pi z)^{-1/2}`.
     # And if `\operatorname{Re}(z) > 0`, we have `A_{\pm} = \exp(\mp i [(2\nu+1)/4] \pi) (2 \pi z)^{-1/2}`.
 
-    void acb_hypgeom_bessel_j_0f1(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_j_0f1(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the Bessel function of the first kind from
     # .. math ::
     # J_{\nu}(z) = \frac{1}{\Gamma(\nu+1)} \left(\frac{z}{2}\right)^{\nu}
     # {}_0F_1\left(\nu+1, -\frac{z^2}{4}\right).
 
-    void acb_hypgeom_bessel_j(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_j(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the Bessel function of the first kind `J_{\nu}(z)` using
     # an automatic algorithm choice.
 
-    void acb_hypgeom_bessel_y(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_y(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the Bessel function of the second kind `Y_{\nu}(z)` from the
     # formula
     # .. math ::
@@ -370,19 +370,19 @@ cdef extern from "flint_wrap.h":
     # As currently implemented, the output is indeterminate if `\nu` is nonexact
     # and contains an integer.
 
-    void acb_hypgeom_bessel_jy(acb_t res1, acb_t res2, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_jy(acb_t res1, acb_t res2, const acb_t nu, const acb_t z, slong prec)
     # Sets *res1* to `J_{\nu}(z)` and *res2* to `Y_{\nu}(z)`, computed
     # simultaneously. From these values, the user can easily
     # construct the Bessel functions of the third kind (Hankel functions)
     # `H_{\nu}^{(1)}(z), H_{\nu}^{(2)}(z) = J_{\nu}(z) \pm i Y_{\nu}(z)`.
 
-    void acb_hypgeom_bessel_i_asymp(acb_t res, const acb_t nu, const acb_t z, int scaled, long prec)
+    void acb_hypgeom_bessel_i_asymp(acb_t res, const acb_t nu, const acb_t z, int scaled, slong prec)
 
-    void acb_hypgeom_bessel_i_0f1(acb_t res, const acb_t nu, const acb_t z, int scaled, long prec)
+    void acb_hypgeom_bessel_i_0f1(acb_t res, const acb_t nu, const acb_t z, int scaled, slong prec)
 
-    void acb_hypgeom_bessel_i(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_i(acb_t res, const acb_t nu, const acb_t z, slong prec)
 
-    void acb_hypgeom_bessel_i_scaled(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_i_scaled(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the modified Bessel function of the first kind
     # `I_{\nu}(z) = z^{\nu} (iz)^{-\nu} J_{\nu}(iz)` respectively using
     # asymptotic series (see :func:`acb_hypgeom_bessel_j_asymp`),
@@ -394,7 +394,7 @@ cdef extern from "flint_wrap.h":
     # The *scaled* version computes the function `e^{-z} I_{\nu}(z)`. The *asymp*
     # and *0f1* functions implement both variants and allow choosing with a flag.
 
-    void acb_hypgeom_bessel_k_asymp(acb_t res, const acb_t nu, const acb_t z, int scaled, long prec)
+    void acb_hypgeom_bessel_k_asymp(acb_t res, const acb_t nu, const acb_t z, int scaled, slong prec)
     # Computes the modified Bessel function of the second kind via
     # via :func:`acb_hypgeom_u_asymp`. For all `\nu` and all `z \ne 0`, we have
     # .. math ::
@@ -402,7 +402,7 @@ cdef extern from "flint_wrap.h":
     # U^{*}(\nu+\tfrac{1}{2}, 2\nu+1, 2z).
     # If *scaled* is set, computes the function `e^{z} K_{\nu}(z)`.
 
-    void acb_hypgeom_bessel_k_0f1_series(acb_poly_t res, const acb_poly_t nu, const acb_poly_t z, int scaled, long len, long prec)
+    void acb_hypgeom_bessel_k_0f1_series(acb_poly_t res, const acb_poly_t nu, const acb_poly_t z, int scaled, slong len, slong prec)
     # Computes the modified Bessel function of the second kind `K_{\nu}(z)`
     # as a power series truncated to length *len*,
     # given `\nu, z \in \mathbb{C}[[x]]`. Uses the formula
@@ -420,7 +420,7 @@ cdef extern from "flint_wrap.h":
     # and contains an integer.
     # If *scaled* is set, computes the function `e^{z} K_{\nu}(z)`.
 
-    void acb_hypgeom_bessel_k_0f1(acb_t res, const acb_t nu, const acb_t z, int scaled, long prec)
+    void acb_hypgeom_bessel_k_0f1(acb_t res, const acb_t nu, const acb_t z, int scaled, slong prec)
     # Computes the modified Bessel function of the second kind from
     # .. math ::
     # K_{\nu}(z) = \frac{1}{2} \left[
@@ -438,18 +438,18 @@ cdef extern from "flint_wrap.h":
     # and contains an integer.
     # If *scaled* is set, computes the function `e^{z} K_{\nu}(z)`.
 
-    void acb_hypgeom_bessel_k(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_k(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the modified Bessel function of the second kind `K_{\nu}(z)` using
     # an automatic algorithm choice.
 
-    void acb_hypgeom_bessel_k_scaled(acb_t res, const acb_t nu, const acb_t z, long prec)
+    void acb_hypgeom_bessel_k_scaled(acb_t res, const acb_t nu, const acb_t z, slong prec)
     # Computes the function `e^{z} K_{\nu}(z)`.
 
-    void acb_hypgeom_airy_direct(acb_t ai, acb_t ai_prime, acb_t bi, acb_t bi_prime, const acb_t z, long n, long prec)
+    void acb_hypgeom_airy_direct(acb_t ai, acb_t ai_prime, acb_t bi, acb_t bi_prime, const acb_t z, slong n, slong prec)
     # Computes the Airy functions using direct series expansions truncated at *n* terms.
     # Error bounds are included in the output.
 
-    void acb_hypgeom_airy_asymp(acb_t ai, acb_t ai_prime, acb_t bi, acb_t bi_prime, const acb_t z, long n, long prec)
+    void acb_hypgeom_airy_asymp(acb_t ai, acb_t ai_prime, acb_t bi, acb_t bi_prime, const acb_t z, slong n, slong prec)
     # Computes the Airy functions using asymptotic expansions truncated at *n* terms.
     # Error bounds are included in the output.
     # For details about how the error bounds are computed, see
@@ -461,7 +461,7 @@ cdef extern from "flint_wrap.h":
     # shortcuts to make it slightly faster than calling
     # :func:`acb_hypgeom_airy_asymp` with `n = 1`.
 
-    void acb_hypgeom_airy(acb_t ai, acb_t ai_prime, acb_t bi, acb_t bi_prime, const acb_t z, long prec)
+    void acb_hypgeom_airy(acb_t ai, acb_t ai_prime, acb_t bi, acb_t bi_prime, const acb_t z, slong prec)
     # Computes Airy functions using an automatic algorithm choice.
     # We use :func:`acb_hypgeom_airy_asymp` whenever this gives full accuracy
     # and :func:`acb_hypgeom_airy_direct` otherwise.
@@ -476,7 +476,7 @@ cdef extern from "flint_wrap.h":
     # bound the propagated error using derivatives. Derivatives are
     # bounded using :func:`acb_hypgeom_airy_bound`.
 
-    void acb_hypgeom_airy_jet(acb_ptr ai, acb_ptr bi, const acb_t z, long len, long prec)
+    void acb_hypgeom_airy_jet(acb_ptr ai, acb_ptr bi, const acb_t z, slong len, slong prec)
     # Writes to *ai* and *bi* the respective Taylor expansions of the Airy functions
     # at the point *z*, truncated to length *len*.
     # Either of the outputs can be *NULL* to avoid computing that function.
@@ -486,37 +486,37 @@ cdef extern from "flint_wrap.h":
     # easily obtained by computing one extra coefficient and differentiating
     # the output with :func:`_acb_poly_derivative`.
 
-    void _acb_hypgeom_airy_series(acb_ptr ai, acb_ptr ai_prime, acb_ptr bi, acb_ptr bi_prime, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_airy_series(acb_ptr ai, acb_ptr ai_prime, acb_ptr bi, acb_ptr bi_prime, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_airy_series(acb_poly_t ai, acb_poly_t ai_prime, acb_poly_t bi, acb_poly_t bi_prime, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_airy_series(acb_poly_t ai, acb_poly_t ai_prime, acb_poly_t bi, acb_poly_t bi_prime, const acb_poly_t z, slong len, slong prec)
     # Computes the Airy functions evaluated at the power series *z*,
     # truncated to length *len*. As with the other Airy methods, any of the
     # outputs can be *NULL*.
 
-    void acb_hypgeom_coulomb(acb_t F, acb_t G, acb_t Hpos, acb_t Hneg, const acb_t l, const acb_t eta, const acb_t z, long prec)
+    void acb_hypgeom_coulomb(acb_t F, acb_t G, acb_t Hpos, acb_t Hneg, const acb_t l, const acb_t eta, const acb_t z, slong prec)
     # Writes to *F*, *G*, *Hpos*, *Hneg* the values of the respective
     # Coulomb wave functions. Any of the outputs can be *NULL*.
 
-    void acb_hypgeom_coulomb_jet(acb_ptr F, acb_ptr G, acb_ptr Hpos, acb_ptr Hneg, const acb_t l, const acb_t eta, const acb_t z, long len, long prec)
+    void acb_hypgeom_coulomb_jet(acb_ptr F, acb_ptr G, acb_ptr Hpos, acb_ptr Hneg, const acb_t l, const acb_t eta, const acb_t z, slong len, slong prec)
     # Writes to *F*, *G*, *Hpos*, *Hneg* the respective Taylor expansions of the
     # Coulomb wave functions at the point *z*, truncated to length *len*.
     # Any of the outputs can be *NULL*.
 
-    void _acb_hypgeom_coulomb_series(acb_ptr F, acb_ptr G, acb_ptr Hpos, acb_ptr Hneg, const acb_t l, const acb_t eta, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_coulomb_series(acb_ptr F, acb_ptr G, acb_ptr Hpos, acb_ptr Hneg, const acb_t l, const acb_t eta, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_coulomb_series(acb_poly_t F, acb_poly_t G, acb_poly_t Hpos, acb_poly_t Hneg, const acb_t l, const acb_t eta, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_coulomb_series(acb_poly_t F, acb_poly_t G, acb_poly_t Hpos, acb_poly_t Hneg, const acb_t l, const acb_t eta, const acb_poly_t z, slong len, slong prec)
     # Computes the Coulomb wave functions evaluated at the power series *z*,
     # truncated to length *len*. Any of the outputs can be *NULL*.
 
-    void acb_hypgeom_gamma_upper_asymp(acb_t res, const acb_t s, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_gamma_upper_asymp(acb_t res, const acb_t s, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_gamma_upper_1f1a(acb_t res, const acb_t s, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_gamma_upper_1f1a(acb_t res, const acb_t s, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_gamma_upper_1f1b(acb_t res, const acb_t s, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_gamma_upper_1f1b(acb_t res, const acb_t s, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_gamma_upper_singular(acb_t res, long s, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_gamma_upper_singular(acb_t res, slong s, const acb_t z, int regularized, slong prec)
 
-    void acb_hypgeom_gamma_upper(acb_t res, const acb_t s, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_gamma_upper(acb_t res, const acb_t s, const acb_t z, int regularized, slong prec)
     # If *regularized* is 0, computes the upper incomplete gamma function
     # `\Gamma(s,z)`.
     # If *regularized* is 1, computes the regularized upper incomplete
@@ -542,15 +542,15 @@ cdef extern from "flint_wrap.h":
     # The *singular* version evaluates the finite sum directly and therefore
     # assumes that *s* is not too large.
 
-    void _acb_hypgeom_gamma_upper_series(acb_ptr res, const acb_t s, acb_srcptr z, long zlen, int regularized, long n, long prec)
+    void _acb_hypgeom_gamma_upper_series(acb_ptr res, const acb_t s, acb_srcptr z, slong zlen, int regularized, slong n, slong prec)
 
-    void acb_hypgeom_gamma_upper_series(acb_poly_t res, const acb_t s, const acb_poly_t z, int regularized, long n, long prec)
+    void acb_hypgeom_gamma_upper_series(acb_poly_t res, const acb_t s, const acb_poly_t z, int regularized, slong n, slong prec)
     # Sets *res* to an upper incomplete gamma function where *s* is
     # a constant and *z* is a power series, truncated to length *n*.
     # The *regularized* argument has the same interpretation as in
     # :func:`acb_hypgeom_gamma_upper`.
 
-    void acb_hypgeom_gamma_lower(acb_t res, const acb_t s, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_gamma_lower(acb_t res, const acb_t s, const acb_t z, int regularized, slong prec)
     # If *regularized* is 0, computes the lower incomplete gamma function
     # `\gamma(s,z) = \frac{z^s}{s} {}_1F_1(s, s+1, -z)`.
     # If *regularized* is 1, computes the regularized lower incomplete
@@ -558,15 +558,15 @@ cdef extern from "flint_wrap.h":
     # If *regularized* is 2, computes a further regularized lower incomplete
     # gamma function `\gamma^{*}(s,z) = z^{-s} P(s,z)`.
 
-    void _acb_hypgeom_gamma_lower_series(acb_ptr res, const acb_t s, acb_srcptr z, long zlen, int regularized, long n, long prec)
+    void _acb_hypgeom_gamma_lower_series(acb_ptr res, const acb_t s, acb_srcptr z, slong zlen, int regularized, slong n, slong prec)
 
-    void acb_hypgeom_gamma_lower_series(acb_poly_t res, const acb_t s, const acb_poly_t z, int regularized, long n, long prec)
+    void acb_hypgeom_gamma_lower_series(acb_poly_t res, const acb_t s, const acb_poly_t z, int regularized, slong n, slong prec)
     # Sets *res* to an lower incomplete gamma function where *s* is
     # a constant and *z* is a power series, truncated to length *n*.
     # The *regularized* argument has the same interpretation as in
     # :func:`acb_hypgeom_gamma_lower`.
 
-    void acb_hypgeom_beta_lower(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_beta_lower(acb_t res, const acb_t a, const acb_t b, const acb_t z, int regularized, slong prec)
     # Computes the (lower) incomplete beta function, defined by
     # `B(a,b;z) = \int_0^z t^{a-1} (1-t)^{b-1}`,
     # optionally the regularized incomplete beta function
@@ -581,24 +581,24 @@ cdef extern from "flint_wrap.h":
     # for nonpositive integer *a*, and *I* is undefined for nonpositive integer
     # `a + b`.
 
-    void _acb_hypgeom_beta_lower_series(acb_ptr res, const acb_t a, const acb_t b, acb_srcptr z, long zlen, int regularized, long n, long prec)
+    void _acb_hypgeom_beta_lower_series(acb_ptr res, const acb_t a, const acb_t b, acb_srcptr z, slong zlen, int regularized, slong n, slong prec)
 
-    void acb_hypgeom_beta_lower_series(acb_poly_t res, const acb_t a, const acb_t b, const acb_poly_t z, int regularized, long n, long prec)
+    void acb_hypgeom_beta_lower_series(acb_poly_t res, const acb_t a, const acb_t b, const acb_poly_t z, int regularized, slong n, slong prec)
     # Sets *res* to the lower incomplete beta function `B(a,b;z)` (optionally
     # the regularized version `I(a,b;z)`) where *a* and *b* are constants
     # and *z* is a power series, truncating the result to length *n*.
     # The underscore method requires positive lengths and does not support
     # aliasing.
 
-    void acb_hypgeom_expint(acb_t res, const acb_t s, const acb_t z, long prec)
+    void acb_hypgeom_expint(acb_t res, const acb_t s, const acb_t z, slong prec)
     # Computes the generalized exponential integral `E_s(z)`. This is a
     # trivial wrapper of :func:`acb_hypgeom_gamma_upper`.
 
-    void acb_hypgeom_ei_asymp(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_ei_asymp(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_ei_2f2(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_ei_2f2(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_ei(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_ei(acb_t res, const acb_t z, slong prec)
     # Computes the exponential integral `\operatorname{Ei}(z)`, respectively
     # using
     # .. math ::
@@ -609,17 +609,17 @@ cdef extern from "flint_wrap.h":
     # + \frac{1}{2} \left(\log(z) - \log\left(\frac{1}{z}\right) \right)
     # and an automatic algorithm choice.
 
-    void _acb_hypgeom_ei_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_ei_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_ei_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_ei_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the exponential integral of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_si_asymp(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_si_asymp(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_si_1f2(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_si_1f2(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_si(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_si(acb_t res, const acb_t z, slong prec)
     # Computes the sine integral `\operatorname{Si}(z)`, respectively
     # using
     # .. math ::
@@ -630,17 +630,17 @@ cdef extern from "flint_wrap.h":
     # \operatorname{Si}(z) = z {}_1F_2(\tfrac{1}{2}; \tfrac{3}{2}, \tfrac{3}{2}; -\tfrac{z^2}{4})
     # and an automatic algorithm choice.
 
-    void _acb_hypgeom_si_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_si_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_si_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_si_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the sine integral of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_ci_asymp(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_ci_asymp(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_ci_2f3(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_ci_2f3(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_ci(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_ci(acb_t res, const acb_t z, slong prec)
     # Computes the cosine integral `\operatorname{Ci}(z)`, respectively
     # using
     # .. math ::
@@ -653,28 +653,28 @@ cdef extern from "flint_wrap.h":
     # + \log(z) + \gamma
     # and an automatic algorithm choice.
 
-    void _acb_hypgeom_ci_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_ci_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_ci_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_ci_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the cosine integral of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_shi(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_shi(acb_t res, const acb_t z, slong prec)
     # Computes the hyperbolic sine integral
     # `\operatorname{Shi}(z) = -i \operatorname{Si}(iz)`.
     # This is a trivial wrapper of :func:`acb_hypgeom_si`.
 
-    void _acb_hypgeom_shi_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_shi_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_shi_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_shi_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the hyperbolic sine integral of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_chi_asymp(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_chi_asymp(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_chi_2f3(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_chi_2f3(acb_t res, const acb_t z, slong prec)
 
-    void acb_hypgeom_chi(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_chi(acb_t res, const acb_t z, slong prec)
     # Computes the hyperbolic cosine integral `\operatorname{Chi}(z)`, respectively
     # using
     # .. math ::
@@ -687,39 +687,39 @@ cdef extern from "flint_wrap.h":
     # + \log(z) + \gamma
     # and an automatic algorithm choice.
 
-    void _acb_hypgeom_chi_series(acb_ptr res, acb_srcptr z, long zlen, long len, long prec)
+    void _acb_hypgeom_chi_series(acb_ptr res, acb_srcptr z, slong zlen, slong len, slong prec)
 
-    void acb_hypgeom_chi_series(acb_poly_t res, const acb_poly_t z, long len, long prec)
+    void acb_hypgeom_chi_series(acb_poly_t res, const acb_poly_t z, slong len, slong prec)
     # Computes the hyperbolic cosine integral of the power series *z*,
     # truncated to length *len*.
 
-    void acb_hypgeom_li(acb_t res, const acb_t z, int offset, long prec)
+    void acb_hypgeom_li(acb_t res, const acb_t z, int offset, slong prec)
     # If *offset* is zero, computes the logarithmic integral
     # `\operatorname{li}(z) = \operatorname{Ei}(\log(z))`.
     # If *offset* is nonzero, computes the offset logarithmic integral
     # `\operatorname{Li}(z) = \operatorname{li}(z) - \operatorname{li}(2)`.
 
-    void _acb_hypgeom_li_series(acb_ptr res, acb_srcptr z, long zlen, int offset, long len, long prec)
+    void _acb_hypgeom_li_series(acb_ptr res, acb_srcptr z, slong zlen, int offset, slong len, slong prec)
 
-    void acb_hypgeom_li_series(acb_poly_t res, const acb_poly_t z, int offset, long len, long prec)
+    void acb_hypgeom_li_series(acb_poly_t res, const acb_poly_t z, int offset, slong len, slong prec)
     # Computes the logarithmic integral (optionally the offset version)
     # of the power series *z*, truncated to length *len*.
 
-    void acb_hypgeom_2f1_continuation(acb_t res0, acb_t res1, const acb_t a, const acb_t b, const acb_t c, const acb_t z0, const acb_t z1, const acb_t f0, const acb_t f1, long prec)
+    void acb_hypgeom_2f1_continuation(acb_t res0, acb_t res1, const acb_t a, const acb_t b, const acb_t c, const acb_t z0, const acb_t z1, const acb_t f0, const acb_t f1, slong prec)
     # Given `F(z_0), F'(z_0)` in *f0*, *f1*, sets *res0* and *res1* to `F(z_1), F'(z_1)`
     # by integrating the hypergeometric differential equation along a straight-line path.
     # The evaluation points should be well-isolated from the singular points 0 and 1.
 
-    void acb_hypgeom_2f1_series_direct(acb_poly_t res, const acb_poly_t a, const acb_poly_t b, const acb_poly_t c, const acb_poly_t z, int regularized, long len, long prec)
+    void acb_hypgeom_2f1_series_direct(acb_poly_t res, const acb_poly_t a, const acb_poly_t b, const acb_poly_t c, const acb_poly_t z, int regularized, slong len, slong prec)
     # Computes `F(z)` of the given power series truncated to length *len*, using
     # direct summation of the hypergeometric series.
 
-    void acb_hypgeom_2f1_direct(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_2f1_direct(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int regularized, slong prec)
     # Computes `F(z)` using direct summation of the hypergeometric series.
 
-    void acb_hypgeom_2f1_transform(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int flags, int which, long prec)
+    void acb_hypgeom_2f1_transform(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int flags, int which, slong prec)
 
-    void acb_hypgeom_2f1_transform_limit(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int regularized, int which, long prec)
+    void acb_hypgeom_2f1_transform_limit(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int regularized, int which, slong prec)
     # Computes `F(z)` using an argument transformation determined by the flag *which*.
     # Legal values are 1 for `z/(z-1)`,
     # 2 for `1/z`, 3 for `1/(1-z)`, 4 for `1-z`, and 5 for `1-1/z`.
@@ -729,7 +729,7 @@ cdef extern from "flint_wrap.h":
     # In these cases, it computes the correct limit value.
     # See :func:`acb_hypgeom_2f1` for the meaning of *flags*.
 
-    void acb_hypgeom_2f1_corner(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int regularized, long prec)
+    void acb_hypgeom_2f1_corner(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int regularized, slong prec)
     # Computes `F(z)` near the corner cases `\exp(\pm \pi i \sqrt{3})`
     # by analytic continuation.
 
@@ -740,7 +740,7 @@ cdef extern from "flint_wrap.h":
     # :func:`acb_hypgeom_2f1_transform` should be used.
     # If the return value is 6, the corner case algorithm should be used.
 
-    void acb_hypgeom_2f1(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int flags, long prec)
+    void acb_hypgeom_2f1(acb_t res, const acb_t a, const acb_t b, const acb_t c, const acb_t z, int flags, slong prec)
     # Computes `F(z)` or `\operatorname{\mathbf{F}}(z)`
     # using an automatic algorithm choice.
     # The following bit fields can be set in *flags*:
@@ -764,9 +764,9 @@ cdef extern from "flint_wrap.h":
     # Currently, only the *AB* and *ABC* flags are used this way;
     # the *AC* and *BC* flags might be used in the future.
 
-    void acb_hypgeom_chebyshev_t(acb_t res, const acb_t n, const acb_t z, long prec)
+    void acb_hypgeom_chebyshev_t(acb_t res, const acb_t n, const acb_t z, slong prec)
 
-    void acb_hypgeom_chebyshev_u(acb_t res, const acb_t n, const acb_t z, long prec)
+    void acb_hypgeom_chebyshev_u(acb_t res, const acb_t n, const acb_t z, slong prec)
     # Computes the Chebyshev polynomial (or Chebyshev function) of first or second kind
     # .. math ::
     # T_n(z) = {}_2F_1\left(-n,n,\frac{1}{2},\frac{1-z}{2}\right)
@@ -777,7 +777,7 @@ cdef extern from "flint_wrap.h":
     # For word-size integer *n*, :func:`acb_chebyshev_t_ui` and
     # :func:`acb_chebyshev_u_ui` are called.
 
-    void acb_hypgeom_jacobi_p(acb_t res, const acb_t n, const acb_t a, const acb_t b, const acb_t z, long prec)
+    void acb_hypgeom_jacobi_p(acb_t res, const acb_t n, const acb_t a, const acb_t b, const acb_t z, slong prec)
     # Computes the Jacobi polynomial (or Jacobi function)
     # .. math ::
     # P_n^{(a,b)}(z)=\frac{(a+1)_n}{\Gamma(n+1)} {}_2F_1\left(-n,n+a+b+1,a+1,\frac{1-z}{2}\right).
@@ -786,7 +786,7 @@ cdef extern from "flint_wrap.h":
     # is undefined. In such cases, the polynomial is evaluated using
     # direct methods.
 
-    void acb_hypgeom_gegenbauer_c(acb_t res, const acb_t n, const acb_t m, const acb_t z, long prec)
+    void acb_hypgeom_gegenbauer_c(acb_t res, const acb_t n, const acb_t m, const acb_t z, slong prec)
     # Computes the Gegenbauer polynomial (or Gegenbauer function)
     # .. math ::
     # C_n^{m}(z)=\frac{(2m)_n}{\Gamma(n+1)} {}_2F_1\left(-n,2m+n,m+\frac{1}{2},\frac{1-z}{2}\right).
@@ -795,7 +795,7 @@ cdef extern from "flint_wrap.h":
     # is undefined. In such cases, the polynomial is evaluated using
     # direct methods.
 
-    void acb_hypgeom_laguerre_l(acb_t res, const acb_t n, const acb_t m, const acb_t z, long prec)
+    void acb_hypgeom_laguerre_l(acb_t res, const acb_t n, const acb_t m, const acb_t z, slong prec)
     # Computes the Laguerre polynomial (or Laguerre function)
     # .. math ::
     # L_n^{m}(z)=\frac{(m+1)_n}{\Gamma(n+1)} {}_1F_1\left(-n,m+1,z\right).
@@ -809,7 +809,7 @@ cdef extern from "flint_wrap.h":
     # case with the recurrence relation `L_{n-1}^m(z) + L_n^{m-1}(z) = L_n^m(z)`.
     # Currently, we leave this case undefined (returning indeterminate).
 
-    void acb_hypgeom_hermite_h(acb_t res, const acb_t n, const acb_t z, long prec)
+    void acb_hypgeom_hermite_h(acb_t res, const acb_t n, const acb_t z, slong prec)
     # Computes the Hermite polynomial (or Hermite function)
     # .. math ::
     # H_n(z) = 2^n \sqrt{\pi} \left(
@@ -817,7 +817,7 @@ cdef extern from "flint_wrap.h":
     # -
     # \frac{2z}{\Gamma(-n/2)} {}_1F_1\left(\frac{1-n}{2},\frac{3}{2},z^2\right)\right).
 
-    void acb_hypgeom_legendre_p(acb_t res, const acb_t n, const acb_t m, const acb_t z, int type, long prec)
+    void acb_hypgeom_legendre_p(acb_t res, const acb_t n, const acb_t m, const acb_t z, int type, slong prec)
     # Sets *res* to the associated Legendre function of the first kind
     # evaluated for degree *n*, order *m*, and argument *z*.
     # When *m* is zero, this reduces to the Legendre polynomial `P_n(z)`.
@@ -833,7 +833,7 @@ cdef extern from "flint_wrap.h":
     # is computed. Type 0 and type 1 respectively correspond to
     # type 2 and type 3 in *Mathematica* and *mpmath*.
 
-    void acb_hypgeom_legendre_q(acb_t res, const acb_t n, const acb_t m, const acb_t z, int type, long prec)
+    void acb_hypgeom_legendre_q(acb_t res, const acb_t n, const acb_t m, const acb_t z, int type, slong prec)
     # Sets *res* to the associated Legendre function of the second kind
     # evaluated for degree *n*, order *m*, and argument *z*.
     # When *m* is zero, this reduces to the Legendre function `Q_n(z)`.
@@ -860,11 +860,11 @@ cdef extern from "flint_wrap.h":
     # .. [WQ3c] http://functions.wolfram.com/07.12.26.0003.01
     # .. [WQ3d] http://functions.wolfram.com/07.12.26.0088.01
 
-    void acb_hypgeom_legendre_p_uiui_rec(acb_t res, unsigned long n, unsigned long m, const acb_t z, long prec)
+    void acb_hypgeom_legendre_p_uiui_rec(acb_t res, ulong n, ulong m, const acb_t z, slong prec)
     # For nonnegative integer *n* and *m*, uses recurrence relations to evaluate
     # `(1-z^2)^{-m/2} P_n^m(z)` which is a polynomial in *z*.
 
-    void acb_hypgeom_spherical_y(acb_t res, long n, long m, const acb_t theta, const acb_t phi, long prec)
+    void acb_hypgeom_spherical_y(acb_t res, slong n, slong m, const acb_t theta, const acb_t phi, slong prec)
     # Computes the spherical harmonic of degree *n*, order *m*,
     # latitude angle *theta*, and longitude angle *phi*, normalized
     # such that
@@ -874,15 +874,15 @@ cdef extern from "flint_wrap.h":
     # This function is a polynomial in `\cos(\theta)` and `\sin(\theta)`.
     # We evaluate it using :func:`acb_hypgeom_legendre_p_uiui_rec`.
 
-    void acb_hypgeom_dilog_zero_taylor(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_dilog_zero_taylor(acb_t res, const acb_t z, slong prec)
     # Computes the dilogarithm for *z* close to 0 using the hypergeometric series
     # (effective only when `|z| \ll 1`).
 
-    void acb_hypgeom_dilog_zero(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_dilog_zero(acb_t res, const acb_t z, slong prec)
     # Computes the dilogarithm for *z* close to 0, using the bit-burst algorithm
     # instead of the hypergeometric series directly at very high precision.
 
-    void acb_hypgeom_dilog_transform(acb_t res, const acb_t z, int algorithm, long prec)
+    void acb_hypgeom_dilog_transform(acb_t res, const acb_t z, int algorithm, slong prec)
     # Computes the dilogarithm by applying one of the transformations
     # `1/z`, `1-z`, `z/(z-1)`, `1/(1-z)`, indexed by *algorithm* from 1 to 4,
     # and calling :func:`acb_hypgeom_dilog_zero` with the reduced variable.
@@ -891,7 +891,7 @@ cdef extern from "flint_wrap.h":
     # chosen according to the midpoint of *z*)
     # and computes the dilogarithm by the bit-burst method.
 
-    void acb_hypgeom_dilog_continuation(acb_t res, const acb_t a, const acb_t z, long prec)
+    void acb_hypgeom_dilog_continuation(acb_t res, const acb_t a, const acb_t z, slong prec)
     # Computes `\operatorname{Li}_2(z) - \operatorname{Li}_2(a)` using
     # Taylor expansion at *a*. Binary splitting is used. Both *a* and *z*
     # should be well isolated from the points 0 and 1, except that *a* may
@@ -899,10 +899,10 @@ cdef extern from "flint_wrap.h":
     # cut, this method provides continuous analytic continuation instead of
     # computing the principal branch.
 
-    void acb_hypgeom_dilog_bitburst(acb_t res, acb_t z0, const acb_t z, long prec)
+    void acb_hypgeom_dilog_bitburst(acb_t res, acb_t z0, const acb_t z, slong prec)
     # Sets *z0* to a point with short bit expansion close to *z* and sets
     # *res* to `\operatorname{Li}_2(z) - \operatorname{Li}_2(z_0)`, computed
     # using the bit-burst algorithm.
 
-    void acb_hypgeom_dilog(acb_t res, const acb_t z, long prec)
+    void acb_hypgeom_dilog(acb_t res, const acb_t z, slong prec)
     # Computes the dilogarithm using a default algorithm choice.

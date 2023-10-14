@@ -15,11 +15,11 @@ cdef extern from "flint_wrap.h":
     double d_randtest(flint_rand_t state)
     # Returns a random number in the interval `[0.5, 1)`.
 
-    double d_randtest_signed(flint_rand_t state, long minexp, long maxexp)
+    double d_randtest_signed(flint_rand_t state, slong minexp, slong maxexp)
     # Returns a random signed number with exponent between ``minexp`` and
     # ``maxexp`` or zero.
 
-    double d_randtest_special(flint_rand_t state, long minexp, long maxexp)
+    double d_randtest_special(flint_rand_t state, slong minexp, slong maxexp)
     # Returns a random signed number with exponent between ``minexp`` and
     # ``maxexp``, zero, ``D_NAN`` or `\pm`\ ``D_INF``.
 

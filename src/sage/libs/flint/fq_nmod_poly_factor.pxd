@@ -20,11 +20,11 @@ cdef extern from "flint_wrap.h":
     void fq_nmod_poly_factor_clear(fq_nmod_poly_factor_t fac, const fq_nmod_ctx_t ctx)
     # Frees all memory associated with ``fac``.
 
-    void fq_nmod_poly_factor_realloc(fq_nmod_poly_factor_t fac, long alloc, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_factor_realloc(fq_nmod_poly_factor_t fac, slong alloc, const fq_nmod_ctx_t ctx)
     # Reallocates the factor structure to provide space for
     # precisely ``alloc`` factors.
 
-    void fq_nmod_poly_factor_fit_length(fq_nmod_poly_factor_t fac, long len, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_factor_fit_length(fq_nmod_poly_factor_t fac, slong len, const fq_nmod_ctx_t ctx)
     # Ensures that the factor structure has space for at least
     # ``len`` factors.  This function takes care of the case of
     # repeated calls by always at least doubling the number of factors
@@ -39,7 +39,7 @@ cdef extern from "flint_wrap.h":
     void fq_nmod_poly_factor_print(const fq_nmod_poly_factor_t fac, const fq_nmod_ctx_t ctx)
     # Prints the entries of ``fac`` to standard output.
 
-    void fq_nmod_poly_factor_insert(fq_nmod_poly_factor_t fac, const fq_nmod_poly_t poly, long exp, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_factor_insert(fq_nmod_poly_factor_t fac, const fq_nmod_poly_t poly, slong exp, const fq_nmod_ctx_t ctx)
     # Inserts the factor ``poly`` with multiplicity ``exp`` into
     # the factorisation ``fac``.
     # If ``fac`` already contains ``poly``, then ``exp`` simply
@@ -51,10 +51,10 @@ cdef extern from "flint_wrap.h":
     # repeatedly with the individual factors of ``fac``.
     # Does not support aliasing between ``res`` and ``fac``.
 
-    void fq_nmod_poly_factor_pow(fq_nmod_poly_factor_t fac, long exp, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_factor_pow(fq_nmod_poly_factor_t fac, slong exp, const fq_nmod_ctx_t ctx)
     # Raises ``fac`` to the power ``exp``.
 
-    unsigned long fq_nmod_poly_remove(fq_nmod_poly_t f, const fq_nmod_poly_t p, const fq_nmod_ctx_t ctx)
+    ulong fq_nmod_poly_remove(fq_nmod_poly_t f, const fq_nmod_poly_t p, const fq_nmod_ctx_t ctx)
     # Removes the highest possible power of ``p`` from ``f`` and
     # returns the exponent.
 
@@ -69,7 +69,7 @@ cdef extern from "flint_wrap.h":
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses Ben-Or's irreducibility test.
 
-    int _fq_nmod_poly_is_squarefree(const fq_nmod_struct * f, long len, const fq_nmod_ctx_t ctx)
+    int _fq_nmod_poly_is_squarefree(const fq_nmod_struct * f, slong len, const fq_nmod_ctx_t ctx)
     # Returns 1 if ``(f, len)`` is squarefree, and 0 otherwise. As a
     # special case, the zero polynomial is not considered squarefree.
     # There are no restrictions on the length.
@@ -78,14 +78,14 @@ cdef extern from "flint_wrap.h":
     # Returns 1 if ``f`` is squarefree, and 0 otherwise. As a special
     # case, the zero polynomial is not considered squarefree.
 
-    int fq_nmod_poly_factor_equal_deg_prob(fq_nmod_poly_t factor, flint_rand_t state, const fq_nmod_poly_t pol, long d, const fq_nmod_ctx_t ctx)
+    int fq_nmod_poly_factor_equal_deg_prob(fq_nmod_poly_t factor, flint_rand_t state, const fq_nmod_poly_t pol, slong d, const fq_nmod_ctx_t ctx)
     # Probabilistic equal degree factorisation of ``pol`` into
     # irreducible factors of degree ``d``. If it passes, a factor is
     # placed in factor and 1 is returned, otherwise 0 is returned and
     # the value of factor is undetermined.
     # Requires that ``pol`` be monic, non-constant and squarefree.
 
-    void fq_nmod_poly_factor_equal_deg(fq_nmod_poly_factor_t factors, const fq_nmod_poly_t pol, long d, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_factor_equal_deg(fq_nmod_poly_factor_t factors, const fq_nmod_poly_t pol, slong d, const fq_nmod_ctx_t ctx)
     # Assuming ``pol`` is a product of irreducible factors all of
     # degree ``d``, finds all those factors and places them in
     # factors.  Requires that ``pol`` be monic, non-constant and
@@ -96,7 +96,7 @@ cdef extern from "flint_wrap.h":
     # linear factor of ``input`` and places it in ``linfactor``.
     # Requires that ``input`` be monic and non-constant.
 
-    void fq_nmod_poly_factor_distinct_deg(fq_nmod_poly_factor_t res, const fq_nmod_poly_t poly, long * const *degs, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_factor_distinct_deg(fq_nmod_poly_factor_t res, const fq_nmod_poly_t poly, slong * const *degs, const fq_nmod_ctx_t ctx)
     # Factorises a monic non-constant squarefree polynomial ``poly``
     # of degree `n` into factors `f[d]` such that for `1 \leq d \leq n`
     # `f[d]` is the product of the monic irreducible factors of
@@ -157,7 +157,7 @@ cdef extern from "flint_wrap.h":
     # performs a square-free factorisation, and finally runs
     # Kaltofen-Shoup on all the individual square-free factors.
 
-    void fq_nmod_poly_iterated_frobenius_preinv(fq_nmod_poly_t *rop, long n, const fq_nmod_poly_t v, const fq_nmod_poly_t vinv, const fq_nmod_ctx_t ctx)
+    void fq_nmod_poly_iterated_frobenius_preinv(fq_nmod_poly_t *rop, slong n, const fq_nmod_poly_t v, const fq_nmod_poly_t vinv, const fq_nmod_ctx_t ctx)
     # Sets ``rop[i]`` to be `x^{q^i} \bmod v` for `0 \le i < n`.
     # It is required that ``vinv`` is the inverse of the reverse of
     # ``v`` mod ``x^lenv``.

@@ -19,13 +19,13 @@ cdef extern from "flint_wrap.h":
     void fexpr_clear(fexpr_t expr)
     # Clears *expr*, freeing its allocated memory.
 
-    fexpr_ptr _fexpr_vec_init(long len)
+    fexpr_ptr _fexpr_vec_init(slong len)
     # Returns a heap-allocated vector of *len* initialized expressions.
 
-    void _fexpr_vec_clear(fexpr_ptr vec, long len)
+    void _fexpr_vec_clear(fexpr_ptr vec, slong len)
     # Clears the *len* expressions in *vec* and frees *vec* itself.
 
-    void fexpr_fit_size(fexpr_t expr, long size)
+    void fexpr_fit_size(fexpr_t expr, slong size)
     # Ensures that *expr* has room for *size* words.
 
     void fexpr_set(fexpr_t res, const fexpr_t expr)
@@ -34,24 +34,24 @@ cdef extern from "flint_wrap.h":
     void fexpr_swap(fexpr_t a, fexpr_t b)
     # Swaps *a* and *b* efficiently.
 
-    long fexpr_depth(const fexpr_t expr)
+    slong fexpr_depth(const fexpr_t expr)
     # Returns the depth of *expr* as a symbolic expression tree.
 
-    long fexpr_num_leaves(const fexpr_t expr)
+    slong fexpr_num_leaves(const fexpr_t expr)
     # Returns the number of leaves (atoms, counted with repetition)
     # in the expression *expr*.
 
-    long fexpr_size(const fexpr_t expr)
+    slong fexpr_size(const fexpr_t expr)
     # Returns the number of words in the internal representation
     # of *expr*.
 
-    long fexpr_size_bytes(const fexpr_t expr)
+    slong fexpr_size_bytes(const fexpr_t expr)
     # Returns the number of bytes in the internal representation
     # of *expr*. The count excludes the size of the structure itself.
     # Add ``sizeof(fexpr_struct)`` to get the size of the object as a
     # whole.
 
-    long fexpr_allocated_bytes(const fexpr_t expr)
+    slong fexpr_allocated_bytes(const fexpr_t expr)
     # Returns the number of allocated bytes in the internal
     # representation of *expr*. The count excludes the size of the
     # structure itself. Add ``sizeof(fexpr_struct)`` to get the size of
@@ -60,12 +60,12 @@ cdef extern from "flint_wrap.h":
     int fexpr_equal(const fexpr_t a, const fexpr_t b)
     # Checks if *a* and *b* are exactly equal as expressions.
 
-    int fexpr_equal_si(const fexpr_t expr, long c)
+    int fexpr_equal_si(const fexpr_t expr, slong c)
 
-    int fexpr_equal_ui(const fexpr_t expr, unsigned long c)
+    int fexpr_equal_ui(const fexpr_t expr, ulong c)
     # Checks if *expr* is an atomic integer exactly equal to *c*.
 
-    unsigned long fexpr_hash(const fexpr_t expr)
+    ulong fexpr_hash(const fexpr_t expr)
     # Returns a hash of the expression *expr*.
 
     int fexpr_cmp_fast(const fexpr_t a, const fexpr_t b)
@@ -95,8 +95,8 @@ cdef extern from "flint_wrap.h":
     int fexpr_is_neg_integer(const fexpr_t expr)
     # Returns whether *expr* is any negative atomic integer.
 
-    void fexpr_set_si(fexpr_t res, long c)
-    void fexpr_set_ui(fexpr_t res, unsigned long c)
+    void fexpr_set_si(fexpr_t res, slong c)
+    void fexpr_set_ui(fexpr_t res, ulong c)
     void fexpr_set_fmpz(fexpr_t res, const fmpz_t c)
     # Sets *res* to the atomic integer *c*.
 
@@ -104,11 +104,11 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to the atomic integer in *expr*. This aborts
     # if *expr* is not an atomic integer.
 
-    void fexpr_set_symbol_builtin(fexpr_t res, long id)
+    void fexpr_set_symbol_builtin(fexpr_t res, slong id)
     # Sets *res* to the builtin symbol with internal index *id*
     # (see :ref:`fexpr-builtin`).
 
-    int fexpr_is_builtin_symbol(const fexpr_t expr, long id)
+    int fexpr_is_builtin_symbol(const fexpr_t expr, slong id)
     # Returns whether *expr* is the builtin symbol with index *id*
     # (see :ref:`fexpr-builtin`).
 
@@ -143,19 +143,19 @@ cdef extern from "flint_wrap.h":
     # Warning: string literals appearing in expressions
     # are currently not escaped.
 
-    void fexpr_write_latex(calcium_stream_t stream, const fexpr_t expr, unsigned long flags)
+    void fexpr_write_latex(calcium_stream_t stream, const fexpr_t expr, ulong flags)
     # Writes the LaTeX representation of *expr* to *stream*.
 
-    void fexpr_print_latex(const fexpr_t expr, unsigned long flags)
+    void fexpr_print_latex(const fexpr_t expr, ulong flags)
     # Prints the LaTeX representation of *expr* to standard output.
 
-    char * fexpr_get_str_latex(const fexpr_t expr, unsigned long flags)
+    char * fexpr_get_str_latex(const fexpr_t expr, ulong flags)
     # Returns a string of the LaTeX representation of *expr*. The string
     # must be freed with :func:`flint_free`.
     # Warning: string literals appearing in expressions
     # are currently not escaped.
 
-    long fexpr_nargs(const fexpr_t expr)
+    slong fexpr_nargs(const fexpr_t expr)
     # Returns the number of arguments *n* in the function call
     # `f(e_1,\ldots,e_n)` represented
     # by *expr*. If *expr* is an atom, returns -1.
@@ -171,13 +171,13 @@ cdef extern from "flint_wrap.h":
     # cleared after use, and *expr* must not be modified or cleared
     # as long as *view* is in use.
 
-    void fexpr_arg(fexpr_t res, const fexpr_t expr, long i)
+    void fexpr_arg(fexpr_t res, const fexpr_t expr, slong i)
     # Assuming that *expr* represents a function call
     # `f(e_1,\ldots,e_n)`, sets *res* to the argument `e_{i+1}`.
     # Note that indexing starts from 0.
     # The index must be in bounds, with `0 \le i < n`.
 
-    void fexpr_view_arg(fexpr_t view, const fexpr_t expr, long i)
+    void fexpr_view_arg(fexpr_t view, const fexpr_t expr, slong i)
     # As :func:`fexpr_arg`, but sets *view* to a shallow view
     # instead of copying the expression.
     # The variable *view* must not be initialized before use or
@@ -193,7 +193,7 @@ cdef extern from "flint_wrap.h":
     # This function can also be called when *view* refers to the function *f*,
     # in which case it will make *view* point to `e_1`.
 
-    int fexpr_is_builtin_call(const fexpr_t expr, long id)
+    int fexpr_is_builtin_call(const fexpr_t expr, slong id)
     # Returns whether *expr* has the form `f(\ldots)` where *f* is
     # a builtin function defined by *id* (see :ref:`fexpr-builtin`).
 
@@ -206,14 +206,14 @@ cdef extern from "flint_wrap.h":
     void fexpr_call2(fexpr_t res, const fexpr_t f, const fexpr_t x1, const fexpr_t x2)
     void fexpr_call3(fexpr_t res, const fexpr_t f, const fexpr_t x1, const fexpr_t x2, const fexpr_t x3)
     void fexpr_call4(fexpr_t res, const fexpr_t f, const fexpr_t x1, const fexpr_t x2, const fexpr_t x3, const fexpr_t x4)
-    void fexpr_call_vec(fexpr_t res, const fexpr_t f, fexpr_srcptr args, long len)
+    void fexpr_call_vec(fexpr_t res, const fexpr_t f, fexpr_srcptr args, slong len)
     # Creates the function call `f(x_1,\ldots,x_n)`.
     # The *vec* version takes the arguments as an array *args*
     # and *n* is given by *len*.
     # Warning: aliasing between inputs and outputs is not implemented.
 
-    void fexpr_call_builtin1(fexpr_t res, long f, const fexpr_t x1)
-    void fexpr_call_builtin2(fexpr_t res, long f, const fexpr_t x1, const fexpr_t x2)
+    void fexpr_call_builtin1(fexpr_t res, slong f, const fexpr_t x1)
+    void fexpr_call_builtin2(fexpr_t res, slong f, const fexpr_t x1, const fexpr_t x2)
     # Creates the function call `f(x_1,\ldots,x_n)`, where *f* defines
     # a builtin symbol.
 
@@ -311,7 +311,7 @@ cdef extern from "flint_wrap.h":
     # If *NULL* is passed for *vars*, a default choice of symbols
     # is used.
 
-    int fexpr_expanded_normal_form(fexpr_t res, const fexpr_t expr, unsigned long flags)
+    int fexpr_expanded_normal_form(fexpr_t res, const fexpr_t expr, ulong flags)
     # Sets *res* to *expr* converted to expanded normal form viewed
     # as a formal rational function with its non-arithmetic subexpressions
     # as terminal nodes.
@@ -321,7 +321,7 @@ cdef extern from "flint_wrap.h":
     # expression with :func:`fexpr_set_fmpz_mpoly_q`.
     # Optional *flags* are reserved for future use.
 
-    void fexpr_vec_init(fexpr_vec_t vec, long len)
+    void fexpr_vec_init(fexpr_vec_t vec, slong len)
     # Initializes *vec* to a vector of length *len*. All entries
     # are set to the atomic integer 0.
 
@@ -334,7 +334,7 @@ cdef extern from "flint_wrap.h":
     void fexpr_vec_swap(fexpr_vec_t x, fexpr_vec_t y)
     # Swaps *x* and *y* efficiently.
 
-    void fexpr_vec_fit_length(fexpr_vec_t vec, long len)
+    void fexpr_vec_fit_length(fexpr_vec_t vec, slong len)
     # Ensures that *vec* has space for *len* entries.
 
     void fexpr_vec_set(fexpr_vec_t dest, const fexpr_vec_t src)
@@ -343,14 +343,14 @@ cdef extern from "flint_wrap.h":
     void fexpr_vec_append(fexpr_vec_t vec, const fexpr_t expr)
     # Appends *expr* to the end of the vector *vec*.
 
-    long fexpr_vec_insert_unique(fexpr_vec_t vec, const fexpr_t expr)
+    slong fexpr_vec_insert_unique(fexpr_vec_t vec, const fexpr_t expr)
     # Inserts *expr* without duplication into vec, returning its
     # position. If this expression already exists, *vec* is unchanged.
     # If this expression does not exist in *vec*, it is appended.
 
-    void fexpr_vec_set_length(fexpr_vec_t vec, long len)
+    void fexpr_vec_set_length(fexpr_vec_t vec, slong len)
     # Sets the length of *vec* to *len*, truncating or zero-extending as needed.
 
-    void _fexpr_vec_sort_fast(fexpr_ptr vec, long len)
+    void _fexpr_vec_sort_fast(fexpr_ptr vec, slong len)
     # Sorts the *len* entries in *vec* using
     # the comparison function :func:`fexpr_cmp_fast`.

@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    int acb_calc_integrate(acb_t res, acb_calc_func_t func, void * param, const acb_t a, const acb_t b, long rel_goal, const mag_t abs_tol, const acb_calc_integrate_opt_t options, long prec)
+    int acb_calc_integrate(acb_t res, acb_calc_func_t func, void * param, const acb_t a, const acb_t b, slong rel_goal, const mag_t abs_tol, const acb_calc_integrate_opt_t options, slong prec)
     # Computes a rigorous enclosure of the integral
     # .. math ::
     # I = \int_a^b f(t) dt
@@ -91,7 +91,7 @@ cdef extern from "flint_wrap.h":
     # Initializes *options* for use, setting all fields to 0 indicating
     # default values.
 
-    int acb_calc_integrate_gl_auto_deg(acb_t res, long * num_eval, acb_calc_func_t func, void * param, const acb_t a, const acb_t b, const mag_t tol, long deg_limit, int flags, long prec)
+    int acb_calc_integrate_gl_auto_deg(acb_t res, slong * num_eval, acb_calc_func_t func, void * param, const acb_t a, const acb_t b, const mag_t tol, slong deg_limit, int flags, slong prec)
     # Attempts to compute `I = \int_a^b f(t) dt` using a single application
     # of Gauss-Legendre quadrature with automatic determination of the
     # quadrature degree so that the error is smaller than *tol*.
@@ -119,7 +119,7 @@ cdef extern from "flint_wrap.h":
     # since this either means that we have hit a singularity or a branch cut or
     # that overestimation in the evaluation of `f` is becoming too severe.
 
-    void acb_calc_cauchy_bound(arb_t bound, acb_calc_func_t func, void * param, const acb_t x, const arb_t radius, long maxdepth, long prec)
+    void acb_calc_cauchy_bound(arb_t bound, acb_calc_func_t func, void * param, const acb_t x, const arb_t radius, slong maxdepth, slong prec)
     # Sets *bound* to a ball containing the value of the integral
     # .. math ::
     # C(x,r) = \frac{1}{2 \pi r} \oint_{|z-x| = r} |f(z)| dz
@@ -133,7 +133,7 @@ cdef extern from "flint_wrap.h":
     # repeatedly subdivides the whole integration range instead of
     # performing adaptive subdivisions.
 
-    int acb_calc_integrate_taylor(acb_t res, acb_calc_func_t func, void * param, const acb_t a, const acb_t b, const arf_t inner_radius, const arf_t outer_radius, long accuracy_goal, long prec)
+    int acb_calc_integrate_taylor(acb_t res, acb_calc_func_t func, void * param, const acb_t a, const acb_t b, const arf_t inner_radius, const arf_t outer_radius, slong accuracy_goal, slong prec)
     # Computes the integral
     # .. math ::
     # I = \int_a^b f(t) dt

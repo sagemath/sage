@@ -18,21 +18,21 @@ cdef extern from "flint_wrap.h":
     # must be made after finishing with the ``fq_default_poly_t`` to free the
     # memory used by the polynomial.
 
-    void fq_default_poly_init2(fq_default_poly_t poly, long alloc, const fq_default_ctx_t ctx)
+    void fq_default_poly_init2(fq_default_poly_t poly, slong alloc, const fq_default_ctx_t ctx)
     # Initialises ``poly`` with space for at least ``alloc``
     # coefficients and sets the length to zero.  The allocated
     # coefficients are all set to zero.  A corresponding call to
     # :func:`fq_default_poly_clear` must be made after finishing with the
     # ``fq_default_poly_t`` to free the memory used by the polynomial.
 
-    void fq_default_poly_realloc(fq_default_poly_t poly, long alloc, const fq_default_ctx_t ctx)
+    void fq_default_poly_realloc(fq_default_poly_t poly, slong alloc, const fq_default_ctx_t ctx)
     # Reallocates the given polynomial to have space for ``alloc``
     # coefficients.  If ``alloc`` is zero the polynomial is cleared
     # and then reinitialised.  If the current length is greater than
     # ``alloc`` the polynomial is first truncated to length
     # ``alloc``.
 
-    void fq_default_poly_fit_length(fq_default_poly_t poly, long len, const fq_default_ctx_t ctx)
+    void fq_default_poly_fit_length(fq_default_poly_t poly, slong len, const fq_default_ctx_t ctx)
     # If ``len`` is greater than the number of coefficients currently
     # allocated, then the polynomial is reallocated to have space for at
     # least ``len`` coefficients.  No data is lost when calling this
@@ -46,41 +46,41 @@ cdef extern from "flint_wrap.h":
     # Clears the given polynomial, releasing any memory used.  It must
     # be reinitialised in order to be used again.
 
-    void _fq_default_poly_set_length(fq_default_poly_t poly, long len, const fq_default_ctx_t ctx)
+    void _fq_default_poly_set_length(fq_default_poly_t poly, slong len, const fq_default_ctx_t ctx)
     # Set the length of ``poly`` to ``len``.
 
-    void fq_default_poly_truncate(fq_default_poly_t poly, long newlen, const fq_default_ctx_t ctx)
+    void fq_default_poly_truncate(fq_default_poly_t poly, slong newlen, const fq_default_ctx_t ctx)
     # Truncates the polynomial to length at most `n`.
 
-    void fq_default_poly_set_trunc(fq_default_poly_t poly1, fq_default_poly_t poly2, long newlen, const fq_default_ctx_t ctx)
+    void fq_default_poly_set_trunc(fq_default_poly_t poly1, fq_default_poly_t poly2, slong newlen, const fq_default_ctx_t ctx)
     # Sets ``poly1`` to ``poly2`` truncated to length `n`.
 
-    void fq_default_poly_reverse(fq_default_poly_t output, const fq_default_poly_t input, long m, const fq_default_ctx_t ctx)
+    void fq_default_poly_reverse(fq_default_poly_t output, const fq_default_poly_t input, slong m, const fq_default_ctx_t ctx)
     # Sets ``output`` to the reverse of ``input``, thinking of it
     # as a polynomial of length ``m``, notionally zero-padded if
     # necessary).  The length ``m`` must be non-negative, but there
     # are no other restrictions. The output polynomial will be set to
     # length ``m`` and then normalised.
 
-    long fq_default_poly_degree(const fq_default_poly_t poly, const fq_default_ctx_t ctx)
+    slong fq_default_poly_degree(const fq_default_poly_t poly, const fq_default_ctx_t ctx)
     # Returns the degree of the polynomial ``poly``.
 
-    long fq_default_poly_length(const fq_default_poly_t poly, const fq_default_ctx_t ctx)
+    slong fq_default_poly_length(const fq_default_poly_t poly, const fq_default_ctx_t ctx)
     # Returns the length of the polynomial ``poly``.
 
-    void fq_default_poly_randtest(fq_default_poly_t f, flint_rand_t state, long len, const fq_default_ctx_t ctx)
+    void fq_default_poly_randtest(fq_default_poly_t f, flint_rand_t state, slong len, const fq_default_ctx_t ctx)
     # Sets `f` to a random polynomial of length at most ``len``
     # with entries in the field described by ``ctx``.
 
-    void fq_default_poly_randtest_not_zero(fq_default_poly_t f, flint_rand_t state, long len, const fq_default_ctx_t ctx)
+    void fq_default_poly_randtest_not_zero(fq_default_poly_t f, flint_rand_t state, slong len, const fq_default_ctx_t ctx)
     # Same as ``fq_default_poly_randtest`` but guarantees that the polynomial
     # is not zero.
 
-    void fq_default_poly_randtest_monic(fq_default_poly_t f, flint_rand_t state, long len, const fq_default_ctx_t ctx)
+    void fq_default_poly_randtest_monic(fq_default_poly_t f, flint_rand_t state, slong len, const fq_default_ctx_t ctx)
     # Sets `f` to a random monic polynomial of length ``len`` with
     # entries in the field described by ``ctx``.
 
-    void fq_default_poly_randtest_irreducible(fq_default_poly_t f, flint_rand_t state, long len, const fq_default_ctx_t ctx)
+    void fq_default_poly_randtest_irreducible(fq_default_poly_t f, flint_rand_t state, slong len, const fq_default_ctx_t ctx)
     # Sets `f` to a random monic, irreducible polynomial of length
     # ``len`` with entries in the field described by ``ctx``.
 
@@ -114,13 +114,13 @@ cdef extern from "flint_wrap.h":
     void fq_default_poly_set_fmpz_poly(fq_default_poly_t rop, const fmpz_poly_t op, const fq_default_ctx_t ctx)
     # Sets the polynomial ``rop`` to the polynomial ``op``.
 
-    void fq_default_poly_get_coeff(fq_default_t x, const fq_default_poly_t poly, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_get_coeff(fq_default_t x, const fq_default_poly_t poly, slong n, const fq_default_ctx_t ctx)
     # Sets `x` to the coefficient of `X^n` in ``poly``.
 
-    void fq_default_poly_set_coeff(fq_default_poly_t poly, long n, const fq_default_t x, const fq_default_ctx_t ctx)
+    void fq_default_poly_set_coeff(fq_default_poly_t poly, slong n, const fq_default_t x, const fq_default_ctx_t ctx)
     # Sets the coefficient of `X^n` in ``poly`` to `x`.
 
-    void fq_default_poly_set_coeff_fmpz(fq_default_poly_t poly, long n, const fmpz_t x, const fq_default_ctx_t ctx)
+    void fq_default_poly_set_coeff_fmpz(fq_default_poly_t poly, slong n, const fmpz_t x, const fq_default_ctx_t ctx)
     # Sets the coefficient of `X^n` in the polynomial to `x`,
     # assuming `n \geq 0`.
 
@@ -128,7 +128,7 @@ cdef extern from "flint_wrap.h":
     # Returns nonzero if the two polynomials ``poly1`` and ``poly2``
     # are equal, otherwise returns zero.
 
-    int fq_default_poly_equal_trunc(const fq_default_poly_t poly1, const fq_default_poly_t poly2, long n, const fq_default_ctx_t ctx)
+    int fq_default_poly_equal_trunc(const fq_default_poly_t poly1, const fq_default_poly_t poly2, slong n, const fq_default_ctx_t ctx)
     # Notionally truncate ``poly1`` and ``poly2`` to length `n` and
     # return nonzero if they are equal, otherwise return zero.
 
@@ -154,17 +154,17 @@ cdef extern from "flint_wrap.h":
     void fq_default_poly_add(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, const fq_default_ctx_t ctx)
     # Sets ``res`` to the sum of ``poly1`` and ``poly2``.
 
-    void fq_default_poly_add_si(fq_default_poly_t res, const fq_default_poly_t poly1, long c, const fq_default_ctx_t ctx)
+    void fq_default_poly_add_si(fq_default_poly_t res, const fq_default_poly_t poly1, slong c, const fq_default_ctx_t ctx)
     # Sets ``res`` to the sum of ``poly1`` and ``c``.
 
-    void fq_default_poly_add_series(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_add_series(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, slong n, const fq_default_ctx_t ctx)
     # Notionally truncate ``poly1`` and ``poly2`` to length ``n`` and set
     # ``res`` to the sum.
 
     void fq_default_poly_sub(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, const fq_default_ctx_t ctx)
     # Sets ``res`` to the difference of ``poly1`` and ``poly2``.
 
-    void fq_default_poly_sub_series(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_sub_series(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, slong n, const fq_default_ctx_t ctx)
     # Notionally truncate ``poly1`` and ``poly2`` to length ``n`` and set
     # ``res`` to the difference.
 
@@ -191,11 +191,11 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the product of ``op1`` and ``op2``,
     # choosing an appropriate algorithm.
 
-    void fq_default_poly_mullow(fq_default_poly_t rop, const fq_default_poly_t op1, const fq_default_poly_t op2, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_mullow(fq_default_poly_t rop, const fq_default_poly_t op1, const fq_default_poly_t op2, slong n, const fq_default_ctx_t ctx)
     # Sets ``rop`` to the lowest `n` coefficients of the product of
     # ``op1`` and ``op2``.
 
-    void fq_default_poly_mulhigh(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, long start, const fq_default_ctx_t ctx)
+    void fq_default_poly_mulhigh(fq_default_poly_t res, const fq_default_poly_t poly1, const fq_default_poly_t poly2, slong start, const fq_default_ctx_t ctx)
     # Computes the product of ``poly1`` and ``poly2`` and writes the
     # coefficients from ``start`` onwards into the high coefficients of
     # ``res``, the remaining coefficients being arbitrary but reduced.
@@ -208,11 +208,11 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the square of ``op``,
     # choosing an appropriate algorithm.
 
-    void fq_default_poly_pow(fq_default_poly_t rop, const fq_default_poly_t op, unsigned long e, const fq_default_ctx_t ctx)
+    void fq_default_poly_pow(fq_default_poly_t rop, const fq_default_poly_t op, ulong e, const fq_default_ctx_t ctx)
     # Computes ``rop = op^e``.  If `e` is zero, returns one,
     # so that in particular ``0^0 = 1``.
 
-    void fq_default_poly_powmod_ui_binexp(fq_default_poly_t res, const fq_default_poly_t poly, unsigned long e, const fq_default_poly_t f, const fq_default_ctx_t ctx)
+    void fq_default_poly_powmod_ui_binexp(fq_default_poly_t res, const fq_default_poly_t poly, ulong e, const fq_default_poly_t f, const fq_default_ctx_t ctx)
     # Sets ``res`` to ``poly`` raised to the power ``e`` modulo
     # ``f``, using binary exponentiation. We require ``e >= 0``.
 
@@ -220,21 +220,21 @@ cdef extern from "flint_wrap.h":
     # Sets ``res`` to ``poly`` raised to the power ``e`` modulo
     # ``f``, using binary exponentiation. We require ``e >= 0``.
 
-    void fq_default_poly_pow_trunc(fq_default_poly_t res, const fq_default_poly_t poly, unsigned long e, long trunc, const fq_default_ctx_t ctx)
+    void fq_default_poly_pow_trunc(fq_default_poly_t res, const fq_default_poly_t poly, ulong e, slong trunc, const fq_default_ctx_t ctx)
     # Sets ``res`` to the low ``trunc`` coefficients of ``poly``
     # to the power ``e``. This is equivalent to doing a powering
     # followed by a truncation.
 
-    void fq_default_poly_shift_left(fq_default_poly_t rop, const fq_default_poly_t op, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_shift_left(fq_default_poly_t rop, const fq_default_poly_t op, slong n, const fq_default_ctx_t ctx)
     # Sets ``rop`` to ``op`` shifted left by `n` coeffs.  Zero
     # coefficients are inserted.
 
-    void fq_default_poly_shift_right(fq_default_poly_t rop, const fq_default_poly_t op, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_shift_right(fq_default_poly_t rop, const fq_default_poly_t op, slong n, const fq_default_ctx_t ctx)
     # Sets ``rop`` to ``op`` shifted right by `n` coefficients.
     # If `n` is equal to or greater than the current length of
     # ``op``, ``rop`` is set to the zero polynomial.
 
-    long fq_default_poly_hamming_weight(const fq_default_poly_t op, const fq_default_ctx_t ctx)
+    slong fq_default_poly_hamming_weight(const fq_default_poly_t op, const fq_default_ctx_t ctx)
     # Returns the number of non-zero entries in the polynomial ``op``.
 
     void fq_default_poly_divrem(fq_default_poly_t Q, fq_default_poly_t R, const fq_default_poly_t A, const fq_default_poly_t B, const fq_default_ctx_t ctx)
@@ -248,13 +248,13 @@ cdef extern from "flint_wrap.h":
     # Sets ``R`` to the remainder of the division of ``A`` by
     # ``B`` in the context described by ``ctx``.
 
-    void fq_default_poly_inv_series(fq_default_poly_t Qinv, const fq_default_poly_t Q, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_inv_series(fq_default_poly_t Qinv, const fq_default_poly_t Q, slong n, const fq_default_ctx_t ctx)
     # Given ``Q`` find ``Qinv`` such that ``Q * Qinv`` is
     # ``1`` modulo `x^n`. The constant coefficient of ``Q`` must
     # be invertible modulo the modulus of ``Q``. An exception is
     # raised if this is not the case or if ``n = 0``.
 
-    void fq_default_poly_div_series(fq_default_poly_t Q, const fq_default_poly_t A, const fq_default_poly_t B, long n, const fq_default_ctx_t ctx)
+    void fq_default_poly_div_series(fq_default_poly_t Q, const fq_default_poly_t A, const fq_default_poly_t B, slong n, const fq_default_ctx_t ctx)
     # Set `Q` to the quotient of the series `A` by `B`, thinking of the series as
     # though they were of length `n`. We assume that the bottom coefficient of
     # `B` is invertible.
@@ -285,11 +285,11 @@ cdef extern from "flint_wrap.h":
     void fq_default_poly_derivative(fq_default_poly_t rop, const fq_default_poly_t op, const fq_default_ctx_t ctx)
     # Sets ``rop`` to the derivative of ``op``.
 
-    void fq_default_poly_invsqrt_series(fq_default_poly_t g, const fq_default_poly_t h, long n, fq_default_ctx_t ctx)
+    void fq_default_poly_invsqrt_series(fq_default_poly_t g, const fq_default_poly_t h, slong n, fq_default_ctx_t ctx)
     # Set `g` to the series expansion of `1/\sqrt{h}` to order `O(x^n)`.
     # It is assumed that `h` has constant term 1.
 
-    void fq_default_poly_sqrt_series(fq_default_poly_t g, const fq_default_poly_t h, long n, fq_default_ctx_t ctx)
+    void fq_default_poly_sqrt_series(fq_default_poly_t g, const fq_default_poly_t h, slong n, fq_default_ctx_t ctx)
     # Set `g` to the series expansion of `\sqrt{h}` to order `O(x^n)`.
     # It is assumed that `h` has constant term 1.
 
@@ -343,16 +343,16 @@ cdef extern from "flint_wrap.h":
     # Returns a pretty representation of the polynomial ``poly`` using the
     # null-terminated string ``x`` as the variable name
 
-    void fq_default_poly_inflate(fq_default_poly_t result, const fq_default_poly_t input, unsigned long inflation, const fq_default_ctx_t ctx)
+    void fq_default_poly_inflate(fq_default_poly_t result, const fq_default_poly_t input, ulong inflation, const fq_default_ctx_t ctx)
     # Sets ``result`` to the inflated polynomial `p(x^n)` where
     # `p` is given by ``input`` and `n` is given by ``inflation``.
 
-    void fq_default_poly_deflate(fq_default_poly_t result, const fq_default_poly_t input, unsigned long deflation, const fq_default_ctx_t ctx)
+    void fq_default_poly_deflate(fq_default_poly_t result, const fq_default_poly_t input, ulong deflation, const fq_default_ctx_t ctx)
     # Sets ``result`` to the deflated polynomial `p(x^{1/n})` where
     # `p` is given by ``input`` and `n` is given by ``deflation``.
     # Requires `n > 0`.
 
-    unsigned long fq_default_poly_deflation(const fq_default_poly_t input, const fq_default_ctx_t ctx)
+    ulong fq_default_poly_deflation(const fq_default_poly_t input, const fq_default_ctx_t ctx)
     # Returns the largest integer by which ``input`` can be deflated.
     # As special cases, returns 0 if ``input`` is the zero polynomial
     # and 1 of ``input`` is a constant polynomial.

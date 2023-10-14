@@ -92,8 +92,8 @@ cdef extern from "flint_wrap.h":
     int arb_fpwrap_double_atanh(double * res, double x, int flags)
     int arb_fpwrap_cdouble_atanh(complex_double * res, complex_double x, int flags)
 
-    int arb_fpwrap_double_lambertw(double * res, double x, long branch, int flags)
-    int arb_fpwrap_cdouble_lambertw(complex_double * res, complex_double x, long branch, int flags)
+    int arb_fpwrap_double_lambertw(double * res, double x, slong branch, int flags)
+    int arb_fpwrap_cdouble_lambertw(complex_double * res, complex_double x, slong branch, int flags)
 
     int arb_fpwrap_double_rising(double * res, double x, double n, int flags)
     int arb_fpwrap_cdouble_rising(complex_double * res, complex_double x, complex_double n, int flags)
@@ -151,7 +151,7 @@ cdef extern from "flint_wrap.h":
 
     int arb_fpwrap_cdouble_hardy_z(complex_double * res, complex_double z, int flags)
 
-    int arb_fpwrap_cdouble_zeta_zero(complex_double * res, unsigned long n, int flags)
+    int arb_fpwrap_cdouble_zeta_zero(complex_double * res, ulong n, int flags)
 
     int arb_fpwrap_double_erf(double * res, double x, int flags)
     int arb_fpwrap_cdouble_erf(complex_double * res, complex_double x, int flags)
@@ -232,13 +232,13 @@ cdef extern from "flint_wrap.h":
     int arb_fpwrap_double_airy_bi_prime(double * res, double x, int flags)
     int arb_fpwrap_cdouble_airy_bi_prime(complex_double * res, complex_double x, int flags)
 
-    int arb_fpwrap_double_airy_ai_zero(double * res, unsigned long n, int flags)
+    int arb_fpwrap_double_airy_ai_zero(double * res, ulong n, int flags)
 
-    int arb_fpwrap_double_airy_ai_prime_zero(double * res, unsigned long n, int flags)
+    int arb_fpwrap_double_airy_ai_prime_zero(double * res, ulong n, int flags)
 
-    int arb_fpwrap_double_airy_bi_zero(double * res, unsigned long n, int flags)
+    int arb_fpwrap_double_airy_bi_zero(double * res, ulong n, int flags)
 
-    int arb_fpwrap_double_airy_bi_prime_zero(double * res, unsigned long n, int flags)
+    int arb_fpwrap_double_airy_bi_prime_zero(double * res, ulong n, int flags)
 
     int arb_fpwrap_double_coulomb_f(double * res, double l, double eta, double x, int flags)
     int arb_fpwrap_cdouble_coulomb_f(complex_double * res, complex_double l, complex_double eta, complex_double x, int flags)
@@ -273,12 +273,12 @@ cdef extern from "flint_wrap.h":
     int arb_fpwrap_double_legendre_q(double * res, double n, double m, double x, int type, int flags)
     int arb_fpwrap_cdouble_legendre_q(complex_double * res, complex_double n, complex_double m, complex_double x, int type, int flags)
 
-    int arb_fpwrap_double_legendre_root(double * res1, double * res2, unsigned long n, unsigned long k, int flags)
+    int arb_fpwrap_double_legendre_root(double * res1, double * res2, ulong n, ulong k, int flags)
     # Sets *res1* to the index *k* root of the Legendre polynomial `P_n(x)`,
     # and simultaneously sets *res2* to the corresponding weight for
     # Gauss-Legendre quadrature.
 
-    int arb_fpwrap_cdouble_spherical_y(complex_double * res, long n, long m, complex_double x1, complex_double x2, int flags)
+    int arb_fpwrap_cdouble_spherical_y(complex_double * res, slong n, slong m, complex_double x1, complex_double x2, int flags)
 
     int arb_fpwrap_double_hypgeom_0f1(double * res, double a, double x, int regularized, int flags)
     int arb_fpwrap_cdouble_hypgeom_0f1(complex_double * res, complex_double a, complex_double x, int regularized, int flags)
@@ -292,8 +292,8 @@ cdef extern from "flint_wrap.h":
     int arb_fpwrap_double_hypgeom_2f1(double * res, double a, double b, double c, double x, int regularized, int flags)
     int arb_fpwrap_cdouble_hypgeom_2f1(complex_double * res, complex_double a, complex_double b, complex_double c, complex_double x, int regularized, int flags)
 
-    int arb_fpwrap_double_hypgeom_pfq(double * res, const double * a, long p, const double * b, long q, double z, int regularized, int flags)
-    int arb_fpwrap_cdouble_hypgeom_pfq(complex_double * res, const complex_double * a, long p, const complex_double * b, long q, complex_double z, int regularized, int flags)
+    int arb_fpwrap_double_hypgeom_pfq(double * res, const double * a, slong p, const double * b, slong q, double z, int regularized, int flags)
+    int arb_fpwrap_cdouble_hypgeom_pfq(complex_double * res, const complex_double * a, slong p, const complex_double * b, slong q, complex_double z, int regularized, int flags)
 
     int arb_fpwrap_double_agm(double * res, double x, double y, int flags)
     int arb_fpwrap_cdouble_agm(complex_double * res, complex_double x, complex_double y, int flags)

@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void d_mat_init(d_mat_t mat, long rows, long cols)
+    void d_mat_init(d_mat_t mat, slong rows, slong cols)
     # Initialises a matrix with the given number of rows and columns for use.
 
     void d_mat_clear(d_mat_t mat)
@@ -30,16 +30,16 @@ cdef extern from "flint_wrap.h":
     # Swaps two matrices by swapping the individual entries rather than swapping
     # the contents of the structs.
 
-    double d_mat_entry(d_mat_t mat, long i, long j)
+    double d_mat_entry(d_mat_t mat, slong i, slong j)
     # Returns the entry of ``mat`` at row `i` and column `j`.
     # Both `i` and `j` must not exceed the dimensions of the matrix.
     # This function is implemented as a macro.
 
-    double d_mat_get_entry(const d_mat_t mat, long i, long j)
+    double d_mat_get_entry(const d_mat_t mat, slong i, slong j)
     # Returns the entry of ``mat`` at row `i` and column `j`.
     # Both `i` and `j` must not exceed the dimensions of the matrix.
 
-    double * d_mat_entry_ptr(const d_mat_t mat, long i, long j)
+    double * d_mat_entry_ptr(const d_mat_t mat, slong i, slong j)
     # Returns a pointer to the entry of ``mat`` at row `i` and column
     # `j`. Both `i` and `j` must not exceed the dimensions of the matrix.
 
@@ -51,7 +51,7 @@ cdef extern from "flint_wrap.h":
     # and zeroes elsewhere. If ``mat`` is nonsquare, it is set to the
     # truncation of a unit matrix.
 
-    void d_mat_randtest(d_mat_t mat, flint_rand_t state, long minexp, long maxexp)
+    void d_mat_randtest(d_mat_t mat, flint_rand_t state, slong minexp, slong maxexp)
     # Sets the entries of ``mat`` to random signed numbers with exponents
     # between ``minexp`` and ``maxexp`` or zero.
 

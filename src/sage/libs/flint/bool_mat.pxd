@@ -12,13 +12,13 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    int bool_mat_get_entry(const bool_mat_t mat, long i, long j)
+    int bool_mat_get_entry(const bool_mat_t mat, slong i, slong j)
     # Returns the entry of matrix *mat* at row *i* and column *j*.
 
-    void bool_mat_set_entry(bool_mat_t mat, long i, long j, int x)
+    void bool_mat_set_entry(bool_mat_t mat, slong i, slong j, int x)
     # Sets the entry of matrix *mat* at row *i* and column *j* to *x*.
 
-    void bool_mat_init(bool_mat_t mat, long r, long c)
+    void bool_mat_init(bool_mat_t mat, slong r, slong c)
     # Initializes the matrix, setting it to the zero matrix with *r* rows
     # and *c* columns.
 
@@ -110,7 +110,7 @@ cdef extern from "flint_wrap.h":
 
     void bool_mat_sqr(bool_mat_t B, const bool_mat_t A)
 
-    void bool_mat_pow_ui(bool_mat_t B, const bool_mat_t A, unsigned long exp)
+    void bool_mat_pow_ui(bool_mat_t B, const bool_mat_t A, ulong exp)
     # Sets *B* to *A* raised to the power *exp*.
     # Requires that *A* is a square matrix.
 
@@ -120,7 +120,7 @@ cdef extern from "flint_wrap.h":
     # The sum is in the boolean semiring, so this function returns nonzero iff
     # any entry on the diagonal of *mat* is nonzero.
 
-    long bool_mat_nilpotency_degree(const bool_mat_t A)
+    slong bool_mat_nilpotency_degree(const bool_mat_t A)
     # Returns the nilpotency degree of the `n \times n` matrix *A*.
     # It returns the smallest positive `k` such that `A^k = 0`.
     # If no such `k` exists then the function returns `-1` if `n` is positive,
@@ -130,7 +130,7 @@ cdef extern from "flint_wrap.h":
     # Sets *B* to the transitive closure `\sum_{k=1}^\infty A^k`.
     # The matrix *A* is required to be square.
 
-    long bool_mat_get_strongly_connected_components(long * p, const bool_mat_t A)
+    slong bool_mat_get_strongly_connected_components(slong * p, const bool_mat_t A)
     # Partitions the `n` row and column indices of the `n \times n` matrix *A*
     # according to the strongly connected components (SCC) of the graph
     # for which *A* is the adjacency matrix.
@@ -140,7 +140,7 @@ cdef extern from "flint_wrap.h":
     # The SCCs themselves can be considered as nodes in a directed acyclic
     # graph (DAG), and the SCCs are indexed in postorder with respect to that DAG.
 
-    long bool_mat_all_pairs_longest_walk(fmpz_mat_t B, const bool_mat_t A)
+    slong bool_mat_all_pairs_longest_walk(fmpz_mat_t B, const bool_mat_t A)
     # Sets `B_{ij}` to the length of the longest walk with endpoint vertices
     # `i` and `j` in the graph whose adjacency matrix is *A*.
     # The matrix *A* must be square.  Empty walks with zero length

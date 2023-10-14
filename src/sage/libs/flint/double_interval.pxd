@@ -19,7 +19,7 @@ cdef extern from "flint_wrap.h":
     di_t arb_get_di(const arb_t x)
     # Returns the ball *x* converted to a double-precision interval.
 
-    void arb_set_di(arb_t res, di_t x, long prec)
+    void arb_set_di(arb_t res, di_t x, slong prec)
     # Sets the ball *res* to the double-precision interval *x*,
     # rounded to *prec* bits.
 

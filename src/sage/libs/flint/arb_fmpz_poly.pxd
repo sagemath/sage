@@ -12,40 +12,40 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void _arb_fmpz_poly_evaluate_arb_horner(arb_t res, const fmpz * poly, long len, const arb_t x, long prec)
+    void _arb_fmpz_poly_evaluate_arb_horner(arb_t res, const fmpz * poly, slong len, const arb_t x, slong prec)
 
-    void arb_fmpz_poly_evaluate_arb_horner(arb_t res, const fmpz_poly_t poly, const arb_t x, long prec)
+    void arb_fmpz_poly_evaluate_arb_horner(arb_t res, const fmpz_poly_t poly, const arb_t x, slong prec)
 
-    void _arb_fmpz_poly_evaluate_arb_rectangular(arb_t res, const fmpz * poly, long len, const arb_t x, long prec)
+    void _arb_fmpz_poly_evaluate_arb_rectangular(arb_t res, const fmpz * poly, slong len, const arb_t x, slong prec)
 
-    void arb_fmpz_poly_evaluate_arb_rectangular(arb_t res, const fmpz_poly_t poly, const arb_t x, long prec)
+    void arb_fmpz_poly_evaluate_arb_rectangular(arb_t res, const fmpz_poly_t poly, const arb_t x, slong prec)
 
-    void _arb_fmpz_poly_evaluate_arb(arb_t res, const fmpz * poly, long len, const arb_t x, long prec)
+    void _arb_fmpz_poly_evaluate_arb(arb_t res, const fmpz * poly, slong len, const arb_t x, slong prec)
 
-    void arb_fmpz_poly_evaluate_arb(arb_t res, const fmpz_poly_t poly, const arb_t x, long prec)
+    void arb_fmpz_poly_evaluate_arb(arb_t res, const fmpz_poly_t poly, const arb_t x, slong prec)
 
-    void _arb_fmpz_poly_evaluate_acb_horner(acb_t res, const fmpz * poly, long len, const acb_t x, long prec)
+    void _arb_fmpz_poly_evaluate_acb_horner(acb_t res, const fmpz * poly, slong len, const acb_t x, slong prec)
 
-    void arb_fmpz_poly_evaluate_acb_horner(acb_t res, const fmpz_poly_t poly, const acb_t x, long prec)
+    void arb_fmpz_poly_evaluate_acb_horner(acb_t res, const fmpz_poly_t poly, const acb_t x, slong prec)
 
-    void _arb_fmpz_poly_evaluate_acb_rectangular(acb_t res, const fmpz * poly, long len, const acb_t x, long prec)
+    void _arb_fmpz_poly_evaluate_acb_rectangular(acb_t res, const fmpz * poly, slong len, const acb_t x, slong prec)
 
-    void arb_fmpz_poly_evaluate_acb_rectangular(acb_t res, const fmpz_poly_t poly, const acb_t x, long prec)
+    void arb_fmpz_poly_evaluate_acb_rectangular(acb_t res, const fmpz_poly_t poly, const acb_t x, slong prec)
 
-    void _arb_fmpz_poly_evaluate_acb(acb_t res, const fmpz * poly, long len, const acb_t x, long prec)
+    void _arb_fmpz_poly_evaluate_acb(acb_t res, const fmpz * poly, slong len, const acb_t x, slong prec)
 
-    void arb_fmpz_poly_evaluate_acb(acb_t res, const fmpz_poly_t poly, const acb_t x, long prec)
+    void arb_fmpz_poly_evaluate_acb(acb_t res, const fmpz_poly_t poly, const acb_t x, slong prec)
     # Evaluates *poly* (given by a polynomial object or an array with *len* coefficients)
     # at the given real or complex number, respectively using Horner's rule, rectangular
     # splitting, or a default algorithm choice.
 
-    unsigned long arb_fmpz_poly_deflation(const fmpz_poly_t poly)
+    ulong arb_fmpz_poly_deflation(const fmpz_poly_t poly)
     # Finds the maximal exponent by which *poly* can be deflated.
 
-    void arb_fmpz_poly_deflate(fmpz_poly_t res, const fmpz_poly_t poly, unsigned long deflation)
+    void arb_fmpz_poly_deflate(fmpz_poly_t res, const fmpz_poly_t poly, ulong deflation)
     # Sets *res* to a copy of *poly* deflated by the exponent *deflation*.
 
-    void arb_fmpz_poly_complex_roots(acb_ptr roots, const fmpz_poly_t poly, int flags, long prec)
+    void arb_fmpz_poly_complex_roots(acb_ptr roots, const fmpz_poly_t poly, int flags, slong prec)
     # Writes to *roots* all the real and complex roots of the polynomial *poly*,
     # computed to at least *prec* accurate bits.
     # The root enclosures are guaranteed to be disjoint, so that
@@ -80,12 +80,12 @@ cdef extern from "flint_wrap.h":
     # The following *flags* are supported:
     # * *ARB_FMPZ_POLY_ROOTS_VERBOSE*
 
-    void arb_fmpz_poly_cos_minpoly(fmpz_poly_t res, unsigned long n)
+    void arb_fmpz_poly_cos_minpoly(fmpz_poly_t res, ulong n)
     # Sets *res* to the monic minimal polynomial of `2 \cos(2 \pi / n)`.
     # This is a wrapper of FLINT's *fmpz_poly_cos_minpoly*, provided here
     # for backward compatibility.
 
-    void arb_fmpz_poly_gauss_period_minpoly(fmpz_poly_t res, unsigned long q, unsigned long n)
+    void arb_fmpz_poly_gauss_period_minpoly(fmpz_poly_t res, ulong q, ulong n)
     # Sets *res* to the minimal polynomial of the Gaussian periods
     # `\sum_{a \in H} \zeta^a` where `\zeta = \exp(2 \pi i / q)`
     # and *H* are the cosets of the subgroups of order `d = (q - 1) / n` of

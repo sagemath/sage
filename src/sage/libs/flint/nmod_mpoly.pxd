@@ -12,12 +12,12 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void nmod_mpoly_ctx_init(nmod_mpoly_ctx_t ctx, long nvars, const ordering_t ord, mp_limb_t n)
+    void nmod_mpoly_ctx_init(nmod_mpoly_ctx_t ctx, slong nvars, const ordering_t ord, mp_limb_t n)
     # Initialise a context object for a polynomial ring with the given number of variables and the given ordering.
     # It will have coefficients modulo *n*. Setting `n = 0` will give undefined behavior.
     # The possibilities for the ordering are ``ORD_LEX``, ``ORD_DEGLEX`` and ``ORD_DEGREVLEX``.
 
-    long nmod_mpoly_ctx_nvars(const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_ctx_nvars(const nmod_mpoly_ctx_t ctx)
     # Return the number of variables used to initialize the context.
 
     ordering_t nmod_mpoly_ctx_ord(const nmod_mpoly_ctx_t ctx)
@@ -32,18 +32,18 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_init(nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Initialise *A* for use with the given an initialised context object. Its value is set to zero.
 
-    void nmod_mpoly_init2(nmod_mpoly_t A, long alloc, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_init2(nmod_mpoly_t A, slong alloc, const nmod_mpoly_ctx_t ctx)
     # Initialise *A* for use with the given an initialised context object. Its value is set to zero.
     # It is allocated with space for *alloc* terms and at least ``MPOLY_MIN_BITS`` bits for the exponent widths.
 
-    void nmod_mpoly_init3(nmod_mpoly_t A, long alloc, flint_bitcnt_t bits, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_init3(nmod_mpoly_t A, slong alloc, flint_bitcnt_t bits, const nmod_mpoly_ctx_t ctx)
     # Initialise *A* for use with the given an initialised context object. Its value is set to zero.
     # It is allocated with space for *alloc* terms and *bits* bits for the exponents.
 
-    void nmod_mpoly_fit_length(nmod_mpoly_t A, long len, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_fit_length(nmod_mpoly_t A, slong len, const nmod_mpoly_ctx_t ctx)
     # Ensure that *A* has space for at least *len* terms.
 
-    void nmod_mpoly_realloc(nmod_mpoly_t A, long alloc, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_realloc(nmod_mpoly_t A, slong alloc, const nmod_mpoly_ctx_t ctx)
     # Reallocate *A* to have space for *alloc* terms.
     # Assumes the current length of the polynomial is not greater than *alloc*.
 
@@ -65,10 +65,10 @@ cdef extern from "flint_wrap.h":
     # The operations ``+``, ``-``, ``*``, and ``/`` are permitted along with integers and the variables in *x*. The character ``^`` must be immediately followed by the (integer) exponent.
     # If any division is not exact, parsing fails.
 
-    void nmod_mpoly_gen(nmod_mpoly_t A, long var, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_gen(nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the variable of index *var*, where `var = 0` corresponds to the variable with the most significance with respect to the ordering.
 
-    int nmod_mpoly_is_gen(const nmod_mpoly_t A, long var, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_is_gen(const nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
     # If `var \ge 0`, return `1` if *A* is equal to the `var`-th generator, otherwise return `0`.
     # If `var < 0`, return `1` if the polynomial is equal to any generator, otherwise return `0`.
 
@@ -84,11 +84,11 @@ cdef extern from "flint_wrap.h":
     int nmod_mpoly_is_ui(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is a constant, else return `0`.
 
-    unsigned long nmod_mpoly_get_ui(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_get_ui(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Assuming that *A* is a constant, return this constant.
     # This function throws if *A* is not a constant.
 
-    void nmod_mpoly_set_ui(nmod_mpoly_t A, unsigned long c, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_ui(nmod_mpoly_t A, ulong c, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the constant *c*.
 
     void nmod_mpoly_zero(nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
@@ -97,7 +97,7 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_one(nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the constant `1`.
 
-    int nmod_mpoly_equal_ui(const nmod_mpoly_t A, unsigned long c, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_equal_ui(const nmod_mpoly_t A, ulong c, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is equal to the constant *c*, else return `0`.
 
     int nmod_mpoly_is_zero(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
@@ -110,12 +110,12 @@ cdef extern from "flint_wrap.h":
     # Return `1` if the degrees of *A* with respect to each variable fit into an ``slong``, otherwise return `0`.
 
     void nmod_mpoly_degrees_fmpz(fmpz ** degs, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_degrees_si(long * degs, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_degrees_si(slong * degs, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Set *degs* to the degrees of *A* with respect to each variable.
     # If *A* is zero, all degrees are set to `-1`.
 
-    void nmod_mpoly_degree_fmpz(fmpz_t deg, const nmod_mpoly_t A, long var, const nmod_mpoly_ctx_t ctx)
-    long nmod_mpoly_degree_si(const nmod_mpoly_t A, long var, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_degree_fmpz(fmpz_t deg, const nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_degree_si(const nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
     # Either return or set *deg* to the degree of *A* with respect to the variable of index *var*.
     # If *A* is zero, the degree is defined to be `-1`.
 
@@ -123,30 +123,30 @@ cdef extern from "flint_wrap.h":
     # Return `1` if the total degree of *A* fits into an ``slong``, otherwise return `0`.
 
     void nmod_mpoly_total_degree_fmpz(fmpz_t tdeg, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
-    long nmod_mpoly_total_degree_si(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_total_degree_si(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Either return or set *tdeg* to the total degree of *A*.
     # If *A* is zero, the total degree is defined to be `-1`.
 
     void nmod_mpoly_used_vars(int * used, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # For each variable index *i*, set ``used[i]`` to nonzero if the variable of index *i* appears in *A* and to zero otherwise.
 
-    unsigned long nmod_mpoly_get_coeff_ui_monomial(const nmod_mpoly_t A, const nmod_mpoly_t M, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_get_coeff_ui_monomial(const nmod_mpoly_t A, const nmod_mpoly_t M, const nmod_mpoly_ctx_t ctx)
     # Assuming that *M* is a monomial, return the coefficient of the corresponding monomial in *A*.
     # This function throws if *M* is not a monomial.
 
-    void nmod_mpoly_set_coeff_ui_monomial(nmod_mpoly_t A, unsigned long c, const nmod_mpoly_t M, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_coeff_ui_monomial(nmod_mpoly_t A, ulong c, const nmod_mpoly_t M, const nmod_mpoly_ctx_t ctx)
     # Assuming that *M* is a monomial, set the coefficient of the corresponding monomial in *A* to *c*.
     # This function throws if *M* is not a monomial.
 
-    unsigned long nmod_mpoly_get_coeff_ui_fmpz(const nmod_mpoly_t A, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
-    unsigned long nmod_mpoly_get_coeff_ui_ui(const nmod_mpoly_t A, const unsigned long * exp, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_get_coeff_ui_fmpz(const nmod_mpoly_t A, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_get_coeff_ui_ui(const nmod_mpoly_t A, const ulong * exp, const nmod_mpoly_ctx_t ctx)
     # Return the coefficient of the monomial with exponent *exp*.
 
-    void nmod_mpoly_set_coeff_ui_fmpz(nmod_mpoly_t A, unsigned long c, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_set_coeff_ui_ui(nmod_mpoly_t A, unsigned long c, const unsigned long * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_coeff_ui_fmpz(nmod_mpoly_t A, ulong c, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_coeff_ui_ui(nmod_mpoly_t A, ulong c, const ulong * exp, const nmod_mpoly_ctx_t ctx)
     # Set the coefficient of the monomial with exponent *exp* to `c`.
 
-    void nmod_mpoly_get_coeff_vars_ui(nmod_mpoly_t C, const nmod_mpoly_t A, const long * vars, const unsigned long * exps, long length, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_get_coeff_vars_ui(nmod_mpoly_t C, const nmod_mpoly_t A, const slong * vars, const ulong * exps, slong length, const nmod_mpoly_ctx_t ctx)
     # Set *C* to the coefficient of *A* with respect to the variables in *vars* with powers in the corresponding array *exps*.
     # Both *vars* and *exps* point to array of length *length*. It is assumed that ``0 < length \le nvars(A)`` and that the variables in *vars* are distinct.
 
@@ -154,56 +154,56 @@ cdef extern from "flint_wrap.h":
     # Return `1` (resp. `-1`, or `0`) if *A* is after (resp. before, same as) *B* in some arbitrary but fixed total ordering of the polynomials.
     # This ordering agrees with the usual ordering of monomials when *A* and *B* are both monomials.
 
-    mp_limb_t * nmod_mpoly_term_coeff_ref(nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    mp_limb_t * nmod_mpoly_term_coeff_ref(nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Return a reference to the coefficient of index *i* of *A*.
 
     int nmod_mpoly_is_canonical(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if *A* is in canonical form. Otherwise, return `0`.
     # To be in canonical form, all of the terms must have nonzero coefficients, and the terms must be sorted from greatest to least.
 
-    long nmod_mpoly_length(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_length(const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
     # Return the number of terms in *A*.
     # If the polynomial is in canonical form, this will be the number of nonzero coefficients.
 
-    void nmod_mpoly_resize(nmod_mpoly_t A, long new_length, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_resize(nmod_mpoly_t A, slong new_length, const nmod_mpoly_ctx_t ctx)
     # Set the length of *A* to ``new_length``.
     # Terms are either deleted from the end, or new zero terms are appended.
 
-    unsigned long nmod_mpoly_get_term_coeff_ui(const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_get_term_coeff_ui(const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Return the coefficient of the term of index *i*.
 
-    void nmod_mpoly_set_term_coeff_ui(nmod_mpoly_t A, long i, unsigned long c, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_term_coeff_ui(nmod_mpoly_t A, slong i, ulong c, const nmod_mpoly_ctx_t ctx)
     # Set the coefficient of the term of index *i* to *c*.
 
-    int nmod_mpoly_term_exp_fits_si(const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
-    int nmod_mpoly_term_exp_fits_ui(const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_term_exp_fits_si(const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_term_exp_fits_ui(const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Return `1` if all entries of the exponent vector of the term of index *i* fit into an ``slong`` (resp. a ``ulong``). Otherwise, return `0`.
 
-    void nmod_mpoly_get_term_exp_fmpz(fmpz ** exp, const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_get_term_exp_ui(unsigned long * exp, const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_get_term_exp_fmpz(fmpz ** exp, const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_get_term_exp_ui(ulong * exp, const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
 
-    void nmod_mpoly_get_term_exp_si(long * exp, const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_get_term_exp_si(slong * exp, const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Set *exp* to the exponent vector of the term of index *i*.
     # The ``_ui`` (resp. ``_si``) version throws if any entry does not fit into a ``ulong`` (resp. ``slong``).
 
-    unsigned long nmod_mpoly_get_term_var_exp_ui(const nmod_mpoly_t A, long i, long var, const nmod_mpoly_ctx_t ctx)
-    long nmod_mpoly_get_term_var_exp_si(const nmod_mpoly_t A, long i, long var, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_get_term_var_exp_ui(const nmod_mpoly_t A, slong i, slong var, const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_get_term_var_exp_si(const nmod_mpoly_t A, slong i, slong var, const nmod_mpoly_ctx_t ctx)
     # Return the exponent of the variable *var* of the term of index *i*.
     # This function throws if the exponent does not fit into a ``ulong`` (resp. ``slong``).
 
-    void nmod_mpoly_set_term_exp_fmpz(nmod_mpoly_t A, long i, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_set_term_exp_ui(nmod_mpoly_t A, long i, const unsigned long * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_term_exp_fmpz(nmod_mpoly_t A, slong i, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_set_term_exp_ui(nmod_mpoly_t A, slong i, const ulong * exp, const nmod_mpoly_ctx_t ctx)
     # Set the exponent of the term of index *i* to *exp*.
 
-    void nmod_mpoly_get_term(nmod_mpoly_t M, const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_get_term(nmod_mpoly_t M, const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Set *M* to the term of index *i* in *A*.
 
-    void nmod_mpoly_get_term_monomial(nmod_mpoly_t M, const nmod_mpoly_t A, long i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_get_term_monomial(nmod_mpoly_t M, const nmod_mpoly_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Set *M* to the monomial of the term of index *i* in *A*. The coefficient of *M* will be one.
 
-    void nmod_mpoly_push_term_ui_fmpz(nmod_mpoly_t A, unsigned long c, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_push_term_ui_ffmpz(nmod_mpoly_t A, unsigned long c, const fmpz * exp, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_push_term_ui_ui(nmod_mpoly_t A, unsigned long c, const unsigned long * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_push_term_ui_fmpz(nmod_mpoly_t A, ulong c, fmpz * const * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_push_term_ui_ffmpz(nmod_mpoly_t A, ulong c, const fmpz * exp, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_push_term_ui_ui(nmod_mpoly_t A, ulong c, const ulong * exp, const nmod_mpoly_ctx_t ctx)
     # Append a term to *A* with coefficient *c* and exponent vector *exp*.
     # This function runs in constant average time.
 
@@ -220,21 +220,21 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_reverse(nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the reversal of *B*.
 
-    void nmod_mpoly_randtest_bound(nmod_mpoly_t A, flint_rand_t state, long length, unsigned long exp_bound, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_randtest_bound(nmod_mpoly_t A, flint_rand_t state, slong length, ulong exp_bound, const nmod_mpoly_ctx_t ctx)
     # Generate a random polynomial with length up to *length* and exponents in the range ``[0, exp_bound - 1]``.
     # The exponents of each variable are generated by calls to  ``n_randint(state, exp_bound)``.
 
-    void nmod_mpoly_randtest_bounds(nmod_mpoly_t A, flint_rand_t state, long length, unsigned long * exp_bounds, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_randtest_bounds(nmod_mpoly_t A, flint_rand_t state, slong length, ulong * exp_bounds, const nmod_mpoly_ctx_t ctx)
     # Generate a random polynomial with length up to *length* and exponents in the range ``[0, exp_bounds[i] - 1]``.
     # The exponents of the variable of index *i* are generated by calls to ``n_randint(state, exp_bounds[i])``.
 
-    void nmod_mpoly_randtest_bits(nmod_mpoly_t A, flint_rand_t state, long length, mp_limb_t exp_bits, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_randtest_bits(nmod_mpoly_t A, flint_rand_t state, slong length, mp_limb_t exp_bits, const nmod_mpoly_ctx_t ctx)
     # Generate a random polynomial with length up to *length* and exponents whose packed form does not exceed the given bit count.
 
-    void nmod_mpoly_add_ui(nmod_mpoly_t A, const nmod_mpoly_t B, unsigned long c, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_add_ui(nmod_mpoly_t A, const nmod_mpoly_t B, ulong c, const nmod_mpoly_ctx_t ctx)
     # Set *A* to `B + c`.
 
-    void nmod_mpoly_sub_ui(nmod_mpoly_t A, const nmod_mpoly_t B, unsigned long c, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_sub_ui(nmod_mpoly_t A, const nmod_mpoly_t B, ulong c, const nmod_mpoly_ctx_t ctx)
     # Set *A* to `B - c`.
 
     void nmod_mpoly_add(nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_t C, const nmod_mpoly_ctx_t ctx)
@@ -246,20 +246,20 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_neg(nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Set *A* to `-B`.
 
-    void nmod_mpoly_scalar_mul_ui(nmod_mpoly_t A, const nmod_mpoly_t B, unsigned long c, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_scalar_mul_ui(nmod_mpoly_t A, const nmod_mpoly_t B, ulong c, const nmod_mpoly_ctx_t ctx)
     # Set *A* to `B \times c`.
 
     void nmod_mpoly_make_monic(nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Set *A* to *B* divided by the leading coefficient of *B*.
     # This throws if *B* is zero or the leading coefficient is not invertible.
 
-    void nmod_mpoly_derivative(nmod_mpoly_t A, const nmod_mpoly_t B, long var, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_derivative(nmod_mpoly_t A, const nmod_mpoly_t B, slong var, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the derivative of *B* with respect to the variable of index *var*.
 
-    unsigned long nmod_mpoly_evaluate_all_ui(const nmod_mpoly_t A, const unsigned long * vals, const nmod_mpoly_ctx_t ctx)
+    ulong nmod_mpoly_evaluate_all_ui(const nmod_mpoly_t A, const ulong * vals, const nmod_mpoly_ctx_t ctx)
     # Return the evaluation of *A* where the variables are replaced by the corresponding elements of the array *vals*.
 
-    void nmod_mpoly_evaluate_one_ui(nmod_mpoly_t A, const nmod_mpoly_t B, long var, unsigned long val, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_evaluate_one_ui(nmod_mpoly_t A, const nmod_mpoly_t B, slong var, ulong val, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the evaluation of *B* where the variable of index *var* is replaced by *val*.
 
     int nmod_mpoly_compose_nmod_poly(nmod_poly_t A, const nmod_mpoly_t B, nmod_poly_struct * const * C, const nmod_mpoly_ctx_t ctx)
@@ -276,7 +276,7 @@ cdef extern from "flint_wrap.h":
     # Return `1` for success and `0` for failure.
     # The main method attempts to perform the calculation using matrices and chooses heuristically between the ``geobucket`` and ``horner`` methods if needed.
 
-    void nmod_mpoly_compose_nmod_mpoly_gen(nmod_mpoly_t A, const nmod_mpoly_t B, const long * c, const nmod_mpoly_ctx_t ctxB, const nmod_mpoly_ctx_t ctxAC)
+    void nmod_mpoly_compose_nmod_mpoly_gen(nmod_mpoly_t A, const nmod_mpoly_t B, const slong * c, const nmod_mpoly_ctx_t ctxB, const nmod_mpoly_ctx_t ctxAC)
     # Set *A* to the evaluation of *B* where the variable of index *i* in *ctxB* is replaced by the variable of index ``c[i]`` in *ctxAC*.
     # The length of the array *C* is the number of variables in *ctxB*.
     # If any ``c[i]`` is negative, the corresponding variable of *B* is replaced by zero. Otherwise, it is expected that ``c[i]`` is less than the number of variables in *ctxAC*.
@@ -303,7 +303,7 @@ cdef extern from "flint_wrap.h":
     # Set *A* to *B* raised to the *k*-th power.
     # Return `1` for success and `0` for failure.
 
-    int nmod_mpoly_pow_ui(nmod_mpoly_t A, const nmod_mpoly_t B, unsigned long k, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_pow_ui(nmod_mpoly_t A, const nmod_mpoly_t B, ulong k, const nmod_mpoly_ctx_t ctx)
     # Set *A* to *B* raised to the *k*-th power.
     # Return `1` for success and `0` for failure.
 
@@ -317,7 +317,7 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_divrem(nmod_mpoly_t Q, nmod_mpoly_t R, const nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Set *Q* and *R* to the quotient and remainder of *A* divided by *B*.
 
-    void nmod_mpoly_divrem_ideal(nmod_mpoly_struct ** Q, nmod_mpoly_t R, const nmod_mpoly_t A, nmod_mpoly_struct * const * B, long len, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_divrem_ideal(nmod_mpoly_struct ** Q, nmod_mpoly_t R, const nmod_mpoly_t A, nmod_mpoly_struct * const * B, slong len, const nmod_mpoly_ctx_t ctx)
     # This function is as per :func:`nmod_mpoly_divrem` except that it takes an array of divisor polynomials *B* and it returns an array of quotient polynomials *Q*.
     # The number of divisor (and hence quotient) polynomials, is given by *len*.
 
@@ -336,7 +336,7 @@ cdef extern from "flint_wrap.h":
     # Set *M* to the GCD of the terms of *A*.
     # If *A* is zero, *M* will be zero. Otherwise, *M* will be a monomial with coefficient one.
 
-    int nmod_mpoly_content_vars(nmod_mpoly_t g, const nmod_mpoly_t A, long * vars, long vars_length, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_content_vars(nmod_mpoly_t g, const nmod_mpoly_t A, slong * vars, slong vars_length, const nmod_mpoly_ctx_t ctx)
     # Set *g* to the GCD of the coefficients of *A* when viewed as a polynomial in the variables *vars*.
     # Return `1` for success and `0` for failure. Upon success, *g* will be independent of the variables *vars*.
 
@@ -352,10 +352,10 @@ cdef extern from "flint_wrap.h":
     int nmod_mpoly_gcd_zippel(nmod_mpoly_t G, const nmod_mpoly_t A, const nmod_mpoly_t B, const nmod_mpoly_ctx_t ctx)
     # Try to set *G* to the GCD of *A* and *B* using various algorithms.
 
-    int nmod_mpoly_resultant(nmod_mpoly_t R, const nmod_mpoly_t A, const nmod_mpoly_t B, long var, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_resultant(nmod_mpoly_t R, const nmod_mpoly_t A, const nmod_mpoly_t B, slong var, const nmod_mpoly_ctx_t ctx)
     # Try to set *R* to the resultant of *A* and *B* with respect to the variable of index *var*.
 
-    int nmod_mpoly_discriminant(nmod_mpoly_t D, const nmod_mpoly_t A, long var, const nmod_mpoly_ctx_t ctx)
+    int nmod_mpoly_discriminant(nmod_mpoly_t D, const nmod_mpoly_t A, slong var, const nmod_mpoly_ctx_t ctx)
     # Try to set *D* to the discriminant of *A* with respect to the variable of index *var*.
 
     int nmod_mpoly_sqrt(nmod_mpoly_t Q, const nmod_mpoly_t A, const nmod_mpoly_ctx_t ctx)
@@ -376,28 +376,28 @@ cdef extern from "flint_wrap.h":
     void nmod_mpoly_univar_swap(nmod_mpoly_univar_t A, nmod_mpoly_univar_t B, const nmod_mpoly_ctx_t ctx)
     # Swap *A* and *B*.
 
-    void nmod_mpoly_to_univar(nmod_mpoly_univar_t A, const nmod_mpoly_t B, long var, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_to_univar(nmod_mpoly_univar_t A, const nmod_mpoly_t B, slong var, const nmod_mpoly_ctx_t ctx)
     # Set *A* to a univariate form of *B* by pulling out the variable of index *var*.
     # The coefficients of *A* will still belong to the content *ctx* but will not depend on the variable of index *var*.
 
-    void nmod_mpoly_from_univar(nmod_mpoly_t A, const nmod_mpoly_univar_t B, long var, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_from_univar(nmod_mpoly_t A, const nmod_mpoly_univar_t B, slong var, const nmod_mpoly_ctx_t ctx)
     # Set *A* to the normal form of *B* by putting in the variable of index *var*.
     # This function is undefined if the coefficients of *B* depend on the variable of index *var*.
 
     int nmod_mpoly_univar_degree_fits_si(const nmod_mpoly_univar_t A, const nmod_mpoly_ctx_t ctx)
     # Return `1` if the degree of *A* with respect to the main variable fits an ``slong``. Otherwise, return `0`.
 
-    long nmod_mpoly_univar_length(const nmod_mpoly_univar_t A, const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_univar_length(const nmod_mpoly_univar_t A, const nmod_mpoly_ctx_t ctx)
     # Return the number of terms in *A* with respect to the main variable.
 
-    long nmod_mpoly_univar_get_term_exp_si(nmod_mpoly_univar_t A, long i, const nmod_mpoly_ctx_t ctx)
+    slong nmod_mpoly_univar_get_term_exp_si(nmod_mpoly_univar_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Return the exponent of the term of index *i* of *A*.
 
-    void nmod_mpoly_univar_get_term_coeff(nmod_mpoly_t c, const nmod_mpoly_univar_t A, long i, const nmod_mpoly_ctx_t ctx)
-    void nmod_mpoly_univar_swap_term_coeff(nmod_mpoly_t c, nmod_mpoly_univar_t A, long i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_univar_get_term_coeff(nmod_mpoly_t c, const nmod_mpoly_univar_t A, slong i, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_univar_swap_term_coeff(nmod_mpoly_t c, nmod_mpoly_univar_t A, slong i, const nmod_mpoly_ctx_t ctx)
     # Set (resp. swap) *c* to (resp. with) the coefficient of the term of index *i* of *A*.
 
-    void nmod_mpoly_pow_rmul(nmod_mpoly_t A, const nmod_mpoly_t B, unsigned long k, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_pow_rmul(nmod_mpoly_t A, const nmod_mpoly_t B, ulong k, const nmod_mpoly_ctx_t ctx)
     # Set *A* to *B* raised to the *k*-th power using repeated multiplications.
 
     void nmod_mpoly_div_monagan_pearce(nmod_mpoly_t polyq, const nmod_mpoly_t poly2, const nmod_mpoly_t poly3, const nmod_mpoly_ctx_t ctx)
@@ -415,7 +415,7 @@ cdef extern from "flint_wrap.h":
     # division using dynamic arrays, heaps and packed exponents" by Michael
     # Monagan and Roman Pearce.
 
-    void nmod_mpoly_divrem_ideal_monagan_pearce(nmod_mpoly_struct ** q, nmod_mpoly_t r, const nmod_mpoly_t poly2, nmod_mpoly_struct * const * poly3, long len, const nmod_mpoly_ctx_t ctx)
+    void nmod_mpoly_divrem_ideal_monagan_pearce(nmod_mpoly_struct ** q, nmod_mpoly_t r, const nmod_mpoly_t poly2, nmod_mpoly_struct * const * poly3, slong len, const nmod_mpoly_ctx_t ctx)
     # This function is as per ``nmod_mpoly_divrem_monagan_pearce`` except
     # that it takes an array of divisor polynomials ``poly3``, and it returns
     # an array of quotient polynomials ``q``. The number of divisor (and hence

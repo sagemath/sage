@@ -18,11 +18,11 @@ cdef extern from "flint_wrap.h":
     void fmpz_factor_clear(fmpz_factor_t factor)
     # Clears an ``fmpz_factor_t`` structure.
 
-    void _fmpz_factor_append_ui(fmpz_factor_t factor, mp_limb_t p, unsigned long exp)
+    void _fmpz_factor_append_ui(fmpz_factor_t factor, mp_limb_t p, ulong exp)
     # Append a factor `p` to the given exponent to the
     # ``fmpz_factor_t`` structure ``factor``.
 
-    void _fmpz_factor_append(fmpz_factor_t factor, const fmpz_t p, unsigned long exp)
+    void _fmpz_factor_append(fmpz_factor_t factor, const fmpz_t p, ulong exp)
     # Append a factor `p` to the given exponent to the
     # ``fmpz_factor_t`` structure ``factor``.
 
@@ -30,7 +30,7 @@ cdef extern from "flint_wrap.h":
     # Factors `n` into prime numbers. If `n` is zero or negative, the
     # sign field of the ``factor`` object will be set accordingly.
 
-    int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n, long bits, int proved)
+    int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n, slong bits, int proved)
     # Factors `n` into prime numbers up to approximately the given number of
     # bits and possibly one additional cofactor, which may or may not be prime.
     # If the number is definitely factored fully, the return value is `1`,
@@ -58,10 +58,10 @@ cdef extern from "flint_wrap.h":
     # ``n_factor`` internally if `n` or the remainder after trial division
     # is smaller than one word, guaranteeing a complete factorisation.
 
-    void fmpz_factor_si(fmpz_factor_t factor, long n)
+    void fmpz_factor_si(fmpz_factor_t factor, slong n)
     # Like ``fmpz_factor``, but takes a machine integer `n` as input.
 
-    int fmpz_factor_trial_range(fmpz_factor_t factor, const fmpz_t n, unsigned long start, unsigned long num_primes)
+    int fmpz_factor_trial_range(fmpz_factor_t factor, const fmpz_t n, ulong start, ulong num_primes)
     # Factors `n` into prime factors using trial division. If `n` is
     # zero or negative, the sign field of the ``factor`` object will be
     # set accordingly.
@@ -70,7 +70,7 @@ cdef extern from "flint_wrap.h":
     # The function returns 1 if `n` is completely factored, otherwise it returns
     # `0`.
 
-    int fmpz_factor_trial(fmpz_factor_t factor, const fmpz_t n, long num_primes)
+    int fmpz_factor_trial(fmpz_factor_t factor, const fmpz_t n, slong num_primes)
     # Factors `n` into prime factors using trial division. If `n` is
     # zero or negative, the sign field of the ``factor`` object will be
     # set accordingly.
@@ -95,7 +95,7 @@ cdef extern from "flint_wrap.h":
     # them together one by one, although much more efficient algorithms
     # exist.
 
-    int fmpz_factor_pp1(fmpz_t factor, const fmpz_t n, unsigned long B1, unsigned long B2_sqrt, unsigned long c)
+    int fmpz_factor_pp1(fmpz_t factor, const fmpz_t n, ulong B1, ulong B2_sqrt, ulong c)
     # Use Williams' `p + 1` method to factor `n`, using a prime bound in
     # stage 1 of ``B1`` and a prime limit in stage 2 of at least the square
     # of ``B2_sqrt``. If a factor is found, the function returns `1` and

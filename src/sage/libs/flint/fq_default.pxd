@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_default_ctx_init(fq_default_ctx_t ctx, const fmpz_t p, long d, const char * var)
+    void fq_default_ctx_init(fq_default_ctx_t ctx, const fmpz_t p, slong d, const char * var)
     # Initialises the context for prime `p` and extension degree `d`,
     # with name ``var`` for the generator.  By default, it will try
     # use a Conway polynomial; if one is not available, a random
@@ -21,7 +21,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that the string ``var`` is a null-terminated string
     # of length at least one.
 
-    void fq_default_ctx_init_type(fq_default_ctx_t ctx, const fmpz_t p, long d, const char * var, int type)
+    void fq_default_ctx_init_type(fq_default_ctx_t ctx, const fmpz_t p, slong d, const char * var, int type)
     # As per the previous function except that if ``type == 1`` an ``fq_zech``
     # context is created, if ``type == 2`` an ``fq_nmod`` and if ``type == 3``
     # an ``fq``. If ``type == 0`` the functionality is as per the previous
@@ -62,7 +62,7 @@ cdef extern from "flint_wrap.h":
     # Returns `1` if the context contains an ``fq_zech`` context, `2` if it
     # contains an ``fq_mod`` context and `3` if it contains an ``fq`` context.
 
-    long fq_default_ctx_degree(const fq_default_ctx_t ctx)
+    slong fq_default_ctx_degree(const fq_default_ctx_t ctx)
     # Returns the degree of the field extension
     # `[\mathbf{F}_{q} : \mathbf{F}_{p}]`, which
     # is equal to `\log_{p} q`.
@@ -87,7 +87,7 @@ cdef extern from "flint_wrap.h":
     # Initializes ``ctx`` to a random finite field.  Assumes that
     # ``fq_default_ctx_init`` has not been called on ``ctx`` already.
 
-    void fq_default_get_coeff_fmpz(fmpz_t c, fq_default_t op, long n, const fq_default_ctx_t ctx)
+    void fq_default_get_coeff_fmpz(fmpz_t c, fq_default_t op, slong n, const fq_default_ctx_t ctx)
     # Set `c` to the degree `n` coefficient of the polynomial representation of
     # the finite field element ``op``.
 
@@ -124,11 +124,11 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
-    void fq_default_mul_si(fq_default_t rop, const fq_default_t op, long x, const fq_default_ctx_t ctx)
+    void fq_default_mul_si(fq_default_t rop, const fq_default_t op, slong x, const fq_default_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
-    void fq_default_mul_ui(fq_default_t rop, const fq_default_t op, unsigned long x, const fq_default_ctx_t ctx)
+    void fq_default_mul_ui(fq_default_t rop, const fq_default_t op, ulong x, const fq_default_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
@@ -149,7 +149,7 @@ cdef extern from "flint_wrap.h":
     # Note that for any input ``op``, ``rop`` is set to `1`
     # whenever `e = 0`.
 
-    void fq_default_pow_ui(fq_default_t rop, const fq_default_t op, const unsigned long e, const fq_default_ctx_t ctx)
+    void fq_default_pow_ui(fq_default_t rop, const fq_default_t op, const ulong e, const fq_default_ctx_t ctx)
     # Sets ``rop`` the ``op`` raised to the power `e`.
     # Currently assumes that `e \geq 0`.
     # Note that for any input ``op``, ``rop`` is set to `1`
@@ -208,11 +208,11 @@ cdef extern from "flint_wrap.h":
     void fq_default_set(fq_default_t rop, const fq_default_t op, const fq_default_ctx_t ctx)
     # Sets ``rop`` to ``op``.
 
-    void fq_default_set_si(fq_default_t rop, const long x, const fq_default_ctx_t ctx)
+    void fq_default_set_si(fq_default_t rop, const slong x, const fq_default_ctx_t ctx)
     # Sets ``rop`` to ``x``, considered as an element of
     # `\mathbf{F}_p`.
 
-    void fq_default_set_ui(fq_default_t rop, const unsigned long x, const fq_default_ctx_t ctx)
+    void fq_default_set_ui(fq_default_t rop, const ulong x, const fq_default_ctx_t ctx)
     # Sets ``rop`` to ``x``, considered as an element of
     # `\mathbf{F}_p`.
 
@@ -296,7 +296,7 @@ cdef extern from "flint_wrap.h":
     # `d = \text{dim}_{\mathbf{F}_p}(\mathbf{F}_q)`.
     # Algorithm selection is automatic depending on the input.
 
-    void fq_default_frobenius(fq_default_t rop, const fq_default_t op, long e, const fq_default_ctx_t ctx)
+    void fq_default_frobenius(fq_default_t rop, const fq_default_t op, slong e, const fq_default_ctx_t ctx)
     # Evaluates the homomorphism `\Sigma^e` at ``op``.
     # Recall that `\mathbf{F}_q / \mathbf{F}_p` is Galois with Galois group
     # `\langle \sigma \rangle`, which is also isomorphic to

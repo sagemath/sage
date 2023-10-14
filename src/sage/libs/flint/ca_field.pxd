@@ -32,13 +32,13 @@ cdef extern from "flint_wrap.h":
     # Initializes *K* to represent the field
     # `\mathbb{Q}(a,b)` where `a = f(x, y)`.
 
-    void ca_field_init_multi(ca_field_t K, long len, ca_ctx_t ctx)
+    void ca_field_init_multi(ca_field_t K, slong len, ca_ctx_t ctx)
     # Initializes *K* to represent a multivariate field
     # `\mathbb{Q}(a_1, \ldots, a_n)` in *n*
     # extension numbers. The extension numbers must subsequently be
     # assigned one by one using :func:`ca_field_set_ext`.
 
-    void ca_field_set_ext(ca_field_t K, long i, ca_ext_srcptr x_index, ca_ctx_t ctx)
+    void ca_field_set_ext(ca_field_t K, slong i, ca_ext_srcptr x_index, ca_ctx_t ctx)
     # Sets the extension number at position *i* (here indexed from 0) of *K*
     # to the generator of the field with index *x_index* in *ctx*.
     # (It is assumed that the generating field is a univariate field.)
@@ -79,7 +79,7 @@ cdef extern from "flint_wrap.h":
     # This does not clear the individual extension
     # numbers, which are only held as references.
 
-    ca_field_ptr ca_field_cache_insert_ext(ca_field_cache_t cache, ca_ext_struct ** x, long len, ca_ctx_t ctx)
+    ca_field_ptr ca_field_cache_insert_ext(ca_field_cache_t cache, ca_ext_struct ** x, slong len, ca_ctx_t ctx)
     # Adds the field defined by the length-*len* list of extension numbers *x*
     # to *cache* without duplication. If such a field already exists in *cache*,
     # a pointer to that instance is returned. Otherwise, a field with

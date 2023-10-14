@@ -15,7 +15,7 @@ cdef extern from "flint_wrap.h":
     const char * calcium_version()
     # Returns a pointer to the version of the library as a string ``X.Y.Z``.
 
-    unsigned long calcium_fmpz_hash(const fmpz_t x)
+    ulong calcium_fmpz_hash(const fmpz_t x)
     # Hash function for integers. The algorithm may change;
     # presently, this simply extracts the low word (with sign).
 
@@ -35,12 +35,12 @@ cdef extern from "flint_wrap.h":
     void calcium_write_free(calcium_stream_t out, char * s)
     # Writes *s* to *out* and then frees *s* by calling ``flint_free()``.
 
-    void calcium_write_si(calcium_stream_t out, long x)
+    void calcium_write_si(calcium_stream_t out, slong x)
     void calcium_write_fmpz(calcium_stream_t out, const fmpz_t x)
     # Writes the integer *x* to *out*.
 
-    void calcium_write_arb(calcium_stream_t out, const arb_t z, long digits, unsigned long flags)
-    void calcium_write_acb(calcium_stream_t out, const acb_t z, long digits, unsigned long flags)
+    void calcium_write_arb(calcium_stream_t out, const arb_t z, slong digits, ulong flags)
+    void calcium_write_acb(calcium_stream_t out, const acb_t z, slong digits, ulong flags)
     # Writes the Arb number *z* to *out*, showing *digits*
     # digits and with the display style specified by *flags*
     # (``ARB_STR_NO_RADIUS``, etc.).

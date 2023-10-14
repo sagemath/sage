@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_zech_ctx_init(fq_zech_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    void fq_zech_ctx_init(fq_zech_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Initialises the context for prime `p` and extension degree `d`,
     # with name ``var`` for the generator.  By default, it will try
     # use a Conway polynomial; if one is not available, a random
@@ -21,7 +21,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that the string ``var`` is a null-terminated string
     # of length at least one.
 
-    int _fq_zech_ctx_init_conway(fq_zech_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    int _fq_zech_ctx_init_conway(fq_zech_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Attempts to initialise the context for prime `p` and extension
     # degree `d`, with name ``var`` for the generator using a Conway
     # polynomial for the modulus.
@@ -32,7 +32,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that the string ``var`` is a null-terminated string
     # of length at least one.
 
-    void fq_zech_ctx_init_conway(fq_zech_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    void fq_zech_ctx_init_conway(fq_zech_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Initialises the context for prime `p` and extension degree `d`,
     # with name ``var`` for the generator using a Conway polynomial
     # for the modulus.
@@ -40,7 +40,7 @@ cdef extern from "flint_wrap.h":
     # Assumes that the string ``var`` is a null-terminated string
     # of length at least one.
 
-    void fq_zech_ctx_init_random(fq_zech_ctx_t ctx, const fmpz_t p, long d, const char *var)
+    void fq_zech_ctx_init_random(fq_zech_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     # Initialises the context for prime `p` and extension degree `d`,
     # with name ``var`` for the generator using a random primitive
     # polynomial.
@@ -77,7 +77,7 @@ cdef extern from "flint_wrap.h":
     const nmod_poly_struct* fq_zech_ctx_modulus(const fq_zech_ctx_t ctx)
     # Returns a pointer to the modulus in the context.
 
-    long fq_zech_ctx_degree(const fq_zech_ctx_t ctx)
+    slong fq_zech_ctx_degree(const fq_zech_ctx_t ctx)
     # Returns the degree of the field extension
     # `[\mathbf{F}_{q} : \mathbf{F}_{p}]`, which
     # is equal to `\log_{p} q`.
@@ -117,15 +117,15 @@ cdef extern from "flint_wrap.h":
     void fq_zech_clear(fq_zech_t rop, const fq_zech_ctx_t ctx)
     # Clears the element ``rop``.
 
-    void _fq_zech_sparse_reduce(mp_ptr R, long lenR, const fq_zech_ctx_t ctx)
+    void _fq_zech_sparse_reduce(mp_ptr R, slong lenR, const fq_zech_ctx_t ctx)
     # Reduces ``(R, lenR)`` modulo the polynomial `f` given by the
     # modulus of ``ctx``.
 
-    void _fq_zech_dense_reduce(mp_ptr R, long lenR, const fq_zech_ctx_t ctx)
+    void _fq_zech_dense_reduce(mp_ptr R, slong lenR, const fq_zech_ctx_t ctx)
     # Reduces ``(R, lenR)`` modulo the polynomial `f` given by the
     # modulus of ``ctx`` using Newton division.
 
-    void _fq_zech_reduce(mp_ptr r, long lenR, const fq_zech_ctx_t ctx)
+    void _fq_zech_reduce(mp_ptr r, slong lenR, const fq_zech_ctx_t ctx)
     # Reduces ``(R, lenR)`` modulo the polynomial `f` given by the
     # modulus of ``ctx``.  Does either sparse or dense reduction
     # based on ``ctx->sparse_modulus``.
@@ -154,11 +154,11 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
-    void fq_zech_mul_si(fq_zech_t rop, const fq_zech_t op, long x, const fq_zech_ctx_t ctx)
+    void fq_zech_mul_si(fq_zech_t rop, const fq_zech_t op, slong x, const fq_zech_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
-    void fq_zech_mul_ui(fq_zech_t rop, const fq_zech_t op, unsigned long x, const fq_zech_ctx_t ctx)
+    void fq_zech_mul_ui(fq_zech_t rop, const fq_zech_t op, ulong x, const fq_zech_ctx_t ctx)
     # Sets ``rop`` to the product of ``op`` and `x`,
     # reducing the output in the given context.
 
@@ -170,7 +170,7 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the quotient of ``op1`` and ``op2``,
     # reducing the output in the given context.
 
-    void _fq_zech_inv(mp_ptr *rop, mp_srcptr *op, long len, const fq_zech_ctx_t ctx)
+    void _fq_zech_inv(mp_ptr *rop, mp_srcptr *op, slong len, const fq_zech_ctx_t ctx)
     # Sets ``(rop, d)`` to the inverse of the non-zero element
     # ``(op, len)``.
 
@@ -182,7 +182,7 @@ cdef extern from "flint_wrap.h":
     # of ``ctx`` and sets ``f`` to one.  Since the modulus for
     # ``ctx`` is always irreducible, ``op`` is always invertible.
 
-    void _fq_zech_pow(fmpz *rop, const fmpz *op, long len, const fmpz_t e, const fmpz * a, const long *j, long lena, const fmpz_t p)
+    void _fq_zech_pow(fmpz *rop, const fmpz *op, slong len, const fmpz_t e, const fmpz * a, const slong *j, slong lena, const fmpz_t p)
     # Sets ``(rop, 2*d-1)`` to ``(op,len)`` raised to the power `e`,
     # reduced modulo `f(X)`, the modulus of ``ctx``.
     # Assumes that `e \geq 0` and that ``len`` is positive and at most `d`.
@@ -197,7 +197,7 @@ cdef extern from "flint_wrap.h":
     # Note that for any input ``op``, ``rop`` is set to `1`
     # whenever `e = 0`.
 
-    void fq_zech_pow_ui(fq_zech_t rop, const fq_zech_t op, const unsigned long e, const fq_zech_ctx_t ctx)
+    void fq_zech_pow_ui(fq_zech_t rop, const fq_zech_t op, const ulong e, const fq_zech_ctx_t ctx)
     # Sets ``rop`` the ``op`` raised to the power `e`.
     # Currently assumes that `e \geq 0`.
     # Note that for any input ``op``, ``rop`` is set to `1`
@@ -260,11 +260,11 @@ cdef extern from "flint_wrap.h":
     void fq_zech_set(fq_zech_t rop, const fq_zech_t op, const fq_zech_ctx_t ctx)
     # Sets ``rop`` to ``op``.
 
-    void fq_zech_set_si(fq_zech_t rop, const long x, const fq_zech_ctx_t ctx)
+    void fq_zech_set_si(fq_zech_t rop, const slong x, const fq_zech_ctx_t ctx)
     # Sets ``rop`` to ``x``, considered as an element of
     # `\mathbf{F}_p`.
 
-    void fq_zech_set_ui(fq_zech_t rop, const unsigned long x, const fq_zech_ctx_t ctx)
+    void fq_zech_set_ui(fq_zech_t rop, const ulong x, const fq_zech_ctx_t ctx)
     # Sets ``rop`` to ``x``, considered as an element of
     # `\mathbf{F}_p`.
 
@@ -348,7 +348,7 @@ cdef extern from "flint_wrap.h":
     # `d = \text{dim}_{\mathbf{F}_p}(\mathbf{F}_q)`.
     # Algorithm selection is automatic depending on the input.
 
-    void fq_zech_frobenius(fq_zech_t rop, const fq_zech_t op, long e, const fq_zech_ctx_t ctx)
+    void fq_zech_frobenius(fq_zech_t rop, const fq_zech_t op, slong e, const fq_zech_ctx_t ctx)
     # Evaluates the homomorphism `\Sigma^e` at ``op``.
     # Recall that `\mathbf{F}_q / \mathbf{F}_p` is Galois with Galois group
     # `\langle \sigma \rangle`, which is also isomorphic to

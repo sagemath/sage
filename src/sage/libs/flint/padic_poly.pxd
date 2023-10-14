@@ -19,18 +19,18 @@ cdef extern from "flint_wrap.h":
     # after finishing with the :type:`padic_poly_t` to free the memory
     # used by the polynomial.
 
-    void padic_poly_init2(padic_poly_t poly, long alloc, long prec)
+    void padic_poly_init2(padic_poly_t poly, slong alloc, slong prec)
     # Initialises ``poly`` with space for at least ``alloc`` coefficients
     # and sets the length to zero.  The allocated coefficients are all set to
     # zero.  The precision is set to ``prec``.
 
-    void padic_poly_realloc(padic_poly_t poly, long alloc, const fmpz_t p)
+    void padic_poly_realloc(padic_poly_t poly, slong alloc, const fmpz_t p)
     # Reallocates the given polynomial to have space for ``alloc``
     # coefficients.  If ``alloc`` is zero the polynomial is cleared
     # and then reinitialised.  If the current length is greater than
     # ``alloc`` the polynomial is first truncated to length ``alloc``.
 
-    void padic_poly_fit_length(padic_poly_t poly, long len)
+    void padic_poly_fit_length(padic_poly_t poly, slong len)
     # If ``len`` is greater than the number of coefficients currently
     # allocated, then the polynomial is reallocated to have space for at
     # least ``len`` coefficients.  No data is lost when calling this
@@ -40,7 +40,7 @@ cdef extern from "flint_wrap.h":
     # of allocated coefficients when length is larger than the number of
     # coefficients currently allocated.
 
-    void _padic_poly_set_length(padic_poly_t poly, long len)
+    void _padic_poly_set_length(padic_poly_t poly, slong len)
     # Demotes the coefficients of ``poly`` beyond ``len`` and sets
     # the length of ``poly`` to ``len``.
     # Note that if the current length is greater than ``len`` the
@@ -55,7 +55,7 @@ cdef extern from "flint_wrap.h":
     # If all coefficients are zero, the length is set to zero.  This function
     # is mainly used internally, as all functions guarantee normalisation.
 
-    void _padic_poly_canonicalise(fmpz *poly, long *v, long len, const fmpz_t p)
+    void _padic_poly_canonicalise(fmpz *poly, slong *v, slong len, const fmpz_t p)
     void padic_poly_canonicalise(padic_poly_t poly, const fmpz_t p)
     # Brings the polynomial ``poly`` into canonical form,
     # assuming that it is normalised already.  Does *not*
@@ -65,16 +65,16 @@ cdef extern from "flint_wrap.h":
     # Reduces the polynomial ``poly`` modulo `p^N`, assuming
     # that it is in canonical form already.
 
-    void padic_poly_truncate(padic_poly_t poly, long n, const fmpz_t p)
+    void padic_poly_truncate(padic_poly_t poly, slong n, const fmpz_t p)
     # Truncates the polynomial to length at most~`n`.
 
-    long padic_poly_degree(const padic_poly_t poly)
+    slong padic_poly_degree(const padic_poly_t poly)
     # Returns the degree of the polynomial ``poly``.
 
-    long padic_poly_length(const padic_poly_t poly)
+    slong padic_poly_length(const padic_poly_t poly)
     # Returns the length of the polynomial ``poly``.
 
-    long padic_poly_val(const padic_poly_t poly)
+    slong padic_poly_val(const padic_poly_t poly)
     # Returns the valuation of the polynomial ``poly``,
     # which is defined to be the minimum valuation of all
     # its coefficients.
@@ -82,22 +82,22 @@ cdef extern from "flint_wrap.h":
     # Note that this is implemented as a macro and can be
     # used as either a ``lvalue`` or a ``rvalue``.
 
-    long padic_poly_prec(padic_poly_t poly)
+    slong padic_poly_prec(padic_poly_t poly)
     # Returns the precision of the polynomial ``poly``.
     # Note that this is implemented as a macro and can be
     # used as either a ``lvalue`` or a ``rvalue``.
     # Note that increasing the precision might require
     # a call to :func:`padic_poly_reduce`.
 
-    void padic_poly_randtest(padic_poly_t f, flint_rand_t state, long len, const padic_ctx_t ctx)
+    void padic_poly_randtest(padic_poly_t f, flint_rand_t state, slong len, const padic_ctx_t ctx)
     # Sets `f` to a random polynomial of length at most ``len``
     # with entries reduced modulo `p^N`.
 
-    void padic_poly_randtest_not_zero(padic_poly_t f, flint_rand_t state, long len, const padic_ctx_t ctx)
+    void padic_poly_randtest_not_zero(padic_poly_t f, flint_rand_t state, slong len, const padic_ctx_t ctx)
     # Sets `f` to a non-zero random polynomial of length at most ``len``
     # with entries reduced modulo `p^N`.
 
-    void padic_poly_randtest_val(padic_poly_t f, flint_rand_t state, long val, long len, const padic_ctx_t ctx)
+    void padic_poly_randtest_val(padic_poly_t f, flint_rand_t state, slong val, slong len, const padic_ctx_t ctx)
     # Sets `f` to a random polynomial of length at most ``len``
     # with at most the prescribed valuation ``val`` and entries
     # reduced modulo `p^N`.
@@ -113,11 +113,11 @@ cdef extern from "flint_wrap.h":
     # Sets the polynomial ``poly1`` to the polynomial ``poly2``,
     # reduced to the precision of ``poly1``.
 
-    void padic_poly_set_si(padic_poly_t poly, long x, const padic_ctx_t ctx)
+    void padic_poly_set_si(padic_poly_t poly, slong x, const padic_ctx_t ctx)
     # Sets the polynomial ``poly`` to the ``signed slong``
     # integer `x` reduced to the precision of the polynomial.
 
-    void padic_poly_set_ui(padic_poly_t poly, unsigned long x, const padic_ctx_t ctx)
+    void padic_poly_set_ui(padic_poly_t poly, ulong x, const padic_ctx_t ctx)
     # Sets the polynomial ``poly`` to the ``unsigned slong``
     # integer `x` reduced to the precision of the polynomial.
 
@@ -158,11 +158,11 @@ cdef extern from "flint_wrap.h":
     # including their precisions.
     # This is done efficiently by swapping pointers.
 
-    void padic_poly_get_coeff_padic(padic_t c, const padic_poly_t poly, long n, const padic_ctx_t ctx)
+    void padic_poly_get_coeff_padic(padic_t c, const padic_poly_t poly, slong n, const padic_ctx_t ctx)
     # Sets `c` to the coefficient of `x^n` in the polynomial,
     # reduced modulo the precision of `c`.
 
-    void padic_poly_set_coeff_padic(padic_poly_t f, long n, const padic_t c, const padic_ctx_t ctx)
+    void padic_poly_set_coeff_padic(padic_poly_t f, slong n, const padic_t c, const padic_ctx_t ctx)
     # Sets the coefficient of `x^n` in the polynomial `f` to `c`,
     # reduced to the precision of the polynomial `f`.
     # Note that this operation can take linear time in the length
@@ -180,7 +180,7 @@ cdef extern from "flint_wrap.h":
     # to the constant polynomial~`1`, taking the precision
     # of the polynomial into account.
 
-    void _padic_poly_add(fmpz *rop, long *rval, long N, const fmpz *op1, long val1, long len1, long N1, const fmpz *op2, long val2, long len2, long N2, const padic_ctx_t ctx)
+    void _padic_poly_add(fmpz *rop, slong *rval, slong N, const fmpz *op1, slong val1, slong len1, slong N1, const fmpz *op2, slong val2, slong len2, slong N2, const padic_ctx_t ctx)
     # Sets ``(rop, *val, FLINT_MAX(len1, len2)`` to the sum of
     # ``(op1, val1, len1)`` and ``(op2, val2, len2)``.
     # Assumes that the input is reduced and guarantees that this is
@@ -191,7 +191,7 @@ cdef extern from "flint_wrap.h":
     void padic_poly_add(padic_poly_t f, const padic_poly_t g, const padic_poly_t h, const padic_ctx_t ctx)
     # Sets `f` to the sum `g + h`.
 
-    void _padic_poly_sub(fmpz *rop, long *rval, long N, const fmpz *op1, long val1, long len1, long N1, const fmpz *op2, long val2, long len2, long N2, const padic_ctx_t ctx)
+    void _padic_poly_sub(fmpz *rop, slong *rval, slong N, const fmpz *op1, slong val1, slong len1, slong N1, const fmpz *op2, slong val2, slong len2, slong N2, const padic_ctx_t ctx)
     # Sets ``(rop, *val, FLINT_MAX(len1, len2)`` to the difference of
     # ``(op1, val1, len1)`` and ``(op2, val2, len2)``.
     # Assumes that the input is reduced and guarantees that this is
@@ -205,7 +205,7 @@ cdef extern from "flint_wrap.h":
     void padic_poly_neg(padic_poly_t f, const padic_poly_t g, const padic_ctx_t ctx)
     # Sets `f` to `-g`.
 
-    void _padic_poly_scalar_mul_padic(fmpz *rop, long *rval, long N, const fmpz *op, long val, long len, const padic_t c, const padic_ctx_t ctx)
+    void _padic_poly_scalar_mul_padic(fmpz *rop, slong *rval, slong N, const fmpz *op, slong val, slong len, const padic_t c, const padic_ctx_t ctx)
     # Sets ``(rop, *rval, len)`` to ``(op, val, len)`` multiplied
     # by the scalar `c`.
     # The result will only be correctly reduced if the polynomial
@@ -217,7 +217,7 @@ cdef extern from "flint_wrap.h":
     # polynomial ``op`` and the `p`-adic number `c`,
     # reducing the result modulo `p^N`.
 
-    void _padic_poly_mul(fmpz *rop, long *rval, long N, const fmpz *op1, long val1, long len1, const fmpz *op2, long val2, long len2, const padic_ctx_t ctx)
+    void _padic_poly_mul(fmpz *rop, slong *rval, slong N, const fmpz *op1, slong val1, slong len1, const fmpz *op2, slong val2, slong len2, const padic_ctx_t ctx)
     # Sets ``(rop, *rval, len1 + len2 - 1)`` to the product of
     # ``(op1, val1, len1)`` and ``(op2, val2, len2)``.
     # Assumes that the resulting valuation ``*rval``, which is
@@ -229,13 +229,13 @@ cdef extern from "flint_wrap.h":
     # Sets the polynomial ``res`` to the product of the two polynomials
     # ``poly1`` and ``poly2``, reduced modulo `p^N`.
 
-    void _padic_poly_pow(fmpz *rop, long *rval, long N, const fmpz *op, long val, long len, unsigned long e, const padic_ctx_t ctx)
+    void _padic_poly_pow(fmpz *rop, slong *rval, slong N, const fmpz *op, slong val, slong len, ulong e, const padic_ctx_t ctx)
     # Sets the polynomial ``(rop, *rval, e (len - 1) + 1)`` to the
     # polynomial ``(op, val, len)`` raised to the power~`e`.
     # Assumes that `e > 1` and ``len > 0``.
     # Does not support aliasing between the input and output arguments.
 
-    void padic_poly_pow(padic_poly_t rop, const padic_poly_t op, unsigned long e, const padic_ctx_t ctx)
+    void padic_poly_pow(padic_poly_t rop, const padic_poly_t op, ulong e, const padic_ctx_t ctx)
     # Sets the polynomial ``rop`` to the polynomial ``op`` raised
     # to the power~`e`, reduced to the precision in ``rop``.
     # In the special case `e = 0`, sets ``rop`` to the constant
@@ -248,7 +248,7 @@ cdef extern from "flint_wrap.h":
     # has valuation~`v < 0`.  The result then has valuation
     # `e v < 0` but is only correct to precision `N + (e - 1) v`.
 
-    void padic_poly_inv_series(padic_poly_t g, const padic_poly_t f, long n, const padic_ctx_t ctx)
+    void padic_poly_inv_series(padic_poly_t g, const padic_poly_t f, slong n, const padic_ctx_t ctx)
     # Computes the power series inverse `g` of `f` modulo `X^n`,
     # where `n \geq 1`.
     # Given the polynomial `f \in \mathbf{Q}[X] \subset \mathbf{Q}_p[X]`,
@@ -260,7 +260,7 @@ cdef extern from "flint_wrap.h":
     # of `f` is minimal among the coefficients of `f`.
     # Note that the result `g` is zero if and only if  `- \operatorname{ord}_p(f) \geq N`.
 
-    void _padic_poly_derivative(fmpz *rop, long *rval, long N, const fmpz *op, long val, long len, const padic_ctx_t ctx)
+    void _padic_poly_derivative(fmpz *rop, slong *rval, slong N, const fmpz *op, slong val, slong len, const padic_ctx_t ctx)
     # Sets ``(rop, rval)`` to the derivative of ``(op, val)`` reduced
     # modulo `p^N`.
     # Supports aliasing of the input and the output parameters.
@@ -269,16 +269,16 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the derivative of ``op``, reducing the
     # result modulo the precision of ``rop``.
 
-    void padic_poly_shift_left(padic_poly_t rop, const padic_poly_t op, long n, const padic_ctx_t ctx)
+    void padic_poly_shift_left(padic_poly_t rop, const padic_poly_t op, slong n, const padic_ctx_t ctx)
     # Notationally, sets the polynomial ``rop`` to the polynomial ``op``
     # multiplied by `x^n`, where `n \geq 0`, and reduces the result.
 
-    void padic_poly_shift_right(padic_poly_t rop, const padic_poly_t op, long n, const padic_ctx_t ctx)
+    void padic_poly_shift_right(padic_poly_t rop, const padic_poly_t op, slong n, const padic_ctx_t ctx)
     # Notationally, sets the polynomial ``rop`` to the polynomial
     # ``op`` after floor division by `x^n`, where `n \geq 0`, ensuring
     # the result is reduced.
 
-    void _padic_poly_evaluate_padic(fmpz_t u, long *v, long N, const fmpz *poly, long val, long len, const fmpz_t a, long b, const padic_ctx_t ctx)
+    void _padic_poly_evaluate_padic(fmpz_t u, slong *v, slong N, const fmpz *poly, slong val, slong len, const fmpz_t a, slong b, const padic_ctx_t ctx)
     void padic_poly_evaluate_padic(padic_t y, const padic_poly_t poly, const padic_t a, const padic_ctx_t ctx)
     # Sets the `p`-adic number ``y`` to ``poly`` evaluated at `a`,
     # reduced in the given context.
@@ -290,7 +290,7 @@ cdef extern from "flint_wrap.h":
     # `y = F(a)` is defined to precision `N` when `a` is integral and
     # `N+(n-1)b` when `b < 0`.
 
-    void _padic_poly_compose(fmpz *rop, long *rval, long N, const fmpz *op1, long val1, long len1, const fmpz *op2, long val2, long len2, const padic_ctx_t ctx)
+    void _padic_poly_compose(fmpz *rop, slong *rval, slong N, const fmpz *op1, slong val1, slong len1, const fmpz *op2, slong val2, slong len2, const padic_ctx_t ctx)
     # Sets ``(rop, *rval, (len1-1)*(len2-1)+1)`` to the composition
     # of the two input polynomials, reducing the result modulo `p^N`.
     # Assumes that ``len1`` is non-zero.
@@ -303,13 +303,13 @@ cdef extern from "flint_wrap.h":
     # denote the polynomials ``op1`` and ``op2``, respectively.
     # Then ``rop`` is set to `f(g(X))`.
 
-    void _padic_poly_compose_pow(fmpz *rop, long *rval, long N, const fmpz *op, long val, long len, long k, const padic_ctx_t ctx)
+    void _padic_poly_compose_pow(fmpz *rop, slong *rval, slong N, const fmpz *op, slong val, slong len, slong k, const padic_ctx_t ctx)
     # Sets ``(rop, *rval, (len - 1)*k + 1)`` to the composition of
     # ``(op, val, len)`` and the monomial `x^k`, where `k \geq 1`.
     # Assumes that ``len`` is positive.
     # Supports aliasing between the input and output polynomials.
 
-    void padic_poly_compose_pow(padic_poly_t rop, const padic_poly_t op, long k, const padic_ctx_t ctx)
+    void padic_poly_compose_pow(padic_poly_t rop, const padic_poly_t op, slong k, const padic_ctx_t ctx)
     # Sets ``rop`` to the composition of ``op`` and the monomial `x^k`,
     # where `k \geq 1`.
     # Note that no reduction takes place.
@@ -319,7 +319,7 @@ cdef extern from "flint_wrap.h":
     # in a simple format useful for debugging purposes.
     # In the current implementation, always returns `1`.
 
-    int _padic_poly_fprint(FILE *file, const fmpz *poly, long val, long len, const padic_ctx_t ctx)
+    int _padic_poly_fprint(FILE *file, const fmpz *poly, slong val, slong len, const padic_ctx_t ctx)
     int padic_poly_fprint(FILE *file, const padic_poly_t poly, const padic_ctx_t ctx)
     # Prints a simple representation of the polynomial ``poly``
     # to the stream ``file``.
@@ -335,18 +335,18 @@ cdef extern from "flint_wrap.h":
     # The zero polynomial is represented by ``"0"``.
     # In the current implementation, always returns `1`.
 
-    int _padic_poly_print(const fmpz *poly, long val, long len, const padic_ctx_t ctx)
+    int _padic_poly_print(const fmpz *poly, slong val, slong len, const padic_ctx_t ctx)
     int padic_poly_print(const padic_poly_t poly, const padic_ctx_t ctx)
     # Prints a simple representation of the polynomial ``poly``
     # to ``stdout``.
     # In the current implementation, always returns `1`.
 
-    int _padic_poly_fprint_pretty(FILE *file, const fmpz *poly, long val, long len, const char *var, const padic_ctx_t ctx)
+    int _padic_poly_fprint_pretty(FILE *file, const fmpz *poly, slong val, slong len, const char *var, const padic_ctx_t ctx)
     int padic_poly_fprint_pretty(FILE *file, const padic_poly_t poly, const char *var, const padic_ctx_t ctx)
-    int _padic_poly_print_pretty(const fmpz *poly, long val, long len, const char *var, const padic_ctx_t ctx)
+    int _padic_poly_print_pretty(const fmpz *poly, slong val, slong len, const char *var, const padic_ctx_t ctx)
     int padic_poly_print_pretty(const padic_poly_t poly, const char *var, const padic_ctx_t ctx)
 
-    int _padic_poly_is_canonical(const fmpz *op, long val, long len, const padic_ctx_t ctx)
+    int _padic_poly_is_canonical(const fmpz *op, slong val, slong len, const padic_ctx_t ctx)
     int padic_poly_is_canonical(const padic_poly_t op, const padic_ctx_t ctx)
-    int _padic_poly_is_reduced(const fmpz *op, long val, long len, long N, const padic_ctx_t ctx)
+    int _padic_poly_is_reduced(const fmpz *op, slong val, slong len, slong N, const padic_ctx_t ctx)
     int padic_poly_is_reduced(const padic_poly_t op, const padic_ctx_t ctx)

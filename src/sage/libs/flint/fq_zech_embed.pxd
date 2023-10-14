@@ -70,7 +70,7 @@ cdef extern from "flint_wrap.h":
     # For an element `a\in\mathbf{F}_{p^n}`, its composition matrix is the
     # matrix whose columns are `a^0, a^1, \ldots, a^{n-1}`.
 
-    void fq_zech_embed_composition_matrix_sub(nmod_mat_t matrix, const fq_zech_t gen, const fq_zech_ctx_t ctx, long trunc)
+    void fq_zech_embed_composition_matrix_sub(nmod_mat_t matrix, const fq_zech_t gen, const fq_zech_ctx_t ctx, slong trunc)
     # Compute the *composition matrix* of ``gen``, truncated to
     # ``trunc`` columns.
 
@@ -88,7 +88,7 @@ cdef extern from "flint_wrap.h":
     # Compute the change of basis matrix from the dual basis of
     # ``ctx`` to its monomial basis.
 
-    void fq_zech_modulus_pow_series_inv(nmod_poly_t res, const fq_zech_ctx_t ctx, long trunc)
+    void fq_zech_modulus_pow_series_inv(nmod_poly_t res, const fq_zech_ctx_t ctx, slong trunc)
     # Compute the power series inverse of the reverse of the modulus of
     # ``ctx`` up to `O(x^\texttt{trunc})`.
 

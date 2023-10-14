@@ -34,21 +34,21 @@ cdef extern from "flint_wrap.h":
     # Set `a` to `b+c` modulo `n`.
 
     void fmpz_mod_add_fmpz(fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
-    void fmpz_mod_add_ui(fmpz_t a, const fmpz_t b, unsigned long c, const fmpz_mod_ctx_t ctx)
-    void fmpz_mod_add_si(fmpz_t a, const fmpz_t b, long c, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_add_ui(fmpz_t a, const fmpz_t b, ulong c, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_add_si(fmpz_t a, const fmpz_t b, slong c, const fmpz_mod_ctx_t ctx)
     # Set `a` to `b+c` modulo `n` where only `b` is assumed to be canonical.
 
     void fmpz_mod_sub(fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
     # Set `a` to `b-c` modulo `n`.
 
     void fmpz_mod_sub_fmpz(fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
-    void fmpz_mod_sub_ui(fmpz_t a, const fmpz_t b, unsigned long c, const fmpz_mod_ctx_t ctx)
-    void fmpz_mod_sub_si(fmpz_t a, const fmpz_t b, long c, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_sub_ui(fmpz_t a, const fmpz_t b, ulong c, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_sub_si(fmpz_t a, const fmpz_t b, slong c, const fmpz_mod_ctx_t ctx)
     # Set `a` to `b-c` modulo `n` where only `b` is assumed to be canonical.
 
     void fmpz_mod_fmpz_sub(fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
-    void fmpz_mod_ui_sub(fmpz_t a, unsigned long b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
-    void fmpz_mod_si_sub(fmpz_t a, long b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_ui_sub(fmpz_t a, ulong b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_si_sub(fmpz_t a, slong b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
     # Set `a` to `b-c` modulo `n` where only `c` is assumed to be canonical.
 
     void fmpz_mod_neg(fmpz_t a, const fmpz_t b, const fmpz_mod_ctx_t ctx)
@@ -65,7 +65,7 @@ cdef extern from "flint_wrap.h":
     int fmpz_mod_divides(fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_mod_ctx_t ctx)
     # If `a\cdot c = b \mod n` has a solution for `a` return `1` and set `a` to such a solution. Otherwise return `0` and leave `a` undefined.
 
-    void fmpz_mod_pow_ui(fmpz_t a, const fmpz_t b, unsigned long e, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_pow_ui(fmpz_t a, const fmpz_t b, ulong e, const fmpz_mod_ctx_t ctx)
     # Set `a` to `b^e` modulo `n`.
 
     int fmpz_mod_pow_fmpz(fmpz_t a, const fmpz_t b, const fmpz_t e, const fmpz_mod_ctx_t ctx)

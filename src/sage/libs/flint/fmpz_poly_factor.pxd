@@ -15,15 +15,15 @@ cdef extern from "flint_wrap.h":
     void fmpz_poly_factor_init(fmpz_poly_factor_t fac)
     # Initialises a new factor structure.
 
-    void fmpz_poly_factor_init2(fmpz_poly_factor_t fac, long alloc)
+    void fmpz_poly_factor_init2(fmpz_poly_factor_t fac, slong alloc)
     # Initialises a new factor structure, providing space for
     # at least ``alloc`` factors.
 
-    void fmpz_poly_factor_realloc(fmpz_poly_factor_t fac, long alloc)
+    void fmpz_poly_factor_realloc(fmpz_poly_factor_t fac, slong alloc)
     # Reallocates the factor structure to provide space for
     # precisely ``alloc`` factors.
 
-    void fmpz_poly_factor_fit_length(fmpz_poly_factor_t fac, long len)
+    void fmpz_poly_factor_fit_length(fmpz_poly_factor_t fac, slong len)
     # Ensures that the factor structure has space for at
     # least ``len`` factors.  This functions takes care
     # of the case of repeated calls by always at least
@@ -35,7 +35,7 @@ cdef extern from "flint_wrap.h":
     void fmpz_poly_factor_set(fmpz_poly_factor_t res, const fmpz_poly_factor_t fac)
     # Sets ``res`` to the same factorisation as ``fac``.
 
-    void fmpz_poly_factor_insert(fmpz_poly_factor_t fac, const fmpz_poly_t p, long e)
+    void fmpz_poly_factor_insert(fmpz_poly_factor_t fac, const fmpz_poly_t p, slong e)
     # Adds the primitive polynomial `p^e` to the factorisation ``fac``.
     # Assumes that `\deg(p) \geq 2` and `e \neq 0`.
 
@@ -58,7 +58,7 @@ cdef extern from "flint_wrap.h":
     # F = c \prod_{i} g_i^{e_i}
     # where `c` is the signed content of `F` and `\gcd(g_i, g_i') = 1`.
 
-    void fmpz_poly_factor_zassenhaus_recombination(fmpz_poly_factor_t final_fac, const fmpz_poly_factor_t lifted_fac, const fmpz_poly_t F, const fmpz_t P, long exp)
+    void fmpz_poly_factor_zassenhaus_recombination(fmpz_poly_factor_t final_fac, const fmpz_poly_factor_t lifted_fac, const fmpz_poly_t F, const fmpz_t P, slong exp)
     # Takes as input a factor structure ``lifted_fac`` containing a
     # squarefree factorization of the polynomial `F \bmod p`. The algorithm
     # does a brute force search for irreducible factors of `F` over the
@@ -66,7 +66,7 @@ cdef extern from "flint_wrap.h":
     # The impact of the algorithm is to augment a factorization of
     # ``F^exp`` to the factor structure ``final_fac``.
 
-    void _fmpz_poly_factor_zassenhaus(fmpz_poly_factor_t final_fac, long exp, const fmpz_poly_t f, long cutoff, int use_van_hoeij)
+    void _fmpz_poly_factor_zassenhaus(fmpz_poly_factor_t final_fac, slong exp, const fmpz_poly_t f, slong cutoff, int use_van_hoeij)
     # This is the internal wrapper of Zassenhaus.
     # It will attempt to find a small prime such that `f` modulo `p` has
     # a minimal number of factors.  If it cannot find a prime giving less
@@ -88,8 +88,8 @@ cdef extern from "flint_wrap.h":
     # The complexity will be exponential in the number of local factors
     # we find for the components of a squarefree factorization of `F`.
 
-    void _fmpz_poly_factor_quadratic(fmpz_poly_factor_t fac, const fmpz_poly_t f, long exp)
-    void _fmpz_poly_factor_cubic(fmpz_poly_factor_t fac, const fmpz_poly_t f, long exp)
+    void _fmpz_poly_factor_quadratic(fmpz_poly_factor_t fac, const fmpz_poly_t f, slong exp)
+    void _fmpz_poly_factor_cubic(fmpz_poly_factor_t fac, const fmpz_poly_t f, slong exp)
     # Inserts the factorisation of the quadratic (resp. cubic) polynomial *f* into *fac* with
     # multiplicity *exp*. This function requires that the content of *f* has
     # been removed, and does not update the content of *fac*.

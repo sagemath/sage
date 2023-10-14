@@ -38,7 +38,7 @@ cdef extern from "flint_wrap.h":
     # A small ``fmpz_t`` is initialised, i.e. just a ``slong``.
     # The value is set to zero.
 
-    void fmpz_init2(fmpz_t f, unsigned long limbs)
+    void fmpz_init2(fmpz_t f, ulong limbs)
     # Initialises the given ``fmpz_t`` to have space for the given
     # number of limbs.
     # If ``limbs`` is zero then a small ``fmpz_t`` is allocated,
@@ -53,9 +53,9 @@ cdef extern from "flint_wrap.h":
 
     void fmpz_init_set(fmpz_t f, const fmpz_t g)
 
-    void fmpz_init_set_ui(fmpz_t f, unsigned long g)
+    void fmpz_init_set_ui(fmpz_t f, ulong g)
 
-    void fmpz_init_set_si(fmpz_t f, long g)
+    void fmpz_init_set_si(fmpz_t f, slong g)
     # Initialises `f` and sets it to the value of `g`.
 
     void fmpz_randbits(fmpz_t f, flint_rand_t state, flint_bitcnt_t bits)
@@ -98,11 +98,11 @@ cdef extern from "flint_wrap.h":
     # If ``proved`` is nonzero, then the integer returned is
     # guaranteed to actually be prime.
 
-    long fmpz_get_si(const fmpz_t f)
+    slong fmpz_get_si(const fmpz_t f)
     # Returns `f` as a ``slong``.  The result is undefined
     # if `f` does not fit into a ``slong``.
 
-    unsigned long fmpz_get_ui(const fmpz_t f)
+    ulong fmpz_get_ui(const fmpz_t f)
     # Returns `f` as an ``ulong``.  The result is undefined
     # if `f` does not fit into an ``ulong`` or is negative.
 
@@ -132,7 +132,7 @@ cdef extern from "flint_wrap.h":
     # **Note:** Requires that ``mpfr.h`` has been included before any FLINT
     # header is included.
 
-    double fmpz_get_d_2exp(long * exp, const fmpz_t f)
+    double fmpz_get_d_2exp(slong * exp, const fmpz_t f)
     # Returns `f` as a normalized ``double`` along with a `2`-exponent
     # ``exp``, i.e. if `r` is the return value then `f = r 2^{exp}`,
     # to within 1 ULP.
@@ -152,10 +152,10 @@ cdef extern from "flint_wrap.h":
     # the function.  Otherwise, it is up to the caller to ensure that
     # the allocated block of memory is sufficiently large.
 
-    void fmpz_set_si(fmpz_t f, long val)
+    void fmpz_set_si(fmpz_t f, slong val)
     # Sets `f` to the given ``slong`` value.
 
-    void fmpz_set_ui(fmpz_t f, unsigned long val)
+    void fmpz_set_ui(fmpz_t f, ulong val)
     # Sets `f` to the given ``ulong`` value.
 
     void fmpz_set_d(fmpz_t f, double c)
@@ -163,10 +163,10 @@ cdef extern from "flint_wrap.h":
     # the value of `c` is fractional. The outcome is undefined if `c` is
     # infinite, not-a-number, or subnormal.
 
-    void fmpz_set_d_2exp(fmpz_t f, double d, long exp)
+    void fmpz_set_d_2exp(fmpz_t f, double d, slong exp)
     # Sets `f` to the nearest integer to `d 2^{exp}`.
 
-    void fmpz_neg_ui(fmpz_t f, unsigned long val)
+    void fmpz_neg_ui(fmpz_t f, ulong val)
     # Sets `f` to the given ``ulong`` value, and then negates `f`.
 
     void fmpz_set_uiui(fmpz_t f, mp_limb_t hi, mp_limb_t lo)
@@ -177,41 +177,41 @@ cdef extern from "flint_wrap.h":
     # Sets `f` to ``lo``, plus ``hi`` shifted to the left by
     # ``FLINT_BITS``, and then negates `f`.
 
-    void fmpz_set_signed_uiui(fmpz_t f, unsigned long hi, unsigned long lo)
+    void fmpz_set_signed_uiui(fmpz_t f, ulong hi, ulong lo)
     # Sets `f` to ``lo``, plus ``hi`` shifted to the left by
     # ``FLINT_BITS``, interpreted as a signed two's complement
     # integer with ``2 * FLINT_BITS`` bits.
 
-    void fmpz_set_signed_uiuiui(fmpz_t f, unsigned long hi, unsigned long mid, unsigned long lo)
+    void fmpz_set_signed_uiuiui(fmpz_t f, ulong hi, ulong mid, ulong lo)
     # Sets `f` to ``lo``, plus ``mid`` shifted to the left by
     # ``FLINT_BITS``, plus ``hi`` shifted to the left by
     # ``2*FLINT_BITS`` bits, interpreted as a signed two's complement
     # integer with ``3 * FLINT_BITS`` bits.
 
-    void fmpz_set_ui_array(fmpz_t out, const unsigned long * input, long n)
+    void fmpz_set_ui_array(fmpz_t out, const ulong * input, slong n)
     # Sets ``out`` to the nonnegative integer
     # ``in[0] + in[1]*X  + ... + in[n - 1]*X^(n - 1)``
     # where ``X = 2^FLINT_BITS``. It is assumed that ``n > 0``.
 
-    void fmpz_set_signed_ui_array(fmpz_t out, const unsigned long * input, long n)
+    void fmpz_set_signed_ui_array(fmpz_t out, const ulong * input, slong n)
     # Sets ``out`` to the integer represented in ``in[0], ..., in[n - 1]``
     # as a signed two's complement integer with ``n * FLINT_BITS`` bits.
     # It is assumed that ``n > 0``. The function operates as a call to
     # :func:`fmpz_set_ui_array` followed by a symmetric remainder modulo
     # `2^{n\cdot FLINT\_BITS}`.
 
-    void fmpz_get_ui_array(unsigned long * out, long n, const fmpz_t input)
+    void fmpz_get_ui_array(ulong * out, slong n, const fmpz_t input)
     # Assuming that the nonnegative integer ``in`` can be represented in the
     # form ``out[0] + out[1]*X + ... + out[n - 1]*X^(n - 1)``,
     # where `X = 2^{FLINT\_BITS}`, sets the corresponding elements of ``out``
     # so that this is true. It is assumed that ``n > 0``.
 
-    void fmpz_get_signed_ui_array(unsigned long * out, long n, const fmpz_t input)
+    void fmpz_get_signed_ui_array(ulong * out, slong n, const fmpz_t input)
     # Retrieves the value of `in` modulo `2^{n * FLINT\_BITS}` and puts the `n`
     # words of the result in ``out[0], ..., out[n-1]``. This will give a signed
     # two's complement representation of `in` (assuming `in` doesn't overflow the array).
 
-    void fmpz_get_signed_uiui(unsigned long * hi, unsigned long * lo, const fmpz_t input)
+    void fmpz_get_signed_uiui(ulong * hi, ulong * lo, const fmpz_t input)
     # Retrieves the value of `in` modulo `2^{2 * FLINT\_BITS}` and puts the high
     # and low words into ``*hi`` and ``*lo`` respectively.
 
@@ -381,19 +381,19 @@ cdef extern from "flint_wrap.h":
     int fmpz_fits_si(const fmpz_t f)
     # Returns whether the value of `f` fits into a ``slong``.
 
-    void fmpz_setbit(fmpz_t f, unsigned long i)
+    void fmpz_setbit(fmpz_t f, ulong i)
     # Sets bit index `i` of `f`.
 
-    int fmpz_tstbit(const fmpz_t f, unsigned long i)
+    int fmpz_tstbit(const fmpz_t f, ulong i)
     # Test bit index `i` of `f` and return `0` or `1`, accordingly.
 
-    mp_limb_t fmpz_abs_lbound_ui_2exp(long * exp, const fmpz_t x, int bits)
+    mp_limb_t fmpz_abs_lbound_ui_2exp(slong * exp, const fmpz_t x, int bits)
     # For nonzero `x`, returns a mantissa `m` with exactly ``bits`` bits and
     # sets ``exp`` to an exponent `e`, such that `|x| \ge m 2^e`. The number
     # of bits must be between 1 and ``FLINT_BITS`` inclusive.
     # The mantissa is guaranteed to be correctly rounded.
 
-    mp_limb_t fmpz_abs_ubound_ui_2exp(long * exp, const fmpz_t x, int bits)
+    mp_limb_t fmpz_abs_ubound_ui_2exp(slong * exp, const fmpz_t x, int bits)
     # For nonzero `x`, returns a mantissa `m` with exactly ``bits`` bits
     # and sets ``exp`` to an exponent `e`, such that `|x| \le m 2^e`.
     # The number of bits must be between 1 and ``FLINT_BITS`` inclusive.
@@ -403,9 +403,9 @@ cdef extern from "flint_wrap.h":
 
     int fmpz_cmp(const fmpz_t f, const fmpz_t g)
 
-    int fmpz_cmp_ui(const fmpz_t f, unsigned long g)
+    int fmpz_cmp_ui(const fmpz_t f, ulong g)
 
-    int fmpz_cmp_si(const fmpz_t f, long g)
+    int fmpz_cmp_si(const fmpz_t f, slong g)
     # Returns a negative value if `f < g`, positive value if `g < f`,
     # otherwise returns `0`.
 
@@ -419,9 +419,9 @@ cdef extern from "flint_wrap.h":
 
     int fmpz_equal(const fmpz_t f, const fmpz_t g)
 
-    int fmpz_equal_ui(const fmpz_t f, unsigned long g)
+    int fmpz_equal_ui(const fmpz_t f, ulong g)
 
-    int fmpz_equal_si(const fmpz_t f, long g)
+    int fmpz_equal_si(const fmpz_t f, slong g)
     # Returns `1` if `f` is equal to `g`, otherwise returns `0`.
 
     int fmpz_is_zero(const fmpz_t f)
@@ -446,38 +446,38 @@ cdef extern from "flint_wrap.h":
     # Sets `f_1` to the absolute value of `f_2`.
 
     void fmpz_add(fmpz_t f, const fmpz_t g, const fmpz_t h)
-    void fmpz_add_ui(fmpz_t f, const fmpz_t g, unsigned long h)
-    void fmpz_add_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_add_ui(fmpz_t f, const fmpz_t g, ulong h)
+    void fmpz_add_si(fmpz_t f, const fmpz_t g, slong h)
     # Sets `f` to `g + h`.
 
     void fmpz_sub(fmpz_t f, const fmpz_t g, const fmpz_t h)
-    void fmpz_sub_ui(fmpz_t f, const fmpz_t g, unsigned long h)
-    void fmpz_sub_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_sub_ui(fmpz_t f, const fmpz_t g, ulong h)
+    void fmpz_sub_si(fmpz_t f, const fmpz_t g, slong h)
     # Sets `f` to `g - h`.
 
     void fmpz_mul(fmpz_t f, const fmpz_t g, const fmpz_t h)
-    void fmpz_mul_ui(fmpz_t f, const fmpz_t g, unsigned long h)
-    void fmpz_mul_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_mul_ui(fmpz_t f, const fmpz_t g, ulong h)
+    void fmpz_mul_si(fmpz_t f, const fmpz_t g, slong h)
     # Sets `f` to `g \times h`.
 
-    void fmpz_mul2_uiui(fmpz_t f, const fmpz_t g, unsigned long x, unsigned long y)
+    void fmpz_mul2_uiui(fmpz_t f, const fmpz_t g, ulong x, ulong y)
     # Sets `f` to `g \times x \times y` where `x` and `y` are of type ``ulong``.
 
-    void fmpz_mul_2exp(fmpz_t f, const fmpz_t g, unsigned long e)
+    void fmpz_mul_2exp(fmpz_t f, const fmpz_t g, ulong e)
     # Sets `f` to `g \times 2^e`.
     # Note: Assumes that ``e + FLINT_BITS`` does not overflow.
 
-    void fmpz_one_2exp(fmpz_t f, unsigned long e)
+    void fmpz_one_2exp(fmpz_t f, ulong e)
     # Sets `f` to `2^e`.
 
     void fmpz_addmul(fmpz_t f, const fmpz_t g, const fmpz_t h)
-    void fmpz_addmul_ui(fmpz_t f, const fmpz_t g, unsigned long h)
-    void fmpz_addmul_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_addmul_ui(fmpz_t f, const fmpz_t g, ulong h)
+    void fmpz_addmul_si(fmpz_t f, const fmpz_t g, slong h)
     # Sets `f` to `f + g \times h`.
 
     void fmpz_submul(fmpz_t f, const fmpz_t g, const fmpz_t h)
-    void fmpz_submul_ui(fmpz_t f, const fmpz_t g, unsigned long h)
-    void fmpz_submul_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_submul_ui(fmpz_t f, const fmpz_t g, ulong h)
+    void fmpz_submul_si(fmpz_t f, const fmpz_t g, slong h)
     # Sets `f` to `f - g \times h`.
 
     void fmpz_fmma(fmpz_t f, const fmpz_t a, const fmpz_t b, const fmpz_t c, const fmpz_t d)
@@ -500,31 +500,31 @@ cdef extern from "flint_wrap.h":
 
     void fmpz_tdiv_q(fmpz_t f, const fmpz_t g, const fmpz_t h)
 
-    void fmpz_cdiv_q_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_cdiv_q_si(fmpz_t f, const fmpz_t g, slong h)
 
-    void fmpz_fdiv_q_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_fdiv_q_si(fmpz_t f, const fmpz_t g, slong h)
 
-    void fmpz_tdiv_q_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_tdiv_q_si(fmpz_t f, const fmpz_t g, slong h)
 
-    void fmpz_cdiv_q_ui(fmpz_t f, const fmpz_t g, unsigned long h)
+    void fmpz_cdiv_q_ui(fmpz_t f, const fmpz_t g, ulong h)
 
-    void fmpz_fdiv_q_ui(fmpz_t f, const fmpz_t g, unsigned long h)
+    void fmpz_fdiv_q_ui(fmpz_t f, const fmpz_t g, ulong h)
 
-    void fmpz_tdiv_q_ui(fmpz_t f, const fmpz_t g, unsigned long h)
+    void fmpz_tdiv_q_ui(fmpz_t f, const fmpz_t g, ulong h)
 
-    void fmpz_cdiv_q_2exp(fmpz_t f, const fmpz_t g, unsigned long exp)
+    void fmpz_cdiv_q_2exp(fmpz_t f, const fmpz_t g, ulong exp)
 
-    void fmpz_fdiv_q_2exp(fmpz_t f, const fmpz_t g, unsigned long exp)
+    void fmpz_fdiv_q_2exp(fmpz_t f, const fmpz_t g, ulong exp)
 
-    void fmpz_tdiv_q_2exp(fmpz_t f, const fmpz_t g, unsigned long exp)
+    void fmpz_tdiv_q_2exp(fmpz_t f, const fmpz_t g, ulong exp)
 
     void fmpz_fdiv_r(fmpz_t s, const fmpz_t g, const fmpz_t h)
 
-    void fmpz_cdiv_r_2exp(fmpz_t s, const fmpz_t g, unsigned long exp)
+    void fmpz_cdiv_r_2exp(fmpz_t s, const fmpz_t g, ulong exp)
 
-    void fmpz_fdiv_r_2exp(fmpz_t s, const fmpz_t g, unsigned long exp)
+    void fmpz_fdiv_r_2exp(fmpz_t s, const fmpz_t g, ulong exp)
 
-    void fmpz_tdiv_r_2exp(fmpz_t s, const fmpz_t g, unsigned long exp)
+    void fmpz_tdiv_r_2exp(fmpz_t s, const fmpz_t g, ulong exp)
     # Sets `f` to the quotient of `g` by `h` and/or `s` to the remainder. For the
     # ``2exp`` functions, ``g = 2^exp``. `If `h` is `0` an exception is raised.
     # Rounding is made in the following way:
@@ -534,29 +534,29 @@ cdef extern from "flint_wrap.h":
     # * ``ndiv`` rounds the quotient such that the remainder has the smallest
     # absolute value. In case of ties, it rounds the quotient towards zero.
 
-    unsigned long fmpz_cdiv_ui(const fmpz_t g, unsigned long h)
+    ulong fmpz_cdiv_ui(const fmpz_t g, ulong h)
 
-    unsigned long fmpz_fdiv_ui(const fmpz_t g, unsigned long h)
+    ulong fmpz_fdiv_ui(const fmpz_t g, ulong h)
 
-    unsigned long fmpz_tdiv_ui(const fmpz_t g, unsigned long h)
+    ulong fmpz_tdiv_ui(const fmpz_t g, ulong h)
 
     void fmpz_divexact(fmpz_t f, const fmpz_t g, const fmpz_t h)
 
-    void fmpz_divexact_si(fmpz_t f, const fmpz_t g, long h)
+    void fmpz_divexact_si(fmpz_t f, const fmpz_t g, slong h)
 
-    void fmpz_divexact_ui(fmpz_t f, const fmpz_t g, unsigned long h)
+    void fmpz_divexact_ui(fmpz_t f, const fmpz_t g, ulong h)
     # Sets `f` to the quotient of `g` and `h`, assuming that the
     # division is exact, i.e. `g` is a multiple of `h`.  If `h`
     # is `0` an exception is raised.
 
-    void fmpz_divexact2_uiui(fmpz_t f, const fmpz_t g, unsigned long x, unsigned long y)
+    void fmpz_divexact2_uiui(fmpz_t f, const fmpz_t g, ulong x, ulong y)
     # Sets `f` to the quotient of `g` and `h = x \times y`, assuming that
     # the division is exact, i.e. `g` is a multiple of `h`.
     # If `x` or `y` is `0` an exception is raised.
 
     int fmpz_divisible(const fmpz_t f, const fmpz_t g)
 
-    int fmpz_divisible_si(const fmpz_t f, long g)
+    int fmpz_divisible_si(const fmpz_t f, slong g)
     # Returns `1` if there is an integer `q` with `f = q g` and `0` if there is
     # none.
 
@@ -568,7 +568,7 @@ cdef extern from "flint_wrap.h":
     # Sets `f` to the remainder of `g` divided by `h` such that the remainder is
     # positive. Assumes that `h` is not zero.
 
-    unsigned long fmpz_mod_ui(fmpz_t f, const fmpz_t g, unsigned long h)
+    ulong fmpz_mod_ui(fmpz_t f, const fmpz_t g, ulong h)
     # Sets `f` to the remainder of `g` divided by `h` such that the remainder is
     # positive and also returns this value. Raises an exception if `h` is zero.
 
@@ -590,28 +590,28 @@ cdef extern from "flint_wrap.h":
     # This function will be faster than :func:`fmpz_fdiv_qr_preinvn` when the
     # number of limbs of `h` is at least ``PREINVN_CUTOFF``.
 
-    void fmpz_pow_ui(fmpz_t f, const fmpz_t g, unsigned long x)
-    void fmpz_ui_pow_ui(fmpz_t f, unsigned long g, unsigned long x)
+    void fmpz_pow_ui(fmpz_t f, const fmpz_t g, ulong x)
+    void fmpz_ui_pow_ui(fmpz_t f, ulong g, ulong x)
     # Sets `f` to `g^x`.  Defines `0^0 = 1`.
 
     int fmpz_pow_fmpz(fmpz_t f, const fmpz_t g, const fmpz_t x)
     # Sets `f` to `g^x`. Defines `0^0 = 1`. Return `1` for success and `0` for
     # failure. The function throws only if `x` is negative.
 
-    void fmpz_powm_ui(fmpz_t f, const fmpz_t g, unsigned long e, const fmpz_t m)
+    void fmpz_powm_ui(fmpz_t f, const fmpz_t g, ulong e, const fmpz_t m)
 
     void fmpz_powm(fmpz_t f, const fmpz_t g, const fmpz_t e, const fmpz_t m)
     # Sets `f` to `g^e \bmod{m}`.  If `e = 0`, sets `f` to `1`.
     # Assumes that `m \neq 0`, raises an ``abort`` signal otherwise.
 
-    long fmpz_clog(const fmpz_t x, const fmpz_t b)
-    long fmpz_clog_ui(const fmpz_t x, unsigned long b)
+    slong fmpz_clog(const fmpz_t x, const fmpz_t b)
+    slong fmpz_clog_ui(const fmpz_t x, ulong b)
     # Returns `\lceil\log_b x\rceil`.
     # Assumes that `x \geq 1` and `b \geq 2` and that
     # the return value fits into a signed ``slong``.
 
-    long fmpz_flog(const fmpz_t x, const fmpz_t b)
-    long fmpz_flog_ui(const fmpz_t x, unsigned long b)
+    slong fmpz_flog(const fmpz_t x, const fmpz_t b)
+    slong fmpz_flog_ui(const fmpz_t x, ulong b)
     # Returns `\lfloor\log_b x\rfloor`.
     # Assumes that `x \geq 1` and `b \geq 2` and that
     # the return value fits into a signed ``slong``.
@@ -645,7 +645,7 @@ cdef extern from "flint_wrap.h":
     int fmpz_is_square(const fmpz_t f)
     # Returns nonzero if `f` is a perfect square and zero otherwise.
 
-    int fmpz_root(fmpz_t r, const fmpz_t f, long n)
+    int fmpz_root(fmpz_t r, const fmpz_t f, slong n)
     # Set `r` to the integer part of the `n`-th root of `f`. Requires that
     # `n > 0` and that if `n` is even then `f` be non-negative, otherwise an
     # exception is raised. The function returns `1` if the root was exact,
@@ -657,35 +657,35 @@ cdef extern from "flint_wrap.h":
     # powers. No guarantee is made about `r` or `k` being the smallest
     # possible value. Negative values of `f` are permitted.
 
-    void fmpz_fac_ui(fmpz_t f, unsigned long n)
+    void fmpz_fac_ui(fmpz_t f, ulong n)
     # Sets `f` to the factorial `n!` where `n` is an ``ulong``.
 
-    void fmpz_fib_ui(fmpz_t f, unsigned long n)
+    void fmpz_fib_ui(fmpz_t f, ulong n)
     # Sets `f` to the Fibonacci number `F_n` where `n` is an
     # ``ulong``.
 
-    void fmpz_bin_uiui(fmpz_t f, unsigned long n, unsigned long k)
+    void fmpz_bin_uiui(fmpz_t f, ulong n, ulong k)
     # Sets `f` to the binomial coefficient `{n \choose k}`.
 
-    void _fmpz_rfac_ui(fmpz_t r, const fmpz_t x, unsigned long a, unsigned long b)
+    void _fmpz_rfac_ui(fmpz_t r, const fmpz_t x, ulong a, ulong b)
     # Sets `r` to the rising factorial `(x+a) (x+a+1) (x+a+2) \cdots (x+b-1)`.
     # Assumes `b > a`.
 
-    void fmpz_rfac_ui(fmpz_t r, const fmpz_t x, unsigned long k)
+    void fmpz_rfac_ui(fmpz_t r, const fmpz_t x, ulong k)
     # Sets `r` to the rising factorial `x (x+1) (x+2) \cdots (x+k-1)`.
 
-    void fmpz_rfac_uiui(fmpz_t r, unsigned long x, unsigned long k)
+    void fmpz_rfac_uiui(fmpz_t r, ulong x, ulong k)
     # Sets `r` to the rising factorial `x (x+1) (x+2) \cdots (x+k-1)`.
 
-    void fmpz_mul_tdiv_q_2exp(fmpz_t f, const fmpz_t g, const fmpz_t h, unsigned long exp)
+    void fmpz_mul_tdiv_q_2exp(fmpz_t f, const fmpz_t g, const fmpz_t h, ulong exp)
     # Sets `f` to the product of `g` and `h` divided by ``2^exp``, rounding
     # down towards zero.
 
-    void fmpz_mul_si_tdiv_q_2exp(fmpz_t f, const fmpz_t g, long x, unsigned long exp)
+    void fmpz_mul_si_tdiv_q_2exp(fmpz_t f, const fmpz_t g, slong x, ulong exp)
     # Sets `f` to the product of `g` and `x` divided by ``2^exp``, rounding
     # down towards zero.
 
-    void fmpz_gcd_ui(fmpz_t f, const fmpz_t g, unsigned long h)
+    void fmpz_gcd_ui(fmpz_t f, const fmpz_t g, ulong h)
 
     void fmpz_gcd(fmpz_t f, const fmpz_t g, const fmpz_t h)
     # Sets `f` to the greatest common divisor of `g` and `h`.  The
@@ -750,14 +750,14 @@ cdef extern from "flint_wrap.h":
     # Aliasing of inputs is not allowed. Similarly aliasing of inputs and outputs
     # is not allowed.
 
-    long _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
+    slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
     # Removes all factors `f` from `x` and returns the number of such.
     # Assumes that `x` is non-zero, that `f > 1` and that ``finv``
     # is the precomputed ``double`` inverse of `f` whenever `f` is
     # a small integer and `0` otherwise.
     # Does not support aliasing.
 
-    long fmpz_remove(fmpz_t rop, const fmpz_t op, const fmpz_t f)
+    slong fmpz_remove(fmpz_t rop, const fmpz_t op, const fmpz_t f)
     # Remove all occurrences of the factor `f > 1` from the
     # integer ``op`` and sets ``rop`` to the resulting
     # integer.
@@ -817,10 +817,10 @@ cdef extern from "flint_wrap.h":
     void fmpz_complement(fmpz_t r, const fmpz_t f)
     # The variable ``r`` is set to the ones-complement of ``f``.
 
-    void fmpz_clrbit(fmpz_t f, unsigned long i)
+    void fmpz_clrbit(fmpz_t f, ulong i)
     # Sets the ``i``\th bit in ``f`` to zero.
 
-    void fmpz_combit(fmpz_t f, unsigned long i)
+    void fmpz_combit(fmpz_t f, ulong i)
     # Complements the ``i``\th bit in ``f``.
 
     void fmpz_and(fmpz_t r, const fmpz_t a, const fmpz_t b)
@@ -834,12 +834,12 @@ cdef extern from "flint_wrap.h":
     # Sets ``r`` to the bit-wise logical exclusive ``or`` of
     # ``a`` and ``b``.
 
-    unsigned long fmpz_popcnt(const fmpz_t a)
+    ulong fmpz_popcnt(const fmpz_t a)
     # Returns the number of '1' bits in the given Z (aka Hamming weight or
     # population count).
     # The return value is undefined if the input is negative.
 
-    void fmpz_CRT_ui(fmpz_t out, const fmpz_t r1, const fmpz_t m1, unsigned long r2, unsigned long m2, int sign)
+    void fmpz_CRT_ui(fmpz_t out, const fmpz_t r1, const fmpz_t m1, ulong r2, ulong m2, int sign)
     # Uses the Chinese Remainder Theorem to compute the unique integer
     # `0 \le x < M` (if sign = 0) or `-M/2 < x \le M/2` (if sign = 1)
     # congruent to `r_1` modulo `m_1` and `r_2` modulo `m_2`,
@@ -877,7 +877,7 @@ cdef extern from "flint_wrap.h":
     # space which must be provided by :func:`fmpz_comb_temp_init` and
     # cleared by :func:`fmpz_comb_temp_clear`.
 
-    void fmpz_comb_init(fmpz_comb_t comb, mp_srcptr primes, long num_primes)
+    void fmpz_comb_init(fmpz_comb_t comb, mp_srcptr primes, slong num_primes)
     # Initialises a ``comb`` structure for multimodular reduction and
     # recombination.  The array ``primes`` is assumed to contain
     # ``num_primes`` primes each of ``FLINT_BITS - 1`` bits. Modular
@@ -899,7 +899,7 @@ cdef extern from "flint_wrap.h":
     void fmpz_multi_CRT_init(fmpz_multi_CRT_t CRT)
     # Initialize ``CRT`` for Chinese remaindering.
 
-    int fmpz_multi_CRT_precompute(fmpz_multi_CRT_t CRT, const fmpz * moduli, long len)
+    int fmpz_multi_CRT_precompute(fmpz_multi_CRT_t CRT, const fmpz * moduli, slong len)
     # Configure ``CRT`` for repeated Chinese remaindering of ``moduli``. The number of moduli, ``len``, should be positive.
     # A return of ``0`` indicates that the compilation failed and future
     # calls to :func:`fmpz_multi_CRT_precomp` will leave the output undefined.
@@ -910,7 +910,7 @@ cdef extern from "flint_wrap.h":
     # Set ``output`` to an integer of smallest absolute value that is congruent to ``values + i`` modulo the ``moduli + i``
     # in ``P``.
 
-    int fmpz_multi_CRT(fmpz_t output, const fmpz * moduli, const fmpz * values, long len, int sign)
+    int fmpz_multi_CRT(fmpz_t output, const fmpz * moduli, const fmpz * values, slong len, int sign)
     # Perform the same operation as :func:`fmpz_multi_CRT_precomp` while internally constructing and destroying the precomputed data.
     # All of the remarks in :func:`fmpz_multi_CRT_precompute` apply.
 
@@ -973,7 +973,7 @@ cdef extern from "flint_wrap.h":
     # composite prime. However in that case an error is printed, as
     # that would be of independent interest.
 
-    int fmpz_is_prime_pocklington(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pm1, long num_pm1)
+    int fmpz_is_prime_pocklington(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pm1, slong num_pm1)
     # Applies the Pocklington primality test. The test computes a product
     # `F` of prime powers which divide `n - 1`.
     # The function then returns either `0` if `n` is definitely composite
@@ -993,7 +993,7 @@ cdef extern from "flint_wrap.h":
     # limit. (See ``_fmpz_nm1_trial_factors``.)
     # Requires `n` to be odd.
 
-    void _fmpz_nm1_trial_factors(const fmpz_t n, mp_ptr pm1, long * num_pm1, unsigned long limit)
+    void _fmpz_nm1_trial_factors(const fmpz_t n, mp_ptr pm1, slong * num_pm1, ulong limit)
     # Trial factors `n - 1` up to the given limit (approximately) and stores
     # the factors in an array ``pm1`` whose length is written out to
     # ``num_pm1``.
@@ -1001,7 +1001,7 @@ cdef extern from "flint_wrap.h":
     # be produced (and hence on the length of the array that needs to be
     # supplied).
 
-    int fmpz_is_prime_morrison(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pp1, long num_pp1)
+    int fmpz_is_prime_morrison(fmpz_t F, fmpz_t R, const fmpz_t n, mp_ptr pp1, slong num_pp1)
     # Applies the Morrison `p + 1` primality test. The test computes a
     # product `F` of primes which divide `n + 1`.
     # The function then returns either `0` if `n` is definitely composite
@@ -1022,7 +1022,7 @@ cdef extern from "flint_wrap.h":
     # limit. (See ``_fmpz_np1_trial_factors``.)
     # Requires `n` to be odd and non-square.
 
-    void _fmpz_np1_trial_factors(const fmpz_t n, mp_ptr pp1, long * num_pp1, unsigned long limit)
+    void _fmpz_np1_trial_factors(const fmpz_t n, mp_ptr pp1, slong * num_pp1, ulong limit)
     # Trial factors `n + 1` up to the given limit (approximately) and stores
     # the factors in an array ``pp1`` whose length is written out to
     # ``num_pp1``.
@@ -1099,7 +1099,7 @@ cdef extern from "flint_wrap.h":
     # GMP 6.1.2 this used Miller-Rabin iterations, and thereafter uses
     # a BPSW test.
 
-    void fmpz_primorial(fmpz_t res, unsigned long n)
+    void fmpz_primorial(fmpz_t res, ulong n)
     # Sets ``res`` to ``n`` primorial or `n \#`, the product of all prime
     # numbers less than or equal to `n`.
 
@@ -1119,8 +1119,8 @@ cdef extern from "flint_wrap.h":
     # `\mu(0) = 0`. The factor version takes a precomputed
     # factorisation of `n`.
 
-    void fmpz_factor_divisor_sigma(fmpz_t res, unsigned long k, const fmpz_factor_t fac)
-    void fmpz_divisor_sigma(fmpz_t res, unsigned long k, const fmpz_t n)
+    void fmpz_factor_divisor_sigma(fmpz_t res, ulong k, const fmpz_factor_t fac)
+    void fmpz_divisor_sigma(fmpz_t res, ulong k, const fmpz_t n)
     # Sets ``res`` to `\sigma_k(n)`, the sum of `k`\th powers of all
     # divisors of `n`. The factor version takes a precomputed
     # factorisation of `n`.

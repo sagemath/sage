@@ -19,11 +19,11 @@ cdef extern from "flint_wrap.h":
     # Clears the polynomial, deallocating all coefficients and the
     # coefficient array.
 
-    void ca_poly_fit_length(ca_poly_t poly, long len, ca_ctx_t ctx)
+    void ca_poly_fit_length(ca_poly_t poly, slong len, ca_ctx_t ctx)
     # Makes sure that the coefficient array of the polynomial contains at
     # least *len* initialized coefficients.
 
-    void _ca_poly_set_length(ca_poly_t poly, long len, ca_ctx_t ctx)
+    void _ca_poly_set_length(ca_poly_t poly, slong len, ca_ctx_t ctx)
     # Directly changes the length of the polynomial, without allocating or
     # deallocating coefficients. The value should not exceed the allocation length.
 
@@ -40,7 +40,7 @@ cdef extern from "flint_wrap.h":
     # Sets *poly* to the monomial *x*.
 
     void ca_poly_set_ca(ca_poly_t poly, const ca_t c, ca_ctx_t ctx)
-    void ca_poly_set_si(ca_poly_t poly, long c, ca_ctx_t ctx)
+    void ca_poly_set_si(ca_poly_t poly, slong c, ca_ctx_t ctx)
     # Sets *poly* to the constant polynomial *c*.
 
     void ca_poly_set(ca_poly_t res, const ca_poly_t src, ca_ctx_t ctx)
@@ -48,7 +48,7 @@ cdef extern from "flint_wrap.h":
     void ca_poly_set_fmpq_poly(ca_poly_t res, const fmpq_poly_t src, ca_ctx_t ctx)
     # Sets *poly* the polynomial *src*.
 
-    void ca_poly_set_coeff_ca(ca_poly_t poly, long n, const ca_t x, ca_ctx_t ctx)
+    void ca_poly_set_coeff_ca(ca_poly_t poly, slong n, const ca_t x, ca_ctx_t ctx)
     # Sets the coefficient at position *n* in *poly* to *x*.
 
     void ca_poly_transfer(ca_poly_t res, ca_ctx_t res_ctx, const ca_poly_t src, ca_ctx_t src_ctx)
@@ -58,17 +58,17 @@ cdef extern from "flint_wrap.h":
     # but may result in a different internal representation depending on the
     # settings of the context objects.
 
-    void ca_poly_randtest(ca_poly_t poly, flint_rand_t state, long len, long depth, long bits, ca_ctx_t ctx)
+    void ca_poly_randtest(ca_poly_t poly, flint_rand_t state, slong len, slong depth, slong bits, ca_ctx_t ctx)
     # Sets *poly* to a random polynomial of length up to *len* and with entries having complexity up to
     # *depth* and *bits* (see :func:`ca_randtest`).
 
-    void ca_poly_randtest_rational(ca_poly_t poly, flint_rand_t state, long len, long bits, ca_ctx_t ctx)
+    void ca_poly_randtest_rational(ca_poly_t poly, flint_rand_t state, slong len, slong bits, ca_ctx_t ctx)
     # Sets *poly* to a random rational polynomial of length up to *len* and with entries up to *bits* bits in size.
 
     void ca_poly_print(const ca_poly_t poly, ca_ctx_t ctx)
     # Prints *poly* to standard output. The coefficients are printed on separate lines.
 
-    void ca_poly_printn(const ca_poly_t poly, long digits, ca_ctx_t ctx)
+    void ca_poly_printn(const ca_poly_t poly, slong digits, ca_ctx_t ctx)
     # Prints a decimal representation of *poly* with precision specified by *digits*.
     # The coefficients are comma-separated and the whole list is enclosed in square brackets.
 
@@ -85,14 +85,14 @@ cdef extern from "flint_wrap.h":
     # and returns 1. Returns 0 if the leading coefficient cannot be
     # certified to be nonzero, or if *poly* is the zero polynomial.
 
-    void _ca_poly_reverse(ca_ptr res, ca_srcptr poly, long len, long n, ca_ctx_t ctx)
+    void _ca_poly_reverse(ca_ptr res, ca_srcptr poly, slong len, slong n, ca_ctx_t ctx)
 
-    void ca_poly_reverse(ca_poly_t res, const ca_poly_t poly, long n, ca_ctx_t ctx)
+    void ca_poly_reverse(ca_poly_t res, const ca_poly_t poly, slong n, ca_ctx_t ctx)
     # Sets *res* to the reversal of *poly* considered as a polynomial
     # of length *n*, zero-padding if needed. The underscore method
     # assumes that *len* is positive and less than or equal to *n*.
 
-    truth_t _ca_poly_check_equal(ca_srcptr poly1, long len1, ca_srcptr poly2, long len2, ca_ctx_t ctx)
+    truth_t _ca_poly_check_equal(ca_srcptr poly1, slong len1, ca_srcptr poly2, slong len2, ca_ctx_t ctx)
     truth_t ca_poly_check_equal(const ca_poly_t poly1, const ca_poly_t poly2, ca_ctx_t ctx)
     # Checks if *poly1* and *poly2* represent the same polynomial.
     # The underscore method assumes that *len1* is at least as
@@ -104,33 +104,33 @@ cdef extern from "flint_wrap.h":
     truth_t ca_poly_check_is_one(const ca_poly_t poly, ca_ctx_t ctx)
     # Checks if *poly* is the constant polynomial 1.
 
-    void _ca_poly_shift_left(ca_ptr res, ca_srcptr poly, long len, long n, ca_ctx_t ctx)
-    void ca_poly_shift_left(ca_poly_t res, const ca_poly_t poly, long n, ca_ctx_t ctx)
+    void _ca_poly_shift_left(ca_ptr res, ca_srcptr poly, slong len, slong n, ca_ctx_t ctx)
+    void ca_poly_shift_left(ca_poly_t res, const ca_poly_t poly, slong n, ca_ctx_t ctx)
     # Sets *res* to *poly* shifted *n* coefficients to the left; that is,
     # multiplied by `x^n`.
 
-    void _ca_poly_shift_right(ca_ptr res, ca_srcptr poly, long len, long n, ca_ctx_t ctx)
-    void ca_poly_shift_right(ca_poly_t res, const ca_poly_t poly, long n, ca_ctx_t ctx)
+    void _ca_poly_shift_right(ca_ptr res, ca_srcptr poly, slong len, slong n, ca_ctx_t ctx)
+    void ca_poly_shift_right(ca_poly_t res, const ca_poly_t poly, slong n, ca_ctx_t ctx)
     # Sets *res* to *poly* shifted *n* coefficients to the right; that is,
     # divided by `x^n`.
 
     void ca_poly_neg(ca_poly_t res, const ca_poly_t src, ca_ctx_t ctx)
     # Sets *res* to the negation of *src*.
 
-    void _ca_poly_add(ca_ptr res, ca_srcptr poly1, long len1, ca_srcptr poly2, long len2, ca_ctx_t ctx)
+    void _ca_poly_add(ca_ptr res, ca_srcptr poly1, slong len1, ca_srcptr poly2, slong len2, ca_ctx_t ctx)
     void ca_poly_add(ca_poly_t res, const ca_poly_t poly1, const ca_poly_t poly2, ca_ctx_t ctx)
     # Sets *res* to the sum of *poly1* and *poly2*.
 
-    void _ca_poly_sub(ca_ptr res, ca_srcptr poly1, long len1, ca_srcptr poly2, long len2, ca_ctx_t ctx)
+    void _ca_poly_sub(ca_ptr res, ca_srcptr poly1, slong len1, ca_srcptr poly2, slong len2, ca_ctx_t ctx)
     void ca_poly_sub(ca_poly_t res, const ca_poly_t poly1, const ca_poly_t poly2, ca_ctx_t ctx)
     # Sets *res* to the difference of *poly1* and *poly2*.
 
-    void _ca_poly_mul(ca_ptr res, ca_srcptr poly1, long len1, ca_srcptr poly2, long len2, ca_ctx_t ctx)
+    void _ca_poly_mul(ca_ptr res, ca_srcptr poly1, slong len1, ca_srcptr poly2, slong len2, ca_ctx_t ctx)
     void ca_poly_mul(ca_poly_t res, const ca_poly_t poly1, const ca_poly_t poly2, ca_ctx_t ctx)
     # Sets *res* to the product of *poly1* and *poly2*.
 
-    void _ca_poly_mullow(ca_ptr C, ca_srcptr poly1, long len1, ca_srcptr poly2, long len2, long n, ca_ctx_t ctx)
-    void ca_poly_mullow(ca_poly_t res, const ca_poly_t poly1, const ca_poly_t poly2, long n, ca_ctx_t ctx)
+    void _ca_poly_mullow(ca_ptr C, ca_srcptr poly1, slong len1, ca_srcptr poly2, slong len2, slong n, ca_ctx_t ctx)
+    void ca_poly_mullow(ca_poly_t res, const ca_poly_t poly1, const ca_poly_t poly2, slong n, ca_ctx_t ctx)
     # Sets *res* to the product of *poly1* and *poly2* truncated to length *n*.
 
     void ca_poly_mul_ca(ca_poly_t res, const ca_poly_t poly, const ca_t c, ca_ctx_t ctx)
@@ -139,9 +139,9 @@ cdef extern from "flint_wrap.h":
     void ca_poly_div_ca(ca_poly_t res, const ca_poly_t poly, const ca_t c, ca_ctx_t ctx)
     # Sets *res* to *poly* divided by the scalar *c*.
 
-    void _ca_poly_divrem_basecase(ca_ptr Q, ca_ptr R, ca_srcptr A, long lenA, ca_srcptr B, long lenB, const ca_t invB, ca_ctx_t ctx)
+    void _ca_poly_divrem_basecase(ca_ptr Q, ca_ptr R, ca_srcptr A, slong lenA, ca_srcptr B, slong lenB, const ca_t invB, ca_ctx_t ctx)
     int ca_poly_divrem_basecase(ca_poly_t Q, ca_poly_t R, const ca_poly_t A, const ca_poly_t B, ca_ctx_t ctx)
-    void _ca_poly_divrem(ca_ptr Q, ca_ptr R, ca_srcptr A, long lenA, ca_srcptr B, long lenB, const ca_t invB, ca_ctx_t ctx)
+    void _ca_poly_divrem(ca_ptr Q, ca_ptr R, ca_srcptr A, slong lenA, ca_srcptr B, slong lenB, const ca_t invB, ca_ctx_t ctx)
     int ca_poly_divrem(ca_poly_t Q, ca_poly_t R, const ca_poly_t A, const ca_poly_t B, ca_ctx_t ctx)
     int ca_poly_div(ca_poly_t Q, const ca_poly_t A, const ca_poly_t B, ca_ctx_t ctx)
     int ca_poly_rem(ca_poly_t R, const ca_poly_t A, const ca_poly_t B, ca_ctx_t ctx)
@@ -151,60 +151,60 @@ cdef extern from "flint_wrap.h":
     # invertible, returns 0.
     # The underscore method takes a precomputed inverse of the leading coefficient of *B*.
 
-    void _ca_poly_pow_ui_trunc(ca_ptr res, ca_srcptr f, long flen, unsigned long exp, long len, ca_ctx_t ctx)
-    void ca_poly_pow_ui_trunc(ca_poly_t res, const ca_poly_t poly, unsigned long exp, long len, ca_ctx_t ctx)
+    void _ca_poly_pow_ui_trunc(ca_ptr res, ca_srcptr f, slong flen, ulong exp, slong len, ca_ctx_t ctx)
+    void ca_poly_pow_ui_trunc(ca_poly_t res, const ca_poly_t poly, ulong exp, slong len, ca_ctx_t ctx)
     # Sets *res* to *poly* raised to the power *exp*, truncated to length *len*.
 
-    void _ca_poly_pow_ui(ca_ptr res, ca_srcptr f, long flen, unsigned long exp, ca_ctx_t ctx)
-    void ca_poly_pow_ui(ca_poly_t res, const ca_poly_t poly, unsigned long exp, ca_ctx_t ctx)
+    void _ca_poly_pow_ui(ca_ptr res, ca_srcptr f, slong flen, ulong exp, ca_ctx_t ctx)
+    void ca_poly_pow_ui(ca_poly_t res, const ca_poly_t poly, ulong exp, ca_ctx_t ctx)
     # Sets *res* to *poly* raised to the power *exp*.
 
-    void _ca_poly_evaluate_horner(ca_t res, ca_srcptr f, long len, const ca_t x, ca_ctx_t ctx)
+    void _ca_poly_evaluate_horner(ca_t res, ca_srcptr f, slong len, const ca_t x, ca_ctx_t ctx)
     void ca_poly_evaluate_horner(ca_t res, const ca_poly_t f, const ca_t a, ca_ctx_t ctx)
-    void _ca_poly_evaluate(ca_t res, ca_srcptr f, long len, const ca_t x, ca_ctx_t ctx)
+    void _ca_poly_evaluate(ca_t res, ca_srcptr f, slong len, const ca_t x, ca_ctx_t ctx)
     void ca_poly_evaluate(ca_t res, const ca_poly_t f, const ca_t a, ca_ctx_t ctx)
     # Sets *res* to *f* evaluated at the point *a*.
 
-    void _ca_poly_compose(ca_ptr res, ca_srcptr poly1, long len1, ca_srcptr poly2, long len2, ca_ctx_t ctx)
+    void _ca_poly_compose(ca_ptr res, ca_srcptr poly1, slong len1, ca_srcptr poly2, slong len2, ca_ctx_t ctx)
     void ca_poly_compose(ca_poly_t res, const ca_poly_t poly1, const ca_poly_t poly2, ca_ctx_t ctx)
     # Sets *res* to the composition of *poly1* with *poly2*.
 
-    void _ca_poly_derivative(ca_ptr res, ca_srcptr poly, long len, ca_ctx_t ctx)
+    void _ca_poly_derivative(ca_ptr res, ca_srcptr poly, slong len, ca_ctx_t ctx)
     void ca_poly_derivative(ca_poly_t res, const ca_poly_t poly, ca_ctx_t ctx)
     # Sets *res* to the derivative of *poly*. The underscore method needs one less
     # coefficient than *len* for the output array.
 
-    void _ca_poly_integral(ca_ptr res, ca_srcptr poly, long len, ca_ctx_t ctx)
+    void _ca_poly_integral(ca_ptr res, ca_srcptr poly, slong len, ca_ctx_t ctx)
     void ca_poly_integral(ca_poly_t res, const ca_poly_t poly, ca_ctx_t ctx)
     # Sets *res* to the integral of *poly*. The underscore method needs one more
     # coefficient than *len* for the output array.
 
-    void _ca_poly_inv_series(ca_ptr res, ca_srcptr f, long flen, long len, ca_ctx_t ctx)
-    void ca_poly_inv_series(ca_poly_t res, const ca_poly_t f, long len, ca_ctx_t ctx)
+    void _ca_poly_inv_series(ca_ptr res, ca_srcptr f, slong flen, slong len, ca_ctx_t ctx)
+    void ca_poly_inv_series(ca_poly_t res, const ca_poly_t f, slong len, ca_ctx_t ctx)
     # Sets *res* to the power series inverse of *f* truncated
     # to length *len*.
 
-    void _ca_poly_div_series(ca_ptr res, ca_srcptr f, long flen, ca_srcptr g, long glen, long len, ca_ctx_t ctx)
-    void ca_poly_div_series(ca_poly_t res, const ca_poly_t f, const ca_poly_t g, long len, ca_ctx_t ctx)
+    void _ca_poly_div_series(ca_ptr res, ca_srcptr f, slong flen, ca_srcptr g, slong glen, slong len, ca_ctx_t ctx)
+    void ca_poly_div_series(ca_poly_t res, const ca_poly_t f, const ca_poly_t g, slong len, ca_ctx_t ctx)
     # Sets *res* to the power series quotient of *f* and *g* truncated
     # to length *len*.
     # This function divides by zero if *g* has constant term zero;
     # the user should manually remove initial zeros when an
     # exact cancellation is required.
 
-    void _ca_poly_exp_series(ca_ptr res, ca_srcptr f, long flen, long len, ca_ctx_t ctx)
-    void ca_poly_exp_series(ca_poly_t res, const ca_poly_t f, long len, ca_ctx_t ctx)
+    void _ca_poly_exp_series(ca_ptr res, ca_srcptr f, slong flen, slong len, ca_ctx_t ctx)
+    void ca_poly_exp_series(ca_poly_t res, const ca_poly_t f, slong len, ca_ctx_t ctx)
     # Sets *res* to the power series exponential of *f* truncated
     # to length *len*.
 
-    void _ca_poly_log_series(ca_ptr res, ca_srcptr f, long flen, long len, ca_ctx_t ctx)
-    void ca_poly_log_series(ca_poly_t res, const ca_poly_t f, long len, ca_ctx_t ctx)
+    void _ca_poly_log_series(ca_ptr res, ca_srcptr f, slong flen, slong len, ca_ctx_t ctx)
+    void ca_poly_log_series(ca_poly_t res, const ca_poly_t f, slong len, ca_ctx_t ctx)
     # Sets *res* to the power series logarithm of *f* truncated
     # to length *len*.
 
-    long _ca_poly_gcd_euclidean(ca_ptr res, ca_srcptr A, long lenA, ca_srcptr B, long lenB, ca_ctx_t ctx)
+    slong _ca_poly_gcd_euclidean(ca_ptr res, ca_srcptr A, slong lenA, ca_srcptr B, slong lenB, ca_ctx_t ctx)
     int ca_poly_gcd_euclidean(ca_poly_t res, const ca_poly_t A, const ca_poly_t B, ca_ctx_t ctx)
-    long _ca_poly_gcd(ca_ptr res, ca_srcptr A, long lenA, ca_srcptr B, long lenB, ca_ctx_t ctx)
+    slong _ca_poly_gcd(ca_ptr res, ca_srcptr A, slong lenA, ca_srcptr B, slong lenB, ca_ctx_t ctx)
     int ca_poly_gcd(ca_poly_t res, const ca_poly_t A, const ca_poly_t g, ca_ctx_t ctx)
     # Sets *res* to the GCD of *A* and *B* and returns 1 on success.
     # On failure, returns 0 leaving the value of *res* arbitrary.
@@ -220,7 +220,7 @@ cdef extern from "flint_wrap.h":
     # and otherwise falls back to an automatic choice
     # of algorithm (currently only the Euclidean algorithm).
 
-    int ca_poly_factor_squarefree(ca_t c, ca_poly_vec_t fac, unsigned long * exp, const ca_poly_t F, ca_ctx_t ctx)
+    int ca_poly_factor_squarefree(ca_t c, ca_poly_vec_t fac, ulong * exp, const ca_poly_t F, ca_ctx_t ctx)
     # Computes the squarefree factorization of *F*, giving a product
     # `F = c f_1 f_2^2 \ldots f_n^n` where all `f_i` with `f_i \ne 1`
     # are squarefree and pairwise coprime. The nontrivial factors
@@ -233,8 +233,8 @@ cdef extern from "flint_wrap.h":
     # This algorithm can fail if GCD computation fails internally.
     # Returns 1 on success and 0 on failure.
 
-    void _ca_poly_set_roots(ca_ptr poly, ca_srcptr roots, const unsigned long * exp, long n, ca_ctx_t ctx)
-    void ca_poly_set_roots(ca_poly_t poly, ca_vec_t roots, const unsigned long * exp, ca_ctx_t ctx)
+    void _ca_poly_set_roots(ca_ptr poly, ca_srcptr roots, const ulong * exp, slong n, ca_ctx_t ctx)
+    void ca_poly_set_roots(ca_poly_t poly, ca_vec_t roots, const ulong * exp, ca_ctx_t ctx)
     # Sets *poly* to the monic polynomial with the *n* roots
     # given in the vector *roots*, with multiplicities given
     # in the vector *exp*. In other words, this constructs
@@ -242,8 +242,8 @@ cdef extern from "flint_wrap.h":
     # `(x-r_0)^{e_0} (x-r_1)^{e_1} \cdots (x-r_{n-1})^{e_{n-1}}`.
     # Uses binary splitting.
 
-    int _ca_poly_roots(ca_ptr roots, ca_srcptr poly, long len, ca_ctx_t ctx)
-    int ca_poly_roots(ca_vec_t roots, unsigned long * exp, const ca_poly_t poly, ca_ctx_t ctx)
+    int _ca_poly_roots(ca_ptr roots, ca_srcptr poly, slong len, ca_ctx_t ctx)
+    int ca_poly_roots(ca_vec_t roots, ulong * exp, const ca_poly_t poly, ca_ctx_t ctx)
     # Attempts to compute all complex roots of the given polynomial *poly*.
     # On success, returns 1 and sets *roots* to a vector containing all
     # the distinct roots with corresponding multiplicities in *exp*.
@@ -256,17 +256,17 @@ cdef extern from "flint_wrap.h":
     # The underscore method assumes that the polynomial is squarefree.
     # The non-underscore method performs a squarefree factorization.
 
-    ca_poly_struct * _ca_poly_vec_init(long len, ca_ctx_t ctx)
-    void ca_poly_vec_init(ca_poly_vec_t res, long len, ca_ctx_t ctx)
+    ca_poly_struct * _ca_poly_vec_init(slong len, ca_ctx_t ctx)
+    void ca_poly_vec_init(ca_poly_vec_t res, slong len, ca_ctx_t ctx)
     # Initializes a vector with *len* polynomials.
 
-    void _ca_poly_vec_fit_length(ca_poly_vec_t vec, long len, ca_ctx_t ctx)
+    void _ca_poly_vec_fit_length(ca_poly_vec_t vec, slong len, ca_ctx_t ctx)
     # Allocates space for *len* polynomials in *vec*.
 
-    void ca_poly_vec_set_length(ca_poly_vec_t vec, long len, ca_ctx_t ctx)
+    void ca_poly_vec_set_length(ca_poly_vec_t vec, slong len, ca_ctx_t ctx)
     # Resizes *vec* to length *len*, zero-extending if needed.
 
-    void _ca_poly_vec_clear(ca_poly_struct * vec, long len, ca_ctx_t ctx)
+    void _ca_poly_vec_clear(ca_poly_struct * vec, slong len, ca_ctx_t ctx)
     void ca_poly_vec_clear(ca_poly_vec_t vec, ca_ctx_t ctx)
     # Clears the vector *vec*.
 

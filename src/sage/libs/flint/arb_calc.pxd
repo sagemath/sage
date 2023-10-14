@@ -16,23 +16,23 @@ cdef extern from "flint_wrap.h":
 
     void arf_interval_clear(arf_interval_t v)
 
-    arf_interval_ptr _arf_interval_vec_init(long n)
+    arf_interval_ptr _arf_interval_vec_init(slong n)
 
-    void _arf_interval_vec_clear(arf_interval_ptr v, long n)
+    void _arf_interval_vec_clear(arf_interval_ptr v, slong n)
 
     void arf_interval_set(arf_interval_t v, const arf_interval_t u)
 
     void arf_interval_swap(arf_interval_t v, arf_interval_t u)
 
-    void arf_interval_get_arb(arb_t x, const arf_interval_t v, long prec)
+    void arf_interval_get_arb(arb_t x, const arf_interval_t v, slong prec)
 
-    void arf_interval_printd(const arf_interval_t v, long n)
+    void arf_interval_printd(const arf_interval_t v, slong n)
     # Helper functions for endpoint-based intervals.
 
-    void arf_interval_fprintd(FILE * file, const arf_interval_t v, long n)
+    void arf_interval_fprintd(FILE * file, const arf_interval_t v, slong n)
     # Helper functions for endpoint-based intervals.
 
-    long arb_calc_isolate_roots(arf_interval_ptr * found, int ** flags, arb_calc_func_t func, void * param, const arf_interval_t interval, long maxdepth, long maxeval, long maxfound, long prec)
+    slong arb_calc_isolate_roots(arf_interval_ptr * found, int ** flags, arb_calc_func_t func, void * param, const arf_interval_t interval, slong maxdepth, slong maxeval, slong maxfound, slong prec)
     # Rigorously isolates single roots of a real analytic function
     # on the interior of an interval.
     # This routine writes an array of *n* interesting subintervals of
@@ -75,14 +75,14 @@ cdef extern from "flint_wrap.h":
     # represented exactly as floating-point numbers in memory.
     # Do not pass `1 \pm 2^{-10^{100}}` as input.
 
-    int arb_calc_refine_root_bisect(arf_interval_t r, arb_calc_func_t func, void * param, const arf_interval_t start, long it, long prec)
+    int arb_calc_refine_root_bisect(arf_interval_t r, arb_calc_func_t func, void * param, const arf_interval_t start, slong it, slong prec)
     # Given an interval *start* known to contain a single root of *func*,
     # refines it using *iter* bisection steps. The algorithm can
     # return a failure code if the sign of the function at an evaluation
     # point is ambiguous. The output *r* is set to a valid isolating interval
     # (possibly just *start*) even if the algorithm fails.
 
-    void arb_calc_newton_conv_factor(arf_t conv_factor, arb_calc_func_t func, void * param, const arb_t conv_region, long prec)
+    void arb_calc_newton_conv_factor(arf_t conv_factor, arb_calc_func_t func, void * param, const arb_t conv_region, slong prec)
     # Given an interval `I` specified by *conv_region*, evaluates a bound
     # for `C = \sup_{t,u \in I} \frac{1}{2} |f''(t)| / |f'(u)|`,
     # where `f` is the function specified by *func* and *param*.
@@ -90,7 +90,7 @@ cdef extern from "flint_wrap.h":
     # If `f` is ill-conditioned, `I` may need to be extremely precise in
     # order to get an effective, finite bound for *C*.
 
-    int arb_calc_newton_step(arb_t xnew, arb_calc_func_t func, void * param, const arb_t x, const arb_t conv_region, const arf_t conv_factor, long prec)
+    int arb_calc_newton_step(arb_t xnew, arb_calc_func_t func, void * param, const arb_t x, const arb_t conv_region, const arf_t conv_factor, slong prec)
     # Performs a single step with an interval version of Newton's method.
     # The input consists of the function `f` specified
     # by *func* and *param*, a ball `x = [m-r, m+r]` known
@@ -109,7 +109,7 @@ cdef extern from "flint_wrap.h":
     # *ARB_CALC_NO_CONVERGENCE*, indicating that no progress
     # is made.
 
-    int arb_calc_refine_root_newton(arb_t r, arb_calc_func_t func, void * param, const arb_t start, const arb_t conv_region, const arf_t conv_factor, long eval_extra_prec, long prec)
+    int arb_calc_refine_root_newton(arb_t r, arb_calc_func_t func, void * param, const arb_t start, const arb_t conv_region, const arf_t conv_factor, slong eval_extra_prec, slong prec)
     # Refines a precise estimate of a single root of a function
     # to high precision by performing several Newton steps, using
     # nearly optimally chosen doubling precision steps.

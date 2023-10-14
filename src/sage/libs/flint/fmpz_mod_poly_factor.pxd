@@ -18,11 +18,11 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_poly_factor_clear(fmpz_mod_poly_factor_t fac, const fmpz_mod_ctx_t ctx)
     # Frees all memory associated with ``fac``.
 
-    void fmpz_mod_poly_factor_realloc(fmpz_mod_poly_factor_t fac, long alloc, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_realloc(fmpz_mod_poly_factor_t fac, slong alloc, const fmpz_mod_ctx_t ctx)
     # Reallocates the factor structure to provide space for
     # precisely ``alloc`` factors.
 
-    void fmpz_mod_poly_factor_fit_length(fmpz_mod_poly_factor_t fac, long len, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_fit_length(fmpz_mod_poly_factor_t fac, slong len, const fmpz_mod_ctx_t ctx)
     # Ensures that the factor structure has space for at
     # least ``len`` factors.  This function takes care
     # of the case of repeated calls by always at least
@@ -34,7 +34,7 @@ cdef extern from "flint_wrap.h":
     void fmpz_mod_poly_factor_print(const fmpz_mod_poly_factor_t fac, const fmpz_mod_ctx_t ctx)
     # Prints the entries of ``fac`` to standard output.
 
-    void fmpz_mod_poly_factor_insert(fmpz_mod_poly_factor_t fac, const fmpz_mod_poly_t poly, long exp, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_insert(fmpz_mod_poly_factor_t fac, const fmpz_mod_poly_t poly, slong exp, const fmpz_mod_ctx_t ctx)
     # Inserts the factor ``poly`` with multiplicity ``exp`` into
     # the factorisation ``fac``.
     # If ``fac`` already contains ``poly``, then ``exp`` simply
@@ -46,7 +46,7 @@ cdef extern from "flint_wrap.h":
     # repeatedly with the individual factors of ``fac``.
     # Does not support aliasing between ``res`` and ``fac``.
 
-    void fmpz_mod_poly_factor_pow(fmpz_mod_poly_factor_t fac, long exp, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_pow(fmpz_mod_poly_factor_t fac, slong exp, const fmpz_mod_ctx_t ctx)
     # Raises ``fac`` to the power ``exp``.
 
     int fmpz_mod_poly_is_irreducible(const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)
@@ -68,12 +68,12 @@ cdef extern from "flint_wrap.h":
     # `\mathbb{Z}/p\mathbb{Z}`, even for composite `f`, or it finds a factor
     # of `p`.
 
-    int _fmpz_mod_poly_is_squarefree(const fmpz * f, long len, const fmpz_mod_ctx_t ctx)
+    int _fmpz_mod_poly_is_squarefree(const fmpz * f, slong len, const fmpz_mod_ctx_t ctx)
     # Returns 1 if ``(f, len)`` is squarefree, and 0 otherwise. As a
     # special case, the zero polynomial is not considered squarefree.
     # There are no restrictions on the length.
 
-    int _fmpz_mod_poly_is_squarefree_f(fmpz_t fac, const fmpz * f, long len, const fmpz_mod_ctx_t ctx)
+    int _fmpz_mod_poly_is_squarefree_f(fmpz_t fac, const fmpz * f, slong len, const fmpz_mod_ctx_t ctx)
     # If `fac` returns with the value `1` then the function operates as per
     # :func:`_fmpz_mod_poly_is_squarefree`, otherwise `f` is set to a nontrivial
     # factor of `p`.
@@ -87,19 +87,19 @@ cdef extern from "flint_wrap.h":
     # :func:`fmpz_mod_poly_is_squarefree`, otherwise `f` is set to a nontrivial
     # factor of `p`.
 
-    int fmpz_mod_poly_factor_equal_deg_prob(fmpz_mod_poly_t factor, flint_rand_t state, const fmpz_mod_poly_t pol, long d, const fmpz_mod_ctx_t ctx)
+    int fmpz_mod_poly_factor_equal_deg_prob(fmpz_mod_poly_t factor, flint_rand_t state, const fmpz_mod_poly_t pol, slong d, const fmpz_mod_ctx_t ctx)
     # Probabilistic equal degree factorisation of ``pol`` into
     # irreducible factors of degree ``d``. If it passes, a factor is
     # placed in ``factor`` and 1 is returned, otherwise 0 is returned and
     # the value of factor is undetermined.
     # Requires that ``pol`` be monic, non-constant and squarefree.
 
-    void fmpz_mod_poly_factor_equal_deg(fmpz_mod_poly_factor_t factors, const fmpz_mod_poly_t pol, long d, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_equal_deg(fmpz_mod_poly_factor_t factors, const fmpz_mod_poly_t pol, slong d, const fmpz_mod_ctx_t ctx)
     # Assuming ``pol`` is a product of irreducible factors all of
     # degree ``d``, finds all those factors and places them in factors.
     # Requires that ``pol`` be monic, non-constant and squarefree.
 
-    void fmpz_mod_poly_factor_distinct_deg(fmpz_mod_poly_factor_t res, const fmpz_mod_poly_t poly, long * const *degs, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_distinct_deg(fmpz_mod_poly_factor_t res, const fmpz_mod_poly_t poly, slong * const *degs, const fmpz_mod_ctx_t ctx)
     # Factorises a monic non-constant squarefree polynomial ``poly``
     # of degree `n` into factors `f[d]` such that for `1 \leq d \leq n`
     # `f[d]` is the product of the monic irreducible factors of ``poly``
@@ -108,7 +108,7 @@ cdef extern from "flint_wrap.h":
     # as the factors.
     # Requires that ``degs`` has enough space for `(n/2)+1 * sizeof(slong)`.
 
-    void fmpz_mod_poly_factor_distinct_deg_threaded(fmpz_mod_poly_factor_t res, const fmpz_mod_poly_t poly, long * const *degs, const fmpz_mod_ctx_t ctx)
+    void fmpz_mod_poly_factor_distinct_deg_threaded(fmpz_mod_poly_factor_t res, const fmpz_mod_poly_t poly, slong * const *degs, const fmpz_mod_ctx_t ctx)
     # Multithreaded version of :func:`fmpz_mod_poly_factor_distinct_deg`.
 
     void fmpz_mod_poly_factor_squarefree(fmpz_mod_poly_factor_t res, const fmpz_mod_poly_t f, const fmpz_mod_ctx_t ctx)

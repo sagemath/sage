@@ -27,7 +27,7 @@ cdef extern from "flint_wrap.h":
     # Initializes *res* and sets it to the bivariate function value `f(x, y)`
     # where *f* is defined by *func*  (example: *func* = *CA_Pow* for `x^y`).
 
-    void ca_ext_init_fxn(ca_ext_t res, calcium_func_code func, ca_srcptr x, long nargs, ca_ctx_t ctx)
+    void ca_ext_init_fxn(ca_ext_t res, calcium_func_code func, ca_srcptr x, slong nargs, ca_ctx_t ctx)
     # Initializes *res* and sets it to the multivariate function value
     # `f(x_1, \ldots, x_n)` where *f* is defined by *func* and *n* is
     # given by *nargs*.
@@ -38,16 +38,16 @@ cdef extern from "flint_wrap.h":
     void ca_ext_clear(ca_ext_t res, ca_ctx_t ctx)
     # Clears *res*.
 
-    long ca_ext_nargs(const ca_ext_t x, ca_ctx_t ctx)
+    slong ca_ext_nargs(const ca_ext_t x, ca_ctx_t ctx)
     # Returns the number of function arguments of *x*.
     # The return value is 0 for any algebraic constant and for any built-in
     # symbolic constant such as `\pi`.
 
-    void ca_ext_get_arg(ca_t res, const ca_ext_t x, long i, ca_ctx_t ctx)
+    void ca_ext_get_arg(ca_t res, const ca_ext_t x, slong i, ca_ctx_t ctx)
     # Sets *res* to argument *i* (indexed from zero) of *x*.
     # This calls *flint_abort* if *i* is out of range.
 
-    unsigned long ca_ext_hash(const ca_ext_t x, ca_ctx_t ctx)
+    ulong ca_ext_hash(const ca_ext_t x, ca_ctx_t ctx)
     # Returns a hash of the structural representation of *x*.
 
     int ca_ext_equal_repr(const ca_ext_t x, const ca_ext_t y, ca_ctx_t ctx)
@@ -62,7 +62,7 @@ cdef extern from "flint_wrap.h":
     void ca_ext_print(const ca_ext_t x, ca_ctx_t ctx)
     # Prints a description of *x* to standard output.
 
-    void ca_ext_get_acb_raw(acb_t res, ca_ext_t x, long prec, ca_ctx_t ctx)
+    void ca_ext_get_acb_raw(acb_t res, ca_ext_t x, slong prec, ca_ctx_t ctx)
     # Sets *res* to an enclosure of the numerical value of *x*.
     # A working precision of *prec* bits is used for the evaluation,
     # without adaptive refinement.

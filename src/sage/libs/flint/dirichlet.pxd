@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    int dirichlet_group_init(dirichlet_group_t G, unsigned long q)
+    int dirichlet_group_init(dirichlet_group_t G, ulong q)
     # Initializes *G* to the group of Dirichlet characters mod *q*.
     # This method computes a canonical decomposition of *G* in terms of cyclic
     # groups, which are the mod `p^e` subgroups for `p^e\|q`, plus
@@ -29,17 +29,17 @@ cdef extern from "flint_wrap.h":
     # be removed in the future. The function returns 1 on success and 0
     # if a factor is too large.
 
-    void dirichlet_subgroup_init(dirichlet_group_t H, const dirichlet_group_t G, unsigned long h)
+    void dirichlet_subgroup_init(dirichlet_group_t H, const dirichlet_group_t G, ulong h)
 
     void dirichlet_group_clear(dirichlet_group_t G)
     # Clears *G*. Remark this function does *not* clear the discrete logarithm
     # tables stored in *G* (which may be shared with another group).
 
-    unsigned long dirichlet_group_size(const dirichlet_group_t G)
+    ulong dirichlet_group_size(const dirichlet_group_t G)
 
-    unsigned long dirichlet_group_num_primitive(const dirichlet_group_t G)
+    ulong dirichlet_group_num_primitive(const dirichlet_group_t G)
 
-    void dirichlet_group_dlog_precompute(dirichlet_group_t G, unsigned long num)
+    void dirichlet_group_dlog_precompute(dirichlet_group_t G, ulong num)
     # Precompute decomposition and tables for discrete log computations in *G*,
     # so as to minimize the complexity of *num* calls to discrete logarithms.
     # If *num* gets very large, the entire group may be indexed.
@@ -56,14 +56,14 @@ cdef extern from "flint_wrap.h":
     void dirichlet_char_print(const dirichlet_group_t G, const dirichlet_char_t chi)
     # Prints the array of exponents representing this character.
 
-    void dirichlet_char_log(dirichlet_char_t x, const dirichlet_group_t G, unsigned long m)
+    void dirichlet_char_log(dirichlet_char_t x, const dirichlet_group_t G, ulong m)
     # Sets *x* to the character of number *m*, computing its log using discrete
     # logarithm in *G*.
 
-    unsigned long dirichlet_char_exp(const dirichlet_group_t G, const dirichlet_char_t x)
+    ulong dirichlet_char_exp(const dirichlet_group_t G, const dirichlet_char_t x)
     # Returns the number *m* corresponding to exponents in *x*.
 
-    unsigned long _dirichlet_char_exp(dirichlet_char_t x, const dirichlet_group_t G)
+    ulong _dirichlet_char_exp(dirichlet_char_t x, const dirichlet_group_t G)
     # Computes and returns the number *m* corresponding to exponents in *x*.
     # This function is for internal use.
 
@@ -94,10 +94,10 @@ cdef extern from "flint_wrap.h":
     int dirichlet_char_next_primitive(dirichlet_char_t x, const dirichlet_group_t G)
     # Same as :func:`dirichlet_char_next`, but jumps to the next primitive character of *G*.
 
-    unsigned long dirichlet_index_char(const dirichlet_group_t G, const dirichlet_char_t x)
+    ulong dirichlet_index_char(const dirichlet_group_t G, const dirichlet_char_t x)
     # Returns the lexicographic index of the *log* of *x* as an integer in `0\dots \varphi(q)`.
 
-    void dirichlet_char_index(dirichlet_char_t x, const dirichlet_group_t G, unsigned long j)
+    void dirichlet_char_index(dirichlet_char_t x, const dirichlet_group_t G, ulong j)
     # Sets *x* to the character whose *log* has lexicographic index *j*.
 
     int dirichlet_char_eq(const dirichlet_char_t x, const dirichlet_char_t y)
@@ -106,35 +106,35 @@ cdef extern from "flint_wrap.h":
 
     int dirichlet_char_is_principal(const dirichlet_group_t G, const dirichlet_char_t chi)
 
-    unsigned long dirichlet_conductor_ui(const dirichlet_group_t G, unsigned long a)
+    ulong dirichlet_conductor_ui(const dirichlet_group_t G, ulong a)
 
-    unsigned long dirichlet_conductor_char(const dirichlet_group_t G, const dirichlet_char_t x)
+    ulong dirichlet_conductor_char(const dirichlet_group_t G, const dirichlet_char_t x)
 
-    int dirichlet_parity_ui(const dirichlet_group_t G, unsigned long a)
+    int dirichlet_parity_ui(const dirichlet_group_t G, ulong a)
 
     int dirichlet_parity_char(const dirichlet_group_t G, const dirichlet_char_t x)
 
-    unsigned long dirichlet_order_ui(const dirichlet_group_t G, unsigned long a)
+    ulong dirichlet_order_ui(const dirichlet_group_t G, ulong a)
 
-    unsigned long dirichlet_order_char(const dirichlet_group_t G, const dirichlet_char_t x)
+    ulong dirichlet_order_char(const dirichlet_group_t G, const dirichlet_char_t x)
 
     int dirichlet_char_is_real(const dirichlet_group_t G, const dirichlet_char_t chi)
 
     int dirichlet_char_is_primitive(const dirichlet_group_t G, const dirichlet_char_t chi)
 
-    unsigned long dirichlet_pairing(const dirichlet_group_t G, unsigned long m, unsigned long n)
+    ulong dirichlet_pairing(const dirichlet_group_t G, ulong m, ulong n)
 
-    unsigned long dirichlet_pairing_char(const dirichlet_group_t G, const dirichlet_char_t chi, const dirichlet_char_t psi)
+    ulong dirichlet_pairing_char(const dirichlet_group_t G, const dirichlet_char_t chi, const dirichlet_char_t psi)
 
-    unsigned long dirichlet_chi(const dirichlet_group_t G, const dirichlet_char_t chi, unsigned long n)
+    ulong dirichlet_chi(const dirichlet_group_t G, const dirichlet_char_t chi, ulong n)
 
-    void dirichlet_chi_vec(unsigned long * v, const dirichlet_group_t G, const dirichlet_char_t chi, long nv)
+    void dirichlet_chi_vec(ulong * v, const dirichlet_group_t G, const dirichlet_char_t chi, slong nv)
 
-    void dirichlet_chi_vec_order(unsigned long * v, const dirichlet_group_t G, const dirichlet_char_t chi, unsigned long order, long nv)
+    void dirichlet_chi_vec_order(ulong * v, const dirichlet_group_t G, const dirichlet_char_t chi, ulong order, slong nv)
 
     void dirichlet_char_mul(dirichlet_char_t chi12, const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2)
 
-    void dirichlet_char_pow(dirichlet_char_t c, const dirichlet_group_t G, const dirichlet_char_t a, unsigned long n)
+    void dirichlet_char_pow(dirichlet_char_t c, const dirichlet_group_t G, const dirichlet_char_t a, ulong n)
 
     void dirichlet_char_lift(dirichlet_char_t chi_G, const dirichlet_group_t G, const dirichlet_char_t chi_H, const dirichlet_group_t H)
     # If *H* is a subgroup of *G*, computes the character in *G* corresponding to

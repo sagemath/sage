@@ -20,11 +20,11 @@ cdef extern from "flint_wrap.h":
     void nmod_poly_factor_clear(nmod_poly_factor_t fac)
     # Frees all memory associated with ``fac``.
 
-    void nmod_poly_factor_realloc(nmod_poly_factor_t fac, long alloc)
+    void nmod_poly_factor_realloc(nmod_poly_factor_t fac, slong alloc)
     # Reallocates the factor structure to provide space for
     # precisely ``alloc`` factors.
 
-    void nmod_poly_factor_fit_length(nmod_poly_factor_t fac, long len)
+    void nmod_poly_factor_fit_length(nmod_poly_factor_t fac, slong len)
     # Ensures that the factor structure has space for at
     # least ``len`` factors.  This function takes care
     # of the case of repeated calls by always at least
@@ -36,7 +36,7 @@ cdef extern from "flint_wrap.h":
     void nmod_poly_factor_print(const nmod_poly_factor_t fac)
     # Prints the entries of ``fac`` to standard output.
 
-    void nmod_poly_factor_insert(nmod_poly_factor_t fac, const nmod_poly_t poly, long exp)
+    void nmod_poly_factor_insert(nmod_poly_factor_t fac, const nmod_poly_t poly, slong exp)
     # Inserts the factor ``poly`` with multiplicity ``exp`` into
     # the factorisation ``fac``.
     # If ``fac`` already contains ``poly``, then ``exp`` simply
@@ -48,10 +48,10 @@ cdef extern from "flint_wrap.h":
     # repeatedly with the individual factors of ``fac``.
     # Does not support aliasing between ``res`` and ``fac``.
 
-    void nmod_poly_factor_pow(nmod_poly_factor_t fac, long exp)
+    void nmod_poly_factor_pow(nmod_poly_factor_t fac, slong exp)
     # Raises ``fac`` to the power ``exp``.
 
-    unsigned long nmod_poly_remove(nmod_poly_t f, const nmod_poly_t p)
+    ulong nmod_poly_remove(nmod_poly_t f, const nmod_poly_t p)
     # Removes the highest possible power of ``p`` from ``f`` and
     # returns the exponent.
 
@@ -66,7 +66,7 @@ cdef extern from "flint_wrap.h":
     # Returns 1 if the polynomial ``f`` is irreducible, otherwise returns 0.
     # Uses Rabin irreducibility test.
 
-    int _nmod_poly_is_squarefree(mp_srcptr f, long len, nmod_t mod)
+    int _nmod_poly_is_squarefree(mp_srcptr f, slong len, nmod_t mod)
     # Returns 1 if ``(f, len)`` is squarefree, and 0 otherwise. As a
     # special case, the zero polynomial is not considered squarefree.
     # There are no restrictions on the length.
@@ -78,19 +78,19 @@ cdef extern from "flint_wrap.h":
     void nmod_poly_factor_squarefree(nmod_poly_factor_t res, const nmod_poly_t f)
     # Sets ``res`` to a square-free factorization of ``f``.
 
-    int nmod_poly_factor_equal_deg_prob(nmod_poly_t factor, flint_rand_t state, const nmod_poly_t pol, long d)
+    int nmod_poly_factor_equal_deg_prob(nmod_poly_t factor, flint_rand_t state, const nmod_poly_t pol, slong d)
     # Probabilistic equal degree factorisation of ``pol`` into
     # irreducible factors of degree ``d``. If it passes, a factor is
     # placed in factor and 1 is returned, otherwise 0 is returned and
     # the value of factor is undetermined.
     # Requires that ``pol`` be monic, non-constant and squarefree.
 
-    void nmod_poly_factor_equal_deg(nmod_poly_factor_t factors, const nmod_poly_t pol, long d)
+    void nmod_poly_factor_equal_deg(nmod_poly_factor_t factors, const nmod_poly_t pol, slong d)
     # Assuming ``pol`` is a product of irreducible factors all of
     # degree ``d``, finds all those factors and places them in factors.
     # Requires that ``pol`` be monic, non-constant and squarefree.
 
-    void nmod_poly_factor_distinct_deg(nmod_poly_factor_t res, const nmod_poly_t poly, long * const *degs)
+    void nmod_poly_factor_distinct_deg(nmod_poly_factor_t res, const nmod_poly_t poly, slong * const *degs)
     # Factorises a monic non-constant squarefree polynomial ``poly``
     # of degree n into factors `f[d]` such that for `1 \leq d \leq n`
     # `f[d]` is the product of the monic irreducible factors of ``poly``
@@ -99,7 +99,7 @@ cdef extern from "flint_wrap.h":
     # as the factors.
     # Requires that ``degs`` has enough space for ``(n/2)+1 * sizeof(slong)``.
 
-    void nmod_poly_factor_distinct_deg_threaded(nmod_poly_factor_t res, const nmod_poly_t poly, long * const *degs)
+    void nmod_poly_factor_distinct_deg_threaded(nmod_poly_factor_t res, const nmod_poly_t poly, slong * const *degs)
     # Multithreaded version of :func:`nmod_poly_factor_distinct_deg`.
 
     void nmod_poly_factor_cantor_zassenhaus(nmod_poly_factor_t res, const nmod_poly_t f)

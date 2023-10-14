@@ -19,27 +19,27 @@ cdef extern from "flint_wrap.h":
     void arb_clear(arb_t x)
     # Clears the variable *x*, freeing or recycling its allocated memory.
 
-    arb_ptr _arb_vec_init(long n)
+    arb_ptr _arb_vec_init(slong n)
     # Returns a pointer to an array of *n* initialized :type:`arb_struct`
     # entries.
 
-    void _arb_vec_clear(arb_ptr v, long n)
+    void _arb_vec_clear(arb_ptr v, slong n)
     # Clears an array of *n* initialized :type:`arb_struct` entries.
 
     void arb_swap(arb_t x, arb_t y)
     # Swaps *x* and *y* efficiently.
 
-    long arb_allocated_bytes(const arb_t x)
+    slong arb_allocated_bytes(const arb_t x)
     # Returns the total number of bytes heap-allocated internally by this object.
     # The count excludes the size of the structure itself. Add
     # ``sizeof(arb_struct)`` to get the size of the object as a whole.
 
-    long _arb_vec_allocated_bytes(arb_srcptr vec, long len)
+    slong _arb_vec_allocated_bytes(arb_srcptr vec, slong len)
     # Returns the total number of bytes allocated for this vector, i.e. the
     # space taken up by the vector itself plus the sum of the internal heap
     # allocation sizes for all its member elements.
 
-    double _arb_vec_estimate_allocated_bytes(long len, long prec)
+    double _arb_vec_estimate_allocated_bytes(slong len, slong prec)
     # Estimates the number of bytes that need to be allocated for a vector of
     # *len* elements with *prec* bits of precision, including the space for
     # internal limb data.
@@ -57,9 +57,9 @@ cdef extern from "flint_wrap.h":
 
     void arb_set_arf(arb_t y, const arf_t x)
 
-    void arb_set_si(arb_t y, long x)
+    void arb_set_si(arb_t y, slong x)
 
-    void arb_set_ui(arb_t y, unsigned long x)
+    void arb_set_ui(arb_t y, ulong x)
 
     void arb_set_d(arb_t y, double x)
 
@@ -69,21 +69,21 @@ cdef extern from "flint_wrap.h":
     void arb_set_fmpz_2exp(arb_t y, const fmpz_t x, const fmpz_t e)
     # Sets *y* to `x \cdot 2^e`.
 
-    void arb_set_round(arb_t y, const arb_t x, long prec)
+    void arb_set_round(arb_t y, const arb_t x, slong prec)
 
-    void arb_set_round_fmpz(arb_t y, const fmpz_t x, long prec)
+    void arb_set_round_fmpz(arb_t y, const fmpz_t x, slong prec)
     # Sets *y* to the value of *x*, rounded to *prec* bits in the direction
     # towards zero.
 
-    void arb_set_round_fmpz_2exp(arb_t y, const fmpz_t x, const fmpz_t e, long prec)
+    void arb_set_round_fmpz_2exp(arb_t y, const fmpz_t x, const fmpz_t e, slong prec)
     # Sets *y* to `x \cdot 2^e`, rounded to *prec* bits in the direction
     # towards zero.
 
-    void arb_set_fmpq(arb_t y, const fmpq_t x, long prec)
+    void arb_set_fmpq(arb_t y, const fmpq_t x, slong prec)
     # Sets *y* to the rational number *x*, rounded to *prec* bits in the direction
     # towards zero.
 
-    int arb_set_str(arb_t res, const char * inp, long prec)
+    int arb_set_str(arb_t res, const char * inp, slong prec)
     # Sets *res* to the value specified by the human-readable string *inp*.
     # The input may be a decimal floating-point literal,
     # such as "25", "0.001", "7e+141" or "-31.4159e-1", and may also consist
@@ -97,7 +97,7 @@ cdef extern from "flint_wrap.h":
     # Returns 0 if successful and nonzero if unsuccessful. If unsuccessful,
     # the result is set to an indeterminate interval.
 
-    char * arb_get_str(const arb_t x, long n, unsigned long flags)
+    char * arb_get_str(const arb_t x, slong n, ulong flags)
     # Returns a nice human-readable representation of *x*, with at most *n*
     # digits of the midpoint printed.
     # With default flags, the output can be parsed back with :func:`arb_set_str`,
@@ -150,16 +150,16 @@ cdef extern from "flint_wrap.h":
     void arb_fprint(FILE * file, const arb_t x)
     # Prints the internal representation of *x*.
 
-    void arb_printd(const arb_t x, long digits)
+    void arb_printd(const arb_t x, slong digits)
 
-    void arb_fprintd(FILE * file, const arb_t x, long digits)
+    void arb_fprintd(FILE * file, const arb_t x, slong digits)
     # Prints *x* in decimal. The printed value of the radius is not adjusted
     # to compensate for the fact that the binary-to-decimal conversion
     # of both the midpoint and the radius introduces additional error.
 
-    void arb_printn(const arb_t x, long digits, unsigned long flags)
+    void arb_printn(const arb_t x, slong digits, ulong flags)
 
-    void arb_fprintn(FILE * file, const arb_t x, long digits, unsigned long flags)
+    void arb_fprintn(FILE * file, const arb_t x, slong digits, ulong flags)
     # Prints a nice decimal representation of *x*.
     # By default, the output shows the midpoint with a guaranteed error of at
     # most one unit in the last decimal place. In addition, an explicit error
@@ -209,25 +209,25 @@ cdef extern from "flint_wrap.h":
     # }
     # fclose(fp);
 
-    void arb_randtest(arb_t x, flint_rand_t state, long prec, long mag_bits)
+    void arb_randtest(arb_t x, flint_rand_t state, slong prec, slong mag_bits)
     # Generates a random ball. The midpoint and radius will both be finite.
 
-    void arb_randtest_exact(arb_t x, flint_rand_t state, long prec, long mag_bits)
+    void arb_randtest_exact(arb_t x, flint_rand_t state, slong prec, slong mag_bits)
     # Generates a random number with zero radius.
 
-    void arb_randtest_precise(arb_t x, flint_rand_t state, long prec, long mag_bits)
+    void arb_randtest_precise(arb_t x, flint_rand_t state, slong prec, slong mag_bits)
     # Generates a random number with radius around `2^{-\text{prec}}`
     # the magnitude of the midpoint.
 
-    void arb_randtest_wide(arb_t x, flint_rand_t state, long prec, long mag_bits)
+    void arb_randtest_wide(arb_t x, flint_rand_t state, slong prec, slong mag_bits)
     # Generates a random number with midpoint and radius chosen independently,
     # possibly giving a very large interval.
 
-    void arb_randtest_special(arb_t x, flint_rand_t state, long prec, long mag_bits)
+    void arb_randtest_special(arb_t x, flint_rand_t state, slong prec, slong mag_bits)
     # Generates a random interval, possibly having NaN or an infinity
     # as the midpoint and possibly having an infinite radius.
 
-    void arb_get_rand_fmpq(fmpq_t q, flint_rand_t state, const arb_t x, long bits)
+    void arb_get_rand_fmpq(fmpq_t q, flint_rand_t state, const arb_t x, slong bits)
     # Sets *q* to a random rational number from the interval represented by *x*.
     # A denominator is chosen by multiplying the binary denominator of *x*
     # by a random integer up to *bits* bits.
@@ -236,7 +236,7 @@ cdef extern from "flint_wrap.h":
     # that representing the endpoints as exact rational numbers would
     # cause overflows.
 
-    void arb_urandom(arb_t x, flint_rand_t state, long prec)
+    void arb_urandom(arb_t x, flint_rand_t state, slong prec)
     # Sets *x* to a uniformly distributed random number in the interval
     # `[0, 1]`. The method uses rounding from integers to floats, hence the
     # radius might not be `0`.
@@ -255,15 +255,15 @@ cdef extern from "flint_wrap.h":
     # Adds the absolute value of *err* to the radius of *x* (the operation
     # is done in-place).
 
-    void arb_add_error_2exp_si(arb_t x, long e)
+    void arb_add_error_2exp_si(arb_t x, slong e)
 
     void arb_add_error_2exp_fmpz(arb_t x, const fmpz_t e)
     # Adds `2^e` to the radius of *x*.
 
-    void arb_union(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_union(arb_t z, const arb_t x, const arb_t y, slong prec)
     # Sets *z* to a ball containing both *x* and *y*.
 
-    int arb_intersection(arb_t z, const arb_t x, const arb_t y, long prec)
+    int arb_intersection(arb_t z, const arb_t x, const arb_t y, slong prec)
     # If *x* and *y* overlap according to :func:`arb_overlaps`,
     # then *z* is set to a ball containing the intersection of *x* and *y*
     # and a nonzero value is returned.
@@ -277,19 +277,19 @@ cdef extern from "flint_wrap.h":
     # certainly contains no negative points.
     # In the special case when *x* is strictly negative, *res* is set to zero.
 
-    void arb_get_abs_ubound_arf(arf_t u, const arb_t x, long prec)
+    void arb_get_abs_ubound_arf(arf_t u, const arb_t x, slong prec)
     # Sets *u* to the upper bound for the absolute value of *x*,
     # rounded up to *prec* bits. If *x* contains NaN, the result is NaN.
 
-    void arb_get_abs_lbound_arf(arf_t u, const arb_t x, long prec)
+    void arb_get_abs_lbound_arf(arf_t u, const arb_t x, slong prec)
     # Sets *u* to the lower bound for the absolute value of *x*,
     # rounded down to *prec* bits. If *x* contains NaN, the result is NaN.
 
-    void arb_get_ubound_arf(arf_t u, const arb_t x, long prec)
+    void arb_get_ubound_arf(arf_t u, const arb_t x, slong prec)
     # Sets *u* to the upper bound for the value of *x*,
     # rounded up to *prec* bits. If *x* contains NaN, the result is NaN.
 
-    void arb_get_lbound_arf(arf_t u, const arb_t x, long prec)
+    void arb_get_lbound_arf(arf_t u, const arb_t x, slong prec)
     # Sets *u* to the lower bound for the value of *x*,
     # rounded down to *prec* bits. If *x* contains NaN, the result is NaN.
 
@@ -321,38 +321,38 @@ cdef extern from "flint_wrap.h":
     # to check that the midpoint and radius of *x* both are within a
     # reasonable range before calling this method.
 
-    void arb_set_interval_mag(arb_t x, const mag_t a, const mag_t b, long prec)
+    void arb_set_interval_mag(arb_t x, const mag_t a, const mag_t b, slong prec)
 
-    void arb_set_interval_arf(arb_t x, const arf_t a, const arf_t b, long prec)
+    void arb_set_interval_arf(arb_t x, const arf_t a, const arf_t b, slong prec)
 
-    void arb_set_interval_mpfr(arb_t x, const mpfr_t a, const mpfr_t b, long prec)
+    void arb_set_interval_mpfr(arb_t x, const mpfr_t a, const mpfr_t b, slong prec)
     # Sets *x* to a ball containing the interval `[a, b]`. We
     # require that `a \le b`.
 
-    void arb_set_interval_neg_pos_mag(arb_t x, const mag_t a, const mag_t b, long prec)
+    void arb_set_interval_neg_pos_mag(arb_t x, const mag_t a, const mag_t b, slong prec)
     # Sets *x* to a ball containing the interval `[-a, b]`.
 
-    void arb_get_interval_arf(arf_t a, arf_t b, const arb_t x, long prec)
+    void arb_get_interval_arf(arf_t a, arf_t b, const arb_t x, slong prec)
 
     void arb_get_interval_mpfr(mpfr_t a, mpfr_t b, const arb_t x)
     # Constructs an interval `[a, b]` containing the ball *x*. The MPFR version
     # uses the precision of the output variables.
 
-    long arb_rel_error_bits(const arb_t x)
+    slong arb_rel_error_bits(const arb_t x)
     # Returns the effective relative error of *x* measured in bits, defined as
     # the difference between the position of the top bit in the radius
     # and the top bit in the midpoint, plus one.
     # The result is clamped between plus/minus *ARF_PREC_EXACT*.
 
-    long arb_rel_accuracy_bits(const arb_t x)
+    slong arb_rel_accuracy_bits(const arb_t x)
     # Returns the effective relative accuracy of *x* measured in bits,
     # equal to the negative of the return value from :func:`arb_rel_error_bits`.
 
-    long arb_rel_one_accuracy_bits(const arb_t x)
+    slong arb_rel_one_accuracy_bits(const arb_t x)
     # Given a ball with midpoint *m* and radius *r*, returns an approximation of
     # the relative accuracy of `[\max(1,|m|) \pm r]` measured in bits.
 
-    long arb_bits(const arb_t x)
+    slong arb_bits(const arb_t x)
     # Returns the number of bits needed to represent the absolute value
     # of the mantissa of the midpoint of *x*, i.e. the minimum precision
     # sufficient to represent *x* exactly. Returns 0 if the midpoint
@@ -378,24 +378,24 @@ cdef extern from "flint_wrap.h":
     # in swapping. It is recommended to check that the midpoint of *x* is
     # within a reasonable range before calling this method.
 
-    void arb_floor(arb_t y, const arb_t x, long prec)
-    void arb_ceil(arb_t y, const arb_t x, long prec)
-    void arb_trunc(arb_t y, const arb_t x, long prec)
-    void arb_nint(arb_t y, const arb_t x, long prec)
+    void arb_floor(arb_t y, const arb_t x, slong prec)
+    void arb_ceil(arb_t y, const arb_t x, slong prec)
+    void arb_trunc(arb_t y, const arb_t x, slong prec)
+    void arb_nint(arb_t y, const arb_t x, slong prec)
     # Sets *y* to a ball containing respectively, `\lfloor x \rfloor` and
     # `\lceil x \rceil`, `\operatorname{trunc}(x)`, `\operatorname{nint}(x)`,
     # with the midpoint of *y* rounded to at most *prec* bits.
 
-    void arb_get_fmpz_mid_rad_10exp(fmpz_t mid, fmpz_t rad, fmpz_t exp, const arb_t x, long n)
+    void arb_get_fmpz_mid_rad_10exp(fmpz_t mid, fmpz_t rad, fmpz_t exp, const arb_t x, slong n)
     # Assuming that *x* is finite and not exactly zero, computes integers *mid*,
     # *rad*, *exp* such that `x \in [m-r, m+r] \times 10^e` and such that the
     # larger out of *mid* and *rad* has at least *n* digits plus a few guard
     # digits. If *x* is infinite or exactly zero, the outputs are all set
     # to zero.
 
-    int arb_can_round_arf(const arb_t x, long prec, arf_rnd_t rnd)
+    int arb_can_round_arf(const arb_t x, slong prec, arf_rnd_t rnd)
 
-    int arb_can_round_mpfr(const arb_t x, long prec, mpfr_rnd_t rnd)
+    int arb_can_round_mpfr(const arb_t x, slong prec, mpfr_rnd_t rnd)
     # Returns nonzero if rounding the midpoint of *x* to *prec* bits in
     # the direction *rnd* is guaranteed to give the unique correctly
     # rounded floating-point approximation for the real number represented by *x*.
@@ -434,7 +434,7 @@ cdef extern from "flint_wrap.h":
     int arb_is_int(const arb_t x)
     # Returns nonzero iff *x* is an exact integer.
 
-    int arb_is_int_2exp_si(const arb_t x, long e)
+    int arb_is_int_2exp_si(const arb_t x, slong e)
     # Returns nonzero iff *x* exactly equals `n 2^e` for some integer *n*.
 
     int arb_equal(const arb_t x, const arb_t y)
@@ -447,7 +447,7 @@ cdef extern from "flint_wrap.h":
     # quantity, use :func:`arb_overlaps` or :func:`arb_contains`,
     # depending on the circumstance.
 
-    int arb_equal_si(const arb_t x, long y)
+    int arb_equal_si(const arb_t x, slong y)
     # Returns nonzero iff *x* is equal to the integer *y*.
 
     int arb_is_positive(const arb_t x)
@@ -473,7 +473,7 @@ cdef extern from "flint_wrap.h":
 
     int arb_contains_fmpz(const arb_t x, const fmpz_t y)
 
-    int arb_contains_si(const arb_t x, long y)
+    int arb_contains_si(const arb_t x, slong y)
 
     int arb_contains_mpfr(const arb_t x, const mpfr_t y)
 
@@ -529,7 +529,7 @@ cdef extern from "flint_wrap.h":
 
     void arb_neg(arb_t y, const arb_t x)
 
-    void arb_neg_round(arb_t y, const arb_t x, long prec)
+    void arb_neg_round(arb_t y, const arb_t x, slong prec)
     # Sets *y* to the negation of *x*.
 
     void arb_abs(arb_t y, const arb_t x)
@@ -550,107 +550,107 @@ cdef extern from "flint_wrap.h":
     # and 0 if *x* is zero or a ball containing zero so that its sign
     # is not determined.
 
-    void arb_min(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_min(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_max(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_max(arb_t z, const arb_t x, const arb_t y, slong prec)
     # Sets *z* respectively to the minimum and the maximum of *x* and *y*.
 
-    void arb_minmax(arb_t z1, arb_t z2, const arb_t x, const arb_t y, long prec)
+    void arb_minmax(arb_t z1, arb_t z2, const arb_t x, const arb_t y, slong prec)
     # Sets *z1* and *z2* respectively to the minimum and the maximum of *x* and *y*.
 
-    void arb_add(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_add(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_add_arf(arb_t z, const arb_t x, const arf_t y, long prec)
+    void arb_add_arf(arb_t z, const arb_t x, const arf_t y, slong prec)
 
-    void arb_add_ui(arb_t z, const arb_t x, unsigned long y, long prec)
+    void arb_add_ui(arb_t z, const arb_t x, ulong y, slong prec)
 
-    void arb_add_si(arb_t z, const arb_t x, long y, long prec)
+    void arb_add_si(arb_t z, const arb_t x, slong y, slong prec)
 
-    void arb_add_fmpz(arb_t z, const arb_t x, const fmpz_t y, long prec)
+    void arb_add_fmpz(arb_t z, const arb_t x, const fmpz_t y, slong prec)
     # Sets `z = x + y`, rounded to *prec* bits. The precision can be
     # *ARF_PREC_EXACT* provided that the result fits in memory.
 
-    void arb_add_fmpz_2exp(arb_t z, const arb_t x, const fmpz_t m, const fmpz_t e, long prec)
+    void arb_add_fmpz_2exp(arb_t z, const arb_t x, const fmpz_t m, const fmpz_t e, slong prec)
     # Sets `z = x + m \cdot 2^e`, rounded to *prec* bits. The precision can be
     # *ARF_PREC_EXACT* provided that the result fits in memory.
 
-    void arb_sub(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_sub(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_sub_arf(arb_t z, const arb_t x, const arf_t y, long prec)
+    void arb_sub_arf(arb_t z, const arb_t x, const arf_t y, slong prec)
 
-    void arb_sub_ui(arb_t z, const arb_t x, unsigned long y, long prec)
+    void arb_sub_ui(arb_t z, const arb_t x, ulong y, slong prec)
 
-    void arb_sub_si(arb_t z, const arb_t x, long y, long prec)
+    void arb_sub_si(arb_t z, const arb_t x, slong y, slong prec)
 
-    void arb_sub_fmpz(arb_t z, const arb_t x, const fmpz_t y, long prec)
+    void arb_sub_fmpz(arb_t z, const arb_t x, const fmpz_t y, slong prec)
     # Sets `z = x - y`, rounded to *prec* bits. The precision can be
     # *ARF_PREC_EXACT* provided that the result fits in memory.
 
-    void arb_mul(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_mul(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_mul_arf(arb_t z, const arb_t x, const arf_t y, long prec)
+    void arb_mul_arf(arb_t z, const arb_t x, const arf_t y, slong prec)
 
-    void arb_mul_si(arb_t z, const arb_t x, long y, long prec)
+    void arb_mul_si(arb_t z, const arb_t x, slong y, slong prec)
 
-    void arb_mul_ui(arb_t z, const arb_t x, unsigned long y, long prec)
+    void arb_mul_ui(arb_t z, const arb_t x, ulong y, slong prec)
 
-    void arb_mul_fmpz(arb_t z, const arb_t x, const fmpz_t y, long prec)
+    void arb_mul_fmpz(arb_t z, const arb_t x, const fmpz_t y, slong prec)
     # Sets `z = x \cdot y`, rounded to *prec* bits. The precision can be
     # *ARF_PREC_EXACT* provided that the result fits in memory.
 
-    void arb_mul_2exp_si(arb_t y, const arb_t x, long e)
+    void arb_mul_2exp_si(arb_t y, const arb_t x, slong e)
 
     void arb_mul_2exp_fmpz(arb_t y, const arb_t x, const fmpz_t e)
     # Sets *y* to *x* multiplied by `2^e`.
 
-    void arb_addmul(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_addmul(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_addmul_arf(arb_t z, const arb_t x, const arf_t y, long prec)
+    void arb_addmul_arf(arb_t z, const arb_t x, const arf_t y, slong prec)
 
-    void arb_addmul_si(arb_t z, const arb_t x, long y, long prec)
+    void arb_addmul_si(arb_t z, const arb_t x, slong y, slong prec)
 
-    void arb_addmul_ui(arb_t z, const arb_t x, unsigned long y, long prec)
+    void arb_addmul_ui(arb_t z, const arb_t x, ulong y, slong prec)
 
-    void arb_addmul_fmpz(arb_t z, const arb_t x, const fmpz_t y, long prec)
+    void arb_addmul_fmpz(arb_t z, const arb_t x, const fmpz_t y, slong prec)
     # Sets `z = z + x \cdot y`, rounded to prec bits. The precision can be
     # *ARF_PREC_EXACT* provided that the result fits in memory.
 
-    void arb_submul(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_submul(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_submul_arf(arb_t z, const arb_t x, const arf_t y, long prec)
+    void arb_submul_arf(arb_t z, const arb_t x, const arf_t y, slong prec)
 
-    void arb_submul_si(arb_t z, const arb_t x, long y, long prec)
+    void arb_submul_si(arb_t z, const arb_t x, slong y, slong prec)
 
-    void arb_submul_ui(arb_t z, const arb_t x, unsigned long y, long prec)
+    void arb_submul_ui(arb_t z, const arb_t x, ulong y, slong prec)
 
-    void arb_submul_fmpz(arb_t z, const arb_t x, const fmpz_t y, long prec)
+    void arb_submul_fmpz(arb_t z, const arb_t x, const fmpz_t y, slong prec)
     # Sets `z = z - x \cdot y`, rounded to prec bits. The precision can be
     # *ARF_PREC_EXACT* provided that the result fits in memory.
 
-    void arb_fma(arb_t res, const arb_t x, const arb_t y, const arb_t z, long prec)
-    void arb_fma_arf(arb_t res, const arb_t x, const arf_t y, const arb_t z, long prec)
-    void arb_fma_si(arb_t res, const arb_t x, long y, const arb_t z, long prec)
-    void arb_fma_ui(arb_t res, const arb_t x, unsigned long y, const arb_t z, long prec)
-    void arb_fma_fmpz(arb_t res, const arb_t x, const fmpz_t y, const arb_t z, long prec)
+    void arb_fma(arb_t res, const arb_t x, const arb_t y, const arb_t z, slong prec)
+    void arb_fma_arf(arb_t res, const arb_t x, const arf_t y, const arb_t z, slong prec)
+    void arb_fma_si(arb_t res, const arb_t x, slong y, const arb_t z, slong prec)
+    void arb_fma_ui(arb_t res, const arb_t x, ulong y, const arb_t z, slong prec)
+    void arb_fma_fmpz(arb_t res, const arb_t x, const fmpz_t y, const arb_t z, slong prec)
     # Sets *res* to `x \cdot y + z`. This is equivalent to an *addmul* except
     # that *res* and *z* can be separate variables.
 
-    void arb_inv(arb_t z, const arb_t x, long prec)
+    void arb_inv(arb_t z, const arb_t x, slong prec)
     # Sets *z* to `1 / x`.
 
-    void arb_div(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_div(arb_t z, const arb_t x, const arb_t y, slong prec)
 
-    void arb_div_arf(arb_t z, const arb_t x, const arf_t y, long prec)
+    void arb_div_arf(arb_t z, const arb_t x, const arf_t y, slong prec)
 
-    void arb_div_si(arb_t z, const arb_t x, long y, long prec)
+    void arb_div_si(arb_t z, const arb_t x, slong y, slong prec)
 
-    void arb_div_ui(arb_t z, const arb_t x, unsigned long y, long prec)
+    void arb_div_ui(arb_t z, const arb_t x, ulong y, slong prec)
 
-    void arb_div_fmpz(arb_t z, const arb_t x, const fmpz_t y, long prec)
+    void arb_div_fmpz(arb_t z, const arb_t x, const fmpz_t y, slong prec)
 
-    void arb_fmpz_div_fmpz(arb_t z, const fmpz_t x, const fmpz_t y, long prec)
+    void arb_fmpz_div_fmpz(arb_t z, const fmpz_t x, const fmpz_t y, slong prec)
 
-    void arb_ui_div(arb_t z, unsigned long x, const arb_t y, long prec)
+    void arb_ui_div(arb_t z, ulong x, const arb_t y, slong prec)
     # Sets `z = x / y`, rounded to *prec* bits. If *y* contains zero, *z* is
     # set to `0 \pm \infty`. Otherwise, error propagation uses the rule
     # .. math ::
@@ -661,12 +661,12 @@ cdef extern from "flint_wrap.h":
     # where the triangle inequality has been applied to the numerator and
     # the reverse triangle inequality has been applied to the denominator.
 
-    void arb_div_2expm1_ui(arb_t z, const arb_t x, unsigned long n, long prec)
+    void arb_div_2expm1_ui(arb_t z, const arb_t x, ulong n, slong prec)
     # Sets `z = x / (2^n - 1)`, rounded to *prec* bits.
 
-    void arb_dot_precise(arb_t res, const arb_t s, int subtract, arb_srcptr x, long xstep, arb_srcptr y, long ystep, long len, long prec)
-    void arb_dot_simple(arb_t res, const arb_t s, int subtract, arb_srcptr x, long xstep, arb_srcptr y, long ystep, long len, long prec)
-    void arb_dot(arb_t res, const arb_t s, int subtract, arb_srcptr x, long xstep, arb_srcptr y, long ystep, long len, long prec)
+    void arb_dot_precise(arb_t res, const arb_t s, int subtract, arb_srcptr x, slong xstep, arb_srcptr y, slong ystep, slong len, slong prec)
+    void arb_dot_simple(arb_t res, const arb_t s, int subtract, arb_srcptr x, slong xstep, arb_srcptr y, slong ystep, slong len, slong prec)
+    void arb_dot(arb_t res, const arb_t s, int subtract, arb_srcptr x, slong xstep, arb_srcptr y, slong ystep, slong len, slong prec)
     # Computes the dot product of the vectors *x* and *y*, setting
     # *res* to `s + (-1)^{subtract} \sum_{i=0}^{len-1} x_i y_i`.
     # The initial term *s* is optional and can be
@@ -694,50 +694,50 @@ cdef extern from "flint_wrap.h":
     # final rounding. This can be extremely slow and is only intended
     # for testing.
 
-    void arb_approx_dot(arb_t res, const arb_t s, int subtract, arb_srcptr x, long xstep, arb_srcptr y, long ystep, long len, long prec)
+    void arb_approx_dot(arb_t res, const arb_t s, int subtract, arb_srcptr x, slong xstep, arb_srcptr y, slong ystep, slong len, slong prec)
     # Computes an approximate dot product *without error bounds*.
     # The radii of the inputs are ignored (only the midpoints are read)
     # and only the midpoint of the output is written.
 
-    void arb_dot_ui(arb_t res, const arb_t initial, int subtract, arb_srcptr x, long xstep, const unsigned long * y, long ystep, long len, long prec)
-    void arb_dot_si(arb_t res, const arb_t initial, int subtract, arb_srcptr x, long xstep, const long * y, long ystep, long len, long prec)
-    void arb_dot_uiui(arb_t res, const arb_t initial, int subtract, arb_srcptr x, long xstep, const unsigned long * y, long ystep, long len, long prec)
-    void arb_dot_siui(arb_t res, const arb_t initial, int subtract, arb_srcptr x, long xstep, const unsigned long * y, long ystep, long len, long prec)
-    void arb_dot_fmpz(arb_t res, const arb_t initial, int subtract, arb_srcptr x, long xstep, const fmpz * y, long ystep, long len, long prec)
+    void arb_dot_ui(arb_t res, const arb_t initial, int subtract, arb_srcptr x, slong xstep, const ulong * y, slong ystep, slong len, slong prec)
+    void arb_dot_si(arb_t res, const arb_t initial, int subtract, arb_srcptr x, slong xstep, const slong * y, slong ystep, slong len, slong prec)
+    void arb_dot_uiui(arb_t res, const arb_t initial, int subtract, arb_srcptr x, slong xstep, const ulong * y, slong ystep, slong len, slong prec)
+    void arb_dot_siui(arb_t res, const arb_t initial, int subtract, arb_srcptr x, slong xstep, const ulong * y, slong ystep, slong len, slong prec)
+    void arb_dot_fmpz(arb_t res, const arb_t initial, int subtract, arb_srcptr x, slong xstep, const fmpz * y, slong ystep, slong len, slong prec)
     # Equivalent to :func:`arb_dot`, but with integers in the array *y*.
     # The *uiui* and *siui* versions take an array of double-limb integers
     # as input; the *siui* version assumes that these represent signed
     # integers in two's complement form.
 
-    void arb_sqrt(arb_t z, const arb_t x, long prec)
+    void arb_sqrt(arb_t z, const arb_t x, slong prec)
 
-    void arb_sqrt_arf(arb_t z, const arf_t x, long prec)
+    void arb_sqrt_arf(arb_t z, const arf_t x, slong prec)
 
-    void arb_sqrt_fmpz(arb_t z, const fmpz_t x, long prec)
+    void arb_sqrt_fmpz(arb_t z, const fmpz_t x, slong prec)
 
-    void arb_sqrt_ui(arb_t z, unsigned long x, long prec)
+    void arb_sqrt_ui(arb_t z, ulong x, slong prec)
     # Sets *z* to the square root of *x*, rounded to *prec* bits.
     # If `x = m \pm x` where `m \ge r \ge 0`, the propagated error is bounded by
     # `\sqrt{m} - \sqrt{m-r} = \sqrt{m} (1 - \sqrt{1 - r/m}) \le \sqrt{m} (r/m + (r/m)^2)/2`.
 
-    void arb_sqrtpos(arb_t z, const arb_t x, long prec)
+    void arb_sqrtpos(arb_t z, const arb_t x, slong prec)
     # Sets *z* to the square root of *x*, assuming that *x* represents a
     # nonnegative number (i.e. discarding any negative numbers in the input
     # interval).
 
-    void arb_hypot(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_hypot(arb_t z, const arb_t x, const arb_t y, slong prec)
     # Sets *z* to `\sqrt{x^2 + y^2}`.
 
-    void arb_rsqrt(arb_t z, const arb_t x, long prec)
+    void arb_rsqrt(arb_t z, const arb_t x, slong prec)
 
-    void arb_rsqrt_ui(arb_t z, unsigned long x, long prec)
+    void arb_rsqrt_ui(arb_t z, ulong x, slong prec)
     # Sets *z* to the reciprocal square root of *x*, rounded to *prec* bits.
     # At high precision, this is faster than computing a square root.
 
-    void arb_sqrt1pm1(arb_t z, const arb_t x, long prec)
+    void arb_sqrt1pm1(arb_t z, const arb_t x, slong prec)
     # Sets `z = \sqrt{1+x}-1`, computed accurately when `x \approx 0`.
 
-    void arb_root_ui(arb_t z, const arb_t x, unsigned long k, long prec)
+    void arb_root_ui(arb_t z, const arb_t x, ulong k, slong prec)
     # Sets *z* to the *k*-th root of *x*, rounded to *prec* bits.
     # This function selects between different algorithms. For large *k*,
     # it evaluates `\exp(\log(x)/k)`. For small *k*, it uses :func:`arf_root`
@@ -751,21 +751,21 @@ cdef extern from "flint_wrap.h":
     # = m^{1/k} \min(1, \log(1+r/(m-r))/k).
     # This is evaluated using :func:`mag_log1p`.
 
-    void arb_root(arb_t z, const arb_t x, unsigned long k, long prec)
+    void arb_root(arb_t z, const arb_t x, ulong k, slong prec)
     # Alias for :func:`arb_root_ui`, provided for backwards compatibility.
 
-    void arb_sqr(arb_t y, const arb_t x, long prec)
+    void arb_sqr(arb_t y, const arb_t x, slong prec)
     # Sets *y* to be the square of *x*.
 
-    void arb_pow_fmpz_binexp(arb_t y, const arb_t b, const fmpz_t e, long prec)
+    void arb_pow_fmpz_binexp(arb_t y, const arb_t b, const fmpz_t e, slong prec)
 
-    void arb_pow_fmpz(arb_t y, const arb_t b, const fmpz_t e, long prec)
+    void arb_pow_fmpz(arb_t y, const arb_t b, const fmpz_t e, slong prec)
 
-    void arb_pow_ui(arb_t y, const arb_t b, unsigned long e, long prec)
+    void arb_pow_ui(arb_t y, const arb_t b, ulong e, slong prec)
 
-    void arb_ui_pow_ui(arb_t y, unsigned long b, unsigned long e, long prec)
+    void arb_ui_pow_ui(arb_t y, ulong b, ulong e, slong prec)
 
-    void arb_si_pow_ui(arb_t y, long b, unsigned long e, long prec)
+    void arb_si_pow_ui(arb_t y, slong b, ulong e, slong prec)
     # Sets `y = b^e` using binary exponentiation (with an initial division
     # if `e < 0`). Provided that *b* and *e*
     # are small enough and the exponent is positive, the exact power can be
@@ -773,25 +773,25 @@ cdef extern from "flint_wrap.h":
     # Note that these functions can get slow if the exponent is
     # extremely large (in such cases :func:`arb_pow` may be superior).
 
-    void arb_pow_fmpq(arb_t y, const arb_t x, const fmpq_t a, long prec)
+    void arb_pow_fmpq(arb_t y, const arb_t x, const fmpq_t a, slong prec)
     # Sets `y = b^e`, computed as `y = (b^{1/q})^p` if the denominator of
     # `e = p/q` is small, and generally as `y = \exp(e \log b)`.
     # Note that this function can get slow if the exponent is
     # extremely large (in such cases :func:`arb_pow` may be superior).
 
-    void arb_pow(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_pow(arb_t z, const arb_t x, const arb_t y, slong prec)
     # Sets `z = x^y`, computed using binary exponentiation if `y` is
     # a small exact integer, as `z = (x^{1/2})^{2y}` if `y` is a small exact
     # half-integer, and generally as `z = \exp(y \log x)`, except giving the
     # obvious finite result if `x` is `a \pm a` and `y` is positive.
 
-    void arb_log_ui(arb_t z, unsigned long x, long prec)
+    void arb_log_ui(arb_t z, ulong x, slong prec)
 
-    void arb_log_fmpz(arb_t z, const fmpz_t x, long prec)
+    void arb_log_fmpz(arb_t z, const fmpz_t x, slong prec)
 
-    void arb_log_arf(arb_t z, const arf_t x, long prec)
+    void arb_log_arf(arb_t z, const arf_t x, slong prec)
 
-    void arb_log(arb_t z, const arb_t x, long prec)
+    void arb_log(arb_t z, const arb_t x, slong prec)
     # Sets `z = \log(x)`.
     # At low to medium precision (up to about 4096 bits), :func:`arb_log_arf`
     # uses table-based argument reduction and fast Taylor series evaluation
@@ -799,7 +799,7 @@ cdef extern from "flint_wrap.h":
     # The function :func:`arb_log` simply calls :func:`arb_log_arf` with
     # the midpoint as input, and separately adds the propagated error.
 
-    void arb_log_ui_from_prev(arb_t log_k1, unsigned long k1, arb_t log_k0, unsigned long k0, long prec)
+    void arb_log_ui_from_prev(arb_t log_k1, ulong k1, arb_t log_k0, ulong k0, slong prec)
     # Computes `\log(k_1)`, given `\log(k_0)` where `k_0 < k_1`.
     # At high precision, this function uses the formula
     # `\log(k_1) = \log(k_0) + 2 \operatorname{atanh}((k_1-k_0)/(k_1+k_0))`,
@@ -808,53 +808,53 @@ cdef extern from "flint_wrap.h":
     # be small). Otherwise, it ignores `\log(k_0)` and evaluates the logarithm
     # the usual way.
 
-    void arb_log1p(arb_t z, const arb_t x, long prec)
+    void arb_log1p(arb_t z, const arb_t x, slong prec)
     # Sets `z = \log(1+x)`, computed accurately when `x \approx 0`.
 
-    void arb_log_base_ui(arb_t res, const arb_t x, unsigned long b, long prec)
+    void arb_log_base_ui(arb_t res, const arb_t x, ulong b, slong prec)
     # Sets *res* to `\log_b(x)`. The result is computed exactly when possible.
 
-    void arb_log_hypot(arb_t res, const arb_t x, const arb_t y, long prec)
+    void arb_log_hypot(arb_t res, const arb_t x, const arb_t y, slong prec)
     # Sets *res* to `\log(\sqrt{x^2+y^2})`.
 
-    void arb_exp(arb_t z, const arb_t x, long prec)
+    void arb_exp(arb_t z, const arb_t x, slong prec)
     # Sets `z = \exp(x)`. Error propagation is done using the following rule:
     # assuming `x = m \pm r`, the error is largest at `m + r`, and we have
     # `\exp(m+r) - \exp(m) = \exp(m) (\exp(r)-1) \le r \exp(m+r)`.
 
-    void arb_expm1(arb_t z, const arb_t x, long prec)
+    void arb_expm1(arb_t z, const arb_t x, slong prec)
     # Sets `z = \exp(x)-1`, using a more accurate method when `x \approx 0`.
 
-    void arb_exp_invexp(arb_t z, arb_t w, const arb_t x, long prec)
+    void arb_exp_invexp(arb_t z, arb_t w, const arb_t x, slong prec)
     # Sets `z = \exp(x)` and `w = \exp(-x)`. The second exponential is computed
     # from the first using a division, but propagated error bounds are
     # computed separately.
 
-    void arb_sin(arb_t s, const arb_t x, long prec)
+    void arb_sin(arb_t s, const arb_t x, slong prec)
 
-    void arb_cos(arb_t c, const arb_t x, long prec)
+    void arb_cos(arb_t c, const arb_t x, slong prec)
 
-    void arb_sin_cos(arb_t s, arb_t c, const arb_t x, long prec)
+    void arb_sin_cos(arb_t s, arb_t c, const arb_t x, slong prec)
     # Sets `s = \sin(x)`, `c = \cos(x)`.
 
-    void arb_sin_pi(arb_t s, const arb_t x, long prec)
+    void arb_sin_pi(arb_t s, const arb_t x, slong prec)
 
-    void arb_cos_pi(arb_t c, const arb_t x, long prec)
+    void arb_cos_pi(arb_t c, const arb_t x, slong prec)
 
-    void arb_sin_cos_pi(arb_t s, arb_t c, const arb_t x, long prec)
+    void arb_sin_cos_pi(arb_t s, arb_t c, const arb_t x, slong prec)
     # Sets `s = \sin(\pi x)`, `c = \cos(\pi x)`.
 
-    void arb_tan(arb_t y, const arb_t x, long prec)
+    void arb_tan(arb_t y, const arb_t x, slong prec)
     # Sets `y = \tan(x) = \sin(x) / \cos(y)`.
 
-    void arb_cot(arb_t y, const arb_t x, long prec)
+    void arb_cot(arb_t y, const arb_t x, slong prec)
     # Sets `y = \cot(x) = \cos(x) / \sin(y)`.
 
-    void arb_sin_cos_pi_fmpq(arb_t s, arb_t c, const fmpq_t x, long prec)
+    void arb_sin_cos_pi_fmpq(arb_t s, arb_t c, const fmpq_t x, slong prec)
 
-    void arb_sin_pi_fmpq(arb_t s, const fmpq_t x, long prec)
+    void arb_sin_pi_fmpq(arb_t s, const fmpq_t x, slong prec)
 
-    void arb_cos_pi_fmpq(arb_t c, const fmpq_t x, long prec)
+    void arb_cos_pi_fmpq(arb_t c, const fmpq_t x, slong prec)
     # Sets `s = \sin(\pi x)`, `c = \cos(\pi x)` where `x` is a rational
     # number (whose numerator and denominator are assumed to be reduced).
     # We first use trigonometric symmetries to reduce the argument to the
@@ -865,30 +865,30 @@ cdef extern from "flint_wrap.h":
     # first of these two methods gives full accuracy even if the original
     # argument is close to some root other the origin.
 
-    void arb_tan_pi(arb_t y, const arb_t x, long prec)
+    void arb_tan_pi(arb_t y, const arb_t x, slong prec)
     # Sets `y = \tan(\pi x)`.
 
-    void arb_cot_pi(arb_t y, const arb_t x, long prec)
+    void arb_cot_pi(arb_t y, const arb_t x, slong prec)
     # Sets `y = \cot(\pi x)`.
 
-    void arb_sec(arb_t res, const arb_t x, long prec)
+    void arb_sec(arb_t res, const arb_t x, slong prec)
     # Computes `\sec(x) = 1 / \cos(x)`.
 
-    void arb_csc(arb_t res, const arb_t x, long prec)
+    void arb_csc(arb_t res, const arb_t x, slong prec)
     # Computes `\csc(x) = 1 / \sin(x)`.
 
-    void arb_csc_pi(arb_t res, const arb_t x, long prec)
+    void arb_csc_pi(arb_t res, const arb_t x, slong prec)
     # Computes `\csc(\pi x) = 1 / \sin(\pi x)`.
 
-    void arb_sinc(arb_t z, const arb_t x, long prec)
+    void arb_sinc(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{sinc}(x) = \sin(x) / x`.
 
-    void arb_sinc_pi(arb_t z, const arb_t x, long prec)
+    void arb_sinc_pi(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{sinc}(\pi x) = \sin(\pi x) / (\pi x)`.
 
-    void arb_atan_arf(arb_t z, const arf_t x, long prec)
+    void arb_atan_arf(arb_t z, const arf_t x, slong prec)
 
-    void arb_atan(arb_t z, const arb_t x, long prec)
+    void arb_atan(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{atan}(x)`.
     # At low to medium precision (up to about 4096 bits), :func:`arb_atan_arf`
     # uses table-based argument reduction and fast Taylor series evaluation
@@ -898,94 +898,94 @@ cdef extern from "flint_wrap.h":
     # The function :func:`arb_atan_arf` uses lookup tables if
     # possible, and otherwise falls back to :func:`arb_atan_arf_bb`.
 
-    void arb_atan2(arb_t z, const arb_t b, const arb_t a, long prec)
+    void arb_atan2(arb_t z, const arb_t b, const arb_t a, slong prec)
     # Sets *r* to an the argument (phase) of the complex number
     # `a + bi`, with the branch cut discontinuity on `(-\infty,0]`.
     # We define `\operatorname{atan2}(0,0) = 0`, and for `a < 0`,
     # `\operatorname{atan2}(0,a) = \pi`.
 
-    void arb_asin(arb_t z, const arb_t x, long prec)
+    void arb_asin(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{asin}(x) = \operatorname{atan}(x / \sqrt{1-x^2})`.
     # If `x` is not contained in the domain `[-1,1]`, the result is an
     # indeterminate interval.
 
-    void arb_acos(arb_t z, const arb_t x, long prec)
+    void arb_acos(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{acos}(x) = \pi/2 - \operatorname{asin}(x)`.
     # If `x` is not contained in the domain `[-1,1]`, the result is an
     # indeterminate interval.
 
-    void arb_sinh(arb_t s, const arb_t x, long prec)
+    void arb_sinh(arb_t s, const arb_t x, slong prec)
 
-    void arb_cosh(arb_t c, const arb_t x, long prec)
+    void arb_cosh(arb_t c, const arb_t x, slong prec)
 
-    void arb_sinh_cosh(arb_t s, arb_t c, const arb_t x, long prec)
+    void arb_sinh_cosh(arb_t s, arb_t c, const arb_t x, slong prec)
     # Sets `s = \sinh(x)`, `c = \cosh(x)`. If the midpoint of `x` is close
     # to zero and the hyperbolic sine is to be computed,
     # evaluates `(e^{2x}\pm1) / (2e^x)` via :func:`arb_expm1`
     # to avoid loss of accuracy. Otherwise evaluates `(e^x \pm e^{-x}) / 2`.
 
-    void arb_tanh(arb_t y, const arb_t x, long prec)
+    void arb_tanh(arb_t y, const arb_t x, slong prec)
     # Sets `y = \tanh(x) = \sinh(x) / \cosh(x)`, evaluated
     # via :func:`arb_expm1` as `\tanh(x) = (e^{2x} - 1) / (e^{2x} + 1)`
     # if `|x|` is small, and as
     # `\tanh(\pm x) = 1 - 2 e^{\mp 2x} / (1 + e^{\mp 2x})`
     # if `|x|` is large.
 
-    void arb_coth(arb_t y, const arb_t x, long prec)
+    void arb_coth(arb_t y, const arb_t x, slong prec)
     # Sets `y = \coth(x) = \cosh(x) / \sinh(x)`, evaluated using
     # the same strategy as :func:`arb_tanh`.
 
-    void arb_sech(arb_t res, const arb_t x, long prec)
+    void arb_sech(arb_t res, const arb_t x, slong prec)
     # Computes `\operatorname{sech}(x) = 1 / \cosh(x)`.
 
-    void arb_csch(arb_t res, const arb_t x, long prec)
+    void arb_csch(arb_t res, const arb_t x, slong prec)
     # Computes `\operatorname{csch}(x) = 1 / \sinh(x)`.
 
-    void arb_atanh(arb_t z, const arb_t x, long prec)
+    void arb_atanh(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{atanh}(x)`.
 
-    void arb_asinh(arb_t z, const arb_t x, long prec)
+    void arb_asinh(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{asinh}(x)`.
 
-    void arb_acosh(arb_t z, const arb_t x, long prec)
+    void arb_acosh(arb_t z, const arb_t x, slong prec)
     # Sets `z = \operatorname{acosh}(x)`.
     # If `x < 1`, the result is an indeterminate interval.
 
-    void arb_const_pi(arb_t z, long prec)
+    void arb_const_pi(arb_t z, slong prec)
     # Computes `\pi`.
 
-    void arb_const_sqrt_pi(arb_t z, long prec)
+    void arb_const_sqrt_pi(arb_t z, slong prec)
     # Computes `\sqrt{\pi}`.
 
-    void arb_const_log_sqrt2pi(arb_t z, long prec)
+    void arb_const_log_sqrt2pi(arb_t z, slong prec)
     # Computes `\log \sqrt{2 \pi}`.
 
-    void arb_const_log2(arb_t z, long prec)
+    void arb_const_log2(arb_t z, slong prec)
     # Computes `\log(2)`.
 
-    void arb_const_log10(arb_t z, long prec)
+    void arb_const_log10(arb_t z, slong prec)
     # Computes `\log(10)`.
 
-    void arb_const_euler(arb_t z, long prec)
+    void arb_const_euler(arb_t z, slong prec)
     # Computes Euler's constant `\gamma = \lim_{k \rightarrow \infty} (H_k - \log k)`
     # where `H_k = 1 + 1/2 + \ldots + 1/k`.
 
-    void arb_const_catalan(arb_t z, long prec)
+    void arb_const_catalan(arb_t z, slong prec)
     # Computes Catalan's constant `C = \sum_{n=0}^{\infty} (-1)^n / (2n+1)^2`.
 
-    void arb_const_e(arb_t z, long prec)
+    void arb_const_e(arb_t z, slong prec)
     # Computes `e = \exp(1)`.
 
-    void arb_const_khinchin(arb_t z, long prec)
+    void arb_const_khinchin(arb_t z, slong prec)
     # Computes Khinchin's constant `K_0`.
 
-    void arb_const_glaisher(arb_t z, long prec)
+    void arb_const_glaisher(arb_t z, slong prec)
     # Computes the Glaisher-Kinkelin constant `A = \exp(1/12 - \zeta'(-1))`.
 
-    void arb_const_apery(arb_t z, long prec)
+    void arb_const_apery(arb_t z, slong prec)
     # Computes Apery's constant `\zeta(3)`.
 
-    void arb_lambertw(arb_t res, const arb_t x, int flags, long prec)
+    void arb_lambertw(arb_t res, const arb_t x, int flags, slong prec)
     # Computes the Lambert W function, which solves the equation `w e^w = x`.
     # The Lambert W function has infinitely many complex branches `W_k(x)`,
     # two of which are real on a part of the real line.
@@ -1002,52 +1002,52 @@ cdef extern from "flint_wrap.h":
     # The algorithm used to compute the Lambert W function is described
     # in [Joh2017b]_, which follows the main ideas in [CGHJK1996]_.
 
-    void arb_rising_ui(arb_t z, const arb_t x, unsigned long n, long prec)
-    void arb_rising(arb_t z, const arb_t x, const arb_t n, long prec)
+    void arb_rising_ui(arb_t z, const arb_t x, ulong n, slong prec)
+    void arb_rising(arb_t z, const arb_t x, const arb_t n, slong prec)
     # Computes the rising factorial `z = x (x+1) (x+2) \cdots (x+n-1)`.
     # These functions are aliases for :func:`arb_hypgeom_rising_ui`
     # and :func:`arb_hypgeom_rising`.
 
-    void arb_rising_fmpq_ui(arb_t z, const fmpq_t x, unsigned long n, long prec)
+    void arb_rising_fmpq_ui(arb_t z, const fmpq_t x, ulong n, slong prec)
     # Computes the rising factorial `z = x (x+1) (x+2) \cdots (x+n-1)` using
     # binary splitting. If the denominator or numerator of *x* is large
     # compared to *prec*, it is more efficient to convert *x* to an approximation
     # and use :func:`arb_rising_ui`.
 
-    void arb_fac_ui(arb_t z, unsigned long n, long prec)
+    void arb_fac_ui(arb_t z, ulong n, slong prec)
     # Computes the factorial `z = n!` via the gamma function.
 
-    void arb_doublefac_ui(arb_t z, unsigned long n, long prec)
+    void arb_doublefac_ui(arb_t z, ulong n, slong prec)
     # Computes the double factorial `z = n!!` via the gamma function.
 
-    void arb_bin_ui(arb_t z, const arb_t n, unsigned long k, long prec)
+    void arb_bin_ui(arb_t z, const arb_t n, ulong k, slong prec)
 
-    void arb_bin_uiui(arb_t z, unsigned long n, unsigned long k, long prec)
+    void arb_bin_uiui(arb_t z, ulong n, ulong k, slong prec)
     # Computes the binomial coefficient `z = {n \choose k}`, via the
     # rising factorial as `{n \choose k} = (n-k+1)_k / k!`.
 
-    void arb_gamma(arb_t z, const arb_t x, long prec)
-    void arb_gamma_fmpq(arb_t z, const fmpq_t x, long prec)
-    void arb_gamma_fmpz(arb_t z, const fmpz_t x, long prec)
+    void arb_gamma(arb_t z, const arb_t x, slong prec)
+    void arb_gamma_fmpq(arb_t z, const fmpq_t x, slong prec)
+    void arb_gamma_fmpz(arb_t z, const fmpz_t x, slong prec)
     # Computes the gamma function `z = \Gamma(x)`.
     # These functions are aliases for :func:`arb_hypgeom_gamma`,
     # :func:`arb_hypgeom_gamma_fmpq`, :func:`arb_hypgeom_gamma_fmpz`.
 
-    void arb_lgamma(arb_t z, const arb_t x, long prec)
+    void arb_lgamma(arb_t z, const arb_t x, slong prec)
     # Computes the logarithmic gamma function `z = \log \Gamma(x)`.
     # The complex branch structure is assumed, so if `x \le 0`, the
     # result is an indeterminate interval.
     # This function is an alias for :func:`arb_hypgeom_lgamma`.
 
-    void arb_rgamma(arb_t z, const arb_t x, long prec)
+    void arb_rgamma(arb_t z, const arb_t x, slong prec)
     # Computes the reciprocal gamma function `z = 1/\Gamma(x)`,
     # avoiding division by zero at the poles of the gamma function.
     # This function is an alias for :func:`arb_hypgeom_rgamma`.
 
-    void arb_digamma(arb_t y, const arb_t x, long prec)
+    void arb_digamma(arb_t y, const arb_t x, slong prec)
     # Computes the digamma function `z = \psi(x) = (\log \Gamma(x))' = \Gamma'(x) / \Gamma(x)`.
 
-    void arb_zeta_ui_vec_borwein(arb_ptr z, unsigned long start, long num, unsigned long step, long prec)
+    void arb_zeta_ui_vec_borwein(arb_ptr z, ulong start, slong num, ulong step, slong prec)
     # Evaluates `\zeta(s)` at `\mathrm{num}` consecutive integers *s* beginning
     # with *start* and proceeding in increments of *step*.
     # Uses Borwein's formula ([Bor2000]_, [GS2003]_),
@@ -1072,49 +1072,49 @@ cdef extern from "flint_wrap.h":
     # additional rounding error, so by induction, the error per term
     # is always smaller than 2 units.
 
-    void arb_zeta_ui_asymp(arb_t x, unsigned long s, long prec)
+    void arb_zeta_ui_asymp(arb_t x, ulong s, slong prec)
 
-    void arb_zeta_ui_euler_product(arb_t z, unsigned long s, long prec)
+    void arb_zeta_ui_euler_product(arb_t z, ulong s, slong prec)
     # Computes `\zeta(s)` using the Euler product. This is fast only if *s*
     # is large compared to the precision. Both methods are trivial wrappers
     # for :func:`_acb_dirichlet_euler_product_real_ui`.
 
-    void arb_zeta_ui_bernoulli(arb_t x, unsigned long s, long prec)
+    void arb_zeta_ui_bernoulli(arb_t x, ulong s, slong prec)
     # Computes `\zeta(s)` for even *s* via the corresponding Bernoulli number.
 
-    void arb_zeta_ui_borwein_bsplit(arb_t x, unsigned long s, long prec)
+    void arb_zeta_ui_borwein_bsplit(arb_t x, ulong s, slong prec)
     # Computes `\zeta(s)` for arbitrary `s \ge 2` using a binary splitting
     # implementation of Borwein's algorithm. This has quasilinear complexity
     # with respect to the precision (assuming that `s` is fixed).
 
-    void arb_zeta_ui_vec(arb_ptr x, unsigned long start, long num, long prec)
+    void arb_zeta_ui_vec(arb_ptr x, ulong start, slong num, slong prec)
 
-    void arb_zeta_ui_vec_even(arb_ptr x, unsigned long start, long num, long prec)
+    void arb_zeta_ui_vec_even(arb_ptr x, ulong start, slong num, slong prec)
 
-    void arb_zeta_ui_vec_odd(arb_ptr x, unsigned long start, long num, long prec)
+    void arb_zeta_ui_vec_odd(arb_ptr x, ulong start, slong num, slong prec)
     # Computes `\zeta(s)` at *num* consecutive integers (respectively *num*
     # even or *num* odd integers) beginning with `s = \mathrm{start} \ge 2`,
     # automatically choosing an appropriate algorithm.
 
-    void arb_zeta_ui(arb_t x, unsigned long s, long prec)
+    void arb_zeta_ui(arb_t x, ulong s, slong prec)
     # Computes `\zeta(s)` for nonnegative integer `s \ne 1`, automatically
     # choosing an appropriate algorithm. This function is
     # intended for numerical evaluation of isolated zeta values; for
     # multi-evaluation, the vector versions are more efficient.
 
-    void arb_zeta(arb_t z, const arb_t s, long prec)
+    void arb_zeta(arb_t z, const arb_t s, slong prec)
     # Sets *z* to the value of the Riemann zeta function `\zeta(s)`.
     # For computing derivatives with respect to `s`,
     # use :func:`arb_poly_zeta_series`.
 
-    void arb_hurwitz_zeta(arb_t z, const arb_t s, const arb_t a, long prec)
+    void arb_hurwitz_zeta(arb_t z, const arb_t s, const arb_t a, slong prec)
     # Sets *z* to the value of the Hurwitz zeta function `\zeta(s,a)`.
     # For computing derivatives with respect to `s`,
     # use :func:`arb_poly_zeta_series`.
 
-    void arb_bernoulli_ui(arb_t b, unsigned long n, long prec)
+    void arb_bernoulli_ui(arb_t b, ulong n, slong prec)
 
-    void arb_bernoulli_fmpz(arb_t b, const fmpz_t n, long prec)
+    void arb_bernoulli_fmpz(arb_t b, const fmpz_t n, slong prec)
     # Sets `b` to the numerical value of the Bernoulli number `B_n`
     # approximated to *prec* bits.
     # The internal precision is increased automatically to give an accurate
@@ -1128,7 +1128,7 @@ cdef extern from "flint_wrap.h":
     # if the number is already cached, but does not automatically extend
     # the cache by itself.
 
-    void arb_bernoulli_ui_zeta(arb_t b, unsigned long n, long prec)
+    void arb_bernoulli_ui_zeta(arb_t b, ulong n, slong prec)
     # Sets `b` to the numerical value of `B_n` accurate to *prec* bits,
     # computed using the formula `B_{2n} = (-1)^{n+1} 2 (2n)! \zeta(2n) / (2 \pi)^n`.
     # To avoid potential infinite recursion, we explicitly call the
@@ -1136,13 +1136,13 @@ cdef extern from "flint_wrap.h":
     # This method will only give high accuracy if the precision is small
     # enough compared to `n` for the Euler product to converge rapidly.
 
-    void arb_bernoulli_poly_ui(arb_t res, unsigned long n, const arb_t x, long prec)
+    void arb_bernoulli_poly_ui(arb_t res, ulong n, const arb_t x, slong prec)
     # Sets *res* to the value of the Bernoulli polynomial `B_n(x)`.
     # Warning: this function is only fast if either *n* or *x* is a small integer.
     # This function reads Bernoulli numbers from the global cache if they
     # are already cached, but does not automatically extend the cache by itself.
 
-    void arb_power_sum_vec(arb_ptr res, const arb_t a, const arb_t b, long len, long prec)
+    void arb_power_sum_vec(arb_ptr res, const arb_t a, const arb_t b, slong len, slong prec)
     # For *n* from 0 to *len* - 1, sets entry *n* in the output vector *res* to
     # .. math ::
     # S_n(a,b) = \frac{1}{n+1}\left(B_{n+1}(b) - B_{n+1}(a)\right)
@@ -1152,83 +1152,83 @@ cdef extern from "flint_wrap.h":
     # S_n(a,b) = \sum_{k=a}^{b-1} k^n.
     # The computation uses the generating function for Bernoulli polynomials.
 
-    void arb_polylog(arb_t w, const arb_t s, const arb_t z, long prec)
+    void arb_polylog(arb_t w, const arb_t s, const arb_t z, slong prec)
 
-    void arb_polylog_si(arb_t w, long s, const arb_t z, long prec)
+    void arb_polylog_si(arb_t w, slong s, const arb_t z, slong prec)
     # Sets *w* to the polylogarithm `\operatorname{Li}_s(z)`.
 
-    void arb_fib_fmpz(arb_t z, const fmpz_t n, long prec)
-    void arb_fib_ui(arb_t z, unsigned long n, long prec)
+    void arb_fib_fmpz(arb_t z, const fmpz_t n, slong prec)
+    void arb_fib_ui(arb_t z, ulong n, slong prec)
     # Computes the Fibonacci number `F_n` using binary squaring.
 
-    void arb_agm(arb_t z, const arb_t x, const arb_t y, long prec)
+    void arb_agm(arb_t z, const arb_t x, const arb_t y, slong prec)
     # Sets *z* to the arithmetic-geometric mean of *x* and *y*.
 
-    void arb_chebyshev_t_ui(arb_t a, unsigned long n, const arb_t x, long prec)
+    void arb_chebyshev_t_ui(arb_t a, ulong n, const arb_t x, slong prec)
 
-    void arb_chebyshev_u_ui(arb_t a, unsigned long n, const arb_t x, long prec)
+    void arb_chebyshev_u_ui(arb_t a, ulong n, const arb_t x, slong prec)
     # Evaluates the Chebyshev polynomial of the first kind `a = T_n(x)`
     # or the Chebyshev polynomial of the second kind `a = U_n(x)`.
 
-    void arb_chebyshev_t2_ui(arb_t a, arb_t b, unsigned long n, const arb_t x, long prec)
+    void arb_chebyshev_t2_ui(arb_t a, arb_t b, ulong n, const arb_t x, slong prec)
 
-    void arb_chebyshev_u2_ui(arb_t a, arb_t b, unsigned long n, const arb_t x, long prec)
+    void arb_chebyshev_u2_ui(arb_t a, arb_t b, ulong n, const arb_t x, slong prec)
     # Simultaneously evaluates `a = T_n(x), b = T_{n-1}(x)` or
     # `a = U_n(x), b = U_{n-1}(x)`.
     # Aliasing between *a*, *b* and *x* is not permitted.
 
-    void arb_bell_sum_bsplit(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, long prec)
+    void arb_bell_sum_bsplit(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, slong prec)
 
-    void arb_bell_sum_taylor(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, long prec)
+    void arb_bell_sum_taylor(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, slong prec)
     # Helper functions for Bell numbers, evaluating the sum
     # `\sum_{k=a}^{b-1} k^n / k!`. If *mmag* is non-NULL, it may be used
     # to indicate that the target error tolerance should be
     # `2^{mmag - prec}`.
 
-    void arb_bell_fmpz(arb_t res, const fmpz_t n, long prec)
+    void arb_bell_fmpz(arb_t res, const fmpz_t n, slong prec)
 
-    void arb_bell_ui(arb_t res, unsigned long n, long prec)
+    void arb_bell_ui(arb_t res, ulong n, slong prec)
     # Sets *res* to the Bell number `B_n`. If the number is too large to
     # fit exactly in *prec* bits, a numerical approximation is computed
     # efficiently.
     # The algorithm to compute Bell numbers, including error analysis,
     # is described in detail in [Joh2015]_.
 
-    void arb_euler_number_fmpz(arb_t res, const fmpz_t n, long prec)
-    void arb_euler_number_ui(arb_t res, unsigned long n, long prec)
+    void arb_euler_number_fmpz(arb_t res, const fmpz_t n, slong prec)
+    void arb_euler_number_ui(arb_t res, ulong n, slong prec)
     # Sets *res* to the Euler number `E_n`, which is defined by
     # the exponential generating function `1 / \cosh(x)`.
     # The result will be exact if `E_n` is exactly representable
     # at the requested precision.
 
-    void arb_fmpz_euler_number_ui_multi_mod(fmpz_t res, unsigned long n, double alpha)
-    void arb_fmpz_euler_number_ui(fmpz_t res, unsigned long n)
+    void arb_fmpz_euler_number_ui_multi_mod(fmpz_t res, ulong n, double alpha)
+    void arb_fmpz_euler_number_ui(fmpz_t res, ulong n)
     # Computes the Euler number `E_n` as an exact integer. The default
     # algorithm uses a table lookup, the Dirichlet beta function or a
     # hybrid modular algorithm depending on the size of *n*.
     # The *multi_mod* algorithm accepts a tuning parameter *alpha* which
     # can be set to a negative value to use defaults.
 
-    void arb_partitions_fmpz(arb_t res, const fmpz_t n, long prec)
+    void arb_partitions_fmpz(arb_t res, const fmpz_t n, slong prec)
 
-    void arb_partitions_ui(arb_t res, unsigned long n, long prec)
+    void arb_partitions_ui(arb_t res, ulong n, slong prec)
     # Sets *res* to the partition function `p(n)`.
     # When *n* is large and `\log_2 p(n)` is more than twice *prec*,
     # the leading term in the Hardy-Ramanujan asymptotic series is used
     # together with an error bound. Otherwise, the exact value is computed
     # and rounded.
 
-    void arb_primorial_nth_ui(arb_t res, unsigned long n, long prec)
+    void arb_primorial_nth_ui(arb_t res, ulong n, slong prec)
     # Sets *res* to the *nth* primorial, defined as the product of the
     # first *n* prime numbers. The running time is quasilinear in *n*.
 
-    void arb_primorial_ui(arb_t res, unsigned long n, long prec)
+    void arb_primorial_ui(arb_t res, ulong n, slong prec)
     # Sets *res* to the primorial defined as the product of the positive
     # integers up to and including *n*. The running time is quasilinear in *n*.
 
-    void _arb_atan_taylor_naive(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, unsigned long N, int alternating)
+    void _arb_atan_taylor_naive(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, ulong N, int alternating)
 
-    void _arb_atan_taylor_rs(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, unsigned long N, int alternating)
+    void _arb_atan_taylor_rs(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, ulong N, int alternating)
     # Computes an approximation of `y = \sum_{k=0}^{N-1} x^{2k+1} / (2k+1)`
     # (if *alternating* is 0) or `y = \sum_{k=0}^{N-1} (-1)^k x^{2k+1} / (2k+1)`
     # (if *alternating* is 1). Used internally for computing arctangents
@@ -1238,9 +1238,9 @@ cdef extern from "flint_wrap.h":
     # The input *x* and output *y* are fixed-point numbers with *xn* fractional
     # limbs. A bound for the ulp error is written to *error*.
 
-    void _arb_exp_taylor_naive(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, unsigned long N)
+    void _arb_exp_taylor_naive(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, ulong N)
 
-    void _arb_exp_taylor_rs(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, unsigned long N)
+    void _arb_exp_taylor_rs(mp_ptr y, mp_limb_t * error, mp_srcptr x, mp_size_t xn, ulong N)
     # Computes an approximation of `y = \sum_{k=0}^{N-1} x^k / k!`. Used internally
     # for computing exponentials. The *naive* version uses the forward recurrence,
     # and the *rs* version uses a division-avoiding rectangular splitting scheme.
@@ -1250,9 +1250,9 @@ cdef extern from "flint_wrap.h":
     # limbs plus one extra limb for the integer part of the result.
     # A bound for the ulp error is written to *error*.
 
-    void _arb_sin_cos_taylor_naive(mp_ptr ysin, mp_ptr ycos, mp_limb_t * error, mp_srcptr x, mp_size_t xn, unsigned long N)
+    void _arb_sin_cos_taylor_naive(mp_ptr ysin, mp_ptr ycos, mp_limb_t * error, mp_srcptr x, mp_size_t xn, ulong N)
 
-    void _arb_sin_cos_taylor_rs(mp_ptr ysin, mp_ptr ycos, mp_limb_t * error, mp_srcptr x, mp_size_t xn, unsigned long N, int sinonly, int alternating)
+    void _arb_sin_cos_taylor_rs(mp_ptr ysin, mp_ptr ycos, mp_limb_t * error, mp_srcptr x, mp_size_t xn, ulong N, int sinonly, int alternating)
     # Computes approximations of `y_s = \sum_{k=0}^{N-1} (-1)^k x^{2k+1} / (2k+1)!`
     # and `y_c = \sum_{k=0}^{N-1} (-1)^k x^{2k} / (2k)!`.
     # Used internally for computing sines and cosines. The *naive* version uses
@@ -1279,12 +1279,12 @@ cdef extern from "flint_wrap.h":
     # The value of *q* mod 8 is written to *octant*. The output variable *q*
     # can be NULL, in which case the full value of *q* is not stored.
 
-    long _arb_exp_taylor_bound(long mag, long prec)
+    slong _arb_exp_taylor_bound(slong mag, slong prec)
     # Returns *n* such that
     # `\left|\sum_{k=n}^{\infty} x^k / k!\right| \le 2^{-\mathrm{prec}}`,
     # assuming `|x| \le 2^{\mathrm{mag}} \le 1/4`.
 
-    void arb_exp_arf_bb(arb_t z, const arf_t x, long prec, int m1)
+    void arb_exp_arf_bb(arb_t z, const arf_t x, slong prec, int m1)
     # Computes the exponential function using the bit-burst algorithm.
     # If *m1* is nonzero, the exponential function minus one is computed
     # accurately.
@@ -1299,9 +1299,9 @@ cdef extern from "flint_wrap.h":
     # could be improved by using `\log(2)` based reduction at precision low
     # enough that the value can be assumed to be cached.
 
-    void _arb_exp_sum_bs_simple(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, long N)
+    void _arb_exp_sum_bs_simple(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, slong N)
 
-    void _arb_exp_sum_bs_powtab(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, long N)
+    void _arb_exp_sum_bs_powtab(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, slong N)
     # Computes *T*, *Q* and *Qexp* such that
     # `T / (Q 2^{\text{Qexp}}) = \sum_{k=1}^N (x/2^r)^k/k!` using binary splitting.
     # Note that the sum is taken to *N* inclusive and omits the constant term.
@@ -1309,13 +1309,13 @@ cdef extern from "flint_wrap.h":
     # resulting in slightly higher memory usage but better speed. For best
     # efficiency, *N* should have many trailing zero bits.
 
-    void arb_exp_arf_rs_generic(arb_t res, const arf_t x, long prec, int minus_one)
+    void arb_exp_arf_rs_generic(arb_t res, const arf_t x, slong prec, int minus_one)
     # Computes the exponential function using a generic version of the rectangular
     # splitting strategy, intended for intermediate precision.
 
-    void _arb_atan_sum_bs_simple(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, long N)
+    void _arb_atan_sum_bs_simple(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, slong N)
 
-    void _arb_atan_sum_bs_powtab(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, long N)
+    void _arb_atan_sum_bs_powtab(fmpz_t T, fmpz_t Q, flint_bitcnt_t * Qexp, const fmpz_t x, flint_bitcnt_t r, slong N)
     # Computes *T*, *Q* and *Qexp* such that
     # `T / (Q 2^{\text{Qexp}}) = \sum_{k=1}^N (-1)^k (x/2^r)^{2k} / (2k+1)`
     # using binary splitting.
@@ -1326,7 +1326,7 @@ cdef extern from "flint_wrap.h":
     # resulting in slightly higher memory usage but better speed. For best
     # efficiency, *N* should have many trailing zero bits.
 
-    void arb_atan_arf_bb(arb_t z, const arf_t x, long prec)
+    void arb_atan_arf_bb(arb_t z, const arf_t x, slong prec)
     # Computes the arctangent of *x*.
     # Initially, the argument-halving formula
     # .. math ::
@@ -1342,11 +1342,11 @@ cdef extern from "flint_wrap.h":
     # is applied repeatedly instead of integrating a differential
     # equation for the arctangent, as this appears to be more efficient.
 
-    void arb_atan_frac_bsplit(arb_t s, const fmpz_t p, const fmpz_t q, int hyperbolic, long prec)
+    void arb_atan_frac_bsplit(arb_t s, const fmpz_t p, const fmpz_t q, int hyperbolic, slong prec)
     # Computes the arctangent of `p/q`, optionally the hyperbolic
     # arctangent, using direct series summation with binary splitting.
 
-    void arb_sin_cos_arf_generic(arb_t s, arb_t c, const arf_t x, long prec)
+    void arb_sin_cos_arf_generic(arb_t s, arb_t c, const arf_t x, slong prec)
     # Computes the sine and cosine of *x* using a generic strategy.
     # This function gets called internally by the main sin and cos functions
     # when the precision for argument reduction or series evaluation
@@ -1360,11 +1360,11 @@ cdef extern from "flint_wrap.h":
     # of the rectangular splitting algorithm if the precision is not too high,
     # and otherwise invokes the asymptotically fast bit-burst algorithm.
 
-    void arb_sin_cos_arf_bb(arb_t s, arb_t c, const arf_t x, long prec)
+    void arb_sin_cos_arf_bb(arb_t s, arb_t c, const arf_t x, slong prec)
     # Computes the sine and cosine of *x* using the bit-burst algorithm.
     # It is required that `|x| < \pi / 2` (this is not checked).
 
-    void arb_sin_cos_wide(arb_t s, arb_t c, const arb_t x, long prec)
+    void arb_sin_cos_wide(arb_t s, arb_t c, const arb_t x, slong prec)
     # Computes an accurate enclosure (with both endpoints optimal to within
     # about `2^{-30}` as afforded by the radius format) of the range of
     # sine and cosine on a given wide interval. The computation is done
@@ -1380,111 +1380,111 @@ cdef extern from "flint_wrap.h":
     # slower reduction using :type:`arb_t` arithmetic is done as a
     # preprocessing step.
 
-    void arb_sin_cos_generic(arb_t s, arb_t c, const arb_t x, long prec)
+    void arb_sin_cos_generic(arb_t s, arb_t c, const arb_t x, slong prec)
     # Computes the sine and cosine of *x* by taking care of various special
     # cases and computing the propagated error before calling
     # :func:`arb_sin_cos_arf_generic`. This is used as a fallback inside
     # :func:`arb_sin_cos` to take care of all cases without a fast
     # path in that function.
 
-    void arb_log_primes_vec_bsplit(arb_ptr res, long n, long prec)
+    void arb_log_primes_vec_bsplit(arb_ptr res, slong n, slong prec)
     # Sets *res* to a vector containing the natural logarithms of
     # the first *n* prime numbers, computed using binary splitting
     # applied to simultaneous Machine-type formulas. This function is not
     # optimized for large *n* or small *prec*.
 
-    void _arb_log_p_ensure_cached(long prec)
+    void _arb_log_p_ensure_cached(slong prec)
     # Ensure that the internal cache of logarithms of small prime
     # numbers has entries to at least *prec* bits.
 
-    void arb_exp_arf_log_reduction(arb_t res, const arf_t x, long prec, int minus_one)
+    void arb_exp_arf_log_reduction(arb_t res, const arf_t x, slong prec, int minus_one)
     # Computes the exponential function using log reduction.
 
-    void arb_exp_arf_generic(arb_t z, const arf_t x, long prec, int minus_one)
+    void arb_exp_arf_generic(arb_t z, const arf_t x, slong prec, int minus_one)
     # Computes the exponential function using an automatic choice
     # between rectangular splitting and the bit-burst algorithm,
     # without precomputation.
 
-    void arb_exp_arf(arb_t z, const arf_t x, long prec, int minus_one, long maglim)
+    void arb_exp_arf(arb_t z, const arf_t x, slong prec, int minus_one, slong maglim)
     # Computes the exponential function using an automatic choice
     # between all implemented algorithms.
 
-    void arb_log_newton(arb_t res, const arb_t x, long prec)
-    void arb_log_arf_newton(arb_t res, const arf_t x, long prec)
+    void arb_log_newton(arb_t res, const arb_t x, slong prec)
+    void arb_log_arf_newton(arb_t res, const arf_t x, slong prec)
     # Computes the logarithm using Newton iteration.
 
-    void arb_atan_gauss_primes_vec_bsplit(arb_ptr res, long n, long prec)
+    void arb_atan_gauss_primes_vec_bsplit(arb_ptr res, slong n, slong prec)
     # Sets *res* to the primitive angles corresponding to the
     # first *n* nonreal Gaussian primes (ignoring symmetries),
     # computed using binary splitting
     # applied to simultaneous Machine-type formulas. This function is not
     # optimized for large *n* or small *prec*.
 
-    void _arb_atan_gauss_p_ensure_cached(long prec)
+    void _arb_atan_gauss_p_ensure_cached(slong prec)
 
-    void arb_sin_cos_arf_atan_reduction(arb_t res1, arb_t res2, const arf_t x, long prec)
+    void arb_sin_cos_arf_atan_reduction(arb_t res1, arb_t res2, const arf_t x, slong prec)
     # Computes sin and/or cos using reduction by primitive angles.
 
-    void arb_atan_newton(arb_t res, const arb_t x, long prec)
-    void arb_atan_arf_newton(arb_t res, const arf_t x, long prec)
+    void arb_atan_newton(arb_t res, const arb_t x, slong prec)
+    void arb_atan_arf_newton(arb_t res, const arf_t x, slong prec)
     # Computes the arctangent using Newton iteration.
 
-    void _arb_vec_zero(arb_ptr vec, long n)
+    void _arb_vec_zero(arb_ptr vec, slong n)
     # Sets all entries in *vec* to zero.
 
-    int _arb_vec_is_zero(arb_srcptr vec, long len)
+    int _arb_vec_is_zero(arb_srcptr vec, slong len)
     # Returns nonzero iff all entries in *x* are zero.
 
-    int _arb_vec_is_finite(arb_srcptr x, long len)
+    int _arb_vec_is_finite(arb_srcptr x, slong len)
     # Returns nonzero iff all entries in *x* certainly are finite.
 
-    void _arb_vec_set(arb_ptr res, arb_srcptr vec, long len)
+    void _arb_vec_set(arb_ptr res, arb_srcptr vec, slong len)
     # Sets *res* to a copy of *vec*.
 
-    void _arb_vec_set_round(arb_ptr res, arb_srcptr vec, long len, long prec)
+    void _arb_vec_set_round(arb_ptr res, arb_srcptr vec, slong len, slong prec)
     # Sets *res* to a copy of *vec*, rounding each entry to *prec* bits.
 
-    void _arb_vec_swap(arb_ptr vec1, arb_ptr vec2, long len)
+    void _arb_vec_swap(arb_ptr vec1, arb_ptr vec2, slong len)
     # Swaps the entries of *vec1* and *vec2*.
 
-    void _arb_vec_neg(arb_ptr B, arb_srcptr A, long n)
+    void _arb_vec_neg(arb_ptr B, arb_srcptr A, slong n)
 
-    void _arb_vec_sub(arb_ptr C, arb_srcptr A, arb_srcptr B, long n, long prec)
+    void _arb_vec_sub(arb_ptr C, arb_srcptr A, arb_srcptr B, slong n, slong prec)
 
-    void _arb_vec_add(arb_ptr C, arb_srcptr A, arb_srcptr B, long n, long prec)
+    void _arb_vec_add(arb_ptr C, arb_srcptr A, arb_srcptr B, slong n, slong prec)
 
-    void _arb_vec_scalar_mul(arb_ptr res, arb_srcptr vec, long len, const arb_t c, long prec)
+    void _arb_vec_scalar_mul(arb_ptr res, arb_srcptr vec, slong len, const arb_t c, slong prec)
 
-    void _arb_vec_scalar_div(arb_ptr res, arb_srcptr vec, long len, const arb_t c, long prec)
+    void _arb_vec_scalar_div(arb_ptr res, arb_srcptr vec, slong len, const arb_t c, slong prec)
 
-    void _arb_vec_scalar_mul_fmpz(arb_ptr res, arb_srcptr vec, long len, const fmpz_t c, long prec)
+    void _arb_vec_scalar_mul_fmpz(arb_ptr res, arb_srcptr vec, slong len, const fmpz_t c, slong prec)
 
-    void _arb_vec_scalar_mul_2exp_si(arb_ptr res, arb_srcptr src, long len, long c)
+    void _arb_vec_scalar_mul_2exp_si(arb_ptr res, arb_srcptr src, slong len, slong c)
 
-    void _arb_vec_scalar_addmul(arb_ptr res, arb_srcptr vec, long len, const arb_t c, long prec)
+    void _arb_vec_scalar_addmul(arb_ptr res, arb_srcptr vec, slong len, const arb_t c, slong prec)
 
-    void _arb_vec_get_mag(mag_t bound, arb_srcptr vec, long len)
+    void _arb_vec_get_mag(mag_t bound, arb_srcptr vec, slong len)
     # Sets *bound* to an upper bound for the entries in *vec*.
 
-    long _arb_vec_bits(arb_srcptr x, long len)
+    slong _arb_vec_bits(arb_srcptr x, slong len)
     # Returns the maximum of :func:`arb_bits` for all entries in *vec*.
 
-    void _arb_vec_set_powers(arb_ptr xs, const arb_t x, long len, long prec)
+    void _arb_vec_set_powers(arb_ptr xs, const arb_t x, slong len, slong prec)
     # Sets *xs* to the powers `1, x, x^2, \ldots, x^{len-1}`.
 
-    void _arb_vec_add_error_arf_vec(arb_ptr res, arf_srcptr err, long len)
+    void _arb_vec_add_error_arf_vec(arb_ptr res, arf_srcptr err, slong len)
 
-    void _arb_vec_add_error_mag_vec(arb_ptr res, mag_srcptr err, long len)
+    void _arb_vec_add_error_mag_vec(arb_ptr res, mag_srcptr err, slong len)
     # Adds the magnitude of each entry in *err* to the radius of the
     # corresponding entry in *res*.
 
-    void _arb_vec_indeterminate(arb_ptr vec, long len)
+    void _arb_vec_indeterminate(arb_ptr vec, slong len)
     # Applies :func:`arb_indeterminate` elementwise.
 
-    void _arb_vec_trim(arb_ptr res, arb_srcptr vec, long len)
+    void _arb_vec_trim(arb_ptr res, arb_srcptr vec, slong len)
     # Applies :func:`arb_trim` elementwise.
 
-    int _arb_vec_get_unique_fmpz_vec(fmpz * res,  arb_srcptr vec, long len)
+    int _arb_vec_get_unique_fmpz_vec(fmpz * res,  arb_srcptr vec, slong len)
     # Calls :func:`arb_get_unique_fmpz` elementwise and returns nonzero if
     # all entries can be rounded uniquely to integers. If any entry in *vec*
     # cannot be rounded uniquely to an integer, returns zero.

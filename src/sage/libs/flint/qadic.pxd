@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void qadic_ctx_init(qadic_ctx_t ctx, const fmpz_t p, long d, long min, long max, const char *var, padic_print_mode mode)
+    void qadic_ctx_init(qadic_ctx_t ctx, const fmpz_t p, slong d, slong min, slong max, const char *var, padic_print_mode mode)
     # Initialises the context ``ctx`` with prime `p`, extension degree `d`,
     # variable name ``var`` and printing mode ``mode``. The defining polynomial
     # is chosen as a Conway polynomial if possible and otherwise as a random
@@ -28,7 +28,7 @@ cdef extern from "flint_wrap.h":
     # arithmetic in `\mathbf{Q}_p / (p^N)` such as powers of `p` close
     # to `p^N`.
 
-    void qadic_ctx_init_conway(qadic_ctx_t ctx, const fmpz_t p, long d, long min, long max, const char *var, padic_print_mode mode)
+    void qadic_ctx_init_conway(qadic_ctx_t ctx, const fmpz_t p, slong d, slong min, slong max, const char *var, padic_print_mode mode)
     # Initialises the context ``ctx`` with prime `p`, extension degree `d`,
     # variable name ``var`` and printing mode ``mode``. The defining polynomial
     # is chosen as a Conway polynomial, hence has restrictions on the
@@ -47,7 +47,7 @@ cdef extern from "flint_wrap.h":
     void qadic_ctx_clear(qadic_ctx_t ctx)
     # Clears all memory that has been allocated as part of the context.
 
-    long qadic_ctx_degree(const qadic_ctx_t ctx)
+    slong qadic_ctx_degree(const qadic_ctx_t ctx)
     # Returns the extension degree.
 
     void qadic_ctx_print(const qadic_ctx_t ctx)
@@ -56,14 +56,14 @@ cdef extern from "flint_wrap.h":
     void qadic_init(qadic_t rop)
     # Initialises the element ``rop``, setting its value to `0`.
 
-    void qadic_init2(qadic_t rop, long prec)
+    void qadic_init2(qadic_t rop, slong prec)
     # Initialises the element ``rop`` with the given output precision,
     # setting the value to `0`.
 
     void qadic_clear(qadic_t rop)
     # Clears the element ``rop``.
 
-    void _fmpz_poly_reduce(fmpz *R, long lenR, const fmpz *a, const long *j, long len)
+    void _fmpz_poly_reduce(fmpz *R, slong lenR, const fmpz *a, const slong *j, slong len)
     # Reduces a polynomial ``(R, lenR)`` modulo a sparse monic
     # polynomial `f(X) = \sum_{i} a_{i} X^{j_{i}}` of degree at
     # least `2`.
@@ -71,7 +71,7 @@ cdef extern from "flint_wrap.h":
     # sorted in ascending order.
     # Allows zero-padding in ``(R, lenR)``.
 
-    void _fmpz_mod_poly_reduce(fmpz *R, long lenR, const fmpz *a, const long *j, long len, const fmpz_t p)
+    void _fmpz_mod_poly_reduce(fmpz *R, slong lenR, const fmpz *a, const slong *j, slong len, const fmpz_t p)
     # Reduces a polynomial ``(R, lenR)`` modulo a sparse monic
     # polynomial `f(X) = \sum_{i} a_{i} X^{j_{i}}` of degree at
     # least `2` in `\mathbf{Z}/(p)`, where `p` is typically a prime
@@ -83,10 +83,10 @@ cdef extern from "flint_wrap.h":
     void qadic_reduce(qadic_t rop, const qadic_ctx_t ctx)
     # Reduces ``rop`` modulo `f(X)` and `p^N`.
 
-    long qadic_val(const qadic_t op)
+    slong qadic_val(const qadic_t op)
     # Returns the valuation of ``op``.
 
-    long qadic_prec(const qadic_t op)
+    slong qadic_prec(const qadic_t op)
     # Returns the precision of ``op``.
 
     void qadic_randtest(qadic_t rop, flint_rand_t state, const qadic_ctx_t ctx)
@@ -95,7 +95,7 @@ cdef extern from "flint_wrap.h":
     void qadic_randtest_not_zero(qadic_t rop, flint_rand_t state, const qadic_ctx_t ctx)
     # Generates a random non-zero element of `\mathbf{Q}_q`.
 
-    void qadic_randtest_val(qadic_t rop, flint_rand_t state, long v, const qadic_ctx_t ctx)
+    void qadic_randtest_val(qadic_t rop, flint_rand_t state, slong v, const qadic_ctx_t ctx)
     # Generates a random element of `\mathbf{Q}_q` with prescribed
     # valuation ``val``.
     # Note that if `v \geq N` then the element is necessarily zero.
@@ -119,7 +119,7 @@ cdef extern from "flint_wrap.h":
     # when `N > 0`, and zero otherwise.  If the extension degree
     # is one, raises an abort signal.
 
-    void qadic_set_ui(qadic_t rop, unsigned long op, const qadic_ctx_t ctx)
+    void qadic_set_ui(qadic_t rop, ulong op, const qadic_ctx_t ctx)
     # Sets ``rop`` to the integer ``op``, reduced in the
     # context.
 
@@ -156,7 +156,7 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to the product of ``op1`` and ``op2``,
     # reducing the output in the given context.
 
-    void _qadic_inv(fmpz *rop, const fmpz *op, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N)
+    void _qadic_inv(fmpz *rop, const fmpz *op, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N)
     # Sets ``(rop, d)`` to the inverse of ``(op, len)``
     # modulo `f(X)` given by ``(a,j,lena)`` and `p^N`.
     # Assumes that ``(op,len)`` has valuation `0`, that is,
@@ -167,7 +167,7 @@ cdef extern from "flint_wrap.h":
     void qadic_inv(qadic_t rop, const qadic_t op, const qadic_ctx_t ctx)
     # Sets ``rop`` to the inverse of ``op``, reduced in the given context.
 
-    void _qadic_pow(fmpz *rop, const fmpz *op, long len, const fmpz_t e, const fmpz *a, const long *j, long lena, const fmpz_t p)
+    void _qadic_pow(fmpz *rop, const fmpz *op, slong len, const fmpz_t e, const fmpz *a, const slong *j, slong lena, const fmpz_t p)
     # Sets ``(rop, 2*d-1)`` to ``(op,len)`` raised to the power `e`,
     # reduced modulo `f(X)` given by ``(a, j, lena)`` and `p`, which
     # is expected to be a prime power.
@@ -187,7 +187,7 @@ cdef extern from "flint_wrap.h":
     # Return ``1`` if the input is a square (to input precision). If so, set
     # ``rop`` to a square root (truncated to output precision).
 
-    void _qadic_exp_rectangular(fmpz *rop, const fmpz *op, long v, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N, const fmpz_t pN)
+    void _qadic_exp_rectangular(fmpz *rop, const fmpz *op, slong v, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N, const fmpz_t pN)
     # Sets ``(rop, 2*d - 1)`` to the exponential of ``(op, v, len)``
     # reduced modulo `p^N`, assuming that the series converges.
     # Assumes that ``(op, v, len)`` is non-zero.
@@ -198,7 +198,7 @@ cdef extern from "flint_wrap.h":
     # and sets ``rop`` to its value reduced modulo in the given
     # context.
 
-    void _qadic_exp_balanced(fmpz *rop, const fmpz *x, long v, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N, const fmpz_t pN)
+    void _qadic_exp_balanced(fmpz *rop, const fmpz *x, slong v, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N, const fmpz_t pN)
     # Sets ``(rop, d)`` to the exponential of ``(op, v, len)``
     # reduced modulo `p^N`, assuming that the series converges.
     # Assumes that ``len`` is in `[1,d)` but supports zero padding,
@@ -210,7 +210,7 @@ cdef extern from "flint_wrap.h":
     # and sets ``rop`` to its value reduced modulo in the given
     # context.
 
-    void _qadic_exp(fmpz *rop, const fmpz *op, long v, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N, const fmpz_t pN)
+    void _qadic_exp(fmpz *rop, const fmpz *op, slong v, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N, const fmpz_t pN)
     # Sets ``(rop, 2*d - 1)`` to the exponential of ``(op, v, len)``
     # reduced modulo `p^N`, assuming that the series converges.
     # Assumes that ``(op, v, len)`` is non-zero.
@@ -223,7 +223,7 @@ cdef extern from "flint_wrap.h":
     # The exponential series converges if the valuation of ``op``
     # is at least `2` or `1` when `p` is even or odd, respectively.
 
-    void _qadic_log_rectangular(fmpz *z, const fmpz *y, long v, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N, const fmpz_t pN)
+    void _qadic_log_rectangular(fmpz *z, const fmpz *y, slong v, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N, const fmpz_t pN)
     # Computes
     # .. math ::
     # z = - \sum_{i = 1}^{\infty} \frac{y^i}{i} \pmod{p^N}.
@@ -243,7 +243,7 @@ cdef extern from "flint_wrap.h":
     # Returns whether the `p`-adic logarithm function converges at
     # ``op``, and if so sets ``rop`` to its value.
 
-    void _qadic_log_balanced(fmpz *z, const fmpz *y, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N, const fmpz_t pN)
+    void _qadic_log_balanced(fmpz *z, const fmpz *y, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N, const fmpz_t pN)
     # Computes `(z, d)` as
     # .. math ::
     # z = - \sum_{i = 1}^{\infty} \frac{y^i}{i} \pmod{p^N}.
@@ -255,7 +255,7 @@ cdef extern from "flint_wrap.h":
     # Returns whether the `p`-adic logarithm function converges at
     # ``op``, and if so sets ``rop`` to its value.
 
-    void _qadic_log(fmpz *z, const fmpz *y, long v, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N, const fmpz_t pN)
+    void _qadic_log(fmpz *z, const fmpz *y, slong v, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N, const fmpz_t pN)
     # Computes `(z, d)` as
     # .. math ::
     # z = - \sum_{i = 1}^{\infty} \frac{y^i}{i} \pmod{p^N}.
@@ -280,7 +280,7 @@ cdef extern from "flint_wrap.h":
     # but this only converges when `\operatorname{ord}_p(x)` is at least `2` or `1`
     # when `p = 2` or `p > 2`, respectively.
 
-    void _qadic_frobenius_a(fmpz *rop, long e, const fmpz *a, const long *j, long lena, const fmpz_t p, long N)
+    void _qadic_frobenius_a(fmpz *rop, slong e, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N)
     # Computes `\sigma^e(X) \bmod{p^N}` where `X` is such that
     # `\mathbf{Q}_q \cong \mathbf{Q}_p[X]/(f(X))`.
     # Assumes that the precision `N` is at least `2` and that the
@@ -289,13 +289,13 @@ cdef extern from "flint_wrap.h":
     # Sets ``(rop, 2*d-1)``, although the actual length of the
     # output will be at most `d`.
 
-    void _qadic_frobenius(fmpz *rop, const fmpz *op, long len, long e, const fmpz *a, const long *j, long lena, const fmpz_t p, long N)
+    void _qadic_frobenius(fmpz *rop, const fmpz *op, slong len, slong e, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N)
     # Sets ``(rop, 2*d-1)`` to `\Sigma` evaluated at ``(op, len)``.
     # Assumes that ``len`` is positive but at most `d`.
     # Assumes that `0 < e < d`.
     # Does not support aliasing.
 
-    void qadic_frobenius(qadic_t rop, const qadic_t op, long e, const qadic_ctx_t ctx)
+    void qadic_frobenius(qadic_t rop, const qadic_t op, slong e, const qadic_ctx_t ctx)
     # Evaluates the homomorphism `\Sigma^e` at ``op``.
     # Recall that `\mathbf{Q}_q / \mathbf{Q}_p` is Galois with Galois group
     # `\langle \Sigma \rangle \cong \langle \sigma \rangle`, which is also
@@ -305,7 +305,7 @@ cdef extern from "flint_wrap.h":
     # `\operatorname{Gal}(\mathbf{Q}_q/\mathbf{Q}_p)`.
     # This functionality is implemented as ``GaloisImage()`` in Magma.
 
-    void _qadic_teichmuller(fmpz *rop, const fmpz *op, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N)
+    void _qadic_teichmuller(fmpz *rop, const fmpz *op, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N)
     # Sets ``(rop, d)`` to the Teichmüller lift of ``(op, len)``
     # modulo `p^N`.
     # Does not support aliasing.
@@ -318,7 +318,7 @@ cdef extern from "flint_wrap.h":
     # Sets ``rop`` to zero if ``op`` is zero in the given context.
     # Raises an exception if the valuation of ``op`` is negative.
 
-    void _qadic_trace(fmpz_t rop, const fmpz *op, long len, const fmpz *a, const long *j, long lena, const fmpz_t pN)
+    void _qadic_trace(fmpz_t rop, const fmpz *op, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t pN)
     void qadic_trace(padic_t rop, const qadic_t op, const qadic_ctx_t ctx)
     # Sets ``rop`` to the trace of ``op``.
     # For an element `a \in \mathbf{Q}_q`, multiplication by `a` defines
@@ -327,7 +327,7 @@ cdef extern from "flint_wrap.h":
     # `\operatorname{Gal}(\mathbf{Q}_q / \mathbf{Q}_p)` then the trace of `a` is equal to
     # `\sum_{i=0}^{d-1} \Sigma^i (a)`.
 
-    void _qadic_norm(fmpz_t rop, const fmpz *op, long len, const fmpz *a, const long *j, long lena, const fmpz_t p, long N)
+    void _qadic_norm(fmpz_t rop, const fmpz *op, slong len, const fmpz *a, const slong *j, slong lena, const fmpz_t p, slong N)
     # Sets ``rop`` to the norm of the element ``(op,len)``
     # in `\mathbf{Z}_q` to precision `N`, where ``len`` is at
     # least one.

@@ -81,16 +81,16 @@ cdef extern from "flint_wrap.h":
 
     int fmpq_cmp(const fmpq_t x, const fmpq_t y)
     int fmpq_cmp_fmpz(const fmpq_t x, const fmpz_t y)
-    int fmpq_cmp_ui(const fmpq_t x, unsigned long y)
+    int fmpq_cmp_ui(const fmpq_t x, ulong y)
     # Returns negative if `x < y`, zero if `x = y`, and positive if `x > y`.
 
-    int fmpq_cmp_si(const fmpq_t x, long y)
+    int fmpq_cmp_si(const fmpq_t x, slong y)
     # Returns negative if `x < y`, zero if `x = y`, and positive if `x > y`.
 
-    int fmpq_equal_ui(fmpq_t x, unsigned long y)
+    int fmpq_equal_ui(fmpq_t x, ulong y)
     # Returns `1` if `x = y`, otherwise returns `0`.
 
-    int fmpq_equal_si(fmpq_t x, long y)
+    int fmpq_equal_si(fmpq_t x, slong y)
     # Returns `1` if `x = y`, otherwise returns `0`.
 
     void fmpq_height(fmpz_t height, const fmpq_t x)
@@ -109,17 +109,17 @@ cdef extern from "flint_wrap.h":
     # Sets ``a``, ``b`` to the numerator and denominator of ``c``
     # respectively.
 
-    void fmpq_set_si(fmpq_t res, long p, unsigned long q)
+    void fmpq_set_si(fmpq_t res, slong p, ulong q)
     # Sets ``res`` to the canonical form of the fraction ``p / q``.
 
-    void _fmpq_set_si(fmpz_t rnum, fmpz_t rden, long p, unsigned long q)
+    void _fmpq_set_si(fmpz_t rnum, fmpz_t rden, slong p, ulong q)
     # Sets ``(rnum, rden)`` to the canonical form of the fraction
     # ``p / q``. ``rnum`` and ``rden`` may not be aliased.
 
-    void fmpq_set_ui(fmpq_t res, unsigned long p, unsigned long q)
+    void fmpq_set_ui(fmpq_t res, ulong p, ulong q)
     # Sets ``res`` to the canonical form of the fraction ``p / q``.
 
-    void _fmpq_set_ui(fmpz_t rnum, fmpz_t rden, unsigned long p, unsigned long q)
+    void _fmpq_set_ui(fmpz_t rnum, fmpz_t rden, ulong p, ulong q)
     # Sets ``(rnum, rden)`` to the canonical form of the fraction
     # ``p / q``. ``rnum`` and ``rden`` may not be aliased.
 
@@ -276,30 +276,30 @@ cdef extern from "flint_wrap.h":
     # Aliasing between any combination of the variables is allowed,
     # whilst no numerator is aliased with a denominator.
 
-    void _fmpq_add_si(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, long r)
-    void _fmpq_sub_si(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, long r)
-    void _fmpq_add_ui(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, unsigned long r)
-    void _fmpq_sub_ui(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, unsigned long r)
+    void _fmpq_add_si(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, slong r)
+    void _fmpq_sub_si(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, slong r)
+    void _fmpq_add_ui(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, ulong r)
+    void _fmpq_sub_ui(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, ulong r)
     void _fmpq_add_fmpz(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, const fmpz_t r)
     void _fmpq_sub_fmpz(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, const fmpz_t r)
     # Sets ``(rnum, rden)`` to the canonical form of the sum or difference
     # respectively of the fractions represented by ``(p, q)`` and
     # ``(r, 1)``. Numerators may not be aliased with denominators.
 
-    void fmpq_add_si(fmpq_t res, const fmpq_t op1, long c)
-    void fmpq_sub_si(fmpq_t res, const fmpq_t op1, long c)
-    void fmpq_add_ui(fmpq_t res, const fmpq_t op1, unsigned long c)
-    void fmpq_sub_ui(fmpq_t res, const fmpq_t op1, unsigned long c)
+    void fmpq_add_si(fmpq_t res, const fmpq_t op1, slong c)
+    void fmpq_sub_si(fmpq_t res, const fmpq_t op1, slong c)
+    void fmpq_add_ui(fmpq_t res, const fmpq_t op1, ulong c)
+    void fmpq_sub_ui(fmpq_t res, const fmpq_t op1, ulong c)
     void fmpq_add_fmpz(fmpq_t res, const fmpq_t op1, const fmpz_t c)
     void fmpq_sub_fmpz(fmpq_t res, const fmpq_t op1, const fmpz_t c)
 
-    void _fmpq_mul_si(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, long r)
+    void _fmpq_mul_si(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, slong r)
 
-    void fmpq_mul_si(fmpq_t res, const fmpq_t op1, long c)
+    void fmpq_mul_si(fmpq_t res, const fmpq_t op1, slong c)
 
-    void _fmpq_mul_ui(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, unsigned long r)
+    void _fmpq_mul_ui(fmpz_t rnum, fmpz_t rden, const fmpz_t p, const fmpz_t q, ulong r)
 
-    void fmpq_mul_ui(fmpq_t res, const fmpq_t op1, unsigned long c)
+    void fmpq_mul_ui(fmpq_t res, const fmpq_t op1, ulong c)
 
     void fmpq_addmul(fmpq_t res, const fmpq_t op1, const fmpq_t op2)
     void fmpq_submul(fmpq_t res, const fmpq_t op1, const fmpq_t op2)
@@ -319,8 +319,8 @@ cdef extern from "flint_wrap.h":
     # Sets ``dest`` to ``1 / src``. The result is placed in canonical
     # form, assuming that ``src`` is already in canonical form.
 
-    void _fmpq_pow_si(fmpz_t rnum, fmpz_t rden, const fmpz_t opnum, const fmpz_t opden, long e)
-    void fmpq_pow_si(fmpq_t res, const fmpq_t op, long e)
+    void _fmpq_pow_si(fmpz_t rnum, fmpz_t rden, const fmpz_t opnum, const fmpz_t opden, slong e)
+    void fmpq_pow_si(fmpq_t res, const fmpq_t op, slong e)
     # Sets ``res`` to ``op`` raised to the power `e`, where `e`
     # is a ``slong``.  If `e` is `0` and ``op`` is `0`, then
     # ``res`` will be set to `1`.
@@ -360,12 +360,12 @@ cdef extern from "flint_wrap.h":
     # Set `g` to `\operatorname{gcd}(a,b)` as per :func:`fmpq_gcd` and also compute `\overline{a} = a/g` and `\overline{b} = b/g`.
     # Unlike :func:`fmpq_gcd`, this function requires canonical inputs.
 
-    void _fmpq_add_small(fmpz_t rnum, fmpz_t rden, long p1, unsigned long q1, long p2, unsigned long q2)
+    void _fmpq_add_small(fmpz_t rnum, fmpz_t rden, slong p1, ulong q1, slong p2, ulong q2)
     # Sets ``(rnum, rden)`` to the sum of ``(p1, q1)`` and ``(p2, q2)``.
     # Assumes that ``(p1, q1)`` and ``(p2, q2)`` are in canonical form
     # and that all inputs are between ``COEFF_MIN`` and ``COEFF_MAX``.
 
-    void _fmpq_mul_small(fmpz_t rnum, fmpz_t rden, long p1, unsigned long q1, long p2, unsigned long q2)
+    void _fmpq_mul_small(fmpz_t rnum, fmpz_t rden, slong p1, ulong q1, slong p2, ulong q2)
     # Sets ``(rnum, rden)`` to the product of ``(p1, q1)`` and ``(p2, q2)``.
     # Assumes that ``(p1, q1)`` and ``(p2, q2)`` are in canonical form
     # and that all inputs are between ``COEFF_MIN`` and ``COEFF_MAX``.
@@ -451,8 +451,8 @@ cdef extern from "flint_wrap.h":
     # The endpoints `l` and `r` do not need to be reduced, but their denominators do need to be positive.
     # `x` will always be returned in canonical form. A canonical fraction `a_1/b_1` is defined to be simpler than `a_2/b_2` iff `b_1<b_2` or `b_1=b_2` and `a_1<a_2`.
 
-    long fmpq_get_cfrac(fmpz * c, fmpq_t rem, const fmpq_t x, long n)
-    long fmpq_get_cfrac_naive(fmpz * c, fmpq_t rem, const fmpq_t x, long n)
+    slong fmpq_get_cfrac(fmpz * c, fmpq_t rem, const fmpq_t x, slong n)
+    slong fmpq_get_cfrac_naive(fmpz * c, fmpq_t rem, const fmpq_t x, slong n)
     # Generates up to `n` terms of the (simple) continued fraction expansion
     # of `x`, writing the coefficients to the vector `c` and the remainder `r`
     # to the ``rem`` variable. The return value is the number `k` of
@@ -477,7 +477,7 @@ cdef extern from "flint_wrap.h":
     # Essentially, if this function is called with canonical `x` and `n > 0`, then ``rem`` will be canonical.
     # Therefore, applications relying on canonical ``fmpq_t``'s should not call this function with `n \le 0`.
 
-    void fmpq_set_cfrac(fmpq_t x, const fmpz * c, long n)
+    void fmpq_set_cfrac(fmpq_t x, const fmpz * c, slong n)
     # Sets `x` to the value of the continued fraction
     # .. math ::
     # x = c_0 + \cfrac{1}{c_1 + \cfrac{1}{c_2 +
@@ -489,15 +489,15 @@ cdef extern from "flint_wrap.h":
     # This product is split in half recursively to balance the size
     # of the coefficients.
 
-    long fmpq_cfrac_bound(const fmpq_t x)
+    slong fmpq_cfrac_bound(const fmpq_t x)
     # Returns an upper bound for the number of terms in the continued
     # fraction expansion of `x`. The computed bound is not necessarily sharp.
     # We use the fact that the smallest denominator
     # that can give a continued fraction of length `n` is the Fibonacci
     # number `F_{n+1}`.
 
-    void _fmpq_harmonic_ui(fmpz_t num, fmpz_t den, unsigned long n)
-    void fmpq_harmonic_ui(fmpq_t x, unsigned long n)
+    void _fmpq_harmonic_ui(fmpz_t num, fmpz_t den, ulong n)
+    void fmpq_harmonic_ui(fmpq_t x, ulong n)
     # Computes the harmonic number `H_n = 1 + 1/2 + 1/3 + \dotsb + 1/n`.
     # Table lookup is used for `H_n` whose numerator and denominator
     # fit in single limb. For larger `n`, a divide and conquer strategy is used.

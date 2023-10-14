@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fmpz_poly_mat_init(fmpz_poly_mat_t mat, long rows, long cols)
+    void fmpz_poly_mat_init(fmpz_poly_mat_t mat, slong rows, slong cols)
     # Initialises a matrix with the given number of rows and columns for use.
 
     void fmpz_poly_mat_init_set(fmpz_poly_mat_t mat, const fmpz_poly_mat_t src)
@@ -23,13 +23,13 @@ cdef extern from "flint_wrap.h":
     # Frees all memory associated with the matrix. The matrix must be
     # reinitialised if it is to be used again.
 
-    long fmpz_poly_mat_nrows(const fmpz_poly_mat_t mat)
+    slong fmpz_poly_mat_nrows(const fmpz_poly_mat_t mat)
     # Returns the number of rows in ``mat``.
 
-    long fmpz_poly_mat_ncols(const fmpz_poly_mat_t mat)
+    slong fmpz_poly_mat_ncols(const fmpz_poly_mat_t mat)
     # Returns the number of columns in ``mat``.
 
-    fmpz_poly_struct * fmpz_poly_mat_entry(const fmpz_poly_mat_t mat, long i, long j)
+    fmpz_poly_struct * fmpz_poly_mat_entry(const fmpz_poly_mat_t mat, slong i, slong j)
     # Gives a reference to the entry at row ``i`` and column ``j``.
     # The reference can be passed as an input or output variable to any
     # ``fmpz_poly`` function for direct manipulation of the matrix element.
@@ -49,15 +49,15 @@ cdef extern from "flint_wrap.h":
     # Prints the matrix ``mat`` to standard output, using the
     # variable ``x``.
 
-    void fmpz_poly_mat_randtest(fmpz_poly_mat_t mat, flint_rand_t state, long len, flint_bitcnt_t bits)
+    void fmpz_poly_mat_randtest(fmpz_poly_mat_t mat, flint_rand_t state, slong len, flint_bitcnt_t bits)
     # This is equivalent to applying ``fmpz_poly_randtest`` to all entries
     # in the matrix.
 
-    void fmpz_poly_mat_randtest_unsigned(fmpz_poly_mat_t mat, flint_rand_t state, long len, flint_bitcnt_t bits)
+    void fmpz_poly_mat_randtest_unsigned(fmpz_poly_mat_t mat, flint_rand_t state, slong len, flint_bitcnt_t bits)
     # This is equivalent to applying ``fmpz_poly_randtest_unsigned`` to
     # all entries in the matrix.
 
-    void fmpz_poly_mat_randtest_sparse(fmpz_poly_mat_t A, flint_rand_t state, long len, flint_bitcnt_t bits, float density)
+    void fmpz_poly_mat_randtest_sparse(fmpz_poly_mat_t A, flint_rand_t state, slong len, flint_bitcnt_t bits, float density)
     # Creates a random matrix with the amount of nonzero entries given
     # approximately by the ``density`` variable, which should be a fraction
     # between 0 (most sparse) and 1 (most dense).
@@ -93,12 +93,12 @@ cdef extern from "flint_wrap.h":
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 
-    long fmpz_poly_mat_max_bits(const fmpz_poly_mat_t A)
+    slong fmpz_poly_mat_max_bits(const fmpz_poly_mat_t A)
     # Returns the maximum number of bits among the coefficients of the
     # entries in ``A``, or the negative of that value if any
     # coefficient is negative.
 
-    long fmpz_poly_mat_max_length(const fmpz_poly_mat_t A)
+    slong fmpz_poly_mat_max_length(const fmpz_poly_mat_t A)
     # Returns the maximum polynomial length among all the entries in ``A``.
 
     void fmpz_poly_mat_transpose(fmpz_poly_mat_t B, const fmpz_poly_mat_t A)
@@ -142,7 +142,7 @@ cdef extern from "flint_wrap.h":
     # computed using Kronecker segmentation. The matrices must have
     # compatible dimensions for matrix multiplication. Aliasing is allowed.
 
-    void fmpz_poly_mat_mullow(fmpz_poly_mat_t C, const fmpz_poly_mat_t A, const fmpz_poly_mat_t B, long len)
+    void fmpz_poly_mat_mullow(fmpz_poly_mat_t C, const fmpz_poly_mat_t A, const fmpz_poly_mat_t B, slong len)
     # Sets ``C`` to the matrix product of ``A`` and ``B``,
     # truncating each entry in the result to length ``len``.
     # Uses classical matrix multiplication. The matrices must have
@@ -162,27 +162,27 @@ cdef extern from "flint_wrap.h":
     # Sets ``B`` to the square of ``A``, which must be a square matrix.
     # Aliasing is allowed. This function uses Kronecker segmentation.
 
-    void fmpz_poly_mat_sqrlow(fmpz_poly_mat_t B, const fmpz_poly_mat_t A, long len)
+    void fmpz_poly_mat_sqrlow(fmpz_poly_mat_t B, const fmpz_poly_mat_t A, slong len)
     # Sets ``B`` to the square of ``A``, which must be a square matrix,
     # truncating all entries to length ``len``.
     # Aliasing is allowed. This function uses direct formulas for very small
     # matrices, and otherwise classical matrix multiplication.
 
-    void fmpz_poly_mat_pow(fmpz_poly_mat_t B, const fmpz_poly_mat_t A, unsigned long exp)
+    void fmpz_poly_mat_pow(fmpz_poly_mat_t B, const fmpz_poly_mat_t A, ulong exp)
     # Sets ``B`` to ``A`` raised to the power ``exp``, where ``A``
     # is a square matrix. Uses exponentiation by squaring. Aliasing is allowed.
 
-    void fmpz_poly_mat_pow_trunc(fmpz_poly_mat_t B, const fmpz_poly_mat_t A, unsigned long exp, long len)
+    void fmpz_poly_mat_pow_trunc(fmpz_poly_mat_t B, const fmpz_poly_mat_t A, ulong exp, slong len)
     # Sets ``B`` to ``A`` raised to the power ``exp``, truncating
     # all entries to length ``len``, where ``A`` is a square matrix.
     # Uses exponentiation by squaring. Aliasing is allowed.
 
-    void fmpz_poly_mat_prod(fmpz_poly_mat_t res, fmpz_poly_mat_t * const factors, long n)
+    void fmpz_poly_mat_prod(fmpz_poly_mat_t res, fmpz_poly_mat_t * const factors, slong n)
     # Sets ``res`` to the product of the ``n`` matrices given in
     # the vector ``factors``, all of which must be square and of the
     # same size. Uses binary splitting.
 
-    long fmpz_poly_mat_find_pivot_any(const fmpz_poly_mat_t mat, long start_row, long end_row, long c)
+    slong fmpz_poly_mat_find_pivot_any(const fmpz_poly_mat_t mat, slong start_row, slong end_row, slong c)
     # Attempts to find a pivot entry for row reduction.
     # Returns a row index `r` between ``start_row`` (inclusive) and
     # ``stop_row`` (exclusive) such that column `c` in ``mat`` has
@@ -192,7 +192,7 @@ cdef extern from "flint_wrap.h":
     # entries in the matrix have roughly the same size, but can lead to
     # unnecessary coefficient growth if the entries vary in size.
 
-    long fmpz_poly_mat_find_pivot_partial(const fmpz_poly_mat_t mat, long start_row, long end_row, long c)
+    slong fmpz_poly_mat_find_pivot_partial(const fmpz_poly_mat_t mat, slong start_row, slong end_row, slong c)
     # Attempts to find a pivot entry for row reduction.
     # Returns a row index `r` between ``start_row`` (inclusive) and
     # ``stop_row`` (exclusive) such that column `c` in ``mat`` has
@@ -203,7 +203,7 @@ cdef extern from "flint_wrap.h":
     # the smallest coefficient bit bound. This heuristic typically reduces
     # coefficient growth when the matrix entries vary in size.
 
-    long fmpz_poly_mat_fflu(fmpz_poly_mat_t B, fmpz_poly_t den, long * perm, const fmpz_poly_mat_t A, int rank_check)
+    slong fmpz_poly_mat_fflu(fmpz_poly_mat_t B, fmpz_poly_t den, slong * perm, const fmpz_poly_mat_t A, int rank_check)
     # Uses fraction-free Gaussian elimination to set (``B``, ``den``) to a
     # fraction-free LU decomposition of ``A`` and returns the
     # rank of ``A``. Aliasing of ``A`` and ``B`` is allowed.
@@ -217,7 +217,7 @@ cdef extern from "flint_wrap.h":
     # the sign is decided by the parity of the permutation. Note that the
     # determinant is not generally the minimal denominator.
 
-    long fmpz_poly_mat_rref(fmpz_poly_mat_t B, fmpz_poly_t den, const fmpz_poly_mat_t A)
+    slong fmpz_poly_mat_rref(fmpz_poly_mat_t B, fmpz_poly_t den, const fmpz_poly_mat_t A)
     # Sets (``B``, ``den``) to the reduced row echelon form of
     # ``A`` and returns the rank of ``A``. Aliasing of ``A`` and
     # ``B`` is allowed.
@@ -244,7 +244,7 @@ cdef extern from "flint_wrap.h":
     # evaluating the matrix at `n` distinct points, computing the determinant
     # of each integer matrix, and forming the interpolating polynomial.
 
-    long fmpz_poly_mat_rank(const fmpz_poly_mat_t A)
+    slong fmpz_poly_mat_rank(const fmpz_poly_mat_t A)
     # Returns the rank of ``A``. Performs fraction-free LU decomposition
     # on a copy of ``A``.
 
@@ -258,7 +258,7 @@ cdef extern from "flint_wrap.h":
     # Uses fraction-free LU decomposition, followed by solving for
     # the identity matrix.
 
-    long fmpz_poly_mat_nullspace(fmpz_poly_mat_t res, const fmpz_poly_mat_t mat)
+    slong fmpz_poly_mat_nullspace(fmpz_poly_mat_t res, const fmpz_poly_mat_t mat)
     # Computes the right rational nullspace of the matrix ``mat`` and
     # returns the nullity.
     # More precisely, assume that ``mat`` has rank `r` and nullity `n`.
@@ -286,6 +286,6 @@ cdef extern from "flint_wrap.h":
     # Uses fraction-free LU decomposition followed by fraction-free
     # forward and back substitution.
 
-    void fmpz_poly_mat_solve_fflu_precomp(fmpz_poly_mat_t X, const long * perm, const fmpz_poly_mat_t FFLU, const fmpz_poly_mat_t B)
+    void fmpz_poly_mat_solve_fflu_precomp(fmpz_poly_mat_t X, const slong * perm, const fmpz_poly_mat_t FFLU, const fmpz_poly_mat_t B)
     # Performs fraction-free forward and back substitution given a precomputed
     # fraction-free LU decomposition and corresponding permutation.
