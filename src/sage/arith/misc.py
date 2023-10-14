@@ -375,7 +375,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
-        from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
+        from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari.all import pari
