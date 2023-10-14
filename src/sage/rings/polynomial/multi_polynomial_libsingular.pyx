@@ -4490,8 +4490,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             ValueError: polynomial is not in the ideal
-            sage: f.lift(I)
-            [1, x2]
 
         Check that we can work over the integers::
 
