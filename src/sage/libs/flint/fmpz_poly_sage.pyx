@@ -42,7 +42,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: Fmpz_poly([1,2,3])
             3  1 2 3
             sage: Fmpz_poly(5)
@@ -79,7 +79,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly(range(10))
             sage: f[7] = 100; f
             10  0 1 2 3 4 5 6 100 8 9
@@ -98,7 +98,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly(range(100))
             sage: f[13]
             13
@@ -115,7 +115,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([0,1]); f^7
             8  0 0 0 0 0 0 0 1
         """
@@ -130,7 +130,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,2,3]); f
             3  1 2 3
             sage: f.degree()
@@ -148,7 +148,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([2,1,0,-1])
             sage: f.list()
             [2, 1, 0, -1]
@@ -161,7 +161,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: Fmpz_poly([1,2,3]) + Fmpz_poly(range(6))
             6  1 3 5 3 4 5
         """
@@ -177,7 +177,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: Fmpz_poly([10,2,3]) - Fmpz_poly([4,-2,1])
             3  6 4 2
         """
@@ -193,7 +193,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: -Fmpz_poly([2,10,2,3,18,-5])
             6  -2 -10 -2 -3 -18 5
         """
@@ -207,7 +207,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([0,1]); g = Fmpz_poly([2,3,4])
             sage: f*g
             4  0 2 3 4
@@ -243,7 +243,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,1])
             sage: f**6
             7  1 6 15 20 15 6 1
@@ -271,7 +271,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,2])
             sage: f.pow_truncate(10,3)
             3  1 20 180
@@ -293,7 +293,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([3,4,5])
             sage: g = f^5; g
             11  243 1620 6345 16560 32190 47224 53650 46000 29375 12500 3125
@@ -314,7 +314,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,3,4,5])
             sage: g = f^23
             sage: g.div_rem(f)[1]
@@ -342,7 +342,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,2])
             sage: f.left_shift(1).list() == [0,1,2]
             True
@@ -359,7 +359,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,2])
             sage: f.right_shift(1).list() == [2]
             True
@@ -389,7 +389,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,2,6])
             sage: f.derivative().list() == [2, 12]
             True
@@ -411,7 +411,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,1])
             sage: g = f**10; g
             11  1 10 45 120 210 252 210 120 45 10 1
@@ -431,7 +431,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,1])
             sage: g = f**10; g
             11  1 10 45 120 210 252 210 120 45 10 1
@@ -447,7 +447,7 @@ cdef class Fmpz_poly(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.flint.fmpz_poly import Fmpz_poly
+            sage: from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
             sage: f = Fmpz_poly([1,1])
             sage: f._sage_('t')
             t + 1

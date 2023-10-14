@@ -8,7 +8,7 @@ def n_factor_to_list(unsigned long n, int proved):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.ulong_extras import n_factor_to_list
+        sage: from sage.libs.flint.ulong_extras_sage import n_factor_to_list
         sage: n_factor_to_list(60, 20)
         [(2, 2), (3, 1), (5, 1)]
         sage: n_factor_to_list((10**6).next_prime() + 1, 0)

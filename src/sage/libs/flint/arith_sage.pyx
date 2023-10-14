@@ -33,7 +33,7 @@ def bell_number(unsigned long n):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import bell_number
+        sage: from sage.libs.flint.arith_sage import bell_number
         sage: [bell_number(i) for i in range(10)]
         [1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147]
         sage: bell_number(10)
@@ -67,7 +67,7 @@ def bernoulli_number(unsigned long n):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import bernoulli_number
+        sage: from sage.libs.flint.arith_sage import bernoulli_number
         sage: [bernoulli_number(i) for i in range(10)]
         [1, -1/2, 1/6, 0, -1/30, 0, 1/42, 0, -1/30, 0]
         sage: bernoulli_number(10)
@@ -98,7 +98,7 @@ def euler_number(unsigned long n):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import euler_number
+        sage: from sage.libs.flint.arith_sage import euler_number
         sage: [euler_number(i) for i in range(8)]
         [1, 0, -1, 0, 5, 0, -61, 0]
     """
@@ -124,7 +124,7 @@ def stirling_number_1(long n, long k):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import stirling_number_1
+        sage: from sage.libs.flint.arith_sage import stirling_number_1
         sage: [stirling_number_1(8,i) for i in range(9)]
         [0, 5040, 13068, 13132, 6769, 1960, 322, 28, 1]
     """
@@ -149,7 +149,7 @@ def stirling_number_2(long n, long k):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import stirling_number_2
+        sage: from sage.libs.flint.arith_sage import stirling_number_2
         sage: [stirling_number_2(8,i) for i in range(9)]
         [0, 1, 127, 966, 1701, 1050, 266, 28, 1]
     """
@@ -176,7 +176,7 @@ def number_of_partitions(unsigned long n):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import number_of_partitions
+        sage: from sage.libs.flint.arith_sage import number_of_partitions
         sage: number_of_partitions(3)
         3
         sage: number_of_partitions(10)
@@ -245,7 +245,7 @@ def dedekind_sum(p, q):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import dedekind_sum
+        sage: from sage.libs.flint.arith_sage import dedekind_sum
         sage: dedekind_sum(4, 5)
         -1/5
     """
@@ -282,7 +282,7 @@ def harmonic_number(unsigned long n):
 
     EXAMPLES::
 
-        sage: from sage.libs.flint.arith import harmonic_number
+        sage: from sage.libs.flint.arith_sage import harmonic_number
         sage: n = 500 + randint(0,500)
         sage: bool( sum(1/k for k in range(1,n+1)) == harmonic_number(n) )
         True
