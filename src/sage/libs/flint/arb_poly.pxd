@@ -504,7 +504,7 @@ cdef extern from "flint_wrap.h":
     # the output to length *len*.
     # The binomial transform maps the coefficients `a_k` in the input polynomial
     # to the coefficients `b_k` in the output polynomial via
-    # `b_n = \sum_{k=0}^n (-1)^k {n \choose k} a_k`.
+    # `b_n = \sum_{k=0}^n (-1)^k {n choose k} a_k`.
     # The binomial transform is equivalent to the power series composition
     # `f(x) \to (1-x)^{-1} f(x/(x-1))`, and is its own inverse.
     # The *basecase* version evaluates coefficients one by one from the

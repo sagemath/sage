@@ -665,7 +665,7 @@ cdef extern from "flint_wrap.h":
     # ``ulong``.
 
     void fmpz_bin_uiui(fmpz_t f, ulong n, ulong k)
-    # Sets `f` to the binomial coefficient `{n \choose k}`.
+    # Sets `f` to the binomial coefficient `{n choose k}`.
 
     void _fmpz_rfac_ui(fmpz_t r, const fmpz_t x, ulong a, ulong b)
     # Sets `r` to the rising factorial `(x+a) (x+a+1) (x+a+2) \cdots (x+b-1)`.

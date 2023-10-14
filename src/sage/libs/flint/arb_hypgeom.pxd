@@ -99,7 +99,7 @@ cdef extern from "flint_wrap.h":
     # algorithm choice.
 
     void arb_hypgeom_central_bin_ui(arb_t res, ulong n, slong prec)
-    # Computes the central binomial coefficient `{2n \choose n}`.
+    # Computes the central binomial coefficient `{2n choose n}`.
 
     void arb_hypgeom_pfq(arb_t res, arb_srcptr a, slong p, arb_srcptr b, slong q, const arb_t z, int regularized, slong prec)
     # Computes the generalized hypergeometric function `{}_pF_{q}(z)`,

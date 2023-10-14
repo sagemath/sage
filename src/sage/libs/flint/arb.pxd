@@ -1023,8 +1023,8 @@ cdef extern from "flint_wrap.h":
     void arb_bin_ui(arb_t z, const arb_t n, ulong k, slong prec)
 
     void arb_bin_uiui(arb_t z, ulong n, ulong k, slong prec)
-    # Computes the binomial coefficient `z = {n \choose k}`, via the
-    # rising factorial as `{n \choose k} = (n-k+1)_k / k!`.
+    # Computes the binomial coefficient `z = {n choose k}`, via the
+    # rising factorial as `{n choose k} = (n-k+1)_k / k!`.
 
     void arb_gamma(arb_t z, const arb_t x, slong prec)
     void arb_gamma_fmpq(arb_t z, const fmpq_t x, slong prec)

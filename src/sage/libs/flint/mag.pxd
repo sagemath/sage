@@ -339,7 +339,7 @@ cdef extern from "flint_wrap.h":
     # Sets *res* to an upper bound for `1/n!`.
 
     void mag_bin_uiui(mag_t res, ulong n, ulong k)
-    # Sets *res* to an upper bound for the binomial coefficient `{n \choose k}`.
+    # Sets *res* to an upper bound for the binomial coefficient `{n choose k}`.
 
     void mag_bernoulli_div_fac_ui(mag_t res, ulong n)
     # Sets *res* to an upper bound for `|B_n| / n!` where `B_n` denotes
