@@ -47,12 +47,12 @@ bootstrap () {
     done
     spkg_configures=""
     # initialize SAGE_ENABLE... options for standard packages
-    for pkgname in $(sage-package list :standard: | sort); do
+    for pkgname in $(sage-package list :standard:); do
         spkg_configures="$spkg_configures
 AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [yes])])"
     done
     # --enable-SPKG options
-    for pkgname in $(sage-package list :optional: :experimental: | sort); do
+    for pkgname in $(sage-package list :optional: :experimental:); do
                 # Issue #29629: Temporary solution for Sage 9.1: Do not provide
                 # --enable-SPKG options for installing pip packages
                 if [ ! -f build/pkgs/$pkgname/requirements.txt ]; then
@@ -71,7 +71,7 @@ SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.
                     esac
                 fi
     done
-    for pkgname in $(sage-package list --has-file spkg-configure.m4 | sort); do
+    for pkgname in $(sage-package list --has-file spkg-configure.m4); do
         echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])"
         config="SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
         if grep -q SAGE_PYTHON_PACKAGE_CHECK build/pkgs/$pkgname/spkg-configure.m4; then
@@ -86,7 +86,7 @@ $config"
 $spkg_configures
 $spkg_configures_python
 EOF
-    for pkgname in $(sage-package list | sort); do
+    for pkgname in $(sage-package list); do
         DIR=build/pkgs/$pkgname
         pkgtype="$(cat $DIR/type)"
         if test -f "$DIR/requirements.txt"; then
@@ -226,10 +226,10 @@ save () {
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
 	src/doc/en/reference/spkg/*.rst \
-	environment.yml \
-	src/environment.yml \
-	environment-optional.yml \
-	src/environment-optional.yml \
+	environment-3.[89].yml environment-3.1[0-9].yml \
+	src/environment-3.[89].yml src/environment-3.1[0-9].yml \
+	environment-optional-3.[89].yml environment-optional-3.1[0-9].yml \
+	src/environment-optional-3.[89].yml src/environment-optional-3.1[0-9].yml \
 	src/Pipfile \
 	src/pyproject.toml \
 	src/requirements.txt \

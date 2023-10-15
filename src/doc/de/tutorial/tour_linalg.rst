@@ -42,16 +42,6 @@ gelöst werden. Das Auswerten von ``A.solve_right(Y)`` gibt eine Matrix
     sage: A * X   # wir überprüfen unsere Antwort...
     (0, -4, -1)
 
-Anstelle von ``solve_right`` kann auch ein Backslash ``\`` verwendet
-werden. Benutzen Sie ``A \ Y`` anstelle von ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 Falls keine Lösung existiert, gibt Sage einen Fehler zurück:
 
 .. skip

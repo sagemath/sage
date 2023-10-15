@@ -3837,7 +3837,8 @@ class Link(SageObject):
         If ``mirror_version`` is set to ``False`` then the result is just ``K``
         (that is: ``m`` is suppressed).
 
-        If it is not possible to determine a unique result a ``NotImplementedError``
+        If it is not possible to determine a unique result
+        a :class:`NotImplementedError`
         will be raised. To avoid this you can set ``unique`` to ``False``. You
         will get a list of matching candidates instead.
 
