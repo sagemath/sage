@@ -484,7 +484,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X.multiplicity(Q)                                                     # needs sage.libs.singular
             1
         """
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("subscheme must be defined over a field")
 
         # check whether P is a point on this subscheme

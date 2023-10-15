@@ -53,7 +53,7 @@ class Application(object):
         """
         Print a list of all available packages
 
-        $ sage --package list | sort
+        $ sage --package list
         4ti2
         arb
         autotools
@@ -63,7 +63,7 @@ class Application(object):
         $ sage -package list --has-file=spkg-configure.m4 :experimental:
         perl_term_readline_gnu
 
-        $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt | sort
+        $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt
         arb
         boost_cropped
         brial

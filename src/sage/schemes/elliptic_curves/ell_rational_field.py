@@ -4987,7 +4987,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         if not is_EllipticCurve(other):
             raise ValueError("Second argument is not an Elliptic Curve.")
-        if not other.base_field() is QQ:
+        if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
 
         if self.is_isomorphic(other):

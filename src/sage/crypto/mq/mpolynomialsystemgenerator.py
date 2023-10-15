@@ -156,7 +156,7 @@ class MPolynomialSystemGenerator(SageObject):
             sage: msg.sbox()
             Traceback (most recent call last):
             ...
-            AttributeError: '<class 'sage.crypto.mq.mpolynomialsystemgenerator.MPolynomialSystemGenerator'>' object has no attribute '_sbox'
+            AttributeError: '<class 'sage.crypto.mq.mpolynomialsystemgenerator.MPolynomialSystemGenerator'>' object has no attribute '_sbox'...
         """
         return self._sbox
 

@@ -836,7 +836,7 @@ cdef class CategoryObject(SageObject):
             sage: Sets().example().sadfasdf
             Traceback (most recent call last):
             ...
-            AttributeError: 'PrimeNumbers_with_category' object has no attribute 'sadfasdf'
+            AttributeError: 'PrimeNumbers_with_category' object has no attribute 'sadfasdf'...
         """
         return self.getattr_from_category(name)
 
