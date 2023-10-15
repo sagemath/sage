@@ -2129,7 +2129,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Semigroups().Inverse()
             Traceback (most recent call last):
             ...
-            AttributeError: 'Semigroups_with_category' object has no attribute 'Inverse'
+            AttributeError: 'Semigroups_with_category' object has no attribute 'Inverse'...
             sage: Semigroups()._with_axioms(["Inverse"])
             Category of semigroups
 

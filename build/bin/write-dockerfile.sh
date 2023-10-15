@@ -104,6 +104,9 @@ EOF
         UPDATE="pacman -Sy &&"
         EXISTS="pacman -Si"
         INSTALL="pacman -Su --noconfirm"
+        cat <<EOF
+RUN sed -i '/^NoExtract/d' /etc/pacman.conf
+EOF
         ;;
     nix*)
         # https://hub.docker.com/r/nixos/nix

@@ -123,7 +123,7 @@ def getattr_debug(obj, name, default=_no_default):
         sage: _ = getattr_debug(1, "foo")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'...
         sage: _ = getattr_debug(1, "foo", "xyz")
         getattr_debug(obj=1, name='foo'):
           type(obj) = <class 'sage.rings.integer.Integer'>
