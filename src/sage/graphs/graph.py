@@ -5095,7 +5095,7 @@ class Graph(GenericGraph):
 
         # if induced is True
         # condition for induced subgraph ensures that if there
-        # doesnt exist an edge(h1, h2) in H then there should
+        # does not exist an edge(h1, h2) in H then there should
         # not be an edge between representative sets of h1 and h2 in G
         if induced:
             for h1, h2 in H.complement().edge_iterator(labels=False):
