@@ -1223,7 +1223,7 @@ However, only "elementary" construction functors have a rank::
     sage: (Fract*Poly).rank
     Traceback (most recent call last):
     ...
-    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'
+    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'...
 
 .. end of output
 

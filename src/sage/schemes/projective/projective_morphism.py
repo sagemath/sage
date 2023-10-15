@@ -2482,9 +2482,11 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         R = S.quotient_ring(X.defining_ideal().change_ring(S))
 
         if R is S:  # true when the defining ideal is zero
-            lift = lambda x: x.numerator()
+            def lift(x):
+                return x.numerator()
         else:  # R is an ordinary quotient ring
-            lift = lambda x: x.lift()
+            def lift(x):
+                return x.lift()
 
         F = [R(f) for f in self.defining_polynomials()]
         n = len(F)

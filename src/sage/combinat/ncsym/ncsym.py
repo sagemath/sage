@@ -297,7 +297,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
         assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
         self._base = R  # Won't be needed once CategoryObject won't override base_ring
-        category = GradedHopfAlgebras(R)  # TODO: .Cocommutative()
+        category = GradedHopfAlgebras(R).Cocommutative()
         Parent.__init__(self, category=category.WithRealizations())
 
     def _repr_(self):
@@ -362,9 +362,13 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: TestSuite(NCSym.m()).run()
             """
-            CombinatorialFreeModule.__init__(self, NCSym.base_ring(), SetPartitions(),
+            R = NCSym.base_ring()
+            category = GradedHopfAlgebras(R).Cocommutative()
+            category &= NCSymBases(NCSym)
+
+            CombinatorialFreeModule.__init__(self, R, SetPartitions(),
                                              prefix='m', bracket=False,
-                                             category=NCSymBases(NCSym))
+                                             category=category)
 
         @cached_method
         def _m_to_p_on_basis(self, A):

@@ -62,6 +62,7 @@ matrices and Latin squares. See:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
@@ -72,9 +73,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.misc.misc_c import running_total
-from copy import copy
+from sage.misc.prandom import randint, shuffle
 from .constructor import matrix
-
 import sage.categories.pushout
 
 
@@ -2473,104 +2473,107 @@ def random_rref_matrix(parent, num_pivots):
 
     TESTS:
 
+    Rank zero::
+
+        sage: random_matrix(QQ, 1, 1, algorithm='echelon_form', num_pivots=0)
+        [0]
+
     Rank of a matrix must be an integer. ::
 
         sage: random_matrix(QQ, 120, 56, algorithm='echelon_form', num_pivots=61/2)
         Traceback (most recent call last):
         ...
-        TypeError: the number of pivots must be an integer.
+        TypeError: the number of pivots must be an integer
 
     Matrices must be generated over exact fields. ::
 
         sage: random_matrix(RR, 40, 88, algorithm='echelon_form', num_pivots=39)
         Traceback (most recent call last):
         ...
-        TypeError: the base ring must be exact.
+        TypeError: the base ring must be exact
 
     Matrices must have the number of pivot columns be less than or equal to the number of rows. ::
 
-        sage: C=random_matrix(ZZ, 6,4, algorithm='echelon_form', num_pivots=7); C
+        sage: C = random_matrix(ZZ, 6,4, algorithm='echelon_form', num_pivots=7); C
         Traceback (most recent call last):
         ...
-        ValueError: number of pivots cannot exceed the number of rows or columns.
+        ValueError: number of pivots cannot exceed the number of rows or columns
 
     Matrices must have the number of pivot columns be less than or equal to the number of columns. ::
 
-        sage: D=random_matrix(QQ, 1,3, algorithm='echelon_form', num_pivots=5); D
+        sage: D = random_matrix(QQ, 1,3, algorithm='echelon_form', num_pivots=5); D
         Traceback (most recent call last):
         ...
-        ValueError: number of pivots cannot exceed the number of rows or columns.
+        ValueError: number of pivots cannot exceed the number of rows or columns
 
     Matrices must have the number of pivot columns be greater than zero. ::
 
         sage: random_matrix(QQ, 5, 4, algorithm='echelon_form', num_pivots=-1)
         Traceback (most recent call last):
         ...
-        ValueError: the number of pivots must be zero or greater.
+        ValueError: the number of pivots must be zero or greater
 
     AUTHOR:
 
     Billy Wonderly (2010-07)
     """
     import sage.probability.probability_distribution as pd
-    from sage.misc.prandom import randint
 
     try:
         num_pivots = ZZ(num_pivots)
     except TypeError:
-        raise TypeError("the number of pivots must be an integer.")
+        raise TypeError("the number of pivots must be an integer")
     if num_pivots < 0:
-        raise ValueError("the number of pivots must be zero or greater.")
+        raise ValueError("the number of pivots must be zero or greater")
     ring = parent.base_ring()
     if not ring.is_exact():
-        raise TypeError("the base ring must be exact.")
+        raise TypeError("the base ring must be exact")
     num_row = parent.nrows()
     num_col = parent.ncols()
     if num_pivots > num_row or num_pivots > num_col:
-        raise ValueError("number of pivots cannot exceed the number of rows or columns.")
+        raise ValueError("number of pivots cannot exceed the number of rows or columns")
+
+    if num_pivots == 0:
+        return parent.zero()
+
+    one = ring.one()
+    # Create a matrix of the desired size to be modified and then returned.
+    return_matrix = copy(parent.zero_matrix())
+
+    # No harm if no pivots at all.
+    subset = list(range(1, num_col))
+    shuffle(subset)
+    pivots = [0] + sorted(subset[:num_pivots - 1])
+
+    # Use the list of pivot columns to set the pivot entries of the return_matrix to leading ones.
+    for pivot_row, pivot in enumerate(pivots):
+        return_matrix[pivot_row, pivot] = one
+    if ring is QQ or ring is ZZ:
+        # Keep track of the non-pivot columns by using the pivot_index, start at the first column to
+        # the right of the initial pivot column, go until the first column to the left of the next
+        # pivot column.
+        for pivot_index in range(num_pivots - 1):
+            for non_pivot_column_index in range(pivots[pivot_index] + 1, pivots[pivot_index + 1]):
+                entry_generator1 = pd.RealDistribution("beta", [6, 4])
+                # Experimental distribution used to generate the values.
+                for non_pivot_column_entry in range(pivot_index + 1):
+                    sign1 = (2 * randint(0, 1) - 1)
+                    return_matrix[non_pivot_column_entry, non_pivot_column_index] = sign1 * int(entry_generator1.get_random_element() * ((1 - non_pivot_column_entry / return_matrix.ncols()) * 7))
+        # Use index to fill entries of the columns to the right of the last pivot column.
+        for rest_non_pivot_column in range(pivots[num_pivots - 1] + 1, num_col):
+            entry_generator2 = pd.RealDistribution("beta", [2.6, 4])
+            # experimental distribution to generate small values.
+            for rest_entries in range(num_pivots):
+                sign2 = (2 * randint(0, 1) - 1)
+                return_matrix[rest_entries, rest_non_pivot_column] = sign2 * int(entry_generator2.get_random_element() * 5)
     else:
-        one = ring.one()
-        # Create a matrix of the desired size to be modified and then returned.
-        return_matrix = copy(parent.zero_matrix())
-        pivots = [0] #Force first column to be a pivot. No harm if no pivots at all.
-        # Probability distribution for the placement of leading one's.
-        pivot_generator = pd.RealDistribution("beta", [1.6, 4.3])
-        while len(pivots) < num_pivots:
-            pivot_column = int(pivot_generator.get_random_element() * num_col)
-            if pivot_column not in pivots:
-                pivots.append(pivot_column)
-        pivots.sort()
-        pivot_row = 0
-        # Use the list of pivot columns to set the pivot entries of the return_matrix to leading ones.
-        while pivot_row < num_pivots:
-            return_matrix[pivot_row, pivots[pivot_row]] = one
-            pivot_row += 1
-        if ring is QQ or ring is ZZ:
-            # Keep track of the non-pivot columns by using the pivot_index, start at the first column to
-            # the right of the initial pivot column, go until the first column to the left of the next
-            # pivot column.
-            for pivot_index in range(num_pivots-1):
-                for non_pivot_column_index in range(pivots[pivot_index]+1, pivots[pivot_index+1]):
-                    entry_generator1 = pd.RealDistribution("beta", [6, 4])
-                    # Experimental distribution used to generate the values.
-                    for non_pivot_column_entry in range(pivot_index+1):
-                        sign1 = (2*randint(0,1)-1)
-                        return_matrix[non_pivot_column_entry,non_pivot_column_index]=sign1*int(entry_generator1.get_random_element()*((1-non_pivot_column_entry/return_matrix.ncols())*7))
-            # Use index to fill entries of the columns to the right of the last pivot column.
-            for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
-                entry_generator2=pd.RealDistribution("beta",[2.6,4])
-                # experimental distribution to generate small values.
-                for rest_entries in range(num_pivots):
-                    sign2=(2*randint(0,1)-1)
-                    return_matrix[rest_entries,rest_non_pivot_column]=sign2*int(entry_generator2.get_random_element()*5)
-        else:
-            for pivot_index in range(num_pivots-1):
-                for non_pivot_column_index in range(pivots[pivot_index]+1,pivots[pivot_index+1]):
-                    for non_pivot_column_entry in range(pivot_index+1):
-                            return_matrix[non_pivot_column_entry,non_pivot_column_index]=ring.random_element()
-            for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
-                for rest_entries in range(num_pivots):
-                    return_matrix[rest_entries,rest_non_pivot_column]=ring.random_element()
+        for pivot_index in range(num_pivots - 1):
+            for non_pivot_column_index in range(pivots[pivot_index] + 1, pivots[pivot_index + 1]):
+                for non_pivot_column_entry in range(pivot_index + 1):
+                    return_matrix[non_pivot_column_entry, non_pivot_column_index] = ring.random_element()
+        for rest_non_pivot_column in range(pivots[num_pivots - 1] + 1, num_col):
+            for rest_entries in range(num_pivots):
+                return_matrix[rest_entries, rest_non_pivot_column] = ring.random_element()
     return return_matrix
 
 
@@ -2692,7 +2695,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
         sage: random_matrix(RR, 3, 3, algorithm='echelonizable', rank=2)
         Traceback (most recent call last):
         ...
-        TypeError: the base ring must be exact.
+        TypeError: the base ring must be exact
 
     Works for rank==1, too. ::
 
