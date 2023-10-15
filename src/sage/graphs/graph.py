@@ -5005,8 +5005,8 @@ class Graph(GenericGraph):
             sage: gg.is_isomorphic(h)
             True
 
-        TESTS::
-            
+        TESTS:
+
         A graph `g` may have a minor isomorphic to a given graph `h` but no
         induced minor isomorphic to `h`::
 
@@ -5095,7 +5095,7 @@ class Graph(GenericGraph):
 
         # if induced is True
         # condition for induced subgraph ensures that if there
-        # doesnt exist an edge(h1, h2) in H then there should 
+        # doesnt exist an edge(h1, h2) in H then there should
         # not be an edge between representative sets of h1 and h2 in G
         if induced:
             for h1, h2 in H.complement().edge_iterator(labels=False):
@@ -5108,7 +5108,7 @@ class Graph(GenericGraph):
         try:
             p.solve(log=verbose)
         except MIPSolverException:
-            if induced: 
+            if induced:
                 raise ValueError("This graph has no induced minor isomorphic to H !")
             else:
                 raise ValueError("This graph has no minor isomorphic to H !")
@@ -6657,7 +6657,7 @@ class Graph(GenericGraph):
         raise ValueError("Algorithm must be equal to 'native' or to 'NetworkX'.")
 
     @doc_index("Clique-related methods")
-    def clique_maximum(self,  algorithm="Cliquer", solver=None, verbose=0,
+    def clique_maximum(self, algorithm="Cliquer", solver=None, verbose=0,
                        *, integrality_tolerance=1e-3):
         """
         Return the vertex set of a maximal order complete subgraph.
@@ -6901,7 +6901,7 @@ class Graph(GenericGraph):
         for c in cliques:
             count.update(c)
 
-        return {v : count[v] for v in vertices or self}
+        return {v: count[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
@@ -7653,7 +7653,7 @@ class Graph(GenericGraph):
             for v in c:
                 d[v].append(c)
 
-        return {v : d[v] for v in vertices or self}
+        return {v: d[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def clique_complex(self):
