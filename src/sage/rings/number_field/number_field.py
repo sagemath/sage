@@ -3823,7 +3823,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.prime_above(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'...
         """
         if degree is not None:
             degree = ZZ(degree)
@@ -3917,7 +3917,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.prime_above(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'...
 
         """
         ids = self.primes_above(x, degree)
@@ -5926,7 +5926,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L.factor(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'factor'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'factor'...
 
         AUTHORS:
 
@@ -12698,7 +12698,7 @@ def is_real_place(v):
         sage: is_real_place(v_fin)
         Traceback (most recent call last):
         ...
-        AttributeError: 'NumberFieldFractionalIdeal' object has no attribute 'im_gens'
+        AttributeError: 'NumberFieldFractionalIdeal' object has no attribute 'im_gens'...
 
     """
     RR = sage.rings.real_mpfr.RealField(53)

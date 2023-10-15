@@ -619,7 +619,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             AttributeError: 'DisjointUnionEnumeratedSets_with_category' object
-            has no attribute 'Element'
+            has no attribute 'Element'...
         """
         if not self._facade:
             return ElementWrapper

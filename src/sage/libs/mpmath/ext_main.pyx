@@ -19,7 +19,7 @@ from cpython.float cimport *
 from cpython.complex cimport *
 from cpython.number cimport *
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_check
 
 from sage.ext.stdsage cimport PY_NEW
 
@@ -707,7 +707,6 @@ cdef class Context:
             False
             sage: isint(3+2j, gaussian=True)
             True
-
         """
         cdef MPF v
         cdef MPF w
@@ -745,6 +744,9 @@ cdef class Context:
         faster and produces more accurate results than the builtin
         Python function :func:`sum`.
 
+        With ``squared=True`` each term is squared, and with ``absolute=True``
+        the absolute value of each term is used.
+
         TESTS ::
 
             sage: from mpmath import mp, fsum
@@ -752,8 +754,13 @@ cdef class Context:
             sage: fsum([1, 2, 0.5, 7])
             mpf('10.5')
 
-        With squared=True each term is squared, and with absolute=True
-        the absolute value of each term is used.
+        Check that the regression from `mpmath/issues/723 <https://github.com/mpmath/mpmath/issues/723>`__
+        has been fixed::
+
+            sage: from mpmath import *
+            sage: mp.dps=16
+            sage: zeta(-0.01 + 1000j)
+            mpc(real='-8.9714595...', imag='8.7321793...')
         """
         cdef MPF sre, sim, tre, tim, tmp
         cdef mpf rr
@@ -764,8 +771,8 @@ cdef class Context:
         workopts.prec = workopts.prec * 2 + 50
         workopts.rounding = ROUND_D
         unknown = global_context.zero
-        sig_on()
-        try:  # Way down, there is a ``finally`` with sig_off()
+        try:
+            sig_check()
             MPF_init(&sre)
             MPF_init(&sim)
             MPF_init(&tre)
@@ -848,8 +855,8 @@ cdef class Context:
                 MPF_clear(&sre)
                 MPF_clear(&sim)
                 return +unknown
-        finally:
-            sig_off()
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt('Ctrl-C pressed while running fsum')
 
     def fdot(ctx, A, B=None, bint conjugate=False):
         r"""

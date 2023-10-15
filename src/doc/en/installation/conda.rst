@@ -75,12 +75,15 @@ from source as follows:
   - Create a new conda environment including all standard packages
     recognized by sage, and activate it::
 
-      $ conda env create --file environment.yml --name sage-build
+      $ conda env create --file environment-3.11.yml --name sage-build
       $ conda activate sage-build
 
-    Alternatively, use ``environment-optional.yml`` in place of
+    Alternatively, use ``environment-optional-3.11.yml`` in place of
     ``environment.yml`` to create an environment with all standard and optional
     packages recognized by sage.
+
+    A different Python version can be selected by replacing ``3.11`` by ``3.9``
+    or ``3.10`` in these commands.
 
   - Then the SageMath distribution will be built using the compilers provided by Conda
     and using many packages installed by Conda::
@@ -123,16 +126,15 @@ Here we assume that you are using a git checkout.
   - Create and activate a new conda environment with the dependencies of Sage
     and a few additional developer tools::
 
-      $ mamba env create --file src/environment-dev.yml --name sage-dev
+      $ mamba env create --file src/environment-dev-3.11.yml --name sage-dev
       $ conda activate sage-dev
 
-    Alternatively, you can use ``src/environment.yml`` or
-    ``src/environment-optional.yml``, which will only install standard
+    Alternatively, you can use ``src/environment-3.11.yml`` or
+    ``src/environment-optional-3.11.yml``, which will only install standard
     (and optional) packages without any additional developer tools.
 
-    By default, the most recent version of Python supported by Sage is
-    installed. You can use the additional option ``python=3.9`` in the above
-    ``env create`` command to select another Python version (here 3.9).
+    A different Python version can be selected by replacing ``3.11`` by ``3.9``
+    or ``3.10`` in these commands.
 
   - Install the build prerequisites and the Sage library::
 
@@ -142,7 +144,7 @@ Here we assume that you are using a git checkout.
   - Verify that Sage has been installed::
 
       $ sage -c 'print(version())'
-      SageMath version 9.6.beta5, Release Date: 2022-03-12
+      SageMath version 10.2.beta4, Release Date: 2023-09-24
 
 Note that ``make`` is not used at all. All dependencies
 (including all Python packages) are provided by conda.
@@ -162,7 +164,7 @@ After editing any Cython files, rebuild the Sage library using::
 
 In order to update the conda environment later, you can run::
 
-  $ mamba env update --file src/environment-dev.yml --name sage-dev
+  $ mamba env update --file src/environment-dev-3.11.yml --name sage-dev
 
 To build the documentation, use::
 

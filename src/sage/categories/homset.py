@@ -632,7 +632,7 @@ class Homset(Set_generic):
             sage: H = MyHomset(X, Y, category=1, base = ZZ, check = False)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'Homsets'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'Homsets'...
             sage: P.<t> = ZZ[]
             sage: f = P.hom([1/2*t])
             sage: f.parent().domain()
