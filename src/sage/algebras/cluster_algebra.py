@@ -167,7 +167,7 @@ g-vectors and F-polynomials can be computed from elements of ``A`` only if
     sage: (t*s).g_vector()
     Traceback (most recent call last):
     ...
-    AttributeError: 'ClusterAlgebra_with_category.element_class' object has no attribute 'g_vector'
+    AttributeError: 'ClusterAlgebra_with_category.element_class' object has no attribute 'g_vector'...
     sage: A = ClusterAlgebra(['A', 2], principal_coefficients=True)
     sage: A.explore_to_depth(infinity)
     sage: s = A.cluster_variable((0, -1)); s

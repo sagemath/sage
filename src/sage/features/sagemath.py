@@ -232,7 +232,7 @@ class sage__graphs(JoinFeature):
         sage: M = Matroid(Matrix(QQ, [[1, 0, 0, 0, 1, 1, 1],
         ....:                         [0, 1, 0, 1, 0, 1, 1],
         ....:                         [0, 0, 1, 1, 1, 0, 1]]))
-        sage: N = M / [2] \ [3, 4]
+        sage: N = (M / [2]).delete([3, 4])
         sage: sorted(N.groundset())
         [0, 1, 5, 6]
 

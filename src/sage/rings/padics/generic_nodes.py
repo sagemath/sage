@@ -740,7 +740,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
             sage: R._get_element_class("foobar")
             Traceback (most recent call last):
             ...
-            AttributeError: module 'sage.rings.padics.padic_relaxed_element' has no attribute 'pAdicRelaxedElement_foobar'
+            AttributeError: module 'sage.rings.padics.padic_relaxed_element' has no attribute 'pAdicRelaxedElement_foobar'...
         """
         if name is None:
             return self.Element

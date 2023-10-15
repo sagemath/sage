@@ -100,7 +100,7 @@ Sage depends.  It installs them automatically if it does not find
 equivalent system packages.
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_' | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -112,7 +112,7 @@ For additional functionality, you can install some of the following
 optional packages.
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_' | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -160,7 +160,7 @@ Distribution Packages of the Sage Library
 -----------------------------------------
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_' | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -173,7 +173,7 @@ Some packages that provide additional functionality are marked as
 integration of these packages into the Sage distribution.
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_' | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 
@@ -203,7 +203,7 @@ Packages are in alphabetical order.
    :maxdepth: 1
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst); do
             PKG_SCRIPTS=build/pkgs/$PKG_BASE
             # Instead of just copying, we may want to call
             # a version of sage-spkg-info to format extra information.

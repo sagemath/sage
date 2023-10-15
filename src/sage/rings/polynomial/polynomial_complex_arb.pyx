@@ -36,6 +36,7 @@ from sage.structure.element import coerce_binop
 cdef inline long prec(Polynomial_complex_arb pol):
     return pol._parent._base._prec
 
+
 cdef class Polynomial_complex_arb(Polynomial):
     r"""
     Wrapper for `Arb <http://arblib.org>`_ polynomials of type
@@ -152,21 +153,27 @@ cdef class Polynomial_complex_arb(Polynomial):
             if isinstance(x, list):
                 lst = <list> x
                 length = len(lst)
-                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                sig_on()
+                acb_poly_fit_length(self._poly, length)
+                sig_off()
                 for i in range(length):
                     ball = Coeff(lst[i])
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, tuple):
                 tpl = <tuple> x
                 length = len(tpl)
-                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                sig_on()
+                acb_poly_fit_length(self._poly, length)
+                sig_off()
                 for i in range(length):
                     ball = Coeff(tpl[i])
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, Polynomial):
                 pol = <Polynomial> x
                 length = pol.degree() + 1
-                sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                sig_on()
+                acb_poly_fit_length(self._poly, length)
+                sig_off()
                 for i in range(length):
                     ball = Coeff(pol.get_unsafe(i))
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
@@ -176,7 +183,9 @@ cdef class Polynomial_complex_arb(Polynomial):
                     acb_poly_zero(self._poly)
                 else:
                     length = max(int(i) for i in dct) + 1
-                    sig_on(); acb_poly_fit_length(self._poly, length); sig_off()
+                    sig_on()
+                    acb_poly_fit_length(self._poly, length)
+                    sig_off()
                     for i, c in dct.iteritems():
                         ball = Coeff(c)
                         acb_poly_set_coeff_acb(self._poly, i, ball.value)

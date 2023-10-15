@@ -45,7 +45,7 @@ class QuiverHomSpace(Homset):
     .. NOTE::
 
         The quivers of the domain and codomain must be equal or a
-        ``ValueError`` is raised.
+        :class:`ValueError` is raised.
 
     EXAMPLES::
 
