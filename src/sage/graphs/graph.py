@@ -4891,7 +4891,7 @@ class Graph(GenericGraph):
         return repr
 
     @doc_index("Algorithmically hard stuff")
-    def minor(self, H, solver=None, verbose=0, *, integrality_tolerance=1e-3):
+    def minor(self, H, solver=None, verbose=0, induced=False, *, integrality_tolerance=1e-3):
         r"""
         Return the vertices of a minor isomorphic to `H` in the current graph.
 
@@ -4900,6 +4900,14 @@ class Graph(GenericGraph):
         sets `S_h \subseteq V(G)` such that once the vertices of each `S_h` have
         been merged to create a new graph `G'`, this new graph contains `H` as a
         subgraph.
+
+        When parameter ``induced`` is ``True``, this method returns an induced minor
+        isomorphic to `H`, if it exists.
+
+        We say that a graph `G` has an induced `H`-minor (or that it has a
+        graph isomorphic to `H` as an induced minor), if `H` can be obtained
+        from an induced subgraph of `G` by contracting edges. Otherwise, `G` is
+        said to be `H`-induced minor-free.
 
         For more information, see the :wikipedia:`Minor_(graph_theory)`.
 
@@ -4921,6 +4929,10 @@ class Graph(GenericGraph):
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
+
+        - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
+          induced minor isomorphic to `H` if it exists, and raises a
+          :class:`ValueError` otherwise.
 
         OUTPUT:
 
@@ -4979,6 +4991,43 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: This graph has no minor isomorphic to H !
+
+        Trying to find an induced minor isomorphic to `C_5` in a graph
+        containing an induced `C_6`::
+
+            sage: g = graphs.CycleGraph(6)
+            sage: for i in range(randint(10, 30)):
+            ....:     g.add_edge(randint(0, 5), g.add_vertex())
+            sage: h = graphs.CycleGraph(5)
+            sage: L = g.minor(h, induced=True)
+            sage: gg = g.subgraph(flatten(L.values(), max_level=1))
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l) > 1]
+            sage: gg.is_isomorphic(h)
+            True
+
+        TESTS::
+            
+        A graph `g` may have a minor isomorphic to a given graph `h` but no
+        induced minor isomorphic to `h`::
+
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
+            sage: l = g.minor(h, induced=False)
+            sage: l = g.minor(h, induced=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: This graph has no induced minor isomorphic to H !
+
+        Checking that the returned induced minor is isomorphic to the given
+        graph::
+
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(7, 8), (8, 9), (9, 10), (10, 11)])
+            sage: L = g.minor(h, induced=True)
+            sage: gg = g.subgraph(flatten(L.values(), max_level=1))
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l) > 1]
+            sage: gg.is_isomorphic(h)
+            True
         """
         self._scream_if_not_simple()
         H._scream_if_not_simple()
@@ -5044,12 +5093,25 @@ class Graph(GenericGraph):
             p.add_constraint(p.sum(h_edges[(h1, h2), frozenset(e)] + h_edges[(h2, h1), frozenset(e)]
                                    for e in self.edge_iterator(labels=None)), min=1)
 
+        # if induced is True
+        # condition for induced subgraph ensures that if there
+        # doesnt exist an edge(h1, h2) in H then there should 
+        # not be an edge between representative sets of h1 and h2 in G
+        if induced:
+            for h1, h2 in H.complement().edge_iterator(labels=False):
+                for v1, v2 in self.edge_iterator(labels=False):
+                    p.add_constraint(rs[h1, v1] + rs[h2, v2], max=1)
+                    p.add_constraint(rs[h2, v1] + rs[h1, v2], max=1)
+
         p.set_objective(None)
 
         try:
             p.solve(log=verbose)
         except MIPSolverException:
-            raise ValueError("This graph has no minor isomorphic to H !")
+            if induced: 
+                raise ValueError("This graph has no induced minor isomorphic to H !")
+            else:
+                raise ValueError("This graph has no minor isomorphic to H !")
 
         rs = p.get_values(rs, convert=bool, tolerance=integrality_tolerance)
 

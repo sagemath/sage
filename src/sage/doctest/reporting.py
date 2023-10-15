@@ -368,7 +368,7 @@ class DocTestReporter(SageObject):
             sage: DTR.report(None, None, None, None, None)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'basename'
+            AttributeError: 'NoneType' object has no attribute 'basename'...
 
         The only-errors mode does not output anything on success::
 

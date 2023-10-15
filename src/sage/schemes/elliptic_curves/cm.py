@@ -113,7 +113,7 @@ def hilbert_class_polynomial(D, algorithm=None):
     D = Integer(D)
     if D >= 0:
         raise ValueError("D (=%s) must be negative" % D)
-    if not (D % 4 in [0, 1]):
+    if (D % 4) not in [0, 1]:
         raise ValueError("D (=%s) must be a discriminant" % D)
 
     if algorithm == "arb":

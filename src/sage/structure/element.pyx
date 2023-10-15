@@ -219,7 +219,7 @@ the parents::
     sage: x._add_(x)
     Traceback (most recent call last):
     ...
-    AttributeError: 'sage.structure.element.Element' object has no attribute '_add_'
+    AttributeError: 'sage.structure.element.Element' object has no attribute '_add_'...
     sage: x + x
     Traceback (most recent call last):
     ...
@@ -478,13 +478,13 @@ cdef class Element(SageObject):
             sage: 1.blah_blah
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'blah_blah'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'blah_blah'...
             sage: Semigroups().example().an_element().is_idempotent
             <bound method LeftZeroSemigroup.Element.is_idempotent of 42>
             sage: Semigroups().example().an_element().blah_blah
             Traceback (most recent call last):
             ...
-            AttributeError: 'LeftZeroSemigroup_with_category.element_class' object has no attribute 'blah_blah'
+            AttributeError: 'LeftZeroSemigroup_with_category.element_class' object has no attribute 'blah_blah'...
         """
         return self.getattr_from_category(name)
 
@@ -1269,7 +1269,7 @@ cdef class Element(SageObject):
             sage: e._add_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_add_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_add_'...
         """
         try:
             python_op = (<object>self)._add_
@@ -1381,7 +1381,7 @@ cdef class Element(SageObject):
             sage: e._sub_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_sub_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_sub_'...
         """
         try:
             python_op = (<object>self)._sub_
@@ -1435,7 +1435,7 @@ cdef class Element(SageObject):
             sage: e._neg_()
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_neg_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_neg_'...
         """
         try:
             python_op = (<object>self)._neg_
@@ -1549,7 +1549,7 @@ cdef class Element(SageObject):
             sage: e._mul_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_mul_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_mul_'...
         """
         try:
             python_op = (<object>self)._mul_
@@ -1662,7 +1662,7 @@ cdef class Element(SageObject):
             sage: e._matmul_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_matmul_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_matmul_'...
         """
         try:
             python_op = (<object>self)._matmul_
@@ -1765,7 +1765,7 @@ cdef class Element(SageObject):
             sage: e._div_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_div_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_div_'...
         """
         try:
             python_op = (<object>self)._div_
@@ -1865,7 +1865,7 @@ cdef class Element(SageObject):
             sage: e._floordiv_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_floordiv_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_floordiv_'...
         """
         try:
             python_op = (<object>self)._floordiv_
@@ -1965,7 +1965,7 @@ cdef class Element(SageObject):
             sage: e._mod_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_mod_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_mod_'...
         """
         try:
             python_op = (<object>self)._mod_
@@ -2092,7 +2092,7 @@ cdef class Element(SageObject):
             sage: e._pow_(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_pow_'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_pow_'...
         """
         try:
             python_op = (<object>self)._pow_
@@ -2122,7 +2122,7 @@ cdef class Element(SageObject):
             sage: e._pow_int(e)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.structure.element.Element' object has no attribute '_pow_int'
+            AttributeError: 'sage.structure.element.Element' object has no attribute '_pow_int'...
         """
         try:
             python_op = (<object>self)._pow_int
@@ -2856,7 +2856,7 @@ cdef class RingElement(ModuleElement):
             sage: m.is_nilpotent()                                                      # needs sage.modules
             Traceback (most recent call last):
             ...
-            AttributeError: ... object has no attribute 'is_nilpotent'
+            AttributeError: '...' object has no attribute 'is_nilpotent'...
         """
         if self.is_unit():
             return False
@@ -4671,7 +4671,7 @@ def coerce_binop(method):
         sage: x.test_add(CC(2))
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.complex_mpfr.ComplexNumber' object has no attribute 'test_add'
+        AttributeError: 'sage.rings.complex_mpfr.ComplexNumber' object has no attribute 'test_add'...
 
     TESTS:
 
