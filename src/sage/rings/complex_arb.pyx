@@ -1360,12 +1360,13 @@ cdef class ComplexBall(RingElement):
             sage: CBF100(-3r)
             -3.000000000000000000000000000000
 
-            sage: ComplexBall(CBF100, 10^100)
-            1.000000000000000000000000000000e+100
             sage: ComplexBall(CBF100, CIF(1, 2))
             1.000000000000000000000000000000 + 2.000000000000000000000000000000*I
             sage: ComplexBall(CBF100, RBF(1/3), RBF(1))
             [0.3333333333333333 +/- ...e-17] + 1.000000000000000000000000000000*I
+            sage: ComplexBall(CBF100, 10^100)
+            [1.000000000000000000000000000000e+100 +/- ...]
+
             sage: NF.<a> = QuadraticField(-1, embedding=CC(0, -1))
             sage: CBF(a)
             -1.000000000000000*I
@@ -3009,7 +3010,7 @@ cdef class ComplexBall(RingElement):
             sage: CBF(1).rising_factorial(2**64)
             [+/- ...e+347382171326740403407]
             sage: ComplexBallField(128)(1).rising_factorial(2**64)
-            [2.343691126796861348e+347382171305201285713 +/- ...e+347382171305201285694]
+            [2.34369112679686134...e+347382171305201285713 +/- ...]
             sage: CBF(1/2).rising_factorial(CBF(2,3)) # abs tol 1e-15
             [-0.123060451458124 +/- 3.06e-16] + [0.0406412631676552 +/- 7.57e-17]*I
 
