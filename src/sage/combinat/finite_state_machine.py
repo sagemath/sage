@@ -5406,8 +5406,7 @@ class FiniteStateMachine(SageObject):
             [('1', '2'), ('2', '2')]
         """
         for state in self.iter_states():
-            for t in state.transitions:
-                yield t
+            yield from state.transitions
 
     def initial_states(self):
         """
@@ -6461,8 +6460,7 @@ class FiniteStateMachine(SageObject):
                                    "here." %
                                    (len(branch.outputs),))
 
-            for o in branch.outputs[0]:
-                yield o
+            yield from branch.outputs[0]
             branch.outputs[0] = []
             # Reset output so that in the next round
             # (of "for current in iterator") only new

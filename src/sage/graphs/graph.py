@@ -9039,8 +9039,7 @@ class Graph(GenericGraph):
 
         # For each unlabeled matching, we yield all its possible labelings
         for m in rec(G):
-            for pm in itertools.product(*[edges[frozenset(e)] for e in m]):
-                yield pm
+            yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
     @doc_index("Leftovers")
     def has_perfect_matching(self, algorithm="Edmonds", solver=None, verbose=0,

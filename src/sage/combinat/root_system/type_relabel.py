@@ -55,7 +55,7 @@ class CartanType(cartan_type.CartanType_decorator):
             return type
 
         relabelling = FiniteFamily(relabelling) # Hack to emulate a frozendict which would be hashable!!!!
-        return super(CartanType, cls).__classcall__(cls, type, relabelling)
+        return super().__classcall__(cls, type, relabelling)
 
     def __init__(self, type, relabelling):
         """

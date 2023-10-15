@@ -1557,7 +1557,7 @@ class SignedPermutations(ColoredPermutations):
                                                 [1 if v == 0 else -1
                                                  for v in x._colors],
                                                 x._perm)
-        return super(SignedPermutations, self)._coerce_map_from_(C)
+        return super()._coerce_map_from_(C)
 
     def long_element(self, index_set=None):
         """
@@ -1587,7 +1587,7 @@ class SignedPermutations(ColoredPermutations):
             True
         """
         if index_set is not None:
-            return super(SignedPermutations, self).long_element()
+            return super().long_element()
         return self.element_class(self, [-ZZ.one()] * self._n, self._P.one())
 
     def conjugacy_class_representative(self, nu):

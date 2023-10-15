@@ -1319,7 +1319,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if self._is_facade and element in self._element_to_vertex_dict:
             return element
-        return super(FinitePoset, self).__call__(element)
+        return super().__call__(element)
 
     def hasse_diagram(self):
         r"""
@@ -8994,7 +8994,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         if not from_iterator and self._n < len(known_values):
             return Integer(known_values[self._n])
         else:
-            return super(FinitePosets_n, self).cardinality()
+            return super().cardinality()
 
 
 # For backward compatibility of pickles of the former Posets()

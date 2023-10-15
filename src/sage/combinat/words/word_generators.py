@@ -1651,8 +1651,7 @@ class WordGenerator():
             if not precedent_letter == m(a)[0]:
                 raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)" % (i+1,a,i+1,m,i,precedent_letter))
             w = p(m(a)[1:])
-            for b in w:
-                yield b
+            yield from w
             p = p * m
             precedent_letter = a
 

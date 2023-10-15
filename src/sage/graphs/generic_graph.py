@@ -11431,8 +11431,7 @@ class GenericGraph(GenericGraph_pyx):
             if not self.has_edge(vertex, vertex):
                 yield vertex
 
-        for u in self._backend.iterator_nbrs(vertex):
-            yield u
+        yield from self._backend.iterator_nbrs(vertex)
 
     def vertices(self, sort=False, key=None, degree=None, vertex_property=None):
         r"""
