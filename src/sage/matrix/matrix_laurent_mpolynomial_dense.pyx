@@ -32,7 +32,7 @@ from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomial
 
 cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
     """
-    Dense matrix over a multivariate polynomial ring over a field.
+    Dense matrix over a Laurent multivariate polynomial ring over a field.
     """
     def laurent_matrix_reduction(self):
         """
