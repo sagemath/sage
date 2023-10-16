@@ -330,10 +330,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         By default, this method uses the so-called *crystalline*
         algorithm which computes the characteristic polynomial of the
         Frobenius acting on the crystalline cohomology of the Drinfeld
-        module. For further details, see [Ang1997]_. Currently, the only
-        alternative is to use the *Gekeler* approach based on solving
-        the linear system given by `t^{nr} + \sum_{i=0}^{r-1}
-        \phi_{A_{i}}t^{ni} = 0`. For more details, see [Gek2008]_.
+        module. For further details, see [Ang1997]_.
         """
         # Throw an error if the user asks for an unimplemented algorithm
         # even if the char poly has already been computed
@@ -411,94 +408,6 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         coeffs_A = [A([x.in_base() for x in coeff]) for coeff in charpoly_K]
         return PolynomialRing(A, name=var)(coeffs_A)
-
-    def _frobenius_charpoly_gekeler(self, var):
-        r"""
-        Return the characteristic polynomial of the Frobenius
-        endomorphism using Gekeler's algorithm.
-
-        The algorithm works for Drinfeld `\mathbb{F}_q[T]`-modules of
-        any rank, provided that the constant coefficient is a generator
-        of the base field.
-
-        This method is private and should not be directly called.
-        Instead, use :meth:`frobenius_charpoly` with the option
-        `algorithm='gekeler'`.
-
-        .. WARNING:
-
-            This algorithm only works in the generic case when the
-            corresponding linear system is invertible. Notable cases
-            where this fails include Drinfeld modules whose minimal
-            polynomial is not equal to the characteristic polynomial,
-            and rank 2 Drinfeld modules where the degree 1 coefficient
-            of `\phi_T` is 0. In that case, an exception is raised.
-
-        INPUT:
-
-        - ``var`` -- the name of the second variable
-
-        OUTPUT: a univariate polynomial with coefficients in the
-                function ring
-
-        EXAMPLES::
-
-            sage: Fq = GF(25)
-            sage: A.<T> = Fq[]
-            sage: K.<z> = Fq.extension(6)
-            sage: phi = DrinfeldModule(A, [z, 4, 1, z])
-            sage: phi.frobenius_charpoly(algorithm='gekeler') # indirect doctest
-            X^3 + ((z2 + 2)*T^2 + (z2 + 2)*T + 4*z2 + 4)*X^2 + ... + (3*z2 + 2)*T^2 + (3*z2 + 3)*T + 4
-
-        ::
-
-            sage: Fq = GF(125)
-            sage: A.<T> = Fq[]
-            sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(A, [z, 0, z])
-            sage: phi.frobenius_charpoly(algorithm='gekeler') # indirect doctest
-            Traceback (most recent call last):
-            NotImplementedError: 'Gekeler' algorithm failed
-
-        ALGORITHM:
-
-        Construct a linear system based on the requirement that the
-        Frobenius satisfies a degree r polynomial with coefficients in
-        the function ring. This generalizes the procedure from
-        [Gek2008]_ for the rank 2 case.
-        """
-        K = self.base_over_constants_field()
-        A = self.function_ring()
-        r, n = self.rank(), self._base_degree_over_constants
-        # Compute constants that determine the block structure of the
-        # linear system. The system is prepared such that the solution
-        # vector has the form [a_0, a_1, ... a_{r-1}]^T with each a_i
-        # corresponding to a block of length (n*(r - i))//r + 1
-        shifts = [(n*(r - i))//r + 1 for i in range(r)]
-        rows, cols = n*r + 1, sum(shifts)
-        block_shifts = [0]
-        for i in range(r-1):
-            block_shifts.append(block_shifts[-1] + shifts[i])
-        # Compute the images \phi_T^i for i = 0 .. n.
-        gen_powers = [self(A.gen()**i).coefficients(sparse=False)
-                      for i in range(0, n + 1)]
-        sys, vec = Matrix(K, rows, cols), vector(K, rows)
-        vec[rows - 1] = -1
-        for j in range(r):
-            for k in range(shifts[j]):
-                for i in range(len(gen_powers[k])):
-                    sys[i + n*j, block_shifts[j] + k] = gen_powers[k][i]
-        if sys.right_nullity() != 0:
-            raise NotImplementedError("'Gekeler' algorithm failed")
-        sol = list(sys.solve_right(vec))
-        # The system is solved over L, but the coefficients should all be in Fq
-        # We project back into Fq here.
-        sol_Fq = [x.in_base() for x in sol]
-        char_poly = []
-        for i in range(r):
-            char_poly.append([sol_Fq[block_shifts[i] + j]
-                              for j in range(shifts[i])])
-        return PolynomialRing(self._function_ring, name=var)(char_poly + [1])
 
     def frobenius_norm(self):
         r"""
