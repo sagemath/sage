@@ -82,6 +82,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           #mamba-version: "*"
+          use-mamba: true
           channels: conda-forge
           channel-priority: true
           activate-environment: sage
