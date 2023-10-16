@@ -93,9 +93,12 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
                     bitset_free(&self.basis[j])
                 memerr = 1
         if memerr:
-            sig_free(self.basis); sig_free(self.scratch_bitsets)
-            sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-            sig_free(self.alpha); sig_free(self.scratch)
+            sig_free(self.basis)
+            sig_free(self.scratch_bitsets)
+            sig_free(self.alpha_is_wd)
+            PS_dealloc(self.word_ps)
+            sig_free(self.alpha)
+            sig_free(self.scratch)
             raise MemoryError
         else:
             bitset_zero(self.alpha_is_wd)
@@ -349,9 +352,12 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             bitset_free(&self.scratch_bitsets[j])
         for j from 0 <= j < self.dimension:
             bitset_free(&self.basis[j])
-        sig_free(self.basis); sig_free(self.scratch_bitsets)
-        sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-        sig_free(self.alpha); sig_free(self.scratch)
+        sig_free(self.basis)
+        sig_free(self.scratch_bitsets)
+        sig_free(self.alpha_is_wd)
+        PS_dealloc(self.word_ps)
+        sig_free(self.alpha)
+        sig_free(self.scratch)
         if self.output is not NULL:
             deallocate_agcl_output(self.output)
 
@@ -433,9 +439,12 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                     bitset_free(&self.words[j])
                 memerr = 1
         if memerr:
-            sig_free(self.words); sig_free(self.scratch_bitsets)
-            sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-            sig_free(self.alpha); sig_free(self.scratch)
+            sig_free(self.words)
+            sig_free(self.scratch_bitsets)
+            sig_free(self.alpha_is_wd)
+            PS_dealloc(self.word_ps)
+            sig_free(self.alpha)
+            sig_free(self.scratch)
             raise MemoryError
         else:
             bitset_zero(self.alpha_is_wd)
@@ -456,20 +465,24 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             bitset_free(&self.scratch_bitsets[j])
         for j from 0 <= j < self.nwords:
             bitset_free(&self.words[j])
-        sig_free(self.words); sig_free(self.scratch_bitsets)
-        sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-        sig_free(self.alpha); sig_free(self.scratch)
+        sig_free(self.words)
+        sig_free(self.scratch_bitsets)
+        sig_free(self.alpha_is_wd)
+        PS_dealloc(self.word_ps)
+        sig_free(self.alpha)
+        sig_free(self.scratch)
         if self.output is not NULL:
             deallocate_agcl_output(self.output)
 
     def run(self, partition=None):
         """
         Perform the canonical labeling and automorphism group computation,
-        storing results to self.
+        storing results to ``self``.
 
         INPUT:
-        partition -- an optional list of lists partition of the columns.
-            default is the unit partition.
+
+        - ``partition`` -- an optional list of lists partition of the columns.
+          default is the unit partition.
 
         EXAMPLES::
 

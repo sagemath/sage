@@ -1206,7 +1206,6 @@ cdef class BinaryCode:
                 combination ^= (1 << j)
                 word ^= self.basis[j]
 
-
     cpdef int put_in_std_form(self):
         """
         Put the code in binary form, which is defined by an identity matrix on
@@ -1225,7 +1224,6 @@ cdef class BinaryCode:
             Binary [6,2] linear code, generator matrix
             [101011]
             [010111]
-
         """
         cdef codeword swap, current = 1, pivots = 0
         cdef int i, j, k, row = 0
@@ -1260,6 +1258,7 @@ cdef class BinaryCode:
                 k += 1
         self._apply_permutation_to_basis(perm)
         self._update_words_from_basis()
+
 
 cdef class OrbitPartition:
     """
@@ -2770,7 +2769,8 @@ cdef class PartitionStack:
             j = 0
             if alpha[m] & flag:
                 while j < self_ncols:
-                    i = j; s = 0
+                    i = j
+                    s = 0
                     invariant += 8
                     while True:
                         self_col_degs[i-j] = self.col_degree(CG, self_col_ents[i], alpha[m]^flag, k)
@@ -2800,7 +2800,8 @@ cdef class PartitionStack:
                     j = i
             else:
                 while j < self.nwords:
-                    i = j; s = 0
+                    i = j
+                    s = 0
                     invariant += 64
                     while True:
                         self_wd_degs[i-j] = self.wd_degree(CG, self_wd_ents[i], alpha[m], k, ham_wts)
@@ -3430,7 +3431,9 @@ cdef class BinaryCodeClassifier:
                 alpha[1] = nu.flag
                 nu.refine(k, alpha, 2, C, ham_wts)
                 if nu.sat_225(k): hh = k
-                if nu.is_discrete(k): state = 18; continue
+                if nu.is_discrete(k):
+                    state = 18
+                    continue
 
                 # store the first smallest nontrivial cell in W[k], and set v[k]
                 # equal to its minimum element
@@ -3448,7 +3451,9 @@ cdef class BinaryCodeClassifier:
                 alpha[0] = nu.split_vertex(v[k-1], k)
                 Lambda[k] = nu.refine(k, alpha, 1, C, ham_wts) # store the invariant to Lambda[k]
                 # only if this is the first time moving down the search tree:
-                if h == -1: state = 5; continue
+                if h == -1:
+                    state = 5
+                    continue
 
                 # update hzf__h_zeta
                 if hzf__h_zeta == k-1 and Lambda[k] == zf__Lambda_zeta[k]: hzf__h_zeta = k
@@ -3478,7 +3483,9 @@ cdef class BinaryCodeClassifier:
                 else: state = 6
 
             elif state == 4: # at this point we have -not- ruled out the presence of automorphisms
-                if nu.is_discrete(k): state = 7; continue # we have a terminal node, so process it
+                if nu.is_discrete(k):
+                    state = 7
+                    continue  # we have a terminal node, so process it
 
                 # otherwise, prepare to split out another column:
                 # store the first smallest nontrivial cell in W[k], and set v[k]
@@ -3521,7 +3528,9 @@ cdef class BinaryCodeClassifier:
                 if hb > k:# update hb since we are backtracking
                     hb = k
                 # if j == hh, then all nodes lower than our current position are equivalent, so bail out
-                if j == hh: state = 13; continue
+                if j == hh:
+                    state = 13
+                    continue
 
                 # recall hh: the height of the oldest ancestor of zeta for which Lemma 2.25 is
                 # satisfied, which implies that all terminal nodes descended from there are equivalent.
@@ -3536,11 +3545,15 @@ cdef class BinaryCodeClassifier:
             elif state == 7: # we have just arrived at a terminal node of the search tree T(G, Pi)
                 # if this is the first terminal node, go directly to 18, to
                 # process zeta
-                if h == -1: state = 18; continue
+                if h == -1:
+                    state = 18
+                    continue
 
                 # hzf is the extremal height of ancestors of both nu and zeta, so if k < hzf, nu is not
                 # equivalent to zeta, i.e. there is no automorphism to discover.
-                if k < hzf__h_zeta: state = 8; continue
+                if k < hzf__h_zeta:
+                    state = 8
+                    continue
 
                 nu.get_permutation(zeta, word_gamma, col_gamma)
 
@@ -3553,18 +3566,26 @@ cdef class BinaryCodeClassifier:
             elif state == 8: # we have just ruled out the presence of automorphism and have not yet
                              # considered whether nu improves on rho
                 # if qzb < 0, then rho already has larger indicator tuple
-                if qzb < 0: state = 6; continue
+                if qzb < 0:
+                    state = 6
+                    continue
 
                 # if Lambda[k] > zb[k] or nu is shorter than rho, then we have an improvement for rho
-                if (qzb > 0) or (k < k_rho): state = 9; continue
+                if (qzb > 0) or (k < k_rho):
+                    state = 9
+                    continue
 
                 # now Lambda[k] == zb[k] and k == k_rho, so we appeal to an enumeration:
                 j = nu.cmp(rho, C)
                 # if C(nu) > C(rho), we have a new label, goto 9
-                if j > 0: state = 9; continue
+                if j > 0:
+                    state = 9
+                    continue
 
                 # if C(nu) < C(rho), no new label, goto 6
-                if j < 0: state = 6; continue
+                if j < 0:
+                    state = 6
+                    continue
 
                 # if C(nu) == C(rho), get the automorphism and goto 10
                 rho.get_permutation(nu, word_gamma, col_gamma)
@@ -3627,7 +3648,9 @@ cdef class BinaryCodeClassifier:
 
                 # j stores whether anything happened or not- if not, then the automorphism we have
                 # discovered is already in the subgroup spanned by the generators we have output
-                if not j: state = 11; continue
+                if not j:
+                    state = 11
+                    continue
 
                 # otherwise, we have a new generator, so record it:
                 self.record_automorphism(col_gamma, ncols)
@@ -3641,10 +3664,11 @@ cdef class BinaryCodeClassifier:
                 if tvc & nu.flag:
                     i = tvc^nu.flag
                     if Theta.wd_min_cell_rep[Theta.wd_find(i)] == i:
-                        state = 11; continue
-                else:
-                    if Theta.col_min_cell_rep[Theta.col_find(tvc)] == tvc:
-                        state = 11; continue
+                        state = 11
+                        continue
+                elif Theta.col_min_cell_rep[Theta.col_find(tvc)] == tvc:
+                    state = 11
+                    continue
 
                 # Otherwise, proceed to where zeta meets nu:
                 k = h
@@ -3675,11 +3699,17 @@ cdef class BinaryCodeClassifier:
                 state = 13
 
             elif state == 13: # hub state
-                if k == -1: state = -1; continue # exit point
+                if k == -1:
+                    state = -1
+                    continue  # exit point
 
-                if k > h: state = 17; continue # we are still on the same principal branch from zeta
+                if k > h:
+                    state = 17
+                    continue # we are still on the same principal branch from zeta
 
-                if k == h: state = 14; continue # update the stabilizer index and check for new splits,
+                if k == h:
+                    state = 14
+                    continue # update the stabilizer index and check for new splits,
                                                 # since we have returned to a partition of zeta
                 # otherwise k < h, hence we have just backtracked up zeta, and are one level closer to done
                 h = k
@@ -3719,7 +3749,8 @@ cdef class BinaryCodeClassifier:
                         v[k] = i^nu.flag
                     else:
                         # there is no new split at this level
-                        state = 16; continue
+                        state = 16
+                        continue
                     # new split column better be a minimal representative in Theta, or wasted effort
                     if Theta.wd_min_cell_rep[Theta.wd_find(i)] == i:
                         state = 15
@@ -3733,7 +3764,8 @@ cdef class BinaryCodeClassifier:
                         v[k] = i
                     else:
                         # there is no new split at this level
-                        state = 16; continue
+                        state = 16
+                        continue
                     # new split column better be a minimal representative in Theta, or wasted effort
                     if Theta.col_min_cell_rep[Theta.col_find(v[k])] == v[k]:
                         state = 15
@@ -3760,7 +3792,8 @@ cdef class BinaryCodeClassifier:
                     i = W[jj]
                     j = ham_wts[i & 65535] + ham_wts[(i >> 16) & 65535]
                 else:
-                    i = 0; j = 0
+                    i = 0
+                    j = 0
                     ii = self.radix
                     while i*ii < nwords:
                         iii = W[jj+1+i]
@@ -3812,7 +3845,8 @@ cdef class BinaryCodeClassifier:
                         if (1 << i%self.radix) & W[jjj+1+i/self.radix]: break
                     if i < nwords:
                         v[k] = i^nu.flag
-                        state = 15; continue
+                        state = 15
+                        continue
                 else:
                     i = v[k]
                     while i < ncols:
@@ -3820,7 +3854,8 @@ cdef class BinaryCodeClassifier:
                         if (1 << i) & W[jjj]: break
                     if i < ncols:
                         v[k] = i
-                        state = 15; continue
+                        state = 15
+                        continue
 
                 k -= 1
                 state = 13

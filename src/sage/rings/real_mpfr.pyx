@@ -3905,7 +3905,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         cdef Integer k
 
-        while (not low_done) or (not high_done):
+        while not low_done or not high_done:
             # Move the low side
             k = (c*b - d*a) // (d*e - c*f)
 

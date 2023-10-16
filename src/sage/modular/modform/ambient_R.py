@@ -123,7 +123,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
                     newB.append(f)
                     V = A.span(gens)
             if len(newB) != self.dimension():
-                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements"%(self.dimension(), len(newB)))
+                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements" % (self.dimension(), len(newB)))
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
         else:

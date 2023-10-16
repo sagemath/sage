@@ -952,7 +952,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         for i in Lsmall:  # i is a shift of the smaller polynomial
             j += 1
             ExpoSmall = Fsmall[i]
-            while (j < lenBig):
+            while j < lenBig:
                 found = False
                 if Lbig[j] >= i:
                     ExpoBigSave = [e for e in Fbig[Lbig[j]]]
