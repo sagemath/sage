@@ -275,25 +275,25 @@ cdef extern from "flint_wrap.h":
     # by ``z1^(-rc)`` for row `r` and column `c` of the matrix of
     # coefficients. Aliasing is not allowed.
 
-    void fft_radix2_twiddle(mp_limb_t ** ii, mp_size_t is, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs)
+    void fft_radix2_twiddle(mp_limb_t ** ii, mp_size_t iis, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs)
     # As for ``fft_radix2`` except that the coefficients are spaced by
     # ``is`` in the array ``ii`` and an additional twist by ``z^c*i``
     # is applied to each coefficient where `i` starts at `r` and increases by
     # ``rs`` as one moves from one coefficient to the next. Here ``z``
     # corresponds to multiplication by ``2^ws``.
 
-    void ifft_radix2_twiddle(mp_limb_t ** ii, mp_size_t is, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs)
+    void ifft_radix2_twiddle(mp_limb_t ** ii, mp_size_t iis, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs)
     # As for ``ifft_radix2`` except that the coefficients are spaced by
     # ``is`` in the array ``ii`` and an additional twist by
     # ``z^(-c*i)`` is applied to each coefficient where `i` starts at `r`
     # and increases by ``rs`` as one moves from one coefficient to the next.
     # Here ``z`` corresponds to multiplication by ``2^ws``.
 
-    void fft_truncate1_twiddle(mp_limb_t ** ii, mp_size_t is, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs, mp_size_t trunc)
+    void fft_truncate1_twiddle(mp_limb_t ** ii, mp_size_t iis, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs, mp_size_t trunc)
     # As per ``fft_radix2_twiddle`` except that the transform is truncated
     # as per ``fft_truncate1``.
 
-    void ifft_truncate1_twiddle(mp_limb_t ** ii, mp_size_t is, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs, mp_size_t trunc)
+    void ifft_truncate1_twiddle(mp_limb_t ** ii, mp_size_t iis, mp_size_t n, flint_bitcnt_t w, mp_limb_t ** t1, mp_limb_t ** t2, mp_size_t ws, mp_size_t r, mp_size_t c, mp_size_t rs, mp_size_t trunc)
     # As per ``ifft_radix2_twiddle`` except that the transform is truncated
     # as per ``ifft_truncate1``.
 

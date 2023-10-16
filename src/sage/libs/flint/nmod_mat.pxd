@@ -37,11 +37,6 @@ cdef extern from "flint_wrap.h":
     # Swaps two matrices by swapping the individual entries rather than swapping
     # the contents of the structs.
 
-    MACRO nmod_mat_entry(nmod_mat_t mat, slong i, slong j)
-    # Directly accesses the entry in ``mat`` in row `i` and column `j`,
-    # indexed from zero. No bounds checking is performed. This macro can be
-    # used both for reading and writing coefficients.
-
     mp_limb_t nmod_mat_get_entry(const nmod_mat_t mat, slong i, slong j)
     # Get the entry at row `i` and column `j` of the matrix ``mat``.
 

@@ -686,11 +686,6 @@ cdef extern from "flint_wrap.h":
     # This produces a reduced Gröbner basis, which is unique
     # (up to the sort order of the entries in the vector).
 
-    pair_t fmpz_mpoly_select_pop_pair(pairs_t pairs, const fmpz_mpoly_vec_t G, const fmpz_mpoly_ctx_t ctx)
-    # Given a vector *pairs* of indices `(i, j)` into *G*, selects one pair
-    # for elimination in Buchberger's algorithm. The pair is removed
-    # from *pairs* and returned.
-
     void fmpz_mpoly_buchberger_naive(fmpz_mpoly_vec_t G, const fmpz_mpoly_vec_t F, const fmpz_mpoly_ctx_t ctx)
     # Sets *G* to a Gröbner basis for *F*, computed using
     # a naive implementation of Buchberger's algorithm.
