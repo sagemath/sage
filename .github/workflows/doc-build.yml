@@ -63,7 +63,7 @@ jobs:
             git config --global --add safe.directory "$GITHUB_WORKSPACE"
             git config --global user.name "Sagemath bot"
             git config --global user.email "ci-sage@example.com"
-            (git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
+            (git tag -f old && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
           fi
 
       - name: Prepare
