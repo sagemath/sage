@@ -75,12 +75,13 @@ jobs:
       - name: Fix mamba
         run: |
           conda upgrade --strict-channel-priority -c conda-forge --all
+          conda install -c conda-forge mamba
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python }}
-          mamba-version: "*"
+          #mamba-version: "*"
           channels: conda-forge,defaults
           channel-priority: true
           activate-environment: sage
