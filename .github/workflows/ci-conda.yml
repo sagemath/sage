@@ -39,18 +39,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Check for Miniconda
-        id: check_conda
-        run: echo ::set-output name=installed::$CONDA
-
-      # Miniconda is installed by default in the ubuntu-latest, however not in the act-image to run it locally
-      - name: Install Miniconda
-        if: steps.check_conda.outputs.installed == ''
-        run: |
-          wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh -O ~/miniconda.sh
-          bash ~/miniconda.sh -b -p $HOME/miniconda
-          echo "CONDA=$HOME/miniconda" >> $GITHUB_ENV
-
       - name: Create conda environment files
         run: ./bootstrap-conda
 
@@ -61,27 +49,11 @@ jobs:
           key:
             ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
 
-      # Mamba currently has problems with dependencies installed from other channels
-      # https://github.com/libarchive/libarchive/issues/1857
-      # https://github.com/conda-incubator/setup-miniconda/issues/292
-      # As temporary workaround we move all preinstalled packages over to conda-forge before installing mamba
-      - name: Setup Conda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          python-version: ${{ matrix.python }}
-          channels: conda-forge
-          channel-priority: true
-
-      - name: Fix mamba
-        run: |
-          conda upgrade --strict-channel-priority -c conda-forge --all
-          conda install -c conda-forge mamba
-
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python }}
-          #mamba-version: "*"
+          miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
