@@ -396,3 +396,8 @@ class DrinfeldModularFormsElement(ModuleElement):
         if not self.is_drinfeld_modular_form():
             raise ValueError("the given ring element is not a Drinfeld modular form")
         return self._polynomial.degree()
+
+
+class DrinfeldModularFormsElement_rank_two(DrinfeldModularFormsElement):
+    def __init__(self, parent, polynomial):
+        super().__init__(parent, polynomial)

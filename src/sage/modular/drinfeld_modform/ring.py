@@ -149,7 +149,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
-from .element import DrinfeldModularFormsElement
+from .element import DrinfeldModularFormsElement, DrinfeldModularFormsElement_rank_two
 
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
@@ -183,7 +183,10 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     Element = DrinfeldModularFormsElement
 
-    def __init__(self, base_ring, rank=2, group=None, has_type=False, names='g'):
+    @staticmethod
+    def __classcall_private__(cls, base_ring, rank=2, group=None,
+                              has_type=False, names='g'):
+        rank = ZZ(rank)
         if group is not None:
             raise NotImplementedError("the ring of Drinfeld modular "
                                       "forms is only implemented for "
@@ -204,14 +207,21 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             if len(names.split()) != rank:
                 raise ValueError("the the number of generators "
                                  f"must be equal to the rank (={rank})")
+        if rank == 2:
+            return DrinfeldModularForms_rank_two(base_ring, group,
+                                                 has_type, names)
+        return cls.__classcall__(cls, base_ring, rank, group, has_type, names)
+
+    def __init__(self, base_ring, rank=2, group=None, has_type=False, names='g'):
+        self._has_type = has_type
+        self._rank = rank
+        self._base_ring = base_ring
+        q = base_ring.base_ring().cardinality()
         if has_type:
             degs = [q**i - 1 for i in range(1, rank, 1)]
             degs.append((q**rank - 1)/(q - 1))
         else:
             degs = [q ** i - 1 for i in range(1, rank + 1, 1)]
-        self._has_type = has_type
-        self._rank = rank
-        self._base_ring = base_ring
         self._poly_ring = PolynomialRing(base_ring, rank, names=names,
                                          order=TermOrder('wdeglex', degs))
         self._assign_names(names)
@@ -525,3 +535,11 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             8
         """
         return self._poly_ring
+
+
+class DrinfeldModularForms_rank_two(DrinfeldModularForms):
+
+    Element = DrinfeldModularFormsElement_rank_two
+
+    def __init__(self, base_ring, group, has_type, names):
+        super().__init__(base_ring, 2, group, has_type, names)
