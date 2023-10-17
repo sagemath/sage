@@ -137,8 +137,10 @@ from sage.categories.graded_algebras import GradedAlgebras
 
 from sage.structure.parent import Parent
 
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.integer_ring import ZZ
 
@@ -181,14 +183,21 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     @staticmethod
     def __classcall_private__(cls, base_ring, rank=2, group=None,
                               has_type=False, names='g'):
-        rank = ZZ(rank)
-        if group is not None:
-            raise NotImplementedError("the ring of Drinfeld modular "
-                                      "forms is only implemented for "
-                                      "the full group")
+        rank = ZZ(rank)  # check the type of rank
+        if not isinstance(base_ring, FractionField_generic):
+            raise TypeError("base ring must be a fraction field")
+        if not isinstance(base_ring.base(), PolynomialRing_general):
+            raise TypeError("the base of the base ring must be a "
+                            "polynomial ring")
+        if not base_ring.characteristic():
+            raise ValueError("base ring characteristic must be finite")
+        if not base_ring.base().base().is_field():
+            raise ValueError("the ring of constants must be a field")
+        if group is not None:  # placeholder
+            raise NotImplementedError("Drinfeld modular forms are currently "
+                                      "only implemented for the full group")
         if not isinstance(names, str):
             raise TypeError("names must be a string")
-        q = base_ring.base_ring().cardinality()
         if len(names) == 1:
             n0 = names
             names += "1, "
@@ -207,7 +216,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                                                  has_type, names)
         return cls.__classcall__(cls, base_ring, rank, group, has_type, names)
 
-    def __init__(self, base_ring, rank=2, group=None, has_type=False, names='g'):
+    def __init__(self, base_ring, rank=2, group=None, has_type=False,
+                 names='g'):
         self._has_type = has_type
         self._rank = rank
         self._base_ring = base_ring
@@ -216,7 +226,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             degs = [q**i - 1 for i in range(1, rank, 1)]
             degs.append((q**rank - 1)/(q - 1))
         else:
-            degs = [q ** i - 1 for i in range(1, rank + 1, 1)]
+            degs = [q**i - 1 for i in range(1, rank + 1, 1)]
         self._poly_ring = PolynomialRing(base_ring, rank, names=names,
                                          order=TermOrder('wdeglex', degs))
         self._assign_names(names)
