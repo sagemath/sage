@@ -479,7 +479,7 @@ The documentation will not be modularized.
 
 However, some parts of the Sage reference manual may depend on functionality
 provided by optional packages. These portions of the reference manual
-should be conditionalized using the Sphinx directive ``.. only ::``,
+should be conditionalized using the Sphinx directive ``.. ONLY ::``,
 as explained in :ref:`section-documentation-conditional`.
 
 
