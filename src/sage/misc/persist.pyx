@@ -1102,9 +1102,9 @@ def unpickle_all(target, debug=False, run_test_suite=False):
       ``.sobj`` files.  The tar archive can be in any format that
       python's ``tarfile`` module understands; for example,
       ``.tar.gz`` or ``.tar.bz2``.
-    - ``debug`` -- a boolean (default: False)
+    - ``debug`` -- a boolean (default: ``False``)
       whether to report a stacktrace in case of failure
-    - ``run_test_suite`` -- a boolean (default: False)
+    - ``run_test_suite`` -- a boolean (default: ``False``)
       whether to run ``TestSuite(x).run()`` on the unpickled objects
 
     OUTPUT:
@@ -1120,7 +1120,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
        You must only pass trusted data to this function, including tar
        archives. We use the "data" filter from PEP 706 if possible
        while extracting the archive, but even that is not a perfect
-       solution, and it is only available since python-3.11.4.
+       solution, and it is only available since Python 3.11.4.
 
     EXAMPLES::
 
