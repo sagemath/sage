@@ -159,7 +159,7 @@ cdef class FieldConverter_class:
             sage: C.field_to_fel('foo')
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'to_integer'
+            AttributeError: 'str' object has no attribute 'to_integer'...
         """
         return FfFromInt(x.to_integer())
 
