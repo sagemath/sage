@@ -1322,6 +1322,29 @@ class Stream_uninitialized(Stream_inexact):
         .. WARNING::
 
             This does not update the approximate order or the cache.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_shift, Stream_function
+            sage: U = Stream_uninitialized(0)
+            sage: F = Stream_function(lambda n: 1, False, 0)
+            sage: X = Stream_function(lambda n: n, False, 0)
+            sage: S = Stream_shift(F, -3)
+            sage: U.replace(X, F) is U
+            True
+            sage: U._target = S
+            sage: Up = U.replace(S, X)
+            sage: Up == U
+            False
+            sage: [Up[i] for i in range(5)]
+            [0, 1, 2, 3, 4]
+            sage: Upp = U.replace(F, X)
+            sage: Upp == U
+            False
+            sage: [Upp[i] for i in range(5)]
+            [3, 4, 5, 6, 7]
+            sage: [U[i] for i in range(5)]
+            [1, 1, 1, 1, 1]
         """
         if self._target is None:
             return self
@@ -1562,6 +1585,28 @@ class Stream_unary(Stream_inexact):
         .. WARNING::
 
             This does not update the approximate order or the cache.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_shift, Stream_neg, Stream_function
+            sage: F = Stream_function(lambda n: 1, False, 0)
+            sage: X = Stream_function(lambda n: n, False, 0)
+            sage: S = Stream_shift(F, -3)
+            sage: N = Stream_neg(S, False)
+            sage: N.replace(X, F) is N
+            True
+            sage: Np = N.replace(F, X)
+            sage: Np == N
+            False
+            sage: [Np[i] for i in range(5)]
+            [-3, -4, -5, -6, -7]
+            sage: Npp = N.replace(S, X)
+            sage: Npp == N
+            False
+            sage: [Npp[i] for i in range(5)]
+            [0, -1, -2, -3, -4]
+            sage: [N[i] for i in range(5)]
+            [-1, -1, -1, -1, -1]
         """
         if self._series == stream:
             ret = copy(self)
@@ -1687,6 +1732,53 @@ class Stream_binary(Stream_inexact):
         .. WARNING::
 
             This does not update the approximate order or the cache.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_neg, Stream_sub, Stream_function
+            sage: L = Stream_function(lambda n: 1, False, 0)
+            sage: R = Stream_function(lambda n: n, False, 0)
+            sage: NL = Stream_neg(L, False)
+            sage: NR = Stream_neg(R, False)
+            sage: S = Stream_sub(NL, NR, False)
+            sage: S.replace(Stream_function(lambda n: n^2, False, 0), R) is S
+            True
+            sage: Sp = S.replace(L, R)
+            sage: Sp == S
+            False
+            sage: [Sp[i] for i in range(5)]
+            [0, 0, 0, 0, 0]
+
+        Because we have computed some values of the cache for ``NR`` (which
+        is copied), we get the following wrong result::
+
+            sage: Sp = S.replace(R, L)
+            sage: Sp == S
+            False
+            sage: [Sp[i] for i in range(5)]
+            [-1, 0, 0, 0, 0]
+
+        With fresh caches::
+
+            sage: NL = Stream_neg(L, False)
+            sage: NR = Stream_neg(R, False)
+            sage: S = Stream_sub(NL, NR, False)
+            sage: Sp = S.replace(R, L)
+            sage: [Sp[i] for i in range(5)]
+            [0, 0, 0, 0, 0]
+
+        The replacements here do not affect the relevant caches::
+
+            sage: Sp = S.replace(NL, L)
+            sage: Sp == S
+            False
+            sage: [Sp[i] for i in range(5)]
+            [1, 2, 3, 4, 5]
+            sage: Sp = S.replace(NR, R)
+            sage: Sp == S
+            False
+            sage: [Sp[i] for i in range(5)]
+            [-1, -2, -3, -4, -5]
         """
         if self._left == stream:
             ret = copy(self)
@@ -3441,6 +3533,28 @@ class Stream_shift(Stream):
         .. WARNING::
 
             This does not update the approximate order.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_shift, Stream_function
+            sage: F = Stream_function(lambda n: 1, False, 0)
+            sage: X = Stream_function(lambda n: n, False, 0)
+            sage: S = Stream_shift(F, -3)
+            sage: S.replace(X, F) is S
+            True
+            sage: Sp = S.replace(F, X)
+            sage: Sp == S
+            False
+            sage: [Sp[i] for i in range(5)]
+            [3, 4, 5, 6, 7]
+            sage: U = Stream_uninitialized(0)
+            sage: U._target = F
+            sage: S = Stream_shift(U, -3)
+            sage: Sp = S.replace(F, X)
+            sage: Sp == S
+            False
+            sage: [Sp[i] for i in range(5)]
+            [3, 4, 5, 6, 7]
         """
         if self._series == stream:
             ret = copy(self)
