@@ -137,16 +137,11 @@ from sage.categories.graded_algebras import GradedAlgebras
 
 from sage.structure.parent import Parent
 
-from sage.matrix.constructor import Matrix
-
-from sage.rings.function_field.function_field import FunctionField
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
-from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .element import DrinfeldModularFormsElement, DrinfeldModularFormsElement_rank_two
