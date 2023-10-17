@@ -18,6 +18,10 @@ name: CI Linux incremental
 on:
   pull_request:
     types:
+      # Defaults
+      - opened
+      - synchronize
+      - reopened
       # When a CI label is added
       - labeled
     paths:
