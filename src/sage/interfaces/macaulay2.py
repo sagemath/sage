@@ -1673,7 +1673,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                     graph_cls = DiGraph
                 adj_mat = self.adjacencyMatrix().sage()
                 g = graph_cls(adj_mat, format='adjacency_matrix')
-                g.relabel(self.vertices(sort=True))
+                g.relabel(self.vertices())
                 return g
             elif cls_str == "ChainComplex":
                 from sage.homology.chain_complex import ChainComplex
@@ -1884,8 +1884,8 @@ def is_Macaulay2Element(x):
 
         sage: from sage.interfaces.macaulay2 import is_Macaulay2Element
         sage: is_Macaulay2Element(2)              # optional - macaulay2
-        doctest:...: DeprecationWarning: the function is_Macaulay2Element is deprecated; use isinstance(x, sage.interfaces.abc.MacaulayElement) instead
-        See https://github.com/sagemath/sage/issues/34823 for details.
+        doctest:...: DeprecationWarning: the function is_Macaulay2Element is deprecated; use isinstance(x, sage.interfaces.abc.Macaulay2Element) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         False
         sage: is_Macaulay2Element(macaulay2(2))   # optional - macaulay2
         True
