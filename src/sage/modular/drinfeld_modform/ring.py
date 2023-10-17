@@ -64,31 +64,8 @@ It is possible to compute the coefficient forms::
 One can compute basis for any subspace of given weight::
 
     sage: M = DrinfeldModularForms(K, 4)
-    sage: M.basis_of_weight(q^4 - 1)
-    [g4,
-     g2^10,
-     g1*g3^3,
-     g1^2*g2^3*g3^2,
-     g1^3*g2^6*g3,
-     g1^4*g2^9,
-     g1^6*g2^2*g3^2,
-     g1^7*g2^5*g3,
-     g1^8*g2^8,
-     g1^10*g2*g3^2,
-     g1^11*g2^4*g3,
-     g1^12*g2^7,
-     g1^14*g3^2,
-     g1^15*g2^3*g3,
-     g1^16*g2^6,
-     g1^19*g2^2*g3,
-     g1^20*g2^5,
-     g1^23*g2*g3,
-     g1^24*g2^4,
-     g1^27*g3,
-     g1^28*g2^3,
-     g1^32*g2^2,
-     g1^36*g2,
-     g1^40]
+    sage: M.basis_of_weight(q^3 - 1)
+    [g3, g1*g2^3, g1^5*g2^2, g1^9*g2, g1^13]
 
 We note that the elements of this ring may not be *modular forms* as
 as they may have mixed weight components::
