@@ -214,7 +214,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         r"""
         Return an element of self.
 
-        EXAMPLES::
+        TESTS::
 
             sage: q = 3
             sage: A = GF(q)['T']
@@ -228,6 +228,14 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     def _repr_(self):
         r"""
         Return the string representation of self.
+
+        TESTS::
+
+            sage: A = GF(2)['T']
+            sage: K = Frac(A)
+            sage: M = DrinfeldModularForms(K, 3)
+            sage: M._repr_()
+            'Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2 (using GF2X)'
         """
         return ("Ring of Drinfeld modular forms of rank %s over %s"
                 % (self._rank, self._base_ring))
@@ -408,6 +416,15 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     def _element_constructor_(self, polynomial):
         r"""
         Return the element corresponding to the given polynomial.
+
+        TESTS::
+
+            sage: A = GF(3)['T']
+            sage: K = Frac(A)
+            sage: M = DrinfeldModularForms(K, 3)
+            sage: g1, g2, g3 = polygens(K, 3, 'g1, g2, g3')
+            sage: M(g1*g2 + g3^4)
+            g3^4 + g1*g2
         """
         return self.element_class(self, polynomial)
 
