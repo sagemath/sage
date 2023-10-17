@@ -88,9 +88,7 @@ from sage.data_structures.stream import (
     Stream_iterator,
     Stream_exact,
     Stream_uninitialized,
-    Stream_sub,
-    Stream_taylor,
-    Stream_functional_equation
+    Stream_taylor
 )
 
 from types import GeneratorType
@@ -1797,7 +1795,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
     def taylor(self, f):
         r"""
-        Return the Taylor expansion of the function ``f``.
+        Return the Taylor expansion around `0` of the function ``f``.
 
         INPUT:
 
@@ -1806,6 +1804,24 @@ class LazyLaurentSeriesRing(LazySeriesRing):
           * the substitution `f(z)`, where `z` is generator of ``self``
           * `f` is a function of a single variable with no poles and has a
             ``derivative`` method
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: x = SR.var('x')
+            sage: f(x) = (1 + x)/(1 - x^2)
+            sage: L.taylor(f)
+            1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
+
+        For inputs as symbolic functions, this uses the generic implementation,
+        and so the function cannot have any poles at `0`::
+
+            sage: f(x) = (1 + x^2) / sin(x^2)
+            sage: L.taylor(f)
+            <repr(...) failed: ValueError: power::eval(): division by zero>
+            sage: def g(a): return (1 + a^2) / sin(a^2)
+            sage: L.taylor(g)
+            z^-2 + 1 + 1/6*z^2 + 1/6*z^4 + O(z^5)
         """
         try:
             return f(self.gen())
@@ -1813,40 +1829,6 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             pass
         stream = Stream_taylor(f, self.is_sparse())
         return self.element_class(self, stream)
-
-    def functional_equation(self, eqn, series, initial_values=None):
-        r"""
-        Define the lazy undefined ``series`` that solves the functional
-        equation ``eqn == 0`` with ``initial_values``.
-
-        EXAMPLES::
-
-            sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: f = L.undefined(-1)
-            sage: L.functional_equation(2+z*f(z^2) - f, f, [5])
-            sage: f
-            5*z^-1 + 2 + 2*z + 2*z^3 + O(z^6)
-            sage: 2 + z*f(z^2) - f
-            O(z^6)
-
-            sage: f = L.undefined(-2)
-            sage: L.functional_equation(2+z*f(z^2) - f, f, [5])
-            sage: f
-            <repr(...) failed: ValueError: no solution in degree -3 as 5 != 0>
-        """
-        if not isinstance(series._coeff_stream, Stream_uninitialized) or series._coeff_stream._target is not None:
-            raise ValueError("series already defined")
-
-        if initial_values is None:
-            initial_values = []
-
-        eqn = self(eqn)
-        cs = series._coeff_stream
-        ao = cs._approximate_order
-        R = self.base_ring()
-        initial_values = [R(val) for val in initial_values]
-        ret = Stream_functional_equation(ao, eqn._coeff_stream, cs, initial_values, R)
-        series._coeff_stream = ret
 
     # === special functions ===
 
@@ -2561,7 +2543,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
     def taylor(self, f):
         r"""
-        Return the Taylor expansion of the function ``f``.
+        Return the Taylor expansion around `0` of the function ``f``.
 
         INPUT:
 
@@ -2571,6 +2553,34 @@ class LazyPowerSeriesRing(LazySeriesRing):
             are the generators of ``self``
           * `f` is a function of a single variable with no poles and has a
             ``derivative`` method
+
+        .. WARNING::
+
+            For inputs as symbolic functions/expressions
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: x = SR.var('x')
+            sage: f(x) = (1 + x) / (1 - x^3)
+            sage: L.taylor(f)
+            1 + z + z^3 + z^4 + z^6 + O(z^7)
+            sage: (1 + z) / (1 - z^3)
+            1 + z + z^3 + z^4 + z^6 + O(z^7)
+            sage: f(x) = cos(x + pi/2)
+            sage: L.taylor(f)
+            -z + 1/6*z^3 - 1/120*z^5 + O(z^7)
+
+            sage: L.<a,b> = LazyPowerSeriesRing(QQ)
+            sage: def f(x, y): return (1 + x) / (1 + y)
+            sage: L.taylor(f)
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            sage: y = SR.var('y')
+            sage: g(x, y) = (1 + x) / (1 + y)
+            sage: L.taylor(g)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented generically for one variable
         """
         try:
             return f(*self.gens())
@@ -2580,123 +2590,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
             raise NotImplementedError("only implemented generically for one variable")
         stream = Stream_taylor(f, self.is_sparse())
         return self.element_class(self, stream)
-
-    def functional_equation(self, eqn, series, initial_values=None):
-        r"""
-        Define the lazy undefined ``series`` that solves the functional
-        equation ``eqn == 0`` with ``initial_values``.
-
-        EXAMPLES::
-
-            sage: L.<z> = LazyPowerSeriesRing(QQ)
-            sage: f = L.undefined(0)
-            sage: F = diff(f, 2)
-            sage: L.functional_equation(F + f, f, [1, 0])
-            sage: f
-            1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
-            sage: cos(z)
-            1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
-            sage: F
-            -1 + 1/2*z^2 - 1/24*z^4 + 1/720*z^6 + O(z^7)
-
-            sage: L.<z> = LazyPowerSeriesRing(QQ)
-            sage: f = L.undefined(0)
-            sage: L.functional_equation(2*z*f(z^3) + z*f^3 - 3*f + 3, f)
-            sage: f
-            1 + z + z^2 + 2*z^3 + 5*z^4 + 11*z^5 + 28*z^6 + O(z^7)
-
-        From Exercise 6.63b in [ECII]_::
-
-            sage: g = L.undefined()
-            sage: z1 = z*diff(g, z)
-            sage: z2 = z1 + z^2 * diff(g, z, 2)
-            sage: z3 = z1 + 3 * z^2 * diff(g, z, 2) + z^3 * diff(g, z, 3)
-            sage: e1 = g^2 * z3 - 15*g*z1*z2 + 30*z1^3
-            sage: e2 = g * z2 - 3 * z1^2
-            sage: e3 = g * z2 - 3 * z1^2
-            sage: e = e1^2 + 32 * e2^3 - g^10 * e3^2
-            sage: L.functional_equation(e, g, [1, 2])
-
-            sage: sol = L(lambda n: 1 if not n else (2 if is_square(n) else 0)); sol
-            1 + 2*z + 2*z^4 + O(z^7)
-            sage: all(g[i] == sol[i] for i in range(20))
-            True
-
-        Some more examples over different rings::
-
-            sage: L.<z> = LazyPowerSeriesRing(SR)
-            sage: G = L.undefined(0)
-            sage: L.functional_equation(diff(G) - exp(-G(-z)), G, [ln(2)])
-            sage: G
-            log(2) + z + 1/2*z^2 + (-1/12*z^4) + 1/45*z^6 + O(z^7)
-
-            sage: L.<z> = LazyPowerSeriesRing(RR)
-            sage: G = L.undefined(0)
-            sage: L.functional_equation(diff(G) - exp(-G(-z)), G, [log(2)])
-            sage: G
-            0.693147180559945 + 1.00000000000000*z + 0.500000000000000*z^2 - 0.0833333333333333*z^4 + 0.0222222222222222*z^6 + O(1.00000000000000*z^7)
-
-        We solve the recurrence relation in (3.12) of Prellberg and Brak
-        :doi:`10.1007/BF02183685`::
-
-            sage: q,y = QQ['q,y'].fraction_field().gens()
-            sage: L.<x> = LazyPowerSeriesRing(q.parent())
-            sage: R = L.undefined()
-            sage: L.functional_equation((1-q*x)*R - (y*q*x+y)*R(q*x) - q*x*R*R(q*x) - x*y*q, R, [0])
-            sage: R[0]
-            0
-            sage: R[1]
-            q*y/(-q*y + 1)
-            sage: R[2]
-            (-q^3*y^2 - q^2*y)/(-q^3*y^2 + q^2*y + q*y - 1)
-            sage: R[3].factor()
-            (-1) * y * q^3 * (q*y - 1)^-2 * (q^2*y - 1)^-1 * (q^3*y - 1)^-1
-             * (q^4*y^3 + q^3*y^2 + q^2*y^2 - q^2*y - q*y - 1)
-
-            sage: Rp = L.undefined(1)
-            sage: L.functional_equation((y*q*x+y)*Rp(q*x) + q*x*Rp*Rp(q*x) + x*y*q - (1-q*x)*Rp, Rp, [])
-            sage: all(R[n] == Rp[n] for n in range(10))
-            True
-
-        Another example::
-
-            sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1,f2"].fraction_field())
-            sage: L.base_ring().inject_variables()
-            Defining x, y, f1, f2
-            sage: F = L.undefined()
-            sage: L.functional_equation(F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z), F, [0, f1, f2])
-            sage: F
-            f1*z + f2*z^2 + ((-1/6*x*y*f1+1/3*x*f2+1/3*y*f2)*z^3)
-             + ((-1/24*x^2*y*f1-1/24*x*y^2*f1+1/12*x^2*f2+1/12*x*y*f2+1/12*y^2*f2)*z^4)
-             + ... + O(z^8)
-            sage: sol = 1/(x-y)*((2*f2-y*f1)*(exp(x*z)-1)/x - (2*f2-x*f1)*(exp(y*z)-1)/y)
-            sage: F - sol
-            O(z^7)
-
-        We need to specify the initial value for the degree 1 component to
-        get a unique solution in the previous example::
-
-            sage: F = L.undefined()
-            sage: L.functional_equation(F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z), F, [])
-            sage: F
-            <repr(...) failed: ValueError: unable to determine a unique solution in degree 3>
-        """
-        if self._arity != 1:
-            raise NotImplementedError("only implemented for one variable")
-
-        if not isinstance(series._coeff_stream, Stream_uninitialized) or series._coeff_stream._target is not None:
-            raise ValueError("series already defined")
-
-        if initial_values is None:
-            initial_values = []
-
-        eqn = self(eqn)
-        cs = series._coeff_stream
-        ao = cs._approximate_order
-        R = self.base_ring()
-        initial_values = [R(val) for val in initial_values]
-        ret = Stream_functional_equation(ao, eqn._coeff_stream, cs, initial_values, R)
-        series._coeff_stream = ret
 
 
 ######################################################################

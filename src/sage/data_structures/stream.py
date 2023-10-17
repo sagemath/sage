@@ -219,6 +219,13 @@ class Stream():
         Return ``self`` except with ``stream`` replaced by ``sub``.
 
         The default is to return ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_zero
+            sage: zero = Stream_zero()
+            sage: zero.replace(zero, zero) is zero
+            True
         """
         return self
 
@@ -1087,6 +1094,15 @@ class Stream_taylor(Stream_inexact):
             sage: f = Stream_taylor(polygen(QQ, 'x')^3, False)
             sage: TestSuite(f).run(skip="_test_pickling")
         """
+        from sage.symbolic.ring import SR
+        from sage.structure.element import parent
+        if parent(function) is SR:
+            self._is_symbolic = True
+            if function.number_of_arguments() != 1:
+                raise NotImplementedError("the function can only take a single input")
+            self._arg = function.arguments()[0]
+        else:
+            self._is_symbolic = False
         self._func = function
         super().__init__(is_sparse, False)
         self._approximate_order = 0
@@ -1135,7 +1151,7 @@ class Stream_taylor(Stream_inexact):
             sage: f == g
             True
         """
-        # The bool call is needed when passing functions in SR
+        # The bool call is needed when the functions are in SR
         return isinstance(other, type(self)) and bool(self._func == other._func)
 
     def get_coefficient(self, n):
@@ -1153,11 +1169,24 @@ class Stream_taylor(Stream_inexact):
             sage: f = Stream_taylor(g, True)
             sage: f.get_coefficient(5)
             1/120
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: y = SR.var('y')
+            sage: f = Stream_taylor(sin(y), True)
+            sage: f.get_coefficient(5)
+            1/120
         """
         if n == 0:
+            if self._is_symbolic:
+                return self._func.subs({self._arg: ZZ.zero()})
             return self._func(ZZ.zero())
+
         from sage.functions.other import factorial
-        return self._func.derivative(n)(ZZ.zero()) / factorial(n)
+        if self._is_symbolic:
+            num = self._func.derivative(n).subs({self._arg: ZZ.zero()})
+        else:
+            num = self._func.derivative(n)(ZZ.zero())
+        return num / factorial(n)
 
     def iterate_coefficients(self):
         """
@@ -1171,12 +1200,21 @@ class Stream_taylor(Stream_inexact):
             sage: it = f.iterate_coefficients()
             sage: [next(it) for _ in range(10)]
             [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+
+            sage: y = SR.var('y')
+            sage: f = Stream_taylor(y^3, False)
+            sage: it = f.iterate_coefficients()
+            sage: [next(it) for _ in range(10)]
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
         """
         cur = self._func
         n = 0
         denom = 1
         while True:
-            yield cur(ZZ.zero()) / denom
+            if self._is_symbolic:
+                yield cur({self._arg: ZZ.zero()}) / denom
+            else:
+                yield cur(ZZ.zero()) / denom
             cur = cur.derivative()
             n += 1
             denom *= n
@@ -1375,7 +1413,10 @@ class Stream_functional_equation(Stream_inexact):
         offset = self._approximate_order
 
         def get_coeff(n):
-            return x[n-offset]
+            n -= offset
+            if n < len(self._initial_values):
+                return self._initial_values[n]
+            return x[n]
 
         sf = Stream_function(get_coeff, is_sparse=False, approximate_order=offset, true_order=True)
         self._F = self._F.replace(self._uninitialized, sf)
@@ -1417,6 +1458,7 @@ class Stream_functional_equation(Stream_inexact):
                 raise ValueError(f"the solutions to the coefficients must be computed in order")
             val = -hc.get(0, P.zero()).lc() / hc[1].lc()
             # Update the cache
+            sf._cache[len(data)] = val
             data.append(val)
             yield val
             n += 1
@@ -3835,7 +3877,7 @@ class Stream_integral(Stream_unary):
         return min(self._series._approximate_order + self._shift, 0)
 
     def get_coefficient(self, n):
-        """
+        r"""
         Return the ``n``-th coefficient of ``self``.
 
         EXAMPLES::
@@ -3845,14 +3887,14 @@ class Stream_integral(Stream_unary):
             sage: [f[i] for i in range(-3, 4)]
             [-2, -1, 0, 1, 2, 3, 4]
             sage: f2 = Stream_integral(f, [0], True)
-            sage: [f2[i] for i in range(-3, 5)]
+            sage: [f2.get_coefficient(i) for i in range(-3, 5)]
             [0, 1, 1, 0, 1, 1, 1, 1]
 
             sage: f = Stream_function(lambda n: (n + 1)*(n+2), True, 2)
             sage: [f[i] for i in range(-1, 4)]
             [0, 0, 0, 12, 20]
             sage: f2 = Stream_integral(f, [-1, -1, -1], True)
-            sage: [f2[i] for i in range(-1, 7)]
+            sage: [f2.get_coefficient(i) for i in range(-1, 7)]
             [0, -1, -1, -1/2, 0, 0, 1/5, 1/6]
         """
         if 0 <= n < self._shift:
