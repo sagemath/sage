@@ -101,6 +101,13 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
                 raise ValueError("not all elements are curves")
             if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
+        self._braid_monodromy = None
+        self._vertical_braid_monodromy = None
+        self._strands = dict()
+        self._vertical_strands = dict()
+        self._fundamental_group = None
+        self._meridians = dict()
+        self._infinity = None
 
     def __getitem__(self, i):
         """
@@ -465,6 +472,8 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
+        if self._braid_monodromy:
+            return self._braid_monodromy
         L = self.defining_polynomials()
         return braid_monodromy(prod(L), arrangement=L, vertical=vertical)[:-1]
 
