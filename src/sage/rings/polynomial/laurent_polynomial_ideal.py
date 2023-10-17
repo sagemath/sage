@@ -114,7 +114,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: P.<x,y,z> = LaurentPolynomialRing(QQ, 3)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: I.hint()
-            Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
             sage: I.set_hint(P.polynomial_ring().ideal([x + 3*y]))
             sage: I.hint()
             Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y, z over Rational Field
@@ -135,7 +135,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: P.<x,y,z> = LaurentPolynomialRing(QQ, 3)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: I.hint()
-            Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         return self._hint
 
