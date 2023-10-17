@@ -102,9 +102,10 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
         self._braid_monodromy = None
-        self._vertical_braid_monodromy = None
         self._strands = dict()
-        self._vertical_strands = dict()
+        self._vertical_braid_monodromy = None
+        self._vertical_strands = None
+        self._vertical_asymptotes = dict()
         self._fundamental_group = None
         self._meridians = dict()
         self._infinity = None
@@ -472,10 +473,38 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
-        if self._braid_monodromy:
+        if self._braid_monodromy and not vertical:
             return self._braid_monodromy
+        if self._vertical_braid_monodromy and self._vertical_asymptotes and vertical:
+            return self._vertical_braid_monodromy
+        K = self.base_ring()
+        if not K.is_subring(QQbar):
+            raise TypeError('the base field is not in QQbar')
         L = self.defining_polynomials()
-        return braid_monodromy(prod(L), arrangement=L, vertical=vertical)[:-1]
+        bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L, vertical=vertical)[:-1]
+        if vertical:
+            self._vertical_braid_monodromy = bm
+            self._vertical_strands = dic
+            self._vertical_asymptotes = dv
+        else:
+            self._braid_monodromy = bm
+            self._strands = dic
+        return bm
+
+    def strands(self, vertical=False):
+        if not vertical:
+            if not self._strands:
+                print("Braid monodromy has not been computed")
+            return self._strands
+        if vertical:
+            if not self._vertical_strands:
+                print("Braid monodromy has not been computed")
+            return self._vertical_strands
+
+    def vertical_asymptotes(self):
+        if not self._vertical_asymptotes:
+            print("Braid monodromy has not been computed")
+        return self._vertical_asymptotes
 
 
 class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
