@@ -1006,7 +1006,7 @@ def AG(n, q, x=None):
 
     EXAMPLES::
 
-        sage: M = matroids.AG(2, 3) \ 8
+        sage: M = matroids.AG(2, 3).delete(8)
         sage: M.is_isomorphic(matroids.named_matroids.AG23minus())
         True
         sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) -                 # needs sage.rings.finite_rings

@@ -7,9 +7,7 @@ SAGE_SPKG_CONFIGURE([mpfr], [
 ], [], [], [
     if test x$sage_spkg_install_mpfr = xyes; then
         AC_SUBST(SAGE_MPFR_PREFIX, ['$SAGE_LOCAL'])
-        AC_MSG_RESULT([using Sage's mpfr SPKG])
     else
        AC_SUBST(SAGE_MPFR_PREFIX, [''])
-       AC_MSG_RESULT([using mpfr library from the system])
     fi
 ])

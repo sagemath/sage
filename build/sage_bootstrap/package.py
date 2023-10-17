@@ -47,6 +47,7 @@ class Package(object):
         self._init_version()
         self._init_type()
         self._init_install_requires()
+        self._init_dependencies()
 
     def __repr__(self):
         return 'Package {0}'.format(self.name)
@@ -245,6 +246,28 @@ class Package(object):
                 return part
         return None
 
+    @property
+    def dependencies(self):
+        """
+        Return a list of strings, the package names of the (ordinary) dependencies
+        """
+        # after a '|', we have order-only dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    @property
+    def dependencies_order_only(self):
+        """
+        Return a list of strings, the package names of the order-only dependencies
+        """
+        return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+
+    @property
+    def dependencies_check(self):
+        """
+        Return a list of strings, the package names of the check dependencies
+        """
+        return self.__dependencies_order_only.strip().split()
+
     def __eq__(self, other):
         return self.tarball == other.tarball
 
@@ -335,3 +358,20 @@ class Package(object):
                 self.__install_requires = f.read().strip()
         except IOError:
             self.__install_requires = None
+
+    def _init_dependencies(self):
+        try:
+            with open(os.path.join(self.path, 'dependencies')) as f:
+                self.__dependencies = f.readline().strip()
+        except IOError:
+            self.__dependencies = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_check')) as f:
+                self.__dependencies_check = f.readline().strip()
+        except IOError:
+            self.__dependencies_check = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_order_only')) as f:
+                self.__dependencies_order_only = f.readline()
+        except IOError:
+            self.__dependencies_order_only = ''

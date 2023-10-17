@@ -3,7 +3,7 @@ r"""
 Finite Drinfeld modules
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.FiniteDrinfeldModule`,
+:class:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule_finite`,
 which inherits
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
@@ -28,7 +28,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 
 
-class FiniteDrinfeldModule(DrinfeldModule):
+class DrinfeldModule_finite(DrinfeldModule):
     r"""
     This class implements finite Drinfeld `\mathbb{F}_q[T]`-modules.
 
@@ -42,9 +42,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
     .. RUBRIC:: Construction:
 
     The user does not ever need to directly call
-    ``FiniteDrinfeldModule`` --- the metaclass ``DrinfeldModule`` is
+    ``DrinfeldModule_finite`` --- the metaclass ``DrinfeldModule`` is
     responsible for instantiating ``DrinfeldModule`` or
-    ``FiniteDrinfeldModule`` depending on the input::
+    ``DrinfeldModule_finite`` depending on the input::
 
         sage: Fq = GF(343)
         sage: A.<T> = Fq[]
@@ -57,11 +57,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         sage: isinstance(phi, DrinfeldModule)
         True
-        sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-        sage: isinstance(phi, FiniteDrinfeldModule)
+        sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+        sage: isinstance(phi, DrinfeldModule_finite)
         True
 
-    The user should never use ``FiniteDrinfeldModule`` to test if a
+    The user should never use ``DrinfeldModule_finite`` to test if a
     Drinfeld module is finite, but rather the ``is_finite`` method::
 
         sage: phi.is_finite()
@@ -148,7 +148,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             True
         """
         # NOTE: There used to be no __init__ here (which was fine). I
-        # added one to ensure that FiniteDrinfeldModule would always
+        # added one to ensure that DrinfeldModule_finite would always
         # have _frobenius_norm and _frobenius_trace attributes.
         super().__init__(gen, category)
         self._frobenius_norm = None
