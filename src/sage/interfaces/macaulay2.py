@@ -656,16 +656,14 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def version(self):
         """
-        Returns the version of Macaulay2.
+        Return the version of Macaulay2 as a tuple.
 
         EXAMPLES::
 
             sage: macaulay2.version() # optional - macaulay2
-            (1, 1...
+            (1, ...)
         """
-        s = self.eval("version")
-        r = re.compile("VERSION => (.*?)\n")
-        s = r.search(s).groups()[0]
+        s = self.eval('version#"VERSION"')
         return tuple(int(i) for i in s.split("."))
 
     # Constructors
