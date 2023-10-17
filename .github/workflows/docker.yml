@@ -251,12 +251,13 @@ jobs:
           if [ -f .tox/$TOX_ENV/Dockertags ]; then
              cat .tox/$TOX_ENV/Dockertags
           fi
-        if: always()
+        if: always() && inputs.docker_push_repository
       - name: Save build as incremental tar archives
         if: always() && inputs.image_artifact
         run: |
+          set -x
           for tag in $(cat .tox/$TOX_ENV/Dockertags); do
-              docker run $tag tar cf - --listed-incremental=/sage.snar /sage > "$tag-incremental.tar"
+              docker run $tag tar cvf - --listed-incremental=/sage.snar --no-check-device /sage > "$tag-incremental.tar"
           done
       - name: Upload incremental tar archives as an artifact
         if: always() && inputs.image_artifact
