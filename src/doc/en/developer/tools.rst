@@ -225,7 +225,7 @@ Ruff
 ====
 
 `Ruff <https://pypi.org/project/ruff/>`_ is a powerful and fast linter
-for Python code, written in C.
+for Python code, written in Rust.
 
 It comes with a large choice of possible checks, and has the capacity
 to fix some of the warnings it emits.
