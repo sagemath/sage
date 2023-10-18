@@ -1372,8 +1372,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: print(P._latex_())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
-              \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
+            \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
               \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
