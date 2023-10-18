@@ -542,3 +542,15 @@ class DrinfeldModularForms_rank_two(DrinfeldModularForms):
 
     def __init__(self, base_ring, group, has_type, names):
         super().__init__(base_ring, 2, group, has_type, names)
+
+    def from_expansion(self, expansion, weight):
+        return
+
+    def from_petrov_expansion(self, k, n, name='t'):
+        return
+
+    def sturm_bound(self, weight):
+        return
+
+    def eisenstein_series(self, weight):
+        return
