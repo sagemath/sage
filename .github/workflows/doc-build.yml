@@ -88,7 +88,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -103,7 +103,7 @@ jobs:
           set -ex
           export SAGE_USE_CDNS=yes
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
-          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage
+          make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
           ./config.status && make doc-html
         working-directory: ./worktree-image

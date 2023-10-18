@@ -89,7 +89,7 @@ jobs:
           ./bootstrap && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build (fallback to non-incremental)
@@ -97,19 +97,20 @@ jobs:
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Build docs (PDF)
         id: docbuild
         if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
-        run: make build V=0 && make doc-pdf
+        run: |
+          make doc-clean doc-uninstall; make doc-pdf
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
+          MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Copy docs
