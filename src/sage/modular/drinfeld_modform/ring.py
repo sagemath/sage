@@ -302,12 +302,32 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             g2
             sage: M._generator_coefficient_form(3)
             g3
+
+        ::
+
+            sage: M = DrinfeldModularForms(K, 3, has_type=True)
+            sage: M._generator_coefficient_form(1)
+            g1
+            sage: M._generator_coefficient_form(2)
+            g2
+            sage: M._generator_coefficient_form(3)
+            h^2
+            sage: M._generator_coefficient_form(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: index (=0) must be >= 1 and <= rank (=3)
+            sage: M._generator_coefficient_form(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: index (=0) must be >= 1 and <= rank (=3)
         """
-        if i == 1:
-            return self.gen(0)
-        if self._has_type and i == 2:
+        i = ZZ(i)
+        r = self.rank()
+        if i < 1 or i > r:
+            raise ValueError(f"index (={i}) must be >= 1 and <= rank (={r})")
+        if self._has_type and i == r:
             q = self._base_ring.base_ring().cardinality()
-            return self.gen(1)**(q - 1)
+            return self.gen(i-1)**(q - 1)
         return self.gen(i - 1)
 
     def coefficient_form(self, i, a=None):
