@@ -20,6 +20,7 @@ cdef list from_word(list w, list base_set):
             sp[b].append(x)
     return sp
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 def set_partition_iterator(base_set):
@@ -74,6 +75,7 @@ def set_partition_iterator(base_set):
             # H3: increase a_{n-1}
             a[last] += 1
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 def _set_partition_block_gen(Py_ssize_t n, Py_ssize_t k, list a):
@@ -107,6 +109,7 @@ def _set_partition_block_gen(Py_ssize_t n, Py_ssize_t k, list a):
         for P in _set_partition_block_gen(n-1, k-1, a):
             yield P
         a[n-1] = n-1
+
 
 @cython.wraparound(False)
 @cython.boundscheck(False)

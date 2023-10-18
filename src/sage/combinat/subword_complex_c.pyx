@@ -57,7 +57,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     if j != i:
         t = R[min(r, r_minus)]
         for k in range(min(i, j) + 1, max(i, j) + 1):
-            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k],side="left")
+            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side="left")
     return j
 
 cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
