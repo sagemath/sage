@@ -153,6 +153,45 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: TestSuite(DrinfeldModularForms(K)).run()
         sage: TestSuite(DrinfeldModularForms(K, 3)).run()
         sage: TestSuite(DrinfeldModularForms(K, 4)).run()
+
+    ::
+
+        sage: K = Frac(GF(2)['T'])
+        sage: DrinfeldModularForms(K, rank=x)
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert x to an integer
+        sage: DrinfeldModularForms(GF(2)['T'])
+        Traceback (most recent call last):
+        ...
+        TypeError: base ring must be a fraction field of a polynomial ring
+        sage: DrinfeldModularForms(Frac(ZZ['T']))
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring characteristic must be finite
+        sage: R = GF(2)['u']
+        sage: K = Frac(R['T'])
+        sage: DrinfeldModularForms(K)
+        Traceback (most recent call last):
+        ...
+        ValueError: the ring of constants must be a field
+        sage: K = Frac(Frac(R)['T'])
+        sage: DrinfeldModularForms(K)
+        Traceback (most recent call last):
+        ...
+        ValueError: the ring of constants must be finite
+        sage: DrinfeldModularForms(Frac(GF(2)['T']), group=2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Drinfeld modular forms are currently only implemented for the full group
+        sage: DrinfeldModularForms(Frac(GF(2)['T']), names=1)
+        Traceback (most recent call last):
+        ...
+        TypeError: names must be a string
+        sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names='f1, f2, f3, f4')
+        Traceback (most recent call last):
+        ...
+        ValueError: the the number of generators must be equal to the rank (=3)
     """
 
     Element = DrinfeldModularFormsElement
@@ -162,20 +201,24 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                               has_type=False, names='g'):
         rank = ZZ(rank)  # check the type of rank
         if not isinstance(base_ring, FractionField_generic):
-            raise TypeError("base ring must be a fraction field")
-        if not isinstance(base_ring.base(), PolynomialRing_general):
+            raise TypeError("base ring must be a fraction field of a "
+                            "polynomial ring")
+        if not isinstance(base_ring.base(), PolynomialRing_general):  # not sure if this test is relevant
             raise TypeError("the base of the base ring must be a "
                             "polynomial ring")
         if not base_ring.characteristic():
             raise ValueError("base ring characteristic must be finite")
         if not base_ring.base().base().is_field():
             raise ValueError("the ring of constants must be a field")
+        if not base_ring.base().base().is_finite():
+            raise ValueError("the ring of constants must be finite")
         if group is not None:  # placeholder
             raise NotImplementedError("Drinfeld modular forms are currently "
                                       "only implemented for the full group")
         if not isinstance(names, str):
             raise TypeError("names must be a string")
-        if len(names) == 1:
+        nb_names = len(names.split())
+        if nb_names == 1:
             n0 = names
             names += "1, "
             for i in range(2, rank, 1):
@@ -185,7 +228,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             else:
                 names += n0 + str(rank)
         else:
-            if len(names.split()) != rank:
+            if nb_names != rank:
                 raise ValueError("the the number of generators "
                                  f"must be equal to the rank (={rank})")
         if rank == 2:
