@@ -85,7 +85,7 @@ class Multiplex():
             sage: m.__bork__
             Traceback (most recent call last):
             ...
-            AttributeError: 'Multiplex' has no attribute '__bork__'
+            AttributeError: 'Multiplex' has no attribute '__bork__'...
         """
         if name.startswith("__"):
             raise AttributeError("'Multiplex' has no attribute '%s'" % name)

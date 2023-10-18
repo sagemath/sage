@@ -610,7 +610,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: (QQ^2).list()  # indirect test                                    # needs sage.modules
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'FreeModule_ambient_field_with_category' object has no attribute 'list'
+                AttributeError: 'FreeModule_ambient_field_with_category' object has no attribute 'list'...
 
             Here we test that for an object that does not know whether it
             is finite or not.  Calling ``x.list()`` simply tries to create
@@ -622,11 +622,11 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: Q.is_finite()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'is_finite'
+                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'is_finite'...
                 sage: Q.list()   # indirect test
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'list'
+                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'list'...
 
             Here is another example. We artificially create a version of
             the ring of integers that does not know whether it is finite

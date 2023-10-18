@@ -988,7 +988,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                     del vertices[i][2*m:2*m+2]
                     k = 0
                 else:
-                    k+=1
+                    k += 1
 
         for i in range(len(basis)):
             for j in range(1, len(basis[i])):
@@ -1074,9 +1074,9 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                 pos_sigma = _find(aux_sigma,aux_val)
 
                 #Now we set the found positions to the new normalized value
-                darts_rho[pos_darts]=i+1
-                aux_sigma[pos_sigma[0]][pos_sigma[1]]=i+1
-                aux_rho[pos_rho[0]][pos_rho[1]]=i+1
+                darts_rho[pos_darts] = i+1
+                aux_sigma[pos_sigma[0]][pos_sigma[1]] = i+1
+                aux_rho[pos_rho[0]][pos_rho[1]] = i+1
 
         return RibbonGraph(
                         PermutationConstructor([tuple(x) for x in aux_sigma]),
@@ -1213,7 +1213,7 @@ def bipartite_ribbon_graph(p, q):
         aux_tuple = [i*q + j + 1  for j in range(q)]
         sigma += [aux_tuple]
     for i in range(q):
-        aux_tuple = [p*q + i*p + j +1  for j in range(p)]
+        aux_tuple = [p*q + i*p + j + 1  for j in range(p)]
         sigma += [aux_tuple]
     for i in range(p*q):
         if (i+1) % q == 0:
@@ -1223,7 +1223,7 @@ def bipartite_ribbon_graph(p, q):
         t = 0
         if (i+1) % q != 0:
             t = 1
-        aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() +1]
+        aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() + 1]
         rho += [aux_edge]
     return RibbonGraph(
                        PermutationConstructor([tuple(x) for x in sigma]),

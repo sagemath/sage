@@ -351,7 +351,7 @@ cdef class FaceIterator_base(SageObject):
             sage: FaceIterator_base(2)  # indirect doctest
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'...
         """
         cdef int i
         sig_free(self.structure.atom_rep)

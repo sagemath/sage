@@ -69,7 +69,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     We plot a random graph on 12 nodes with probability `p = .71`::
 
         sage: gnp = graphs.RandomGNP(12,.71)
-        sage: gnp.show() # long time
+        sage: gnp.show()                        # long time                             # needs sage.plot
 
     We view many random graphs using a graphics array::
 
@@ -1359,7 +1359,7 @@ def RandomTree(n, seed=None):
         sage: G = graphs.RandomTree(10)
         sage: G.is_tree()
         True
-        sage: G.show() # long time
+        sage: G.show()                          # long time                             # needs sage.plot
 
     TESTS:
 

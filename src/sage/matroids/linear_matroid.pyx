@@ -819,7 +819,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano() \ ['g']
+            sage: M = matroids.named_matroids.Fano().delete(['g'])
             sage: N = BinaryMatroid(Matrix(matroids.Wheel(3)))
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
             sage: M._is_field_isomorphism(N, morphism)
@@ -1004,7 +1004,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             False
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano() \ ['g']
+            sage: M = matroids.named_matroids.Fano().delete(['g'])
             sage: N = LinearMatroid(reduced_matrix=Matrix(GF(2),
             ....:                       [[-1, 0, 1], [1, -1, 0], [0, 1, -1]]))
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
@@ -1134,7 +1134,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.matroids.basis_matroid.BasisMatroid' object
-            has no attribute 'base_ring'
+            has no attribute 'base_ring'...
             sage: from sage.matroids.advanced import *
             sage: M4 = BinaryMatroid(Matrix(M1))
             sage: M5 = LinearMatroid(reduced_matrix=Matrix(GF(2), [[-1, 0, 1],
@@ -3413,8 +3413,8 @@ cdef class BinaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano() \ ['a']
-            sage: N = matroids.named_matroids.Fano() \ ['b']
+            sage: M = matroids.named_matroids.Fano().delete(['a'])
+            sage: N = matroids.named_matroids.Fano().delete(['b'])
             sage: morphism = {'b':'a', 'c':'c', 'd':'e', 'e':'d', 'f':'f', 'g':'g'}
             sage: M._is_isomorphism(N, morphism)
             True
@@ -3632,7 +3632,7 @@ cdef class BinaryMatroid(LinearMatroid):
             2
             sage: for i in [-1, 0, 1]:
             ....:     print(sorted(e for e in M.groundset()
-            ....:                    if (M\e).bicycle_dimension() == 2 + i))
+            ....:                    if (M.delete(e)).bicycle_dimension() == 2 + i))
             ['a', 'b', 'c', 'e', 'f', 'g']
             ['d']
             ['h']
@@ -5459,7 +5459,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: # needs sage.rings.finite_rings
-            sage: M = matroids.named_matroids.Q10()\'a'
+            sage: M = matroids.named_matroids.Q10().delete('a')
             sage: for F in M._principal_tripartition(): print(sorted(F))
             ['b', 'c', 'd', 'e', 'h', 'i']
             ['f', 'g', 'j']
@@ -5468,7 +5468,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             1
             sage: for i in [-1, 0, 1]:
             ....:     print(sorted(e for e in M.groundset()
-            ....:                  if (M\e).bicycle_dimension() == 1 + i))
+            ....:                  if (M.delete(e)).bicycle_dimension() == 1 + i))
             ['b', 'c', 'd', 'e', 'h', 'i']
             ['f', 'g', 'j']
             []
@@ -5497,8 +5497,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-           sage: M = matroids.named_matroids.Q10()\'a'                                  # needs sage.rings.finite_rings
-           sage: N = matroids.named_matroids.Q10()\'b'                                  # needs sage.rings.finite_rings
+           sage: M = matroids.named_matroids.Q10().delete('a')                          # needs sage.rings.finite_rings
+           sage: N = matroids.named_matroids.Q10().delete('b')                          # needs sage.rings.finite_rings
            sage: M._fast_isom_test(N) is None                                           # needs sage.rings.finite_rings
            True
         """
@@ -6182,8 +6182,8 @@ cdef class RegularMatroid(LinearMatroid):
 
         EXAMPLES::
 
-           sage: M = matroids.named_matroids.R10()\'a'
-           sage: N = matroids.named_matroids.R10()\'b'
+           sage: M = matroids.named_matroids.R10().delete('a')
+           sage: N = matroids.named_matroids.R10().delete('b')
            sage: M._fast_isom_test(N)                                                   # needs sage.graphs
            True
         """

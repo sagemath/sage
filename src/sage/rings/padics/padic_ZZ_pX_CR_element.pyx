@@ -1415,13 +1415,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: z * 25
             3 + O(w^6)
         """
-        cdef ZZ_pX_c high_shifter, high_shifter2
+        cdef ZZ_pX_c high_shifter
         cdef ZZ_pX_Modulus_c *modulus
-        cdef ZZ_pX_Modulus_c modulus_up
         cdef ntl_ZZ_pContext_class c
-        cdef PowComputer_ZZ_pX_small_Eis sm
-        cdef PowComputer_ZZ_pX_big_Eis big
-        cdef ntl_ZZ_pX printer
         cdef ZZ_pX_c* high_array
         cdef long i, high_length
         if self.prime_pow.e == 1:
@@ -1922,7 +1918,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         cdef long exp_val
         cdef long relprec
         cdef long threshold # e / (p-1)
-        cdef long prime_long
         cdef mpz_t tmp, tmp2
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
             threshold = 0
@@ -2212,7 +2207,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         cdef pAdicZZpXCRElement right = <pAdicZZpXCRElement>_right
         cdef ZZ_pX_c modulus_corrected
-        cdef ntl_ZZ_pContext_class ctx
         cdef pAdicZZpXCRElement ans
         if self._is_exact_zero():
             return self
@@ -2805,7 +2799,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 return zero
             elif n >= self.ordp + self.relprec:
                 raise PrecisionError
-        cdef Integer ordp
         if self.relprec == 0: # cannot have n = None
             return []
         if lift_mode == 'simple':
@@ -2881,11 +2874,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         cdef ZZ_pX_Modulus_c* m = self.prime_pow.get_modulus_capdiv(self.ordp + self.relprec)
         cdef ZZ_pX_c x
         ZZ_pX_SetX(x)
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         zero = int(0)
-        for i from 0 <= i < n:
+        for i in range(n):
             curlist = cur.list()
-            L.extend(curlist + [zero]*(n - len(curlist)))
+            L.extend(curlist + [zero] * (n - len(curlist)))
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
         return matrix(R, n, n,  L)
 
