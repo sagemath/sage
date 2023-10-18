@@ -1769,12 +1769,12 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A2.<x,y,z> = AffineSpace(2, QQ)
+            sage: A2.<x, y> = AffineSpace(2, QQ)
             sage: Curve(x - 1).is_vertical_line()
             True
             sage: Curve(x - y).is_vertical_line()
             False
-            sage: Curve(y^2 * x + x + y).has_vertical_asymptote()
+            sage: Curve(y^2 * x + x + y).is_vertical_line()
             False
         """
         A = self.ambient_space()

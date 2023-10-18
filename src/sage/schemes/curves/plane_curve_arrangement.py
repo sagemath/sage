@@ -108,7 +108,6 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         self._vertical_asymptotes = dict()
         self._fundamental_group = None
         self._meridians = dict()
-        self._infinity = None
 
     def __getitem__(self, i):
         """
@@ -332,6 +331,23 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         curves = tuple(c.change_ring(base_ring) for c in self)
         return parent(curves)
 
+    def coordinate_ring(self):
+        """
+        Return the coordinate ring of ``self``.
+
+        OUTPUT:
+
+        The base ring of the curve arrangement.
+
+        EXAMPLES::
+
+            sage: L.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: C = L(x, y)
+            sage: C.coordinate_ring()
+            Multivariate Polynomial Ring in x, y over Rational Field
+        """
+        return self.curves()[0].defining_polynomial().parent()
+
     def defining_polynomials(self):
         r"""
         Return the defining polynomials of the elements of``self``.
@@ -413,28 +429,42 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: A.fundamental_group()
-            (Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
-                                                     x1*x0*x1^-1*x0^-1,
-                                                     (x0*x2)^2*(x0^-1*x2^-1)^2 >,
-             {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0],
-              3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]})
-            sage: A.fundamental_group(vertical=True)
-            (Finitely presented group < x0, x1, x2 | x1*x0^-1*x1^-1*x0,
-                                                     x2*x1*x2^-1*x1^-1, x2*x0*x2^-1*x0^-1 >,
-             {0: [x1], 1: [x0], 2: [x2], 3: [x2^-1*x1^-2*x0^-1]})
+            sage: G = A.fundamental_group(); G
+            Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
+                                                    x1*x0*x1^-1*x0^-1,
+                                                    (x0*x2)^2*(x0^-1*x2^-1)^2 >
+            sage: A.fundamental_group(vertical=True) == G
+            True
 
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
+        if self._fundamental_group and self._meridians:
+            return self._fundamental_group
         K = self.base_ring()
+        R = self.coordinate_ring()
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
         C = self.reduce()
         L = C.defining_polynomials()
-        G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical)
-        return (G, dic)
+        if not vertical and self._braid_monodromy is not None and self._strands:
+            d1 = prod(L).degree()
+            bd = (self._braid_monodromy, self._strands, dict(), d1)
+        elif vertical and self._vertical_braid_monodromy is not None and self._vertical_asymptotes and self._vertical_strands:
+            d1 = prod(L).degree(R.gen(1))
+            bd = (self._braid_monodromy, self._strands, self._vertical_asymptotes, d1)
+        else:
+            bd = None
+            G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical, braid_data=bd)
+        self._fundamental_group = G
+        self._meridians = dic
+        return G
+
+    def meridians(self):
+        if not self._meridians:
+            print("Braid monodromy has not been computed")
+        return self._meridians
 
     def braid_monodromy(self, vertical=False):
         r"""
@@ -459,15 +489,13 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
             sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
             sage: A.braid_monodromy()
-            ([s1*s0*(s1*s2*s1)^2*s2*(s1^-1*s2^-1)^2*s1^-1*s0^-1*s1^-1,
-              s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-              s1*s0*s1*s2*(s1*s2^-1)^2*s0*s1*s2*s1*s0*s2^-1*s1^-3*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-              s1*s0*s1*s2*s1*s2^-1*s1^4*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-              s1*s0*s1*s2*s1*s2^-1*s1^-1*s2*s0^-1*s1^-1],
-              {0: 2, 1: 1, 2: 0, 3: 0}, {})
+            [s1*s0*(s1*s2*s1)^2*s2*(s1^-1*s2^-1)^2*s1^-1*s0^-1*s1^-1,
+             s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+             s1*s0*s1*s2*(s1*s2^-1)^2*s0*s1*s2*s1*s0*s2^-1*s1^-3*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+             s1*s0*s1*s2*s1*s2^-1*s1^4*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+             s1*s0*s1*s2*s1*s2^-1*s1^-1*s2*s0^-1*s1^-1]
             sage: A.braid_monodromy(vertical=True)
-            ([s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0],
-             {0: 1, 1: 0, 2: 0}, {1: 2})
+            [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
 
         .. WARNING::
 
@@ -481,7 +509,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
         L = self.defining_polynomials()
-        bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L, vertical=vertical)[:-1]
+        bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L, vertical=vertical)
         if vertical:
             self._vertical_braid_monodromy = bm
             self._vertical_strands = dic
@@ -567,6 +595,22 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             Rational Field
         """
         return self._base_ring
+
+    def coordinate_ring(self):
+        """
+        Return the base ring.
+
+        OUTPUT:
+
+        The base ring of the curve arrangement.
+
+        EXAMPLES::
+
+            sage: L.<x,y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: L.base_ring()
+            Rational Field
+        """
+        return self._coordinate_ring
 
     def change_ring(self, base_ring):
         """

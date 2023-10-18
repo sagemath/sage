@@ -1700,7 +1700,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
 
 
-def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, vertical=False):
+def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False, vertical=False, braid_data=None):
     r"""
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information
@@ -1729,6 +1729,10 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     - ``vertical`` -- boolean (default: ``False``); if set to ``True``,
       whenever no curve has vertical asymptotes the computation of braid
       monodromy is simpler if some lines are vertical.
+
+    - ``braid_data`` -- tuple (default: ``None``); if it is not the default
+      it is the output of ``fundamental_group_from_braid_mon`` previously
+      computed.
 
     OUTPUT:
 
@@ -1808,7 +1812,9 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         infinity = all([g.degree(y) == g.degree() or Curve(g).is_vertical_line() for g in flist1])
     if vertical0:
         infinity = all([not Curve(g).has_vertical_asymptote() for g in flist1])
-    if len(flist1) == 0:
+    if braid_data:
+        bm, dic, dv, d1 = braid_data
+    elif len(flist1) == 0:
         bm = []
         dic = dict()
         dv = {j: j for j, f in flist}
