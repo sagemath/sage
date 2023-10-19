@@ -278,7 +278,7 @@ class CartanType(cartan_type.CartanType_decorator):
         ret += "\\draw[shift={{({}, {})}}, {}, {}] (0.25cm, -0.25cm) -- (-0.25cm, 0.25cm);\n".format(x, y, color, thickness)
         return ret
 
-    def _latex_dynkin_diagram(self, label=label, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
