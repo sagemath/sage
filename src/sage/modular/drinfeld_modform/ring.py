@@ -312,20 +312,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             g2
             sage: M._generator_coefficient_form(3)
             h^2
-            sage: M._generator_coefficient_form(0)
-            Traceback (most recent call last):
-            ...
-            ValueError: index (=0) must be >= 1 and <= rank (=3)
-            sage: M._generator_coefficient_form(4)
-            Traceback (most recent call last):
-            ...
-            ValueError: index (=0) must be >= 1 and <= rank (=3)
         """
-        i = ZZ(i)
-        r = self.rank()
-        if i < 1 or i > r:
-            raise ValueError(f"index (={i}) must be >= 1 and <= rank (={r})")
-        if self._has_type and i == r:
+        if self._has_type and i == self.rank():
             q = self._base_ring.base_ring().cardinality()
             return self.gen(i-1)**(q - 1)
         return self.gen(i - 1)
@@ -361,8 +349,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             g2
             sage: M.coefficient_form(3)
             g3
-            sage: M.coefficient_form(5, T^2)
-            g2^27*g3 + g2*g3^9
+            sage: M.coefficient_form(3, T^2)
+            g1^9*g2 + g1*g2^3 + (T^27 + T)*g3
 
         ::
 
@@ -373,13 +361,35 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             h^2
             sage: M.coefficient_form(2, T^3 + T^2 + T)
             (T^9 + T^3 + T + 1)*g1^4 + (T^18 + T^10 + T^9 + T^2 + T + 1)*h^2
+
+        TESTS::
+
+            sage: M.coefficient_form(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: index (=0) must be >= 1 and <= rank (=2)
+            sage: M.coefficient_form(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: index (=3) must be >= 1 and <= rank (=2)
+            sage: M.coefficient_form(9, T^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: index (=9) must be >= 1 and <= deg(a)*rank (=4)
+            sage: M.coefficient_form(1, 1/T)
+            Traceback (most recent call last):
+            ...
+            ValueError: a should be in the ring of regular functions
+            sage: M.coefficient_form(1, x)
+            Traceback (most recent call last):
+            ...
+            TypeError: a should be an element of the base ring
         """
-        if i not in ZZ:
-            raise TypeError("i must be an integer")
         i = ZZ(i)
-        if i < 1:
-            raise ValueError("i must be >= 1")
         if a is None:
+            if i < 1 or i > self.rank():
+                raise ValueError(f"index (={i}) must be >= 1 and <= rank "
+                                 f"(={self.rank()})")
             return self._generator_coefficient_form(i)
         if a not in self._base_ring:
             raise TypeError("a should be an element of the base ring")
@@ -387,6 +397,9 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         if not a.denominator().is_one():
             raise ValueError("a should be in the ring of regular functions")
         a = a.numerator()
+        if i < 1 or i > a.degree()*self.rank():
+            raise ValueError(f"index (={i}) must be >= 1 and <= deg(a)*rank "
+                             f"(={a.degree()*self.rank()})")
         poly_ring = PolynomialRing(self._base_ring, self.rank(), 'g')
         poly_ring_gens = poly_ring.gens()
         Frob = poly_ring.frobenius_endomorphism()
