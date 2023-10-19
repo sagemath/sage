@@ -79,7 +79,15 @@ jobs:
           if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
           (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
           # Keep track of changes to built HTML
-          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /;s,/sage/local/share/mathjax/mathjax/tex-chtml.js,https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js,;'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
+          new_version=$(cat src/VERSION.txt)
+          mathjax_path_from=$(SAGE_USE_CDNS=no ./sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+          mathjax_path_to=$(SAGE_USE_CDNS=yes ./sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+          (cd /sage/local/share/doc/sage/html/en && \
+           find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /;s,'$mathjax_path_from,$mathjax_path_to,';'; \
+           git init && \
+           (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
+           (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
+           git add -A && git commit --quiet -m "old")
 
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
