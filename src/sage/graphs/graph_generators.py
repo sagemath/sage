@@ -1192,7 +1192,7 @@ class GraphGenerators():
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G
 
-    def cospectral_graphs(self, vertices, matrix_function=lambda g: g.adjacency_matrix(), graphs=None):
+    def cospectral_graphs(self, vertices, matrix_function=None, graphs=None):
         r"""
         Find all sets of graphs on ``vertices`` vertices (with
         possible restrictions) which are cospectral with respect to a
@@ -1288,6 +1288,9 @@ class GraphGenerators():
             ....:   == g[0][1].laplacian_matrix(normalized=True).charpoly())
             True
         """
+        if matrix_function is None:
+            matrix_function = lambda g: g.adjacency_matrix()
+
         from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:
             graph_list = graph_gen(vertices, property=lambda _: True)

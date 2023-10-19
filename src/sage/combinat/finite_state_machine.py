@@ -949,7 +949,7 @@ from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 
 
-def full_group_by(l, key=lambda x: x):
+def full_group_by(l, key=None):
     """
     Group iterable ``l`` by values of ``key``.
 
@@ -1003,6 +1003,7 @@ def full_group_by(l, key=lambda x: x):
     Here, the result ``r`` has been sorted in order to guarantee a
     consistent order for the doctest suite.
     """
+    key = (lambda x: x) if key is None else key
     elements = defaultdict(list)
     original_keys = {}
     for item in l:
