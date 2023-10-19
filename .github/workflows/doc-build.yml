@@ -56,15 +56,19 @@ jobs:
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
+          # mathjax path in old doc
           mathjax_path_from=$(SAGE_USE_CDNS=no /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           .ci/retrofit-worktree.sh worktree-image /sage
-          # Keep track of changes to built HTML
-          new_version=$(cat src/VERSION.txt)
+          # mathjax path in new doc
           mathjax_path_to=$(SAGE_USE_CDNS=yes /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+          new_version=$(cat src/VERSION.txt)
+          # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '$new_version' /' \
                                                 -e 's_'"$mathjax_path_from"'_'"$mathjax_path_to"'_' \
-                                                -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d' && \
+                                                -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d')
+          # Create git repo from old doc
+          (cd /sage/local/share/doc/sage/html/en && \
            git init && \
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
@@ -130,10 +134,22 @@ jobs:
           (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
           # Create changelog
           echo '## Preview of CHANGES.html'
+          # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
-           find . -name "*.html" | xargs sed -i -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d' )
+           find . -name "*.html" | xargs sed -i -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d')
           (cd /sage/local/share/doc/sage/html/en && git diff HEAD^ --name-only) | tee ./docs/CHANGES.txt
-          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/html.diff
+          # Create diff
+          echo '<html>' > ./docs/html.diff
+          echo '<head>' >> ./docs/html.diff
+          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/html.diff
+          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/html.diff
+          echo '<script>hljs.highlightAll();</script>' >> ./docs/html.diff
+          echo '</head>' >> ./docs/html.diff
+          echo '<body><pre><code class="language-diff">' >> ./docs/html.diff
+          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) >> ./docs/html.diff
+          echo '</code></pre></body>' >> ./docs/html.diff
+          echo '</html>' >> ./docs/html.diff
+          # Preview of changes
           echo '## Preview of html.diff'; head -n 400 ./docs/html.diff
           (echo '<p><a href="html.diff">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
           (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
