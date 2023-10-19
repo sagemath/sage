@@ -105,7 +105,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         self._strands = dict()
         self._vertical_braid_monodromy = None
         self._vertical_strands = None
-        self._vertical_asymptotes = dict()
+        self._vertical_lines = None
         self._fundamental_group = None
         self._meridians = dict()
 
@@ -451,9 +451,9 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         if not vertical and self._braid_monodromy is not None and self._strands:
             d1 = prod(L).degree()
             bd = (self._braid_monodromy, self._strands, dict(), d1)
-        elif vertical and self._vertical_braid_monodromy is not None and self._vertical_asymptotes and self._vertical_strands:
+        elif vertical and self._vertical_braid_monodromy is not None and self._vertical_lines is not None and self._vertical_strands:
             d1 = prod(L).degree(R.gen(1))
-            bd = (self._braid_monodromy, self._strands, self._vertical_asymptotes, d1)
+            bd = (self._braid_monodromy, self._strands, self._vertical_lines, d1)
         else:
             bd = None
             G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical, braid_data=bd)
@@ -462,8 +462,33 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         return G
 
     def meridians(self):
-        if not self._meridians:
+        r"""
+        Meridians of each irreducible component if the group has been computed
+
+        OUTPUT:
+
+        A dictionnary which associates the index of each curve with its meridians,
+        including the line at infinity if it can be easily computed
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: G = A.fundamental_group(); G
+            Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
+                                                    x1*x0*x1^-1*x0^-1,
+                                                    (x0*x2)^2*(x0^-1*x2^-1)^2 >
+            sage: A.meridians()
+            {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not self._meridians or not self._fundamental_group:
             print("Braid monodromy has not been computed")
+            return None
         return self._meridians
 
     def braid_monodromy(self, vertical=False):
@@ -501,9 +526,9 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
-        if self._braid_monodromy and not vertical:
+        if not vertical and self._braid_monodromy is not None and self._strands:
             return self._braid_monodromy
-        if self._vertical_braid_monodromy and self._vertical_asymptotes and vertical:
+        if vertical and self._vertical_braid_monodromy is not None and self._vertical_strands and self._vertical_lines is not None:
             return self._vertical_braid_monodromy
         K = self.base_ring()
         if not K.is_subring(QQbar):
@@ -513,26 +538,86 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         if vertical:
             self._vertical_braid_monodromy = bm
             self._vertical_strands = dic
-            self._vertical_asymptotes = dv
+            self._vertical_lines = dv
         else:
             self._braid_monodromy = bm
             self._strands = dic
         return bm
 
     def strands(self, vertical=False):
-        if not vertical:
-            if not self._strands:
-                print("Braid monodromy has not been computed")
-            return self._strands
-        if vertical:
-            if not self._vertical_strands:
-                print("Braid monodromy has not been computed")
-            return self._vertical_strands
+        r"""
+        Strands for each member of the arrangement.
 
-    def vertical_asymptotes(self):
-        if not self._vertical_asymptotes:
+        OUTPUT:
+
+        A dictionnary which associates to the index of each strand its associated component.
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: bm = A.braid_monodromy()
+            sage: A.strands()
+            {0: 2, 1: 1, 2: 0, 3: 0}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not self._strands or self._braid_monodromy is None:
             print("Braid monodromy has not been computed")
-        return self._vertical_asymptotes
+        return self._strands
+
+    def vertical_strands(self):
+        r"""
+        Vertical strands for each member of the arrangement.
+
+        OUTPUT:
+
+        A dictionnary which associates to the index of each strand its associated component.
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: bm = A.braid_monodromy(vertical=True)
+            sage: A.vertical_strands()
+            {0: 1, 1: 0, 2: 0}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not self._vertical_strands or self._vertical_braid_monodromy is None or self._vertical_lines is None:
+            print("Vertical braid monodromy has not been computed")
+        return self._vertical_strands
+
+    def vertical_lines(self):
+        r"""
+        Vertical lines in the arrangement.
+
+        OUTPUT:
+
+        A dictionnary which associates an index to the index of a vertical lines.
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: bm = A.braid_monodromy(vertical=True)
+            sage: A.vertical_lines()
+            {1: 2}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not self._vertical_strands or self._vertical_braid_monodromy is None or self._vertical_lines is None:
+            print("Braid monodromy has not been computed")
+        return self._vertical_lines
 
 
 class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
