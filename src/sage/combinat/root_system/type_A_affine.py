@@ -111,7 +111,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             g.add_edge(0, n)
         return g
 
-    def _latex_dynkin_diagram(self, label=None node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 

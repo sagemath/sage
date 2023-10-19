@@ -1003,7 +1003,8 @@ def full_group_by(l, key=None):
     Here, the result ``r`` has been sorted in order to guarantee a
     consistent order for the doctest suite.
     """
-    key = (lambda x: x) if key is None else key
+    if key is None:
+        key = lambda x: x
     elements = defaultdict(list)
     original_keys = {}
     for item in l:

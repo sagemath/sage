@@ -340,7 +340,8 @@ class IndexedSequence(SageObject):
             implemented Group (permutation, matrix), call .characters()
             and test if the index list is the set of conjugacy classes.
         """
-        chi = (lambda x: x) if chi is None else chi
+        if chi is None:
+            chi = lambda x: x
         J = self.index_object()   # index set of length N
         N = len(J)
         S = self.list()
