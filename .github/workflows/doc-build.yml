@@ -85,7 +85,7 @@ jobs:
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make build
+          ./bootstrap && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -96,7 +96,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -113,7 +113,7 @@ jobs:
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
-          ./config.status && make doc-html
+          ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
