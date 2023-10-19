@@ -62,7 +62,9 @@ jobs:
           new_version=$(cat src/VERSION.txt)
           mathjax_path_to=$(SAGE_USE_CDNS=yes /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           (cd /sage/local/share/doc/sage/html/en && \
-           find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /;s,'$mathjax_path_from,$mathjax_path_to,';'; \
+           find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '$new_version' /' \
+                                                -e 's_'"$mathjax_path_from"'_'"$mathjax_path_to"'_' \
+                                                -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d' && \
            git init && \
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
@@ -125,12 +127,16 @@ jobs:
         run: |
           set -ex
           mkdir -p ./docs
+          (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
           # Create changelog
           echo '## Preview of CHANGES.html'
+          (cd /sage/local/share/doc/sage/html/en && \
+           find . -name "*.html" | xargs sed -i -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d' )
           (cd /sage/local/share/doc/sage/html/en && git diff --name-only) | tee ./docs/CHANGES.txt
           (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) > ./docs/html.diff
           echo '## Preview of html.diff'; head -n 400 ./docs/html.diff
           (echo '<p><a href="html.diff">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
+          (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
