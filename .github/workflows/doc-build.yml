@@ -146,12 +146,13 @@ jobs:
           echo '<script>hljs.highlightAll();</script>' >> ./docs/diff.html
           echo '</head>' >> ./docs/diff.html
           echo '<body><pre><code class="language-diff">' >> ./docs/diff.html
-          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) >> ./docs/diff.html
+          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
+          sed 's/\&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' ./docs/diff.txt >> ./docs/diff.html
           echo '</code></pre></body>' >> ./docs/diff.html
           echo '</html>' >> ./docs/diff.html
           # Preview of changes
           echo '## Preview of diff.html'; head -n 400 ./docs/diff.html
-          (echo '<p><a href="diff.html">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
+          (echo '<p><a href="diff.html">diff.html</a> <a href="diff.txt">diff.txt</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
           (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
