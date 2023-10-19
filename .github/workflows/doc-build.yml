@@ -132,8 +132,8 @@ jobs:
           echo '## Preview of CHANGES.html'
           (cd /sage/local/share/doc/sage/html/en && \
            find . -name "*.html" | xargs sed -i -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d' )
-          (cd /sage/local/share/doc/sage/html/en && git diff --name-only) | tee ./docs/CHANGES.txt
-          (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) > ./docs/html.diff
+          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^ --name-only) | tee ./docs/CHANGES.txt
+          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/html.diff
           echo '## Preview of html.diff'; head -n 400 ./docs/html.diff
           (echo '<p><a href="html.diff">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
           (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
