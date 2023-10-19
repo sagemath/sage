@@ -1661,6 +1661,25 @@ cdef class LieGenerator(LieObject):
         """
         return self._word
 
+    cpdef lift(self, dict UEA_gens_dict):
+        """
+        Lift ``self`` to the universal enveloping algebra.
+
+        ``UEA_gens_dict`` should be the dictionary for the
+        generators of the universal enveloping algebra.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y,z')
+            sage: Lyn = L.Lyndon()
+            sage: x,y,z = Lyn.gens()
+            sage: x.lift()
+            x
+            sage: x.lift().parent()
+            Free Algebra on 3 generators (x, y, z) over Rational Field
+        """
+        return UEA_gens_dict[self._name]
+
 cdef class LieBracket(LieObject):
     """
     An abstract Lie bracket (formally, just a binary tree).
