@@ -308,16 +308,16 @@ class DegreeSequences:
             sage: DegreeSequences(-1)
             Traceback (most recent call last):
             ...
-            ValueError: The input parameter must be >= 0.
+            ValueError: the input parameter must be >= 0
         """
         if n < 0:
-            raise ValueError("The input parameter must be >= 0.")
+            raise ValueError("the input parameter must be >= 0")
         self._n = n
 
     def __contains__(self, seq):
         """
-        Checks whether a given integer sequence is the degree sequence
-        of a graph on `n` elements
+        Check whether a given integer sequence is the degree sequence
+        of a graph on `n` elements.
 
         EXAMPLES::
 
@@ -343,7 +343,7 @@ class DegreeSequences:
             [[0]]
         """
         cdef int n = self._n
-        if len(seq)!=n:
+        if len(seq) != n:
             return False
 
         # Is the sum even ?
@@ -371,9 +371,9 @@ class DegreeSequences:
             partial += d
 
             # Evaluating the right hand side
-            right = i*(i+1)
-            for dd in seq[i+1:]:
-                right += min(dd, i+1)
+            right = i * (i + 1)
+            for dd in seq[i + 1:]:
+                right += min(dd, i + 1)
 
             # Comparing the two
             if partial > right:

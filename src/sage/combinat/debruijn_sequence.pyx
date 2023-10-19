@@ -264,7 +264,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Setting ``n`` orr ``k`` to anything under 1 will return
+        Setting ``n`` or ``k`` to anything under 1 will return
         a :class:`ValueError`::
 
             sage: DeBruijnSequences(3, 0).an_element()
