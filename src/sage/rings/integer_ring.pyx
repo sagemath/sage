@@ -54,8 +54,6 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-import sage.libs.pari.all
-import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
@@ -69,7 +67,7 @@ from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
 cimport sage.rings.integer as integer
 
-from . import ring
+from sage.rings import ring
 
 arith = None
 cdef void late_import():
