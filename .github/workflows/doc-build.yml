@@ -64,9 +64,9 @@ jobs:
           new_version=$(cat src/VERSION.txt)
           # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
-           find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '$new_version' /' \
-                                                -e 's_'"$mathjax_path_from"'_'"$mathjax_path_to"'_' \
-                                                -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d')
+           find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
+                                                -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
+                                                -e '\;<script type="application/vnd\.jupyter\.widget-state\+json">;,\;</script>; d')
           # Create git repo from old doc
           (cd /sage/local/share/doc/sage/html/en && \
            git init && \
@@ -135,7 +135,7 @@ jobs:
           echo '## Preview of CHANGES.html'
           # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
-           find . -name "*.html" | xargs sed -i -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d')
+           find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state\+json">;,\;</script>; d')
           # Create CHANGES.html
           echo '<html>' > ./docs/CHANGES.html
           echo '<head>' >> ./docs/CHANGES.html
