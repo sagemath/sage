@@ -6,6 +6,8 @@ from pathlib import Path
 
 from setuptools import setup
 from setuptools.command.build_py import build_py as setuptools_build_py
+from setuptools.command.editable_wheel import \
+    editable_wheel as setuptools_editable_wheel
 from setuptools.errors import SetupError
 
 
@@ -45,8 +47,16 @@ class build_scripts(distutils_build_scripts):
         distutils_build_scripts.run(self)
 
 
+class editable_wheel(setuptools_editable_wheel):
+    r"""
+    Customized so that exceptions raised by our build_py
+    do not lead to the "Customization incompatible with editable install" message
+    """
+    _safely_run = setuptools_editable_wheel.run_command
+
+
 setup(
     cmdclass=dict(
-        build_py=build_py, build_scripts=build_scripts
+        build_py=build_py, build_scripts=build_scripts, editable_wheel=editable_wheel
     )
 )
