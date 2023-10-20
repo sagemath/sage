@@ -1170,16 +1170,15 @@ def braid_monodromy(f, arrangement=(), vertical=False):
 
     OUTPUT:
 
-    A list of braids, two dictionaries, and the number
-    of strands of the braids (specially relevant if the list
-    pf braids is empty).
-    The braids correspond to paths based in the same point;
-    each of these paths is the conjugated of a loop around one of the points
-    in the discriminant of the projection of ``f``. The first dictionary assigns each
-    strand to the index of the corresponding factor in ``arrangement``.
-    If ``vertical`` is set to ``True`` only the vertical lines are not used.
-    The second dictionnary assign to each vertical line the corresponding braid.
-    The fourth one is the number of strands of the braids.
+    - A list of braids, images by the braid monodromy of a geometric
+      basis of the complement of the discriminant of `f` in `\mathbb{C}'.
+    - A dictionnary: ``i``, index of a strand is sent to the index of
+      the corresponding factor in ``arrangement``.
+    - Another dictionnary, only relevant if ``vertical`` is ``True``. It attaches
+      the index of a vertical line in ``arrangement`` to the index of its
+      corresponding braid.
+    - A non-negative integer: the number of strands of the braids, only necessary
+      if the list of braids is empty.
 
     .. NOTE::
 
