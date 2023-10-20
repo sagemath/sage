@@ -147,7 +147,7 @@ jobs:
           (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
           /sage/sage -python - << EOF
           import re, html
-          with open('./docs/diff.txt  ', 'r') as f:
+          with open('./docs/diff.txt', 'r') as f:
               diff_text = f.read()
               diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
               out_blocks = []
@@ -157,11 +157,10 @@ jobs:
                       path = match.group(1)
                       out_blocks.append(f'<p><a href="{path}">{path}</a></p>\n<pre><code class="language-diff">\n' + html.escape(block).strip() + '\n</code></pre>')
               output_text = '\n'.join(out_blocks)
-
-          with open('./docs/diff.html'  ', 'w') as f:
+          with open('./docs/diff.html', 'w') as f:
               f.write(output_text)
           EOF
-          cat .docs/diff.html >> ./docs/CHANGES.html
+          cat ./docs/diff.html >> ./docs/CHANGES.html
           echo '</body>' >> ./docs/CHANGES.html
           echo '</html>' >>./docs/CHANGES.html
           # Preview of changes
