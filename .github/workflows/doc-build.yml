@@ -142,6 +142,25 @@ jobs:
           echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
           echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
           echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
+          cat >> ./docs/CHANGES.html << EOF
+          <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const diffSite = 'https://pianomister.github.io/diffsite/'
+            const baseDocURL = 'https://sagemath-tobias.netlify.app/'
+            const diffParagraphs = document.querySelectorAll('p.diff');
+            diffParagraphs.forEach(paragraph => {
+              const rootURL = window.location.origin;
+              const docAnchor = paragraph.querySelector('a');
+              const path = docAnchor.href;
+              const anchor = document.createElement('a');
+              anchor.href = diffSite + '?url1=' + rootURL + path + '&url2=' + baseDocURL + path;
+              anchor.textContent = 'compare with the base doc';
+              anchor.setAttribute('target', '_blank');
+              paragraph.appendChild(anchor);
+            });
+          });
+          </script>
+          EOF
           echo '</head>' >> ./docs/CHANGES.html
           echo '<body>' >> ./docs/CHANGES.html
           (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
@@ -155,7 +174,7 @@ jobs:
                   match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
                   if match:
                       path = match.group(1)
-                      out_blocks.append(f'<p><a href="{path}">{path}</a></p>\n<pre><code class="language-diff">\n' + html.escape(block).strip() + '\n</code></pre>')
+                      out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a></p>\n<pre><code class="language-diff">\n' + html.escape(block).strip() + '\n</code></pre>')
               output_text = '\n'.join(out_blocks)
           with open('./docs/diff.html', 'w') as f:
               f.write(output_text)
