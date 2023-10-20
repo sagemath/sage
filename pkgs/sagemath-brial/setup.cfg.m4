@@ -10,11 +10,13 @@ include(`setup_cfg_metadata.m4')dnl'
 [options]
 python_requires = >=3.8, <3.12
 install_requires =
-    SPKG_INSTALL_REQUIRES_sagemath_categories
-    SPKG_INSTALL_REQUIRES_sagemath_environment
+    # These install_requires are removed so that sagemath-brial can just work with the monolithic Sage library
+    # SPKG_INSTALL_REQUIRES_sagemath_categories
+    # SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_cysignals
 
 [options.extras_require]
 
-# No test requirements; see comment in tox.ini
 test =
+    # Testing is done with the modularized Sage library
+    SPKG_INSTALL_REQUIRES_sagemath_categories
