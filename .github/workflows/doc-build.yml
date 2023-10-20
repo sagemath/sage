@@ -132,27 +132,38 @@ jobs:
           set -ex
           mkdir -p ./docs
           (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
-          # Create changelog
           echo '## Preview of CHANGES.html'
           # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
            find . -name "*.html" | xargs sed -i -e '\_<script type="application/vnd\.jupyter\.widget-state\+json">_,\_</script>_ d')
-          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^ --name-only) | tee ./docs/CHANGES.txt
-          # Create diff
-          echo '<html>' > ./docs/diff.html
-          echo '<head>' >> ./docs/diff.html
-          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/diff.html
-          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/diff.html
-          echo '<script>hljs.highlightAll();</script>' >> ./docs/diff.html
-          echo '</head>' >> ./docs/diff.html
-          echo '<body><pre><code class="language-diff">' >> ./docs/diff.html
+          # Create CHANGES.html
+          echo '<html>' > ./docs/CHANGES.html
+          echo '<head>' >> ./docs/CHANGES.html
+          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
+          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
+          echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
+          echo '</head>' >> ./docs/CHANGES.html
+          echo '<body>' >> ./docs/CHANGES.html
           (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
-          sed 's/\&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' ./docs/diff.txt >> ./docs/diff.html
-          echo '</code></pre></body>' >> ./docs/diff.html
-          echo '</html>' >> ./docs/diff.html
+          python -c "import re, html
+          with open('./docs/diff.txt  ', 'r') as f:
+              diff_text = f.read()
+              diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
+              out_blocks = []
+              for block in diff_blocks:
+                  match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
+                  if match:
+                      path = match.group(1)
+                      out_blocks.append(f'<p><a href="{path}">{path}</a></p>\n<pre><code class="language-diff">\n' + html.escape(block).strip() + '\n</code></pre>')
+              output_text = '\n'.join(out_blocks)
+
+          with open('./docs/diff.html'  ', 'w') as f:
+              f.write(output_text)"
+          cat .docs/diff.html >> ./docs/CHANGES.html
+          echo '</body>' >> ./docs/CHANGES.html
+          echo '</html>' >>./docs/CHANGES.html
           # Preview of changes
-          echo '## Preview of diff.html'; head -n 400 ./docs/diff.html
-          (echo '<p><a href="diff.html">diff.html</a> <a href="diff.txt">diff.txt</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
+          echo '## Preview of diff.txt'; head -n 400 ./docs/diff.txt
           (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
