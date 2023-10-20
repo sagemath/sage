@@ -145,7 +145,7 @@ jobs:
           echo '</head>' >> ./docs/CHANGES.html
           echo '<body>' >> ./docs/CHANGES.html
           (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
-          python -c "import re, html
+          /sage/sage -python -c "import re, html
           with open('./docs/diff.txt  ', 'r') as f:
               diff_text = f.read()
               diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
