@@ -33,7 +33,7 @@ jobs:
         python-version: 3.9
 
     - name: Install dependencies
-      run: pip install tox pycodestyle relint
+      run: pip install tox
 
     - name: Code style check with pycodestyle
       run: tox -e pycodestyle-minimal
