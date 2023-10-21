@@ -18,5 +18,5 @@ install_requires =
 [options.extras_require]
 
 test =
-    # Testing is done with the modularized Sage library
-    SPKG_INSTALL_REQUIRES_sagemath_categories
+    # For now, we test with the monolithic Sage library
+    SPKG_INSTALL_REQUIRES_sagelib
