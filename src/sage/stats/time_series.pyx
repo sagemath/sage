@@ -1725,8 +1725,9 @@ cdef class TimeSeries:
 
     def min(self, bint index=False):
         r"""
-        Return the smallest value in this time series. If this series
-        has length 0 we raise a ``ValueError``.
+        Return the smallest value in this time series.
+
+        If this series has length 0, we raise a :class:`ValueError`.
 
         INPUT:
 

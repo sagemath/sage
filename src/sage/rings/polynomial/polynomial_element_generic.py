@@ -953,6 +953,17 @@ class Polynomial_generic_sparse(Polynomial):
             1
             sage: (6*x).gcd(9)
             3
+
+        Check that :trac:`36427` is fixed::
+
+            sage: P = PolynomialRing(ZZ, "q", sparse=True)
+            sage: q = P.gen()
+            sage: 2*q^-100
+            2/q^100
+            sage: gcd(1, q^100)
+            1
+            sage: gcd(q^0, q^100)
+            1
         """
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -969,8 +980,8 @@ class Polynomial_generic_sparse(Polynomial):
             # <https://groups.google.com/d/msg/sage-devel/6qhW90dgd1k/Hoq3N7fWe4QJ>
             sd = self.degree()
             od = other.degree()
-            if max(sd,od) < 100 or \
-               min(len(self.__coeffs)/sd, len(other.__coeffs)/od) > .06:
+            if ((sd < 100 or len(self.__coeffs)/sd > .06)
+                    and (od < 100 or len(other.__coeffs)/od > .06)):
                 implementation = "FLINT"
             else:
                 implementation = "NTL"

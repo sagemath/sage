@@ -556,7 +556,7 @@ class Monoids(CategoryWithAxiom):
                     Traceback (most recent call last):
                     ...
                     AttributeError: 'IntegerModMonoid_with_category' object
-                    has no attribute 'monoid_generators'
+                    has no attribute 'monoid_generators'...
                     sage: Z12.semigroup_generators()
                     Family (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
                     sage: Z12.algebra(QQ).algebra_generators()                          # needs sage.modules

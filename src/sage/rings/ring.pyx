@@ -1734,7 +1734,7 @@ cdef class IntegralDomain(CommutativeRing):
             sage: Z5.is_integrally_closed()
             Traceback (most recent call last):
             ...
-            AttributeError: 'IntegerModRing_generic_with_category' object has no attribute 'is_integrally_closed'
+            AttributeError: 'IntegerModRing_generic_with_category' object has no attribute 'is_integrally_closed'...
         """
         raise NotImplementedError
 
