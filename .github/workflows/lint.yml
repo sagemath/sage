@@ -14,63 +14,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-pycodestyle:
-    name: Code style check with pycodestyle
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
     - name: Merge CI fixes from sagemath/sage
       if: ${{ github.event_name == 'pull_request' || github.event.repository.fork }}
       run: |
         .ci/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.9
-    - name: Install pycodestyle
-      run: pip install tox pycodestyle
-    - name: Lint using pycodestyle
+
+    - name: Install dependencies
+      run: pip install tox pycodestyle relint
+
+    - name: Code style check with pycodestyle
       run: tox -e pycodestyle-minimal
-  lint-relint:
-    name: Code style check with relint
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Merge CI fixes from sagemath/sage
-      if: ${{ github.event_name == 'pull_request' || github.event.repository.fork }}
-      run: |
-        .ci/merge-fixes.sh
-      env:
-        GH_TOKEN: ${{ github.token }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-    - name: Install relint
-      run: pip install tox relint
-    - name: Lint using relint
+
+    - name: Code style check with relint
       run: tox -e relint -- src/sage/
-  lint-rst:
-    name: Validate docstring markup as RST
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Merge CI fixes from sagemath/sage
-      if: ${{ github.event_name == 'pull_request' || github.event.repository.fork }}
-      run: |
-        .ci/merge-fixes.sh
-      env:
-        GH_TOKEN: ${{ github.token }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-    - name: Install tox
-      run: pip install tox
-    - name: Lint using tox -e rst
+
+    - name: Validate docstring markup as RST
       run: tox -e rst

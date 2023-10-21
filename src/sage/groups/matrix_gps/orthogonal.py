@@ -132,7 +132,7 @@ def normalize_args_e(degree, ring, e):
         ...
         ValueError: must have e=-1 or e=1 for even degree
     """
-    if isinstance(ring, FiniteField) and degree%2 == 0:
+    if isinstance(ring, FiniteField) and degree % 2 == 0:
         if e not in (-1, +1):
             raise ValueError('must have e=-1 or e=1 for even degree')
     else:
@@ -167,10 +167,10 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
         NotImplementedError: invariant_form for finite groups is fixed by GAP
     """
     prefix = 'General'
-    ltx_prefix ='G'
+    ltx_prefix = 'G'
     if special:
         prefix = 'Special'
-        ltx_prefix ='S'
+        ltx_prefix = 'S'
 
     degree, ring = normalize_args_vectorspace(n, R, var=var)
     e = normalize_args_e(degree, ring, e)
@@ -538,5 +538,5 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
             if F == self.one().matrix():
                 raise TypeError('matrix must be orthogonal')
             else:
-                raise TypeError('matrix must be orthogonal with respect to the symmetric form\n%s' %(F))
+                raise TypeError('matrix must be orthogonal with respect to the symmetric form\n%s' % (F))
         # TODO: check that quadratic form is preserved in characteristic two

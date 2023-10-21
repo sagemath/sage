@@ -40,18 +40,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Check for Miniconda
-        id: check_conda
-        run: echo ::set-output name=installed::$CONDA
-
-      # Miniconda is installed by default in the ubuntu-latest, however not in the act-image to run it locally
-      - name: Install Miniconda
-        if: steps.check_conda.outputs.installed == ''
-        run: |
-          wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh -O ~/miniconda.sh
-          bash ~/miniconda.sh -b -p $HOME/miniconda
-          echo "CONDA=$HOME/miniconda" >> $GITHUB_ENV
-
       - name: Create conda environment files
         run: ./bootstrap-conda
 
@@ -62,12 +50,13 @@ jobs:
           key:
             ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
 
-      - name: Setup Conda
+      - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python }}
-          mamba-version: "*"
-          channels: conda-forge,defaults
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
           channel-priority: true
           activate-environment: sage
           environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}.yml
@@ -93,7 +82,7 @@ jobs:
         run: |
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
           pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
-          pip install --no-build-isolation --no-deps -v -v -e ./src
+          pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
         
