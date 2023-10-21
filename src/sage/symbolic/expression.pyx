@@ -409,32 +409,6 @@ include "pynac_impl.pxi"
 from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
 
 
-cpdef bint is_Expression(x):
-    """
-    Return True if ``x`` is a symbolic expression.
-
-    This method is deprecated.  Use :func:`isinstance` with
-    :class:`sage.structure.element.Expression` instead.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.expression import is_Expression
-        sage: is_Expression(x)
-        doctest:warning...
-        DeprecationWarning: is_Expression is deprecated;
-        use isinstance(..., sage.structure.element.Expression) instead
-        See https://github.com/sagemath/sage/issues/32638 for details.
-        True
-        sage: is_Expression(2)
-        False
-        sage: is_Expression(SR(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32638, 'is_Expression is deprecated; use isinstance(..., sage.structure.element.Expression) instead')
-    return isinstance(x, Expression)
-
-
 cpdef bint is_SymbolicEquation(x):
     """
     Return True if *x* is a symbolic equation.
@@ -6345,32 +6319,6 @@ cdef class Expression(Expression_abc):
         return self._gobj.nops()
 
     nops = number_of_operands
-
-    def __len__(self):
-        """
-        Return the number of operands of this expression.
-
-        This is deprecated; use :meth:`number_of_operands` instead.
-
-        EXAMPLES::
-
-            sage: var('a,b,c,x,y')
-            (a, b, c, x, y)
-            sage: len(a)
-            doctest:warning...
-            DeprecationWarning: using len on a symbolic expression is deprecated; use method number_of_operands instead
-            See https://github.com/sagemath/sage/issues/29738 for details.
-            0
-            sage: len((a^2 + b^2 + (x+y)^2))
-            3
-            sage: len((a^2))
-            2
-            sage: len(a*b^2*c)
-            3
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(29738, "using len on a symbolic expression is deprecated; use method number_of_operands instead")
-        return self.number_of_operands()
 
     def _unpack_operands(self):
         """
