@@ -716,7 +716,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             sage: A = AlternatingGroup([2,3,7]); A
             Alternating group of order 3!/2 as a permutation group
         """
-        return "Alternating group of order %s!/2 as a permutation group"%self.degree()
+        return "Alternating group of order %s!/2 as a permutation group" % self.degree()
 
     def _gap_init_(self, gap=None):
         """
@@ -782,7 +782,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
             sage: CyclicPermutationGroup(8)
             Cyclic group of order 8 as a permutation group
         """
-        return "Cyclic group of order %s as a permutation group"%self.order()
+        return "Cyclic group of order %s as a permutation group" % self.order()
 
     def is_commutative(self):
         """
@@ -975,7 +975,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
         # Representation of  x
         # Four-cycles that will conjugate the generator  a  properly
-        x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i)%halfr + halfr + 1)
+        x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i) % halfr + halfr + 1)
              for i in range(0, fourthr)]
         # With an odd part, transpositions will conjugate the m-cycle to create inverse
         if m > 1:
@@ -990,7 +990,7 @@ class DiCyclicGroup(PermutationGroup_unique):
             sage: DiCyclicGroup(12)
             Dicyclic group of order 48 as a permutation group
         """
-        return "Dicyclic group of order %s as a permutation group"%self.order()
+        return "Dicyclic group of order %s as a permutation group" % self.order()
 
     def is_commutative(self):
         r"""
@@ -1809,7 +1809,7 @@ class MathieuGroup(PermutationGroup_unique):
             sage: G = MathieuGroup(12); G
             Mathieu group of degree 12 and order 95040 as a permutation group
         """
-        return "Mathieu group of degree %s and order %s as a permutation group"%(self._n, self.order())
+        return "Mathieu group of degree %s and order %s as a permutation group" % (self._n, self.order())
 
 
 class TransitiveGroup(PermutationGroup_unique):
@@ -1919,7 +1919,7 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: G = TransitiveGroup(1,1); G
             Transitive group number 1 of degree 1
         """
-        return "Transitive group number %s of degree %s"%(self._n, self._d)
+        return "Transitive group number %s of degree %s" % (self._n, self._d)
 
 
 def TransitiveGroups(d=None):
@@ -2496,7 +2496,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: PrimitiveGroups(6)
             Primitive Groups of degree 6
         """
-        return "Primitive Groups of degree %s"%(self._degree)
+        return "Primitive Groups of degree %s" % (self._degree)
 
     def __contains__(self, G):
         r"""
@@ -2689,7 +2689,7 @@ class PGL(PermutationGroup_plg):
             sage: print(G)
             The projective general linear group of degree 2 over Finite Field of size 3
         """
-        return "The projective general linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective general linear group of degree %s over %s" % (self._n, self.base_ring())
 
 
 class PSL(PermutationGroup_plg):
@@ -2776,7 +2776,7 @@ class PSL(PermutationGroup_plg):
             sage: print(G)
             The projective special linear group of degree 2 over Finite Field of size 3
         """
-        return "The projective special linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective special linear group of degree %s over %s" % (self._n, self.base_ring())
 
     def ramification_module_decomposition_hurwitz_curve(self):
         r"""
@@ -2935,7 +2935,7 @@ class PSp(PermutationGroup_plg):
             sage: print(G)
             The projective symplectic linear group of degree 4 over Finite Field of size 3
         """
-        return "The projective symplectic linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective symplectic linear group of degree %s over %s" % (self._n, self.base_ring())
 
 
 PSP = PSp
@@ -3054,7 +3054,7 @@ class PGU(PermutationGroup_pug):
             The projective general unitary group of degree 2 over Finite Field of size 3
 
         """
-        return "The projective general unitary group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective general unitary group of degree %s over %s" % (self._n, self.base_ring())
 
 
 class SuzukiGroup(PermutationGroup_unique):
@@ -3535,7 +3535,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
             sage: G = SmallPermutationGroup(12,4); G
             Group of order 12 and GAP Id 4 as a permutation group
         """
-        return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
+        return "Group of order %s and GAP Id %s as a permutation group" % (self._n, self._gap_id)
 
     def order(self):
         """
