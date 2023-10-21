@@ -246,7 +246,7 @@ class CrystalBacktracker(GenericBacktracker):
             for j in self._index_set:
                 if j == i:
                     break
-                if not y.e(j) is None:
+                if y.e(j) is not None:
                     hasParent = True
                     break
             if hasParent:

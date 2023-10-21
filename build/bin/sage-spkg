@@ -548,7 +548,7 @@ WRAPPED_SCRIPTS="build install check preinst postinst $INSTALLED_SCRIPTS"
 
 # Prepare script for uninstallation of packages that use sdh_pip_install
 # or sdh_store_and_pip_install_wheel.
-echo 'sdh_pip_uninstall -r $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-piprm-requirements.txt' > spkg-piprm.in
+echo 'sdh_pip_uninstall -r $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt' > spkg-piprm.in
 
 for script in $WRAPPED_SCRIPTS; do
     # 'Installed' scripts are not run immediately out of the package build
@@ -566,24 +566,6 @@ for script in $WRAPPED_SCRIPTS; do
             write_script_wrapper "$(pwd)/$script" "$script_dir"
     fi
 done
-
-
-# When there is no spkg-install, assume the "spkg" is a tarball not
-# specifically made for Sage.  Since we want it to be as easy as
-# possible to install such a package, we "guess" spkg-install.
-if [ ! -f spkg-install ]; then
-    echo '#!/usr/bin/env bash' > spkg-install
-    if [ -x configure ]; then
-        echo './configure --prefix="$SAGE_INST_LOCAL" && make && $SAGE_SUDO make install' >> spkg-install
-    elif [ -f setup.py ]; then
-        echo 'python setup.py install' >> spkg-install
-    else
-        echo >&2 "Error: There is no spkg-install script, no setup.py, and no configure"
-        echo >&2 "script, so I do not know how to install $PKG_SRC."
-        exit 1
-    fi
-    chmod +x spkg-install
-fi
 
 echo "****************************************************"
 echo "Host system:"
@@ -722,9 +704,7 @@ unset SAGE_DESTDIR_LOCAL
 # removed by sage-spkg-uninstall
 INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
 
-if [ -f spkg-piprm-requirements.txt ]; then
-    INSTALLED_SCRIPTS="$INSTALLED_SCRIPTS piprm-requirements.txt"
-else
+if [ ! -f $INSTALLED_SCRIPTS_DEST/spkg-requirements.txt ]; then
     # No packages to uninstall with pip, so remove the prepared uninstall script
     rm -f spkg-piprm spkg-piprm.in
 fi
