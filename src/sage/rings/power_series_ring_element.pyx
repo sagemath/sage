@@ -1522,7 +1522,7 @@ cdef class PowerSeries(AlgebraElement):
             power series with odd degree leading coefficient is
             defined as an element of a formal extension ring.
 
-          - ``name`` -- string; if ``extend`` is True, you must also specify the print
+          - ``name`` -- string; if ``extend`` is ``True``, you must also specify the print
             name of the formal square root.
 
           - ``all`` -- bool (default: ``False``); if ``True``, return all square

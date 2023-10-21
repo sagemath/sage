@@ -680,8 +680,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
     cdef long _hash_(self) except -1:
         """
-        Return hash of an immutable matrix. Raise a TypeError if input
-        matrix is mutable.
+        Return hash of an immutable matrix.
+
+        This raises a :class:`TypeError` if input matrix is mutable.
 
         EXAMPLES:
 
@@ -846,7 +847,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: A.set_mutable()
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense' object has no attribute 'set_mutable'
+            AttributeError: 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense' object has no attribute 'set_mutable'...
             sage: B = A.__copy__()
             sage: B[0,0] = 20
             sage: B[0,0]

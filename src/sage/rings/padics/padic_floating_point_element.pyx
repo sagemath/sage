@@ -144,7 +144,8 @@ cdef class pAdicFloatingPointElement(FPElement):
         precision.  If a rational is returned, its denominator will equal
         ``p^ordp(self)``.
 
-        This method will raise a ValueError when this element is infinity.
+        This method will raise a :class:`ValueError` when this element
+        is infinity.
 
         EXAMPLES::
 

@@ -2071,7 +2071,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             K = R
             v = BR.places(prec=prec)[0]
         else:
-            raise ValueError("invalid valuation (=%s) entered"%v)
+            raise ValueError("invalid valuation (=%s) entered" % v)
 
         #Coerce all polynomials in F into polynomials with coefficients in K
         F = self.change_ring(K, check=False)
@@ -2082,7 +2082,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if err is not None:
             err = R(err)
             if not err > 0:
-                raise ValueError("error bound (=%s) must be positive"%err)
+                raise ValueError("error bound (=%s) must be positive" % err)
 
             #if doing error estimates, compute needed number of iterates
             D = (dim + 1) * (d - 1) + 1
@@ -2115,7 +2115,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         else: #non-archimedean
                             h = max([c.local_height(v, prec=prec) for c in poly.coefficients()])
                         if h > maxh:
-                            maxh=h
+                            maxh = h
             if maxh == 0:
                 maxh = 1  #avoid division by 0
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
@@ -2126,7 +2126,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if C != 0:
                 N = R(C / (err*(d-1))).log(d).abs().ceil()
             else: #we just need log||P||_v
-                N=1
+                N = 1
 
         #START GREEN FUNCTION CALCULATION
         if isinstance(v, RingHomomorphism_im_gens):  #embedding for archimedean local height
@@ -2550,7 +2550,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         if check:
             if self.nth_iterate(P, n) != P:
-                raise ValueError("%s is not periodic of period %s"%(P, n))
+                raise ValueError("%s is not periodic of period %s" % (P, n))
             if n < 1:
                 raise ValueError("period must be a positive integer")
         N = self.domain().ambient_space().dimension_relative()
@@ -2689,7 +2689,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         if return_points:
             points = kwds["points"]
-            if n==1:
+            if n == 1:
                 # Base case of recursion
                 return D, points
             else:
@@ -2699,7 +2699,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     D.update(self._nth_preimage_tree_helper(pt, n-1, m+1, **kwds)[0])
             return D, points
         else:
-            if n==1:
+            if n == 1:
                 # Base case of recursion
                 return D
             else:
@@ -3506,7 +3506,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 hyperplane_found = True
                                 break
                 if not hyperplane_found:
-                    raise ValueError('no possible conjugation over %s makes all preperiodic points affine' %R)
+                    raise ValueError('no possible conjugation over %s makes all preperiodic points affine' % R)
             else:
                 # if the characteristic is 0, R contains Z
                 if R.characteristic() == 0:
@@ -3541,7 +3541,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                             if hyperplane_found:
                                 break
                     else:
-                        raise NotImplementedError('cannot find affine periodic model over %s' %(R))
+                        raise NotImplementedError('cannot find affine periodic model over %s' % (R))
             source = PS.subscheme(CR.gens()[-1])
             mat = PS.hyperplane_transformation_matrix(source, hyperplane)
             if R.is_field():
@@ -4176,7 +4176,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         N = len(crit_points)
         for i in range(N):
             done = False
-            Q= F(crit_points[i])
+            Q = F(crit_points[i])
             while not done:
                 if Q in crit_points:
                     done = True
@@ -6248,7 +6248,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     pp_d = pts_poly.degree()
                     pts_poly_CF = pts_poly_CF.subs({pts_poly_CF.parent().gen(1):1}).univariate_polynomial()
                     max_mult = max([pp_d - pts_poly_CF.degree()] + [ex for p,ex in pts_poly_CF.roots()])
-            assert (n<=4), "n > 4, failed to find usable poly"
+            assert (n <= 4), "n > 4, failed to find usable poly"
             G,m = pts_poly.reduced_form(prec=prec, emb=emb, smallest_coeffs=False)
             sm_f = self.conjugate(m)
 
@@ -8150,7 +8150,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             return m1.is_similar(m2)
         # sigma invariants are invariant under conjugacy but are only fast in dim 1
         n = f.domain().dimension_relative()
-        if (n==1) and (R in NumberFields() or R in FiniteFields())\
+        if (n == 1) and (R in NumberFields() or R in FiniteFields())\
           and (f.sigma_invariants(1) != g.sigma_invariants(1)):
             return False
         tup = conjugating_set_initializer(f, g)

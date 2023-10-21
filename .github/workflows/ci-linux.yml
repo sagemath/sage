@@ -34,7 +34,46 @@ permissions:
 
 jobs:
 
+  # standard-pre for the default platform (used by build.yml etc.)
+  default-pre:
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build from scratch
+      docker_targets: "with-system-packages configured with-targets-pre"
+      # FIXME: duplicated from env.TARGETS
+      targets_pre: all-sage-local
+      tox_system_factors: >-
+        ["ubuntu-focal"]
+      tox_packages_factors: >-
+        ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  # standard for the default platform (used by build.yml etc.)
+  default:
+    if: ${{ success() || failure() }}
+    needs: [default-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets: build doc-html
+      targets_optional: ptest
+      tox_system_factors: >-
+        ["ubuntu-focal"]
+      tox_packages_factors: >-
+          ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  # All platforms. This duplicates the default platform, but why not,
+  # it makes it more robust regarding random timeouts.
+
   standard-pre:
+    if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch

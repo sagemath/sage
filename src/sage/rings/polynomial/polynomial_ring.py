@@ -388,7 +388,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: S(x)
             x
 
-        Throw a TypeError if any of the coefficients cannot be coerced
+        Throw a :class:`TypeError` if any of the coefficients cannot be coerced
         into the base ring (:trac:`6777`)::
 
             sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr

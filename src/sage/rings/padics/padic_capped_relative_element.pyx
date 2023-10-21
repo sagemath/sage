@@ -576,6 +576,7 @@ def unpickle_pcre_v1(R, unit, ordp, relprec):
     """
     return unpickle_cre_v2(pAdicCappedRelativeElement, R, unit, ordp, relprec)
 
+
 def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     r"""
     Return a base-`p` list of digits of ``n``.

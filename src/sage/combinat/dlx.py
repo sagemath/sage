@@ -237,7 +237,7 @@ class DLXMatrix:
         for r in ones:
             curRow = r[0]  # row index
             columns = r[1]  # column indexes
-            if not(columns):
+            if not (columns):
                 continue
             columns.sort()
 

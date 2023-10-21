@@ -246,7 +246,7 @@ class TangentSpace(FiniteRankFreeModule):
         """
         manif = point._manifold
         name = "T_{} {}".format(point._name, manif._name)
-        latex_name = r"T_{%s}\,%s"%(point._latex_name, manif._latex_name)
+        latex_name = r"T_{%s}\,%s" % (point._latex_name, manif._latex_name)
         self._point = point
         self._manif = manif
         if base_ring is None:

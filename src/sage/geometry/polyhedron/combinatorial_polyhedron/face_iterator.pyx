@@ -351,7 +351,7 @@ cdef class FaceIterator_base(SageObject):
             sage: FaceIterator_base(2)  # indirect doctest
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'...
         """
         cdef int i
         sig_free(self.structure.atom_rep)
@@ -1945,7 +1945,8 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         # The function is not supposed to be called,
         # just prevent it from crashing.
         # Actually raising an error here results in a bad branch prediction.
-        return -1
+        # But return -1 results in a crash with python 3.12
+        raise StopIteration
 
     # Getting ``[faces, n_faces, n_visited_all]`` according to dimension.
     cdef face_list_t* faces = &structure.new_faces[structure.current_dimension]
