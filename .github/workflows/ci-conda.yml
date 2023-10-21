@@ -96,7 +96,8 @@ jobs:
 
       # We keep this step for now to make sure that the configure-based setup still works.
       - name: Test configure
-        run:
+        shell: bash -l {0}
+        run: |
           echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
           ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX --enable-system-site-packages $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
           echo "::remove-matcher owner=configure-system-package-warning::"
