@@ -66,7 +66,7 @@ jobs:
           (cd /sage/local/share/doc/sage/html/en && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
-                                                -e '\;<script type="application/vnd\.jupyter\.widget-state\+json">;,\;</script>; d')
+                                                -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
           (cd /sage/local/share/doc/sage/html/en && \
            git init && \
@@ -132,10 +132,9 @@ jobs:
           set -ex
           mkdir -p ./docs
           (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
-          echo '## Preview of CHANGES.html'
           # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
-           find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state\+json">;,\;</script>; d')
+           find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create CHANGES.html
           echo '<html>' > ./docs/CHANGES.html
           echo '<head>' >> ./docs/CHANGES.html
@@ -182,8 +181,7 @@ jobs:
           cat ./docs/diff.html >> ./docs/CHANGES.html
           echo '</body>' >> ./docs/CHANGES.html
           echo '</html>' >>./docs/CHANGES.html
-          # Preview of changes
-          echo '## Preview of diff.txt'; head -n 400 ./docs/diff.txt
+          rm ./docs/diff.txt ./docs/diff.html
           (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
