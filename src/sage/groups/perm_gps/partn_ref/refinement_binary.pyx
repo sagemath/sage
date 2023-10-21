@@ -235,9 +235,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sage: B = LinearBinaryCodeStruct(M)
             sage: B.automorphism_group()[1]
             17868913969917295853568000000
-
         """
-        cdef int i, n = self.degree
+        cdef int n = self.degree
         cdef PartitionStack *part
         if partition is None:
             part = PS_new(n, 1)
@@ -650,7 +649,7 @@ cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_ref
     """
     cdef BinaryCodeStruct BCS = <BinaryCodeStruct> S
     cdef int current_cell_against = 0
-    cdef int current_cell, i, r, j
+    cdef int current_cell, i, r
     cdef int first_largest_subcell
     cdef int invariant = 0
     cdef PartitionStack *word_ps = BCS.word_ps
@@ -970,7 +969,7 @@ cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int e
         of PS
     """
     cdef bitset_t cell, word
-    cdef int i, h
+    cdef int h
     bitset_init(cell, BCS.degree)
     bitset_zero(cell)
     bitset_init(word, BCS.degree)
@@ -1001,7 +1000,7 @@ cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int ent
     """
     cdef bitset_t word
     bitset_init(word, BCS.degree)
-    cdef int degree = 0, word_basis, i, b
+    cdef int degree = 0
     entry = col_ps.entries[entry]
     while True:
         BCS.ith_word(BCS, word_ps.entries[cell_index], word)
@@ -1017,15 +1016,14 @@ cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degre
     A simple counting sort, given the degrees of vertices to a certain cell.
 
     INPUT:
-    PS -- the partition stack to be checked
-    start -- beginning index of the cell to be sorted
-    degrees -- the values to be sorted by
-    count, count_max, output -- scratch space
 
+    - PS -- the partition stack to be checked
+    - start -- beginning index of the cell to be sorted
+    - degrees -- the values to be sorted by
+    - count, count_max, output -- scratch space
     """
-    cdef int n = PS.degree
     cdef int i, j, max, max_location
-    for j from 0 <= j < count_max:
+    for j in range(count_max):
         counts[j] = 0
     i = 0
     while PS.levels[i+start] > PS.depth:

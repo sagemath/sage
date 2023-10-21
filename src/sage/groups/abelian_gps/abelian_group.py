@@ -764,7 +764,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         from sage.matrix.constructor import diagonal_matrix
         ed = diagonal_matrix(ZZ, self.gens_orders()).elementary_divisors()
-        return tuple(d for d in ed if d!=1)
+        return tuple(d for d in ed if d != 1)
 
     @cached_method
     def exponent(self):
@@ -823,7 +823,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         v = []
         for x in eldv:
             if x:
-                v.append("C%s"%x)
+                v.append("C%s" % x)
             else:
                 v.append("Z")
         return ' x '.join(v)
@@ -893,12 +893,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             'AbelianPcpGroup([0, 3, 4])'
         """
         if self.is_finite():
-            return 'AbelianGroup(%s)'%list(self.gens_orders())
+            return 'AbelianGroup(%s)' % list(self.gens_orders())
 
         from sage.features.gap import GapPackage
         # Make sure to LoadPackage("Polycyclic") in gap
         GapPackage("polycyclic", spkg="gap_packages").require()
-        return 'AbelianPcpGroup(%s)'%list(self.gens_orders())
+        return 'AbelianPcpGroup(%s)' % list(self.gens_orders())
 
     def gen(self, i=0):
         """
@@ -920,7 +920,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         n = self.ngens()
         if i < 0 or i >= n:
-            raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
+            raise IndexError("Argument i (= %s) must be between 0 and %s." % (i, n-1))
         x = [0]*n
         if self._gens_orders[i] != 1:
             x[i] = 1
@@ -1142,7 +1142,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         if not self.is_finite():
             raise TypeError('Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
-        s = 'Image(IsomorphismPermGroup(%s))'%self._gap_init_()
+        s = 'Image(IsomorphismPermGroup(%s))' % self._gap_init_()
         return PermutationGroup(gap_group=s)
 
     def is_commutative(self):

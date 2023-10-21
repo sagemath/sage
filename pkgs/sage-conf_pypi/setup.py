@@ -6,10 +6,21 @@ import platform
 import fnmatch
 
 from setuptools import setup
+from setuptools.dist import Distribution
 from distutils.command.build_scripts import build_scripts as distutils_build_scripts
 from setuptools.command.build_py import build_py as setuptools_build_py
 from setuptools.command.editable_wheel import editable_wheel as setuptools_editable_wheel
 from setuptools.errors import SetupError
+
+
+# setuptools plugins considered harmful:
+# If build isolation is not in use and setuptools_scm is installed,
+# then its file_finders entry point is invoked, which we don't need.
+# And with setuptools_scm 8, we get more trouble:
+# LookupError: pyproject.toml does not contain a tool.setuptools_scm section
+# LookupError: setuptools-scm was unable to detect version ...
+# We just remove all handling of "setuptools.finalize_distribution_options" entry points.
+Distribution._removed = staticmethod(lambda ep: True)
 
 
 class build_py(setuptools_build_py):
