@@ -21,10 +21,11 @@ log = logging.getLogger()
 
 class PackageClass(object):
 
-    def __init__(self, *package_names_or_classes, exclude=(),
-                 include_dependencies=False, exclude_dependencies=False,
-                 **filters):
+    def __init__(self, *package_names_or_classes, **filters):
         self.__names = set()
+        exclude = filters.pop('exclude', ())
+        include_dependencies = filters.pop('include_dependencies', False)
+        exclude_dependencies = filters.pop('exclude_dependencies', False)
         filenames = filters.pop('has_files', [])
         no_filenames = filters.pop('no_files', [])
         excluded = []
