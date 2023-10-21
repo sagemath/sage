@@ -1,5 +1,4 @@
 # sage.doctest: optional - sage.rings.finite_rings
-# cython: profile=True
 """
 Lean matrices
 

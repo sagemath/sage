@@ -1913,7 +1913,7 @@ class KnotInfoBase(Enum):
           the target of the conversion is the ``pip`` installable
           package `SnapPy <https://snappy.math.uic.edu/index.html>`__
           (explicitely, ``spherogram.links.invariants.Link``).
-          If SnapPy is not installed an ``ImportError`` is raised. To
+          If SnapPy is not installed an :class:`ImportError` is raised. To
           install SnapPy use ``sage -pip install snappy``.
 
         .. NOTE::

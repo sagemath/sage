@@ -23,7 +23,7 @@ EXAMPLES::
     sage: A.rank()
     4
     sage: v = vector(GF(127), 4, (100, 93, 47, 110))
-    sage: x = A\v
+    sage: x = A.solve_right(v)
     sage: A*x == v
     True
 
