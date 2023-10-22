@@ -115,17 +115,17 @@ jobs:
       - name: Pytest
         if: contains(github.ref, 'pytest')
         run: |
-          ../sage -python -m pip install coverage pytest-xdist
-          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
+          ./sage -python -m pip install coverage pytest-xdist
+          ./sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
         # Increase the length of the lines in the "short summary"
         shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image COLUMNS=120 {0}
 
       - name: Test all files (sage -t --all --long)
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image/src {0}
+          ./sage -python -m pip install coverage
+          ./sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Prepare coverage results
         if: (success() || failure()) && steps.build.outcome == 'success'
