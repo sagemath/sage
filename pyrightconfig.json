@@ -22,4 +22,5 @@
     "reportUndefinedVariable": "warning",
     "reportOptionalOperand": "warning",
     "reportMissingImports": "warning",
+    "reportSelfClsParameterName": "none",
 }
