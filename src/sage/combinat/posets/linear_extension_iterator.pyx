@@ -59,7 +59,7 @@ def _linear_extension_prepare(D):
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py_ssize_t i):
+cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py_ssize_t i) noexcept:
     """
     This implements the ``Switch`` procedure described on page 7
     of "Generating Linear Extensions Fast" by Pruesse and Ruskey.
@@ -83,7 +83,7 @@ cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i):
+cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
     Return ``True`` if and only if ``_a[i]`` is incomparable with the
     element to its right in ``_le`` and the element to the right is
@@ -111,7 +111,7 @@ cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i):
+cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
     Return True if and only if ``_b[i]`` is incomparable with the
     elements to its right in ``_le``.

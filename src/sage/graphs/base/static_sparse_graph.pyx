@@ -310,7 +310,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
         cpython.Py_XINCREF(g.edge_labels)
 
 
-cdef inline int n_edges(short_digraph g):
+cdef inline int n_edges(short_digraph g) noexcept:
     """
     Return the number of edges in ``g``.
 
@@ -319,7 +319,7 @@ cdef inline int n_edges(short_digraph g):
     return <int> (g.neighbors[g.n] - g.edges)
 
 
-cdef inline int out_degree(short_digraph g, int i):
+cdef inline int out_degree(short_digraph g, int i) noexcept:
     """
     Return the out-degree of vertex `i` in ``g``.
 
@@ -402,14 +402,14 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
     return 0
 
 
-cdef int compare_uint32_p(const_void *a, const_void *b):
+cdef int compare_uint32_p(const_void *a, const_void *b) noexcept:
     """
     Comparison function needed for ``bsearch``.
     """
     return (<uint32_t *> a)[0] - (<uint32_t *> b)[0]
 
 
-cdef inline uint32_t * has_edge(short_digraph g, int u, int v):
+cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
     r"""
     Test the existence of an edge.
 
@@ -418,7 +418,7 @@ cdef inline uint32_t * has_edge(short_digraph g, int u, int v):
     return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u], sizeof(uint32_t), compare_uint32_p)
 
 
-cdef inline object edge_label(short_digraph g, uint32_t * edge):
+cdef inline object edge_label(short_digraph g, uint32_t * edge) noexcept:
     r"""
     Return the label associated with a given edge
     """
@@ -433,7 +433,7 @@ cdef uint32_t simple_BFS(short_digraph g,
                          uint32_t *distances,
                          uint32_t *predecessors,
                          uint32_t *waiting_list,
-                         bitset_t seen):
+                         bitset_t seen) noexcept:
     """
     Perform a breadth first search (BFS) using the same method as in
     sage.graphs.distances_all_pairs.all_pairs_shortest_path_BFS
@@ -565,7 +565,7 @@ cdef int can_be_reached_from(short_digraph g, int src, bitset_t reached) except 
     sig_free(stack)
 
 
-cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc):
+cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc) noexcept:
     r"""
     The Tarjan algorithm to compute strongly connected components (SCCs).
 
@@ -765,7 +765,7 @@ def tarjan_strongly_connected_components(G):
     return output
 
 
-cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output):
+cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output) noexcept:
     r"""
     Compute the strongly connected components (SCCs) digraph of `g`.
 
@@ -889,7 +889,7 @@ def strongly_connected_components_digraph(G):
     return output, {v: scc[i] for i, v in enumerate(int_to_vertex)}
 
 
-cdef strongly_connected_component_containing_vertex(short_digraph g, short_digraph g_reversed, int v, bitset_t scc):
+cdef strongly_connected_component_containing_vertex(short_digraph g, short_digraph g_reversed, int v, bitset_t scc) noexcept:
     """
     Feed ``scc`` with the vertices in the strongly connected component of ``v``.
     """
@@ -903,7 +903,7 @@ cdef strongly_connected_component_containing_vertex(short_digraph g, short_digra
     bitset_intersection(scc, scc, scc_reversed)
 
 
-cdef void free_short_digraph(short_digraph g):
+cdef void free_short_digraph(short_digraph g) noexcept:
     """
     Free the resources used by ``g``
     """

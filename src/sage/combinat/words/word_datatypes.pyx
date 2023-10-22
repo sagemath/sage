@@ -419,7 +419,7 @@ cdef class WordDatatype_str(WordDatatype):
         else:
             return a in self._data
 
-    cpdef _has_factor_naive(self, w):
+    cpdef _has_factor_naive(self, w) noexcept:
         r"""
         A naive test for testing whether the word contains ``w`` as a factor.
 
@@ -449,7 +449,7 @@ cdef class WordDatatype_str(WordDatatype):
             return w in self._data
         raise ValueError
 
-    cpdef find(self, sub, start=0, end=None):
+    cpdef find(self, sub, start=0, end=None) noexcept:
         r"""
         Returns the index of the first occurrence of sub in self,
         such that sub is contained within self[start:end].

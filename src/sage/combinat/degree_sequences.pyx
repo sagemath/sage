@@ -412,7 +412,7 @@ class DegreeSequences:
         """
         sig_free(seq)
 
-cdef init(int n):
+cdef init(int n) noexcept:
     """
     Initializes the memory and starts the enumeration algorithm.
     """
@@ -436,7 +436,7 @@ cdef init(int n):
     sig_free(seq)
     return sequences
 
-cdef inline add_seq():
+cdef inline add_seq() noexcept:
     """
     This function is called whenever a sequence is found.
 
@@ -457,7 +457,7 @@ cdef inline add_seq():
     sequences.append(s)
 
 
-cdef void enum(int k, int M):
+cdef void enum(int k, int M) noexcept:
     r"""
     Main function; for an explanation of the algorithm please refer to the
     :mod:`sage.combinat.degree_sequences` documentation.

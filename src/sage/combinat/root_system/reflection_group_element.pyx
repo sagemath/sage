@@ -347,7 +347,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat.set_immutable()
         return mat
 
-    cpdef action(self, vec, on_space="primal"):
+    cpdef action(self, vec, on_space="primal") noexcept:
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -372,7 +372,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat = self.matrix(on_space=on_space)
         return vec * mat
 
-    cpdef _act_on_(self, vec, bint self_on_left):
+    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
         r"""
         Defines the action of ``self`` as a linear transformation
         on the vector space, in the basis given by the simple
@@ -396,7 +396,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             return (~self).action(vec)
         return self.action(vec)
 
-    cpdef action_on_root_indices(self, i):
+    cpdef action_on_root_indices(self, i) noexcept:
         """
         Return the right action on the set of roots.
 
@@ -763,7 +763,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         """
         return ZZ(len(self._reduced_word))
 
-    cpdef bint has_left_descent(self, i):
+    cpdef bint has_left_descent(self, i) noexcept:
         r"""
         Return whether ``i`` is a left descent of ``self``.
 
@@ -784,7 +784,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         # we also check == because 0-based indexing
         return self.perm[W._index_set_inverse[i]] >= W.number_of_reflections()
 
-    cpdef bint has_descent(self, i, side="left", positive=False):
+    cpdef bint has_descent(self, i, side="left", positive=False) noexcept:
         r"""
         Return whether ``i`` is a descent (or ascent) of ``self``.
 
@@ -957,7 +957,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
     matrix = to_matrix
 
-    cpdef action(self, vec, side="right", on_space="primal"):
+    cpdef action(self, vec, side="right", on_space="primal") noexcept:
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -1020,7 +1020,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         else:
             raise ValueError('on_space must be "primal" or "dual"')
 
-    cpdef _act_on_(self, vec, bint self_on_left):
+    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
         r"""
         Give the action of ``self`` as a linear transformation on
         the vector space, in the basis given by the simple roots.
@@ -1053,7 +1053,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         else:
             return self.action(vec,side="right")
 
-    cpdef action_on_root_indices(self, i, side="right"):
+    cpdef action_on_root_indices(self, i, side="right") noexcept:
         """
         Return the action on the set of roots.
 
