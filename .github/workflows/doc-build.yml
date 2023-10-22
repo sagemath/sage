@@ -16,39 +16,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  get_ci_fixes:
+  build-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
+
       - name: Merge CI fixes from sagemath/sage
         run: |
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Store CI fixes in upstream artifact
-        run: |
-          mkdir -p upstream
-          if git format-patch --stdout test_base > ci_fixes.patch; then
-            cp ci_fixes.patch upstream/
-          fi
-      - uses: actions/upload-artifact@v3
-        with:
-          path: upstream
-          name: upstream
 
-  build-docs:
-    runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets:dev
-    needs: [get_ci_fixes]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Start container
+        run: |
+          docker run --name BUILD -dit \
+            --mount type=bind,src=$(pwd),dst=$(pwd) \
+            --workdir $(pwd) \
+            ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}} /bin/sh
 
       - name: Update system packages
         run: |
           apt-get update && apt-get install -y git zip
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Add prebuilt tree as a worktree
         id: worktree
@@ -73,40 +63,23 @@ jobs:
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
            git add -A && git commit --quiet -m "old")
-
-      - name: Download upstream artifact
-        uses: actions/download-artifact@v3
-        with:
-          path: upstream
-          name: upstream
-
-      - name: Apply CI fixes from sagemath/sage
-        # After applying the fixes, make sure all changes are marked as uncommitted changes.
-        run: |
-          if [ -r upstream/ci_fixes.patch ]; then
-            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
-          fi
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Incremental build
         id: incremental
         run: |
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
           ./bootstrap && make sagemath_doc_html-build-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Build (fallback to non-incremental)
         id: build
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
-          set -ex
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Build docs
         id: docbuild
@@ -114,16 +87,13 @@ jobs:
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
-          set -ex
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           export SAGE_USE_CDNS=yes
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
           ./config.status && make sagemath_doc_html-no-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Copy docs
         id: copy
@@ -189,6 +159,7 @@ jobs:
           cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload docs
         if: always() && steps.copy.outcome == 'success'
