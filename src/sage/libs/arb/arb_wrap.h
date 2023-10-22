@@ -5,6 +5,8 @@
  * by arb, most of which rely on flint's ulong and slong defines.
  */
 
+#include <mpfr.h>
+
 #undef ulong
 #undef slong
 
