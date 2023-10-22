@@ -75,7 +75,7 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/arf.h
-    cdef enum arf_rnd_t:
+    ctypedef enum arf_rnd_t:
         ARF_RND_DOWN
         ARF_RND_UP
         ARF_RND_FLOOR
@@ -654,16 +654,6 @@ cdef extern from "flint_wrap.h":
     ctypedef nmod_discrete_log_pohlig_hellman_struct nmod_discrete_log_pohlig_hellman_t[1]
 
 
-    # flint/fq_nmod.h
-    ctypedef struct fq_nmod_ctx_struct:
-        nmod_poly_t modulus
-
-    ctypedef fq_nmod_ctx_struct fq_nmod_ctx_t[1]
-
-    ctypedef nmod_poly_struct fq_nmod_struct
-    ctypedef nmod_poly_t fq_nmod_t
-
-
     # flint/fq_types.h
     ctypedef fmpz_poly_t fq_t
     ctypedef fmpz_poly_struct fq_struct
@@ -820,7 +810,7 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/mpoly_types.h
-    ctypedef enum  ordering_t:
+    ctypedef enum ordering_t:
         ORD_LEX
         ORD_DEGLEX
         ORD_DEGREVLEX
