@@ -47,7 +47,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab( void *,
     PartitionStack *, int,
     bint (*)(PartitionStack *, void *) noexcept,
     int (*)(PartitionStack *, void *, int *, int) noexcept,
-    int (*)(int *, int *, void *, void *, int), bint, StabilizerChain * noexcept,
+    int (*)(int *, int *, void *, void *, int) noexcept, bint, StabilizerChain *,
     agcl_work_space *, aut_gp_and_can_lab *) except NULL
 
 
