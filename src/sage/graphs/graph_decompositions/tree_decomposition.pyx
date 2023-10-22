@@ -104,12 +104,14 @@ Methods
 
 from sage.sets.set import Set
 from sage.misc.cachefunc import cached_function
-from itertools import chain
 from sage.features import PythonModule
 from sage.sets.disjoint_set import DisjointSet
 from sage.rings.infinity import Infinity
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from cysignals.memory cimport sig_calloc, sig_free
+
+from itertools import chain
+from collections.abc import Iterable
 
 
 def is_valid_tree_decomposition(G, T):
@@ -206,9 +208,7 @@ def is_valid_tree_decomposition(G, T):
         raise ValueError("the second parameter must be a tree")
 
     for X in T:
-        try:
-            _ = list(X)
-        except TypeError:
+        if not isinstance(X, Iterable):
             raise ValueError("the vertices of T must be iterables")
 
     # 1. The union of the bags equals V
@@ -438,7 +438,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
 
     INPUT:
 
-    - ``g`` -- a sage Graph
+    - ``g`` -- a Sage Graph
 
     - ``k`` -- integer (default: ``None``); indicates the width to be
       considered. When ``k`` is an integer, the method checks that the graph has
@@ -466,12 +466,12 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
 
     ALGORITHM:
 
-    This function virtually explores the graph of all pairs ``(vertex_cut,cc)``,
+    This function virtually explores the graph of all pairs ``(vertex_cut, cc)``,
     where ``vertex_cut`` is a vertex cut of the graph of cardinality `\leq k+1`,
     and ``connected_component`` is a connected component of the graph induced by
     ``G-vertex_cut``.
 
-    We deduce that the pair ``(vertex_cut,cc)`` is feasible with tree-width `k`
+    We deduce that the pair ``(vertex_cut, cc)`` is feasible with tree-width `k`
     if ``cc`` is empty, or if a vertex ``v`` from ``vertex_cut`` can be replaced
     with a vertex from ``cc``, such that the pair ``(vertex_cut+v,cc-v)`` is
     feasible.
@@ -498,14 +498,14 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
         sage: graphs.PetersenGraph().treewidth(certificate=True)
         Tree decomposition: Graph on 6 vertices
 
-    The treewidth of a 2d grid is its smallest side::
+    The treewidth of a 2-dimensional grid is its smallest side::
 
         sage: graphs.Grid2dGraph(2,5).treewidth()
         2
         sage: graphs.Grid2dGraph(3,5).treewidth()
         3
 
-    When parameter ``kmin`` is specified, the method search for a
+    When parameter ``kmin`` is specified, the method searches for a
     tree-decomposition of width at least ``kmin``::
 
         sage: g = graphs.PetersenGraph()
@@ -598,7 +598,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
 
         sage: graphs.PetersenGraph().treewidth(k=35)
         True
-        sage: graphs.PetersenGraph().treewidth(k=35,certificate=True)
+        sage: graphs.PetersenGraph().treewidth(k=35, certificate=True)
         Tree decomposition: Graph on 1 vertex
 
     Bad input::
@@ -609,34 +609,27 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
         ValueError: k(=-3) must be a nonnegative integer
     """
     # Check Input
-    if algorithm is None or algorithm == 'tdlib':
-        try:
-            import sage.graphs.graph_decompositions.tdlib as tdlib
-            tdlib_found = True
-        except ImportError:
-            tdlib_found = False
-
-    elif algorithm != "sage":
+    if algorithm not in [None, 'tdlib', 'sage']:
         raise ValueError("'algorithm' must be equal to 'tdlib', 'sage', or None")
 
-    if algorithm is None:
-        if tdlib_found:
-            algorithm = 'tdlib'
-        else:
-            algorithm = 'sage'
+    try:
+        import sage.graphs.graph_decompositions.tdlib as tdlib
+        tdlib_found = True
+    except ImportError:
+        tdlib_found = False
 
-    if k is not None and k < 0:
-        raise ValueError("k(={}) must be a nonnegative integer".format(k))
+    if algorithm is None:
+        algorithm = 'tdlib' if tdlib_found else 'sage'
+
+    if (k is not None) and k < 0:
+        raise ValueError(f"k(={k}) must be a nonnegative integer")
 
     # Stupid cases
     from sage.graphs.graph import Graph
     if not g.order():
         if certificate:
             return Graph()
-        elif k is None:
-            return -1
-        else:
-            return True
+        return -1 if k is None else True
 
     if k is not None and k >= g.order() - 1:
         if certificate:
@@ -661,10 +654,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
 
         if certificate:
             return T if (k is None or width <= k) else False
-        elif k is None:
-            return width
-        else:
-            return width <= k
+        return width if k is None else width <= k
 
     # The treewidth of a graph is the maximum over its atoms. So, we decompose
     # the graph by clique minimal separators, compute the treewidth of each of
@@ -672,6 +662,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     # This decomposition also deals with disconnected cases.
     atoms, cliques = g.atoms_and_clique_separators()
     if cliques:
+        # If we do not need the tree decomposition
         if not certificate:
             if k is None:
                 for a in atoms:
@@ -681,16 +672,17 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
                 return False
             else:
                 return all(g.subgraph(a).treewidth(algorithm=algorithm, k=k) for a in atoms)
-        else:
-            # We compute the tree decomposition of each atom
-            T = []
-            for a in atoms:
-                ga = g.subgraph(a)
-                Ta = ga.treewidth(algorithm=algorithm, certificate=True, kmin=kmin)
-                kmin = max(kmin, width_of_tree_decomposition(ga, Ta, check=False))
-                T.append(Ta)
-            # and merge the resulting trees
-            return _from_tree_decompositions_of_atoms_to_tree_decomposition(T, cliques)
+
+        # Otherwise, compute the tree decomposition of each atom
+        T = []
+        for a in atoms:
+            ga = g.subgraph(a)
+            Ta = ga.treewidth(algorithm=algorithm, certificate=True, kmin=kmin)
+            kmin = max(kmin, width_of_tree_decomposition(ga, Ta, check=False))
+            T.append(Ta)
+
+        # Merge the resulting trees
+        return _from_tree_decompositions_of_atoms_to_tree_decomposition(T, cliques)
 
     # Forcing k to be defined
     if k is None:
@@ -768,7 +760,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     G.add_edges(((Set(x), Set(y)) for x, y in TD), loops=False)
 
     # The Tree-Decomposition may contain a lot of useless nodes.
-    # We merge all edges between two sets S,S' where S is a subset of S'
+    # We merge all edges between two sets S, S' where S is a subset of S'
     G = reduced_tree_decomposition(G)
 
     G.name("Tree decomposition")
