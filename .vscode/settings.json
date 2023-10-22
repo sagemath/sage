@@ -8,13 +8,30 @@
         "src/**/*.so": true
     },
     "search.exclude": {
+        "build/pkgs/sagemath_bliss/src": true,
         "build/pkgs/sagemath_categories/src": true,
+        "build/pkgs/sagemath_coxeter3/src": true,
+        "build/pkgs/sagemath_doc_html/src": true,
+        "build/pkgs/sagemath_environment/src": true,
+        "build/pkgs/sagemath_mcqd/src": true,
+        "build/pkgs/sagemath_meataxe/src": true,
         "build/pkgs/sagemath_objects/src": true,
+        "build/pkgs/sagemath_repl/src": true,
+        "build/pkgs/sagemath_sirocco/src": true,
+        "build/pkgs/sagemath_tdlib/src": true,
         "build/pkgs/sagelib/src": true,
         "pkgs/sage-conf_pypi/sage_root/build": true,
+        "pkgs/sagemath-bliss/sage": true,
         "pkgs/sagemath-categories/sage": true,
+        "pkgs/sagemath-coxeter3/sage": true,
+        "pkgs/sagemath-environment/sage": true,
+        "pkgs/sagemath-mcqd/sage": true,
+        "pkgs/sagemath-meataxe/sage": true,
         "pkgs/sagemath-objects/sage": true,
-        "pkgs/sagemath-standard/sage": true
+        "pkgs/sagemath-repl/sage": true,
+        "pkgs/sagemath-sirocco/sage": true,
+        "pkgs/sagemath-standard/sage": true,
+        "pkgs/sagemath-tdlib/sage": true,
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
@@ -34,5 +51,6 @@
         "sagemath",
         "Cython"
     ],
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "esbonio.sphinx.confDir": ""
 }
