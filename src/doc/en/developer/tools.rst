@@ -79,6 +79,26 @@ Sage doctester in the normal Sage environment.  This is equivalent to
 using the command ``./sage -t``; see :ref:`chapter-doctesting`.
 
 
+.. _section-tools-coverage-py:
+
+Doctest with Coverage.py
+========================
+
+The command ``./sage -tox -e coverage.py`` requires that Sage has been
+built already. ``coverage.py`` is a special tox environment that runs the
+Sage doctester (:ref:`chapter-doctesting`) in the normal Sage environment,
+but under the control of
+`Coverage.py <https://coverage.readthedocs.io/en/latest/index.html>`_
+for code coverage analysis.
+
+If invoked as ``./sage -tox -e coverage.py-html``, additionally a
+detailed HTML report is generated.
+
+*Configuration:* ``[coverage:run]`` block in ``SAGE_ROOT/src/tox.ini``
+
+*Documentation:* https://coverage.readthedocs.io
+
+
 .. _section-tools-coverage:
 
 Coverage
