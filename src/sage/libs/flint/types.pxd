@@ -1706,8 +1706,9 @@ cdef extern from "flint_wrap.h":
     ctypedef void ((*gr_method_init_clear_op)(gr_ptr, gr_ctx_ptr))
     ctypedef void ((*gr_method_swap_op)(gr_ptr, gr_ptr, gr_ctx_ptr))
     ctypedef int ((*gr_method_ctx)(gr_ctx_ptr))
-    # Cython is confused!?
-    ## ctypedef truth_t ((*gr_method_ctx_predicate)(gr_ctx_ptr))
+    # NOTE: we removed an extra paranthesis so that Cython is less confused
+    # see https://github.com/cython/cython/issues/5779
+    ctypedef truth_t (*gr_method_ctx_predicate)(gr_ctx_ptr)
     ctypedef int ((*gr_method_ctx_set_si)(gr_ctx_ptr, slong))
     ctypedef int ((*gr_method_ctx_get_si)(slong *, gr_ctx_ptr))
     ctypedef int ((*gr_method_ctx_stream)(gr_stream_t, gr_ctx_ptr))
@@ -1766,9 +1767,10 @@ cdef extern from "flint_wrap.h":
     ctypedef int ((*gr_method_quaternary_binary_op)(gr_ptr, gr_ptr, gr_ptr, gr_ptr, gr_srcptr, gr_srcptr, gr_ctx_ptr))
     ctypedef int ((*gr_method_quaternary_ternary_op)(gr_ptr, gr_ptr, gr_ptr, gr_ptr, gr_srcptr, gr_srcptr, gr_srcptr, gr_ctx_ptr))
     ctypedef int ((*gr_method_si_si_quaternary_op)(gr_ptr, slong, slong, gr_srcptr, gr_srcptr, gr_ctx_ptr))
-    # Cython is confused!?
-    ## ctypedef truth_t ((*gr_method_unary_predicate)(gr_srcptr, gr_ctx_ptr))
-    ## ctypedef truth_t ((*gr_method_binary_predicate)(gr_srcptr, gr_srcptr, gr_ctx_ptr))
+    # NOTE: we removed an extra paranthesis so that Cython is less confused
+    # see https://github.com/cython/cython/issues/5779
+    ctypedef truth_t (*gr_method_unary_predicate)(gr_srcptr, gr_ctx_ptr)
+    ctypedef truth_t (*gr_method_binary_predicate)(gr_srcptr, gr_srcptr, gr_ctx_ptr)
     ctypedef void ((*gr_method_vec_init_clear_op)(gr_ptr, slong, gr_ctx_ptr))
     ctypedef void ((*gr_method_vec_swap_op)(gr_ptr, gr_ptr, slong, gr_ctx_ptr))
     ctypedef int ((*gr_method_vec_constant_op)(gr_ptr, slong, gr_ctx_ptr))
@@ -1784,9 +1786,10 @@ cdef extern from "flint_wrap.h":
     ctypedef int ((*gr_method_vec_scalar_op_ui)(gr_ptr, gr_srcptr, slong, ulong, gr_ctx_ptr))
     ctypedef int ((*gr_method_vec_scalar_op_fmpz)(gr_ptr, gr_srcptr, slong, const fmpz_t, gr_ctx_ptr))
     ctypedef int ((*gr_method_vec_scalar_op_fmpq)(gr_ptr, gr_srcptr, slong, const fmpq_t, gr_ctx_ptr))
-    # Cython is confused!?
-    ## ctypedef truth_t ((*gr_method_vec_predicate)(gr_srcptr, slong, gr_ctx_ptr))
-    ## ctypedef truth_t ((*gr_method_vec_vec_predicate)(gr_srcptr, gr_srcptr, slong, gr_ctx_ptr))
+    # NOTE: we removed an extra paranthesis so that Cython is less confused
+    # see https://github.com/cython/cython/issues/5779
+    ctypedef truth_t (*gr_method_vec_predicate)(gr_srcptr, slong, gr_ctx_ptr)
+    ctypedef truth_t (*gr_method_vec_vec_predicate)(gr_srcptr, gr_srcptr, slong, gr_ctx_ptr)
     ctypedef int ((*gr_method_factor_op)(gr_ptr, gr_vec_t, gr_vec_t, gr_srcptr, int, gr_ctx_ptr))
     ctypedef int ((*gr_method_poly_unary_trunc_op)(gr_ptr, gr_srcptr, slong, slong, gr_ctx_ptr))
     ctypedef int ((*gr_method_poly_binary_op)(gr_ptr, gr_srcptr, slong, gr_srcptr, slong, gr_ctx_ptr))
