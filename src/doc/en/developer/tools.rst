@@ -48,8 +48,8 @@ available::
   ...
   --tox [options] <files|dirs> -- general entry point for testing
                                   and linting of the Sage library
-     -e <envlist>     -- run specific test environments
-                         (default: run all except full pycodestyle)
+     -e <envlist>     -- run specific test environments; default:
+                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst
         doctest                -- run the Sage doctester
                                   (same as "sage -t")
         coverage               -- give information about doctest coverage of files
@@ -59,11 +59,13 @@ available::
         pycodestyle-minimal    -- check against Sage's minimal style conventions
         relint                 -- check whether some forbidden patterns appear
                                   (includes all patchbot pattern-exclusion plugins)
-        rst                    -- validate Python docstrings markup as reStructuredText
         codespell              -- check for misspelled words in source code
-        cython-lint            -- Check Cython files for code style
+        rst                    -- validate Python docstrings markup as reStructuredText
+        coverage.py            -- run the Sage doctester with Coverage.py
+                                  (use "sage --tox -e coverage.py-html" to generate HTML report)
         pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
+        cython-lint            -- check Cython files for code style
      -p auto          -- run test environments in parallel
      --help           -- show tox help
 
