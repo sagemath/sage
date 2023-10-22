@@ -106,7 +106,7 @@ cdef inline int face_list_shallow_copy(face_list_t dst, face_list_t src) except 
     for i in range(src.n_faces):
         dst.faces[i][0] = src.faces[i][0]
 
-cdef inline int add_face_shallow(face_list_t faces, face_t face) nogil except -1:
+cdef inline int add_face_shallow(face_list_t faces, face_t face) except -1 nogil:
     """
     Add a face to faces.
     """
@@ -246,7 +246,7 @@ cdef inline bint is_not_maximal_fused(face_list_t faces, size_t j, algorithm_var
 # Arithmetic
 #############################################################################
 
-cdef inline int face_list_intersection_fused(face_list_t dest, face_list_t A, face_t b, algorithm_variant algorithm) nogil except -1:
+cdef inline int face_list_intersection_fused(face_list_t dest, face_list_t A, face_t b, algorithm_variant algorithm) except -1 nogil:
     """
     Set ``dest`` to be the intersection of each face of ``A`` with ``b``.
     """
@@ -267,7 +267,7 @@ cdef inline int face_list_intersection_fused(face_list_t dest, face_list_t A, fa
 cdef inline size_t get_next_level_fused(
         face_list_t faces,
         face_list_t new_faces,
-        face_list_t visited_all, algorithm_variant algorithm) nogil except -1:
+        face_list_t visited_all, algorithm_variant algorithm) except -1 nogil:
     """
     Set ``new_faces`` to be the facets of ``faces.faces[face.n_faces-1]``
     that are not contained in a face of ``visited_all``.
@@ -337,7 +337,7 @@ cdef inline size_t get_next_level_fused(
 cdef inline size_t get_next_level(
         face_list_t faces,
         face_list_t new_faces,
-        face_list_t visited_all) nogil except -1:
+        face_list_t visited_all) except -1 nogil:
 
     cdef size_t output
     if faces.polyhedron_is_simple:

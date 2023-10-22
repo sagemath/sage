@@ -1923,7 +1923,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
 
 # Nogil definitions of crucial functions.
 
-cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0) nogil except -1:
+cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0) except -1 nogil:
     r"""
     See :meth:`FaceIterator.next_dimension`.
 
@@ -1937,7 +1937,7 @@ cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0)
     structure._index += 1
     return structure.current_dimension
 
-cdef inline int next_face_loop(iter_t structure) nogil except -1:
+cdef inline int next_face_loop(iter_t structure) except -1 nogil:
     r"""
     See :meth:`FaceIterator.next_face_loop`.
     """
@@ -2023,7 +2023,7 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         structure.first_time[structure.current_dimension] = True
         return 0
 
-cdef inline size_t n_atom_rep(iter_t structure) nogil except -1:
+cdef inline size_t n_atom_rep(iter_t structure) except -1 nogil:
     r"""
     See :meth:`FaceIterator.n_atom_rep`.
     """
@@ -2114,7 +2114,7 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
             f_vector[j] += parallel_structs[i].f_vector[j]
 
 cdef int _parallel_f_vector(iter_t structure, size_t parallelization_depth,
-                            parallel_f_t parallel_struct, size_t job_id) nogil except -1:
+                            parallel_f_t parallel_struct, size_t job_id) except -1 nogil:
     """
     Set up a job and then visit all faces.
     """
@@ -2129,7 +2129,7 @@ cdef int _parallel_f_vector(iter_t structure, size_t parallelization_depth,
 
 cdef inline int prepare_face_iterator_for_partial_job(
         iter_t structure, size_t parallelization_depth,
-        parallel_f_t parallel_struct, size_t job_id) nogil except -1:
+        parallel_f_t parallel_struct, size_t job_id) except -1 nogil:
     """
     Set ``structure`` according to ``job_id``.
 
