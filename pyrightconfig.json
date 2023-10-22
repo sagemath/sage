@@ -22,6 +22,7 @@
     "reportUndefinedVariable": "warning",
     "reportOptionalOperand": "warning",
     "reportMissingImports": "warning",
+    "reportPrivateImportUsage": "warning",
     // Suppress because it flags our standard pattern @staticmethod __classcall__(cls, ...)
     "reportSelfClsParameterName": "none",
 }
