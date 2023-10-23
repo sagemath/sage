@@ -156,7 +156,7 @@ jobs:
           mkdir -p unpacked
           for pkg in sagemath-objects sagemath-categories; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              pipx run cibuildwheel==2.7.0 unpacked/$pkg*
+              pipx run cibuildwheel==2.16.2 unpacked/$pkg*
           done
 
       - uses: actions/upload-artifact@v3
