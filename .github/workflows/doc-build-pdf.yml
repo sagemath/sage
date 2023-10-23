@@ -112,6 +112,7 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Copy docs
+        id: copy
         if: always() && steps.docbuild.outcome == 'success'
         run: |
           # For some reason the deploy step below cannot find /sage/...
