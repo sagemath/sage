@@ -262,7 +262,7 @@ class IntegerLists(Parent):
             sage: L.foo
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'foo'
+            AttributeError: 'NoneType' object has no attribute 'foo'...
         """
         return getattr(self.backend, name)
 

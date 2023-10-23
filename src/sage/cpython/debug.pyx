@@ -79,7 +79,7 @@ def getattr_debug(obj, name, default=_no_default):
 
     EXAMPLES::
 
-        sage: _ = getattr_debug(list, "reverse")
+        sage: _ = getattr_debug(list, "reverse")  # not tested - broken in python 3.12
         getattr_debug(obj=<class 'list'>, name='reverse'):
           type(obj) = <class 'type'>
           object has __dict__ slot (<class 'dict'>)
@@ -124,7 +124,7 @@ def getattr_debug(obj, name, default=_no_default):
         sage: _ = getattr_debug(1, "foo")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'...
         sage: _ = getattr_debug(1, "foo", "xyz")
         getattr_debug(obj=1, name='foo'):
           type(obj) = <class 'sage.rings.integer.Integer'>

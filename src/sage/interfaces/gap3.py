@@ -46,7 +46,7 @@ Sage assumes that GAP3 can be launched with the command ``gap3``; that is,
 Sage assumes that the command ``gap3`` is in your ``PATH``. If this is not
 the case, then you can start GAP3 using the following command::
 
-    sage: gap3 = Gap3(command='/usr/local/bin/gap3')               #not tested
+    sage: gap3 = Gap3(command='/usr/local/bin/gap3')            # not tested
 
 Functionality and Examples
 --------------------------
@@ -56,18 +56,20 @@ The interface to GAP3 offers the following functionality.
 #.  ``gap3(expr)`` - Evaluation of arbitrary GAP3 expressions, with the
     result returned as a Sage object wrapping the corresponding GAP3 element::
 
-        sage: a = gap3('3+2')                              #optional - gap3
-        sage: a                                            #optional - gap3
+        sage: # optional - gap3
+        sage: a = gap3('3+2')
+        sage: a
         5
-        sage: type(a)                                      #optional - gap3
+        sage: type(a)
         <class 'sage.interfaces.gap3.GAP3Element'>
 
     ::
 
-        sage: S5 = gap3('SymmetricGroup(5)')               #optional - gap3
-        sage: S5                                           #optional - gap3
+        sage: # optional - gap3
+        sage: S5 = gap3('SymmetricGroup(5)')
+        sage: S5
         Group( (1,5), (2,5), (3,5), (4,5) )
-        sage: type(S5)                                     #optional - gap3
+        sage: type(S5)
         <class 'sage.interfaces.gap3.GAP3Record'>
 
     This provides a Pythonic interface to GAP3. If ``gap_function`` is the
@@ -75,9 +77,10 @@ The interface to GAP3 offers the following functionality.
     returns the ``gap_element`` obtained by evaluating the command
     ``gap_function(gap_element)`` in GAP3::
 
-        sage: S5.Size()                                    #optional - gap3
+        sage: # optional - gap3
+        sage: S5.Size()
         120
-        sage: S5.CharTable()                               #optional - gap3
+        sage: S5.CharTable()
         CharTable( Group( (1,5), (2,5), (3,5), (4,5) ) )
 
     Alternatively, you can instead use the syntax
@@ -112,7 +115,7 @@ The interface to GAP3 offers the following functionality.
 
     ::
 
-        sage: gap3.interact()                              #not tested
+        sage: gap3.interact()                            # not tested
 
           --> Switching to Gap3 <--
 
@@ -120,7 +123,7 @@ The interface to GAP3 offers the following functionality.
 
 #.  You can start a new GAP3 session as follows::
 
-        sage: gap3.console()                               #not tested
+        sage: gap3.console()                             # not tested
 
                      ########            Lehrstuhl D fuer Mathematik
                    ###    ####           RWTH Aachen
@@ -148,7 +151,7 @@ The interface to GAP3 offers the following functionality.
 
 #.  The interface also has access to the GAP3 help system::
 
-        sage: gap3.help('help', pager=False)               #not tested
+        sage: gap3.help('help', pager=False)             # not tested
         Help _______________________________________________________...
 
         This  section describes  together with  the following sections the   GAP
@@ -174,8 +177,9 @@ Examples
 
 Load a GAP3 package::
 
-    sage: gap3.load_package("chevie")                      #optional - gap3
-    sage: gap3.version() # random                          #optional - gap3
+    sage: # optional - gap3
+    sage: gap3.load_package("chevie")
+    sage: gap3.version() # random  # not tested
     'lib: v3r4p4 1997/04/18, src: v3r4p0 1994/07/10, sys: usg gcc ansi'
 
 Working with GAP3 lists. Note that GAP3 lists are 1-indexed::
@@ -230,6 +234,7 @@ Controlling variable names used by GAP3::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import os
 
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.expect import Expect
@@ -298,11 +303,12 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: gap3 = Gap3()                            #optional - gap3
+            sage: # optional - gap3
+            sage: gap3 = Gap3()
             sage: gap3.is_running()
             False
-            sage: gap3._start()                            #optional - gap3
-            sage: gap3.is_running()                        #optional - gap3
+            sage: gap3._start()
+            sage: gap3.is_running()
             True
         """
         self.__gap3_command_string = command
@@ -315,21 +321,21 @@ class Gap3(Gap_generic):
         #     lines of text are output by GAP3 before the pager is invoked.
         #     This option is useful in dealing with the GAP3 help system.
         Expect.__init__(self,
-             name='gap3',
-             prompt='gap> ',
-             command=self.__gap3_command_string + " -p -b -y 500",
-             server=None,
-             ulimit=None,
-             script_subdirectory=None,
-             restart_on_ctrlc=True,
-             verbose_start=False,
-             init_code=[],
-             max_startup_time=None,
-             logfile=None,
-             eval_using_file_cutoff=100,
-             do_cleaner=True,
-             remote_cleaner=False,
-             path=None)
+                        name='gap3',
+                        prompt='gap> ',
+                        command=self.__gap3_command_string + " -p -b -y 500",
+                        server=None,
+                        ulimit=None,
+                        script_subdirectory=None,
+                        restart_on_ctrlc=True,
+                        verbose_start=False,
+                        init_code=[],
+                        max_startup_time=None,
+                        logfile=None,
+                        eval_using_file_cutoff=100,
+                        do_cleaner=True,
+                        remote_cleaner=False,
+                        path=None)
 
     def _start(self):
         r"""
@@ -337,26 +343,28 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: gap3 = Gap3()                            #optional - gap3
+            sage: # optional - gap3
+            sage: gap3 = Gap3()
             sage: gap3.is_running()
             False
-            sage: gap3._start()                            #optional - gap3
-            sage: gap3.is_running()                        #optional - gap3
+            sage: gap3._start()
+            sage: gap3.is_running()
             True
 
         Check that :trac:`23142` is fixed::
 
-            sage: gap3.eval("1+1")                         #optional - gap3
+            sage: # optional - gap3
+            sage: gap3.eval("1+1")
             '2'
-            sage: gap3.quit()                              #optional - gap3
+            sage: gap3.quit()
         """
         Expect._start(self)
         # The -p command-line option to GAP3 produces the following
         # funny-looking patterns in the interface. We compile the patterns
         # now, and use them later for interpreting interface messages.
         self._compiled_full_pattern = self._expect.compile_pattern_list([
-            r'@p\d+\.','@@','@[A-Z]',r'@[123456!"#$%&][^+]*\+', '@e','@c',
-            '@f','@h','@i','@m','@n','@r',r'@s\d',r'@w.*\+','@x','@z'])
+            r'@p\d+\.', '@@', '@[A-Z]', r'@[123456!"#$%&][^+]*\+', '@e', '@c',
+            '@f', '@h', '@i', '@m', '@n', '@r', r'@s\d', r'@w.*\+', '@x', '@z'])
         self._compiled_small_pattern = self._expect.compile_pattern_list('@J')
         self._expect.expect("@i")
 
@@ -420,7 +428,7 @@ class Gap3(Gap_generic):
         # messages, so the generic GAP interface processing code does not
         # detect it. So we test for a syntax error explicitly.
         normal_output, error_output = \
-            super(Gap3, self)._execute_line(line, wait_for_prompt=True, expect_eof=False)
+            super()._execute_line(line, wait_for_prompt=True, expect_eof=False)
         normal = bytes_to_str(normal_output)
         if normal.startswith("Syntax error:"):
             normal_output, error_output = "", normal_output
@@ -490,7 +498,7 @@ class Gap3(Gap_generic):
                 helptext.append(E.before)
             elif x == 2:
                 # matched a special char; convert and insert
-                helptext.append(chr(ord(E.after[1:2])-ord('A')+1))
+                helptext.append(chr(ord(E.after[1:2]) - ord('A') + 1))
                 helptext.append(E.before)
             elif x == 10:
                 # matched @n (normal input mode); it seems we're done
@@ -500,7 +508,7 @@ class Gap3(Gap_generic):
                 E.expect_list(self._compiled_small_pattern)
 
         # merge the help text into one string and print it.
-        helptext = "".join(helptext).strip()
+        helptext = "".join(bytes_to_str(line) for line in helptext).strip()
         if pager is True:
             from sage.misc.pager import pager as pag
             pag()(helptext)
@@ -509,27 +517,28 @@ class Gap3(Gap_generic):
 
     def cputime(self, t=None):
         r"""
-        Returns the amount of CPU time that the GAP session has used in
-        seconds. If ``t`` is not None, then it returns the difference
+        Return the amount of CPU time that the GAP session has used in seconds.
+
+        If ``t`` is not None, then it returns the difference
         between the current CPU time and ``t``.
 
         EXAMPLES::
 
             sage: # optional - gap3
             sage: t = gap3.cputime()
-            sage: t  #random
+            sage: t  # random
             0.02
             sage: gap3.SymmetricGroup(5).Size()
             120
-            sage: gap3.cputime()  #random
+            sage: gap3.cputime()  # random
             0.14999999999999999
-            sage: gap3.cputime(t)  #random
+            sage: gap3.cputime(t)  # random
             0.13
         """
         if t is not None:
             return self.cputime() - t
         else:
-            return eval(self.eval('Runtime();'))/1000.0
+            return eval(self.eval('Runtime();')) / 1000.0
 
     def console(self):
         r"""
@@ -537,7 +546,7 @@ class Gap3(Gap_generic):
 
         EXAMPLES::
 
-            sage: gap3.console()                               #not tested
+            sage: gap3.console()                             # not tested
 
                          ########            Lehrstuhl D fuer Mathematik
                        ###    ####           RWTH Aachen
@@ -664,11 +673,12 @@ class GAP3Element(GapElement_generic):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.gap3 import GAP3Element   #optional - gap3
-        sage: gap3 = Gap3()                                  #optional - gap3
-        sage: GAP3Element(gap3, value='3+2')                 #optional - gap3
+        sage: # optional - gap3
+        sage: from sage.interfaces.gap3 import GAP3Element
+        sage: gap3 = Gap3()
+        sage: GAP3Element(gap3, value='3+2')
         5
-        sage: GAP3Element(gap3, value='sage0', is_name=True) #optional - gap3
+        sage: GAP3Element(gap3, value='sage0', is_name=True)
         5
 
     TESTS::
@@ -688,11 +698,12 @@ class GAP3Element(GapElement_generic):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.gap3 import GAP3Element   #optional - gap3
-            sage: gap3 = Gap3()                                  #optional - gap3
-            sage: GAP3Element(gap3, value='3+2')                 #optional - gap3
+            sage: # optional - gap3
+            sage: from sage.interfaces.gap3 import GAP3Element
+            sage: gap3 = Gap3()
+            sage: GAP3Element(gap3, value='3+2')
             5
-            sage: GAP3Element(gap3, value='sage0', is_name=True) #optional - gap3
+            sage: GAP3Element(gap3, value='sage0', is_name=True)
             5
 
         TESTS::
@@ -704,11 +715,11 @@ class GAP3Element(GapElement_generic):
         """
         # Warning: One should not redefine E, X or Z in gap3, because
         # things will break, but gap3 raises no errors if one does this!
-        if name in ["E","X","Z"]:
+        if name in ["E", "X", "Z"]:
             raise ValueError("you are attempting to redefine %s; but you should never redefine E, X or Z in gap3 (because things will break!)" % name)
 
         # initialize the superclass
-        super(GAP3Element, self).__init__(parent, value, is_name, name)
+        super().__init__(parent, value, is_name, name)
 
         # check for a GAP record; if so then change the class
         parent._synchronize()
@@ -751,11 +762,12 @@ class GAP3Element(GapElement_generic):
         gap3_session = self._check_valid()
         try:
             s = gap3_session.eval('FormatLaTeX(%s)' % self.name())
-            s = s.replace('\\\\','\\').replace('"','')
-            s = s.replace('%\\n',' ')
+            s = s.replace('\\\\', '\\').replace('"', '')
+            s = s.replace('%\\n', ' ')
             return s
         except RuntimeError:
             return str(self)
+
 
 class GAP3Record(GAP3Element):
     r"""
@@ -793,9 +805,9 @@ class GAP3Record(GAP3Element):
         gap3_session = self._check_valid()
         if not hasattr(self, "_gap_recfields"):
             s = str(gap3_session.eval("RecFields(%s)" % self._name))
-            s = s.strip('[] ').replace('\n','')
+            s = s.strip('[] ').replace('\n', '')
             self._gap_recfields = [ss.strip('" ') for ss in s.split(',')]
-        return getattr(self,"_gap_recfields")
+        return getattr(self, "_gap_recfields")
 
     def operations(self):
         r"""
@@ -818,11 +830,11 @@ class GAP3Record(GAP3Element):
                         [ (1,2,5), (1,3,5), (1,4,5) ] ) ]
         """
         gap3_session = self._check_valid()
-        if not hasattr(self,"_gap_operations"):
+        if not hasattr(self, "_gap_operations"):
             s = str(gap3_session.eval("RecFields(%s.operations)" % self._name))
-            s = s.strip('[] ').replace('\n','')
+            s = s.strip('[] ').replace('\n', '')
             self._gap_operations = [ss.strip('" ') for ss in s.split(',')]
-        return getattr(self,"_gap_operations")
+        return getattr(self, "_gap_operations")
 
     def __getattr__(self, attrname):
         r"""
@@ -873,14 +885,13 @@ class GAP3Record(GAP3Element):
         return names
 
 
-import os
 def gap3_console():
     r"""
     Spawn a new GAP3 command-line session.
 
     EXAMPLES::
 
-        sage: gap3.console()                               #not tested
+        sage: gap3.console()                             # not tested
 
                      ########            Lehrstuhl D fuer Mathematik
                    ###    ####           RWTH Aachen
@@ -910,6 +921,7 @@ def gap3_console():
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%gap3 magics instead.')
     os.system(gap3_cmd)
+
 
 def gap3_version():
     r"""

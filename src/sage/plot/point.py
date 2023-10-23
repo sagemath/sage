@@ -580,6 +580,10 @@ def point2d(points, **options):
 
        sage: point2d(iter([]))
        Graphics object consisting of 0 graphics primitives
+
+    Verify that :issue:`36153` does not arise::
+
+        sage: P = point((0.5, 0.5), legend_label="test")
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics

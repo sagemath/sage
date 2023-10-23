@@ -3115,7 +3115,7 @@ class Link(SageObject):
         """
         return self.braid().links_gould_polynomial(varnames=varnames)
 
-    def _coloring_matrix(self, n):
+    def _coloring_matrix(self, n=None):
         r"""
         Return the coloring matrix of ``self``.
 
@@ -3124,15 +3124,12 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
-
-        If ``n`` is not a prime number, it is replaced by the smallest
-        prime number that is larger than ``n``.
+        - ``n`` -- the number of colors to consider (if ommitted the
+          value of the determinant of ``self`` will be taken)
 
         OUTPUT:
 
-        a matrix over the smallest prime field with cardinality
-        larger than or equal to ``n``.
+        a matrix over the residue class ring of integers modulo ``n``.
 
         EXAMPLES::
 
@@ -3144,22 +3141,22 @@ class Link(SageObject):
             [2 2 2]
             sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
             sage: K8._coloring_matrix(4)
-            [2 0 4 4]
-            [4 4 2 0]
-            [0 4 4 2]
-            [4 2 0 4]
+            [2 0 3 3]
+            [3 3 2 0]
+            [0 3 3 2]
+            [3 2 0 3]
 
         REFERENCES:
 
         - :wikipedia:`Fox_n-coloring`
         """
-        from sage.arith.misc import next_prime
-        from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        p = next_prime(n - 1)
-        F = FiniteField(p)
+        if not n:
+            n = self.determinant()
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+        R = IntegerModRing(n)
         arcs = self.arcs(presentation='pd')
         di = len(arcs)
-        M = matrix(F, di, di)
+        M = matrix(R, di, di)
         crossings = self.pd_code()
         for i in range(di):
             crossing = crossings[i]
@@ -3173,7 +3170,7 @@ class Link(SageObject):
                     M[i, j] -= 1
         return M
 
-    def is_colorable(self, n):
+    def is_colorable(self, n=None):
         r"""
         Return whether the link is ``n``-colorable.
 
@@ -3184,10 +3181,8 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
-
-        If ``n`` is not a prime number, it is replaced by the smallest
-        prime number that is larger than ``n``.
+        - ``n`` -- the number of colors to consider (if ommitted the
+          value of the determinant of ``self`` will be taken)
 
         EXAMPLES:
 
@@ -3203,26 +3198,45 @@ class Link(SageObject):
             sage: K8.is_colorable(3)                                                    # needs sage.libs.pari sage.modules
             False
 
+        But it is colorable with respect to the value of its determinant::
+
+            sage: K8.determinant()
+            5
+            sage: K8.is_colorable()
+            True
+
+        An examples with non prime determinant::
+
+            sage: K = Knots().from_table(6, 1)
+            sage: K.determinant()
+            9
+            sage: K.is_colorable()
+            True
+
         REFERENCES:
 
         - :wikipedia:`Fox_n-coloring`
 
         - Chapter 3 of [Liv1993]_
 
-        .. SEEALSO:: :meth:`colorings`
+        .. SEEALSO:: :meth:`colorings` and :meth:`coloring_maps`
         """
-        return self._coloring_matrix(n).nullity() > 1
+        M = self._coloring_matrix(n=n)
+        if M.base_ring().is_field():
+            return self._coloring_matrix(n=n).nullity() > 1
+        else:
+            # nullity is not implemented in this case
+            return M.right_kernel_matrix().dimensions()[0] > 1
 
-    def colorings(self, n):
+    def colorings(self, n=None):
         r"""
         Return the ``n``-colorings of ``self``.
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
-
-        If ``n`` is not a prime number, it is replaced by the smallest
-        prime number that is larger than ``n``.
+        - ``n`` -- the number of colors to consider (if ommitted the value
+          of the determinant of ``self`` will be taken). Note that there
+          are no colorings if n is coprime to the determinant of ``self``
 
         OUTPUT:
 
@@ -3245,27 +3259,127 @@ class Link(SageObject):
             sage: K.arcs('pd')
             [[1, 2], [3, 4], [5, 6]]
 
+        Note that ``n`` is not the number of different colors to be used. It
+        can be looked upon the size of the color palette::
+
+            sage: K = Knots().from_table(9, 15)
+            sage: cols = K.colorings(13); len(cols)
+            156
+            sage: max(cols[0].values())
+            12
+            sage: max(cols[13].values())
+            9
+
         REFERENCES:
 
         - :wikipedia:`Fox_n-coloring`
 
         - Chapter 3 of [Liv1993]_
 
-        .. SEEALSO:: :meth:`is_colorable`
+        .. SEEALSO:: :meth:`is_colorable` and :meth:`coloring_maps`
         """
-        from sage.arith.misc import next_prime
-        p = next_prime(n-1)
-        M = self._coloring_matrix(n)
-        K = M.right_kernel()
+        from sage.modules.free_module import FreeModule
+        M = self._coloring_matrix(n=n)
+        KM = M.right_kernel_matrix()
+        F = FreeModule(M.base_ring(), KM.dimensions()[0])
+        K = [v*KM for v in F]
         res = set([])
         arcs = self.arcs('pd')
         for coloring in K:
             colors = sorted(set(coloring))
-            if len(colors) == p:
-                colors = {b: a for a, b in enumerate(colors)}
-                res.add(tuple(colors[c] for c in coloring))
+            if len(colors) >= 2:
+                res.add(tuple(coloring))
         return [{tuple(arc): col for arc, col in zip(arcs, c)}
                 for c in sorted(res)]
+
+    def coloring_maps(self, n=None, finitely_presented=False):
+        r"""
+        Return the ``n``-coloring maps of ``self``. These are group
+        homomorphisms from the fundamental group of ``self`` to the
+        ``n``-th dihedral group.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider (if ommitted the value
+          of the determinant of ``self`` will be taken). Note that there
+          are no coloring maps if n is coprime to the determinant of ``self``
+
+        - ``finitely_presented`` (default ``False``) whether to choose the
+          dihedral groups as finitely presented groups. If not set to ``True``
+          they are represented as permutation groups.
+
+        OUTPUT:
+
+        a list of group homomporhisms from the fundamental group of ``self``
+        to the ``n``-th dihedral group (represented according to the key
+        argument ``finitely_presented``).
+
+        EXAMPLES::
+
+          sage: L5a1_1 = Link([[8, 2, 9, 1], [10, 7, 5, 8], [4, 10, 1, 9],
+          ....:                [2, 5, 3, 6], [6, 3, 7, 4]])
+          sage: L5a1_1.determinant()
+          8
+          sage: L5a1_1.coloring_maps(2)
+          [Group morphism:
+             From: Finitely presented group < x0, x1, x2, x3, x4 | x4*x1*x0^-1*x1^-1, x0*x4^-1*x3^-1*x4, x2*x0*x1^-1*x0^-1, x1*x3^-1*x2^-1*x3, x3*x2^-1*x4^-1*x2 >
+             To:   Dihedral group of order 4 as a permutation group,
+           Group morphism:
+             From: Finitely presented group < x0, x1, x2, x3, x4 | x4*x1*x0^-1*x1^-1, x0*x4^-1*x3^-1*x4, x2*x0*x1^-1*x0^-1, x1*x3^-1*x2^-1*x3, x3*x2^-1*x4^-1*x2 >
+             To:   Dihedral group of order 4 as a permutation group]
+          sage: col_maps = L5a1_1.coloring_maps(4); len(col_maps)
+          12
+          sage: col_maps = L5a1_1.coloring_maps(5); len(col_maps)
+          0
+          sage: col_maps = L5a1_1.coloring_maps(12); len(col_maps)
+          36
+          sage: col_maps = L5a1_1.coloring_maps(); len(col_maps)
+          56
+
+        applying the map::
+
+          sage: cm1 = col_maps[0]
+          sage: gs = L5a1_1.fundamental_group().gens()
+          sage: d = cm1(gs[0]); d
+          (1,8)(2,7)(3,6)(4,5)
+          sage: d.parent()
+          Dihedral group of order 16 as a permutation group
+
+        using the finitely presented dihedral group::
+
+          sage: col_maps = L5a1_1.coloring_maps(2, finitely_presented=True)
+          sage: d = col_maps[0](gs[1]); d
+          b*a
+          sage: d.parent()
+          Finitely presented group < a, b | a^2, b^2, (a*b)^2 >
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+
+        - Chapter 3 of [Liv1993]_
+
+        .. SEEALSO:: :meth:`is_colorable` and :meth:`colorings`
+        """
+        if not n:
+            n = self.determinant()
+
+        if finitely_presented:
+            from sage.groups.finitely_presented_named import DihedralPresentation
+            D = DihedralPresentation(n)
+        else:
+            from sage.groups.perm_gps.permgroup_named import DihedralGroup
+            D = DihedralGroup(n)
+
+        a, b = D.gens()
+        gr = self.fundamental_group()
+        cols = self.colorings(n=n)
+        maps = []
+        for c in cols:
+            t = list(c.values())
+            ims = [b*a**i for i in t]
+            maps.append(gr.hom(ims))
+        return maps
 
     def plot(self, gap=0.1, component_gap=0.5, solver=None,
              color='blue', **kwargs):
@@ -3413,13 +3527,13 @@ class Link(SageObject):
             sphinx_plot(L.plot())
 
         If a coloring is passed, the different arcs are plotted with
-        the corresponding colors::
+        the corresponding colors (see :meth:`colorings`)::
 
             sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: b = B([1,2,3,1,2,-1,-3,2,3])
             sage: L = Link(b)
-            sage: L.plot(color=L.colorings(3)[0])                                       # needs sage.plot
+            sage: L.plot(color=L.colorings()[0])                                        # needs sage.plot
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3428,7 +3542,7 @@ class Link(SageObject):
             B = BraidGroup(4)
             b = B([1, 2, 3, 1, 2, -1, -3, 2, 3])
             L = Link(b)
-            sphinx_plot(L.plot(color=L.colorings(3)[0]))
+            sphinx_plot(L.plot(color=L.colorings()[0]))
 
         TESTS:
 
@@ -3449,10 +3563,8 @@ class Link(SageObject):
             coloring = {int(i): color for i in set(flatten(pd_code))}
         else:
             from sage.plot.colors import rainbow
-            ncolors = len(set(color.values()))
+            ncolors = max([int(i) for i in color.values()]) + 1
             arcs = self.arcs()
-            if len(color) != len(arcs):
-                raise ValueError("Number of entries in the color vector must match the number of arcs")
             rainb = rainbow(ncolors)
             coloring = {int(i): rainb[color[tuple(j)]] for j in arcs for i in j}
         comp = self._isolated_components()
@@ -3922,7 +4034,8 @@ class Link(SageObject):
         If ``mirror_version`` is set to ``False`` then the result is just ``K``
         (that is: ``m`` is suppressed).
 
-        If it is not possible to determine a unique result a ``NotImplementedError``
+        If it is not possible to determine a unique result
+        a :class:`NotImplementedError`
         will be raised. To avoid this you can set ``unique`` to ``False``. You
         will get a list of matching candidates instead.
 
@@ -4117,9 +4230,10 @@ class Link(SageObject):
 
         TESTS::
 
-            sage: L = KnotInfo.L10a171_1_1_0         # optional - database_knotinfo
-            sage: l = L.link(L.items.braid_notation) # optional - database_knotinfo
-            sage: l.get_knotinfo(unique=False)       # optional - database_knotinfo
+            sage: # optional - database_knotinfo
+            sage: L = KnotInfo.L10a171_1_1_0
+            sage: l = L.link(L.items.braid_notation)
+            sage: l.get_knotinfo(unique=False)
             [(<KnotInfo.L10a171_0_1_0: 'L10a171{0,1,0}'>, True),
              (<KnotInfo.L10a171_1_0_1: 'L10a171{1,0,1}'>, True),
              (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, False),

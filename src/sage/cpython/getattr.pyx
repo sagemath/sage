@@ -54,12 +54,12 @@ cdef class AttributeErrorMessage:
         sage: 1.bla  #indirect doctest
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'...
         sage: x = polygen(ZZ, 'x')
         sage: QQ[x].gen().bla                                                           # needs sage.libs.flint
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'
+        AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'...
 
     ::
 
@@ -145,7 +145,7 @@ cpdef raw_getattr(obj, name):
         sage: raw_getattr(X, "attr")
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'attr'
+        AttributeError: '...' object has no attribute 'attr'...
         sage: x = X()
         sage: raw_getattr(x, "prop")
         <property object at ...>
@@ -174,7 +174,7 @@ cpdef raw_getattr(obj, name):
         sage: raw_getattr(Y, "attr")
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'attr'
+        AttributeError: '...' object has no attribute 'attr'...
         sage: y = Y()
         sage: raw_getattr(y, "prop")
         <property object at ...>
@@ -279,7 +279,7 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(1, A, "lazy_attribute")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'...
 
     The integer ring is a parent, so, lazy attributes work::
 
@@ -290,7 +290,7 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(17, A, "lazy_attribute")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'...
 
     In general, descriptors are not yet well supported, because they
     often do not accept to be cheated with the type of their instance::
@@ -306,7 +306,7 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(1, A, "__weakref__")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
 
     This was caught by :trac:`8296` for which we do a couple more tests::
 
@@ -315,7 +315,7 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: 1.__weakref__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
 
         sage: n = 1
         sage: ip = get_ipython()                 # not tested: only works in interactive shell
@@ -330,7 +330,7 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(1, A, "__call__")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__call__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__call__'...
 
     TESTS:
 
@@ -340,14 +340,14 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(1, type, "__name__")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__name__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__name__'...
 
     Non-strings as "name" are handled gracefully::
 
         sage: getattr_from_other_class(1, type, None)
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute None
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute None...
     """
     if not isinstance(cls, type):
         raise TypeError(f"{cls!r} is not a type")

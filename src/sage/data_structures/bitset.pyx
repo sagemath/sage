@@ -968,7 +968,7 @@ cdef class FrozenBitset:
             sage: None | FrozenBitset('10101')
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute '_union'
+            AttributeError: 'NoneType' object has no attribute '_union'...
         """
         return self._union(other)
 
@@ -1038,7 +1038,7 @@ cdef class FrozenBitset:
             sage: None & FrozenBitset("101011")
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'intersection'
+            AttributeError: 'NoneType' object has no attribute 'intersection'...
         """
         return self.intersection(other)
 
@@ -1107,7 +1107,7 @@ cdef class FrozenBitset:
             sage: None - FrozenBitset('10101')
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'difference'
+            AttributeError: 'NoneType' object has no attribute 'difference'...
         """
         return self.difference(other)
 
@@ -1180,7 +1180,7 @@ cdef class FrozenBitset:
             sage: None ^^ FrozenBitset('11111' * 10)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'symmetric_difference'
+            AttributeError: 'NoneType' object has no attribute 'symmetric_difference'...
         """
         return self.symmetric_difference(other)
 

@@ -20,6 +20,8 @@ from libc.limits cimport LONG_MIN, LONG_MAX
 from cpython.object cimport Py_SIZE
 from cpython.number cimport PyNumber_Index, PyIndex_Check
 from cpython.longintrepr cimport py_long, PyLong_SHIFT, digit
+from sage.cpython.pycore_long cimport (
+    ob_digit, _PyLong_IsNegative, _PyLong_DigitCount)
 
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
 from sage.rings.integer_fake cimport is_Integer, Integer_AS_MPZ
@@ -300,8 +302,11 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
         return 0
 
     # x is a Python "int" (aka PyLongObject or py_long in cython)
-    cdef const digit* D = (<py_long>x).ob_digit
-    cdef Py_ssize_t size = Py_SIZE(x)
+    cdef const digit* D = ob_digit(x)
+    cdef Py_ssize_t size = _PyLong_DigitCount(x)
+
+    if _PyLong_IsNegative(x):
+        size = -size
 
     # We assume PyLong_SHIFT <= BITS_IN_LONG <= 3 * PyLong_SHIFT.
     # This is true in all the default configurations:

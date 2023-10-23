@@ -111,8 +111,6 @@ from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 from sage.modular.modsym.p1list import P1List
 from sage.quadratic_forms.binary_qf import BinaryQF, BinaryQF_reduced_representatives
-from sage.rings.complex_double import CDF
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.factorint import factor_trial_division
 from sage.rings.fast_arith import prime_range
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -121,13 +119,15 @@ from sage.rings.infinity import Infinity as infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     richcmp_not_equal, rich_to_bool)
 
+lazy_import('sage.rings.complex_double', 'CDF')
+lazy_import('sage.rings.complex_mpfr', 'ComplexField')
 lazy_import('sage.rings.number_field.number_field', ['NumberField', 'QuadraticField'])
 lazy_import('sage.rings.real_mpfi', 'RealIntervalField')
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
 ###############################################################################
 #

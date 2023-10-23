@@ -412,7 +412,7 @@ class Function_ceil(BuiltinFunction):
             sage: latex(ceil(x))  # indirect doctest                                    # needs sage.symbolic
             \left \lceil x \right \rceil
         """
-        return r"\left \lceil %s \right \rceil"%latex(x)
+        return r"\left \lceil %s \right \rceil" % latex(x)
 
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
@@ -581,7 +581,7 @@ class Function_floor(BuiltinFunction):
             sage: latex(floor(x))                                                       # needs sage.symbolic
             \left \lfloor x \right \rfloor
         """
-        return r"\left \lfloor %s \right \rfloor"%latex(x)
+        return r"\left \lfloor %s \right \rfloor" % latex(x)
 
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
@@ -1115,7 +1115,7 @@ class Function_arg(BuiltinFunction):
         return parent(x).arg()
 
 
-arg=Function_arg()
+arg = Function_arg()
 
 
 ############################

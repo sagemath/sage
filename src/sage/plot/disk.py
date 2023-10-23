@@ -248,7 +248,7 @@ class Disk(GraphicPrimitive):
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=True, rgbcolor=(0, 0, 1), thickness=0, legend_label=None,
-         aspect_ratio=1.0)
+         legend_color=None, aspect_ratio=1.0)
 def disk(point, radius, angle, **options):
     r"""
     A disk (that is, a sector or wedge of a circle) with center
@@ -347,6 +347,10 @@ def disk(point, radius, angle, **options):
         Traceback (most recent call last):
         ...
         ValueError: the center point of a plotted disk should have two or three coordinates
+
+    Verify that :issue:`36153` is fixed::
+
+        sage: D = disk((0, 0), 5, (0, pi/2), legend_label="test")
     """
     from sage.plot.all import Graphics
     g = Graphics()

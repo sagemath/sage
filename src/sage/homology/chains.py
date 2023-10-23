@@ -299,7 +299,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
                 sage: chain.is_cocycle()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_cocycle'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_cocycle'...
             """
             return self.to_complex().is_cycle()
 
@@ -326,7 +326,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
                 sage: chain.is_coboundary()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_coboundary'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_coboundary'...
             """
             return self.to_complex().is_boundary()
 
@@ -540,7 +540,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: cochain.is_cycle()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_cycle'
+                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_cycle'...
             """
             return self.to_complex().is_cycle()
 
@@ -567,7 +567,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: cochain.is_boundary()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_boundary'
+                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_boundary'...
             """
             return self.to_complex().is_boundary()
 
@@ -605,7 +605,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: z.eval(c) # z is not a cochain
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'eval'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'eval'...
                 sage: c.eval(c) # can't evaluate a cochain on a cochain
                 Traceback (most recent call last):
                 ...

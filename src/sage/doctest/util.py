@@ -52,13 +52,13 @@ def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     else:
         pad_noun = ""
     if pad_number:
-        number_str = ("%%%sd"%pad_number)%number
+        number_str = ("%%%sd" % pad_number) % number
     else:
-        number_str = "%d"%number
+        number_str = "%d" % number
     if number == 1:
-        return "%s %s%s"%(number_str, noun, pad_noun)
+        return "%s %s%s" % (number_str, noun, pad_noun)
     else:
-        return "%s %s"%(number_str, plural)
+        return "%s %s" % (number_str, plural)
 
 
 def dict_difference(self, other):

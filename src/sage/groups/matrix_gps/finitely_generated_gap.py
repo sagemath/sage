@@ -924,7 +924,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         inv = set()
         for e in IntegerVectors(deg, D):
             F = self.reynolds_operator(R.monomial(*e), chi=chi)
-            if not F.is_zero() and _new_invariant_is_linearly_independent((F:=F/F.lc()), inv):
+            if not F.is_zero() and _new_invariant_is_linearly_independent((F := F/F.lc()), inv):
                 inv.add(F)
                 if len(inv) == ms[deg]:
                     break
@@ -942,6 +942,6 @@ def _new_invariant_is_linearly_independent(F, invariants):
         sage: len(s)                                                                    # needs sage.rings.number_field
         3
     """
-    if len(invariants)==0:
+    if len(invariants) == 0:
         return True
     return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()

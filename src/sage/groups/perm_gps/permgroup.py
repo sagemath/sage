@@ -633,7 +633,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: A4._gap_init_()
             'Group([PermList([1, 3, 4, 2]), PermList([2, 3, 1, 4])])'
         """
-        return 'Group([%s])'%(', '.join([g._gap_init_() for g in self.gens()]))
+        return 'Group([%s])' % (', '.join([g._gap_init_() for g in self.gens()]))
 
     @cached_method
     def gap(self):
@@ -738,7 +738,7 @@ class PermutationGroup_generic(FiniteGroup):
             'PermutationGroup<3 | (1,2,3), (1,2)>'
         """
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
-        return 'PermutationGroup<%s | %s>'%(self.degree(), g)
+        return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
     def __richcmp__(self, right, op):
         """

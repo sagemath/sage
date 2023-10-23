@@ -155,6 +155,10 @@ cdef extern from *:
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
     #include "internal/pycore_pystate.h"
+    #if PY_VERSION_HEX >= 0x030c0000
+    // struct atexit_callback was renamed in 3.12 to atexit_py_callback
+    #define atexit_callback atexit_py_callback
+    #endif
     static atexit_callback ** _atexit_callbacks(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         struct atexit_state state = interp->atexit;

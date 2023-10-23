@@ -87,7 +87,7 @@ def process_command_results(result_values):
     error = None
     for r in result_values:
         if r:
-            print("Error running command, failed with status %s."%r)
+            print("Error running command, failed with status %s." % r)
             if not keep_going:
                 sys.exit(1)
             error = r
@@ -126,9 +126,9 @@ def execute_list_of_commands(command_list):
 
     def plural(n,noun):
         if n == 1:
-            return "1 %s"%noun
-        return "%i %ss"%(n,noun)
+            return "1 %s" % noun
+        return "%i %ss" % (n,noun)
 
-    print("Executing %s (using %s)"%(plural(len(command_list),"command"), plural(nthreads,"thread")))
+    print("Executing %s (using %s)" % (plural(len(command_list),"command"), plural(nthreads,"thread")))
     execute_list_of_commands_in_parallel(command_list, nthreads)
-    print("Time to execute %s: %.2f seconds."%(plural(len(command_list),"command"), time.time() - t))
+    print("Time to execute %s: %.2f seconds." % (plural(len(command_list),"command"), time.time() - t))

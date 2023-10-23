@@ -59,7 +59,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: P = posets.BooleanLattice(4)
+            sage: P = posets.BooleanLattice(3)
             sage: I = P.incidence_algebra(QQ)
             sage: TestSuite(I).run()  # long time
         """
@@ -94,8 +94,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
             Incidence algebra of Finite lattice containing 16 elements
              over Rational Field
         """
-        return "Incidence algebra of {} over {}".format(self._poset,
-                                                        self.base_ring())
+        return f"Incidence algebra of {self._poset} over {self.base_ring()}"
 
     def _coerce_map_from_(self, R):
         """

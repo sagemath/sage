@@ -104,6 +104,9 @@ EOF
         UPDATE="pacman -Sy &&"
         EXISTS="pacman -Si"
         INSTALL="pacman -Su --noconfirm"
+        cat <<EOF
+RUN sed -i '/^NoExtract/d' /etc/pacman.conf
+EOF
         ;;
     nix*)
         # https://hub.docker.com/r/nixos/nix
@@ -223,6 +226,7 @@ $ADD src/*.m4 src/VERSION.txt src/MANIFEST.in src/
 $ADD m4 ./m4
 $ADD pkgs pkgs
 $ADD build ./build
+$ADD .upstream.d ./.upstream.d
 ARG BOOTSTRAP=./bootstrap
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 

@@ -1611,7 +1611,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             elif not isinstance(args[0], (int, Integer, slice)):
                 basis = args[0]
                 args = args[1:]
-                if len(args)==1:
+                if len(args) == 1:
                     args = args[0]  # to accommodate for [e,:] syntax
             else:
                 basis = self._fmodule._def_basis

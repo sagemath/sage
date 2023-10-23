@@ -235,7 +235,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
-        return tags, (first_line + '\n' + rest%literals if rest is not None
+        return tags, (first_line + '\n' + rest % literals if rest is not None
                       else first_line), is_persistent
     else:
         return tags

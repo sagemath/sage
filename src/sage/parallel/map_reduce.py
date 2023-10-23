@@ -294,8 +294,9 @@ It is possible to profile a map/reduce computation. First we create a
 The profiling is activated by the ``profile`` parameter. The value provided
 should be a prefix (including a possible directory) for the profile dump::
 
-    sage: prof = tmp_dir('RESetMR_profile') + 'profcomp'
-    sage: res = S.run(profile=prof)  # random
+    sage: import tempfile
+    sage: d = tempfile.TemporaryDirectory(prefix="RESetMR_profile")
+    sage: res = S.run(profile=d.name)  # random
     [RESetMapReduceWorker-1:58] (20:00:41.444) Profiling in
     /home/user/.sage/temp/.../32414/RESetMR_profilewRCRAx/profcomp1
     ...
@@ -310,7 +311,7 @@ In this example, the profiles have been dumped in files such as
 :class:`cProfile.Profile` for more details::
 
     sage: import cProfile, pstats
-    sage: st = pstats.Stats(prof+'0')
+    sage: st = pstats.Stats(d.name+'0')
     sage: st.strip_dirs().sort_stats('cumulative').print_stats()  # random
     ...
        Ordered by: cumulative time
@@ -320,6 +321,11 @@ In this example, the profiles have been dumped in files such as
         11968    0.151    0.000    0.223    0.000 map_reduce.py:1292(walk_branch_locally)
     ...
     <pstats.Stats instance at 0x7fedea40c6c8>
+
+Like a good neighbor we clean up our temporary directory as soon as
+possible::
+
+    sage: d.cleanup()
 
 .. SEEALSO::
 
@@ -1235,7 +1241,7 @@ class RESetMapReduce():
             sage: S.print_communication_statistics()
             Traceback (most recent call last):
             ...
-            AttributeError: 'RESetMPExample' object has no attribute '_stats'
+            AttributeError: 'RESetMPExample' object has no attribute '_stats'...
 
             sage: S.finish()
 
@@ -1714,7 +1720,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn(f"Profiling in {output} ...")
+            logger.warning(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()

@@ -134,7 +134,7 @@ class SageIpythonConfiguration():
         # TerminalInteractiveShell (note: in fact some configs like term_title
         # only apply to the latter, but we can still use the same config for
         # both for simplicity's sake; see Issue #28289)
-        InteractiveShell=Config(
+        InteractiveShell = Config(
             prompts_class=SagePrompts,
             ast_node_interactivity='all',
             colors=self.colors(),

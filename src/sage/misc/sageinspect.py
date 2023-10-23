@@ -603,7 +603,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             On Python 3 negative numbers are parsed first, for some reason, as
             a UnaryOp node.
         """
-        return node.n
+        return node.value
 
     def visit_Str(self, node):
         r"""
@@ -625,7 +625,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
             ['abstract', 'syntax', 'tr\\ee']
         """
-        return node.s
+        return node.value
 
     def visit_List(self, node):
         """

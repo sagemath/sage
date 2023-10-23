@@ -1833,7 +1833,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         coords = symbols.split()  # list of strings, one per coordinate
         # Adding the coordinate ranges:
         coordinates = (coords[0] + ':(0,+oo) ' + coords[1]
-                       + ':(0,2*pi):periodic '+ coords[2])
+                       + ':(0,2*pi):periodic ' + coords[2])
         chart = self.chart(coordinates=coordinates)
         self._cylindrical_chart = chart
         frame = chart.frame()

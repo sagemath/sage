@@ -62,7 +62,6 @@ jobs:
       - name: Download image artifact
         uses: actions/download-artifact@v3
         with:
-          path: image.tar.gz
           name: ${{ env.IMAGE_ARTIFACT_NAME }}
       - name: Load image
         run: docker load --input image.tar.gz

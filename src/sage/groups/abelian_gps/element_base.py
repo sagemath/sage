@@ -247,7 +247,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         M = self.parent()
         order = M.gens_orders()
         L = self.exponents()
-        N = LCM([order[i]/GCD(order[i],L[i]) for i in range(len(order)) if L[i]!=0])
+        N = LCM([order[i]/GCD(order[i],L[i]) for i in range(len(order)) if L[i] != 0])
         if N == 0:
             return infinity
         else:
@@ -348,4 +348,4 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
             sage: (b^5).is_trivial()
             True
         """
-        return all(e==0 for e in self._exponents)
+        return all(e == 0 for e in self._exponents)
