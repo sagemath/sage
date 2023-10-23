@@ -480,13 +480,13 @@ if __name__ == '__main__':
     distribution = args.set or args.add or ''
 
     if distribution == 'all':
-        distributions = ["sagemath-symbolics",
-                         "sagemath-schemes",
-                         "sagemath-glpk",
-                         "sagemath-polyhedra",
-                         "sagemath-graphs",
-                         "sagemath-combinat",
-                         "sagemath-modules",
+        distributions = ["sagemath-bliss",
+                         "sagemath-coxeter3",
+                         "sagemath-mcqd",
+                         "sagemath-meataxe",
+                         "sagemath-sirocco",
+                         "sagemath-tdlib",
+                         "sagemath-environment",
                          "sagemath-categories",
                          "sagemath-repl",
                          "sagemath-objects"]
