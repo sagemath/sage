@@ -4280,7 +4280,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
     def preperiodic_points(self, m, n, **kwds):
         r"""
-        Computes the preperiodic points of period ``m, n`` of this dynamical system
+        Compute the preperiodic points of period ``m, n`` of this dynamical system
         defined over the ring ``R`` or the base ring of the map.
 
         This is done by finding the rational points on the variety
@@ -4292,16 +4292,16 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer, the period
+        - ``m`` - a non-negative integer, the preperiod
 
-        - ``m`` - a non negative integer, the preperiod
+        - ``n`` - a positive integer, the period
 
         kwds:
 
         - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
-          find only the preperiodic points of minimal period ``m``,``n`` and
-          ``False`` specifies to find all preperiodic points of period
-          ``m``, ``n``
+          find only the preperiodic points of minimal period ``m``, ``n``,
+          and ``False`` specifies to find all preperiodic points of period
+          ``m``, ``n``.
 
         - ``formal`` -- (default: ``False``) boolean; ``True`` specifies to
           find the formal periodic points only. The formal periodic points
@@ -4311,12 +4311,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           commutative ring over which to find the preperiodic points
 
         - ``return_scheme`` -- (default: ``False``) boolean; return a
-          subscheme of the ambient space that defines the ``m``,``n`` th
+          subscheme of the ambient space that defines the ``m``,``n``-th
           preperiodic points
 
         OUTPUT:
 
-        A list of preperiodic points of this map or the subscheme defining
+        A list of preperiodic points of this map, or the subscheme defining
         the preperiodic points.
 
         EXAMPLES::
@@ -4471,6 +4471,15 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: f = DynamicalSystem_projective([4*x^2 - 7*y^2, 4*y^2])
+            sage: f.preperiodic_points(1, 2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: ring must a number field or finite field
+
+        ::
+
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([x^2 - 29/16*y^2, y^2])
             sage: f.preperiodic_points(1.2, 3)
@@ -4499,116 +4508,152 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             ValueError: dynamical system is not a morphism,
             cannot calculate minimal or formal preperiodic points
         """
-        n = ZZ(n)
         m = ZZ(m)
+        n = ZZ(n)
+
+        if m < 0:
+            raise ValueError("a non-negative preperiod must be specified")
         if n <= 0:
             raise ValueError("a positive integer period must be specified")
-        if m < 0:
-            raise ValueError("a non negative preperiod must be specified")
+
         R = kwds.pop('R', None)
+
         if R is None:
             f_sub = self
             R = self.base_ring()
         else:
             f_sub = self.change_ring(R)
-            R = f_sub.base_ring() #in the case when R is an embedding
+            R = f_sub.base_ring() # In the case when R is an embedding
+
         if isinstance(R, FractionField_1poly_field) or is_FunctionField(R):
             raise NotImplementedError('Periodic points not implemented for function fields; '
                 'clear denominators and use the polynomial ring instead')
+
         CR = f_sub.coordinate_ring()
         dom = f_sub.domain()
         PS = f_sub.codomain().ambient_space()
-        if dom != PS:
+
+        if dom is not PS:
             f = DynamicalSystem(f_sub.defining_polynomials())
         else:
             f = f_sub
-        N = PS.dimension_relative() + 1
+
         formal = kwds.pop('formal', False)
         minimal = kwds.pop('minimal', True)
         return_scheme = kwds.pop('return_scheme', False)
-        if formal and N == 2 and dom == PS:
-            X = PS.subscheme([f.dynatomic_polynomial([m,n])])
+
+        N = PS.dimension_relative() + 1
+
+        if formal and (N == 2) and (dom is PS):
+            X = PS.subscheme([f.dynatomic_polynomial([m, n])])
         else:
-            F_1 = f.nth_iterate_map(n+m)
+            F_1 = f.nth_iterate_map(n + m)
             F_2 = f.nth_iterate_map(m)
             L = [F_1[i]*F_2[j] - F_1[j]*F_2[i] for i in range(N)
-                    for j in range(i+1, N)]
+                    for j in range(i + 1, N)]
             X = PS.subscheme(L + list(dom.defining_polynomials()))
+
             if (minimal or formal) and (n != 1 or m != 0):
                 if not f_sub.is_morphism():
                     raise ValueError('dynamical system is not a morphism, cannot calculate minimal or formal preperiodic points')
+
                 if formal:
                     d = f.degree()
-                    # we need a model with no preperiodic points at infinity
+
+                    # We need a model with no preperiodic points at infinity
                     new_f, mat = f.affine_preperiodic_model(m, n, return_conjugation=True)
                     new_f.normalize_coordinates()
-                    # we now deform by a parameter t
+
+                    # We now deform by a parameter `t`
                     T = R['t']
                     t = T.gens()[0]
-                    Pt = ProjectiveSpace(N-1, R=T, names=[str(i) for i in CR.gens()])
-                    deformed_polys = [poly + t*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
+                    Pt = ProjectiveSpace(N - 1, R=T, names=[str(i) for i in CR.gens()])
+                    deformed_polys = [poly + t * Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
                     deformed_polys += [new_f.defining_polynomials()[-1]]
                     f_deformed = DynamicalSystem(deformed_polys)
 
-                    # after deforming by the parameter, the preperiodic points with multiplicity
-                    # will separate into different points. we can now calculate the minimal preperiodic
-                    # points with the parameter, and then specialize to get the formal preperiodic points
+                    # After deforming by the parameter, the preperiodic points
+                    # with multiplicity will separate into different points.
+                    # We can now calculate the minimal preperiodic points with
+                    # the parameter, and then specialize to get the formal
+                    # preperiodic points.
                     ideal = f_deformed.preperiodic_points(m, n, return_scheme=True).defining_ideal()
                     L = [poly.specialization({t:0}) for poly in ideal.gens()]
                     X = PS.subscheme(L)
-                    subs_list = mat.inverse()*vector(CR.gens())
+                    subs_list = mat.inverse() * vector(CR.gens())
                     subs = {}
+
                     for i in range(len(subs_list)):
                         subs[PS.gens()[i]] = subs_list[i]
+
                     if R.is_field():
                         X = PS.subscheme([poly.subs(subs) for poly in L])
                     else:
                         K = [poly.subs(subs) for poly in L]
-                        K = [poly*poly.denominator() for poly in K]
+                        K = [poly * poly.denominator() for poly in K]
                         X = PS.subscheme(K)
+
                 elif minimal:
                     Sn = []
+
                     for k in ZZ(n).divisors():
                         if ZZ(n/k).is_prime():
                             Sn.append(k)
-                    if (is_PolynomialRing(R) or is_MPolynomialRing(R)):
+
+                    if is_PolynomialRing(R) or is_MPolynomialRing(R):
                         phi = FlatteningMorphism(CR)
                         flatCR = phi.codomain()
                         Ik = flatCR.ideal(1)
+
                         for k in Sn:
                             Ik *= f.preperiodic_points(m, k, return_scheme=True, minimal=False).defining_ideal()
+
                         if m != 0:
                             Ik *= f.preperiodic_points(m-1, n, return_scheme=True, minimal=False).defining_ideal()
+
                         psi = UnflatteningMorphism(flatCR, CR)
                         In = flatCR.ideal([phi(i) for i in X.defining_polynomials()])
                         X = PS.subscheme([psi(i) for i in In.saturation(Ik)[0].gens()])
+
                     else:
                         Ik = CR.ideal(1)
+
                         for k in Sn:
                             Ik *= f.preperiodic_points(m, k, return_scheme=True, minimal=False).defining_ideal()
+
                         if m != 0:
                             Ik *= f.preperiodic_points(m-1, n, return_scheme=True, minimal=False).defining_ideal()
+
                         In = X.defining_ideal()
                         X = PS.subscheme(In.saturation(Ik)[0])
-        if dom != PS:
+
+        if dom is not PS:
             X = PS.subscheme(list(X.defining_polynomials()) + list(dom.defining_polynomials()))
-        if return_scheme:  # this includes the indeterminacy locus points!
+
+        # This includes the indeterminacy locus points!
+        if return_scheme:
             return X
-        if X.dimension() <= 0:
-            if R in NumberFields() or R is QQbar or R in FiniteFields():
-                Z = f.base_indeterminacy_locus()
+
+        # Ensure calling `X.dimension()` works
+        if X.change_ring(FractionField(R)).dimension() <= 0:
+            if (R in NumberFields()) or (R is QQbar) or (R in FiniteFields()):
                 points = [dom(Q) for Q in X.rational_points()]
                 good_points = []
+
                 for Q in points:
                     try:
+                        Z = f.base_indeterminacy_locus()
                         Z(list(Q))
                     except TypeError:
                         good_points.append(Q)
+
                 good_points.sort()
                 return good_points
             else:
                 raise NotImplementedError("ring must a number field or finite field")
-        else: #a higher dimensional scheme
+
+        # A higher dimensional scheme
+        else:
             raise TypeError("use return_scheme=True")
 
     def periodic_points(self, n, minimal=True, formal=False, R=None, algorithm='variety',
