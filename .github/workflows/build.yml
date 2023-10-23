@@ -107,8 +107,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success'
         uses: jakebailey/pyright-action@v1
         with:
-          # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
-          version: 1.1.232
+          version: 1.1.332
           # Many warnings issued by pyright are not yet helpful because there is not yet enough type information.
           no-comments: true
           working-directory: ./worktree-image
@@ -117,8 +116,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success'
         uses: jakebailey/pyright-action@v1
         with:
-          # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
-          version: 1.1.232
+          version: 1.1.332
           # Issue errors
           no-comments: false
           level: error
