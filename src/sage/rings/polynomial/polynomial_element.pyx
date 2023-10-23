@@ -11074,15 +11074,19 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
         """
+        if p.is_zero():
+            return True          # everything divides 0
+        if self.is_zero():
+            return False      # 0 only divides 0
+        try:
+            if self.is_unit():
+                return True   # units divide everything
+        except NotImplementedError:
+            if self.is_one():
+                return True    # if is_unit is not implemented
+
         if not self.base_ring().is_integral_domain():
             raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
-
-        if p.is_zero(): return True          # everything divides 0
-        if self.is_zero(): return False      # 0 only divides 0
-        try:
-            if self.is_unit(): return True   # units divide everything
-        except NotImplementedError:
-            if self.is_one(): return True    # if is_unit is not implemented
 
         if self.degree() > p.degree():
             return False
