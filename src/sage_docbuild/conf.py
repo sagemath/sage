@@ -33,6 +33,7 @@ from sage.misc.sagedoc import extlinks
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, THEBE_DIR, PPLPY_DOCS, MATHJAX_DIR
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.features import PythonModule
+from sage.features.all import all_features
 
 # General configuration
 # ---------------------
@@ -940,3 +941,18 @@ def setup(app):
         app.connect('missing-reference', find_sage_dangling_links)
         app.connect('builder-inited', nitpick_patch_config)
         app.connect('html-page-context', add_page_context)
+
+
+# Conditional content
+# https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
+# https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
+# Workaround to allow importing this file from other confs
+if 'tags' not in locals():
+    class Tags(set):
+        has = set.__contains__
+    tags = Tags()
+
+
+for feature in all_features():
+    tags.add('feature_' + feature.name.replace('.', '_'))
