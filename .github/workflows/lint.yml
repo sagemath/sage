@@ -33,10 +33,16 @@ jobs:
         python-version: 3.9
 
     - name: Install dependencies
-      run: pip install tox pycodestyle relint
+      run: pip install tox relint
 
-    - name: Code style check with pycodestyle
-      run: tox -e pycodestyle-minimal
+    # Manually register problem matcher as long as https://github.com/ChartBoost/ruff-action/issues/7 is not implemented
+    - name: Register problem matcher
+      run: echo "::add-matcher::$(pwd)/.github/workflows/ruff-problem-matcher.json"
+
+    - name: Code style check with ruff
+      uses: chartboost/ruff-action@v1
+      with:
+          args: --show-diff-on-failure
 
     - name: Code style check with relint
       run: tox -e relint -- src/sage/
