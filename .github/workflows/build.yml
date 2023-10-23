@@ -119,9 +119,9 @@ jobs:
         with:
           # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
           version: 1.1.232
-          # Issue warnings for all annoted functions
+          # Issue errors
           no-comments: false
-          skip-unannotated: true
+          level: error
           working-directory: ./worktree-image
 
       - name: Clean (fallback to non-incremental)
