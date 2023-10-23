@@ -170,6 +170,10 @@ The source directory of a distribution package, such as
 
     $ ./sage --fixdistributions --set sagemath-polyhedra --from-egg-info
 
+  To take care of all distributions, use::
+
+    $ ./sage --fixdistributions --set all --from-egg-info
+
 - `pyproject.toml <https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/>`_,
   `setup.cfg <https://setuptools.pypa.io/en/latest/userguide/declarative_config.html>`_,
   and `requirements.txt <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_ --
