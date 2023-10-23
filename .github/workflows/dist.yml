@@ -111,11 +111,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: x86_64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             arch: i686
-          - os: macos-10.15
+          - os: macos-latest
             arch: auto
     env:
       # SPKGs to install as system packages
