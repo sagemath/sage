@@ -111,6 +111,9 @@ jobs:
           # Many warnings issued by pyright are not yet helpful because there is not yet enough type information.
           no-comments: true
           working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
       
       - name: Static code check with pyright (annotated)
         if: always() && steps.worktree.outcome == 'success'
@@ -121,6 +124,9 @@ jobs:
           no-comments: false
           level: error
           working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Clean (fallback to non-incremental)
         id: clean
