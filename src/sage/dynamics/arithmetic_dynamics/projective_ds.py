@@ -64,6 +64,7 @@ from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.function_fields import FunctionFields
 from sage.categories.homset import End
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.number_fields import NumberFields
 from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import (
     automorphism_group_QQ_CRT,
@@ -2166,35 +2167,36 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 Q = F(Q, False)
         return (1 / BR.absolute_degree()) * localht
 
-    def canonical_height(self, P, **kwds):
+    def canonical_height(self, point, **kwds):
         r"""
-        Evaluate the (absolute) canonical height of ``P`` with respect to
-        this dynamical system.
+        Evaluate the (absolute) canonical height of the projective point ``point``
+        with respect to this dynamical system.
 
-        Must be over number field or order of a number field. Specify
-        either the number of terms of the series to evaluate or the
-        error bound required.
+        Must be over a number field or an order of a number field. Specify
+        either the number of terms ``N`` of the series to evaluate, or
+        the required error bound ``error_bound``.
 
         ALGORITHM:
 
-        The sum of the Green's function at the archimedean places and
-        the places of bad reduction.
+        Sum the Green's function at the archimedean places and the places
+        of bad reduction.
 
-        If function is defined over `\QQ` uses Wells' Algorithm, which
-        allows us to not have to factor the resultant.
+        Original implementation of Wells' algorithm works for functions
+        defined over `\QQ`. Current implementation uses Hutz's version that
+        works for functions defined over any number fields.
 
         INPUT:
 
-        - ``P`` -- a projective point
+        - ``point`` -- a projective point
 
         kwds:
 
-        - ``badprimes`` -- (optional) a list of primes of bad reduction
+        - ``bad_primes`` -- (optional) a list of primes of bad reduction
 
-        - ``N`` -- (default: 10) positive integer. number of
-          terms of the series to use in the local green functions
+        - ``N`` -- (default: 10) a positive integer; number of terms of the
+          series to use in the local green functions
 
-        - ``prec`` -- (default: 100) positive integer, float point or
+        - ``prec`` -- (default: 100) a positive integer, float point or
           `p`-adic precision
 
         - ``error_bound`` -- (optional) a positive real number
@@ -2203,41 +2205,41 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(ZZ,1)
-            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y]);
-            sage: f.canonical_height(P.point([5,4]), error_bound=0.001)
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y])
+            sage: f.canonical_height(P.point([5, 4]), error_bound=0.001)
             2.1970553519503404898926835324
-            sage: f.canonical_height(P.point([2,1]), error_bound=0.001)
+            sage: f.canonical_height(P.point([2, 1]), error_bound=0.001)
             1.0984430632822307984974382955
 
         Notice that preperiodic points may not return exactly 0::
 
             sage: R.<X> = PolynomialRing(QQ)
             sage: K.<a> = NumberField(X^2 + X - 1)
-            sage: P.<x,y> = ProjectiveSpace(K,1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: f = DynamicalSystem_projective([x^2 - 2*y^2, y^2])
-            sage: Q = P.point([a,1])
-            sage: f.canonical_height(Q, error_bound=0.000001)  # Answer only within error_bound of 0
+            sage: Q = P.point([a, 1])
+            sage: f.canonical_height(Q, error_bound=0.000001) # Answer only within error_bound of 0
             5.7364919788790160119266380480e-8
-            sage: f.nth_iterate(Q, 2) == Q  # but it is indeed preperiodic
+            sage: f.nth_iterate(Q,2) == Q # but it is indeed preperiodic
             True
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: X = P.subscheme(x^2 - y^2);
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x^2 - y^2)
             sage: f = DynamicalSystem_projective([x^2, y^2, 4*z^2], domain=X);
-            sage: Q = X([4,4,1])
-            sage: f.canonical_height(Q, badprimes=[2])
+            sage: Q = X([4, 4, 1])
+            sage: f.canonical_height(Q, bad_primes=[2])
             0.0013538030870311431824555314882
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: X = P.subscheme(x^2 - y^2);
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x^2 - y^2)
             sage: f = DynamicalSystem_projective([x^2, y^2, 30*z^2], domain=X)
             sage: Q = X([4, 4, 1])
-            sage: f.canonical_height(Q, badprimes=[2,3,5], prec=200)
+            sage: f.canonical_height(Q, bad_primes=[2, 3, 5], prec=200)
             2.7054056208276961889784303469356774912979228770208655455481
 
         ::
@@ -2254,144 +2256,272 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             ....: 1726400507263657518745202199786469389956474942774063845925192557326303453731548\
             ....: 2685079170261221429134616704292143116022212404792747377940806653514195974598569\
             ....: 02143413
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem_projective([RSA768*x^2 + y^2, x*y])
-            sage: Q = P(RSA768,1)
+            sage: Q = P(RSA768, 1)
             sage: f.canonical_height(Q, error_bound=0.00000000000000001)
             931.18256422718241278672729195
 
         ::
 
-            sage: P.<x,y>=ProjectiveSpace(QQ, 1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSystem([2*(-2*x^3 + 3*(x^2*y)) + 3*y^3, 3*y^3])
-            sage: f.canonical_height(P(1,0))
+            sage: f.canonical_height(P(1, 0))
             0.00000000000000000000000000000
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ[sqrt(3)], 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, 2*x*y])
+            sage: f.canonical_height(P(5, 4), error_bound=0.001)
+            2.1971399646432799363415870031
+
+        ::
+
+            sage: K.<v> = QuadraticField(5)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem([x^2, y^2])
+            sage: f.canonical_height(P(2 + v, 1))
+            0.721817737589405
+
+        ::
+
+            sage: S.<z> = QQ[]
+            sage: K.<v> = NumberField(z^3-5)
+            sage: O = K.maximal_order()
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem([x^2 + 3*y^2, v*y^2])
+            sage: f.canonical_height(P(25*11, 5*v))
+            3.4708559341837528755619744489
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(CC, 1)
+            sage: f = DynamicalSystem([x, y])
+            sage: f.canonical_height(P(1, 0))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Must be over a number field, a number field order, or QQbar
+
+        ::
+
+            sage: K.<v> = QuadraticField(5)
+            sage: R.<x> = K[]
+            sage: L.<l> = K.extension(x^3 + 2)
+            sage: P.<x,y> = ProjectiveSpace(L, 1)
+            sage: f = DynamicalSystem([x^2, y^2])
+            sage: print(f.canonical_height(P(2 + l, 1)))
+            Traceback (most recent call last):
+            ...
+            TypeError: Must be an absolute field
         """
-        bad_primes = kwds.get("badprimes", None)
+        bad_primes = kwds.get("bad_primes", None)
         prec = kwds.get("prec", 100)
         error_bound = kwds.get("error_bound", None)
         K = FractionField(self.codomain().base_ring())
 
         if K not in NumberFields():
             if K is not QQbar:
-                raise NotImplementedError("must be over a number field or a number field order or QQbar")
+                raise NotImplementedError("Must be over a number field, a number field order, or QQbar")
+
+            # Since we want to compute the absolute height, we may compute
+            # the height of a QQbar point by choosing any number field that
+            # it is defined over.
+            number_field_pt = point._number_field_from_algebraics()
+            K = number_field_pt.codomain().base_ring()
+            f = self._number_field_from_algebraics().as_dynamical_system()
+
+            if K is QQ:
+                K = f.base_ring()
+                number_field_pt = number_field_pt.change_ring(K)
+            elif f.base_ring() is QQ:
+                f = f.change_ring(K)
             else:
-                #since this an absolute height, we can compute the height of a QQbar point
-                #by choosing any number field it is defined over.
-                Q = P._number_field_from_algebraics()
-                K = Q.codomain().base_ring()
-                f = self._number_field_from_algebraics().as_dynamical_system()
-                if K == QQ:
-                    K = f.base_ring()
-                    Q = Q.change_ring(K)
-                elif f.base_ring() == QQ:
-                    f = f.change_ring(K)
-                else:
-                    K, phi, psi, b = K.composite_fields(f.base_ring(), both_maps=True)[0]
-                    Q = Q.change_ring(phi)
-                    f = f.change_ring(psi)
+                K, phi, psi, b = K.composite_fields(f.base_ring(), both_maps=True)[0]
+                number_field_pt = number_field_pt.change_ring(phi)
+                f = f.change_ring(psi)
         else:
             if not K.is_absolute():
-                raise TypeError("must be an absolute field")
-            Q = P
+                raise TypeError("Must be an absolute field")
+
+            number_field_pt = point
             f = self
 
-        # After moving from QQbar to K being something like QQ, we need
-        # to renormalize f, especially to match the normalized resultant.
+        # After moving from QQbar to K (like QQ), we need to normalize ``f``
+        # to match the normalized resultant.
         f.normalize_coordinates()
 
-        # If our map and point are defined on P^1(QQ), use Wells' Algorithm
-        # instead of the usual algorithm using local Green's functions:
-        if K is QQ and self.codomain().ambient_space().dimension_relative() == 1:
-            # write our point with coordinates whose gcd is 1
-            Q.normalize_coordinates()
-            if Q.parent().value_ring() is QQ:
-                Q.clear_denominators()
-            # assures integer coefficients
-            coeffs = f[0].coefficients() + f[1].coefficients()
-            t = 1
-            for c in coeffs:
-                t = lcm(t, c.denominator())
-            A = t * f[0]
-            B = t * f[1]
-            Res = f.resultant(normalize=True).abs()
-            H = 0
-            x_i = Q[0]
-            y_i = Q[1]
+        # The original implementation uses Wells' Algorithm if the maps and
+        # points are defined on P^1(QQ). Current implementation extends this
+        # to general number fields with unique factorisation.
+        # Otherwise, apply the usual algorithm using local Green's functions:
+        rel_dim = self.codomain().ambient_space().dimension_relative()
+
+        if rel_dim == 1:
+            # Write our point with coordinates whose GCD is 1
+            number_field_pt.normalize_coordinates()
+            if number_field_pt.parent().value_ring() is QQ:
+                number_field_pt.clear_denominators()
+
+            A = f[0]
+            B = f[1]
+
             d = self.degree()
             R = RealField(prec)
             N = kwds.get('N', 10)
-            err = kwds.get('error_bound', None)
-            # computes the error bound as defined in Algorithm 3.1 of [WELLS]
-            if Res > 1:
-                if err is not None:
-                    err = err / 2
-                    N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
-                    if N < 1:
-                        N = 1
-                    kwds.update({'error_bound': err})
-                    kwds.update({'N': N})
-                for n in range(N):
-                    x = A(x_i,y_i) % Res**(N-n)
-                    y = B(x_i,y_i) % Res**(N-n)
-                    g = gcd([x, y, Res])
-                    H = H + R(g).abs().log() / (d**(n+1))
-                    x_i = x / g
-                    y_i = y / g
-            # this looks different than Wells' Algorithm because of the difference
-            # between what Wells' calls H_infty,
-            # and what Green's Function returns for the infinite place
-            h = f.green_function(Q, 0, **kwds) - H + R(t).log()
-            # The value returned by Well's algorithm may be negative. As the canonical height
-            # is always nonnegative, so if this value is within -err of 0, return 0.
-            if h < 0:
-                assert h > -err, "A negative height less than -error_bound was computed. " + \
-                 "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
+            error_bound = kwds.get('error_bound', None)
+
+            H = 0
+            h = R.zero()
+
+            # import pdb; pdb.set_trace()
+
+            if K is QQ:
+                Res = f.resultant(normalize=True).abs()
+
+                x_i = number_field_pt[0]
+                y_i = number_field_pt[1]
+
+                # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
+                if Res > 1:
+                    if error_bound is not None:
+                        error_bound /= 2
+                        N = ceil((R(Res).log().log() - R(d - 1).log() - R(error_bound).log()) / R(d).log())
+                        if N < 1:
+                            N = 1
+
+                        kwds.update({'error_bound': error_bound})
+                        kwds.update({'N': N})
+
+                    for n in range(N):
+                        x = A(x_i, y_i) % Res**(N - n)
+                        y = B(x_i, y_i) % Res**(N - n)
+                        g = gcd([x, y, Res])
+                        H += R(g).abs().log() / d**(n + 1)
+                        x_i = x / g
+                        y_i = y / g
+
+                # It looks different than Wells' Algorithm, because of the difference
+                # between what Wells' calls H_infty and what Green's function returns
+                # for the infinite place.
+                h = f.green_function(number_field_pt, 0, **kwds) - H
+
+                # The value returned by Wells' Algorithm may be negative.
+                # As the canonical height is always non-negative, hence return 0 if
+                # this value is within -err of 0.
+                if h < 0:
                     # This should be impossible. The error bound for Wells' is rigorous
-                    # and the actual height is always >= 0. If we see something less than -err,
-                    # something has g one very wrong.
-                h = R(0)
-            return h
+                    # and the actual height is always >= 0.
+                    # If we see something less than -error_bound, something has gone wrong.
+                    assert h > -error_bound, "A negative height less than -error_bound was computed. " + \
+                    "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
+                    h = R(0)
+                return h
+
+            elif K.class_number() == 1:
+                O = K.maximal_order()
+
+                # Put the coordinates in the maximal order, to facilitate
+                # the following calculations
+                max_order_PS = ProjectiveSpace(O, 1)
+                number_field_pt.clear_denominators()
+                number_field_pt = max_order_PS(number_field_pt)
+
+                x_i = number_field_pt[0]
+                y_i = number_field_pt[1]
+
+                Res = O(f.resultant().abs())
+
+                # Compute the error bound as defined in Algorithm 3.1 of [WELLS]
+                if Res > 1:
+                    if error_bound is not None:
+                        error_bound /= len(K.places()) + 1
+                        N = ceil((R(Res.norm()).log().log() - R(d - 1).log() - R(error_bound).log()) / R(d).log())
+
+                        if N < 1:
+                            N = 1
+
+                        kwds.update({'error_bound': error_bound})
+                        kwds.update({'N': N})
+
+                    # import pdb; pdb.set_trace()
+
+                    for n in range(N):
+                        order_quotient = O.quotient(O.fractional_ideal(Res**(N - n)), 't')
+                        x = order_quotient(A(x_i, y_i)).lift()
+                        y = order_quotient(B(x_i, y_i)).lift()
+                        g = gcd([x, y, Res])
+                        H += R(g.norm()).abs().log() / d**(n + 1)
+                        x_i = O(x / g)
+                        y_i = O(y / g)
+
+                # import pdb; pdb.set_trace()
+
+                # It looks different than Wells' Algorithm, because of the difference
+                # between what Wells' calls H_infty and what Green's function returns
+                # for the infinite place.
+                h = -H
+                for v in K.places(prec=prec):
+                    if isinstance(v.codomain(), (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
+                        dv = R.one()
+                    else:
+                        dv = R(2)
+                    h += dv * f.green_function(number_field_pt, v, **kwds)
+
+                # The value returned by Wells' Algorithm may be negative.
+                # As the canonical height is always non-negative, hence return 0 if
+                # this value is within -err of 0.
+                if h < 0:
+                    # This should be impossible. The error bound for Wells' is rigorous
+                    # and the actual height is always >= 0.
+                    # If we see something less than -error_bound, something has gone wrong.
+                    assert h > -error_bound, "A negative height less than -error_bound was computed. " + \
+                    "This should be impossible, please report bug on https://github.com/sagemath/sage/issues"
+                    h = R(0)
+                return h
 
         if bad_primes is None:
             bad_primes = []
-            for b in Q:
-                if K == QQ:
+            for b in number_field_pt:
+                if K is QQ:
                     bad_primes += b.denominator().prime_factors()
                 else:
                     bad_primes += b.denominator_ideal().prime_factors()
+
             bad_primes += K(f.resultant(normalize=True)).support()
             bad_primes = list(set(bad_primes))
 
         emb = K.places(prec=prec)
-        num_places = len(emb) + len(bad_primes)
-        if error_bound is not None:
-            error_bound /= num_places
-        R = RealField(prec)
-        h = R.zero()
 
-        ##update the keyword dictionary for use in green_function
-        kwds.update({"badprimes": bad_primes})
+        # Update the ``kwds`` dictionary for use in ``green_function``
+        if error_bound is not None:
+            error_bound /= len(emb) + len(bad_primes)
+
+        kwds.update({"bad_primes": bad_primes})
         kwds.update({"error_bound": error_bound})
 
         # Archimedean local heights
-        # :: WARNING: If places is fed the default Sage precision of 53 bits,
+        # WARNING: If places is fed the default Sage precision of 53 bits, then
         # it uses Real or Complex Double Field in place of RealField(prec) or ComplexField(prec).
-        # RDF is an instance of a separate class.
+        # RealDoubleField is an instance of a separate class.
+        R = RealField(prec)
+        h = R.zero()
+
         for v in emb:
             if isinstance(v.codomain(), (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
                 dv = R.one()
             else:
                 dv = R(2)
-            h += dv * f.green_function(Q, v, **kwds)     #arch Green function
+            h += dv * f.green_function(number_field_pt, v, **kwds) # arch Green function
 
-        # Non-Archimedean local heights
+        # Non-archimedean local heights
         for v in bad_primes:
-            if K == QQ:
+            if K is QQ:
                 dv = R.one()
             else:
                 dv = R(v.residue_class_degree() * v.absolute_ramification_index())
-            h += dv * f.green_function(Q, v, **kwds)  #non-arch Green functions
+            h += dv * f.green_function(number_field_pt, v, **kwds) # non-arch Green functions
+
         return h
 
     def height_difference_bound(self, prec=None):
