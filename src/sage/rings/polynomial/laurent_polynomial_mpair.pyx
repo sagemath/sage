@@ -1855,9 +1855,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return new_ring(ans)
         return ans
 
+    @coerce_binop
     def divides(self, other):
         """
-        Check if `self` divides `other`
+        Check if ``self`` divides ``other``
 
         EXAMPLES::
 
@@ -1869,6 +1870,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f1.divides(f2)
             True
             sage: f1.divides(f3)
+            False
+            sage: f1.divides(3)
             False
         """
         R = self._parent.polynomial_ring()

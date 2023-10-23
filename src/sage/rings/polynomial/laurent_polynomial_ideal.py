@@ -206,7 +206,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
     def gens_reduced(self):
         """
-       A reduced system of generators.
+        A reduced system of generators.
 
         EXAMPLES::
 
@@ -217,7 +217,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         R = self.ring()
         J = self.polynomial_ideal()
-        return tuple(R(p) for p in J.gens())
+        return tuple([R(p) for p in J.gens()])
 
     # Operations on ideals
 
@@ -423,7 +423,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         Q = self._poly_ring
         if len(P.gens()) == 1:
             a = [Q(p.polynomial_construction()[0]) for p in self.gens()]
-            if P.is_integral_domain():
+            if P.base_ring().is_field():
                 a = GCD(a)
             return Q.ideal(a)
         if self._poly_ideal is not None and (self._saturated or not saturate):

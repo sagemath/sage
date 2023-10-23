@@ -1341,6 +1341,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         The parameter ``m`` may be either a single polynomial or an ideal
         (for consistency with :meth:`inverse_mod` in other rings).
 
+        ALGORITHM: Solve the system `as + mt = 1`, returning `s` as the inverse
+        of `a` mod `m`.
+
         EXAMPLES::
 
             sage: S.<t> = LaurentPolynomialRing(QQ)
@@ -1348,15 +1351,12 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             1/2*t^2 - 1/2*t^3 - 1/2*t^4
             sage: f * (t^-2 + 1) + (1/2*t^4 + 1/2*t^3) * (t^-3 + 1)
             1
-
-        ALGORITHM: Solve the system `as + mt = 1`, returning `s` as the inverse
-        of `a` mod `m`.
         """
         from sage.rings.ideal import is_Ideal
         if is_Ideal(m):
             v = m.gens_reduced()
             if len(v) > 1:
-                raise NotImplementedError("Don't know how to invert modulo non-principal ideal %s" % m)
+                raise NotImplementedError("only inversion modulo principal ideals implemented")
             m = v[0]
         if m.degree() == 1 and m[1].is_unit():
             # a(x) mod (x-r) = a(r)
@@ -1366,8 +1366,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             u = a(r)
             if u.is_unit():
                 return a.parent()(~u)
-        if not a.parent().is_exact():
-            raise NotImplementedError("only implemented when the base ring is exact")
         g, s, _ = a.xgcd(m)
         if g == 1:
             return s
@@ -2052,8 +2050,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
     def divides(self, other):
         r"""
         Return ``True`` if ``self`` divides ``other``.
-
-        This method is only implemented for Laurent polynomials over an integral domain.
 
         EXAMPLES::
 
