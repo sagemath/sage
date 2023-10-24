@@ -1874,7 +1874,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f1.divides(3)
             False
         """
-        R = self._parent.polynomial_ring()
-        p = R(self.monomial_reduction()[0])
-        q = R(other.monomial_reduction()[0])
+        p = self.monomial_reduction()[0]
+        q = other.monomial_reduction()[0]
         return p.divides(q)

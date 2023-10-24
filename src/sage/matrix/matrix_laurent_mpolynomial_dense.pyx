@@ -14,8 +14,6 @@ AUTHOR:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
-
 from sage.matrix.constructor import identity_matrix
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 

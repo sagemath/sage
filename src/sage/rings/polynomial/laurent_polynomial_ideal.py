@@ -94,7 +94,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         self._poly_ring = ring.polynomial_ring()
         self._poly_ideal = None  # Create only as needed
         self._saturated = False
-        # self._hint = self._poly_ring.ideal([f.monomial_reduction()[0] for f in self.gens()])
         if hint is None:
             self._hint = self._poly_ring.zero_ideal()
         else:
@@ -194,6 +193,14 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: x + 3*y in I
             True
+            sage: I.gen(0).__reduce__()
+            (Multivariate Laurent Polynomial Ring in x, y over Rational Field,
+             (x^2*y + 3*x*y^2, (0, 0)))
+            sage: P.<x> = LaurentPolynomialRing(QQ, 1)
+            sage: I = P.ideal([x^2 + 3*x])
+            sage: I.gen(0).__reduce__()  # Check the differences of __reduce__ for distinct Laurent polynomial rings
+            (Multivariate Laurent Polynomial Ring in x over Rational Field,
+             (x^2 + 3*x, (0,)))
         """
         if not f or f in self.gens():
             return True
@@ -416,8 +423,17 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: I.polynomial_ideal()
-            Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y
-             over Rational Field
+            Ideal (x + 3*y) of Multivariate Polynomial Ring in x, y over Rational Field
+            sage: P.<t> = LaurentPolynomialRing(QQ)
+            sage: J = P.ideal(t^2 - t^-1)
+            sage: J.polynomial_ideal()
+            Principal ideal (t^3 - 1) of Univariate Polynomial Ring in t over Rational Field
+            sage: J = P.ideal([t^2 - t^-1, t + t^-1])
+            sage: J.polynomial_ideal()
+            Principal ideal (1) of Univariate Polynomial Ring in t over Rational Field
+            sage: J = P.ideal([t^2 - t^-1, t - t^-1])
+            sage: J.polynomial_ideal()
+            Principal ideal (t - 1) of Univariate Polynomial Ring in t over Rational Field
         """
         P = self.ring()
         Q = self._poly_ring
