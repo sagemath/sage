@@ -1566,7 +1566,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             r"""
             Evaluate the reduced expression of this element at ``x``, where ``x``
             is either the tuple of values to evaluate in, a dictionary indicating
-            to which value is each generator evaluated, or  keywords giving
+            to which value is each generator evaluated, or keywords giving
             the value to which generators should be evaluated.
 
             INPUT:
