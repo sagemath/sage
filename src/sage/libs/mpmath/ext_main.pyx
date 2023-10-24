@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-mpmath
 """
 mpmath floating-point numbers
 
@@ -40,11 +41,11 @@ DEF S_NAN = 5
 
 from .ext_impl cimport *
 
-import mpmath.rational as rationallib
-import mpmath.libmp as libmp
-import mpmath.function_docs as function_docs
-from mpmath.libmp import to_str
-from mpmath.libmp import repr_dps, prec_to_dps, dps_to_prec
+import sage.libs.mpmath._vendor.mpmath.rational as rationallib
+import sage.libs.mpmath._vendor.mpmath.libmp as libmp
+import sage.libs.mpmath._vendor.mpmath.function_docs as function_docs
+from sage.libs.mpmath._vendor.mpmath.libmp import to_str
+from sage.libs.mpmath._vendor.mpmath.libmp import repr_dps, prec_to_dps, dps_to_prec
 
 DEF OP_ADD = 0
 DEF OP_SUB = 1
@@ -395,9 +396,9 @@ cdef class Context:
         """
         At present, only a single global context should exist ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: type(mp)
-            <class 'mpmath.ctx_mp.MPContext'>
+            <class 'sage.libs.mpmath._vendor.mpmath.ctx_mp.MPContext'>
         """
         global global_opts, global_context
         global_opts = opts_double_precision
@@ -414,10 +415,10 @@ cdef class Context:
 
         TESTS ::
 
-            sage: import mpmath
-            sage: mpmath.mp.prec = 100
-            sage: mpmath.mp.default()
-            sage: mpmath.mp.prec
+            sage: import sage.libs.mpmath
+            sage: sage.libs.mpmath.all.mp.prec = 100
+            sage: sage.libs.mpmath.all.mp.default()
+            sage: sage.libs.mpmath.all.mp.prec
             53
         """
         global global_opts
@@ -429,7 +430,7 @@ cdef class Context:
         """
         Controls the working precision in bits ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.prec = 100
             sage: mp.prec
             100
@@ -443,7 +444,7 @@ cdef class Context:
         """
         Controls the working precision in bits ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.prec = 100
             sage: mp.prec
             100
@@ -457,7 +458,7 @@ cdef class Context:
         """
         Controls the working precision in decimal digits ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.dps = 100
             sage: mp.prec
             336
@@ -471,7 +472,7 @@ cdef class Context:
         """
         Controls the working precision in decimal digits ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.dps = 100
             sage: mp.prec
             336
@@ -490,7 +491,7 @@ cdef class Context:
         """
         Returns the precision and rounding mode ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp._get_prec_rounding()
             (53, 'n')
         """
@@ -502,8 +503,8 @@ cdef class Context:
         """
         Creates an mpf from tuple data ::
 
-            sage: import mpmath
-            sage: float(mpmath.mp.make_mpf((0,1,-1,1)))
+            sage: import sage.libs.mpmath
+            sage: float(sage.libs.mpmath.all.mp.make_mpf((0,1,-1,1)))
             0.5
         """
         cdef mpf x
@@ -515,8 +516,8 @@ cdef class Context:
         """
         Creates an mpc from tuple data ::
 
-            sage: import mpmath
-            sage: complex(mpmath.mp.make_mpc(((0,1,-1,1), (1,1,-2,1))))
+            sage: import sage.libs.mpmath
+            sage: complex(sage.libs.mpmath.all.mp.make_mpc(((0,1,-1,1), (1,1,-2,1))))
             (0.5-0.25j)
         """
         cdef mpc x
@@ -537,7 +538,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import mp, convert
+            sage: from sage.libs.mpmath.all import mp, convert
             sage: mp.dps = 15; mp.pretty = False
             sage: convert(3.5)
             mpf('3.5')
@@ -571,7 +572,7 @@ cdef class Context:
 
         TESTS::
 
-            sage: from mpmath import isnan, nan
+            sage: from sage.libs.mpmath.all import isnan, nan
             sage: isnan(nan), isnan(3)
             (True, False)
         """
@@ -602,7 +603,7 @@ cdef class Context:
 
         TESTS::
 
-            sage: from mpmath import isinf, inf, mpc
+            sage: from sage.libs.mpmath.all import isinf, inf, mpc
             sage: isinf(inf)
             True
             sage: isinf(-inf)
@@ -648,7 +649,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import isnormal, inf, nan, mpc
+            sage: from sage.libs.mpmath.all import isnormal, inf, nan, mpc
             sage: isnormal(3)
             True
             sage: isnormal(0)
@@ -689,7 +690,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import isint, mpf, inf
+            sage: from sage.libs.mpmath.all import isint, mpf, inf
             sage: isint(3)
             True
             sage: isint(mpf(3))
@@ -749,7 +750,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import mp, fsum
+            sage: from sage.libs.mpmath.all import mp, fsum
             sage: mp.dps = 15; mp.pretty = False
             sage: fsum([1, 2, 0.5, 7])
             mpf('10.5')
@@ -873,7 +874,7 @@ cdef class Context:
 
         TESTS::
 
-            sage: from mpmath import mp, fdot
+            sage: from sage.libs.mpmath.all import mp, fdot
             sage: mp.dps = 15; mp.pretty = False
             sage: A = [2, 1.5r, 3]
             sage: B = [1, -1, 2]
@@ -985,7 +986,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.pretty = True
             sage: (x, T) = mp._convert_param(3)
             sage: (x, type(x).__name__, T)
@@ -1059,7 +1060,7 @@ cdef class Context:
 
         TESTS::
 
-            sage: from mpmath import *
+            sage: from sage.libs.mpmath.all import *
             sage: mp.pretty = True
             sage: mag(10), mag(10.0), mag(mpf(10)), int(ceil(log(10,2)))
             (4, 4, 4, 4)
@@ -1136,7 +1137,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.pretty = False
             sage: f = lambda x, prec, rnd: x
             sage: g = mp._wrap_libmp_function(f)
@@ -1161,7 +1162,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp._wrap_specfun("foo", lambda ctx, x: ctx.prec + x, True)
             sage: mp.pretty = False; mp.prec = 53
             sage: mp.foo(5)       # 53 + 10 guard bits + 5
@@ -1202,7 +1203,7 @@ cdef class Context:
 
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.dps = 15
             sage: print(mp.sqrt(2))   # indirect doctest
             1.4142135623731
@@ -1240,7 +1241,7 @@ cdef class Context:
 
         EXAMPLES::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.dps = 15
             sage: print(mp.exp(2))   # indirect doctest
             7.38905609893065
@@ -1272,7 +1273,7 @@ cdef class Context:
 
         EXAMPLES::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.dps = 15
             sage: print(mp.cos(2))   # indirect doctest
             -0.416146836547142
@@ -1309,7 +1310,7 @@ cdef class Context:
 
         EXAMPLES::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.dps = 15
             sage: print(mp.sin(2))   # indirect doctest
             0.909297426825682
@@ -1346,7 +1347,7 @@ cdef class Context:
 
         EXAMPLES::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: print(mp.ln(2))   # indirect doctest
             0.693147180559945
             sage: print(mp.ln(-2))
@@ -1407,8 +1408,8 @@ cdef class wrapped_libmp_function:
         TESTS ::
 
             sage: from sage.libs.mpmath.ext_main import wrapped_libmp_function
-            sage: from mpmath import mp
-            sage: from mpmath.libmp import mpf_exp, mpf_sqrt
+            sage: from sage.libs.mpmath.all import mp
+            sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_exp, mpf_sqrt
             sage: f = lambda x, prec, rnd: mpf_exp(mpf_sqrt(x, prec, rnd), prec, rnd)
             sage: g = wrapped_libmp_function(f)
             sage: g(mp.mpf(3))
@@ -1434,7 +1435,7 @@ cdef class wrapped_libmp_function:
         conversions and uses the default working precision
         unless overridden ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.sinh(2)
             mpf('3.6268604078470186')
             sage: mp.sinh(2, prec=10)
@@ -1498,7 +1499,7 @@ cdef class wrapped_specfun:
 
         TESTS ::
 
-            sage: import mpmath
+            sage: import sage.libs.mpmath
             sage: from sage.libs.mpmath.ext_main import wrapped_specfun
             sage: f = wrapped_specfun("f", lambda ctx, x: x)
             sage: f.name
@@ -1514,7 +1515,7 @@ cdef class wrapped_specfun:
         to mpmath number, and the internal working precision is increased
         by a few bits to suppress typical rounding errors ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: from sage.libs.mpmath.ext_main import wrapped_specfun
             sage: f = wrapped_specfun("f", lambda ctx, x: x + ctx.prec)
             sage: f("1")     # 53 + 10 guard bits + 1
@@ -1539,7 +1540,7 @@ cdef class mpnumber:
         Comparison of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(3) == mpc(3)
             True
             sage: mpf(3) == mpc(4)
@@ -1561,7 +1562,7 @@ cdef class mpnumber:
         Addition of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(3) + mpc(3)
             mpc(real='6.0', imag='0.0')
             sage: float(4) + mpf(3)
@@ -1574,7 +1575,7 @@ cdef class mpnumber:
         Subtraction of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(5) - mpc(3)
             mpc(real='2.0', imag='0.0')
             sage: float(4) - mpf(3)
@@ -1587,7 +1588,7 @@ cdef class mpnumber:
         Multiplication of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(5) * mpc(3)
             mpc(real='15.0', imag='0.0')
             sage: float(4) * mpf(3)
@@ -1600,7 +1601,7 @@ cdef class mpnumber:
         Division of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(10) / mpc(5)
             mpc(real='2.0', imag='0.0')
             sage: float(9) / mpf(3)
@@ -1613,7 +1614,7 @@ cdef class mpnumber:
         Remainder of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(12) % float(7)
             mpf('5.0')
         """
@@ -1624,7 +1625,7 @@ cdef class mpnumber:
         Exponentiation of mpmath numbers. Compatible numerical types
         are automatically converted to mpmath numbers ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(10) ** mpc(3)
             mpc(real='1000.0', imag='0.0')
             sage: mpf(3) ** float(2)
@@ -1639,7 +1640,7 @@ cdef class mpnumber:
         Check if two numbers are approximately equal to within the specified
         tolerance (see mp.almosteq for documentation) ::
 
-            sage: from mpmath import mpf, mpc
+            sage: from sage.libs.mpmath.all import mpf, mpc
             sage: mpf(3).ae(mpc(3,1e-10))
             False
             sage: mpf(3).ae(mpc(3,1e-10), rel_eps=1e-5)
@@ -1658,7 +1659,7 @@ cdef class mpf_base(mpnumber):
         """
         Support hashing of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: hash(X()) == hash(float(X()))
@@ -1670,7 +1671,7 @@ cdef class mpf_base(mpnumber):
         """
         Support repr() of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: repr(X())
@@ -1685,7 +1686,7 @@ cdef class mpf_base(mpnumber):
         """
         Support str() of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: str(X())
@@ -1698,7 +1699,7 @@ cdef class mpf_base(mpnumber):
         """
         Support real part of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().real
@@ -1711,7 +1712,7 @@ cdef class mpf_base(mpnumber):
         """
         Support imaginary part of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().imag
@@ -1723,7 +1724,7 @@ cdef class mpf_base(mpnumber):
         """
         Support complex conjugate of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().conjugate()
@@ -1736,7 +1737,7 @@ cdef class mpf_base(mpnumber):
         """
         Support mantissa extraction of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().man
@@ -1749,7 +1750,7 @@ cdef class mpf_base(mpnumber):
         """
         Support exponent extraction of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().exp
@@ -1762,7 +1763,7 @@ cdef class mpf_base(mpnumber):
         """
         Support bitcount extraction of derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().bc
@@ -1775,7 +1776,7 @@ cdef class mpf_base(mpnumber):
         """
         Support integer conversion for derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: int(X())
@@ -1787,7 +1788,7 @@ cdef class mpf_base(mpnumber):
         """
         Support float conversion for derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: float(X())
@@ -1799,7 +1800,7 @@ cdef class mpf_base(mpnumber):
         """
         Support complex conversion for derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: complex(X())
@@ -1811,7 +1812,7 @@ cdef class mpf_base(mpnumber):
         """
         Support conversion to a fixed-point integer for derived classes ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: from sage.libs.mpmath.ext_main import mpf_base
             sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
             sage: X().to_fixed(30)
@@ -1842,7 +1843,7 @@ cdef class mpf(mpf_base):
 
         TESTS ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf()
             mpf('0.0')
             sage: mpf(5)
@@ -1876,7 +1877,7 @@ cdef class mpf(mpf_base):
         """
         Support pickling ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: loads(dumps(mpf(0.5))) == mpf(0.5)
             True
         """
@@ -1887,7 +1888,7 @@ cdef class mpf(mpf_base):
         Returns internal representation of self as a tuple
         of (sign bit, mantissa, exponent, bitcount) ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.mpf(-3)._mpf_
             (1, 3, 0, 2)
         """
@@ -1897,7 +1898,7 @@ cdef class mpf(mpf_base):
         """
         Sets tuple value of self (warning: unsafe) ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: x = mp.mpf(-3)
             sage: x._mpf_ = (1, 3, -1, 2)
             sage: x
@@ -1911,7 +1912,7 @@ cdef class mpf(mpf_base):
         """
         Returns whether the number is nonzero ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: bool(mpf(3.5))
             True
             sage: bool(mpf(0.0))
@@ -1924,7 +1925,7 @@ cdef class mpf(mpf_base):
         Hash values are compatible with builtin Python floats
         when the precision is small enough ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: hash(mpf(2.5)) == hash(float(2.5))
             True
             sage: hash(mpf('inf')) == hash(float(Infinity))
@@ -1937,7 +1938,7 @@ cdef class mpf(mpf_base):
         """
         Real part, leaves self unchanged ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(2.5).real
             mpf('2.5')
         """
@@ -1948,7 +1949,7 @@ cdef class mpf(mpf_base):
         """
         Imaginary part, equal to zero ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(2.5).imag
             mpf('0.0')
         """
@@ -1958,7 +1959,7 @@ cdef class mpf(mpf_base):
         """
         Complex conjugate, leaves self unchanged ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(2.5).conjugate()
             mpf('2.5')
         """
@@ -1970,7 +1971,7 @@ cdef class mpf(mpf_base):
         Returns the binary mantissa of self. The result is a Sage
         integer ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(-500.5).man
             1001
             sage: type(_)
@@ -1983,7 +1984,7 @@ cdef class mpf(mpf_base):
         """
         Returns the binary exponent of self ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(1/64.).exp
             -6
         """
@@ -1994,7 +1995,7 @@ cdef class mpf(mpf_base):
         """
         Returns the number of bits in the mantissa of self ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(-256).bc
             1
             sage: mpf(-255).bc
@@ -2006,7 +2007,7 @@ cdef class mpf(mpf_base):
         """
         Convert to a fixed-point integer of the given precision ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(7.25).to_fixed(30)
             7784628224
             sage: ZZ(7.25 * 2**30)
@@ -2023,7 +2024,7 @@ cdef class mpf(mpf_base):
         """
         Convert to a Python integer (truncating if necessary) ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: int(mpf(2.5))
             2
             sage: type(_)
@@ -2036,7 +2037,7 @@ cdef class mpf(mpf_base):
         """
         Convert to a double-precision Python float ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: float(mpf(2.5))
             2.5
             sage: type(_)
@@ -2048,7 +2049,7 @@ cdef class mpf(mpf_base):
         """
         Support pickling ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: loads(dumps(mpf(3))) == mpf(3)
             True
         """
@@ -2058,7 +2059,7 @@ cdef class mpf(mpf_base):
         """
         Support pickling ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: loads(dumps(mpf(3))) == mpf(3)
             True
         """
@@ -2068,7 +2069,7 @@ cdef class mpf(mpf_base):
         """
         Create a new mpf ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: x = mpf()
 
         """
@@ -2081,7 +2082,7 @@ cdef class mpf(mpf_base):
         """
         Negates self, rounded to the current working precision ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: -mpf(2)
             mpf('-2.0')
         """
@@ -2094,7 +2095,7 @@ cdef class mpf(mpf_base):
         """
         Rounds the number to the current working precision ::
 
-            sage: from mpmath import mp, mpf
+            sage: from sage.libs.mpmath.all import mp, mpf
             sage: mp.prec = 200
             sage: x = mpf(1) / 3
             sage: x.man
@@ -2115,7 +2116,7 @@ cdef class mpf(mpf_base):
         Computes the absolute value, rounded to the current
         working precision ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: abs(mpf(-2))
             mpf('2.0')
         """
@@ -2129,7 +2130,7 @@ cdef class mpf(mpf_base):
         Computes the square root, rounded to the current
         working precision ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(2).sqrt()
             mpf('1.4142135623730951')
         """
@@ -2141,7 +2142,7 @@ cdef class mpf(mpf_base):
         """
         Compares numbers ::
 
-            sage: from mpmath import mpf
+            sage: from sage.libs.mpmath.all import mpf
             sage: mpf(3) > 2
             True
             sage: mpf(3) == 3
@@ -2168,7 +2169,7 @@ cdef class constant(mpf_base):
         Creates a constant from a function computing an mpf
         tuple value ::
 
-            sage: from mpmath import mp, mpf
+            sage: from sage.libs.mpmath.all import mp, mpf
             sage: q = mp.constant(lambda prec, rnd: mpf(0.25)._mpf_, "quarter", "q")
             sage: q
             <quarter: 0.25~>
@@ -2185,7 +2186,7 @@ cdef class constant(mpf_base):
         Calling a constant is equivalent to rounding it. A
         custom precision and rounding direction can also be passed ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: print(pi(dps=5, rounding='d'))
             3.1415901184082
             sage: print(pi(dps=5, rounding='u'))
@@ -2205,7 +2206,7 @@ cdef class constant(mpf_base):
         Returns the tuple value of the constant as if rounded
         to an mpf at the present working precision ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: pi._mpf_
             (0, 884279719003555, -48, 50)
             sage: 884279719003555 / 2.0**48
@@ -2220,7 +2221,7 @@ cdef class constant(mpf_base):
         Represents self as a string. With mp.pretty=False, the
         representation differs from that of an ordinary mpf ::
 
-            sage: from mpmath import mp, pi
+            sage: from sage.libs.mpmath.all import mp, pi
             sage: mp.pretty = True
             sage: repr(pi)
             '3.14159265358979'
@@ -2237,7 +2238,7 @@ cdef class constant(mpf_base):
         """
         Returns whether the constant is nonzero ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: bool(pi)
             True
         """
@@ -2247,7 +2248,7 @@ cdef class constant(mpf_base):
         """
         Negates the constant ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: -pi
             mpf('-3.1415926535897931')
         """
@@ -2257,7 +2258,7 @@ cdef class constant(mpf_base):
         """
         Instantiates the constant as an mpf ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: +pi
             mpf('3.1415926535897931')
         """
@@ -2267,7 +2268,7 @@ cdef class constant(mpf_base):
         """
         Computes the absolute value of the constant ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: abs(pi)
             mpf('3.1415926535897931')
         """
@@ -2277,7 +2278,7 @@ cdef class constant(mpf_base):
         """
         Computes the square root of the constant ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: print(pi.sqrt())
             1.77245385090552
         """
@@ -2288,7 +2289,7 @@ cdef class constant(mpf_base):
         """
         Convert to a fixed-point integer ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: float(pi.to_fixed(10) / 2.0**10)
             3.140625
         """
@@ -2305,7 +2306,7 @@ cdef class constant(mpf_base):
         """
         A constant hashes as if instantiated to a number ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: hash(pi) == hash(+pi)
             True
         """
@@ -2315,7 +2316,7 @@ cdef class constant(mpf_base):
         """
         A constant hashes as if instantiated to a number ::
 
-            sage: from mpmath import pi
+            sage: from sage.libs.mpmath.all import pi
             sage: pi == pi
             True
             sage: pi > 3.14
@@ -2340,7 +2341,7 @@ cdef class mpc(mpnumber):
         """
         Creates a new mpc::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: mpc() == mpc(0,0) == mpc(1,0)-1 == 0
             True
 
@@ -2358,7 +2359,7 @@ cdef class mpc(mpnumber):
         """
         Create a new mpc ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: x = mpc()
 
         """
@@ -2373,7 +2374,7 @@ cdef class mpc(mpnumber):
         """
         Support pickling ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: loads(dumps(mpc(1,3))) == mpc(1,3)
             True
         """
@@ -2383,7 +2384,7 @@ cdef class mpc(mpnumber):
         """
         Support pickling ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: loads(dumps(mpc(1,3))) == mpc(1,3)
             True
         """
@@ -2393,7 +2394,7 @@ cdef class mpc(mpnumber):
         """
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.pretty = True
             sage: repr(mp.mpc(2,3))
             '(2.0 + 3.0j)'
@@ -2411,7 +2412,7 @@ cdef class mpc(mpnumber):
         """
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: str(mp.mpc(2,3))
             '(2.0 + 3.0j)'
         """
@@ -2421,7 +2422,7 @@ cdef class mpc(mpnumber):
         """
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: bool(mp.mpc(0,1))
             True
             sage: bool(mp.mpc(1,0))
@@ -2439,7 +2440,7 @@ cdef class mpc(mpnumber):
         """
         TESTS ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: complex(mp.mpc(1,2)) == complex(1,2)
             True
         """
@@ -2449,7 +2450,7 @@ cdef class mpc(mpnumber):
         """
         Returns tuple value of self ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.mpc(2,3)._mpc_
             ((0, 1, 1, 1), (0, 3, 0, 2))
         """
@@ -2459,7 +2460,7 @@ cdef class mpc(mpnumber):
         """
         Sets tuple value of self (warning: unsafe) ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: x = mp.mpc(2,3)
             sage: x._mpc_ = (x._mpc_[1], x._mpc_[0])
             sage: x
@@ -2475,7 +2476,7 @@ cdef class mpc(mpnumber):
         """
         Returns the real part of self as an mpf ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.mpc(1,2).real
             mpf('1.0')
         """
@@ -2488,7 +2489,7 @@ cdef class mpc(mpnumber):
         """
         Returns the imaginary part of self as an mpf ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.mpc(1,2).imag
             mpf('2.0')
         """
@@ -2502,7 +2503,7 @@ cdef class mpc(mpnumber):
 
         EXAMPLES::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: hash(mp.mpc(2,3)) == hash(complex(2,3))
             True
 
@@ -2510,7 +2511,7 @@ cdef class mpc(mpnumber):
 
         Check that :trac:`31676` is fixed::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t
             False
         """
@@ -2520,7 +2521,7 @@ cdef class mpc(mpnumber):
         """
         Negates the number ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: -mpc(1,2)
             mpc(real='-1.0', imag='-2.0')
         """
@@ -2535,7 +2536,7 @@ cdef class mpc(mpnumber):
         """
         Returns the complex conjugate ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: mpc(1,2).conjugate()
             mpc(real='1.0', imag='-2.0')
         """
@@ -2550,7 +2551,7 @@ cdef class mpc(mpnumber):
         """
         Rounds the number to the current working precision ::
 
-            sage: from mpmath import mp
+            sage: from sage.libs.mpmath.all import mp
             sage: mp.prec = 200
             sage: x = mp.mpc(1) / 3
             sage: x.real.man
@@ -2572,7 +2573,7 @@ cdef class mpc(mpnumber):
         """
         Returns the absolute value of self ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: abs(mpc(3,4))
             mpf('5.0')
         """
@@ -2584,7 +2585,7 @@ cdef class mpc(mpnumber):
         """
         Complex numbers can be compared for equality ::
 
-            sage: from mpmath import mpc
+            sage: from sage.libs.mpmath.all import mpc
             sage: mpc(2,3) == complex(2,3)
             True
             sage: mpc(-2,3) == complex(2,3)
@@ -2603,7 +2604,7 @@ def hypsum_internal(int p, int q, param_types, str ztype, coeffs, z,
 
     EXAMPLES::
 
-        sage: from mpmath import mp  # indirect doctest
+        sage: from sage.libs.mpmath.all import mp  # indirect doctest
         sage: mp.dps = 15
         sage: print(mp.hyp1f1(1,2,3))
         6.36184564106256

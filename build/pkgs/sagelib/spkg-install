@@ -62,7 +62,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     # under the old distribution name "sage" (before #30912, which switched to setuptools
     # and renamed the distribution to "sagemath-standard").  There is no clean way to uninstall
     # them, so we just use rm.
-    (cd "$SITEPACKAGESDIR" && rm -rf sage sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
+    (cd "$SITEPACKAGESDIR" && rm -rf sage/__init__.py sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
     time sdh_pip_editable_install .
 
     if [ "$SAGE_WHEELS" = yes ]; then

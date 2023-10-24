@@ -204,7 +204,8 @@ def init_sage(controller=None):
     if controller is None:
         import sage.repl.ipython_kernel.all_jupyter
     else:
-        controller.load_environment()
+        import sage
+        sage.all = controller.load_environment()
 
     try:
         from sage.interfaces.quit import invalidate_all

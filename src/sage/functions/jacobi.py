@@ -158,8 +158,8 @@ from sage.symbolic.function import BuiltinFunction
 
 lazy_import('sage.misc.latex', 'latex')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath', 'ellipfun', as_='_mpmath_ellipfun')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all', 'ellipfun', as_='_mpmath_ellipfun')
 
 HALF = QQ((1, 2))
 
@@ -367,7 +367,7 @@ class Jacobi(BuiltinFunction):
             sage: jacobi_dn(I, I).n()                                                   # needs mpmath sage.symbolic
             0.874189950651018 + 0.667346865048825*I
         """
-        return _mpmath_utils_call(_mpmath_ellipfun, self.kind, x, m, parent=parent)
+        return _mpmath_call(_mpmath_ellipfun, self.kind, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -377,7 +377,7 @@ class Jacobi(BuiltinFunction):
         that the derivatives are correct by computing the series::
 
             sage: # needs mpmath sage.symbolic
-            sage: from mpmath import almosteq
+            sage: from sage.libs.mpmath.all import almosteq
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
             sage: almosteq(jacobi_sn(x, b).series(x, 10).subs(x=a),
@@ -568,7 +568,7 @@ class InverseJacobi(BuiltinFunction):
         Check that the simplifications are correct::
 
             sage: # needs mpmath sage.symbolic
-            sage: from mpmath import almosteq
+            sage: from sage.libs.mpmath.all import almosteq
             sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),
             ....:          n(inverse_jacobi_cd(1, -8)))
             True
@@ -725,7 +725,7 @@ class InverseJacobi(BuiltinFunction):
             sage: inverse_jacobi_cd(3, 4).n(100)                                        # needs mpmath
             -0.67214752201235862490069823239 + 2.1565156474996432354386749988*I
         """
-        return _mpmath_utils_call(inverse_jacobi_f, self.kind, x, m, parent=parent)
+        return _mpmath_call(inverse_jacobi_f, self.kind, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -735,7 +735,7 @@ class InverseJacobi(BuiltinFunction):
         ``x = inverse_jacobi_pq(y, m)``::
 
             sage: # needs mpmath sage.symbolic
-            sage: from mpmath import almosteq
+            sage: from sage.libs.mpmath.all import almosteq
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
             sage: m = var('m')
@@ -1110,7 +1110,7 @@ class JacobiAmplitude(BuiltinFunction):
             sage: jacobi_am(1, 2).n(100)                                                # needs mpmath
             0.73704379494724574105101929735
         """
-        return _mpmath_utils_call(jacobi_am_f, x, m, parent=parent)
+        return _mpmath_call(jacobi_am_f, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -1160,7 +1160,7 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipfun, chop                                         # needs mpmath
+        sage: from sage.libs.mpmath.all import ellipfun, chop                           # needs mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
         sage: # needs mpmath
@@ -1294,7 +1294,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))               # needs mpmath
         mpf('4.0')
     """
-    from mpmath import mp as ctx
+    from sage.libs.mpmath.all import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)
@@ -1636,7 +1636,7 @@ def jacobi_am_f(x, m):
     TESTS::
 
         sage: # needs mpmath
-        sage: from mpmath import ellipf
+        sage: from sage.libs.mpmath.all import ellipf
         sage: from sage.functions.jacobi import jacobi_am_f
         sage: ellipf(jacobi_am_f(0.5, 1), 1)
         mpf('0.5')
@@ -1651,7 +1651,7 @@ def jacobi_am_f(x, m):
         sage: jacobi_am_f(-3, 2)
         mpf('0.36067407399586108')
     """
-    from mpmath import mp as ctx
+    from sage.libs.mpmath.all import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)

@@ -146,7 +146,7 @@ from cypari2.paridecl cimport *
 from cypari2.gen cimport Gen
 from cypari2.stack cimport new_gen
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.libs.mpmath.mpfr_to_mpmath cimport mpfr_to_mpfval
 
 from .integer cimport Integer
 from .rational cimport Rational
@@ -5333,8 +5333,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             if parent._prec > SIG_PREC_THRESHOLD:
                 sig_off()
             return x
-        from sage.libs.mpmath.utils import call
-        from mpmath import loggamma
+        from sage.libs.mpmath.sage_utils import call
+        from sage.libs.mpmath.all import loggamma
         return call(loggamma, mpfr_to_mpfval(self.value), parent=parent)
 
     def zeta(self):

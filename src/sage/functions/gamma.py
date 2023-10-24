@@ -17,8 +17,8 @@ lazy_import('sage.functions.other', 'sqrt')
 
 lazy_import('sage.symbolic.constants', 'pi')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath', 'gammainc', as_='_mpmath_gammainc')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all', 'gammainc', as_='_mpmath_gammainc')
 
 
 class Function_gamma(GinacFunction):
@@ -158,7 +158,7 @@ class Function_gamma(GinacFunction):
         Check that the implementations roughly agrees (note there might be
         difference of several ulp on more complicated entries)::
 
-            sage: import mpmath                                                         # needs mpmath
+            sage: import sage.libs.mpmath as mpmath                                     # needs mpmath
             sage: float(gamma(10.)) == gamma(10.r) == float(gamma(mpmath.mpf(10)))      # needs mpmath
             True
             sage: float(gamma(8.5)) == gamma(8.5r) == float(gamma(mpmath.mpf(8.5)))     # needs mpmath
@@ -481,7 +481,7 @@ class Function_gamma_inc(BuiltinFunction):
         if algorithm == 'pari':
             v = ComplexField(prec)(x).gamma_inc(y)
         else:
-            v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, y, parent=R))
+            v = ComplexField(prec)(_mpmath_call(_mpmath_gammainc, x, y, parent=R))
         if v.is_real():
             return R(v)
         else:
@@ -612,7 +612,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
             Cx = ComplexField(prec)(x)
             v = Cx.gamma() - Cx.gamma_inc(y)
         else:
-            v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, 0, y, parent=R))
+            v = ComplexField(prec)(_mpmath_call(_mpmath_gammainc, x, 0, y, parent=R))
         return R(v) if v.is_real() else C(v)
 
     def _derivative_(self, x, y, diff_param=None):

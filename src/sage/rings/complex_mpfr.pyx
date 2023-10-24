@@ -53,7 +53,7 @@ from .complex_double cimport ComplexDoubleElement
 from .real_mpfr cimport RealNumber
 from sage.libs.gsl.complex cimport *
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.libs.mpmath.mpfr_to_mpmath cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
 
 cimport gmpy2
