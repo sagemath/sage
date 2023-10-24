@@ -1599,7 +1599,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             if len(values) == 1 and isinstance(values[0], dict):
                 images = list(gens)
                 for (i, g) in enumerate(gens):
-                    if g in values[0].keys():
+                    if g in values[0]:
                         images[i] = values[0][g]
             elif len(values) == len(gens):
                 images = list(values)
