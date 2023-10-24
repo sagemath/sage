@@ -1594,7 +1594,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 Traceback (most recent call last):
                 ...
                 ValueError: number of arguments does not match number of variables in parent
-
             """
             gens = self.parent().gens()
             if len(values) == 1 and isinstance(values[0], dict):
