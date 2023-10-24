@@ -1,5 +1,22 @@
-project('sage', 'c')
+project(
+  'SageMath',
+  ['c', 'cpp', 'cython'],
+  version: '10.2.beta8',
+  license: 'GPL v3',
+  meson_version: '>= 1.2.0',
+)
+
+# Python module
+# https://mesonbuild.com/Python-module.html
+py = import('python').find_installation(pure: false)
+py_dep = py.dependency()
+
+# Compilers
 cc = meson.get_compiler('c')
+cpp = meson.get_compiler('cpp')
+cython = meson.get_compiler('cython')
+
+# Generate the configuration file
 conf_data = configuration_data()
 
 conf_data.set('PACKAGE_VERSION', '1.2.3')
@@ -38,3 +55,4 @@ configure_file(input : 'pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
                output : '_conf.py',
                configuration : conf_data)
 
+subdir('src')

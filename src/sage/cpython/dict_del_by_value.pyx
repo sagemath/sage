@@ -48,7 +48,7 @@ cdef extern from "dict_internal.h":
 
 
 # dk_lookup was removed in python 3.11
-DEF HAS_DK_LOOKUP = PY_VERSION_HEX < 0x30b0000
+DEF HAS_DK_LOOKUP = False
 
 IF HAS_DK_LOOKUP:
 
