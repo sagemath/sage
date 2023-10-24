@@ -1571,7 +1571,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             INPUT:
 
-            - ``values`` -- (optional) either a tuple or a dictionary
+            - ``values`` -- (optional) either the values in which the variables
+              will be evaluated or a dictionary.
 
             OUTPUT:
 
@@ -1594,8 +1595,30 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 Traceback (most recent call last):
                 ...
                 ValueError: number of arguments does not match number of variables in parent
+
+            It is also possible to use keywords like this::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f(x=3)
+                21*y^2*z^3*t - 5*y*z + 3*y
+                sage: f(t=x,y=z)
+                -5*z^2 + x*z
+
+            If both a dictionary and keywords are used, only the dictionary is
+            considered::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f({x:1}, t=x,y=z)
+                7*y^2*z^3*t - 5*y*z + y
+
             """
             gens = self.parent().gens()
+            images = list(gens)
+            if values and not isinstance(values[0], dict):
+                for (i, p) in enumerate(values):
+                    images[i] = p
             if len(values) == 1 and isinstance(values[0], dict):
                 images = list(gens)
                 for (i, g) in enumerate(gens):
