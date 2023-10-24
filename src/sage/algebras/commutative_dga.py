@@ -1575,7 +1575,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             OUTPUT:
 
-                this element evaluated in the given values
+            this element evaluated at the given values
 
             EXAMPLES::
 
