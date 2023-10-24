@@ -3185,7 +3185,7 @@ class HyperplaneArrangementElement(Element):
         n = len(region)
         v = identity_matrix(R, n, n)
         for i in range(n):
-            for j in range(i+1, n):
+            for j in range(i + 1, n):
                 t = prod(h[p] for p in range(k) if
                          self.is_separating_hyperplane(region[i], region[j], self[p]))
                 v[i, j] = v[j, i] = t
