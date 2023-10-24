@@ -45,7 +45,6 @@ cdef inline OrbitPartition *OP_new(int n):
     Allocate and return a pointer to a new OrbitPartition of degree n. Returns a
     null pointer in the case of an allocation failure.
     """
-    cdef int i
     cdef OrbitPartition *OP = <OrbitPartition *> \
                                 sig_malloc(sizeof(OrbitPartition))
     cdef int *int_array = <int *> sig_malloc( 4*n * sizeof(int) )
@@ -185,7 +184,6 @@ cdef inline PartitionStack *PS_new(int n, bint unit_partition):
     Allocate and return a pointer to a new PartitionStack of degree n. Returns a
     null pointer in the case of an allocation failure.
     """
-    cdef int i
     cdef PartitionStack *PS = <PartitionStack *> \
                                 sig_malloc(sizeof(PartitionStack))
     cdef int *int_array = <int *> sig_malloc( 2*n * sizeof(int) )
@@ -210,7 +208,7 @@ cdef void PS_unit_partition(PartitionStack *PS):
     for i in range(n - 1):
         PS.entries[i] = i
         PS.levels[i] = n
-    PS.entries[n-1] = n-1
+    PS.entries[n-1] = n - 1
     PS.levels[n-1] = -1
 
 cdef inline PartitionStack *PS_copy(PartitionStack *PS):
@@ -218,7 +216,7 @@ cdef inline PartitionStack *PS_copy(PartitionStack *PS):
     Allocate and return a pointer to a copy of PartitionStack PS. Returns a null
     pointer in the case of an allocation failure.
     """
-    cdef int i, n = PS.degree
+    cdef int n = PS.degree
 
     cdef PartitionStack *PS2 = <PartitionStack *> \
                                 sig_malloc(sizeof(PartitionStack))
@@ -327,7 +325,6 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
     Return the number of rows of ``nonsingletons_ptr``.
     """
     cdef int beg=0, end, n = PS.degree, count=0, i, n_1 = n-1
-    cdef bint non_unit_partition = False
     cdef bitset_t scratch
     bitset_init(scratch, n)
     cdef bitset_t* nonsingletons = nonsingletons_ptr[0]
@@ -561,10 +558,6 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
     cdef int i
     cdef StabilizerChain *SC = <StabilizerChain *> \
                                 sig_calloc(1, sizeof(StabilizerChain))
-    cdef int *array1
-    cdef int *array2
-    cdef int *array3
-    cdef bint mem_err = 0
     if SC is NULL:
         return NULL
     SC.degree = n
@@ -762,7 +755,6 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
     cdef unsigned long new_size = size_old
     while new_size < size:
         new_size *= 2
-    cdef unsigned long limbs_old = SC.gen_used.limbs
     cdef long limbs = (new_size - 1)/(8*sizeof(unsigned long)) + 1
     cdef mp_limb_t *tmp = <mp_limb_t*> sig_realloc(SC.gen_used.bits, limbs * sizeof(mp_limb_t))
     if tmp is not NULL:
@@ -866,7 +858,7 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
     return NEW
 
 cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len):
-    cdef int i, n = SC.degree
+    cdef int i
     SC_dest.base_size = 0
     for i in range(base_len):
         SC_add_base_point(SC_dest, base[i])
@@ -937,7 +929,7 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
     return NEW
 
 cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level, int p):
-    cdef int i, b, n = SC.degree
+    cdef int i, b
     SC_copy_nomalloc(SC_dest, SC, level)
     SC_add_base_point(SC_dest, p)
     for i in range(level, SC.base_size):
@@ -956,7 +948,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
     """
     cdef int *gen
     cdef int *gen_inv
-    cdef int i, b, gen_index, error, n = SC.degree
+    cdef int i, b, gen_index, n = SC.degree
 
     # make sure we have room for the new generator:
     if SC.array_size[level] == SC.num_gens[level]:
@@ -1027,7 +1019,6 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
     cdef int y, b = SC.base_orbits[level][0]
     cdef int *perm
     cdef int *perm_rep_inv = temp
-    cdef int j
     for i from 0 <= i < num_gens:
         perm = new_gens + n*i # this is now rs
         y = perm[b]
@@ -1039,7 +1030,6 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
 cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_perms, bint sift):
     cdef int i, j, b, n = SC.degree
     cdef int perm_gen_index
-    cdef int max_orbit_size, max_orbit_place
     if sift:
         if SC_realloc_bitsets(SC, num_perms):
             return 1
@@ -1065,13 +1055,11 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
 
     # Record the old orbit elements and the old generators (see sifting phase)
     cdef int old_num_gens = SC.num_gens[level]
-    cdef int old_num_points = SC.orbit_sizes[level]
 
     # Add new points to the tree:
     cdef int x
     cdef int *perm
     cdef int start_over = 1
-    cdef int error
     cdef int re_treed = 0
     while start_over:
         start_over = 0
