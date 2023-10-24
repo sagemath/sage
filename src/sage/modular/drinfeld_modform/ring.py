@@ -318,6 +318,49 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             return self.gen(i-1)**(q - 1)
         return self.gen(i - 1)
 
+    def _coefficient_forms(self, a):
+        r"""
+        Return the list of all coefficients of the universal Drinfeld
+        module at `a`.
+
+        This method is used in the methods :meth:`coefficient_form` and
+        :meth:`coefficient_forms`. The main difference is that we don't
+        check the input here.
+
+        INPUT:
+
+        - ``a`` -- an element in the ring of regular functions.
+
+        OUTPUT: a list of Drinfeld modular forms. The `i`-th element of
+        that list corresponds to the `(i+1)`-th coefficient form at `a`.
+
+        TESTS::
+
+            sage: K.<T> = Frac(GF(2)['T'])
+            sage: M = DrinfeldModularForms(K, 2)
+            sage: M._coefficient_forms(T)
+            [g1, g2]
+            sage: M._coefficient_forms(T^2)
+            [(T^2 + T)*g1, g1^3 + (T^4 + T)*g2, g1^4*g2 + g1*g2^2, g2^5]
+        """
+        a = a.numerator()
+        d = a.degree()
+        poly_ring = PolynomialRing(self._base_ring, self.rank(), 'g')
+        poly_ring_gens = poly_ring.gens()
+        Frob = poly_ring.frobenius_endomorphism()
+        gen = [self._base_ring.gen()]
+        for g in poly_ring_gens:
+            gen.append(g)
+        ore_pol_ring = OrePolynomialRing(poly_ring, Frob, 't')
+        gen = ore_pol_ring(gen)
+        f = sum(c*(gen**idx) for idx, c in enumerate(a.coefficients(sparse=False)))
+        coeff_forms = []
+        for i in range(1, a.degree()*self.rank()+1):
+            form = f[i]
+            coeff_forms.append(form.subs({g: self._generator_coefficient_form(j+1)
+                                          for j, g in enumerate(poly_ring_gens)}))
+        return coeff_forms
+
     def coefficient_form(self, i, a=None):
         r"""
         Return the `i`-th coefficient form of the universal Drinfeld
@@ -391,33 +434,34 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                 raise ValueError(f"index (={i}) must be >= 1 and <= rank "
                                  f"(={self.rank()})")
             return self._generator_coefficient_form(i)
-        if a not in self._base_ring:
+        try:
+            a = self._base_ring(a)
+        except TypeError:
             raise TypeError("a should be an element of the base ring")
-        a = self._base_ring(a)
         if not a.denominator().is_one():
             raise ValueError("a should be in the ring of regular functions")
         a = a.numerator()
         if i < 1 or i > a.degree()*self.rank():
             raise ValueError(f"index (={i}) must be >= 1 and <= deg(a)*rank "
                              f"(={a.degree()*self.rank()})")
-        poly_ring = PolynomialRing(self._base_ring, self.rank(), 'g')
-        poly_ring_gens = poly_ring.gens()
-        Frob = poly_ring.frobenius_endomorphism()
-        gen = [self._base_ring.gen()]
-        for g in poly_ring_gens:
-            gen.append(g)
-        ore_pol_ring = OrePolynomialRing(poly_ring, Frob, 't')
-        gen = ore_pol_ring(gen)
-        f = sum(c*(gen**idx) for idx, c in enumerate(a.coefficients(sparse=False)))
-        form = f[i]
-        coeff_form = form.subs({g: self._generator_coefficient_form(j+1) for j, g in enumerate(poly_ring_gens)})
-        return coeff_form
+        coeff_forms = self._coefficient_forms(a)
+        return coeff_forms[i - 1]
 
     def coefficient_forms(self, a=None):
         r"""
-        Return the list of all coefficient forms at `a`.
+        Return the list of all coefficients of the universal Drinfeld
+        module at `a`.
 
-        See also :meth:`coefficient_form`.
+        See also :meth:`coefficient_form` for definitions.
+
+        INPUT:
+
+        - ``a`` -- (default: ``None``) an element in the ring of regular
+        functions. If `a` is ``None``, then the method returns the
+        coefficients forms at `a = T`.
+
+        OUTPUT: a list of Drinfeld modular forms. The `i`-th element of
+        that list corresponds to the `(i+1)`-th coefficient form at `a`.
 
         EXAMPLE::
 
@@ -439,12 +483,14 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         """
         if a is None:
             return [self._generator_coefficient_form(i) for i in range(1, self.rank() + 1)]
-        a = self._base_ring(a)
+        try:
+            a = self._base_ring(a)
+        except TypeError:
+            raise TypeError("the input should be an element of the base ring")
         if not a.denominator().is_one():
             raise ValueError("the input should be in the ring of regular"
                              " functions")
-        d = a.numerator().degree()
-        return [self.coefficient_form(i, a) for i in range(1, self.rank()*d + 1)]
+        return self._coefficient_forms(a)
 
     def gen(self, n):
         r"""
