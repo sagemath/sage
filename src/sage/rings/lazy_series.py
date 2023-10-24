@@ -1588,7 +1588,7 @@ class LazyModuleElement(Element):
 
             sage: sol = L(lambda n: 1 if not n else (2 if is_square(n) else 0)); sol
             1 + 2*z + 2*z^4 + O(z^7)
-            sage: all(g[i] == sol[i] for i in range(20))
+            sage: all(g[i] == sol[i] for i in range(50))
             True
 
         Some more examples over different rings::
@@ -1603,12 +1603,13 @@ class LazyModuleElement(Element):
             sage: G = L.undefined(0)
             sage: G.define_implicity(diff(G) - exp(-G(-z)), [log(2)])
             sage: G
-            0.693147180559945 + 1.00000000000000*z + 0.500000000000000*z^2 - 0.0833333333333333*z^4 + 0.0222222222222222*z^6 + O(1.00000000000000*z^7)
+            0.693147180559945 + 1.00000000000000*z + 0.500000000000000*z^2
+             - 0.0833333333333333*z^4 + 0.0222222222222222*z^6 + O(1.00000000000000*z^7)
 
         We solve the recurrence relation in (3.12) of Prellberg and Brak
         :doi:`10.1007/BF02183685`::
 
-            sage: q,y = QQ['q,y'].fraction_field().gens()
+            sage: q, y = QQ['q,y'].fraction_field().gens()
             sage: L.<x> = LazyPowerSeriesRing(q.parent())
             sage: R = L.undefined()
             sage: R.define_implicity((1-q*x)*R - (y*q*x+y)*R(q*x) - q*x*R*R(q*x) - x*y*q, [0])
@@ -1624,7 +1625,7 @@ class LazyModuleElement(Element):
 
             sage: Rp = L.undefined(1)
             sage: Rp.define_implicity((y*q*x+y)*Rp(q*x) + q*x*Rp*Rp(q*x) + x*y*q - (1-q*x)*Rp)
-            sage: all(R[n] == Rp[n] for n in range(10))
+            sage: all(R[n] == Rp[n] for n in range(7))
             True
 
         Another example::

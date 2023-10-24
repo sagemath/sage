@@ -147,6 +147,9 @@ class Stream():
         """
         self._true_order = true_order
 
+    def map_cache(self, function):
+        pass
+
     @lazy_attribute
     def _approximate_order(self):
         """
@@ -453,6 +456,14 @@ class Stream_inexact(Stream):
         while True:
             yield self.get_coefficient(n)
             n += 1
+
+    def map_cache(self, function):
+        if self._cache:
+            if self._is_sparse:
+                i = max(self._cache)
+                self._cache[i] = function(self._cache[i])
+            else:
+                self._cache[-1] = function(self._cache[-1])
 
     def order(self):
         r"""
@@ -1360,6 +1371,11 @@ class Stream_uninitialized(Stream_inexact):
                 ret._target = temp
         return ret
 
+    def map_cache(self, function):
+        super().map_cache(function)
+        if self._target is not None:
+            self._target.map_cache(function)
+
 
 class Stream_functional_equation(Stream_inexact):
     r"""
@@ -1430,7 +1446,7 @@ class Stream_functional_equation(Stream_inexact):
         yield from self._initial_values
 
         from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        P = InfinitePolynomialRing(self._base, names=('FESDUMMY',))
+        P = InfinitePolynomialRing(self._base, names=('FESDUMMY',), implementation='sparse')
         x = P.gen()
         PFF = P.fraction_field()
         offset = self._approximate_order
@@ -1481,7 +1497,16 @@ class Stream_functional_equation(Stream_inexact):
                 raise ValueError(f"the solutions to the coefficients must be computed in order")
             val = -hc.get(0, P.zero()).lc() / hc[1].lc()
             # Update the cache
-            sf._cache[len(data)] = val
+            def sub(c):
+                if c not in self._base:
+                    # print(c.polynomial().parent())
+                    return self._base(c.subs({V[0]: val}))
+                return c
+            # print("sf._cache", sf._cache)
+            sf.map_cache(sub)
+            # print("F._cache", self._F._cache)
+            self._F.map_cache(sub)
+            # sf._cache[len(data)] = val
             data.append(val)
             yield val
             n += 1
@@ -1525,6 +1550,10 @@ class Stream_unary(Stream_inexact):
         """
         self._series = series
         super().__init__(is_sparse, true_order)
+
+    def map_cache(self, function):
+        super().map_cache(function)
+        self._series.map_cache(function)
 
     def __hash__(self):
         """
@@ -1662,6 +1691,11 @@ class Stream_binary(Stream_inexact):
         self._left = left
         self._right = right
         super().__init__(is_sparse, False)
+
+    def map_cache(self, function):
+        super().map_cache(function)
+        self._left.map_cache(function)
+        self._right.map_cache(function)
 
     def __hash__(self):
         """
@@ -2525,6 +2559,10 @@ class Stream_plethysm(Stream_binary):
             self._tensor_power = None
             f = Stream_map_coefficients(f, lambda x: p(x), is_sparse)
         super().__init__(f, g, is_sparse)
+
+    def map_cache(self, function):
+        super().map_cache(function)
+        self._powers = [g.map_cache(function) for g in self._powers]
 
     @lazy_attribute
     def _approximate_order(self):
@@ -3406,6 +3444,9 @@ class Stream_shift(Stream):
         self._series = series
         self._shift = shift
         super().__init__(series._true_order)
+
+    def map_cache(self, function):
+        self._series.map_cache(function)
 
     @lazy_attribute
     def _approximate_order(self):
