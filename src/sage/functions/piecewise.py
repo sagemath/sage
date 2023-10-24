@@ -719,7 +719,7 @@ class PiecewiseFunction(BuiltinFunction):
                 except ValueError:
                     ex2 = 0
                 ex = ex1 + ex2
-                if i>0 and funcs[-1] == ex:
+                if i > 0 and funcs[-1] == ex:
                     # extend the previous domain
                     rs += domain[-1]
                     domain[-1] = rs
@@ -927,7 +927,7 @@ class PiecewiseFunction(BuiltinFunction):
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    for root in maxima.allroots(SR(f).diff(x)==0):
+                    for root in maxima.allroots(SR(f).diff(x) == 0):
                         root = float(root.rhs())
                         if a < root < b:
                             crit_pts.append(root)
@@ -995,7 +995,7 @@ class PiecewiseFunction(BuiltinFunction):
                 raise ValueError('one of the piecewise functions is nowhere defined')
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
-            if len(f)==1 and len(g)==1:
+            if len(f) == 1 and len(g) == 1:
                 f = f.unextend_zero()
                 g = g.unextend_zero()
                 a1 = fd[0].lower()
@@ -1010,19 +1010,19 @@ class PiecewiseFunction(BuiltinFunction):
                         fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt:variable})
                         fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt:variable})
                         fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt:variable})
-                if a1-b1<a2-b2:
-                    if a2+b1!=a1+b2:
+                if a1-b1 < a2-b2:
+                    if a2+b1 != a1+b2:
                         h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b1),fg2],[(a2+b1,a2+b2),fg3]])
                     else:
                         h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b2),fg3]])
                 else:
-                    if a1+b2!=a2+b1:
+                    if a1+b2 != a2+b1:
                         h = piecewise([[(a1+b1,a2+b1),fg1],[(a2+b1,a1+b2),fg4],[(a1+b2,a2+b2),fg3]])
                     else:
                         h = piecewise([[(a1+b1,a2+b1),fg1],[(a2+b1,a2+b2),fg3]])
                 return (piecewise([[(minus_infinity,infinity),0]]).piecewise_add(h)).unextend_zero()
 
-            if len(f)>1 or len(g)>1:
+            if len(f) > 1 or len(g) > 1:
                 z = piecewise([[(0,0),0]])
                 for fpiece in f.pieces():
                     for gpiece in g.pieces():
@@ -1126,14 +1126,14 @@ class PiecewiseFunction(BuiltinFunction):
 
             x = SR.var(x)
             s = SR.var(s)
-            assume(s>0)
+            assume(s > 0)
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
                     result += (SR(f)*exp(-s*x)).integral(x,a,b)
-            forget(s>0)
+            forget(s > 0)
             return result
 
         def fourier_series_cosine_coefficient(self, parameters,

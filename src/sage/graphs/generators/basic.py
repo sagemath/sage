@@ -435,9 +435,9 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
 
     # compare against alpha to get adjacency matrix
     if include_anticorrelation:
-        boolean_adjacency_matrix = abs(corrs)>=alpha
+        boolean_adjacency_matrix = abs(corrs) >= alpha
     else:
-        boolean_adjacency_matrix = corrs>=alpha
+        boolean_adjacency_matrix = corrs >= alpha
 
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
