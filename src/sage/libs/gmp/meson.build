@@ -3,9 +3,16 @@ py.install_sources(
     subdir: 'sage/libs/gmp',
 )
 
-py.extension_module(
-    'pylong.pyx',
-    subdir: 'sage/libs/gmp',
-    install: true,
-    dependencies: py_dep,
-)
+extension_data = {
+    'pylong': files('pylong.pyx'),
+}
+
+foreach name, pyx : extension_data
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/libs/gmp',
+        install: true,
+        include_directories: [inc_cpython],
+        dependencies: py_dep,
+    )
+endforeach

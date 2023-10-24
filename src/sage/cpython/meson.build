@@ -1,21 +1,28 @@
 py.install_sources(
-    'all.py',
     '__init__.py',
     '_py2_random.py',
+    'all.py',
     subdir: 'sage/cpython',
 )
 
-py.extension_module(
-    'debug.pyx',
-    'getattr.pyx',
-    'atexit.pyx',
-    'wrapperdescr.pyx',
-    'builtin_types.pyx',
-    'cython_metaclass.pyx',
-    'dict_del_by_value.pyx',
-    'string.pyx',
-    'type.pyx',
-    subdir: 'sage/cpython',
-    install: true,
-    dependencies: py_dep,
-)
+extension_data = {
+    'atexit': files('atexit.pyx'),
+    'builtin_types': files('builtin_types.pyx'),
+    'cython_metaclass': files('cython_metaclass.pyx'),
+    'debug': files('debug.pyx'),
+    'dict_del_by_value': files('dict_del_by_value.pyx'),
+    'getattr': files('getattr.pyx'),
+    'string': files('string.pyx'),
+    'type': files('type.pyx'),
+    'wrapperdescr': files('wrapperdescr.pyx'),
+}
+
+foreach name, pyx : extension_data
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/cpython',
+        install: true,
+        include_directories: [inc_src],
+        dependencies: py_dep,
+    )
+endforeach

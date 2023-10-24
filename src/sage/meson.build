@@ -1,0 +1,5 @@
+subdir('cpython')
+subdir('libs/gmp')
+subdir('misc')
+subdir('structure')
+subdir('categories')

@@ -26,6 +26,8 @@ folder_rel_to_src = folder.relative_to('src')
 
 python_files = list(folder.glob('*.py'))
 cython_files = list(folder.glob('*.pyx'))
+python_files.sort()
+cython_files.sort()
 
 if not python_files and not cython_files:
     print(f'Error: {folder} does not contain any python or cython files')
@@ -43,10 +45,15 @@ with open(meson_build_path, 'w') if not dry_run else sys.stdout as meson_build:
     meson_build.write(f"    subdir: '{folder_rel_to_src}',\n")
     meson_build.write(')\n\n')
 
-    meson_build.write('py.extension_module(\n')
+    meson_build.write('extension_data = {\n')
     for file in cython_files:
-        meson_build.write(f"    '{file.name}',\n")
-    meson_build.write(f"    subdir: '{folder_rel_to_src}',\n")
-    meson_build.write('    install: true,\n')
-    meson_build.write('    dependencies: py_dep,\n')
-    meson_build.write(')\n')
+        meson_build.write(f"    '{file.stem}': files('{file.name}'),\n")
+    meson_build.write('}\n\n')
+    meson_build.write('foreach name, pyx : extension_data\n')
+    meson_build.write("    py.extension_module(name,\n")
+    meson_build.write("        sources: pyx,\n")
+    meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
+    meson_build.write('        install: true,\n')
+    meson_build.write('        dependencies: py_dep,\n')
+    meson_build.write('    )\n')
+    meson_build.write('endforeach\n')

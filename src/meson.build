@@ -4,6 +4,7 @@
 # have to add them manually.
 # https://github.com/mesonbuild/meson/issues/9562
 add_project_arguments('-I', meson.current_source_dir(), language : 'cython')
+#add_project_arguments('-I', py.get_path('include'), language : 'cython')
 
 inc_numpy = run_command(py,
     [
@@ -52,8 +53,4 @@ inc_rings = include_directories('sage/rings')
 inc_src = include_directories('.')
 
 # Submodules
-subdir('sage/cpython')
-subdir('sage/libs/gmp')
-subdir('sage/misc')
-subdir('sage/structure')
-subdir('sage/categories')
+subdir('sage')

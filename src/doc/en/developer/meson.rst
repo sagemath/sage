@@ -4,12 +4,21 @@ Assume we're starting from a clean repo and a fully set up conda environment::
     ./bootstrap-conda
     mamba env create --file src/environment-dev-3.11.yml --name sage-dev
     conda activate sage-dev
+    ./bootstrap
     ```
+
+To compile and install the project in editable install, just use
+    
+    ```bash
+    pip install --no-build-isolation --config-settings=builddir=builddir --editable .
+    ```
+
+Under the hood, pip invokes meson to configure and build the project.
+We can also use meson directly as follows.
 
 Now to configure the project, we need to run the following commands::
 
     ```bash
-    ./bootstrap
     meson setup builddir
     ```
 

@@ -8,7 +8,8 @@ project(
 
 # Python module
 # https://mesonbuild.com/Python-module.html
-py = import('python').find_installation(pure: false)
+py_module = import('python')
+py = py_module.find_installation(pure: false)
 py_dep = py.dependency()
 
 # Compilers
@@ -54,5 +55,31 @@ endif
 configure_file(input : 'pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
                output : '_conf.py',
                configuration : conf_data)
+
+test(
+    'import',
+    py,
+    args: [
+      '-c',
+      'from sage.categories.category import Category; print(Category)',
+    ],
+    )
+
+# py_with_pytest = py_module.find_installation(required: false, modules: ['pytest'])
+# if py_with_pytest.found()
+#   test(
+#     'pytest', 
+#     py_with_pytest, 
+#     args: [
+#       '-m', 
+#       'pytest', 
+#       '-c', 
+#       meson.current_source_dir() / 'tox.ini', 
+#       '--doctest-modules', 
+#       meson.current_source_dir() / 'src' / 'sage' / 'categories'
+#     ],
+#     timeout: 0,
+#   )
+# endif
 
 subdir('src')
