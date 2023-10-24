@@ -5149,13 +5149,13 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(0, 2, 'a'), (0, 2, 'b'), (0, 1, 'c'), (1, 2, 'd')],
             ....:           multiedges=True)
-            sage: G.cycle_basis()                                                       # needs networkx
+            sage: G.cycle_basis()
             [[2, 0], [2, 0, 1]]
-            sage: G.cycle_basis(output='edge')                                          # needs networkx
+            sage: G.cycle_basis(output='edge')
             [[(0, 2, 'b'), (2, 0, 'a')], [(1, 2, 'd'), (2, 0, 'a'), (0, 1, 'c')]]
             sage: H = Graph([(1, 2), (2, 3), (2, 3), (3, 4), (1, 4),
             ....:            (1, 4), (4, 5), (5, 6), (4, 6), (6, 7)], multiedges=True)
-            sage: H.cycle_basis()                                                       # needs networkx
+            sage: H.cycle_basis()
             [[4, 1], [3, 2], [4, 1, 2, 3], [6, 4, 5]]
 
         Disconnected graph::
@@ -5174,13 +5174,13 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.CycleGraph(3)
             sage: G.allow_multiple_edges(True)
-            sage: G.cycle_basis()                                                       # needs networkx
+            sage: G.cycle_basis()
             [[2, 0, 1]]
 
         Not yet implemented for directed graphs::
 
             sage: G = DiGraph([(0, 2, 'a'), (0, 1, 'c'), (1, 2, 'd')])
-            sage: G.cycle_basis()                                                       # needs networkx
+            sage: G.cycle_basis()
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented for directed graphs
@@ -5191,9 +5191,9 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, 'a'), (2, 3, 'b'), (2, 3, 'c'),
             ....:            (3, 4, 'd'), (3, 4, 'e'), (4, 1, 'f')], multiedges=True)
-            sage: G.cycle_basis()                                                       # needs networkx
+            sage: G.cycle_basis()
             [[3, 2], [4, 1, 2, 3], [4, 1, 2, 3]]
-            sage: G.cycle_basis(output='edge')                                          # needs networkx
+            sage: G.cycle_basis(output='edge')
             [[(2, 3, 'c'), (3, 2, 'b')],
              [(3, 4, 'd'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')],
              [(3, 4, 'e'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')]]
