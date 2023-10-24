@@ -76,7 +76,7 @@ class build_py(setuptools_build_py):
         cmd = f'cd {SAGE_ROOT} && {SETENV} && {SETMAKE} && $MAKE V=0 {TARGETS}'
         print(f"Running {cmd}", flush=True)
         if os.system(cmd) != 0:
-            raise DistutilsSetupError(f"make {TARGETS} failed")
+            raise SetupError(f"make {TARGETS} failed")
 
         setuptools_build_py.run(self)
 
