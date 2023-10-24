@@ -215,7 +215,7 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m pip install pipx
           export PATH=build/bin:$PATH
-          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && make -j4 V=0 $TARGETS_PRE"
+          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && MAKE='make -j4' make V=0 $TARGETS_PRE"
           mkdir -p unpacked
           for pkg in sagemath-objects sagemath-categories sagemath-bliss sagemath-coxeter3 sagemath-mcqd sagemath-meataxe sagemath-sirocco sagemath-tdlib; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
