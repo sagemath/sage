@@ -1613,7 +1613,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                         images[i] = kwargs[gstr]
             res = 0
             for (m, c) in self.dict().items():
-                term = prod([gen**y for (y, gen) in zip(m, images)], c)
+                term = prod((gen**y for (y, gen) in zip(m, images)), c)
                 res += term
             return res
 
