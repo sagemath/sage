@@ -1074,6 +1074,10 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         p_Setm(_p, _ring)
 
         return new_MP(self, _p)
+    
+    def subring_generated_by(self, gens):
+        from .multi_polynomial_subring import MPolynomial_subring
+        return MPolynomial_subring(self, gens)
 
     def ideal(self, *gens, **kwds):
         """
@@ -3281,6 +3285,39 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             rChangeCurrRing(_ring)
         return bool(p_IsHomogeneous(self._poly,_ring))
 
+    def is_homogeneous_with_grading(self, grading):
+
+        """
+        EXAMPLES ::
+            sage: R.<a,b,c> = QQ[]
+            sage: grading_dict = {a:1, b:2, c:3}
+            sage: p = a**4+b**2
+            sage: p.is_homogeneous_with_grading(grading_dict)
+            True
+            sage: grading_dict = {a:1, b:1, c:3}
+            sage: p.is_homogeneous_with_grading(grading_dict)
+            False
+        """
+
+        if self==0:
+            return True
+
+        variables=self.parent().gens()
+
+        # degree of a monomial wrt grading
+        monomial_degree = lambda exponents : sum(grading[variable]*exponent for variable, exponent in zip(variables, exponents))
+
+        # calculate degree of first term
+        terms=iter(self.exponents())
+        first_term=next(terms)
+        first_term_degree=monomial_degree(first_term)
+
+        # make sure all other degrees are the same
+        for term in terms:
+            if monomial_degree(term)!=first_term_degree:
+                return False
+        return True
+
     cpdef _homogenize(self, int var):
         """
         Return ``self`` if ``self`` is homogeneous.  Otherwise return
@@ -5378,7 +5415,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             p_Setm(mon, _ring)
             _p = p_Add_q(_p, mon, _ring)
         return new_MP(self._parent, _p)
-
+    
     def resultant(self, MPolynomial_libsingular other, variable=None):
         """
         Compute the resultant of this polynomial and the first
