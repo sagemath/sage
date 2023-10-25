@@ -10,6 +10,7 @@ which inherits
 AUTHORS:
 
 - Antoine Leudière (2022-04)
+- Yossef Musleh (2023-02): added characteristic polynomial methods
 """
 
 # *****************************************************************************
@@ -323,6 +324,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
             sage: phi.frobenius_charpoly(algorithm="NotImplemented")
             Traceback (most recent call last):
+            ...
             NotImplementedError: algorithm "NotImplemented" not implemented
 
         ALGORITHM:
@@ -396,7 +398,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         is equal to that of the Frobenius endomorphism on the Drinfeld
         module. A recurrence on elements of the cohomology allows us to
         compute a matrix representation of the Frobenius endomorphism
-        efficiently using a companion matrix method.
+        efficiently using a companion matrix method. Based on the algorithm
+        of section 6.3 in [MS2023]_.
         """
         A = self.function_ring()
         K = self.base_over_constants_field()
@@ -646,6 +649,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: mu = DrinfeldModule(A, [z + 1, z^2 + z + 1, z^2 + z])
             sage: phi.is_isogenous(mu)
             Traceback (most recent call last):
+            ...
             TypeError: Drinfeld modules are not in the same category
 
         ::
@@ -653,6 +657,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: mu = 1
             sage: phi.is_isogenous(mu)
             Traceback (most recent call last):
+            ...
             TypeError: input must be a Drinfeld module
 
         ALGORITHM:
