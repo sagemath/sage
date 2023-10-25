@@ -73,10 +73,10 @@ class build_py(setuptools_build_py):
         # (that use native libraries shared with other packages).
         SETMAKE = 'if [ -z "$MAKE" ]; then export MAKE="make -j$(PATH=build/bin:$PATH build/bin/sage-build-num-threads | cut -d" " -f 2)"; fi'
         TARGETS = 'build'
-        cmd = f'cd {SAGE_ROOT} && ({SETENV}; {SETMAKE} && $MAKE V=0 {TARGETS})'
+        cmd = f'cd {SAGE_ROOT} && ({SETENV}; {SETMAKE} && $MAKE V=0 ${{SAGE_CONF_TARGETS-{TARGETS}}})'
         print(f"Running {cmd}", flush=True)
         if os.system(cmd) != 0:
-            raise SetupError(f"make {TARGETS} failed")
+            raise SetupError(f"make ${{SAGE_CONF_TARGETS-{TARGETS}}} failed")
 
         setuptools_build_py.run(self)
 
