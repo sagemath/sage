@@ -123,7 +123,7 @@ summary for each module of the Sage library.
 
 If invoked with arguments, for example ``./sage -tox -e coverage
 -- src/sage/geometry src/sage/combinat/tableau.py``, it is equivalent to
-using the command ``./sage --coverageall``, which includes details on
+using the command ``./sage --coverage``, which includes details on
 the modules in the given files or directories.
 
 .. NOTE::
