@@ -118,7 +118,7 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: (M.0 + M.1)*M.0
             g1*g2 + g1^2
         """
-        return self.__class__(self.parent(), self._polynomial * other._polynomial)
+        return self.__class__(self.parent(), self._polynomial*other._polynomial)
 
     def _lmul_(self, c):
         r"""
@@ -137,7 +137,7 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: M.0 * 0
             0
         """
-        return self.__class__(self.parent(), c * self._polynomial)
+        return self.__class__(self.parent(), c*self._polynomial)
 
     def __neg__(self):
         r"""
@@ -297,10 +297,9 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: D[32]
             g2^4
         """
-        elt_class = self.__class__
         M = self.parent()
         components = self._polynomial.homogeneous_components().items()
-        return {k: elt_class(M, p) for k, p in components}
+        return {k: self.__class__(M, p) for k, p in components}
 
     def polynomial(self):
         r"""
