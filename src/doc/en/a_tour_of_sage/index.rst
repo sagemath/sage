@@ -6,18 +6,17 @@ Welcome to Sage
 
 This is a short tour of Sage as a calculator.
 
-The Sage command line has a prompt "``sage:``". You do not have to add it.
+The Sage command line has a prompt "``sage:``". To experiment with the
+following examples, you only enter the part after the prompt.
 
 ::
 
     sage: 3 + 5
     8
 
-If you use Sage on the Jupyter notebook, then put everything after the
-``sage:`` prompt in an input cell, and press shift-enter to compute the
-corresponding output.
-
-
+If you use Sage on the Jupyter notebook, then likewise put everything after the
+prompt in an input cell, and press :kbd:`Shift-Enter` to get the corresponding
+output.
 
 The caret symbol means "raise to a power".
 
@@ -40,7 +39,8 @@ Here we integrate a simple function.
 
     sage: x = var('x')   # create a symbolic variable
     sage: integrate(sqrt(x) * sqrt(1 + x), x)
-    1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1) - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
+    1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1)
+    - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
 
 This asks Sage to solve a quadratic equation. The symbol ``==`` represents equality in Sage.
 
@@ -94,7 +94,8 @@ digits.
 ::
 
     sage: factorial(100)
-    93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+    93326215443944152681699238856266700490715968264381621468592963895217599993229915608
+    941463976156518286253697920827223758251185210916864000000000000000000000000
 
 ::
 
@@ -107,7 +108,8 @@ This computes at least 100 digits of :math:`\pi`.
 ::
 
     sage: N(pi, digits=100)
-    3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117068
+    3.141592653589793238462643383279502884197169399375105820974944592307816406286208998
+    628034825342117068
 
 This asks Sage to factor a polynomial in two variables.
 
