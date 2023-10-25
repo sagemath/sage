@@ -23,7 +23,7 @@ conf_data = configuration_data()
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 
 maxima = find_program('maxima', required: true)
-conf_data.set('SAGE_MAXIMA', maxima.path())
+conf_data.set('SAGE_MAXIMA', maxima.full_path())
 # Conda's ecl does not have any problems with Maxima, so nothing needs to be set here:
 conf_data.set('SAGE_MAXIMA_FAS', '')
 
@@ -39,7 +39,7 @@ conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')
 
 ecl_config = find_program('ecl-config', required: true)
-conf_data.set('SAGE_ECL_CONFIG', ecl_config.path())
+conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
 
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 

@@ -7,6 +7,10 @@ Assume we're starting from a clean repo and a fully set up conda environment::
     ./bootstrap
     ```
 
+(Note, that in the codespace environment you first have to delete the
+already compiled files, e.g. with ``shopt -s globstar`` followed by ``rm src/**/*.so``
+)
+
 To compile and install the project in editable install, just use
     
     ```bash
