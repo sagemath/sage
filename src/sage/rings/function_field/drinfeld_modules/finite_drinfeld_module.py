@@ -404,7 +404,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         A = self.function_ring()
         K = self.base_over_constants_field()
         charpoly_K = self._frobenius_crystalline_matrix() \
-                     .charpoly(var).coefficients(sparse=False)
+                         .charpoly(var).coefficients(sparse=False)
 
         # The above line obtains the char poly with coefficients in K[T]
         # This maps them into A = Fq[T]
