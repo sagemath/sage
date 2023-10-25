@@ -401,3 +401,6 @@ class DrinfeldModularFormsElement(ModuleElement):
 class DrinfeldModularFormsElement_rank_two(DrinfeldModularFormsElement):
     def __init__(self, parent, polynomial):
         super().__init__(parent, polynomial)
+
+    def expansion():
+        pass
