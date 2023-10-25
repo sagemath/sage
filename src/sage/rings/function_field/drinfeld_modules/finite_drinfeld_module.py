@@ -23,15 +23,15 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.functions.log import logb
+from sage.functions.other import ceil, sqrt
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import companion_matrix
-from sage.modules.free_module_element import vector
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
-from sage.functions.other import ceil, sqrt
-from sage.functions.log import logb
 from sage.misc.misc_c import prod
+from sage.modules.free_module_element import vector
+from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class DrinfeldModule_finite(DrinfeldModule):
