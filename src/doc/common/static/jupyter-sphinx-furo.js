@@ -2,8 +2,9 @@
 function changeTheme(editor, theme) {
   if (theme === 'dark') {
     editor.setOption('theme', 'monokai'); // the same with pygments dark style in conf.py
-  }
-  else {
+  } else if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    editor.setOption('theme', 'monokai');
+  } else {
     editor.setOption('theme', 'default');
   }
 }
