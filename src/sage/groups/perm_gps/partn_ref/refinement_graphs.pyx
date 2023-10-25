@@ -65,7 +65,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
     cdef GraphStruct GS1 = GraphStruct()
     cdef GraphStruct GS2 = GraphStruct()
     cdef GraphStruct GS
-    cdef int i, j, k, n = -1, cell_len
+    cdef int i, j, n = -1
     cdef list partition, cell
     cdef bint loops = 0
 
@@ -131,7 +131,6 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             raise TypeError("G must be a Sage graph")
         if first:
             frm1 = frm
-            to1 = to
         else:
             frm2 = frm
             to2 = to
@@ -464,7 +463,6 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sig_free(GS.scratch)
         raise MemoryError
 
-    lab_new = lab or certificate
     output = get_aut_gp_and_can_lab(<void *>GS, part, G.num_verts, &all_children_are_equivalent, &refine_by_degree, &compare_graphs, lab, NULL, NULL, NULL)
     sig_free( GS.scratch )
     # prepare output
@@ -693,7 +691,6 @@ cdef bint all_children_are_equivalent(PartitionStack *PS, void *S):
     cdef GraphStruct GS = <GraphStruct> S
     if GS.directed or GS.loops:
         return 0
-    cdef CGraph G = GS.G
     cdef int i, n = PS.degree
     cdef bint in_cell = 0
     cdef int nontrivial_cells = 0
@@ -1147,7 +1144,7 @@ cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, 
     cdef GraphStruct GS_child = <GraphStruct> child, GS_par = <GraphStruct> parent
     cdef DenseGraph DG = <DenseGraph> GS_child.G, DG_par = <DenseGraph> GS_par.G
     cdef subset *edge = <subset *> aug
-    cdef int u, v, n = DG_par.num_verts
+    cdef int u, v
 
     # copy DG_par edges to DG
     copy_dense_graph(DG, DG_par)
@@ -1353,7 +1350,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
 
     cdef list out_list
     cdef void *thing
-    cdef GraphStruct thing_gs
     cdef Integer number
     cdef bint mem_err = 0
     if construct:
@@ -1476,7 +1472,7 @@ cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation,
     """
     cdef GraphStruct GS_par = <GraphStruct> parent, GS = <GraphStruct> child
     cdef DenseGraph DG_par = <DenseGraph> GS_par.G, DG = <DenseGraph> GS.G
-    cdef int u, v, n = DG_par.num_verts
+    cdef int u, n = DG_par.num_verts
     cdef int *scratch = GS.scratch
 
     # copy DG edges to DG_par
@@ -1630,7 +1626,6 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
 
     cdef list out_list
     cdef void *thing
-    cdef GraphStruct thing_gs
     cdef Integer number
     cdef bint mem_err = 0
     if construct:

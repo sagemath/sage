@@ -2797,7 +2797,7 @@ class LPAbstractDictionary(SageObject):
         leaving = "Leaving: ${}$. ".format(latex(self.leaving()))
         if direction == "primal":
             return HtmlFragment(entering + leaving)
-        elif direction =="dual":
+        elif direction == "dual":
             return HtmlFragment(leaving + entering)
         else:
             raise ValueError("direction must be either primal or dual")
@@ -4977,7 +4977,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         for i, coef in zip(self.nonbasic_indices(), nonbasic_coefficients):
             # Extra -1 is due to the auxiliary variable at index 0
             if i > n:
-                nbc_slack[i -1 - n] = coef
+                nbc_slack[i - 1 - n] = coef
             else:
                 nbc_decision[i - 1] = coef
         if 0 in self.basic_indices() and not sum(nbc_slack) == -1:

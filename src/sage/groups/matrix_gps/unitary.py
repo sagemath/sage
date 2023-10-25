@@ -104,10 +104,10 @@ def _UG(n, R, special, var='a', invariant_form=None):
         3961191000000
     """
     prefix = 'General'
-    latex_prefix ='G'
+    latex_prefix = 'G'
     if special:
         prefix = 'Special'
-        latex_prefix ='S'
+        latex_prefix = 'S'
 
     degree, ring = normalize_args_vectorspace(n, R, var=var)
     if isinstance(ring, FiniteField):

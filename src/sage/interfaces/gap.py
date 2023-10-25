@@ -430,7 +430,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         Load the Gap package with the given name.
 
-        If loading fails, raise a RuntimeError exception.
+        If loading fails, raise a :class:`RuntimeError` exception.
 
         TESTS::
 
@@ -632,7 +632,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         - ``restart_if_needed`` (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :class:`EOFError` occurred.
 
         TESTS::
 

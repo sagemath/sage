@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Star-Crystal Structure On `B(\infty)`
 

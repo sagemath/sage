@@ -2492,7 +2492,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         We verify that calling directly raises the expected error
         (just coercing into the codomain), but calling with __call__
-        (the second call below) gives a TypeError since 1/2 can't be
+        (the second call below) gives a :class:`TypeError` since 1/2 cannot be
         coerced into the domain. ::
 
             sage: f._call_(1/2)

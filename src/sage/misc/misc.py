@@ -560,12 +560,20 @@ class BackslashOperator:
             ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: temp.left is A
             True
             sage: X = temp * B
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: A * X == B
             True
         """
+        from sage.misc.superseded import deprecation
+        deprecation(36394, 'the backslash operator has been deprecated')
         self.left = left
         return self
 
@@ -577,15 +585,26 @@ class BackslashOperator:
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
             (0.0, 0.5, 1.0, 1.5, 2.0)
             sage: v = A._backslash_(b)
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)
             (0.0, 0.5, 1.0, 1.5, 2.0)
             sage: v = A * BackslashOperator() * b
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
+        from sage.misc.superseded import deprecation
+        deprecation(36394, 'the backslash operator has been deprecated')
         return self.left._backslash_(right)
 
 

@@ -69,8 +69,8 @@ def QuasiQuadraticResidueCode(p):
     """
     GapPackage("guava", spkg="gap_packages").require()
     libgap.load_package("guava")
-    C=libgap.QQRCode(p)
-    G=C.GeneratorMat()
+    C = libgap.QQRCode(p)
+    G = C.GeneratorMat()
     MS = MatrixSpace(GF(2), len(G), len(G[0]))
     return LinearCode(MS(G))
 
@@ -104,7 +104,7 @@ def RandomLinearCodeGuava(n, k, F):
 
     GapPackage("guava", spkg="gap_packages").require()
     libgap.load_package("guava")
-    C=libgap.RandomLinearCode(n,k,F)
-    G=C.GeneratorMat()
+    C = libgap.RandomLinearCode(n,k,F)
+    G = C.GeneratorMat()
     MS = MatrixSpace(F, len(G), len(G[0]))
     return LinearCode(MS(G))
