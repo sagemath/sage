@@ -72,7 +72,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3, 1], implementation='coxeter3'); W   # optional - coxeter3
             Coxeter group of type ['A', 3, 1] implemented by Coxeter3
         """
-        return "Coxeter group of type %s implemented by Coxeter3"%(self.cartan_type())
+        return "Coxeter group of type %s implemented by Coxeter3" % (self.cartan_type())
 
     def __iter__(self):
         """

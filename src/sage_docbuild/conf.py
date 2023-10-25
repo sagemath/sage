@@ -745,7 +745,7 @@ def find_sage_dangling_links(app, env, node, contnode):
         debug_inf(app, "-- no refdoc in node %s" % node)
         return None
 
-    debug_inf(app, "Searching %s from %s"%(reftarget, doc))
+    debug_inf(app, "Searching %s from %s" % (reftarget, doc))
 
     # Workaround: in Python's doc 'object', 'list', ... are documented as a
     # function rather than a class
@@ -803,7 +803,7 @@ def find_sage_dangling_links(app, env, node, contnode):
                              ', '.join(match[0] for match in matches)),
                  node.line)
     name, obj = matches[0]
-    debug_inf(app, "++ match = %s %s"%(name, obj))
+    debug_inf(app, "++ match = %s %s" % (name, obj))
 
     from docutils import nodes
     newnode = nodes.reference('', '', internal=True)
@@ -812,7 +812,7 @@ def find_sage_dangling_links(app, env, node, contnode):
     else:
         newnode['refuri'] = builder.get_relative_uri(node['refdoc'], obj[0])
         newnode['refuri'] += '#' + name
-        debug_inf(app, "++ DONE at URI %s"%(newnode['refuri']))
+        debug_inf(app, "++ DONE at URI %s" % (newnode['refuri']))
     newnode['reftitle'] = name
     newnode.append(contnode)
     return newnode
