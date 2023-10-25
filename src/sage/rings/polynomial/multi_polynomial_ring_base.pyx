@@ -1849,6 +1849,8 @@ class MatrixPolynomialAction(Action):
         """
         self._poly_vars = PR.gens()
         self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
+        self.MS=MS
+        self.PR=PR
         super().__init__(MS, PR, op=matmul)
 
     def _act_(self, mat, polynomial):
@@ -1857,3 +1859,6 @@ class MatrixPolynomialAction(Action):
         vars_to_sub_ring_context = map(PolynomialRing(mat.base_ring(), self._poly_vars), vars_to_sub_module_context)
         substitution_dict = {v: s for v, s in zip(self._poly_vars, vars_to_sub_ring_context)}
         return polynomial.subs(substitution_dict)
+    
+    def __reduce__(self):
+        return (type(self), (self.MS, self.PR))
