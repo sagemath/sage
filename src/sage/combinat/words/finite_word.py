@@ -3103,15 +3103,14 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. Letter permutations must be callable on
-        letters as well as words (e.g. ``WordMorphism``). If the identity
-        morphisms is not in `morphisms`, then it is added automatically.
-
+            on the alphabet of ``self``. Letter permutations must be callable on
+            letters as well as words (e.g. ``WordMorphism``). If the identity
+            morphisms is not in `morphisms`, then it is added automatically.
         - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. If ``antimorphisms`` is empty, then
-        antimorphism which acts as identity on letters is added to it.
-        Letter permutations must be callable on letters as well
-        as words (e.g. ``WordMorphism``).
+            on the alphabet of ``self``. If ``antimorphisms`` is empty, then
+            antimorphism which acts as identity on letters is added to it.
+            Letter permutations must be callable on letters as well
+            as words (e.g. ``WordMorphism``).
 
         OUTPUT:
 
@@ -3175,12 +3174,10 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``morphismsG`` -- list of all morphisms of `G`.
-
         - ``inverseMorphismsG`` -- list of inverses of all morphisms of `G`.
-
         - ``palindromesTrees`` -- list of tree graphs, which contain data
-        about palindromic factors of ``self``. Contains one tree graph for
-        every antimorphism of `G`.
+            about palindromic factors of ``self``. Contains one tree graph for
+            every antimorphism of `G`.
 
         OUTPUT:
 
@@ -3301,15 +3298,14 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. Letter permutations must be callable on
-        letters as well as words (e.g. ``WordMorphism``). If the identity
-        morphisms is not in `morphisms`, then it is added automatically.
-
+            on the alphabet of ``self``. Letter permutations must be callable on
+            letters as well as words (e.g. ``WordMorphism``). If the identity
+            morphisms is not in `morphisms`, then it is added automatically.
         - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. If ``antimorphisms`` is empty, then
-        antimorphism which acts as identity on letters is added to it.
-        Letter permutations must be callable on letters as well
-        as words (e.g. ``WordMorphism``).
+            on the alphabet of ``self``. If ``antimorphisms`` is empty, then
+            antimorphism which acts as identity on letters is added to it.
+            Letter permutations must be callable on letters as well
+            as words (e.g. ``WordMorphism``).
 
         OUTPUT:
 
@@ -3383,15 +3379,14 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. Letter permutations must be callable on
-        letters as well as words (e.g. ``WordMorphism``). If the identity
-        morphisms is not in `morphisms`, then it is added automatically.
-
+            on the alphabet of ``self``. Letter permutations must be callable on
+            letters as well as words (e.g. ``WordMorphism``). If the identity
+            morphisms is not in `morphisms`, then it is added automatically.
         - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. If ``antimorphisms`` is empty, then
-        antimorphism which acts as identity on letters is added to it.
-        Letter permutations must be callable on letters as well
-        as words (e.g. ``WordMorphism``).
+            on the alphabet of ``self``. If ``antimorphisms`` is empty, then
+            antimorphism which acts as identity on letters is added to it.
+            Letter permutations must be callable on letters as well
+            as words (e.g. ``WordMorphism``).
 
         OUTPUT:
 
@@ -3518,7 +3513,6 @@ class FiniteWord_class(Word_class):
 
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) the
           direction of the  closure
-
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
           It must be callable on letters as well as words (e.g. ``WordMorphism``).
 
@@ -3710,9 +3704,9 @@ class FiniteWord_class(Word_class):
         OUTPUT:
 
         - a word -- copy of ``self`` with not used letter inserted
-        between each pair of consecutive letters.
+            between each pair of consecutive letters.
         - a morphism -- copy of ``f`` which returns the letter which was inserted
-        into ``self``, when applied on the same letter.
+            into ``self``, when applied on the same letter.
         - a letter -- not used letter which was inserted into ``self``.
 
         EXAMPLES::
@@ -3881,11 +3875,11 @@ class FiniteWord_class(Word_class):
     def _find_lacunas_from_palindromes_tree(self, palindromesTree):
         r"""
         This is private method. Returns all lacunas of ``self``using
-        palindromes tree from _get_palindromic_factors_data method.
+        palindromes tree from ``_get_palindromic_factors_data`` method.
 
         INPUT:
 
-        - palindromes tree -- data structure returned by _get_palindromic_factors_data method.
+        - palindromes tree -- data structure returned by ``_get_palindromic_factors_data`` method.
 
         OUTPUT:
 
@@ -3934,10 +3928,10 @@ class FiniteWord_class(Word_class):
         OUTPUT:
 
         - ``list`` -- list of lengths of the maximal palindromes (or ``f``-palindrome)
-        for each symmetry axis (letter or space between two letters).
+            for each symmetry axis (letter or space between two letters).
         - ``tree`` -- tree graph, which contains data about palindromic
-        (or ``f``-palindromic) factors as described in [Rom2023]_.
-        Represented as Python list, the first node is the root.
+            (or ``f``-palindromic) factors as described in [Rom2023]_.
+            Represented as Python list, the first node is the root.
 
         ALGORITHM:
 
@@ -3964,12 +3958,12 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``diffForest`` -- forest graph, which contains data extracted
-        from apply of Manacher's algorithm on ``wordWithSpecialLetter``.
+            from apply of Manacher's algorithm on ``wordWithSpecialLetter``.
         - ``wordWithSpecialLetter`` -- a word, such that
-        every second letter of it is the same letter and all other letters
-        are different from this letter.
+            every second letter of it is the same letter and all other letters
+            are different from this letter.
         - ``specialLetter`` -- a letter, which is the every second letter
-        of ``wordWithSpecialLetter``.
+            of ``wordWithSpecialLetter``.
 
         OUTPUT:
 
@@ -4030,17 +4024,17 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``maximalPalindromeRadiuses`` -- list of radiuses of the maximal
-        palindromesfor each symmetry axis (letter or space between
-        two letters).
+            palindromesfor each symmetry axis (letter or space between
+            two letters).
         - ``initialPalindromeRadiuses`` -- for each symmetry axis (letter
-        or space between two letters) a radius of the palindrome, which
-        was initial palindrome from which Manacher's algorithm
-        started to increment radius in this symmetry axis.
+            or space between two letters) a radius of the palindrome, which
+            was initial palindrome from which Manacher's algorithm
+            started to increment radius in this symmetry axis.
         - ``previousPositions`` -- for each symmetry axis (letter or space
-        between two letters) an index of ``wordWithSpecialLetter``, from
-        which Manacher's algorithm copied initial radius in this
-        symmetry axis (``None`` if radius was not copied in this
-        symmetry axis).
+            between two letters) an index of ``wordWithSpecialLetter``, from
+            which Manacher's algorithm copied initial radius in this
+            symmetry axis (``None`` if radius was not copied in this
+            symmetry axis).
 
         OUTPUT:
 
@@ -4075,26 +4069,26 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``word`` -- a word, such that every second letter of it
-        is the same letter and all other letters are different from
-        this letter. Manacher's algorithm will be applied on this word.
+            is the same letter and all other letters are different from
+            this letter. Manacher's algorithm will be applied on this word.
         - ``morphism`` -- a morphism which will be used for defining
-        which factors of ``word`` are palindromes.
+            which factors of ``word`` are palindromes.
 
         OUTPUT:
 
         - ``list`` -- list of radiuses of the maximal palindromes
-        for each symmetry axis (letter or space between two letters).
+            for each symmetry axis (letter or space between two letters).
         - ``list`` -- list of lengths of the maximal palindromes
-        for each symmetry axis (letter or space between two letters).
+            for each symmetry axis (letter or space between two letters).
         - ``list`` -- for each symmetry axis (letter or space
-        between two letters) a radius of the palindrome, which
-        was initial palindrome from which Manacher's algorithm
-        started to increment radius in this symmetry axis.
+            between two letters) a radius of the palindrome, which
+            was initial palindrome from which Manacher's algorithm
+            started to increment radius in this symmetry axis.
         - ``list`` -- for each symmetry axis (letter or space
-        between two letters) an index of ``word``, from
-        which Manacher's algorithm copied initial radius in this
-        symmetry axis (``None`` if radius was not copied in this
-        symmetry axis).
+            between two letters) an index of ``word``, from
+            which Manacher's algorithm copied initial radius in this
+            symmetry axis (``None`` if radius was not copied in this
+            symmetry axis).
 
         ALGORITHM:
 
