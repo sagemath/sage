@@ -2719,7 +2719,7 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``pos`` -- integer, position of the symmetry axis of the palindrome.
-          If ``pos`` is even, then it is position of letter. 
+          If ``pos`` is even, then it is position of letter.
           If ``pos`` is odd, then it is position of space between two letters.
 
         - ``f`` -- letter permutation (default: ``None``), on the alphabet. It must be
@@ -2776,7 +2776,7 @@ class FiniteWord_class(Word_class):
             while left >= 0 and pos - left < self.length() and self[left] == self[pos - left]:
                 left -= 1
         else:
-            while (left >= 0 and pos - left < self.length() 
+            while (left >= 0 and pos - left < self.length()
                    and self[left] == f(self[pos - left])[0]
                    and self[pos - left] == f(self[left])[0]):
                 left -= 1
@@ -3095,9 +3095,9 @@ class FiniteWord_class(Word_class):
         generalization of defect of `w`. More precisely, for the finite group `G`
         generated from `morphisms` and `antimorphisms`, the `G`-defect is
         `D_G(w)=|w|+1-g_G(w)-|PAL_G(w)|`, where `PAL_G(w)` denotes the set of
-        `G`-palindromic classes of equivalence of factors of `w` (including 
+        `G`-palindromic classes of equivalence of factors of `w` (including
         the empty word) and `g_G(w)` is the number of classes of equivalence
-        `\[a\]` such that `a` is a letter, `a` is not equal to `f(a)` for 
+        `\[a\]` such that `a` is a letter, `a` is not equal to `f(a)` for
         every antimorphism `f \in G`, and `a` occurs in `w`.
 
         INPUT:
@@ -3108,15 +3108,15 @@ class FiniteWord_class(Word_class):
         morphisms is not in `morphisms`, then it is added automatically.
 
         - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-        on the alphabet of ``self``. If ``antimorphisms`` is empty, then 
-        antimorphism which acts as identity on letters is added to it. 
-        Letter permutations must be callable on letters as well 
+        on the alphabet of ``self``. If ``antimorphisms`` is empty, then
+        antimorphism which acts as identity on letters is added to it.
+        Letter permutations must be callable on letters as well
         as words (e.g. ``WordMorphism``).
 
         OUTPUT:
 
         an integer -- the `G`-defect of ``self``, where `G` is a finite group
-        of morphisms and antimorphisms, which is generated from 
+        of morphisms and antimorphisms, which is generated from
         `morphisms` and `antimorphisms`.
 
         ALGORITHM:
@@ -3794,7 +3794,7 @@ class FiniteWord_class(Word_class):
             currentIndexesWithRemoveIndexes.append([i + 1, currentPos + 1 + ((maximalPalindromeLengths[i + 1] + 1) // 2)])
             i += 2
             currentPos += 1
-            while (len(currentIndexesWithRemoveIndexes) > 0 
+            while (len(currentIndexesWithRemoveIndexes) > 0
                    and currentIndexesWithRemoveIndexes[0][1] <= currentPos):
                 currentIndexesWithRemoveIndexes.popleft()
         if len(currentIndexesWithRemoveIndexes) > 0:
@@ -3880,7 +3880,7 @@ class FiniteWord_class(Word_class):
 
     def _find_lacunas_from_palindromes_tree(self, palindromesTree):
         r"""
-        This is private method. Returns all lacunas of ``self``using 
+        This is private method. Returns all lacunas of ``self``using
         palindromes tree from _get_palindromic_factors_data method.
 
         INPUT:
