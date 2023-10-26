@@ -74,6 +74,10 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
         sage: v = Q.find_primitive_p_divisible_vector__next(5, v); v
         (1, 0)
         sage: v = Q.find_primitive_p_divisible_vector__next(5, v); v
+        sage: v = Q.find_primitive_p_divisible_vector__next(2) ; v
+        (0, 1)
+        sage: v = Q.find_primitive_p_divisible_vector__next(2, v) ; v
+        (1, 0)
         sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = Q.find_primitive_p_divisible_vector__next(2)
         sage: Q(v)
@@ -83,6 +87,9 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     n = self.dim()
     if v is None:
         w = vector(ZZ, [0] * (n - 1) + [1])
+        a = self(w)
+        if a in ZZ and (a % p == 0):
+            return w
     else:
         w = deepcopy(v)
 
