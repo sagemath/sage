@@ -834,72 +834,88 @@ def make_nice_tree_decomposition(T):
         directed_tree.add_edge(bags_to_int[u], vi)
         bag[vi] = Set()
 
-    # P3: Ensure that each vertex of directed_tree has at most 2 children.
-    # If b has k > 2 children (c1, c2, ..., c_k). We disconnect (c1, ... ck-1)
-    # from b, introduce k - 2 new vertices (b1, b2, .., bk-2), make ci the
-    # children of bi for 1 <= i <= k-2, make ck-1 the second children of bk-2,
-    # make bi the second children of b_i-1, and finally make b1 the second
-    # children of b. Each vertex bi has the same bag has b.
-    for ui in list(directed_tree):  # the list(..) is needed since we modify directed_tree
+    # Step 3: Ensure that each node of directed_tree has at most 2 children.
+    # If a node has more than 2 children, introduce new nodes to 
+    # make sure each node has at most 2 children:
+    #
+    # If v has k > 2 children (w_1, w_2, ..., w_k), we disconnect (w_1, ..., w_{k-1})
+    # from v, and introduce k - 2 new nodes (u_1, u_2, ..., u_{k-2}).
+    # We then let w_i be the children of u_i for 1 <= i <= k - 2.
+    # We also let w_{k-1} be the second child of u_{k-2}, and
+    # u_i the second child of u_{i-1}.
+    # Finally, we let u_1 the second child of u.
+    # Each node u_i has the same bag as u.
+
+    # We need to call list(...) since we modify directed_tree
+    for ui in list(directed_tree):
         if directed_tree.out_degree(ui) > 2:
             children = directed_tree.neighbors_out(ui)
-            children.pop()  # one vertex remains a child of ui
+            children.pop() # one vertex remains a child of ui
+
             directed_tree.delete_edges((ui, vi) for v in children)
-            new_vertices = [directed_tree.add_vertex() for _ in range(len(children) - 1)]
-            directed_tree.add_edge(ui, new_vertices[0])
-            directed_tree.add_path(new_vertices)
-            directed_tree.add_edges(zip(new_vertices, children))
-            directed_tree.add_edge(new_vertices[-1], children[-1])
-            bag.update((vi, bag[ui]) for vi in new_vertices)
 
-    # P4: If b has 2 children c1 and c2, then bag[b] == bag[c1] == bag[c2]
-    for ui in list(directed_tree):
-        if directed_tree.out_degree(ui) < 2:
+            new_nodes = [directed_tree.add_vertex() for _ in range(len(children) - 1)]
+
+            directed_tree.add_edge(ui, new_nodes[0])
+            directed_tree.add_path(new_nodes)
+            directed_tree.add_edges(zip(new_nodes, children))
+            directed_tree.add_edge(new_nodes[-1], children[-1])
+
+            bag.update((vi, bag[ui]) for vi in new_nodes)
+
+    # Step 4: If current vertex v has two children w1 and w2,
+    # then bag[v] == bag[w1] == bag[w2]
+    for current_node in list(directed_tree):
+        if directed_tree.out_degree(current_node) < 2:
             continue
-        for vi in directed_tree.neighbor_out_iterator(ui):
-            if bag[ui] != bag[vi]:
-                directed_tree.delete_edge(ui, vi)
-                wi = directed_tree.add_vertex()
-                directed_tree.add_path([ui, wi, vi])
-                bag[wi] = bag[ui]
+        for neighbor in directed_tree.neighbor_out_iterator(current_node):
+            if bag[current_node] != bag[neighbor]:
+                directed_tree.delete_edge(current_node, neighbor)
+                new_node = directed_tree.add_vertex()
+                directed_tree.add_path([current_node, new_node, neighbor])
+                bag[new_node] = bag[current_node]
 
-    # P5: if b has a single child c, then one of the following conditions holds:
-    #       (i)  bag[c] is a subset of bag[b] and |bag[b]| == |bag[c]| + 1
-    #       (ii) bag[b] is a subset of bag[c] and |bag[c]| == |bag[b]| + 1
-
-    def add_path_of_introduce(ui, vi):
+    # Step 5: If the node v has only one child, then it is either an introduce
+    # node or a forget node.
+    def add_path_of_intro_nodes(u, v):
         """
-        Replace arc (ui, vi) by a path of introduce vertices.
+        Replace the arc (u, v) by a path of introduce nodes.
         """
-        if len(bag[ui]) + 1 == len(bag[vi]):
+        if len(bag[u]) + 1 == len(bag[v]):
             return
-        diff = list(bag[vi] - bag[ui])
-        diff.pop()  # when all vertices are added, we are on vi
-        xi = ui
-        for w in diff:
-            wi = directed_tree.add_vertex()
-            bag[wi] = bag[xi].union(Set((w,)))
-            directed_tree.add_edge(xi, wi)
-            xi = wi
-        directed_tree.add_edge(xi, vi)
-        directed_tree.delete_edge(ui, vi)
 
-    def add_path_of_forget(ui, vi):
-        """
-        Replace arc (ui, vi) by a path of forget vertices.
-        """
-        if len(bag[vi]) + 1 == len(bag[ui]):
-            return
-        diff = list(bag[ui] - bag[vi])
-        diff.pop()  # when all vertices are removed, we are on vi
-        xi = ui
+        diff = list(bag[v] - bag[u])
+        diff.pop()
+
+        last_node = u
         for w in diff:
-            wi = directed_tree.add_vertex()
-            bag[wi] = bag[xi] - Set((w,))
-            directed_tree.add_edge(xi, wi)
-            xi = wi
-        directed_tree.add_edge(xi, vi)
-        directed_tree.delete_edge(ui, vi)
+            new_node = directed_tree.add_vertex()
+            bag[new_node] = bag[last_node].union({w})
+            directed_tree.add_edge(last_node, new_node)
+            last_node = new_node
+
+        directed_tree.add_edge(last_node, v)
+        directed_tree.delete_edge(u, v)
+
+    def add_path_of_forget_nodes(u, v):
+        """
+        Replace the arc (u, v) by a path of forget nodes.
+        """
+        if len(bag[v]) + 1 == len(bag[u]):
+            return
+
+        diff = list(bag[u] - bag[v])
+        diff.pop()
+
+        last_node = u
+        for w in diff:
+            new_node = directed_tree.add_vertex()
+            bag[new_node] = bag[last_node] - {w}
+            directed_tree.add_edge(last_node, new_node)
+            last_node = new_node
+
+        directed_tree.add_edge(last_node, v)
+        directed_tree.delete_edge(u, v)
 
     for ui in list(directed_tree):
         if directed_tree.out_degree(ui) != 1:
@@ -908,8 +924,8 @@ def make_nice_tree_decomposition(T):
         vi = next(directed_tree.neighbor_out_iterator(ui))
         bag_ui, bag_vi = bag[ui], bag[vi]
 
+        # Merge the nodes if the two bags are the same
         if bag_ui == bag_vi:
-            # We can merge the vertices
             if directed_tree.in_degree(ui) == 1:
                 parent = next(directed_tree.neighbor_in_iterator(ui))
                 directed_tree.add_edge(parent, vi)
@@ -917,25 +933,30 @@ def make_nice_tree_decomposition(T):
                 root = vi
             directed_tree.delete_vertex(ui)
 
+        # Add paths of intro / forget nodes accordingly
+
         elif bag_ui.issubset(bag_vi):
-            add_path_of_introduce(ui, vi)
+            add_path_of_intro_nodes(ui, vi)
 
         elif bag_vi.issubset(bag_ui):
-            add_path_of_forget(ui, vi)
+            add_path_of_forget_nodes(ui, vi)
 
+        # Handle the case when the two nodes are not related in any way above
         else:
-            # We must first forget some nodes and then introduce new nodes
             wi = directed_tree.add_vertex()
             bag[wi] = bag[ui] & bag[vi]
             directed_tree.add_path([ui, wi, vi])
             directed_tree.delete_edge(ui, vi)
-            add_path_of_forget(ui, wi)
-            add_path_of_introduce(wi, vi)
+            add_path_of_forget_nodes(ui, wi)
+            add_path_of_intro_nodes(wi, vi)
 
-    # We now return the result
+    # Return the nice tree decomposition after the processing
     nice_tree_decomp = Graph(directed_tree, name=name)
-    nice_tree_decomp.relabel(inplace=True,
-                 perm={u: (i, bag[u]) for i, u in enumerate(nice_tree_decomp.breadth_first_search(start=root))})
+
+    bfs_ordering = nice_tree_decomp.breadth_first_search(start=root)
+    relabeling = {u: (i, bag[u]) for i, u in enumerate(bfs_ordering)}
+    nice_tree_decomp.relabel(inplace=True, perm=relabeling)
+
     return nice_tree_decomp
 
 
