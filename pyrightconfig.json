@@ -10,7 +10,6 @@
     "pythonVersion": "3.9",
     "exclude": ["venv"],
     "venvPath": "./venv/",
-    "venv": "./",
 
     "reportGeneralTypeIssues": "warning",
     "reportUnboundVariable": "warning",
