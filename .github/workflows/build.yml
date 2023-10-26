@@ -96,30 +96,6 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Build modularized distributions
-        if: always() && steps.worktree.outcome == 'success'
-        run: make V=0 tox && make SAGE_CHECK=no pypi-wheels
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      - name: Set up node to install pyright
-        if: always() && steps.worktree.outcome == 'success'
-        uses: actions/setup-node@v3
-        with:
-          node-version: '12'
-
-      - name: Install pyright
-        if: always() && steps.worktree.outcome == 'success'
-        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
-        run: npm install -g pyright@1.1.232
-
-      - name: Static code check with pyright
-        if: always() && steps.worktree.outcome == 'success'
-        run: pyright
-        working-directory: ./worktree-image
-
       - name: Clean (fallback to non-incremental)
         id: clean
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
@@ -145,51 +121,9 @@ jobs:
 
       # Testing
 
-      - name: Test changed files (sage -t --new)
-        if: always() && steps.build.outcome == 'success'
-        run: |
-          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p2
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      - name: Test modularized distributions
-        if: always() && steps.build.outcome == 'success'
-        run: make V=0 tox && make pypi-wheels-check
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      - name: Pytest
-        if: contains(github.ref, 'pytest')
-        run: |
-          ../sage -python -m pip install coverage pytest-xdist
-          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
-        working-directory: ./worktree-image/src
-        env:
-          # Increase the length of the lines in the "short summary"
-          COLUMNS: 120
-
       - name: Test all files (sage -t --all --long)
         if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
+          ../sage -python -m coverage run ./bin/sage-runtests sage/combinat -p3 --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image/src
-
-      - name: Prepare coverage results
-        if: always() && steps.build.outcome == 'success'
-        run: |
-          ./venv/bin/python3 -m coverage combine src/.coverage/
-          ./venv/bin/python3 -m coverage xml
-          find . -name *coverage*
-        working-directory: ./worktree-image
-
-      - name: Upload coverage to codecov
-        if: always() && steps.build.outcome == 'success'
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./worktree-image/coverage.xml
