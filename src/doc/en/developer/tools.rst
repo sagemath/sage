@@ -46,8 +46,8 @@ available::
   ...
   Testing files:
   ...
-  --tox [options] <files|dirs> -- general entry point for testing
-                                  and linting of the Sage library
+  --tox [options] -- <files|dirs> -- general entry point for testing
+                                     and linting of the Sage library
      -e <envlist>     -- run specific test environments
                          (default: run all except full pycodestyle)
         doctest                -- run the Sage doctester
@@ -325,7 +325,7 @@ Pyright
 
 *Usage:*
 
-- Tox: Run ``./sage -tox -e pyright path/to/the/file.py``
+- Tox: Run ``./sage -tox -e pyright -- path/to/the/file.py``
 
 - Manual: Run ``pyright path/to/the/file.py``. If you want to check the whole Sage library, you most likely run out of memory with the default settings.
   You can use the following command to check the whole library::
