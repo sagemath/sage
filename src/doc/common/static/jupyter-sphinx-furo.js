@@ -1,4 +1,4 @@
-// Change the editor theme of all CodeMirror cells according to the furo (dark) mode
+// Change the editor theme according to the furo light/dark/auto mode
 function changeTheme(editor, theme) {
   if (theme === 'dark') {
     editor.setOption('theme', 'monokai'); // the same with pygments dark style in conf.py
@@ -9,18 +9,41 @@ function changeTheme(editor, theme) {
   }
 }
 
-// Use the theme data of the document.body element set by setTheme function
+// Change the editor theme of all CodeMirror cells
+function changeThemeAll(theme) {
+  const querySet = document.querySelectorAll('.CodeMirror');
+  for (var i = 0; i < querySet.length; i++) {
+    changeTheme(querySet[i].CodeMirror, theme);
+  }
+}
+
+// Use the theme data of the body element set by setTheme function
 // defined in https://github.com/pradyunsg/furo/blob/main/src/furo/assets/scripts/furo.js
 const body = document.body;
 const observer1 = new MutationObserver((mutationsList) => {
   for (let mutation of mutationsList) {
     if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
       const theme = body.dataset.theme;
-      const querySet = document.querySelectorAll('.CodeMirror');
-      for (var i = 0; i < querySet.length; i++) {
-        changeTheme(querySet[i].CodeMirror, theme);
-      }}}});
+      changeThemeAll(theme);
+    }
+  }
+});
 observer1.observe(body, { attributes: true });
+
+
+// In the furo auto mode, we watch prefers-color-scheme and use the theme data
+// of the body element to change the CodeMirror editor theme
+const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+
+function handlePrefersColorSchemeChange(e) {
+  const theme = body.dataset.theme;
+  if (theme === 'auto') {
+    changeThemeAll(theme);
+  }
+}
+
+prefersDarkMode.addEventListener('change', handlePrefersColorSchemeChange);
+
 
 // Change the editor theme of a new CodeMirror cell.
 const callback = function(mutationsList, observer) {
@@ -89,4 +112,3 @@ thebelab.on("status", function (evt, data) {
     kernel.requestExecute({code: "%display latex"});
   }
 });
-
