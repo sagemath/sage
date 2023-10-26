@@ -332,7 +332,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         By default, this method uses the so-called *crystalline*
         algorithm which computes the characteristic polynomial of the
         Frobenius acting on the crystalline cohomology of the Drinfeld
-        module. For further details, see [Ang1997]_.
+        module. For further details, see [Ang1997]_. Other options
+        include the *motive* method.
         """
         # Throw an error if the user asks for an unimplemented algorithm
         # even if the char poly has already been computed
@@ -411,6 +412,55 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         coeffs_A = [A([x.in_base() for x in coeff]) for coeff in charpoly_K]
         return PolynomialRing(A, name=var)(coeffs_A)
+
+    def _frobenius_charpoly_motive(self, var):
+        r"""
+        Return the characteristic polynomial of the Frobenius
+        endomorphism using Motivic cohomology.
+
+        The algorithm works for Drinfeld `\mathbb{F}_q[T]`-modules of
+        any rank.
+
+        This method is private and should not be directly called.
+        Instead, use :meth:`frobenius_charpoly` with the option
+        `algorithm='motive'`.
+
+        INPUT:
+
+        - ``var`` -- the name of the second variable
+
+        OUTPUT: a univariate polynomial with coefficients in the
+                function ring
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: phi.frobenius_charpoly(algorithm='motive') # indirect doctest
+            X^2 + ((4*z2 + 4)*T^3 + (z2 + 3)*T^2 + 3*T + 2*z2 + 3)*X + 3*z2*T^6 + (4*z2 + 3)*T^5 + (4*z2 + 4)*T^4 + 2*T^3 + (3*z2 + 3)*T^2 + (z2 + 2)*T + 4*z2
+
+        ::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(8)
+            sage: phi = DrinfeldModule(A, [z, 4, 1, z, z+1, 2, z+2, 1, 1, 3, 1])
+            sage: phi.frobenius_charpoly(algorithm='motive') # indirect doctest
+            X^10 + X^9 + (3*T + z2 + 1)*X^8 + (4*T^2 + z2*T + 2*z2 + 1)*X^7 + ... + (4*z2 + 4)*T^4 + 4*z2*T^2 + (z2 + 2)*T + z2
+
+        ::
+
+            sage: Fq = GF(27)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(10)
+            sage: phi = DrinfeldModule(A, [z, z^2 + z, 2, 1, z, z+1, 2, z+2, 0, 1, 1, z^2 + z])
+            sage: phi.frobenius_charpoly(algorithm='motive') # indirect doctest
+            X^11 + (z3^2 + 2*z3)*X^10 + ((z3 + 1)*T + z3)*X^9 + ((2*z3^2 + z3 + 2)*T^2 + ... + (2*z3^2 + 2*z3 + 2)*T + z3^2
+        """
+        return self.frobenius_endomorphism().characteristic_polynomial(var)
 
     def frobenius_norm(self):
         r"""
