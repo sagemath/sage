@@ -1,1 +1,1 @@
-dev-python/memory_allocator
+dev-python/memory-allocator
