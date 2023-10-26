@@ -125,5 +125,5 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests sage/combinat -p3 --random-seed=286735480429121101562228604801325644303
+          ../sage -python -m coverage run ./bin/sage-runtests -p4 --random-seed=286735480429121101562228604801325644303 sage/combinat
         working-directory: ./worktree-image/src
