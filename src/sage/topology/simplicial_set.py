@@ -3772,6 +3772,171 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         return ChainComplex(differentials, degree_of_differential=-1,
                             check=check)
 
+
+    def twisted_chain_complex(self, twisting_operator, dimensions=None, augmented=False,
+                      cochain=False, verbose=False, subcomplex=None,
+                      check=False):
+        r"""
+        Return the normalized chain complex twisted by some operator.
+
+        A twisting operator is a map from the set of simplices to some algebra.
+        The differentials are then twisted by this operator.
+
+        INPUT:
+
+        - ``twisting_operator`` -- a dictionary, associating the twist of each
+          simplex.
+
+        - ``dimensions`` -- if ``None``, compute the chain complex in all
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.
+
+        - ``augmented`` (optional, default ``False``) -- if ``True``,
+          return the augmented chain complex (that is, include a class
+          in dimension `-1` corresponding to the empty cell).
+
+        - ``cochain`` (optional, default ``False``) -- if ``True``,
+          return the cochain complex (that is, the dual of the chain
+          complex).
+
+        - ``verbose`` (optional, default ``False``) -- ignored.
+
+        - ``subcomplex`` (optional, default ``None``) -- if present,
+          compute the chain complex relative to this subcomplex.
+
+        - ``check`` (optional, default ``False``) -- If ``True``, make
+          sure that the chain complex is actually a chain complex:
+          the differentials are composable and their product is zero.
+
+        The normalized chain complex of a simplicial set is isomorphic
+        to the chain complex obtained by modding out by degenerate
+        simplices, and the latter is what is actually constructed
+        here.
+
+        EXAMPLES::
+
+            sage: W = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
+            sage: W.nondegenerate_simplices()
+            [*, sigma_1, sigma_2]
+            sage: s1 = W.nondegenerate_simplices()[1]
+            sage: L.<t> = LaurentPolynomialRing(QQ)
+            sage: tw = {s1:t}
+            sage: ChC = W.twisted_chain_complex(tw)
+            sage: ChC.differential(1)
+            [-1 + t]
+            sage: ChC.differential(2)
+            [0]
+
+        """
+        from sage.homology.chain_complex import ChainComplex
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+
+        def twist(s):
+            if s in twisting_operator:
+                return twisting_operator[s]
+            if s.dimension() > 1:
+                return twist(self.face_data()[s][-1])
+            return 1
+        base_ring = cm.common_parent(*twisting_operator.values())
+
+        if dimensions is None:
+            if not self.cells():  # Empty
+                if cochain:
+                    return ChainComplex({-1: matrix(base_ring, 0, 0)},
+                                        degree_of_differential=1)
+                return ChainComplex({0: matrix(base_ring, 0, 0)},
+                                    degree_of_differential=-1)
+            dimensions = list(range(self.dimension() + 1))
+        else:
+            if not isinstance(dimensions, (list, tuple, range)):
+                dimensions = list(range(dimensions - 1, dimensions + 2))
+            else:
+                dimensions = [n for n in dimensions if n >= 0]
+            if not dimensions:
+                # Return the empty chain complex.
+                if cochain:
+                    return ChainComplex(base_ring=base_ring, degree=1)
+                else:
+                    return ChainComplex(base_ring=base_ring, degree=-1)
+
+        differentials = {}
+        # Convert the tuple self._data to a dictionary indexed by the
+        # non-degenerate simplices.
+        if subcomplex:
+            X = self.quotient(subcomplex)
+            face_data = X.face_data()
+            nondegens = X.nondegenerate_simplices()
+        else:
+            face_data = self.face_data()
+            nondegens = self.nondegenerate_simplices()
+        # simplices: dictionary indexed by dimension, values the list
+        # of non-degenerate simplices in that dimension.
+        simplices = {}
+        for sigma in nondegens:
+            if sigma.dimension() in simplices:
+                simplices[sigma.dimension()].append(sigma)
+            else:
+                simplices[sigma.dimension()] = [sigma]
+        first = dimensions.pop(0)
+        if first in simplices:
+            rank = len(simplices[first])
+            current = sorted(simplices[first])
+        else:
+            rank = 0
+            current = []
+        if augmented and first == 0:
+            differentials[first-1] = matrix(base_ring, 0, 1)
+            differentials[first] = matrix(base_ring, 1, rank,
+                                          [1] * rank)
+        else:
+            differentials[first] = matrix(base_ring, 0, rank)
+
+        for d in dimensions:
+            old_rank = rank
+            faces = {_[1]: _[0] for _ in enumerate(current)}
+            if d in simplices:
+                current = sorted(simplices[d])
+                rank = len(current)
+                # old_rank: number of simplices in dimension d-1.
+                # faces: list of simplices in dimension d-1.
+                # rank: number of simplices in dimension d.
+                # current: list of simplices in dimension d.
+                if not faces:
+                    differentials[d] = matrix(base_ring, old_rank, rank)
+                else:
+                    matrix_data = {}
+                    for col, sigma in enumerate(current):
+                        sign = 1
+                        twists = len(face_data[sigma]) * [1]
+                        twists[0] = twist(sigma)
+                        for (ch,tau) in zip(twists,face_data[sigma]):
+                            if tau.is_nondegenerate():
+                                row = faces[tau]
+                                if (row, col) in matrix_data:
+                                    matrix_data[(row, col)] += sign*ch
+                                else:
+                                    matrix_data[(row, col)] = sign*ch
+                            sign *= -1
+
+                    differentials[d] = matrix(base_ring, old_rank,
+                                              rank, matrix_data)
+
+            else:
+                rank = 0
+                current = []
+                differentials[d] = matrix(base_ring, old_rank, rank)
+
+        if cochain:
+            new_diffs = {}
+            for d in differentials:
+                new_diffs[d-1] = differentials[d].transpose()
+            return ChainComplex(new_diffs, degree_of_differential=1,
+                                check=check)
+        return ChainComplex(differentials, degree_of_differential=-1,
+                            check=check)
+
     @cached_method
     def algebraic_topological_model(self, base_ring=None):
         r"""
