@@ -75,6 +75,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
 
     :meth:`treewidth` | Compute the treewidth of `G` (and provide a decomposition).
     :meth:`treelength` | Compute the treelength of `G` (and provide a decomposition).
+    :meth:`make_nice_tree_decomposition` | Return a *nice* tree decomposition (TD) of the TD `tree_decomp`.
     :meth:`is_valid_tree_decomposition` | Check whether `T` is a valid tree-decomposition for `G`.
     :meth:`reduced_tree_decomposition` | Return a reduced tree-decomposition of `T`.
     :meth:`width_of_tree_decomposition` | Return the width of the tree decomposition `T` of `G`.
@@ -796,20 +797,21 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         are hashable and have attribute ``issuperset``, e.g., ``frozenset`` or
         :class:`~sage.sets.set.Set_object_enumerated_with_category`.
 
-    TESTS::
-
-    TODO
-
     EXAMPLES::
 
-    TODO
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: petersen = graphs.PetersenGraph()
+        sage: TD = petersen.treewidth(certificate=True)
+        sage: nice_TD = make_nice_tree_decomposition(petersen, TD)
+        sage: len(nice_TD)
+        28
     """
     if not is_valid_tree_decomposition(graph, tree_decomp):
         raise ValueError("input must be a valid tree decomposition for this graph")
 
     name = f"Nice tree decomposition of {tree_decomp.name()}"
+    from sage.graphs.graph import Graph
     if not tree_decomp:
-        from sage.graphs.graph import Graph
         return Graph(name=name)
 
     # Step 1: Ensure the tree is directed and has a root
