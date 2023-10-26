@@ -290,7 +290,7 @@ def discrec(self):
 
 def hasse_conductor(self):
     """
-    Return the Hasse coductor.
+    Return the Hasse conductor.
 
     This is the product of all primes where the Hasse invariant equals `-1`.
 
@@ -317,7 +317,6 @@ def hasse_conductor(self):
 def clifford_invariant(self, p):
     """
     Return the Clifford invariant.
-
 
     This is the class in the Brauer group of the Clifford algebra for
     even dimension, of the even Clifford Algebra for odd dimension.

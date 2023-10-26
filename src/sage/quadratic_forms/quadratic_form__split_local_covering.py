@@ -239,20 +239,20 @@ def vectors_by_length(self, bound):
             print(" Float = ", Q_val_double, "   Long = ", Q_val)
             raise RuntimeError("The roundoff error is bigger than 0.001, so we should use more precision somewhere...")
 
-        if (Q_val <= bound):
+        if Q_val <= bound:
             theta_vec[Q_val].append(deepcopy(x))
 
         # 5. Check if x = 0, for exit condition. =)
         j = 0
         done_flag = True
-        while (j < n):
-            if (x[j] != 0):
+        while j < n:
+            if x[j] != 0:
                 done_flag = False
             j += 1
 
         # 3a. Increment (and carry if we go out of bounds)
         x[i] += 1
-        while (x[i] > L[i]) and (i < n - 1):
+        while i < n - 1 and x[i] > L[i]:
             i += 1
             x[i] += 1
 

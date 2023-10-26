@@ -58,7 +58,7 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
     except TypeError:
         M = -1
 
-    if (Max not in ['mod_form']) and (not M >= 0):
+    if Max not in ['mod_form'] and not M >= 0:
         raise TypeError("Max = {Max} is not an integer >= 0 or an allowed string")
 
     if Max == 'mod_form':
@@ -205,9 +205,6 @@ def theta_by_cholesky(self, q_prec):
     from_step4_flag = False
     from_step3_flag = True        # We start by pretending this, since then we get to run through 2 and 3a once. =)
 
-    # double Q_val_double;
-    # unsigned long Q_val;                 // WARNING: Still need a good way of checking overflow for this value...
-
     # Big loop which runs through all vectors
     while not done_flag:
 
@@ -226,12 +223,12 @@ def theta_by_cholesky(self, q_prec):
 
             # 3a. Main loop
             x[i] += 1
-            while (x[i] > L[i]):
+            while x[i] > L[i]:
                 i += 1
                 x[i] += 1
 
             # 3b. Main loop
-            if (i > 0):
+            if i > 0:
                 from_step3_flag = True
                 T[i - 1] = T[i] - Q[i, i] * (x[i] + U[i]) * (x[i] + U[i])
                 i += -1
