@@ -105,8 +105,7 @@ it makes sense to build on top of the base class
 This base class provides a lot more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
-    ['__fraction_field',
-     '__ideal_monoid',
+    ['_CommutativeRing__fraction_field',
      '__iter__',
      '__len__',
      '__rxor__',
@@ -119,6 +118,7 @@ This base class provides a lot more methods than a general parent::
      '_default_category',
      '_gens',
      '_ideal_class_',
+     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
@@ -1223,7 +1223,7 @@ However, only "elementary" construction functors have a rank::
     sage: (Fract*Poly).rank
     Traceback (most recent call last):
     ...
-    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'
+    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'...
 
 .. end of output
 

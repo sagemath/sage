@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Binary Recurrence Sequences
 
@@ -126,9 +127,9 @@ class BinaryRecurrenceSequence(SageObject):
         self.c = c
         self.u0 = u0
         self.u1 = u1
-        self._period_dict = {}    #dictionary to cache the period of a sequence for future lookup
-        self._PGoodness = {} #dictionary to cache primes that are "good" by some prime power
-        self._ell = 1 #variable that keeps track of the last prime power to be used as a goodness
+        self._period_dict = {}  # dictionary to cache the period of a sequence for future lookup
+        self._PGoodness = {}  # dictionary to cache primes that are "good" by some prime power
+        self._ell = 1  # variable that keeps track of the last prime power to be used as a goodness
 
     def __repr__(self):
         """
@@ -468,7 +469,7 @@ class BinaryRecurrenceSequence(SageObject):
                     #expand the list of prime factors so every factor is with multiplicity 1
 
                     for i0, i1 in Mfac:
-                        for j in range(i1):
+                        for _ in range(i1):
                             C.append(i0)
 
                     Mfac = C
@@ -519,7 +520,9 @@ class BinaryRecurrenceSequence(SageObject):
 
         OUTPUT:
 
-        - A list of the indices of all ``p`` th powers less bounded by ``Bound``.  If the sequence is degenerate and there are many ``p`` th powers, raises ``ValueError``.
+        - A list of the indices of all ``p`` th powers less bounded by
+          ``Bound``. If the sequence is degenerate and there are many
+          ``p`` th powers, raises :class:`ValueError`.
 
         EXAMPLES::
 
@@ -536,7 +539,7 @@ class BinaryRecurrenceSequence(SageObject):
             [1]
 
         If the sequence is degenerate, and there are no ``p`` th powers, returns `[]`.  Otherwise, if
-        there are many ``p`` th powers, raises ``ValueError``.
+        there are many ``p`` th powers, raises :class:`ValueError`.
 
         ::
 
@@ -646,10 +649,10 @@ class BinaryRecurrenceSequence(SageObject):
 
                 F = GF(ell)
                 a0 = F(self.u0)
-                a1 = F(self.u1) #a0 and a1 are variables for terms in sequence
+                a1 = F(self.u1)  # a0 and a1 are variables for terms in sequence
                 bf, cf = F(self.b), F(self.c)
 
-                for n in range(Bound): # n is the index of the a0
+                for n in range(Bound):  # n is the index of the a0
 
                     #Check whether a0 is a perfect power mod ell
                     if _is_p_power_mod(a0, p, ell):
@@ -690,7 +693,7 @@ class BinaryRecurrenceSequence(SageObject):
                             #gather congruence data for the sequence mod ell, which will be mod period(ell) = modu
                             cong1, modu = _find_cong1(p, self, ell)
 
-                            CongNew = []        #makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
+                            CongNew = []        # makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
                             M = lcm(M1, modu)
                             for k in range(M // M1):
                                 for i in cong:
@@ -699,18 +702,18 @@ class BinaryRecurrenceSequence(SageObject):
 
                             M1 = M
 
-                            killed_something = False        #keeps track of when cong1 can rule out a congruence in cong
+                            killed_something = False        # keeps track of when cong1 can rule out a congruence in cong
 
-                            #CRT by hand to gain speed
+                            # CRT by hand to gain speed
                             for i in list(cong):
-                                if not (i % modu in cong1):        #congruence in cong is inconsistent with any in cong1
-                                    cong.remove(i)            #remove that congruence
+                                if i % modu not in cong1:     # congruence in cong is inconsistent with any in cong1
+                                    cong.remove(i)            # remove that congruence
                                     killed_something = True
 
                             if M1 == M2:
                                 if not killed_something:
                                     tries += 1
-                                    if tries == 2:            #try twice to rule out congruences
+                                    if tries == 2:            # try twice to rule out congruences
                                         cong = list(cong)
                                         qqold = qq
                                         qq = next_prime_power(qq)

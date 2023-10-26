@@ -561,7 +561,7 @@ If this all works, you can then make calls like:
         try:
             if self._expect is not None:
                 self._expect.close(force=force)
-        except ExceptionPexpect:
+        except (ExceptionPexpect, OSError):
             self._expect.ptyproc.fd = -1
             self._expect.ptyproc.closed = True
             self._expect.child_fd = -1
@@ -800,7 +800,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` - (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :class:`EOFError` occurred.
 
         TESTS::
 
@@ -902,7 +902,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :class:`EOFError` occurred.
 
         TESTS::
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 S-Boxes used in cryptographic schemes
 
@@ -395,6 +396,7 @@ def monomial_function(n, e):
     R = PolynomialRing(base_ring, name='X')
     X = R.gen()
     return SBox(X**e)
+
 
 # Bijective S-Boxes mapping 9 bits to 9
 # =====================================

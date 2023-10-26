@@ -824,7 +824,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._coerce_from_special_method('2 + 3')  # optional - magma
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute '_magma_init_'
+            AttributeError: 'str' object has no attribute '_magma_init_'...
         """
         s = x._magma_init_(self)
         a = self(s)
@@ -1885,9 +1885,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         INPUT:
 
-
-        -  ``attrname`` - string
-
+        -  ``attrname`` -- string
 
         OUTPUT: a Magma function partially evaluated with self as the first
         input.
@@ -1895,8 +1893,8 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         .. note::
 
            If the input ``attrname`` starts with an underscore, an
-           AttributeError is raised so that the actual Python _ method/value
-           can be accessed.
+           :class:`AttributeError` is raised so that the actual
+           Python _ method/value can be accessed.
 
         EXAMPLES::
 
@@ -2751,7 +2749,6 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         return self.parent().bar_call(self, 'ideal', gens, nvals=1)
 
-###########################################################################
 
 magma = Magma()
 

@@ -25,7 +25,7 @@ First, consider an example from arithmetic geometry::
     sage: fx = f.derivative(x)
     sage: fy = f.derivative(y)
     sage: I = B.ideal([B(f), B(fx), B(fy)])
-    sage: I.groebner_basis()                                                            # optional - sage.libs.singular
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [1]
 
 Since the output is 1, we know that there are no generic
@@ -102,7 +102,7 @@ of the original system modulo `p`.::
     sage: I.change_ring(P.change_ring(GF(103))).groebner_basis()
     [z - 18, y + 8, x + 39]
 
-    sage: I.change_ring( P.change_ring(GF(27173681))).groebner_basis()
+    sage: I.change_ring( P.change_ring(GF(27173681))).groebner_basis()                  # needs sage.libs.pari
     [z + 10380032, y + 3186055, x - 536027]
 
 Of course, modulo any other prime the Groebner basis is trivial so

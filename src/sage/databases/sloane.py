@@ -308,7 +308,7 @@ class SloaneEncyclopediaClass:
         Return the name of sequence ``N`` in the encyclopedia.
 
         If sequence ``N`` does not exist, return ``''``.  If the names
-        database is not installed, raise an ``IOError``.
+        database is not installed, raise an :class:`IOError`.
 
         INPUT:
 

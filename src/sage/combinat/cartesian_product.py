@@ -190,7 +190,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         An ``int``, the number of elements in the Cartesian product. If the
         number of elements is infinite or does not fit into a python ``int``, a
-        ``TypeError`` is raised.
+        :class:`TypeError` is raised.
 
         .. SEEALSO::
 

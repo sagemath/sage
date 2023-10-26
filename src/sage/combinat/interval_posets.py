@@ -450,7 +450,7 @@ class TamariIntervalPoset(Element,
         c1 = 'red'    # self.latex_options()["color_decreasing"]
         G = self.poset().hasse_diagram()
         G.set_pos(self._find_node_positions())
-        for a, b, c in G.edges(sort=False):
+        for a, b in G.edges(sort=False, labels=False):
             if a < b:
                 G.set_edge_label(a, b, 0)
             else:
@@ -1229,7 +1229,7 @@ class TamariIntervalPoset(Element,
             sage: def test_equivalence(n):
             ....:     for T in TamariIntervalPosets(n):
             ....:         for i in range(1, n + 2):
-            ....:             if not (insert_alternative(T, i) == T.insertion(i)):
+            ....:             if insert_alternative(T, i) != T.insertion(i):
             ....:                 print(T, i)
             ....:                 return False
             ....:     return True

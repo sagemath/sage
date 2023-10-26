@@ -145,7 +145,7 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             self.relprec = min(rprec, aprec - val)
             self.ordp = val
-            if isinstance(x,CRElement) and x.parent() is self.parent():
+            if isinstance(x, CRElement) and x.parent() is self.parent():
                 cshift_notrunc(self.unit, (<CRElement>x).unit, 0, self.relprec, self.prime_pow, True)
             else:
                 cconv(self.unit, x, self.relprec, val, self.prime_pow)
@@ -678,8 +678,8 @@ cdef class CRElement(pAdicTemplateElement):
                 return base.__pow__(-_right, dummy)
             exact_exp = True
         elif self.parent() is _right.parent():
-            ## For extension elements, we need to switch to the
-            ## fraction field sometimes in highly ramified extensions.
+            # For extension elements, we need to switch to the
+            # fraction field sometimes in highly ramified extensions.
             exact_exp = (<CRElement>_right)._is_exact_zero()
             pright = _right
         else:
@@ -732,7 +732,7 @@ cdef class CRElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
-        """
+        r"""
         Multiplies by `\pi^{\mbox{shift}}`.
 
         Negative shifts may truncate the result if the parent is not a
@@ -763,7 +763,7 @@ cdef class CRElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
-        """
+        r"""
         Divides by ``\pi^{\mbox{shift}}``.
 
         Positive shifts may truncate the result if the parent is not a
@@ -878,7 +878,6 @@ cdef class CRElement(pAdicTemplateElement):
             cdivunit(q.unit, q.prime_pow.shift_rem, right.unit, q.relprec, q.prime_pow)
         q._normalize()
         return q, r
-
 
     def add_bigoh(self, absprec):
         """
@@ -1253,6 +1252,7 @@ cdef class CRElement(pAdicTemplateElement):
         """
         def tuple_recursive(l):
             return tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
+
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.valuation(), self.precision_relative())
 
     def _teichmuller_set_unsafe(self):
@@ -1506,7 +1506,7 @@ cdef class CRElement(pAdicTemplateElement):
         """
         # Since we keep this element normalized there's not much to do here.
         if p is not None and p != self.parent().prime():
-            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
+            raise ValueError('ring (%s) residue field of the wrong characteristic' % self.parent())
         if exactzero((<CRElement>self).ordp):
             raise ValueError("unit part of 0 not defined")
         cdef Integer val = Integer.__new__(Integer)
@@ -1968,7 +1968,7 @@ cdef class pAdicConvert_CR_QQ(RingMap):
             1/5
         """
         cdef Rational ans = Rational.__new__(Rational)
-        cdef CRElement x =  _x
+        cdef CRElement x = _x
         if x.relprec == 0:
             mpq_set_ui(ans.value, 0, 1)
         else:
@@ -2184,7 +2184,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -2241,7 +2241,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     def section(self):
@@ -2404,7 +2404,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -2463,7 +2463,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     cdef dict _extra_slots(self):
@@ -2521,6 +2521,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
+
 
 def unpickle_cre_v2(cls, parent, unit, ordp, relprec):
     """

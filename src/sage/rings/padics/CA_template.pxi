@@ -89,7 +89,7 @@ cdef class CAElement(pAdicTemplateElement):
             self.absprec = aprec
         else:
             self.absprec = min(aprec, val + rprec)
-            if isinstance(x,CAElement) and x.parent() is self.parent():
+            if isinstance(x, CAElement) and x.parent() is self.parent():
                 cshift_notrunc(self.value, (<CAElement>x).value, 0, self.absprec, self.prime_pow, True)
             else:
                 cconv(self.value, x, self.absprec, 0, self.prime_pow)
@@ -395,9 +395,8 @@ cdef class CAElement(pAdicTemplateElement):
         creduce(q.value, q.value, q.absprec, q.prime_pow)
         return q, r
 
-
     def __pow__(CAElement self, _right, dummy):
-        """
+        r"""
         Exponentiation.
 
         When ``right`` is divisible by `p` then one can get more
@@ -474,8 +473,8 @@ cdef class CAElement(pAdicTemplateElement):
                 return base.__pow__(-_right, dummy)
             exact_exp = True
         elif self.parent() is _right.parent():
-            ## For extension elements, we need to switch to the
-            ## fraction field sometimes in highly ramified extensions.
+            # For extension elements, we need to switch to the
+            # fraction field sometimes in highly ramified extensions.
             exact_exp = (<CAElement>_right)._is_exact_zero()
             pright = _right
         else:
@@ -861,6 +860,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         def tuple_recursive(l):
             return tuple(tuple_recursive(x) for x in l) if isinstance(l, Iterable) else l
+
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.precision_absolute())
 
     def _teichmuller_set_unsafe(self):
@@ -1463,7 +1463,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         ans._normalize()
         return ans
 
@@ -1516,7 +1516,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
             pass
         return ans
 
@@ -1686,7 +1686,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 R = ans.value.base_ring()
-                ans.value.__coeffs = [R(c) for c in ans.value.__coeffs]
+                ans.value._coeffs = [R(c) for c in ans.value._coeffs]
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -1741,7 +1741,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 R = ans.value.base_ring()
-                ans.value.__coeffs = [R(c) for c in ans.value.__coeffs]
+                ans.value._coeffs = [R(c) for c in ans.value._coeffs]
         return ans
 
     cdef dict _extra_slots(self):
@@ -1800,6 +1800,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
 
+
 def unpickle_cae_v2(cls, parent, value, absprec):
     r"""
     Unpickle capped absolute elements.
@@ -1834,4 +1835,3 @@ def unpickle_cae_v2(cls, parent, value, absprec):
     cunpickle(ans.value, value, ans.prime_pow)
     ans.absprec = absprec
     return ans
-

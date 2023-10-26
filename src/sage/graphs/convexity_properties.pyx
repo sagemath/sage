@@ -132,7 +132,7 @@ cdef class ConvexityProperties:
         sage: CP = ConvexityProperties(g)
         sage: CP.hull([1, 3])
         [1, 2, 3]
-        sage: CP.hull_number()
+        sage: CP.hull_number()                                                          # needs sage.numerical.mip
         3
 
     TESTS::
@@ -410,10 +410,10 @@ cdef class ConvexityProperties:
             sage: from sage.graphs.convexity_properties import ConvexityProperties
             sage: g = graphs.PetersenGraph()
             sage: CP = ConvexityProperties(g)
-            sage: CP.hull_number()
+            sage: CP.hull_number()                                                      # needs sage.numerical.mip
             3
-            sage: generating_set = CP.hull_number(value_only=False)
-            sage: CP.hull(generating_set)
+            sage: generating_set = CP.hull_number(value_only=False)                     # needs sage.numerical.mip
+            sage: CP.hull(generating_set)                                               # needs sage.numerical.mip
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         cdef int i

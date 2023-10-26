@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs scipy sage.symbolic
 """
 (Ring-)LWE oracle generators
 
@@ -52,6 +52,7 @@ Finally, :func:`samples` also accepts instances of classes::
 
 Note that Ring-LWE samples are returned as vectors::
 
+    sage: # needs sage.libs.pari
     sage: from sage.crypto.lwe import RingLWE
     sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
     sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], euler_phi(16), 5)
@@ -169,7 +170,7 @@ class UniformSampler(SageObject):
             sage: UniformSampler(-2, 2)
             UniformSampler(-2, 2)
         """
-        return "UniformSampler(%d, %d)"%(self.lower_bound, self.upper_bound)
+        return "UniformSampler(%d, %d)" % (self.lower_bound, self.upper_bound)
 
 
 class UniformPolynomialSampler(SageObject):
@@ -235,7 +236,7 @@ class UniformPolynomialSampler(SageObject):
             sage: UniformPolynomialSampler(ZZ['x'], 8, -3, 3)
             UniformPolynomialSampler(8, -3, 3)
         """
-        return "UniformPolynomialSampler(%d, %d, %d)"%(self.n, self.lower_bound, self.upper_bound)
+        return "UniformPolynomialSampler(%d, %d, %d)" % (self.n, self.lower_bound, self.upper_bound)
 
 
 class LWE(SageObject):
@@ -296,8 +297,8 @@ class LWE(SageObject):
         fix the representation and recover the correct standard deviation of the
         noise::
 
-            sage: from numpy import std
-            sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:
+            sage: from numpy import std                                                             # needs numpy
+            sage: while abs(std([e if e <= 200 else e-401 for e in S()]) - 3.0) > 0.01:             # needs numpy
             ....:     L = []  # reset L to avoid quadratic behaviour
             ....:     add_samples()
 
@@ -306,7 +307,7 @@ class LWE(SageObject):
             sage: from sage.crypto.lwe import LWE
             sage: lwe = LWE(n=20, q=next_prime(400), D=D, m=30)
             sage: _ = [lwe() for _ in range(30)]
-            sage: lwe() # 31
+            sage: lwe()  # 31
             Traceback (most recent call last):
             ...
             IndexError: Number of available samples exhausted.
@@ -328,7 +329,7 @@ class LWE(SageObject):
                 lb, ub = map(ZZ, secret_dist)
                 self.__s = vector(self.K, self.n, [randint(lb,ub) for _ in range(n)])
             except (IndexError, TypeError):
-                raise TypeError("Parameter secret_dist=%s not understood."%(secret_dist))
+                raise TypeError("Parameter secret_dist=%s not understood." % (secret_dist))
 
     def _repr_(self):
         """
@@ -344,9 +345,9 @@ class LWE(SageObject):
             LWE(20, 401, Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0.000000, (-3, 3), None)
         """
         if isinstance(self.secret_dist, str):
-            return "LWE(%d, %d, %s, '%s', %s)"%(self.n,self.K.order(),self.D,self.secret_dist, self.m)
+            return "LWE(%d, %d, %s, '%s', %s)" % (self.n,self.K.order(),self.D,self.secret_dist, self.m)
         else:
-            return "LWE(%d, %d, %s, %s, %s)"%(self.n,self.K.order(),self.D,self.secret_dist, self.m)
+            return "LWE(%d, %d, %s, %s, %s)" % (self.n,self.K.order(),self.D,self.secret_dist, self.m)
 
     def __call__(self):
         """
@@ -361,7 +362,7 @@ class LWE(SageObject):
         if self.m is not None:
             if self.__i >= self.m:
                 raise IndexError("Number of available samples exhausted.")
-        self.__i+=1
+        self.__i += 1
         a = self.FM.random_element()
         return a, a.dot_product(self.__s) + self.K(self.D())
 
@@ -479,7 +480,7 @@ class UniformNoiseLWE(LWE):
             LWE(131, 64311834871, UniformSampler(0, 11109), 'noise', 181)
         """
 
-        if n<89:
+        if n < 89:
             raise TypeError("Parameter too small")
 
         n2 = n
@@ -508,7 +509,7 @@ class UniformNoiseLWE(LWE):
                 m = n2+l
             LWE.__init__(self, n=n1, q=q, D=D, secret_dist='noise', m=m)
         else:
-            raise TypeError("Parameter instance=%s not understood."%(instance))
+            raise TypeError("Parameter instance=%s not understood." % (instance))
 
 class RingLWE(SageObject):
     """
@@ -539,8 +540,8 @@ class RingLWE(SageObject):
 
             sage: from sage.crypto.lwe import RingLWE
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
-            sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n=euler_phi(20), sigma=3.0)
-            sage: RingLWE(N=20, q=next_prime(800), D=D)
+            sage: D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n=euler_phi(20), sigma=3.0)                # needs sage.libs.pari
+            sage: RingLWE(N=20, q=next_prime(800), D=D)                                 # needs sage.libs.pari
             RingLWE(20, 809, Discrete Gaussian sampler for polynomials of degree < 8 with σ=3.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None)
         """
         self.N  = ZZ(N)
@@ -550,7 +551,7 @@ class RingLWE(SageObject):
         self.K  = IntegerModRing(q)
 
         if self.n != D.n:
-            raise ValueError("Noise distribution has dimensions %d != %d"%(D.n, self.n))
+            raise ValueError("Noise distribution has dimensions %d != %d" % (D.n, self.n))
 
         self.D = D
         self.q = q
@@ -567,7 +568,7 @@ class RingLWE(SageObject):
         elif secret_dist == 'noise':
             self.__s = self.D()
         else:
-            raise TypeError("Parameter secret_dist=%s not understood."%(secret_dist))
+            raise TypeError("Parameter secret_dist=%s not understood." % (secret_dist))
 
     def _repr_(self):
         """
@@ -579,14 +580,15 @@ class RingLWE(SageObject):
             RingLWE(16, 401, Discrete Gaussian sampler for polynomials of degree < 8 with σ=3.000000 in each component, x^8 + 1, 'uniform', None)
         """
         if isinstance(self.secret_dist, str):
-            return "RingLWE(%d, %d, %s, %s, '%s', %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
+            return "RingLWE(%d, %d, %s, %s, '%s', %s)" % (self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
         else:
-            return "RingLWE(%d, %d, %s, %s, %s, %s)"%(self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
+            return "RingLWE(%d, %d, %s, %s, %s, %s)" % (self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
 
     def __call__(self):
         """
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: from sage.crypto.lwe import DiscreteGaussianDistributionPolynomialSampler, RingLWE
             sage: N = 16
             sage: n = euler_phi(N)
@@ -600,7 +602,7 @@ class RingLWE(SageObject):
         if self.m is not None:
             if self.__i >= self.m:
                 raise IndexError("Number of available samples exhausted.")
-        self.__i+=1
+        self.__i += 1
         a = self.R_q.random_element()
         return vector(a), vector(a * (self.__s) + self.D())
 
@@ -708,7 +710,7 @@ class RingLWEConverter(SageObject):
             RingLWEConverter(RingLWE(20, 257, Discrete Gaussian sampler for polynomials of degree < 8 with σ=5.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None))
 
         """
-        return "RingLWEConverter(%s)"%str(self.ringlwe)
+        return "RingLWEConverter(%s)" % str(self.ringlwe)
 
 def samples(m, n, lwe, seed=None, balanced=False, **kwds):
     """

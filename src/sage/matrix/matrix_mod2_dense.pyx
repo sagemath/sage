@@ -500,7 +500,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             i = i + self._nrows
         if from_list:
             return self.rows(copy=False)[i]
-        cdef Py_ssize_t j
         cdef Vector_mod2_dense z = Vector_mod2_dense.__new__(Vector_mod2_dense)
         global VectorSpace
         if VectorSpace is None:
@@ -881,8 +880,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A^(-1)
             []
         """
-        cdef int k = 0
-        cdef mzd_t *I
         cdef Matrix_mod2_dense A
 
         if self._nrows != self._ncols:
@@ -1033,7 +1030,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.cache('rank', 0)
             self.cache('pivots', ())
             return self
-        cdef int k, n, full
+        cdef int k, full
 
         full = int(reduced)
 
@@ -1759,7 +1756,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         """
         cdef Py_ssize_t i, j, k, n
         cdef char *s
-        cdef char *t
 
         if self._nrows == 0 or self._ncols == 0:
             data = ''
@@ -2057,10 +2053,12 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
 
     return A
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.matrix.matrix_mod2_dense',
                            'unpickle_matrix_mod2_dense_v1',
                            unpickle_matrix_mod2_dense_v2)
+
 
 def from_png(filename):
     """

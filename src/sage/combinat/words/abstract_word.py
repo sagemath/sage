@@ -251,7 +251,7 @@ class Word_class(SageObject):
         """
         L = self.length()
         if L is None or L is Infinity:
-            msg = "Python len method cannot return a non integer value (=%s): "%L
+            msg = "Python len method cannot return a non integer value (=%s): " % L
             msg += "use length method instead."
             raise TypeError(msg)
         return int(L)
@@ -632,7 +632,7 @@ class Word_class(SageObject):
         """
         from sage.combinat.words.words import FiniteWords, InfiniteWords
         if use_parent_alphabet and\
-            isinstance(self.parent(), (FiniteWords, InfiniteWords)):
+                isinstance(self.parent(), (FiniteWords, InfiniteWords)):
             A = self.parent().alphabet()
             for letter in self:
                 yield A.rank(letter)
@@ -641,7 +641,7 @@ class Word_class(SageObject):
             mapping = {}
             next_value = 0
             for letter in self:
-                if not(letter in mapping):
+                if letter not in mapping:
                     mapping[letter] = next_value
                     next_value += 1
                 yield mapping[letter]

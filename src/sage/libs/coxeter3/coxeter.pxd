@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-coxeter3
+
 #*****************************************************************************
 #       Copyright (C) 2009-2013 Mike Hansen <mhansen@gmail.com>
 #
@@ -27,6 +29,3 @@ cdef class CoxGroupElement:
     cdef CoxGroup _parent_group
     cdef CoxGroupElement _new(self)
     cpdef CoxGroup parent_group(self)
-
-cdef class CoxGraph:
-    cdef c_CoxGraph x
