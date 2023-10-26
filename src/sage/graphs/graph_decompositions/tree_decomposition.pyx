@@ -82,9 +82,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
 
 .. TODO:
 
-    - Add method to return a *nice* tree decomposition
-    - Approximation of treelength based on
-      :meth:`~sage.graphs.graph.Graph.lex_M`
+    - Approximation of treelength based on :meth:`~sage.graphs.graph.Graph.lex_M`
     - Approximation of treelength based on BFS Layering
     - upgrade tdlib to 0.9.0 :trac:`30813`
 
@@ -765,6 +763,168 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
 
     G.name("Tree decomposition")
     return G
+
+def make_nice_tree_decomposition(T):
+    r"""
+    Return a *nice* tree-decomposition of the tree-decomposition `T`.
+
+    https://kam.mff.cuni.cz/~ashutosh/lectures/lec06.pdf
+
+    A *nice* tree-decomposition is a rooted binary tree with four types of
+    nodes:
+    - Leaf nodes have no children and bag size 1;
+    - Introduce nodes have one child. The child has the same vertices as the
+      parent with one deleted;
+    - Forget nodes have one child. The child has the same vertices as the parent
+      with one added.
+    - Join nodes have two children, both identical to the parent.
+
+    .. WARNING::
+
+        This method assumes that the vertices of the input tree `T` are hashable
+        and have attribute ``issuperset``, e.g., ``frozenset`` or
+        :class:`~sage.sets.set.Set_object_enumerated_with_category`.
+
+    INPUT:
+
+    - ``T`` -- a tree-decomposition
+    """
+    from sage.graphs.graph import Graph
+    if not isinstance(T, Graph):
+        raise ValueError("T must be a tree-decomposition")
+
+    name = "Nice tree-decomposition of {}".format(T.name())
+    if not T:
+        return Graph(name=name)
+
+    # P1: The tree is rooted.
+    # We choose a root and orient the edges in root to leaves direction.
+    leaves = [u for u in T if T.degree(u) == 1]
+    root = leaves.pop()
+    from sage.graphs.digraph import DiGraph
+    DT = DiGraph(T.breadth_first_search(start=root, edges=True),
+                 format='list_of_edges')
+
+    # We relabel the graph in range 0..|T|-1
+    bag_to_int = DT.relabel(inplace=True, return_map=True)
+    # get the new name of the root
+    root = bag_to_int[root]
+    # and force bags to be of type Set to simplify the code
+    bag = {ui: Set(u) for u, ui in bag_to_int.items()}
+
+    # P2: The root and the leaves have empty bags.
+    # To do so, we add to each leaf node l of DT a children with empty bag.
+    # We also add a new root with empty bag.
+    root, old_root = DT.add_vertex(), root
+    DT.add_edge(root, old_root)
+    bag[root] = Set()
+    for vi, u in enumerate(leaves, start=root + 1):
+        DT.add_edge(bag_to_int[u], vi)
+        bag[vi] = Set()
+
+    # P3: Ensure that each vertex of DT has at most 2 children.
+    # If b has k > 2 children (c1, c2, ..., c_k). We disconnect (c1, ... ck-1)
+    # from b, introduce k - 2 new vertices (b1, b2, .., bk-2), make ci the
+    # children of bi for 1 <= i <= k-2, make ck-1 the second children of bk-2,
+    # make bi the second children of b_i-1, and finally make b1 the second
+    # children of b. Each vertex bi has the same bag has b.
+    for ui in list(DT):  # the list(..) is needed since we modify DT
+        if DT.out_degree(ui) > 2:
+            children = DT.neighbors_out(ui)
+            children.pop()  # one vertex remains a child of ui
+            DT.delete_edges((ui, vi) for v in children)
+            new_vertices = [DT.add_vertex() for _ in range(len(children) - 1)]
+            DT.add_edge(ui, new_vertices[0])
+            DT.add_path(new_vertices)
+            DT.add_edges(zip(new_vertices, children))
+            DT.add_edge(new_vertices[-1], children[-1])
+            bag.update((vi, bag[ui]) for vi in new_vertices)
+
+    # P4: If b has 2 children c1 and c2, then bag[b] == bag[c1] == bag[c2]
+    for ui in list(DT):
+        if DT.out_degree(ui) < 2:
+            continue
+        for vi in DT.neighbor_out_iterator(ui):
+            if bag[ui] != bag[vi]:
+                DT.delete_edge(ui, vi)
+                wi = DT.add_vertex()
+                DT.add_path([ui, wi, vi])
+                bag[wi] = bag[ui]
+
+    # P5: if b has a single child c, then one of the following conditions holds:
+    #       (i)  bag[c] is a subset of bag[b] and |bag[b]| == |bag[c]| + 1
+    #       (ii) bag[b] is a subset of bag[c] and |bag[c]| == |bag[b]| + 1
+
+    def add_path_of_introduce(ui, vi):
+        """
+        Replace arc (ui, vi) by a path of introduce vertices.
+        """
+        if len(bag[ui]) + 1 == len(bag[vi]):
+            return
+        diff = list(bag[vi] - bag[ui])
+        diff.pop()  # when all vertices are added, we are on vi
+        xi = ui
+        for w in diff:
+            wi = DT.add_vertex()
+            bag[wi] = bag[xi].union(Set((w,)))
+            DT.add_edge(xi, wi)
+            xi = wi
+        DT.add_edge(xi, vi)
+        DT.delete_edge(ui, vi)
+
+    def add_path_of_forget(ui, vi):
+        """
+        Replace arc (ui, vi) by a path of forget vertices.
+        """
+        if len(bag[vi]) + 1 == len(bag[ui]):
+            return
+        diff = list(bag[ui] - bag[vi])
+        diff.pop()  # when all vertices are removed, we are on vi
+        xi = ui
+        for w in diff:
+            wi = DT.add_vertex()
+            bag[wi] = bag[xi] - Set((w,))
+            DT.add_edge(xi, wi)
+            xi = wi
+        DT.add_edge(xi, vi)
+        DT.delete_edge(ui, vi)
+
+    for ui in list(DT):
+        if DT.out_degree(ui) != 1:
+            continue
+        
+        vi = next(DT.neighbor_out_iterator(ui))
+        bag_ui, bag_vi = bag[ui], bag[vi]
+
+        if bag_ui == bag_vi:
+            # We can merge the vertices
+            if DT.in_degree(ui) == 1:
+                parent = next(DT.neighbor_in_iterator(ui))
+                DT.add_edge(parent, vi)
+            else:
+                root = vi
+            DT.delete_vertex(ui)
+
+        elif bag_ui.issubset(bag_vi):
+            add_path_of_introduce(ui, vi)
+
+        elif bag_vi.issubset(bag_ui):
+            add_path_of_forget(ui, vi)
+
+        else:
+            # We must first forget some nodes and then introduce new nodes
+            wi = DT.add_vertex()
+            bag[wi] = bag[ui] & bag[vi]
+            DT.add_path([ui, wi, vi])
+            DT.delete_edge(ui, vi)
+            add_path_of_forget(ui, wi)
+            add_path_of_introduce(wi, vi)
+
+    # We now return the result
+    nice = Graph(DT, name=name)
+    nice.relabel(inplace=True,
+                 perm={u: (i, bag[u]) for i, u in enumerate(nice.breadth_first_search(start=root))})
+    return nice
 
 
 #
