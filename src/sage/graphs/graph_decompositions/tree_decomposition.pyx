@@ -764,9 +764,11 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     G.name("Tree decomposition")
     return G
 
-def make_nice_tree_decomposition(T):
+def make_nice_tree_decomposition(graph, tree_decomp):
     r"""
-    Return a *nice* tree decomposition (TD) of the TD `T`.
+    Return a *nice* tree decomposition (TD) of the TD `tree_decomp`.
+
+    See page 161 of [CFKLMPPS15]_ for a description of the nice tree decomposition.
 
     A *nice* TD `NT` is a rooted tree with four types of nodes:
 
@@ -781,7 +783,8 @@ def make_nice_tree_decomposition(T):
 
     INPUT::
 
-    - ``T`` -- a tree decomposition
+    - ``graph`` -- a Sage graph
+    - ``tree_decomp`` -- a tree decomposition
 
     OUTPUT::
 
@@ -789,8 +792,8 @@ def make_nice_tree_decomposition(T):
 
     .. WARNING::
 
-        This method assumes that the vertices of the input tree `T` are hashable
-        and have attribute ``issuperset``, e.g., ``frozenset`` or
+        This method assumes that the vertices of the input tree `tree_decomp`
+        are hashable and have attribute ``issuperset``, e.g., ``frozenset`` or
         :class:`~sage.sets.set.Set_object_enumerated_with_category`.
 
     TESTS::
@@ -801,23 +804,23 @@ def make_nice_tree_decomposition(T):
 
     TODO
     """
-    from sage.graphs.graph import Graph
-    if not isinstance(T, Graph):
-        raise ValueError("Input must be a valid tree decomposition")
+    if not is_valid_tree_decomposition(graph, tree_decomp):
+        raise ValueError("input must be a valid tree decomposition for this graph")
 
-    name = f"Nice tree decomposition of {T.name()}"
-    if not T:
+    name = f"Nice tree decomposition of {tree_decomp.name()}"
+    if not tree_decomp:
+        from sage.graphs.graph import Graph
         return Graph(name=name)
 
     # Step 1: Ensure the tree is directed and has a root
     # Choose a root and orient the edges from root-to-leaves direction
-    leaves = [u for u in T if T.degree(u) == 1]
+    leaves = [u for u in tree_decomp if tree_decomp.degree(u) == 1]
     root = leaves.pop()
     from sage.graphs.digraph import DiGraph
-    directed_tree = DiGraph(T.breadth_first_search(start=root, edges=True),
+    directed_tree = DiGraph(tree_decomp.breadth_first_search(start=root, edges=True),
                             format='list_of_edges')
 
-    # Relabel the graph in range (0, |T| - 1)
+    # Relabel the graph in range (0, |tree_decomp| - 1)
     bags_to_int = directed_tree.relabel(inplace=True, return_map=True)
     # Get the new name of the root node
     root = bags_to_int[root]
