@@ -12,6 +12,19 @@
                     "message": 7,
                 }
             ]
+        },
+        {
+            "owner": "doctest-warning",
+            "severity": "warning",
+            "pattern": [
+                {
+                    "regexp": "^(\\[(\\S*)-[0-9.a-z]\\] )?File \"(\\S*)\", line ([0-9]*), in (\\S*)\\s*$(\\[(\\S*)-[0-9.a-z]\\] )?^(Warning):",
+                    "code": 2,
+                    "file": 3,
+                    "line": 4,
+                    "message": 7,
+                }
+            ]
         }
     ]
 }
