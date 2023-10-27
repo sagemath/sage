@@ -801,10 +801,25 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
         sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
         sage: petersen = graphs.PetersenGraph()
-        sage: TD = petersen.treewidth(certificate=True)
-        sage: nice_TD = make_nice_tree_decomposition(petersen, TD)
-        sage: len(nice_TD)
-        28
+        sage: petersen_TD = petersen.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(petersen, petersen_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 28 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: cherry = graphs.CompleteBipartiteGraph(1, 2)
+        sage: cherry_TD = cherry.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(cherry, cherry_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 7 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: bip_one_four = graphs.CompleteBipartiteGraph(1, 4)
+        sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 15 vertices
     """
     if not is_valid_tree_decomposition(graph, tree_decomp):
         raise ValueError("input must be a valid tree decomposition for this graph")
@@ -895,7 +910,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         last_node = u
         for w in diff:
             new_node = directed_tree.add_vertex()
-            bag[new_node] = bag[last_node].union({w})
+            bag[new_node] = bag[last_node].union(Set((w,)))
             directed_tree.add_edge(last_node, new_node)
             last_node = new_node
 
