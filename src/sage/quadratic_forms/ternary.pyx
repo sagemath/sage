@@ -164,7 +164,7 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
                 m12 = -m12
                 m22 = -m22
                 m32 = -m32
-                a13=-a13
+                a13 = -a13
             if (a12 < 0):
                 # M *= diagonal_matrix([1, 1, -1])
                 m13 = -m13
@@ -186,23 +186,23 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
                         if (a12 == 0):
                             s3 = 1
             if s1:
-                  # M *= diagonal_matrix([-1, 1, 1])
-                  m11 = -m11
-                  m21 = -m21
-                  m31 = -m31
-                  a23 = -a23
+                # M *= diagonal_matrix([-1, 1, 1])
+                m11 = -m11
+                m21 = -m21
+                m31 = -m31
+                a23 = -a23
             if s2:
-                  # M *= diagonal_matrix([1, -1, 1])
-                  m12 = -m12
-                  m22 = -m22
-                  m32 = -m32
-                  a13 = -a13
+                # M *= diagonal_matrix([1, -1, 1])
+                m12 = -m12
+                m22 = -m22
+                m32 = -m32
+                a13 = -a13
             if s3:
-                  # M *= diagonal_matrix([1, 1, -1])
-                  m13 = -m13
-                  m23 = -m23
-                  m33 = -m33
-                  a12 = -a12
+                # M *= diagonal_matrix([1, 1, -1])
+                m13 = -m13
+                m23 = -m23
+                m33 = -m33
+                a12 = -a12
 
         loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1 + a2 + a23 + a13 + a12 >= 0)
 
@@ -306,7 +306,6 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
 
     return (a1, a2, a3, a23, a13, a12), \
             matrix(ZZ, 3, (m11, m12, m13, m21, m22, m23, m31, m32, m33))
-
 
 
 def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
