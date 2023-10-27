@@ -1,6 +1,6 @@
 {
     "include": [
-      "src/sage"
+      "src"
     ],
     "executionEnvironments": [
       {
