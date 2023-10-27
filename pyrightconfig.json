@@ -1,15 +1,10 @@
 {
     "include": [
-      "src"
+      "src/sage"
     ],
-    "executionEnvironments": [
-      {
-        "root": "src"
-      }
-    ],  
+    "stubPath": "src/typings",
     "pythonVersion": "3.9",
     "exclude": ["venv"],
-    "venvPath": "./venv/",
 
     "reportGeneralTypeIssues": "warning",
     "reportUnboundVariable": "warning",
