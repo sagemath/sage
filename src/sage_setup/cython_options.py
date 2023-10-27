@@ -20,6 +20,7 @@ def compiler_directives(profile: bool):
         fast_getattr=True,
         # Use Python 3 (including source code semantics) for module compilation
         language_level="3",
+        legacy_implicit_noexcept=True,
         # Enable support for late includes (make declarations in Cython code available to C include files)
         preliminary_late_includes_cy28=True,
         # Add hooks for Python profilers into the compiled C code
