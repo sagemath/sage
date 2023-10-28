@@ -1,5 +1,4 @@
 py.install_sources(
-    '__init__.py',
     'all.py',
     'coerce_exceptions.py',
     'dynamic_class.py',
@@ -20,6 +19,7 @@ py.install_sources(
     'unique_representation.py',
     subdir: 'sage/structure',
 )
+install_subdir('proof', install_dir: sage_install_dir / 'structure' / 'proof')
 
 extension_data = {
     'category_object': files('category_object.pyx'),
