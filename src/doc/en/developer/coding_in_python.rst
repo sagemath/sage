@@ -606,8 +606,12 @@ that provide this information. Although various
 `tools for writing and maintaining type stub files
 <https://typing.readthedocs.io/en/latest/source/writing_stubs.html#writing-and-maintaining-stub-files>`_
 are available, creating stub files for Cython files involves manual work.
+There is hope that better tools become available soon, see for example
+`cython/cython #5744 <https://github.com/cython/cython/pull/5744>`_.
+Contributing to the development and testing of such tools likely will have a
+greater impact than writing the typestub files manually.
 
-For Cython modules of the Sage library, these type stub files should be placed
+For Cython modules of the Sage library, these type stub files would be placed
 next to the ``.pyx`` and ``.pxd`` files.
 
 When importing from other Python libraries that do not provide sufficient typing
