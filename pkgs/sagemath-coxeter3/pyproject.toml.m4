@@ -15,7 +15,7 @@ name = "sagemath-coxeter3"
 description = "Sage: Open Source Mathematics Software: Coxeter groups, Bruhat ordering, Kazhdan-Lusztig polynomials with coxeter3"
 dependencies = []
 dynamic = ["version"]
-include(`pyproject_toml_metadata.m4`)
+include(`pyproject_toml_metadata.m4')dnl'
 
 [project.readme]
 file = "README.rst"

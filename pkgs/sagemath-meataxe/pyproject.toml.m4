@@ -15,7 +15,7 @@ name = "sagemath-meataxe"
 description = "Sage: Open Source Mathematics Software: Matrices over small finite fields with meataxe"
 dependencies = []
 dynamic = ["version"]
-include(`pyproject_toml_metadata.m4`)
+include(`pyproject_toml_metadata.m4')dnl'
 
 [project.readme]
 file = "README.rst"
