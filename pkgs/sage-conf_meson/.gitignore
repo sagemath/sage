@@ -1,5 +1,4 @@
-/_sage_conf/_conf.py
-/builddir
+/sage_conf/builddir
 /build
 /dist
 /*.egg-info
