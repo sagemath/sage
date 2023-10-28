@@ -357,8 +357,7 @@ class PreLieOperad(CombinatorialFreeModule):
             Finite family {'pre_Lie_product': B[1[2[]]]}
         """
         from sage.sets.family import Family
-        return Family(dict([("pre_Lie_product",
-                             self.operad_generator(1, 2))]))
+        return Family({"pre_Lie_product": self.operad_generator(1, 2)})
 
     def pre_Lie_product(self, x, y):
         """

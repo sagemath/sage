@@ -226,8 +226,7 @@ class CommutativeOperad(CombinatorialFreeModule):
             Finite family {'commutative_product': B[word: 12]}
         """
         from sage.sets.family import Family
-        return Family(dict([("commutative_product",
-                             self.basis()[self.basis().keys()([1, 2])])]))
+        return Family({"commutative_product": self.basis()[self.basis().keys()([1, 2])]})
 
     def operad_morphism_on_basis(self, t, codomain):
         """

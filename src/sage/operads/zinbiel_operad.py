@@ -120,8 +120,7 @@ class ZinbielOperad(CombinatorialFreeModule):
             Finite family {'zinbiel_product': B[word: 12]}
         """
         from sage.sets.family import Family
-        return Family(dict([("zinbiel_product",
-                             self._from_key([1, 2]))]))
+        return Family({"zinbiel_product": self._from_key([1, 2])})
 
     def composition_on_basis_list(self, x, y, i):
         r"""
@@ -147,9 +146,8 @@ class ZinbielOperad(CombinatorialFreeModule):
         if i not in x:
             raise ValueError("the composition index is not present")
         elif x[0] == i:
-            return map(lambda u: y[:1] + u, ShuffleProduct_w1w2(x[1:], y[1:]))
-        return map(lambda u: x[:1] + u,
-                   self.composition_on_basis_list(x[1:], y, i))
+            return (y[:1] + u for u in ShuffleProduct_w1w2(x[1:], y[1:]))
+        return (x[:1] + u for u in self.composition_on_basis_list(x[1:], y, i))
 
     def composition_on_basis(self, x, y, i):
         """

@@ -177,8 +177,7 @@ class AssociativeOperad(CombinatorialFreeModule):
             Finite family {'associative_product': B[word: 12]}
         """
         from sage.sets.family import Family
-        return Family(dict([("associative_product",
-                             self.basis()[self.basis().keys()([1, 2])])]))
+        return Family({"associative_product": self.basis()[self.basis().keys()([1, 2])]})
 
     def operad_morphism_on_basis(self, t, codomain):
         """
