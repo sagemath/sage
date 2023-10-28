@@ -589,7 +589,7 @@ Static typing
 =============
 
 Python libraries are increasingly annotated with static typing information;
-see the `Python reference on typing <https://docs.python.org/3/library/typing.html>`.
+see the `Python reference on typing <https://docs.python.org/3/library/typing.html>`_.
 
 For typechecking the Sage library, the project uses :ref:`pyright <section-tools-pyright>`;
 it automatically runs in the GitHub Actions CI and can also be run locally.
