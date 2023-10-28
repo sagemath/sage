@@ -4,13 +4,15 @@ CVXPY Backend
 
 AUTHORS:
 
-- Nathann Cohen (2010-10)      : generic_backend template
-- Matthias Koeppe (2022-03)    : this backend
+- Nathann Cohen (2010-10):   generic_backend template
+- Matthias Koeppe (2022-03): this backend
+- Zhongling Xu (2023):       refactor through :class:`MatrixBackend`
 
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
-#       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2023 Zhongling Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,15 +21,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.numerical.mip import MIPSolverException
-from sage.rings.real_double import RDF
 from copy import copy
 import cvxpy
 from cvxpy.atoms.affine.add_expr import AddExpression
 from cvxpy.expressions.constants import Constant
 from cvxpy.constraints.zero import Equality
+from sage.numerical.mip import MIPSolverException
+from sage.rings.real_double import RDF
 
-cdef class CVXPYBackend:
+cdef class CVXPYBackend(MatrixBackend):
     """
     MIP Backend that delegates to CVXPY.
 
@@ -58,11 +60,11 @@ cdef class CVXPYBackend:
 
     Open-source solvers provided by optional packages::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()            # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()             # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()         # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()          # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()          # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()           # needs cvxopt
         0.0
         sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLOP"); p.solve()            # optional - ortools
         0.0
@@ -87,21 +89,22 @@ cdef class CVXPYBackend:
         0.0
     """
 
-    def __cinit__(self, maximization=True, base_ring=None, cvxpy_solver=None, cvxpy_solver_args=None):
+    def __cinit__(self, maximization=True, base_ring=None, sparse=None, implementation=None,
+                  cvxpy_solver=None, cvxpy_solver_args=None):
         """
         Cython constructor
 
         INPUT:
 
-        - ``maximization`` (boolean, default: ``True``) -- Whether this is a
+        - ``maximization`` -- boolean (default: ``True``); whether this is a
           maximization or minimization problem.
 
-        - ``base_ring`` (optional): Must be ``RDF`` if provided.
+        - ``base_ring`` -- (optional); must be ``RDF`` if provided.
 
-        - ``cvxpy_solver (optional): Passed to :meth:`cvxpy.Problem.solve` as the
+        - ``cvxpy_solver -- (optional); passed to :meth:`cvxpy.Problem.solve` as the
           parameter ``solver``.
 
-        - ``cvxpy_solver_args`` (optional dict): Passed to :meth:`cvxpy.Problem.solve`
+        - ``cvxpy_solver_args`` -- dict (optional); passed to :meth:`cvxpy.Problem.solve`
           as additional keyword arguments.
 
         EXAMPLES::
@@ -109,11 +112,33 @@ cdef class CVXPYBackend:
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
         """
-        if base_ring is None:
-            base_ring = RDF
-        elif base_ring != RDF:
+        self._cvxpy_solver = cvxpy_solver
+        self._cvxpy_solver_args = cvxpy_solver_args
+
+    def _init_base_ring(self, base_ring=None):
+        r"""
+        Handle a ``base_ring`` parameter passed to the constructor.
+
+        This implementation only allows to pass ``RDF``.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver="CVXPY", base_ring=RDF)  # indirect doctest
+            sage: p = get_solver(solver="CVXPY", base_ring=QQ)
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+        """
+        if base_ring != RDF and base_ring is not None:
             raise ValueError('base_ring must be RDF')
 
+        self._base_ring = RDF
+
+    def init_cvxpy_problem(self, maximization, cvxpy_solver=None, cvxpy_solver_args=None):
+        r"""
+        Create a :class:`cvxpy.Problem` from the stored data.
+        """
         if cvxpy_solver_args is None:
             cvxpy_solver_args = {}
 
@@ -127,24 +152,35 @@ cdef class CVXPYBackend:
         self._cvxpy_solver_args = cvxpy_solver_args
 
         self.set_verbosity(0)
+
         self.variables = []
-        self.constraint_names = []
-        self.Matrix = []
-        self.row_lower_bound = []
-        self.row_upper_bound = []
-        self.col_lower_bound = []
-        self.col_upper_bound = []
-        self.objective_coefficients = []
-        self.obj_constant_term = 0.0
-        if maximization:
-            objective = cvxpy.Maximize(0)
+        for j in range(self.ncols()):
+            lower_bound, upper_bound = self.col_bounds(j)
+            binary = self.is_binary[j]
+            continuous = self.is_continuous[j]
+            integer = self.is_integer[j]
+            name = self.col_name(j)
+            self.variables.append(self._cvxpy_variable(lower_bound, upper_bound,
+                                                       binary, continuous, integer, name))
+
+        if self.variables:
+            expr = AddExpression([c * x for c, x in zip(self.objective_coefficients[0], self.variables)])
         else:
-            objective = cvxpy.Minimize(0)
-        self.problem = cvxpy.Problem(objective, ())
+            expr = Constant(0)
+        if maximization:
+            objective = cvxpy.Maximize(expr)
+        else:
+            objective = cvxpy.Minimize(expr)
+
+        constraints = []
+        for i in range(self.nrows()):
+            constraints.extend(self._cvxpy_constraints(zip(*self.row(i)), *self.row_bounds(i)))
+
+        self.problem = cvxpy.Problem(objective, constraints)
 
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -159,30 +195,37 @@ cdef class CVXPYBackend:
             sage: cp.get_objective_value()  # abs tol 1e-7
             6.0
         """
-        cdef CVXPYBackend cp = type(self)(base_ring=self.base_ring())
+        cdef CVXPYBackend cp = super(CVXPYBackend, self).__copy__()
         cp.problem = self.problem                   # it's considered immutable; so no need to copy.
         cp.variables = copy(self.variables)
-        cp.constraint_names = copy(self.constraint_names)
-        cp.Matrix = [row[:] for row in self.Matrix]
-        cp.row_lower_bound = self.row_lower_bound[:]
-        cp.row_upper_bound = self.row_upper_bound[:]
-        cp.col_lower_bound = self.col_lower_bound[:]
-        cp.col_upper_bound = self.col_upper_bound[:]
-        cp.objective_coefficients = self.objective_coefficients[:]
-        cp.obj_constant_term = self.obj_constant_term
         return cp
 
     cpdef cvxpy_problem(self):
+        r"""
+        Return the :class:`cvxpy.Problem`.
+        """
         return self.problem
 
     def cvxpy_variables(self):
+        r"""
+        Return a list of the :class:`cvxpy.Variable` objects.
+        """
         return self.variables
+
+    def _cvxpy_variable(self, lower_bound, upper_bound, binary, continuous, integer, name):
+        if binary:
+            variable = cvxpy.Variable(name=name, boolean=True)
+        elif integer:
+            variable = cvxpy.Variable(name=name, integer=True)
+        else:
+            variable = cvxpy.Variable(name=name)
+        return variable
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
                            binary=False, continuous=True, integer=False,
                            obj=None, name=None, coefficients=None) except -1:
-        ## coefficients is an extension in this backend,
-        ## and a proposed addition to the interface, to unify this with add_col.
+        # coefficients is an extension in this backend,
+        # and a proposed addition to the interface, to unify this with add_col.
         """
         Add a variable.
 
@@ -225,12 +268,14 @@ cdef class CVXPYBackend:
             Traceback (most recent call last):
             ...
             ValueError: ...
-            sage: p.add_variable(name='x',obj=1)
+            sage: p.add_variable(name='x', obj=1)
             1
             sage: p.col_name(1)
             'x'
             sage: p.objective_coefficient(1)
             1.0
+            sage: p.objective_coefficient(1).parent()
+            Real Double Field
         """
         cdef int vtype = int(binary) + int(continuous) + int(integer)
         if vtype == 0:
@@ -238,50 +283,37 @@ cdef class CVXPYBackend:
         elif vtype != 1:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
 
-        for i in range(len(self.Matrix)):
-            self.Matrix[i].append(0.0)
-        if lower_bound is not None:
-            lower_bound = float(lower_bound)
-        self.col_lower_bound.append(lower_bound)
-        if upper_bound is not None:
-            upper_bound = float(upper_bound)
-        self.col_upper_bound.append(upper_bound)
-        if obj is None:
-            obj = 0.0
+        index = super(CVXPYBackend, self).add_variable(lower_bound, upper_bound,
+                                                       binary, continuous, integer,
+                                                       obj, name, coefficients)
+        if self.problem is None:
+            pass
         else:
-            obj = float(obj)
-        self.objective_coefficients.append(obj)
+            name = self.col_name(index)
+            variable = self._cvxpy_variable(lower_bound, upper_bound, binary, continuous, integer, name)
+            constraints = self.problem.constraints
 
-        if name is None:
-            name = f'x_{self.ncols()}'
+            if coefficients is not None:
+                constraints = list(constraints)
+                for i, v in coefficients:
+                    if not isinstance(constraints[i], Equality):
+                        # adding coefficients to inequalities is ambiguous
+                        # because cvxpy rewrites all inequalities as <=
+                        # - so just re-create the problem on next 'solve'
+                        self.problem = self.variables = None
+                        self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
+                        return index
 
-        if binary:
-            variable = cvxpy.Variable(name=name, boolean=True)
-        elif integer:
-            variable = cvxpy.Variable(name=name, integer=True)
-        else:
-            variable = cvxpy.Variable(name=name)
+                    constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
+                                                          constraints[i].args[1])
+            objective = self.problem.objective
+            if obj:
+                objective = type(objective)(self.problem.objective.args[0] + obj * variable)
 
-        self.variables.append(variable)
-        index = self.ncols() - 1
-
-        if coefficients is not None:
-            constraints = list(self.problem.constraints)
-            for i, v in coefficients:
-                if not isinstance(constraints[i], Equality):
-                    raise NotImplementedError('adding coefficients to inequalities is ambiguous '
-                                              'because cvxpy rewrites all inequalities as <=')
-                constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
-                                                      constraints[i].args[1])
-            self.problem = cvxpy.Problem(self.problem.objective, constraints)
+            self.problem = cvxpy.Problem(objective, constraints)
+            self.variables.append(variable)
 
         self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
-
-        if obj:
-            objective = type(self.problem.objective)(self.problem.objective.args[0]
-                                                     + obj * variable)
-            self.problem = cvxpy.Problem(objective, self.problem.constraints)
-
         return index
 
     cpdef set_verbosity(self, int level):
@@ -301,6 +333,38 @@ cdef class CVXPYBackend:
             sage: p.set_verbosity(2)
         """
         pass
+
+    def _cvxpy_constraints(self, coefficients, lower_bound, upper_bound):
+        r"""
+        Return a list of :class:`cvxpy.Constraint` objects that express
+        ``lower_bound <= coefficients * variables <= upper_bound``.
+
+        INPUT:
+
+        - ``coefficients`` -- an iterable of pairs ``(i, v)``. In each
+          pair, ``i`` is a variable index (integer) and ``v`` is a
+          value (element of :meth:`base_ring`).
+
+        - ``lower_bound`` -- element of :meth:`base_ring` or
+          ``None``. The lower bound.
+
+        - ``upper_bound`` -- element of :meth:`base_ring` or
+          ``None``. The upper bound.
+        """
+        constraints = []
+        terms = [v * self.variables[i] for i, v in coefficients]
+        if terms:
+            expr = AddExpression(terms)
+        else:
+            expr = Constant(0)
+        if lower_bound is not None and lower_bound == upper_bound:
+            constraints.append(expr == upper_bound)
+        else:
+            if lower_bound is not None:
+                constraints.append(lower_bound <= expr)
+            if upper_bound is not None:
+                constraints.append(expr <= upper_bound)
+        return constraints
 
     cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
@@ -329,84 +393,20 @@ cdef class CVXPYBackend:
             sage: index = p.nrows()
             sage: p.add_linear_constraint( zip(range(5), range(5)), 2, 2)
             sage: p.row(index)
-            ([1, 2, 3, 4], [1, 2, 3, 4])
+            ([1, 2, 3, 4], [1.0, 2.0, 3.0, 4.0])
             sage: p.row_bounds(index)
-            (2, 2)
+            (2.0, 2.0)
             sage: p.add_linear_constraint( zip(range(5), range(5)), 1, 1, name='foo')
             sage: p.row_name(1)
             'constraint_1'
         """
-        last = len(self.Matrix)
-        self.Matrix.append([])
-        for i in range(len(self.objective_coefficients)):
-            self.Matrix[last].append(0.0)
-        for a in coefficients:
-            self.Matrix[last][a[0]] = a[1]
+        super(CVXPYBackend, self).add_linear_constraint(coefficients, lower_bound, upper_bound, name)
 
-        self.row_lower_bound.append(lower_bound)
-        self.row_upper_bound.append(upper_bound)
-
-        terms = [v * self.variables[i] for i, v in coefficients]
-        if terms:
-            expr = AddExpression(terms)
+        if self.problem is None:
+            pass
         else:
-            expr = Constant(0)
-        constraints = list(self.problem.constraints)
-        if lower_bound is not None and lower_bound == upper_bound:
-            constraints.append(expr == upper_bound)
-        elif lower_bound is not None:
-            constraints.append(lower_bound <= expr)
-        elif upper_bound is not None:
-            constraints.append(expr <= upper_bound)
-        self.constraint_names.append(name)
-        self.problem = cvxpy.Problem(self.problem.objective, constraints)
-
-    cpdef add_col(self, indices, coeffs):
-        """
-        Add a column.
-
-        INPUT:
-
-        - ``indices`` (list of integers) -- this list contains the
-          indices of the constraints in which the variable's
-          coefficient is nonzero
-
-        - ``coeffs`` (list of real values) -- associates a coefficient
-          to the variable in each of the constraints in which it
-          appears. Namely, the i-th entry of ``coeffs`` corresponds to
-          the coefficient of the variable in the constraint
-          represented by the i-th entry in ``indices``.
-
-        .. NOTE::
-
-            ``indices`` and ``coeffs`` are expected to be of the same
-            length.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.ncols()
-            0
-            sage: p.nrows()
-            0
-            sage: p.add_linear_constraints(5, 0, None)
-            sage: p.add_col(list(range(5)), list(range(5)))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: adding coefficients to inequalities is ambiguous because cvxpy rewrites all inequalities as <=
-            sage: p.nrows()
-            5
-        """
-        for i in range(len(self.Matrix)):
-            self.Matrix[i].append(0)
-        for i in range(len(indices)):
-            self.Matrix[indices[i]][len(self.Matrix[indices[i]]) - 1] = coeffs[i]
-
-        self.col_lower_bound.append(None)
-        self.col_upper_bound.append(None)
-        #self.objective_coefficients.append(0) goes to "self.add_variable"
-        self.add_variable(coefficients=zip(indices, coeffs))
+            constraints = self.problem.constraints + self._cvxpy_constraints(coefficients, lower_bound, upper_bound)
+            self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
     cpdef set_objective(self, list coeff, d=0.0):
         """
@@ -414,7 +414,7 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``coeff`` - a list of real values, whose ith element is the
+        - ``coeff`` -- a list of real values, whose ith element is the
           coefficient of the ith variable in the objective function.
 
         - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
@@ -429,16 +429,18 @@ cdef class CVXPYBackend:
             sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0, 1.0, 2.0, 1.0, 3.0]
         """
-        if self.variables:
-            expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
-            for i in range(len(coeff)):
-                self.objective_coefficients[i] = float(coeff[i])
+        super(CVXPYBackend, self).set_objective(coeff, d)
+
+        if self.problem is None:
+            pass
         else:
-            expr = Constant(0)
-        objective = type(self.problem.objective)(expr)
-        constraints = list(self.problem.constraints)
-        self.problem = cvxpy.Problem(objective, constraints)
-        self.obj_constant_term = d
+            if self.variables:
+                expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
+            else:
+                expr = Constant(0)
+            objective = type(self.problem.objective)(expr)
+            constraints = list(self.problem.constraints)
+            self.problem = cvxpy.Problem(objective, constraints)
 
     cpdef set_sense(self, int sense):
         """
@@ -446,10 +448,10 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` (integer):
 
-            * +1 => Maximization
-            * -1 => Minimization
+          * +1 => Maximization
+          * -1 => Minimization
 
         EXAMPLES::
 
@@ -461,12 +463,17 @@ cdef class CVXPYBackend:
             sage: p.is_maximization()
             False
         """
-        expr = self.problem.objective.args[0]
-        if sense == 1:
-            objective = cvxpy.Maximize(expr)
+        super(CVXPYBackend, self).set_sense(sense)
+
+        if self.problem is None:
+            pass
         else:
-            objective = cvxpy.Minimize(expr)
-        self.problem = cvxpy.Problem(objective, self.problem.constraints)
+            expr = self.problem.objective.args[0]
+            if sense == 1:
+                objective = cvxpy.Maximize(expr)
+            else:
+                objective = cvxpy.Minimize(expr)
+            self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
@@ -489,19 +496,19 @@ cdef class CVXPYBackend:
             0.0
             sage: p.objective_coefficient(0, 2)
             sage: p.objective_coefficient(0)
-            2
+            2.0
         """
         if coeff is not None:
-            self.objective_coefficients[variable] = coeff
-            expr = self.problem.objective.args[0] + coeff * self.variables[variable]
-            objective = type(self.problem.objective)(expr)
-            constraints = list(self.problem.constraints)
-            self.problem = cvxpy.Problem(objective, constraints)
-        else:
-            if variable < len(self.objective_coefficients):
-                return self.objective_coefficients[variable]
+            super(CVXPYBackend, self).objective_coefficient(variable, coeff)
+            if self.problem is None:
+                pass
             else:
-                return 0
+                expr = self.problem.objective.args[0] + coeff * self.variables[variable]  # FIXME: Wrong if variable already had a nonzero coeff
+                objective = type(self.problem.objective)(expr)
+                constraints = list(self.problem.constraints)
+                self.problem = cvxpy.Problem(objective, constraints)
+        else:
+            return super(CVXPYBackend, self).objective_coefficient(variable, coeff)
 
     cpdef int solve(self) except -1:
         """
@@ -519,21 +526,22 @@ cdef class CVXPYBackend:
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_linear_constraints(5, 0, None)
             sage: p.add_col(list(range(5)), list(range(5)))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: adding coefficients to inequalities is ambiguous because cvxpy rewrites all inequalities as <=
             sage: p.solve()
             0
-            sage: p.objective_coefficient(0,1)
+            sage: p.objective_coefficient(0, 1)
             sage: p.solve()
             Traceback (most recent call last):
             ...
             MIPSolverException: ...
         """
+        if not self.problem:
+            self.init_cvxpy_problem(self.is_maximize, self._cvxpy_solver, self._cvxpy_solver_args)
+
         try:
             self.problem.solve(solver=self._cvxpy_solver, **self._cvxpy_solver_args)
         except Exception as e:
             raise MIPSolverException(f"cvxpy.Problem.solve raised exception: {e}")
+
         status = self.problem.status
         if 'optimal' in status:
             return 0
@@ -597,55 +605,6 @@ cdef class CVXPYBackend:
         """
         return float(self.variables[variable].value)
 
-    cpdef int ncols(self):
-        """
-        Return the number of columns/variables.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.ncols()
-            0
-            sage: p.add_variables(2)
-            1
-            sage: p.ncols()
-            2
-        """
-        return len(self.variables)
-
-    cpdef int nrows(self):
-        """
-        Return the number of rows/constraints.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.nrows()
-            0
-            sage: p.add_linear_constraints(2, 0, None)
-            sage: p.nrows()
-            2
-        """
-        return len(self.problem.constraints)
-
-    cpdef bint is_maximization(self):
-        """
-        Test whether the problem is a maximization
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.is_maximization()
-            True
-            sage: p.set_sense(-1)
-            sage: p.is_maximization()
-            False
-        """
-        return isinstance(self.problem.objective, cvxpy.Maximize)
-
     cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
@@ -670,263 +629,3 @@ cdef class CVXPYBackend:
                 return ""
         else:
             self.prob_name = str(name)
-
-    cpdef row(self, int i):
-        """
-        Return a row
-
-        INPUT:
-
-        - ``index`` (integer) -- the constraint's id.
-
-        OUTPUT:
-
-        A pair ``(indices, coeffs)`` where ``indices`` lists the
-        entries whose coefficient is nonzero, and to which ``coeffs``
-        associates their coefficient on the model of the
-        ``add_linear_constraint`` method.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variables(5)
-            4
-            sage: index = p.nrows()
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
-            sage: p.row(index)
-            ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(index)
-            (2, 2)
-        """
-        idx = []
-        coef = []
-        for j in range(len(self.Matrix[i])):
-            if self.Matrix[i][j] != 0:
-                idx.append(j)
-                coef.append(self.Matrix[i][j])
-        return (idx, coef)
-
-    cpdef row_bounds(self, int index):
-        """
-        Return the bounds of a specific constraint.
-
-        INPUT:
-
-        - ``index`` (integer) -- the constraint's id.
-
-        OUTPUT:
-
-        A pair ``(lower_bound, upper_bound)``. Each of them can be set
-        to ``None`` if the constraint is not bounded in the
-        corresponding direction, and is a real value otherwise.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variables(5)
-            4
-            sage: index = p.nrows()
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
-            sage: p.row(index)
-            ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(index)
-            (2, 2)
-        """
-        return (self.row_lower_bound[index], self.row_upper_bound[index])
-
-    cpdef col_bounds(self, int index):
-        """
-        Return the bounds of a specific variable.
-
-        INPUT:
-
-        - ``index`` (integer) -- the variable's id.
-
-        OUTPUT:
-
-        A pair ``(lower_bound, upper_bound)``. Each of them can be set
-        to ``None`` if the variable is not bounded in the
-        corresponding direction, and is a real value otherwise.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variable()
-            0
-            sage: p.col_bounds(0)
-            (0.0, None)
-            sage: p.variable_upper_bound(0, 5)
-            sage: p.col_bounds(0)
-            (0.0, 5)
-        """
-        return (self.col_lower_bound[index], self.col_upper_bound[index])
-
-    cpdef bint is_variable_binary(self, int index):
-        """
-        Test whether the given variable is of binary type.
-
-        INPUT:
-
-        - ``index`` (integer) -- the variable's id
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.ncols()
-            0
-            sage: p.add_variable()
-            0
-            sage: p.is_variable_binary(0)
-            False
-        """
-        return bool(self.variables[index].boolean_idx)
-
-    cpdef bint is_variable_integer(self, int index):
-        """
-        Test whether the given variable is of integer type.
-
-        INPUT:
-
-        - ``index`` (integer) -- the variable's id
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.ncols()
-            0
-            sage: p.add_variable()
-            0
-            sage: p.is_variable_integer(0)
-            False
-        """
-        return bool(self.variables[index].integer_idx)
-
-    cpdef bint is_variable_continuous(self, int index):
-        """
-        Test whether the given variable is of continuous/real type.
-
-        INPUT:
-
-        - ``index`` (integer) -- the variable's id
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.ncols()
-            0
-            sage: p.add_variable()
-            0
-            sage: p.is_variable_continuous(0)
-            True
-        """
-        return not self.is_variable_binary(index) and not self.is_variable_integer(index)
-
-    cpdef row_name(self, int index):
-        """
-        Return the ``index`` th row name
-
-        INPUT:
-
-        - ``index`` (integer) -- the row's id
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_linear_constraint([], 2, 2)
-            sage: p.row_name(0)
-            'constraint_0'
-        """
-        return self.constraint_names[index] or ("constraint_" + repr(index))
-
-    cpdef col_name(self, int index):
-        """
-        Return the ``index`` th col name
-
-        INPUT:
-
-        - ``index`` (integer) -- the col's id
-
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variable()
-            0
-            sage: p.col_name(0)
-            'x_0'
-        """
-        return self.variables[index].name()
-
-    cpdef variable_upper_bound(self, int index, value = False):
-        """
-        Return or define the upper bound on a variable
-
-        INPUT:
-
-        - ``index`` (integer) -- the variable's id
-
-        - ``value`` -- real value, or ``None`` to mean that the
-          variable has not upper bound. When set to ``None``
-          (default), the method returns the current value.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variable()
-            0
-            sage: p.col_bounds(0)
-            (0.0, None)
-            sage: p.variable_upper_bound(0, 5)
-            sage: p.col_bounds(0)
-            (0.0, 5)
-            sage: p.variable_upper_bound(0, None)
-            sage: p.col_bounds(0)
-            (0.0, None)
-        """
-        if value is not False:
-            self.col_upper_bound[index] = value
-        else:
-            return self.col_upper_bound[index]
-
-    cpdef variable_lower_bound(self, int index, value = False):
-        """
-        Return or define the lower bound on a variable
-
-        INPUT:
-
-        - ``index`` (integer) -- the variable's id
-
-        - ``value`` -- real value, or ``None`` to mean that the
-          variable has not lower bound. When set to ``None``
-          (default), the method returns the current value.
-
-        EXAMPLES::
-
-            sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
-            sage: p.add_variable()
-            0
-            sage: p.col_bounds(0)
-            (0.0, None)
-            sage: p.variable_lower_bound(0, 5)
-            sage: p.col_bounds(0)
-            (5, None)
-            sage: p.variable_lower_bound(0, None)
-            sage: p.col_bounds(0)
-            (None, None)
-        """
-        if value is not False:
-            self.col_lower_bound[index] = value
-        else:
-            return self.col_lower_bound[index]
