@@ -12,7 +12,7 @@ name = "sagemath-environment"
 description = "Sage: Open Source Mathematics Software: System and software environment"
 dependencies = []
 dynamic = ["version"]
-include(`pyproject_toml_metadata.m4`)
+include(`pyproject_toml_metadata.m4')dnl'
 
 [project.optional-dependencies]
 conf      = [SPKG_INSTALL_REQUIRES_sage_conf]           # sage.env can optionally use sage_conf

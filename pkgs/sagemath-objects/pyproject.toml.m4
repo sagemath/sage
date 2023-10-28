@@ -20,7 +20,7 @@ dependencies = [
     SPKG_INSTALL_REQUIRES_cysignals
 ]
 dynamic = ["version"]
-include(`pyproject_toml_metadata.m4`)
+include(`pyproject_toml_metadata.m4')dnl'
 
 [project.optional-dependencies]
 # Currently we do not use the sage doctester to test sagemath-objects,

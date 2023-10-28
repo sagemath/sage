@@ -17,7 +17,7 @@ dependencies = [
     SPKG_INSTALL_REQUIRES_ipywidgets
 ]
 dynamic = ["version"]
-include(`pyproject_toml_metadata.m4`)
+include(`pyproject_toml_metadata.m4')dnl'
 
 [project.readme]
 file = "README.rst"
