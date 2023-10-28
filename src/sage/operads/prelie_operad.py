@@ -350,7 +350,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
-        Return the familly of generators.
+        Return the family of generators.
 
         EXAMPLES::
 
