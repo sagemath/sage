@@ -170,9 +170,7 @@ class MirrorList_from_url(object):
         timed_mirrors = []
         import time, socket
         log.info('Searching fastest mirror')
-        timeout = socket.getdefaulttimeout()
-        if timeout is None:
-            timeout = 1
+        timeout = 1
         for mirror in self.mirrors:
             if not mirror.startswith('http'):
                 log.debug('we currently can only handle http, got %s', mirror)
@@ -190,6 +188,11 @@ class MirrorList_from_url(object):
             result_ms = int(1000 * result)
             log.info(str(result_ms).rjust(5) + 'ms: ' + mirror)
             timed_mirrors.append((result, mirror))
+            timed_mirrors.sort()
+            if len(timed_mirrors) >= 5 and timed_mirrors[4][0] < 0.3:
+                # We don't need more than 5 decent mirrors
+                break
+
         if len(timed_mirrors) == 0:
             # We cannot reach any mirror directly, most likely firewall issue
             if 'http_proxy' not in os.environ:
@@ -197,7 +200,6 @@ class MirrorList_from_url(object):
                 raise MirrorListException('Failed to connect to any mirror, probably no internet connection')
             log.info('Cannot time mirrors via proxy, using default order')
         else:
-            timed_mirrors.sort()
             self._mirrors = [m[1] for m in timed_mirrors]
         log.info('Fastest mirror: ' + self.fastest)
 
