@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The Pre-Lie Operad
 
@@ -85,7 +84,7 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: PreLieOperad(QQ)  # indirect doctest
             The Pre-Lie operad over Rational Field
         """
-        return "The Pre-Lie operad over {}".format(self.base_ring())
+        return f"The Pre-Lie operad over {self.base_ring()}"
 
     def species(self):
         """

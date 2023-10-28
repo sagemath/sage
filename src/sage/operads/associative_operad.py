@@ -26,7 +26,7 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: AssociativeOperad(QQ)       # indirect doctest
             The Associative operad over Rational Field
         """
-        return "The Associative operad over {}".format(self.base_ring())
+        return f"The Associative operad over {self.base_ring()}"
 
     def species(self):
         """

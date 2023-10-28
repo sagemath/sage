@@ -46,7 +46,7 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: CommutativeOperad(QQ)       # indirect doctest
             The Commutative operad over Rational Field
         """
-        return "The Commutative operad over {}".format(self.base_ring())
+        return f"The Commutative operad over {self.base_ring()}"
 
     def species(self):
         """

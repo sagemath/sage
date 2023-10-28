@@ -48,7 +48,7 @@ class NapOperad(CombinatorialFreeModule):
             sage: NapOperad(QQ)         # indirect doctest
             The Nap operad over Rational Field
         """
-        return "The Nap operad over {}".format(self.base_ring())
+        return f"The Nap operad over {self.base_ring()}"
 
     def species(self):
         """

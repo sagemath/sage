@@ -57,7 +57,7 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: DendriformOperad(QQ)  # indirect doctest
             The Dendriform operad over Rational Field
         """
-        return "The Dendriform operad over {}".format(self.base_ring())
+        return f"The Dendriform operad over {self.base_ring()}"
 
     def species(self):
         """

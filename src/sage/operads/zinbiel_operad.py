@@ -51,7 +51,7 @@ class ZinbielOperad(CombinatorialFreeModule):
             sage: ZinbielOperad(QQ)     # indirect doctest
             The Zinbiel operad over Rational Field
         """
-        return "The Zinbiel operad over {}".format(self.base_ring())
+        return f"The Zinbiel operad over {self.base_ring()}"
 
     def species(self):
         """
