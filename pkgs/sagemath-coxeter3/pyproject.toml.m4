@@ -9,3 +9,27 @@ requires = [
     SPKG_INSTALL_REQUIRES_cysignals
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-coxeter3"
+description = "Sage: Open Source Mathematics Software: Coxeter groups, Bruhat ordering, Kazhdan-Lusztig polynomials with coxeter3"
+dependencies = []
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4`)
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[tool.setuptools]
+packages = ["sage.libs.coxeter3"]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
+
+[tool.setuptools.package-data]
+"sage.libs.coxeter3" = [
+    "coxeter.pxd",
+    "decl.pxd",
+]
