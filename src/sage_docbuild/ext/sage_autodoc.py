@@ -536,9 +536,15 @@ class Documenter:
                                self.fullname, exc, type='autodoc')
                 args = None
 
-        result = self.env.events.emit_firstresult('autodoc-process-signature',
+        try:
+            result = self.env.events.emit_firstresult('autodoc-process-signature',
                                                   self.objtype, self.fullname,
                                                   self.object, self.options, args, retann)
+        except Exception:
+            signature = inspect.signature(self.object)
+            logger.warning(f"signature: {signature}")
+            raise
+
         if result:
             args, retann = result
 
@@ -968,7 +974,7 @@ class Documenter:
             sig = self.format_signature()
         except Exception as exc:
             logger.warning(__('error while formatting signature for %s: %s'),
-                           self.fullname, exc, type='autodoc')
+                           self.fullname, exc, type='autodoc', exc_info=True)
             return
 
         # generate the directive header and options, if applicable
