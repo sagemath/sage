@@ -1130,7 +1130,8 @@ def unpickle_all(target, debug=False, run_test_suite=False):
         Successfully unpickled 1 objects.
         Failed to unpickle 0 objects.
     """
-    import os.path, tarfile
+    import os.path
+    import tarfile
 
     ok_count = 0
     fail_count = 0
