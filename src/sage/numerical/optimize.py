@@ -217,7 +217,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
 
     - ``f`` -- a function of at most one variable.
 
-    - ``a``, ``b`` -- endpoints of interval on which to minimize self.
+    - ``a``, ``b`` -- endpoints of interval on which to minimize `f`.
 
     - ``tol`` -- the convergence tolerance
 
@@ -226,10 +226,10 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
 
     OUTPUT:
 
-    - ``minval`` -- (float) the minimum value that self takes on in the
+    - ``minval`` -- (float) the minimum value that `f` takes on in the
       interval `[a,b]`
 
-    - ``x`` -- (float) the point at which self takes on the minimum value
+    - ``x`` -- (float) the point at which `f` takes on the minimum value
 
 
     EXAMPLES::
@@ -323,15 +323,15 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
       ``'default'`` (for Python functions, the simplex method is the default)
       (for symbolic functions bfgs is the default):
 
-       - ``'simplex'`` -- using the downhill simplex algorithm
+      - ``'simplex'`` -- using the downhill simplex algorithm
 
-       - ``'powell'`` -- use the modified Powell algorithm
+      - ``'powell'`` -- use the modified Powell algorithm
 
-       - ``'bfgs'`` -- (Broyden-Fletcher-Goldfarb-Shanno) requires gradient
+      - ``'bfgs'`` -- (Broyden-Fletcher-Goldfarb-Shanno) requires gradient
 
-       - ``'cg'`` -- (conjugate-gradient) requires gradient
+      - ``'cg'`` -- (conjugate-gradient) requires gradient
 
-       - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
+      - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
 
     - ``verbose`` -- (optional, default: False) print convergence message
 
@@ -366,7 +366,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
     Same example with just Python functions::
 
-        sage: def rosen(x): # The Rosenbrock function
+        sage: def rosen(x):  # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: minimize(rosen, [.1,.3,.4]) # abs tol 3e-5
         (1.0, 1.0, 1.0)
@@ -374,11 +374,12 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     Same example with a pure Python function and a Python function to
     compute the gradient::
 
-        sage: def rosen(x): # The Rosenbrock function
+        sage: # needs numpy
+        sage: def rosen(x):  # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
-        sage: import numpy                                                              # needs numpy
-        sage: from numpy import zeros                                                   # needs numpy
-        sage: def rosen_der(x):                                                         # needs numpy
+        sage: import numpy
+        sage: from numpy import zeros
+        sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
         ....:    xm_m1 = x[:-2r]
         ....:    xm_p1 = x[2r:]
@@ -387,7 +388,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         ....:    der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
         ....:    der[-1] = 200r*(x[-1r]-x[-2r]**2r)
         ....:    return der
-        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6           # needs numpy
+        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6
         ....:          algorithm="bfgs")
         (1.0, 1.0, 1.0)
     """
@@ -440,7 +441,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
     INPUT:
 
     - ``func`` -- Either a symbolic function, or a Python function whose
-      argument is a tuple with n components
+      argument is a tuple with `n` components
 
     - ``cons`` -- constraints. This should be either a function or list of
       functions that must be positive. Alternatively, the constraints can
