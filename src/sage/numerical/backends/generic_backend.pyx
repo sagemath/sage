@@ -141,13 +141,13 @@ cdef class GenericBackend:
         Check that arguments are used::
 
             sage: # optional - nonexistent_lp_solver
-            sage: p.col_bounds(5)
+            sage: p.col_bounds(5)               # tol 1e-8
             (-2.0, None)
             sage: p.is_variable_integer(5)
             True
             sage: p.col_name(5)
             'a'
-            sage: p.objective_coefficient(5)
+            sage: p.objective_coefficient(5)    # tol 1e-8
             42.0
         """
         cdef int i
