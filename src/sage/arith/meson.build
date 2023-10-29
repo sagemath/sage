@@ -1,0 +1,25 @@
+py.install_sources(
+    'all.py',
+    'all__sagemath_objects.py',
+    'misc.py',
+    subdir: 'sage/arith',
+)
+
+extension_data = {
+    'functions': files('functions.pyx'),
+    'multi_modular': files('multi_modular.pyx'),# - compilation error
+    'numerical_approx': files('numerical_approx.pyx'),
+    'power': files('power.pyx'),
+    'rational_reconstruction': files('rational_reconstruction.pyx'),
+    'srange': files('srange.pyx'),
+}
+
+foreach name, pyx : extension_data
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/arith',
+        install: true,
+        include_directories: [inc_cpython, inc_rings, inc_ext],
+        dependencies: [py_dep, cysignals, gmp],
+    )
+endforeach

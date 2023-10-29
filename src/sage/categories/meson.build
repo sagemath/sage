@@ -1,5 +1,4 @@
 py.install_sources(
-    '__init__.py',
     'additive_groups.py',
     'additive_magmas.py',
     'additive_monoids.py',
@@ -196,7 +195,7 @@ py.install_sources(
 extension_data = {
     'action': files('action.pyx'),
     'category_cy_helper': files('category_cy_helper.pyx'),
-    #'category_singleton': files('category_singleton.pyx'), -- cannot find cpython for some reason?!
+    'category_singleton': files('category_singleton.pyx'),
     'coercion_methods': files('coercion_methods.pyx'),
     'functor': files('functor.pyx'),
     'map': files('map.pyx'),
@@ -208,7 +207,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/categories',
         install: true,
-        include_directories: [inc_cpython],
+        #cython_args: ['-I', inc_numpy, '-I', '/workspaces/sage/builddir'],
+        include_directories: [inc_cpython, inc_numpy],
         dependencies: [py_dep],
     )
 endforeach

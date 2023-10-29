@@ -56,6 +56,9 @@ configure_file(input : 'pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
                output : '_conf.py',
                configuration : conf_data)
 
+#arb = dependency('arb', required: true)
+#cpari = dependency('cpari', required: true)
+
 test(
     'import',
     py,

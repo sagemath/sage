@@ -5,6 +5,7 @@ no_processing = [
     'repl',
     'doctest',
     'features',
+    'typeset',
 ]
 foreach package : no_processing
     install_subdir(package, install_dir: sage_install_dir)
@@ -29,9 +30,12 @@ py.install_sources(
 )
 
 subdir('cpython')
-subdir('libs/gmp')
+subdir('libs')
 subdir('misc')
 subdir('structure')
 subdir('categories')
 subdir('sets')
 subdir('data_structures')
+subdir('rings')
+subdir('arith')
+subdir('combinat')

@@ -116,6 +116,6 @@ foreach name, pyx : extension_data
         subdir: 'sage/misc',
         include_directories: [inc_cpython],
         install: true,
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
