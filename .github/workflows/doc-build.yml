@@ -56,9 +56,17 @@ jobs:
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
+          mathjax_path_from=$(SAGE_USE_CDNS=no /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           .ci/retrofit-worktree.sh worktree-image /sage
           # Keep track of changes to built HTML
-          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
+          new_version=$(cat src/VERSION.txt)
+          mathjax_path_to=$(SAGE_USE_CDNS=yes /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+          (cd /sage/local/share/doc/sage/html/en && \
+           find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /;s,'$mathjax_path_from,$mathjax_path_to,';'; \
+           git init && \
+           (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
+           (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
+           git add -A && git commit --quiet -m "old")
 
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
@@ -77,7 +85,7 @@ jobs:
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make build
+          ./bootstrap && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -88,7 +96,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -105,7 +113,7 @@ jobs:
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
-          ./config.status && make doc-html
+          ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
