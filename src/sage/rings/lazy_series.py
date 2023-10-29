@@ -1670,6 +1670,14 @@ class LazyModuleElement(Element):
             sage: g.define_implicity(2+z*g(z^2) - g, [5])
             sage: g
             <repr(...) failed: ValueError: no solution in degree -3 as 5 != 0>
+
+        TESTS::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(0)
+            sage: f.define_implicity(log(1+f) - ~(1 + f) + 1, [])
+            sage: f
+
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")

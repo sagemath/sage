@@ -229,20 +229,19 @@ class Stream():
         """
         return self
 
-    def recursive_map_largest_cached(self, function):
+    def parent_streams(self):
         r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
-
-        The default is to do nothing (as there is no cache).
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
 
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_zero
             sage: z = Stream_zero()
-            sage: z.recursive_map_largest_cached(lambda x: x + 10)
+            sage: z.parent_streams()
+            []
         """
-        pass
+        return []
 
 
 class Stream_inexact(Stream):
@@ -605,39 +604,6 @@ class Stream_inexact(Stream):
                 return True
 
         return False
-
-    def recursive_map_largest_cached(self, function):
-        r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function
-            sage: f = Stream_function(lambda n: n, False, 1)
-            sage: [f[i] for i in range(5)]
-            [0, 1, 2, 3, 4]
-            sage: f._cache
-            [1, 2, 3, 4]
-            sage: f.recursive_map_largest_cached(lambda x: x + 10)
-            sage: f._cache
-            [1, 2, 3, 14]
-
-            sage: f = Stream_function(lambda n: n, True, 1)
-            sage: [f[i] for i in range(0,10,3)]
-            [0, 3, 6, 9]
-            sage: f._cache
-            {3: 3, 6: 6, 9: 9}
-            sage: f.recursive_map_largest_cached(lambda x: x + 10)
-            sage: f._cache
-            {3: 3, 6: 6, 9: 19}
-        """
-        if self._cache:
-            if self._is_sparse:
-                i = max(self._cache)
-                self._cache[i] = function(self._cache[i])
-            else:
-                self._cache[-1] = function(self._cache[-1])
 
 
 class Stream_exact(Stream):
@@ -1408,28 +1374,27 @@ class Stream_uninitialized(Stream_inexact):
                 ret._target = temp
         return ret
 
-    def recursive_map_largest_cached(self, function):
+    def parent_streams(self):
         r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
 
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_uninitialized, Stream_function
             sage: h = Stream_function(lambda n: n, False, 1)
             sage: M = Stream_uninitialized(0)
+            sage: M.parent_streams()
+            []
             sage: M._target = h
             sage: [h[i] for i in range(5)]
             [0, 1, 2, 3, 4]
-            sage: h._cache
-            [1, 2, 3, 4]
-            sage: M.recursive_map_largest_cached(lambda x: x + 10)
-            sage: h._cache
-            [1, 2, 3, 14]
+            sage: M.parent_streams()
+            [<sage.data_structures.stream.Stream_function object at ...>]
         """
-        super().recursive_map_largest_cached(function)
         if self._target is not None:
-            self._target.recursive_map_largest_cached(function)
+            return [self._target]
+        return []
 
 
 class Stream_functional_equation(Stream_inexact):
@@ -1497,6 +1462,19 @@ class Stream_functional_equation(Stream_inexact):
         self._uninitialized._approximate_order = approximate_order
         self._uninitialized._target = self
 
+    def _subs_in_caches(self, s, var, val):
+        if hasattr(s, "_cache"):
+            if s._cache:
+                if s._is_sparse:
+                    i = max(s._cache)
+                else:
+                    i = -1
+                c = s._cache[i]
+                if c not in self._base:
+                    s._cache[i] = self._base(c.subs({var: val}))
+        for t in s.parent_streams():
+            self._subs_in_caches(t, var, val)
+
     def iterate_coefficients(self):
         """
         A generator for the coefficients of ``self``.
@@ -1532,7 +1510,7 @@ class Stream_functional_equation(Stream_inexact):
         self._F = self._F.replace(self._uninitialized, sf)
 
         n = self._F._approximate_order
-        data = list(self._initial_values)
+        m = len(self._initial_values)
         while True:
             coeff = self._F[n]
             if coeff.parent() is PFF:
@@ -1540,16 +1518,6 @@ class Stream_functional_equation(Stream_inexact):
             else:
                 coeff = P(coeff)
             V = coeff.variables()
-
-            # Substitute for known variables
-            if V:
-                # The infinite polynomial ring is very brittle with substitutions
-                #   and variable comparisons
-                sub = {str(x[i]): val for i, val in enumerate(data)
-                       if any(str(x[i]) == str(va) for va in V)}
-                if sub:
-                    coeff = coeff.subs(sub)
-                    V = P(coeff).variables()
 
             if len(V) > 1:
                 raise ValueError(f"unable to determine a unique solution in degree {n}")
@@ -1562,21 +1530,20 @@ class Stream_functional_equation(Stream_inexact):
 
             # single variable to solve for
             hc = coeff.homogeneous_components()
-            if not set(hc).issubset([0,1]):
-                raise ValueError(f"unable to determine a unique solution in degree {n}")
-            if str(hc[1].lm()) != str(x[len(data)]):
-                raise ValueError(f"the solutions to the coefficients must be computed in order")
-            val = -hc.get(0, P.zero()).lc() / hc[1].lc()
+            if len(hc) == 1:
+                val = self._base.zero()
+            else:
+                if set(hc) != set([0, 1]):
+                    raise ValueError(f"unable to determine a unique solution in degree {n}")
+                if str(hc[1].lm()) != str(x[m]):
+                    raise ValueError(f"the solutions to the coefficients must be computed in order")
+                val = self._base(-hc[0].lc() / hc[1].lc())
             # Update the caches
-            def sub(c):
-                if c not in self._base:
-                    return self._base(c.subs({V[0]: val}))
-                return c
-            sf.recursive_map_largest_cached(sub)
-            self._F.recursive_map_largest_cached(sub)
-            data.append(val)
+            self._subs_in_caches(sf, V[0], val)
+            self._subs_in_caches(self._F, V[0], val)
             yield val
             n += 1
+            m += 1
 
 
 class Stream_unary(Stream_inexact):
@@ -1712,34 +1679,20 @@ class Stream_unary(Stream_inexact):
                 ret._series = temp
         return ret
 
-    def recursive_map_largest_cached(self, function):
+    def parent_streams(self):
         r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
-
-        .. WARNING::
-
-            This might make the output inconsistent.
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
 
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_function, Stream_neg
             sage: h = Stream_function(lambda n: n, False, 1)
             sage: M = Stream_neg(h, False)
-            sage: [M[i] for i in range(5)]
-            [0, -1, -2, -3, -4]
-            sage: M._cache
-            [-1, -2, -3, -4]
-            sage: h._cache
-            [1, 2, 3, 4]
-            sage: M.recursive_map_largest_cached(lambda x: x + 10)
-            sage: M._cache
-            [-1, -2, -3, 6]
-            sage: h._cache
-            [1, 2, 3, 14]
+            sage: M.parent_streams()
+            [<sage.data_structures.stream.Stream_function object at ...>]
         """
-        super().recursive_map_largest_cached(function)
-        self._series.recursive_map_largest_cached(function)
+        return [self._series]
 
 
 class Stream_binary(Stream_inexact):
@@ -1922,10 +1875,10 @@ class Stream_binary(Stream_inexact):
                 ret._right = temp
         return ret
 
-    def recursive_map_largest_cached(self, function):
+    def parent_streams(self):
         r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
 
         EXAMPLES::
 
@@ -1933,25 +1886,11 @@ class Stream_binary(Stream_inexact):
             sage: l = Stream_function(lambda n: n, False, 1)
             sage: r = Stream_function(lambda n: n^2, False, 1)
             sage: M = Stream_add(l, r, False)
-            sage: [M[i] for i in range(5)]
-            [0, 2, 6, 12, 20]
-            sage: M._cache
-            [2, 6, 12, 20]
-            sage: l._cache
-            [1, 2, 3, 4]
-            sage: r._cache
-            [1, 4, 9, 16]
-            sage: M.recursive_map_largest_cached(lambda x: x + 10)
-            sage: M._cache
-            [2, 6, 12, 30]
-            sage: l._cache
-            [1, 2, 3, 14]
-            sage: r._cache
-            [1, 4, 9, 26]
+            sage: M.parent_streams()
+            [<sage.data_structures.stream.Stream_function object at ...>,
+             <sage.data_structures.stream.Stream_function object at ...>]
         """
-        super().recursive_map_largest_cached(function)
-        self._left.recursive_map_largest_cached(function)
-        self._right.recursive_map_largest_cached(function)
+        return [self._left, self._right]
 
 
 class Stream_binaryCommutative(Stream_binary):
@@ -2877,10 +2816,10 @@ class Stream_plethysm(Stream_binary):
 
         return self._basis.zero()
 
-    def recursive_map_largest_cached(self, function):
+    def parent_streams(self):
         r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
 
         EXAMPLES::
 
@@ -2890,32 +2829,18 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
+            sage: h.parent_streams()
+            [<sage.data_structures.stream.Stream_map_coefficients object at ...>]
             sage: [h[i] for i in range(1, 5)]
-            [0, 1/2*p[1, 1] - 1/2*p[2], 1/3*p[1, 1, 1] - 1/3*p[3],
+            [0,
+             1/2*p[1, 1] - 1/2*p[2],
+             1/3*p[1, 1, 1] - 1/3*p[3],
              1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
-            sage: h._cache
-            {2: 1/2*p[1, 1] - 1/2*p[2],
-             3: 1/3*p[1, 1, 1] - 1/3*p[3],
-             4: 1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]}
-            sage: [hp._cache for hp in h._powers]
-            [{2: 1/2*p[1, 1] - 1/2*p[2],
-              3: 1/3*p[1, 1, 1] - 1/3*p[3],
-              4: 1/8*p[1, 1, 1, 1] + 1/4*p[2, 1, 1] - 1/8*p[2, 2] - 1/4*p[4]},
-             {4: 1/4*p[1, 1, 1, 1] - 1/2*p[2, 1, 1] + 1/4*p[2, 2]}]
-            sage: h.recursive_map_largest_cached(lambda x: x/2)
-            sage: h._cache
-            {2: 1/2*p[1, 1] - 1/2*p[2],
-             3: 1/3*p[1, 1, 1] - 1/3*p[3],
-             4: 1/8*p[1, 1, 1, 1] + 1/8*p[2, 2] - 1/4*p[4]}
-            sage: [hp._cache for hp in h._powers]
-            [{2: 1/2*p[1, 1] - 1/2*p[2],
-              3: 1/3*p[1, 1, 1] - 1/3*p[3],
-              4: 1/128*p[1, 1, 1, 1] + 1/64*p[2, 1, 1] - 1/128*p[2, 2] - 1/64*p[4]},
-             {4: 1/8*p[1, 1, 1, 1] - 1/4*p[2, 1, 1] + 1/8*p[2, 2]}]
+            sage: h.parent_streams()
+            [<sage.data_structures.stream.Stream_map_coefficients object at ...>,
+             <sage.data_structures.stream.Stream_cauchy_mul object at ...>]
         """
-        super().recursive_map_largest_cached(function)
-        for g in self._powers:
-            g.recursive_map_largest_cached(function)
+        return self._powers
 
 
 #####################################################################
@@ -3759,27 +3684,6 @@ class Stream_shift(Stream):
                 ret = copy(self)
                 ret._series = temp
         return ret
-
-    def recursive_map_largest_cached(self, function):
-        r"""
-        Update the largest indexed entry in the cache by applying ``function``
-        and proceed recursively through any dependent streams.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_shift
-            sage: from sage.data_structures.stream import Stream_function
-            sage: h = Stream_function(lambda n: n, False, -5)
-            sage: M = Stream_shift(h, 2)
-            sage: [M[i] for i in range(-5, 5)]
-            [0, 0, -5, -4, -3, -2, -1, 0, 1, 2]
-            sage: h._cache
-            [-5, -4, -3, -2, -1, 0, 1, 2]
-            sage: M.recursive_map_largest_cached(lambda x: x + 10)
-            sage: h._cache
-            [-5, -4, -3, -2, -1, 0, 1, 12]
-        """
-        self._series.recursive_map_largest_cached(function)
 
 
 class Stream_truncated(Stream_unary):
