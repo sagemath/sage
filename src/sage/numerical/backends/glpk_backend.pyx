@@ -549,7 +549,7 @@ cdef class GLPKBackend(GenericBackend):
         cdef int * rows = <int *>sig_malloc((m + 1) * sizeof(int *))
         cdef int nrows = glp_get_num_rows(self.lp)
 
-        for i in xrange(m):
+        for i in range(m):
 
             c = constraints[i]
             if c < 0 or c >= nrows:

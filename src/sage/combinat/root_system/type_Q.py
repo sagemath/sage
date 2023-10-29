@@ -60,7 +60,7 @@ class CartanType(CartanType_standard_finite):
             'Q4'
         """
         format = '%s%s' if compact else "['%s', %s]"
-        return format%(self.letter, self.n+1)
+        return format % (self.letter, self.n+1)
 
     def __reduce__(self):
         """

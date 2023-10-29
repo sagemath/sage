@@ -103,7 +103,7 @@ class Bimodules(CategoryWithParameters):
 
         EXAMPLES::
 
-            sage: Bimodules.an_instance()
+            sage: Bimodules.an_instance()                                               # needs sage.rings.real_mpfr
             Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right
         """
         from sage.rings.rational_field import QQ
@@ -118,7 +118,7 @@ class Bimodules(CategoryWithParameters):
             Category of bimodules over Rational Field on the left and Integer Ring on the right
         """
         return "bimodules over %s on the left and %s on the right" \
-            %(self._left_base_ring, self._right_base_ring)
+            % (self._left_base_ring, self._right_base_ring)
 
     def left_base_ring(self):
         """

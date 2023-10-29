@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Tensor Products of Crystals
 
@@ -969,7 +970,7 @@ class CrystalOfTableaux(CrystalOfWords):
             S = CrystalOfSpins(cartan_type)
         B = CrystalOfTableaux(cartan_type, shapes=shapes)
         T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0],x] for x in B.module_generators])
-        T.rename("The crystal of tableaux of type %s and shape(s) %s"%(cartan_type, list(list(shape) for shape in spin_shapes)))
+        T.rename("The crystal of tableaux of type %s and shape(s) %s" % (cartan_type, list(list(shape) for shape in spin_shapes)))
         T.shapes = spin_shapes
         return T
 

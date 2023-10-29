@@ -455,6 +455,42 @@ SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\
 # Interface shell #
 ###################
 
+class logstr(str):
+    """
+    For use by :meth`~InterfaceShellTransformer.transform`.
+    This provides a ``_latex_`` method which is just the string
+    wrapped in a ``\\verb`` environment.
+    """
+    def __repr__(self):
+        """
+        EXAMPLES::
+            sage: from sage.repl.interpreter import logstr
+            sage: logstr("ABC")
+            ABC
+        """
+        return self
+
+    def _latex_(self):
+        r"""
+        EXAMPLES::
+            sage: from sage.repl.interpreter import logstr
+            sage: logstr("A")
+            A
+            sage: latex(logstr("A"))
+            \verb#A#
+            sage: latex(logstr("A#B"))
+            \verb@A#B@
+        """
+        # return "\\begin{verbatim}%s\\end{verbatim}"%self
+        if '#' not in self:
+            delim = '#'
+        elif '@' not in self:
+            delim = '@'
+        elif '~' not in self:
+            delim = '~'
+        return r"""\verb%s%s%s""" % (delim, self.replace('\n\n', '\n').replace('\n', '; '), delim)
+
+
 class InterfaceShellTransformer(PrefilterTransformer):
     priority = 50
 
@@ -472,6 +508,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed
             sage: shell = interface_shell_embed(maxima)
             sage: ift = shell.prefilter_manager.transformers[0]
@@ -499,9 +536,11 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
             sage: shell = interface_shell_embed(maxima)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.shell.ex('a = 3')
             sage: ift.preparse_imports_from_sage('2 + sage(a)')
             '2 + sage0 '
@@ -515,9 +554,11 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Since :trac:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
+            sage: # needs sage.libs.gap sage.symbolic
             sage: shell = interface_shell_embed(gap)
             sage: shell.user_ns = locals()
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: line = '2 + sage((1+2)*gap(-(5-3)^2).sage()) - gap(1+(2-1))'
             sage: line = ift.preparse_imports_from_sage(line)
             sage: gap.eval(line)
@@ -551,35 +592,41 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
             sage: shell = interface_shell_embed(maxima)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)   # note: output contains triple quotation marks
-            'sage.misc.all.logstr(r"""4""")'
+            'sage.repl.interpreter.logstr(r"""4""")'
             sage: ift.shell.ex('a = 4')
             sage: ift.transform(r'sage(a)+4', False)
-            'sage.misc.all.logstr(r"""8""")'
+            'sage.repl.interpreter.logstr(r"""8""")'
             sage: ift.temporary_objects
             set()
-            sage: shell = interface_shell_embed(gap)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
+            sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap
+            ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)
-            'sage.misc.all.logstr(r"""4""")'
+            'sage.repl.interpreter.logstr(r"""4""")'
 
         TESTS:
 
         Check that whitespace is not stripped and that special characters are
         escaped (:trac:`28439`)::
 
-            sage: shell = interface_shell_embed(gap)
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager)
-            sage: ift.transform(r'Print("  -\n\\\\-  ");', False)
-            'sage.misc.all.logstr(r"""  -\n\\\\-""")'
+            sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap sage.symbolic
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap sage.symbolic
+            ....:     prefilter_manager=shell.prefilter_manager)
+            sage: ift.transform(r'Print("  -\n\\\\-  ");', False)                       # needs sage.symbolic
+            'sage.repl.interpreter.logstr(r"""  -\n\\\\-""")'
 
-            sage: shell = interface_shell_embed(macaulay2)  # optional - macaulay2
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config, prefilter_manager=shell.prefilter_manager) # optional - macaulay2
-            sage: ift.transform('net(ZZ^2)', False)  # optional - macaulay2
-            'sage.misc.all.logstr(r"""  2\nZZ""")'
+            sage: # optional - macaulay2
+            sage: shell = interface_shell_embed(macaulay2)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
+            ....:     prefilter_manager=shell.prefilter_manager)
+            sage: ift.transform('net(ZZ^2)', False)
+            'sage.repl.interpreter.logstr(r"""  2\nZZ""")'
         '''
         line = self.preparse_imports_from_sage(line)
 
@@ -591,7 +638,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             self.temporary_objects = set()
         # We do not strip whitespace from t here as the individual interface is
         # responsible for that
-        return 'sage.misc.all.logstr(r"""%s""")' % t
+        return 'sage.repl.interpreter.logstr(r"""%s""")' % t
 
 
 def interface_shell_embed(interface):
@@ -608,8 +655,8 @@ def interface_shell_embed(interface):
     EXAMPLES::
 
         sage: from sage.repl.interpreter import interface_shell_embed
-        sage: shell = interface_shell_embed(gap)
-        sage: shell.run_cell('List( [1..10], IsPrime )')
+        sage: shell = interface_shell_embed(gap)                                        # needs sage.libs.gap
+        sage: shell.run_cell('List( [1..10], IsPrime )')                                # needs sage.libs.gap
         [ false, true, true, false, true, false, true, false, false, false ]
         <ExecutionResult object at ..., execution_count=None error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
     """
@@ -730,14 +777,14 @@ class SageTerminalApp(TerminalIPythonApp):
 
         Test that :trac:`15972` has been fixed::
 
-            sage: from sage.misc.temporary_file import tmp_dir
+            sage: import tempfile
             sage: from sage.repl.interpreter import SageTerminalApp
-            sage: d = tmp_dir()
             sage: from IPython.paths import get_ipython_dir
-            sage: IPYTHONDIR = get_ipython_dir()
-            sage: os.environ['IPYTHONDIR'] = d
-            sage: SageTerminalApp().load_config_file()
-            sage: os.environ['IPYTHONDIR'] = IPYTHONDIR
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     IPYTHONDIR = get_ipython_dir()
+            ....:     os.environ['IPYTHONDIR'] = d
+            ....:     SageTerminalApp().load_config_file()
+            ....:     os.environ['IPYTHONDIR'] = IPYTHONDIR
         """
         super().load_config_file(*args, **kwds)
         newconfig = sage_ipython_config.default()

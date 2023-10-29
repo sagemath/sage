@@ -160,7 +160,7 @@ def bandwidth(G, k=None):
         False
         sage: bandwidth(G)
         (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2])
-        sage: G.adjacency_matrix(vertices=[0, 4, 5, 8, 1, 9, 3, 7, 6, 2])               # optional - sage.modules
+        sage: G.adjacency_matrix(vertices=[0, 4, 5, 8, 1, 9, 3, 7, 6, 2])               # needs sage.modules
         [0 1 1 0 1 0 0 0 0 0]
         [1 0 0 0 0 1 1 0 0 0]
         [1 0 0 1 0 0 0 1 0 0]
@@ -174,7 +174,7 @@ def bandwidth(G, k=None):
         sage: G = graphs.ChvatalGraph()
         sage: bandwidth(G)
         (6, [0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])
-        sage: G.adjacency_matrix(vertices=[0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])       # optional - sage.modules
+        sage: G.adjacency_matrix(vertices=[0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])       # needs sage.modules
         [0 0 1 1 0 1 1 0 0 0 0 0]
         [0 0 0 1 1 1 0 1 0 0 0 0]
         [1 0 0 0 1 0 0 1 1 0 0 0]

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Helper functions for mutation types of quivers
 
@@ -55,20 +56,20 @@ def is_mutation_finite(M, nr_of_checks=None):
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 
         sage: Q = ClusterQuiver(['A',10])
-        sage: M = Q.b_matrix()
-        sage: is_mutation_finite(M)
+        sage: M = Q.b_matrix()                                                          # needs sage.modules
+        sage: is_mutation_finite(M)                                                     # needs sage.modules
         (True, None)
 
         sage: Q = ClusterQuiver([(0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(2,9)])
-        sage: M = Q.b_matrix()
-        sage: is_mutation_finite(M) # random
+        sage: M = Q.b_matrix()                                                          # needs sage.modules
+        sage: is_mutation_finite(M)  # random                                           # needs sage.modules
         (False, [9, 6, 9, 8, 9, 4, 0, 4, 5, 2, 1, 0, 1, 0, 7, 1, 9, 2, 5, 7, 8, 6, 3, 0, 2, 5, 4, 2, 6, 9, 2, 7, 3, 5, 3, 7, 9, 5, 9, 0, 2, 7, 9, 2, 4, 2, 1, 6, 9, 4, 3, 5, 0, 8, 2, 9, 5, 3, 7, 0, 1, 8, 3, 7, 2, 7, 3, 4, 8, 0, 4, 9, 5, 2, 8, 4, 8, 1, 7, 8, 9, 1, 5, 0, 8, 7, 4, 8, 9, 8, 0, 7, 4, 7, 1, 2, 8, 6, 1, 3, 9, 3, 9, 1, 3, 2, 4, 9, 5, 1, 2, 9, 4, 8, 5, 3, 4, 6, 8, 9, 2, 5, 9, 4, 6, 2, 1, 4, 9, 6, 0, 9, 8, 0, 4, 7, 9, 2, 1, 6])
 
     Check that :trac:`19495` is fixed::
 
-        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S
+        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S                  # needs sage.modules
         A seed for a cluster algebra of rank 1
-        sage: S.is_mutation_finite()
+        sage: S.is_mutation_finite()                                                    # needs sage.modules
         True
     """
     import random
@@ -310,7 +311,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
                 if conn_vert_list:
                     conn_verts = list(set(dg).difference(conn_verts))
             if mut_type._letter == hope_letter and not mut_type._twist and conn_vert.issubset(conn_verts):
-                if len(check_letter)>1:
+                if len(check_letter) > 1:
                     check_twist = 1
                 if check_twist:
                     n -= 1
@@ -891,11 +892,11 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
                 # Exception 1 case (4-cycle):
                 edges = sg.edges(sort=True, labels=False)
-                if not (c1[0],c1[1]) in edges and not (c1[1],c1[0]) in edges and sg.is_isomorphic( exception_graph1 ):
-                    dg_tmp = DiGraph( dg )
-                    dg_tmp.delete_vertices( c1 )
+                if (c1[0], c1[1]) not in edges and (c1[1], c1[0]) not in edges and sg.is_isomorphic(exception_graph1):
+                    dg_tmp = DiGraph(dg)
+                    dg_tmp.delete_vertices(c1)
 
-                    components = dg_tmp.connected_components()
+                    components = dg_tmp.connected_components(sort=False)
                     # if not len(components) == 2:
                     if len(components) != 2:
                         return _false_return(4)
@@ -937,7 +938,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     else:
                         c2.reverse()
                         dg_tmp.delete_edge( tuple( c2 ) )
-                    components = dg_tmp.connected_components()
+                    components = dg_tmp.connected_components(sort=False)
                     if len(components) != 2:
                         return _false_return(7)
                     else:
@@ -1080,13 +1081,13 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     if len( in_neighbors ) == 1:
                         in_neighbors.extend(in_neighbors)
 
-                    if not (in_neighbors[0],v) in oriented_trian_edges:
+                    if (in_neighbors[0], v) not in oriented_trian_edges:
                         return _false_return(24)
-                    elif not (in_neighbors[1],v) in oriented_trian_edges:
+                    elif (in_neighbors[1], v) not in oriented_trian_edges:
                         return _false_return(25)
-                    elif not (v,out_neighbors[0]) in oriented_trian_edges:
+                    elif (v, out_neighbors[0]) not in oriented_trian_edges:
                         return _false_return(26)
-                    elif not (v,out_neighbors[1]) in oriented_trian_edges:
+                    elif (v, out_neighbors[1]) not in oriented_trian_edges:
                         return _false_return(27)
 
             # if a vertex has valency 3 than 2 of its neighboring edges must be contained in an oriented triangle and the remaining must not
@@ -1105,14 +1106,14 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                                 return _false_return(30)
                             if not long_cycle[1] == QuiverMutationType(['D',n]):
                                 return _false_return(31)
-                            if not (v,out_neighbors[0]) in long_cycle[0] and not (v,out_neighbors[1]) in long_cycle[0]:
+                            if (v, out_neighbors[0]) not in long_cycle[0] and (v, out_neighbors[1]) not in long_cycle[0]:
                                 return _false_return(32)
                         if (v,out_neighbors[0]) not in oriented_trian_edges and (v,out_neighbors[1]) not in oriented_trian_edges:
                             return _false_return(33)
                 elif w[0] == 2:
                     in_neighbors = dg.neighbors_in( v )
                     out_neighbors = dg.neighbors_out( v )
-                    if not (v,out_neighbors[0]) in oriented_trian_edges:
+                    if (v, out_neighbors[0]) not in oriented_trian_edges:
                         return _false_return(34)
                     elif len( in_neighbors ) == 1:
                         if (in_neighbors[0],v) not in oriented_trian_edges:
@@ -1123,9 +1124,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                                 return _false_return(36)
                             if not long_cycle[1] == QuiverMutationType(['D',n]):
                                 return _false_return(37)
-                            if not (in_neighbors[0],v) in long_cycle[0] and not (in_neighbors[1],v) in long_cycle[0]:
+                            if (in_neighbors[0], v) not in long_cycle[0] and (in_neighbors[1], v) not in long_cycle[0]:
                                 return _false_return(38)
-                        if (in_neighbors[0],v) not in oriented_trian_edges and (in_neighbors[1],v) not in oriented_trian_edges:
+                        if (in_neighbors[0], v) not in oriented_trian_edges and (in_neighbors[1], v) not in oriented_trian_edges:
                             return _false_return(39)
                 else:
                     return _false_return(40)
@@ -1189,7 +1190,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
             edge = long_cycle[0][0]
             sg = DiGraph( dg )
             sg. delete_vertices(edge)
-            connected_components = sg.connected_components()
+            connected_components = sg.connected_components(sort=False)
             cycle = []
             if connected_components:
                 cycle.append( ( edge[0], edge[1], len( connected_components[0] ) + 1 ) )
@@ -1199,7 +1200,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
             for edge in tmp:
                 sg = DiGraph( dg )
                 sg. delete_vertices(edge)
-                connected_components = sg.connected_components()
+                connected_components = sg.connected_components(sort=False)
                 if len( connected_components ) == 2:
                     #if len( list_intersection( [ connected_components[0], list_substract( long_cycle[0], [edge] )[0] ] ) ) > 0:
                     if len( set(connected_components[0]).intersection( set(long_cycle[0]).difference([edge]).pop() ) ) > 0:
@@ -1428,7 +1429,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
     TESTS::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _random_tests
-        sage: _random_tests( ['A',3], 1)
+        sage: _random_tests( ['A',3], 1)                                                # needs sage.modules
         testing ['A', 3]
     """
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver

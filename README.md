@@ -10,9 +10,11 @@
 >   "Creating a Viable Open Source Alternative to
 >   Magma, Maple, Mathematica, and MATLAB"
 
->   Copyright (C) 2005-2022 The Sage Development Team
+>   Copyright (C) 2005-2023 The Sage Development Team
 
 https://www.sagemath.org
+
+[Sage Documentation](https://doc.sagemath.org/html/en/index.html)
 
 The Sage Library is free software released under the
 GNU General Public Licence GPLv2+, and included packages
@@ -20,6 +22,24 @@ have [compatible software licenses](./COPYING.txt).
 [Over 800 people](https://www.sagemath.org/development-map.html)
 have contributed code to Sage. In many cases, documentation
 for modules and functions list the authors.
+
+Table of Contents
+-----------------
+
+* [Getting Started](#getting-started)
+* [Supported Platforms](#supported-platforms)
+* [\[Windows\] Preparing the Platform Libraries](#windows-preparing-the-platform)
+* [\[macOS\] Preparing the Platform Libraries](#macos-preparing-the-platform)
+* [Instructions to Build from Source](#instructions-to-build-from-source)
+* [SageMath Docker Images](#sagemath-docker-images)
+* [Troubleshooting](#troubleshooting)
+* [Contributing to Sage](#contributing-to-sage)
+* [Directory Layout](#directory-layout)
+* [Build System](#build-system)
+* [Relocation](#relocation)
+* [Redistribution](#redistribution)
+* [Build System](#build-system)
+* [Changes to Included Software](#changes-to-included-software)
 
 Getting Started
 ---------------
@@ -47,7 +67,7 @@ macOS, and Windows (using Windows Subsystem for Linux or
 virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
-can be found in the section "Availability and installation help" of the
+can be found in the section _Availability and installation help_ of the
 [release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
 
 We highly appreciate contributions to Sage that fix portability bugs
@@ -64,13 +84,13 @@ your Windows. Make sure you allocate WSL sufficient RAM; 5GB is known to work, w
 2GB might be not enough for building Sage from source. 
 Then all instructions for installation in Linux apply.
 
-As an alternative, you can also run Linux on Windows using Docker (see
-above) or other virtualization solutions.
+As an alternative, you can also run Linux on Windows using Docker ([see
+below](#sagemath-docker-images)) or other virtualization solutions.
 
 [macOS] Preparing the Platform
 ------------------------------
 
-If your Mac uses the Apple Silicon (M1, arm64) architecture:
+If your Mac uses the Apple Silicon (M1, M2, arm64) architecture:
 
 - If you set up your Mac by transfering files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
@@ -116,6 +136,7 @@ The instructions cover all of Linux, macOS, and WSL.
 More details, providing a background for these instructions, can be found
 in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
 in the Installation Guide.
+
 
 1.  Decide on the source/build directory (`SAGE_ROOT`):
 
@@ -189,8 +210,8 @@ in the Installation Guide.
 
 3.  [Linux, WSL] Install the required minimal build prerequisites.
 
-    - Compilers: `gcc`, `gfortran`, `g++` (GCC 8.x to 12.x and recent
-      versions of Clang (LLVM) are supported).
+    - Compilers: `gcc`, `gfortran`, `g++` (GCC versions from 8.4.0 to 13.x
+      and recent versions of Clang (LLVM) are supported).
       See [build/pkgs/gcc/SPKG.rst](build/pkgs/gcc/SPKG.rst) and
       [build/pkgs/gfortran/SPKG.rst](build/pkgs/gfortran/SPKG.rst)
       for a discussion of suitable compilers.
@@ -201,7 +222,7 @@ in the Installation Guide.
       more details.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.8.x, 3.9.x, or 3.10.x, which
+      `urllib`; but ideally version 3.9.x, 3.10.x, or 3.11.x, which
       will avoid having to build Sage's own copy of Python 3.
       See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
       for more details.
@@ -298,12 +319,18 @@ in the Installation Guide.
 
         $ ./configure --help
 
-    A notable option for Sage developers is the following:
+    Notable options for Sage developers are the following:
 
-    - Use `./configure --enable-download-from-upstream-url` to allow
-      downloading packages from their upstream URL if they cannot (yet) be
-      found on the Sage mirrors. This is useful for trying out ticket branches
-      that make package upgrades.
+    - Use the option `--config-cache` to have `configure`
+      keep a disk cache of configuration values. This gives a nice speedup
+      when trying out ticket branches that make package upgrades, which
+      involves automatic re-runs of the configuration step.
+
+    - Use the option `--enable-ccache` to have Sage install and use the
+      optional package `ccache`, which is preconfigured to keep a
+      disk cache of object files created from source files. This can give
+      a great speedup when switching between different branches, at the
+      expense of disk space use.
 
 10. Optional, but highly recommended: Set some environment variables to
     customize the build.
@@ -415,6 +442,18 @@ For installation of `sage` in python using `pip` you need to install `sagemath-s
 You need to install `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`. 
 
 **NOTE:** You can find `sage` and `sagemath` pip packages but with these packages, you will encounter `ModuleNotFoundError`.
+
+SageMath Docker images
+----------------------
+
+[![Docker Status](http://dockeri.co/image/sagemath/sagemath)](https://hub.docker.com/r/sagemath/sagemath)
+
+SageMath is available on Docker Hub and can be downloaded by:
+``` bash
+docker pull sagemath/sagemath
+```
+
+Currently, only stable versions are kept up to date.
 
 Troubleshooting
 ---------------

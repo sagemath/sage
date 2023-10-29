@@ -297,11 +297,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                     for a in self.symmetric_matrix().list():
                         if a != 0:
                             for f in a.factor():
-                                if f[1] < 0 and not f[0] in candidates:
+                                if f[1] < 0 and f[0] not in candidates:
                                     candidates.append(f[0])
-                    for f in (2 * self.determinant()).factor():
-                        if f[1] > 0 and not f[0] in candidates:
-                            candidates.append(f[0])
+                    for f0, f1 in (2 * self.determinant()).factor():
+                        if f1 > 0 and f0 not in candidates:
+                            candidates.append(f0)
                 for b in candidates:
                     if not self.is_locally_solvable(b):
                         obs1.append(b)

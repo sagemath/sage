@@ -183,13 +183,9 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
     cdef void *next_candidate
     cdef void *parent_cand
     cdef void *aug
-    cdef int i, next_cand_deg, parent_cand_deg
-    cdef int *isom
+    cdef int next_cand_deg, parent_cand_deg
     cdef PartitionStack *part
     cdef bint augmentation_is_canonical
-    cdef aut_gp_and_can_lab *output
-    cdef agcl_work_space *agcl_ws
-    cdef dc_work_space *dc_ws
 
     if cgd.level == 0:
         if cgd.mem_err:
@@ -211,7 +207,8 @@ cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_e
                 aug, cgd.object_stack[cgd.level], &cgd.degree_stack[cgd.level],
                 &cgd.mem_err)
             cgd.object_stack[cgd.level] = next_candidate
-            if cgd.mem_err: continue
+            if cgd.mem_err:
+                continue
             next_cand_deg = cgd.degree_stack[cgd.level]
             if cgd.agcl_work_spaces[cgd.level] is NULL:
                 # allocate a work space if it hasn't been allocated already
@@ -343,6 +340,7 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree):
     cgd.degree_stack[0] = degree
     return cgd
 
+
 cdef void deallocate_cgd(canonical_generator_data *cgd):
     r"""
     Deallocate the data part of the canonical generation iterator struct.
@@ -350,8 +348,6 @@ cdef void deallocate_cgd(canonical_generator_data *cgd):
     if cgd is NULL:
         return
     cdef int i
-    cdef void *thingy
-    cdef void (*clearer)(void*)
     for i from 0 <= i < cgd.allocd_levels:
         if cgd.agcl_work_spaces[i] is not NULL:
             deallocate_agcl_work_space(cgd.agcl_work_spaces[i])

@@ -257,14 +257,19 @@ cdef class LazyImport():
             if finish_startup_called:
                 warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
 
+        feature = self._feature
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
         except ImportError as e:
-            if self._feature:
+            if feature:
                 # Avoid warnings from static type checkers by explicitly importing FeatureNotPresentError.
                 from sage.features import FeatureNotPresentError
-                raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
+                raise FeatureNotPresentError(feature, reason=f'Importing {self._name} failed: {e}')
             raise
+
+        if feature:
+            # for the case that the feature is hidden
+            feature.require()
 
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation
@@ -350,7 +355,7 @@ cdef class LazyImport():
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: rm = LazyImport('sage.matrix.special', 'random_matrix')
-            sage: rm._sage_argspec_()
+            sage: rm._sage_argspec_()                                                   # needs sage.modules
             FullArgSpec(args=['ring', 'nrows', 'ncols', 'algorithm', 'implementation'],
                         varargs='args', varkw='kwds', defaults=(None, 'randomize', None),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -526,12 +531,12 @@ cdef class LazyImport():
 
            We access the ``plot`` method::
 
-               sage: Bar.plot
+               sage: Bar.plot                                                           # needs sage.plot
                <function plot at 0x...>
 
            Now ``plot`` has been replaced in the dictionary of ``Foo``::
 
-               sage: type(Foo.__dict__['plot'])
+               sage: type(Foo.__dict__['plot'])                                         # needs sage.plot
                <... 'function'>
         """
         # Don't use the namespace of the class definition
@@ -662,9 +667,10 @@ cdef class LazyImport():
         """
         TESTS::
 
+            sage: # needs sympy
             sage: from sympy import Matrix
             sage: import sage.all__sagemath_objects
-            sage: sage.all__sagemath_objects.foo = Matrix([[1,1],[0,1]])
+            sage: sage.all__sagemath_objects.foo = Matrix([[1,1], [0,1]])
             sage: lazy_import('sage.all__sagemath_objects', 'foo')
             sage: foo.__matmul__(foo)
             Matrix([
@@ -1059,15 +1065,16 @@ def lazy_import(module, names, as_=None, *,
         ....:     pass
         sage: type(Foo.__dict__['plot'])
         <class 'sage.misc.lazy_import.LazyImport'>
-        sage: 'EXAMPLES' in Bar.plot.__doc__
+        sage: 'EXAMPLES' in Bar.plot.__doc__                                            # needs sage.plot
         True
-        sage: type(Foo.__dict__['plot'])
+        sage: type(Foo.__dict__['plot'])                                                # needs sage.plot
         <... 'function'>
 
     If deprecated then a deprecation warning is issued::
 
-        sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp', deprecation=14275)
-        sage: my_Qp(5)
+        sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp',
+        ....:             deprecation=14275)
+        sage: my_Qp(5)                                                                  # needs sage.rings.padics
         doctest:...: DeprecationWarning:
         Importing my_Qp from here is deprecated; please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
         See https://github.com/sagemath/sage/issues/14275 for details.
@@ -1075,8 +1082,9 @@ def lazy_import(module, names, as_=None, *,
 
     An example of deprecation with a message::
 
-        sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp_msg', deprecation=(14275, "This is an example."))
-        sage: my_Qp_msg(5)
+        sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp_msg',
+        ....:             deprecation=(14275, "This is an example."))
+        sage: my_Qp_msg(5)                                                              # needs sage.rings.padics
         doctest:...: DeprecationWarning: This is an example.
         See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
@@ -1084,9 +1092,10 @@ def lazy_import(module, names, as_=None, *,
     An example of an import relying on a feature::
 
         sage: from sage.features import PythonModule
-        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy'))
-        sage: equation
-        <built-in function equation>
+        sage: lazy_import('ppl', 'equation',
+        ....:             feature=PythonModule('ppl', spkg='pplpy', type='standard'))
+        sage: equation                                                                  # needs pplpy
+        <cyfunction equation at ...>
         sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
         sage: NmzListConeProperties  # optional - pynormaliz
         <built-in function NmzListConeProperties>
@@ -1099,7 +1108,7 @@ def lazy_import(module, names, as_=None, *,
     """
     if as_ is None:
         as_ = names
-    if isinstance(names, basestring):
+    if isinstance(names, str):
         names = [names]
         as_ = [as_]
     else:
@@ -1150,7 +1159,7 @@ def get_star_imports(module_name):
         sage: from sage.misc.lazy_import import get_star_imports
         sage: 'get_star_imports' in get_star_imports('sage.misc.lazy_import')
         True
-        sage: 'EllipticCurve' in get_star_imports('sage.schemes.all')                   # optional - sage.schemes
+        sage: 'EllipticCurve' in get_star_imports('sage.schemes.all')                   # needs sage.schemes
         True
 
     TESTS::
@@ -1164,7 +1173,7 @@ def get_star_imports(module_name):
         sage: import sage.misc.lazy_import_cache as cache
         sage: cache.get_cache_file = (lambda: cache_file)
         sage: lazy.star_imports = None
-        sage: lazy.get_star_imports('sage.schemes.all')                                 # optional - sage.schemes
+        sage: lazy.get_star_imports('sage.schemes.all')                                 # needs sage.schemes
         doctest:...: UserWarning: star_imports cache is corrupted
         [...]
         sage: os.remove(cache_file)
@@ -1242,6 +1251,7 @@ def clean_namespace(namespace=None):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.misc.lazy_import import attributes, clean_namespace
         sage: from sage.calculus.calculus import maxima as C
         sage: attributes(C)['_as_name']

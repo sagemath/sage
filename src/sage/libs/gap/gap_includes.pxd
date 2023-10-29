@@ -22,32 +22,8 @@ cdef extern from "gap/system.h" nogil:
     ctypedef void* Obj
 
 
-cdef extern from "gap/ariths.h" nogil:
-    Obj SUM(Obj, Obj)
-    Obj DIFF(Obj, Obj)
-    Obj PROD(Obj, Obj)
-    Obj QUO(Obj, Obj)
-    Obj POW(Obj, Obj)
-    Obj MOD(Obj, Obj)
-    bint EQ(Obj opL, Obj opR)
-    bint LT(Obj opL, Obj opR)
-
-
 cdef extern from "gap/calls.h" nogil:
     bint IS_FUNC(Obj)
-    Obj CALL_0ARGS(Obj f)              # 0 arguments
-    Obj CALL_1ARGS(Obj f, Obj a1)      # 1 argument
-    Obj CALL_2ARGS(Obj f, Obj a1, Obj a2)
-    Obj CALL_3ARGS(Obj f, Obj a1, Obj a2, Obj a3)
-    Obj CALL_4ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4)
-    Obj CALL_5ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4, Obj a5)
-    Obj CALL_6ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4, Obj a5, Obj a6)
-    Obj CALL_XARGS(Obj f, Obj args)   # more than 6 arguments
-
-
-cdef extern from "gap/intobj.h" nogil:
-    Obj INTOBJ_INT(Int)
-    Int INT_INTOBJ(Obj)
 
 
 cdef extern from "gap/libgap-api.h" nogil:
@@ -71,14 +47,33 @@ cdef extern from "gap/libgap-api.h" nogil:
     void GAP_MarkBag(Obj bag)
     void GAP_CollectBags(UInt full)
 
+    Obj GAP_SUM(Obj, Obj)
+    Obj GAP_DIFF(Obj, Obj)
+    Obj GAP_PROD(Obj, Obj)
+    Obj GAP_QUO(Obj, Obj)
+    Obj GAP_POW(Obj, Obj)
+    Obj GAP_MOD(Obj, Obj)
+    bint GAP_EQ(Obj opL, Obj opR)
+    bint GAP_LT(Obj opL, Obj opR)
+    bint GAP_IN(Obj opL, Obj opR)
+
     cdef Obj GAP_True
     cdef Obj GAP_False
+
+    Obj GAP_CallFuncList(Obj func, Obj args);
+    Obj GAP_CallFuncArray(Obj func, UInt narg, Obj * args);
+    Obj GAP_CallFunc0Args(Obj func);
+    Obj GAP_CallFunc1Args(Obj func, Obj a1);
+    Obj GAP_CallFunc2Args(Obj func, Obj a1, Obj a2);
+    Obj GAP_CallFunc3Args(Obj func, Obj a1, Obj a2, Obj a3);
 
     bint GAP_IsMacFloat(Obj obj)
     double GAP_ValueMacFloat(Obj obj)
 
     bint GAP_IsInt(Obj)
     bint GAP_IsSmallInt(Obj)
+    Obj GAP_NewObjIntFromInt(Int val)
+    Int GAP_ValueInt(Obj)
 
     bint GAP_IsList(Obj lst)
     UInt GAP_LenList(Obj lst)
@@ -89,15 +84,16 @@ cdef extern from "gap/libgap-api.h" nogil:
     bint GAP_IsRecord(Obj obj)
     Obj GAP_NewPrecord(Int capacity)
 
+    bint GAP_IsString(Obj obj)
+    UInt GAP_LenString(Obj string)
+    char* GAP_CSTR_STRING(Obj list)
+    Obj GAP_MakeStringWithLen(const char* buf, UInt len)
+
+    Int GAP_ValueOfChar(Obj obj)
+
 
 cdef extern from "gap/lists.h" nogil:
     Obj ELM_LIST(Obj lst, int pos)
-    Obj ELM0_LIST(Obj lst, int pos)
-    void ASS_LIST(Obj lst, int pos, Obj elt)
-
-
-cdef extern from "gap/listfunc.h" nogil:
-    void AddList(Obj list, Obj obj)
 
 
 cdef extern from "gap/objects.h" nogil:
@@ -115,9 +111,7 @@ cdef extern from "gap/objects.h" nogil:
         T_PERM2
         T_PERM4
         T_BOOL
-        T_CHAR
         T_FUNCTION
-        T_PLIST
         T_COMOBJ
         T_POSOBJ
 
@@ -147,8 +141,21 @@ cdef extern from "gap/records.h" nogil:
 
 
 cdef extern from "gap/stringobj.h" nogil:
-    char* CSTR_STRING(Obj list)
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
-    Obj MakeStringWithLen(const char* buf, size_t len)
+
+
+cdef extern from "<structmember.h>" nogil:
+    """
+    /* Hack: Cython 3.0 automatically includes <structmember.h>, which
+     * defines several macros that collides with enum definitions in
+     * gap/objects.h. We need to include the header explicitly and
+     * undefine these macros.
+     */
+    #undef T_INT
+    #undef T_STRING
+    #undef T_CHAR
+    #undef T_BOOL
+    """
+    pass

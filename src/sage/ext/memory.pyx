@@ -3,14 +3,14 @@ Low-level memory allocation functions
 
 TESTS:
 
-Check that a ``MemoryError`` is raised if we try to allocate a
+Check that an error is raised if we try to allocate a
 ridiculously large integer, see :trac:`15363`::
 
-    sage: 2^(2^63-3)
-    Traceback (most recent call last):
-    ...
-    OverflowError: exponent must be at most 2147483647         # 32-bit
-    RuntimeError: Aborted                                      # 64-bit
+    sage: try:
+    ....:     2^(2^63-3)
+    ....: except (OverflowError, RuntimeError, FloatingPointError):
+    ....:     print ('Overflow error')
+    ...Overflow error
 
 AUTHORS:
 
@@ -44,7 +44,7 @@ cdef extern from "Python.h":
 
 cdef void alloc_error(size_t size) nogil:
     """
-    Jump back to ``sig_on()``, raising a ``MemoryError``.
+    Jump back to ``sig_on()``, raising a :class:`MemoryError`.
     """
     with gil:
         PyErr_Format(MemoryError, "failed to allocate %zu bytes", size)

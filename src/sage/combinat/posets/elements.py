@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Elements of posets, lattices, semilattices, etc.
 """
@@ -78,9 +79,9 @@ class PosetElement(Element):
 
         EXAMPLES::
 
-            sage: m = matrix(2,[1,2,3,4])
+            sage: m = matrix(2, [1,2,3,4])
             sage: m.set_immutable()
-            sage: P = Poset(([m],[]), facade = False)
+            sage: P = Poset(([m],[]), facade=False)
             sage: [e] = P
             sage: type(e)
             <class 'sage.combinat.posets.posets.FinitePoset_with_category.element_class'>
@@ -243,7 +244,7 @@ class MeetSemilatticeElement(PosetElement):
 
         EXAMPLES::
 
-            sage: D = posets.DiamondPoset(5,facade=False)
+            sage: D = posets.DiamondPoset(5, facade=False)
             sage: D(1) * D(2)
             0
             sage: D(1) * D(1)

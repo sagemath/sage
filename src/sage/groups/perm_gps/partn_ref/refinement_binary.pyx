@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 """
 Partition backtrack functions for binary codes
 
@@ -23,7 +24,7 @@ REFERENCE:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
@@ -63,16 +64,18 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             raise MemoryError
 
         cdef bint memerr = 0
-        for i from 0 <= i < self.dimension:
-            try: bitset_init(&self.basis[i], self.degree)
+        for i in range(self.dimension):
+            try:
+                bitset_init(&self.basis[i], self.degree)
             except MemoryError:
                 for j from 0 <= j < i:
                     bitset_free(&self.basis[j])
                 memerr = 1
                 break
         if not memerr:
-            for i from 0 <= i < 2*self.dimension+2:
-                try: bitset_init(&self.scratch_bitsets[i], self.degree)
+            for i in range(2*self.dimension+2):
+                try:
+                    bitset_init(&self.scratch_bitsets[i], self.degree)
                 except MemoryError:
                     for j from 0 <= j < i:
                         bitset_free(&self.scratch_bitsets[j])
@@ -81,7 +84,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
                     memerr = 1
                     break
         if not memerr:
-            try: bitset_init(self.alpha_is_wd, self.nwords + self.degree)
+            try:
+                bitset_init(self.alpha_is_wd, self.nwords + self.degree)
             except MemoryError:
                 for j from 0 <= j < 2*self.dimension+2:
                     bitset_free(&self.scratch_bitsets[j])
@@ -89,16 +93,19 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
                     bitset_free(&self.basis[j])
                 memerr = 1
         if memerr:
-            sig_free(self.basis); sig_free(self.scratch_bitsets)
-            sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-            sig_free(self.alpha); sig_free(self.scratch)
+            sig_free(self.basis)
+            sig_free(self.scratch_bitsets)
+            sig_free(self.alpha_is_wd)
+            PS_dealloc(self.word_ps)
+            sig_free(self.alpha)
+            sig_free(self.scratch)
             raise MemoryError
         else:
             bitset_zero(self.alpha_is_wd)
             for j from 0 <= j < self.dimension:
                 bitset_zero(&self.basis[j])
 
-        for i,j in matrix.nonzero_positions():
+        for i, j in matrix.nonzero_positions():
             bitset_set(&self.basis[i], j)
 
         self.output = NULL
@@ -228,9 +235,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sage: B = LinearBinaryCodeStruct(M)
             sage: B.automorphism_group()[1]
             17868913969917295853568000000
-
         """
-        cdef int i, n = self.degree
+        cdef int n = self.degree
         cdef PartitionStack *part
         if partition is None:
             part = PS_new(n, 1)
@@ -265,11 +271,11 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         if self.output is NULL:
             self.run()
         generators = []
-        for i from 0 <= i < self.output.num_gens:
+        for i in range(self.output.num_gens):
             generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
         order = Integer()
         SC_order(self.output.group, 0, order.value)
-        base = [self.output.group.base_orbits[i][0] for i from 0 <= i < self.output.group.base_size]
+        base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
         return generators, order, base
 
     def canonical_relabeling(self):
@@ -294,7 +300,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         cdef int i
         if self.output is NULL:
             self.run()
-        return [self.output.relabeling[i] for i from 0 <= i < self.degree]
+        return [self.output.relabeling[i] for i in range(self.degree)]
 
     def is_isomorphic(self, LinearBinaryCodeStruct other):
         """
@@ -322,7 +328,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sig_free(ordering)
             sig_free(output)
             raise MemoryError
-        for i from 0 <= i < n:
+        for i in range(n):
             ordering[i] = i
         self.first_time = 1
         other.first_time = 1
@@ -332,7 +338,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         PS_dealloc(part)
         sig_free(ordering)
         if isomorphic:
-            output_py = [output[i] for i from 0 <= i < n]
+            output_py = [output[i] for i in range(n)]
         else:
             output_py = False
         sig_free(output)
@@ -345,9 +351,12 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             bitset_free(&self.scratch_bitsets[j])
         for j from 0 <= j < self.dimension:
             bitset_free(&self.basis[j])
-        sig_free(self.basis); sig_free(self.scratch_bitsets)
-        sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-        sig_free(self.alpha); sig_free(self.scratch)
+        sig_free(self.basis)
+        sig_free(self.scratch_bitsets)
+        sig_free(self.alpha_is_wd)
+        PS_dealloc(self.word_ps)
+        sig_free(self.alpha)
+        sig_free(self.scratch)
         if self.output is not NULL:
             deallocate_agcl_output(self.output)
 
@@ -391,16 +400,18 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             raise MemoryError
 
         cdef bint memerr = 0
-        for i from 0 <= i < self.nwords:
-            try: bitset_init(&self.words[i], self.degree)
+        for i in range(self.nwords):
+            try:
+                bitset_init(&self.words[i], self.degree)
             except MemoryError:
                 for j from 0 <= j < i:
                     bitset_free(&self.words[j])
                 memerr = 1
                 break
         if not memerr:
-            for i from 0 <= i < 4*self.nwords:
-                try: bitset_init(&self.scratch_bitsets[i], self.degree)
+            for i in range(4*self.nwords):
+                try:
+                    bitset_init(&self.scratch_bitsets[i], self.degree)
                 except MemoryError:
                     for j from 0 <= j < i:
                         bitset_free(&self.scratch_bitsets[j])
@@ -409,7 +420,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                     memerr = 1
                     break
         if not memerr:
-            try: bitset_init(&self.scratch_bitsets[4*self.nwords], self.nwords)
+            try:
+                bitset_init(&self.scratch_bitsets[4*self.nwords], self.nwords)
             except MemoryError:
                 for j from 0 <= j < 4*self.nwords:
                     bitset_free(&self.scratch_bitsets[j])
@@ -417,7 +429,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                     bitset_free(&self.words[j])
                 memerr = 1
         if not memerr:
-            try: bitset_init(self.alpha_is_wd, self.nwords + self.degree)
+            try:
+                bitset_init(self.alpha_is_wd, self.nwords + self.degree)
             except MemoryError:
                 for j from 0 <= j < 4*self.nwords + 1:
                     bitset_free(&self.scratch_bitsets[j])
@@ -425,9 +438,12 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                     bitset_free(&self.words[j])
                 memerr = 1
         if memerr:
-            sig_free(self.words); sig_free(self.scratch_bitsets)
-            sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-            sig_free(self.alpha); sig_free(self.scratch)
+            sig_free(self.words)
+            sig_free(self.scratch_bitsets)
+            sig_free(self.alpha_is_wd)
+            PS_dealloc(self.word_ps)
+            sig_free(self.alpha)
+            sig_free(self.scratch)
             raise MemoryError
         else:
             bitset_zero(self.alpha_is_wd)
@@ -435,7 +451,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
                 bitset_zero(&self.words[j])
 
         if is_Matrix(arg):
-            for i,j in arg.nonzero_positions():
+            for i, j in arg.nonzero_positions():
                 bitset_set(&self.words[i], j)
 
         self.output = NULL
@@ -448,20 +464,24 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             bitset_free(&self.scratch_bitsets[j])
         for j from 0 <= j < self.nwords:
             bitset_free(&self.words[j])
-        sig_free(self.words); sig_free(self.scratch_bitsets)
-        sig_free(self.alpha_is_wd); PS_dealloc(self.word_ps)
-        sig_free(self.alpha); sig_free(self.scratch)
+        sig_free(self.words)
+        sig_free(self.scratch_bitsets)
+        sig_free(self.alpha_is_wd)
+        PS_dealloc(self.word_ps)
+        sig_free(self.alpha)
+        sig_free(self.scratch)
         if self.output is not NULL:
             deallocate_agcl_output(self.output)
 
     def run(self, partition=None):
         """
         Perform the canonical labeling and automorphism group computation,
-        storing results to self.
+        storing results to ``self``.
 
         INPUT:
-        partition -- an optional list of lists partition of the columns.
-            default is the unit partition.
+
+        - ``partition`` -- an optional list of lists partition of the columns.
+          default is the unit partition.
 
         EXAMPLES::
 
@@ -534,11 +554,11 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         if self.output is NULL:
             self.run()
         generators = []
-        for i from 0 <= i < self.output.num_gens:
+        for i in range(self.output.num_gens):
             generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
         order = Integer()
         SC_order(self.output.group, 0, order.value)
-        base = [self.output.group.base_orbits[i][0] for i from 0 <= i < self.output.group.base_size]
+        base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
         return generators, order, base
 
     def canonical_relabeling(self):
@@ -557,7 +577,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         cdef int i
         if self.output is NULL:
             self.run()
-        return [self.output.relabeling[i] for i from 0 <= i < self.degree]
+        return [self.output.relabeling[i] for i in range(self.degree)]
 
     def is_isomorphic(self, NonlinearBinaryCodeStruct other):
         """
@@ -585,7 +605,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             sig_free(ordering)
             sig_free(output)
             raise MemoryError
-        for i from 0 <= i < n:
+        for i in range(n):
             ordering[i] = i
         self.first_time = 1
         other.first_time = 1
@@ -595,7 +615,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         PS_dealloc(part)
         sig_free(ordering)
         if isomorphic:
-            output_py = [output[i] for i from 0 <= i < n]
+            output_py = [output[i] for i in range(n)]
         else:
             output_py = False
         sig_free(output)
@@ -629,7 +649,7 @@ cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_ref
     """
     cdef BinaryCodeStruct BCS = <BinaryCodeStruct> S
     cdef int current_cell_against = 0
-    cdef int current_cell, i, r, j
+    cdef int current_cell, i, r
     cdef int first_largest_subcell
     cdef int invariant = 0
     cdef PartitionStack *word_ps = BCS.word_ps
@@ -949,7 +969,7 @@ cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int e
         of PS
     """
     cdef bitset_t cell, word
-    cdef int i, h
+    cdef int h
     bitset_init(cell, BCS.degree)
     bitset_zero(cell)
     bitset_init(word, BCS.degree)
@@ -980,7 +1000,7 @@ cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int ent
     """
     cdef bitset_t word
     bitset_init(word, BCS.degree)
-    cdef int degree = 0, word_basis, i, b
+    cdef int degree = 0
     entry = col_ps.entries[entry]
     while True:
         BCS.ith_word(BCS, word_ps.entries[cell_index], word)
@@ -996,15 +1016,14 @@ cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degre
     A simple counting sort, given the degrees of vertices to a certain cell.
 
     INPUT:
-    PS -- the partition stack to be checked
-    start -- beginning index of the cell to be sorted
-    degrees -- the values to be sorted by
-    count, count_max, output -- scratch space
 
+    - PS -- the partition stack to be checked
+    - start -- beginning index of the cell to be sorted
+    - degrees -- the values to be sorted by
+    - count, count_max, output -- scratch space
     """
-    cdef int n = PS.degree
     cdef int i, j, max, max_location
-    for j from 0 <= j < count_max:
+    for j in range(count_max):
         counts[j] = 0
     i = 0
     while PS.levels[i+start] > PS.depth:

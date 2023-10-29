@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 C-Finite Sequences
 
@@ -155,7 +155,7 @@ def CFiniteSequences(base_ring, names=None, category=None):
         raise NotImplementedError("Multidimensional o.g.f. not implemented.")
     if category is None:
         category = Fields()
-    if not(base_ring in (QQ, ZZ)):
+    if not (base_ring in (QQ, ZZ)):
         raise ValueError("O.g.f. base not rational.")
     polynomial_ring = PolynomialRing(base_ring, names)
     return CFiniteSequences_generic(polynomial_ring, category)
@@ -301,7 +301,7 @@ class CFiniteSequence(FieldElement,
         """
 
         br = ogf.base_ring()
-        if not(br in (QQ, ZZ)):
+        if not (br in (QQ, ZZ)):
             br = QQ  # if the base ring of the o.g.f is not QQ, we force it to QQ and see if the o.g.f converts nicely
 
         # trying to figure out the ogf variables
@@ -1265,10 +1265,11 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 r"""
 .. TODO::
 
-    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6)) # not implemented
-    sage: latex(r)        # not implemented
+    sage: # not implemented
+    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
+    sage: latex(r)
     \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
-    sage: r.egf()      # not implemented
+    sage: r.egf()
     exp(2*x)
-    sage: r = CFiniteSequence(1/(1-y-x*y), x) # not implemented
+    sage: r = CFiniteSequence(1/(1-y-x*y), x)
 """

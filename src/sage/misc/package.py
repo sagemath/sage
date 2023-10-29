@@ -125,6 +125,42 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     return max(stable_releases)
 
 
+def spkg_type(name):
+    r"""
+    Return the type of the Sage package with the given name.
+
+    INPUT:
+
+    - ``name`` -- string giving the subdirectory name of the package under
+      ``SAGE_PKGS``
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import spkg_type
+        sage: spkg_type('pip')                                  # optional - sage_spkg
+        'standard'
+
+    OUTPUT:
+
+    The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
+    If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
+    not avaialble), ``None`` is returned.
+    """
+    spkg_type = None
+    from sage.env import SAGE_PKGS
+    if not SAGE_PKGS:
+        return None
+    try:
+        f = open(os.path.join(SAGE_PKGS, name, "type"))
+    except IOError:
+        # Probably an empty directory => ignore
+        return None
+
+    with f:
+        spkg_type = f.read().strip()
+    return spkg_type
+
+
 def pip_installed_packages(normalization=None):
     r"""
     Return a dictionary `name->version` of installed pip packages.
@@ -140,18 +176,19 @@ def pip_installed_packages(normalization=None):
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import pip_installed_packages
-        sage: d = pip_installed_packages()                      # optional - sage_spkg
-        sage: 'scipy' in d or 'SciPy' in d                      # optional - sage_spkg
+        sage: d = pip_installed_packages()
+        sage: 'scipy' in d or 'SciPy' in d
         True
-        sage: d['beautifulsoup4']                               # optional - sage_spkg beautifulsoup4
+        sage: d['beautifulsoup4']                               # optional - beautifulsoup4
         '...'
-        sage: d['prompt-toolkit']                               # optional - sage_spkg
+        sage: d['prompt-toolkit']
         '...'
-        sage: d = pip_installed_packages(normalization='spkg')  # optional - sage_spkg
-        sage: d['prompt_toolkit']                               # optional - sage_spkg
+        sage: d = pip_installed_packages(normalization='spkg')
+        sage: d['prompt_toolkit']
         '...'
-        sage: d['scipy']                                        # optional - sage_spkg
+        sage: d['scipy']
         '...'
     """
     with open(os.devnull, 'w') as devnull:
@@ -257,27 +294,29 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import list_packages
-        sage: L = list_packages('standard')    # optional - sage_spkg
-        sage: sorted(L.keys())                 # optional - sage_spkg, random
+        sage: L = list_packages('standard')
+        sage: sorted(L.keys())  # random
         ['alabaster',
          'arb',
          'babel',
          ...
          'zlib']
-        sage: sage_conf_info = L['sage_conf']  # optional - sage_spkg
-        sage: sage_conf_info.type              # optional - sage_spkg
+        sage: sage_conf_info = L['sage_conf']
+        sage: sage_conf_info.type
         'standard'
-        sage: sage_conf_info.is_installed()    # optional - sage_spkg
+        sage: sage_conf_info.is_installed()
         True
-        sage: sage_conf_info.source            # optional - sage_spkg
+        sage: sage_conf_info.source
         'script'
 
-        sage: L = list_packages(pkg_sources=['pip'], local=True)  # optional - sage_spkg internet
-        sage: bp_info = L['biopython']         # optional - sage_spkg internet
-        sage: bp_info.type                     # optional - sage_spkg internet
+        sage: # optional - sage_spkg internet
+        sage: L = list_packages(pkg_sources=['pip'], local=True)
+        sage: bp_info = L['biopython']
+        sage: bp_info.type
         'optional'
-        sage: bp_info.source                   # optional - sage_spkg internet
+        sage: bp_info.source
         'pip'
 
     Check the option ``exclude_pip``::
@@ -310,14 +349,9 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     for p in lp:
 
-        try:
-            f = open(os.path.join(SAGE_PKGS, p, "type"))
-        except IOError:
-            # Probably an empty directory => ignore
+        typ = spkg_type(p)
+        if not typ:
             continue
-
-        with f:
-            typ = f.read().strip()
 
         if os.path.isfile(os.path.join(SAGE_PKGS, p, "requirements.txt")):
             src = 'pip'
@@ -393,9 +427,11 @@ def installed_packages(exclude_pip=True):
     records of Python packages. Our ``SAGE_VENV`` is not necessarily the
     main Sage venv; it could be a user-created venv or a venv created by tox.)::
 
-        sage: sorted(installed_packages().keys())         # optional - sage_spkg
+        sage: # optional - sage_spkg
+        sage: from sage.misc.package import installed_packages
+        sage: sorted(installed_packages().keys())
         [...'conway_polynomials', ...]
-        sage: installed_packages()['conway_polynomials']  # optional - sage_spkg, random
+        sage: installed_packages()['conway_polynomials']  # random
         '0.5'
 
     .. SEEALSO::
@@ -431,6 +467,7 @@ def is_package_installed(package, exclude_pip=True):
 
     EXAMPLES::
 
+        sage: from sage.misc.package import is_package_installed
         sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
         True
 
@@ -501,10 +538,12 @@ def package_versions(package_type, local=False):
 
     EXAMPLES::
 
-        sage: std = package_versions('standard', local=True)  # optional - sage_spkg
-        sage: 'gap' in std  # optional - sage_spkg
+        sage: # optional - sage_spkg
+        sage: from sage.misc.package import package_versions
+        sage: std = package_versions('standard', local=True)
+        sage: 'gap' in std
         True
-        sage: std['zlib']  # optional - sage_spkg, random
+        sage: std['zlib']  # random
         ('1.2.11.p0', '1.2.11.p0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
@@ -563,12 +602,13 @@ def optional_packages():
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import optional_packages
-        sage: installed, not_installed = optional_packages()  # optional - sage_spkg
+        sage: installed, not_installed = optional_packages()
         doctest:...: DeprecationWarning: ...
-        sage: 'biopython' in installed + not_installed        # optional - sage_spkg
+        sage: 'biopython' in installed + not_installed
         True
-        sage: 'biopython' in installed                        # optional - sage_spkg biopython
+        sage: 'biopython' in installed          # optional - biopython
         True
     """
     from sage.misc.superseded import deprecation
@@ -627,11 +667,12 @@ def package_manifest(package):
 
     EXAMPLES::
 
+        sage: # optional - sage_spkg
         sage: from sage.misc.package import package_manifest
-        sage: manifest = package_manifest('conway_polynomials')  # optional - sage_spkg
-        sage: manifest['package_name'] == 'conway_polynomials'   # optional - sage_spkg
+        sage: manifest = package_manifest('conway_polynomials')
+        sage: manifest['package_name'] == 'conway_polynomials'
         True
-        sage: 'files' in manifest                                # optional - sage_spkg
+        sage: 'files' in manifest
         True
 
     Test a nonexistent package::

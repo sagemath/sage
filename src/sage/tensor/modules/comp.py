@@ -1235,9 +1235,9 @@ class Components(SageObject):
 
         Check that the bug reported in :trac:`22520` is fixed::
 
-            sage: c = Components(SR, [1, 2], 1)      # optional - sage.symbolic
-            sage: c[0] = SR.var('t', domain='real')  # optional - sage.symbolic
-            sage: c.display('c')                     # optional - sage.symbolic
+            sage: c = Components(SR, [1, 2], 1)                                         # needs sage.symbolic
+            sage: c[0] = SR.var('t', domain='real')                                     # needs sage.symbolic
+            sage: c.display('c')                                                        # needs sage.symbolic
             c_0 = t
 
         """
@@ -3259,7 +3259,7 @@ class CompWithSym(Components):
             if indsym_ordered != indsym:
                 # Permutation linking indsym_ordered to indsym:
                 #  (the +1 is required to fulfill the convention of Permutation)
-                perm = [indsym.index(i) +1 for i in indsym_ordered]
+                perm = [indsym.index(i) + 1 for i in indsym_ordered]
                 #c#     Permutation(perm).signature()
                 sign *= Permutation(perm).signature()
         ind = tuple(ind)

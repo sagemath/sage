@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Tensor Products of Crystal Elements
 
@@ -1158,7 +1158,7 @@ cdef class InfinityCrystalOfTableauxElementTypeD(InfinityCrystalOfTableauxElemen
         return ret
 
 #####################################################################
-## BKK crystal elements
+#  BKK crystal elements
 
 cdef class TensorProductOfSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
     r"""
@@ -1405,7 +1405,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         return Tableau(tab).conjugate()
 
 #####################################################################
-## Queer crystal elements
+#  Queer crystal elements
 
 cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
     r"""

@@ -277,7 +277,7 @@ cdef class Dist(ModuleElement):
                 use_arg = False
             if not z:
                 return False
-            for a in xrange(1, n):
+            for a in range(1, n):
                 if usearg:
                     try:
                         z = self._unscaled_moment(a).is_zero(M - a)
@@ -853,7 +853,7 @@ cdef class Dist_vector(Dist):
             sage: QQ(d)
             4/3
 
-        We get a TypeError if there is more than 1 moment::
+        We get a :class:`TypeError` if there is more than 1 moment::
 
             sage: D = Symk(1); d = D([1,2]); d
             (1, 2)

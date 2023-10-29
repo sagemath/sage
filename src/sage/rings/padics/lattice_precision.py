@@ -32,7 +32,7 @@ TESTS::
 
 from collections import defaultdict
 
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
@@ -676,9 +676,9 @@ class DifferentialPrecisionGeneric(SageObject):
             sage: R.precision()
             Precision lattice on 0 objects (label: mylabel)
         """
-        label = "" if self._label is None else " (label: %s)"%(self._label,)
-        count = "1 object" if len(self._elements) == 1 else "%s objects"%len(self._elements)
-        return "%s on %s%s"%(self._repr_type, count, label)
+        label = "" if self._label is None else " (label: %s)" % (self._label,)
+        count = "1 object" if len(self._elements) == 1 else "%s objects" % len(self._elements)
+        return "%s on %s%s" % (self._repr_type, count, label)
 
     def threshold_deletion(self, threshold=None):
         r"""
@@ -2786,7 +2786,7 @@ class pAdicLatticeElementWeakProxy():
         """
         if not hasattr(element, '_proxy_id'):
             element._proxy_id = pAdicLatticeElementWeakProxy._next_id
-            pAdicLatticeElementWeakProxy._next_id +=1
+            pAdicLatticeElementWeakProxy._next_id += 1
         self._id = element._proxy_id
         from weakref import ref
         proxy_callback = callback
@@ -2856,7 +2856,7 @@ class pAdicLatticeElementWeakProxy():
             [WeakProxy#...]
 
         """
-        return "WeakProxy#%s"%(self._id,)
+        return "WeakProxy#%s" % (self._id,)
 
 def list_of_padics(elements):
     r"""

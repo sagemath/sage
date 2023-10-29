@@ -52,7 +52,8 @@ class DatabaseConwayPolynomials(StaticFile):
                             filename='conway_polynomials.p',
                             search_path=search_path,
                             spkg='conway_polynomials',
-                            description="Frank Luebeck's database of Conway polynomials")
+                            description="Frank Luebeck's database of Conway polynomials",
+                            type='standard')
 
 
 CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])

@@ -823,7 +823,7 @@ class FractionWithFactoredDenominator(RingElement):
         for a, m in df:
             am = a**m
             q, r = denominator.quo_rem(am)
-            assert r==0
+            assert r == 0
             numer = p * q.inverse_mod(am) % am
             # The inverse exists because the product and a**m
             # are relatively prime.
@@ -1251,7 +1251,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: H = R(f.denominator())
             sage: ff = FFPD(G, H.factor())
             sage: decomp = ff.leinartas_decomposition()
-            sage: decomp
+            sage: decomp  # random - non canonical depends on singular version
             (0, []) +
             (-(x*y^2*sin(x) + x^2*y + x*y + y*sin(x) + x)*y, [(y, 1)]) +
             ((x*y^2*sin(x) + x^2*y + x*y + y*sin(x) + x)*x*y, [(x*y + 1, 1)]) +
@@ -1611,9 +1611,7 @@ class FractionWithFactoredDenominator(RingElement):
             (-16, [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 2)])
             sage: alpha = [3, 3, 2]
             sage: decomp = F.asymptotic_decomposition(alpha); decomp
-            (0, []) +
-            (16*r*(3/x - 2/z) + 16/x - 16/z,
-             [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
+            (0, []) + (..., [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
             sage: F1 = decomp[1]
             sage: p = {x: 1, y: 1, z: 1}
             sage: asy = F1.asymptotics(p, alpha, 2, verbose=True) # long time
@@ -1932,7 +1930,7 @@ class FractionWithFactoredDenominator(RingElement):
             if v.mod(2) == 0:
                 At_derivs = diff_all(At, T, 2 * N - 2, sub=hderivs1,
                                      sub_final=[Tstar, atP], rekey=AA)
-                Phitu_derivs = diff_all(Phitu, T, 2 * N - 2 +v,
+                Phitu_derivs = diff_all(Phitu, T, 2 * N - 2 + v,
                                         sub=hderivs1, sub_final=[Tstar, atP],
                                         zero_order=v + 1, rekey=BB)
             else:

@@ -713,7 +713,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
                 sage: Lyn([x, [y, [z, x]]]) # indirect doctest
                 [x, [[x, z], y]]
             """
-            assert l < r, "Order mismatch %s > %s"%(l, r)
+            assert l < r, "Order mismatch %s > %s" % (l, r)
 
             if self._is_basis_element(l, r):
                 # Compute the grade of the new element

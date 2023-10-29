@@ -144,7 +144,8 @@ cdef class pAdicFloatingPointElement(FPElement):
         precision.  If a rational is returned, its denominator will equal
         ``p^ordp(self)``.
 
-        This method will raise a ValueError when this element is infinity.
+        This method will raise a :class:`ValueError` when this element
+        is infinity.
 
         EXAMPLES::
 
@@ -223,6 +224,7 @@ cdef class pAdicFloatingPointElement(FPElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_top(),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo

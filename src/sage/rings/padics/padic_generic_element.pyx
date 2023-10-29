@@ -2422,7 +2422,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             while True:
                 # we compute the sum for the possible values for u using Horner's method
                 inner_sum = R.zero()
-                for u in xrange(upper_u,0,-1):
+                for u in range(upper_u,0,-1):
                     # We want u to be a p-adic unit
                     if u%p==0:
                         new_term = R.zero()

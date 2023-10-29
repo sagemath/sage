@@ -391,7 +391,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
              sage: from sage.coding.linear_rank_metric import AbstractLinearRankMetricCode
              sage: class RankRepetitionCode(AbstractLinearRankMetricCode):
              ....:   def __init__(self, base_field, sub_field, length):
-             ....:       super().__init__(self, base_field, sub_field, length,
+             ....:       super().__init__(base_field, sub_field, length,
              ....:                        "GeneratorMatrix", "NearestNeighbor")
              ....:       beta = base_field.gen()
              ....:       self._generator_matrix = matrix(base_field,
@@ -731,9 +731,9 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         R = self.base_field()
         S = self.sub_field()
         if R and S in Fields():
-            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)"%(self.length(), self.dimension(), R.cardinality(), S.cardinality())
+            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)" % (self.length(), self.dimension(), R.cardinality(), S.cardinality())
         else:
-            return "[%s, %s] linear rank metric code over %s/%s"%(self.length(), self.dimension(), R, S)
+            return "[%s, %s] linear rank metric code over %s/%s" % (self.length(), self.dimension(), R, S)
 
     def _latex_(self):
         r"""
@@ -891,7 +891,8 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
             sage: D.decoding_radius()
             1
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
+
 
 ####################### registration ###############################
 

@@ -57,10 +57,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
     This base exchange graph is not stored as such, but should be provided
     implicitly by the child class in the form of two methods
-    ``__is_exchange_pair(x, y)`` and ``__exchange(x, y)``, as well as an
+    ``_is_exchange_pair(x, y)`` and ``_exchange(x, y)``, as well as an
     initial basis. At any moment, BasisExchangeMatroid keeps a current basis
-    `B`. The method ``__is_exchange_pair(x, y)`` should return a boolean
-    indicating whether `B - x + y` is a basis. The method ``__exchange(x, y)``
+    `B`. The method ``_is_exchange_pair(x, y)`` should return a boolean
+    indicating whether `B - x + y` is a basis. The method ``_exchange(x, y)``
     is called when the current basis `B` is replaced by said `B-x + y`. It is
     up to the child class to update its internal data structure to make
     information relative to the new basis more accessible. For instance, a
@@ -81,16 +81,16 @@ cdef class BasisExchangeMatroid(Matroid):
     - :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`: keeps
       a list of all bases.
 
-        - ``__is_exchange_pair(x, y)`` reduces to a query whether `B - x + y`
+        - ``_is_exchange_pair(x, y)`` reduces to a query whether `B - x + y`
           is a basis.
-        - ``__exchange(x, y)`` has no work to do.
+        - ``_exchange(x, y)`` has no work to do.
 
     - :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`:
       keeps a matrix representation `A` of the matroid so that `A[B] = I`.
 
-        - ``__is_exchange_pair(x, y)`` reduces to testing whether `A[r, y]`
+        - ``_is_exchange_pair(x, y)`` reduces to testing whether `A[r, y]`
           is nonzero, where `A[r, x]=1`.
-        - ``__exchange(x, y)`` should modify the matrix so that `A[B - x + y]`
+        - ``_exchange(x, y)`` should modify the matrix so that `A[B - x + y]`
           becomes `I`, which means pivoting on `A[r, y]`.
 
     - ``TransversalMatroid`` (not yet implemented): If `A` is a set of subsets
@@ -100,17 +100,17 @@ cdef class BasisExchangeMatroid(Matroid):
       edge `(A_i,e)` if `e` is in the subset `A_i`. At any time you keep a
       maximum matching `M` of `G` covering the current basis `B`.
 
-        - ``__is_exchange_pair(x, y)`` checks for the existence of an
+        - ``_is_exchange_pair(x, y)`` checks for the existence of an
           `M`-alternating path `P` from `y` to `x`.
-        - ``__exchange(x, y)`` replaces `M` by the symmetric difference of
+        - ``_exchange(x, y)`` replaces `M` by the symmetric difference of
           `M` and `E(P)`.
 
     - ``AlgebraicMatroid`` (not yet implemented): keeps a list of polynomials
       in variables `E - B + e` for each variable `e` in `B`.
 
-        - ``__is_exchange_pair(x, y)`` checks whether the polynomial that
+        - ``_is_exchange_pair(x, y)`` checks whether the polynomial that
           relates `y` to `E-B` uses `x`.
-        - ``__exchange(x, y)`` make new list of polynomials by computing
+        - ``_exchange(x, y)`` make new list of polynomials by computing
           resultants.
 
     All but the first of the above matroids are algebraic, and all
@@ -139,7 +139,7 @@ cdef class BasisExchangeMatroid(Matroid):
         This initializer sets up a correspondence between elements of
         ``groundset`` and ``range(len(groundset))``. ``BasisExchangeMatroid``
         uses this correspondence for encoding of subsets of the groundset as
-        bitpacked sets of integers --- see ``__pack()`` and ``__unpack()``. In
+        bitpacked sets of integers --- see ``_pack()`` and ``__unpack()``. In
         general, methods of ``BasisExchangeMatroid`` having a name starting
         with two underscores deal with such encoded subsets.
 
@@ -180,7 +180,7 @@ cdef class BasisExchangeMatroid(Matroid):
             self._idx[self._E[i]] = i
 
         if basis is not None:
-            self.__pack(self._current_basis, frozenset(basis))
+            self._pack(self._current_basis, frozenset(basis))
 
     def __dealloc__(self):
         bitset_free(self._current_basis)
@@ -191,7 +191,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_free(self._output)
         bitset_free(self._temp)
 
-    cdef __relabel(self, l):
+    cdef _relabel(self, l):
         """
         Relabel each element `e` as `l[e]`, where `l` is a given injective map.
 
@@ -231,7 +231,7 @@ cdef class BasisExchangeMatroid(Matroid):
             self._heuristic_partition_var._relabel(l)
 
     # the engine
-    cdef __pack(self, bitset_t I, F):
+    cdef _pack(self, bitset_t I, F):
         """
         Encode a subset F of the groundset into a bitpacked set of integers
         """
@@ -252,21 +252,21 @@ cdef class BasisExchangeMatroid(Matroid):
         return frozenset(F)
 
     # this method needs to be overridden by child class
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         """
         Test if current_basis-x + y is a basis
         """
         raise NotImplementedError
 
     # if this method is overridden by a child class, the child class needs to call this method
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         """
         put current_basis <-- current_basis-x + y
         """
         bitset_discard(self._current_basis, x)
         bitset_add(self._current_basis, y)
 
-    cdef int __move(self, bitset_t X, bitset_t Y) except -1:
+    cdef int _move(self, bitset_t X, bitset_t Y) except -1:
         """
         Change current_basis to minimize intersection with ``X``, maximize intersection with ``Y``.
         """
@@ -275,8 +275,8 @@ cdef class BasisExchangeMatroid(Matroid):
         while x >= 0:
             y = bitset_first(Y)
             while y >= 0:
-                if self.__is_exchange_pair(x, y):
-                    self.__exchange(x, y)
+                if self._is_exchange_pair(x, y):
+                    self._exchange(x, y)
                     bitset_discard(Y, y)
                     bitset_discard(X, x)
                     if bitset_isempty(Y):
@@ -295,7 +295,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_complement(self._temp, self._current_basis)
         y = bitset_first(self._temp)
         while y >= 0:
-            if self.__is_exchange_pair(x, y):
+            if self._is_exchange_pair(x, y):
                 bitset_add(C, y)
             y = bitset_next(self._temp, y + 1)
         bitset_add(C, x)
@@ -308,7 +308,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_clear(C)
         x = bitset_first(self._current_basis)
         while x >= 0:
-            if self.__is_exchange_pair(x, y):
+            if self._is_exchange_pair(x, y):
                 bitset_add(C, x)
             x = bitset_next(self._current_basis, x + 1)
         bitset_add(C, y)
@@ -319,7 +319,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, F)
         bitset_difference(self._outside, F, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_intersection(R, self._current_basis, F)
 
     cdef __circuit(self, bitset_t R, bitset_t F):
@@ -335,8 +335,8 @@ cdef class BasisExchangeMatroid(Matroid):
         while y >= 0:
             x = bitset_first(self._inside)
             while x >= 0:
-                if self.__is_exchange_pair(x, y):
-                    self.__exchange(x, y)
+                if self._is_exchange_pair(x, y):
+                    self._exchange(x, y)
                     bitset_discard(self._outside, y)
                     bitset_discard(self._inside, x)
                     if bitset_isempty(self._outside):
@@ -355,7 +355,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, F)
         bitset_difference(self._outside, F, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_set_first_n(R, self._groundset_size)
         cdef long x = bitset_first(self._inside)
         while x >= 0:
@@ -370,7 +370,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_difference(R, F, self._current_basis)
 
     cdef __cocircuit(self, bitset_t R, bitset_t F):
@@ -387,8 +387,8 @@ cdef class BasisExchangeMatroid(Matroid):
         while x >= 0:
             y = bitset_first(self._outside)
             while y >= 0:
-                if self.__is_exchange_pair(x, y):
-                    self.__exchange(x, y)
+                if self._is_exchange_pair(x, y):
+                    self._exchange(x, y)
                     bitset_discard(self._outside, y)
                     bitset_discard(self._inside, x)
                     if bitset_isempty(self._inside):
@@ -401,14 +401,14 @@ cdef class BasisExchangeMatroid(Matroid):
                 return
             x = bitset_next(self._inside, x + 1)
 
-    cdef __coclosure(self, bitset_t R, bitset_t F):
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``closure``.
         """
         bitset_complement(R, F)
         bitset_difference(self._inside, self._current_basis, R)
         bitset_difference(self._outside, R, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_set_first_n(R, self._groundset_size)
         cdef long y = bitset_first(self._outside)
         while y >= 0:
@@ -422,10 +422,10 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, X)
         bitset_difference(self._outside, X, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_difference(self._inside, self._inside, Y)
         bitset_difference(self._outside, Y, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_intersection(R, self._current_basis, Y)
 
     cdef bint __is_independent(self, bitset_t F) except -1:
@@ -434,7 +434,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, F)
         bitset_difference(self._outside, F, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         return bitset_isempty(self._outside)
 
     cdef __move_current_basis(self, bitset_t X, bitset_t Y):
@@ -443,21 +443,21 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_difference(self._inside, self._current_basis, X)
         bitset_difference(self._outside, X, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         bitset_intersection(self._inside, self._current_basis, Y)
         bitset_complement(self._outside, self._current_basis)
         bitset_difference(self._outside, self._outside, Y)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
 
     # functions for derived classes and for parent class
     cdef bint _set_current_basis(self, F):
         """
         Set _current_basis to subset of the groundset ``F``.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         bitset_difference(self._inside, self._current_basis, self._input)
         bitset_difference(self._outside, self._input, self._current_basis)
-        self.__move(self._inside, self._outside)
+        self._move(self._inside, self._outside)
         return bitset_isempty(self._outside) and bitset_isempty(self._inside)
 
     # groundset and full_rank
@@ -473,8 +473,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted(M.groundset())                                                 # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         """
         return self._groundset
@@ -495,17 +495,17 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: type(M.groundset())                                                   # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: type(M.groundset())
             <... 'frozenset'>
-            sage: type(M.groundset_list())                                              # optional - sage.rings.finite_rings
+            sage: type(M.groundset_list())
             <... 'list'>
-            sage: sorted(M.groundset_list())                                            # optional - sage.rings.finite_rings
+            sage: sorted(M.groundset_list())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
-            sage: E = M.groundset_list()                                                # optional - sage.rings.finite_rings
-            sage: E.remove('a')                                                         # optional - sage.rings.finite_rings
-            sage: sorted(M.groundset_list())                                            # optional - sage.rings.finite_rings
+            sage: E = M.groundset_list()
+            sage: E.remove('a')
+            sage: sorted(M.groundset_list())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         """
         return list(self._E)
@@ -516,10 +516,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: len(M)                                                                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: len(M)
             7
-            sage: len(M.groundset())                                                    # optional - sage.rings.finite_rings
+            sage: len(M.groundset())
             7
 
         """
@@ -538,10 +538,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.full_rank()                                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.full_rank()
             3
-            sage: M.dual().full_rank()                                                  # optional - sage.rings.finite_rings
+            sage: M.dual().full_rank()
             4
         """
         return self._matroid_rank
@@ -564,10 +564,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M.full_corank()                                                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.full_corank()
             4
-            sage: M.dual().full_corank()                                                # optional - sage.rings.finite_rings
+            sage: M.dual().full_corank()
             3
         """
         return self._groundset_size - self._matroid_rank
@@ -592,12 +592,12 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: sorted(M.basis())                                                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: sorted(M.basis())
             ['a', 'b', 'c']
-            sage: M.rank('cd')                                                          # optional - sage.rings.finite_rings
+            sage: M.rank('cd')
             2
-            sage: sorted(M.basis())                                                     # optional - sage.rings.finite_rings
+            sage: sorted(M.basis())
             ['a', 'c', 'd']
 
         """
@@ -630,8 +630,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ['b', 'c', 'e', 'f']
 
         """
-        self.__pack(self._input, X)
-        self.__pack(self._input2, Y)
+        self._pack(self._input, X)
+        self._pack(self._input2, Y)
         self.__move_current_basis(self._input, self._input2)
 
     cpdef _max_independent(self, F):
@@ -661,7 +661,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.max_independent>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -692,7 +692,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.rank>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
         return bitset_len(self._output)
 
@@ -729,7 +729,7 @@ cdef class BasisExchangeMatroid(Matroid):
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.circuit>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__circuit(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -750,11 +750,11 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()                                      # optional - sage.rings.finite_rings
-            sage: sorted(M._fundamental_circuit('abcd', 'e'))                           # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.P8()
+            sage: sorted(M._fundamental_circuit('abcd', 'e'))
             ['a', 'b', 'c', 'e']
         """
-        self.__pack(self._input, B)
+        self._pack(self._input, B)
         bitset_clear(self._input2)
         self.__move_current_basis(self._input, self._input2)
         self.__fundamental_circuit(self._output, self._idx[e])
@@ -787,7 +787,7 @@ cdef class BasisExchangeMatroid(Matroid):
             :meth:`<sage.matroids.matroid.Matroid.closure>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__closure(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -818,7 +818,7 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.max_coindependent>`.
 
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_coindependent(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -848,7 +848,7 @@ cdef class BasisExchangeMatroid(Matroid):
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.corank>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__max_coindependent(self._output, self._input)
         return bitset_len(self._output)
 
@@ -885,7 +885,7 @@ cdef class BasisExchangeMatroid(Matroid):
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.cocircuit>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         self.__cocircuit(self._output, self._input)
         return self.__unpack(self._output)
 
@@ -906,11 +906,11 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()                                      # optional - sage.rings.finite_rings
-            sage: sorted(M._fundamental_cocircuit('efgh', 'e'))                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.P8()
+            sage: sorted(M._fundamental_cocircuit('efgh', 'e'))
             ['b', 'c', 'd', 'e']
         """
-        self.__pack(self._input, B)
+        self._pack(self._input, B)
         bitset_clear(self._input2)
         self.__move_current_basis(self._input, self._input2)
         self.__fundamental_cocircuit(self._output, self._idx[e])
@@ -943,8 +943,8 @@ cdef class BasisExchangeMatroid(Matroid):
             see :meth:`<sage.matroids.matroid.Matroid.coclosure>`.
 
         """
-        self.__pack(self._input, F)
-        self.__coclosure(self._output, self._input)
+        self._pack(self._input, F)
+        self._coclosure_internal(self._output, self._input)
         return self.__unpack(self._output)
 
     cpdef _augment(self, X, Y):
@@ -973,8 +973,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ['e', 'f', 'g']
 
         """
-        self.__pack(self._input, X)
-        self.__pack(self._input2, Y)
+        self._pack(self._input, X)
+        self._pack(self._input2, Y)
         self.__augment(self._output, self._input, self._input2)
         return self.__unpack(self._output)
 
@@ -1006,7 +1006,7 @@ cdef class BasisExchangeMatroid(Matroid):
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.is_independent>`.
         """
-        self.__pack(self._input, F)
+        self._pack(self._input, F)
         return self.__is_independent(self._input)
 
     # connectivity
@@ -1134,7 +1134,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M.connectivity(X)
             2
             sage: J = M.groundset()-(S|T|I)
-            sage: N = M/I\J
+            sage: N = (M/I).delete(J)
             sage: N.connectivity(S)
             2
         """
@@ -1142,8 +1142,8 @@ cdef class BasisExchangeMatroid(Matroid):
         cdef bitset_t SS, TT
         bitset_init(SS, self._groundset_size)
         bitset_init(TT, self._groundset_size)
-        self.__pack(SS,S)
-        self.__pack(TT,T)
+        self._pack(SS,S)
+        self._pack(TT,T)
         #F = set(self.groundset()) - (S | T)
         cdef bitset_t F, I
         bitset_init(F, self._groundset_size)
@@ -1255,8 +1255,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.S8()                                      # optional - sage.rings.finite_rings
-            sage: M.f_vector()                                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.S8()
+            sage: M.f_vector()
             [1, 8, 22, 14, 1]
 
         """
@@ -1321,14 +1321,14 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.S8()                                      # optional - sage.rings.finite_rings
-            sage: M.f_vector()                                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.S8()
+            sage: M.f_vector()
             [1, 8, 22, 14, 1]
-            sage: len(M.flats(2))                                                       # optional - sage.rings.finite_rings
+            sage: len(M.flats(2))
             22
-            sage: len(M.flats(8))                                                       # optional - sage.rings.finite_rings
+            sage: len(M.flats(8))
             0
-            sage: len(M.flats(4))                                                       # optional - sage.rings.finite_rings
+            sage: len(M.flats(4))
             1
         """
         cdef bitset_t *flats
@@ -1396,14 +1396,14 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.S8().dual()                               # optional - sage.rings.finite_rings
-            sage: M.f_vector()                                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.S8().dual()
+            sage: M.f_vector()
             [1, 8, 22, 14, 1]
-            sage: len(M.coflats(2))                                                     # optional - sage.rings.finite_rings
+            sage: len(M.coflats(2))
             22
-            sage: len(M.coflats(8))                                                     # optional - sage.rings.finite_rings
+            sage: len(M.coflats(8))
             0
-            sage: len(M.coflats(4))                                                     # optional - sage.rings.finite_rings
+            sage: len(M.coflats(4))
             1
         """
         cdef bitset_t *coflats
@@ -1421,7 +1421,7 @@ cdef class BasisExchangeMatroid(Matroid):
         Rcoflats = SetSystem(self._E)
         i = 0
         bitset_clear(todo[0])
-        self.__coclosure(coflats[0], todo[0])
+        self._coclosure_internal(coflats[0], todo[0])
         bitset_complement(todo[0], coflats[0])
         self._coflats_rec(Rcoflats, r, coflats, todo, 0, 0)
         for i in range(r + 1):
@@ -1443,7 +1443,7 @@ cdef class BasisExchangeMatroid(Matroid):
         while e >= 0:
             bitset_copy(self._input, coflats[i])
             bitset_add(self._input, e)
-            self.__coclosure(coflats[i + 1], self._input)
+            self._coclosure_internal(coflats[i + 1], self._input)
             bitset_difference(todo[i], todo[i], coflats[i + 1])
             bitset_difference(todo[i + 1], coflats[i + 1], coflats[i])
             if bitset_first(todo[i + 1]) == e:
@@ -1529,8 +1529,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: M.bases_count()                                                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: M.bases_count()
             184
         """
         if self._bcount is not None:
@@ -1556,9 +1556,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: I = M.independent_sets()                                              # optional - sage.rings.finite_rings
-            sage: len(I)                                                                # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: I = M.independent_sets()
+            sage: len(I)
             57
         """
         cdef bitset_t *I
@@ -1617,10 +1617,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: M.bases_count()                                                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: M.bases_count()
             184
-            sage: [len(M.independent_r_sets(r)) for r in range(M.full_rank() + 1)]      # optional - sage.rings.finite_rings
+            sage: [len(M.independent_r_sets(r)) for r in range(M.full_rank() + 1)]
             [1, 10, 45, 120, 201, 184]
 
         """
@@ -1649,10 +1649,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: M.bases_count()                                                       # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: M.bases_count()
             184
-            sage: len([B for B in M.bases()])                                           # optional - sage.rings.finite_rings
+            sage: len([B for B in M.bases()])
             184
         """
         return self.independent_r_sets(self.full_rank())
@@ -1671,10 +1671,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: len(M.nonbases())                                                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: len(M.nonbases())
             68
-            sage: [len(M.dependent_r_sets(r)) for r in range(M.full_rank() + 1)]        # optional - sage.rings.finite_rings
+            sage: [len(M.dependent_r_sets(r)) for r in range(M.full_rank() + 1)]
             [0, 0, 0, 0, 9, 68]
 
         """
@@ -1714,10 +1714,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: binomial(M.size(), M.full_rank())-M.bases_count()                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: binomial(M.size(), M.full_rank())-M.bases_count()                     # needs sage.symbolic
             68
-            sage: len([B for B in M.nonbases()])                                        # optional - sage.rings.finite_rings
+            sage: len([B for B in M.nonbases()])
             68
         """
         return self.dependent_r_sets(self.full_rank())
@@ -1740,8 +1740,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: len(M.nonspanning_circuits())                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: len(M.nonspanning_circuits())
             23
         """
         cdef SetSystem NSC
@@ -1789,8 +1789,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: len(M.noncospanning_cocircuits())                                     # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: len(M.noncospanning_cocircuits())
             23
         """
         cdef SetSystem NSC
@@ -1835,8 +1835,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.NonFano().bases())          # optional - sage.rings.finite_rings
-            sage: sorted([sorted(C) for C in M.cocircuits()])                           # optional - sage.rings.finite_rings
+            sage: M = Matroid(bases=matroids.named_matroids.NonFano().bases())
+            sage: sorted([sorted(C) for C in M.cocircuits()])
             [['a', 'b', 'c', 'd', 'g'], ['a', 'b', 'c', 'e', 'g'],
              ['a', 'b', 'c', 'f', 'g'], ['a', 'b', 'd', 'e'],
              ['a', 'c', 'd', 'f'], ['a', 'e', 'f', 'g'], ['b', 'c', 'e', 'f'],
@@ -1883,8 +1883,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(matroids.named_matroids.NonFano().bases())                # optional - sage.rings.finite_rings
-            sage: sorted([sorted(C) for C in M.circuits()])                             # optional - sage.rings.finite_rings
+            sage: M = Matroid(matroids.named_matroids.NonFano().bases())
+            sage: sorted([sorted(C) for C in M.circuits()])
             [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'b', 'f'],
              ['a', 'c', 'd', 'f'], ['a', 'c', 'e'], ['a', 'd', 'e', 'f'],
              ['a', 'd', 'g'], ['a', 'e', 'f', 'g'], ['b', 'c', 'd'],
@@ -1932,10 +1932,10 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()                                      # optional - sage.rings.finite_rings
-            sage: M._characteristic_setsystem()                                         # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.N1()
+            sage: M._characteristic_setsystem()
             Iterator over a system of subsets
-            sage: len(M._characteristic_setsystem())                                    # optional - sage.rings.finite_rings
+            sage: len(M._characteristic_setsystem())
             23
         """
         if 2 * self._matroid_rank > self._groundset_size:
@@ -1958,9 +1958,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())             # optional - sage.rings.finite_rings
-            sage: N = Matroid(matroids.named_matroids.NonFano().bases())                # optional - sage.rings.finite_rings
-            sage: M._weak_invariant() == N._weak_invariant()                            # optional - sage.rings.finite_rings
+            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
+            sage: N = Matroid(matroids.named_matroids.NonFano().bases())
+            sage: M._weak_invariant() == N._weak_invariant()
             False
         """
         if self._weak_invariant_var is None:
@@ -2003,9 +2003,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(matroids.named_matroids.Fano().bases())                   # optional - sage.rings.finite_rings
-            sage: N = Matroid(matroids.named_matroids.NonFano().bases())                # optional - sage.rings.finite_rings
-            sage: M._strong_invariant() == N._strong_invariant()                        # optional - sage.rings.finite_rings
+            sage: M = Matroid(matroids.named_matroids.Fano().bases())
+            sage: N = Matroid(matroids.named_matroids.NonFano().bases())
+            sage: M._strong_invariant() == N._strong_invariant()
             False
         """
         if self._strong_invariant_var is None:
@@ -2132,10 +2132,10 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: N._is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano() \ ['g']                            # optional - sage.rings.finite_rings
-            sage: N = matroids.Wheel(3)                                                 # optional - sage.rings.finite_rings
-            sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}                # optional - sage.rings.finite_rings
-            sage: M._is_isomorphism(N, morphism)                                        # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano().delete(['g'])
+            sage: N = matroids.Wheel(3)
+            sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
+            sage: M._is_isomorphism(N, morphism)
             True
 
         TESTS:
@@ -2146,8 +2146,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ....:     return min(len(X), 2)
             ....:
             sage: M = Matroid(groundset='abcd', rank_function=f)
-            sage: N = Matroid(field=GF(3), reduced_matrix=[[1,1],[1,-1]])               # optional - sage.rings.finite_rings
-            sage: N._is_isomorphism(M, {0:'a', 1:'b', 2:'c', 3:'d'})                    # optional - sage.rings.finite_rings
+            sage: N = Matroid(field=GF(3), reduced_matrix=[[1,1],[1,-1]])
+            sage: N._is_isomorphism(M, {0:'a', 1:'b', 2:'c', 3:'d'})
             True
         """
         if not isinstance(other, BasisExchangeMatroid):
@@ -2195,13 +2195,13 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = matroids.Wheel(3)
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: morphism = M1._isomorphism(M2)                                        # optional - sage.graphs
-            sage: M1._is_isomorphism(M2, morphism)                                      # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: morphism = M1._isomorphism(M2)                                        # needs sage.graphs
+            sage: M1._is_isomorphism(M2, morphism)                                      # needs sage.graphs
             True
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1._isomorphism(M2) is None                                           # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1._isomorphism(M2) is None
             True
 
         TESTS:
@@ -2212,8 +2212,8 @@ cdef class BasisExchangeMatroid(Matroid):
             ....:     return min(len(X), 2)
             ....:
             sage: M = Matroid(groundset='abcd', rank_function=f)
-            sage: N = Matroid(field=GF(3), reduced_matrix=[[1,1],[1,-1]])               # optional - sage.rings.finite_rings
-            sage: N._isomorphism(M) is not None                                         # optional - sage.rings.finite_rings
+            sage: N = Matroid(field=GF(3), reduced_matrix=[[1,1],[1,-1]])
+            sage: N._isomorphism(M) is not None
             True
         """
         if not isinstance(other, BasisExchangeMatroid):
@@ -2289,16 +2289,16 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M1 = BasisMatroid(matroids.Wheel(3))
-            sage: M2 = matroids.CompleteGraphic(4)                                      # optional - sage.graphs
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.graphs
+            sage: M2 = matroids.CompleteGraphic(4)                                      # needs sage.graphs
+            sage: M1._is_isomorphic(M2)                                                 # needs sage.graphs
             True
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.graphs
+            sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
-            sage: M1 = BasisMatroid(matroids.named_matroids.Fano())                     # optional - sage.rings.finite_rings
-            sage: M2 = matroids.named_matroids.NonFano()                                # optional - sage.rings.finite_rings
-            sage: M1._is_isomorphic(M2)                                                 # optional - sage.rings.finite_rings
+            sage: M1 = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1._is_isomorphic(M2)
             False
-            sage: M1._is_isomorphic(M2, certificate=True)                               # optional - sage.rings.finite_rings
+            sage: M1._is_isomorphic(M2, certificate=True)
             (False, None)
 
         """
@@ -2370,8 +2370,8 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())                      # optional - sage.rings.finite_rings
-            sage: M.is_valid()                                                          # optional - sage.rings.finite_rings
+            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M.is_valid()
             True
             sage: M = Matroid(groundset='abcd', bases=['ab', 'cd'])
             sage: M.is_valid()
@@ -2397,7 +2397,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 # Set current basis to Y
                 bitset_difference(self._inside, self._current_basis, BB._subsets[pointerY])
                 bitset_difference(self._outside, BB._subsets[pointerY], self._current_basis)
-                self.__move(self._inside, self._outside)
+                self._move(self._inside, self._outside)
                 if not bitset_eq(self._current_basis, BB._subsets[pointerY]):
                     # We failed to set the current basis to Y through basis exchanges.
                     # Therefore, the exchange axioms are violated!
@@ -2409,7 +2409,7 @@ cdef class BasisExchangeMatroid(Matroid):
                     foundpair = False
                     y = bitset_first(self._input2)
                     while y >= 0:  # for y in Y-X
-                        if self.__is_exchange_pair(y, x):
+                        if self._is_exchange_pair(y, x):
                             foundpair = True
                             y = -1
                         else:

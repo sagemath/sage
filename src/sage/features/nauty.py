@@ -37,7 +37,8 @@ class NautyExecutable(Executable):
         """
         Executable.__init__(self, name=f"nauty_{name}",
                             executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
-                            spkg="nauty")
+                            spkg="nauty",
+                            type="standard")
 
 
 class Nauty(JoinFeature):

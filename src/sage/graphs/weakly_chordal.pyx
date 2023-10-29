@@ -263,8 +263,7 @@ def is_long_hole_free(g, certificate=False):
 
                         if certificate:
                             return False, hole
-                        else:
-                            return False
+                        return False
 
             InPath[v] = -1
         InPath[u] = -1
@@ -275,8 +274,7 @@ def is_long_hole_free(g, certificate=False):
 
     if certificate:
         return True, []
-    else:
-        return True
+    return True
 
 
 cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_graph,
@@ -495,8 +493,7 @@ def is_long_antihole_free(g, certificate=False):
 
                         if certificate:
                             return False, antihole
-                        else:
-                            return False
+                        return False
 
             InPath[v] = -1
         InPath[u] = -1
@@ -507,8 +504,7 @@ def is_long_antihole_free(g, certificate=False):
 
     if certificate:
         return True, []
-    else:
-        return True
+    return True
 
 
 def is_weakly_chordal(g, certificate=False):
@@ -562,5 +558,5 @@ def is_weakly_chordal(g, certificate=False):
             return False, forbid_subgr
 
         return g.is_long_antihole_free(certificate=True)
-    else:
-        return g.is_long_hole_free() and g.is_long_antihole_free()
+
+    return g.is_long_hole_free() and g.is_long_antihole_free()

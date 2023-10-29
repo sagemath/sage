@@ -33,7 +33,7 @@ import atexit
 # as the parent for all temporary files & directories created by them.
 # This lets us clean up after those two functions when sage exits normally
 # using an atexit hook
-TMP_DIR_FILENAME_BASE=tempfile.TemporaryDirectory()
+TMP_DIR_FILENAME_BASE = tempfile.TemporaryDirectory()
 atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 

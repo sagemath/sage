@@ -155,7 +155,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         b = max(s_1, s_2)
 
     import scipy.optimize
-    brentqRes = scipy.optimize.brentq(f, a, b,
+    g = lambda x: float(f(x))
+    brentqRes = scipy.optimize.brentq(g, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
     # A check following :trac:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
@@ -389,37 +390,37 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     import numpy
     from scipy import optimize
     if isinstance(func, Expression):
-        var_list=func.variables()
+        var_list = func.variables()
         var_names = [str(_) for _ in var_list]
-        fast_f=fast_callable(func, vars=var_names, domain=float)
-        f=lambda p: fast_f(*p)
-        gradient_list=func.gradient()
-        fast_gradient_functions=[fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
-        gradient=lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
+        fast_f = fast_callable(func, vars=var_names, domain=float)
+        f = lambda p: fast_f(*p)
+        gradient_list = func.gradient()
+        fast_gradient_functions = [fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
+        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
     else:
-        f=func
+        f = func
 
-    if algorithm=="default":
+    if algorithm == "default":
         if gradient is None:
             min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         else:
-            min= optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, disp=verbose, **args)
+            min = optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, disp=verbose, **args)
     else:
-        if algorithm=="simplex":
-            min= optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
-        elif algorithm=="bfgs":
-            min= optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
-        elif algorithm=="cg":
-            min= optimize.fmin_cg(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
-        elif algorithm=="powell":
-            min= optimize.fmin_powell(f, [float(_) for _ in x0], disp=verbose, **args)
-        elif algorithm=="ncg":
+        if algorithm == "simplex":
+            min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
+        elif algorithm == "bfgs":
+            min = optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
+        elif algorithm == "cg":
+            min = optimize.fmin_cg(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
+        elif algorithm == "powell":
+            min = optimize.fmin_powell(f, [float(_) for _ in x0], disp=verbose, **args)
+        elif algorithm == "ncg":
             if isinstance(func, Expression):
-                hess=func.hessian()
-                hess_fast= [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
-                hessian=lambda p: [[a(*p) for a in row] for row in hess_fast]
+                hess = func.hessian()
+                hess_fast = [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
+                hessian = lambda p: [[a(*p) for a in row] for row in hess_fast]
                 from scipy import dot
-                hessian_p=lambda p,v: dot(numpy.array(hessian(p)),v)
+                hessian_p = lambda p,v: dot(numpy.array(hessian(p)),v)
                 min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient,
                       fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
     return vector(RDF, min)
@@ -650,19 +651,19 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
 
     from cvxopt.base import matrix as m
     from cvxopt import solvers
-    solvers.options['show_progress']=False
-    if solver=='glpk':
+    solvers.options['show_progress'] = False
+    if solver == 'glpk':
         from cvxopt import glpk
         glpk.options['LPX_K_MSGLEV'] = 0
-    c_=m(c.base_extend(RDF).numpy())
-    G_=m(G.base_extend(RDF).numpy())
-    h_=m(h.base_extend(RDF).numpy())
+    c_ = m(c.base_extend(RDF).numpy())
+    G_ = m(G.base_extend(RDF).numpy())
+    h_ = m(h.base_extend(RDF).numpy())
     if A is not None and b is not None:
-        A_=m(A.base_extend(RDF).numpy())
-        b_=m(b.base_extend(RDF).numpy())
-        sol=solvers.lp(c_,G_,h_,A_,b_,solver=solver)
+        A_ = m(A.base_extend(RDF).numpy())
+        b_ = m(b.base_extend(RDF).numpy())
+        sol = solvers.lp(c_,G_,h_,A_,b_,solver=solver)
     else:
-        sol=solvers.lp(c_,G_,h_,solver=solver)
+        sol = solvers.lp(c_,G_,h_,solver=solver)
     status = sol['status']
     if status != 'optimal':
         return {'primal objective': None, 'x': None, 's': None, 'y': None,

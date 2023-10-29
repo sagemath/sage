@@ -44,7 +44,7 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     message='pkg_resources is deprecated as an API|'
             'Deprecated call to `pkg_resources.declare_namespace(.*)`',
-    module='pkg_resources')
+    module='pkg_resources|setuptools.sandbox')
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     message='msvccompiler is deprecated and slated to be removed',
     module='distutils.msvccompiler')
@@ -78,6 +78,23 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message=r"Use setlocale\(\), getencoding\(\) and getlocale\(\) instead",
                         module='docutils.io')
+
+# triggered by dateutil 2.8.2 and sphinx 7.0.1 on Python 3.12
+# see: https://github.com/dateutil/dateutil/pull/1285
+# see: https://github.com/sphinx-doc/sphinx/pull/11468
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"datetime.datetime.utcfromtimestamp\(\) is deprecated",
+                        module='dateutil.tz.tz|sphinx.(builders.gettext|util.i18n)')
+
+# triggered on Python 3.12
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"This process.* is multi-threaded, "
+                                r"use of .*\(\) may lead to deadlocks in the child.")
+
+# pickling of itertools is deprecated in Python 3.12
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"Pickle, copy, and deepcopy support will be "
+                                r"removed from itertools in Python 3.14.")
 
 
 from .all__sagemath_objects import *

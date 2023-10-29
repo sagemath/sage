@@ -176,9 +176,9 @@ indentation. Most of the time a new block is introduced by
 
   .. CODE-BLOCK:: python
 
-     raise <ErrorType> [, error message]
+     raise <ErrorType>[("error message")]
 
-  Usual errors include ``ValueError`` and ``TypeError``.
+  Usual errors include :class:`ValueError` and :class:`TypeError`.
 
 Functions
 =========
