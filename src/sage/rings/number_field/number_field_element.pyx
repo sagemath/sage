@@ -541,15 +541,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
-            sage: F.gen()._libgap_()                                                    # needs sage.libs.gap
+            sage: F.gen()._libgap_()
             E(8)
-            sage: libgap(F.gen())   # syntactic sugar                                   # needs sage.libs.gap
+            sage: libgap(F.gen())   # syntactic sugar
             E(8)
-            sage: E8 = F.gen()                                                          # needs sage.libs.gap
-            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)                                      # needs sage.libs.gap
+            sage: E8 = F.gen()
+            sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)
             E(8)+3/2*E(8)^2-100*E(8)^3
-            sage: type(_)                                                               # needs sage.libs.gap
+            sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
         Check that :trac:`15276` is fixed::
@@ -571,7 +572,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         E = libgap(P).GeneratorsOfField()[0]
         n = P._n()
         if n % 4 == 2:
-            E = -E**((n // 2 + 1) // 2)
+            E = -E**((n//2 + 1)//2)
         return self.polynomial()(E)
 
     def _pari_polynomial(self, name='y'):
@@ -980,9 +981,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Otherwise, it is the numerical absolute value with respect to
         the first archimedean embedding, to double precision.
 
-        This is the ``abs()`` Python function. If you want a
-        different embedding or precision, use
-        ``self.abs(...)``.
+        This is the :func:`abs` Python function. If you want a
+        different embedding or precision, use ``self.abs(...)``.
 
         EXAMPLES::
 
@@ -1368,10 +1368,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         CCprec = ComplexField(prec)
         if i is None and CCprec.has_coerce_map_from(self.parent()):
             return CCprec(self).abs()
-        else:
-            i = 0 if i is None else i
-            P = self.number_field().complex_embeddings(prec)[i]
-            return P(self).abs()
+
+        i = 0 if i is None else i
+        P = self.number_field().complex_embeddings(prec)[i]
+        return P(self).abs()
 
     def abs_non_arch(self, P, prec=None):
         r"""
