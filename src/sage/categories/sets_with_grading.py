@@ -8,11 +8,11 @@ Sets With a Grading
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from .category_types import Category
-from sage.categories.sets_cat import Sets
+from sage.categories.category_types import Category
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 
 
 class SetsWithGrading(Category):
@@ -220,9 +220,9 @@ class SetsWithGrading(Category):
 
                  - Very likely, this should always return a lazy power series.
             """
-            from sage.sets.non_negative_integers import NonNegativeIntegers
-            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
             from sage.rings.integer_ring import ZZ
+            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            from sage.sets.non_negative_integers import NonNegativeIntegers
             if isinstance(self.grading_set(), NonNegativeIntegers):
                 R = LazyPowerSeriesRing(ZZ, names="z")
                 return R(lambda n: self.graded_component(n).cardinality())

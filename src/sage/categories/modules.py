@@ -11,21 +11,22 @@ Modules
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from sage.misc.lazy_import import LazyImport
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.morphism import SetMorphism
-from sage.categories.homsets import HomsetsCategory
-from sage.categories.homset import Hom
-from .category import Category
-from .category_types import Category_module
-from sage.categories.tensor import TensorProductsCategory, TensorProductFunctor, tensor
-from .dual import DualObjectsCategory
-from sage.categories.cartesian_product import CartesianProductsCategory
-from sage.categories.sets_cat import Sets
 from sage.categories.bimodules import Bimodules
+from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category import Category
+from sage.categories.category_types import Category_module
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.dual import DualObjectsCategory
 from sage.categories.fields import Fields
+from sage.categories.homset import Hom
+from sage.categories.homsets import HomsetsCategory
+from sage.categories.morphism import SetMorphism
+from sage.categories.sets_cat import Sets
+from sage.categories.tensor import TensorProductFunctor, TensorProductsCategory, tensor
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
+
 _Fields = Fields()
 
 

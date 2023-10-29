@@ -10,10 +10,11 @@ Algebra modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_module
-from .commutative_algebras import CommutativeAlgebras
-from .commutative_rings import CommutativeRings
-from .modules import Modules
+from sage.categories.category_types import Category_module
+from sage.categories.commutative_algebras import CommutativeAlgebras
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.modules import Modules
+
 
 class AlgebraModules(Category_module):
     """

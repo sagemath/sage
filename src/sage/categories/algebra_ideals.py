@@ -10,10 +10,10 @@ Algebra ideals
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .algebra_modules import AlgebraModules
-from .algebras import Algebras
-from .rings import Rings
-from .category_types import Category_ideal
+from sage.categories.algebra_modules import AlgebraModules
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_ideal
+from sage.categories.rings import Rings
 
 
 class AlgebraIdeals(Category_ideal):
