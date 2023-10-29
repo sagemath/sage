@@ -8040,12 +8040,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: H == {x for x in G.longest_path().edge_iterator(labels=False)}        # needs sage.numerical.mip
             True
 
-        :gh:`12345`::
+        :issue:`36574`::
 
             sage: G = graphs.PathGraph(3)
             sage: P = G.longest_path(algorithm='backtrack')
             doctest:...: FutureWarning: algorithm 'backtrack' will be renamed 'heuristic' in the future.
-            See https://github.com/sagemath/sage/issues/12345 for details.
+            See https://github.com/sagemath/sage/issues/36574 for details.
             sage: G.longest_path(algorithm='heuristic', s=0)
             Traceback (most recent call last):
             ...
@@ -8068,7 +8068,7 @@ class GenericGraph(GenericGraph_pyx):
             raise ValueError("algorithm must be either 'backtrack', 'heuristic' or 'MILP'")
         if algorithm == "backtrack":
             from sage.misc.superseded import warning
-            warning(12345,
+            warning(36574,
                     "algorithm 'backtrack' will be renamed 'heuristic' in the future.",
                     FutureWarning)
             algorithm = 'heuristic'
