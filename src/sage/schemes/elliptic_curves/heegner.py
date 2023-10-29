@@ -118,14 +118,11 @@ from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modular.modsym.p1list import P1List
 from sage.rings.complex_double import CDF
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.factorint import factor_trial_division
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField
 from sage.quadratic_forms.binary_qf import BinaryQF
 from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base

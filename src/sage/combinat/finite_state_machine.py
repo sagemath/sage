@@ -1835,7 +1835,7 @@ class FSMState(SageObject):
             sage: T1.transitions
             Traceback (most recent call last):
             ...
-            AttributeError: 'FSMState' object has no attribute 'transitions'
+            AttributeError: 'FSMState' object has no attribute 'transitions'...
             sage: A1 = loads(dumps(A))
             sage: all(A.state(j) == A1.state(j) for j in [0, 1])
             True
