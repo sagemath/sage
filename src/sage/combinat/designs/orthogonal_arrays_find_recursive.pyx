@@ -51,6 +51,7 @@ from .orthogonal_arrays import orthogonal_array
 from sage.rings.integer cimport smallInteger
 from sage.arith.misc import prime_powers
 
+
 @cached_function
 def find_recursive_construction(k, n):
     r"""
@@ -113,6 +114,7 @@ def find_recursive_construction(k, n):
         if res:
             return res
     return False
+
 
 cpdef find_product_decomposition(int k,int n):
     r"""
@@ -879,6 +881,7 @@ def int_as_sum(int value, list S, int k_max):
         last_D = new_D
 
     return None
+
 
 cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
     r"""

@@ -1,4 +1,4 @@
-#cython: wraparound=False, boundscheck=False
+# cython: wraparound=False, boundscheck=False
 r"""
 This contains a few time-critical auxiliary cython functions for
 finite complex or real reflection groups.
@@ -51,7 +51,7 @@ cdef class Iterator():
         for i in range(n):
             si = S[i]
             noncom_i = []
-            for j in range(i+1,n):
+            for j in range(i+1, n):
                 sj = S[j]
                 if si._mul_(sj) == sj._mul_(si):
                     pass
@@ -87,7 +87,7 @@ cdef class Iterator():
             raise ValueError('the algorithm (="%s") must be either "depth", "breadth", or "parabolic"')
         self.algorithm = algorithm
 
-#        self.noncom = self.noncom_letters()
+        # self.noncom = self.noncom_letters()
 
     cdef list succ(self, PermutationGroupElement u, int first):
         cdef PermutationGroupElement si
@@ -95,18 +95,18 @@ cdef class Iterator():
         cdef list successors = []
         cdef tuple S = self.S
         cdef int N = self.N
-#        cdef list nc = self.noncom[first]
+        # cdef list nc = self.noncom[first]
 
         for i in range(first):
             si = <PermutationGroupElement>(S[i])
             if self.test(u, si, i):
-                successors.append((_new_mul_(si,u), i))
-        for i in range(first+1,self.n):
-#        for i in nc:
+                successors.append((_new_mul_(si, u), i))
+        for i in range(first+1, self.n):
+            # for i in nc:
             if u.perm[i] < N:
                 si = <PermutationGroupElement>(S[i])
                 if self.test(u, si, i):
-                    successors.append((_new_mul_(si,u), i))
+                    successors.append((_new_mul_(si, u), i))
         return successors
 
     cdef list succ_words(self, PermutationGroupElement u, list word, int first):
@@ -120,7 +120,7 @@ cdef class Iterator():
         for i in range(first):
             si = <PermutationGroupElement>(S[i])
             if self.test(u, si, i):
-                u1 = <PermutationGroupElement>(_new_mul_(si,u))
+                u1 = <PermutationGroupElement>(_new_mul_(si, u))
                 # try to use word+[i] and the reversed
                 word_new = [i] + word
                 u1._reduced_word = word_new
@@ -129,7 +129,7 @@ cdef class Iterator():
             if u.perm[i] < N:
                 si = <PermutationGroupElement>(S[i])
                 if self.test(u, si, i):
-                    u1 = <PermutationGroupElement>(_new_mul_(si,u))
+                    u1 = <PermutationGroupElement>(_new_mul_(si, u))
                     word_new = [i] + word
                     u1._reduced_word = word_new
                     successors.append((u1, word_new, i))
@@ -375,6 +375,7 @@ cdef class Iterator():
             for v in coset_reps:
                 yield _new_mul_(<PermutationGroupElement>w, <PermutationGroupElement>v)
 
+
 def iterator_tracking_words(W):
     r"""
     Return an iterator through the elements of ``self`` together
@@ -417,7 +418,7 @@ def iterator_tracking_words(W):
     cdef list index_list = list(range(len(S)))
 
     cdef list level_set_cur = [(W.one(), [])]
-    cdef set level_set_old = set([ W.one() ])
+    cdef set level_set_old = {W.one()}
     cdef list word
     cdef PermutationGroupElement x, y
 
@@ -431,6 +432,7 @@ def iterator_tracking_words(W):
                     level_set_old.add(y)
                     level_set_new.append((y, word+[i]))
         level_set_cur = level_set_new
+
 
 cdef inline bint has_left_descent(PermutationGroupElement w, int i, int N):
     return w.perm[i] >= N
@@ -501,7 +503,7 @@ cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S
             w = _new_mul_(w, si)
 
 cdef list reduced_coset_representatives(W, list parabolic_big, list parabolic_small,
-                                       bint right):
+                                        bint right):
     cdef tuple S = tuple(W.simple_reflections())
     cdef int N = W.number_of_reflections()
     cdef set totest = set([W.one()])
@@ -515,7 +517,7 @@ cdef list reduced_coset_representatives(W, list parabolic_big, list parabolic_sm
                                         S, parabolic_small, N, right)
                         for i in parabolic_big])
         res.update(totest)
-        totest = new.difference(res)#[ w for w in new if w not in res ]
+        totest = new.difference(res)  # [w for w in new if w not in res]
     return list(res)
 
 cdef parabolic_recursive(PermutationGroupElement x, list v, f):
@@ -557,6 +559,7 @@ def parabolic_iteration_application(W, f):
                             for i in range(W.rank())]
 
     parabolic_recursive(W.one(), coset_reps, f)
+
 
 cpdef list reduced_word_c(W, PermutationGroupElement w):
     r"""

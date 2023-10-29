@@ -1,7 +1,7 @@
 r"""
 Datatypes for finite words
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #                          Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -9,8 +9,8 @@ Datatypes for finite words
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
 from itertools import islice
@@ -20,10 +20,10 @@ cdef class WordDatatype():
     r"""
     The generic WordDatatype class.
 
-    Any word datatype must contain two attributes (at least)::
+    Any word datatype must contain two attributes (at least):
 
-      - _parent
-      - _hash
+    - ``_parent``
+    - ``_hash``
 
     They are automatically defined here and it's not necessary (and forbidden)
     to define them anywhere else.
