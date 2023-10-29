@@ -2634,7 +2634,7 @@ class FiniteWord_class(Word_class):
         maximalPalindromeLengths, palindromesTree = self._get_palindromic_factors_data(f=f)
         lpsLengths = self._find_lps_for_all_prefixes_from_maximal_palindrome_lengths(maximalPalindromeLengths)[1:]
         lacunas = self._find_lacunas_from_palindromes_tree(palindromesTree)
-        palindromicFactors = self._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree, f=f)
+        palindromicFactors = self.palindromes(f=f)
         return lpsLengths, lacunas, palindromicFactors
 
     def lacunas(self, f=None):
@@ -2909,8 +2909,8 @@ class FiniteWord_class(Word_class):
             sage: sorted(Word('abbabaab').palindromes(f))
             [word: , word: ab, word: abbabaab, word: ba, word: baba, word: bbabaa]
         """
-        _, palindromesTree = self._get_palindromic_factors_data(f=f)
-        return self._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree, f=f)
+        lpsLengths = self.lps_lengths(f=f)
+        return set(self[i - lpsLengths[i]: i] for i in range(len(self) + 1))
 
     def palindromic_complexity(self, n, f=None):
         r"""
@@ -3798,80 +3798,6 @@ class FiniteWord_class(Word_class):
             result.append(0)
         return result
 
-    def _find_set_of_all_palindromic_factors_from_palindromes_tree(self, palindromesTree, f=None):
-        r"""
-        This is private method. Returns all palindromic factors or ``f``-palindromic factors
-        of ``self`` using palindromes tree from _get_palindromic_factors_data method.
-
-        INPUT:
-
-        - palindromes tree -- data structure returned by _get_palindromic_factors_data method.
-
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
-
-        OUTPUT:
-
-        a set -- set of all palindromic or ``f``-palindromic factors of ``self``.
-
-        EXAMPLES:
-
-        sage: word = Word('aabab')
-        sage: palindromesTree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
-        ....: [{0: 2}, 0, 1, False], [{'b': 3}, 2, 1, True], [{}, 6, 3, False],
-        ....: [{'a': 5}, 1, 0, True], [{}, 1, 2, False], [{0: 7}, 4, 1, False],
-        ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
-        sage: factors = word._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree)
-        sage: sorted(factors)
-        [word: , word: a, word: aa, word: aba, word: b, word: bab]
-        sage: f = WordMorphism('a->b,b->a')
-        sage: palindromesTree = [[{'s': 1}, None, 0, False],
-        ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
-        ....: [{'a': 4}, 5, 2, True], [{}, 5, 4, False],
-        ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
-        sage: factors = word._find_set_of_all_palindromic_factors_from_palindromes_tree(palindromesTree, f=f)
-        sage: sorted(factors)
-        [word: , word: ab, word: abab, word: ba]
-        """
-        from sage.combinat.words.morphism import WordMorphism
-        if f is not None:
-            if not isinstance(f, WordMorphism):
-                f = WordMorphism(f)
-            if not f.is_letter_permutation():
-                raise ValueError("f must be a letter permutation")
-        from sage.combinat.words.word import Word
-        from collections import deque
-        result = set()
-        result.add(Word())
-        currentWordLetters = deque()
-        currentPalindromes = [palindrome for palindrome in palindromesTree[0][0].items()]
-        while currentPalindromes:
-            if currentPalindromes[-1] is None:
-                currentPalindromes.pop()
-                if len(currentWordLetters) == 1:
-                    currentWordLetters.pop()
-                else:
-                    currentWordLetters.pop()
-                    currentWordLetters.popleft()
-            else:
-                leftLetter, palindromeIndex = currentPalindromes.pop()
-                palindrome = palindromesTree[palindromeIndex]
-                actualPalindromeLength, endsWithSpecialLetter = palindrome[2], palindrome[3]
-                if not endsWithSpecialLetter:
-                    currentPalindromes.append(None)
-                    if actualPalindromeLength == 1:
-                        currentWordLetters.append(leftLetter)
-                    else:
-                        currentWordLetters.appendleft(leftLetter)
-                        if f is not None:
-                            currentWordLetters.append(f(leftLetter)[0])
-                        else:
-                            currentWordLetters.append(leftLetter)
-                    result.add(Word(currentWordLetters))
-                for neighbour in palindrome[0].items():
-                    currentPalindromes.append(neighbour)
-        return result
-
     def _find_lacunas_from_palindromes_tree(self, palindromesTree):
         r"""
         This is private method. Returns all lacunas of ``self``using
@@ -3915,6 +3841,7 @@ class FiniteWord_class(Word_class):
             i += 1
         return result
 
+    @cached_method
     def _get_palindromic_factors_data(self, f=None):
         r"""
         This is private method. It returns some data which provides information
