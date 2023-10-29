@@ -908,7 +908,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: rings.append(PolynomialRing(QQ, 'x'))
             sage: rings.append(PolynomialRing(CC, 2, 'x'))                              # needs sage.rings.real_mpfr
             sage: rings.append(SR)                                                      # needs sage.symbolic
-            sage: rings.extend([GF(2), GF(11)]
+            sage: rings.extend([GF(2), GF(11)])
             sage: rings.extend([GF(2^8,'a'), GF(3^19,'a')])                             # needs sage.rings.finite_rings
             sage: x = polygen(QQ)
             sage: rings.extend([NumberField(x^3 + 2, 'a'), CyclotomicField(4)])         # needs sage.rings.number_field
