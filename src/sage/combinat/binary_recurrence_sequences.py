@@ -539,7 +539,7 @@ class BinaryRecurrenceSequence(SageObject):
             [1]
 
         If the sequence is degenerate, and there are no ``p`` th powers, returns `[]`.  Otherwise, if
-        there are many ``p`` th powers, raises ``ValueError``.
+        there are many ``p`` th powers, raises :class:`ValueError`.
 
         ::
 
@@ -693,7 +693,7 @@ class BinaryRecurrenceSequence(SageObject):
                             #gather congruence data for the sequence mod ell, which will be mod period(ell) = modu
                             cong1, modu = _find_cong1(p, self, ell)
 
-                            CongNew = []        #makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
+                            CongNew = []        # makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
                             M = lcm(M1, modu)
                             for k in range(M // M1):
                                 for i in cong:
@@ -702,18 +702,18 @@ class BinaryRecurrenceSequence(SageObject):
 
                             M1 = M
 
-                            killed_something = False        #keeps track of when cong1 can rule out a congruence in cong
+                            killed_something = False        # keeps track of when cong1 can rule out a congruence in cong
 
-                            #CRT by hand to gain speed
+                            # CRT by hand to gain speed
                             for i in list(cong):
-                                if i % modu not in cong1:        #congruence in cong is inconsistent with any in cong1
-                                    cong.remove(i)            #remove that congruence
+                                if i % modu not in cong1:     # congruence in cong is inconsistent with any in cong1
+                                    cong.remove(i)            # remove that congruence
                                     killed_something = True
 
                             if M1 == M2:
                                 if not killed_something:
                                     tries += 1
-                                    if tries == 2:            #try twice to rule out congruences
+                                    if tries == 2:            # try twice to rule out congruences
                                         cong = list(cong)
                                         qqold = qq
                                         qq = next_prime_power(qq)

@@ -1005,11 +1005,11 @@ class SkewPartition(CombinatorialElement):
             True
         """
         N = len(self[0])
-        mu_betas = [x - j for (j, x) in enumerate(self[1])]
+        mu_betas = [x - j for j, x in enumerate(self[1])]
         mu_betas.extend([- j for j in range(len(self[1]), N)])
         res = 0
         for i, x in enumerate(self[0]):
-            if not x - i in mu_betas:
+            if (x - i) not in mu_betas:
                 res += 1
         return res
 
@@ -1574,7 +1574,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
 
         - If it exists the unique skew-partitions with row lengths ``rowL``
           and column lengths ``colL``.
-        - Raise a ``ValueError`` if ``rowL`` and ``colL`` are not compatible.
+        - Raise a :class:`ValueError` if ``rowL`` and ``colL`` are not compatible.
 
         EXAMPLES::
 
@@ -1604,7 +1604,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
         .. WARNING::
 
             If some rows and columns have length zero, there is no way to retrieve
-            unambiguously the skew partition. We therefore raise a ``ValueError``.
+            unambiguously the skew partition. We therefore raise
+            a :class:`ValueError`.
             For examples here are two skew partitions with the same row and column
             lengths::
 

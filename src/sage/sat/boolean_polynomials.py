@@ -283,7 +283,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
             try:
                 learnt = solver.learnt_clauses(unitary_only=True)
                 if learnt:
-                    S.append(dict((phi[abs(i)-1], K(i<0)) for i in learnt))
+                    S.append(dict((phi[abs(i) - 1], K(i < 0)) for i in learnt))
                 else:
                     S.append(s)
                     break

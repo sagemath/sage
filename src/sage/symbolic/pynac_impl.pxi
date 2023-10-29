@@ -619,7 +619,7 @@ def tolerant_is_symbol(a):
         sage: None.is_symbol()
         Traceback (most recent call last):
         ...
-        AttributeError: 'NoneType' object has no attribute 'is_symbol'
+        AttributeError: 'NoneType' object has no attribute 'is_symbol'...
     """
     try:
         return a.is_symbol()

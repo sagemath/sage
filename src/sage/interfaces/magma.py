@@ -824,7 +824,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._coerce_from_special_method('2 + 3')  # optional - magma
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute '_magma_init_'
+            AttributeError: 'str' object has no attribute '_magma_init_'...
         """
         s = x._magma_init_(self)
         a = self(s)
