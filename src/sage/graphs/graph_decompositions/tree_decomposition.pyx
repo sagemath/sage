@@ -695,7 +695,9 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
             T.append(Ta)
 
         # Merge the resulting trees
-        return _from_tree_decompositions_of_atoms_to_tree_decomposition(T, cliques)
+        tree_decomp = _from_tree_decompositions_of_atoms_to_tree_decomposition(T, cliques)
+
+        return make_nice_tree_decomposition(g, tree_decomp) if nice else tree_decomp
 
     # Forcing k to be defined
     if k is None:
