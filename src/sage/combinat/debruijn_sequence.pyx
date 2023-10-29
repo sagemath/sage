@@ -95,7 +95,7 @@ def debruijn_sequence(int k, int n):
     return sequence
 
 
-cdef gen(int t, int p, k, n):
+cdef gen(int t, int p, k, n) noexcept:
     """
     The internal generation function. This should not be accessed by the
     user.

@@ -25,7 +25,7 @@ cdef class MatrixStruct:
     cdef PartitionStack *temp_col_ps
     cdef aut_gp_and_can_lab *output
 
-cdef int refine_matrix(PartitionStack *, void *, int *, int)
-cdef int compare_matrices(int *, int *, void *, void *, int)
-cdef bint all_matrix_children_are_equivalent(PartitionStack *, void *)
+cdef int refine_matrix(PartitionStack *, void *, int *, int) noexcept
+cdef int compare_matrices(int *, int *, void *, void *, int) noexcept
+cdef bint all_matrix_children_are_equivalent(PartitionStack *, void *) noexcept
 

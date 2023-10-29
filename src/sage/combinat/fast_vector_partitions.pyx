@@ -30,7 +30,7 @@ AUTHORS:
 #
 # To understand the code below, consult the ALGORITHM.
 
-cdef list vector_halve(list v):
+cdef list vector_halve(list v) noexcept:
     r"""
     Return the vector halfway (lexicographically) between ``v`` and zero.
 
@@ -231,7 +231,7 @@ def within_from_to(list m, list s, list e):
     yield from recursive_within_from_to(m, ss, e, True, True)
 
 
-cdef inline list vector_sub(list a, list b):
+cdef inline list vector_sub(list a, list b) noexcept:
     """
     Return ``a - b`` considered as vectors.
 

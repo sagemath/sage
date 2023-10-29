@@ -7,7 +7,7 @@ Cython function to compute the orbit of the braid moves on a reduced word.
 from cysignals.signals cimport sig_check
 
 
-cpdef set BraidOrbit(list word, list rels):
+cpdef set BraidOrbit(list word, list rels) noexcept:
     r"""
     Return the orbit of ``word`` by all replacements given by ``rels``.
 
@@ -74,7 +74,7 @@ cpdef set BraidOrbit(list word, list rels):
     return words
 
 
-cpdef bint is_fully_commutative(list word, list rels):
+cpdef bint is_fully_commutative(list word, list rels) noexcept:
     r"""
     Check if the braid orbit of ``word`` is using a braid relation.
 
@@ -129,7 +129,7 @@ cpdef bint is_fully_commutative(list word, list rels):
     return True
 
 
-cdef inline bint pattern_match(tuple L, int i, tuple X, int l):
+cdef inline bint pattern_match(tuple L, int i, tuple X, int l) noexcept:
     r"""
     Return ``True`` if ``L[i:i+l] == X``.
 

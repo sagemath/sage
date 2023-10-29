@@ -31,7 +31,7 @@ cdef class Iterator():
     cdef list noncom
     cdef list order
 
-    cdef list noncom_letters(self):
+    cdef list noncom_letters(self) noexcept:
         """
         Return a list ``L`` of lists such that ...
 
@@ -89,7 +89,7 @@ cdef class Iterator():
 
         # self.noncom = self.noncom_letters()
 
-    cdef list succ(self, PermutationGroupElement u, int first):
+    cdef list succ(self, PermutationGroupElement u, int first) noexcept:
         cdef PermutationGroupElement si
         cdef int i
         cdef list successors = []
@@ -109,7 +109,7 @@ cdef class Iterator():
                     successors.append((_new_mul_(si, u), i))
         return successors
 
-    cdef list succ_words(self, PermutationGroupElement u, list word, int first):
+    cdef list succ_words(self, PermutationGroupElement u, list word, int first) noexcept:
         cdef PermutationGroupElement u1, si
         cdef int i
         cdef list successors = []
@@ -135,7 +135,7 @@ cdef class Iterator():
                     successors.append((u1, word_new, i))
         return successors
 
-    cdef inline bint test(self, PermutationGroupElement u, PermutationGroupElement si, int i):
+    cdef inline bint test(self, PermutationGroupElement u, PermutationGroupElement si, int i) noexcept:
         cdef int j
         cdef int N = self.N
         cdef int* siperm = si.perm
@@ -434,10 +434,10 @@ def iterator_tracking_words(W):
         level_set_cur = level_set_new
 
 
-cdef inline bint has_left_descent(PermutationGroupElement w, int i, int N):
+cdef inline bint has_left_descent(PermutationGroupElement w, int i, int N) noexcept:
     return w.perm[i] >= N
 
-cdef int first_descent(PermutationGroupElement w, int n, int N, bint left):
+cdef int first_descent(PermutationGroupElement w, int n, int N, bint left) noexcept:
     cdef int i
     if not left:
         w = ~w
@@ -447,7 +447,7 @@ cdef int first_descent(PermutationGroupElement w, int n, int N, bint left):
     return -1
 
 cdef int first_descent_in_parabolic(PermutationGroupElement w, list parabolic,
-                                    int N, bint left):
+                                    int N, bint left) noexcept:
     cdef int i
     if not left:
         w = ~w
@@ -459,7 +459,7 @@ cdef int first_descent_in_parabolic(PermutationGroupElement w, list parabolic,
 
 
 cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S,
-                                              list parabolic, int N, bint right):
+                                              list parabolic, int N, bint right) noexcept:
     r"""
     Return the minimal length coset representative of ``w`` of the parabolic
     subgroup indexed by ``parabolic`` (with indices `\{0, \ldots, n\}`).
@@ -503,7 +503,7 @@ cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S
             w = _new_mul_(w, si)
 
 cdef list reduced_coset_representatives(W, list parabolic_big, list parabolic_small,
-                                        bint right):
+                                        bint right) noexcept:
     cdef tuple S = tuple(W.simple_reflections())
     cdef int N = W.number_of_reflections()
     cdef set totest = set([W.one()])
@@ -520,7 +520,7 @@ cdef list reduced_coset_representatives(W, list parabolic_big, list parabolic_sm
         totest = new.difference(res)  # [w for w in new if w not in res]
     return list(res)
 
-cdef parabolic_recursive(PermutationGroupElement x, list v, f):
+cdef parabolic_recursive(PermutationGroupElement x, list v, f) noexcept:
     if not v:
         f(x)
     else:
@@ -561,7 +561,7 @@ def parabolic_iteration_application(W, f):
     parabolic_recursive(W.one(), coset_reps, f)
 
 
-cpdef list reduced_word_c(W, PermutationGroupElement w):
+cpdef list reduced_word_c(W, PermutationGroupElement w) noexcept:
     r"""
     Computes a reduced word for the element ``w`` in the
     reflection group ``W`` in the positions ``range(n)``.
@@ -587,7 +587,7 @@ cpdef list reduced_word_c(W, PermutationGroupElement w):
         word.append(fdes)
     return word
 
-cdef PermutationGroupElement _new_mul_(PermutationGroupElement left, PermutationGroupElement right):
+cdef PermutationGroupElement _new_mul_(PermutationGroupElement left, PermutationGroupElement right) noexcept:
     """
     Multiply two :class:`PermutationGroupElement` directly without the
     coercion framework.

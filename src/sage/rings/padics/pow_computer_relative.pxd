@@ -20,10 +20,10 @@ cdef class PowComputer_relative(PowComputer_class):
     # allow cached methods
     cdef public dict _cached_methods
 
-    cdef unsigned long capdiv(self, unsigned long n)
+    cdef unsigned long capdiv(self, unsigned long n) noexcept
 
 cdef class PowComputer_relative_eis(PowComputer_relative):
     # (x^e - modulus)/p
     cdef public Polynomial_generic_dense _shift_seed
     cdef public Polynomial_generic_dense _inv_shift_seed
-    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense element, long prec)
+    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense element, long prec) noexcept
