@@ -7159,7 +7159,7 @@ cdef class Matrix(Matrix1):
 
         The second eigenvector is contained in the left kernel of `B`::
 
-            sage: (P[1, :] * B).norm() < 1e-14                                          # needs sage.rings.complex_double sage.symbolic
+            sage: (P[1, :] * B).norm() < 1e-14                                          # needs scipy sage.rings.complex_double sage.symbolic
             True
 
         .. SEEALSO::
