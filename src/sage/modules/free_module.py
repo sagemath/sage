@@ -5387,7 +5387,7 @@ class FreeModule_ambient(FreeModule_generic):
             if (self.base_ring().has_coerce_map_from(M.base_ring()) and
                 self.rank() == M.degree()):
                 return True
-        return super(FreeModule_ambient, self)._coerce_map_from_(M)
+        return super()._coerce_map_from_(M)
 
     def _dense_module(self):
         """

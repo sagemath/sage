@@ -9440,8 +9440,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
                 for (r, c) in growth_choice:
                     new_tab[r][c] = growth_num
                 list_of_partial_inc_tabs.append(Tableau(new_tab))
-        for inctab in list_of_inc_tabs:
-            yield inctab
+        yield from list_of_inc_tabs
 
 
 class IncreasingTableaux_size_weight(IncreasingTableaux):

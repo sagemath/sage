@@ -503,7 +503,7 @@ from collections import namedtuple
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
-class SageDocTestRunner(doctest.DocTestRunner, object):
+class SageDocTestRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwds):
         """
         A customized version of DocTestRunner that tracks dependencies

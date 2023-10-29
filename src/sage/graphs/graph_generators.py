@@ -1521,8 +1521,7 @@ class GraphGenerators():
 
         sp.stdout.reconfigure(newline='')
 
-        for G in graphs._read_planar_code(sp.stdout):
-            yield(G)
+        yield from graphs._read_planar_code(sp.stdout)
 
     def fusenes(self, hexagon_count, benzenoids=False):
         r"""
@@ -1797,8 +1796,7 @@ class GraphGenerators():
         sp.stdout.reconfigure(newline='')
 
         try:
-            for G in graphs._read_planar_code(sp.stdout):
-                yield(G)
+            yield from graphs._read_planar_code(sp.stdout)
         except AssertionError:
             raise AttributeError("invalid options '{}'".format(options))
 
