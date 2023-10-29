@@ -394,6 +394,13 @@ REFERENCES:
 .. [BaKi2001] Bakalov and Kirillov, *Lectures on tensor categories and modular functors*,
             AMS (2001).
 
+.. [BRP2018] Basson D., Breuer F., Pink R., Drinfeld modular forms of
+             arbitrary rank:
+             Part I: :arxiv:`1805.12335`_,
+             Part II: :arxiv:`1805.12337`_,
+             Part III: :arxiv:`1805.12339`_,
+             2018.
+
 .. [Ba1994] Kaushik Basu. *The Traveler's Dilemma: Paradoxes of
             Rationality in Game Theory*. The American Economic Review
             (1994): 391-395.
