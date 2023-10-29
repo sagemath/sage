@@ -1674,9 +1674,10 @@ class LazyModuleElement(Element):
         TESTS::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
-            sage: f = L.undefined(0)
+            sage: f = L.undefined(1)
             sage: f.define_implicity(log(1+f) - ~(1 + f) + 1, [])
             sage: f
+            0
 
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:

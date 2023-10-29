@@ -1456,6 +1456,9 @@ class Stream_functional_equation(Stream_inexact):
         super().__init__(False, true_order)
         self._F = F
         self._base = R
+        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+        self._P = InfinitePolynomialRing(self._base, names=('FESDUMMY',), implementation='sparse')
+        self._PFF = self._P.fraction_field()
         self._initial_values = initial_values
         self._approximate_order = approximate_order
         self._uninitialized = uninitialized
@@ -1470,8 +1473,13 @@ class Stream_functional_equation(Stream_inexact):
                 else:
                     i = -1
                 c = s._cache[i]
-                if c not in self._base:
-                    s._cache[i] = self._base(c.subs({var: val}))
+                if hasattr(c, "parent"):
+                    if c.parent() is self._PFF:
+                        num = c.numerator().subs({var: val})
+                        den = c.denominator().subs({var: val})
+                        s._cache[i] = self._base(num/den)
+                    elif c.parent() is self._P:
+                        s._cache[i] = self._base(c.subs({var: val}))
         for t in s.parent_streams():
             self._subs_in_caches(t, var, val)
 
@@ -1493,13 +1501,8 @@ class Stream_functional_equation(Stream_inexact):
             [1, 1, 1/2, 1/6, 1/24, 1/120, 1/720, 1/5040, 1/40320, 1/362880]
         """
         yield from self._initial_values
-
-        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        P = InfinitePolynomialRing(self._base, names=('FESDUMMY',), implementation='sparse')
-        x = P.gen()
-        PFF = P.fraction_field()
+        x = self._P.gen()
         offset = self._approximate_order
-
         def get_coeff(n):
             n -= offset
             if n < len(self._initial_values):
@@ -1513,10 +1516,10 @@ class Stream_functional_equation(Stream_inexact):
         m = len(self._initial_values)
         while True:
             coeff = self._F[n]
-            if coeff.parent() is PFF:
+            if coeff.parent() is self._PFF:
                 coeff = coeff.numerator()
             else:
-                coeff = P(coeff)
+                coeff = self._P(coeff)
             V = coeff.variables()
 
             if len(V) > 1:
