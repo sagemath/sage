@@ -25,10 +25,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
     EXAMPLES::
 
         sage: CoxeterGroups.Finite()
-        Category of finite coxeter groups
+        Category of finite Coxeter groups
         sage: FiniteCoxeterGroups().super_categories()
         [Category of finite generalized coxeter groups,
-         Category of coxeter groups]
+         Category of Coxeter groups]
 
         sage: G = CoxeterGroups().Finite().example()
         sage: G.cayley_graph(side = "right").plot()
@@ -55,7 +55,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             sage: CoxeterGroups().Finite().super_categories()
             [Category of finite generalized coxeter groups,
-             Category of coxeter groups]
+             Category of Coxeter groups]
         """
         from sage.categories.complex_reflection_groups import ComplexReflectionGroups
         return [ComplexReflectionGroups().Finite().WellGenerated()]
@@ -214,7 +214,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                   handle large / infinite Coxeter groups.
             """
             from sage.combinat.posets.posets import Poset
-            covers = tuple([u, v] for v in self for u in v.bruhat_lower_covers() )
+            covers = tuple([u, v] for v in self for u in v.bruhat_lower_covers())
             return Poset((self, covers), cover_relations=True, facade=facade)
 
         def shard_poset(self, side='right'):
@@ -590,7 +590,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 inv_woc = self.inversion_sequence(sorting_word)
                 S = self.simple_reflections()
                 T = self.reflections_from_w0()
-                Twords = {t : t.reduced_word() for t in T}
+                Twords = {t: t.reduced_word() for t in T}
 
             elements = set()
             covers = []
@@ -799,11 +799,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: P.rank()
                 3
 
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")  # optional - gap3
-                sage: P = W.coxeter_poset()                                     # optional - gap3
-                sage: P                                                         # optional - gap3
+                sage: # optional - gap3
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: P = W.coxeter_poset()
+                sage: P
                 Finite meet-semilattice containing 363 elements
-                sage: P.rank()                                                  # optional - gap3
+                sage: P.rank()
                 3
             """
             I = self.index_set()
@@ -871,11 +872,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: C.homology()
                 {0: 0, 1: 0, 2: Z}
 
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")  # optional - gap3
-                sage: C = W.coxeter_complex()                                   # optional - gap3
-                sage: C                                                         # optional - gap3
+                sage: # optional - gap3
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: C = W.coxeter_complex()
+                sage: C
                 Simplicial complex with 62 vertices and 120 facets
-                sage: C.homology()                                              # optional - gap3
+                sage: C.homology()
                 {0: 0, 1: 0, 2: Z}
             """
             I = self.index_set()
@@ -898,7 +900,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             verts = set()
             for F in facets.values():
                 verts.update(F)
-            labels = {x: i for i,x in enumerate(verts)}
+            labels = {x: i for i, x in enumerate(verts)}
             result = [[labels[v] for v in F] for F in facets.values()]
             from sage.topology.simplicial_complex import SimplicialComplex
             return SimplicialComplex(result)
@@ -938,12 +940,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             are those covers of `ws_i` that have a descent at `i`.
             """
 
-            i = self.first_descent(positive=True,side='right')
+            i = self.first_descent(positive=True, side='right')
             if i is not None:
-                wsi = self.apply_simple_reflection(i,side='right')
-                return [u.apply_simple_reflection(i,side='right') for u in wsi.bruhat_upper_covers() if u.has_descent(i,side='right')] + [wsi]
-            else:
-                return []
+                wsi = self.apply_simple_reflection(i, side='right')
+                return [u.apply_simple_reflection(i, side='right')
+                        for u in wsi.bruhat_upper_covers()
+                        if u.has_descent(i, side='right')] + [wsi]
+            return []
 
         def coxeter_knuth_neighbor(self, w):
             r"""
@@ -984,7 +987,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             if not C[0] == 'A':
                 raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
-            for i in range(2,len(w)):
+            for i in range(2, len(w)):
                 v = [j for j in w]
                 if w[i-2] == w[i]:
                     if w[i] == w[i-1] - 1:
@@ -1046,7 +1049,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             R = [tuple(v) for v in self.reduced_words()]
             G = Graph()
             G.add_vertices(R)
-            G.add_edges([v,vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
+            G.add_edges([v, vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
             return G
 
         def is_coxeter_element(self):
