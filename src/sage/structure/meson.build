@@ -1,4 +1,5 @@
 py.install_sources(
+    '__init__.py',
     'all.py',
     'coerce_exceptions.py',
     'dynamic_class.py',
