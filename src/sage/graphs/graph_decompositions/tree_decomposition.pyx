@@ -431,7 +431,7 @@ def _from_tree_decompositions_of_atoms_to_tree_decomposition(T_atoms, cliques):
     return T
 
 
-def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
+def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=False):
     r"""
     Compute the treewidth of `g` (and provide a decomposition).
 
@@ -442,7 +442,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     - ``k`` -- integer (default: ``None``); indicates the width to be
       considered. When ``k`` is an integer, the method checks that the graph has
       treewidth `\leq k`. If ``k`` is ``None`` (default), the method computes
-      the optimal tree-width.
+      the optimal treewidth.
 
     - ``kmin`` -- integer (default: ``None``); when specified, search for a
       tree-decomposition of width at least ``kmin``. This parameter is useful
@@ -456,12 +456,19 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
       installation of the 'tdlib' package). The default behaviour is to use
       'tdlib' if it is available, and Sage's own algorithm when it is not.
 
+    - ``nice`` -- boolean (default: ``False``); whether or not to return the
+      nice tree decomposition, provided ``certificate`` is ``True``.
+
     OUTPUT:
 
-    ``g.treewidth()`` returns the treewidth of ``g``. When ``k`` is specified,
-    it returns ``False`` when no tree-decomposition of width `\leq k` exists or
-    ``True`` otherwise. When ``certificate=True``, the tree-decomposition is
-    also returned.
+    ``g.treewidth()`` returns treewidth of the graph ``g``.
+
+    When ``k`` is specified, it returns ``False`` if there is no tree
+    decomposition of width `\leq k`, and ``True`` otherwise.
+    
+    When ``certificate=True``, the tree decomposition is returned.
+
+    When ``nice=True``, the nice tree decomposition is returned.
 
     ALGORITHM:
 
@@ -470,7 +477,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     and ``connected_component`` is a connected component of the graph induced by
     ``G-vertex_cut``.
 
-    We deduce that the pair ``(vertex_cut, cc)`` is feasible with tree-width `k`
+    We deduce that the pair ``(vertex_cut, cc)`` is feasible with treewidth `k`
     if ``cc`` is empty, or if a vertex ``v`` from ``vertex_cut`` can be replaced
     with a vertex from ``cc``, such that the pair ``(vertex_cut+v,cc-v)`` is
     feasible.
@@ -496,6 +503,11 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
         4
         sage: graphs.PetersenGraph().treewidth(certificate=True)
         Tree decomposition: Graph on 6 vertices
+
+    Nice tree decomposition of the PetersenGraph has 28 nodes:
+
+        sage: graphs.PetersenGraph().treewidth(certificate=True, nice=True)
+        Nice tree decomposition: Graph on 28 vertices
 
     The treewidth of a 2-dimensional grid is its smallest side::
 
@@ -544,7 +556,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
         True
         sage: g.treewidth(k=3, certificate=True)
         False
-        sage: T = g.treewidth(k=4,certificate=True)
+        sage: T = g.treewidth(k=4, certificate=True)
         sage: T
         Tree decomposition: Graph on 6 vertices
         sage: from sage.graphs.graph_decompositions.tree_decomposition import is_valid_tree_decomposition
@@ -623,7 +635,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     if (k is not None) and k < 0:
         raise ValueError(f"k(={k}) must be a nonnegative integer")
 
-    # Stupid cases
+    # Silly cases
     from sage.graphs.graph import Graph
     if not g.order():
         if certificate:
@@ -648,11 +660,13 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
             raise FeatureNotPresentError(PythonModule('sage.graphs.graph_decompositions.tdlib',
                                                       spkg='tdlib'))
 
-        T = tdlib.treedecomposition_exact(g, -1 if k is None else k)
-        width = tdlib.get_width(T)
+        tree_decomp = tdlib.treedecomposition_exact(g, -1 if k is None else k)
+        width = tdlib.get_width(tree_decomp)
 
         if certificate:
-            return T if (k is None or width <= k) else False
+            if k is None or width <= k:
+                return make_nice_tree_decomposition(g, tree_decomp) if nice else tree_decomp
+            return False
         return width if k is None else width <= k
 
     # The treewidth of a graph is the maximum over its atoms. So, we decompose
@@ -752,22 +766,27 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     if not certificate:
         return True
 
-    # Building the Tree-Decomposition graph. Its vertices are cuts of the
+    # Building the tree-decomposition graph. Its vertices are cuts of the
     # decomposition, and there is an edge from a cut C1 to a cut C2 if C2 is an
     # immediate subcall of C1
-    G = Graph()
-    G.add_edges(((Set(x), Set(y)) for x, y in TD), loops=False)
+    tree_decomp = Graph()
+    tree_decomp.add_edges(((Set(x), Set(y)) for x, y in TD), loops=False)
 
-    # The Tree-Decomposition may contain a lot of useless nodes.
+    # The tree-decomposition may contain a lot of useless nodes.
     # We merge all edges between two sets S, S' where S is a subset of S'
-    G = reduced_tree_decomposition(G)
+    tree_decomp = reduced_tree_decomposition(tree_decomp)
 
-    G.name("Tree decomposition")
-    return G
+    tree_decomp.name("Tree decomposition")
+    if nice:
+        print(nice)
+        tree_decomp = make_nice_tree_decomposition(g, tree_decomp)
+
+    print(nice)
+    return tree_decomp
 
 def make_nice_tree_decomposition(graph, tree_decomp):
     r"""
-    Return a *nice* tree decomposition (TD) of the TD `tree_decomp`.
+    Return a *nice* tree decomposition (TD) of the TD ``tree_decomp``.
 
     See page 161 of [CFKLMPPS15]_ for a description of the nice tree decomposition.
 
@@ -775,10 +794,10 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     - *Leaf* nodes have no children and bag size 1;
     - *Introduce* nodes have one child: If `v \in NT` is an introduce node and
-      `w \in NT` its child, then `Bag(v) = Bag(w) \cup { x }`, where `x` is the
+      `w \in NT` its child, then `Bag(v) = Bag(w) \cup \{ x \}`, where `x` is the
       introduced node;
     - *Forget* nodes have one child: If `v \in NT` is a forget node and
-      `w \in NT` its child, then `Bag(v) = Bag(w) \setminus { x }`, where `x` is the
+      `w \in NT` its child, then `Bag(v) = Bag(w) \setminus \{ x \}`, where `x` is the
       forgotten node;
     - *Join* nodes have two children, both identical to the parent.
 
@@ -1370,7 +1389,7 @@ cdef class TreelengthConnected:
         if not self.certificate:
             return True
 
-        # Building the Tree-Decomposition graph. Its vertices are cuts of the
+        # Building the tree-decomposition graph. Its vertices are cuts of the
         # decomposition, and there is an edge from a cut C1 to a cut C2 if C2 is an
         # immediate subcall of C1. If needed, the vertices are relabeled.
         if self.perm_inv:
@@ -1716,7 +1735,7 @@ def treelength(G, k=None, certificate=False):
     # decompositions of its atoms.
     T = _from_tree_decompositions_of_atoms_to_tree_decomposition(result, cliques)
 
-    # The Tree-Decomposition may contain a lot of useless nodes.
+    # The tree-decomposition may contain a lot of useless nodes.
     # We merge all edges between two sets S,S' where S is a subset of S'
     T = reduced_tree_decomposition(T)
     T.name(name)
