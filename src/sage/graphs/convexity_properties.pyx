@@ -682,6 +682,8 @@ def is_geodetic(G):
     unweighted (di)graphs. Examples of geodetic graphs are trees, cliques and
     odd cycles. See the :wikipedia:`Geodetic_graph` for more details.
 
+    (Di)graphs with multiple edges are not considered geodetic.
+
     INPUT:
 
     - ``G`` -- a Sage graph or digraph
@@ -731,8 +733,20 @@ def is_geodetic(G):
         True
         sage: all((2*g).is_geodetic() for g in graphs(3))
         True
+        sage: G = graphs.CycleGraph(5)
+        sage: G.allow_loops(True)
+        sage: G.add_edges([(u, u) for u in G])
+        sage: G.is_geodetic()
+        True
+        sage: G.allow_multiple_edges(True)
+        sage: G.is_geodetic()
+        True
+        sage: G.add_edge(G.random_edge())
+        sage: G.is_geodetic()
+        False
     """
-    G._scream_if_not_simple(allow_loops=True)
+    if G.has_multiple_edges():
+        return False
 
     if G.order() < 4:
         return True
