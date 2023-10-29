@@ -48,4 +48,4 @@ from cpython.object cimport PyObject
 cdef extern from *:
     PyObject* __pyx_d
 
-#(<object>__pyx_d)["debug"] = debug
+(<object>__pyx_d)["debug"] = debug
