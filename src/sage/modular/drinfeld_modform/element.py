@@ -364,7 +364,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         if not self.parent()._has_type:
             return ZZ(0)
         q = self.base_ring().base_ring().cardinality()
-        return self.polynomial().degrees()[-1]%(q-1)
+        return self.polynomial().degrees()[-1] % (q-1)
 
     def weight(self):
         r"""
