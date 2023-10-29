@@ -1931,7 +1931,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         P = self
         E = P.curve()
 
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         K = E.base_ring()
@@ -2139,7 +2139,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # check for same curve
         E = P.curve()
         O = E(0)
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         # set q to be the order of the base field
@@ -3709,7 +3709,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         return Q
 
-    def discrete_log(self, Q, ord=None):
+    def discrete_log(self, Q):
         r"""
         Return the discrete logarithm of `Q` to base `P` = ``self``,
         that is, an integer `x` such that `xP = Q`.
@@ -3780,18 +3780,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: x = P.discrete_log(Q)
             sage: x*P == Q
             True
-
-        Doctest deprecation::
-
-            sage: P.discrete_log(Q, ord=P.order())                                      # needs sage.rings.finite_rings
-            doctest:warning
-            ...
-            DeprecationWarning: The "ord" argument to .discrete_log() is obsolete. ...
         """
-        if ord is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33121, 'The "ord" argument to .discrete_log() is obsolete. Use the .set_order() method instead.')
-            self.set_order(ord)
         if Q not in self.parent():
             raise ValueError('not a point on the same curve')
         n = self.order()

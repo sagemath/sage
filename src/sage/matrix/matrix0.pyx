@@ -393,7 +393,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         This function gets called when you're about to change this matrix.
 
-        If self is immutable, a ValueError is raised, since you should
+        If self is immutable, a :class:`ValueError` is raised, since you should
         never change a mutable matrix.
 
         If self is mutable, the cache of results about self is deleted.
@@ -406,10 +406,10 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j):
         """
         This function gets called when you're about to set the i,j entry of
-        this matrix. If i or j is out of range, an IndexError exception is
-        raised.
+        this matrix. If i or j is out of range, an :class:`IndexError`
+        exception is raised.
 
-        If self is immutable, a ValueError is raised, since you should
+        If self is immutable, a :class:`ValueError` is raised, since you should
         never change a mutable matrix.
 
         If self is mutable, the cache of results about self is deleted.
@@ -524,7 +524,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         This is fast since it is a cdef function and there is no bounds
         checking.
         """
-        raise NotImplementedError("this must be defined in the derived class (type=%s)"%type(self))
+        raise NotImplementedError("this must be defined in the derived class (type=%s)" % type(self))
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         """
@@ -1396,7 +1396,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef list row_list
         cdef list col_list
-        cdef object index
         cdef Py_ssize_t row_list_len, col_list_len
         cdef list value_list
         cdef bint value_list_one_dimensional = 0
@@ -2241,7 +2240,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         tmp = [align*(b-a) for a,b in zip([0] + col_divs, col_divs + [nc])]
         format = '|'.join(tmp)
 
-        return "\\left" + matrix_delimiters[0] + "\\begin{array}{%s}\n"%format + s + "\n\\end{array}\\right" + matrix_delimiters[1]
+        return "\\left" + matrix_delimiters[0] + "\\begin{array}{%s}\n" % format + s + "\n\\end{array}\\right" + matrix_delimiters[1]
 
     ###################################################
     ## Basic Properties
@@ -2345,7 +2344,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         if self._nrows != self._ncols:
             raise ArithmeticError("self must be a square matrix")
 
-        F = f.base_ring()
         vars = f.parent().gens()
         n = len(self.rows())
         ans = []
@@ -3746,7 +3744,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef dict d = {}
         cdef list queue = list(range(self._ncols))
-        cdef int l, sign, i, j
+        cdef int l, sign, i
 
         if skew:
             # testing the diagonal entries to be zero
@@ -4638,7 +4636,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             print(self)
             print(self.nrows())
             print(self.dict())
-            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
+            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'" % self.parent())
         return tuple(x)
 
     def rank(self):
@@ -5815,10 +5813,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             Traceback (most recent call last):
             ...
             ArithmeticError: self must be a square matrix
+
             sage: matrix(RR, 1, 1, [2]).inverse_of_unit()                               # needs sage.libs.singular
             Traceback (most recent call last):
             ...
-            NotImplementedError: Lifting of multivariate polynomials over non-fields is not implemented.
+            ArithmeticError: non-invertible matrix
 
             sage: R = ZZ.cartesian_product(ZZ)
             sage: m = matrix(R, 2, [R((2,1)), R((1,1)), R((1,1)), R((1,2))])

@@ -2113,28 +2113,6 @@ def is_AlgebraicField(F):
 QQbar = AlgebraicField()
 
 
-def is_AlgebraicField_common(F):
-    r"""
-    Check whether ``F`` is an :class:`~AlgebraicField_common` instance.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.AlgebraicField_common` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.qqbar import is_AlgebraicField_common
-        sage: [is_AlgebraicField_common(x) for x in [AA, QQbar, None, 0, "spam"]]
-        doctest:warning...
-        DeprecationWarning: is_AlgebraicField_common is deprecated;
-        use isinstance(..., sage.rings.abc.AlgebraicField_common) instead
-        See https://github.com/sagemath/sage/issues/32610 for details.
-        [True, True, False, False, False]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32610, 'is_AlgebraicField_common is deprecated; use isinstance(..., sage.rings.abc.AlgebraicField_common) instead')
-    return isinstance(F, AlgebraicField_common)
-
-
 def prec_seq():
     r"""
     Return a generator object which iterates over an infinite increasing
@@ -3421,7 +3399,7 @@ class AlgebraicGenerator(SageObject):
                 continue
             if self is u.child1:
                 return u.child1_poly(poly)
-            assert(self is u.child2)
+            assert (self is u.child2)
             return u.child2_poly(poly)
         return None
 
@@ -3469,7 +3447,7 @@ class AlgebraicGenerator(SageObject):
             return elt.field_element_value()
         gen = elt.generator()
         sp = gen.super_poly(self)
-        assert(not(sp is None))
+        assert (not (sp is None))
         return self._field(elt.field_element_value().polynomial()(sp))
 
 
@@ -7565,7 +7543,7 @@ class ANRoot(ANDescr):
             my_factor = find_zero_result(find_fn, qpf)
 
             # Factoring always returns monic polynomials over the rationals
-            assert(my_factor.is_monic())
+            assert (my_factor.is_monic())
 
             if my_factor.degree() == 1:
                 return ANRational(-my_factor[0])
@@ -7608,7 +7586,7 @@ class ANRoot(ANDescr):
                 return ip(self_val)
             my_factor = find_zero_result(find_fn, fpf)
 
-            assert(my_factor.is_monic())
+            assert (my_factor.is_monic())
 
             if my_factor.degree() == 1:
                 return ANExtensionElement(gen, -my_factor[0])
@@ -7773,7 +7751,7 @@ class ANExtensionElement(ANDescr):
             ({call: {atomic:QQbar}({binop:+ {atomic:1} {atomic:I}})}, True)
         """
         if self._generator is QQbar_I_generator:
-            assert(is_qqbar)
+            assert (is_qqbar)
             re, im = self._value.list()
             im_part = sib.prod([sib(im, True), sib.name('I')], simplify=True)
             v = sib.sum([sib(re, True), im_part], simplify=True)

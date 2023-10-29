@@ -55,7 +55,7 @@ from sage.misc.randstate import current_randstate
 from sage.misc.randstate cimport randstate
 from sage.structure.element cimport Element, Matrix
 from sage.structure.richcmp import rich_to_bool
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 from libc.string cimport memset, memcpy
 
@@ -159,7 +159,7 @@ cdef class FieldConverter_class:
             sage: C.field_to_fel('foo')
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'to_integer'
+            AttributeError: 'str' object has no attribute 'to_integer'...
         """
         return FfFromInt(x.to_integer())
 

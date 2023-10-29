@@ -1701,44 +1701,6 @@ cdef class TimeSeries:
              152.2437, 151.5327, 152.7629, 152.9169, 152.9084]
             sage: bm.hurst_exponent()
             0.527450972...
-
-        We compute the Hurst exponent of a simulated fractional Brownian
-        motion with Hurst parameter 0.7.  This function estimates the
-        Hurst exponent as 0.706511951... ::
-
-            sage: set_random_seed(0)
-            sage: import sage.finance.all as finance
-            doctest:warning...
-            DeprecationWarning: the package sage.finance is deprecated
-            See https://github.com/sagemath/sage/issues/32427 for details.
-            sage: fbm = finance.fractional_brownian_motion_simulation(0.7,0.1,10^5,1)[0]
-            sage: fbm.hurst_exponent()
-            0.706511951...
-
-        Another example with small Hurst exponent (notice the overestimation).
-
-        ::
-
-            sage: fbm = finance.fractional_brownian_motion_simulation(0.2,0.1,10^5,1)[0]
-            sage: fbm.hurst_exponent()
-            0.278997441...
-
-        We compute the mean Hurst exponent of 100 simulated multifractal
-        cascade random walks::
-
-            sage: set_random_seed(0)
-            sage: y = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-            sage: stats.TimeSeries([z.hurst_exponent() for z in y]).mean()
-            0.57984822577934...
-
-        We compute the mean Hurst exponent of 100 simulated Markov switching
-        multifractal time series.  The Hurst exponent is quite small. ::
-
-            sage: set_random_seed(0)
-            sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,0.5,0.95,3)
-            sage: y = msm.simulations(1000,100)
-            sage: stats.TimeSeries([z.hurst_exponent() for z in y]).mean()
-            0.286102325623705...
         """
         # We use disjoint blocks of size 8, 16, 32, ....
         cdef Py_ssize_t k = 8
@@ -1763,8 +1725,9 @@ cdef class TimeSeries:
 
     def min(self, bint index=False):
         r"""
-        Return the smallest value in this time series. If this series
-        has length 0 we raise a ``ValueError``.
+        Return the smallest value in this time series.
+
+        If this series has length 0, we raise a :class:`ValueError`.
 
         INPUT:
 
@@ -2621,108 +2584,6 @@ def autoregressive_fit(acvs):
     `\Gamma a =\gamma`, where `\gamma=(\gamma(1),\dots,\gamma(M))`,
     `a=(a_1,\dots,a_M)`, with `\gamma(i)` the autocovariance of lag `i`
     and `\Gamma_{ij}=\gamma(i-j)`.
-
-    EXAMPLES:
-
-    In this example we consider the multifractal cascade random walk
-    of length 1000, and use simulations to estimate the
-    expected first few autocovariance parameters for this model, then
-    use them to construct a linear filter that works vastly better
-    than a linear filter constructed from the same data but not using
-    this model. The Monte-Carlo method illustrated below should work for
-    predicting one "time step" into the future for any
-    model that can be simulated.  To predict k time steps into the
-    future would require using a similar technique but would require
-    scaling time by k.
-
-    We create 100 simulations of a multifractal random walk.  This
-    models the logarithms of a stock price sequence. ::
-
-        sage: set_random_seed(0)
-        sage: import sage.finance.all as finance
-        sage: y = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-
-    For each walk below we replace the walk by the walk but where each
-    step size is replaced by its absolute value -- this is what we
-    expect to be able to predict given the model, which is only a
-    model for predicting volatility.  We compute the first 200
-    autocovariance values for every random walk::
-
-        sage: c = [[a.diffs().abs().sums().autocovariance(i) for a in y] for i in range(200)]
-
-    We make a time series out of the expected values of the
-    autocovariances::
-
-        sage: ac = stats.TimeSeries([stats.TimeSeries(z).mean() for z in c])
-        sage: ac
-        [3.9962, 3.9842, 3.9722, 3.9601, 3.9481 ... 1.7144, 1.7033, 1.6922, 1.6812, 1.6701]
-
-    .. NOTE::
-
-        ``ac`` looks like a line -- one could best fit it to yield a lot
-        more approximate autocovariances.
-
-    We compute the autoregression coefficients matching the above
-    autocovariances::
-
-        sage: F = stats.autoregressive_fit(ac); F
-        [0.9982, -0.0002, -0.0002, 0.0003, 0.0001 ... 0.0002, -0.0002, -0.0000, -0.0002, -0.0014]
-
-    Note that the sum is close to 1::
-
-        sage: sum(F)
-        0.99593284089454...
-
-    Now we make up an 'out of sample' sequence::
-
-        sage: y2 = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,1)[0].diffs().abs().sums()
-        sage: y2
-        [0.0013, 0.0059, 0.0066, 0.0068, 0.0184 ... 6.8004, 6.8009, 6.8063, 6.8090, 6.8339]
-
-    And we forecast the very last value using our linear filter; the forecast
-    is close::
-
-        sage: y2[:-1].autoregressive_forecast(F)
-        6.7836741372407...
-
-    In fact it is closer than we would get by forecasting using a
-    linear filter made from all the autocovariances of our sequence::
-
-        sage: y2[:-1].autoregressive_forecast(y2[:-1].autoregressive_fit(len(y2)))
-        6.770168705668...
-
-    We record the last 20 forecasts, always using all correct values up to the
-    one we are forecasting::
-
-        sage: s1 = sum([(y2[:-i].autoregressive_forecast(F)-y2[-i])^2 for i in range(1,20)])
-
-    We do the same, but using the autocovariances of the sample sequence::
-
-        sage: F2 = y2[:-100].autoregressive_fit(len(F))
-        sage: s2 = sum([(y2[:-i].autoregressive_forecast(F2)-y2[-i])^2 for i in range(1,20)])
-
-    Our model gives us something that is 15 percent better in this case::
-
-        sage: s2/s1
-        1.15464636102...
-
-    How does it compare overall?  To find out we do 100 simulations
-    and for each we compute the percent that our model beats naively
-    using the autocovariances of the sample::
-
-        sage: y_out = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-        sage: s1 = []; s2 = []
-        sage: for v in y_out:
-        ....:     s1.append(sum([(v[:-i].autoregressive_forecast(F)-v[-i])^2 for i in range(1,20)]))
-        ....:     F2 = v[:-len(F)].autoregressive_fit(len(F))
-        ....:     s2.append(sum([(v[:-i].autoregressive_forecast(F2)-v[-i])^2 for i in range(1,20)]))
-
-    We find that overall the model beats naive linear forecasting by 35
-    percent! ::
-
-        sage: s = stats.TimeSeries([s2[i]/s1[i] for i in range(len(s1))])
-        sage: s.mean()
-        1.354073591877...
     """
     cdef TimeSeries c
     cdef Py_ssize_t i

@@ -10793,7 +10793,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (y**2 + x).nth_root(2)
             Traceback (most recent call last):
             ...
-            AttributeError: ... has no attribute 'nth_root'
+            AttributeError: ... has no attribute 'nth_root'...
 
         TESTS::
 
@@ -11831,7 +11831,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: int(1) // x  # check that this doesn't segfault
             Traceback (most recent call last):
             ...
-            AttributeError: type object 'int' has no attribute 'base_ring'
+            AttributeError: type object 'int' has no attribute 'base_ring'...
         """
         if have_same_parent(self, right):
             return (<Polynomial_generic_dense>self)._floordiv_(<Polynomial_generic_dense>right)

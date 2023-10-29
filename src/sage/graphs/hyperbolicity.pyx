@@ -327,8 +327,7 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
     # Last, we return the computed value and the certificate
     if h_LB != -1:
         return (h_LB, certificate)
-    else:
-        return (-1, [])
+    return (-1, [])
 
 
 ######################################################################
@@ -825,10 +824,10 @@ cdef tuple hyperbolicity_BCCM(int N,
     # Last, we return the computed value and the certificate
     if not certificate:
         return (-1, [], h_UB)
-    else:
-        # When using far-apart pairs, the loops may end before improving the
-        # upper-bound
-        return (h, certificate, h_UB)
+
+    # When using far-apart pairs, the loops may end before improving the
+    # upper-bound
+    return (h, certificate, h_UB)
 
 
 ######################################################################
@@ -1043,10 +1042,10 @@ cdef tuple hyperbolicity_CCL(int N,
     # Last, we return the computed value and the certificate
     if not certificate:
         return (-1, [], h_UB)
-    else:
-        # When using far-apart pairs, the loops may end before improving the
-        # upper-bound
-        return (h, certificate, h_UB if GOTO_RETURN else h)
+
+    # When using far-apart pairs, the loops may end before improving the
+    # upper-bound
+    return (h, certificate, h_UB if GOTO_RETURN else h)
 
 
 def hyperbolicity(G,
@@ -1188,7 +1187,7 @@ def hyperbolicity(G,
     Comparison of results::
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
-        sage: for i in range(10): # long time
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:     G = graphs.RandomBarabasiAlbert(100,2)
         ....:     d1,_,_ = hyperbolicity(G, algorithm='basic')
         ....:     d2,_,_ = hyperbolicity(G, algorithm='CCL')
@@ -1202,7 +1201,7 @@ def hyperbolicity(G,
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: import random
         sage: random.seed()
-        sage: for i in range(10): # long time
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:     n = random.randint(2, 20)
         ....:     m = random.randint(0, n*(n-1) / 2)
         ....:     G = graphs.RandomGNM(n, m)

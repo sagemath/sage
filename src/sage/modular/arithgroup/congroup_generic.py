@@ -544,7 +544,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         from .congroup_gammaH import is_GammaH
         from .all import Gamma0, Gamma1, GammaH
         N = self.level()
-        if (level%N) and (N%level):
+        if (level % N) and (N % level):
             raise ValueError("one level must divide the other")
         if is_Gamma0(self):
             return Gamma0(level)
@@ -558,7 +558,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
                 newH = [ h + diff for h in H for diff in diffs ]
                 return GammaH(level, [x for x in newH if gcd(level, x) == 1])
             else:
-                return GammaH(level, [ h%level for h in H ])
+                return GammaH(level, [ h % level for h in H ])
         else:
             raise NotImplementedError
 

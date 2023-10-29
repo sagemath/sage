@@ -64,18 +64,18 @@ EXAMPLE:
 
 epilog_list = \
 """
-Print a list of packages known to Sage
+Print a list of packages known to Sage (sorted alphabetically)
 
 EXAMPLE:
 
-    $ sage --package list | sort
+    $ sage --package list
     4ti2
     arb
     autotools
     [...]
     zlib
 
-    $ sage --package list :standard: | sort
+    $ sage --package list :standard:
     arb
     backports_ssl_match_hostname
     [...]
@@ -214,10 +214,10 @@ def make_parser():
         help='Print a list of packages known to Sage')
     parser_list.add_argument(
         'package_class', metavar='[package_name|:package_type:]',
-        type=str, default=[':all:'], nargs='*',
+        type=str, default=[':all-or-nothing:'], nargs='*',
         help=('package name or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:); '
-              'default: :all:'))
+              'default: :all: (or nothing when --include-dependencies or --exclude-dependencies is given'))
     parser_list.add_argument(
         '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
         help=('only include packages that have this file in their metadata directory '
@@ -227,8 +227,15 @@ def make_parser():
         help=('only include packages that do not have this file in their metadata directory '
               '(examples: huge, patches, huge|has_nonfree_dependencies)'))
     parser_list.add_argument(
-        '--exclude', action='append', default=[], metavar='PACKAGE_NAME',
+        '--exclude', nargs='*', action='append', default=[], metavar='PACKAGE_NAME',
         help='exclude package from list')
+    parser_list.add_argument(
+        '--include-dependencies', action='store_true',
+        help='include (ordinary) dependencies of the packages recursively')
+    parser_list.add_argument(
+        '--exclude-dependencies', action='store_true',
+        help='exclude (ordinary) dependencies of the packages recursively')
+
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -353,7 +360,16 @@ def run():
     if args.subcommand == 'config':
         app.config()
     elif args.subcommand == 'list':
-        app.list_cls(*args.package_class, has_files=args.has_files, no_files=args.no_files, exclude=args.exclude)
+        if args.package_class == [':all-or-nothing:']:
+            if args.include_dependencies or args.exclude_dependencies:
+                args.package_class = []
+            else:
+                args.package_class = [':all:']
+        app.list_cls(*args.package_class,
+                     has_files=args.has_files, no_files=args.no_files,
+                     exclude=args.exclude,
+                     include_dependencies=args.include_dependencies,
+                     exclude_dependencies=args.exclude_dependencies)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':

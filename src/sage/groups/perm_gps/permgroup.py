@@ -631,7 +631,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: A4._gap_init_()
             'Group([PermList([1, 3, 4, 2]), PermList([2, 3, 1, 4])])'
         """
-        return 'Group([%s])'%(', '.join([g._gap_init_() for g in self.gens()]))
+        return 'Group([%s])' % (', '.join([g._gap_init_() for g in self.gens()]))
 
     @cached_method
     def gap(self):
@@ -736,7 +736,7 @@ class PermutationGroup_generic(FiniteGroup):
             'PermutationGroup<3 | (1,2,3), (1,2)>'
         """
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
-        return 'PermutationGroup<%s | %s>'%(self.degree(), g)
+        return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
     def __richcmp__(self, right, op):
         """
@@ -1279,7 +1279,7 @@ class PermutationGroup_generic(FiniteGroup):
         We make sure that the trivial group gets handled correctly::
 
             sage: SymmetricGroup(1).gens()
-            ((),)
+            ()
         """
         return self._gens
 
@@ -2034,8 +2034,11 @@ class PermutationGroup_generic(FiniteGroup):
                end;
                return CosetsStabChain(S0);
             end;""")
-            G = libgap.Group(self.gens())  # G = libgap(self)
-            S = G.StabChain()
+            if self._gens:
+                G = libgap.Group(self.gens())  # G = libgap(self)
+            else:
+                G = libgap.SymmetricGroup([])
+            S = G.StabChainImmutable()
             cosets = gap_cosets(S)
             one = self.one()
             return [[one._generate_new_GAP(libgap.ListPerm(elt))

@@ -225,7 +225,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
         cdef IntegerMod_int n
         for i from 0 <= i < self._nrows:
@@ -310,10 +310,6 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             v = &(right.rows[i])
             for j in range(v.num_nonzero):
                 (<set> nonzero_positions_in_columns[v.positions[j]]).add(i)
-        # pre-computes the list of nonzero columns of right
-        cdef list right_indices
-        right_indices = [j for j in range(right._ncols)
-                         if nonzero_positions_in_columns[j]]
 
         ans = self.new_matrix(self._nrows, right._ncols)
 
@@ -423,7 +419,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         self.check_mutability()
 
         cdef Py_ssize_t i, r, c, min, min_row,  start_row
-        cdef int a0, a_inverse, b, do_verb
+        cdef int a_inverse, b, do_verb
         cdef c_vector_modint tmp
         start_row = 0
         pivots = []
@@ -884,7 +880,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         .. NOTE::
 
-           In Sage one can also write ``A \ B`` for
+           DEPRECATED. In Sage one can also write ``A \ B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the
            MATLAB/Octave backslash operator".
 
@@ -918,14 +914,14 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
             sage: A = matrix(ZZ, 3, [1,2,3,-1,2,5,2,3,1], sparse=True)
             sage: b = vector(ZZ, [1,2,3])
-            sage: x = A \ b
+            sage: x = A.solve_right(b)
             sage: x
             (-13/12, 23/12, -7/12)
             sage: A * x
             (1, 2, 3)
 
             sage: u = matrix(ZZ, 3, 2, [0,1,1,1,0,2])
-            sage: x = A \ u
+            sage: x = A.solve_right(u)
             sage: x
             [-7/12  -1/6]
             [ 5/12   5/6]

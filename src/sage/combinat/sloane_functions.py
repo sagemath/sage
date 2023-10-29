@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.gap sage.libs.flint sage.libs.pari sage.modules
 r"""
 Functions that compute some of the sequences in Sloane's tables
 
@@ -9169,7 +9169,7 @@ class Sloane(SageObject):
         ::
 
             sage: sloane.__repr__
-            <method-wrapper '__repr__' of Sloane object at 0x...>
+            <built-in method __repr__ of Sloane object at 0x...>
             sage: sloane.__name__
             Traceback (most recent call last):
             ...

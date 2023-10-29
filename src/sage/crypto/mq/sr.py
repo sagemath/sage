@@ -586,7 +586,7 @@ class SR_generic(MPolynomialSystemGenerator):
             self.Mstar = self.ShiftRows * self.Lin
             return self.Mstar
 
-        raise AttributeError("%s has no attribute %s"%(type(self), attr))
+        raise AttributeError("%s has no attribute %s" % (type(self), attr))
 
     def _repr_(self):
         """
@@ -598,9 +598,9 @@ class SR_generic(MPolynomialSystemGenerator):
             SR*(1,2,2,4)
         """
         if self._star:
-            return "SR*(%d,%d,%d,%d)"%(self._n, self._r, self._c, self._e)
+            return "SR*(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
         else:
-            return "SR(%d,%d,%d,%d)"%(self._n, self._r, self._c, self._e)
+            return "SR(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
 
     def base_ring(self):
         r"""
@@ -748,7 +748,7 @@ class SR_generic(MPolynomialSystemGenerator):
                                                 [1, 0, 1, 1],
                                                 [1, 1, 0, 1]])
 
-            elif e==8:
+            elif e == 8:
                 if not hasattr(self, "_L"):
                     self._L = Matrix(GF(2), 8, 8, [[1, 0, 0, 0, 1, 1, 1, 1],
                                                 [1, 1, 0, 0, 0, 1, 1, 1],
@@ -911,7 +911,7 @@ class SR_generic(MPolynomialSystemGenerator):
         d = self.state_array(d)
         ret = []
         for i in range(d.nrows()):
-            ret += list(d.row(i)[i%d.ncols():]) + list(d.row(i)[:i%d.ncols()])
+            ret += list(d.row(i)[i % d.ncols():]) + list(d.row(i)[:i % d.ncols()])
         return Matrix(self.base_ring(), self._r, self._c, ret)
 
     def mix_columns(self, d):
@@ -958,7 +958,7 @@ class SR_generic(MPolynomialSystemGenerator):
                                               [1, a, a+1, 1],
                                               [1, 1, a, a+1],
                                               [a+1, 1, 1, a]])
-        ret =[]
+        ret = []
         for column in d.columns():
             ret.append(M * column)
         # AES uses the column major ordering
@@ -1315,7 +1315,7 @@ class SR_generic(MPolynomialSystemGenerator):
             elif len(P) == len(K) == r*c*e:
                 _type = self.vector
             else:
-                raise TypeError("length %d or %d doesn't match either %d or %d"%(len(P),len(K),r*c,r*c*e))
+                raise TypeError("length %d or %d doesn't match either %d or %d" % (len(P),len(K),r*c,r*c*e))
         else:
             raise TypeError("plaintext or key parameter not understood")
 
@@ -1332,46 +1332,46 @@ class SR_generic(MPolynomialSystemGenerator):
 
         for r in range(self._n-1):
             if get_verbose() >= 2:
-                print("R[%02d].start   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].start   %s" % (r+1, self.hex_str_vector(P)))
 
             P = SubBytes(P)
             if get_verbose() >= 2:
-                print("R[%02d].s_box   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].s_box   %s" % (r+1, self.hex_str_vector(P)))
 
             P = ShiftRows(P)
             if get_verbose() >= 2:
-                print("R[%02d].s_row   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].s_row   %s" % (r+1, self.hex_str_vector(P)))
 
             P = MixColumns(P)
             if get_verbose() >= 2:
-                print("R[%02d].m_col   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].m_col   %s" % (r+1, self.hex_str_vector(P)))
 
             K = KeyExpansion(K, r+1)
             if get_verbose() >= 2:
-                print("R[%02d].k_sch   %s"%(r+1, self.hex_str_vector(K)))
+                print("R[%02d].k_sch   %s" % (r+1, self.hex_str_vector(K)))
 
             P = AddRoundKey(P, K)
 
         P = SubBytes(P)
         if get_verbose() >= 2:
-            print("R[%02d].s_box   %s"%(self.n, self.hex_str_vector(P)))
+            print("R[%02d].s_box   %s" % (self.n, self.hex_str_vector(P)))
 
         P = ShiftRows(P)
         if get_verbose() >= 2:
-            print("R[%02d].s_row   %s"%(self.n, self.hex_str_vector(P)))
+            print("R[%02d].s_row   %s" % (self.n, self.hex_str_vector(P)))
 
         if not self._star:
             P = MixColumns(P)
             if get_verbose() >= 2:
-                print("R[%02d].m_col   %s"%(self.n, self.hex_str_vector(P)))
+                print("R[%02d].m_col   %s" % (self.n, self.hex_str_vector(P)))
 
         K = KeyExpansion(K, self._n)
         if get_verbose() >= 2:
-            print("R[%02d].k_sch   %s"%(self.n, self.hex_str_vector(K)))
+            print("R[%02d].k_sch   %s" % (self.n, self.hex_str_vector(K)))
 
         P = AddRoundKey(P, K)
         if get_verbose() >= 2:
-            print("R[%02d].output  %s"%(self.n, self.hex_str_vector(P)))
+            print("R[%02d].output  %s" % (self.n, self.hex_str_vector(P)))
 
         return _type(P)
 
@@ -1860,7 +1860,7 @@ class SR_generic(MPolynomialSystemGenerator):
                 plaintext = Matrix(R, r*c*e, 1, self.phi(plaintext))
             return tuple((w1 + k0 + plaintext).list())
 
-        elif i>0 and i<=n:
+        elif i > 0 and i <= n:
 
             if self._star and i == n:
                 M = self.Mstar
@@ -1957,8 +1957,8 @@ class SR_generic(MPolynomialSystemGenerator):
             if r == 1:
                 sbox += self.inversion_polynomials(kj[(c - 1)*e:(c - 1)*e + e], si[0:e], e)
             if r == 2:
-                sbox += self.inversion_polynomials( kj[(2*c -1)*e : (2*c -1)*e + e] , si[0:1*e], e )
-                sbox += self.inversion_polynomials( kj[(2*c -2)*e : (2*c -2)*e + e] , si[e:2*e], e )
+                sbox += self.inversion_polynomials( kj[(2*c - 1)*e : (2*c - 1)*e + e] , si[0:1*e], e )
+                sbox += self.inversion_polynomials( kj[(2*c - 2)*e : (2*c - 2)*e + e] , si[e:2*e], e )
             if r == 4:
                 if self._aes_mode:
                     sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[0*e : 1*e] , e )
@@ -2108,19 +2108,19 @@ class SR_generic(MPolynomialSystemGenerator):
         plaintext, key, ciphertext = data
 
         if plaintext is False:
-            raise TypeError("type %s of P not understood"%(type(plaintext)))
+            raise TypeError("type %s of P not understood" % (type(plaintext)))
         elif plaintext is None:
             plaintext = self.random_element("vector")
 
         if key is None:
             key = self.random_element("vector")
         elif key is False and ciphertext is False:
-            raise TypeError("type %s of K not understood"%(type(key)))
+            raise TypeError("type %s of K not understood" % (type(key)))
 
         if ciphertext is None:
             ciphertext = self(plaintext, key)
         elif ciphertext is False:
-            raise TypeError("type %s of C not understood"%(type(ciphertext)))
+            raise TypeError("type %s of C not understood" % (type(ciphertext)))
 
         for i in range(n+1):
             system.append( self.round_polynomials(i, plaintext, ciphertext) )
@@ -2324,13 +2324,13 @@ class SR_gf2n(SR_generic):
             for k in range( 0, length ):
                 for i in range(0, 4):
                     for j in range(0, 4):
-                        lin[k*4+j, k*4+i] = l[(i-j)%4] ** (2**j)
+                        lin[k*4+j, k*4+i] = l[(i-j) % 4] ** (2**j)
         elif e == 8:
             l = [k.from_integer(x) for x in (5, 9, 249, 37, 244, 1, 181, 143)]
             for k in range( 0, length ):
                 for i in range(0, 8):
                     for j in range(0, 8):
-                        lin[k*8+j, k*8+i] = l[(i-j)%8] ** (2**j)
+                        lin[k*8+j, k*8+i] = l[(i-j) % 8] ** (2**j)
 
         return lin
 
@@ -2480,7 +2480,7 @@ class SR_gf2n(SR_generic):
             l = r*c
 
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+k]**2 - _vars[e*j+(k+1)%e]   for j in range(l)  for k in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e]   for j in range(l)  for k in range(e)]
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -2665,7 +2665,7 @@ class SR_gf2(SR_generic):
         elif isinstance(l, tuple):
             return tuple(ret)
         elif is_Matrix(l):
-            return Matrix(self.base_ring(), self.r *self.c, 1, ret)
+            return Matrix(self.base_ring(), self.r * self.c, 1, ret)
         else:
             raise TypeError
 
@@ -2911,7 +2911,7 @@ class SR_gf2(SR_generic):
 
         if x is None and w is None:
             # make sure it prints like in the book.
-            names = ["w%d" % i for i in reversed(range(e))] + ["x%d"%i for i in reversed(range(e))]
+            names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
             x = P.gens()[e:]
             w = P.gens()[:e]
@@ -3086,7 +3086,7 @@ class SR_gf2(SR_generic):
 
         if x is None and w is None:
             # make sure it prints like in the book.
-            names = ["w%d" % i for i in reversed(range(e))] + ["x%d"%i for i in reversed(range(e))]
+            names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
             x = Matrix(P, e, 1, P.gens()[e:])
             w = Matrix(P, e, 1, P.gens()[:e])
@@ -3123,8 +3123,8 @@ class SR_gf2(SR_generic):
             l.append( (Cw * x + o).list()[:-1] )
         else:
             l.append( (Cw * x + o).list() )
-        l.append( (Cw * S *x  + x).list() )
-        l.append( (Cx * S *w  + w).list() )
+        l.append( (Cw * S * x  + x).list() )
+        l.append( (Cx * S * w  + w).list() )
         if not biaffine_only:
             l.append( ((Cw * S**2 + Cx*S)*x).list() )
             l.append( ((Cx * S**2 + Cw*S)*w).list() )
@@ -3280,7 +3280,7 @@ class SR_gf2_2(SR_gf2):
         e = self.e
         if x is None and w is None:
             # make sure it prints like in the book.
-            names = ["w%d" % i for i in reversed(range(e))] + ["x%d"%i for i in reversed(range(e))]
+            names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
             x = P.gens()[e:]
             w = P.gens()[:e]

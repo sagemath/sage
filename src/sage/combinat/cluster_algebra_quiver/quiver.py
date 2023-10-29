@@ -36,8 +36,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from copy import copy
+from itertools import product
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
@@ -46,7 +46,6 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
 from sage.arith.misc import gcd
-from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
 from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
@@ -366,7 +365,7 @@ class ClusterQuiver(SageObject):
             elif n+m == 1:
                 self._description = 'Quiver on 1 vertex'
             else:
-                self._description = 'Quiver on %d vertices' %(n+m)
+                self._description = 'Quiver on %d vertices' % (n+m)
 
         # constructs a quiver from a digraph
         elif isinstance(data, DiGraph):
@@ -1512,7 +1511,7 @@ class ClusterQuiver(SageObject):
             raise ValueError('The quiver can only be mutated at a vertex or at a sequence of vertices')
         if any(v not in V for v in sequence):
             v = next(v for v in sequence if v not in V)
-            raise ValueError('The quiver can only be mutated at the vertex %s'%v )
+            raise ValueError('The quiver can only be mutated at the vertex %s' % v )
 
         quiver = copy( self )
         quiver_sequence = []
@@ -2109,8 +2108,8 @@ class ClusterQuiver(SageObject):
         mu_d = theta.dot_product(d) / sum(d)
 
         Li = [0 * d]
-        it = (vector(e) for e in cartesian_product([range(d_i + 1)
-                                                    for d_i in d]))
+        it = (vector(e) for e in product(*[range(d_i + 1)
+                                           for d_i in d]))
         Li += [e for e in it if e.dot_product(theta) > mu_d * sum(e)]
         Li.append(d)
         N = len(Li) - 1
@@ -2181,7 +2180,7 @@ class ClusterQuiver(SageObject):
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
+        if not (self.is_finite()):
             raise ValueError('only makes sense for quivers of finite type')
         seed = ClusterSeed(self)
         return Fan([Cone(s.d_matrix().columns())
@@ -2229,7 +2228,7 @@ class ClusterQuiver(SageObject):
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
+        if not (self.is_finite()):
             raise ValueError('only supported for quivers of finite type')
         seed = ClusterSeed(self).principal_extension()
         return Fan([Cone(s.g_matrix().columns())

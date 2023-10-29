@@ -1,4 +1,4 @@
-"""
+r"""
 Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK)
 
 FFLAS/FFPACK are libraries to provide BLAS/LAPACK-style routines for
@@ -23,7 +23,7 @@ EXAMPLES::
     sage: A.rank()
     4
     sage: v = vector(GF(127), 4, (100, 93, 47, 110))
-    sage: x = A\v
+    sage: x = A.solve_right(v)
     sage: A*x == v
     True
 
@@ -857,7 +857,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
 
     cpdef _add_(self, right):
-        """
+        r"""
         Add two dense matrices over `\Z/n\Z`
 
         INPUT:
@@ -2284,7 +2284,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             return Matrix_dense.determinant(self)
 
     cdef xgcd_eliminate(self, celement * row1, celement* row2, Py_ssize_t start_col):
-        """
+        r"""
         Reduces ``row1`` and ``row2`` by a unimodular transformation
         using the xgcd relation between their first coefficients ``a`` and
         ``b``.
@@ -2297,7 +2297,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         -``start_col`` - the column of the pivots in ``row1`` and
          ``row2``. It is assumed that all entries before ``start_col``
          in ``row1`` and ``row2`` are zero.
-
 
         OUTPUT:
 

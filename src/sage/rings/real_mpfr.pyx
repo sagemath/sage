@@ -3905,7 +3905,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         cdef Integer k
 
-        while (not low_done) or (not high_done):
+        while not low_done or not high_done:
             # Move the low side
             k = (c*b - d*a) // (d*e - c*f)
 
@@ -5912,29 +5912,6 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
     return RealLiteral(R, s, base)
 
 
-def is_RealField(x):
-    """
-    Returns ``True`` if ``x`` is technically of a Python real field type.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.RealField` instead.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfr.is_RealField(RR)
-        doctest:warning...
-        DeprecationWarning: is_RealField is deprecated;
-        use isinstance(..., sage.rings.abc.RealField) instead
-        See https://github.com/sagemath/sage/issues/32610 for details.
-        True
-        sage: sage.rings.real_mpfr.is_RealField(CC)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32610, 'is_RealField is deprecated; use isinstance(..., sage.rings.abc.RealField) instead')
-    return isinstance(x, RealField_class)
-
-
 def is_RealNumber(x):
     """
     Return ``True`` if ``x`` is of type :class:`RealNumber`, meaning that it
@@ -6120,24 +6097,6 @@ cdef class int_toRR(Map):
             raise TypeError("argument cannot be converted to a Python int/long")
 
         return y
-
-
-def create_RealField(*args, **kwds):
-    r"""
-    Deprecated function moved to :mod:`sage.rings.real_field`.
-
-    TESTS::
-
-        sage: from sage.rings.real_mpfr import create_RealField
-        sage: create_RealField()
-        doctest:...: DeprecationWarning: Please import create_RealField from sage.rings.real_field
-        See https://github.com/sagemath/sage/issues/24511 for details.
-        Real Field with 53 bits of precision
-    """
-    # deprecation has already been imported in this file
-    deprecation(24511, "Please import create_RealField from sage.rings.real_field")
-    from sage.rings.real_field import create_RealField as cr
-    return cr(*args, **kwds)
 
 
 # Support Python's numbers abstract base class
