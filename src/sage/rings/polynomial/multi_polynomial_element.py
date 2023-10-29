@@ -1150,7 +1150,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class))):
+        if K not in NumberFields():
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -1199,7 +1199,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class))):
+        if K not in NumberFields():
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
