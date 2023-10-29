@@ -5,14 +5,13 @@ Numerical Root Finding and Optimization
 AUTHOR:
 
 - William Stein (2007): initial version
-- Nathann Cohen (2008) : Bin Packing
+- Nathann Cohen (2008): Bin Packing
 
 
 Functions and Methods
 ----------------------
 """
 
-from sage.misc.superseded import deprecation
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
 
@@ -172,6 +171,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         raise NotImplementedError("Brent's method failed to find a zero for f on the interval")
     return brentqRes
 
+
 def find_local_maximum(f, a, b, tol=1.48e-08, maxfun=500):
     """
     Numerically find a local maximum of the expression `f` on the interval
@@ -201,6 +201,7 @@ def find_local_maximum(f, a, b, tol=1.48e-08, maxfun=500):
         pass
     minval, x = find_local_minimum(lambda z: -f(z), a=a, b=b, tol=tol, maxfun=maxfun)
     return -minval, x
+
 
 def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     """
@@ -570,119 +571,6 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
     elif isinstance(cons, function_type) or isinstance(cons, Expression):
         min = optimize.fmin_cobyla(f, x0, cons, **args)
     return vector(RDF, min)
-
-
-def linear_program(c, G, h, A=None, b=None, solver=None):
-    r"""
-    Solve the dual linear programs:
-
-    - Minimize  `c'x` subject to `Gx + s = h`, `Ax = b`, and `s \geq 0` where
-      `'` denotes transpose.
-
-    - Maximize  `-h'z - b'y` subject to `G'z + A'y + c = 0` and `z \geq 0`.
-
-    This function is deprecated.  Use :class:`MixedIntegerLinearProgram` instead.
-
-    This function depends on the optional package ``cvxopt``.
-
-    INPUT:
-
-    - ``c`` -- a vector
-
-    - ``G`` -- a matrix
-
-    - ``h`` -- a vector
-
-    - ``A`` -- a matrix
-
-    - ``b`` --- a vector
-
-    - ``solver`` (optional) --- solver to use. If None, the cvxopt's lp-solver
-                                is used. If it is 'glpk', then glpk's solver
-                                is used.
-
-    These can be over any field that can be turned into a floating point
-    number.
-
-
-    OUTPUT:
-
-    A dictionary ``sol`` with keys ``x``, ``s``, ``y``, ``z`` corresponding
-    to the variables above:
-
-    - ``sol['x']`` -- the solution to the linear program
-
-    - ``sol['s']`` -- the slack variables for the solution
-
-    - ``sol['z']``, ``sol['y']`` -- solutions to the dual program
-
-
-    EXAMPLES:
-
-    First, we minimize `-4x_1 - 5x_2` subject to `2x_1 + x_2 \leq 3`,
-    `x_1 +  2x_2 \leq 3`, `x_1 \geq 0`, and `x_2 \geq 0`::
-
-        sage: c=vector(RDF,[-4,-5])
-        sage: G=matrix(RDF,[[2,1],[1,2],[-1,0],[0,-1]])
-        sage: h=vector(RDF,[3,3,0,0])
-        sage: sol=linear_program(c,G,h)                                                 # needs cvxopt
-        doctest:warning...
-        DeprecationWarning: linear_program is deprecated; use MixedIntegerLinearProgram instead
-        See https://github.com/sagemath/sage/issues/32226 for details.
-        sage: sol['x']                                                                  # needs cvxopt
-        (0.999..., 1.000...)
-
-    Here we solve the same problem with 'glpk' interface to 'cvxopt'::
-
-        sage: sol=linear_program(c,G,h,solver='glpk')                                   # needs cvxopt
-        GLPK Simplex Optimizer...
-        ...
-        OPTIMAL LP SOLUTION FOUND
-        sage: sol['x']                                                                  # needs cvxopt
-        (1.0, 1.0)
-
-    Next, we maximize `x+y-50` subject to `50x + 24y \leq 2400`,
-    `30x + 33y \leq 2100`, `x \geq 45`, and `y \geq 5`::
-
-        sage: v=vector([-1.0,-1.0,-1.0])
-        sage: m=matrix([[50.0,24.0,0.0],[30.0,33.0,0.0],[-1.0,0.0,0.0],[0.0,-1.0,0.0],[0.0,0.0,1.0],[0.0,0.0,-1.0]])
-        sage: h=vector([2400.0,2100.0,-45.0,-5.0,1.0,-1.0])
-        sage: sol=linear_program(v,m,h)                                                 # needs cvxopt
-        sage: sol['x']                                                                  # needs cvxopt
-        (45.000000..., 6.2499999..., 1.00000000...)
-        sage: sol=linear_program(v,m,h,solver='glpk')                                   # needs cvxopt
-        GLPK Simplex Optimizer...
-        OPTIMAL LP SOLUTION FOUND
-        sage: sol['x']                                                                  # needs cvxopt
-        (45.0..., 6.25..., 1.0...)
-    """
-    deprecation(32226, 'linear_program is deprecated; use MixedIntegerLinearProgram instead')
-
-    from cvxopt.base import matrix as m
-    from cvxopt import solvers
-    solvers.options['show_progress'] = False
-    if solver == 'glpk':
-        from cvxopt import glpk
-        glpk.options['LPX_K_MSGLEV'] = 0
-    c_ = m(c.base_extend(RDF).numpy())
-    G_ = m(G.base_extend(RDF).numpy())
-    h_ = m(h.base_extend(RDF).numpy())
-    if A is not None and b is not None:
-        A_ = m(A.base_extend(RDF).numpy())
-        b_ = m(b.base_extend(RDF).numpy())
-        sol = solvers.lp(c_,G_,h_,A_,b_,solver=solver)
-    else:
-        sol = solvers.lp(c_,G_,h_,solver=solver)
-    status = sol['status']
-    if status != 'optimal':
-        return {'primal objective': None, 'x': None, 's': None, 'y': None,
-                'z': None, 'status': status}
-    x = vector(RDF, list(sol['x']))
-    s = vector(RDF, list(sol['s']))
-    y = vector(RDF, list(sol['y']))
-    z = vector(RDF, list(sol['z']))
-    return {'primal objective': sol['primal objective'],
-            'x': x, 's': s, 'y': y, 'z': z, 'status': status}
 
 
 def find_fit(data, model, initial_guess=None, parameters=None, variables=None, solution_dict=False):
