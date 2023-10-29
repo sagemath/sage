@@ -4532,7 +4532,7 @@ cpdef bin_op(x, y, op):
 
 
 # Make coercion_model accessible as Python object
-globals()["coercion_model"] = coercion_model
+globals()["sage.structure.coercion_model"] = coercion_model
 
 
 def get_coercion_model():

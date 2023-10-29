@@ -56,7 +56,7 @@ AUTHORS:
 
 import types
 
-from .sage_object cimport SageObject
+from sage.structure.sage_object cimport SageObject
 
 cdef sage_version
 from sage.version import version as sage_version
@@ -771,4 +771,4 @@ def lookup_global(name):
 
 
 # Old imports required for unpickling old pickles
-from sage.structure.test_factory import test_factory
+#from sage.structure.test_factory import test_factory
