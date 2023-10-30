@@ -50,7 +50,7 @@ pari    = [SPKG_INSTALL_REQUIRES_sagemath_pari]
 
 # extras by packages (specific to sagemath-schemes)
 
-singular = # no extra needed
+singular = []  # no extra needed
 
 # extras by rings; same as in sagemath-modules
 RDF     = ["sagemath-schemes[numpy]"]

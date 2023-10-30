@@ -13,6 +13,7 @@ requires = [
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_cypari
     SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_pkgconfig
 ]
 build-backend = "setuptools.build_meta"
 
