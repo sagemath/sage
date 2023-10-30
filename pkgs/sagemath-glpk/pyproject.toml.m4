@@ -13,3 +13,31 @@ requires = [
     SPKG_INSTALL_REQUIRES_cysignals
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-glpk"
+description = "Sage: Open Source Mathematics Software: Linear and mixed integer linear optimization backend using GLPK"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_sagemath_objects
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_cysignals
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[project.optional-dependencies]
+test = [
+    # No test requirements; see comment in tox.ini
+    # SPKG_INSTALL_REQUIRES_sagemath_repl
+    # SPKG_INSTALL_REQUIRES_sagemath_polyhedra
+]
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
