@@ -74,4 +74,4 @@ jobs:
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: python -m pytest -c src/tox.ini --doctest-modules src
+        run: ./sage -m pytest -c src/tox.ini --doctest-modules src
