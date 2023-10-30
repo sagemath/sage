@@ -96,7 +96,7 @@ With power series the behavior is the same.
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
-from .infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, is_Infinite
 
 from sage.rings.rational_field import QQ
 
@@ -104,7 +104,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
-from .integer import Integer
+from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 from sage.categories.fields import Fields

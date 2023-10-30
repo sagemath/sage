@@ -182,7 +182,7 @@ from sage.structure.element import coerce_binop
 
 from sage.structure.richcmp cimport rich_to_bool_sgn
 
-from . import integer_ring
+from sage.rings import integer_ring
 
 cimport gmpy2
 gmpy2.import_gmpy2()

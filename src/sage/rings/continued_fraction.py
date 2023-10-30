@@ -207,12 +207,12 @@ AUTHORS:
 
 import numbers
 
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import richcmp_method, rich_to_bool
 import sage.rings.abc
-from .integer import Integer
-from .integer_ring import ZZ
-from .infinity import Infinity
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.structure.richcmp import rich_to_bool, richcmp_method
+from sage.structure.sage_object import SageObject
 
 ZZ_0 = Integer(0)
 ZZ_1 = Integer(1)
@@ -849,8 +849,9 @@ class ContinuedFraction_base(SageObject):
             Add an example with infinite list.
         """
         if self.length() == Infinity:
-            from sage.misc.lazy_list import lazy_list
             from itertools import count
+
+            from sage.misc.lazy_list import lazy_list
             return lazy_list(self.numerator(n) / self.denominator(n)
                              for n in count())
         return [self.numerator(n) / self.denominator(n)
@@ -876,8 +877,9 @@ class ContinuedFraction_base(SageObject):
             Add an example with infinite list.
         """
         if self.length() == Infinity:
-            from sage.misc.lazy_list import lazy_list
             from itertools import count
+
+            from sage.misc.lazy_list import lazy_list
             return lazy_list(self.quotient(n) for n in count())
         return [self.quotient(n) for n in range(len(self))]
 
@@ -1147,8 +1149,7 @@ class ContinuedFraction_base(SageObject):
             sage: cf.n(digits=33)                                                       # needs sage.combinat
             1.28102513329556981555293038097590
         """
-        from sage.arith.numerical_approx import (digits_to_bits,
-                                                 numerical_approx_generic)
+        from sage.arith.numerical_approx import digits_to_bits, numerical_approx_generic
         if prec is None:
             prec = digits_to_bits(digits)
         return numerical_approx_generic(self, prec)
@@ -1564,8 +1565,8 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
 
         # now x is one of the root of the equation
         #   q1 x^2 + (q0 - p1) x - p0 = 0
-        from sage.rings.number_field.number_field import QuadraticField
         from sage.misc.functional import squarefree_part
+        from sage.rings.number_field.number_field import QuadraticField
         D = (q0-p1)**2 + 4*q1*p0
         DD = squarefree_part(D)
         Q = QuadraticField(DD, 'sqrt%d' % DD)
@@ -2674,8 +2675,8 @@ def continued_fraction(x, value=None):
         return ContinuedFraction_periodic(x1, x2)
 
     # input for infinite partial quotient expansion
-    from sage.misc.lazy_list import lazy_list_generic
     from sage.combinat.words.infinite_word import InfiniteWord_class
+    from sage.misc.lazy_list import lazy_list_generic
     if isinstance(x, (lazy_list_generic, InfiniteWord_class)):
         return ContinuedFraction_infinite(x, value)
 
