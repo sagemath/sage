@@ -107,7 +107,6 @@ from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.unknown import Unknown
 from sage.misc.weak_dict import WeakValueDictionary
 
 from sage.structure.sage_object import SageObject
@@ -1817,6 +1816,8 @@ class Category(UniqueRepresentation, SageObject):
             sage: PoV3.is_subcategory(PoA3)
             False
         """
+        from sage.misc.unknown import Unknown
+
         if c is self:
             return True
         subcat_hook = c._subcategory_hook_(self)
@@ -2896,6 +2897,8 @@ class CategoryWithParameters(Category):
             sage: Bimodules(QQ,QQ)._subcategory_hook_(Rings())
             False
         """
+        from sage.misc.unknown import Unknown
+
         if not issubclass(C.parent_class, self.parent_class):
             return False
         return Unknown
@@ -3063,6 +3066,8 @@ class JoinCategory(CategoryWithParameters):
             sage: Category.join([Rings(),Modules(QQ)]).is_subcategory(Category.join([Rngs(),Bimodules(QQ,QQ)]))
             True
         """
+        from sage.misc.unknown import Unknown
+
         if C is self:
             return True
         hook = C._subcategory_hook_(self)

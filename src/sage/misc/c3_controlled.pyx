@@ -365,7 +365,6 @@ AUTHOR:
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.structure.dynamic_class import dynamic_class
 
 ##############################################################################
 # Implementation of the total order between categories
@@ -1349,6 +1348,8 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: x.cls.mro()
             [<class '30.cls'>, <class '15.cls'>, <class '10.cls'>, <class '6.cls'>, <class '5.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <... 'object'>]
         """
+        from sage.structure.dynamic_class import dynamic_class
+
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:
             super_classes = (object,)
