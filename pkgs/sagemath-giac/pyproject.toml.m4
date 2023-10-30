@@ -12,3 +12,26 @@ requires = [
     SPKG_INSTALL_REQUIRES_cysignals
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-giac"
+description = "Sage: Open Source Mathematics Software: Symbolic computation with GIAC"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[tool.setuptools]
+packages = ["sage.libs.giac"]
+include-package-data = false
+
+[tool.setuptools.package-data]
+"sage.libs.giac" = ["*.pxd"]
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
