@@ -1,8 +1,8 @@
-from .hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
+from sage.rings.finite_rings.hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
     FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field)
 
 from sage.structure.element cimport Element
-from .element_givaro cimport Cache_givaro
+from sage.rings.finite_rings.element_givaro cimport Cache_givaro
 
 
 cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_generic):
