@@ -2325,7 +2325,13 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
     def function(self, f):
         """
-        Return the function field element coerced from ``x``.
+        Return the function field element coerced from ``f``.
+
+        INPUT:
+
+        - ``f`` -- an element in the fraction field of the coordinate ring
+
+        OUTPUT: An element of the function field
 
         EXAMPLES::
 
@@ -2372,6 +2378,39 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             return coords
         inv = ~coords[i]
         return tuple([coords[j]*inv for j in range(len(coords)) if j != i])
+
+    def pull_from_function_field(self, f):
+        """
+        Return the fraction corresponding to ``f``.
+
+        INPUT:
+
+        -  ``f`` -- an element of the function field
+
+        OUTPUT:
+
+        A fraction of homogeneous polynomials in the coordinate ring of this curve.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: F = C.function_field()
+            sage: C.pull_from_function_field(F.gen())
+            z/x
+            sage: C.pull_from_function_field(F.one())
+            1
+            sage: C.pull_from_function_field(F.zero())
+            0
+            sage: f1 = F.gen()
+            sage: f2 = F.base_ring().gen()
+            sage: C.function(C.pull_from_function_field(f1)) == f1
+            True
+            sage: C.function(C.pull_from_function_field(f2)) == f2
+            True
+        """
+        return self._pull_from_function_field(f)
 
     @lazy_attribute
     def _function_field(self):
@@ -2424,6 +2463,33 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         coords = list(self._open_affine._coordinate_functions)
         coords.insert(self._open_affine_index, self._function_field.one())
         return tuple(coords)
+
+    @lazy_attribute
+    def _pull_from_function_field(self):
+        """
+        Return the map to the function field of the curve.
+
+        TESTS::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: F = C.function_field()
+            sage: f = F.random_element()
+            sage: C.function(C._pull_from_function_field(f)) == f
+            True
+        """
+        F = self._function_field
+        S = self.ambient_space().coordinate_ring()
+        phi = self._open_affine._nonsingular_model[2]
+        i = self._open_affine_index
+
+        def pull(f):
+            pf = phi(f)
+            num = S(pf.numerator()).homogenize(i)
+            den = S(pf.denominator()).homogenize(i)
+            return num / den * S.gen(i) ** (den.total_degree() - num.total_degree())
+
+        return pull
 
     @lazy_attribute
     def _singularities(self):
