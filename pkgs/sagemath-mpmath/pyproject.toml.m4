@@ -11,6 +11,25 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "sagemath-mpmath"
+description = "Sage: Open Source Mathematics Software: Vendored copy of mpmath using the Sage backend"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
 
 [tool.vendoring]
 # Following example at https://github.com/pypa/pip/blob/main/pyproject.toml#L30
