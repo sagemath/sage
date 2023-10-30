@@ -4,6 +4,22 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ordered_tree import LabelledOrderedTrees
 
 
+LT = LabelledOrderedTrees()
+
+
+def map_leaves(self, f):
+    if self.is_empty():
+        return self
+    if len(self) == 0:
+        return self.parent()([t.map_labels(f) for t in self],
+                             label=f(self.label()))
+    return self.parent()([t.map_labels(f) for t in self],
+                         label=self.label())
+
+
+LT.map_labels = map_leaves
+
+
 class FreeOperad(CombinatorialFreeModule):
     r"""
     The free operad over any given set of generators
@@ -16,7 +32,7 @@ class FreeOperad(CombinatorialFreeModule):
             The Free operad over Rational Field with generators
             sage: TestSuite(A).run()
         """
-        CombinatorialFreeModule.__init__(self, R, LabelledOrderedTrees(),
+        CombinatorialFreeModule.__init__(self, R, LT,
                                          category=OperadsWithBasis(R))
 
     def _repr_(self):
@@ -30,7 +46,7 @@ class FreeOperad(CombinatorialFreeModule):
         return msg.format(self.base_ring())
 
     @cached_method
-    def one_basis(self, letter):
+    def one_basis(self, letter=None):
         """
         Return the planar tree with no vertex and one leaf, which indexes
         the one of this operad.
@@ -41,6 +57,8 @@ class FreeOperad(CombinatorialFreeModule):
             sage: A.one_basis("a")
             a[]
         """
+        if letter is None:
+            letter = '@'
         return self.basis().keys()([], label=letter)
 
     def composition_on_basis_as_tree(self, x, y, i):
