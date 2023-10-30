@@ -1,0 +1,87 @@
+name: Build & Test using Conda
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Conda (Meson)
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: ${{ github.event_name == 'pull_request' }}
+      max-parallel: ${{ github.event_name == 'pull_request' && 2 || 6 }}
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.9', '3.10', '3.11']
+        # Optional environment is disabled for now as its not yet working
+        # environment: [environment, environment-optional]
+        conda-env: [environment]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create conda environment files
+        run: ./bootstrap-conda
+
+      - name: Cache conda packages
+        uses: actions/cache@v3
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
+
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python }}
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage
+          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}.yml
+
+      - name: Print Conda environment
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+
+      - name: Bootstrap
+        shell: bash -l {0}
+        run: ./bootstrap
+
+      - name: Build
+        shell: bash -l {0}
+        run: |
+          # Compile as extra step for better error reporting
+          meson compile -j2 -C builddir
+          pip install --no-build-isolation --config-settings=builddir=builddir --editable .
+        
+      - name: Verify dependencies
+        if: success() || failure()
+        shell: bash -l {0}
+        run: pip check
+
+      - name: Test
+        if: success() || failure()
+        shell: bash -l {0}
+        run: python -m pytest -c src/tox.ini --doctest-modules src
