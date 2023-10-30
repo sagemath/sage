@@ -165,4 +165,4 @@ from sage.rings.continued_fraction import (continued_fraction,
 from sage.rings.asymptotic.all import *
 
 # Register classes in numbers abc
-from sage.rings. import numbers_abc
+from sage.rings import numbers_abc
