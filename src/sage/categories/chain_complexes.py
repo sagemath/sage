@@ -13,10 +13,11 @@ Category of chain complexes
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .category_types import Category_module
-from .commutative_additive_groups import CommutativeAdditiveGroups
-from .functor import Functor
+from sage.categories.category_types import Category_module
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+from sage.categories.functor import Functor
 from sage.misc.abstract_method import abstract_method
+
 
 #############################################################
 # ChainComplex
@@ -259,8 +260,8 @@ class HomologyFunctor(Functor):
             sage: id_star(one)
             [one]
         """
-        from .morphism import SetMorphism
-        from .homset import Hom
+        from sage.categories.homset import Hom
+        from sage.categories.morphism import SetMorphism
 
         domain = f.domain()
         codomain = f.codomain()

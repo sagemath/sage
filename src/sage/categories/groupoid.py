@@ -12,7 +12,8 @@ Groupoid
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
-from .sets_cat import Sets
+from sage.categories.sets_cat import Sets
+
 
 class Groupoid(CategoryWithParameters):
     """

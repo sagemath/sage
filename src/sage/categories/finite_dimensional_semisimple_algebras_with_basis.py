@@ -9,10 +9,11 @@ Finite dimensional semisimple algebras with basis
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.algebras import Algebras
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.semisimple_algebras import SemisimpleAlgebras
 from sage.misc.cachefunc import cached_method
-from .algebras import Algebras
-from .semisimple_algebras import SemisimpleAlgebras
+
 
 class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """

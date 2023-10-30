@@ -9,10 +9,13 @@ Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 #**************************************************************************
 
 
+from sage.categories.category_singleton import Category_singleton
+from sage.categories.discrete_valuation import (
+    DiscreteValuationFields,
+    DiscreteValuationRings,
+)
 from sage.misc.abstract_method import abstract_method
 
-from sage.categories.category_singleton import Category_singleton
-from .discrete_valuation import DiscreteValuationRings, DiscreteValuationFields
 #from sage.misc.cachefunc import cached_method
 
 
