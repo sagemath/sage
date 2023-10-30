@@ -7,7 +7,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .bitset_base cimport bitset_t
+from sage.data_structures.bitset_base cimport bitset_t
 
 # Python layer over bitset_t
 cdef class FrozenBitset:
