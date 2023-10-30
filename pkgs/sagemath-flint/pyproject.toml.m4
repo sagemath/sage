@@ -19,3 +19,53 @@ requires = [
     SPKG_INSTALL_REQUIRES_cysignals
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-flint"
+description = "Sage: Open Source Mathematics Software: Fast computations with FLINT and arb"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_sagemath_ntl
+    SPKG_INSTALL_REQUIRES_cypari
+    SPKG_INSTALL_REQUIRES_numpy
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[project.optional-dependencies]
+test = [
+     SPKG_INSTALL_REQUIRES_sagemath_repl
+     SPKG_INSTALL_REQUIRES_sagemath_modules
+]
+
+[tool.setuptools]
+packages = [
+    "sage.libs.arb",
+    "sage.libs.flint",
+    "sage.libs.mpfi",
+    "sage.matrix",
+    "sage.rings",
+    "sage.rings.number_field",
+    "sage.rings.padics",
+    "sage.rings.polynomial",
+]
+include-package-data = false
+
+[tool.setuptools.package-data]
+"sage.libs.arb" = ["*.pxd"]
+"sage.libs.flint" = ["*.pxd"]
+"sage.matrix" = ["matrix_complex_ball_dense.pxd"]
+"sage.rings" = ["*_arb.pxd"]
+"sage.rings.number_field" = ["number_field_element_quadratic.pxd"]
+"sage.rings.padics" = ["*_flint_*.pxd"]
+"sage.rings.polynomial" = [
+    "*_flint.pxd",
+    "*_arb.pxd",
+]
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
