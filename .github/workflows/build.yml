@@ -162,6 +162,15 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
+      - name: Imports
+        run: |
+          ../sage -python -m pip install pytest-xdist
+          ../sage -python -m pytest -c tox.ini --doctest-modules --collect-only || true
+        working-directory: ./worktree-image/src
+        env:
+          # Increase the length of the lines in the "short summary"
+          COLUMNS: 120
+
       - name: Pytest
         if: contains(github.ref, 'pytest')
         run: |
