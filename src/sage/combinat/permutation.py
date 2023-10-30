@@ -5459,12 +5459,12 @@ class Permutation(CombinatorialElement):
 
         def rewind(L, n):
             """
-            Construct the list M such that M[(j*n)%(len(M))] == L[j].
+            Construct the list M such that ``M[(j * n) % len(M)] == L[j]``.
             """
             M = [0] * len(L)
             m = len(M)
             for j in range(m):
-                M[(j*n) % m] = L[j]
+                M[(j * n) % m] = L[j]
             return M
 
         if n < 1:
@@ -5480,7 +5480,7 @@ class Permutation(CombinatorialElement):
                 cycles[lc] = []
             cycles[lc].append(c)
 
-        # for each length m, collects all product of cycles which n-th power gives the product prod(Cycles[l])
+        # for each length m, collects all product of cycles which n-th power gives the product prod(cycles[l])
         possibilities = [[] for m in cycles]
         for i, m in enumerate(cycles):
             N = len(cycles[m])
