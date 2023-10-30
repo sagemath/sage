@@ -41,12 +41,10 @@ TESTS::
 # be coercible into vector space of appropriate dimension.
 
 import sage.modules.free_module as free_module
-from . import matrix_morphism
 from sage.categories.morphism import Morphism
+from sage.modules import free_module_homspace, matrix_morphism
+from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp, rich_to_bool
-
-from . import free_module_homspace
 
 
 def is_FreeModuleMorphism(x):

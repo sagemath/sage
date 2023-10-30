@@ -177,33 +177,41 @@ AUTHORS:
 ###########################################################################
 
 import itertools
+from warnings import warn
 
-from . import free_module_element
 import sage.matrix.matrix_space
 import sage.misc.latex as latex
-
-from sage.modules.module import Module
-import sage.rings.ring as ring
 import sage.rings.abc
-import sage.rings.integer_ring
-import sage.rings.rational_field
 import sage.rings.infinity
 import sage.rings.integer
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.integral_domains import IntegralDomains
+import sage.rings.integer_ring
+import sage.rings.rational_field
+import sage.rings.ring as ring
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import LazyImport
 from sage.misc.randstate import current_randstate
+from sage.modules import free_module_element
+from sage.modules.module import Module
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.structure.factory import UniqueFactory
+from sage.structure.richcmp import (
+    op_EQ,
+    op_GE,
+    op_GT,
+    op_LE,
+    op_LT,
+    op_NE,
+    revop,
+    rich_to_bool,
+    richcmp,
+    richcmp_method,
+    richcmp_not_equal,
+)
 from sage.structure.sequence import Sequence
-from sage.structure.richcmp import (richcmp_method, rich_to_bool, richcmp,
-                                    richcmp_not_equal, revop,
-                                    op_LT,op_LE,op_EQ,op_NE,op_GT,op_GE)
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import LazyImport
-
-from warnings import warn
 
 ###############################################################################
 #
@@ -226,7 +234,7 @@ class FreeModuleFactory(UniqueFactory):
         """
         rank = int(sage.rings.integer.Integer(rank))
 
-        if not (inner_product_matrix is None):
+        if inner_product_matrix is not None:
             inner_product_matrix = sage.matrix.matrix_space.MatrixSpace(base_ring, rank)(inner_product_matrix)
             inner_product_matrix.set_immutable()
 
@@ -1821,7 +1829,9 @@ class Module_free_ambient(Module):
                         [    z   x*z]
              0 <-- C_0 <-------------- C_1 <-- 0
         """
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial_libsingular import (
+            MPolynomialRing_libsingular,
+        )
         if isinstance(self.base_ring(), MPolynomialRing_libsingular):
             from sage.homology.free_resolution import FiniteFreeResolution_singular
             return FiniteFreeResolution_singular(self, *args, **kwds)
@@ -1854,13 +1864,19 @@ class Module_free_ambient(Module):
             sage: N.graded_free_resolution(degrees=[2, 1, 3], shifts=[2, 3])            # needs sage.libs.singular
             S(-2)⊕S(-3) <-- S(-6)⊕S(-8) <-- 0
         """
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial_libsingular import (
+            MPolynomialRing_libsingular,
+        )
         if isinstance(self.base_ring(), MPolynomialRing_libsingular):
-            from sage.homology.graded_resolution import GradedFiniteFreeResolution_singular
+            from sage.homology.graded_resolution import (
+                GradedFiniteFreeResolution_singular,
+            )
             return GradedFiniteFreeResolution_singular(self, *args, **kwds)
 
         if isinstance(self, FreeModule_generic):
-            from sage.homology.graded_resolution import GradedFiniteFreeResolution_free_module
+            from sage.homology.graded_resolution import (
+                GradedFiniteFreeResolution_free_module,
+            )
             return GradedFiniteFreeResolution_free_module(self, *args, **kwds)
 
         raise NotImplementedError("the module must be a free module or "
@@ -4084,7 +4100,9 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         if base_ring is None or base_ring == self.base_ring():
             try:
                 if self.is_dense():
-                    from .free_module_integer import FreeModule_submodule_with_basis_integer
+                    from .free_module_integer import (
+                        FreeModule_submodule_with_basis_integer,
+                    )
                     return FreeModule_submodule_with_basis_integer(self.ambient_module(),
                                                                    basis=basis, check=check,
                                                                    already_echelonized=already_echelonized,
@@ -5370,8 +5388,8 @@ class FreeModule_ambient(FreeModule_generic):
             sage: V = QQ^2
             sage: V.coerce_map_from(M)
         """
-        from sage.modules.submodule import Submodule_free_ambient
         from sage.modules.quotient_module import FreeModule_ambient_field_quotient
+        from sage.modules.submodule import Submodule_free_ambient
 
         if isinstance(M, FreeModule_ambient_field_quotient):
             # No forgetful map.
@@ -5989,8 +6007,8 @@ class FreeModule_ambient(FreeModule_generic):
             sage: (1, 2, 3) in sZZ3                                                     # needs sympy
             True
         """
-        from sympy import ProductSet
         from sage.interfaces.sympy import sympy_init
+        from sympy import ProductSet
         sympy_init()
         return ProductSet(*([self.coordinate_ring()] * self.rank()))
 
@@ -8194,7 +8212,7 @@ def element_class(R, is_sparse):
             else:
                 return Vector_mod2_dense
         try:
-            from .vector_modn_dense import Vector_modn_dense, MAX_MODULUS
+            from .vector_modn_dense import MAX_MODULUS, Vector_modn_dense
         except ImportError:
             pass
         else:
@@ -8210,7 +8228,9 @@ def element_class(R, is_sparse):
             return Vector_real_double_dense
     elif isinstance(R, sage.rings.abc.ComplexDoubleField) and not is_sparse:
         try:
-            from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
+            from sage.modules.vector_complex_double_dense import (
+                Vector_complex_double_dense,
+            )
         except ImportError:
             pass
         else:

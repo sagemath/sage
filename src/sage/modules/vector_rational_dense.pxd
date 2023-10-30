@@ -1,4 +1,4 @@
-from .free_module_element cimport FreeModuleElement
+from sage.modules .free_module_element cimport FreeModuleElement
 from sage.libs.gmp.types cimport mpq_t
 from sage.structure.parent cimport Parent
 
