@@ -597,7 +597,7 @@ it automatically runs in the GitHub Actions CI and can also be run locally.
 As of Sage 10.2, the Sage library only contains a minimal set of such type
 annotations. Pull requests that add more annotations are generally welcome.
 
-The Sage library makes very extensive use of Cython (see chapter :ref:`_chapter-cython`).
+The Sage library makes very extensive use of Cython (see chapter :ref:`chapter-cython`).
 Although Cython source code often declares static types for the purpose of
 compilation to efficient machine code, this typing information is unfortunately
 not visible to static checkers such as Pyright. It is necessary to create `type stub
