@@ -5461,7 +5461,7 @@ class Permutation(CombinatorialElement):
             """
             Construct the list M such that M[(j*n)%(len(M))] == L[j].
             """
-            M = [0 for _ in L]
+            M = [0] * len(L)
             m = len(M)
             for j in range(m):
                 M[(j*n) % m] = L[j]
