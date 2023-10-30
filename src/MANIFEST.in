@@ -21,7 +21,6 @@ global-exclude *.cpp
 include sage/cpython/debugimpl.c
 include sage/graphs/base/boost_interface.cpp
 include sage/graphs/cliquer/cl.c
-include sage/graphs/graph_decompositions/sage_tdlib.cpp
 include sage/libs/eclib/wrap.cpp
 include sage/libs/linkages/padics/relaxed/flint_helper.c
 include sage/misc/inherit_comparison_impl.c
@@ -45,7 +44,21 @@ include sage/geometry/triangulation/data.cc
 include sage/geometry/triangulation/functions.cc
 
 # Exclude extension modules shipped by optional packages
-exclude sage/graphs/bliss.pyx
+exclude sage/graphs/bliss.p*
+prune sage/graphs/bliss_cpp
+prune sage/libs/coxeter3
+exclude sage/graphs/mcqd.p*
+exclude sage/libs/meataxe.p*
+exclude sage/matrix/matrix_gfpn_dense.p*
+exclude sage/graphs/graph_decomposition/tdlib.p*
+
+# Exclude all__*.py files belonging to distributions related to optional packages
+global-exclude all__sagemath_bliss.py
+global-exclude all__sagemath_coxeter3.py
+global-exclude all__sagemath_mcqd.py
+global-exclude all__sagemath_meataxe.py
+global-exclude all__sagemath_sirocco.py
+global-exclude all__sagemath_tdlib.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

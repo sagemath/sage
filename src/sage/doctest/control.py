@@ -281,11 +281,15 @@ def skipfile(filename, tested_optional_tags=False, *,
         if log:
             log(f"Skipping '{filename}' because it does not have one of the recognized file name extensions")
         return True
+    if if_installed and ext not in ('.py', '.pyx'):
+        if log:
+            log(f"Skipping '{filename}' because it is not the source file of a Python module")
+        return True
     if "jupyter_execute" in filename:
         if log:
             log(f"Skipping '{filename}' because it is created by the jupyter-sphinx extension for internal use and should not be tested")
         return True
-    if if_installed and ext in ('.py', '.pyx', '.pxd'):
+    if if_installed:
         module_name = get_basename(filename)
         try:
             if not importlib.util.find_spec(module_name):  # tries to import the containing package
@@ -704,8 +708,8 @@ class DocTestController(SageObject):
         try:
             with open(filename) as stats_file:
                 self.baseline_stats.update(json.load(stats_file))
-        except Exception:
-            self.log("Error loading baseline stats from %s"%filename)
+        except Exception as e:
+            self.log("Error loading baseline stats from %s: %s" % (filename, e))
 
     def load_stats(self, filename):
         """
@@ -768,7 +772,7 @@ class DocTestController(SageObject):
         """
         from sage.misc.temporary_file import atomic_write
         with atomic_write(filename) as stats_file:
-            json.dump(self.stats, stats_file)
+            json.dump(self.stats, stats_file, sort_keys=True, indent=4)
 
     def log(self, s, end="\n"):
         """
@@ -1085,7 +1089,7 @@ class DocTestController(SageObject):
 
             def sort_key(source):
                 basename = source.basename
-                return -self.stats.get(basename, default).get('walltime'), basename
+                return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
 
     def run_doctests(self):

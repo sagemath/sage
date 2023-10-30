@@ -32,6 +32,7 @@ from collections import defaultdict
 
 from sage.structure.sage_object import SageObject
 
+
 ###########################################################################
 #
 # Helper functions

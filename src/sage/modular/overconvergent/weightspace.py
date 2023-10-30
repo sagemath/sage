@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 The space of `p`-adic weights
 
@@ -17,7 +17,8 @@ EXAMPLES::
 
     sage: W = pAdicWeightSpace(17)
     sage: W
-    Space of 17-adic weight-characters defined over 17-adic Field with capped relative precision 20
+    Space of 17-adic weight-characters
+     defined over 17-adic Field with capped relative precision 20
     sage: R.<x> = QQ[]
     sage: L = Qp(17).extension(x^2 - 17, names='a'); L.rename('L')
     sage: W.base_extend(L)
@@ -68,17 +69,19 @@ import weakref
 from sage.arith.misc import divisors
 from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.modular.dirichlet import DirichletGroup, trivial_character
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
+
+lazy_import('sage.rings.padics.factory', 'Qp')
+lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 
 
 _wscache = {}
@@ -99,7 +102,8 @@ def WeightSpace_constructor(p, base_ring=None):
     EXAMPLES::
 
         sage: pAdicWeightSpace(3) # indirect doctest
-        Space of 3-adic weight-characters defined over 3-adic Field with capped relative precision 20
+        Space of 3-adic weight-characters
+         defined over 3-adic Field with capped relative precision 20
         sage: pAdicWeightSpace(3, QQ)
         Space of 3-adic weight-characters defined over Rational Field
         sage: pAdicWeightSpace(10)
@@ -246,11 +250,13 @@ class WeightSpace_class(Parent):
 
             sage: W = pAdicWeightSpace(3, QQ)
             sage: W.base_extend(Qp(3))
-            Space of 3-adic weight-characters defined over 3-adic Field with capped relative precision 20
+            Space of 3-adic weight-characters
+             defined over 3-adic Field with capped relative precision 20
             sage: W.base_extend(IntegerModRing(12))
             Traceback (most recent call last):
             ...
-            TypeError: No coercion map from 'Rational Field' to 'Ring of integers modulo 12' is defined
+            TypeError: No coercion map from 'Rational Field'
+            to 'Ring of integers modulo 12' is defined
         """
         if R.has_coerce_map_from(self.base_ring()):
             return WeightSpace_constructor(self.prime(), R)
@@ -354,7 +360,9 @@ class WeightCharacter(Element):
 
             sage: kappa = pAdicWeightSpace(3)(3, DirichletGroup(3,QQ).0)
             sage: kappa.pAdicEisensteinSeries(QQ[['q']], 20)
-            1 - 9*q + 27*q^2 - 9*q^3 - 117*q^4 + 216*q^5 + 27*q^6 - 450*q^7 + 459*q^8 - 9*q^9 - 648*q^10 + 1080*q^11 - 117*q^12 - 1530*q^13 + 1350*q^14 + 216*q^15 - 1845*q^16 + 2592*q^17 + 27*q^18 - 3258*q^19 + O(q^20)
+            1 - 9*q + 27*q^2 - 9*q^3 - 117*q^4 + 216*q^5 + 27*q^6 - 450*q^7 + 459*q^8
+             - 9*q^9 - 648*q^10 + 1080*q^11 - 117*q^12 - 1530*q^13 + 1350*q^14 + 216*q^15
+             - 1845*q^16 + 2592*q^17 + 27*q^18 - 3258*q^19 + O(q^20)
         """
         if not self.is_even():
             raise ValueError("Eisenstein series not defined for odd weight-characters")
@@ -568,7 +576,8 @@ class AlgebraicWeight(WeightCharacter):
 
             sage: kappa = pAdicWeightSpace(29)(13, DirichletGroup(29, Qp(29)).0^14)
             sage: kappa.chi()
-            Dirichlet character modulo 29 of conductor 29 mapping 2 |--> 28 + 28*29 + 28*29^2 + ... + O(29^20)
+            Dirichlet character modulo 29 of conductor 29
+             mapping 2 |--> 28 + 28*29 + 28*29^2 + ... + O(29^20)
         """
         return self._chi
 
@@ -665,7 +674,8 @@ class AlgebraicWeight(WeightCharacter):
             sage: pAdicWeightSpace(7)(5, DirichletGroup(7, Qp(7)).0^4).Lvalue()
             0
             sage: pAdicWeightSpace(7)(6, DirichletGroup(7, Qp(7)).0^4).Lvalue()
-            1 + 2*7 + 7^2 + 3*7^3 + 3*7^5 + 4*7^6 + 2*7^7 + 5*7^8 + 2*7^9 + 3*7^10 + 6*7^11 + 2*7^12 + 3*7^13 + 5*7^14 + 6*7^15 + 5*7^16 + 3*7^17 + 6*7^18 + O(7^19)
+            1 + 2*7 + 7^2 + 3*7^3 + 3*7^5 + 4*7^6 + 2*7^7 + 5*7^8 + 2*7^9 + 3*7^10 + 6*7^11
+             + 2*7^12 + 3*7^13 + 5*7^14 + 6*7^15 + 5*7^16 + 3*7^17 + 6*7^18 + O(7^19)
         """
         if self._k > 0:
             return -self._chi.bernoulli(self._k) / self._k

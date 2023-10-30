@@ -110,6 +110,7 @@ def apply_map(phi):
 class Vector_symbolic_sparse(free_module_element.FreeModuleElement_generic_sparse):
     pass
 
+
 # Add elementwise methods.
 for method in ['simplify', 'simplify_factorial',
                'simplify_log', 'simplify_rational',

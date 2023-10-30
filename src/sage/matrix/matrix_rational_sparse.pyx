@@ -268,7 +268,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_clear(s)
         return ans
 
-
     ########################################################################
     # def _pickle(self):
     # def _unpickle(self, data, int version):   # use version >= 0
@@ -281,20 +280,21 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-# TODO
-##     cpdef _lmul_(self, Element right):
-##         """
-##         EXAMPLES::
-##
-##             sage: a = matrix(QQ,2,range(6))
-##             sage: (3/4) * a
-##             [   0  3/4  3/2]
-##             [ 9/4    3 15/4]
-##         """
+    # TODO
+    ##     cpdef _lmul_(self, Element right):
+    ##         """
+    ##         EXAMPLES::
+    ##
+    ##             sage: a = matrix(QQ,2,range(6))
+    ##             sage: (3/4) * a
+    ##             [   0  3/4  3/2]
+    ##             [ 9/4    3 15/4]
+    ##         """
 
     def _dict(self):
         """
         Unsafe version of the dict method, mainly for internal use.
+
         This may return the dict of elements, but as an *unsafe*
         reference to the underlying dict of the object.  It might
         be dangerous if you change entries of the returned dict.
@@ -303,16 +303,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Rational()
                 mpq_set((<Rational>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
-
 
     ########################################################################
     # LEVEL 3 functionality (Optional)
@@ -325,7 +324,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _nonzero_positions_by_row(self, copy=True):
         """
-        Returns the list of pairs (i,j) such that self[i,j] != 0.
+        Return the list of pairs (i,j) such that self[i,j] != 0.
 
         It is safe to change the resulting list (unless you give the option copy=False).
 
@@ -397,17 +396,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return 0
 
     cdef int mpz_denom(self, mpz_t d) except -1:
-        mpz_set_si(d,1)
+        mpz_set_si(d, 1)
         cdef Py_ssize_t i, j
-        cdef mpq_vector *v
 
         sig_on()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 mpz_lcm(d, d, mpq_denref(self._matrix[i].entries[j]))
         sig_off()
         return 0
-
 
     def denominator(self):
         """
@@ -415,7 +412,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         OUTPUT:
 
-            -- Sage Integer
+        - Sage Integer
 
         EXAMPLES::
 

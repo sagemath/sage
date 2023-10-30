@@ -19,7 +19,13 @@ jobs:
     container: ghcr.io/sagemath/sage/sage-docker-fedora-31-maximal-with-targets:dev
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Prepare
         run: |

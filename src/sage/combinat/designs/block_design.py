@@ -245,8 +245,8 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
 
     Check that the constructor using gap also works::
 
-        sage: BD = designs.ProjectiveGeometryDesign(2, 1, GF(2), algorithm="gap")  # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True)                               # optional - gap_packages (design package)
+        sage: BD = designs.ProjectiveGeometryDesign(2, 1, GF(2), algorithm="gap")  # optional - gap_package_design
+        sage: BD.is_t_design(return_parameters=True)                               # optional - gap_package_design
         (True, (2, 7, 3, 1))
     """
     try:
@@ -389,7 +389,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
              for y in Kiter}
         d.update({line_infinity(x): (x,one,zero)
                   for x in Kiter})
-        d[n2+n]=(one,zero,zero)
+        d[n2+n] = (one,zero,zero)
         B.relabel(d)
 
     return B
@@ -588,7 +588,7 @@ def HughesPlane(q2, check=True):
     """
     if not q2.is_square():
         raise EmptySetError("No Hughes plane of non-square order exists.")
-    if q2%2 == 0:
+    if q2 % 2 == 0:
         raise EmptySetError("No Hughes plane of even order exists.")
     q = q2.sqrt()
     K = FiniteField(q2, prefix='x')
@@ -758,7 +758,7 @@ def projective_plane(n, check=True, existence=False):
             return False
         ref = ("C. Lam, L. Thiel and S. Swiercz \"The nonexistence of finite "
                "projective planes of order 10\" (1989), Canad. J. Math.")
-        raise EmptySetError("No projective plane of order 10 exists by %s"%ref)
+        raise EmptySetError("No projective plane of order 10 exists by %s" % ref)
 
     if BruckRyserChowla_check(n*n+n+1, n+1, 1) is False:
         if existence:
@@ -934,12 +934,12 @@ def WittDesign(n):
 
     EXAMPLES::
 
-        sage: BD = designs.WittDesign(9)             # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True) # optional - gap_packages (design package)
+        sage: BD = designs.WittDesign(9)                # optional - gap_package_design
+        sage: BD.is_t_design(return_parameters=True)    # optional - gap_package_design
         (True, (2, 9, 3, 1))
-        sage: BD                             # optional - gap_packages (design package)
+        sage: BD                                        # optional - gap_package_design
         Incidence structure with 9 points and 12 blocks
-        sage: print(BD)                      # optional - gap_packages (design package)
+        sage: print(BD)                                 # optional - gap_package_design
         Incidence structure with 9 points and 12 blocks
     """
     libgap.load_package("design")

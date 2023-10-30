@@ -258,12 +258,12 @@ def connected_components_subgraphs(G):
         sage: from sage.graphs.connectivity import connected_components_subgraphs
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(G)
-        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(D)
-        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
         sage: L = D.connected_components_subgraphs()
-        sage: graphs_list.show_graphs(L)                                                # optional - sage.plot
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
 
     TESTS:
 
@@ -1177,8 +1177,7 @@ def edge_connectivity(G,
             return 0
         elif vertices:
             return [0, [], [{}, {}]]
-        else:
-            return [0, []]
+        return [0, []]
 
     if implementation == "boost":
         from sage.graphs.base.boost_graph import edge_connectivity
@@ -1275,29 +1274,27 @@ def edge_connectivity(G,
     if value_only:
         return obj
 
+    val = [obj]
+    in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+
+    if g.is_directed():
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
     else:
-        val = [obj]
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
 
-        in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val.append(edges)
 
-        if g.is_directed():
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
-        else:
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
+    if vertices:
+        a = {}
+        b = {}
+        for v in g:
+            if in_set[0, v]:
+                a.add(v)
+            else:
+                b.add(v)
+        val.append([a, b])
 
-        val.append(edges)
-
-        if vertices:
-            a = {}
-            b = {}
-            for v in g:
-                if in_set[0, v]:
-                    a.add(v)
-                else:
-                    b.add(v)
-            val.append([a, b])
-
-        return val
+    return val
 
 
 def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0,
@@ -1361,25 +1358,25 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
     A basic application on a ``PappusGraph``::
 
        sage: from sage.graphs.connectivity import vertex_connectivity
-       sage: g=graphs.PappusGraph()
-       sage: vertex_connectivity(g)
+       sage: g = graphs.PappusGraph()
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        3
-       sage: g.vertex_connectivity()
+       sage: g.vertex_connectivity()                                                    # needs sage.numerical.mip
        3
 
     In a grid, the vertex connectivity is equal to the minimum degree, in which
     case one of the two sets is of cardinality `1`::
 
        sage: g = graphs.GridGraph([ 3,3 ])
-       sage: [value, cut, [ setA, setB ]] = vertex_connectivity(g, sets=True)
-       sage: len(setA) == 1 or len(setB) == 1
+       sage: [value, cut, [ setA, setB ]] = vertex_connectivity(g, sets=True)           # needs sage.numerical.mip
+       sage: len(setA) == 1 or len(setB) == 1                                           # needs sage.numerical.mip
        True
 
     A vertex cut in a tree is any internal vertex::
 
        sage: tree = graphs.RandomTree(15)
-       sage: val, [cut_vertex] = vertex_connectivity(tree, value_only=False)
-       sage: tree.degree(cut_vertex) > 1
+       sage: val, [cut_vertex] = vertex_connectivity(tree, value_only=False)            # needs sage.numerical.mip
+       sage: tree.degree(cut_vertex) > 1                                                # needs sage.numerical.mip
        True
 
     When ``value_only = True``, this function is optimized for small
@@ -1388,41 +1385,41 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
     It is the case for connected graphs which are not connected::
 
        sage: g = 2 * graphs.PetersenGraph()
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        0
 
     Or if they are just 1-connected::
 
        sage: g = graphs.PathGraph(10)
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        1
 
     For directed graphs, the strong connectivity is tested through the dedicated
     function::
 
        sage: g = digraphs.ButterflyGraph(3)
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        0
 
     A complete graph on `10` vertices is `9`-connected::
 
        sage: g = graphs.CompleteGraph(10)
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        9
 
     A complete digraph on `10` vertices is `9`-connected::
 
        sage: g = DiGraph(graphs.CompleteGraph(10))
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        9
 
     When parameter ``k`` is set, we only check for the existence of a vertex cut
     of order at least ``k``::
 
        sage: g = graphs.PappusGraph()
-       sage: vertex_connectivity(g, k=3)
+       sage: vertex_connectivity(g, k=3)                                                # needs sage.numerical.mip
        True
-       sage: vertex_connectivity(g, k=4)
+       sage: vertex_connectivity(g, k=4)                                                # needs sage.numerical.mip
        False
 
     TESTS:
@@ -1441,13 +1438,13 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
        sage: from sage.graphs.connectivity import is_strongly_connected
        sage: from sage.graphs.connectivity import is_connected
        sage: empty = Graph()
-       sage: vertex_connectivity(empty)
+       sage: vertex_connectivity(empty)                                                 # needs sage.numerical.mip
        0
-       sage: vertex_connectivity(empty, k=1) == is_connected(empty)
+       sage: vertex_connectivity(empty, k=1) == is_connected(empty)                     # needs sage.numerical.mip
        True
-       sage: vertex_connectivity(Graph(), k=2) == empty.is_biconnected()
+       sage: vertex_connectivity(Graph(), k=2) == empty.is_biconnected()                # needs sage.numerical.mip
        True
-       sage: vertex_connectivity(DiGraph(), k=1) == is_strongly_connected(DiGraph())
+       sage: vertex_connectivity(DiGraph(), k=1) == is_strongly_connected(DiGraph())    # needs sage.numerical.mip
        True
 
     If ``G`` is not a Sage (Di)Graph, an error is raised::
@@ -1460,16 +1457,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
     Complete Graph with loops or multiple edges (:trac:`25589`)::
 
         sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
-        sage: G.vertex_connectivity()
+        sage: G.vertex_connectivity()                                                   # needs sage.numerical.mip
         1
         sage: G = graphs.CompleteGraph(4)
         sage: G.allow_loops(True)
         sage: G.add_edge(0, 0)
-        sage: G.vertex_connectivity(value_only=False, verbose=1)
+        sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
         sage: G.allow_multiple_edges(True)
         sage: G.add_edge(0, 1)
-        sage: G.vertex_connectivity(value_only=False, verbose=1)
+        sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
     """
     from sage.graphs.generic_graph import GenericGraph
@@ -1503,8 +1500,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             return max(g.order() - 1, 0)
         elif not sets:
             return max(g.order() - 1, 0), []
-        else:
-            return max(g.order() - 1, 0), [], [[], []]
+        return max(g.order() - 1, 0), [], [[], []]
 
     if value_only:
         if G.is_directed():
@@ -2379,21 +2375,21 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
         sage: T = spqr_tree(G, algorithm="Hopcroft_Tarjan")
         sage: G.is_isomorphic(spqr_tree_to_graph(T))
         True
-        sage: T2 = spqr_tree(G, algorithm='cleave')
-        sage: G.is_isomorphic(spqr_tree_to_graph(T2))
+        sage: T2 = spqr_tree(G, algorithm='cleave')                                     # needs sage.numerical.mip
+        sage: G.is_isomorphic(spqr_tree_to_graph(T2))                                   # needs sage.numerical.mip
         True
 
         sage: G = Graph([(0, 1)], multiedges=True)
-        sage: T = spqr_tree(G, algorithm='cleave')
-        sage: T.vertices(sort=True)
+        sage: T = spqr_tree(G, algorithm='cleave')                                      # needs sage.numerical.mip
+        sage: T.vertices(sort=True)                                                     # needs sage.numerical.mip
         [('Q', Multi-graph on 2 vertices)]
-        sage: G.is_isomorphic(spqr_tree_to_graph(T))
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))                                    # needs sage.numerical.mip
         True
         sage: T = spqr_tree(G, algorithm='Hopcroft_Tarjan')
         sage: T.vertices(sort=True)
         [('Q', Multi-graph on 2 vertices)]
         sage: G.add_edge(0, 1)
-        sage: spqr_tree(G, algorithm='cleave').vertices(sort=True)
+        sage: spqr_tree(G, algorithm='cleave').vertices(sort=True)                      # needs sage.numerical.mip
         [('P', Multi-graph on 2 vertices)]
 
         sage: from collections import Counter
@@ -2401,24 +2397,24 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
         sage: Counter(u[0] for u in T)
         Counter({'R': 1})
-        sage: T = G.spqr_tree(algorithm="cleave")
-        sage: Counter(u[0] for u in T)
+        sage: T = G.spqr_tree(algorithm="cleave")                                       # needs sage.numerical.mip
+        sage: Counter(u[0] for u in T)                                                  # needs sage.numerical.mip
         Counter({'R': 1})
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 15), ('R', 1), ('S', 15)]
-        sage: T = G.spqr_tree(algorithm="cleave")
-        sage: sorted(Counter(u[0] for u in T).items())
+        sage: T = G.spqr_tree(algorithm="cleave")                                       # needs sage.numerical.mip
+        sage: sorted(Counter(u[0] for u in T).items())                                  # needs sage.numerical.mip
         [('P', 15), ('R', 1), ('S', 15)]
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 60), ('R', 1), ('S', 75)]
-        sage: T = G.spqr_tree(algorithm="cleave")       # long time
-        sage: sorted(Counter(u[0] for u in T).items())  # long time
+        sage: T = G.spqr_tree(algorithm="cleave")       # long time                     # needs sage.numerical.mip
+        sage: sorted(Counter(u[0] for u in T).items())  # long time                     # needs sage.numerical.mip
         [('P', 60), ('R', 1), ('S', 75)]
 
     TESTS::
@@ -2814,7 +2810,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
+            sage: cython(os.linesep.join(cython_code))                                  # needs sage.misc.cython
             Polygon: 2 3 4
         """
         self.mem = MemoryAllocator()
@@ -2861,7 +2857,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
+            sage: cython(os.linesep.join(cython_code))                                  # needs sage.misc.cython
             Polygon: 2 3 4
         """
         if self.component_type == 0:
@@ -3298,8 +3294,7 @@ cdef class TriconnectivitySPQR:
         cdef _LinkedListNode * head = _LinkedList_get_head(self.highpt[v])
         if head:
             return head.data
-        else:
-            return 0
+        return 0
 
     cdef __del_high(self, int e_index):
         """
@@ -4344,8 +4339,8 @@ def is_triconnected(G):
     Comparing different methods on random graphs that are not always
     triconnected::
 
-        sage: G = graphs.RandomBarabasiAlbert(50, 3)                                    # optional - networkx
-        sage: G.is_triconnected() == G.vertex_connectivity(k=3)                         # optional - networkx
+        sage: G = graphs.RandomBarabasiAlbert(50, 3)                                    # needs networkx
+        sage: G.is_triconnected() == G.vertex_connectivity(k=3)                         # needs networkx
         True
 
     .. SEEALSO::

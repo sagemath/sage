@@ -35,18 +35,19 @@ coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
-    sage: K.<t> = GF(2^55)                                                                          # optional - sage.rings.finite_rings sage.combinat
-    sage: for i in range(50):                                                                       # optional - sage.rings.finite_rings sage.combinat
+    sage: # needs sage.combinat sage.modules sage.rings.finite_rings
+    sage: K.<t> = GF(2^55)
+    sage: for i in range(20):
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
     ....:     Q = 2*P
-    sage: L = [Partitions(n) for n in range(200)]  # purge strong cache in CachedRepresentation     # optional - sage.rings.finite_rings sage.combinat
+    sage: L = [Partitions(n) for n in range(200)]  # purge strong cache in CachedRepresentation
     sage: import gc
     sage: n = gc.collect()
-    sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field      # optional - sage.rings.finite_rings sage.combinat
-    sage: LE = [x for x in gc.get_objects() if isinstance(x, EllipticCurve_finite_field)]           # optional - sage.rings.finite_rings sage.combinat
-    sage: len(LE)                                                                                   # optional - sage.rings.finite_rings sage.combinat
+    sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
+    sage: LE = [x for x in gc.get_objects() if isinstance(x, EllipticCurve_finite_field)]
+    sage: len(LE)
     1
 """
 
@@ -776,7 +777,7 @@ cdef class MonoDict:
             sage: L[1] = None
             sage: L[2] = True
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: sorted(L.items())
             [(1, None), (2, True)]
         """
@@ -1451,7 +1452,7 @@ cdef class TripleDict:
             sage: L = TripleDict()
             sage: L[1,2,3] = None
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: list(L.items())
             [((1, 2, 3), None)]
         """

@@ -110,8 +110,8 @@ def breadth_first_level_search(G, start):
 
     EXAMPLES::
 
-        sage: H = digraphs.DeBruijn(3,2)                                                # optional - sage.combinat
-        sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))        # optional - sage.combinat
+        sage: H = digraphs.DeBruijn(3,2)                                                # needs sage.combinat
+        sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))        # needs sage.combinat
         [{'00': {'01', '02'}},
          {'01': {'10', '11', '12'}, '02': {'20', '21', '22'}},
          {'10': set(),
@@ -162,9 +162,9 @@ def depth_first_traversal(G, start):
 
     EXAMPLES::
 
-        sage: H = digraphs.DeBruijn(3,2)                                                # optional - sage.combinat
-        sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))         # optional - sage.combinat
-        sage: len(t)                                                                    # optional - sage.combinat
+        sage: H = digraphs.DeBruijn(3,2)                                                # needs sage.combinat
+        sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))         # needs sage.combinat
+        sage: len(t)                                                                    # needs sage.combinat
         16
     """
     neighbors = G.neighbor_out_iterator
