@@ -45,8 +45,8 @@ import shutil
 import sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
-from .viewer import browser
-from . import sageinspect
+from sage.misc.viewer import browser
+from sage.misc import sageinspect
 import sage.version
 from sage.env import SAGE_DOC, SAGE_SRC
 

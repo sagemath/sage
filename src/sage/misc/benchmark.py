@@ -1,6 +1,6 @@
 "Benchmarks"
 
-from .misc import cputime
+from sage.misc.misc import cputime
 
 from sage.all import *
 
