@@ -5507,7 +5507,7 @@ class Permutation(CombinatorialElement):
 
         An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
-        Note that the number of n-th roots only depend on the cyclic type of ``self``.
+        Note that the number of n-th roots only depend on the cycle type of ``self``.
 
         EXAMPLES::
 
@@ -5568,7 +5568,7 @@ class Permutation(CombinatorialElement):
 
         An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
-        Note that the number of n-th roots only depend on the cyclic type of ``self``.
+        Note that the number of n-th roots only depend on the cycle type of ``self``.
 
         EXAMPLES::
 
