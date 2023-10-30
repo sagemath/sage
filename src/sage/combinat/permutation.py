@@ -5393,14 +5393,14 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Sigma = Permutations(5).identity()
-            sage: list(Sigma.nth_roots(3))
+            sage: sigma = Permutations(5).identity()
+            sage: list(sigma.nth_roots(3))
             [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1],
              [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5],
              [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
 
-            sage: Sigma = Permutation('(1, 3)')
-            sage: list(Sigma.nth_roots(2))
+            sage: sigma = Permutation('(1, 3)')
+            sage: list(sigma.nth_roots(2))
             []
 
         For n >= 6, this algorithm begins to be more efficient than naive search
@@ -5424,8 +5424,8 @@ class Permutation(CombinatorialElement):
             sage: list(Permutation('').nth_roots(2))
             [[]]
 
-            sage: Sigma = Permutations(6).random_element()
-            sage: list(Sigma.nth_roots(1)) == [Sigma]
+            sage: sigma = Permutations(6).random_element()
+            sage: list(sigma.nth_roots(1)) == [Sigma]
             True
 
             sage: list(Permutations(4).identity().nth_roots(-1))
@@ -5472,7 +5472,7 @@ class Permutation(CombinatorialElement):
 
         P = Permutations(self.size())
 
-        # Creating dict {length: cycles of this length in the cycle decomposition of Sigma}
+        # Creating dict {length: cycles of this length in the cycle decomposition of sigma}
         cycles = {}
         for c in self.cycle_tuples(singletons=True):
             lc = len(c)
@@ -5511,12 +5511,12 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Sigma = Permutations(5).identity()
-            sage: Sigma.has_nth_root(3)
+            sage: sigma = Permutations(5).identity()
+            sage: sigma.has_nth_root(3)
             True
 
-            sage: Sigma = Permutation('(1, 3)')
-            sage: Sigma.has_nth_root(2)
+            sage: sigma = Permutation('(1, 3)')
+            sage: sigma.has_nth_root(2)
             False
 
         .. SEEALSO::
@@ -5537,8 +5537,8 @@ class Permutation(CombinatorialElement):
             sage: Permutation('').has_nth_root(2)
             True
 
-            sage: Sigma = Permutations(6).random_element()
-            sage: Sigma.has_nth_root(1)
+            sage: sigma = Permutations(6).random_element()
+            sage: sigma.has_nth_root(1)
             True
 
             sage: Permutations(4).identity().has_nth_root(-1)
@@ -5555,7 +5555,7 @@ class Permutation(CombinatorialElement):
         cycles = self.cycle_type().to_exp_dict()
 
         # for each length m, check if the number of m-cycles can come from a n-th power
-        # (i.e. if you can partitionate m*Cycles[m] into parts of size l with l = m*gcd(l, n))
+        # (i.e. if you can partition m*Cycles[m] into parts of size l with l = m*gcd(l, n))
         for m, N in cycles.items():
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
             if Partitions(N, parts_in=parts).is_empty():
