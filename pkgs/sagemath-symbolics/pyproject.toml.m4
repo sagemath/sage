@@ -43,7 +43,7 @@ file = "README.rst"
 content-type = "text/x-rst"
 
 [project.optional-dependencies]
-test            = SPKG_INSTALL_REQUIRES_sagemath_repl
+test            = [SPKG_INSTALL_REQUIRES_sagemath_repl]
 
 # extras by libraries
 axiom           = []  # FIXME
