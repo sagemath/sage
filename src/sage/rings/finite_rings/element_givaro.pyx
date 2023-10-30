@@ -57,7 +57,7 @@ from cysignals.signals cimport sig_on, sig_off
 from cypari2.paridecl cimport *
 
 from sage.misc.randstate cimport current_randstate
-from .element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.richcmp cimport richcmp
 import sage.arith.all
 

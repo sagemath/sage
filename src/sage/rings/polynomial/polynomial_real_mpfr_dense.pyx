@@ -30,7 +30,7 @@ from cpython.long cimport PyLong_AsLong
 from cpython.float cimport PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
-from .polynomial_element cimport Polynomial, _dict_to_list
+from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.rational cimport Rational
