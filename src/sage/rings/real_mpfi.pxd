@@ -5,8 +5,8 @@ from sage.rings.ring cimport Field
 cimport sage.rings.abc
 from sage.structure.element cimport RingElement
 
-from .rational cimport Rational
-from .real_mpfr cimport RealField_class
+from sage.rings.rational cimport Rational
+from sage.rings.real_mpfr cimport RealField_class
 
 cdef class RealIntervalFieldElement(RingElement)  # forward decl
 

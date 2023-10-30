@@ -83,19 +83,17 @@ Test that :trac:`15971` is fixed::
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import ring
-from . import fraction_field_element
 import sage.misc.latex as latex
-from sage.misc.cachefunc import cached_method
-
-from sage.rings.integer_ring import ZZ
-from sage.structure.richcmp import richcmp
-from sage.structure.parent import Parent
-from sage.structure.element import parent
-from sage.structure.coerce import py_scalar_to_element
-from sage.structure.coerce_maps import CallableConvertMap, DefaultConvertMap_unique
 from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
+from sage.misc.cachefunc import cached_method
+from sage.rings import fraction_field_element, ring
+from sage.rings.integer_ring import ZZ
+from sage.structure.coerce import py_scalar_to_element
+from sage.structure.coerce_maps import CallableConvertMap, DefaultConvertMap_unique
+from sage.structure.element import parent
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 
 
 def FractionField(R, names=None):
@@ -327,10 +325,11 @@ class FractionField_generic(ring.Field):
             sage: f(L(1/7)) == 1/7
             True
         """
-        from sage.rings.rational_field import QQ
         from sage.rings.number_field.number_field_base import NumberField
-        from sage.rings.polynomial.laurent_polynomial_ring_base import \
-            LaurentPolynomialRing_generic
+        from sage.rings.polynomial.laurent_polynomial_ring_base import (
+            LaurentPolynomialRing_generic,
+        )
+        from sage.rings.rational_field import QQ
 
         if S is self._R:
             parent = self._R.Hom(self)
@@ -1079,7 +1078,9 @@ class FractionField_1poly_field(FractionField_generic):
             1/t
 
         """
-        from sage.rings.function_field.function_field_rational import RationalFunctionField
+        from sage.rings.function_field.function_field_rational import (
+            RationalFunctionField,
+        )
         if isinstance(R, RationalFunctionField) and self.variable_name() == R.variable_name() and self.base_ring() is R.constant_base_field():
             from sage.categories.homset import Hom
             parent = Hom(R, self)
@@ -1160,8 +1161,8 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
               To:   Univariate Polynomial Ring in x over Rational Field
 
         """
-        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         from sage.categories.homset import Hom
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         parent = Hom(self.codomain(), self.domain(), SetsWithPartialMaps())
         return parent.__make_element_class__(FractionFieldEmbeddingSection)(self)
 
