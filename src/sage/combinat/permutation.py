@@ -5386,23 +5386,23 @@ class Permutation(CombinatorialElement):
     def nth_roots(self, n):
         r"""
         Return all n-th roots of ``self`` (as a generator).
-        
+
         An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
         Note that the number of n-th roots only depend on the cycle type of ``self``.
-        
+
         EXAMPLES::
-        
+
             sage: Sigma = Permutations(5).identity()
             sage: list(Sigma.nth_roots(3))
             [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1],
              [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5],
              [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
-            
+   
             sage: Sigma = Permutation('(1, 3)')
             sage: list(Sigma.nth_roots(2))
             []
-        
+
         For n >= 6, this algorithm begins to be more efficient than naive search
         (look at all permutations and test their n-th power).
         
@@ -5414,10 +5414,10 @@ class Permutation(CombinatorialElement):
         TESTS:
             
         We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`)::
-            
+
             sage: [len(list(Permutations(n).identity().nth_roots(2))) for n in range(2,8)]
             [2, 4, 10, 26, 76, 232]
-            
+
             sage: list(Permutation('(1)').nth_roots(2))
             [[1]]
 
@@ -5427,7 +5427,7 @@ class Permutation(CombinatorialElement):
             sage: Sigma = Permutations(6).random_element()
             sage: list(Sigma.nth_roots(1)) == [Sigma]
             True
-            
+
             sage: list(Permutations(4).identity().nth_roots(-1))
             Traceback (most recent call last):
             ...
@@ -5446,7 +5446,7 @@ class Permutation(CombinatorialElement):
             lC = len(list_of_cycles)
             lperm = len(list_of_cycles[0])
             l = lC*lperm
-            perm = [0]
+            perm = [0] * l
             for j in range(lperm):
                 perm[j*lC] = list_of_cycles[0][j]
             for p in Permutations(lC-1):
@@ -5454,7 +5454,7 @@ class Permutation(CombinatorialElement):
                     new_perm = list(perm)
                     for i in range(lC-1):
                         for j in range(lperm):
-                            new_perm[(p[i] + (indices[i]+j)*lC) %l] = list_of_cycles[i+1][j]
+                            new_perm[(p[i] + (indices[i]+j)*lC) % l] = list_of_cycles[i+1][j]
                     yield Permutation(tuple(new_perm))
 
         def rewind(L, n):
@@ -5466,12 +5466,12 @@ class Permutation(CombinatorialElement):
             for j in range(m):
                 M[(j*n) % m] = L[j]
             return M
-        
+
         if n < 1:
             raise ValueError('n must be at least 1')
-        
+
         P = Permutations(self.size())
-        
+
         # Creating dict {length: cycles of this length in the cycle decomposition of Sigma}
         cycles = {}
         for c in self.cycle_tuples(singletons=True):
@@ -5479,9 +5479,9 @@ class Permutation(CombinatorialElement):
             if lc not in cycles:
                 cycles[lc] = []
             cycles[lc].append(c)
-        
+
         # for each length m, collects all product of cycles which n-th power gives the product prod(Cycles[l])
-        Possibilities = {m: [] for m in cycles}
+        possibilities = [[] for m in cycles]
         for m in cycles:
             N = len(cycles[m])
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
@@ -5492,13 +5492,13 @@ class Permutation(CombinatorialElement):
                     poss = [P.identity()]
                     for pa in partition:
                             poss = [p*q for p in poss
-                                        for q in merging_cycles([rewind(cycles[m][i-1], n//len(pa)) for i in pa])]
-                    Possibilities[m] += poss
+                                    for q in merging_cycles([rewind(cycles[m][i-1], n//len(pa)) for i in pa])]
+                    possibilities[m] += poss
             if not b:
                 return
-        
+   
         #Product of Possibilities (i.e. final result)
-        for L in cartesian_product(Possibilities.values()):
+        for L in product(*possibilities):
             yield P.prod(L)
 
     def has_nth_root(self, n):
