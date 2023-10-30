@@ -103,3 +103,15 @@ foreach name, pyx : extension_data
         dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, gmp],
     )
 endforeach
+
+install_subdir('asymptotic', install_dir: sage_install_dir / 'rings')
+install_subdir('invariants', install_dir: sage_install_dir / 'rings')
+install_subdir('valuation', install_dir: sage_install_dir / 'rings')
+
+subdir('convert')
+subdir('finite_rings')
+subdir('function_field')
+subdir('number_field')
+subdir('padics')
+subdir('polynomial')
+subdir('semirings')

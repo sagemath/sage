@@ -92,8 +92,10 @@ add_project_arguments('-X preliminary_late_includes_cy28=True', language : 'cyth
 
 inc_cpython = include_directories('sage/cpython')
 inc_rings = include_directories('sage/rings')
+inc_rings_finite = include_directories('sage/rings/finite_rings')
 inc_flint = include_directories('sage/libs/flint')
 inc_gsl = include_directories('sage/libs/gsl')
+inc_ntl = include_directories('sage/libs/ntl')
 inc_data_structures = include_directories('sage/data_structures')
 inc_ext = include_directories('sage/ext')
 inc_src = include_directories('.')
