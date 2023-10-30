@@ -5383,26 +5383,28 @@ class Permutation(CombinatorialElement):
         return self.shifted_concatenation(other, "right").\
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
 
-
     def nth_roots(self, n):
         r"""
         Return all n-th roots of ``self`` (as a generator).
         
         A n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
-        Note that the number of n-th roots only depend on the cyclic type of ``self``.
+        Note that the number of n-th roots only depend on the cycle type of ``self``.
         
         EXAMPLES::
         
             sage: Sigma = Permutations(5).identity()
             sage: list(Sigma.nth_roots(3))
-            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1], [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5], [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
+            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1],
+             [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5],
+             [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
             
             sage: Sigma = Permutation('(1, 3)')
             sage: list(Sigma.nth_roots(2))
             []
         
-        For n >= 6, this algorithm begins to be more efficient than naive search (look at all permutations and test their n-th power).
+        For n >= 6, this algorithm begins to be more efficient than naive search
+        (look at all permutations and test their n-th power).
         
         .. SEEALSO::
         
@@ -5431,7 +5433,6 @@ class Permutation(CombinatorialElement):
             ...
             ValueError: n must be at least 1
         """
-        
         from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
         from itertools import product
@@ -5439,12 +5440,13 @@ class Permutation(CombinatorialElement):
 
         def merging_cycles(list_of_cycles):
             """
-            Generate all l-cycles such that its n-th power is the product of cycles in Cycles (which conctains gcd(l, n) cycles of lenght l/gcd(l, n))
+            Generate all l-cycles such that its n-th power is the product
+            of cycles in 'cycles' (which contains gcd(l, n) cycles of length l/gcd(l, n))
             """
             lC = len(list_of_cycles)
             lperm = len(list_of_cycles[0])
             l = lC*lperm
-            perm = [0 for i in range(l)]
+            perm = [0]
             for j in range(lperm):
                 perm[j*lC] = list_of_cycles[0][j]
             for p in Permutations(lC-1):
@@ -5546,7 +5548,6 @@ class Permutation(CombinatorialElement):
         """
         from sage.combinat.partition import Partitions
         from sage.arith.misc import divisors, gcd
-        from sage.rings.integer import Integer
 
         if n < 1:
             raise ValueError('n must be at least 1')
@@ -5556,9 +5557,8 @@ class Permutation(CombinatorialElement):
         # for each length m, check if the number of m-cycles can come from a n-th power
         # (i.e. if you can partitionate m*Cycles[m] into parts of size l with l = m*gcd(l, n))
         for m, N in cycles.items():
-            N = Integer(N) # I don't know why but ._findfirst doesn't work without
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
-            if not Partitions(0, parts_in=[])._findfirst(N, parts):
+            if not Partitions(N, parts_in=parts).is_empty():
                 return False
         return True
 
