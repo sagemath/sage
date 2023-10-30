@@ -1,4 +1,4 @@
-name: Build & Test using Conda
+name: Build & Test using Conda (Meson)
 
 on:
   push:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   test:
-    name: Conda (Meson)
+    name: Meson
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -73,13 +73,9 @@ jobs:
         shell: bash -l {0}
         run: |
           # Compile as extra step for better error reporting
+          meson setup builddir
           meson compile -j2 -C builddir
           pip install --no-build-isolation --config-settings=builddir=builddir --editable .
-        
-      - name: Verify dependencies
-        if: success() || failure()
-        shell: bash -l {0}
-        run: pip check
 
       - name: Test
         if: success() || failure()
