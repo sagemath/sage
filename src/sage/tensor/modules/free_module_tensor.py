@@ -194,7 +194,7 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
@@ -212,6 +212,9 @@ if TYPE_CHECKING:
     from sage.symbolic.expression import Expression
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
     from sage.tensor.modules.free_module_basis import FreeModuleBasis
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
 
 class FreeModuleTensor(ModuleElementWithMutability):
@@ -677,10 +680,11 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         Check that the bug reported in :trac:`22520` is fixed::
 
-            sage: M = FiniteRankFreeModule(SR, 3, name='M')  # optional - sage.symbolic
-            sage: e = M.basis('e')                           # optional - sage.symbolic
-            sage: t = SR.var('t', domain='real')             # optional - sage.symbolic
-            sage: (t*e[0]).display()                         # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: M = FiniteRankFreeModule(SR, 3, name='M')
+            sage: e = M.basis('e')
+            sage: t = SR.var('t', domain='real')
+            sage: (t*e[0]).display()
             t e_0
 
         """
@@ -1606,7 +1610,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             elif not isinstance(args[0], (int, Integer, slice)):
                 basis = args[0]
                 args = args[1:]
-                if len(args)==1:
+                if len(args) == 1:
                     args = args[0]  # to accommodate for [e,:] syntax
             else:
                 basis = self._fmodule._def_basis
@@ -2445,9 +2449,19 @@ class FreeModuleTensor(ModuleElementWithMutability):
             res._latex_name = res_latex
         return res
 
-    def trace(self, pos1=0, pos2=1):
+    def trace(
+        self,
+        pos1: int = 0,
+        pos2: int = 1,
+        using: Optional[
+            Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField]
+        ] = None,
+    ):
         r"""
         Trace (contraction) on two slots of the tensor.
+
+        If a non-degenerate form is provided, the trace of a type-`(0,2)` tensor
+        is computed by first raising the last index.
 
         INPUT:
 
@@ -2457,6 +2471,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         - ``pos2`` -- (default: 1) position of the second index for the
           contraction, with the same convention as for ``pos1``; the variance
           type of ``pos2`` must be opposite to that of ``pos1``
+
+        - ``using`` -- (default: ``None``) a non-degenerate form
 
         OUTPUT:
 
@@ -2500,7 +2516,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         The contraction on two slots having the same tensor type cannot occur::
 
-            sage: b =  M.tensor((2,0), name='b') ; b
+            sage: b = M.tensor((2,0), name='b') ; b
             Type-(2,0) tensor b on the Rank-3 free module M over the Integer Ring
             sage: b[:] = [[1,2,3], [4,5,6], [7,8,9]]
             sage: b.trace(0,1)
@@ -2568,6 +2584,13 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
+        if using is not None:
+            if self.tensor_type() != (0, 2):
+                raise ValueError(
+                    "trace with respect to a non-degenerate form is only defined for type-(0,2) tensor"
+                )
+            return self.up(using, 1).trace()
+
         # The indices at pos1 and pos2 must be of different types:
         k_con = self._tensor_type[0]
         l_cov = self._tensor_type[1]

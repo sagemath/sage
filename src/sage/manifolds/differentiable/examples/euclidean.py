@@ -694,7 +694,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                     if names[1] in ['p', 'ph', 'phi']:
                         names[1] = names[1] + ':\\phi'
 
-            symbols = ' '.join(x for x in names)
+            symbols = ' '.join(names)
 
         # Technical bit for UniqueRepresentation
         from sage.misc.prandom import getrandbits
@@ -1832,7 +1832,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         coords = symbols.split()  # list of strings, one per coordinate
         # Adding the coordinate ranges:
         coordinates = (coords[0] + ':(0,+oo) ' + coords[1]
-                       + ':(0,2*pi):periodic '+ coords[2])
+                       + ':(0,2*pi):periodic ' + coords[2])
         chart = self.chart(coordinates=coordinates)
         self._cylindrical_chart = chart
         frame = chart.frame()

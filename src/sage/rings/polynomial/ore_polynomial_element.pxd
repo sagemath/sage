@@ -1,5 +1,6 @@
 from sage.structure.element cimport AlgebraElement
 from sage.structure.parent cimport Parent
+from sage.rings.integer cimport Integer
 from sage.rings.morphism cimport Morphism
 from sage.structure.element cimport RingElement
 from sage.rings.polynomial.polynomial_element cimport Polynomial_generic_dense
@@ -23,7 +24,7 @@ cdef class OrePolynomial(AlgebraElement):
     cdef OrePolynomial _right_lcm_cofactor(self, OrePolynomial other)
 
     # Abstract methods
-    cpdef int degree(self)
+    cpdef Integer degree(self)
     cpdef list coefficients(self, sparse=*)
 
 
@@ -32,7 +33,7 @@ cdef void lmul_gen(list A, Morphism m, d)
 cdef class OrePolynomial_generic_dense(OrePolynomial):
     cdef list _coeffs
 
-    cdef void __normalize(self)
+    cdef void _normalize(self)
     cpdef _add_(self, other)
     cdef list _mul_list(self, list A)
     cpdef _mul_(self, other)

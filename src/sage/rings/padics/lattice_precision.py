@@ -32,7 +32,7 @@ TESTS::
 
 from collections import defaultdict
 
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
@@ -60,7 +60,7 @@ class pRational:
     r"""
     This class implements rational numbers viewed as elements of ``Qp``.
     In particular, it provides additional methods which are specific to
-    ``p``-adics (as ``p``-adic valuation).
+    `p`-adics (as `p`-adic valuation).
 
     Only for internal use.
 
@@ -72,8 +72,8 @@ class pRational:
 
     - ``exponent`` -- an integer (default: 0)
 
-    - ``valuation`` -- an integer or None (default: ``None``),
-      the ``p``-adic valuation of this element
+    - ``valuation`` -- an integer or ``None`` (default: ``None``),
+      the `p`-adic valuation of this element
 
     If not ``None``, this method trusts the given value to the
     attribute ``valuation``.
@@ -259,7 +259,7 @@ class pRational:
 
     def is_p_power(self):
         r"""
-        Return true if this element is a power of `p`.
+        Return ``True`` if this element is a power of `p`.
 
         TESTS::
 
@@ -279,7 +279,7 @@ class pRational:
 
     def is_zero(self):
         r"""
-        Return true if this element vanishes.
+        Return ``True`` if this element vanishes.
 
         TESTS::
 
@@ -503,7 +503,7 @@ class pRational:
     def xgcd(self, other):
         r"""
         Return the gcd of ``self`` and ``other`` together with two
-        element ``u`` and ``v`` such that ``u*self + v*other = gcd``.
+        elements ``u`` and ``v`` such that ``u*self + v*other = gcd``.
 
         The ``gcd`` is normalized so that it is a power of `p`.
 
@@ -676,9 +676,9 @@ class DifferentialPrecisionGeneric(SageObject):
             sage: R.precision()
             Precision lattice on 0 objects (label: mylabel)
         """
-        label = "" if self._label is None else " (label: %s)"%(self._label,)
-        count = "1 object" if len(self._elements) == 1 else "%s objects"%len(self._elements)
-        return "%s on %s%s"%(self._repr_type, count, label)
+        label = "" if self._label is None else " (label: %s)" % (self._label,)
+        count = "1 object" if len(self._elements) == 1 else "%s objects" % len(self._elements)
+        return "%s on %s%s" % (self._repr_type, count, label)
 
     def threshold_deletion(self, threshold=None):
         r"""
@@ -1483,20 +1483,20 @@ class DifferentialPrecisionGeneric(SageObject):
 
         INPUT:
 
-        - ``action`` -- ``None`` (the default), ``add``, ``mark``, ``del``,
-          ``partial reduce`` or ``full reduce``; if not None, return the
+        - ``action`` -- ``None`` (the default), ``'add'``, ``'mark'``, ``'del'``,
+          ``'partial reduce'`` or ``'full reduce'``; if not ``None``, return the
           cumulated timing corresponding to this action; otherwise, return
           a dictionary
 
         Here are the meanings of the keywords above:
 
-        - ``add``: time spent in adding new columns to the precision matrix
+        - ``'add'``: time spent in adding new columns to the precision matrix
           (corresponding to the creation of new elements)
-        - ``mark``: time spent in marking elements for deletion
-        - ``del``: time spent in deleting columns of the precision matrix
+        - ``'mark'``: time spent in marking elements for deletion
+        - ``'del'``: time spent in deleting columns of the precision matrix
           and re-echelonizing the matrix
-        - ``partial reduce``: time spent in partial Hermite reduction
-        - ``full reduce``: time spent in full Hermite reduction.
+        - ``'partial reduce'``: time spent in partial Hermite reduction
+        - ``'full reduce'``: time spent in full Hermite reduction.
 
         EXAMPLES::
 
@@ -2786,7 +2786,7 @@ class pAdicLatticeElementWeakProxy():
         """
         if not hasattr(element, '_proxy_id'):
             element._proxy_id = pAdicLatticeElementWeakProxy._next_id
-            pAdicLatticeElementWeakProxy._next_id +=1
+            pAdicLatticeElementWeakProxy._next_id += 1
         self._id = element._proxy_id
         from weakref import ref
         proxy_callback = callback
@@ -2856,12 +2856,12 @@ class pAdicLatticeElementWeakProxy():
             [WeakProxy#...]
 
         """
-        return "WeakProxy#%s"%(self._id,)
+        return "WeakProxy#%s" % (self._id,)
 
 def list_of_padics(elements):
     r"""
-    Convert a list of p-adic composed elements (such as polynomials, matrices)
-    to a list of weak references of their p-adic coefficients.
+    Convert a list of `p`-adic composed elements (such as polynomials, matrices)
+    to a list of weak references of their `p`-adic coefficients.
 
     This is a helper function for the method :meth:`precision_lattice`.
 

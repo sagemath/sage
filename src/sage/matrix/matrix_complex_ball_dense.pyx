@@ -23,8 +23,7 @@ TESTS::
     sage: loads(dumps(mat)).identical(mat)
     True
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Clemens Heuberger <clemens.heuberger@aau.at>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,8 +31,7 @@ TESTS::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 from cpython.object cimport Py_EQ, Py_NE
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
@@ -42,9 +40,7 @@ from sage.libs.arb.acb cimport *
 from sage.libs.arb.acb_mat cimport *
 from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_get_ui
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix_generic_sparse cimport Matrix_generic_sparse
 from .args cimport SparseEntry, MatrixArgs_init
-from sage.rings.complex_interval_field import ComplexIntervalField_class, ComplexIntervalField
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.complex_arb cimport (
     ComplexBall,
@@ -52,12 +48,11 @@ from sage.rings.complex_arb cimport (
     acb_to_ComplexIntervalFieldElement)
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_complex_arb cimport Polynomial_complex_arb
-from sage.structure.element cimport Element, RingElement, Matrix
+from sage.structure.element cimport Element, Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.sequence import Sequence
 
 from sage.misc.superseded import experimental
-from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial import polynomial_ring_constructor
 
 
@@ -75,7 +70,7 @@ cdef void matrix_to_acb_mat(acb_mat_t target, source):
 
     None.
     """
-    cdef unsigned long nrows, ncols, r, c, precision
+    cdef unsigned long nrows, ncols, r, c
 
     nrows = acb_mat_nrows(target)
     ncols = acb_mat_ncols(target)
@@ -92,8 +87,7 @@ cdef ComplexIntervalFieldElement _to_CIF(acb_t source, ComplexIntervalFieldEleme
         result, source)
     return result
 
-cdef Matrix_generic_dense acb_mat_to_matrix(
-    acb_mat_t source, Parent CIF):
+cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF):
     """
     Convert an ``acb_mat_t`` to a matrix containing :class:`ComplexIntervalFieldElement`.
 
@@ -575,14 +569,14 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         r"""
         TESTS::
 
-            sage: matrix(CBF, [[1/2, 1/3], [1, 1]]) \ vector([-1, 1])
+            sage: matrix(CBF, [[1/2, 1/3], [1, 1]]).solve_right(vector([-1, 1]))
             ([-8.00000000000000 +/- ...], [9.00000000000000 +/- ...])
-            sage: matrix(CBF, 2, 2, 0) \ vector([-1, 1])
+            sage: matrix(CBF, 2, 2, 0).solve_right(vector([-1, 1]))
             Traceback (most recent call last):
             ...
             ValueError: unable to invert this matrix
             sage: b = CBF(0, RBF(0, rad=.1r))
-            sage: matrix(CBF, [[1, 1], [0, b]]) \ vector([-1, 1])
+            sage: matrix(CBF, [[1, 1], [0, b]]).solve_right(vector([-1, 1]))
             Traceback (most recent call last):
             ...
             ValueError: unable to invert this matrix
@@ -670,7 +664,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         Pol = polynomial_ring_constructor._single_variate(self.base_ring(), var)
         cdef Polynomial_complex_arb res = Polynomial_complex_arb(Pol)
         sig_on()
-        acb_mat_charpoly(res.__poly, self.value, prec(self))
+        acb_mat_charpoly(res._poly, self.value, prec(self))
         sig_off()
         return res
 
@@ -804,7 +798,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             eigval = _acb_vec_to_list(_eigval, n, self._parent._base)
         finally:
             _acb_vec_clear(_eigval, n)
-        return [(l, [v], 1) for l, v in zip(eigval, eigvec.columns())]
+        return [(val, [vec], 1) for val, vec in zip(eigval, eigvec.columns())]
 
     @experimental(issue_number=30393)
     def eigenvectors_right(self, other=None, *, extend=None):
@@ -867,7 +861,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             acb_mat_clear(eigvec_approx)
             _acb_vec_clear(_eigval, n)
             _acb_vec_clear(eigval_approx, n)
-        return [(l, [v], 1) for l, v in zip(eigval, eigvec.columns())]
+        return [(val, [vec], 1) for val, vec in zip(eigval, eigvec.columns())]
 
     def eigenvectors_left_approx(self, other=None, *, extend=None):
         r"""
@@ -951,7 +945,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         EXAMPLES::
 
-            sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()
+            sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()                             # needs sage.symbolic
             [[-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             [                                                0 [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             sage: matrix(CBF, [[1/2, 1/3]]).exp()

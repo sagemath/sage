@@ -117,7 +117,7 @@ class Gamma1_class(GammaH_class):
             sage: Gamma1(133)._repr_()
             'Congruence Subgroup Gamma1(133)'
         """
-        return "Congruence Subgroup Gamma1(%s)"%self.level()
+        return "Congruence Subgroup Gamma1(%s)" % self.level()
 
     def __reduce__(self):
         """
@@ -141,7 +141,7 @@ class Gamma1_class(GammaH_class):
             sage: latex(Gamma1(3))
             \Gamma_1(3)
         """
-        return "\\Gamma_1(%s)"%self.level()
+        return "\\Gamma_1(%s)" % self.level()
 
     def is_even(self):
         """
@@ -221,9 +221,9 @@ class Gamma1_class(GammaH_class):
             [ 3 -2], [ 3 -2], [ 9 -2], [-12   7]
             ]
         """
-        if algorithm=="farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
-        elif algorithm=="todd-coxeter":
+        elif algorithm == "todd-coxeter":
             from sage.modular.modsym.g1list import G1list
             from .congroup import generators_helper
             level = self.level()
@@ -253,7 +253,7 @@ class Gamma1_class(GammaH_class):
         """
         N = self.level()
         # don't need to check d == 1 mod N as this is automatic from det
-        return ((a%N == 1) and (c%N == 0))
+        return ((a % N == 1) and (c % N == 0))
 
     def nu2(self):
         r"""
@@ -370,6 +370,7 @@ class Gamma1_class(GammaH_class):
 
         Check that :trac:`18436` is fixed::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1)
             sage: G = DirichletGroup(13, base_ring=K)
             sage: Gamma1(13).dimension_modular_forms(2, G[1])
@@ -458,7 +459,7 @@ class Gamma1_class(GammaH_class):
         if eps.is_trivial():
             return Gamma0(N).dimension_cusp_forms(k)
 
-        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k%2) == 0 and eps.is_odd()):
+        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k % 2) == 0 and eps.is_odd()):
             return ZZ(0)
 
         if k == 1:
@@ -542,7 +543,7 @@ class Gamma1_class(GammaH_class):
             return Gamma0(N).dimension_eis(k)
 
         # Note case of k = 0 and trivial character already dealt with separately, so k <= 0 here is valid:
-        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k%2) == 0 and eps.is_odd()):
+        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k % 2) == 0 and eps.is_odd()):
             return ZZ(0)
 
         if algorithm == "Quer":
@@ -636,7 +637,7 @@ class Gamma1_class(GammaH_class):
 
         from .congroup_gammaH import mumu
 
-        if p == 0 or N%p != 0 or eps.conductor().valuation(p) == N.valuation(p):
+        if p == 0 or N % p != 0 or eps.conductor().valuation(p) == N.valuation(p):
             D = [eps.conductor()*d for d in divisors(N//eps.conductor())]
             return sum([Gamma1_constructor(M).dimension_cusp_forms(k, eps.restrict(M), algorithm)*mumu(N//M) for M in D])
         eps_p = eps.restrict(N//p)

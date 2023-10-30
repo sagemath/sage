@@ -64,7 +64,7 @@ you can run these commands with typeset mode on (``%display typeset``) and get
 
 Since it has only two variables, we can solve it graphically::
 
-    sage: P.plot()
+    sage: P.plot()                                                                      # optional - sage.plot
     Graphics object consisting of 19 graphics primitives
 
 
@@ -182,10 +182,10 @@ import re
 from copy import copy
 
 from sage.misc.abstract_method import abstract_method
-from sage.geometry.all import Polyhedron
+from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.special import column_matrix
 from sage.matrix.special import identity_matrix
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.special import random_matrix
 from sage.misc.latex import LatexExpr, latex
 from sage.misc.cachefunc import cached_function, cached_method
@@ -1534,19 +1534,19 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot()
-            sage: p.show()
+            sage: p = P.plot()                                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot(0, 1000, 0, 1500)
-            sage: p.show()
+            sage: p = P.plot(0, 1000, 0, 1500)                                          # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         TESTS:
 
         We check that zero objective can be dealt with::
 
-            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()
+            sage: InteractiveLPProblem(A, b, (0, 0), ["C", "B"], variable_type=">=").plot()         # optional - sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         FP = self.plot_feasible_set(*args, **kwds)
@@ -1611,13 +1611,13 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: p = P.plot_feasible_set()
-            sage: p.show()
+            sage: p = P.plot_feasible_set()                                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
 
         In this case the plot works better with the following axes ranges::
 
-            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)
-            sage: p.show()
+            sage: p = P.plot_feasible_set(0, 1000, 0, 1500)                             # optional - sage.plot
+            sage: p.show()                                                              # optional - sage.plot
         """
         if self.n() != 2:
             raise ValueError("only problems with 2 variables can be plotted")
@@ -2797,7 +2797,7 @@ class LPAbstractDictionary(SageObject):
         leaving = "Leaving: ${}$. ".format(latex(self.leaving()))
         if direction == "primal":
             return HtmlFragment(entering + leaving)
-        elif direction =="dual":
+        elif direction == "dual":
             return HtmlFragment(leaving + entering)
         else:
             raise ValueError("direction must be either primal or dual")
@@ -4510,7 +4510,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
                              "for auxiliary problems")
         super().__init__()
         self._problem = problem
-        R =  problem.coordinate_ring()
+        R = problem.coordinate_ring()
         self._x_B = vector(R, [variable(R, v) for v in basic_variables])
 
     def __eq__(self, other):
@@ -4611,7 +4611,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             headers.append("B^{-1} A_{%s}" % latex(entering))
         if show_ratios:
             headers.append(r"\hbox{Ratio}")
-        lines.append(" & ".join(headers) +  r" \\")
+        lines.append(" & ".join(headers) + r" \\")
         lines.append(r"\hline")
         Bi = self.B_inverse()
         c_B = self.c_B()
@@ -4977,7 +4977,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         for i, coef in zip(self.nonbasic_indices(), nonbasic_coefficients):
             # Extra -1 is due to the auxiliary variable at index 0
             if i > n:
-                nbc_slack[i -1 - n] = coef
+                nbc_slack[i - 1 - n] = coef
             else:
                 nbc_decision[i - 1] = coef
         if 0 in self.basic_indices() and not sum(nbc_slack) == -1:

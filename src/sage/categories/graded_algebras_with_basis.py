@@ -46,8 +46,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()
-                sage: m.graded_algebra() is m
+                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
+                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
                 True
 
             TESTS:
@@ -57,6 +57,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             and :meth:`projection` (which form the interface of the
             associated graded algebra) work correctly here::
 
+                sage: # needs sage.combinat sage.modules
                 sage: to_gr = m.to_graded_conversion()
                 sage: from_gr = m.from_graded_conversion()
                 sage: m[2] == to_gr(m[2]) == from_gr(m[2])
@@ -111,6 +112,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
                 sage: Cl = CliffordAlgebra(Q)
                 sage: M = Cl.free_graded_module((0, 2, 3))
@@ -134,6 +136,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
                 sage: S = NCSF.Complete()
                 sage: L = S.formal_series_ring()
@@ -185,6 +188,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A.<x,y> = ExteriorAlgebra(QQ)
                     sage: A.one_basis()
                     0
@@ -211,6 +215,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 Test the sign in the super tensor product::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = SteenrodAlgebra(3)
                     sage: x = A.Q(0)
                     sage: y = x.coproduct()

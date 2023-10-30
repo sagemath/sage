@@ -6,23 +6,35 @@ Version of the Jupyter kernel when running Sage inside the Jupyter
 notebook or remote Jupyter sessions.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import sys
-from ipykernel.ipkernel import IPythonKernel
+import warnings
+with warnings.catch_warnings():
+    # When upstream pydevd (as opposed to the bundled version) is used
+    # with debugpy, a PEP 420 warning is emitted. Debugpy and/or
+    # pydevd will eventually work around this, but as of September
+    # 2023, hiding the warning gives us more flexibility in the
+    # versions of those packages that we can accept.
+    warnings.filterwarnings("ignore",
+                            message=r".*pkg_resources\.declare_namespace",
+                            category=DeprecationWarning)
+    from ipykernel.ipkernel import IPythonKernel
+
 from ipykernel.zmqshell import ZMQInteractiveShell
 from traitlets import Type
 
 from sage.env import SAGE_VERSION
 from sage.repl.interpreter import SageNotebookInteractiveShell
 from sage.repl.ipython_extension import SageJupyterCustomizations
+
 
 class SageZMQInteractiveShell(SageNotebookInteractiveShell, ZMQInteractiveShell):
     pass
@@ -98,7 +110,10 @@ class SageKernel(IPythonKernel):
         """
         from sage.repl.ipython_kernel.install import SageKernelSpec
         identifier = SageKernelSpec.identifier()
-        kernel_url = lambda x: 'kernelspecs/{0}/{1}'.format(identifier, x)
+
+        def kernel_url(x):
+            return 'kernelspecs/{0}/{1}'.format(identifier, x)
+
         return [
             {
                 'text': 'Sage Documentation',

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Catalog of posets and lattices
 
@@ -727,7 +728,9 @@ class Posets(metaclass=ClasscallMetaclass):
             return LatticePoset(facade=facade)
         from sage.categories.cartesian_product import cartesian_product
         elements = cartesian_product([range(i) for i in l])
-        compare = lambda a, b: all(x <= y for x, y in zip(a, b))
+
+        def compare(a, b):
+            return all(x <= y for x, y in zip(a, b))
         return LatticePoset([elements, compare], facade=facade)
 
     @staticmethod
@@ -875,7 +878,7 @@ class Posets(metaclass=ClasscallMetaclass):
             covers = _random_lattice(n, p)
             covers_dict = {i: covers[i] for i in range(n)}
             D = DiGraph(covers_dict)
-            D.relabel([i-1 for i in Permutations(n).random_element()])
+            D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D, cover_relations=True)
 
         if isinstance(properties, str):
@@ -906,23 +909,23 @@ class Posets(metaclass=ClasscallMetaclass):
 
         if properties == set(['planar']):
             D = _random_planar_lattice(n)
-            D.relabel([i-1 for i in Permutations(n).random_element()])
+            D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
         if properties == set(['dismantlable']):
             D = _random_dismantlable_lattice(n)
-            D.relabel([i-1 for i in Permutations(n).random_element()])
+            D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
         if properties == set(['stone']):
             D = _random_stone_lattice(n)
-            D.relabel([i-1 for i in Permutations(n).random_element()])
+            D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
         if properties == set(['distributive']):
             tmp = Poset(_random_distributive_lattice(n)).order_ideals_lattice(as_ideals=False)
             D = copy(tmp._hasse_diagram)
-            D.relabel([i-1 for i in Permutations(n).random_element()])
+            D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
         raise AssertionError("bug in RandomLattice()")
@@ -948,7 +951,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         def covers(x):
             for i, s in enumerate(x):
-                for j in range(i+1, len(x)):
+                for j in range(i + 1, len(x)):
                     L = list(x)
                     L[i] = s.union(x[j])
                     L.pop(j)
@@ -988,7 +991,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.SSTPoset([2,1],2).cover_relations()
             [[[[1, 1], [2]], [[1, 2], [2]]]]
 
-            sage: posets.SSTPoset([3,2]).bottom()  # long time (6s on sage.math, 2012)
+            sage: posets.SSTPoset([3,2]).bottom()       # long time (6s on sage.math, 2012)
             [[1, 1, 1], [2, 2]]
 
             sage: posets.SSTPoset([3,2],4).maximal_elements()
@@ -1000,7 +1003,7 @@ class Posets(metaclass=ClasscallMetaclass):
             return all(ix <= iy for x, y in zip(a, b) for ix, iy in zip(x, y))
 
         if f is None:
-            f = sum(i for i in s)
+            f = sum(s)
         E = SemistandardTableaux(s, max_entry=f)
         return LatticePoset((E, tableaux_is_less_than))
 
@@ -1051,8 +1054,8 @@ class Posets(metaclass=ClasscallMetaclass):
             (False, False)
         """
         n = check_int(n, 2)
-        return Poset((range(2*n), [[i, j+n] for i in range(n)
-                                   for j in range(n) if i != j]),
+        return Poset((range(2 * n), [[i, j + n] for i in range(n)
+                                     for j in range(n) if i != j]),
                      facade=facade)
 
     @staticmethod
@@ -1274,12 +1277,12 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['B', 3])
-            sage: posets.CoxeterGroupAbsoluteOrderPoset(W)
+            sage: W = CoxeterGroup(['B', 3])                                            # needs sage.groups
+            sage: posets.CoxeterGroupAbsoluteOrderPoset(W)                              # needs sage.groups
             Finite poset containing 48 elements
 
-            sage: W = WeylGroup(['B', 2], prefix='s')
-            sage: posets.CoxeterGroupAbsoluteOrderPoset(W, False)
+            sage: W = WeylGroup(['B', 2], prefix='s')                                   # needs sage.groups
+            sage: posets.CoxeterGroupAbsoluteOrderPoset(W, False)                       # needs sage.groups
             Finite poset containing 8 elements
         """
         if use_reduced_words:
@@ -1298,12 +1301,12 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A', 3])
-            sage: posets.NoncrossingPartitions(W)
+            sage: W = CoxeterGroup(['A', 3])                                            # needs sage.groups
+            sage: posets.NoncrossingPartitions(W)                                       # needs sage.groups
             Finite lattice containing 14 elements
 
-            sage: W = WeylGroup(['B', 2], prefix='s')
-            sage: posets.NoncrossingPartitions(W)
+            sage: W = WeylGroup(['B', 2], prefix='s')                                   # needs sage.groups
+            sage: posets.NoncrossingPartitions(W)                                       # needs sage.groups
             Finite lattice containing 6 elements
         """
         return W.noncrossing_partition_lattice()
@@ -1329,11 +1332,11 @@ class Posets(metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(4)
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(4)                            # needs sage.groups
             Finite poset containing 24 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")           # needs sage.groups
             Finite poset containing 6 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")    # needs sage.groups
             Finite poset containing 6 elements
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -1548,20 +1551,20 @@ class Posets(metaclass=ClasscallMetaclass):
 
         covers = []
         current_level = ['']
-        for i in range(1, n+1):
+        for i in range(1, n + 1):
             new_level = set()
             for low in current_level:
                 ind = low.find('1')
                 if ind != -1:  # = found a '1' -> change first '1' to '2'
-                    up = low[:ind]+'2'+low[ind+1:]
+                    up = low[:ind] + '2' + low[ind + 1:]
                     new_level.add(up)
                     covers.append((low, up))
                 else:  # no '1' in low
                     ind = len(low)
 
                 # add '1' to every position not after first existing '1'
-                for j in range(ind+1):
-                    up = '2'*j + '1' + low[j:len(low)]
+                for j in range(ind + 1):
+                    up = '2' * j + '1' + low[j:len(low)]
                     new_level.add(up)
                     covers.append((low, up))
 
@@ -1589,10 +1592,10 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         n = check_int(n, 1)
 
-        edges = [(i, i+1) for i in range(1, n)]
-        edges.extend([(n, n+1), (n, n+2), (n+1, n+3), (n+2, n+3)])
-        edges.extend([(i, i+1) for i in range(n+3, 2*n+2)])
-        p = DiGraph([list(range(1, 2*n + 3)), edges])
+        edges = [(i, i + 1) for i in range(1, n)]
+        edges.extend([(n, n + 1), (n, n + 2), (n + 1, n + 3), (n + 2, n + 3)])
+        edges.extend([(i, i + 1) for i in range(n + 3, 2 * n + 2)])
+        p = DiGraph([list(range(1, 2 * n + 3)), edges])
         return DCompletePoset(p)
 
     @staticmethod
@@ -1694,7 +1697,7 @@ class Posets(metaclass=ClasscallMetaclass):
                     # Try and remove the ith element from the permutation
                     lower = list(upper)
                     j = lower.pop(i)
-                    for k in range(len(top)-level-1):  # Standardize result
+                    for k in range(len(top) - level - 1):  # Standardize result
                         if lower[k] > j:
                             lower[k] = lower[k] - 1
                     lower_perm = P(lower)
@@ -1749,13 +1752,13 @@ class Posets(metaclass=ClasscallMetaclass):
         while len(top) - len(bottom) >= level + 1:
             elem.append([])  # Add a new empty level
             for upper in elem[level]:
-                for i in range(len(top)-level):
+                for i in range(len(top) - level):
                     # Try and remove the ith element from the permutation
                     if i in upper[1]:
                         continue
                     lower_perm = list(upper[0])
                     j = lower_perm.pop(i)
-                    for e in range(len(top)-level-1):
+                    for e in range(len(top) - level - 1):
                         if lower_perm[e] > j:
                             lower_perm[e] = lower_perm[e] - 1
                     lower_pos = list(upper[1])
@@ -1901,9 +1904,9 @@ def _random_lattice(n, p):
         # Look for an admissible lower cover for the next element i
         while True:
             # Generate a random antichain
-            lc_list = [i-1-floor(i*sqrt(random()))]
+            lc_list = [i - 1 - floor(i * sqrt(random()))]
             while random() < p and 0 not in lc_list:
-                new = i-1-floor(i*sqrt(random()))
+                new = i - 1 - floor(i * sqrt(random()))
                 if any(meets[new][lc] in [new, lc] for lc in lc_list):
                     continue
                 lc_list.append(new)

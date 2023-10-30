@@ -284,7 +284,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         cdef Integer list_elt
         cdef ZZ_c halfp
         cdef Py_ssize_t i, j
-        cdef ZZ_p_c const_term_holder
         self.prime_pow.restore_top_context()
         ###ZZ_p_construct(&const_term_holder)
         cdef ntl_ZZ holder = ntl_ZZ()
@@ -614,11 +613,13 @@ def _test_preprocess_list(R, L):
         ([1, 10, 25, 0], -1, NTL modulus 625)
         sage: _test_preprocess_list(ZqCA(25,names='a',implementation="NTL"), [1/5,mod(2,625),Zp(5)(5,3),mod(0,3125)])
         ([1, 10, 25, 0], -1, NTL modulus 625)
-        sage: T.<a> = Qp(5).extension(x^2-5)
+        sage: x = polygen(ZZ, 'x')
+        sage: T.<a> = Qp(5).extension(x^2 - 5)
         sage: _test_preprocess_list(T, [5^-1 + O(5)])
         ([1], -1, NTL modulus 25)
     """
     return preprocess_list(R(0), L)
+
 
 cdef preprocess_list(pAdicZZpXElement elt, L):
     """
@@ -629,7 +630,6 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
     cdef ntl_ZZ_pContext_class ctx
     cdef ntl_ZZ pshift_z
     cdef Integer pshift_m
-    cdef long aprec
     cdef ntl_ZZ py_tmp
     if not isinstance(L, list):
         raise TypeError("L must be a list")

@@ -22,9 +22,9 @@ class CartanType(CartanType_standard_affine):
             sage: ct = CartanType(['BC',4,2])
             sage: ct
             ['BC', 4, 2]
-            sage: ct._repr_(compact = True)
+            sage: ct._repr_(compact=True)
             'BC4~'
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O=<=O---O---O=<=O
             0   1   2   3   4
             BC4~
@@ -43,19 +43,19 @@ class CartanType(CartanType_standard_affine):
             ['C', 4]
 
             sage: dual = ct.dual()
-            sage: dual.dynkin_diagram()
+            sage: dual.dynkin_diagram()                                                 # needs sage.graphs
             O=>=O---O---O=>=O
             0   1   2   3   4
             BC4~*
 
             sage: dual.special_node()
             0
-            sage: dual.classical().dynkin_diagram()
+            sage: dual.classical().dynkin_diagram()                                     # needs sage.graphs
             O---O---O=>=O
             1   2   3   4
             B4
 
-            sage: CartanType(['BC',1,2]).dynkin_diagram()
+            sage: CartanType(['BC',1,2]).dynkin_diagram()                               # needs sage.graphs
               4
             O=<=O
             0   1
@@ -74,37 +74,34 @@ class CartanType(CartanType_standard_affine):
 
         EXAMPLES::
 
-            sage: c = CartanType(['BC',3,2]).dynkin_diagram()
-            sage: c
+            sage: c = CartanType(['BC',3,2]).dynkin_diagram(); c                        # needs sage.graphs
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-            sage: c = CartanType(["A", 6, 2]).dynkin_diagram() # should be the same as above; did fail at some point!
-            sage: c
+            sage: c = CartanType(["A", 6, 2]).dynkin_diagram()  # should be the same as above; did fail at some point!  # needs sage.graphs
+            sage: c                                                                     # needs sage.graphs
             O=<=O---O=<=O
             0   1   2   3
             BC3~
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-            sage: c = CartanType(['BC',2,2]).dynkin_diagram()
-            sage: c
+            sage: c = CartanType(['BC',2,2]).dynkin_diagram(); c                        # needs sage.graphs
             O=<=O=<=O
             0   1   2
             BC2~
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 2), (1, 2, 1), (2, 1, 2)]
 
-            sage: c = CartanType(['BC',1,2]).dynkin_diagram()
-            sage: c
+            sage: c = CartanType(['BC',1,2]).dynkin_diagram(); c                        # needs sage.graphs
               4
             O=<=O
             0   1
             BC1~
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 4)]
 
         """
@@ -186,10 +183,10 @@ class CartanType(CartanType_standard_affine):
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
-            ret = "\\draw (0, 0.05 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, -0.05 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
-            ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
+            ret = "\\draw (0, 0.05 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, -0.05 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n" % node_dist
+            ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n" % node_dist
             if dual:
                 ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
             else:
@@ -198,13 +195,13 @@ class CartanType(CartanType_standard_affine):
             ret += node(node_dist, 0, label(1))
             return ret
 
-        ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.1 cm) -- +(%s cm,0);\n" % node_dist
         if dual:
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
         else:
             ret += self._latex_draw_arrow_tip(0.5*node_dist-0.2, 0, 180)
-        ret += "{\n\\pgftransformxshift{%s cm}\n"%node_dist
+        ret += "{\n\\pgftransformxshift{%s cm}\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual=dual)
         ret += "}\n" + node(0, 0, label(0))
         return ret

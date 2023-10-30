@@ -69,13 +69,14 @@ cdef class Morphism(Map):
         EXAMPLES::
 
             sage: R.<t> = ZZ[]
-            sage: f = R.hom([t+1])
+            sage: f = R.hom([t + 1])
             sage: f     # indirect doctest
             Ring endomorphism of Univariate Polynomial Ring in t over Integer Ring
               Defn: t |--> t + 1
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(12)
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K); phi
@@ -83,7 +84,6 @@ cdef class Morphism(Map):
             Generic morphism:
               From: Cyclotomic Field of order 12 and degree 4
               To:   Cyclotomic Field of order 132 and degree 40
-
             sage: del K
             sage: import gc
             sage: _ = gc.collect()
@@ -182,6 +182,7 @@ cdef class Morphism(Map):
              and left modules over (euclidean domains
              and infinite enumerated sets and metric spaces)
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(12)
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K)
@@ -202,6 +203,7 @@ cdef class Morphism(Map):
             sage: f.is_endomorphism()
             True
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(12)
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K)
@@ -224,7 +226,7 @@ cdef class Morphism(Map):
             sage: f = R.hom([t])
             sage: f.is_identity()
             True
-            sage: g = R.hom([t+1])
+            sage: g = R.hom([t + 1])
             sage: g.is_identity()
             False
 
@@ -260,7 +262,9 @@ cdef class Morphism(Map):
             sage: x^2 + y
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for +:
+            'Univariate Polynomial Ring in x over Integer Ring' and
+            'Univariate Polynomial Ring in y over Integer Ring'
 
         Let us declare a coercion from `\ZZ[x]` to `\ZZ[z]`::
 
@@ -284,7 +288,9 @@ cdef class Morphism(Map):
             sage: phi.register_as_coercion()
             Traceback (most recent call last):
             ...
-            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring to Univariate Polynomial Ring in z over Integer Ring already registered or discovered
+            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring
+            to Univariate Polynomial Ring in z over Integer Ring
+            already registered or discovered
 
         """
         self._codomain.register_coercion(self)
@@ -300,6 +306,7 @@ cdef class Morphism(Map):
         Let us declare a conversion from the symmetric group to `\ZZ`
         through the sign map::
 
+            sage: # needs sage.groups
             sage: S = SymmetricGroup(4)
             sage: phi = Hom(S, ZZ)(lambda x: ZZ(x.sign()))
             sage: x = S.an_element(); x
@@ -346,27 +353,29 @@ cdef class Morphism(Map):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: from sage.categories.morphism import SetMorphism
             sage: E = End(Partitions(5))
             sage: f = E.identity()
-            sage: g = SetMorphism(E, lambda x:x)
+            sage: g = SetMorphism(E, lambda x: x)
             sage: f == g
             Traceback (most recent call last):
             ...
-            NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'> and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
+            NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'>
+            and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
 
         We check that :trac:`28617` is fixed::
 
-            sage: FF = GF(2^20)
-            sage: f = FF.frobenius_endomorphism()
-            sage: f == FF.frobenius_endomorphism()
+            sage: FF = GF(2^20)                                                         # needs sage.rings.finite_rings
+            sage: f = FF.frobenius_endomorphism()                                       # needs sage.rings.finite_rings
+            sage: f == FF.frobenius_endomorphism()                                      # needs sage.rings.finite_rings
             True
 
         and that :trac:`29632` is fixed::
 
-            sage: R.<x,y> = QuadraticField(-1)[]
-            sage: f = R.hom(R.gens(), R)
-            sage: f.is_identity()
+            sage: R.<x,y> = QuadraticField(-1)[]                                        # needs sage.rings.number_field
+            sage: f = R.hom(R.gens(), R)                                                # needs sage.rings.number_field
+            sage: f.is_identity()                                                       # needs sage.rings.number_field
             True
         """
         if self is other:
@@ -502,12 +511,13 @@ cdef class IdentityMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: E = End(Partitions(5))
-            sage: E.identity().is_identity()
+            sage: E = End(Partitions(5))                                                # needs sage.combinat
+            sage: E.identity().is_identity()                                            # needs sage.combinat
             True
 
         Check that :trac:`15478` is fixed::
 
+            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
             sage: phi = End(K)([z^2])
             sage: R.<t> = K[]
@@ -678,7 +688,7 @@ cdef class SetMorphism(Morphism):
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
             sage: g = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
-            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__) # todo: replace by the more correct Monoids
+            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__)  # todo: replace by the more correct Monoids
             sage: i = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__neg__)
             sage: f._eq_c_impl(g)
             True
@@ -704,7 +714,7 @@ cdef class SetMorphism(Morphism):
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
             sage: g = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
-            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__) # todo: replace by the more correct Monoids
+            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__)  # todo: replace by the more correct Monoids
             sage: i = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__neg__)
             sage: f == f, f != f, f < f, f > f, f <= f, f >= f
             (True, False, False, False, True, True)

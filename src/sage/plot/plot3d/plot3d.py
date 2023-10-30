@@ -1,10 +1,12 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Plotting functions
 
 EXAMPLES::
 
     sage: x, y = var('x y')
-    sage: W = plot3d(sin(pi*((x)^2 + (y)^2))/2, (x, -1, 1), (y, -1, 1), frame=False, color='purple', opacity=0.8)
+    sage: W = plot3d(sin(pi*((x)^2 + (y)^2))/2, (x, -1, 1), (y, -1, 1),
+    ....:            frame=False, color='purple', opacity=0.8)
     sage: S = sphere((0, 0, 0), size=0.3, color='red', aspect_ratio=[1,1,1])
     sage: show(W + S, figsize=8)
 
@@ -30,7 +32,8 @@ EXAMPLES::
 
     sage: def f(x,y):
     ....:     return math.sin(y^2 + x^2)/math.sqrt(x^2 + y^2 + 0.0001)
-    sage: P = plot3d(f, (-3, 3),(-3, 3), adaptive=True, color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
+    sage: P = plot3d(f, (-3, 3),(-3, 3), adaptive=True,
+    ....:            color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
     sage: P.show()
 
 .. ONLY:: html
@@ -121,11 +124,14 @@ We plot "cape man"::
 
 ::
 
-    sage: S += sphere((.45, -.1, .15), size=.1, color='white') + sphere((.51,-.1,.17), size=.05, color='black')
-    sage: S += sphere((.45, .1, .15), size=.1, color='white') + sphere((.51, .1,.17), size=.05, color='black')
+    sage: S += sphere((.45, -.1, .15), size=.1, color='white')
+    sage: S += sphere((.51,-.1,.17), size=.05, color='black')
+    sage: S += sphere((.45, .1, .15), size=.1, color='white')
+    sage: S += sphere((.51, .1,.17), size=.05, color='black')
     sage: S += sphere((.5, 0, -.2), size=.1, color='yellow')
     sage: def f(x,y): return math.exp(x/5)*math.cos(y)
-    sage: P = plot3d(f, (-5, 5), (-5, 5), adaptive=True, color=['red','yellow'], max_depth=10)
+    sage: P = plot3d(f, (-5, 5), (-5, 5), adaptive=True,
+    ....:            color=['red','yellow'], max_depth=10)
     sage: cape_man = P.scale(.2) + S.translate(1, 0, 0)
     sage: cape_man.show(aspect_ratio=[1, 1, 1])
 
@@ -257,7 +263,7 @@ class _Coordinates():
         """
         all_vars = sage_getargspec(self.transform).args[1:]
         if set(all_vars) != set(indep_vars + [dep_var]):
-            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s'%list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
+            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s' % list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
         self.dep_var = dep_var
         self.indep_vars = indep_vars
 
@@ -378,7 +384,7 @@ class _Coordinates():
             ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
             ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
             sage: import scipy.interpolate
-            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r)
+            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r).ev
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
             Graphics3d Object
 
@@ -703,7 +709,8 @@ class SphericalElevation(_Coordinates):
 
     Plot a sin curve wrapped around the equator::
 
-        sage: P1 = plot3d( (pi/12)*sin(8*theta), (r,0.99,1), (theta, 0, 2*pi), transformation=SE, plot_points=(10,200))
+        sage: P1 = plot3d((pi/12)*sin(8*theta), (r,0.99,1), (theta, 0, 2*pi),
+        ....:             transformation=SE, plot_points=(10,200))
         sage: P2 = sphere(center=(0,0,0), size=1, color='red', opacity=0.3)
         sage: P1 + P2
         Graphics3d Object
@@ -736,10 +743,14 @@ class SphericalElevation(_Coordinates):
         sage: r, phi, theta = var('r phi theta')
         sage: SE = SphericalElevation('elevation', ['radius', 'azimuth'])
         sage: angles = [pi/18, pi/12, pi/6]
-        sage: P1 = [plot3d( a, (r,0,3), (theta, 0, 2*pi), transformation=SE, opacity=0.85, color='blue') for a in angles]
+        sage: P1 = [plot3d(a, (r,0,3), (theta, 0, 2*pi), transformation=SE,
+        ....:              opacity=0.85, color='blue')
+        ....:       for a in angles]
 
         sage: S = Spherical('inclination', ['radius', 'azimuth'])
-        sage: P2 = [plot3d( a, (r,0,3), (theta, 0, 2*pi), transformation=S, opacity=0.85, color='red') for a in angles]
+        sage: P2 = [plot3d(a, (r,0,3), (theta, 0, 2*pi), transformation=S,
+        ....:              opacity=0.85, color='red')
+        ....:       for a in angles]
         sage: show(sum(P1+P2), aspect_ratio=1)
 
     .. ONLY:: html
@@ -886,7 +897,7 @@ class TrivialTriangleFactory:
     but simply returning a list of vertices for both regular and
     smooth triangles.
     """
-    def triangle(self, a, b, c, color = None):
+    def triangle(self, a, b, c, color=None):
         """
         Function emulating behavior of
         :meth:`~sage.plot.plot3d.tri_plot.TriangleFactory.triangle`
@@ -911,8 +922,9 @@ class TrivialTriangleFactory:
             sage: tri
             [[0, 0, 0], [0, 0, 1], [1, 1, 0]]
         """
-        return [a,b,c]
-    def smooth_triangle(self, a, b, c, da, db, dc, color = None):
+        return [a, b, c]
+
+    def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         """
         Function emulating behavior of
         :meth:`~sage.plot.plot3d.tri_plot.TriangleFactory.smooth_triangle`
@@ -940,6 +952,7 @@ class TrivialTriangleFactory:
             [[0, 0, 0], [0, 0, 1], [1, 1, 0]]
         """
         return [a,b,c]
+
 
 from . import parametric_plot3d
 def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
@@ -1083,7 +1096,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
         sage: var('x,y')
         (x, y)
-        sage: plot3d(sin(x^2 + y^2),(x,-5,5),(y,-5,5), plot_points=200)
+        sage: plot3d(sin(x^2 + y^2), (x,-5,5), (y,-5,5), plot_points=200)
         Graphics3d Object
 
     .. ONLY:: html
@@ -1151,8 +1164,10 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     Two wobby translucent planes::
 
         sage: x,y = var('x,y')
-        sage: P = plot3d(x + y + sin(x*y), (x, -10, 10), (y, -10, 10), opacity=0.87, color='blue')
-        sage: Q = plot3d(x - 2*y - cos(x*y),(x, -10, 10), (y, -10, 10), opacity=0.3, color='red')
+        sage: P = plot3d(x + y + sin(x*y), (x, -10, 10), (y, -10, 10),
+        ....:            opacity=0.87, color='blue')
+        sage: Q = plot3d(x - 2*y - cos(x*y),(x, -10, 10), (y, -10, 10),
+        ....:            opacity=0.3, color='red')
         sage: P + Q
         Graphics3d Object
 
@@ -1357,11 +1372,11 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
         from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
         if isinstance(transformation, (tuple, list,Vector_callable_symbolic_dense)):
-            if len(transformation)==3:
+            if len(transformation) == 3:
                 if params is None:
                     raise ValueError("must specify independent variable names in the ranges when using generic transformation")
                 indep_vars = params
-            elif len(transformation)==4:
+            elif len(transformation) == 4:
                 indep_vars = transformation[3]
                 transformation = transformation[0:3]
             else:
@@ -1369,8 +1384,8 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
             # find out which variable is the function variable by
             # eliminating the parameter variables.
             all_vars = set(sum([list(s.variables()) for s in transformation],[]))
-            dep_var=all_vars - set(indep_vars)
-            if len(dep_var)==1:
+            dep_var = all_vars - set(indep_vars)
+            if len(dep_var) == 1:
                 dep_var = dep_var.pop()
                 transformation = _ArbitraryCoordinates(transformation, dep_var, indep_vars)
             else:
@@ -1476,9 +1491,9 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
             texture = Texture(kwds)
 
     factory = TrivialTriangleFactory()
-    plot = TrianglePlot(factory, g, (xmin, xmax), (ymin, ymax), g = grad_f,
+    plot = TrianglePlot(factory, g, (xmin, xmax), (ymin, ymax), g=grad_f,
                         min_depth=initial_depth, max_depth=max_depth,
-                        max_bend=max_bend, num_colors = None)
+                        max_bend=max_bend, num_colors=None)
 
     P = IndexFaceSet(plot._objects)
     if isinstance(texture, (list, tuple)):

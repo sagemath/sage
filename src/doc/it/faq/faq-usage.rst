@@ -98,7 +98,7 @@ lancia i seguenti comandi dall'interfaccia a riga di comando di Sage::
     import _tkinter
     import Tkinter
 
-Se non ti viene segnalato alcun errore di ``ImportError``
+Se non ti viene segnalato alcun errore di :class:`ImportError`
 allora il problema è risolto.
 
 
@@ -304,7 +304,7 @@ anziché Integer di Sage. Ad esempio::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind([1,2,3,4,5], [2,3,4,5,.6])
-    Ttest_indResult(statistic=0.0767529..., pvalue=0.940704...)
+    Ttest...Result(statistic=0.0767529..., pvalue=0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 
@@ -662,7 +662,7 @@ Con degli oggetti "a" e "b" ed una funzione "f" ho digitato accidentalmente "f(a
 
 Questo è dovuto a come sono definite le funzioni in Sage con la
 notazione ``f(x)=expr`` usando il preparser. Nota anche che se fai
-quest'errore in un costrutto ``if``, avrai un errore ``SyntaxError``
+quest'errore in un costrutto ``if``, avrai un errore :class:`SyntaxError`
 prima di qualunque altro comportamento errato, quindi, in questo caso,
 non hai il problema.
 

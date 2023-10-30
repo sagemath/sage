@@ -79,9 +79,10 @@ class AlgebraIdeals(Category_ideal):
         EXAMPLES::
 
             sage: AlgebraIdeals(QQ['x']).super_categories()
-            [Category of algebra modules over Univariate Polynomial Ring in x over Rational Field]
-            sage: C = AlgebraIdeals(FreeAlgebra(QQ,2,'a,b'))
-            sage: C.super_categories()
+            [Category of algebra modules
+              over Univariate Polynomial Ring in x over Rational Field]
+            sage: C = AlgebraIdeals(FreeAlgebra(QQ, 2, 'a,b'))                          # needs sage.combinat sage.modules
+            sage: C.super_categories()                                                  # needs sage.combinat sage.modules
             []
 
         """

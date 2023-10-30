@@ -1,7 +1,7 @@
-"""
+r"""
 `p`-adic Extension Leaves
 
-The final classes for extensions of Zp and Qp (ie classes that are not
+The final classes for extensions of `\ZZ_p` and `\QQ_p` (i.e., classes that are not
 just designed to be inherited from).
 
 AUTHORS:
@@ -20,11 +20,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from .pow_computer_ext import PowComputer_ext_maker
-from .pow_computer_flint import PowComputer_flint_maker
-from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
+
+lazy_import('sage.rings.padics.pow_computer_ext', 'PowComputer_ext_maker')
+lazy_import('sage.rings.padics.pow_computer_flint', 'PowComputer_flint_maker')
+lazy_import('sage.libs.ntl.ntl_ZZ_pX', 'ntl_ZZ_pX')
 
 from .unramified_extension_generic import UnramifiedExtensionGeneric
 from .eisenstein_extension_generic import EisensteinExtensionGeneric
@@ -47,13 +49,21 @@ from .generic_nodes import pAdicCappedRelativeRingGeneric, \
 #from padic_general_extension_capped_relative_element import pAdicGeneralExtensionCappedRelativeElement
 #from padic_general_extension_lazy_element import pAdicGeneralExtensionRelaxedElement
 
-from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
-from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
-from .padic_ZZ_pX_CA_element import pAdicZZpXCAElement
-from .qadic_flint_CR import qAdicCappedRelativeElement
-from .qadic_flint_CA import qAdicCappedAbsoluteElement
-from .qadic_flint_FM import qAdicFixedModElement
-from .qadic_flint_FP import qAdicFloatingPointElement
+try:
+    from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
+    from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
+    from .padic_ZZ_pX_CA_element import pAdicZZpXCAElement
+except ImportError:
+    pass
+
+try:
+    from .qadic_flint_CR import qAdicCappedRelativeElement
+    from .qadic_flint_CA import qAdicCappedAbsoluteElement
+    from .qadic_flint_FM import qAdicFixedModElement
+    from .qadic_flint_FP import qAdicFloatingPointElement
+except ImportError:
+    pass
+
 
 def _make_integral_poly(exact_modulus, p, prec):
     """
@@ -89,12 +99,12 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCR(27,10000)
+        sage: R.<a> = ZqCR(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
-        """
-        A capped relative representation of Zq.
+        r"""
+        A capped relative representation of `\ZZ_q`.
 
         INPUT:
 
@@ -102,7 +112,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
           This could be a polynomial with integer coefficients, for example,
           while ``poly`` has coefficients in a `p`-adic ring.
 
-        - ``poly`` -- t polynomial with coefficients in :meth:`base_ring`
+        - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
 
         - ``prec`` -- the precision cap of this ring
@@ -147,12 +157,12 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
     """
     TESTS::
 
-        sage: R.<a> = QqCR(27,10000)
+        sage: R.<a> = QqCR(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         r"""
-        A representation of Qq.
+        A representation of `\QQ_q`.
 
         INPUT:
 
@@ -233,25 +243,25 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCA(27,10000)
+        sage: R.<a> = ZqCA(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
-        """
-        A capped absolute representation of Zq.
+        r"""
+        A capped absolute representation of `ZZ_q`.
 
         INPUT:
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while poly has coefficients in a `p`-adic ring.
+          while ``poly`` has coefficients in a `p`-adic ring.
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- A dictionary of print options
+        - ``print_mode`` -- a dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -292,7 +302,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     """
     TESTS::
 
-        sage: R.<a> = ZqFM(27,10000)
+        sage: R.<a> = ZqFM(27,1000)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4) # long time
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -358,14 +368,14 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         True
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
-        """
-        A floating point representation of Zq.
+        r"""
+        A floating point representation of `\ZZ_q`.
 
         INPUT:
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in Zp.
+          while ``poly`` has coefficients in `\ZZ_p`.
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -415,8 +425,8 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         True
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
-        """
-        A representation of Qq.
+        r"""
+        A representation of `\QQ_q`.
 
         INPUT:
 
@@ -479,13 +489,13 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R = Zp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = Zp(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
-        """
-        A capped relative representation of an eisenstein extension of Zp.
+        r"""
+        A capped relative representation of an Eisenstein extension of `\ZZ_p`.
 
         INPUT:
 
@@ -534,13 +544,13 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
     """
     TESTS::
 
-        sage: R = Qp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = Qp(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
-        """
-        A capped relative representation of an eisenstein extension of Qp.
+        r"""
+        A capped relative representation of an Eisenstein extension of `\QQ_p`.
 
         INPUT:
 
@@ -590,13 +600,13 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R = ZpCA(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = ZpCA(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation):
-        """
-        A capped absolute representation of an eisenstein extension of Zp.
+        r"""
+        A capped absolute representation of an Eisenstein extension of `\ZZ_p`.
 
         INPUT:
 
@@ -645,13 +655,13 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
     """
     TESTS::
 
-        sage: R = ZpFM(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
+        sage: R = ZpFM(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
         sage: W.<w> = R.ext(f)
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
-        """
-        A fixed modulus representation of an eisenstein extension of Zp.
+        r"""
+        A fixed modulus representation of an eisenstein extension of `\ZZ_p`.
 
         INPUT:
 
@@ -706,7 +716,8 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
             sage: R.fraction_field()
             Traceback (most recent call last):
             ...
-            TypeError: This implementation of the p-adic ring does not support fields of fractions.
+            TypeError: This implementation of the p-adic ring
+            does not support fields of fractions.
         """
         raise TypeError("This implementation of the p-adic ring does not support fields of fractions.")
 

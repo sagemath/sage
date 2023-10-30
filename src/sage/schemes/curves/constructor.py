@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.singular
 """
 Curve constructor
 
@@ -12,8 +13,8 @@ EXAMPLES::
 
 ::
 
-    sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)                                         # optional - sage.rings.finite_rings
-    sage: Curve(y^2*z^7 - x^9 - x*z^8)                                                  # optional - sage.rings.finite_rings
+    sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+    sage: Curve(y^2*z^7 - x^9 - x*z^8)
     Projective Plane Curve over Finite Field of size 5
      defined by -x^9 + y^2*z^7 - x*z^8
 
@@ -26,14 +27,14 @@ AUTHORS:
 - Grayson Jorgenson (2016-06)
 
 """
-#*********************************************************************
+# ********************************************************************
 #      Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-#                 http://www.gnu.org/licenses/
-#*********************************************************************
+#                 https://www.gnu.org/licenses/
+# ********************************************************************
 
 from sage.categories.fields import Fields
 
@@ -78,7 +79,8 @@ from .affine_curve import (AffineCurve,
 
 from sage.schemes.plane_conics.constructor import Conic
 
-def _is_irreducible_and_reduced(F):
+
+def _is_irreducible_and_reduced(F) -> bool:
     """
     Check if the polynomial F is irreducible and reduced.
 
@@ -92,6 +94,7 @@ def _is_irreducible_and_reduced(F):
     """
     factors = F.factor()
     return len(factors) == 1 and factors[0][1] == 1
+
 
 def Curve(F, A=None):
     """
@@ -124,10 +127,10 @@ def Curve(F, A=None):
 
     Affine plane curves.  ::
 
-        sage: x,y = GF(7)['x,y'].gens()                                                 # optional - sage.rings.finite_rings
-        sage: C = Curve(y^2 + x^3 + x^10); C                                            # optional - sage.rings.finite_rings
+        sage: x,y = GF(7)['x,y'].gens()
+        sage: C = Curve(y^2 + x^3 + x^10); C
         Affine Plane Curve over Finite Field of size 7 defined by x^10 + x^3 + y^2
-        sage: C.genus()                                                                 # optional - sage.rings.finite_rings
+        sage: C.genus()
         0
         sage: x, y = QQ['x,y'].gens()
         sage: Curve(x^3 + y^3 + 1)
@@ -205,11 +208,11 @@ def Curve(F, A=None):
     The defining polynomial must be nonzero unless the ambient space itself is
     of dimension 1. ::
 
-        sage: P1.<x,y> = ProjectiveSpace(1, GF(5))                                      # optional - sage.rings.finite_rings
-        sage: S = P1.coordinate_ring()                                                  # optional - sage.rings.finite_rings
-        sage: Curve(S(0), P1)                                                           # optional - sage.rings.finite_rings
+        sage: P1.<x,y> = ProjectiveSpace(1, GF(5))
+        sage: S = P1.coordinate_ring()
+        sage: Curve(S(0), P1)
         Projective Line over Finite Field of size 5
-        sage: Curve(P1)                                                                 # optional - sage.rings.finite_rings
+        sage: Curve(P1)
         Projective Line over Finite Field of size 5
 
     ::
@@ -239,9 +242,9 @@ def Curve(F, A=None):
                     A._coordinate_ring = P
                     break
             else:
-                A = ProjectiveSpace(P.ngens()-1, P.base_ring(), names=P.variable_names())
+                A = ProjectiveSpace(P.ngens() - 1, P.base_ring(), names=P.variable_names())
                 A._coordinate_ring = P
-        elif isinstance(F, MPolynomial): # define a plane curve
+        elif isinstance(F, MPolynomial):  # define a plane curve
             P = F.parent()
             k = F.base_ring()
 

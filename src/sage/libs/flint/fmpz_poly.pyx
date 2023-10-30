@@ -27,7 +27,7 @@ from sage.arith.long cimport pyobject_to_long
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.structure.sage_object cimport SageObject
 from sage.rings.integer cimport Integer
-from sage.libs.flint.fmpz_poly cimport *
+
 
 cdef class Fmpz_poly(SageObject):
 
@@ -152,7 +152,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f.list()
             [2, 1, 0, -1]
         """
-        return [self[i] for i in xrange(self.degree() + 1)]
+        return [self[i] for i in range(self.degree() + 1)]
 
     def __add__(left, right):
         """

@@ -264,22 +264,18 @@ Checking the consistency of enumeration and test::
     than a couple of minutes.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
-from libc.string cimport memset
 from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
-
-from sage.rings.integer cimport Integer
 
 
 cdef unsigned char * seq

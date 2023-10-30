@@ -486,7 +486,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         elif data is None:
             raise ValueError('%s cannot be converted.' % (data,))
 
-        elif type(data) == self.element_class and data.parent() == self:
+        elif type(data) is self.element_class and data.parent() == self:
             return data
 
         elif isinstance(data, str):
@@ -775,8 +775,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             def subfactors(F):
                 for f in F:
                     if isinstance(f, GenericProduct):
-                        for g in subfactors(f.cartesian_factors()):
-                            yield g
+                        yield from subfactors(f.cartesian_factors())
                     else:
                         yield f
 
@@ -838,7 +837,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 S.next_custom()
                 O.next_custom()
 
-        assert(len(newS) == len(newO))
+        assert (len(newS) == len(newO))
 
         if (len(Sfactors) == len(newS) and
             len(Ofactors) == len(newO)):

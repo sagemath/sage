@@ -52,8 +52,8 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: W.<x,y> = algebras.DifferentialWeyl(QQ)
-                sage: W.graded_algebra()
+                sage: W.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
+                sage: W.graded_algebra()                                                # needs sage.combinat sage.modules
                 Graded Algebra of Differential Weyl algebra of
                  polynomials in x, y over Rational Field
             """
@@ -76,6 +76,7 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
                 sage: Cl.<x,y,z> = CliffordAlgebra(Q)
                 sage: a = x*y - z
@@ -91,6 +92,7 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
                 sage: a.supercommutator(Cl.zero())
                 0
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(ZZ, 2, [-1,1,-3])
                 sage: Cl.<x,y> = CliffordAlgebra(Q)
                 sage: [a.supercommutator(b) for a in Cl.basis() for b in Cl.basis()]
@@ -104,8 +106,8 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
             supercommutators work as well. We verify the exterior algebra
             is supercommutative::
 
-                sage: E.<x,y,z,w> = ExteriorAlgebra(QQ)
-                sage: all(b1.supercommutator(b2) == 0
+                sage: E.<x,y,z,w> = ExteriorAlgebra(QQ)                                 # needs sage.modules
+                sage: all(b1.supercommutator(b2) == 0                                   # needs sage.modules
                 ....:     for b1 in E.basis() for b2 in E.basis())
                 True
             """

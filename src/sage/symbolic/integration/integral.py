@@ -362,9 +362,9 @@ class DefiniteIntegral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: integral(x, x, 0, 1, hold=True)._sympy_()
+            sage: integral(x, x, 0, 1, hold=True)._sympy_()                             # needs sympy
             Integral(x, (x, 0, 1))
-            sage: _.doit()
+            sage: _.doit()                                                              # needs sympy
             1/2
         """
         from sympy.integrals import Integral
@@ -619,12 +619,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: integrate(x*sin(log(x)), x)
         -1/5*x^2*(cos(log(x)) - 2*sin(log(x)))
-        sage: integrate(x*sin(log(x)), x, algorithm='sympy')
+        sage: integrate(x*sin(log(x)), x, algorithm='sympy')                            # needs sympy
         -1/5*x^2*cos(log(x)) + 2/5*x^2*sin(log(x))
         sage: _ = var('y, z')
         sage: (x^y - z).integrate(y)
         -y*z + x^y/log(x)
-        sage: (x^y - z).integrate(y, algorithm="sympy")
+        sage: (x^y - z).integrate(y, algorithm="sympy")                                 # needs sympy
         -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
 
     We integrate the above function in Maple now::
@@ -663,9 +663,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     where the default integrator obtains another answer::
 
-        sage: result = integrate(f(x), x)
-        ...
-        sage: result
+        sage: integrate(f(x), x)  # long time
         1/8*sqrt(x)*gamma(1/4)*gamma(-1/4)^2*hypergeometric((-1/4, -1/4, 1/4), (1/2, 3/4), -1/x^2)/(pi*gamma(3/4))
 
     The following definite integral is not found by maxima::
@@ -683,7 +681,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: integrate(f(x), x, 1, 2, algorithm="fricas")  # optional - fricas
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
-        sage: integrate(f(x), x, 1, 2, algorithm="sympy")
+        sage: integrate(f(x), x, 1, 2, algorithm="sympy")                               # needs sympy
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
     Using Giac to integrate the absolute value of a trigonometric expression::
@@ -743,14 +741,14 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: _ = var('x,y')
         sage: f = log(x^2+y^2)
-        sage: res = integral(f,x,0.0001414, 1.); res
+        sage: res = integral(f,x,1414/10^7, 1); res
         Traceback (most recent call last):
         ...
-        ValueError: Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume(50015104*y^2-50015103>0)', see `assume?` for more details)
-        Is 50015104*y^2-50015103 positive, negative or zero?
+        ValueError: Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help ...
+        Is ... positive, negative or zero?
         sage: assume(y>1)
-        sage: res = integral(f,x,0.0001414, 1.); res
-        2*y*arctan(1.0/y) - 2*y*arctan(0.0001414/y) + 1.0*log(1.0*y^2 + 1.0) - 0.0001414*log(1.0*y^2 + 1.9993959999999997e-08) - 1.9997172
+        sage: res = integral(f,x,1414/10^7, 1); res
+        -2*y*arctan(707/5000000/y) + 2*y*arctan(1/y) + log(y^2 + 1) - 707/5000000*log(y^2 + 499849/25000000000000) - 4999293/2500000
         sage: nres = numerical_integral(f.subs(y=2), 0.0001414, 1.); nres
         (1.4638323264144..., 1.6251803529759...e-14)
         sage: res.subs(y=2).n()
@@ -858,7 +856,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     Verify that MinusInfinity works with sympy (:trac:`12345`)::
 
-        sage: integral(1/x^2, x, -infinity, -1, algorithm='sympy')
+        sage: integral(1/x^2, x, -infinity, -1, algorithm='sympy')                      # needs sympy
         1
 
     Check that :trac:`11737` is fixed::

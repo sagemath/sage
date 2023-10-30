@@ -65,12 +65,11 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
     cdef GraphStruct GS1 = GraphStruct()
     cdef GraphStruct GS2 = GraphStruct()
     cdef GraphStruct GS
-    cdef int i, j, k, n = -1, cell_len
+    cdef int i, j, n = -1
     cdef list partition, cell
     cdef bint loops = 0
 
     from sage.graphs.graph import Graph
-    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     which_G = 1
@@ -88,7 +87,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
                 n = G_in.num_verts()
             elif n != G_in.num_verts():
                 return False
-            if G_in.vertices(sort=True) != list(xrange(n)):
+            if G_in.vertices(sort=True) != list(range(n)):
                 G_in = copy(G_in)
                 to = G_in.relabel(return_map=True)
                 frm = {}
@@ -99,19 +98,19 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             else:
                 if first:
                     partition = partn
-                to = list(xrange(n))
+                to = list(range(n))
                 frm = to
             if sparse:
                 G = SparseGraph(n)
             else:
                 G = DenseGraph(n)
             if G_in.is_directed():
-                for i,j in G_in.edge_iterator(labels=False):
-                    G.add_arc(i,j)
+                for i, j in G_in.edge_iterator(labels=False):
+                    G.add_arc(i, j)
             else:
-                for i,j in G_in.edge_iterator(labels=False):
-                    G.add_arc(i,j)
-                    G.add_arc(j,i)
+                for i, j in G_in.edge_iterator(labels=False):
+                    G.add_arc(i, j)
+                    G.add_arc(j, i)
         elif isinstance(G_in, CGraph):
             G = <CGraph> G_in
             if n == -1:
@@ -119,18 +118,22 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             elif n != <int>G.num_verts:
                 return False
             if not loops:
-                for i from 0 <= i < n:
+                for i in range(n):
                     if G.has_arc_unsafe(i,i):
                         loops = 1
             to = {}
-            for a in G.verts(): to[a]=a
+            for a in G.verts():
+                to[a] = a
             frm = to
             if first:
                 partition = partn
         else:
             raise TypeError("G must be a Sage graph")
-        if first: frm1=frm;to1=to
-        else: frm2=frm;to2=to
+        if first:
+            frm1 = frm
+        else:
+            frm2 = frm
+            to2 = to
         GS.G = G
         GS.directed = 1 if dig else 0
         GS.loops = 1
@@ -300,7 +303,10 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         ....:        if bde.has_arc(i,j):
         ....:            bdg.add_edge(i,j)
         sage: a, b.graph6_string()
-        ([[0, 19, 3, 2, 6, 5, 4, 17, 18, 11, 10, 9, 13, 12, 16, 15, 14, 7, 8, 1], [0, 1, 8, 9, 13, 14, 7, 6, 2, 3, 19, 18, 17, 4, 5, 15, 16, 12, 11, 10], [1, 8, 9, 10, 11, 12, 13, 14, 7, 6, 2, 3, 4, 5, 15, 16, 17, 18, 19, 0]], 'S?[PG__OQ@?_?_?P?CO?_?AE?EC?Ac?@O')
+        ([[0, 19, 3, 2, 6, 5, 4, 17, 18, 11, 10, 9, 13, 12, 16, 15, 14, 7, 8, 1],
+          [0, 1, 8, 9, 13, 14, 7, 6, 2, 3, 19, 18, 17, 4, 5, 15, 16, 12, 11, 10],
+          [1, 8, 9, 10, 11, 12, 13, 14, 7, 6, 2, 3, 4, 5, 15, 16, 17, 18, 19, 0]],
+         'S?[PG__OQ@?_?_?P?CO?_?AE?EC?Ac?@O')
         sage: a == asp
         True
         sage: a == ade
@@ -380,13 +386,12 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     cdef aut_gp_and_can_lab *output
     cdef PartitionStack *part
     from sage.graphs.graph import Graph
-    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
         n = G_in.num_verts()
-        if G_in.vertices(sort=False) != list(xrange(n)):
+        if G_in.vertices(sort=False) != list(range(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
             frm = {}
@@ -401,21 +406,22 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         else:
             G = DenseGraph(n)
         if G_in.is_directed():
-            for i,j in G_in.edge_iterator(labels=False):
-                G.add_arc(i,j)
+            for i, j in G_in.edge_iterator(labels=False):
+                G.add_arc(i, j)
         else:
-            for i,j in G_in.edge_iterator(labels=False):
-                G.add_arc(i,j)
-                G.add_arc(j,i)
+            for i, j in G_in.edge_iterator(labels=False):
+                G.add_arc(i, j)
+                G.add_arc(j, i)
     elif isinstance(G_in, CGraph):
         G = <CGraph> G_in
         n = G.num_verts
         loops = 0
-        for i from 0 <= i < n:
-            if G.has_arc_unsafe(i,i):
+        for i in range(n):
+            if G.has_arc_unsafe(i, i):
                 loops = 1
         to = {}
-        for a in G.verts(): to[a]=a
+        for a in G.verts():
+            to[a] = a
         frm = to
     else:
         raise TypeError("G must be a Sage graph")
@@ -457,7 +463,6 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sig_free(GS.scratch)
         raise MemoryError
 
-    lab_new = lab or certificate
     output = get_aut_gp_and_can_lab(<void *>GS, part, G.num_verts, &all_children_are_equivalent, &refine_by_degree, &compare_graphs, lab, NULL, NULL, NULL)
     sig_free( GS.scratch )
     # prepare output
@@ -686,7 +691,6 @@ cdef bint all_children_are_equivalent(PartitionStack *PS, void *S):
     cdef GraphStruct GS = <GraphStruct> S
     if GS.directed or GS.loops:
         return 0
-    cdef CGraph G = GS.G
     cdef int i, n = PS.degree
     cdef bint in_cell = 0
     cdef int nontrivial_cells = 0
@@ -847,7 +851,7 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
                 print(H.graph6_string())
                 print(perm)
                 return
-            isom = isomorphic(G, H, [list(xrange(n))], list(xrange(n)), 0, 1)
+            isom = isomorphic(G, H, [list(range(n))], list(range(n)), 0, 1)
             if not isom or G.relabel(isom, inplace=False) != H:
                 print("isom FAILURE: graph6-")
                 print(H.graph6_string())
@@ -872,7 +876,7 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
                 print(E.dig6_string())
                 print(perm)
                 return
-            isom = isomorphic(D, E, [list(xrange(n))], list(xrange(n)), 1, 1)
+            isom = isomorphic(D, E, [list(range(n))], list(range(n)), 1, 1)
             if not isom or D.relabel(isom, inplace=False) != E:
                 print("isom FAILURE: dig6-")
                 print(E.dig6_string())
@@ -882,6 +886,7 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
         num_tests += 4*perms_per_graph
         num_graphs += 2
     print("All passed: %d random tests on %d graphs." % (num_tests, num_graphs))
+
 
 def orbit_partition(gamma, list_perm=False):
     r"""
@@ -899,6 +904,7 @@ def orbit_partition(gamma, list_perm=False):
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import orbit_partition
         sage: G = graphs.PetersenGraph()
         sage: S = SymmetricGroup(10)
@@ -934,7 +940,8 @@ def orbit_partition(gamma, list_perm=False):
         l = []
         for i in range(1,n+1):
             orb = gamma.orbit(i)
-            if orb not in l: l.append(orb)
+            if orb not in l:
+                l.append(orb)
         for i in l:
             for j in range(len(i)):
                 if i[j] == n:
@@ -1082,7 +1089,8 @@ cdef void *dg_edge_gen_next(void *data, int *degree, bint *mem_err):
         else:
             u = bitset_first(&edge_candidate.bits)
             v = bitset_next(&edge_candidate.bits, u+1)
-            if v == -1: v = u
+            if v == -1:
+                v = u
             if graph.G.has_arc_unsafe(u, v):
                 reject = 1
         if not reject:
@@ -1136,7 +1144,7 @@ cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, 
     cdef GraphStruct GS_child = <GraphStruct> child, GS_par = <GraphStruct> parent
     cdef DenseGraph DG = <DenseGraph> GS_child.G, DG_par = <DenseGraph> GS_par.G
     cdef subset *edge = <subset *> aug
-    cdef int u, v, n = DG_par.num_verts
+    cdef int u, v
 
     # copy DG_par edges to DG
     copy_dense_graph(DG, DG_par)
@@ -1288,7 +1296,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         34
         156
         1044
-        sage: generate_dense_graphs_edge_addition(8,0) # long time - about 14 seconds at 2.4 GHz
+        sage: generate_dense_graphs_edge_addition(8,0)  # long time (about 14 seconds at 2.4 GHz)
         12346
 
     """
@@ -1342,7 +1350,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
 
     cdef list out_list
     cdef void *thing
-    cdef GraphStruct thing_gs
     cdef Integer number
     cdef bint mem_err = 0
     if construct:
@@ -1352,7 +1359,8 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
     if construct:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             ODG = (<GraphStruct>thing).G
             G = Graph(0, implementation='c_graph', sparse=False)
             DG = DenseGraph(ODG.active_vertices.size, extra_vertices=0)
@@ -1362,7 +1370,8 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
     else:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             number += 1
 
     free_dg_edge_gen(graph_iterator)
@@ -1463,7 +1472,7 @@ cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation,
     """
     cdef GraphStruct GS_par = <GraphStruct> parent, GS = <GraphStruct> child
     cdef DenseGraph DG_par = <DenseGraph> GS_par.G, DG = <DenseGraph> GS.G
-    cdef int u, v, n = DG_par.num_verts
+    cdef int u, n = DG_par.num_verts
     cdef int *scratch = GS.scratch
 
     # copy DG edges to DG_par
@@ -1555,7 +1564,7 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
         53
         209
         1253
-        sage: generate_dense_graphs_vert_addition(8) # long time
+        sage: generate_dense_graphs_vert_addition(8)  # long time
         13599
 
     TESTS::
@@ -1617,7 +1626,6 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
 
     cdef list out_list
     cdef void *thing
-    cdef GraphStruct thing_gs
     cdef Integer number
     cdef bint mem_err = 0
     if construct:
@@ -1627,7 +1635,8 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
     if construct:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             ODG = (<GraphStruct>thing).G
             G = Graph(0, implementation='c_graph', sparse=False)
             DG = DenseGraph(ODG.active_vertices.size, extra_vertices=0)
@@ -1637,7 +1646,8 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
     else:
         while True:
             thing = graph_iterator.next(graph_iterator.data, NULL, &mem_err)
-            if thing is NULL: break
+            if thing is NULL:
+                break
             number += 1
 
     free_dg_vert_gen(graph_iterator)

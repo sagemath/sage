@@ -7,14 +7,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -402,7 +402,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
         if analytic_type <= AT("weak"):
             if analytic_type <= AT("holo"):
                 if analytic_type <= AT("cusp"):
-                    if analytic_type <=AT([]):
+                    if analytic_type <= AT([]):
                         raise ValueError("Analytic type Zero is not valid for forms rings.")
                     else:
                         from .graded_ring import CuspFormsRing
@@ -420,7 +420,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
         if analytic_type <= AT(["weak", "quasi"]):
             if analytic_type <= AT(["holo", "quasi"]):
                 if analytic_type <= AT(["cusp", "quasi"]):
-                    if analytic_type <=AT(["quasi"]):
+                    if analytic_type <= AT(["quasi"]):
                         raise ValueError("Analytic type Zero is not valid for forms rings.")
                     else:
                         from .graded_ring import QuasiCuspFormsRing

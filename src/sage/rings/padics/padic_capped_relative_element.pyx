@@ -235,6 +235,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_tmp(self.relprec),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo
@@ -574,6 +575,7 @@ def unpickle_pcre_v1(R, unit, ordp, relprec):
         2*5^2 + 3*5^3 + O(5^7)
     """
     return unpickle_cre_v2(pAdicCappedRelativeElement, R, unit, ordp, relprec)
+
 
 def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     r"""

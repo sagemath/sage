@@ -100,7 +100,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     Examples over other Number Fields::
 
+        sage: # needs sage.rings.number_field
         sage: E = EllipticCurve('11a1')
+        sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)
         sage: EK = E.change_ring(K)
         sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
@@ -110,9 +112,9 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
           over Number Field in i with defining polynomial x^2 + 1
 
         sage: E = EllipticCurve('11a1')
-        sage: K.<i> = NumberField(x^2 + 1)
-        sage: EK = E.change_ring(K)
-        sage: T = EK.torsion_subgroup()
+        sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
+        sage: EK = E.change_ring(K)                                                     # needs sage.rings.number_field
+        sage: T = EK.torsion_subgroup()                                                 # needs sage.rings.number_field
         sage: T.ngens()
         1
         sage: T.gen(0)
@@ -120,6 +122,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     Note: this class is normally constructed indirectly as follows::
 
+        sage: # needs sage.rings.number_field
         sage: T = EK.torsion_subgroup(); T
         Torsion Subgroup isomorphic to Z/5 associated to the
          Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
@@ -139,26 +142,27 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         INPUT:
 
-        - ``E`` -- An elliptic curve defined over a number field (including `\Q`)
+        - ``E`` -- An elliptic curve defined over a number field (including `\QQ`)
 
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
             sage: E = EllipticCurve('11a1')
-            sage: K.<i> = NumberField(x^2+1)
-            sage: EK = E.change_ring(K)
-            sage: EllipticCurveTorsionSubgroup(EK)
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: EK = E.change_ring(K)                                                 # needs sage.rings.number_field
+            sage: EllipticCurveTorsionSubgroup(EK)                                      # needs sage.rings.number_field
             Torsion Subgroup isomorphic to Z/5 associated to the
              Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
               over Number Field in i with defining polynomial x^2 + 1
 
         Note: this class is normally constructed indirectly as follows::
 
-            sage: T = EK.torsion_subgroup(); T
+            sage: T = EK.torsion_subgroup(); T                                          # needs sage.rings.number_field
             Torsion Subgroup isomorphic to Z/5 associated to the
              Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
               over Number Field in i with defining polynomial x^2 + 1
-            sage: type(T)
+            sage: type(T)                                                               # needs sage.rings.number_field
             <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category'>
 
             sage: T == loads(dumps(T))  # known bug, see https://github.com/sagemath/sage/issues/11599#comment:7
@@ -210,15 +214,16 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
                                                     [T1, T2], structure)
 
     def _repr_(self):
-        """
+        r"""
         String representation of an instance of the EllipticCurveTorsionSubgroup class.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('11a1')
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: EK = E.change_ring(K)
-            sage: T = EK.torsion_subgroup(); T._repr_()
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
+            sage: EK = E.change_ring(K)                                                 # needs sage.rings.number_field
+            sage: T = EK.torsion_subgroup(); T._repr_()                                 # needs sage.rings.number_field
             'Torsion Subgroup isomorphic to Z/5 associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in i with defining polynomial x^2 + 1'
         """
         return "Torsion Subgroup isomorphic to %s associated to the %s" % (self.short_name(), self.__E)
@@ -234,17 +239,19 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: tor == tor
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp(self.__E, other.__E, op)
 
     def curve(self):
-        """
+        r"""
         Return the curve of this torsion subgroup.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('11a1')
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: EK = E.change_ring(K)
             sage: T = EK.torsion_subgroup()
@@ -255,13 +262,15 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     @cached_method
     def points(self):
-        """
+        r"""
         Return a list of all the points in this torsion subgroup.
 
         The list is cached.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve(K, [0,0,0,1,0])
             sage: tor = E.torsion_subgroup()
@@ -310,6 +319,7 @@ def torsion_bound(E, number_of_places=20):
 
     An example over a relative number field (see :trac:`16011`)::
 
+        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
         sage: F.<a> = QuadraticField(5)
         sage: K.<b> = F.extension(x^2 - 3)
@@ -319,6 +329,7 @@ def torsion_bound(E, number_of_places=20):
 
     An example of a base-change curve from `\QQ` to a degree 16 field::
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.elliptic_curves.ell_torsion import torsion_bound
         sage: f = PolynomialRing(QQ,'x')([5643417737593488384,0,
         ....:     -11114515801179776,0,-455989850911004,0,379781901872,

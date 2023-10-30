@@ -57,7 +57,6 @@ from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element, parent
 from sage.symbolic.function cimport Function
 
-
 #################################################################
 # Symbolic function helpers
 #################################################################
@@ -620,7 +619,7 @@ def tolerant_is_symbol(a):
         sage: None.is_symbol()
         Traceback (most recent call last):
         ...
-        AttributeError: 'NoneType' object has no attribute 'is_symbol'
+        AttributeError: 'NoneType' object has no attribute 'is_symbol'...
     """
     try:
         return a.is_symbol()
@@ -1873,7 +1872,7 @@ cdef py_atan2(x, y):
         sage: atan2(RDF(-3), RDF(-1))
         -1.8925468811915387
     """
-    from sage.symbolic.constants import pi, NaN
+    from sage.symbolic.constants import I, pi, NaN
     P = coercion_model.common_parent(x, y)
     if P is ZZ:
         P = RR
@@ -2365,51 +2364,6 @@ cdef mpq_ptr py_mpq_from_rational(x):
     return <mpq_ptr>((<Rational>x).value)
 
 
-symbol_table = {'functions': {}}
-
-
-def register_symbol(obj, conversions, nargs=None):
-    """
-    Add an object to the symbol table, along with how to convert it to
-    other systems such as Maxima, Mathematica, etc.  This table is used
-    to convert *from* other systems back to Sage.
-
-    INPUT:
-
-    - `obj` -- a symbolic object or function.
-
-    - `conversions` -- a dictionary of conversions, where the keys
-                       are the names of interfaces (e.g.,
-                       'maxima'), and the values are the string
-                       representation of obj in that system.
-
-    - ``nargs`` -- optional number of arguments. For most functions,
-      this can be deduced automatically.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.expression import register_symbol as rs
-        sage: rs(SR(5),{'maxima':'five'})
-        sage: SR(maxima_calculus('five'))
-        5
-    """
-    conversions = dict(conversions)
-    try:
-        conversions['sage'] = obj.name()
-    except AttributeError:
-        pass
-    if nargs is None:
-        try:
-            nargs = obj.number_of_arguments()
-        except AttributeError:
-            nargs = -1  # meaning unknown number of arguments
-    for system, name in conversions.iteritems():
-        system_table = symbol_table.get(system, None)
-        if system_table is None:
-            symbol_table[system] = system_table = {}
-        system_table[(name, nargs)] = obj
-
-
 import sage.rings.integer
 ginac_pyinit_Integer(sage.rings.integer.Integer)
 
@@ -2417,22 +2371,21 @@ import sage.rings.real_double
 ginac_pyinit_Float(sage.rings.real_double.RDF)
 
 cdef Element pynac_I
-I = None
 
 
 def init_pynac_I():
     """
-    Initialize the numeric I object in pynac. We use the generator of QQ(i).
+    Initialize the numeric ``I`` object in pynac. We use the generator of ``QQ(i)``.
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import I as symbolic_I
+        sage: from sage.symbolic.constants import I as symbolic_I
         sage: symbolic_I
         I
         sage: symbolic_I^2
         -1
 
-    Note that conversions to real fields will give TypeErrors::
+    Note that conversions to real fields will give :class:`TypeError`::
 
         sage: float(symbolic_I)
         Traceback (most recent call last):
@@ -2480,22 +2433,22 @@ def init_pynac_I():
         sage: maxima(2*symbolic_I)
         2*%i
 
-    TESTS:
+    TESTS::
 
         sage: repr(symbolic_I)
         'I'
         sage: latex(symbolic_I)
         i
 
-        sage: sage.symbolic.expression.init_pynac_I()
-        sage: type(sage.symbolic.expression.I)
+        sage: I = sage.symbolic.expression.init_pynac_I()
+        sage: type(I)
         <class 'sage.symbolic.expression.Expression'>
-        sage: type(sage.symbolic.expression.I.pyobject())
+        sage: type(I.pyobject())
         <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
     Check that :trac:`10064` is fixed::
 
-        sage: y = symbolic_I*symbolic_I*x / x # so y is the expression -1
+        sage: y = symbolic_I*symbolic_I*x / x  # so y is the expression -1
         sage: y.is_positive()
         False
         sage: z = -x / x
@@ -2509,12 +2462,12 @@ def init_pynac_I():
         sage: x * ((3*I + 4)*x - 5)
         ((3*I + 4)*x - 5)*x
     """
-    global pynac_I, I
+    global pynac_I
     from sage.rings.number_field.number_field import GaussianField
     pynac_I = GaussianField().gen()
     ginac_pyinit_I(pynac_I)
     from .ring import SR
-    I = new_Expression_from_GEx(SR, g_I)
+    return new_Expression_from_GEx(SR, g_I)
 
 
 def init_function_table():
@@ -2610,6 +2563,5 @@ def init_function_table():
 
 
 init_function_table()
-init_pynac_I()
 
 set_ginac_fn_serial()

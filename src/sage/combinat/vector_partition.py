@@ -52,15 +52,15 @@ def find_min(vect):
         [0, 1, 0]
     """
     i = len(vect)
-    while vect[i-1]==0 and i>0:
-        i=i-1
+    while vect[i-1] == 0 and i > 0:
+        i = i-1
     min = [0]*len(vect)
-    if i>0:
-        min[i-1]=1
+    if i > 0:
+        min[i-1] = 1
     return min
 
 
-def IntegerVectorsIterator(vect, min = None):
+def IntegerVectorsIterator(vect, min=None):
     """
     Return an iterator over the list of integer vectors which are componentwise
     less than or equal to ``vect``, and lexicographically greater than or equal
@@ -161,7 +161,7 @@ class VectorPartition(CombinatorialElement):
             sage: V.partition_at_vertex(1)
             [4, 2]
         """
-        return Partition(sorted([vec[i] for vec in self._list], reverse = True))
+        return Partition(sorted([vec[i] for vec in self._list], reverse=True))
 
 
 class VectorPartitions(UniqueRepresentation, Parent):
@@ -315,7 +315,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             for part in self._parts: # choose the first part
                 if tuple(part) == self._vec:
                     yield self.element_class(self, [list(part)])
-                elif any(part[i]>self._vec[i] for i in range(len(self._vec))):
+                elif any(part[i] > self._vec[i] for i in range(len(self._vec))):
                     pass
                 else:# recursively find all possibilities for the rest of the vector partition
                     new_vec = tuple(self._vec[i]-part[i] for i in range(len(self._vec)))

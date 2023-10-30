@@ -1,9 +1,13 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Access functions to online databases for coding theory
 """
-from sage.libs.gap.libgap import libgap
 from sage.features.gap import GapPackage
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
+
+del lazy_import
 
 # Do not put any global imports here since this module is accessible as
 # sage.codes.databases.<tab>
@@ -31,11 +35,11 @@ def best_linear_code_in_guava(n, k, F):
 
     EXAMPLES::
 
-        sage: codes.databases.best_linear_code_in_guava(10,5,GF(2))    # long time; optional - gap_packages (Guava package)
+        sage: codes.databases.best_linear_code_in_guava(10,5,GF(2))    # long time; optional - gap_package_guava
         [10, 5] linear code over GF(2)
-        sage: libgap.LoadPackage('guava')                              # long time; optional - gap_packages (Guava package)
+        sage: libgap.LoadPackage('guava')                              # long time; optional - gap_package_guava
         ...
-        sage: libgap.BestKnownLinearCode(10,5,libgap.GF(2))            # long time; optional - gap_packages (Guava package)
+        sage: libgap.BestKnownLinearCode(10,5,libgap.GF(2))            # long time; optional - gap_package_guava
         a linear [10,5,4]2..4 shortened code
 
     This means that the best possible binary linear code of length 10 and
@@ -82,8 +86,8 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
 
     EXAMPLES::
 
-        sage: gap_rec = codes.databases.bounds_on_minimum_distance_in_guava(10,5,GF(2))  # optional - gap_packages (Guava package)
-        sage: gap_rec.Display()                                                          # optional - gap_packages (Guava package)
+        sage: gap_rec = codes.databases.bounds_on_minimum_distance_in_guava(10,5,GF(2))  # optional - gap_package_guava
+        sage: gap_rec.Display()                                                          # optional - gap_package_guava
         rec(
           construction := [ <Operation "ShortenedCode">,
             [ [ <Operation "UUVCode">,
@@ -142,8 +146,8 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
         <BLANKLINE>
         last modified: 2002-03-20
 
-    This function raises an ``IOError`` if an error occurs downloading data or
-    parsing it. It raises a ``ValueError`` if the ``q`` input is invalid.
+    This function raises an :class:`IOError` if an error occurs downloading data or
+    parsing it. It raises a :class:`ValueError` if the ``q`` input is invalid.
 
     AUTHORS:
 
@@ -184,22 +188,22 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
     INPUT:
 
-    -  ``n`` - Integer, maximal length
+    -  ``n`` -- Integer, maximal length
 
-    -  ``k`` - Integer, maximal dimension
+    -  ``k`` -- Integer, maximal dimension
 
-    -  ``b`` - Integer, requires that the generators all have weight divisible
+    -  ``b`` -- Integer, requires that the generators all have weight divisible
        by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.
 
-    -  ``parent`` - Used in recursion (default: ``None``)
+    -  ``parent``- - Used in recursion (default: ``None``)
 
-    -  ``BC`` - Used in recursion (default: ``None``)
+    -  ``BC`` -- Used in recursion (default: ``None``)
 
-    -  ``equal`` - If ``True`` generates only [n, k] codes (default: ``False``)
+    -  ``equal`` -- If ``True``, generates only [n, k] codes (default: ``False``)
 
-    -  ``in_test`` - Used in recursion (default: ``None``)
+    -  ``in_test`` -- Used in recursion (default: ``None``)
 
     EXAMPLES:
 
@@ -270,9 +274,9 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.matrix.constructor import Matrix
 
-    d=int(b)
-    if d!=b or d%2==1 or d <= 0:
-        raise ValueError("b (%s) must be a positive even integer."%b)
+    d = int(b)
+    if d != b or d % 2 == 1 or d <= 0:
+        raise ValueError("b (%s) must be a positive even integer." % b)
     from .linear_code import LinearCode
     from .binary_code import BinaryCode, BinaryCodeClassifier
     if k < 1 or n < 2:
@@ -304,6 +308,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
                     for N in self_orthogonal_binary_codes(n, k, d, child, BC, in_test=in_test):
                         if out_test(N):
                             yield N
+
 
 # Import the following function so that it is available as
 # sage.codes.databases.self_dual_binary_codes sage.codes.databases functions

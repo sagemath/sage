@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Partition Species
 """

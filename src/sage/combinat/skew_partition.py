@@ -1005,11 +1005,11 @@ class SkewPartition(CombinatorialElement):
             True
         """
         N = len(self[0])
-        mu_betas = [x - j for (j, x) in enumerate(self[1])]
+        mu_betas = [x - j for j, x in enumerate(self[1])]
         mu_betas.extend([- j for j in range(len(self[1]), N)])
         res = 0
         for i, x in enumerate(self[0]):
-            if not x - i in mu_betas:
+            if (x - i) not in mu_betas:
                 res += 1
         return res
 
@@ -1068,18 +1068,18 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()
-            sage: dag.edges(sort=True)
+            sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()                     # optional - sage.graphs
+            sage: dag.edges(sort=True)                                                  # optional - sage.graphs
             [('0,1', '0,2', None),
             ('0,1', '1,1', None),
             ('0,2', '1,2', None),
             ('1,1', '1,2', None)]
-            sage: dag.vertices(sort=True)
+            sage: dag.vertices(sort=True)                                               # optional - sage.graphs
             ['0,1', '0,2', '1,1', '1,2', '2,0']
-            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")
-            sage: dag.edges(sort=True)
+            sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")       # optional - sage.graphs
+            sage: dag.edges(sort=True)                                                  # optional - sage.graphs
             [((0, 1), (0, 2), None), ((0, 1), (1, 1), None)]
-            sage: dag.vertices(sort=True)
+            sage: dag.vertices(sort=True)                                               # optional - sage.graphs
             [(0, 1), (0, 2), (1, 1), (2, 0)]
         """
         outer = list(self.outer())
@@ -1574,7 +1574,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
 
         - If it exists the unique skew-partitions with row lengths ``rowL``
           and column lengths ``colL``.
-        - Raise a ``ValueError`` if ``rowL`` and ``colL`` are not compatible.
+        - Raise a :class:`ValueError` if ``rowL`` and ``colL`` are not compatible.
 
         EXAMPLES::
 
@@ -1604,7 +1604,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
         .. WARNING::
 
             If some rows and columns have length zero, there is no way to retrieve
-            unambiguously the skew partition. We therefore raise a ``ValueError``.
+            unambiguously the skew partition. We therefore raise
+            a :class:`ValueError`.
             For examples here are two skew partitions with the same row and column
             lengths::
 
@@ -1874,7 +1875,7 @@ class SkewPartitions_n(SkewPartitions):
             return ZZ.one()
 
         if self.overlap > 0:
-            gg = Compositions(self.n, min_part = max(1, self.overlap))
+            gg = Compositions(self.n, min_part=max(1, self.overlap))
         else:
             gg = Compositions(self.n)
 
@@ -1925,7 +1926,7 @@ class SkewPartitions_n(SkewPartitions):
             sage: SkewPartitions(3, overlap=4).list()
             []
         """
-        for co in Compositions(self.n, min_part = max(1, self.overlap)):
+        for co in Compositions(self.n, min_part=max(1, self.overlap)):
             for sp in SkewPartitions(row_lengths=co, overlap=self.overlap):
                 yield self.element_class(self, sp)
 

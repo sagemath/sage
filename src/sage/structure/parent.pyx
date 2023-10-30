@@ -86,7 +86,7 @@ TESTS:
 
 This came up in some subtle bug once::
 
-    sage: gp(2) + gap(3)
+    sage: gp(2) + gap(3)                                                                # needs sage.libs.gap sage.libs.pari
     5
 """
 # ****************************************************************************
@@ -103,7 +103,7 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.object cimport PyObject, Py_NE, Py_EQ, Py_LE, Py_GE
+from cpython.object cimport Py_EQ, Py_LE, Py_GE
 from cpython.bool cimport *
 
 from types import MethodType, BuiltinMethodType
@@ -111,7 +111,6 @@ import operator
 from copy import copy
 
 from sage.cpython.type cimport can_assign_class
-cimport sage.categories.morphism as morphism
 cimport sage.categories.map as map
 from sage.structure.debug_options cimport debug
 from sage.structure.sage_object cimport SageObject
@@ -119,14 +118,14 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_string cimport _LazyString
-from sage.sets.pythonclass cimport Set_PythonType_class, Set_PythonType
+from sage.sets.pythonclass cimport Set_PythonType_class
 from .category_object import CategoryObject
 from .coerce cimport coercion_model
 from .coerce cimport parent_is_integers
 from .coerce_exceptions import CoercionException
 from .coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
-from .element cimport parent, Element
+from .element cimport parent
 
 
 cdef _record_exception():
@@ -362,16 +361,22 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         EXAMPLES::
 
             sage: P.<x,y> = QQ[]
-            sage: Q = P.quotient(x^2+2)
+            sage: Q = P.quotient(x^2 + 2)
             sage: Q.category()
-            Join of Category of commutative rings and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of
+             Category of commutative rings and
+             Category of subquotients of monoids and
+             Category of quotients of semigroups
             sage: first_class = Q.__class__
             sage: Q._refine_category_(Fields())
             sage: Q.category()
-            Join of Category of fields and Category of subquotients of monoids and Category of quotients of semigroups
+            Join of
+             Category of fields and
+             Category of subquotients of monoids and
+             Category of quotients of semigroups
             sage: first_class == Q.__class__
             False
-            sage: TestSuite(Q).run()
+            sage: TestSuite(Q).run()                                                    # needs sage.libs.singular
 
         TESTS:
 
@@ -775,7 +780,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS::
 
-            sage: loads(dumps(CDF['x'])) == CDF['x']
+            sage: loads(dumps(CDF['x'])) == CDF['x']                                    # needs sage.rings.complex_double
             True
         """
         CategoryObject.__setstate__(self, d)
@@ -824,10 +829,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: ZZ._repr_option('ascii_art')
             False
-            sage: MatrixSpace(ZZ, 2)._repr_option('element_ascii_art')
+            sage: MatrixSpace(ZZ, 2)._repr_option('element_ascii_art')                  # needs sage.modules
             True
         """
-        if not isinstance(key, basestring):
+        if not isinstance(key, str):
             raise ValueError('key must be a string')
         defaults = {'ascii_art': False,
                     'element_ascii_art': False,
@@ -910,36 +915,37 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: MS = MatrixSpace(QQ,2,2)
+            sage: MS = MatrixSpace(QQ, 2, 2)                                            # needs sage.modules
 
         This matrix space is in fact an algebra, and in particular
         it is a ring, from the point of view of categories::
 
-            sage: MS.category()
+            sage: MS.category()                                                         # needs sage.modules
             Category of infinite finite dimensional algebras with basis
              over (number fields and quotient fields and metric spaces)
-            sage: MS in Rings()
+            sage: MS in Rings()                                                         # needs sage.modules
             True
 
         However, its class does not inherit from the base class
         ``Ring``::
 
-            sage: isinstance(MS,Ring)
+            sage: isinstance(MS, Ring)                                                  # needs sage.modules
             False
 
         Its ``_mul_`` method is inherited from the category, and
         can be used to create a left or right ideal::
 
+            sage: # needs sage.modules
             sage: MS._mul_.__module__
             'sage.categories.rings'
-            sage: MS*MS.1      # indirect doctest
+            sage: MS * MS.1      # indirect doctest
             Left Ideal
             (
               [0 1]
               [0 0]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: MS*[MS.1,2]
+            sage: MS * [MS.1, 2]
             Left Ideal
             (
               [0 1]
@@ -949,14 +955,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               [0 2]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: MS.1*MS
+            sage: MS.1 * MS
             Right Ideal
             (
               [0 1]
               [0 0]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-            sage: [MS.1,2]*MS
+            sage: [MS.1, 2] * MS
             Right Ideal
             (
               [0 1]
@@ -1005,12 +1011,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: ZZ^3
             Ambient free module of rank 3 over the principal ideal domain
              Integer Ring
             sage: QQ^3
             Vector space of dimension 3 over Rational Field
-            sage: QQ[x]^3
+            sage: QQ['x']^3
             Ambient free module of rank 3 over the principal ideal domain
              Univariate Polynomial Ring in x over Rational Field
             sage: IntegerModRing(6)^3
@@ -1020,7 +1027,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for ^: 'Integer Ring' and '<class 'sage.rings.integer_ring.IntegerRing_class'>'
-            sage: Partitions(3)^3
+            sage: Partitions(3)^3                                                       # needs sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for ** or pow(): 'Partitions_n_with_category' and 'int'
@@ -1076,13 +1083,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: 5 in QQ
             True
-            sage: I in RR
+            sage: I in RR                                                               # needs sage.rings.real_mpfr sage.symbolic
             False
+            sage: RIF(1, 2) in RIF                                                      # needs sage.rings.real_interval_field
+            True
+
+            sage: # needs sage.symbolic
             sage: SR(2) in ZZ
             True
-            sage: RIF(1, 2) in RIF
-            True
-            sage: pi in RIF # there is no element of RIF equal to pi
+            sage: pi in RIF  # there is no element of RIF equal to pi
             False
             sage: sqrt(2) in CC
             True
@@ -1099,31 +1108,31 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         ::
 
-            sage: 3/2 in RIF
+            sage: 3/2 in RIF                                                            # needs sage.rings.real_interval_field
             True
 
         because ``3/2`` has an exact representation in ``RIF`` (i.e. can be
         represented as an interval that contains exactly one value)::
 
-            sage: RIF(3/2).is_exact()
+            sage: RIF(3/2).is_exact()                                                   # needs sage.rings.real_interval_field
             True
 
         On the other hand, we have
 
         ::
 
-            sage: 2/3 in RIF
+            sage: 2/3 in RIF                                                            # needs sage.rings.real_interval_field
             False
 
         because ``2/3`` has no exact representation in ``RIF``. Since
         ``RIF(2/3)`` is a nontrivial interval, it cannot be equal to anything
         (not even itself)::
 
-            sage: RIF(2/3).is_exact()
+            sage: RIF(2/3).is_exact()                                                   # needs sage.rings.real_interval_field
             False
-            sage: RIF(2/3).endpoints()
+            sage: RIF(2/3).endpoints()                                                  # needs sage.rings.real_interval_field
             (0.666666666666666, 0.666666666666667)
-            sage: RIF(2/3) == RIF(2/3)
+            sage: RIF(2/3) == RIF(2/3)                                                  # needs sage.rings.real_interval_field
             False
 
         TESTS:
@@ -1132,7 +1141,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: 4/3 in GF(3)
             False
-            sage: 15/50 in GF(25, 'a')
+            sage: 15/50 in GF(25, 'a')                                                  # needs sage.rings.finite_rings
             False
             sage: 7/4 in Integers(4)
             False
@@ -1149,9 +1158,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Check that :trac:`24209` is fixed::
 
-            sage: I in QQbar
+            sage: I in QQbar                                                            # needs sage.rings.number_field
             True
-            sage: sqrt(-1) in QQbar
+            sage: sqrt(-1) in QQbar                                                     # needs sage.rings.number_field sage.symbolic
             True
         """
         P = parent(x)
@@ -1195,8 +1204,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         We make an exception for zero::
 
-            sage: V = GF(7)^7
-            sage: V.coerce(0)
+            sage: V = GF(7)^7                                                           # needs sage.modules
+            sage: V.coerce(0)                                                           # needs sage.modules
             (0, 0, 0, 0, 0, 0, 0)
         """
         cdef R = parent(x)
@@ -1234,7 +1243,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: VectorSpace(GF(7), 3)[:10]
+            sage: VectorSpace(GF(7), 3)[:10]                                            # needs sage.modules
             [(0, 0, 0),
              (1, 0, 0),
              (2, 0, 0),
@@ -1335,7 +1344,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         r"""
         Return the unique homomorphism from self to codomain that
         sends ``self.gens()`` to the entries of ``im_gens``.
-        Raises a TypeError if there is no such homomorphism.
+
+        This raises a :class:`TypeError` if there is no such homomorphism.
 
         INPUT:
 
@@ -1374,8 +1384,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: f = R.hom([5], GF(7))
             Traceback (most recent call last):
             ...
-            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
+            ValueError: relations do not all (canonically) map to 0
+            under map determined by images of generators
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<x> = PolynomialRing(GF(7))
             sage: f = R.hom([3], GF(49,'a'))
             sage: f
@@ -1383,9 +1395,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               From: Univariate Polynomial Ring in x over Finite Field of size 7
               To:   Finite Field in a of size 7^2
               Defn: x |--> 3
-            sage: f(x+6)
+            sage: f(x + 6)
             2
-            sage: f(x^2+1)
+            sage: f(x^2 + 1)
             3
 
         Natural morphism::
@@ -1677,11 +1689,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             ....:             D[tuple(nk)] = v
             ....:         return a.parent()(D)
 
+            sage: # needs sage.groups
             sage: R.<x, y, z> = QQ['x, y, z']
             sage: G = SymmetricGroup(3)
             sage: act = SymmetricGroupAction(G, R)
             sage: t = x + 2*y + 3*z
 
+            sage: # needs sage.groups
             sage: act(G((1, 2)), t)
             2*x + y + 3*z
             sage: act(G((2, 3)), t)
@@ -1692,13 +1706,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         This should fail, since we have not registered the left
         action::
 
-            sage: G((1,2)) * t
+            sage: G((1,2)) * t                                                          # needs sage.groups
             Traceback (most recent call last):
             ...
             TypeError: ...
 
         Now let's make it work::
 
+            sage: # needs sage.groups
             sage: R._unset_coercions_used()
             sage: R.register_action(act)
             sage: G((1, 2)) * t
@@ -1762,20 +1777,21 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: S3 = AlternatingGroup(3)
-            sage: G = SL(3, QQ)
-            sage: p = S3[2]; p.matrix()
+            sage: S3 = AlternatingGroup(3)                                              # needs sage.groups
+            sage: G = SL(3, QQ)                                                         # needs sage.groups
+            sage: p = S3[2]; p.matrix()                                                 # needs sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
 
         In general one cannot mix matrices and permutations::
 
+            sage: # needs sage.groups
             sage: G(p)
             Traceback (most recent call last):
             ...
             TypeError: unable to convert (1,3,2) to a rational
-            sage: phi = S3.hom(lambda p: G(p.matrix()), codomain = G)
+            sage: phi = S3.hom(lambda p: G(p.matrix()), codomain=G)
             sage: phi(p)
             [0 0 1]
             [1 0 0]
@@ -1786,11 +1802,11 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         By :trac:`14711`, coerce maps should be copied when using outside of
         the coercion system::
 
-            sage: phi = copy(S3.coerce_embedding()); phi
+            sage: phi = copy(S3.coerce_embedding()); phi                                # needs sage.groups
             Generic morphism:
               From: Alternating group of order 3!/2 as a permutation group
               To:   Special Linear Group of degree 3 over Rational Field
-            sage: phi(p)
+            sage: phi(p)                                                                # needs sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
@@ -1798,17 +1814,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         This does not work since matrix groups are still old-style
         parents (see :trac:`14014`)::
 
-            sage: G(p)                               # todo: not implemented
+            sage: G(p)                          # not implemented                       # needs sage.groups
 
         Though one can have a permutation act on the rows of a matrix::
 
-            sage: G(1) * p
+            sage: G(1) * p                                                              # needs sage.groups
             [0 0 1]
             [1 0 0]
             [0 1 0]
 
         Some more advanced examples::
 
+            sage: # needs sage.rings.number_field
             sage: x = QQ['x'].0
             sage: t = abs(ZZ.random_element(10^6))
             sage: K = NumberField(x^2 + 2*3*7*11, "a"+str(t))
@@ -1817,23 +1834,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: K._unset_coercions_used()
             sage: K.register_embedding(K_into_MS)
 
-            sage: L = NumberField(x^2 + 2*3*7*11*19*31, "b"+str(abs(ZZ.random_element(10^6))))
+            sage: # needs sage.rings.number_field
+            sage: L = NumberField(x^2 + 2*3*7*11*19*31,
+            ....:                 "b" + str(abs(ZZ.random_element(10^6))))
             sage: b = L.gen()
             sage: L_into_MS = L.hom([b.matrix()])
             sage: L._unset_coercions_used()
             sage: L.register_embedding(L_into_MS)
 
-            sage: K.coerce_embedding()(a)
+            sage: K.coerce_embedding()(a)                                               # needs sage.rings.number_field
             [   0    1]
             [-462    0]
-            sage: L.coerce_embedding()(b)
+            sage: L.coerce_embedding()(b)                                               # needs sage.rings.number_field
             [      0       1]
             [-272118       0]
 
-            sage: a.matrix() * b.matrix()
+            sage: a.matrix() * b.matrix()                                               # needs sage.rings.number_field
             [-272118       0]
             [      0    -462]
-            sage: a.matrix() * b.matrix()
+            sage: a.matrix() * b.matrix()                                               # needs sage.rings.number_field
             [-272118       0]
             [      0    -462]
         """
@@ -1862,16 +1881,20 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: K.<a>=NumberField(x^3+x^2+1,embedding=1)
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=1)
             sage: K.coerce_embedding()
             Generic morphism:
-              From: Number Field in a with defining polynomial x^3 + x^2 + 1 with a = -1.465571231876768?
+              From: Number Field in a with defining polynomial x^3 + x^2 + 1
+                    with a = -1.465571231876768?
               To:   Real Lazy Field
               Defn: a -> -1.465571231876768?
-            sage: K.<a>=NumberField(x^3+x^2+1,embedding=CC.gen())
+            sage: K.<a> = NumberField(x^3 + x^2 + 1, embedding=CC.gen())
             sage: K.coerce_embedding()
             Generic morphism:
-              From: Number Field in a with defining polynomial x^3 + x^2 + 1 with a = 0.2327856159383841? + 0.7925519925154479?*I
+              From: Number Field in a with defining polynomial x^3 + x^2 + 1
+                    with a = 0.2327856159383841? + 0.7925519925154479?*I
               To:   Complex Lazy Field
               Defn: a -> 0.2327856159383841? + 0.7925519925154479?*I
         """
@@ -1922,7 +1945,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: QQ['x']._generic_convert_map(SR)
+            sage: QQ['x']._generic_convert_map(SR)                                      # needs sage.symbolic
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in x over Rational Field
@@ -2004,7 +2027,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         By :trac:`14711`, coerce maps should be copied for usage outside
         of the coercion system::
 
-            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], int))
+            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], int))                          # needs sage.rings.complex_double
             Composite map:
               From: Set of Python objects of class 'int'
               To:   Complex Double Field
@@ -2016,7 +2039,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                       From: Integer Ring
                       To:   Complex Double Field
 
-            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], QQ))
+            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], QQ))                           # needs sage.rings.complex_double
             Composite map:
               From: Rational Field
               To:   Complex Double Field
@@ -2028,7 +2051,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                       From: Real Field with 53 bits of precision
                       To:   Complex Double Field
 
-            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], CC))
+            sage: copy(CDF._coerce_map_via([ZZ, RR, CC], CC))                           # needs sage.rings.complex_double
             Generic map:
               From: Complex Field with 53 bits of precision
               To:   Complex Double Field
@@ -2045,8 +2068,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint has_coerce_map_from(self, S) except -2:
         """
-        Return True if there is a natural map from S to self.
-        Otherwise, return False.
+        Return ``True`` if there is a natural map from ``S`` to ``self``.
+        Otherwise, return ``False``.
 
         EXAMPLES::
 
@@ -2098,19 +2121,20 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: import gc
             sage: _ = gc.collect()
-            sage: K = GF(1<<55,'t')
-            sage: for i in range(50):
+            sage: K = GF(1<<55,'t')                                                     # needs sage.rings.finite_rings
+            sage: for i in range(50):                                                   # needs sage.rings.finite_rings sage.schemes
             ....:   a = K.random_element()
             ....:   E = EllipticCurve(j=a)
             ....:   b = K.has_coerce_map_from(E)
             sage: _ = gc.collect()
-            sage: len([x for x in gc.get_objects() if isinstance(x,type(E))])
+            sage: len([x for x in gc.get_objects() if isinstance(x, type(E))])          # needs sage.rings.finite_rings sage.schemes
             1
 
         TESTS:
 
         The following was fixed in :trac:`12969`::
 
+            sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
             sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
             sage: H = Sym.macdonald().H()
@@ -2147,6 +2171,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               From: Integer Ring
               To:   Rational Field
 
+            sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
             sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
             sage: P = Sym.macdonald().P()
@@ -2285,7 +2310,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Another test::
 
-            sage: K = NumberField([x^2-2, x^2-3], 'a,b')
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField([x^2 - 2, x^2 - 3], 'a,b')
             sage: M = K.absolute_field('c')
             sage: M_to_K, K_to_M = M.structure()
             sage: M.register_coercion(K_to_M)
@@ -2318,16 +2345,19 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Check that :trac:`14982` is fixed, and more generally that we discover
         sensible coercion paths in the presence of embeddings::
 
-            sage: K.<a> = NumberField(x^2+1/2, embedding=CC(0,1))
-            sage: L = NumberField(x^2+2, 'b', embedding=1/a)
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + 1/2, embedding=CC(0, 1))
+            sage: L = NumberField(x^2 + 2, 'b', embedding=1/a)
             sage: PolynomialRing(L, 'x').coerce_map_from(L)
             Polynomial base injection morphism:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Univariate Polynomial Ring in x over Number Field in b with defining polynomial x^2 + 2 with b = -2*a
+              To:   Univariate Polynomial Ring in x over Number Field in b
+                    with defining polynomial x^2 + 2 with b = -2*a
             sage: PolynomialRing(K, 'x').coerce_map_from(L)
             Composite map:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Univariate Polynomial Ring in x over Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
+              To:   Univariate Polynomial Ring in x over Number Field in a
+                    with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
               Defn:   Generic morphism:
                       From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
                       To:   Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
@@ -2335,15 +2365,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     then
                       Polynomial base injection morphism:
                       From: Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
-                      To:   Univariate Polynomial Ring in x over Number Field in a with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
+                      To:   Univariate Polynomial Ring in x over Number Field in a
+                            with defining polynomial x^2 + 1/2 with a = 0.7071067811865475?*I
             sage: MatrixSpace(L, 2, 2).coerce_map_from(L)
             Coercion map:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Full MatrixSpace of 2 by 2 dense matrices over Number Field in b with defining polynomial x^2 + 2 with b = -2*a
+              To:   Full MatrixSpace of 2 by 2 dense matrices over Number Field in b
+                    with defining polynomial x^2 + 2 with b = -2*a
             sage: PowerSeriesRing(L, 'x').coerce_map_from(L)
             Coercion map:
               From: Number Field in b with defining polynomial x^2 + 2 with b = -2*a
-              To:   Power Series Ring in x over Number Field in b with defining polynomial x^2 + 2 with b = -2*a
+              To:   Power Series Ring in x over Number Field in b
+                    with defining polynomial x^2 + 2 with b = -2*a
         """
         if isinstance(S, Parent) and (<Parent>S)._embedding is not None:
             if (<Parent>S)._embedding.codomain() is self:
@@ -2539,10 +2572,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS::
 
-            sage: M = QQ['y']^3
-            sage: M.get_action(ZZ['x']['y'])
-            Right scalar multiplication by Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring on Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in y over Rational Field
-            sage: print(M.get_action(ZZ['x']))
+            sage: M = QQ['y']^3                                                         # needs sage.modules
+            sage: M.get_action(ZZ['x']['y'])                                            # needs sage.modules
+            Right scalar multiplication
+             by Univariate Polynomial Ring in y
+                over Univariate Polynomial Ring in x over Integer Ring
+             on Ambient free module of rank 3 over the principal ideal domain
+                Univariate Polynomial Ring in y over Rational Field
+            sage: print(M.get_action(ZZ['x']))                                          # needs sage.modules
             None
         """
         action = self._get_action_(S, op, self_on_left)
@@ -2561,33 +2598,42 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         TESTS::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve([1,0])
             sage: coercion_model.get_action(E, ZZ, operator.mul)
-            Right Integer Multiplication by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Right Integer Multiplication by Integer Ring
+             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(ZZ, E, operator.mul)
-            Left Integer Multiplication by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Left Integer Multiplication by Integer Ring
+             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(E, int, operator.mul)
-            Right Integer Multiplication by Set of Python objects of class 'int' on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Right Integer Multiplication by Set of Python objects of class 'int'
+             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(int, E, operator.mul)
-            Left Integer Multiplication by Set of Python objects of class 'int' on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Left Integer Multiplication by Set of Python objects of class 'int'
+             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
 
         ::
 
+            sage: # needs sage.rings.complex_double
             sage: R.<x> = CDF[]
             sage: coercion_model.get_action(R, ZZ, operator.pow)
-            Right Integer Powering by Integer Ring on Univariate Polynomial Ring in x over Complex Double Field
+            Right Integer Powering by Integer Ring
+             on Univariate Polynomial Ring in x over Complex Double Field
             sage: print(coercion_model.get_action(ZZ, R, operator.pow))
             None
             sage: coercion_model.get_action(R, int, operator.pow)
-            Right Integer Powering by Set of Python objects of class 'int' on Univariate Polynomial Ring in x over Complex Double Field
+            Right Integer Powering by Set of Python objects of class 'int'
+             on Univariate Polynomial Ring in x over Complex Double Field
             sage: print(coercion_model.get_action(int, R, operator.pow))
             None
             sage: coercion_model.get_action(R, IntegerModRing(7), operator.pow)
-            Right Integer Powering by Ring of integers modulo 7 on Univariate Polynomial Ring in x over Complex Double Field
+            Right Integer Powering by Ring of integers modulo 7
+             on Univariate Polynomial Ring in x over Complex Double Field
 
         ::
 
-            sage: print(coercion_model.get_action(E, ZZ, operator.pow))
+            sage: print(coercion_model.get_action(E, ZZ, operator.pow))                 # needs sage.schemes
             None
         """
         # G acts on S, G -> G', R -> S => G' acts on R (?)
@@ -2597,7 +2643,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # If needed, it will be passed to Left/RightModuleAction.
         from sage.categories.action import Action, PrecomposedAction
         from sage.categories.homset import Hom
-        from .coerce_actions import LeftModuleAction, RightModuleAction
         cdef Parent R
 
         for action in self._action_list:
@@ -2684,7 +2729,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: CDF.an_element()
+            sage: CDF.an_element()                                                      # needs sage.rings.complex_double
             1.0*I
             sage: ZZ[['t']].an_element()
             t
@@ -2791,9 +2836,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: ZZ.is_exact()
             True
-            sage: Qp(7).is_exact()
+            sage: Qp(7).is_exact()                                                      # needs sage.rings.padics
             False
-            sage: Zp(7, type='capped-abs').is_exact()
+            sage: Zp(7, type='capped-abs').is_exact()                                   # needs sage.rings.padics
             False
         """
         return True
@@ -2806,12 +2851,20 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: [R._is_numerical() for R in [RR, CC, QQ, QuadraticField(-1)]]
-            [True, True, True, True]
-            sage: [R._is_numerical() for R in [SR, QQ['x'], QQ[['x']]]]
-            [False, False, False]
-            sage: [R._is_numerical() for R in [RIF, RBF, CIF, CBF]]
-            [False, False, False, False]
+            sage: QuadraticField(-1)._is_numerical()                                    # needs sage.rings.number_field
+            True
+            sage: QQ._is_numerical()
+            True
+            sage: [RR._is_numerical(), CC._is_numerical()]                              # needs sage.rings.real_mpfr
+            [True, True]
+            sage: SR._is_numerical()                                                    # needs sage.symbolic
+            False
+            sage: [R._is_numerical() for R in [QQ['x'], QQ[['x']]]]
+            [False, False]
+            sage: [R._is_numerical() for R in [RBF, CBF]]                               # needs sage.libs.flint
+            [False, False]
+            sage: [R._is_numerical() for R in [RIF, CIF]]                               # needs sage.rings.real_interval_field
+            [False, False]
         """
         try:
             from sage.rings.complex_mpfr import ComplexField
@@ -2821,8 +2874,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
 
-        from sage.rings.real_double import CDF
-        return CDF.has_coerce_map_from(self)
+        try:
+            from sage.rings.complex_double import CDF
+        except ImportError:
+            pass
+        else:
+            return CDF.has_coerce_map_from(self)
+
+        from sage.rings.real_double import RDF
+        return RDF.has_coerce_map_from(self)
 
     @cached_method
     def _is_real_numerical(self):
@@ -2832,14 +2892,24 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES::
 
-            sage: [R._is_real_numerical() for R in [RR, QQ, ZZ, RLF, QuadraticField(2)]]
-            [True, True, True, True, True]
-            sage: [R._is_real_numerical() for R in [CC, QuadraticField(-1)]]
+            sage: QuadraticField(2)._is_real_numerical()                                # needs sage.rings.number_field
+            True
+            sage: [QQ._is_real_numerical(), ZZ._is_real_numerical()]
+            [True, True]
+            sage: [RR._is_real_numerical(), RLF._is_real_numerical()]                   # needs sage.rings.real_mpfr
+            [True, True]
+            sage: QuadraticField(-1)._is_real_numerical()                               # needs sage.rings.number_field
+            False
+            sage: CC._is_real_numerical()                                               # needs sage.rings.real_mpfr
+            False
+            sage: SR._is_real_numerical()                                               # needs sage.symbolic
+            False
+            sage: [R._is_real_numerical() for R in [QQ['x'], QQ[['x']]]]
             [False, False]
-            sage: [R._is_real_numerical() for R in [SR, QQ['x'], QQ[['x']]]]
-            [False, False, False]
-            sage: [R._is_real_numerical() for R in [RIF, RBF, CIF, CBF]]
-            [False, False, False, False]
+            sage: [R._is_real_numerical() for R in [RBF, CBF]]                          # needs sage.libs.flint
+            [False, False]
+            sage: [R._is_real_numerical() for R in [RIF, CIF]]                          # needs sage.libs.flint
+            [False, False]
         """
         try:
             from sage.rings.real_mpfr import RealField, mpfr_prec_min
@@ -2926,9 +2996,9 @@ cdef class EltPair:
 
         Verify that :trac:`16341` has been resolved::
 
-            sage: K.<a> = Qq(9)                                         # optional - sage.rings.padics
-            sage: E = EllipticCurve_from_j(0).base_extend(K)            # optional - sage.rings.padics
-            sage: E.get_action(ZZ)                                      # optional - sage.rings.padics
+            sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
+            sage: E = EllipticCurve_from_j(0).base_extend(K)                            # needs sage.rings.padics
+            sage: E.get_action(ZZ)                                                      # needs sage.rings.padics
             Right Integer Multiplication
              by Integer Ring
              on Elliptic Curve defined by y^2 + (1+O(3^20))*y = x^3

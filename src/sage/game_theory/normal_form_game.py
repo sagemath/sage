@@ -635,7 +635,7 @@ from collections.abc import MutableMapping
 from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
@@ -1577,8 +1577,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(0, 0, 1, 0), (0, 0, 1)]]
 
-        Running the constant-sum solver on a game which isn't a constant sum game
-        generates a ``ValueError``::
+        Running the constant-sum solver on a game which is not a constant sum
+        game generates a :class:`ValueError`::
 
             sage: cg = NormalFormGame([A, A])
             sage: cg.obtain_nash(algorithm='lp', solver='glpk')

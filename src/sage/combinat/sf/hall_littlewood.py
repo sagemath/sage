@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hall-Littlewood Polynomials
 
@@ -88,8 +89,8 @@ class HallLittlewood(UniqueRepresentation):
         self._sym = Sym
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
-        if str(t) !='t':
-            self._name_suffix += " with t=%s"%t
+        if str(t) != 't':
+            self._name_suffix += " with t=%s" % t
         self._name = "Hall-Littlewood polynomials"+self._name_suffix
 
     def symmetric_function_ring( self ):
@@ -370,7 +371,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         sfa.SymmetricFunctionAlgebra_generic.__init__(
             self, hall_littlewood._sym,
             basis_name="Hall-Littlewood " + s + hall_littlewood._name_suffix,
-            prefix="HL" +s)
+            prefix="HL" + s)
         self.t = hall_littlewood.t
         self._sym = hall_littlewood._sym
         self._hall_littlewood = hall_littlewood

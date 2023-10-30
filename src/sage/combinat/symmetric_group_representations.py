@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
 Representations of the Symmetric Group
 
@@ -75,28 +76,28 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     ::
 
-        sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal"); orth
+        sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal"); orth            # optional - sage.symbolic
         Orthogonal representation of the symmetric group corresponding to [2, 1]
-        sage: all(a*a.transpose() == a.parent().identity_matrix() for a in orth)
+        sage: all(a*a.transpose() == a.parent().identity_matrix() for a in orth)        # optional - sage.symbolic
         True
 
     ::
 
-        sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal"); orth
+        sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal"); orth            # optional - sage.symbolic
         Orthogonal representation of the symmetric group corresponding to [3, 2]
-        sage: orth([2,1,3,4,5])
+        sage: orth([2,1,3,4,5])                                                         # optional - sage.symbolic
         [ 1  0  0  0  0]
         [ 0  1  0  0  0]
         [ 0  0 -1  0  0]
         [ 0  0  0  1  0]
         [ 0  0  0  0 -1]
-        sage: orth([1,3,2,4,5])
+        sage: orth([1,3,2,4,5])                                                         # optional - sage.symbolic
         [          1           0           0           0           0]
         [          0        -1/2 1/2*sqrt(3)           0           0]
         [          0 1/2*sqrt(3)         1/2           0           0]
         [          0           0           0        -1/2 1/2*sqrt(3)]
         [          0           0           0 1/2*sqrt(3)         1/2]
-        sage: orth([1,2,4,3,5])
+        sage: orth([1,2,4,3,5])                                                         # optional - sage.symbolic
         [       -1/3 2/3*sqrt(2)           0           0           0]
         [2/3*sqrt(2)         1/3           0           0           0]
         [          0           0           1           0           0]
@@ -200,13 +201,13 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     ::
 
-        sage: orth = SymmetricGroupRepresentations(3, "orthogonal"); orth
+        sage: orth = SymmetricGroupRepresentations(3, "orthogonal"); orth               # optional - sage.symbolic
         Orthogonal representations of the symmetric group of order 3! over Symbolic Ring
-        sage: orth.list()
+        sage: orth.list()                                                               # optional - sage.symbolic
         [Orthogonal representation of the symmetric group corresponding to [3],
          Orthogonal representation of the symmetric group corresponding to [2, 1],
          Orthogonal representation of the symmetric group corresponding to [1, 1, 1]]
-        sage: orth([2,1])([1,2,3])
+        sage: orth([2,1])([1,2,3])                                                      # optional - sage.symbolic
         [1 0]
         [0 1]
 
@@ -516,8 +517,8 @@ class SymmetricGroupRepresentations_class(UniqueRepresentation,Parent):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentations(3, "orthogonal")
-            sage: for x in orth: print(x)
+            sage: orth = SymmetricGroupRepresentations(3, "orthogonal")                 # optional - sage.symbolic
+            sage: for x in orth: print(x)                                               # optional - sage.symbolic
             Orthogonal representation of the symmetric group corresponding to [3]
             Orthogonal representation of the symmetric group corresponding to [2, 1]
             Orthogonal representation of the symmetric group corresponding to [1, 1, 1]
@@ -540,8 +541,8 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal")
-            sage: orth._yang_baxter_graph
+            sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal")              # optional - sage.symbolic
+            sage: orth._yang_baxter_graph                                               # optional - sage.symbolic
             Yang-Baxter graph of [3, 2], with top vertex (0, -1, 2, 1, 0)
         """
         Y = YangBaxterGraph_partition(self._partition)
@@ -565,8 +566,8 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal")
-            sage: orth._tableau_dict
+            sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal")              # optional - sage.symbolic
+            sage: orth._tableau_dict                                                    # optional - sage.symbolic
             {(0, -1, 2, 1, 0): [[1, 2, 3], [4, 5]],
              (0, 2, -1, 1, 0): [[1, 2, 4], [3, 5]],
              (0, 2, 1, -1, 0): [[1, 3, 4], [2, 5]],
@@ -576,7 +577,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
         # construct a dictionary pairing vertices with tableau
         t = StandardTableaux(self._partition).last()
         tableau_dict = {self._yang_baxter_graph.root(): t}
-        for (u, w, (i, beta)) in self._yang_baxter_graph._edges_in_bfs():
+        for u, w, (i, _) in self._yang_baxter_graph._edges_in_bfs():
             # TODO: improve the following
             si = PermutationConstructor((i, i + 1))
             tableau_dict[w] = Tableau([[si(b) for b in row]
@@ -591,8 +592,8 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal")
-            sage: orth._word_dict
+            sage: orth = SymmetricGroupRepresentation([3,2], "orthogonal")              # optional - sage.symbolic
+            sage: orth._word_dict                                                       # optional - sage.symbolic
             {(0, -1, 2, 1, 0): (4, 5, 1, 2, 3),
              (0, 2, -1, 1, 0): (3, 5, 1, 2, 4),
              (0, 2, 1, -1, 0): (2, 5, 1, 3, 4),
@@ -610,11 +611,11 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")
-            sage: orth.representation_matrix_for_simple_transposition(1)
+            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")              # optional - sage.symbolic
+            sage: orth.representation_matrix_for_simple_transposition(1)                # optional - sage.symbolic
             [ 1  0]
             [ 0 -1]
-            sage: orth.representation_matrix_for_simple_transposition(2)
+            sage: orth.representation_matrix_for_simple_transposition(2)                # optional - sage.symbolic
             [       -1/2 1/2*sqrt(3)]
             [1/2*sqrt(3)         1/2]
 
@@ -627,7 +628,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
             [ 1/2  1/2]
         """
         from copy import copy
-        if not(1 <= i < sum(self._partition)):
+        if not (1 <= i < sum(self._partition)):
             raise TypeError
         Y = self._yang_baxter_graph
         index_lookup = {b: a for a, b in enumerate(list(Y))}
@@ -663,11 +664,11 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")
-            sage: orth._representation_matrix_uncached(Permutation([2,1,3]))
+            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")              # optional - sage.symbolic
+            sage: orth._representation_matrix_uncached(Permutation([2,1,3]))            # optional - sage.symbolic
             [ 1  0]
             [ 0 -1]
-            sage: orth._representation_matrix_uncached(Permutation([1,3,2]))
+            sage: orth._representation_matrix_uncached(Permutation([1,3,2]))            # optional - sage.symbolic
             [       -1/2 1/2*sqrt(3)]
             [1/2*sqrt(3)         1/2]
 
@@ -696,11 +697,11 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")
-            sage: orth.representation_matrix(Permutation([2,1,3]))
+            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")              # optional - sage.symbolic
+            sage: orth.representation_matrix(Permutation([2,1,3]))                      # optional - sage.symbolic
             [ 1  0]
             [ 0 -1]
-            sage: orth.representation_matrix(Permutation([1,3,2]))
+            sage: orth.representation_matrix(Permutation([1,3,2]))                      # optional - sage.symbolic
             [       -1/2 1/2*sqrt(3)]
             [1/2*sqrt(3)         1/2]
 
@@ -779,7 +780,7 @@ class YoungRepresentation_Orthogonal(YoungRepresentation_generic):
 
         EXAMPLES::
 
-            sage: SymmetricGroupRepresentation([2,1], "orthogonal")
+            sage: SymmetricGroupRepresentation([2,1], "orthogonal")                     # optional - sage.symbolic
             Orthogonal representation of the symmetric group corresponding to [2, 1]
         """
         return "Orthogonal representation of the symmetric group corresponding to {}".format(self._partition)
@@ -796,8 +797,8 @@ class YoungRepresentation_Orthogonal(YoungRepresentation_generic):
 
         EXAMPLES::
 
-            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")
-            sage: orth._2x2_matrix_entries(1/2)
+            sage: orth = SymmetricGroupRepresentation([2,1], "orthogonal")              # optional - sage.symbolic
+            sage: orth._2x2_matrix_entries(1/2)                                         # optional - sage.symbolic
             (-1/2, 1/2*sqrt(3), 1/2*sqrt(3), 1/2)
         """
         return (-beta, sqrt(1 - beta**2), sqrt(1 - beta**2), beta)
@@ -815,7 +816,7 @@ class YoungRepresentations_Orthogonal(SymmetricGroupRepresentations_class):
         EXAMPLES::
 
             sage: from sage.combinat.symmetric_group_representations import YoungRepresentations_Orthogonal
-            sage: YoungRepresentations_Orthogonal(3)
+            sage: YoungRepresentations_Orthogonal(3)                                    # optional - sage.symbolic
             Orthogonal representations of the symmetric group of order 3! over Symbolic Ring
         """
         return "Orthogonal representations of the symmetric group of order %s! over %s" % (self._n, self._ring)

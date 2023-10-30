@@ -167,7 +167,7 @@ g-vectors and F-polynomials can be computed from elements of ``A`` only if
     sage: (t*s).g_vector()
     Traceback (most recent call last):
     ...
-    AttributeError: 'ClusterAlgebra_with_category.element_class' object has no attribute 'g_vector'
+    AttributeError: 'ClusterAlgebra_with_category.element_class' object has no attribute 'g_vector'...
     sage: A = ClusterAlgebra(['A', 2], principal_coefficients=True)
     sage: A.explore_to_depth(infinity)
     sage: s = A.cluster_variable((0, -1)); s
@@ -613,7 +613,7 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
                 y_exp = min(f_poly.dict())
                 coeff = f_poly.dict()[y_exp]
                 g_theta = tuple(g_vect + B*vector(y_exp))
-                out[g_theta] = out.get(g_theta, zero_A) +  A({zero_t + tuple(y_exp):coeff})
+                out[g_theta] = out.get(g_theta, zero_A) + A({zero_t + tuple(y_exp):coeff})
                 f_poly -= U({y_exp:coeff}) * A.theta_basis_F_polynomial(g_theta)
 
         return out

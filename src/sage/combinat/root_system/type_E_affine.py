@@ -66,8 +66,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: e = CartanType(['E', 6, 1]).dynkin_diagram()
-            sage: e
+            sage: e = CartanType(['E', 6, 1]).dynkin_diagram(); e                       # needs sage.graphs
                     O 0
                     |
                     |
@@ -77,7 +76,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O---O---O
             1   3   4   5   6
             E6~
-            sage: e.edges(sort=True)
+            sage: e.edges(sort=True)                                                    # needs sage.graphs
             [(0, 2, 1),
              (1, 3, 1),
              (2, 0, 1),
@@ -91,8 +90,8 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
              (5, 6, 1),
              (6, 5, 1)]
 
-            sage: e = CartanType(['E', 7, 1]).dynkin_diagram()
-            sage: e
+            sage: # needs sage.graphs
+            sage: e = CartanType(['E', 7, 1]).dynkin_diagram(); e
                         O 2
                         |
                         |
@@ -103,8 +102,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             [(0, 1, 1), (1, 0, 1), (1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1),
              (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1),
              (6, 5, 1), (6, 7, 1), (7, 6, 1)]
-            sage: e = CartanType(['E', 8, 1]).dynkin_diagram()
-            sage: e
+            sage: e = CartanType(['E', 8, 1]).dynkin_diagram(); e
                     O 2
                     |
                     |
@@ -158,8 +156,8 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             node = self._latex_draw_node
 
         if n == 7:
-            ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%((n-1)*node_dist)
-            ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n"%(3*node_dist, node_dist)
+            ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % ((n-1)*node_dist)
+            ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n" % (3*node_dist, node_dist)
             ret += node(0, 0, label(0))
             ret += node(node_dist, 0, label(1))
             for i in range(2, n):
@@ -167,14 +165,14 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             ret += node(3*node_dist, node_dist, label(2), "right=3pt")
             return ret
 
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%((n-2)*node_dist)
-        ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n"%(2*node_dist, node_dist)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % ((n-2)*node_dist)
+        ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n" % (2*node_dist, node_dist)
 
         if n == 6:
-            ret += "\\draw (%s cm, %s cm) -- +(0,%s cm);\n"%(2*node_dist, node_dist, node_dist)
+            ret += "\\draw (%s cm, %s cm) -- +(0,%s cm);\n" % (2*node_dist, node_dist, node_dist)
             ret += node(2*node_dist, 2*node_dist, label(0), "right=3pt")
         else: # n == 8
-            ret += "\\draw (%s cm,0) -- +(%s cm,0);\n"%((n-2)*node_dist, node_dist)
+            ret += "\\draw (%s cm,0) -- +(%s cm,0);\n" % ((n-2)*node_dist, node_dist)
             ret += node((n-1)*node_dist, 0, label(0))
 
         ret += node(0, 0, label(1))

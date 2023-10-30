@@ -29,7 +29,7 @@ TESTS::
 from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython.int cimport PyInt_FromSize_t
+from cpython.long cimport PyLong_FromSize_t
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.ext.mod_int cimport *
@@ -62,7 +62,7 @@ from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
 from .matrix_modn_sparse cimport Matrix_modn_sparse
-from sage.structure.element cimport ModuleElement, RingElement, Element, Vector
+from sage.structure.element cimport Element
 
 import sage.matrix.matrix_space as matrix_space
 
@@ -182,24 +182,21 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         return M
 
     cpdef _add_(self, right):
-        cdef Py_ssize_t i, j
-        cdef mpz_vector *self_row
-        cdef mpz_vector *M_row
+        cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
         M = Matrix_integer_sparse.__new__(Matrix_integer_sparse, self._parent, None, None, None)
         cdef mpz_t mul
         mpz_init_set_si(mul,1)
-        for i from 0 <= i < self._nrows:
+        for i in range(self._nrows):
             mpz_vector_clear(&M._matrix[i])
-            add_mpz_vector_init(&M._matrix[i], &self._matrix[i], &(<Matrix_integer_sparse>right)._matrix[i], mul)
+            add_mpz_vector_init(&M._matrix[i], &self._matrix[i],
+                                &(<Matrix_integer_sparse>right)._matrix[i], mul)
         mpz_clear(mul)
         return M
 
     cpdef _sub_(self, right):
-        cdef Py_ssize_t i, j
-        cdef mpz_vector *self_row
-        cdef mpz_vector *M_row
+        cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
         M = Matrix_integer_sparse.__new__(Matrix_integer_sparse, self._parent, None, None, None)
@@ -214,6 +211,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
     def _dict(self):
         """
         Unsafe version of the dict method, mainly for internal use.
+
         This may return the dict of elements, but as an *unsafe*
         reference to the underlying dict of the object.  It might
         be dangerous if you change entries of the returned dict.
@@ -222,13 +220,13 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Integer()
                 mpz_set((<Integer>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
 
@@ -348,7 +346,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             if copy:
                 return list(x)
             return x
-        nzc = [[] for _ in xrange(self._ncols)]
+        nzc = [[] for _ in range(self._ncols)]
         cdef Py_ssize_t i, j
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
@@ -399,13 +397,15 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
     def rational_reconstruction(self, N):
         """
-        Use rational reconstruction to lift self to a matrix over the
-        rational numbers (if possible), where we view self as a matrix
-        modulo N.
+        Use rational reconstruction to lift ``self`` to a matrix over the
+        rational numbers (if possible), where we view ``self`` as a matrix
+        modulo `N`.
 
         EXAMPLES::
 
-            sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
+            sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500,
+            ....:                       7, 2, 2, 3,
+            ....:                       4, 3, 4, (5/7)%500], sparse=True)
             sage: A.rational_reconstruction(500)
             [1/3   2   3  -4]
             [  7   2   2   3]
@@ -415,7 +415,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         Check that :trac:`9345` is fixed::
 
-            sage: A = random_matrix(ZZ, 3, 3, sparse = True)
+            sage: A = random_matrix(ZZ, 3, 3, sparse=True)
             sage: A.rational_reconstruction(0)
             Traceback (most recent call last):
             ...
@@ -721,7 +721,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         del M
 
-        return PyInt_FromSize_t(r)
+        return PyLong_FromSize_t(r)
 
     def _det_linbox(self):
         r"""
@@ -867,10 +867,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
-        fmpz_poly_fit_length(g.__poly, p.size())
+        fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g.__poly, i, p[0][i].get_mpz_const())
-        _fmpz_poly_set_length(g.__poly, p.size())
+            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+        _fmpz_poly_set_length(g._poly, p.size())
 
         del M
         del p
@@ -966,10 +966,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
-        fmpz_poly_fit_length(g.__poly, p.size())
+        fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g.__poly, i, p[0][i].get_mpz_const())
-        _fmpz_poly_set_length(g.__poly, p.size())
+            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+        _fmpz_poly_set_length(g._poly, p.size())
 
         del M
         del p
@@ -985,7 +985,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         .. NOTE::
 
-           In Sage one can also write ``A \ B`` for
+           DEPRECATED. In Sage one can also write ``A \ B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the
            MATLAB/Octave backslash operator".
 
@@ -1019,14 +1019,14 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
             sage: A = matrix(ZZ, 3, [1,2,3,-1,2,5,2,3,1], sparse=True)
             sage: b = vector(ZZ, [1,2,3])
-            sage: x = A \ b
+            sage: x = A.solve_right(b)
             sage: x
             (-13/12, 23/12, -7/12)
             sage: A * x
             (1, 2, 3)
 
             sage: u = matrix(ZZ, 3, 2, [0,1,1,1,0,2])
-            sage: x = A \ u
+            sage: x = A.solve_right(u)
             sage: x
             [-7/12  -1/6]
             [ 5/12   5/6]

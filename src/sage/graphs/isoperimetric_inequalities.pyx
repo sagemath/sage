@@ -23,7 +23,7 @@ Authors:
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_malloc, sig_free
 
-from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph, out_degree
+from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
@@ -209,8 +209,8 @@ def edge_isoperimetric_number(g):
     In general, for `d`-regular graphs the edge-isoperimetric number is
     `d` times larger than the Cheeger constant of the graph::
 
-        sage: g = graphs.RandomRegular(3, 10)
-        sage: g.edge_isoperimetric_number() == g.cheeger_constant() * 3
+        sage: g = graphs.RandomRegular(3, 10)                                           # needs networkx
+        sage: g.edge_isoperimetric_number() == g.cheeger_constant() * 3                 # needs networkx
         True
 
     And the edge-isoperimetric constant of a disconnected graph is `0`::
