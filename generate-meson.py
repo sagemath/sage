@@ -54,6 +54,6 @@ with open(meson_build_path, 'w') if not dry_run else sys.stdout as meson_build:
     meson_build.write("        sources: pyx,\n")
     meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
     meson_build.write('        install: true,\n')
-    meson_build.write('        dependencies: py_dep,\n')
+    meson_build.write('        dependencies: [py_dep],\n')
     meson_build.write('    )\n')
     meson_build.write('endforeach\n')
