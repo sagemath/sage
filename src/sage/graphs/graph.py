@@ -4890,6 +4890,55 @@ class Graph(GenericGraph):
 
         return repr
 
+    @doc_index("Basic methods")
+    def transpose_of_graph(self):
+        r"""
+        Return the transpose of a directed graph G.
+        
+        The transpose of a directed graph has the same vertices, but the direction
+        of each edge is reversed.
+
+        INPUT:
+        - G: A directed graph (DiGraph).
+
+        OUTPUT:
+        - The transpose of the graph G.
+
+        EXAMPLES::
+
+            sage: G = DiGraph([(1, 2), (2, 3), (3, 1)])
+            sage: GT = transpose_graph(G)
+            sage: GT.edges()
+            [(2, 1), (3, 2), (1, 3)]
+
+            sage: G = DiGraph([(1, 2), (2, 2), (3, 3), (3, 1)])
+            sage: GT = transpose_graph(G)
+            sage: GT.edges()
+            [(2, 1), (2, 2), (3, 3), (1, 3)]
+
+            sage: G = DiGraph()
+            sage: GT = transpose_graph(G)
+            sage: GT.edges()
+            []
+
+        """
+        self._scream_if_not_simple()  # Ensure G is a simple graph.
+
+        GT = self.copy(data_structure='dense')  # Create a copy of G with dense data structure.
+        
+        for u, v, label in self.edges():
+            GT.delete_edge(u, v, label)  # Remove the original edge.
+            GT.add_edge(v, u, label)     # Add the reversed edge.
+            
+        # Update the name if it exists.
+        if self.name():
+            GT.name("transpose({})".format(self.name()))
+
+        if self.is_immutable():
+            return GT.copy(immutable=True)
+        
+        return GT 
+
     @doc_index("Algorithmically hard stuff")
     def minor(self, H, solver=None, verbose=0, induced=False, *, integrality_tolerance=1e-3):
         r"""
