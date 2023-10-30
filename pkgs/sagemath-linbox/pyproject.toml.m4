@@ -16,3 +16,27 @@ requires = [
     SPKG_INSTALL_REQUIRES_numpy
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-linbox"
+description = "Sage: Open Source Mathematics Software: Linear Algebra with fflas-ffpack, Givaro, IML, LinBox"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_cypari
+    SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_memory_allocator
+    SPKG_INSTALL_REQUIRES_sagemath_environment
+    SPKG_INSTALL_REQUIRES_sagemath_categories
+    SPKG_INSTALL_REQUIRES_sagemath_pari
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
