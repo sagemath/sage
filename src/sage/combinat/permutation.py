@@ -5425,7 +5425,7 @@ class Permutation(CombinatorialElement):
             [[]]
 
             sage: sigma = Permutations(6).random_element()
-            sage: list(sigma.nth_roots(1)) == [Sigma]
+            sage: list(sigma.nth_roots(1)) == [sigma]
             True
 
             sage: list(Permutations(4).identity().nth_roots(-1))
