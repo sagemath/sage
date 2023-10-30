@@ -5434,7 +5434,7 @@ class Permutation(CombinatorialElement):
         
         from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
-        from sage.categories.cartesian_product import cartesian_product
+        from itertools import product
         from sage.arith.misc import divisors, gcd
 
         def merging_cycles(list_of_cycles):
@@ -5444,17 +5444,16 @@ class Permutation(CombinatorialElement):
             lC = len(list_of_cycles)
             lperm = len(list_of_cycles[0])
             l = lC*lperm
-            Perm = [0 for i in range(l)]
+            perm = [0 for i in range(l)]
             for j in range(lperm):
-                Perm[j*lC] = list_of_cycles[0][j]
+                perm[j*lC] = list_of_cycles[0][j]
             for p in Permutations(lC-1):
-                for indices in cartesian_product([range(lperm) for _ in range(lC-1)]):
-                    new_Perm = list(Perm)
+                for indices in product(*[range(lperm) for _ in range(lC-1)]):
+                    new_perm = list(perm)
                     for i in range(lC-1):
                         for j in range(lperm):
-                            new_Perm[(p[i] + (indices[i]+j)*lC) %l] = list_of_cycles[i+1][j]
-                    gamma = Permutation(tuple(new_Perm))
-                    yield gamma
+                            new_perm[(p[i] + (indices[i]+j)*lC) %l] = list_of_cycles[i+1][j]
+                    yield Permutation(tuple(new_perm))
 
         def rewind(L, n):
             """
@@ -5463,7 +5462,7 @@ class Permutation(CombinatorialElement):
             M = [0 for _ in L]
             m = len(M)
             for j in range(m):
-                M[(j*n)%m] = L[j]
+                M[(j*n) % m] = L[j]
             return M
         
         if n < 1:
@@ -5472,17 +5471,17 @@ class Permutation(CombinatorialElement):
         P = Permutations(self.size())
         
         # Creating dict {length: cycles of this length in the cycle decomposition of Sigma}
-        Cycles = {}
+        cycles = {}
         for c in self.cycle_tuples(singletons=True):
             lc = len(c)
-            if lc not in Cycles:
-                Cycles[lc] = []
-            Cycles[lc].append(c)
+            if lc not in cycles:
+                cycles[lc] = []
+            cycles[lc].append(c)
         
         # for each length m, collects all product of cycles which n-th power gives the product prod(Cycles[l])
-        Possibilities = {m: [] for m in Cycles}
-        for m in Cycles:
-            N = len(Cycles[m])
+        Possibilities = {m: [] for m in cycles}
+        for m in cycles:
+            N = len(cycles[m])
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
             b = False
             for X in Partitions(N, parts_in=parts):
@@ -5491,7 +5490,7 @@ class Permutation(CombinatorialElement):
                     poss = [P.identity()]
                     for pa in partition:
                             poss = [p*q for p in poss
-                                        for q in merging_cycles([rewind(Cycles[m][i-1], n//len(pa)) for i in pa])]
+                                        for q in merging_cycles([rewind(cycles[m][i-1], n//len(pa)) for i in pa])]
                     Possibilities[m] += poss
             if not b:
                 return
@@ -5504,7 +5503,7 @@ class Permutation(CombinatorialElement):
         r"""
         Decide if ``self`` has n-th roots.
         
-        A n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
+        An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
         Note that the number of n-th roots only depend on the cyclic type of ``self``.
         
@@ -5545,7 +5544,6 @@ class Permutation(CombinatorialElement):
             ...
             ValueError: n must be at least 1
         """
-
         from sage.combinat.partition import Partitions
         from sage.arith.misc import divisors, gcd
         from sage.rings.integer import Integer
@@ -5553,11 +5551,11 @@ class Permutation(CombinatorialElement):
         if n < 1:
             raise ValueError('n must be at least 1')
         
-        Cycles = self.cycle_type().to_exp_dict()
+        cycles = self.cycle_type().to_exp_dict()
 
         # for each length m, check if the number of m-cycles can come from a n-th power
         # (i.e. if you can partitionate m*Cycles[m] into parts of size l with l = m*gcd(l, n))
-        for m, N in Cycles.items():
+        for m, N in cycles.items():
             N = Integer(N) # I don't know why but ._findfirst doesn't work without
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
             if not Partitions(0, parts_in=[])._findfirst(N, parts):
@@ -5568,7 +5566,7 @@ class Permutation(CombinatorialElement):
         r"""
         Return the number of n-th roots of ``self``.
 
-        A n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
+        An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
 
         Note that the number of n-th roots only depend on the cyclic type of ``self``.
 
@@ -5620,18 +5618,18 @@ class Permutation(CombinatorialElement):
         if n < 1:
             raise ValueError('n must be at least 1')
 
-        Cycles = self.cycle_type().to_exp_dict()
-        Result = 1
-        for m, N in Cycles.items():
+        cycles = self.cycle_type().to_exp_dict()
+        result = 1
+        for m, N in cycles.items():
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
-            Result *= sum(SetPartitions(N, pa).cardinality() *
+            result *= sum(SetPartitions(N, pa).cardinality() *
                           prod(factorial(x-1) * m**(x-1) for x in pa)
                           for pa in Partitions(N, parts_in=parts))
 
-            if not Result:
+            if not result:
                 return 0
 
-        return Result
+        return result
 
 def _tableau_contribution(T):
     r"""
