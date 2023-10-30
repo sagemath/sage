@@ -260,8 +260,8 @@ class HomologyFunctor(Functor):
             sage: id_star(one)
             [one]
         """
-        from .homset import Hom
-        from .morphism import SetMorphism
+        from sage.categories.homset import Hom
+        from sage.categories.morphism import SetMorphism
 
         domain = f.domain()
         codomain = f.codomain()
