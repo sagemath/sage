@@ -5482,7 +5482,7 @@ class Permutation(CombinatorialElement):
 
         # for each length m, collects all product of cycles which n-th power gives the product prod(Cycles[l])
         possibilities = [[] for m in cycles]
-        for m in cycles:
+        for i, m in enumerate(cycles):
             N = len(cycles[m])
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
             b = False
@@ -5493,10 +5493,10 @@ class Permutation(CombinatorialElement):
                     for pa in partition:
                             poss = [p*q for p in poss
                                     for q in merging_cycles([rewind(cycles[m][i-1], n//len(pa)) for i in pa])]
-                    possibilities[m] += poss
+                    possibilities[i] += poss
             if not b:
                 return
-   
+
         #Product of Possibilities (i.e. final result)
         for L in product(*possibilities):
             yield P.prod(L)
@@ -5558,7 +5558,7 @@ class Permutation(CombinatorialElement):
         # (i.e. if you can partitionate m*Cycles[m] into parts of size l with l = m*gcd(l, n))
         for m, N in cycles.items():
             parts = [x for x in divisors(n) if gcd(m*x, n) == x]
-            if not Partitions(N, parts_in=parts).is_empty():
+            if Partitions(N, parts_in=parts).is_empty():
                 return False
         return True
 
