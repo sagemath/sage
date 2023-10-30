@@ -5408,8 +5408,8 @@ class Permutation(CombinatorialElement):
         
         .. SEEALSO::
         
-                * :meth:`has_nth_root`
-                * :meth:`number_of_nth_roots`
+            * :meth:`has_nth_root`
+            * :meth:`number_of_nth_roots`
         
         TESTS:
             
@@ -5521,8 +5521,8 @@ class Permutation(CombinatorialElement):
         
         .. SEEALSO::
         
-                * :meth:`nth_roots`
-                * :meth:`number_of_nth_roots`
+            * :meth:`nth_roots`
+            * :meth:`number_of_nth_roots`
         
         TESTS:
             
@@ -5582,8 +5582,8 @@ class Permutation(CombinatorialElement):
 
         .. SEEALSO::
 
-                * :meth:`nth_roots`
-                * :meth:`has_nth_root`
+            * :meth:`nth_roots`
+            * :meth:`has_nth_root`
 
         TESTS:
 
