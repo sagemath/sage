@@ -1503,6 +1503,7 @@ class Stream_functional_equation(Stream_inexact):
         yield from self._initial_values
         x = self._P.gen()
         offset = self._approximate_order
+
         def get_coeff(n):
             n -= offset
             if n < len(self._initial_values):
