@@ -464,20 +464,20 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     But nevertheless isospectral::
 
-        sage: g0.spectrum()                                                             # needs sage.modules
+        sage: g0.spectrum()                                                             # needs sage.modules sage.rings.number_field
         [9, 1, 1, 1, 1, 1, 1, 1, 1, 1, -3, -3, -3, -3, -3, -3]
-        sage: g1.spectrum()                                                             # needs sage.modules
+        sage: g1.spectrum()                                                             # needs sage.modules sage.rings.number_field
         [9, 1, 1, 1, 1, 1, 1, 1, 1, 1, -3, -3, -3, -3, -3, -3]
 
     Note that the graph ``g0`` is actually isomorphic to the affine polar graph
     `VO^+(4,2)`::
 
-        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)              # needs sage.modules
+        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)              # needs sage.libs.gap sage.modules
         True
 
     TESTS::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)                                 # needs sage.modules
+        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)                                 # needs sage.modules sage.schemes
         Traceback (most recent call last):
         ...
         NotImplementedError: I don't know how to build an OA(4,6)!

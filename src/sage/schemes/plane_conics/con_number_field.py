@@ -442,10 +442,10 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                     for a in self.symmetric_matrix().list():
                         if a != 0:
                             for f in O.fractional_ideal(a).factor():
-                                if f[1] < 0 and not f[0] in candidates:
+                                if f[1] < 0 and f[0] not in candidates:
                                     candidates.append(f[0])
                     for f in O.fractional_ideal(2 * self.determinant()).factor():
-                        if f[1] > 0 and not f[0] in candidates:
+                        if f[1] > 0 and f[0] not in candidates:
                             candidates.append(f[0])
                 for b in candidates:
                     if not self.is_locally_solvable(b):

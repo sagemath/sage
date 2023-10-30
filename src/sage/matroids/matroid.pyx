@@ -280,7 +280,7 @@ Minors::
     sage: M = Matroid(Matrix(QQ, [[1, 0, 0, 0, 1, 1, 1],
     ....:                         [0, 1, 0, 1, 0, 1, 1],
     ....:                         [0, 0, 1, 1, 1, 0, 1]]))
-    sage: N = M / [2] \ [3, 4]
+    sage: N = (M / [2]).delete([3, 4])
     sage: sorted(N.groundset())
     [0, 1, 5, 6]
     sage: N.full_rank()
@@ -337,6 +337,7 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
+from sage.misc.superseded import deprecation
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -2142,7 +2143,7 @@ cdef class Matroid(SageObject):
             sage: M = matroids.named_matroids.Fano().dual()
             sage: M.coloops()
             frozenset()
-            sage: (M \ ['a', 'b']).coloops()
+            sage: (M.delete(['a', 'b'])).coloops()
             frozenset({'f'})
         """
         return self._coclosure(set())
@@ -3475,7 +3476,7 @@ cdef class Matroid(SageObject):
             sage: N.is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano() \ ['g']
+            sage: M = matroids.named_matroids.Fano().delete(['g'])
             sage: N = matroids.Wheel(3)
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
             sage: M.is_isomorphism(N, morphism)
@@ -3603,7 +3604,7 @@ cdef class Matroid(SageObject):
             sage: N._is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano() \ ['g']
+            sage: M = matroids.named_matroids.Fano().delete(['g'])
             sage: N = matroids.Wheel(3)
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
             sage: M._is_isomorphism(N, morphism)
@@ -3907,7 +3908,8 @@ cdef class Matroid(SageObject):
         one. It can be shown that the resulting matroid does not depend on the
         order of the deletions.
 
-        Sage supports the shortcut notation ``M \ X`` for ``M.delete(X)``.
+        DEPRECATED: Sage supports the shortcut notation ``M \ X`` for
+        ``M.delete(X)``.
 
         INPUT:
 
@@ -3932,7 +3934,7 @@ cdef class Matroid(SageObject):
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
             sage: M.delete(['a', 'c'])
             Binary matroid of rank 3 on 5 elements, type (1, 6)
-            sage: M.delete(['a']) == M \ ['a']
+            sage: M.delete(['a']) == M.delete(['a'])
             True
 
         One can use a single element, rather than a set::
@@ -3940,13 +3942,13 @@ cdef class Matroid(SageObject):
             sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
             sage: M.delete(1) == M.delete([1])                                          # needs sage.graphs
             True
-            sage: M \ 1                                                                 # needs sage.graphs
+            sage: M.delete(1)                                                           # needs sage.graphs
             Graphic matroid of rank 3 on 5 elements
 
         Note that one can iterate over strings::
 
             sage: M = matroids.named_matroids.Fano()
-            sage: M \ 'abc'
+            sage: M.delete('abc')
             Binary matroid of rank 3 on 4 elements, type (0, 5)
 
         The following is therefore ambiguous. Sage will delete the single
@@ -3954,7 +3956,7 @@ cdef class Matroid(SageObject):
 
             sage: M = Matroid(groundset=['a', 'b', 'c', 'abc'],
             ....:             bases=[['a', 'b', 'c'], ['a', 'b', 'abc']])
-            sage: sorted((M \ 'abc').groundset())
+            sage: sorted((M.delete('abc')).groundset())
             ['a', 'b', 'c']
         """
         return self.minor(deletions=X)
@@ -3963,12 +3965,17 @@ cdef class Matroid(SageObject):
         r"""
         Shorthand for ``self.delete(X)``.
 
+        DEPRECATED
+
         EXAMPLES::
 
             sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
             sage: M.delete(1) == M \ 1  # indirect doctest                              # needs sage.graphs
+            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use M.delete(X) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             True
         """
+        deprecation(36394, 'the backslash operator has been deprecated; use M.delete(X) instead')
         return self.delete(X)
 
     cpdef dual(self):
@@ -4399,7 +4406,7 @@ cdef class Matroid(SageObject):
         `\{b, f\}`::
 
             sage: M = matroids.named_matroids.S8()
-            sage: N = M \ 'h'
+            sage: N = M.delete('h')
             sage: frozenset('bf') in N.modular_cut(['cg', 'ae'])
             True
 
@@ -4768,7 +4775,7 @@ cdef class Matroid(SageObject):
             sage: M = matroids.named_matroids.Fano().dual()
             sage: M.is_cosimple()
             True
-            sage: N = M \ 'a'
+            sage: N = M.delete('a')
             sage: N.is_cosimple()
             False
         """
@@ -4977,7 +4984,7 @@ cdef class Matroid(SageObject):
             sage: M.connectivity(X)
             2
             sage: J = M.groundset()-(S|T|I)
-            sage: N = M/I\J
+            sage: N = (M/I).delete(J)
             sage: N.connectivity(S)
             2
         """
@@ -5026,7 +5033,7 @@ cdef class Matroid(SageObject):
             sage: M.connectivity(X)
             2
             sage: J = M.groundset()-(S|T|I)
-            sage: N = M/I\J
+            sage: N = (M/I).delete(J)
             sage: N.connectivity(S)
             2
         """

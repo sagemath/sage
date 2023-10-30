@@ -749,7 +749,7 @@ class DocTestController(SageObject):
             with open(filename) as stats_file:
                 self.stats.update(json.load(stats_file))
         except Exception:
-            self.log("Error loading stats from %s"%filename)
+            self.log("Error loading stats from %s" % filename)
 
     def save_stats(self, filename):
         """
@@ -838,7 +838,7 @@ class DocTestController(SageObject):
             Running doctests with ID ...
         """
         self.run_id = time.strftime('%Y-%m-%d-%H-%M-%S-') + "%08x" % random.getrandbits(32)
-        self.log("Running doctests with ID %s."%self.run_id)
+        self.log("Running doctests with ID %s." % self.run_id)
 
     def add_files(self):
         r"""
@@ -1128,16 +1128,16 @@ class DocTestController(SageObject):
         if self.sources:
             filestr = ", ".join(([count_noun(nfiles, "file")] if nfiles else []) +
                                 ([count_noun(nother, "other source")] if nother else []))
-            threads = " using %s threads"%(self.options.nthreads) if self.options.nthreads > 1 else ""
+            threads = " using %s threads" % (self.options.nthreads) if self.options.nthreads > 1 else ""
             iterations = []
             if self.options.global_iterations > 1:
-                iterations.append("%s global iterations"%(self.options.global_iterations))
+                iterations.append("%s global iterations" % (self.options.global_iterations))
             if self.options.file_iterations > 1:
-                iterations.append("%s file iterations"%(self.options.file_iterations))
+                iterations.append("%s file iterations" % (self.options.file_iterations))
             iterations = ", ".join(iterations)
             if iterations:
-                iterations = " (%s)"%(iterations)
-            self.log("Doctesting %s%s%s."%(filestr, threads, iterations))
+                iterations = " (%s)" % (iterations)
+            self.log("Doctesting %s%s%s." % (filestr, threads, iterations))
             self.reporter = DocTestReporter(self)
             self.dispatcher = DocTestDispatcher(self)
             N = self.options.global_iterations
@@ -1246,10 +1246,10 @@ class DocTestController(SageObject):
             raise ValueError("You cannot run gdb/lldb/valgrind on the whole sage library")
         for o in ("all", "long", "force_lib", "verbose", "failed", "new"):
             if o in opt:
-                cmd += "--%s "%o
+                cmd += "--%s " % o
         for o in ("timeout", "randorder", "stats_path"):
             if o in opt:
-                cmd += "--%s=%s "%(o, opt[o])
+                cmd += "--%s=%s " % (o, opt[o])
         if "optional" in opt:
             cmd += "--optional={} ".format(self._optional_tags_string())
         return cmd + " ".join(self.files)
@@ -1315,9 +1315,9 @@ class DocTestController(SageObject):
                 flags = os.getenv("SAGE_MEMCHECK_FLAGS")
                 if flags is None:
                     flags = "--leak-resolution=high --leak-check=full --num-callers=25 "
-                    flags += '''--suppressions="%s" '''%(os.path.join(SAGE_EXTCODE,"valgrind","pyalloc.supp"))
-                    flags += '''--suppressions="%s" '''%(os.path.join(SAGE_EXTCODE,"valgrind","sage.supp"))
-                    flags += '''--suppressions="%s" '''%(os.path.join(SAGE_EXTCODE,"valgrind","sage-additional.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind","pyalloc.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind","sage.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind","sage-additional.supp"))
             elif opt.massif:
                 toolname = "massif"
                 flags = os.getenv("SAGE_MASSIF_FLAGS", "--depth=6 ")
@@ -1327,7 +1327,7 @@ class DocTestController(SageObject):
             elif opt.omega:
                 toolname = "exp-omega"
                 flags = os.getenv("SAGE_OMEGA_FLAGS", "")
-            cmd = "exec valgrind --tool=%s "%(toolname)
+            cmd = "exec valgrind --tool=%s " % (toolname)
             flags += f''' --log-file={shlex.quote(logfile)} '''
             if opt.omega:
                 toolname = "omega"
@@ -1623,7 +1623,7 @@ def run_doctests(module, options=None):
 # Declaration of doctest strings
 ###############################################################################
 
-test_hide=r"""r{quotmark}
+test_hide = r"""r{quotmark}
 {prompt}: next(graphs.fullerenes(20))
 Traceback (most recent call last):
  ...

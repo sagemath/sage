@@ -128,7 +128,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     - Martin Raum (2009-08-02): use FLINT for polynomial arithmetic (instead of NTL)
     """
     k = Integer(k)
-    if k%2 == 1 or k==2:
+    if k % 2 == 1 or k == 2:
         return Sequence([])
     elif k < 0:
         raise ValueError("k must be non-negative")
