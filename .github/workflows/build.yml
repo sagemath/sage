@@ -165,7 +165,7 @@ jobs:
       - name: Imports
         run: |
           ../sage -python -m pip install pytest-xdist
-          ../sage -python -m pytest -c tox.ini --doctest-modules --collect-only || true
+          ../sage -python -m pytest -c tox.ini -qq --doctest-modules --collect-only || true
         working-directory: ./worktree-image/src
         env:
           # Increase the length of the lines in the "short summary"
