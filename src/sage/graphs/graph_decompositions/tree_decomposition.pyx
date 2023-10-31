@@ -465,7 +465,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
 
     When ``k`` is specified, it returns ``False`` if there is no tree
     decomposition of width `\leq k`, and ``True`` otherwise.
-    
+
     When ``certificate=True``, the tree decomposition is returned.
 
     When ``nice=True``, the nice tree decomposition is returned.
@@ -801,12 +801,12 @@ def make_nice_tree_decomposition(graph, tree_decomp):
       forgotten node;
     - *Join* nodes have two children, both identical to the parent.
 
-    INPUT::
+    INPUT:
 
     - ``graph`` -- a Sage graph
     - ``tree_decomp`` -- a tree decomposition
 
-    OUTPUT::
+    OUTPUT:
 
     A nice tree decomposition.
 
@@ -874,7 +874,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         bag[vi] = Set()
 
     # Step 3: Ensure that each node of directed_tree has at most 2 children.
-    # If a node has more than 2 children, introduce new nodes to 
+    # If a node has more than 2 children, introduce new nodes to
     # make sure each node has at most 2 children:
     #
     # If v has k > 2 children (w_1, w_2, ..., w_k), we disconnect (w_1, ..., w_{k-1})
@@ -959,7 +959,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
     for ui in list(directed_tree):
         if directed_tree.out_degree(ui) != 1:
             continue
-        
+
         vi = next(directed_tree.neighbor_out_iterator(ui))
         bag_ui, bag_vi = bag[ui], bag[vi]
 
