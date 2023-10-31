@@ -507,7 +507,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
     Nice tree decomposition of the PetersenGraph has 28 nodes:
 
         sage: graphs.PetersenGraph().treewidth(certificate=True, nice=True)
-        Nice tree decomposition: Graph on 28 vertices
+        Nice tree decomposition of Tree decomposition: Graph on 28 vertices
 
     The treewidth of a 2-dimensional grid is its smallest side::
 
@@ -702,7 +702,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
     # Forcing k to be defined
     if k is None:
         for i in range(max(kmin, g.clique_number() - 1, min(g.degree())), g.order()):
-            ans = g.treewidth(algorithm=algorithm, k=i, certificate=certificate)
+            ans = g.treewidth(algorithm=algorithm, k=i, certificate=certificate, nice=nice)
             if ans:
                 return ans if certificate else i
 
@@ -780,10 +780,8 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
 
     tree_decomp.name("Tree decomposition")
     if nice:
-        print(nice)
         tree_decomp = make_nice_tree_decomposition(g, tree_decomp)
 
-    print(nice)
     return tree_decomp
 
 def make_nice_tree_decomposition(graph, tree_decomp):
