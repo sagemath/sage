@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs, sage.combinat
 r"""
 Posets
 """
@@ -70,13 +71,14 @@ class Posets(Category):
     :trac:`10130` will be resolved, this will be automatically
     provided by this category::
 
-        sage: x < y      # todo: not implemented
+        sage: # not implemented
+        sage: x < y
         True
-        sage: x < x      # todo: not implemented
+        sage: x < x
         False
-        sage: x <= x     # todo: not implemented
+        sage: x <= x
         True
-        sage: y >= x     # todo: not implemented
+        sage: y >= x
         True
 
     .. SEEALSO:: :func:`Poset`, :class:`FinitePosets`, :class:`LatticePosets`
@@ -112,7 +114,8 @@ class Posets(Category):
             An example of a poset: sets ordered by inclusion
 
             sage: Posets().example("facade")
-            An example of a facade poset: the positive integers ordered by divisibility
+            An example of a facade poset:
+             the positive integers ordered by divisibility
         """
         from sage.categories.examples.posets import FiniteSetsOrderedByInclusion, PositiveIntegersOrderedByDivisibilityFacade
         if choice == "facade":
@@ -147,8 +150,7 @@ class Posets(Category):
         from sage.combinat.posets.posets import FinitePosets_n
         n = 0
         while True:
-            for P in FinitePosets_n(n):
-                yield P
+            yield from FinitePosets_n(n)
             n += 1
 
     Finite = LazyImport('sage.categories.finite_posets', 'FinitePosets')
@@ -398,7 +400,7 @@ class Posets(Category):
 
                 sage: P = Poset({1: [2,3], 2: [4], 3: []})
                 sage: I = Set({1, 2})
-                sage: I in P.order_ideals_lattice()
+                sage: I in P.order_ideals_lattice()                                     # needs sage.modules
                 True
                 sage: P.order_ideal_toggle(I, 1)
                 {1, 2}
@@ -409,7 +411,7 @@ class Posets(Category):
                 sage: P.order_ideal_toggle(I, 4)
                 {1, 2, 4}
                 sage: P4 = Posets(4)
-                sage: all(all(all(P.order_ideal_toggle(P.order_ideal_toggle(I, i), i) == I
+                sage: all(all(all(P.order_ideal_toggle(P.order_ideal_toggle(I, i), i) == I          # needs sage.modules
                 ....:               for i in range(4))
                 ....:          for I in P.order_ideals_lattice(facade=True))
                 ....:     for P in P4)
@@ -457,7 +459,8 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: P = Poset((divisors(12), attrcall("divides")), facade=True, linear_extension=True)
+                sage: P = Poset((divisors(12), attrcall("divides")),
+                ....:           facade=True, linear_extension=True)
                 sage: sorted(P.list())
                 [1, 2, 3, 4, 6, 12]
                 sage: P.is_order_ideal([1, 3])
@@ -483,7 +486,8 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: P = Poset((divisors(12), attrcall("divides")), facade=True, linear_extension=True)
+                sage: P = Poset((divisors(12), attrcall("divides")),
+                ....:           facade=True, linear_extension=True)
                 sage: sorted(P.list())
                 [1, 2, 3, 4, 6, 12]
                 sage: P.is_order_filter([4, 12])
@@ -527,7 +531,8 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: P = Poset((divisors(12), attrcall("divides")), facade=True, linear_extension=True)
+                sage: P = Poset((divisors(12), attrcall("divides")),
+                ....:           facade=True, linear_extension=True)
                 sage: sorted(P.list())
                 [1, 2, 3, 4, 6, 12]
                 sage: P.is_chain_of_poset([1, 3])
@@ -575,11 +580,16 @@ class Posets(Category):
 
                 sage: from sage.categories.examples.posets import FiniteSetsOrderedByInclusion
                 sage: R = FiniteSetsOrderedByInclusion()
-                sage: R.is_chain_of_poset([R(set([3, 1, 2])), R(set([1, 4])), R(set([4, 5]))])
+                sage: R.is_chain_of_poset([R(set([3, 1, 2])),
+                ....:                      R(set([1, 4])),
+                ....:                      R(set([4, 5]))])
                 False
-                sage: R.is_chain_of_poset([R(set([3, 1, 2])), R(set([1, 2])), R(set([1]))], ordered=True)
+                sage: R.is_chain_of_poset([R(set([3, 1, 2])),
+                ....:                      R(set([1, 2])),
+                ....:                      R(set([1]))], ordered=True)
                 False
-                sage: R.is_chain_of_poset([R(set([3, 1, 2])), R(set([1, 2])), R(set([1]))])
+                sage: R.is_chain_of_poset([R(set([3, 1, 2])),
+                ....:                      R(set([1, 2])), R(set([1]))])
                 True
 
                 sage: from sage.categories.examples.posets import PositiveIntegersOrderedByDivisibilityFacade
@@ -632,7 +642,8 @@ class Posets(Category):
 
             EXAMPLES::
 
-                sage: P = Poset((divisors(12), attrcall("divides")), facade=True, linear_extension=True)
+                sage: P = Poset((divisors(12), attrcall("divides")),
+                ....:           facade=True, linear_extension=True)
                 sage: sorted(P.list())
                 [1, 2, 3, 4, 6, 12]
                 sage: P.is_antichain_of_poset([1, 3])
@@ -653,9 +664,11 @@ class Posets(Category):
                 False
                 sage: P.is_antichain_of_poset([6, 4])
                 True
-                sage: P.is_antichain_of_poset(i for i in divisors(12) if (2 < i and i < 6))
+                sage: P.is_antichain_of_poset(i for i in divisors(12)
+                ....:                         if (2 < i and i < 6))
                 True
-                sage: P.is_antichain_of_poset(i for i in divisors(12) if (2 <= i and i < 6))
+                sage: P.is_antichain_of_poset(i for i in divisors(12)
+                ....:                         if (2 <= i and i < 6))
                 False
 
                 sage: Q = Poset({2: [3, 1], 3: [4], 1: [4]})
@@ -680,9 +693,11 @@ class Posets(Category):
 
                 sage: from sage.categories.examples.posets import FiniteSetsOrderedByInclusion
                 sage: R = FiniteSetsOrderedByInclusion()
-                sage: R.is_antichain_of_poset([R(set([3, 1, 2])), R(set([1, 4])), R(set([4, 5]))])
+                sage: R.is_antichain_of_poset([R(set([3, 1, 2])),
+                ....:                          R(set([1, 4])), R(set([4, 5]))])
                 True
-                sage: R.is_antichain_of_poset([R(set([3, 1, 2, 4])), R(set([1, 4])), R(set([4, 5]))])
+                sage: R.is_antichain_of_poset([R(set([3, 1, 2, 4])),
+                ....:                          R(set([1, 4])), R(set([4, 5]))])
                 False
             """
             return all(not self.lt(x,y) for x in o for y in o)

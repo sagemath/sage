@@ -112,12 +112,12 @@ Aussi, Sage se comporte différemment de Python à plusieurs égards.
         sage: a
         10
 
--  **Division entière :** L'expression Python ``2/3`` ne se comporte pas
-   de la manière à laquelle s'attendraient des mathématiciens. En Python 2, si
-   ``m`` et ``n`` sont de type int, alors ``m/n`` est aussi de type int, c'est
-   le quotient entier de ``m`` par ``n``. Par conséquent, ``2/3=0``. Ce
-   comportement est différent en Python 3, où ``2/3`` renvoie un flottant
-   ``0.6666...`` et c'est ``2//3`` qui renvoie ``0``.
+- **Division entière :** L'expression Python ``2/3`` ne se comporte
+   pas de la manière à laquelle s'attendraient des mathématiciens. En
+   Python 3, si ``m`` et ``n`` sont de type ``int``, alors ``m/n`` est
+   de type ``float``, c'est le quotient réel de ``m`` par ``n``. Par
+   exemple, ``2/3`` renvoie ``0.6666...``. Pour obtenir le quotient
+   entier, il faut utiliser ``2//3`` qui renvoie ``0``.
 
    Dans l'interpréteur Sage, nous réglons cela en encapsulant
    automatiquement les entiers litéraux par ``Integer( )`` et en faisant

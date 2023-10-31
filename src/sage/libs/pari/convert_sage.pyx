@@ -2,7 +2,7 @@ r"""
 Convert PARI objects to Sage types
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #       Copyright (C) 2016 Luca De Feo <luca.defeo@polytechnique.edu>
 #       Copyright (C) 2016 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
@@ -11,8 +11,8 @@ Convert PARI objects to Sage types
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -20,9 +20,7 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_INTMOD, t_PADIC, t_INFINITY, t_VEC, t_COL,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
-from cypari2.pari_instance cimport prec_words_to_bits
 from cypari2.paridecl cimport *
-from cypari2.gen cimport objtogen
 from cypari2.stack cimport new_gen
 from .convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
@@ -30,7 +28,9 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
 from sage.libs.gmp.mpq cimport mpq_denref, mpq_numref
 from sage.rings.integer cimport smallInteger
-from sage.rings.all import RealField, ComplexField, QuadraticField
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.number_field.number_field import QuadraticField
 from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
                                MA_ENTRIES_SEQ_FLAT, MA_ENTRIES_CALLABLE,
                                MA_ENTRIES_UNKNOWN, MA_ENTRIES_SCALAR)
@@ -38,7 +38,7 @@ from sage.rings.padics.factory import Qp
 from sage.rings.infinity import Infinity
 
 
-cpdef gen_to_sage(Gen z, locals=None):
+cpdef gen_to_sage(Gen z, locals=None) noexcept:
     """
     Convert a PARI gen to a Sage/Python object.
 
@@ -326,7 +326,7 @@ cpdef gen_to_sage(Gen z, locals=None):
     return sage_eval(str(z), locals=locals)
 
 
-cpdef set_integer_from_gen(Integer self, Gen x):
+cpdef set_integer_from_gen(Integer self, Gen x) noexcept:
     r"""
     EXAMPLES::
 
@@ -374,7 +374,7 @@ cpdef set_integer_from_gen(Integer self, Gen x):
     INT_to_mpz(self.value, (<Gen>x).g)
 
 
-cpdef Gen new_gen_from_integer(Integer self):
+cpdef Gen new_gen_from_integer(Integer self) noexcept:
     """
     TESTS::
 
@@ -386,7 +386,7 @@ cpdef Gen new_gen_from_integer(Integer self):
     return new_gen_from_mpz_t(self.value)
 
 
-cpdef set_rational_from_gen(Rational self, Gen x):
+cpdef set_rational_from_gen(Rational self, Gen x) noexcept:
     r"""
     EXAMPLES::
 
@@ -406,7 +406,7 @@ cpdef set_rational_from_gen(Rational self, Gen x):
         mpz_set_si(mpq_denref(self.value), 1)
 
 
-cpdef Gen new_gen_from_rational(Rational self):
+cpdef Gen new_gen_from_rational(Rational self) noexcept:
     """
     TESTS::
 
@@ -418,7 +418,7 @@ cpdef Gen new_gen_from_rational(Rational self):
     return new_gen_from_mpq_t(self.value)
 
 
-cpdef list pari_divisors_small(Integer self):
+cpdef list pari_divisors_small(Integer self) noexcept:
     r"""
     Return the list of divisors of this number using PARI ``divisorsu``.
 
@@ -464,7 +464,7 @@ cpdef list pari_divisors_small(Integer self):
         avma = ltop
 
 
-cpdef pari_is_prime(Integer p):
+cpdef pari_is_prime(Integer p) noexcept:
     r"""
     Return whether ``p`` is a prime.
 
@@ -491,7 +491,7 @@ cpdef pari_is_prime(Integer p):
     return bool(uisprime(mpz_get_ui(p.value)))
 
 
-cpdef pari_is_prime_power(Integer q, bint get_data):
+cpdef pari_is_prime_power(Integer q, bint get_data) noexcept:
     r"""
     Return whether ``q`` is a prime power.
 
@@ -532,7 +532,7 @@ cpdef pari_is_prime_power(Integer q, bint get_data):
         return (q, smallInteger(0)) if get_data else False
 
 
-cpdef unsigned long pari_maxprime():
+cpdef unsigned long pari_maxprime() noexcept:
     """
     Return to which limit PARI has computed the primes.
 
@@ -548,7 +548,7 @@ cpdef unsigned long pari_maxprime():
     return maxprime()
 
 
-cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
+cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False) noexcept:
     """
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 

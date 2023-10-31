@@ -175,7 +175,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=Groups())
         self._vmodule = vector_field_module
 
-
     #### Parent methods ####
 
     def _element_constructor_(self, comp=[], frame=None, name=None,
@@ -265,7 +264,6 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
         return resu
 
     #### End of parent methods ####
-
 
     #### Monoid methods ####
 
@@ -357,7 +355,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
 
         """
         from sage.misc.latex import latex
-        return r"\mathrm{GL}\left("+ latex(self._vmodule)+ r"\right)"
+        return r"\mathrm{GL}\left(" + latex(self._vmodule) + r"\right)"
 
     def base_module(self):
         r"""

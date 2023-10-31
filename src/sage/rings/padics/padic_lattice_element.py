@@ -17,10 +17,11 @@ tests because they take a few minutes as of mid 2018, see :trac:`25431`::
     sage: R3 = QpLC(2)
     sage: R4 = QpLF(2)
 
-    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: # long time
+    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith'])
+    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith'])
+    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith'])
+    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith'])
 """
 
 # ****************************************************************************
@@ -1010,7 +1011,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: b.unit_part()
             1 + 16*17 + O(17^3)
 
-        If the element is indistinguishable from zero, an error is raised.
+        If the element is indistinguishable from zero, an error is raised::
 
             sage: c = R(0, 5); c
             O(17^5)

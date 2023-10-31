@@ -26,7 +26,8 @@ Thematic indexes
 - :ref:`sage.combinat.species.all`
 - :ref:`sage.combinat.designs.all`
 - :ref:`sage.combinat.posets.all`
-- :ref:`sage.combinat.words`
+- :ref:`sage.combinat.words.all`
+- :ref:`sage.combinat.bijectionist`
 
 Utilities
 ---------
@@ -217,7 +218,7 @@ from .set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 lazy_import('sage.combinat.multiset_partition_into_sets_ordered',
             ['OrderedMultisetPartitionIntoSets',
              'OrderedMultisetPartitionsIntoSets'])
-from .subset import Subsets
+from .subset import Subsets, subsets, powerset, uniq
 from .necklace import Necklaces
 lazy_import('sage.combinat.dyck_word', ('DyckWords', 'DyckWord'))
 lazy_import('sage.combinat.nu_dyck_word', ('NuDyckWords', 'NuDyckWord'))
@@ -276,7 +277,7 @@ lazy_import('sage.combinat.finite_state_machine_generators',
 lazy_import('sage.combinat.binary_recurrence_sequences',
             'BinaryRecurrenceSequence')
 lazy_import('sage.combinat.recognizable_series', 'RecognizableSeriesSpace')
-lazy_import('sage.combinat.k_regular_sequence', 'kRegularSequenceSpace')
+lazy_import('sage.combinat.regular_sequence', 'RegularSequenceRing')
 
 # Six Vertex Model
 lazy_import('sage.combinat.six_vertex_model', 'SixVertexModel')
@@ -299,3 +300,6 @@ lazy_import('sage.combinat.growth', 'GrowthDiagram')
 
 # Path Tableaux
 lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
+
+# Bijectionist
+lazy_import('sage.combinat.bijectionist', 'Bijectionist')

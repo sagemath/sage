@@ -56,46 +56,35 @@ from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
 
-from sage.misc.randstate cimport randstate, current_randstate
-from sage.rings.finite_rings.finite_field_base cimport FiniteField
-from sage.rings.ring cimport Ring
+from sage.misc.randstate cimport current_randstate
 from .element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.richcmp cimport richcmp
-from sage.structure.element cimport Element, ModuleElement, RingElement
-import operator
 import sage.arith.all
-import sage.rings.finite_rings.finite_field_constructor as finite_field
 
-from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
 from sage.structure.parent cimport Parent
-
+from sage.structure.element cimport Vector
 
 from sage.interfaces.abc import GapElement
 
 cdef object is_IntegerMod
 cdef object Integer
 cdef object Rational
-cdef object ConwayPolynomials
-cdef object conway_polynomial
 cdef object MPolynomial
 cdef object Polynomial
-cdef object FreeModuleElement
 
-cdef void late_import():
+
+cdef void late_import() noexcept:
     """
     Late import of modules
     """
     global is_IntegerMod, \
            Integer, \
            Rational, \
-           ConwayPolynomials, \
-           conway_polynomial, \
            MPolynomial, \
-           Polynomial, \
-           FreeModuleElement
+           Polynomial
 
     if is_IntegerMod is not None:
         return
@@ -109,20 +98,12 @@ cdef void late_import():
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
 
-    import sage.databases.conway
-    ConwayPolynomials = sage.databases.conway.ConwayPolynomials
-
-    import sage.rings.finite_rings.finite_field_constructor
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
-
     import sage.rings.polynomial.multi_polynomial_element
     MPolynomial = sage.rings.polynomial.multi_polynomial_element.MPolynomial
 
     import sage.rings.polynomial.polynomial_element
     Polynomial = sage.rings.polynomial.polynomial_element.Polynomial
 
-    import sage.modules.free_module_element
-    FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
 cdef class Cache_givaro(Cache_base):
     def __init__(self, parent, unsigned int p, unsigned int k, modulus, repr="poly", cache=False):
@@ -227,7 +208,7 @@ cdef class Cache_givaro(Cache_base):
             self._array = self.gen_array()
             self._has_array = True
 
-    cdef gen_array(self):
+    cdef gen_array(self) noexcept:
         """
         Generates an array/list/tuple containing all elements of ``self``
         indexed by their power with respect to the internal generator.
@@ -245,7 +226,7 @@ cdef class Cache_givaro(Cache_base):
         """
         delete(self.objectptr)
 
-    cpdef int characteristic(self):
+    cpdef int characteristic(self) noexcept:
         """
         Return the characteristic of this field.
 
@@ -268,7 +249,7 @@ cdef class Cache_givaro(Cache_base):
         """
         return Integer(self.order_c())
 
-    cpdef int order_c(self):
+    cpdef int order_c(self) noexcept:
         """
         Return the order of this field.
 
@@ -280,7 +261,7 @@ cdef class Cache_givaro(Cache_base):
         """
         return self.objectptr.cardinality()
 
-    cpdef int exponent(self):
+    cpdef int exponent(self) noexcept:
         r"""
         Return the degree of this field over `\GF{p}`.
 
@@ -314,7 +295,7 @@ cdef class Cache_givaro(Cache_base):
         self.objectptr.random(generator, res)
         return make_FiniteField_givaroElement(self, res)
 
-    cpdef FiniteField_givaroElement element_from_data(self, e):
+    cpdef FiniteField_givaroElement element_from_data(self, e) noexcept:
         """
         Coerces several data types to ``self``.
 
@@ -398,7 +379,7 @@ cdef class Cache_givaro(Cache_base):
             return self.parent(eval(e.replace("^", "**"),
                                     self.parent.gens_dict()))
 
-        elif isinstance(e, FreeModuleElement):
+        elif isinstance(e, Vector):
             if self.parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ret = self._zero_element
@@ -485,7 +466,7 @@ cdef class Cache_givaro(Cache_base):
 
         return make_FiniteField_givaroElement(self, res)
 
-    cpdef FiniteField_givaroElement gen(self):
+    cpdef FiniteField_givaroElement gen(self) noexcept:
         """
         Return a generator of the field.
 
@@ -565,7 +546,7 @@ cdef class Cache_givaro(Cache_base):
         sig_off()
         return r
 
-    cpdef FiniteField_givaroElement fetch_int(self, number):
+    cpdef FiniteField_givaroElement fetch_int(self, number) noexcept:
         r"""
         Given an integer ``n`` return a finite field element in ``self``
         which equals ``n`` under the condition that :meth:`gen()` is set to
@@ -773,7 +754,7 @@ cdef class Cache_givaro(Cache_base):
             rep = 'int'
         return unpickle_Cache_givaro, (self.parent, p, k, self.parent.polynomial(), rep, self._has_array)
 
-    cdef FiniteField_givaroElement _new_c(self, int value):
+    cdef FiniteField_givaroElement _new_c(self, int value) noexcept:
         return make_FiniteField_givaroElement(self, value)
 
 
@@ -891,7 +872,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         self._cache = parent._cache
         self.element = 0
 
-    cdef FiniteField_givaroElement _new_c(self, int value):
+    cdef FiniteField_givaroElement _new_c(self, int value) noexcept:
         return make_FiniteField_givaroElement(self._cache, value)
 
     def __dealloc__(FiniteField_givaroElement self):
@@ -1095,7 +1076,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         else:
             raise ValueError("must be a perfect square.")
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two elements.
 
@@ -1110,7 +1091,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two elements.
 
@@ -1127,7 +1108,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide two elements
 
@@ -1149,7 +1130,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two elements.
 
@@ -1300,7 +1281,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             return make_FiniteField_givaroElement(cache, cache.objectptr.one)
         return make_FiniteField_givaroElement(cache, r)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Comparison of finite field elements is correct or equality
         tests and somewhat random for ``<`` and ``>`` type of
@@ -1579,7 +1560,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         # TODO -- I'm sure this can be made vastly faster
         # using how elements are represented as a power of the generator ??
-        import sage.arith.all
 
         if self._multiplicative_order is not None:
             return self._multiplicative_order
@@ -1758,7 +1738,7 @@ def unpickle_FiniteField_givaroElement(parent, int x):
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_givaro', 'unpickle_FiniteField_givaroElement', unpickle_FiniteField_givaroElement)
 
-cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x):
+cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x) noexcept:
     cdef FiniteField_givaroElement y
 
     if cache._has_array:

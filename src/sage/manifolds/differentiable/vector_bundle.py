@@ -362,8 +362,8 @@ class TensorBundle(DifferentiableVectorBundle):
 
     .. MATH::
 
-        t:\ \underbrace{T_q^*N\times\cdots\times T_q^*N}_{k\ \; \mbox{times}}
-            \times \underbrace{T_q N\times\cdots\times T_q N}_{l\ \; \mbox{times}}
+        t:\ \underbrace{T_q^*N\times\cdots\times T_q^*N}_{k\ \; \text{times}}
+            \times \underbrace{T_q N\times\cdots\times T_q N}_{l\ \; \text{times}}
             \longrightarrow K
 
     (`k` is called the *contravariant* and `l` the *covariant* rank of the
@@ -464,7 +464,7 @@ class TensorBundle(DifferentiableVectorBundle):
             else:
                 name = self._dest_map._name + "^*"
             if self._dest_map._latex_name is None:
-                latex_name = r'\mbox{(unnamed map)}^* '
+                latex_name = r'\text{(unnamed map)}^* '
             else:
                 latex_name = self._dest_map._latex_name + r'^* '
         else:
@@ -1356,8 +1356,8 @@ class TensorBundle(DifferentiableVectorBundle):
 
         .. MATH::
 
-            p \mapsto \Big(\underbrace{e^*(p), \dots, e^*(p)}_{k\ \; \mbox{times}},
-            \underbrace{e(p), \dots, e(p)}_{l\ \; \mbox{times}}\Big) \in
+            p \mapsto \Big(\underbrace{e^*(p), \dots, e^*(p)}_{k\ \; \text{times}},
+            \underbrace{e(p), \dots, e(p)}_{l\ \; \text{times}}\Big) \in
             T^{(k,l)}_q N ,
 
         with `q=\Phi(p)`, defines a basis at each point `p \in U` and

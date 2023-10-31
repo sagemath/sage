@@ -213,7 +213,7 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
 
         sage: explain_pickle(dumps({('a', 'b'): [1r, 2r]}))
         {('a', 'b'):[1r, 2r]}
-        sage: explain_pickle(dumps(RR(pi)), in_current_sage=True)
+        sage: explain_pickle(dumps(RR(pi)), in_current_sage=True)                       # needs sage.symbolic
         from sage.rings.real_mpfr import __create__RealNumber_version0
         from sage.rings.real_mpfr import __create__RealField_version0
         __create__RealNumber_version0(__create__RealField_version0(53r, False, 'RNDN'), '3.4gvml245kc0@0', 32r)
@@ -294,6 +294,7 @@ def explain_pickle_string(pickle, in_current_sage=False,
     else:
         return ans
 
+
 valid_name_re = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*$')
 def name_is_valid(name):
     r"""
@@ -312,6 +313,7 @@ def name_is_valid(name):
     """
     # Technically, we also need to reject keywords...
     return bool(valid_name_re.match(name))
+
 
 # The pickle interpreter can push and pop "marks" on the stack.
 # This string is used as the representation of a mark.
@@ -851,7 +853,7 @@ class PickleExplainer():
         TESTS::
 
             sage: from sage.misc.explain_pickle import *
-            sage: test_pickle(float(pi))
+            sage: test_pickle(float(pi))                                                # needs sage.symbolic
                 0: \x80 PROTO      2
                 2: G    BINFLOAT   3.141592653589793
                11: .    STOP
@@ -3050,6 +3052,7 @@ class TestGlobalFunnyName():
             'TestGlobalFunnyName'
         """
         return "TestGlobalFunnyName"
+
 
 TestGlobalFunnyName.__name__ = "funny$name"
 #This crashed Sphinx. Instead, we manually execute this just before the test.

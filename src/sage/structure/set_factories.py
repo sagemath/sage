@@ -792,8 +792,6 @@ class FacadeParentPolicy(SetFactoryPolicy):
             self._parent_for)
 
 
-
-
 class BareFunctionPolicy(SetFactoryPolicy):
     r"""
     Policy where element are constructed using a bare function.

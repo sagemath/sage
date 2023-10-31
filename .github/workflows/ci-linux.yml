@@ -29,9 +29,51 @@ env:
   TARGETS: build doc-html
   TARGETS_OPTIONAL: ptest
 
+permissions:
+  packages: write
+
 jobs:
 
+  # standard-pre for the default platform (used by build.yml etc.)
+  default-pre:
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build from scratch
+      docker_targets: "with-system-packages configured with-targets-pre"
+      # FIXME: duplicated from env.TARGETS
+      targets_pre: all-sage-local
+      tox_system_factors: >-
+        ["ubuntu-focal"]
+      tox_packages_factors: >-
+        ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  # standard for the default platform (used by build.yml etc.)
+  default:
+    if: ${{ success() || failure() }}
+    needs: [default-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets: build doc-html
+      targets_optional: ptest
+      tox_system_factors: >-
+        ["ubuntu-focal"]
+      tox_packages_factors: >-
+          ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  # All platforms. This duplicates the default platform, but why not,
+  # it makes it more robust regarding random timeouts.
+
   standard-pre:
+    if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
@@ -59,6 +101,55 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  standard-sitepackages:
+    if: ${{ success() || failure() }}
+    needs: [standard-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets: build doc-html
+      targets_optional: ptest
+      tox_packages_factors: >-
+        ["standard-sitepackages"]
+      # Only test systems with a usable system python (>= 3.9)
+      tox_system_factors: >-
+        ["ubuntu-jammy",
+         "ubuntu-lunar",
+         "ubuntu-mantic",
+         "debian-bullseye",
+         "debian-bookworm",
+         "debian-trixie",
+         "debian-sid",
+         "linuxmint-21",
+         "linuxmint-21.1",
+         "linuxmint-21.2",
+         "fedora-33",
+         "fedora-34",
+         "fedora-35",
+         "fedora-36",
+         "fedora-37",
+         "fedora-38",
+         "fedora-39",
+         "centos-stream-8-python3.9",
+         "centos-stream-9-python3.9",
+         "almalinux-8-python3.9",
+         "gentoo-python3.10",
+         "gentoo-python3.11",
+         "archlinux-latest",
+         "opensuse-15.4-gcc_11-python3.10",
+         "opensuse-15.5-gcc_11-python3.11",
+         "opensuse-tumbleweed-python3.10",
+         "opensuse-tumbleweed",
+         "debian-bullseye-i386"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 10
 
   minimal-pre:
     if: ${{ success() || failure() }}

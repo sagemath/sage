@@ -413,7 +413,10 @@ class Arrow(GraphicPrimitive):
                     return paths
 
                 def __call__(self, renderer, gc, tpath, affine, rgbFace):
-                    path = self.get_paths(renderer)[self._n]
+                    paths = self.get_paths(renderer)
+                    if self._n >= len(paths):
+                        return False
+                    path = paths[self._n]
                     vert1, code1 = path.vertices, path.codes
                     import numpy as np
 
@@ -470,6 +473,13 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
         sphinx_plot(arrow((0,0,1), (1,1,1)))
 
+    TESTS:
+
+    Check that :trac:`35031` is fixed::
+
+        sage: arrow((0,0), (0,0), linestyle='dashed')
+        Graphics object consisting of 1 graphics primitive
+
     """
     try:
         return arrow2d(tailpoint, headpoint, **kwds)
@@ -479,7 +489,8 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
 
 @rename_keyword(color='rgbcolor')
-@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid', legend_label=None)
+@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid',
+         legend_label=None, legend_color=None)
 def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     """
     If ``tailpoint`` and ``headpoint`` are provided, returns an arrow from
@@ -576,7 +587,8 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
     A pretty circle of arrows::
 
-        sage: sum([arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi)) for x in [0..2*pi,step=0.1]])
+        sage: sum(arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi))                         # needs sage.symbolic
+        ....:     for x in [0..2*pi, step=0.1])
         Graphics object consisting of 63 graphics primitives
 
     .. PLOT::
@@ -629,6 +641,12 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     ::
 
         sage: arrow2d((-2,2), (7,1)).show(frame=True)
+
+    TESTS:
+
+    Verify that :issue:`36153` is fixed::
+
+        sage: A = arrow2d((-1,-1), (2,3), legend_label="test")
     """
     from sage.plot.all import Graphics
     g = Graphics()

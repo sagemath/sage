@@ -57,7 +57,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         else:
             return self ** (float(1)/n)
 
-    cdef __pow_double(self, double exponent, double sign):
+    cdef __pow_double(self, double exponent, double sign) noexcept:
         """
         If ``sign == 1`` or ``self >= 0``, return ``self ^ exponent``.
         If ``sign == -1`` and ``self < 0``, return ``- abs(self) ^ exponent``.
@@ -84,7 +84,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             v = -v
         return self._new_c(sign * gsl_sf_exp(gsl_sf_log(v) * exponent))
 
-    cpdef _pow_(self, other):
+    cpdef _pow_(self, other) noexcept:
         """
         Return ``self`` raised to the real double power ``other``.
 
@@ -117,7 +117,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         """
         return self.__pow_double((<RealDoubleElement>other)._value, 1)
 
-    cpdef _pow_int(self, n):
+    cpdef _pow_int(self, n) noexcept:
         """
         Return ``self`` raised to the integer power ``n``.
 
@@ -174,7 +174,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         """
         return self.__pow_double(n, -1.0 if (n & 1) else 1.0)
 
-    cdef _pow_long(self, long n):
+    cdef _pow_long(self, long n) noexcept:
         """
         Compute ``self`` raised to the power ``n``.
 
@@ -214,7 +214,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         # of n to double might change an odd number to an even number.
         return self.__pow_double(<double>n, -1.0 if (n & 1) else 1.0)
 
-    cdef _log_base(self, double log_of_base):
+    cdef _log_base(self, double log_of_base) noexcept:
         if self._value == 0:
             from .real_double import RDF
             return RDF(-1)/RDF(0)
@@ -249,7 +249,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             0.6931471805599453
             sage: RDF(2).log(2)
             1.0
-            sage: RDF(2).log(pi)
+            sage: RDF(2).log(pi)                                                        # needs sage.symbolic
             0.6055115613982801
             sage: RDF(2).log(10)
             0.30102999566398114
@@ -334,7 +334,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
             sage: r = RDF('16.0'); r.log10()
             1.2041199826559248
-            sage: r.log() / RDF(log(10))
+            sage: r.log() / RDF(log(10))                                                # needs sage.symbolic
             1.2041199826559246
             sage: r = RDF('39.9'); r.log10()
             1.6009728956867482
@@ -355,7 +355,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
             sage: r = RDF(16); r.logpi()
             2.4220462455931204
-            sage: r.log() / RDF(log(pi))
+            sage: r.log() / RDF(log(pi))                                                # needs sage.symbolic
             2.4220462455931204
             sage: r = RDF('39.9'); r.logpi()
             3.2203023346075152
@@ -508,11 +508,11 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
         EXAMPLES::
 
-            sage: RDF(pi).restrict_angle()
+            sage: RDF(pi).restrict_angle()                                              # needs sage.symbolic
             3.141592653589793
-            sage: RDF(pi + 1e-10).restrict_angle()
+            sage: RDF(pi + 1e-10).restrict_angle()                                      # needs sage.symbolic
             -3.1415926534897936
-            sage: RDF(1+10^10*pi).restrict_angle()
+            sage: RDF(1+10^10*pi).restrict_angle()                                      # needs sage.symbolic
             0.9999977606...
         """
         return self._new_c(gsl_sf_angle_restrict_symm(self._value))

@@ -12,7 +12,7 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.projective.projective_subscheme\
      import AlgebraicScheme_subscheme_projective
 from sage.categories.homset import Hom
-from sage.categories.all import Schemes
+from sage.categories.schemes import Schemes
 
 # The generic genus 2 curve in Weierstrass form:
 #

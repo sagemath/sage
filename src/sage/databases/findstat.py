@@ -259,6 +259,7 @@ from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.colored_permutations import SignedPermutation, SignedPermutations
 from sage.combinat.plane_partition import PlanePartition
 from sage.combinat.decorated_permutation import DecoratedPermutation, DecoratedPermutations
+from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 
 ######################################################################
 # the FindStat URLs
@@ -1499,7 +1500,8 @@ class FindStatFunction(SageObject):
             from sage.repl.preparse import preparse
             try:
                 l = {}
-                code = "from sage.all import *\n" + preparse(self.sage_code())
+                environment = 'sage.all'
+                code = f"from {environment} import *\n" + preparse(self.sage_code())
                 exec(code, l)
             except SyntaxError:
                 raise ValueError("could not execute verified code for %s" % self)
@@ -1555,11 +1557,12 @@ class FindStatFunction(SageObject):
 
         Check that new statistics and maps cannot be reset::
 
-            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])   # optional -- internet
-            sage: q.set_description("Random values on Dyck paths.")             # optional -- internet
-            sage: print(q.description())                                        # optional -- internet
+            sage: # optional - internet
+            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])
+            sage: q.set_description("Random values on Dyck paths.")
+            sage: print(q.description())
             Random values on Dyck paths.
-            sage: q.reset()                                                     # optional -- internet
+            sage: q.reset()
             Traceback (most recent call last):
             ...
             ValueError: cannot reset values of St000000: a new statistic on Dyck paths
@@ -2094,7 +2097,7 @@ class FindStatCombinatorialStatistic(SageObject):
         if counter >= 4:
             if verbose:
                 print('Searching the OEIS for "%s"' % OEIS_string)
-            return oeis(str(OEIS_string)) # in python 2.7, oeis does not like unicode
+            return oeis(OEIS_string)
 
         if verbose:
             print("Too little information to search the OEIS for this statistic (only %s values given)." % counter)
@@ -2370,7 +2373,7 @@ class FindStatStatistic(Element,
             sage: s.set_description(u"Möbius")                                  # optional -- internet
             sage: s.submit()                                                    # optional -- webbrowser
         """
-        args = dict()
+        args = {}
         args["OriginalStatistic"] = self.id_str()
         args["Domain"]            = self.domain().id_str()
         args["Values"]            = self.first_terms_str(max_values=max_values)
@@ -2918,7 +2921,6 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         webbrowser.open(FINDSTAT_URL_STATISTICS + self.id_str())
 
-
     def info(self):
         """
         Print a detailed description of the compound statistic.
@@ -3280,14 +3282,15 @@ class FindStatMap(Element,
 
         EXAMPLES::
 
-            sage: from sage.databases.findstat import FindStatMap               # optional -- internet
-            sage: FindStatMap(61).set_properties_raw('surjective')             # optional -- internet
-            sage: FindStatMap(61).properties_raw()                              # optional -- internet
+            sage: # optional - internet
+            sage: from sage.databases.findstat import FindStatMap
+            sage: FindStatMap(61).set_properties_raw('surjective')
+            sage: FindStatMap(61).properties_raw()
             'surjective'
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61)
             Mp00061(modified): to increasing tree
-            sage: FindStatMap(61).reset()                                       # optional -- internet
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61).reset()
+            sage: FindStatMap(61)
             Mp00061: to increasing tree
         """
         if value != self.properties_raw():
@@ -4187,7 +4190,7 @@ class FindStatCollection(Element,
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatCollections
-            sage: set(c for c in FindStatCollections())                         # optional -- internet
+            sage: set(FindStatCollections())           # optional -- internet
             {Cc0001: Permutations,
              Cc0002: Integer partitions,
              ...
@@ -4283,13 +4286,14 @@ class FindStatCollection(Element,
 
         EXAMPLES::
 
+            sage: # optional - internet
             sage: from sage.databases.findstat import FindStatCollection
-            sage: c = FindStatCollection("GelfandTsetlinPatterns")              # optional -- internet
-            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))              # optional -- internet
+            sage: c = FindStatCollection("GelfandTsetlinPatterns")
+            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))
             False
 
         TESTS::
@@ -4512,6 +4516,7 @@ class FindStatCollection(Element,
             return self._data["NamePlural"]
         raise ValueError("argument 'style' (=%s) must be 'singular' or 'plural'" % style)
 
+
 from collections import namedtuple
 _SupportedFindStatCollection = namedtuple("SupportedFindStatCollection",
                                           ["string_to_element",
@@ -4670,7 +4675,13 @@ _SupportedFindStatCollections = {
                                                            for i, v in enumerate(x, 1))) + "]",
                                  DecoratedPermutations,
                                  lambda x: x.size(),
-                                 lambda x: isinstance(x, DecoratedPermutation))}
+                                 lambda x: isinstance(x, DecoratedPermutation)),
+    "OrderedSetPartitions":
+    _SupportedFindStatCollection(lambda x: OrderedSetPartition(literal_eval(x.replace('{','[').replace('}',']'))),
+                                 str,
+                                 OrderedSetPartitions,
+                                 lambda x: x.size(),
+                                 lambda x: isinstance(x, OrderedSetPartition))}
 
 
 class FindStatCollections(UniqueRepresentation, Parent):
@@ -4738,6 +4749,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
 #                fields = "SageCodeElementToString,SageCodeElementsOnLevel,SageCodeStringToElement"
 #                url = FINDSTAT_API_COLLECTIONS + id + "?fields=" + fields
 #                print(json.load(urlopen(url))["included"]["Collections"][id])
+
         def position(item):
             try:
                 return tuple(_SupportedFindStatCollections).index(item[1]["NameWiki"])

@@ -19,10 +19,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
+
 from .padic_generic import pAdicGeneric, ResidueLiftingMap
 from .padic_base_generic import pAdicBaseGeneric
 from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.number_field.order import Order
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import op_EQ
@@ -118,6 +119,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: K._extension_type()
             'Unramified'
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<pi> = Qp(5).extension(x^2 - 5)
             sage: L._extension_type()
             'Eisenstein'
@@ -138,7 +140,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
             7-adic Unramified Extension Ring in a defined by x^3 + 6*x^2 + 4
             sage: R1._latex_()
             '\\Bold{Z}_{7^{3}}'
-            sage: R2.<t> = R.ext(x^2+7)
+            sage: x = polygen(ZZ, 'x')
+            sage: R2.<t> = R.ext(x^2 + 7)
             sage: R2 #indirect doctest
             7-adic Eisenstein Extension Ring in t defined by x^2 + 7
             sage: R2._latex_()
@@ -221,7 +224,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
                 cat = R.category()
             else:
                 cat = EuclideanDomains() & MetricSpaces().Complete()
-        elif isinstance(R, Order) and R.number_field().defining_polynomial() == self.defining_polynomial():
+        elif isinstance(R, sage.rings.abc.Order) and R.number_field().defining_polynomial() == self.defining_polynomial():
             cat = IntegralDomains()
         elif isinstance(R, NumberField) and R.defining_polynomial() == self.defining_polynomial():
             if self.is_field():
@@ -373,7 +376,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         Return the order with the same defining polynomial.
 
-        Will raise a ValueError if the coefficients of the defining polynomial are not integral.
+        Will raise a :class:`ValueError` if the coefficients of the defining
+        polynomial are not integral.
 
         EXAMPLES::
 
@@ -510,7 +514,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c(R0) == R
             True
 
-        For a field, by default we return a fraction field functor.
+        For a field, by default we return a fraction field functor. ::
 
             sage: K.<a> = Qq(25, 8)
             sage: c, R = K.construction(); R
@@ -628,7 +632,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             from_V = MapFreeModuleToTwoStep
             to_V = MapTwoStepToFreeModule
         elif base is self:
-            return super(pAdicExtensionGeneric, self).free_module(base=base, basis=basis, map=map)
+            return super().free_module(base=base, basis=basis, map=map)
         else:
             raise NotImplementedError
         FromV = Hom(V, self)

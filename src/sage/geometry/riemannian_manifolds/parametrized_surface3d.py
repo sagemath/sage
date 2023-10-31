@@ -85,7 +85,8 @@ class ParametrizedSurface3D(SageObject):
     explicitly specifying its parametric equation::
 
         sage: u, v = var('u,v', domain='real')
-        sage: eparaboloid = ParametrizedSurface3D((u, v, u^2 + v^2), (u, v),'elliptic paraboloid'); eparaboloid
+        sage: eparaboloid = ParametrizedSurface3D((u, v, u^2 + v^2), (u, v),
+        ....:                                     'elliptic paraboloid'); eparaboloid
         Parametrized surface ('elliptic paraboloid') with equation (u, v, u^2 + v^2)
 
     When the ranges for the intrinsic coordinates are known, they can be
@@ -96,19 +97,24 @@ class ParametrizedSurface3D(SageObject):
         sage: coords = ((u1, -pi/2, pi/2), (u2, 0, pi))
         sage: ellipsoid_eq = (cos(u1)*cos(u2), 2*sin(u1)*cos(u2), 3*sin(u2))
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, coords, 'ellipsoid'); ellipsoid
-        Parametrized surface ('ellipsoid') with equation (cos(u1)*cos(u2), 2*cos(u2)*sin(u1), 3*sin(u2))
-        sage: ellipsoid.plot()  # optional - sage.plot
+        Parametrized surface ('ellipsoid') with equation
+        (cos(u1)*cos(u2), 2*cos(u2)*sin(u1), 3*sin(u2))
+        sage: ellipsoid.plot()                                                          # needs sage.plot
         Graphics3d Object
 
     Standard surfaces can be constructed using the ``surfaces`` generator::
 
         sage: klein = surfaces.Klein(); klein
-        Parametrized surface ('Klein bottle') with equation (-(sin(1/2*u)*sin(2*v) - cos(1/2*u)*sin(v) - 1)*cos(u), -(sin(1/2*u)*sin(2*v) - cos(1/2*u)*sin(v) - 1)*sin(u), cos(1/2*u)*sin(2*v) + sin(1/2*u)*sin(v))
+        Parametrized surface ('Klein bottle') with equation
+        (-(sin(1/2*u)*sin(2*v) - cos(1/2*u)*sin(v) - 1)*cos(u),
+         -(sin(1/2*u)*sin(2*v) - cos(1/2*u)*sin(v) - 1)*sin(u),
+         cos(1/2*u)*sin(2*v) + sin(1/2*u)*sin(v))
 
     Latex representation of the surfaces::
 
         sage: u, v = var('u, v', domain='real')
-        sage: sphere = ParametrizedSurface3D((cos(u)*cos(v), sin(u)*cos(v), sin(v)), (u, v), 'sphere')
+        sage: sphere = ParametrizedSurface3D((cos(u)*cos(v), sin(u)*cos(v), sin(v)), (u, v),
+        ....:                                'sphere')
         sage: print(latex(sphere))
         \left(\cos\left(u\right) \cos\left(v\right), \cos\left(v\right) \sin\left(u\right), \sin\left(v\right)\right)
         sage: print(sphere._latex_())
@@ -119,8 +125,9 @@ class ParametrizedSurface3D(SageObject):
     To plot a parametric surface, use the :meth:`plot` member function::
 
         sage: enneper = surfaces.Enneper(); enneper
-        Parametrized surface ('Enneper's surface') with equation (-1/9*(u^2 - 3*v^2 - 3)*u, -1/9*(3*u^2 - v^2 + 3)*v, 1/3*u^2 - 1/3*v^2)
-        sage: enneper.plot(aspect_ratio='automatic')  # optional - sage.plot
+        Parametrized surface ('Enneper's surface') with equation
+        (-1/9*(u^2 - 3*v^2 - 3)*u, -1/9*(3*u^2 - v^2 + 3)*v, 1/3*u^2 - 1/3*v^2)
+        sage: enneper.plot(aspect_ratio='automatic')                                    # needs sage.plot
         Graphics3d Object
 
     We construct an ellipsoid whose axes are given by symbolic variables `a`,
@@ -131,11 +138,14 @@ class ParametrizedSurface3D(SageObject):
         sage: a, b, c = var('a, b, c', domain='real')
         sage: u1, u2 = var('u1, u2', domain='real')
         sage: ellipsoid_eq = (a*cos(u1)*cos(u2), b*sin(u1)*cos(u2), c*sin(u2))
-        sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, (u1, u2), 'Symbolic ellipsoid'); ellipsoid
-        Parametrized surface ('Symbolic ellipsoid') with equation (a*cos(u1)*cos(u2), b*cos(u2)*sin(u1), c*sin(u2))
+        sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, (u1, u2),
+        ....:                                   'Symbolic ellipsoid'); ellipsoid
+        Parametrized surface ('Symbolic ellipsoid') with equation
+        (a*cos(u1)*cos(u2), b*cos(u2)*sin(u1), c*sin(u2))
 
         sage: ellipsoid.natural_frame()
-        {1: (-a*cos(u2)*sin(u1), b*cos(u1)*cos(u2), 0), 2: (-a*cos(u1)*sin(u2), -b*sin(u1)*sin(u2), c*cos(u2))}
+        {1: (-a*cos(u2)*sin(u1), b*cos(u1)*cos(u2), 0),
+         2: (-a*cos(u1)*sin(u2), -b*sin(u1)*sin(u2), c*cos(u2))}
 
     We find the normal vector field to the surface.  The normal vector
     field is the vector product of the vectors of the natural frame,
@@ -148,7 +158,8 @@ class ParametrizedSurface3D(SageObject):
     the unit normal vector field of the elliptic paraboloid, we put::
 
         sage: u, v = var('u,v', domain='real')
-        sage: eparaboloid = ParametrizedSurface3D([u,v,u^2+v^2],[u,v],'elliptic paraboloid')
+        sage: eparaboloid = ParametrizedSurface3D([u, v, u^2 + v^2], [u,v],
+        ....:                                     'elliptic paraboloid')
         sage: eparaboloid.normal_vector(normalized=True)
         (-2*u/sqrt(4*u^2 + 4*v^2 + 1), -2*v/sqrt(4*u^2 + 4*v^2 + 1), 1/sqrt(4*u^2 + 4*v^2 + 1))
 
@@ -156,7 +167,9 @@ class ParametrizedSurface3D(SageObject):
 
         sage: u, v = var('u, v', domain='real')
         sage: a, b = var('a, b', domain='real')
-        sage: torus = ParametrizedSurface3D(((a + b*cos(u))*cos(v),(a + b*cos(u))*sin(v), b*sin(u)),[u,v],'torus')
+        sage: torus = ParametrizedSurface3D(((a + b*cos(u))*cos(v),
+        ....:                                (a + b*cos(u))*sin(v),
+        ....:                                b*sin(u)), [u,v], 'torus')
         sage: torus.first_fundamental_form_coefficients()
         {(1, 1): b^2, (1, 2): 0, (2, 1): 0, (2, 2): b^2*cos(u)^2 + 2*a*b*cos(u) + a^2}
 
@@ -179,7 +192,7 @@ class ParametrizedSurface3D(SageObject):
     Once we specify numerical values for the axes of the ellipsoid, we can
     determine the numerical value of the length integral::
 
-        sage: L = sqrt(ellipsoid.first_fundamental_form(du, du).substitute(u1=u1,u2=u2))
+        sage: L = sqrt(ellipsoid.first_fundamental_form(du, du).substitute(u1=u1, u2=u2))
         sage: numerical_integral(L.substitute(a=2, b=1.5, c=1),0,1)[0] # rel tol 1e-11
         2.00127905972
 
@@ -189,8 +202,9 @@ class ParametrizedSurface3D(SageObject):
         sage: u, v = var('u,v', domain='real')
         sage: assume(R>0)
         sage: assume(cos(v)>0)
-        sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v),R*sin(u)*cos(v),R*sin(v)],[u,v],'sphere')
-        sage: integral(integral(sphere.area_form(),u,0,2*pi),v,-pi/2,pi/2)
+        sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v), R*sin(u)*cos(v), R*sin(v)],
+        ....:                                [u,v], 'sphere')
+        sage: integral(integral(sphere.area_form(), u, 0, 2*pi), v, -pi/2, pi/2)
         4*pi*R^2
 
     We can find an orthonormal frame field `\{e_1, e_2\}` of a surface
@@ -198,9 +212,13 @@ class ParametrizedSurface3D(SageObject):
     orthonormal frame field for the elliptic paraboloid::
 
         sage: u, v = var('u,v', domain='real')
-        sage: eparaboloid = ParametrizedSurface3D([u,v,u^2+v^2],[u,v],'elliptic paraboloid')
+        sage: eparaboloid = ParametrizedSurface3D([u, v, u^2 + v^2], [u,v],
+        ....:                                     'elliptic paraboloid')
         sage: eparaboloid.orthonormal_frame()
-        {1: (1/sqrt(4*u^2 + 1), 0, 2*u/sqrt(4*u^2 + 1)), 2: (-4*u*v/(sqrt(4*u^2 + 4*v^2 + 1)*sqrt(4*u^2 + 1)), sqrt(4*u^2 + 1)/sqrt(4*u^2 + 4*v^2 + 1), 2*v/(sqrt(4*u^2 + 4*v^2 + 1)*sqrt(4*u^2 + 1)))}
+        {1: (1/sqrt(4*u^2 + 1), 0, 2*u/sqrt(4*u^2 + 1)),
+         2: (-4*u*v/(sqrt(4*u^2 + 4*v^2 + 1)*sqrt(4*u^2 + 1)),
+             sqrt(4*u^2 + 1)/sqrt(4*u^2 + 4*v^2 + 1),
+             2*v/(sqrt(4*u^2 + 4*v^2 + 1)*sqrt(4*u^2 + 1)))}
 
     We can express the orthogonal frame field both in exterior
     coordinates (i.e. expressed as vector field fields in the ambient
@@ -209,7 +227,9 @@ class ParametrizedSurface3D(SageObject):
     coordinates::
 
         sage: eparaboloid.orthonormal_frame(coordinates='int')
-        {1: (1/sqrt(4*u^2 + 1), 0), 2: (-4*u*v/(sqrt(4*u^2 + 4*v^2 + 1)*sqrt(4*u^2 + 1)), sqrt(4*u^2 + 1)/sqrt(4*u^2 + 4*v^2 + 1))}
+        {1: (1/sqrt(4*u^2 + 1), 0),
+         2: (-4*u*v/(sqrt(4*u^2 + 4*v^2 + 1)*sqrt(4*u^2 + 1)),
+             sqrt(4*u^2 + 1)/sqrt(4*u^2 + 4*v^2 + 1))}
 
     Using the orthonormal frame in interior coordinates, we can calculate
     the structure functions `c^k_{ij}` of the surface, defined by
@@ -227,18 +247,19 @@ class ParametrizedSurface3D(SageObject):
 
         sage: sphere = surfaces.Sphere(); sphere
         Parametrized surface ('Sphere') with equation (cos(u)*cos(v), cos(v)*sin(u), sin(v))
-        sage: K = sphere.gauss_curvature(); K # Not tested -- see trac 12737
+        sage: K = sphere.gauss_curvature(); K  # Not tested -- see trac 12737
         1
-        sage: H = sphere.mean_curvature(); H # Not tested -- see trac 12737
+        sage: H = sphere.mean_curvature(); H  # Not tested -- see trac 12737
         -1
 
     We can easily generate a color plot of the Gaussian curvature of a surface.
     Here we deal with the ellipsoid::
 
+        sage: # needs numpy
         sage: u1, u2 = var('u1,u2', domain='real')
         sage: u = [u1,u2]
         sage: ellipsoid_equation(u1,u2) = [2*cos(u1)*cos(u2),1.5*cos(u1)*sin(u2),sin(u1)]
-        sage: ellipsoid = ParametrizedSurface3D(ellipsoid_equation(u1,u2), [u1, u2],'ellipsoid')
+        sage: ellipsoid = ParametrizedSurface3D(ellipsoid_equation(u1,u2), [u1, u2], 'ellipsoid')
         sage: # set intervals for variables and the number of division points
         sage: u1min, u1max = -1.5, 1.5
         sage: u2min, u2max = 0, 6.28
@@ -247,7 +268,7 @@ class ParametrizedSurface3D(SageObject):
         sage: from numpy import linspace
         sage: u1_array = linspace(u1min, u1max, u1num)
         sage: u2_array = linspace(u2min, u2max, u2num)
-        sage: u_array = [ (uu1,uu2) for uu1 in u1_array for uu2 in u2_array]
+        sage: u_array = [(uu1,uu2) for uu1 in u1_array for uu2 in u2_array]
         sage: # Find the gaussian curvature
         sage: K(u1,u2) = ellipsoid.gauss_curvature()
         sage: # Make array of K values
@@ -256,36 +277,39 @@ class ParametrizedSurface3D(SageObject):
         sage: K_max = max(K_array)
         sage: K_min = min(K_array)
         sage: # Make the array of color coefficients
-        sage: cc_array = [ (ccc - K_min)/(K_max - K_min) for ccc in K_array ]
-        sage: points_array = [ellipsoid_equation(u_array[counter][0],u_array[counter][1]) for counter in range(0,len(u_array)) ]
-        sage: curvature_ellipsoid_plot = sum( point([xx for xx in points_array[counter]],color=hue(cc_array[counter]/2))  for counter in range(0,len(u_array)) )
-        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)
+        sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]
+        sage: points_array = [ellipsoid_equation(u_array[counter][0],
+        ....:                                    u_array[counter][1])
+        ....:                 for counter in range(0,len(u_array))]
+        sage: curvature_ellipsoid_plot = sum(point([xx                                  # needs sage.plot
+        ....:                                       for xx in points_array[counter]],
+        ....:                                      color=hue(cc_array[counter]/2))
+        ....:                                for counter in range(0,len(u_array)))
+        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                             # needs sage.plot
 
     We can find the principal curvatures and principal directions of the
     elliptic paraboloid::
 
         sage: u, v = var('u, v', domain='real')
-        sage: eparaboloid = ParametrizedSurface3D([u, v, u^2+v^2], [u, v], 'elliptic paraboloid')
+        sage: eparaboloid = ParametrizedSurface3D([u, v, u^2+v^2], [u, v],
+        ....:                                     'elliptic paraboloid')
         sage: pd = eparaboloid.principal_directions(); pd
-        [(2*sqrt(4*u^2 + 4*v^2 + 1)/(16*u^4 + 16*v^4 + 8*(4*u^2 + 1)*v^2 + 8*u^2 + 1), [(1, v/u)], 1), (2/sqrt(4*u^2 + 4*v^2 + 1), [(1, -u/v)], 1)]
+        [(2*sqrt(4*u^2 + 4*v^2 + 1)/(16*u^4 + 16*v^4 + 8*(4*u^2 + 1)*v^2 + 8*u^2 + 1), [(1, v/u)], 1),
+         (2/sqrt(4*u^2 + 4*v^2 + 1), [(1, -u/v)], 1)]
 
     We extract the principal curvatures::
 
-        sage: k1 = pd[0][0].simplify_full()
-        sage: k1
+        sage: k1 = pd[0][0].simplify_full(); k1
         2*sqrt(4*u^2 + 4*v^2 + 1)/(16*u^4 + 16*v^4 + 8*(4*u^2 + 1)*v^2 + 8*u^2 + 1)
-        sage: k2 = pd[1][0].simplify_full()
-        sage: k2
+        sage: k2 = pd[1][0].simplify_full(); k2
         2/sqrt(4*u^2 + 4*v^2 + 1)
 
     and check them by comparison with the Gaussian and mean curvature
     expressed in terms of the principal curvatures::
 
-        sage: K = eparaboloid.gauss_curvature().simplify_full()
-        sage: K
+        sage: K = eparaboloid.gauss_curvature().simplify_full(); K
         4/(16*u^4 + 16*v^4 + 8*(4*u^2 + 1)*v^2 + 8*u^2 + 1)
-        sage: H = eparaboloid.mean_curvature().simplify_full()
-        sage: H
+        sage: H = eparaboloid.mean_curvature().simplify_full(); H
         2*(2*u^2 + 2*v^2 + 1)/(4*u^2 + 4*v^2 + 1)^(3/2)
         sage: (K - k1*k2).simplify_full()
         0
@@ -311,13 +335,17 @@ class ParametrizedSurface3D(SageObject):
     that these points are conjugate::
 
         sage: S = surfaces.Sphere()
-        sage: g1 = [c[-1] for c in S.geodesics_numerical((0,0),(1,0),(0,2*pi,100))]
-        sage: g2 = [c[-1] for c in S.geodesics_numerical((0,0),(cos(pi/3),sin(pi/3)),(0,2*pi,100))]
-        sage: g3 = [c[-1] for c in S.geodesics_numerical((0,0),(cos(2*pi/3),sin(2*pi/3)),(0,2*pi,100))]
-        sage: (S.plot(opacity=0.3) + line3d(g1,color='red') + line3d(g2,color='red') + line3d(g3,color='red')).show()  # optional - sage.plot
+        sage: g1 = [c[-1] for c in S.geodesics_numerical((0,0), (1,0), (0,2*pi,100))]
+        sage: g2 = [c[-1] for c in S.geodesics_numerical((0,0),
+        ....:                                            (cos(pi/3),sin(pi/3)),
+        ....:                                            (0,2*pi,100))]
+        sage: g3 = [c[-1] for c in S.geodesics_numerical((0,0),
+        ....:                                            (cos(2*pi/3),sin(2*pi/3)),
+        ....:                                            (0,2*pi,100))]
+        sage: (S.plot(opacity=0.3) + line3d(g1, color='red')                            # needs sage.plot
+        ....:     + line3d(g2, color='red') + line3d(g3, color='red')).show()
 
     """
-
 
     def __init__(self, equation, variables, name=None):
         r"""
@@ -336,7 +364,8 @@ class ParametrizedSurface3D(SageObject):
             sage: u, v = var('u,v', domain='real')
             sage: eq = (3*u + 3*u*v^2 - u^3, 3*v + 3*u^2*v - v^3, 3*(u^2-v^2))
             sage: enneper = ParametrizedSurface3D(eq, (u, v),'Enneper Surface'); enneper
-            Parametrized surface ('Enneper Surface') with equation (-u^3 + 3*u*v^2 + 3*u, 3*u^2*v - v^3 + 3*v, 3*u^2 - 3*v^2)
+            Parametrized surface ('Enneper Surface') with equation
+            (-u^3 + 3*u*v^2 + 3*u, 3*u^2*v - v^3 + 3*v, 3*u^2 - 3*v^2)
 
         """
         self.equation = tuple(equation)
@@ -368,7 +397,6 @@ class ParametrizedSurface3D(SageObject):
         from sage.misc.latex import latex
         return latex(self.equation)
 
-
     def _repr_(self):
         r"""
         Returns the string representation of this parametrized surface.
@@ -387,10 +415,9 @@ class ParametrizedSurface3D(SageObject):
         name = 'Parametrized surface'
         if self.name is not None:
             name += " ('%s')" % self.name
-        s ='%(designation)s with equation %(eq)s' % \
+        s = '%(designation)s with equation %(eq)s' % \
             {'designation': name, 'eq': str(self.equation)}
         return s
-
 
     def point(self, coords):
         r"""
@@ -407,7 +434,9 @@ class ParametrizedSurface3D(SageObject):
         EXAMPLES::
 
             sage: u, v = var('u, v', domain='real')
-            sage: torus = ParametrizedSurface3D(((2 + cos(u))*cos(v),(2 + cos(u))*sin(v), sin(u)),[u,v],'torus')
+            sage: torus = ParametrizedSurface3D(((2 + cos(u))*cos(v),
+            ....:                                (2 + cos(u))*sin(v),
+            ....:                                sin(u)), [u,v], 'torus')
             sage: torus.point((0, pi/2))
             (0, 3, 0)
             sage: torus.point((pi/2, pi))
@@ -419,7 +448,6 @@ class ParametrizedSurface3D(SageObject):
 
         d = dict(zip(self.variables_list, coords))
         return vector([f.subs(d) for f in self.equation])
-
 
     def tangent_vector(self, coords, components):
         r"""
@@ -445,7 +473,7 @@ class ParametrizedSurface3D(SageObject):
 
             sage: u, v = var('u,v', domain='real')
             sage: eq = (3*u + 3*u*v^2 - u^3, 3*v + 3*u^2*v - v^3, 3*(u^2-v^2))
-            sage: e = ParametrizedSurface3D(eq, (u, v),'Enneper Surface')
+            sage: e = ParametrizedSurface3D(eq, (u, v), 'Enneper Surface')
 
             sage: w1 = e.tangent_vector((1, 2), (1, 0)); w1
             (12, 12, 6)
@@ -467,7 +495,6 @@ class ParametrizedSurface3D(SageObject):
                            for f in self.equation])
         return jacobian * components
 
-
     def plot(self, urange=None, vrange=None, **kwds):
         r"""
         Enable easy plotting directly from the surface class.
@@ -488,7 +515,7 @@ class ParametrizedSurface3D(SageObject):
             sage: u, v = var('u, v', domain='real')
             sage: eq = (3*u + 3*u*v^2 - u^3, 3*v + 3*u^2*v - v^3, 3*(u^2-v^2))
             sage: enneper = ParametrizedSurface3D(eq, (u, v), 'Enneper Surface')
-            sage: enneper.plot((-5, 5), (-5, 5))  # optional - sage.plot
+            sage: enneper.plot((-5, 5), (-5, 5))                                        # needs sage.plot
             Graphics3d Object
 
         """
@@ -512,7 +539,6 @@ class ParametrizedSurface3D(SageObject):
 
         return P
 
-
     @cached_method
     def natural_frame(self):
         """
@@ -527,7 +553,8 @@ class ParametrizedSurface3D(SageObject):
         EXAMPLES::
 
             sage: u, v = var('u, v', domain='real')
-            sage: eparaboloid = ParametrizedSurface3D((u, v, u^2+v^2), (u, v), 'elliptic paraboloid')
+            sage: eparaboloid = ParametrizedSurface3D((u, v, u^2+v^2), (u, v),
+            ....:                                     'elliptic paraboloid')
             sage: eparaboloid.natural_frame()
             {1: (1, 0, 2*u), 2: (0, 1, 2*v)}
         """
@@ -540,7 +567,6 @@ class ParametrizedSurface3D(SageObject):
                     for f in self.equation])
 
         return {1:dr1, 2:dr2}
-
 
     @cached_method
     def normal_vector(self, normalized=False):
@@ -558,11 +584,14 @@ class ParametrizedSurface3D(SageObject):
         EXAMPLES::
 
             sage: u, v = var('u, v', domain='real')
-            sage: eparaboloid = ParametrizedSurface3D((u, v, u^2 + v^2), (u, v), 'elliptic paraboloid')
+            sage: eparaboloid = ParametrizedSurface3D((u, v, u^2 + v^2), (u, v),
+            ....:                                     'elliptic paraboloid')
             sage: eparaboloid.normal_vector(normalized=False)
             (-2*u, -2*v, 1)
             sage: eparaboloid.normal_vector(normalized=True)
-            (-2*u/sqrt(4*u^2 + 4*v^2 + 1), -2*v/sqrt(4*u^2 + 4*v^2 + 1), 1/sqrt(4*u^2 + 4*v^2 + 1))
+            (-2*u/sqrt(4*u^2 + 4*v^2 + 1),
+             -2*v/sqrt(4*u^2 + 4*v^2 + 1),
+             1/sqrt(4*u^2 + 4*v^2 + 1))
 
         """
 
@@ -572,7 +601,6 @@ class ParametrizedSurface3D(SageObject):
         if normalized:
             normal /= normal.norm()
         return _simplify_full_rad(normal)
-
 
     @cached_method
     def _compute_first_fundamental_form_coefficient(self, index):
@@ -593,7 +621,6 @@ class ParametrizedSurface3D(SageObject):
         """
         dr = self.natural_frame()
         return _simplify_full_rad(dr[index[0]]*dr[index[1]])
-
 
     def first_fundamental_form_coefficient(self, index):
         r"""
@@ -692,7 +719,6 @@ class ParametrizedSurface3D(SageObject):
         return sum(gamma[(i,j)] * vector1[i - 1] * vector2[j - 1]
                    for i, j in product((1, 2), repeat=2))
 
-
     def area_form_squared(self):
         """
         Returns the square of the coefficient of the area form on the surface.
@@ -718,7 +744,6 @@ class ParametrizedSurface3D(SageObject):
         sq = gamma[(1,1)] * gamma[(2,2)] - gamma[(1,2)]**2
         return _simplify_full_rad(sq)
 
-
     def area_form(self):
         r"""
         Returns the coefficient of the area form on the surface.  In terms of
@@ -742,7 +767,6 @@ class ParametrizedSurface3D(SageObject):
         """
         f = abs(sqrt(self.area_form_squared()))
         return _simplify_full_rad(f)
-
 
     def first_fundamental_form_inverse_coefficients(self):
         r"""
@@ -774,7 +798,6 @@ class ParametrizedSurface3D(SageObject):
 
         return {(1,1): gi11, (1,2): gi12, (2,1): gi21, (2,2): gi22}
 
-
     def first_fundamental_form_inverse_coefficient(self, index):
         r"""
         Returns a specific component `g^{ij}` of the inverse of the fundamental
@@ -804,8 +827,6 @@ class ParametrizedSurface3D(SageObject):
             return self.first_fundamental_form_inverse_coefficients()[index]
         else:
             raise ValueError("Index %s out of bounds." % str(index))
-
-
 
     @cached_method
     def rotation(self,theta):
@@ -857,7 +878,6 @@ class ParametrizedSurface3D(SageObject):
         R22 = (cos(theta) - sin(theta)*gi[2,1]*w12).simplify_full()
         return matrix([[R11,R12],[R21,R22]])
 
-
     @cached_method
     def orthonormal_frame(self, coordinates='ext'):
         r"""
@@ -905,28 +925,24 @@ class ParametrizedSurface3D(SageObject):
             0
             sage: sphere.first_fundamental_form(frame_int[2], frame_int[2])
             1
-
         """
-
-
         from sage.symbolic.constants import pi
 
         if coordinates not in ['ext', 'int']:
             raise ValueError("Coordinate system must be exterior ('ext') "
                              "or interior ('int').")
 
-        c  = self.first_fundamental_form_coefficient([1,1])
+        c = self.first_fundamental_form_coefficient([1, 1])
         if coordinates == 'ext':
             f1 = self.natural_frame()[1]
 
-            E1 = _simplify_full_rad(f1/sqrt(c))
+            E1 = _simplify_full_rad(f1 / sqrt(c))
             E2 = _simplify_full_rad(
                 self.normal_vector(normalized=True).cross_product(E1))
         else:
-            E1 =  vector([_simplify_full_rad(1/sqrt(c)), 0])
-            E2 = (self.rotation(pi/2)*E1).simplify_full()
-        return  {1:E1, 2:E2}
-
+            E1 = vector([_simplify_full_rad(1 / sqrt(c)), 0])
+            E2 = (self.rotation(pi / 2) * E1).simplify_full()
+        return {1: E1, 2: E2}
 
     def orthonormal_frame_vector(self, index, coordinates='ext'):
         r"""
@@ -963,7 +979,6 @@ class ParametrizedSurface3D(SageObject):
         """
 
         return self.orthonormal_frame(coordinates)[index]
-
 
     def lie_bracket(self, v, w):
         r"""
@@ -1002,7 +1017,6 @@ class ParametrizedSurface3D(SageObject):
         Dw = matrix([[_simplify_full_rad(diff(component, u))
                       for u in variables] for component in w])
         return vector(Dv*w - Dw*v).simplify_full()
-
 
     def frame_structure_functions(self, e1, e2):
         r"""
@@ -1065,7 +1079,6 @@ class ParametrizedSurface3D(SageObject):
         return {(1,1,1): 0, (1,1,2): 0, (1,2,1): w[0], (1,2,2): w[1],
                 (2,1,1): -w[0], (2,1,2): -w[1], (2,2,1): 0, (2,2,2): 0}
 
-
     @cached_method
     def _compute_second_order_frame_element(self, index):
         """
@@ -1090,7 +1103,6 @@ class ParametrizedSurface3D(SageObject):
                               for f in self.equation])
 
         return ddr_element
-
 
     def second_order_natural_frame(self):
         r"""
@@ -1123,7 +1135,6 @@ class ParametrizedSurface3D(SageObject):
             vectors[index] = \
                 self._compute_second_order_frame_element(sorted_index)
         return vectors
-
 
     def second_order_natural_frame_element(self, index):
         r"""
@@ -1176,7 +1187,6 @@ class ParametrizedSurface3D(SageObject):
         v = self.second_order_natural_frame_element(index)
         return _simplify_full_rad(v*N)
 
-
     def second_fundamental_form_coefficient(self, index):
         r"""
         Returns the coefficient `h_{ij}` of the second fundamental form
@@ -1209,7 +1219,6 @@ class ParametrizedSurface3D(SageObject):
         else:
             raise ValueError("Index %s out of bounds." % str(index))
 
-
     def second_fundamental_form_coefficients(self):
         """
         Returns the coefficients `h_{ij}` of the second fundamental form as
@@ -1238,7 +1247,6 @@ class ParametrizedSurface3D(SageObject):
             coefficients[index] = \
                 self._compute_second_fundamental_form_coefficient(index)
         return coefficients
-
 
     def second_fundamental_form(self,vector1,vector2):
         r"""
@@ -1279,7 +1287,6 @@ class ParametrizedSurface3D(SageObject):
         return sum(hh[(i, j)] * vector1[i - 1] * vector2[j - 1]
                    for (i, j) in product((1, 2), repeat=2))
 
-
     def gauss_curvature(self):
         r"""
         Finds the gaussian curvature of the surface, given by
@@ -1305,7 +1312,6 @@ class ParametrizedSurface3D(SageObject):
         hh = self.second_fundamental_form_coefficients()
         return _simplify_full_rad(
             (hh[(1,1)] * hh[(2,2)] - hh[(1,2)]**2)/self.area_form_squared())
-
 
     def mean_curvature(self):
         r"""
@@ -1335,7 +1341,6 @@ class ParametrizedSurface3D(SageObject):
         numer = (gg[(2,2)]*hh[(1,1)] - 2*gg[(1,2)]*hh[(1,2)] +
                  gg[(1,1)]*hh[(2,2)]).simplify_full()
         return _simplify_full_rad(numer/denom)
-
 
     @cached_method
     def shape_operator_coefficients(self):
@@ -1368,7 +1373,6 @@ class ParametrizedSurface3D(SageObject):
         sh_op22 = _simplify_full_rad(gi[(2,1)]*hh[(2,1)] + gi[(2,2)]*hh[(2,2)])
 
         return {(1,1): sh_op11, (1,2): sh_op12, (2,1): sh_op21, (2,2): sh_op22}
-
 
     def shape_operator(self):
         r"""
@@ -1406,10 +1410,9 @@ class ParametrizedSurface3D(SageObject):
         """
 
         shop = self.shape_operator_coefficients()
-        shop_matrix=matrix([[shop[(1,1)],shop[(1,2)]],
+        shop_matrix = matrix([[shop[(1,1)],shop[(1,2)]],
                             [shop[(2,1)],shop[(2,2)]]])
         return shop_matrix
-
 
     def principal_directions(self):
         r"""
@@ -1444,7 +1447,6 @@ class ParametrizedSurface3D(SageObject):
 
         """
         return self.shape_operator().eigenvectors_right()
-
 
     @cached_method
     def connection_coefficients(self):
@@ -1490,14 +1492,13 @@ class ParametrizedSurface3D(SageObject):
         for i,j,k in product((1, 2), repeat=3):
             dg[(i,j,k)] = _simplify_full_rad(gg[(j,k)].differentiate(x[i]))
 
-        structfun={}
+        structfun = {}
         for i,j,k in product((1, 2), repeat=3):
             structfun[(i,j,k)] = sum(gi[(k,s)]*(dg[(i,j,s)] + dg[(j,i,s)]
-                                                -dg[(s,i,j)])/2
+                                                - dg[(s,i,j)])/2
                                      for s in (1,2))
             structfun[(i,j,k)] = _simplify_full_rad(structfun[(i,j,k)])
         return structfun
-
 
     @cached_method
     def _create_geodesic_ode_system(self):
@@ -1534,7 +1535,6 @@ class ParametrizedSurface3D(SageObject):
                     lambda t, u1_u2_v1_v2:
                     [u1_u2_v1_v2[2], u1_u2_v1_v2[3], fun1(*u1_u2_v1_v2), fun2(*u1_u2_v1_v2)])
                 return geodesic_ode
-
 
     def geodesics_numerical(self, p0, v0, tinterval):
         r"""
@@ -1601,7 +1601,6 @@ class ParametrizedSurface3D(SageObject):
 
         return parsed_solution
 
-
     @cached_method
     def _create_pt_ode_system(self, curve, t):
         """
@@ -1649,7 +1648,6 @@ class ParametrizedSurface3D(SageObject):
                 pt_ode = ode_solver()
                 pt_ode.function = lambda t, v1_v2: [fun1(t, v1_v2[0], v1_v2[1]), fun2(t, v1_v2[0], v1_v2[1])]
                 return pt_ode
-
 
     def parallel_translation_numerical(self,curve,t,v0,tinterval):
         r"""

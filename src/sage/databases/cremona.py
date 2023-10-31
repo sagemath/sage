@@ -51,7 +51,7 @@ from sage.misc.prandom import randint
 import sage.schemes.elliptic_curves.constructor as elliptic
 from .sql_db import SQLDatabase, verify_column
 from sage.features.databases import DatabaseCremona
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 import re
 import string
@@ -120,7 +120,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
-        raise IOError("The data file is not at %s"%data_tgz)
+        raise IOError("The data file is not at %s" % data_tgz)
     t = walltime()
 
     if decompress:
@@ -217,7 +217,7 @@ def cremona_letter_code(n):
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
-        sage: cremona_letter_code(x)
+        sage: cremona_letter_code(x)                                                    # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
@@ -246,7 +246,7 @@ def cremona_letter_code(n):
         return "a"
     s = ""
     while n != 0:
-        s = chr(n%26+97) + s
+        s = chr(n % 26+97) + s
         n //= 26
     return s
 
@@ -287,7 +287,7 @@ def old_cremona_letter_code(n):
         'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
     """
     n -= 1
-    k = n%26 + 65
+    k = n % 26 + 65
     label = chr(k)*int(n//26 + 1)
     return label
 
@@ -678,7 +678,7 @@ class MiniCremonaDatabase(SQLDatabase):
             return
         SQLDatabase.__init__(self, db_path, read_only=read_only)
         if self.get_skeleton() != self._expected_skeleton:
-            raise RuntimeError('Database at %s does '%(self.__dblocation__)
+            raise RuntimeError('Database at %s does ' % (self.__dblocation__)
               + 'not appear to be a valid SQL Cremona database.')
 
     def __iter__(self):
@@ -1377,7 +1377,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         if largest_conductor:
             print("largest conductor =", largest_conductor)
-            self.__largest_conductor__ =  largest_conductor
+            self.__largest_conductor__ = largest_conductor
 
         # Since July 2014 the data files have been arranged in
         # subdirectories (see trac #16903).

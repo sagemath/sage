@@ -141,7 +141,6 @@ class TopologicalSpaces(TopologicalSpacesCategory):
                 """
                 return [TopologicalSpaces().Connected()]
 
-
     class Compact(CategoryWithAxiom):
         """
         The category of compact topological spaces.

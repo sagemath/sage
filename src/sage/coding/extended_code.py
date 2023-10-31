@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Extended code
 
@@ -85,7 +86,7 @@ class ExtendedCode(AbstractLinearCode):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -98,7 +99,7 @@ class ExtendedCode(AbstractLinearCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -111,7 +112,7 @@ class ExtendedCode(AbstractLinearCode):
 
     def original_code(self):
         r"""
-        Returns the code which was extended to get ``self``.
+        Return the code which was extended to get ``self``.
 
         EXAMPLES::
 
@@ -125,7 +126,7 @@ class ExtendedCode(AbstractLinearCode):
     @cached_method
     def parity_check_matrix(self):
         r"""
-        Returns a parity check matrix of ``self``.
+        Return a parity check matrix of ``self``.
 
         This matrix is computed directly from :func:`original_code`.
 
@@ -156,7 +157,7 @@ class ExtendedCode(AbstractLinearCode):
 
     def random_element(self):
         r"""
-        Returns a random element of ``self``.
+        Return a random element of ``self``.
 
         This random element is computed directly from the original code,
         and does not compute a generator matrix of ``self`` in the process.
@@ -177,14 +178,6 @@ class ExtendedCode(AbstractLinearCode):
             last_element += i
         c_list.append(-last_element)
         return vector(F, c_list)
-
-
-
-
-
-
-
-
 
 
 class ExtendedCodeExtendedMatrixEncoder(Encoder):
@@ -213,7 +206,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -227,7 +220,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -260,7 +253,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Returns a generator matrix of the associated code of ``self``.
+        Return a generator matrix of the associated code of ``self``.
 
         EXAMPLES::
 
@@ -286,14 +279,6 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         return M
 
 
-
-
-
-
-
-
-
-
 class ExtendedCodeOriginalCodeDecoder(Decoder):
     r"""
     Decoder which decodes through a decoder over the original code.
@@ -314,10 +299,11 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         sage: Ce = codes.ExtendedCode(C)
         sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce)
         sage: D
-        Decoder of Extension of [15, 7, 9] Reed-Solomon Code over GF(16) through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
+        Decoder of Extension of [15, 7, 9] Reed-Solomon Code over GF(16)
+         through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder = None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs):
         r"""
         TESTS:
 
@@ -350,7 +336,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -364,7 +350,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -378,7 +364,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
     def original_decoder(self):
         r"""
-        Returns the decoder over the original code that will be used to decode words of
+        Return the decoder over the original code that will be used to decode words of
         :meth:`sage.coding.decoder.Decoder.code`.
 
         EXAMPLES::
@@ -393,7 +379,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
     def decode_to_code(self, y, **kwargs):
         r"""
-        Decodes ``y`` to an element in :meth:`sage.coding.decoder.Decoder.code`.
+        Decode ``y`` to an element in :meth:`sage.coding.decoder.Decoder.code`.
 
         EXAMPLES::
 
@@ -401,7 +387,8 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
             sage: Ce = codes.ExtendedCode(C)
             sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce)
             sage: c = Ce.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: y in Ce
             False
@@ -412,10 +399,12 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
             sage: Ce = codes.ExtendedCode(C)
-            sage: Dgrs = C.decoder('GuruswamiSudan', tau = 4)
-            sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce, original_decoder = Dgrs)
+            sage: Dgrs = C.decoder('GuruswamiSudan', tau=4)
+            sage: D = codes.decoders.ExtendedCodeOriginalCodeDecoder(Ce,
+            ....:                                                    original_decoder=Dgrs)
             sage: c = Ce.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(Ce.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: y in Ce
             False
@@ -449,7 +438,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
     def decoding_radius(self, *args, **kwargs):
         r"""
-        Returns maximal number of errors that ``self`` can decode.
+        Return maximal number of errors that ``self`` can decode.
 
         INPUT:
 

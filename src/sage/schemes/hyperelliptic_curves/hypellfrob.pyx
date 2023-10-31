@@ -6,6 +6,7 @@
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
+# sage.doctest: needs sage.libs.ntl sage.modules sage.rings.padics
 
 r"""
 Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve over a
@@ -38,8 +39,9 @@ from libcpp.vector cimport vector
 from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
 from sage.libs.ntl.all import ZZ, ZZX
 from sage.matrix.constructor import Matrix
-from sage.rings.all import Qp, O as big_oh
-from sage.arith.all import is_prime
+from sage.rings.padics.factory import Qp
+from sage.rings.big_oh import O as big_oh
+from sage.arith.misc import is_prime
 
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
@@ -74,8 +76,8 @@ def interval_products(M0, M1, target):
 
     INPUT:
 
-    - M0, M1 -- matrices over `\ZZ/N\ZZ`, so that `M = M0 + M1*x`
-    - target -- a list of integers
+    - ``M0``, ``M1`` -- matrices over `\ZZ/N\ZZ`, so that `M = M0 + M1*x`
+    - ``target`` -- a list of integers
 
     ALGORITHM:
 
@@ -172,10 +174,10 @@ def hypellfrob(p, N, Q):
 
     INPUT:
 
-    - p -- a prime
-    - Q -- a monic polynomial in `\ZZ[x]` of odd degree.
-      Must have no multiple roots mod p.
-    - N -- precision parameter; the output matrix will be correct modulo `p^N`.
+    - ``p`` -- a prime
+    - ``Q`` -- a monic polynomial in `\ZZ[x]` of odd degree.
+      Must have no multiple roots mod `p`.
+    - ``N`` -- precision parameter; the output matrix will be correct modulo `p^N`.
 
     PRECONDITIONS:
 

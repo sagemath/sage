@@ -33,7 +33,7 @@ from .ntl_GF2X cimport ntl_GF2X
 from .ntl_GF2EContext cimport ntl_GF2EContext_class
 from .ntl_GF2EContext import ntl_GF2EContext
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 
 
 ##############################################################################
@@ -155,7 +155,7 @@ cdef class ntl_GF2E():
             self.c = <ntl_GF2EContext_class>ntl_GF2EContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_GF2E _new(self):
+    cdef ntl_GF2E _new(self) noexcept:
         cdef ntl_GF2E r
         self.c.restore_c()
         r = ntl_GF2E.__new__(ntl_GF2E)

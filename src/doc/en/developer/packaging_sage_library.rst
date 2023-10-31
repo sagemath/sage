@@ -1,9 +1,9 @@
 
 .. _chapter-modularization:
 
-============================
- Packaging the Sage Library
-============================
+===========================================
+Packaging the Sage Library for Distribution
+===========================================
 
 
 Modules, packages, distribution packages
@@ -167,7 +167,7 @@ The source directory of a distribution package, such as
   the current development release is ``9.7.beta8``, then such a
   version could be marked ``9.7.beta8.post1``.
 
-  Also sometimes when working on tickets it may be necessary to
+  Also sometimes when working on PRs it may be necessary to
   increment the version because a new feature is needed in another
   distribution package. Such versions should be marked by using the
   version number of the anticipated next development release and
@@ -178,7 +178,7 @@ The source directory of a distribution package, such as
   use ``9.7.beta9.dev1``. If the current development release is
   the stable release ``9.8``, use ``9.9.beta0.dev1``.
 
-  After the ticket is merged in the next development version, it will
+  After the PR is merged in the next development version, it will
   be synchronized again with the other package versions.
 
 - ``setup.py`` -- a `setuptools <https://pypi.org/project/setuptools/>`_-based
@@ -190,9 +190,6 @@ The technique of using symbolic links pointing into ``SAGE_ROOT/src``
 has allowed the modularization effort to keep the ``SAGE_ROOT/src``
 tree monolithic: Modularization has been happening behind the scenes
 and will not change where Sage developers find the source files.
-When adding a new distribution package that uses a symbolic link pointing into
-``SAGE_ROOT/src``, please update ``search.exclude`` in
-``SAGE_ROOT/.vscode/settings.json``.
 
 Some of these files may actually be generated from source files with suffix ``.m4`` by the
 ``SAGE_ROOT/bootstrap`` script via the ``m4`` macro processor.
@@ -472,6 +469,17 @@ requiring all of Sage to be present.
 mechanism mentioned above can also be used for this.
 
 
+Dependencies of the Sage documentation
+--------------------------------------
+
+The documentation will not be modularized.
+
+However, some parts of the Sage reference manual may depend on functionality
+provided by optional packages. These portions of the reference manual
+should be conditionalized using the Sphinx directive ``.. ONLY::``,
+as explained in :ref:`section-documentation-conditional`.
+
+
 Version constraints of dependencies
 -----------------------------------
 
@@ -536,21 +544,28 @@ Not shown in the diagram are build dependencies and optional dependencies for te
   the Sage doctester (:mod:`sage.doctest`), and some related modules from :mod:`sage.misc`.
 
 
+.. _section-modularized-doctesting:
+
 Testing distribution packages
 =============================
 
 Of course, we need tools for testing modularized distributions of
 portions of the Sage library.
 
-- Modularized distributions must be testable separately!
+- Distribution packages of the modularized Sage library must be testable separately!
 
 - But we want to keep integration testing with other portions of Sage too!
 
-Preparing doctests
-------------------
+Preparing doctests for modularized testing
+------------------------------------------
 
-Whenever an optional package is needed for a particular test, we use the
-doctest annotation ``# optional``. This mechanism can also be used for making a
+Section :ref:`section-doctest-writing` explains how to write doctests
+for Sage. Here we show how to prepare existing or new doctests so that
+they are suitable for modularized testing.
+
+Per section :ref:`section-further_conventions`,
+whenever an optional package is needed for a particular test, we use the
+doctest tag ``# optional``. This mechanism can also be used for making a
 doctest conditional on the presence of a portion of the Sage library.
 
 The available tags take the form of package or module names such as
@@ -564,33 +579,43 @@ hints to the user.
 For example, the package :mod:`sage.tensor` is purely algebraic and has
 no dependency on symbolics. However, there are a small number of
 doctests that depend on :class:`sage.symbolic.ring.SymbolicRing` for integration
-testing. Hence, these doctests are marked ``# optional -
-sage.symbolic``.
+testing. Hence, these doctests are marked as depending on the feature
+:class:`sage.symbolic <~sage.features.sagemath.sage__symbolic>`.
+
+By convention, because :class:`sage.symbolic <~sage.features.sagemath.sage__symbolic>`
+is present in a standard installation of Sage, we use the keyword ``# needs``
+instead of ``# optional``. These two keywords have identical semantics;
+the tool :ref:`sage --fixdoctests <section-fixdoctests-optional-needs>`
+rewrites the doctest tags according to the convention.
+
+When defining new features for the purpose of conditionalizing doctests, it may be a good
+idea to hide implementation details from feature names. For example, all doctests that
+use large finite fields have to depend on PARI. However, we have defined a feature
+:mod:`sage.rings.finite_rings` (which implies the presence of :mod:`sage.libs.pari`).
+Marking the doctests ``# needs sage.rings.finite_rings`` expresses the
+dependency in a clearer way than using ``# needs sage.libs.pari``, and it
+will be a smaller maintenance burden when implementation details change.
+
 
 Testing the distribution in virtual environments with tox
 ---------------------------------------------------------
 
-So how to test that this works?
+Chapter :ref:`chapter-doctesting` explains in detail how to run the
+Sage doctester with various options.
 
-Sure, we could go into the installation directory
-``SAGE_VENV/lib/python3.9/site-packages/`` and do ``rm -rf
-sage/symbolic`` and test that things still work. But that's not a good
-way of testing.
-
-Instead, we use a virtual environment in which we only install the
+To test a distribution package of the modularized Sage library,
+we use a virtual environment in which we only install the
 distribution to be tested (and its Python dependencies).
 
 Let's try it out first with the entire Sage library, represented by
 the distribution **sagemath-standard**.  Note that after Sage has been
-built normally, a set of wheels for all installed Python packages is
-available in ``SAGE_VENV/var/lib/sage/wheels/``::
+built normally, a set of wheels for most installed Python distribution
+packages is available in ``SAGE_VENV/var/lib/sage/wheels/``::
 
   $ ls venv/var/lib/sage/wheels
   Babel-2.9.1-py2.py3-none-any.whl
   Cython-0.29.24-cp39-cp39-macosx_11_0_x86_64.whl
   Jinja2-2.11.2-py2.py3-none-any.whl
-  ...
-  sage_conf-9.5b6-py3-none-any.whl
   ...
   scipy-1.7.2-cp39-cp39-macosx_11_0_x86_64.whl
   setuptools-58.2.0-py3-none-any.whl
@@ -598,6 +623,22 @@ available in ``SAGE_VENV/var/lib/sage/wheels/``::
   wheel-0.37.0-py2.py3-none-any.whl
   widgetsnbextension-3.5.1-py2.py3-none-any.whl
   zipp-3.5.0-py3-none-any.whl
+
+However, in a build of Sage with the default configuration
+``configure --enable-editable``, there will be no wheels for the
+distributions ``sage_*`` and ``sagemath-*``.
+
+To create these wheels, use the command ``make wheels``::
+
+  $ make wheels
+  ...
+  $ ls venv/var/lib/sage/wheels/sage*
+  ...
+  sage_conf-10.0b2-py3-none-any.whl
+  ...
+
+(You can also use ``./configure --enable-wheels`` to ensure that
+these wheels are always available and up to date.)
 
 Note in particular the wheel for **sage-conf**, which provides
 configuration variable settings and the connection to the non-Python
@@ -618,7 +659,7 @@ command::
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
-``SAGE_ROOT/pkgs/sagemath-standard-no-symbolics/.tox/``. After the command
+``SAGE_ROOT/pkgs/sagemath-standard/.tox/``. After the command
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 
@@ -632,14 +673,14 @@ The whole ``.tox`` directory can be safely deleted at any time.
 
 We can do the same with other distributions, for example the large
 distribution **sagemath-standard-no-symbolics**
-(from :trac:`32601`), which is intended to provide
+(from :trac:`35095`), which is intended to provide
 everything that is currently in the standard Sage library, i.e.,
 without depending on optional packages, but without the packages
-:mod:`sage.symbolic`, :mod:`sage.functions`, :mod:`sage.calculus`, etc.
+:mod:`sage.symbolic`, :mod:`sage.calculus`, etc.
 
 Again we can run the test with ``tox`` in a separate virtual environment::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
+  $ ./bootstrap && make wheels && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi-norequirements)'
 
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
@@ -659,4 +700,4 @@ Building these small distributions serves as a valuable regression
 testsuite.  However, a current issue with both of these distributions
 is that they are not separately testable: The doctests for these
 modules depend on a lot of other functionality from higher-level parts
-of the Sage library.
+of the Sage library. This is being addressed in :issue:`35095`.

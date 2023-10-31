@@ -1,7 +1,7 @@
 r"""
 Datatypes for finite words
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #                          Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -9,8 +9,8 @@ Datatypes for finite words
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
 from itertools import islice
@@ -20,10 +20,10 @@ cdef class WordDatatype():
     r"""
     The generic WordDatatype class.
 
-    Any word datatype must contain two attributes (at least)::
+    Any word datatype must contain two attributes (at least):
 
-      - _parent
-      - _hash
+    - ``_parent``
+    - ``_hash``
 
     They are automatically defined here and it's not necessary (and forbidden)
     to define them anywhere else.
@@ -64,7 +64,7 @@ cdef class WordDatatype():
         cdef int res
         if self._hash is None:
             res = 5381
-            for s in islice(self,1024):
+            for s in islice(self, 1024):
                 res = ((res << 5) + res) + hash(s)
             self._hash = res
         return self._hash
@@ -94,10 +94,9 @@ cdef class WordDatatype_list(WordDatatype):
             sage: w = Word([0,1,1,0])
             sage: isinstance(w, sage.combinat.words.word_datatypes.WordDatatype_list)
             True
-
         """
         self._parent = parent
-        if isinstance(data,list):
+        if isinstance(data, list):
             self._data = data
         else:
             self._data = list(data)
@@ -420,7 +419,7 @@ cdef class WordDatatype_str(WordDatatype):
         else:
             return a in self._data
 
-    cpdef _has_factor_naive(self, w):
+    cpdef _has_factor_naive(self, w) noexcept:
         r"""
         A naive test for testing whether the word contains ``w`` as a factor.
 
@@ -450,7 +449,7 @@ cdef class WordDatatype_str(WordDatatype):
             return w in self._data
         raise ValueError
 
-    cpdef find(self, sub, start=0, end=None):
+    cpdef find(self, sub, start=0, end=None) noexcept:
         r"""
         Returns the index of the first occurrence of sub in self,
         such that sub is contained within self[start:end].
@@ -697,7 +696,7 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.split("32")
             [word: , word: 30301030, word: , word: 12, word: 30, word: , word: 1]
 
-        If the separator is not a string a ValueError is raised::
+        If the separator is not a string a :class:`ValueError` is raised::
 
             sage: w = Word("le papa du papa du papa etait un petit pioupiou")
             sage: w.split(Word(['p','a','p','a']))
@@ -867,14 +866,12 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: abba.is_prefix(ab)
             False
-
         """
         if isinstance(other, WordDatatype_str):
             return other._data.startswith(self._data)
-        if isinstance(other ,str):
+        if isinstance(other, str):
             return other.startswith(self._data)
-        else:
-            return super().is_prefix(other)
+        return super().is_prefix(other)
 
     def has_prefix(self, other):
         r"""
@@ -940,10 +937,9 @@ cdef class WordDatatype_tuple(WordDatatype):
             sage: u = Word([0,1,1,0], datatype='tuple')
             sage: isinstance(u, sage.combinat.words.word_datatypes.WordDatatype_tuple)
             True
-
         """
         self._parent = parent
-        if isinstance(data,tuple):
+        if isinstance(data, tuple):
             self._data = data
         else:
             self._data = tuple(data)

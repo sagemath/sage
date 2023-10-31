@@ -68,17 +68,6 @@ Database Access
 
    sage/databases/sql_db
 
-Media
-~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/structure/graphics_file
-   sage/media/wav
-.. underscore-methods only
-..   sage/media/channels
-
 Warnings
 ~~~~~~~~
 
@@ -140,44 +129,6 @@ Fast Expression Evaluation
 ..   sage/ext/interpreters/wrapper_py
 ..   sage/ext/interpreters/wrapper_rdf
 ..   sage/ext/interpreters/wrapper_rr
-
-Features
-~~~~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/features
-   sage/features/join_feature
-   sage/features/all
-   sage/features/sagemath
-   sage/features/pkg_systems
-   sage/features/bliss
-   sage/features/csdp
-   sage/features/databases
-   sage/features/dvipng
-   sage/features/ffmpeg
-   sage/features/four_ti_2
-   sage/features/gap
-   sage/features/graph_generators
-   sage/features/graphviz
-   sage/features/imagemagick
-   sage/features/interfaces
-   sage/features/internet
-   sage/features/kenzo
-   sage/features/latex
-   sage/features/latte
-   sage/features/lrs
-   sage/features/mcqd
-   sage/features/meataxe
-   sage/features/mip_backends
-   sage/features/normaliz
-   sage/features/pandoc
-   sage/features/pdf2svg
-   sage/features/polymake
-   sage/features/rubiks
-   sage/features/tdlib
-
 
 Code Evaluation
 ---------------
@@ -311,7 +262,7 @@ Miscellaneous Inspection and Development Tools
 .. toctree::
    :maxdepth: 1
 
-   sage/docs/instancedoc
+   sage/misc/instancedoc
    sage/misc/sageinspect
    sage/misc/edit_module
    sage/misc/classgraph

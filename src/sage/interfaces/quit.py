@@ -45,7 +45,7 @@ def register_spawned_process(pid, cmd=''):
     # This is safe, since only this process writes to this file.
     try:
         with open(sage_spawned_process_file(), 'a') as o:
-            o.write('%s %s\n'%(pid, cmd))
+            o.write('%s %s\n' % (pid, cmd))
     except IOError:
         pass
     else:
@@ -149,7 +149,7 @@ def invalidate_all():
         sage: b
         (invalid PARI/GP interpreter object -- The pari session in which this object was defined is no longer running.)
 
-    However the maxima and gp sessions should still work out, though with their state reset:
+    However the maxima and gp sessions should still work out, though with their state reset::
 
         sage: a = maxima(2); b = gp(3)
         sage: a, b

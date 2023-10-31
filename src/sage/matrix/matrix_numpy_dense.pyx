@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Dense matrices using a NumPy backend
 
@@ -39,7 +40,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .matrix cimport Matrix
 from .args cimport MatrixArgs_init
 cimport sage.structure.element
 
@@ -145,7 +145,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             for j in range(ma.ncols):
                 self.set_unsafe(i, j, next(it))
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value) noexcept:
         """
         Set the (i,j) entry to value without any bounds checking,
         mutability checking, etc.
@@ -169,7 +169,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
                         self._python_dtype(value))
         #TODO: Throw an error if status == -1
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get the (i,j) entry without any bounds checking, etc.
         """
@@ -177,7 +177,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         return self._sage_dtype(cnumpy.PyArray_GETITEM(self._matrix_numpy,
                                                 cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j)))
 
-    cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1):
+    cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1) noexcept:
         """
         Return a new uninitialized matrix with same parent as ``self``.
 
@@ -383,8 +383,9 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             sage: m = matrix(RDF,[[1,2],[3,4]])
             sage: n = m.numpy()
             sage: import numpy
-            sage: numpy.linalg.eig(n)
-            (array([-0.37228132,  5.37228132]), array([[-0.82456484, -0.41597356],
+            sage: tuple(numpy.linalg.eig(n))
+            (array([-0.37228132,  5.37228132]),
+             array([[-0.82456484, -0.41597356],
                    [ 0.56576746, -0.90937671]]))
             sage: m = matrix(RDF, 2, range(6)); m
             [0.0 1.0 2.0]

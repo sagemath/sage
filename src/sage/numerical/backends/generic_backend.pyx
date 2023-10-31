@@ -33,11 +33,11 @@ from copy import copy
 
 cdef class GenericBackend:
 
-    cpdef base_ring(self):
+    cpdef base_ring(self) noexcept:
         from sage.rings.real_double import RDF
         return RDF
 
-    cpdef zero(self):
+    cpdef zero(self) noexcept:
         return self.base_ring()(0)
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
@@ -57,9 +57,9 @@ cdef class GenericBackend:
 
         - ``binary`` - ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
 
         - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
 
@@ -207,7 +207,7 @@ cdef class GenericBackend:
         tester.assertEqual(p.col_name(ncols_before), 'a')
         tester.assertAlmostEqual(p.objective_coefficient(ncols_before), 42.0)
 
-    cpdef  set_variable_type(self, int variable, int vtype):
+    cpdef  set_variable_type(self, int variable, int vtype) noexcept:
         """
         Set the type of a variable
 
@@ -235,7 +235,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef set_sense(self, int sense):
+    cpdef set_sense(self, int sense) noexcept:
         """
         Set the direction (maximization/minimization).
 
@@ -280,7 +280,7 @@ cdef class GenericBackend:
         tester.assertIsNone(p.set_sense(1))
         tester.assertEqual(p.is_maximization(), True)
 
-    cpdef objective_coefficient(self, int variable, coeff=None):
+    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
         """
         Set or get the coefficient of a variable in the objective
         function
@@ -305,7 +305,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef objective_constant_term(self, d=None):
+    cpdef objective_constant_term(self, d=None) noexcept:
         """
         Set or get the constant term in the objective function
 
@@ -328,7 +328,7 @@ cdef class GenericBackend:
         else:
             self.obj_constant_term = d
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d = 0.0) noexcept:
         """
         Set the objective function.
 
@@ -362,7 +362,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef set_verbosity(self, int level):
+    cpdef set_verbosity(self, int level) noexcept:
         """
         Set the log (verbosity) level
 
@@ -378,7 +378,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef remove_constraint(self, int i):
+    cpdef remove_constraint(self, int i) noexcept:
         r"""
         Remove a constraint.
 
@@ -405,7 +405,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef remove_constraints(self, constraints):
+    cpdef remove_constraints(self, constraints) noexcept:
         r"""
         Remove several constraints.
 
@@ -423,7 +423,7 @@ cdef class GenericBackend:
             sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6) # optional - Nonexistent_LP_solver
             sage: p.remove_constraints([0, 1])                       # optional - Nonexistent_LP_solver
         """
-        if type(constraints) == int: self.remove_constraint(constraints)
+        if isinstance(constraints, int): self.remove_constraint(constraints)
 
         cdef int last = self.nrows() + 1
 
@@ -432,7 +432,7 @@ cdef class GenericBackend:
                 self.remove_constraint(c)
                 last = c
 
-    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
+    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None) noexcept:
         """
         Add a linear constraint.
 
@@ -467,7 +467,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError('add_linear_constraint')
 
-    cpdef add_linear_constraint_vector(self, degree, coefficients, lower_bound, upper_bound, name=None):
+    cpdef add_linear_constraint_vector(self, degree, coefficients, lower_bound, upper_bound, name=None) noexcept:
         """
         Add a vector-valued linear constraint.
 
@@ -546,7 +546,7 @@ cdef class GenericBackend:
             p.add_linear_constraint_vector(2, coeffs, lower, upper, 'foo')
         # FIXME: Tests here. Careful what we expect regarding ranged constraints with some solvers.
 
-    cpdef add_col(self, indices, coeffs):
+    cpdef add_col(self, indices, coeffs) noexcept:
         """
         Add a column.
 
@@ -606,7 +606,7 @@ cdef class GenericBackend:
         for 1 <= i <= 4:
             tester.assertEqual(p.row(i), ([0], [i]))
 
-    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None):
+    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None) noexcept:
         """
         Add ``'number`` linear constraints.
 
@@ -721,7 +721,7 @@ cdef class GenericBackend:
             tester = p._tester(**options)
         # From doctest of GenericBackend.solve:
         tester.assertIsNone(p.add_linear_constraints(5, 0, None))
-        tester.assertIsNone(p.add_col(list(xrange(5)), list(xrange(5))))
+        tester.assertIsNone(p.add_col(list(range(5)), list(range(5))))
         tester.assertEqual(p.solve(), 0)
         tester.assertIsNone(p.objective_coefficient(0,1))
         from sage.numerical.mip import MIPSolverException
@@ -729,7 +729,7 @@ cdef class GenericBackend:
         with tester.assertRaises(MIPSolverException) as cm:   # unbounded
             p.solve()
 
-    cpdef get_objective_value(self):
+    cpdef get_objective_value(self) noexcept:
         """
         Return the value of the objective function.
 
@@ -757,7 +757,7 @@ cdef class GenericBackend:
 
         raise NotImplementedError()
 
-    cpdef best_known_objective_bound(self):
+    cpdef best_known_objective_bound(self) noexcept:
         r"""
         Return the value of the currently best known bound.
 
@@ -777,7 +777,7 @@ cdef class GenericBackend:
             sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
             sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
             sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
-            ....:     p.add_constraint(b[u]+b[v]<=1)                   # optional - Nonexistent_LP_solver
+            ....:     p.add_constraint(b[u]+b[v]<=1)
             sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
             sage: p.solve()                                            # optional - Nonexistent_LP_solver
             2.0
@@ -790,7 +790,7 @@ cdef class GenericBackend:
         raise NotImplementedError()
 
 
-    cpdef get_relative_objective_gap(self):
+    cpdef get_relative_objective_gap(self) noexcept:
         r"""
         Return the relative objective gap of the best known solution.
 
@@ -812,7 +812,7 @@ cdef class GenericBackend:
             sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
             sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
             sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
-            ....:     p.add_constraint(b[u]+b[v]<=1)                   # optional - Nonexistent_LP_solver
+            ....:     p.add_constraint(b[u]+b[v]<=1)
             sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
             sage: p.solve()                                            # optional - Nonexistent_LP_solver
             2.0
@@ -825,7 +825,7 @@ cdef class GenericBackend:
         raise NotImplementedError()
 
 
-    cpdef get_variable_value(self, int variable):
+    cpdef get_variable_value(self, int variable) noexcept:
         """
         Return the value of a variable given by the solver.
 
@@ -853,7 +853,7 @@ cdef class GenericBackend:
 
         raise NotImplementedError()
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -879,7 +879,7 @@ cdef class GenericBackend:
         p = self
         tester.assertGreaterEqual(self.ncols(), 0)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -896,7 +896,7 @@ cdef class GenericBackend:
 
         raise NotImplementedError()
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -912,7 +912,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef problem_name(self, name=None):
+    cpdef problem_name(self, name=None) noexcept:
         """
         Return or define the problem's name
 
@@ -932,7 +932,7 @@ cdef class GenericBackend:
 
         raise NotImplementedError()
 
-    cpdef write_lp(self, name):
+    cpdef write_lp(self, name) noexcept:
         """
         Write the problem to a ``.lp`` file
 
@@ -954,7 +954,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef write_mps(self, name, int modern):
+    cpdef write_mps(self, name, int modern) noexcept:
         """
         Write the problem to a ``.mps`` file
 
@@ -977,7 +977,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef copy(self):
+    cpdef copy(self) noexcept:
         """
         Returns a copy of self.
 
@@ -994,7 +994,7 @@ cdef class GenericBackend:
         return self.__copy__()
 
     # Override this method in backends.
-    cpdef __copy__(self):
+    cpdef __copy__(self) noexcept:
         """
         Returns a copy of self.
 
@@ -1032,7 +1032,7 @@ cdef class GenericBackend:
         """
         return self.__copy__()
 
-    cpdef row(self, int i):
+    cpdef row(self, int i) noexcept:
         """
         Return a row
 
@@ -1061,7 +1061,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef row_bounds(self, int index):
+    cpdef row_bounds(self, int index) noexcept:
         """
         Return the bounds of a specific constraint.
 
@@ -1089,7 +1089,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef col_bounds(self, int index):
+    cpdef col_bounds(self, int index) noexcept:
         """
         Return the bounds of a specific variable.
 
@@ -1117,7 +1117,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -1140,7 +1140,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -1162,7 +1162,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -1187,7 +1187,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef row_name(self, int index):
+    cpdef row_name(self, int index) noexcept:
         """
         Return the ``index`` th row name
 
@@ -1206,7 +1206,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef col_name(self, int index):
+    cpdef col_name(self, int index) noexcept:
         """
         Return the ``index``-th column name
 
@@ -1288,8 +1288,8 @@ cdef class GenericBackend:
         del cp
         self._do_test_problem_data(tester, cpcp)
 
-
     # TODO: We should have a more systematic way of generating MIPs for testing.
+
     @classmethod
     def _test_copy_some_mips(cls, tester=None, **options):
         p = cls()                         # fresh instance of the backend
@@ -1299,7 +1299,7 @@ cdef class GenericBackend:
         p.add_linear_constraints(5, 0, None)
         try:
             # p.add_col(range(5), range(5))     -- bad test because COIN sparsifies the 0s away on copy
-            p.add_col(list(xrange(5)), list(xrange(1, 6)))
+            p.add_col(list(range(5)), list(range(1, 6)))
         except NotImplementedError:
             # Gurobi does not implement add_col
             pass
@@ -1309,7 +1309,7 @@ cdef class GenericBackend:
         p._test_copy(**options)
         p._test_copy_does_not_share_data(**options)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value = False) noexcept:
         """
         Return or define the upper bound on a variable
 
@@ -1335,7 +1335,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value = False) noexcept:
         """
         Return or define the lower bound on a variable
 
@@ -1361,7 +1361,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value = None) noexcept:
         """
         Return or define a solver parameter
 
@@ -1387,7 +1387,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_basic(self, int index):
+    cpdef bint is_variable_basic(self, int index) noexcept:
         """
         Test whether the given variable is basic.
 
@@ -1417,7 +1417,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
 
@@ -1447,7 +1447,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_slack_variable_basic(self, int index):
+    cpdef bint is_slack_variable_basic(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is basic.
 
@@ -1477,7 +1477,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
 
@@ -1555,7 +1555,7 @@ def default_mip_solver(solver=None):
         - a string indicating one of the available solvers
           (see :class:`MixedIntegerLinearProgram`);
 
-        - a callable (typically a subclass of 
+        - a callable (typically a subclass of
           :class:`sage.numerical.backends.generic_backend.GenericBackend`);
 
         - ``None`` (default), in which case the current default solver
@@ -1595,7 +1595,7 @@ def default_mip_solver(solver=None):
             return default_solver
 
         else:
-            for s in ["Cplex", "Gurobi", "Coin", "Glpk", "SCIP"]:
+            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Coin", "Glpk", "SCIP"]:
                 try:
                     default_mip_solver(s)
                     return s
@@ -1649,6 +1649,24 @@ def default_mip_solver(solver=None):
     elif solver == "Interactivelp":
         default_solver = solver
 
+    elif solver == "Cvxpy":
+        try:
+            from sage.numerical.backends.cvxpy_backend import CVXPYBackend
+        except ImportError:
+            raise ValueError("CVXPY is not available. Please refer to the documentation to install it.")
+        else:
+            assert CVXPYBackend
+            default_solver = solver
+
+    elif solver.startswith("Cvxpy"):
+        try:
+            s = get_solver(solver=solver)
+            s.solve()
+        except Exception as e:
+            raise ValueError(f"{solver} is not available: {e}. Please refer to the documentation to install it.")
+        else:
+            default_solver = solver
+
     elif solver == "Scip":
         try:
             from sage.numerical.backends.scip_backend import SCIPBackend
@@ -1657,9 +1675,9 @@ def default_mip_solver(solver=None):
             raise ValueError("SCIP is not available. Please refer to the documentation to install it.")
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
+        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
-cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
+cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None) noexcept:
     """
     Return a solver according to the given preferences
 
@@ -1759,7 +1777,8 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
         if base_ring is not None:
             base_ring = base_ring.fraction_field()
-            from sage.rings.all import QQ, RDF
+            from sage.rings.rational_field import QQ
+            from sage.rings.real_double import RDF
             if base_ring is QQ:
                 solver = "Ppl"
             elif solver in ["Interactivelp", "Ppl"] and not base_ring.is_exact():
@@ -1813,10 +1832,16 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         from sage.numerical.backends.interactivelp_backend import InteractiveLPBackend
         return InteractiveLPBackend(base_ring=base_ring)
 
+    elif solver.startswith("Cvxpy"):
+        from sage.numerical.backends.cvxpy_backend import CVXPYBackend
+        if solver == "Cvxpy":
+            return CVXPYBackend()
+        if solver.startswith("Cvxpy/"):
+            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/"):])
+
     elif solver == "Scip":
         from sage.numerical.backends.scip_backend import SCIPBackend
         return SCIPBackend()
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
-
+        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")

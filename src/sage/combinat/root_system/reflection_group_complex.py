@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Finite complex reflection groups
 ----------------------------------
@@ -21,17 +22,18 @@ which can be used with finite Cartan-Killing types::
 
 or with Shephard-Todd types::
 
-    sage: ReflectionGroup((1,1,3))                                      # optional - gap3
+    sage: # optional - gap3
+    sage: ReflectionGroup((1,1,3))
     Irreducible real reflection group of rank 2 and type A2
-    sage: ReflectionGroup((2,1,3))                                      # optional - gap3
+    sage: ReflectionGroup((2,1,3))
     Irreducible real reflection group of rank 3 and type B3
-    sage: ReflectionGroup((3,1,3))                                      # optional - gap3
+    sage: ReflectionGroup((3,1,3))
     Irreducible complex reflection group of rank 3 and type G(3,1,3)
-    sage: ReflectionGroup((4,2,3))                                      # optional - gap3
+    sage: ReflectionGroup((4,2,3))
     Irreducible complex reflection group of rank 3 and type G(4,2,3)
-    sage: ReflectionGroup(4)                                            # optional - gap3
+    sage: ReflectionGroup(4)
     Irreducible complex reflection group of rank 2 and type ST4
-    sage: ReflectionGroup(31)                                           # optional - gap3
+    sage: ReflectionGroup(31)
     Irreducible complex reflection group of rank 4 and type ST31
 
 Also reducible types are allowed using concatenation::
@@ -208,13 +210,12 @@ from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.combinat.permutation import Permutation
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.matrix.all import Matrix, identity_matrix
+from sage.matrix.constructor import Matrix
+from sage.matrix.special import identity_matrix
 from sage.structure.element import is_Matrix
 from sage.interfaces.gap3 import gap3
-from sage.rings.universal_cyclotomic_field import E
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.misc.sage_eval import sage_eval
 
 
@@ -399,14 +400,15 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((1,1,4))                          # optional - gap3
-            sage: W.index_set()                                         # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((1,1,4))
+            sage: W.index_set()
             (1, 2, 3)
-            sage: W = ReflectionGroup((1,1,4), index_set=[1,3,'asdf'])  # optional - gap3
-            sage: W.index_set()                                         # optional - gap3
+            sage: W = ReflectionGroup((1,1,4), index_set=[1,3,'asdf'])
+            sage: W.index_set()
             (1, 3, 'asdf')
-            sage: W = ReflectionGroup((1,1,4), index_set=('a', 'b', 'c'))   # optional - gap3
-            sage: W.index_set()                                         # optional - gap3
+            sage: W = ReflectionGroup((1,1,4), index_set=('a', 'b', 'c'))
+            sage: W.index_set()
             ('a', 'b', 'c')
         """
         return self._index_set
@@ -451,14 +453,15 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((1,1,4))                          # optional - gap3
-            sage: W.hyperplane_index_set()                              # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((1,1,4))
+            sage: W.hyperplane_index_set()
             (1, 2, 3, 4, 5, 6)
-            sage: W = ReflectionGroup((1,1,4), hyperplane_index_set=[1,3,'asdf',7,9,11])    # optional - gap3
-            sage: W.hyperplane_index_set()                              # optional - gap3
+            sage: W = ReflectionGroup((1,1,4), hyperplane_index_set=[1,3,'asdf',7,9,11])
+            sage: W.hyperplane_index_set()
             (1, 3, 'asdf', 7, 9, 11)
-            sage: W = ReflectionGroup((1,1,4),hyperplane_index_set=('a','b','c','d','e','f'))   # optional - gap3
-            sage: W.hyperplane_index_set()                              # optional - gap3
+            sage: W = ReflectionGroup((1,1,4),hyperplane_index_set=('a','b','c','d','e','f'))
+            sage: W.hyperplane_index_set()
             ('a', 'b', 'c', 'd', 'e', 'f')
         """
         return self._hyperplane_index_set
@@ -519,12 +522,13 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-            sage: W.distinguished_reflection(1)                         # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((1,1,3))
+            sage: W.distinguished_reflection(1)
             (1,4)(2,3)(5,6)
-            sage: W.distinguished_reflection(2)                         # optional - gap3
+            sage: W.distinguished_reflection(2)
             (1,3)(2,5)(4,6)
-            sage: W.distinguished_reflection(3)                         # optional - gap3
+            sage: W.distinguished_reflection(3)
             (1,5)(2,4)(3,6)
 
             sage: W = ReflectionGroup((3,1,1),hyperplane_index_set=['a'])   # optional - gap3
@@ -533,7 +537,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: W = ReflectionGroup((1,1,3),(3,1,2))                  # optional - gap3
             sage: for i in range(W.number_of_reflection_hyperplanes()): # optional - gap3
-            ....:     W.distinguished_reflection(i+1)                   # optional - gap3
+            ....:     W.distinguished_reflection(i+1)
             (1,6)(2,5)(7,8)
             (1,5)(2,7)(6,8)
             (3,9,15)(4,10,16)(12,17,23)(14,18,24)(20,25,29)(21,22,26)(27,28,30)
@@ -652,14 +656,15 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((1,1,4))                          # optional - gap3
-            sage: W.reflection_index_set()                              # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((1,1,4))
+            sage: W.reflection_index_set()
             (1, 2, 3, 4, 5, 6)
-            sage: W = ReflectionGroup((1,1,4), reflection_index_set=[1,3,'asdf',7,9,11])    # optional - gap3
-            sage: W.reflection_index_set()                              # optional - gap3
+            sage: W = ReflectionGroup((1,1,4), reflection_index_set=[1,3,'asdf',7,9,11])
+            sage: W.reflection_index_set()
             (1, 3, 'asdf', 7, 9, 11)
-            sage: W = ReflectionGroup((1,1,4), reflection_index_set=('a','b','c','d','e','f'))  # optional - gap3
-            sage: W.reflection_index_set()                              # optional - gap3
+            sage: W = ReflectionGroup((1,1,4), reflection_index_set=('a','b','c','d','e','f'))
+            sage: W.reflection_index_set()
             ('a', 'b', 'c', 'd', 'e', 'f')
         """
         return self._reflection_index_set
@@ -709,12 +714,13 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-            sage: W.reflection(1)                                       # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((1,1,3))
+            sage: W.reflection(1)
             (1,4)(2,3)(5,6)
-            sage: W.reflection(2)                                       # optional - gap3
+            sage: W.reflection(2)
             (1,3)(2,5)(4,6)
-            sage: W.reflection(3)                                       # optional - gap3
+            sage: W.reflection(3)
             (1,5)(2,4)(3,6)
 
             sage: W = ReflectionGroup((3,1,1),reflection_index_set=['a','b'])   # optional - gap3
@@ -763,7 +769,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.discriminant()                           # optional - gap3
             x0^6*x1^2 - 6*x0^5*x1^3 + 13*x0^4*x1^4 - 12*x0^3*x1^5 + 4*x0^2*x1^6
         """
-        from sage.rings.polynomial.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         n = self.rank()
         P = PolynomialRing(QQ, 'x', n)
         x = P.gens()
@@ -1008,17 +1014,18 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
-            sage: W.rank()                                              # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((1,1,3))
+            sage: W.rank()
             2
-            sage: W = ReflectionGroup((2,1,3))                          # optional - gap3
-            sage: W.rank()                                              # optional - gap3
+            sage: W = ReflectionGroup((2,1,3))
+            sage: W.rank()
             3
-            sage: W = ReflectionGroup((4,1,3))                          # optional - gap3
-            sage: W.rank()                                              # optional - gap3
+            sage: W = ReflectionGroup((4,1,3))
+            sage: W.rank()
             3
-            sage: W = ReflectionGroup((4,2,3))                          # optional - gap3
-            sage: W.rank()                                              # optional - gap3
+            sage: W = ReflectionGroup((4,2,3))
+            sage: W.rank()
             3
         """
         return self._rank
@@ -1135,7 +1142,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W = ReflectionGroup((3,1,2))                          # optional - gap3
             sage: reflection_eigenvalues = W.reflection_eigenvalues_family()    # optional - gap3
             sage: for elt in sorted(reflection_eigenvalues.keys()):     # optional - gap3
-            ....:     print('%s %s'%(elt, reflection_eigenvalues[elt])) # optional - gap3
+            ....:     print('%s %s'%(elt, reflection_eigenvalues[elt]))
             () [0, 0]
             (1,3,9)(2,4,10)(6,11,17)(8,12,18)(14,19,23)(15,16,20)(21,22,24) [1/3, 0]
             (1,3,9)(2,16,24)(4,20,21)(5,7,13)(6,12,23)(8,19,17)(10,15,22)(11,18,14) [1/3, 1/3]
@@ -1149,7 +1156,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W = ReflectionGroup(23)                               # optional - gap3
             sage: reflection_eigenvalues = W.reflection_eigenvalues_family()    # optional - gap3
             sage: for elt in sorted(reflection_eigenvalues.keys()):     # optional - gap3
-            ....:     print('%s %s'%(elt, reflection_eigenvalues[elt])) # optional - gap3
+            ....:     print('%s %s'%(elt, reflection_eigenvalues[elt]))
             () [0, 0, 0]
             (1,8,4)(2,21,3)(5,10,11)(6,18,17)(7,9,12)(13,14,15)(16,23,19)(20,25,26)(22,24,27)(28,29,30) [1/3, 2/3, 0]
             (1,16)(2,5)(4,7)(6,9)(8,10)(11,13)(12,14)(17,20)(19,22)(21,24)(23,25)(26,28)(27,29) [1/2, 0, 0]
@@ -1182,7 +1189,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: W = ReflectionGroup((1,1,3))                          # optional - gap3
             sage: for w in W:                                           # optional - gap3
-            ....:     print('%s %s'%(w.reduced_word(), W.reflection_eigenvalues(w)))    # optional - gap3
+            ....:     print('%s %s'%(w.reduced_word(), W.reflection_eigenvalues(w)))
             [] [0, 0]
             [2] [1/2, 0]
             [1] [1/2, 0]
@@ -1228,12 +1235,13 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: W.simple_root(1)                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: W.simple_root(1)
             (1, 0, 0)
-            sage: W.simple_root(2)                                      # optional - gap3
+            sage: W.simple_root(2)
             (0, 1, 0)
-            sage: W.simple_root(3)                                      # optional - gap3
+            sage: W.simple_root(3)
             (0, 0, 1)
 
         TESTS::
@@ -1415,20 +1423,20 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             (x0^3 + x1^3, x0^3*x1^3)
         """
         import re
-        from sage.rings.polynomial.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         if not self.is_irreducible():
             return sum([W.fundamental_invariants() for W in self.irreducible_components() ],tuple())
 
         I = [ str(p) for p in gap3('List(Invariants(%s),x->ApplyFunc(x,List([0..%s],i->Mvp(SPrint("x",i)))))' % (self._gap_group._name, self.rank()-1)) ]
-        P = PolynomialRing(QQ,['x%s'%i for i in range(self.rank())])
+        P = PolynomialRing(QQ,['x%s' % i for i in range(self.rank())])
         x = P.gens()
         for i in range(len(I)):
             I[i] = I[i].replace('^','**')
             I[i] = re.compile(r'E(\d\d*)').sub(r'E(\1)', I[i])
             I[i] = re.compile(r'(\d)E\(').sub(r'\1*E(', I[i])
             for j in range(len(x)):
-                I[i] = I[i].replace('x%s'%j,'*x[%s]'%j)
+                I[i] = I[i].replace('x%s' % j,'*x[%s]' % j)
             I[i] = I[i].replace("+*","+").replace("-*","-").replace("ER(5)","*(E(5)-E(5)**2-E(5)**3+E(5)**4)").lstrip("*")
         # sage_eval is used since eval kills the rational entries!
         I = [sage_eval(p, locals={'x': x}) for p in I]
@@ -1554,7 +1562,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         if self.is_crystallographic():
             from sage.combinat.root_system.cartan_matrix import CartanMatrix as CartanMat
         else:
-            from sage.matrix.all import Matrix as CartanMat
+            from sage.matrix.constructor import Matrix as CartanMat
         return CartanMat(self._gap_group.CartanMat().sage())
 
     def invariant_form(self, brute_force=False):
@@ -1586,13 +1594,14 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: all( F == S[i].matrix()*F*S[i].matrix().transpose() for i in W.index_set() )  # optional - gap3
             True
 
-            sage: W = ReflectionGroup(['B',3])                          # optional - gap3
-            sage: F = W.invariant_form(); F                             # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['B',3])
+            sage: F = W.invariant_form(); F
             [ 1 -1  0]
             [-1  2 -1]
             [ 0 -1  2]
-            sage: w = W.an_element().to_matrix()                        # optional - gap3
-            sage: w * F * w.transpose().conjugate() == F                # optional - gap3
+            sage: w = W.an_element().to_matrix()
+            sage: w * F * w.transpose().conjugate() == F
             True
 
             sage: S = W.simple_reflections()                            # optional - gap3
@@ -1633,10 +1642,10 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             sage: tests = [['A',3],['B',3],['F',4],(4,2,2),4,7]         # optional - gap3
             sage: for ty in tests:                                      # optional - gap3
-            ....:     W = ReflectionGroup(ty)                           # optional - gap3
-            ....:     A = W.invariant_form()                            # optional - gap3
-            ....:     B = W.invariant_form(brute_force=True)            # optional - gap3
-            ....:     print("{} {}".format(ty, A == B/B[0,0]))          # optional - gap3
+            ....:     W = ReflectionGroup(ty)
+            ....:     A = W.invariant_form()
+            ....:     B = W.invariant_form(brute_force=True)
+            ....:     print("{} {}".format(ty, A == B/B[0,0]))
             ['A', 3] True
             ['B', 3] True
             ['F', 4] True
@@ -1709,6 +1718,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             [1 0]
             [0 1]
         """
+        from sage.rings.universal_cyclotomic_field import E
+
         base_change = self.base_change_matrix()
         Delta = tuple(self.independent_roots())
         basis_is_Delta = base_change.is_one()
@@ -1736,7 +1747,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         coeffs = []
         for i in self.index_set():
-            coeff = 1-E(S[i].order())
+            coeff = 1 - E(S[i].order())
             if coeff in QQ:
                 coeff = QQ(coeff)
             coeffs.append(coeff)
@@ -1763,20 +1774,22 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((4,2,5))             # optional - gap3
-            sage: I = W.invariant_form()                   # optional - gap3
-            sage: A = W.invariant_form_standardization()   # optional - gap3
-            sage: A^2 == I                                 # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup((4,2,5))
+            sage: I = W.invariant_form()
+            sage: A = W.invariant_form_standardization()
+            sage: A^2 == I
             True
 
         TESTS::
 
-            sage: W = ReflectionGroup(9)                              # optional - gap3
-            sage: A = W.invariant_form_standardization()              # optional - gap3
-            sage: S = W.simple_reflections()                          # optional - gap3
-            sage: Ainv = A.inverse()                                  # optional - gap3
-            sage: T = {i: Ainv * S[i] * A for i in W.index_set()}     # optional - gap3
-            sage: all(T[i] * T[i].conjugate_transpose()               # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(9)
+            sage: A = W.invariant_form_standardization()
+            sage: S = W.simple_reflections()
+            sage: Ainv = A.inverse()
+            sage: T = {i: Ainv * S[i] * A for i in W.index_set()}
+            sage: all(T[i] * T[i].conjugate_transpose()
             ....:     == 1 for i in W.index_set() )
             True
         """
@@ -1905,14 +1918,15 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(["H",4])               # optional - gap3
-            sage: W.coxeter_number()                         # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(["H",4])
+            sage: W.coxeter_number()
             30
-            sage: all(W.coxeter_number(chi).is_integer()    # optional - gap3
+            sage: all(W.coxeter_number(chi).is_integer()
             ....:     for chi in W.irreducible_characters())
             True
-            sage: W = ReflectionGroup(14)                    # optional - gap3
-            sage: W.coxeter_number()                         # optional - gap3
+            sage: W = ReflectionGroup(14)
+            sage: W.coxeter_number()
             24
         """
         if chi is None:
@@ -1940,7 +1954,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
                 sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     print('%s %s'%(w.reduced_word(), w.conjugacy_class_representative().reduced_word()))  # optional - gap3
+                ....:     print('%s %s'%(w.reduced_word(), w.conjugacy_class_representative().reduced_word()))
                 [] []
                 [2] [1]
                 [1] [1]
@@ -1952,7 +1966,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             for w in W._conjugacy_classes:
                 if self in W._conjugacy_classes[w]:
                     return w
-            return W.conjugacy_classes_representatives()[ gap3("PositionClass(%s,%s)"%(W._gap_group._name,self)).sage()-1 ]
+            return W.conjugacy_classes_representatives()[ gap3("PositionClass(%s,%s)" % (W._gap_group._name,self)).sage()-1 ]
 
         def conjugacy_class(self):
             r"""
@@ -2084,7 +2098,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     print('%s %s'%(w.reduced_word(), w.is_coxeter_element())) # optional - gap3
+                ....:     print('%s %s'%(w.reduced_word(), w.is_coxeter_element()))
                 [] False
                 [2] False
                 [1] False
@@ -2112,7 +2126,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     print('%s %s'%(w.reduced_word(), w.is_h_regular()))   # optional - gap3
+                ....:     print('%s %s'%(w.reduced_word(), w.is_h_regular()))
                 [] False
                 [2] False
                 [1] False
@@ -2156,8 +2170,8 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
                 sage: W = ReflectionGroup(23); h = W.coxeter_number()   # optional - gap3
                 sage: for w in W:                                       # optional - gap3
-                ....:     if w.is_regular(h):                           # optional - gap3
-                ....:         w.reduced_word()                          # optional - gap3
+                ....:     if w.is_regular(h):
+                ....:         w.reduced_word()
                 [1, 2, 3]
                 [2, 1, 3]
                 [1, 3, 2]
@@ -2185,14 +2199,17 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
             Check that :trac:`25478` is fixed::
 
-                sage: W = ReflectionGroup(["A",5])                      # optional - gap3
-                sage: w = W.from_reduced_word([1,2,3,5])                # optional - gap3
-                sage: w.is_regular(4)                                   # optional - gap3
+                sage: # optional - gap3
+                sage: W = ReflectionGroup(["A",5])
+                sage: w = W.from_reduced_word([1,2,3,5])
+                sage: w.is_regular(4)
                 False
-                sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-                sage: len([w for w in W if w.is_regular(w.order())])    # optional - gap3
+                sage: W = ReflectionGroup(["A",3])
+                sage: len([w for w in W if w.is_regular(w.order())])
                 18
             """
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField, E
+
             evs = self.reflection_eigenvalues(is_class_representative=is_class_representative)
             P = self.parent()
             I = identity_matrix(P.rank())

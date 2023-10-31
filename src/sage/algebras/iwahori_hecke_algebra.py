@@ -30,10 +30,12 @@ from sage.misc.bindable_class import BindableClass
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.realizations import Realizations, Category_realization_of_parent
-from sage.categories.all import AlgebrasWithBasis, FiniteDimensionalAlgebrasWithBasis, CoxeterGroups
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+from sage.categories.coxeter_groups import CoxeterGroups
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.arith.all import is_square
+from sage.arith.misc import is_square
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -2490,6 +2492,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         def __init__(self, IHAlgebra, prefix=None):
             r"""
             Initialize the `A`-basis of the Iwahori-Hecke algebra ``IHAlgebra``.
+
+            EXAMPLES::
 
                 sage: R.<v> = LaurentPolynomialRing(QQ)
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)

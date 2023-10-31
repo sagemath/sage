@@ -22,13 +22,13 @@ AUTHOR:
 - Xavier Caruso (2012-06-29)
 """
 
-#############################################################################
+# ###########################################################################
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -41,7 +41,6 @@ from .hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
 
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
-from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from .element_givaro cimport FiniteField_givaroElement
@@ -97,7 +96,7 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
         self._codomain_cache = (<FiniteField_givaroElement>(self._codomain.gen()))._cache
 
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -175,7 +174,7 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         self._order_codomain = codomain.cardinality() - 1
 
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -264,7 +263,7 @@ cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
 
 
 # copied from element_givaro.pyx
-cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x):
+cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x) noexcept:
     cdef FiniteField_givaroElement y
 
     if cache._has_array:

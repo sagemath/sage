@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Parity-check code
 
@@ -5,8 +6,8 @@ A simple way of detecting up to one error is to use the device of adding a
 parity check to ensure that the sum of the digits in a transmitted word is
 even.
 
-A parity-check code of dimension `k` over `F_q` is the set:
-`\{(m_1, m_2, \dots, m_k, - \Sigma_{i=1}^k m_i) \mid (m_1, m_2, \dots, m_k) \in F_q^k\}`
+A parity-check code of dimension `k` over `\GF{q}` is the set:
+`\{(m_1, m_2, \dots, m_k, - \Sigma_{i=1}^k m_i) \mid (m_1, m_2, \dots, m_k) \in \GF{q}^k\}`
 
 REFERENCE:
 
@@ -303,7 +304,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
             sage: C.encode(message)
             (1, 0, 4, 2, 0, 3, 2, 3)
         """
-        parity=self.code().base_field().zero()
+        parity = self.code().base_field().zero()
         for i in message.list():
             parity += i
         return vector(self.code().base_field(), message.list() + [-parity])
@@ -347,6 +348,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
             Vector space of dimension 7 over Finite Field of size 5
         """
         return VectorSpace(self.code().base_field(), self.code().dimension())
+
 
 ####################### registration ###############################
 

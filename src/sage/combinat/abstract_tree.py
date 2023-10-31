@@ -779,8 +779,7 @@ class AbstractTree():
             yield tuple(path)
         else:
             for i in range(len(self)):
-                for p in self[i].paths_at_depth(depth - 1, path + [i]):
-                    yield p
+                yield from self[i].paths_at_depth(depth - 1, path + [i])
 
     def node_number_at_depth(self, depth):
         r"""
@@ -1555,7 +1554,7 @@ class AbstractTree():
                     # ==> n & n & ... & n' & n' & ...
                     try:
                         mat[i] += sep + mat2[i]
-                    except Exception:
+                    except IndexError:
                         if i >= lmat:
                             if i != 0:
                                 # mat[i] does not exist but
@@ -1937,8 +1936,8 @@ class AbstractClonableTree(AbstractTree):
         TESTS::
 
             sage: x = OrderedTree([[[], []],[[]]])
-            sage: with x.clone() as x:
-            ....:     x[0,1] = OrderedTree([[[]]]) # indirect doctest
+            sage: with x.clone() as x:              # indirect doctest
+            ....:     x[0,1] = OrderedTree([[[]]])
             sage: x
             [[[], [[[]]]], [[]]]
         """

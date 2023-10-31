@@ -20,7 +20,7 @@ from sage.libs.gsl.complex cimport *
 
 from sage.arith.long cimport integer_check_long
 from sage.cpython.string cimport bytes_to_str
-from sage.structure.element cimport Element, parent
+from sage.structure.element cimport Element
 
 import sage.rings.abc
 from ..integer cimport Integer
@@ -35,7 +35,7 @@ from ..complex_double cimport ComplexDoubleElement
 from cypari2.gen cimport Gen
 
 
-cdef inline int return_real(mpfi_ptr im):
+cdef inline int return_real(mpfi_ptr im) noexcept:
     """
     Called by ``mpfi_set_sage`` on the imaginary part when converting
     a real number.

@@ -23,6 +23,8 @@ from .free_module_element import (vector, free_module_element, zero_vector,
 
 from .vector_space_morphism import linear_transformation
 
+from .with_basis.all import *
+
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.modules.filtered_vector_space', 'FilteredVectorSpace')

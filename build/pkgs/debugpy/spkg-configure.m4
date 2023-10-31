@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([debugpy], [SAGE_PYTHON_PACKAGE_CHECK([debugpy])])

@@ -99,11 +99,12 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 
     Compare with NetworkX::
 
+        sage: # needs networkx
         sage: import networkx
         sage: g = graphs.RandomGNP(100, .2)
         sage: nw = networkx.betweenness_centrality(g.networkx_graph())
         sage: sg = centrality_betweenness(g)
-        sage: max(abs(nw[x] - sg[x]) for x in g) # abs tol 1e-10
+        sage: max(abs(nw[x] - sg[x]) for x in g)  # abs tol 1e-10
         0
 
     Stupid cases::
@@ -118,12 +119,11 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
     """
     if exact:
         return centrality_betweenness_C(G, <mpq_t> 0, normalize=normalize)
-    else:
-        return centrality_betweenness_C(G, <double>0, normalize=normalize)
+    return centrality_betweenness_C(G, <double>0, normalize=normalize)
 
 
 @cython.cdivision(True)
-cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
+cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True) noexcept:
     r"""
     Return the centrality betweenness of G (C implementation)
 
@@ -327,7 +327,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     return {vv: betweenness_list[i] for i, vv in enumerate(int_to_vertex)}
 
 
-cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU):
+cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU) noexcept:
     r"""
     For each vertex ``v``, bounds the number of vertices reachable from ``v``.
 
@@ -460,7 +460,7 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
         reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
 
-cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
+cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable) noexcept:
     r"""
     For each vertex ``v``, compute the number of vertices reachable from ``v``.
 
@@ -513,7 +513,7 @@ cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
             reachable[v] = len(currentcc)
 
 
-cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts):
+cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts) noexcept:
     r"""
     Sort vertices in decreasing order of degree.
 
@@ -637,6 +637,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
 
     The result is correct::
 
+        sage: # needs networkx
         sage: from sage.graphs.centrality import centrality_closeness_top_k
         sage: import random
         sage: n = 20
@@ -653,6 +654,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
 
     Directed case::
 
+        sage: # needs networkx
         sage: from sage.graphs.centrality import centrality_closeness_top_k
         sage: import random
         sage: n = 20

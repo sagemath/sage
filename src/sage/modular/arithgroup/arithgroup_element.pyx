@@ -1,10 +1,9 @@
 """
 Elements of arithmetic subgroups
 """
-
-################################################################################
+# ##############################################################################
 #
-#       Copyright (C) 2009, The Sage Group -- http://www.sagemath.org/
+#       Copyright (C) 2009, The Sage Group -- https://www.sagemath.org/
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -12,12 +11,11 @@ Elements of arithmetic subgroups
 #
 #                  https://www.gnu.org/licenses/
 #
-################################################################################
+# ##############################################################################
 
-from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
+from sage.structure.element cimport MultiplicativeGroupElement
 from sage.structure.richcmp cimport richcmp
 from sage.rings.integer_ring import ZZ
-from sage.modular.cusps import Cusp
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
@@ -109,7 +107,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: unpickle_build(si, (Gamma0(13), {'_ArithmeticSubgroupElement__x': x}))
         """
         from .congroup_sl2z import SL2Z
-        oldparent, kwdict = state
+        _, kwdict = state
         self._parent = SL2Z
         if '_ArithmeticSubgroupElement__x' in kwdict:
             self.__x = M2Z(kwdict['_ArithmeticSubgroupElement__x'])
@@ -160,7 +158,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return '%s' % self.__x._latex_()
 
-    cpdef _richcmp_(self, right_r, int op):
+    cpdef _richcmp_(self, right_r, int op) noexcept:
         """
         Compare self to right, where right is guaranteed to have the same
         parent as self.
@@ -206,7 +204,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return True
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Return self * right.
 
@@ -342,6 +340,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example involving the Gaussian numbers::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)
             1/1186*i + 77/1186

@@ -228,7 +228,7 @@ from sage.misc.flatten import flatten
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -635,7 +635,7 @@ class TableauTuple(CombinatorialElement):
             sage: t(3,3,3)
             Traceback (most recent call last):
             ...
-            IndexError: The cell (3, 3, 3) is not contained in the tableau
+            IndexError: the cell (3, 3, 3) is not contained in the tableau
         """
         if isinstance(cell[0], (int, Integer)):
             k, r, c = cell[0], cell[1], cell[2]
@@ -644,7 +644,7 @@ class TableauTuple(CombinatorialElement):
         try:
             return self[k][r][c]
         except IndexError:
-            raise IndexError("The cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
+            raise IndexError("the cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
 
     def level(self):
         """
@@ -2661,11 +2661,11 @@ class TableauTuples_level_size(TableauTuples):
         """
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
-        else:
-            tab = [[[m for m in range(1, self.size() + 1)]]]
-            for s in range(self.level() - 1):
-                tab.append([])
-            return self.element_class(self, tab)
+
+        tab = [[[m for m in range(1, self.size() + 1)]]]
+        for _ in range(self.level() - 1):
+            tab.append([])
+        return self.element_class(self, tab)
 
 
 # -------------------------------------------------
@@ -4126,12 +4126,12 @@ class StandardTableauTuples(RowStandardTableauTuples):
                 raise ValueError('the shape must be a partition tuple')
 
             if level is None:
-                level=shape.level()
-            elif level!=shape.level():
+                level = shape.level()
+            elif level != shape.level():
                 raise ValueError('the shape and level must agree')
             if size is None:
-                size=shape.size()
-            elif size!=shape.size():
+                size = shape.size()
+            elif size != shape.size():
                 raise ValueError('the shape and size must agree')
 
         # now that the inputs appear to make sense, return the appropriate class
@@ -4235,8 +4235,8 @@ class StandardTableauTuples(RowStandardTableauTuples):
             if all(s in Tableaux() for s in t):
                 flatt = sorted(sum((list(row) for s in t for row in s), []))
                 return flatt == list(range(1, len(flatt)+1)) and all(len(x) == 0 or
-                  (all(row[i]<row[i+1] for row in x for i in range(len(row)-1))
-                      and all(x[r][c]<x[r+1][c] for c in range(len(x[0]))
+                  (all(row[i] < row[i+1] for row in x for i in range(len(row)-1))
+                      and all(x[r][c] < x[r+1][c] for c in range(len(x[0]))
                               for r in range(len(x)-1) if len(x[r+1]) > c)) for x in t)
             else:
                 return t in StandardTableaux()

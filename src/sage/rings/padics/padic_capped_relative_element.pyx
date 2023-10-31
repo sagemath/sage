@@ -160,7 +160,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self):
+    cdef lift_c(self) noexcept:
         """
         Implementation of lift.
 
@@ -210,7 +210,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self):
+    cdef pari_gen _to_gen(self) noexcept:
         """
         Convert this element to an equivalent pari element.
 
@@ -235,6 +235,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_tmp(self.relprec),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo
@@ -575,6 +576,7 @@ def unpickle_pcre_v1(R, unit, ordp, relprec):
     """
     return unpickle_cre_v2(pAdicCappedRelativeElement, R, unit, ordp, relprec)
 
+
 def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     r"""
     Return a base-`p` list of digits of ``n``.
@@ -604,7 +606,7 @@ def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
         raise ValueError("n must be nonnegative")
     cdef expansion_mode mode = simple_mode if pos else smallest_mode
     # We need a p-adic element to feed to ExpansionIter before resetting its curvalue
-    from sage.rings.padics.all import Zp
+    from sage.rings.padics.factory import Zp
     p = prime_pow.prime
     dummy = Zp(p)(0)
     cdef ExpansionIter expansion = ExpansionIter(dummy, n.exact_log(p) + 2, mode)

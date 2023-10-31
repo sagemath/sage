@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Linear feedback shift register (LFSR) sequence commands
 
@@ -128,8 +129,9 @@ AUTHORS:
 import copy
 
 from sage.structure.all import Sequence
-from sage.rings.all import Integer, PolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def lfsr_sequence(key, fill, n):
@@ -179,7 +181,7 @@ def lfsr_sequence(key, fill, n):
         raise TypeError("key must be a list")
     key = Sequence(key)
     F = key.universe()
-    if not is_FiniteField(F):
+    if not isinstance(F, FiniteField):
         raise TypeError("universe of sequence must be a finite field")
 
     s = fill

@@ -57,15 +57,17 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)
             sage: TestSuite(V).run()
         """
-        nsdict =  {('L','L'):{0:{('L',1):1}, 1:{('L',0): 2},
-                    3:{('C', 0):R(2).inverse_of_unit()}},
-                   ('L','G'):{0:{('G',1):1}, 1:{('G',0):R(3)*R(2).\
-                    inverse_of_unit()}}, ('G','G'): {0:{('L',0):2},
-                    2:{('C',0):R(2)*R(3).inverse_of_unit()}}}
+        nsdict = {('L', 'L'): {0: {('L', 1): 1},
+                               1: {('L', 0): 2},
+                               3: {('C', 0): R(2).inverse_of_unit()}},
+                  ('L', 'G'): {0: {('G', 1): 1},
+                               1: {('G', 0): R(3) * R(2).inverse_of_unit()}},
+                  ('G', 'G'): {0: {('L', 0): 2},
+                               2: {('C', 0): R(2) * R(3).inverse_of_unit()}}}
         from sage.rings.rational_field import QQ
-        weights = (2,QQ(3/2))
-        parity = (0,1)
-        GradedLieConformalAlgebra.__init__(self, R, nsdict, names=('L','G'),
+        weights = (2, QQ((3, 2)))
+        parity = (0, 1)
+        GradedLieConformalAlgebra.__init__(self, R, nsdict, names=('L', 'G'),
                     central_elements=('C',), weights=weights, parity=parity)
 
     def _repr_(self):

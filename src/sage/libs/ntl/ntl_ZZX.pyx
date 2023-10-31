@@ -32,15 +32,12 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ import unpickle_class_value
 
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 from sage.arith.power cimport generic_power_pos
 
 ZZ = IntegerRing()
 
-cdef inline ntl_ZZ make_ZZ(ZZ_c* x):
+cdef inline ntl_ZZ make_ZZ(ZZ_c* x) noexcept:
     """ These make_XXXX functions are deprecated and should be phased out."""
     cdef ntl_ZZ y
     y = ntl_ZZ()
@@ -49,12 +46,12 @@ cdef inline ntl_ZZ make_ZZ(ZZ_c* x):
     return y
 
 # You must do sig_on() before calling this function
-cdef inline ntl_ZZ make_ZZ_sig_off(ZZ_c* x):
+cdef inline ntl_ZZ make_ZZ_sig_off(ZZ_c* x) noexcept:
     cdef ntl_ZZ y = make_ZZ(x)
     sig_off()
     return y
 
-cdef inline ntl_ZZX make_ZZX(ZZX_c* x):
+cdef inline ntl_ZZX make_ZZX(ZZX_c* x) noexcept:
     """ These make_XXXX functions are deprecated and should be phased out."""
     cdef ntl_ZZX y
     y = ntl_ZZX()
@@ -63,13 +60,13 @@ cdef inline ntl_ZZX make_ZZX(ZZX_c* x):
     return y
 
 # You must do sig_on() before calling this function
-cdef inline ntl_ZZX make_ZZX_sig_off(ZZX_c* x):
+cdef inline ntl_ZZX make_ZZX_sig_off(ZZX_c* x) noexcept:
     cdef ntl_ZZX y = make_ZZX(x)
     sig_off()
     return y
 
 from sage.structure.proof.proof import get_flag
-cdef proof_flag(t):
+cdef proof_flag(t) noexcept:
     return get_flag(t, "polynomial")
 
 ##############################################################################
@@ -203,7 +200,7 @@ cdef class ntl_ZZX():
             cc = ntl_ZZ(a)
         ZZX_SetCoeff(self.x, i, cc.x)
 
-    cdef void setitem_from_int(ntl_ZZX self, long i, int value):
+    cdef void setitem_from_int(ntl_ZZX self, long i, int value) noexcept:
         r"""
         Sets ith coefficient to value.
 
@@ -248,7 +245,7 @@ cdef class ntl_ZZX():
         sig_off()
         return r
 
-    cdef int getitem_as_int(ntl_ZZX self, long i):
+    cdef int getitem_as_int(ntl_ZZX self, long i) noexcept:
         r"""
         Returns ith coefficient as C int.
         Return value is only valid if the result fits into an int.
@@ -1000,7 +997,7 @@ cdef class ntl_ZZX():
             sage: f.trace_list()
             [5, 0, -6, 0, 10]
 
-        The input polynomial must be monic or a ValueError is raised::
+        The input polynomial must be monic or a :class:`ValueError` is raised::
 
             sage: f = ntl.ZZX([1,2,0,3,0,2])
             sage: f.trace_list()

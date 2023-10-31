@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups sage.libs.flint
 """
 Permutation species
 """
@@ -97,7 +98,8 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
              ['a', 'c', 'b', 'd'],
              ['a', 'c', 'b', 'd']]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         S = SymmetricGroup(len(self._labels))
         p = self.permutation_group_element()
         return PermutationGroup(S.centralizer(p).gens())
@@ -113,7 +115,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: P = species.PermutationSpecies(); P
             Permutation species
       """
-        return super(PermutationSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """

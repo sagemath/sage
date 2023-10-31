@@ -5,7 +5,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-04-28) - Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -27,10 +27,8 @@ from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.semirings import Semirings
 from sage.categories.map cimport Map
-from sage.sets.family import Family
 from sage.rings.integer_ring import ZZ
 
-import operator
 
 cdef class TropicalSemiringElement(Element):
     r"""
@@ -40,7 +38,7 @@ cdef class TropicalSemiringElement(Element):
     """
     cdef ModuleElement _val
 
-    cdef TropicalSemiringElement _new(self):
+    cdef TropicalSemiringElement _new(self) noexcept:
         """
         Return a new tropical semiring element with parent ``self`.
         """
@@ -134,7 +132,7 @@ cdef class TropicalSemiringElement(Element):
         return hash(self._val)
 
     # Comparisons
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         r"""
         Return the standard comparison of ``left`` and ``right``.
 
@@ -208,7 +206,7 @@ cdef class TropicalSemiringElement(Element):
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Add ``left`` to ``right``.
 
@@ -276,7 +274,7 @@ cdef class TropicalSemiringElement(Element):
             return self
         raise ArithmeticError("cannot negate any non-infinite element")
 
-    cpdef _mul_(left, right):
+    cpdef _mul_(left, right) noexcept:
         """
         Multiply ``left`` and ``right``.
 
@@ -302,7 +300,7 @@ cdef class TropicalSemiringElement(Element):
         x._val = self._val + rhs._val
         return x
 
-    cpdef _div_(left, right):
+    cpdef _div_(left, right) noexcept:
         """
         Divide ``left`` by ``right``.
 
@@ -400,7 +398,7 @@ cdef class TropicalSemiringElement(Element):
         from sage.rings.infinity import infinity
         return infinity
 
-    cpdef ModuleElement lift(self):
+    cpdef ModuleElement lift(self) noexcept:
         """
         Return the value of ``self`` lifted to the base.
 
@@ -557,16 +555,18 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: TQ = TropicalSemiring(QQ)
+            sage: TQ.has_coerce_map_from(TQ)
+            True
+            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
+            True
+
+            sage: # needs sage.rings.real_mpfr
             sage: TR = TropicalSemiring(RR)
             sage: T60 = TropicalSemiring(RealField(60))
             sage: TR.has_coerce_map_from(T60)
             True
-            sage: TQ = TropicalSemiring(QQ)
-            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
-            True
             sage: TR.has_coerce_map_from(TR)
-            True
-            sage: TQ.has_coerce_map_from(TQ)
             True
             sage: TR.has_coerce_map_from(TQ)
             True
@@ -656,7 +656,7 @@ cdef class TropicalToTropical(Map):
     Map from the tropical semiring to itself (possibly with different bases).
     Used in coercion.
     """
-    cpdef TropicalSemiringElement _call_(self, x):
+    cpdef TropicalSemiringElement _call_(self, x) noexcept:
         """
         EXAMPLES::
 

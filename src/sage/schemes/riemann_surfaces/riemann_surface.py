@@ -1,3 +1,4 @@
+# sage.doctest: needs scipy sage.graphs sage.groups
 r"""
 Riemann matrices and endomorphism rings of algebraic Riemann surfaces
 
@@ -124,6 +125,7 @@ from sage.matrix.special import block_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_integer import IntegerLattice
@@ -134,11 +136,12 @@ from sage.rings.function_field.divisor import FunctionFieldDivisor
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 import sage.libs.mpmath.all as mpall
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
@@ -258,15 +261,15 @@ def numerical_inverse(C):
 
     EXAMPLES::
 
-        sage: C = matrix(CC,3,3,[-4.5606e-31 + 1.2326e-31*I,
-        ....: -0.21313 + 0.24166*I,
-        ....: -3.4513e-31 + 0.16111*I,
-        ....: -1.0175 + 9.8608e-32*I,
-        ....: 0.30912 + 0.19962*I,
-        ....: -4.9304e-32 + 0.39923*I,
-        ....: 0.96793 - 3.4513e-31*I,
-        ....: -0.091587 + 0.19276*I,
-        ....: 3.9443e-31 + 0.38552*I])
+        sage: C = matrix(CC, 3, 3, [-4.5606e-31 + 1.2326e-31*I,
+        ....:                       -0.21313 + 0.24166*I,
+        ....:                       -3.4513e-31 + 0.16111*I,
+        ....:                       -1.0175 + 9.8608e-32*I,
+        ....:                       0.30912 + 0.19962*I,
+        ....:                       -4.9304e-32 + 0.39923*I,
+        ....:                       0.96793 - 3.4513e-31*I,
+        ....:                       -0.091587 + 0.19276*I,
+        ....:                       3.9443e-31 + 0.38552*I])
         sage: from sage.schemes.riemann_surfaces.riemann_surface import numerical_inverse
         sage: 3e-16 < (C^-1*C-C^0).norm() < 1e-15
         True
@@ -416,8 +419,8 @@ def reparameterize_differential_minpoly(minpoly, z0):
 
     INPUT:
 
-    - ``minpoly`` -- a polynomial in two variables, where the first variables
-       corresponds to the base coordinate on the Riemann surface
+    - ``minpoly`` -- a polynomial in two variables, where the first variable
+      corresponds to the base coordinate on the Riemann surface
     - ``z0`` -- complex number or infinity; the point about which to
       reparameterize
 
@@ -434,7 +437,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
 
     .. MATH::
 
-        `\frac{-\bar{z}^{-2} d\bar{z}}{2\sqrt{\bar{z}^{-3}-1}} = \frac{-d\bar{z}}{2\sqrt{\bar{z}(1-\bar{z}^3)}}`.
+        \frac{-\bar{z}^{-2} d\bar{z}}{2\sqrt{\bar{z}^{-3}-1}} = \frac{-d\bar{z}}{2\sqrt{\bar{z}(1-\bar{z}^3)}}.
 
     Hence the transformed differential should have minimal polynomial
     `\bar{g}^2 \bar{z} (1 - \bar{z}^3) - 1/4 = 0`, and we can check this::
@@ -529,7 +532,7 @@ class RiemannSurface():
     We can also work with Riemann surfaces that are defined over fields with a
     complex embedding, but since the current interface for computing genus and
     regular differentials in Singular presently does not support extensions of
-    QQ, we need to specify a description of the differentials ourselves. We give
+    `\QQ`, we need to specify a description of the differentials ourselves. We give
     an example of a CM elliptic curve::
 
         sage: Qt.<t> = QQ[]
@@ -709,7 +712,7 @@ class RiemannSurface():
         combined_discriminant = lcm(discriminants)(*self._R.gens())
         self._differentials_branch_locus = []
         for x in combined_discriminant.factor():
-            if not x[0] in existing_factors:
+            if x[0] not in existing_factors:
                 self._differentials_branch_locus += self._CCz(
                     x[0](self._CCz.gen(), 0)
                 ).roots(multiplicities=False)
@@ -2128,6 +2131,7 @@ class RiemannSurface():
         # CCzg is required to be known as we need to know the ring which the minpolys
         # lie in.
         CCzg, bounding_data_list = bounding_data
+        CCz = CCzg.univariate_ring(CCzg.gen(1)).base_ring()
 
         d_edge = tuple(u[0] for u in upstairs_edge)
         # Using a try-catch here allows us to retain a certain amount of back
@@ -2193,7 +2197,7 @@ class RiemannSurface():
                 z_1 = a0lc.abs() * prod((cz - r).abs() - rho_z for r in a0roots)
                 n = minpoly.degree(CCzg.gen(1))
                 ai_new = [
-                    (minpoly.coefficient({CCzg.gen(1): i}))(z=cz + self._CCz.gen(0))
+                    CCz(minpoly.coefficient({CCzg.gen(1): i}))(z=cz + self._CCz.gen(0))
                     for i in range(n)
                 ]
                 ai_pos = [self._RRz([c.abs() for c in h.list()]) for h in ai_new]
@@ -2293,7 +2297,7 @@ class RiemannSurface():
         .. NOTE::
 
             If ``differentials is self.cohomology_basis()``, the calculations
-            of the integrals along the edges are written to `self._integral_dict``.
+            of the integrals along the edges are written to ``self._integral_dict``.
             This is as this data will be required when computing the Abel-Jacobi
             map, and so it is helpful to have is stored rather than recomputing.
 
@@ -2371,7 +2375,8 @@ class RiemannSurface():
         easier to test.::
 
             sage: parent(M)
-            Full MatrixSpace of 3 by 6 dense matrices over Complex Field with 30 bits of precision
+            Full MatrixSpace of 3 by 6 dense matrices
+             over Complex Field with 30 bits of precision
             sage: M.rank()
             3
 
@@ -2437,7 +2442,7 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - x^3 - x)
-            sage: S.plot_paths()
+            sage: S.plot_paths()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
@@ -2473,8 +2478,8 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^3-x)
-            sage: S.plot_paths3d()
+            sage: S = RiemannSurface(y^2 - x^3 - x)
+            sage: S.plot_paths3d()                                                      # needs sage.plot
             Graphics3d Object
         """
         from sage.plot.graphics import Graphics
@@ -2561,12 +2566,12 @@ class RiemannSurface():
 
         Given another complex torus (given as the analytic Jacobian of a Riemann
         surface), numerically compute a basis for the homomorphism module. The
-        answer is returned as a list of 2g x 2g integer matrices T=(D, B; C, A)
-        such that if the columns of (I|M1) generate the lattice defining the
-        Jacobian of the Riemann surface and the columns of (I|M2) do this for
-        the codomain, then approximately we have (I|M2)T=(D+M2C)(I|M1), i.e., up
+        answer is returned as a list of `2g \times 2g` integer matrices `T=(D, B; C, A)`
+        such that if the columns of `(I|M_1)` generate the lattice defining the
+        Jacobian of the Riemann surface and the columns of `(I|M_2)` do this for
+        the codomain, then approximately we have `(I|M_2)T=(D+M_2C)(I|M_1)`, i.e., up
         to a choice of basis for `\CC^g` as a complex vector space, we we
-        realize (I|M1) as a sublattice of (I|M2).
+        realize `(I|M_1)` as a sublattice of `(I|M_2)`.
 
         INPUT:
 
@@ -2954,7 +2959,7 @@ class RiemannSurface():
             sage: s = sign(w_start)
             sage: u_edge = ((z_start, w_start), z_end)
             sage: J, _ = S._integrate_differentials_iteratively(u_edge)
-            sage: bool(J[0]+s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2)<1e-10)
+            sage: bool(J[0] + s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2) < 1e-10)        # needs sage.symbolic
             True
 
         .. NOTE::
@@ -3264,9 +3269,7 @@ class RiemannSurface():
           we are using the convention that the `w` value over `\infty` is given by
           the limit as ``z`` tends to `\infty` of ``self.w_values(z)[branch]``.
 
-        OUTPUT:
-
-        A vector of length ``self.genus``.
+        OUTPUT: A vector of length ``self.genus``.
 
         EXAMPLES:
 
@@ -3496,9 +3499,7 @@ class RiemannSurface():
           of the computation, in terms of how many elements of the list ``divisor``
           have been completed.
 
-        OUTPUT:
-
-        A vector of length ``self.genus``.
+        OUTPUT: A vector of length ``self.genus``.
 
         EXAMPLES:
 
@@ -3665,9 +3666,7 @@ class RiemannSurface():
         For others, the curve is constructed and cached, so that an identical curve is
         returned upon subsequent calls.
 
-        OUTPUT:
-
-        Curve from which Riemann surface is obtained.
+        OUTPUT: Curve from which Riemann surface is obtained.
 
         EXAMPLES::
 

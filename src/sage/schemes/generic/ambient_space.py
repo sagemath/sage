@@ -29,7 +29,7 @@ def is_AmbientSpace(x):
         sage: is_AmbientSpace(AffineSpace(2, QQ))
         True
         sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-        sage: is_AmbientSpace(P.subscheme([x+y+z]))
+        sage: is_AmbientSpace(P.subscheme([x + y + z]))
         False
     """
     return isinstance(x, AmbientSpace)
@@ -148,7 +148,7 @@ class AmbientSpace(Scheme):
 
             sage: from sage.schemes.generic.ambient_space import AmbientSpace
             sage: A = AmbientSpace(3, ZZ)
-            sage: A._validate((x + 1, 1))
+            sage: A._validate((x + 1, 1))                                               # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: ambient spaces must override "_validate" method!
@@ -196,9 +196,9 @@ class AmbientSpace(Scheme):
 
         EXAMPLES::
 
-            sage: AffineSpace(3,QQ).is_projective()
+            sage: AffineSpace(3, QQ).is_projective()
             False
-            sage: ProjectiveSpace(3,QQ).is_projective()
+            sage: ProjectiveSpace(3, QQ).is_projective()
             True
         """
         # overloaded in the projective space derived class

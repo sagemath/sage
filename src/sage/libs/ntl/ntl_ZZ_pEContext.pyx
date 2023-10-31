@@ -17,7 +17,7 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 include 'misc.pxi'
@@ -25,8 +25,6 @@ include 'decl.pxi'
 
 from sage.ext.cplusplus cimport ccrepr
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 
 
 ZZ_pEContextDict = {}
@@ -124,7 +122,7 @@ cdef class ntl_ZZ_pEContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         """
         Sets the global NTL modulus to be self.
 

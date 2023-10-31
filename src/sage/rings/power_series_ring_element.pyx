@@ -95,53 +95,44 @@ With power series the behavior is the same.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import operator
-
 from cpython.object cimport Py_EQ, Py_NE
 from .infinity import infinity, is_Infinite
 
 from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-import sage.rings.polynomial.polynomial_element
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
-from . import rational_field
-from . import integer_ring
 from .integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from warnings import warn
 
 from sage.categories.fields import Fields
 _Fields = Fields()
 
 from sage.misc.derivative import multi_derivative
-
-Polynomial = sage.rings.polynomial.polynomial_element.Polynomial_generic_dense
-
-from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport AlgebraElement, RingElement
 from sage.structure.richcmp cimport richcmp
 
 
 def is_PowerSeries(x):
     """
-    Return True if ``x`` is an instance of a univariate
+    Return ``True`` if ``x`` is an instance of a univariate
     or multivariate power series.
 
     EXAMPLES::
 
         sage: R.<x> = PowerSeriesRing(ZZ)
         sage: from sage.rings.power_series_ring_element import is_PowerSeries
-        sage: is_PowerSeries(1+x^2)
+        sage: is_PowerSeries(1 + x^2)
         True
-        sage: is_PowerSeries(x-x)
+        sage: is_PowerSeries(x - x)
         True
         sage: is_PowerSeries(0)
         False
-        sage: var('x')
+        sage: var('x')                                                                  # needs sage.symbolic
         x
-        sage: is_PowerSeries(1+x^2)
+        sage: is_PowerSeries(1 + x^2)                                                   # needs sage.symbolic
         False
     """
     return isinstance(x, PowerSeries)
@@ -161,14 +152,14 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: PowerSeriesRing(CC, 'q')
+            sage: PowerSeriesRing(CC, 'q')                                              # needs sage.rings.real_mpfr
             Power Series Ring in q over Complex Field with 53 bits of precision
-            sage: T = PowerSeriesRing(GF(3),5,'t'); T
-            Multivariate Power Series Ring in t0, t1, t2, t3, t4 over Finite
-            Field of size 3
+            sage: T = PowerSeriesRing(GF(3), 5, 't'); T
+            Multivariate Power Series Ring in t0, t1, t2, t3, t4
+             over Finite Field of size 3
         """
         AlgebraElement.__init__(self, parent)
-        self.__is_gen = is_gen
+        self._is_gen = is_gen
         self._prec = prec
 
     def __hash__(self):
@@ -222,7 +213,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_gen(self):
         """
-        Return True if this is the generator (the variable) of the power
+        Return ``True`` if this is the generator (the variable) of the power
         series ring.
 
         EXAMPLES::
@@ -243,7 +234,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: 1*t == t
             True
         """
-        return bool(self.__is_gen)
+        return bool(self._is_gen)
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -263,7 +254,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             raise NotImplementedError
 
-    cpdef base_extend(self, R):
+    cpdef base_extend(self, R) noexcept:
         """
         Return a copy of this power series but with coefficients in R.
 
@@ -301,18 +292,18 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')
-            sage: R.<t> = K[['t']]
-            sage: (4*t).change_ring(ZZ)
+            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')                    # needs sage.rings.number_field
+            sage: R.<t> = K[['t']]                                                      # needs sage.rings.number_field
+            sage: (4*t).change_ring(ZZ)                                                 # needs sage.rings.number_field
             4*t
 
         This does not succeed because ``ZZ(K(a+1))`` is not defined.
 
         ::
 
-            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')
-            sage: R.<t> = K[['t']]
-            sage: ((a+1)*t).change_ring(ZZ)
+            sage: K.<a> = NumberField(cyclotomic_polynomial(3), 'a')                    # needs sage.rings.number_field
+            sage: R.<t> = K[['t']]                                                      # needs sage.rings.number_field
+            sage: ((a+1)*t).change_ring(ZZ)                                             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: Unable to coerce a + 1 to an integer
@@ -320,7 +311,7 @@ cdef class PowerSeries(AlgebraElement):
         S = self._parent.change_ring(R)
         return S(self)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         r"""
         Comparison of self and ``right``.
 
@@ -451,8 +442,9 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: from sage.rings.power_series_ring_element import PowerSeries
             sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: PowerSeries.list(1+x^2)
+            sage: PowerSeries.list(1 + x^2)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -471,8 +463,9 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: from sage.rings.power_series_ring_element import PowerSeries
             sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: PowerSeries.polynomial(1+x^2)
+            sage: PowerSeries.polynomial(1 + x^2)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -530,8 +523,8 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(49,'alpha')[[]]
-            sage: (t^2 + O(t^3)).base_ring()
+            sage: R.<t> = GF(49,'alpha')[[]]                                            # needs sage.rings.finite_rings
+            sage: (t^2 + O(t^3)).base_ring()                                            # needs sage.rings.finite_rings
             Finite Field in alpha of size 7^2
         """
         return self._parent.base_ring()
@@ -702,7 +695,7 @@ cdef class PowerSeries(AlgebraElement):
             v = self.list()
             m = len(v)
             first = True
-            for n in xrange(m):
+            for n in range(m):
                 x = v[n]
                 x = repr(x)
                 if x != '0':
@@ -765,7 +758,7 @@ cdef class PowerSeries(AlgebraElement):
         X = self._parent.latex_variable_names()[0]
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         first = True
-        for n in xrange(m):
+        for n in range(m):
             x = v[n]
             x = sage.misc.latex.latex(x)
             if x != '0':
@@ -820,7 +813,7 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent._poly_ring()(v)
 
-    cdef _inplace_truncate(self, long prec):
+    cdef _inplace_truncate(self, long prec) noexcept:
         return self.truncate(prec)
 
     def add_bigoh(self, prec):
@@ -854,6 +847,7 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<m> = CDF[[]]
             sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16
             9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
@@ -923,7 +917,7 @@ cdef class PowerSeries(AlgebraElement):
             return self.prec()
         return min(self.prec(), f.prec())
 
-    cdef common_prec_c(self, PowerSeries f):
+    cdef common_prec_c(self, PowerSeries f) noexcept:
         if self._prec is infinity:
             return f._prec
         elif f._prec is infinity:
@@ -952,7 +946,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def __bool__(self):
         """
-        Return True if this power series is not equal to 0.
+        Return ``True`` if this power series is not equal to 0.
 
         EXAMPLES::
 
@@ -972,7 +966,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_unit(self):
         """
-        Return True if this power series is invertible.
+        Return ``True`` if this power series is invertible.
 
         A power series is invertible precisely when the
         constant term is invertible.
@@ -1054,7 +1048,7 @@ cdef class PowerSeries(AlgebraElement):
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
 
-    cpdef _div_(self, denom_r):
+    cpdef _div_(self, denom_r) noexcept:
         """
         EXAMPLES::
 
@@ -1113,9 +1107,9 @@ cdef class PowerSeries(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: R.<T> = Qp(7)[[]]
-            sage: f = (48*67 + 46*67^2)*T + (1 + 42*67 + 5*67^3)*T^2 + O(T^3)
-            sage: f % 67
+            sage: R.<T> = Qp(7)[[]]                                                     # needs sage.rings.padics
+            sage: f = (48*67 + 46*67^2)*T + (1 + 42*67 + 5*67^3)*T^2 + O(T^3)           # needs sage.rings.padics
+            sage: f % 67                                                                # needs sage.rings.padics
             T^2 + O(T^3)
         """
         from sage.rings.power_series_ring import PowerSeriesRing
@@ -1203,6 +1197,7 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = exp(x) + O(x^7); f
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
@@ -1221,6 +1216,7 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = exp(x) + O(x^7)
             sage: f >> 3
@@ -1236,7 +1232,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_monomial(self):
         """
-        Return True if this element is a monomial.  That is, if self is
+        Return ``True`` if this element is a monomial.  That is, if self is
         `x^n` for some non-negative integer `n`.
 
         EXAMPLES::
@@ -1275,9 +1271,9 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: R.<x> = SR[[]]
-            sage: f = (1+I)*x^2 + 3*x - I
-            sage: f.map_coefficients(lambda z: z.conjugate())
+            sage: R.<x> = SR[[]]                                                        # needs sage.symbolic
+            sage: f = (1+I)*x^2 + 3*x - I                                               # needs sage.symbolic
+            sage: f.map_coefficients(lambda z: z.conjugate())                           # needs sage.symbolic
             I + 3*x + (-I + 1)*x^2
             sage: R.<x> = ZZ[[]]
             sage: f = x^2 + 2
@@ -1294,7 +1290,7 @@ cdef class PowerSeries(AlgebraElement):
             1 + x
             sage: g.parent()
             Power Series Ring in x over Integer Ring
-            sage: g = f.map_coefficients(residue, new_base_ring = k); g
+            sage: g = f.map_coefficients(residue, new_base_ring=k); g
             1 + x
             sage: g.parent()
             Power Series Ring in x over Finite Field of size 2
@@ -1345,8 +1341,8 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
-            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
-            sage: s.jacobi_continued_fraction()
+            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)                 # needs sage.rings.complex_double
+            sage: s.jacobi_continued_fraction()                                         # needs sage.rings.complex_double
             ((-1, -1), (-3, -4), (-5, -9), (-7, -16), (-9, -25))
 
         Another example::
@@ -1464,7 +1460,7 @@ cdef class PowerSeries(AlgebraElement):
 
     def is_square(self):
         """
-        Return True if this function has a square root in this ring, e.g.,
+        Return ``True`` if this function has a square root in this ring, e.g.,
         there is an element `y` in ``self.parent()``
         such that `y^2` equals ``self``.
 
@@ -1514,21 +1510,21 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-          - ``prec`` - integer (default: None): if not None and the series
-            has infinite precision, truncates series at precision
-            prec.
+          - ``prec`` - integer (default: ``None``): if not ``None``
+            and the series has infinite precision, truncates series at
+            precision prec.
 
-          - ``extend`` - bool (default: False); if True, return a square
+          - ``extend`` - bool (default: ``False``); if ``True``, return a square
             root in an extension ring, if necessary. Otherwise, raise
-            a ValueError if the square root is not in the base power series
-            ring. For example, if ``extend`` is True the square root of a
-            power series with odd degree leading coefficient is
-            defined as an element of a formal extension ring.
+            a :class:`ValueError` if the square root is not in the
+            base power series ring. For example, if ``extend`` is ``True``
+            the square root of a power series with odd degree leading
+            coefficient is defined as an element of a formal extension ring.
 
-          - ``name`` - string; if ``extend`` is True, you must also specify the print
+          - ``name`` - string; if ``extend`` is ``True``, you must also specify the print
             name of the formal square root.
 
-          - ``all`` - bool (default: False); if True, return all square
+          - ``all`` - bool (default: ``False``); if ``True``, return all square
             roots of self, instead of just one.
 
         ALGORITHM: Newton's method
@@ -1566,7 +1562,7 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: K.<t> = PowerSeriesRing(CDF, 5)
+            sage: K.<t> = PowerSeriesRing(CDF, 5)                                       # needs sage.rings.complex_double
             sage: v = sqrt(-1 + t + t^3, all=True); v
             [1.0*I - 0.5*I*t - 0.125*I*t^2 - 0.5625*I*t^3 - 0.2890625*I*t^4 + O(t^5),
              -1.0*I + 0.5*I*t + 0.125*I*t^2 + 0.5625*I*t^3 + 0.2890625*I*t^4 + O(t^5)]
@@ -2036,7 +2032,7 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
+            sage: g = 2 + f
             sage: tan(g)
             Traceback (most recent call last):
             ...
@@ -2090,7 +2086,7 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: T.<a,b> = PowerSeriesRing(ZZ,2)
             sage: f = a + b + a*b + T.O(3)
-            sage: sin(f)
+            sage: sinh(f)
             a + b + a*b + O(a, b)^3
             sage: f.sinh()
             a + b + a*b + O(a, b)^3
@@ -2100,7 +2096,7 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
+            sage: g = 2 + f
             sage: sinh(g)
             Traceback (most recent call last):
             ...
@@ -2189,7 +2185,7 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
+            sage: g = 2 + f
             sage: cosh(g)
             Traceback (most recent call last):
             ...
@@ -2277,7 +2273,7 @@ cdef class PowerSeries(AlgebraElement):
         If the power series has a non-zero constant coefficient `c`,
         one raises an error::
 
-            sage: g = 2+f
+            sage: g = 2 + f
             sage: tanh(g)
             Traceback (most recent call last):
             ...
@@ -2520,7 +2516,7 @@ cdef class PowerSeries(AlgebraElement):
         ::
 
             sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: (1 + x + O(x^2)).exp()
+            sage: (1 + x + O(x^2)).exp()                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ArithmeticError: exponential of constant term does not belong to coefficient ring (consider working in a larger ring)
@@ -2578,7 +2574,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: t.exp().log()
             t + O(t^10)
 
-            sage: (1+t).log().exp()
+            sage: (1 + t).log().exp()
             1 + t + O(t^10)
 
             sage: (-1 + t + O(t^10)).log()
@@ -2617,7 +2613,7 @@ cdef class PowerSeries(AlgebraElement):
             1 + x^2 + x^10
             sage: p.V(3)
             1 + x^6 + x^30
-            sage: (p+O(x^20)).V(3)
+            sage: (p + O(x^20)).V(3)
             1 + x^6 + x^30 + O(x^60)
         """
         v = self.list()
@@ -2652,7 +2648,7 @@ cdef class PowerSeries(AlgebraElement):
         Dense examples::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
-            sage: f = 17*t^100 +O(t^110)
+            sage: f = 17*t^100 + O(t^110)
             sage: f.valuation()
             100
             sage: t.valuation()
@@ -2744,7 +2740,7 @@ cdef class PowerSeries(AlgebraElement):
         EXAMPLES::
 
             sage: k.<w> = QQ[[]]
-            sage: f = 1+17*w+15*w^3+O(w^5)
+            sage: f = 1 + 17*w + 15*w^3 + O(w^5)
             sage: parent(f)
             Power Series Ring in w over Rational Field
             sage: g = f.laurent_series(); g
@@ -2790,27 +2786,27 @@ cdef class PowerSeries(AlgebraElement):
 
         There are currently limits to the possible base rings over which this
         function works.  See the documentation for
-        ``sage.rings.polynomial.polynomial_element.Polynomial.__pari__``
+        :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.__pari__`
 
         EXAMPLES::
 
             sage: k.<w> = QQ[[]]
-            sage: f = 1+17*w+15*w^3+O(w^5)
-            sage: pari(f) # indirect doctest
+            sage: f = 1 + 17*w + 15*w^3 + O(w^5)
+            sage: pari(f)  # indirect doctest                                           # needs sage.libs.pari
             1 + 17*w + 15*w^3 + O(w^5)
-            sage: pari(1 - 19*w + w^5) # indirect doctest
+            sage: pari(1 - 19*w + w^5)  # indirect doctest                              # needs sage.libs.pari
             w^5 - 19*w + 1
             sage: R.<x> = Zmod(6)[[]]
-            sage: pari(1 + x + 8*x^3 + O(x^8)) # indirect doctest
+            sage: pari(1 + x + 8*x^3 + O(x^8))  # indirect doctest                      # needs sage.libs.pari
             Mod(1, 6) + Mod(1, 6)*x + Mod(2, 6)*x^3 + O(x^8)
 
         TESTS::
 
-            sage: pari(1 + O(x^1))
+            sage: pari(1 + O(x^1))                                                      # needs sage.libs.pari
             Mod(1, 6) + O(x)
-            sage: pari(O(x^1))
+            sage: pari(O(x^1))                                                          # needs sage.libs.pari
             O(x)
-            sage: pari(O(x^0))
+            sage: pari(O(x^0))                                                          # needs sage.libs.pari
             O(x^0)
         """
         n = self.prec()

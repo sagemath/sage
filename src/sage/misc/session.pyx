@@ -61,12 +61,11 @@ AUTHOR:
 #       Copyright (C) 2007,2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #############################################################################
 
 # Standard python imports
 import builtins
-import os
 import types
 
 # We want the caller's locals, but locals() is emulated in Cython
@@ -80,6 +79,8 @@ from sage.misc.persist import load, save, loads, dumps
 # before the user starts typing or running code.
 
 state_at_init = None
+
+CythonFunctionType = type(lambda: None)
 
 def init(state=None):
     """
@@ -312,7 +313,7 @@ def save_session(name='sage_session', verbose=False):
     for k in show_identifiers(hidden = True):
         try:
             x = state[k]
-            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, type)):
+            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, CythonFunctionType, type)):
                 raise TypeError('{} is a function, method, class or type'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to

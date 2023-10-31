@@ -21,8 +21,8 @@ from sage.groups.group import Group
 from sage.categories.groups import Groups
 from sage.groups.matrix_gps.linear import GL
 from sage.categories.rings import Rings
-from sage.matrix.all import MatrixSpace
-from sage.modules.all import FreeModule
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module import FreeModule
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
@@ -129,11 +129,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
     Some additional ways to create affine groups::
 
-        sage: A = AffineSpace(2, GF(4,'a'));  A
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                         # needs sage.rings.finite_rings
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: G = AffineGroup(A); G
+        sage: G = AffineGroup(A); G                                                     # needs sage.rings.finite_rings
         Affine Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is AffineGroup(2,4) # shorthand
+        sage: G is AffineGroup(2,4)  # shorthand                                        # needs sage.rings.finite_rings
         True
 
         sage: V = ZZ^3;  V
@@ -152,10 +152,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: A = AffineSpace(2, GF(4,'a'))
-            sage: AffineGroup(A) is AffineGroup(2,4)
+            sage: A = AffineSpace(2, GF(4,'a'))                                         # needs sage.rings.finite_rings
+            sage: AffineGroup(A) is AffineGroup(2,4)                                    # needs sage.rings.finite_rings
             True
-            sage: AffineGroup(A) is AffineGroup(2, GF(4,'a'))
+            sage: AffineGroup(A) is AffineGroup(2, GF(4,'a'))                           # needs sage.rings.finite_rings
             True
             sage: A = AffineGroup(2, QQ)
             sage: V = QQ^2
@@ -301,9 +301,7 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         Return the dimension of the affine space.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
@@ -388,9 +386,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``A`` -- anything that determines a matrix
 
-        OUTPUT:
-
-        The affine group element `x \mapsto A x`.
+        OUTPUT: The affine group element `x \mapsto A x`.
 
         EXAMPLES::
 
@@ -411,9 +407,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``b`` -- anything that determines a vector
 
-        OUTPUT:
-
-        The affine group element `x \mapsto x + b`.
+        OUTPUT: The affine group element `x \mapsto x + b`.
 
         EXAMPLES::
 

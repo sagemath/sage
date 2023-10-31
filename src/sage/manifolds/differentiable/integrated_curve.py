@@ -523,7 +523,7 @@ class IntegratedCurve(DifferentiableCurve):
         # extract all the variables appearing in the initial tangent
         # vector components:
         initial_coord_basis = chart.frame().at(initial_pt)
-        initial_tgt_vec_comps=initial_tangent_vector[initial_coord_basis,:]
+        initial_tgt_vec_comps = initial_tangent_vector[initial_coord_basis,:]
         for comp in initial_tgt_vec_comps:
             if isinstance(comp, Expression):
                 parameters = parameters.union(comp.variables())
@@ -578,7 +578,6 @@ class IntegratedCurve(DifferentiableCurve):
                 fast_transf = [fast_callable(f.expr(), vars=list(CoC[0][:]), domain=float)
                                for f in transf]
                 self._fast_changes_of_chart[CoC] = fast_transf
-
 
         self._velocities = list(velocities) # converts to list
         # since might not already be a list (which is later required)
@@ -778,7 +777,7 @@ class IntegratedCurve(DifferentiableCurve):
 
             description += "Initial tangent vector: {} ".format(v0)
             description += "with components "
-            description +="{}".format(initial_tgt_vec_comps)
+            description += "{}".format(initial_tgt_vec_comps)
             description += " with respect to {}\n\n".format(chart)
 
             for coord_func,velocity in zip(chart[:],self._velocities):
@@ -1376,12 +1375,10 @@ class IntegratedCurve(DifferentiableCurve):
         # 'tangent_vector_eval_at', and in 'plot' when plotting the
         # tangent vectors.)
 
-
         if isinstance(sol, list):
             coords_sol = [point[0:dim + 1] for point in sol]
         else:
             coords_sol = sol[:, 0:dim + 1].tolist() # far faster in numpy
-
 
         if verbose:
             print("Numerical integration completed.\n\n" +
@@ -1400,9 +1397,9 @@ class IntegratedCurve(DifferentiableCurve):
                              "to {}) is out ".format(sol[n][0]) +
                              "of the chart domain; a curve with a " +
                              "smaller maximal value of the curve " +
-                             "parameter, or a smaller initial tangent "+
-                             "vector, might be considered. You can also try "+
-                             "'solve_across_charts' in order not to be "+
+                             "parameter, or a smaller initial tangent " +
+                             "vector, might be considered. You can also try " +
+                             "'solve_across_charts' in order not to be " +
                              "confined to a single chart")
         else:
             self._solutions[solution_key] = coords_sol
@@ -1779,7 +1776,6 @@ class IntegratedCurve(DifferentiableCurve):
                             new_vel = self._fast_changes_of_frame[(new_chart.frame().restrict(inter),
                                chart.frame().restrict(inter))](last_pts, last_vel)
 
-
                             ics = new_pts + new_vel
                             chart = new_chart
 
@@ -1998,7 +1994,7 @@ class IntegratedCurve(DifferentiableCurve):
                       "with the key '{}' ".format(interpolation_key) +
                       "by default.")
 
-        if method=='cubic spline':
+        if method == 'cubic spline':
             self._interpolations[interpolation_key] = []
             dim = self.codomain().dim()
             if not isinstance(self._solutions[solution_key][0], tuple):
@@ -2006,7 +2002,7 @@ class IntegratedCurve(DifferentiableCurve):
                     coordinate_curve = []
                     for point in self._solutions[solution_key]:
                         coordinate_curve += [[point[0], point[i+1]]]
-                    self._interpolations[interpolation_key]+=[Spline(coordinate_curve)]
+                    self._interpolations[interpolation_key] += [Spline(coordinate_curve)]
             else:   # case multi charts
                 j = 0
                 for chart, sol in self._solutions[solution_key]:
@@ -2018,7 +2014,7 @@ class IntegratedCurve(DifferentiableCurve):
                         interp_chart += [Spline(coordinate_curve)]
                     self._interpolations[interpolation_key] += [(chart, interp_chart)]
                     self._interpolations[interpolation_key+"_chart_"+str(j)] = interp_chart
-                    j+=1
+                    j += 1
         else:
             raise ValueError("no available method of interpolation " +
                              "referred to as '{}'".format(method))
@@ -2268,7 +2264,7 @@ class IntegratedCurve(DifferentiableCurve):
             # contain lists of instances of the Spline class
             raise TypeError("unexpected type of interpolation object")
 
-        interpolated_coordinates=[coordinate_curve_spline(t)
+        interpolated_coordinates = [coordinate_curve_spline(t)
                        for coordinate_curve_spline in interpolation]
         M = self.codomain()
         p = M.point(interpolated_coordinates, chart=self._chart, name=None)
@@ -2434,7 +2430,6 @@ class IntegratedCurve(DifferentiableCurve):
         thickness = kwds.pop('thickness')
         aspect_ratio = kwds.pop('aspect_ratio')
 
-
         #
         # The mapping, if present, and the chart with respect to which the curve
         # is plotted
@@ -2461,7 +2456,7 @@ class IntegratedCurve(DifferentiableCurve):
         if ambient_coords is None:
             ambient_coords = chart[:]  # all chart coordinates are used
         n_pc = len(ambient_coords)
-        if n_pc != 2 and n_pc !=3:
+        if n_pc != 2 and n_pc != 3:
             raise ValueError("the number of coordinates involved in " +
                              "the plot must be either 2 or 3, " +
                              "not {}".format(n_pc))
@@ -2498,7 +2493,7 @@ class IntegratedCurve(DifferentiableCurve):
                              "tuple/list of 2 elements")
         else:
             p = prange #'p' declared only for the line below to be shorter
-            if p[0]<param_min or p[0]>param_max or p[1]<param_min or p[1]>param_max:
+            if p[0] < param_min or p[0] > param_max or p[1] < param_min or p[1] > param_max:
                 raise ValueError("parameter range should be a " +
                                  "subinterval of the curve domain " +
                                  "({})".format(self.domain()))
@@ -2539,8 +2534,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_min + 0.01*dt
                     if verbose:
                         print("A tiny initial offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the first point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the first point " +
                               "only, in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2557,8 +2552,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_max - 0.01*dt
                     if verbose:
                         print("A tiny final offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the last point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the last point " +
                               "in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2577,7 +2572,7 @@ class IntegratedCurve(DifferentiableCurve):
                 from sage.plot.plot3d.shapes import arrow3d
 
                 scale = kwds.pop('scale')
-                plot_points_tangent=kwds.pop('plot_points_tangent')
+                plot_points_tangent = kwds.pop('plot_points_tangent')
                 width_tangent = kwds.pop('width_tangent')
 
                 plot_vectors = Graphics()
@@ -2599,8 +2594,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_min + 0.01*dt
                         if verbose:
                             print("A tiny initial offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the first point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the first point " +
                                   "only, in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2618,8 +2613,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_max - 0.01*dt
                         if verbose:
                             print("A tiny final offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the last point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the last point " +
                                   "in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2684,7 +2679,7 @@ class IntegratedCurve(DifferentiableCurve):
                         # to be shorter
                         transf[pc] = AUX.expr()[jpc]
                         AUX2 = transf[pc].variables() # idem
-                        required_coords=required_coords.union(AUX2)
+                        required_coords = required_coords.union(AUX2)
                     break
             else:
                 raise ValueError("no expression has been found for " +
@@ -2721,8 +2716,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_min + 0.01*dt
                     if verbose:
                         print("A tiny initial offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the first point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the first point " +
                               "only, in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2739,8 +2734,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_max - 0.01*dt
                     if verbose:
                         print("A tiny final offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the last point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the last point " +
                               "in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2750,11 +2745,11 @@ class IntegratedCurve(DifferentiableCurve):
                 xp = [fastf[j](*arg) for j in range(len(ambient_coords))]
                 plot_curve.append(xp)
 
-                if k==0 and t > tmin:
+                if k == 0 and t > tmin:
                     # in case an initial offset was earlier added to
                     # 'tmin' in order to avoid errors, it is now needed
                     # to cancel this offset for the next steps
-                    t=tmin
+                    t = tmin
 
                 t += dt
 
@@ -2792,8 +2787,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_min + 0.01*dt
                         if verbose:
                             print("A tiny initial offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the first point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the first point " +
                                   "only, in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2811,8 +2806,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_max - 0.01*dt
                         if verbose:
                             print("A tiny final offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the last point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the last point " +
                                   "in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2831,13 +2826,13 @@ class IntegratedCurve(DifferentiableCurve):
                         AUX = AUX.substitute(required_coords_values)
                         # 'AUX' only used for the lines of code to
                         # be shorter
-                        xp+=[numerical_approx(AUX)]
+                        xp += [numerical_approx(AUX)]
 
                         pushed_comp = 0
                         for coord in transf[pc].variables():
                             D = Dpc_Dcoord[pc][coord]
                             D = D.substitute(required_coords_values)
-                            D=numerical_approx(D)
+                            D = numerical_approx(D)
                             pushed_comp += Dcoord_Dt[coord] * D
 
                         pushed_vec += [pushed_comp]
@@ -2862,7 +2857,7 @@ class IntegratedCurve(DifferentiableCurve):
                         # in case an initial offset was earlier added to
                         # 'tmin' in order to avoid errors, it is now needed
                         # to cancel this offset for the next steps
-                        t=tmin
+                        t = tmin
 
                     t += dt
                 return plot_vectors + DifferentiableCurve._graphics(self,
@@ -3425,7 +3420,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
         velocities = chart.symbolic_velocities()
 
-
         dim = parent.codomain().dim()
         i0 = parent.codomain().start_index()
 
@@ -3470,7 +3464,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
                     equations_rhs_chart += [rhs.simplify_full()]
                 equations_rhs[chart] = equations_rhs_chart
 
-
         IntegratedCurve.__init__(self, parent, equations_rhs,
                                  velocities, curve_parameter,
                                  initial_tangent_vector, chart=chart,
@@ -3478,7 +3471,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
                                  verbose=verbose, across_charts=across_charts)
 
         self._affine_connection = affine_connection
-
 
     def _repr_(self):
         r"""
@@ -3652,7 +3644,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
             description += "Initial tangent vector: {} ".format(v0)
             description += "with components "
-            description +="{}".format(initial_tgt_vec_comps)
+            description += "{}".format(initial_tgt_vec_comps)
             description += " with respect to {}\n\n".format(chart)
 
             for coord_func,velocity in zip(chart[:],self._velocities):
@@ -3825,7 +3817,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     def __init__(self, parent, metric, curve_parameter,
                  initial_tangent_vector, chart=None, name=None,
                  latex_name=None, verbose=False, across_charts=False):
-
         r"""
         Construct a geodesic curve with respect to the given metric with the
         given initial tangent vector.
@@ -4029,7 +4020,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
             description += "Initial tangent vector: {} ".format(v0)
             description += "with components "
-            description +="{}".format(initial_tgt_vec_comps)
+            description += "{}".format(initial_tgt_vec_comps)
             description += " with respect to {}\n\n".format(chart)
 
             for coord_func,velocity in zip(chart[:],self._velocities):

@@ -359,7 +359,6 @@ class VectorField(MultivectorField):
             resu.set_name(name=name, latex_name=latex_name)
         return resu
 
-
     @options(max_range=8, scale=1, color='blue')
     def plot(self, chart=None, ambient_coords=None, mapping=None,
              chart_domain=None, fixed_coords=None, ranges=None,
@@ -716,7 +715,7 @@ class VectorField(MultivectorField):
         elif not isinstance(ambient_coords, tuple):
             ambient_coords = tuple(ambient_coords)
         nca = len(ambient_coords)
-        if nca != 2 and nca !=3:
+        if nca != 2 and nca != 3:
             raise ValueError("the number of ambient coordinates must be " +
                              "either 2 or 3, not {}".format(nca))
         if ranges is None:
@@ -758,11 +757,11 @@ class VectorField(MultivectorField):
             steps = {}
         for coord in coords:
             if coord not in steps:
-                steps[coord] = (ranges[coord][1] - ranges[coord][0])/ \
+                steps[coord] = (ranges[coord][1] - ranges[coord][0]) / \
                                (number_values[coord]-1)
             else:
                 number_values[coord] = 1 + int(
-                           (ranges[coord][1] - ranges[coord][0])/ steps[coord])
+                           (ranges[coord][1] - ranges[coord][0]) / steps[coord])
         #
         # 2/ Plots
         #    -----
@@ -799,8 +798,8 @@ class VectorField(MultivectorField):
             list_xx = []
 
             while ind != ind_max:
-                for i in  range(ncp):
-                    xx[ind_coord[i]] = xmin[i] + ind[i]*step_tab[i]
+                for i in range(ncp):
+                    xx[ind_coord[i]] = xmin[i] + ind[i] * step_tab[i]
 
                 if chart_domain.valid_coordinates(*xx, tolerance=1e-13,
                                                   parameters=parameters):

@@ -32,12 +32,10 @@ Check that :trac:`20829` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
+from sage.structure.element cimport AlgebraElement, Element
 from sage.structure.richcmp cimport rich_to_bool, rich_to_bool_sgn, richcmp_item
-from sage.algebras.quatalg.quaternion_algebra_element cimport QuaternionAlgebraElement_abstract
 from sage.rings.rational cimport Rational
 from sage.rings.integer cimport Integer
-from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.number_field.number_field_element cimport NumberFieldElement
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import matrix
@@ -55,7 +53,7 @@ from sage.libs.flint.ntl_interface cimport *
 cdef mpz_t T1, T2, t3, t4, t5, t6, t7, t8, s1, s2, U1, U2
 cdef fmpz_poly_t fT1, fT2, ft3, ft4, ft5, ft6, ft7, ft8, fs1, fs2, fU1, fU2
 
-cdef _clear_globals():
+cdef _clear_globals() noexcept:
     """
     Clear all global variables allocated for optimization of
     quaternion algebra arithmetic.
@@ -92,7 +90,7 @@ cdef _clear_globals():
     fmpz_poly_clear(fU1)
     fmpz_poly_clear(fU2)
 
-cdef _init_globals():
+cdef _init_globals() noexcept:
     """
     Initialize all global variables allocated for optimization of
     quaternion algebra arithmetic, and register a hook to eventually
@@ -139,7 +137,7 @@ cdef _init_globals():
 # Initialize module-scope global C variables.
 _init_globals()
 
-cdef to_quaternion(R, x):
+cdef to_quaternion(R, x) noexcept:
     """
     Internal function used implicitly by quaternion algebra creation.
 
@@ -163,7 +161,7 @@ cdef to_quaternion(R, x):
     else:
         return R(x), R(0), R(0), R(0)
 
-cdef inline print_coeff(y, i, bint atomic):
+cdef inline print_coeff(y, i, bint atomic) noexcept:
     """
     Internal function used implicitly by all quaternion algebra printing.
 
@@ -221,7 +219,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             h = ((h+34125L)*51125L) ^ hash(x)
         return h
 
-    cpdef bint is_constant(self):
+    cpdef bint is_constant(self) noexcept:
         """
         Return True if this quaternion is constant, i.e., has no i, j, or k term.
 
@@ -337,7 +335,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self[0] or self[1] or self[2] or self[3]
 
-    cdef _do_print(self, x, y, z, w):
+    cdef _do_print(self, x, y, z, w) noexcept:
         """
         Used internally by the print function.
 
@@ -349,21 +347,21 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         cdef bint atomic = self._parent._base._repr_option('element_is_atomic')
         v = []
-        i,j,k = self._parent.variable_names()
+        i, j, k = self._parent.variable_names()
         if x:
             v.append(str(x))
-        c = print_coeff(y,i,atomic)
+        c = print_coeff(y, i, atomic)
         if c:
             v.append(c)
-        c = print_coeff(z,j,atomic)
+        c = print_coeff(z, j, atomic)
         if c:
             v.append(c)
-        c = print_coeff(w,k,atomic)
+        c = print_coeff(w, k, atomic)
         if c:
             v.append(c)
         if not v:
             return '0'
-        return ' + '.join(v).replace('+ -','- ')
+        return ' + '.join(v).replace('+ -', '- ')
 
     def _repr_(self):
         """
@@ -386,7 +384,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self._do_print(self[0], self[1], self[2], self[3])
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         Comparing elements.
 
@@ -414,7 +412,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
                 return res
         return rich_to_bool(op, 0)
 
-    cpdef conjugate(self):
+    cpdef conjugate(self) noexcept:
         """
         Return the conjugate of the quaternion: if `\\theta = x + yi + zj + wk`,
         return `x - yi - zj - wk`; that is, return theta.reduced_trace() - theta.
@@ -438,7 +436,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self.__class__(self._parent, (self[0], -self[1], -self[2], -self[3]), check=False)
 
-    cpdef reduced_trace(self):
+    cpdef reduced_trace(self) noexcept:
         """
         Return the reduced trace of self: if `\\theta = x + yi + zj +
         wk`, then `\\theta` has reduced trace `2x`.
@@ -453,7 +451,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return 2*self[0]
 
-    cpdef reduced_norm(self):
+    cpdef reduced_norm(self) noexcept:
         """
         Return the reduced norm of self: if `\\theta = x + yi + zj +
         wk`, then `\\theta` has reduced norm `x^2 - ay^2 - bz^2 +
@@ -467,7 +465,8 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: theta.reduced_norm()
             w^2*a*b - y^2*a - z^2*b + x^2
         """
-        a,b,x,y,z,w = self._parent._a,self._parent._b,self[0],self[1],self[2],self[3]
+        a, b = self._parent._a, self._parent._b
+        x, y, z, w = self[0], self[1], self[2], self[3]
         return w*w*a*b - y*y*a - z*z*b + x*x
 
     def __invert__(self):
@@ -509,12 +508,13 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return ~self.reduced_norm() * self.conjugate()
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         Return left*self, where left is in the base ring.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2-x-1); Q.<i,j,k> = QuaternionAlgebra(K,-1,-1); z=2*i+3*j+4/3*k+5/8
             sage: a*z
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
@@ -523,12 +523,13 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self.__class__(self._parent, (left*self[0], left*self[1], left*self[2], left*self[3]), check=False)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         Return self*right, where right is in the base ring.
 
         EXAMPLES::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2-x-1); Q.<i,j,k> = QuaternionAlgebra(K,-1,-1); z=2*i+3*j+4/3*k+5/8
             sage: z*a
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
@@ -537,7 +538,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self.__class__(self._parent, (self[0]*right, self[1]*right, self[2]*right, self[3]*right), check=False)
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Return quotient of self by right.
 
@@ -768,7 +769,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
         return (unpickle_QuaternionAlgebraElement_generic_v0,
                 (self._parent, (self.x, self.y, self.z, self.w)))
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         """
         Return the sum of self and _right.
 
@@ -784,7 +785,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
         # TODO -- make this, etc. use __new__
         return QuaternionAlgebraElement_generic(self._parent, (self.x + right.x, self.y + right.y, self.z + right.z, self.w + right.w), check=False)
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         """
         Return the difference of self and _right.
 
@@ -799,7 +800,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
         cdef QuaternionAlgebraElement_generic right = _right
         return QuaternionAlgebraElement_generic(self._parent, (self.x - right.x, self.y - right.y, self.z - right.z, self.w - right.w), check=False)
 
-    cpdef _mul_(self, _right):
+    cpdef _mul_(self, _right) noexcept:
         """
         Return the product of self and _right.
 
@@ -819,10 +820,10 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
         x1, y1, z1, w1 = self.x, self.y, self.z, self.w
         x2, y2, z2, w2 = right.x, right.y, right.z, right.w
 
-        #x = x1*x2 + y1*y2*a + z1*z2*b - w1*w2*a*b
-        #y = x1*y2 + y1*x2 - z1*w2*b + w1*z2*b
-        #z = x1*z2 + y1*w2 + z1*x2 - w1*y2*a
-        #w = x1*w2 + y1*z2 - z1*y2 + w1*x2
+        # x = x1*x2 + y1*y2*a + z1*z2*b - w1*w2*a*b
+        # y = x1*y2 + y1*x2 - z1*w2*b + w1*z2*b
+        # z = x1*z2 + y1*w2 + z1*x2 - w1*y2*a
+        # w = x1*w2 + y1*z2 - z1*y2 + w1*x2
 
         t1 = x1 * x2
         t2 = y1 * y2
@@ -834,7 +835,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
         t8 = y1 * w2
 
         x = t1 + a * t2 + b * (t3 - a*t4)
-        y = (x1 + y1)*(x2 + y2) - t1 - t2 + b*( (z1 + w1)*(z2 - w2) - t3 + t4)
+        y = (x1 + y1)*(x2 + y2) - t1 - t2 + b*((z1 + w1)*(z2 - w2) - t3 + t4)
         z = t5 - a*t6 + t7 + a*t8
         w = (x2 - y2)*(z1 + w1) - t5 + t6 + (x1 + y1)*(z2 + w2) - t7 - t8
 
@@ -896,7 +897,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_init(self.b)
         mpz_init(self.d)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         mpz_clear(self.x)
         mpz_clear(self.y)
         mpz_clear(self.z)
@@ -927,7 +928,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             return x
         raise TypeError
 
-    cpdef bint is_constant(self):
+    cpdef bint is_constant(self) noexcept:
         """
         Return True if this quaternion is constant, i.e., has no i, j, or k term.
 
@@ -963,7 +964,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         return bool(mpz_sgn(self.x) or mpz_sgn(self.y) or mpz_sgn(self.z) or mpz_sgn(self.w))
 
-    cpdef _richcmp_(self, _right, int op):
+    cpdef _richcmp_(self, _right, int op) noexcept:
         """
         Compare two quaternions.
 
@@ -1040,7 +1041,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         cdef Rational x, y, z, w
         cdef mpz_t lcm
         cdef mpq_t lcm_rat
-        if not isinstance(v, (list,tuple)):
+        if not isinstance(v, (list, tuple)):
             try:
                 x = Rational(v)
                 mpz_set(self.x, mpq_numref(x.value))
@@ -1060,7 +1061,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             z = Rational(v[2])
             w = Rational(v[3])
         else:
-            x,y,z,w = v
+            x, y, z, w = v
         mpz_init(lcm)
         mpz_lcm(lcm, mpq_denref(x.value), mpq_denref(y.value))
         mpz_lcm(lcm, lcm, mpq_denref(z.value))
@@ -1124,7 +1125,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         return (unpickle_QuaternionAlgebraElement_rational_field_v0,
                 (self._parent, (self[0], self[1], self[2], self[3])))
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         """
         EXAMPLES::
 
@@ -1172,7 +1173,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_mul(U2, right.w, self.d)        # U2 = w2 * d1
         mpz_add(result.w, U1, U2)           # w3 = w1 * d2 + w2 * d1
 
-        mpz_mul(result.d, self.d, right.d) # d3 = d1 * d2
+        mpz_mul(result.d, self.d, right.d)  # d3 = d1 * d2
 
         result.canonicalize()
 
@@ -1180,7 +1181,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_set(result.b, self.b)
         return result
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         """
         EXAMPLES::
 
@@ -1221,7 +1222,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_set(result.b, self.b)
         return result
 
-    cpdef _mul_(self, _right):
+    cpdef _mul_(self, _right) noexcept:
         """
         EXAMPLES::
 
@@ -1286,7 +1287,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_add(s1, self.x, self.y)     # s1 = x1 + y1
         mpz_add(s2, self.z, self.w)     # s2 = z1 + w1
 
-        #------------------
+        # ------------------
 
         mpz_mul(U1, self.a, t4)
         mpz_sub(U1, t3, U1)
@@ -1295,7 +1296,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_add(result.x, T1, U2)
         mpz_add(result.x, result.x, U1)
 
-        #------------------
+        # ------------------
 
         mpz_sub(U1, right.z, right.w)
         mpz_mul(U1, U1, s2)
@@ -1308,7 +1309,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_mul(U2, s1, U2)
         mpz_add(result.y, U1, U2)
 
-        #------------------
+        # ------------------
 
         mpz_mul(U1, self.a, t8)
         mpz_add(U1, U1, t7)
@@ -1316,7 +1317,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_sub(U1, U1, U2)
         mpz_add(result.z, U1, t5)
 
-        #------------------
+        # ------------------
 
         mpz_add(U1, right.z, right.w)
         mpz_mul(U1, U1, s1)
@@ -1328,15 +1329,13 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_mul(U2, U2, s2)
         mpz_add(result.w, U1, U2)
 
-
-
         mpz_mul(result.d, self.d, right.d)
 
         result.canonicalize()
 
         return result
 
-    cpdef reduced_norm(self):
+    cpdef reduced_norm(self) noexcept:
         """
         Return the reduced norm of ``self``.
 
@@ -1377,7 +1376,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
         return result
 
-    cpdef conjugate(self):
+    cpdef conjugate(self) noexcept:
         """
         Return the conjugate of this quaternion.
 
@@ -1408,7 +1407,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
         return result
 
-    cpdef reduced_trace(self):
+    cpdef reduced_trace(self) noexcept:
         """
         Return the reduced trace of ``self``.
 
@@ -1425,8 +1424,6 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: a.reduced_trace()
             2/3
         """
-        #return 2*self[0]
-
         mpz_mul_si(U1, self.x, 2)
         cdef Rational result = Rational.__new__(Rational)
         mpq_set_num(result.value, U1)
@@ -1434,7 +1431,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpq_canonicalize(result.value)
         return result
 
-    cdef inline canonicalize(self):
+    cdef inline canonicalize(self) noexcept:
         """
         Put the representation of this quaternion element into
         smallest form. For `a = (1/d)(x + yi + zj + wk)` we
@@ -1454,7 +1451,6 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
         # Implementation-wise, we compute the GCD's one at a time,
         # and quit if it ever becomes one
-
 
         mpz_gcd(U1, self.d, self.x)
         if mpz_cmp_ui(U1, 1) != 0:
@@ -1551,8 +1547,6 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         mpz_set(w.value, self.w)
 
         return (x, y, z, w)
-
-
 
     def coefficient_tuple(self):
         """
@@ -1705,15 +1699,15 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             x, y, z, w = v
         cdef NumberFieldElement a = <NumberFieldElement>(parent._base(parent._a))
         cdef NumberFieldElement b = <NumberFieldElement>(parent._base(parent._b))
-        fmpz_poly_set_ZZX(self.x, (<NumberFieldElement>x).__numerator)
-        fmpz_poly_set_ZZX(self.y, (<NumberFieldElement>y).__numerator)
-        fmpz_poly_set_ZZX(self.z, (<NumberFieldElement>z).__numerator)
-        fmpz_poly_set_ZZX(self.w, (<NumberFieldElement>w).__numerator)
+        fmpz_poly_set_ZZX(self.x, (<NumberFieldElement>x)._numerator)
+        fmpz_poly_set_ZZX(self.y, (<NumberFieldElement>y)._numerator)
+        fmpz_poly_set_ZZX(self.z, (<NumberFieldElement>z)._numerator)
+        fmpz_poly_set_ZZX(self.w, (<NumberFieldElement>w)._numerator)
 
-        ZZ_to_mpz(T1, &(<NumberFieldElement>x).__denominator)
-        ZZ_to_mpz(T2, &(<NumberFieldElement>y).__denominator)
-        ZZ_to_mpz(t3, &(<NumberFieldElement>z).__denominator)
-        ZZ_to_mpz(t4, &(<NumberFieldElement>w).__denominator)
+        ZZ_to_mpz(T1, &(<NumberFieldElement>x)._denominator)
+        ZZ_to_mpz(T2, &(<NumberFieldElement>y)._denominator)
+        ZZ_to_mpz(t3, &(<NumberFieldElement>z)._denominator)
+        ZZ_to_mpz(t4, &(<NumberFieldElement>w)._denominator)
 
         mpz_lcm(self.d, T1, T2)
         mpz_lcm(self.d, self.d, t3)
@@ -1729,10 +1723,10 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_scalar_mul_mpz(self.z, self.z, t3)
         fmpz_poly_scalar_mul_mpz(self.w, self.w, t4)
 
-        fmpz_poly_set_ZZX(self.a, a.__numerator)     # we will assume that the denominator of a and b are 1
-        fmpz_poly_set_ZZX(self.b, b.__numerator)
+        fmpz_poly_set_ZZX(self.a, a._numerator)     # we will assume that the denominator of a and b are 1
+        fmpz_poly_set_ZZX(self.b, b._numerator)
 
-        fmpz_poly_set_ZZX(self.modulus, (<NumberFieldElement>x).__fld_numerator.x) # and same for the modulus
+        fmpz_poly_set_ZZX(self.modulus, (<NumberFieldElement>x)._fld_numerator.x)  # and same for the modulus
 
     def __getitem__(self, int i):
         """
@@ -1761,17 +1755,17 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         cdef NumberFieldElement item = el._new()
 
         if i == 0:
-            fmpz_poly_get_ZZX(item.__numerator, self.x)
+            fmpz_poly_get_ZZX(item._numerator, self.x)
         elif i == 1:
-            fmpz_poly_get_ZZX(item.__numerator, self.y)
+            fmpz_poly_get_ZZX(item._numerator, self.y)
         elif i == 2:
-            fmpz_poly_get_ZZX(item.__numerator, self.z)
+            fmpz_poly_get_ZZX(item._numerator, self.z)
         elif i == 3:
-            fmpz_poly_get_ZZX(item.__numerator, self.w)
+            fmpz_poly_get_ZZX(item._numerator, self.w)
         else:
             raise IndexError("quaternion element index out of range")
 
-        mpz_to_ZZ(&item.__denominator, self.d)
+        mpz_to_ZZ(&item._denominator, self.d)
 
         return item
 
@@ -1791,7 +1785,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         return (unpickle_QuaternionAlgebraElement_number_field_v0,
                 (self._parent, (self[0], self[1], self[2], self[3])))
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         """
         Add self and _right:
 
@@ -1806,6 +1800,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         Check that the fix in :trac:`17099` is correct::
 
+            sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x**3 + x - 1, 'a')
             sage: D.<i,j,k> = QuaternionAlgebra(K, -1, -3)
             sage: j/3 + (2*j)/3 == j
@@ -1862,7 +1857,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         return result
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         """
         Subtract _right from self.
 
@@ -1883,7 +1878,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         # a modulus that is not monic.
         cdef QuaternionAlgebraElement_number_field right = _right
         cdef QuaternionAlgebraElement_number_field result = <QuaternionAlgebraElement_number_field> QuaternionAlgebraElement_number_field.__new__(QuaternionAlgebraElement_number_field)
-
 
         fmpz_poly_set(result.a, self.a)
         fmpz_poly_set(result.b, self.b)
@@ -1912,7 +1906,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         return result
 
-    cpdef _mul_(self, _right):
+    cpdef _mul_(self, _right) noexcept:
         """
         Multiply self and _right.
 
@@ -1982,7 +1976,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_add(fs1, self.x, self.y)     # s1 = x1 + y1
         fmpz_poly_add(fs2, self.z, self.w)     # s2 = z1 + w
 
-        #------------------
+        # ------------------
 
         fmpz_poly_mul(fU1, self.a, ft4)
         fmpz_poly_sub(fU1, ft3, fU1)
@@ -1991,7 +1985,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_add(result.x, fT1, fU2)
         fmpz_poly_add(result.x, result.x, fU1)
 
-        #------------------
+        # ------------------
 
         fmpz_poly_sub(fU1, right.z, right.w)
         fmpz_poly_mul(fU1, fU1, fs2)
@@ -2004,7 +1998,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_mul(fU2, fs1, fU2)
         fmpz_poly_add(result.y, fU1, fU2)
 
-        #------------------
+        # ------------------
 
         fmpz_poly_mul(fU1, self.a, ft8)
         fmpz_poly_add(fU1, fU1, ft7)
@@ -2012,7 +2006,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         fmpz_poly_sub(fU1, fU1, fU2)
         fmpz_poly_add(result.z, fU1, ft5)
 
-        #------------------
+        # ------------------
 
         fmpz_poly_add(fU1, right.z, right.w)
         fmpz_poly_mul(fU1, fU1, fs1)
@@ -2058,7 +2052,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         return result
 
-    cdef inline canonicalize(self):
+    cdef inline canonicalize(self) noexcept:
         """
         Put the representation of this quaternion element into
         smallest form. For a = `(1/d)(x + yi + zj + wk)` we

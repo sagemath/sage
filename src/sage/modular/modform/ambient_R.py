@@ -91,12 +91,12 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         This checks that :trac:`13445` is fixed::
 
-            sage: M = ModularForms(Gamma1(29), base_ring=GF(29))
+            sage: M = ModularForms(Gamma0(11), base_ring=GF(11))
             sage: S = M.cuspidal_subspace()
             sage: 0 in [f.valuation() for f in S.basis()]
             False
             sage: from sage.modular.dims import dimension_cusp_forms
-            sage: len(S.basis()) == dimension_cusp_forms(Gamma1(29), 2)
+            sage: len(S.basis()) == dimension_cusp_forms(Gamma0(11), 2)
             True
         """
         if prec is None:
@@ -123,7 +123,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
                     newB.append(f)
                     V = A.span(gens)
             if len(newB) != self.dimension():
-                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements"%(self.dimension(), len(newB)))
+                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements" % (self.dimension(), len(newB)))
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
         else:
@@ -146,7 +146,6 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_R_with_category'>
         """
         return CuspidalSubmodule_R(self)
-
 
     def change_ring(self, R):
         r"""

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: language = c++
 # distutils: libraries = coxeter3
 # sage_setup: distribution = sagemath-coxeter3
@@ -87,8 +86,10 @@ cdef class String:
             sage: all([tb > ta1, tb >= ta1, tb >= tb])                 # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s = repr(self)
         o = repr(other)
@@ -200,8 +201,10 @@ cdef class Type:
             sage: all([tb > ta1, tb >= ta1, tb >= tb])                 # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s = repr(self)
         o = repr(other)
@@ -364,8 +367,10 @@ cdef class CoxGroup(SageObject):
             sage: B4 >= A5                                                              # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s_t = self.type()
         o_t = other.type()
@@ -535,7 +540,7 @@ cdef class CoxGroup(SageObject):
         """
         return isFiniteType(self.x)
 
-    cpdef full_context(self):
+    cpdef full_context(self) noexcept:
         """
         Make all of the elements of a finite Coxeter group available.
 
@@ -736,7 +741,7 @@ cdef class CoxGroupElement:
 
     inverse = __invert__
 
-    cpdef CoxGroup parent_group(self):
+    cpdef CoxGroup parent_group(self) noexcept:
         """
         Return the parent Coxeter group for this element.
 
@@ -777,7 +782,7 @@ cdef class CoxGroupElement:
         """
         if isinstance(i, slice):
             #Get the start, stop, and step from the slice
-            return [self[ii] for ii in xrange(*i.indices(len(self)))]
+            return [self[ii] for ii in range(*i.indices(len(self)))]
         if i < 0:
             i += len(self)
         if i >= len(self):
@@ -840,8 +845,10 @@ cdef class CoxGroupElement:
             sage: w1 != v1                                        # optional - coxeter3
             True
         """
-        if type(other) != type(self):
-            return False
+        if type(other) is not type(self):
+            if op in (Py_LT, Py_LE, Py_GT, Py_GE):
+                return NotImplemented
+            return op == Py_NE
 
         s_p = self.parent_group()
         o_p = other.parent_group()
@@ -873,7 +880,7 @@ cdef class CoxGroupElement:
             sage: [a for a in w]                                # optional - coxeter3
             [1, 2, 3]
         """
-        return (self[i] for i in xrange(len(self)))
+        return (self[i] for i in range(len(self)))
 
     def __len__(self):
         """
@@ -952,7 +959,7 @@ cdef class CoxGroupElement:
         cdef Generator ss = self._parent_group.in_ordering[s]
         return self.group.isDescent(self.word, s)
 
-    cdef CoxGroupElement _new(self):
+    cdef CoxGroupElement _new(self) noexcept:
         """
         Return a new copy of this element.
         """
@@ -1123,7 +1130,7 @@ cdef class CoxGroupElement:
         cdef CoxNbr y = self.group.extendContext(vv.word)
         return ZZ(self.group.mu(x,y))
 
-cdef LFlags_to_list(CoxGroup parent, LFlags f):
+cdef LFlags_to_list(CoxGroup parent, LFlags f) noexcept:
     """
     Return the right descent set of this element.
 

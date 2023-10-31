@@ -39,6 +39,7 @@ def is_Gamma0(x):
     """
     return isinstance(x, Gamma0_class)
 
+
 _gamma0_cache = {}
 def Gamma0_constructor(N):
     """
@@ -104,7 +105,6 @@ class Gamma0_class(GammaH_class):
 
     """
 
-
     def __init__(self, level):
         r"""
         The congruence subgroup `\Gamma_0(N)`.
@@ -147,7 +147,7 @@ class Gamma0_class(GammaH_class):
             sage: Gamma0(98)._repr_()
             'Congruence Subgroup Gamma0(98)'
         """
-        return "Congruence Subgroup Gamma0(%s)"%self.level()
+        return "Congruence Subgroup Gamma0(%s)" % self.level()
 
     def __reduce__(self):
         """
@@ -171,7 +171,7 @@ class Gamma0_class(GammaH_class):
             sage: latex(Gamma0(20))
             \Gamma_0(20)
         """
-        return "\\Gamma_0(%s)"%self.level()
+        return "\\Gamma_0(%s)" % self.level()
 
     @cached_method
     def _generators_for_H(self):
@@ -364,10 +364,10 @@ class Gamma0_class(GammaH_class):
             # reasons, which aren't the ones the Farey symbol code gives
             return [ self([0,-1,1,0]), self([1,1,0,1]) ]
 
-        elif algorithm=="farey":
+        elif algorithm == "farey":
             return self.farey_symbol().generators()
 
-        elif algorithm=="todd-coxeter":
+        elif algorithm == "todd-coxeter":
             from sage.modular.modsym.p1list import P1List
             from .congroup import generators_helper
             level = self.level()
@@ -482,13 +482,14 @@ class Gamma0_class(GammaH_class):
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         """
         n = self.level()
-        return sum([euler_phi(gcd(d,n//d)) for d in n.divisors()])
-
+        return sum(euler_phi(gcd(d, n // d)) for d in n.divisors())
 
     def nu2(self):
         r"""
         Return the number of elliptic points of order 2 for this congruence
-        subgroup `\Gamma_0(N)`. The number of these is given by a standard formula:
+        subgroup `\Gamma_0(N)`.
+
+        The number of these is given by a standard formula:
         0 if `N` is divisible by 4 or any prime congruent to -1 mod 4, and
         otherwise `2^d` where d is the number of odd primes dividing `N`.
 
@@ -506,7 +507,7 @@ class Gamma0_class(GammaH_class):
             [1, 1, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0]
         """
         n = self.level()
-        if n%4 == 0:
+        if n % 4 == 0:
             return ZZ(0)
         return prod([ 1 + kronecker_symbol(-4, p) for p, _ in n.factor()])
 
@@ -593,12 +594,10 @@ class Gamma0_class(GammaH_class):
              sage: all(Gamma0(N).dimension_new_cusp_forms(2)==100 for N in L)
              True
         """
-        from sage.functions.other import floor
-
         N = self.level()
         k = ZZ(k)
 
-        if not(p == 0 or N % p):
+        if not (p == 0 or N % p):
             return (self.dimension_cusp_forms(k) -
                     2 * self.restrict(N // p).dimension_new_cusp_forms(k))
 
@@ -669,8 +668,8 @@ class Gamma0_class(GammaH_class):
 
         res = (k - 1) / 12 * N * prod(s0(q, a) for q, a in factors)
         res -= prod(vinf(q, a) for q, a in factors) / ZZ(2)
-        res += ((1 - k)/4 + floor(k/4)) * prod(v2(q, a) for q, a in factors)
-        res += ((1 - k)/3 + floor(k/3)) * prod(v3(q, a) for q, a in factors)
+        res += ((1 - k)/4 + k//4) * prod(v2(q, a) for q, a in factors)
+        res += ((1 - k)/3 + k//3) * prod(v3(q, a) for q, a in factors)
         if k == 2:
             res += moebius(N)
         return res

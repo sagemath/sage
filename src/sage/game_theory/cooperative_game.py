@@ -21,7 +21,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from itertools import permutations, combinations
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 

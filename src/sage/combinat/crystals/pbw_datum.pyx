@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 PBW Data
 
@@ -25,11 +25,11 @@ AUTHORS:
 #from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.root_system.root_system import RootSystem
 from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
 
 cimport cython
+
 
 class PBWDatum():
     """
@@ -278,10 +278,11 @@ class PBWData(): # UniqueRepresentation?
         w0 = self.weyl_group.long_element()
         return tuple([i] + (si * w0).reduced_word())
 
-#enhanced_braid_chain is an ugly data structure.
+
+# enhanced_braid_chain is an ugly data structure.
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum):
+cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum) noexcept:
     """
     Return the Lusztig datum obtained by applying tropical Plücker
     relations along ``enhanced_braid_chain`` starting with
@@ -315,20 +316,21 @@ cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig
     """
     cdef tuple interval_of_change
     # Does not currently check that len(initial_lusztig_datum) is appropriate
-    cdef list new_lusztig_datum = list(initial_lusztig_datum) #shallow copy
+    cdef list new_lusztig_datum = list(initial_lusztig_datum)  # shallow copy
     cdef int i
     for i in range(1, len(enhanced_braid_chain)):
         interval_of_change, type_data = enhanced_braid_chain[i]
-        a,b = interval_of_change
+        a, b = interval_of_change
         old_interval_datum = new_lusztig_datum[a:b]
         new_interval_datum = tropical_plucker_relation(type_data, old_interval_datum)
         new_lusztig_datum[a:b] = new_interval_datum
     return tuple(new_lusztig_datum)
 
-# The tropical plucker relations
+
+# The tropical Plücker relations
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum):
+cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum) noexcept:
     r"""
     Apply the tropical Plücker relation of type ``a`` to ``lusztig_datum``.
 
@@ -396,11 +398,12 @@ cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum):
         return tuple(reversed(tropical_plucker_relation((a[1], a[0]),
                                                         reversed_lusztig_datum)))
 
+
 # Maybe we need to be more specific, and pass not the Cartan type, but the root lattice?
 # TODO: Move to PBW_data?
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
+cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type) noexcept:
     r"""
     Return a list of tuples that records the data of the long words in
     ``braid_move_chain`` plus the data of the intervals where the braid moves
@@ -450,7 +453,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     """
     cdef int i, j
     cdef int k, pos, first, last
-    cdef tuple interval_of_change, cartan_sub_matrix
+    cdef tuple cartan_sub_matrix
     cdef list output_list = []
     output_list.append( (None, None) )
     cdef tuple previous_word = <tuple> (braid_move_chain[0])

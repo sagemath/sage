@@ -373,15 +373,15 @@ class TypeSpace(SageObject):
         Test that :trac:`13158` is fixed::
 
             sage: f = Newforms(256,names='a')[0]
-            sage: T = TypeSpace(f,2)
-            sage: g = T.minimal_twist()
-            sage: g[0:3]
+            sage: T = TypeSpace(f,2)                            # long time
+            sage: g = T.minimal_twist()                         # long time
+            sage: g[0:3]                                        # long time
             [0, 1, 0]
-            sage: str(g[3]) in ('a', '-a', '-1/2*a', '1/2*a')
+            sage: str(g[3]) in ('a', '-a', '-1/2*a', '1/2*a')   # long time
             True
-            sage: g[4:]
+            sage: g[4:]                                         # long time
             []
-            sage: g.level()
+            sage: g.level()                                     # long time
             64
         """
         if self.is_minimal():
@@ -497,7 +497,7 @@ class TypeSpace(SageObject):
             True
         """
         f = self.prime() ** self.u()
-        from sage.groups.matrix_gps.all import SL
+        from sage.groups.matrix_gps.linear import SL
         G = SL(2, Zmod(f))
         gg = G(g)
         s = G([1,1,0,1])

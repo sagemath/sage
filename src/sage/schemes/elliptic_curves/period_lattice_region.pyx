@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.complex_double sage.symbolic
 r"""
 Regions in fundamental domains of period lattices
 
@@ -54,12 +55,12 @@ cdef class PeriodicRegion:
             sage: import numpy as np
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
             sage: S = PeriodicRegion(CDF(2), CDF(2*I), np.zeros((4, 4)))
-            sage: S.plot()
+            sage: S.plot()                                                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
             sage: data = np.zeros((4, 4))
             sage: data[1,1] = True
             sage: S = PeriodicRegion(CDF(2), CDF(2*I+1), data)
-            sage: S.plot()
+            sage: S.plot()                                                              # needs sage.plot
             Graphics object consisting of 5 graphics primitives
         """
         if data.dtype is not np.int8:
@@ -250,16 +251,16 @@ cdef class PeriodicRegion:
             sage: data = np.zeros((4, 4))
             sage: data[1,1] = True
             sage: S = PeriodicRegion(CDF(1), CDF(I + 1/2), data)
-            sage: S.plot()
+            sage: S.plot()                                                              # needs sage.plot
             Graphics object consisting of 5 graphics primitives
-            sage: S.expand().plot()
+            sage: S.expand().plot()                                                     # needs sage.plot
             Graphics object consisting of 13 graphics primitives
             sage: S.expand().data
             array([[1, 1, 1, 0],
                    [1, 1, 1, 0],
                    [1, 1, 1, 0],
                    [0, 0, 0, 0]], dtype=int8)
-            sage: S.expand(corners=False).plot()
+            sage: S.expand(corners=False).plot()                                        # needs sage.plot
             Graphics object consisting of 13 graphics primitives
             sage: S.expand(corners=False).data
             array([[0, 1, 0, 0],
@@ -298,9 +299,9 @@ cdef class PeriodicRegion:
             sage: data = np.zeros((10, 10))
             sage: data[1:4,1:4] = True
             sage: S = PeriodicRegion(CDF(1), CDF(I + 1/2), data)
-            sage: S.plot()
+            sage: S.plot()                                                              # needs sage.plot
             Graphics object consisting of 13 graphics primitives
-            sage: S.contract().plot()
+            sage: S.contract().plot()                                                   # needs sage.plot
             Graphics object consisting of 5 graphics primitives
             sage: S.contract().data.sum()
             1
@@ -376,11 +377,11 @@ cdef class PeriodicRegion:
             sage: data[2:6, 2] = True
             sage: data[3, 3] = True
             sage: S = PeriodicRegion(CDF(1), CDF(I + 1/2), data)
-            sage: S.plot()
+            sage: S.plot()                                                              # needs sage.plot
             Graphics object consisting of 29 graphics primitives
-            sage: (S / 2).plot()
+            sage: (S / 2).plot()                                                        # needs sage.plot
             Graphics object consisting of 57 graphics primitives
-            sage: (S / 3).plot()
+            sage: (S / 3).plot()                                                        # needs sage.plot
             Graphics object consisting of 109 graphics primitives
             sage: (S / 2 / 3) == (S / 6) == (S / 3 / 2)
             True
@@ -619,7 +620,7 @@ cdef class PeriodicRegion:
             sage: S = PeriodicRegion(CDF(1), CDF(I+1/2), data)
             sage: S.innermost_point()
             0.375 + 0.25*I
-            sage: S.plot() + point(S.innermost_point())
+            sage: S.plot() + point(S.innermost_point())                                 # needs sage.plot
             Graphics object consisting of 24 graphics primitives
         """
         if self.is_empty():
@@ -646,7 +647,7 @@ cdef class PeriodicRegion:
             sage: data[2:5, 2] = True
             sage: data[3, 3] = True
             sage: S = PeriodicRegion(CDF(1), CDF(I + 1/2), data)
-            sage: plot(S) + plot(S.expand(), rgbcolor=(1, 0, 1), thickness=2)
+            sage: plot(S) + plot(S.expand(), rgbcolor=(1, 0, 1), thickness=2)           # needs sage.plot
             Graphics object consisting of 46 graphics primitives
         """
         from sage.plot.line import line
@@ -664,7 +665,7 @@ cdef class PeriodicRegion:
         return sum(L, F)
 
 
-cdef frame_data(data, bint full=True):
+cdef frame_data(data, bint full=True) noexcept:
     """
     Helper function for PeriodicRegion.expand() and
     PeriodicRegion.border().  This makes "wrapping around" work
@@ -694,7 +695,7 @@ cdef frame_data(data, bint full=True):
     framed[-1,:] = framed[-3,:]
     return framed
 
-cdef unframe_data(framed, bint full=True):
+cdef unframe_data(framed, bint full=True) noexcept:
     """
     Helper function for PeriodicRegion.expand().  This glues the
     borders together using the "or" operator.

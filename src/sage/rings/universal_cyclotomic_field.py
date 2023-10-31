@@ -163,11 +163,14 @@ AUTHORS:
 - Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import FieldElement, parent
+
 from sage.structure.coerce import py_scalar_to_element
 from sage.categories.morphism import Morphism
 from sage.rings.ring import Field
@@ -176,6 +179,7 @@ from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.rings.qqbar import AA, QQbar
@@ -331,8 +335,6 @@ class UniversalCyclotomicFieldElement(FieldElement):
             [False, True, True, True]
         """
         return bool(self._obj)
-
-
 
     def __reduce__(self):
         r"""
@@ -521,14 +523,14 @@ class UniversalCyclotomicFieldElement(FieldElement):
         r"""
         TESTS::
 
-            sage: SR(E(7))
+            sage: SR(E(7))                                                              # needs sage.symbolic
             e^(2/7*I*pi)
-            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))
+            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # needs sage.symbolic
             -sqrt(5) + 1/4*I*sqrt(2*sqrt(5) + 10) - 1/4*I*sqrt(-2*sqrt(5) + 10) - 3/2
 
         Test that the bug reported in :trac:`19912` has been fixed::
 
-            sage: SR(1+E(4))
+            sage: SR(1+E(4))                                                            # needs sage.symbolic
             I + 1
         """
         from sage.symbolic.constants import pi, I
@@ -580,7 +582,8 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         Using a non-standard embedding::
 
-            sage: CF = CyclotomicField(5,embedding=CC(exp(4*pi*i/5)))
+            sage: # needs sage.symbolic
+            sage: CF = CyclotomicField(5, embedding=CC(exp(4*pi*i/5)))
             sage: x = E(5)
             sage: CC(x)
             0.309016994374947 + 0.951056516295154*I
@@ -721,7 +724,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
             sage: RR(E(7) + E(7,6))
             1.24697960371747
-            sage: 2*cos(2*pi/7).n()
+            sage: 2*cos(2*pi/7).n()                                                     # needs sage.symbolic
             1.24697960371747
 
         Check that units are evaluated correctly (:trac:`23775`)::
@@ -1281,7 +1284,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         return QQ[var](QQ['x_1'](str(gap_p)))
 
 
-class UniversalCyclotomicField(UniqueRepresentation, Field):
+class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyclotomicField):
     r"""
     The universal cyclotomic field.
 
@@ -1483,7 +1486,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
         Some conversions from symbolic functions are possible::
 
             sage: UCF = UniversalCyclotomicField()
-            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]
+            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]                      # needs sage.symbolic
             [0,
              1,
              -1/2*E(12)^7 + 1/2*E(12)^11,
@@ -1493,7 +1496,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
              -1/2*E(28)^19 + 1/2*E(28)^23,
              1/2*E(16)^3 - 1/2*E(16)^5,
              -1/2*E(36)^25 + 1/2*E(36)^29]
-            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]
+            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]                      # needs sage.symbolic
             [-1,
              0,
              1/2,
@@ -1504,8 +1507,9 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
              1/2*E(16) - 1/2*E(16)^7,
              -1/2*E(9)^4 - 1/2*E(9)^5]
 
-             sage: UCF(1 + sqrt(-3/5))
-             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8 + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
+             sage: UCF(1 + sqrt(-3/5))                                                  # needs sage.symbolic
+             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8
+              + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
 
         .. TODO::
 
@@ -1537,8 +1541,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
         import sage.rings.abc
         P = parent(elt)
         if isinstance(P, sage.rings.abc.NumberField_cyclotomic):
-            from sage.rings.number_field.number_field_element import NumberFieldElement
-            if isinstance(elt, NumberFieldElement):
+            if isinstance(elt, NumberFieldElement_base):
                 from sage.rings.number_field.number_field import CyclotomicField
                 n = P.gen().multiplicative_order()
                 elt = CyclotomicField(n)(elt)
@@ -1617,7 +1620,8 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             sage: (x^3 - 8).factor()
             (x - 2) * (x - 2*E(3)) * (x - 2*E(3)^2)
 
-        In most situations, the factorization will fail with a ``NotImplementedError``::
+        In most situations, the factorization will fail with a
+        :class:`NotImplementedError`::
 
             sage: (x^3 - 2).factor()
             Traceback (most recent call last):

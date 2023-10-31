@@ -631,7 +631,7 @@ class AugmentedValuation_base(InductiveValuation):
             False
 
         """
-        assert(self._mu > 0)
+        assert (self._mu > 0)
         return False
 
     def monic_integral_model(self, G):
@@ -1109,7 +1109,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         # We only have to do that if psi is non-trivial
         if self.psi().degree() > 1:
             from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
-            from sage.rings.function_field.element import FunctionFieldElement_polymod
+            from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
             from sage.rings.number_field.number_field_element import NumberFieldElement_relative
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if isinstance(F, PolynomialQuotientRingElement):
@@ -1120,7 +1120,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
                 G = PolynomialRing(F.base_ring(), 'x')(list(F))
             else:
                 G = F.polynomial()
-            assert(G(self._residue_field_generator()) == F)
+            assert (G(self._residue_field_generator()) == F)
             F = G.change_variable_name(self._base_valuation.residue_ring().variable_name())
 
         H = self._base_valuation.lift(F)

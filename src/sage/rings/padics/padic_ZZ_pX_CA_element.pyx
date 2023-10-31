@@ -56,7 +56,7 @@ element contains the following data:
     ``prime_pow.get_top_context`` -- obtain an
     ``ntl_ZZ_pContext_class`` corresponding to `p^n`.  The capdiv
     version divides by ``prime_pow.e`` as appropriate.
-    ``top_context`` corresponds to `p^{prec_cap}`.
+    ``top_context`` corresponds to `p^{\texttt{prec\_cap}}`.
 
   + ``prime_pow.restore_context``,
     ``prime_pow.restore_context_capdiv``,
@@ -175,7 +175,6 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
@@ -183,10 +182,6 @@ from sage.rings.finite_rings.integer_mod import is_IntegerMod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
 from sage.rings.padics.precision_error import PrecisionError
-
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_small_Eis
-from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_big_Eis
 
 cdef object infinity
 from sage.rings.infinity import infinity
@@ -841,7 +836,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         else:
             self._set_prec_abs(ordp + relprec)
 
-    cdef pAdicZZpXCAElement _new_c(self, long absprec):
+    cdef pAdicZZpXCAElement _new_c(self, long absprec) noexcept:
         """
         Returns a new element with the same parent as ``self`` and
         absolute precision ``absprec``.
@@ -939,7 +934,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         return ~self.to_fraction_field()
 
-    cpdef pAdicZZpXCRElement to_fraction_field(self):
+    cpdef pAdicZZpXCRElement to_fraction_field(self) noexcept:
         """
         Returns ``self`` cast into the fraction field of ``self.parent()``.
 
@@ -966,7 +961,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ans.unit = self.value
         return ans
 
-    cdef pAdicZZpXCAElement _lshift_c(self, long n):
+    cdef pAdicZZpXCAElement _lshift_c(self, long n) noexcept:
         """
         Multiplies ``self`` by the uniformizer raised to the power ``n``.  If
         ``n`` is negative, right shifts by ``-n``.
@@ -1017,7 +1012,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(-mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXCAElement _rshift_c(self, long n):
+    cdef pAdicZZpXCAElement _rshift_c(self, long n) noexcept:
         """
         Divides ``self`` by the uniformizer raised to the power ``n``.  If
         parent is not a field, throws away the non-positive part of
@@ -1115,7 +1110,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Returns ``-self``.
 
@@ -1242,7 +1237,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef long self_ordp = self.valuation_c()
         cdef long self_relprec = self.absprec - self_ordp
         cdef long threshold # e / (p-1)
-        cdef long prime_long
         cdef mpz_t tmp, tmp2
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
             threshold = 0
@@ -1382,7 +1376,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         """
         Computes the sum of ``self`` and ``right``.
 
@@ -1404,7 +1398,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         cdef pAdicZZpXCAElement right = <pAdicZZpXCAElement>_right
         cdef pAdicZZpXCAElement ans
-        cdef long tmpL
         cdef ZZ_pX_c tmpP
         if self.absprec == 0 or right.absprec == 0:
             return self._new_c(0)
@@ -1421,7 +1414,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_add(ans.value, tmpP, right.value)
         return ans
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         """
         Returns the difference of ``self`` and ``right``.
 
@@ -1446,7 +1439,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         cdef pAdicZZpXCAElement right = <pAdicZZpXCAElement>_right
         cdef pAdicZZpXCAElement ans
-        cdef long tmpL
         cdef ZZ_pX_c tmpP
         if self.absprec == 0 or right.absprec == 0:
             return self._new_c(0)
@@ -1463,7 +1455,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_sub(ans.value, tmpP, right.value)
         return ans
 
-    cpdef _mul_(self, _right):
+    cpdef _mul_(self, _right) noexcept:
         """
         Returns the product of ``self`` and ``right``.
 
@@ -1516,7 +1508,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(ans.value, self_adapted, right_adapted, self.prime_pow.get_modulus_capdiv(ans_absprec)[0])
         return ans
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Returns the quotient of ``self`` by ``right``.
 
@@ -1648,7 +1640,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                     ans = (self.valuation_c() >= aprec)
         return ans
 
-    cpdef ntl_ZZ_pX _ntl_rep(self):
+    cpdef ntl_ZZ_pX _ntl_rep(self) noexcept:
         """
         Return an ``ntl_ZZ_pX`` that holds the value of ``self``.
 
@@ -1670,7 +1662,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         ans.x = self.value
         return ans
 
-    cpdef _ntl_rep_abs(self):
+    cpdef _ntl_rep_abs(self) noexcept:
         """
         Return a pair ``(f, 0)`` where ``f = self._ntl_rep()``.
 
@@ -1750,7 +1742,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         S = R[var]
         return S(self._polynomial_list())
 
-    cdef ZZ_p_c _const_term(self):
+    cdef ZZ_p_c _const_term(self) noexcept:
         """
         Returns the constant term of ``self.value``.
 
@@ -1789,7 +1781,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         # Should be sped up later
         return (self - right).is_zero(absprec)
 
-    cpdef pAdicZZpXCAElement lift_to_precision(self, absprec=None):
+    cpdef pAdicZZpXCAElement lift_to_precision(self, absprec=None) noexcept:
         """
         Returns a ``pAdicZZpXCAElement`` congruent to ``self`` but with
         absolute precision at least ``absprec``.
@@ -1829,7 +1821,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             True
         """
         cdef pAdicZZpXCAElement ans
-        cdef long aprec, rprec
+        cdef long aprec
         if absprec is not None and not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if absprec is None:
@@ -1982,9 +1974,9 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef ZZ_pX_Modulus_c* m = self.prime_pow.get_modulus_capdiv(self.absprec)
         cdef ZZ_pX_c x
         ZZ_pX_SetX(x)
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         zero = int(0)
-        for i from 0 <= i < n:
+        for i in range(n):
             curlist = cur.list()
             L.extend(curlist + [zero]*(n - len(curlist)))
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
@@ -2076,7 +2068,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef long ordp = self.valuation_c()
         cdef long rp = self.absprec - ordp
         cdef long goal
-        if n is not None: goal = self.absprec - n
+        if n is not None:
+            goal = self.absprec - n
         cdef pAdicZZpXCAElement v
         if n is None:
             L = []
@@ -2089,7 +2082,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         else:
             v = self._new_c(rp)
         cdef pAdicZZpXCAElement u = self.unit_part()
-        if u is self: u = self.__copy__()
+        if u is self:
+            u = self.__copy__()
         while not ZZ_pX_IsZero(u.value):
             v = self._new_c(rp)
             self.prime_pow.teichmuller_set_c(&v.value, &u.value, rp)
@@ -2097,7 +2091,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 L.append(v)
             elif rp == goal:
                 return v
-            if rp == 1: break
+            if rp == 1:
+                break
             ZZ_pX_sub(u.value, u.value, v.value)
             rp -= 1
             if self.prime_pow.e == 1:
@@ -2220,7 +2215,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 #        """
 #        raise NotImplementedError
 
-    cdef long valuation_c(self):
+    cdef long valuation_c(self) noexcept:
         """
         Returns the valuation of ``self``.
 
@@ -2257,7 +2252,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             else:
                 return self.absprec
 
-    cpdef pAdicZZpXCAElement unit_part(self):
+    cpdef pAdicZZpXCAElement unit_part(self) noexcept:
         """
         Returns the unit part of ``self``, ie ``self / uniformizer^(self.valuation())``
 
@@ -2280,7 +2275,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         return self._rshift_c(self.valuation_c())
 
-    cdef ext_p_list(self, bint pos):
+    cdef ext_p_list(self, bint pos) noexcept:
         """
         Returns a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can
@@ -2323,6 +2318,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^5)
         """
         return self.ext_p_list_precs(pos, self.absprec)
+
 
 def make_ZZpXCAElement(parent, value, absprec, version):
     """

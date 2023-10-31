@@ -27,7 +27,7 @@ debugger.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
@@ -35,7 +35,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from .data_structures cimport *
 from .automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab,
-    allocate_agcl_output, deallocate_agcl_output)
+    deallocate_agcl_output)
 from .double_coset cimport double_coset
 from sage.rings.integer cimport Integer
 
@@ -388,7 +388,7 @@ class PythonObjectWrapper:
         self.rari_fn = rari_fn
         self.cs_fn = cs_fn
 
-cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S):
+cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S) noexcept:
     """
     Python conversion of all_children_are_equivalent function.
     """
@@ -397,7 +397,7 @@ cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S):
     PS_copy_from_to(PS, Py_PS.c_ps)
     return S_obj.acae_fn(Py_PS, S_obj.obj)
 
-cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     """
     Python conversion of refine_and_return_invariant function.
     """
@@ -408,7 +408,7 @@ cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *ce
     cdef list ctrb_py = [cells_to_refine_by[i] for i from 0 <= i < ctrb_len]
     return S_obj.rari_fn(Py_PS, S_obj.obj, ctrb_py)
 
-cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     """
     Python conversion of compare_structures function.
     """
@@ -471,7 +471,6 @@ def aut_gp_and_can_lab_python(S, partition, n,
     """
     obj_wrapper = PythonObjectWrapper(S, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     cdef aut_gp_and_can_lab *output
-    cdef PythonPartitionStack Py_PS = PythonPartitionStack(n)
     cdef int i, j
     cdef Integer I
 
@@ -486,11 +485,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
         canonical_label, NULL, NULL, NULL)
 
     list_of_gens = []
-    for i from 0 <= i < output.num_gens:
-        list_of_gens.append([output.generators[j+i*n] for j from 0 <= j < n])
+    for i in range(output.num_gens):
+        list_of_gens.append([output.generators[j+i*n] for j in range(n)])
     return_tuple = [list_of_gens]
     if canonical_label:
-        return_tuple.append([output.relabeling[i] for i from 0 <= i < n])
+        return_tuple.append([output.relabeling[i] for i in range(n)])
     if base:
         return_tuple.append([output.group.base_orbits[i][0] for i from 0 <= i < output.group.base_size])
     if order:

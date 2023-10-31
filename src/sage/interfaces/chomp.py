@@ -151,7 +151,8 @@ class CHomP:
         from subprocess import Popen, PIPE
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.modules.all import VectorSpace, vector
+        from sage.modules.free_module import VectorSpace
+        from sage.modules.free_module_element import free_module_element as vector
         from sage.combinat.free_module import CombinatorialFreeModule
 
         deprecation(33777, "the CHomP interface is deprecated")

@@ -2165,7 +2165,7 @@ class RealChart(Chart):
                 rlatex += r"\right]"
                 if bounds[1][1] == 'periodic':
                     rtxt += " (periodic)"
-                    rlatex += r"\mbox{(periodic)}"
+                    rlatex += r"\text{(periodic)}"
             else:
                 rtxt += ")"
                 rlatex += r"\right)"
@@ -2316,7 +2316,6 @@ class RealChart(Chart):
         self._bounds = tuple(bounds)
         self._restrictions = new_restrictions
         self._fast_valid_coordinates = None
-
 
     def restrict(self, subset, restrictions=None):
         r"""
@@ -3141,7 +3140,7 @@ class RealChart(Chart):
         elif not isinstance(ambient_coords, tuple):
             ambient_coords = tuple(ambient_coords)
         nca = len(ambient_coords)
-        if nca != 2 and nca !=3:
+        if nca != 2 and nca != 3:
             raise ValueError("bad number of ambient coordinates: {}".format(nca))
         if ranges is None:
             ranges = {}

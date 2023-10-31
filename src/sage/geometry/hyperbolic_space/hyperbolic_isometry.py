@@ -218,7 +218,7 @@ class HyperbolicIsometry(Morphism):
         if self.domain().is_isometry_group_projective():
             # Special care must be taken for projective groups
             m = matrix(self._matrix.nrows(),
-                       [abs(x) for x in  self._matrix.list()])
+                       [abs(x) for x in self._matrix.list()])
             m.set_immutable()
         else:
             m = self._matrix

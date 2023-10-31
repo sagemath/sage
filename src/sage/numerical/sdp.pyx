@@ -217,21 +217,20 @@ AUTHORS:
 - Dima Pasechnik      (2014-)    : supervision, minor fixes, duality
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.misc.cachefunc import cached_method
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 
 
@@ -566,7 +565,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self.linear_functions_parent().gen(i)
 
-    cpdef int number_of_constraints(self):
+    cpdef int number_of_constraints(self) noexcept:
         r"""
         Returns the number of constraints assigned so far.
 
@@ -588,7 +587,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.nrows()
 
-    cpdef int number_of_variables(self):
+    cpdef int number_of_variables(self) noexcept:
         r"""
         Returns the number of variables used so far.
 
@@ -960,7 +959,7 @@ cdef class SemidefiniteProgram(SageObject):
         return self._backend.get_objective_value()
 
 
-    cpdef dual_variable(self, int i, sparse=False):
+    cpdef dual_variable(self, int i, sparse=False) noexcept:
         """
         The `i`-th dual variable.
 
@@ -1009,7 +1008,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.dual_variable(i, sparse=sparse)
 
-    cpdef slack(self, int i, sparse=False):
+    cpdef slack(self, int i, sparse=False) noexcept:
         """
         Slack of the `i`-th constraint
 
@@ -1102,7 +1101,7 @@ cdef class SemidefiniteProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L):
+    cpdef sum(self, L) noexcept:
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements.
@@ -1325,7 +1324,7 @@ cdef class SDPVariable(Element):
         """
         return self._dict.values()
 
-    cdef _matrix_rmul_impl(self, m):
+    cdef _matrix_rmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -1339,7 +1338,7 @@ cdef class SDPVariable(Element):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m):
+    cdef _matrix_lmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the left.
         """
@@ -1353,7 +1352,7 @@ cdef class SDPVariable(Element):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cpdef _acted_upon_(self, mat, bint self_on_left):
+    cpdef _acted_upon_(self, mat, bint self_on_left) noexcept:
         """
         Act with matrices on SDPVariables.
 

@@ -9,9 +9,11 @@ VERSION = "@PACKAGE_VERSION@"
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
 
-MAXIMA = "@prefix@/bin/maxima"
+# The path to the standalone maxima executable.
+MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)
 
-# Delete this line if your ECL can load maxima without further prodding.
+# Set this to the empty string if your ECL can load maxima without
+# further prodding.
 MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace('${prefix}', SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.
@@ -48,15 +50,12 @@ SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
 SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace('$SAGE_LOCAL', SAGE_LOCAL)
 
 # Used in sage.repl.ipython_kernel.install
-MATHJAX_DIR = SAGE_LOCAL + "/share/mathjax"
+MATHJAX_DIR = "@SAGE_MATHJAX_DIR@".replace('${prefix}', SAGE_LOCAL)
 THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 
 # OpenMP flags, if available.
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
-
-# The full absolute path to the main Singular library.
-LIBSINGULAR_PATH = "@LIBSINGULAR_PATH@".replace('$SAGE_LOCAL', SAGE_LOCAL)
 
 # Installation location of wheels. This is determined at configuration time
 # and does not depend on the installation location of sage-conf.

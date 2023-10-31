@@ -234,11 +234,7 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.structure.parent cimport Parent
-from sage.structure.element cimport Element
 from sage.structure.element import is_Matrix
-from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.rings.integer_ring import ZZ
 
 
@@ -873,7 +869,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return tuple(self.new_variable() for i in range(n))
 
-    cpdef int number_of_constraints(self):
+    cpdef int number_of_constraints(self) noexcept:
         r"""
         Return the number of constraints assigned so far.
 
@@ -887,7 +883,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.nrows()
 
-    cpdef int number_of_variables(self):
+    cpdef int number_of_variables(self) noexcept:
         r"""
         Returns the number of variables used so far.
 
@@ -997,11 +993,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef str s
         cdef GenericBackend b = self._backend
 
-        result = list()
+        result = []
 
         # If indices is None, we actually want to return all constraints
         if indices is None:
-            indices = list(xrange(b.nrows()))
+            indices = list(range(b.nrows()))
 
         # Only one constraint
         if isinstance(indices, (int, Integer)):
@@ -2134,11 +2130,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.remove_constraint(2)
             sage: p.solve()
             6.0
-
         """
         from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
         from sage.numerical.linear_tensor import is_LinearTensor
-        from sage.numerical.linear_tensor_constraints import  is_LinearTensorConstraint
+        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
         if is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
             # Find the parent for the coefficients
             if is_LinearFunction(linear_function):
@@ -2883,7 +2878,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L):
+    cpdef sum(self, L) noexcept:
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
@@ -3663,7 +3658,7 @@ cdef class MIPVariable(SageObject):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 
-    cdef _matrix_rmul_impl(self, m):
+    cdef _matrix_rmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -3677,7 +3672,7 @@ cdef class MIPVariable(SageObject):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m):
+    cdef _matrix_lmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the left.
         """

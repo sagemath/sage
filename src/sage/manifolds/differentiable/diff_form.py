@@ -619,6 +619,7 @@ class DiffForm(TensorField):
         nondegenerate_tensor: Union[
             PseudoRiemannianMetric, SymplecticForm, None
         ] = None,
+        minus_eigenvalues_convention: bool = False,
     ) -> DiffForm:
         r"""
         Compute the Hodge dual of the differential form with respect to some non-degenerate
@@ -630,13 +631,18 @@ class DiffForm(TensorField):
 
         .. MATH::
 
-            *A_{i_1\ldots i_{n-p}} = \frac{1}{p!} A_{k_1\ldots k_p}
-                \epsilon^{k_1\ldots k_p}_{\qquad\ i_1\ldots i_{n-p}}
+            *A_{i_1\ldots i_{n-p}} = \frac{1}{p!} A^{k_1\ldots k_p}
+                \epsilon_{k_1\ldots k_p\, i_1\ldots i_{n-p}}
 
         where `n` is the manifold's dimension, `\epsilon` is the volume
         `n`-form associated with `g` (see
         :meth:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric.volume_form`)
         and the indices `k_1,\ldots, k_p` are raised with `g`.
+        If `g` is a pseudo-Riemannian metric, sometimes an additional multiplicative
+        factor of `(-1)^s` is introduced on the right-hand side,
+        where `s` is the number of negative eigenvalues of `g`.
+        This convention can be enforced by setting the option
+        ``minus_eigenvalues_convention``.
 
         INPUT:
 
@@ -646,6 +652,9 @@ class DiffForm(TensorField):
           :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`.
           If none is provided, the ambient domain of ``self`` is supposed to be endowed
           with a default metric and this metric is then used.
+        - ``minus_eigenvalues_convention`` -- if `true`, a factor of `(-1)^s` is
+            introduced with `s` being the number of negative eigenvalues of the
+            ``nondegenerate_tensor``.
 
         OUTPUT:
 
@@ -772,6 +781,9 @@ class DiffForm(TensorField):
             nondegenerate_tensor = self._vmodule._ambient_domain.metric()
 
         p = self.tensor_type()[1]
+        # For performance reasons, we raise the indicies of the volume form
+        # and not of the differential form; in the symplectic case this is wrong by
+        # a factor of (-1)^p, which will be corrected below
         eps = nondegenerate_tensor.volume_form(p)
         if p == 0:
             common_domain = nondegenerate_tensor.domain().intersection(self.domain())
@@ -780,6 +792,15 @@ class DiffForm(TensorField):
             result = self.contract(*range(p), eps, *range(p))
             if p > 1:
                 result = result / factorial(p)
+            if minus_eigenvalues_convention:
+                from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+                if isinstance(nondegenerate_tensor, PseudoRiemannianMetric):
+                    result = result * nondegenerate_tensor._indic_signat
+            from sage.manifolds.differentiable.symplectic_form import SymplecticForm
+            if isinstance(nondegenerate_tensor, SymplecticForm):
+                # correction because we lifted the indicies of the volume (see above)
+                result = result * (-1)**p
+
         result.set_name(
             name=format_unop_txt("*", self._name),
             latex_name=format_unop_latex(r"\star ", self._latex_name),
@@ -1555,7 +1576,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         self_r = self.restrict(dom_resu)
         other_r = other.restrict(dom_resu)
         return FreeModuleAltForm.wedge(self_r, other_r)
-
 
     def interior_product(self, qvect):
         r"""

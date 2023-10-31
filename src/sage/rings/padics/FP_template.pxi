@@ -2,19 +2,19 @@
 Floating point template for complete discrete valuation rings
 
 In order to use this template you need to write a linkage file and
-gluing file.  For an example see mpz_linkage.pxi (linkage file) and
-padic_floating_point_element.pyx (gluing file).
+gluing file.  For an example see ``mpz_linkage.pxi`` (linkage file) and
+``padic_floating_point_element.pyx`` (gluing file).
 
 The linkage file implements a common API that is then used in the
-class FPElement defined here.  See sage/libs/linkages/padics/API.pxi
+class :class:`FPElement` defined here.  See ``sage/libs/linkages/padics/API.pxi``
 for the functions needed.
 
 The gluing file does the following:
 
-- ctypedef's celement to be the appropriate type (e.g. mpz_t)
+- ``ctypedef``'s ``celement`` to be the appropriate type (e.g. ``mpz_t``)
 - includes the linkage file
 - includes this template
-- defines a concrete class inheriting from FPElement, and implements
+- defines a concrete class inheriting from :class:`FPElement`, and implements
   any desired extra methods
 
 AUTHORS:
@@ -35,7 +35,7 @@ AUTHORS:
 
 from sage.ext.stdsage cimport PY_NEW
 include "padic_template_element.pxi"
-from cpython.int cimport *
+from cpython.long cimport *
 
 from sage.structure.element cimport Element
 from sage.rings.padics.common_conversion cimport comb_prec, _process_args_and_kwds
@@ -45,7 +45,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.homset import Hom
 
-cdef inline bint overunderflow(long* ordp, celement unit, PowComputer_ prime_pow):
+cdef inline bint overunderflow(long* ordp, celement unit, PowComputer_ prime_pow) noexcept:
     """
     Check for over and underflow.  If detected, sets ordp and unit
     appropriately, and returns True.  If not, returns False.
@@ -60,7 +60,7 @@ cdef inline bint overunderflow(long* ordp, celement unit, PowComputer_ prime_pow
         return False
     return True
 
-cdef inline bint overunderflow_mpz(long* ordp, mpz_t ordp_mpz, celement unit, PowComputer_ prime_pow):
+cdef inline bint overunderflow_mpz(long* ordp, mpz_t ordp_mpz, celement unit, PowComputer_ prime_pow) noexcept:
     """
     Check for over and underflow with an mpz_t ordp.  If detected, sets ordp and unit
     appropriately, and returns True.  If not, returns False.
@@ -75,13 +75,13 @@ cdef inline bint overunderflow_mpz(long* ordp, mpz_t ordp_mpz, celement unit, Po
         return True
     return False
 
-cdef inline bint very_pos_val(long ordp):
+cdef inline bint very_pos_val(long ordp) noexcept:
     return ordp >= maxordp
 
-cdef inline bint very_neg_val(long ordp):
+cdef inline bint very_neg_val(long ordp) noexcept:
     return ordp <= minusmaxordp
 
-cdef inline bint huge_val(long ordp):
+cdef inline bint huge_val(long ordp) noexcept:
     return very_pos_val(ordp) or very_neg_val(ordp)
 
 cdef class FPElement(pAdicTemplateElement):
@@ -142,7 +142,7 @@ cdef class FPElement(pAdicTemplateElement):
             self._set_infinity()
         else:
             self.ordp = val
-            if isinstance(x,FPElement) and x.parent() is self.parent():
+            if isinstance(x, FPElement) and x.parent() is self.parent():
                 ccopy(self.unit, (<FPElement>x).unit, self.prime_pow)
             else:
                 cconv(self.unit, x, self.prime_pow.ram_prec_cap, val, self.prime_pow)
@@ -171,7 +171,7 @@ cdef class FPElement(pAdicTemplateElement):
         csetone(self.unit, self.prime_pow)
         self.ordp = minusmaxordp
 
-    cdef FPElement _new_c(self):
+    cdef FPElement _new_c(self) noexcept:
         """
         Creates a new element with the same basic info.
 
@@ -196,7 +196,7 @@ cdef class FPElement(pAdicTemplateElement):
         cconstruct(ans.unit, ans.prime_pow)
         return ans
 
-    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
+    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec) noexcept:
         """
         Creates a new element with a given value and absolute precision.
 
@@ -312,7 +312,7 @@ cdef class FPElement(pAdicTemplateElement):
 #        """
 #        return (<Element>self)._richcmp(right, op)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Return the additive inverse of this element.
 
@@ -331,7 +331,7 @@ cdef class FPElement(pAdicTemplateElement):
             creduce_small(ans.unit, ans.unit, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         r"""
         Return the sum of this element and ``_right``.
 
@@ -375,7 +375,7 @@ cdef class FPElement(pAdicTemplateElement):
                 creduce(ans.unit, ans.unit, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         r"""
         Return the difference of this element and ``_right``.
 
@@ -454,7 +454,7 @@ cdef class FPElement(pAdicTemplateElement):
             cinvert(ans.unit, self.unit, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
-    cpdef _mul_(self, _right):
+    cpdef _mul_(self, _right) noexcept:
         r"""
         Return the product of this element and ``_right``.
 
@@ -487,7 +487,7 @@ cdef class FPElement(pAdicTemplateElement):
         creduce(ans.unit, ans.unit, ans.prime_pow.ram_prec_cap, ans.prime_pow)
         return ans
 
-    cpdef _div_(self, _right):
+    cpdef _div_(self, _right) noexcept:
         r"""
         Return the quotient of this element and ``right``.
 
@@ -584,7 +584,6 @@ cdef class FPElement(pAdicTemplateElement):
         q._normalize()
         return q, r
 
-
     def __pow__(FPElement self, _right, dummy): # NOTE: dummy ignored, always use self.prime_pow.ram_prec_cap
         """
         Exponentiation by an integer
@@ -624,8 +623,8 @@ cdef class FPElement(pAdicTemplateElement):
                 _right = -_right
             exact_exp = True
         elif self.parent() is _right.parent():
-            ## For extension elements, we need to switch to the
-            ## fraction field sometimes in highly ramified extensions.
+            # For extension elements, we need to switch to the
+            # fraction field sometimes in highly ramified extensions.
             exact_exp = (<FPElement>_right)._is_exact_zero()
             pright = _right
         else:
@@ -664,8 +663,8 @@ cdef class FPElement(pAdicTemplateElement):
             ans.ordp = 0
         return ans
 
-    cdef pAdicTemplateElement _lshift_c(self, long shift):
-        """
+    cdef pAdicTemplateElement _lshift_c(self, long shift) noexcept:
+        r"""
         Multiplies self by `\pi^{shift}`.
 
         Negative shifts may truncate the result if the parent is not a
@@ -717,8 +716,8 @@ cdef class FPElement(pAdicTemplateElement):
             ccopy(ans.unit, self.unit, ans.prime_pow)
         return ans
 
-    cdef pAdicTemplateElement _rshift_c(self, long shift):
-        """
+    cdef pAdicTemplateElement _rshift_c(self, long shift) noexcept:
+        r"""
         Divides by `\pi^{shift}`.
 
         Positive shifts may truncate the result if the parent is not a
@@ -772,7 +771,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     def _repr_(self, mode=None, do_latex=False):
         """
-        Returns a string representation of this element.
+        Return a string representation of this element.
 
         INPUT:
 
@@ -794,8 +793,8 @@ cdef class FPElement(pAdicTemplateElement):
         return self.parent()._printer.repr_gen(self, do_latex, mode=mode)
 
     def add_bigoh(self, absprec):
-        """
-        Returns a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        r"""
+        Return a new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
 
@@ -803,7 +802,7 @@ cdef class FPElement(pAdicTemplateElement):
 
         OUTPUT:
 
-            - a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        a new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         EXAMPLES::
 
@@ -851,7 +850,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Returns True if self is indistinguishable from zero.
+        Return ``True`` if self is indistinguishable from zero.
 
         EXAMPLES::
 
@@ -865,7 +864,7 @@ cdef class FPElement(pAdicTemplateElement):
 
     def is_zero(self, absprec = None):
         r"""
-        Returns whether self is zero modulo `\pi^{\mbox{absprec}}`.
+        Returns whether ``self`` is zero modulo `\pi^{\mbox{absprec}}`.
 
         INPUT:
 
@@ -897,7 +896,7 @@ cdef class FPElement(pAdicTemplateElement):
         """
         Return ``True`` if this element is distinguishable from zero.
 
-        For most applications, explicitly specifying the power of p
+        For most applications, explicitly specifying the power of `p`
         modulo which the element is supposed to be nonzero is preferable.
 
         EXAMPLES::
@@ -910,14 +909,14 @@ cdef class FPElement(pAdicTemplateElement):
 
     def is_equal_to(self, _right, absprec=None):
         r"""
-        Returns whether this element is equal to ``right`` modulo `p^{\mbox{absprec}}`.
+        Return whether this element is equal to ``right`` modulo `p^{\mbox{absprec}}`.
 
-        If ``absprec`` is ``None``, determines whether self and right
+        If ``absprec`` is ``None``, determines whether ``self`` and ``right``
         have the same value.
 
         INPUT:
 
-        - ``right`` -- a p-adic element with the same parent
+        - ``right`` -- a `p`-adic element with the same parent
         - ``absprec`` -- a positive integer or ``None`` (default: ``None``)
 
         EXAMPLES::
@@ -986,7 +985,7 @@ cdef class FPElement(pAdicTemplateElement):
         cdef FPElement right = _right
         return ccmp(self.unit, right.unit, self.prime_pow.ram_prec_cap, False, False, self.prime_pow)
 
-    cdef pAdicTemplateElement lift_to_precision_c(self, long absprec):
+    cdef pAdicTemplateElement lift_to_precision_c(self, long absprec) noexcept:
         """
         Lift this element to another with precision at least absprec.
 
@@ -1135,9 +1134,9 @@ cdef class FPElement(pAdicTemplateElement):
             mpz_set_si(ans.value, self.prime_pow.ram_prec_cap)
         return ans
 
-    cpdef pAdicTemplateElement unit_part(FPElement self):
+    cpdef pAdicTemplateElement unit_part(FPElement self) noexcept:
         r"""
-        Returns the unit part of this element.
+        Return the unit part of this element.
 
         If the valuation of this element is positive, then the high
         digits of the result will be zero.
@@ -1165,9 +1164,9 @@ cdef class FPElement(pAdicTemplateElement):
         ccopy(ans.unit, (<FPElement>self).unit, ans.prime_pow)
         return ans
 
-    cdef long valuation_c(self):
+    cdef long valuation_c(self) noexcept:
         """
-        Returns the valuation of this element.
+        Return the valuation of this element.
 
         If this element is an exact zero, returns ``maxordp``, which is defined as
         ``(1L << (sizeof(long) * 8 - 2))-1``.
@@ -1202,9 +1201,9 @@ cdef class FPElement(pAdicTemplateElement):
         """
         return self.ordp
 
-    cpdef val_unit(self, p=None):
+    cpdef val_unit(self, p=None) noexcept:
         """
-        Returns a 2-tuple, the first element set to the valuation of
+        Return a 2-tuple, the first element set to the valuation of
         this element, and the second to the unit part.
 
         If this element is either zero or infinity, raises an error.
@@ -1221,7 +1220,7 @@ cdef class FPElement(pAdicTemplateElement):
             ValueError: unit part of 0 and infinity not defined
         """
         if p is not None and p != self.parent().prime():
-            raise ValueError('Ring (%s) residue field of the wrong characteristic.'%self.parent())
+            raise ValueError('Ring (%s) residue field of the wrong characteristic.' % self.parent())
         if huge_val(self.ordp):
             raise ValueError("unit part of 0 and infinity not defined")
         cdef Integer valuation = PY_NEW(Integer)
@@ -1276,7 +1275,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_FP_ZZ(R)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1296,7 +1295,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
         return _slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1315,7 +1314,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         self._section = _slots['_section']
         RingHomomorphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Evaluation.
 
@@ -1333,7 +1332,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         ans.ordp = cconv_mpz_t(ans.unit, (<Integer>x).value, ans.prime_pow.ram_prec_cap, False, ans.prime_pow)
         return ans
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         """
         This function is used when some precision cap is passed in (relative or absolute or both).
 
@@ -1380,8 +1379,8 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         return ans
 
     def section(self):
-        """
-        Returns a map back to ZZ that approximates an element of this
+        r"""
+        Returns a map back to `\ZZ` that approximates an element of this
         `p`-adic ring by an integer.
 
         EXAMPLES::
@@ -1398,11 +1397,11 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
 
 
 cdef class pAdicConvert_FP_ZZ(RingMap):
-    """
-    The map from a floating point ring back to ZZ that returns the smallest
+    r"""
+    The map from a floating point ring back to `\ZZ` that returns the smallest
     non-negative integer approximation to its input which is accurate up to the precision.
 
-    If the input is not in the closure of the image of ZZ, raises a ValueError.
+    If the input is not in the closure of the image of `\ZZ`, raises a :class:`ValueError`.
 
     EXAMPLES::
 
@@ -1427,7 +1426,7 @@ cdef class pAdicConvert_FP_ZZ(RingMap):
         else:
             RingMap.__init__(self, Hom(R, ZZ, Sets()))
 
-    cpdef Element _call_(self, _x):
+    cpdef Element _call_(self, _x) noexcept:
         """
         Evaluation.
 
@@ -1488,7 +1487,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
         self._zero = R.element_class(R, 0)
         self._section = pAdicConvert_FP_QQ(R)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1514,7 +1513,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
         _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
         return _slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1539,7 +1538,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
         self._section = _slots['_section']
         RingHomomorphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Evaluation.
 
@@ -1561,7 +1560,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
         ans.ordp = cconv_mpq_t(ans.unit, (<Rational>x).value, ans.prime_pow.ram_prec_cap, False, self._zero.prime_pow)
         return ans
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         """
         This function is used when some precision cap is passed in
         (relative or absolute or both).
@@ -1602,7 +1601,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
 
     def section(self):
         """
-        Returns a map back to the rationals that approximates an element by
+        Return a map back to the rationals that approximates an element by
         a rational number.
 
         EXAMPLES::
@@ -1644,7 +1643,7 @@ cdef class pAdicConvert_FP_QQ(RingMap):
         """
         RingMap.__init__(self, Hom(R, QQ, SetsWithPartialMaps()))
 
-    cpdef Element _call_(self, _x):
+    cpdef Element _call_(self, _x) noexcept:
         """
         Evaluation.
 
@@ -1659,7 +1658,7 @@ cdef class pAdicConvert_FP_QQ(RingMap):
             1/5
         """
         cdef Rational ans = Rational.__new__(Rational)
-        cdef FPElement x =  _x
+        cdef FPElement x = _x
         if very_pos_val(x.ordp):
             mpq_set_ui(ans.value, 0, 1)
         elif very_neg_val(x.ordp):
@@ -1669,8 +1668,8 @@ cdef class pAdicConvert_FP_QQ(RingMap):
         return ans
 
 cdef class pAdicConvert_QQ_FP(Morphism):
-    """
-    The inclusion map from QQ to a floating point ring.
+    r"""
+    The inclusion map from `\QQ` to a floating point ring.
 
     EXAMPLES::
 
@@ -1691,7 +1690,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1710,7 +1709,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
         _slots['_zero'] = self._zero
         return _slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1728,7 +1727,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Evaluation.
 
@@ -1748,7 +1747,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
             raise ValueError("p divides the denominator")
         return ans
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         """
         This function is used when some precision cap is passed in (relative or absolute or both).
 
@@ -1828,7 +1827,7 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
         self._zero = K(0)
         self._section = pAdicConvert_FP_frac_field(K, R)
 
-    cpdef Element _call_(self, _x):
+    cpdef Element _call_(self, _x) noexcept:
         r"""
         Evaluation.
 
@@ -1849,10 +1848,10 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
-    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}) noexcept:
         r"""
         This function is used when some precision cap is passed in
         (relative or absolute or both).
@@ -1903,12 +1902,12 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     def section(self):
         r"""
-        Returns a map back to the ring that converts elements of
+        Return a map back to the ring that converts elements of
         non-negative valuation.
 
         EXAMPLES::
@@ -1921,7 +1920,7 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
         """
         return self._section
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         r"""
         Helper for copying and pickling.
 
@@ -1949,7 +1948,7 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
         _slots['_section'] = self.section() # use method since it copies coercion-internal sections.
         return _slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         r"""
         Helper for copying and pickling.
 
@@ -2004,7 +2003,7 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)
 
-    cpdef Element _call_(self, _x):
+    cpdef Element _call_(self, _x) noexcept:
         r"""
         Evaluation.
 
@@ -2025,10 +2024,10 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
-    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}) noexcept:
         r"""
         This function is used when some precision cap is passed in
         (relative or absolute or both).
@@ -2081,10 +2080,10 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         r"""
         Helper for copying and pickling.
 
@@ -2112,7 +2111,7 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         _slots['_zero'] = self._zero
         return _slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         r"""
         Helper for copying and pickling.
 
@@ -2139,6 +2138,7 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
+
 
 def unpickle_fpe_v2(cls, parent, unit, ordp):
     """

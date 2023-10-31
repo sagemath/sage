@@ -28,12 +28,11 @@ include 'decl.pxi'
 
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
-from cpython.int cimport PyInt_AS_LONG
 
 
-cdef make_ZZ(ZZ_c* x):
+cdef make_ZZ(ZZ_c* x) noexcept:
     cdef ntl_ZZ y
     y = ntl_ZZ()
     y.x = x[0]
@@ -93,8 +92,8 @@ cdef class ntl_ZZ():
             v = str(v)
             if not v:
                 v = '0'
-            if not ((v[0].isdigit() or v[0] == '-') and \
-                    (v[1:-1].isdigit() or (len(v) <= 2)) and \
+            if not ((v[0].isdigit() or v[0] == '-') and
+                    (v[1:-1].isdigit() or (len(v) <= 2)) and
                     (v[-1].isdigit() or (v[-1].lower() in ['l','r']))):
                 raise ValueError("invalid integer: %s" % v)
             ccreadstr(self.x, v)
@@ -270,7 +269,7 @@ cdef class ntl_ZZ():
         """
         return int(self._integer_())
 
-    cdef int get_as_int(ntl_ZZ self):
+    cdef int get_as_int(ntl_ZZ self) noexcept:
         r"""
         Returns value as C int.
 
@@ -313,7 +312,7 @@ cdef class ntl_ZZ():
         ZZ_to_mpz(ans.value, &self.x)
         return ans
 
-    cdef void set_from_int(ntl_ZZ self, int value):
+    cdef void set_from_int(ntl_ZZ self, int value) noexcept:
         r"""
         Sets the value from a C int.
 

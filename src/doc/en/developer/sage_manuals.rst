@@ -107,9 +107,9 @@ by Sage, you can link toward it without specifying its full path:
    :widths: 4 4 4
    :header-rows: 0
 
-   * - Trac server
-     - ``:trac:`17596```
-     - :trac:`17596`
+   * - GitHub issue
+     - ``issue:`17596```
+     - :issue:`17596`
 
    * - Wikipedia
      - ``:wikipedia:`Sage_(mathematics_software)```
@@ -149,7 +149,7 @@ another option is to use `anonymous hyperlinks
 
 .. _section-add-file:
 
-Adding a New File
+Adding a new file
 =================
 
 If you added a new file to Sage (e.g. ``sage/matroids/my_algorithm.py``) and you
@@ -166,9 +166,35 @@ procedure is different:
 * Add your file to the index contained in
   ``SAGE_ROOT/src/doc/en/reference/combinat/module_list.rst``.
 
+.. _section-documentation-conditional:
+
+Making portions of the reference manual conditional on optional features
+========================================================================
+
+For every dynamically detectable feature such as :class:`graphviz
+<~sage.features.graphviz.Graphviz>` or :class:`sage.symbolic
+<sage.features.sagemath.sage__symbolic>` (see :mod:`sage.features`),
+Sage defines a Sphinx tag that can be used with the `Sphinx
+directive ".. ONLY::"
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags>`_.
+Because Sphinx tags have to use Python identifier syntax, Sage uses
+the format ``feature_``, followed by the feature name where dots are
+replaced by underscores. Hence, conditionalizing on the features of
+the previous examples would look as follows:
+
+.. CODE-BLOCK:: rest
+
+  .. ONLY:: feature_graphviz
+
+and:
+
+.. CODE-BLOCK:: rest
+
+  .. ONLY:: feature_sage_symbolic
+
 .. _section-building-manuals:
 
-Building the Manuals
+Building the manuals
 ====================
 
 *(Do you want to edit the documentation?* :ref:`Click here
@@ -206,7 +232,7 @@ links::
 
 .. _section-manuals-names:
 
-Document Names
+Document names
 --------------
 
 The ``<document-name>`` has the form:
@@ -228,7 +254,7 @@ To specify the French version of the tutorial, you would simply run::
     sage --docbuild fr/tutorial html
 
 
-Syntax Highlighting Cython Code
+Syntax highlighting Cython code
 ===============================
 
 If you want to write :ref:`Cython <chapter-cython>` code in a ReST file, precede

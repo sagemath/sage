@@ -16,8 +16,7 @@ AUTHORS:
 
 - Julian Rueth (2012-10-18): added residue
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2010 David Roe <roed.math@gmail.com>
 #                     2012 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -25,11 +24,10 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.padics.pow_computer cimport PowComputer_class
-from sage.rings.integer import Integer
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 
 cdef class pAdicExtElement(pAdicGenericElement):
@@ -264,10 +262,10 @@ cdef class pAdicExtElement(pAdicGenericElement):
     cdef long _check_ZZ_pEContext(self, ntl_ZZ_pEContext_class ctx) except -1:
         raise NotImplementedError
 
-    cdef ext_p_list(self, bint pos):
+    cdef ext_p_list(self, bint pos) noexcept:
         raise NotImplementedError
 
-    cdef ext_p_list_precs(self, bint pos, long prec):
+    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
         raise NotImplementedError
 
     def _const_term_test(self):
@@ -292,7 +290,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         ans.x = self._const_term()
         return ans
 
-    cdef ZZ_p_c _const_term(self):
+    cdef ZZ_p_c _const_term(self) noexcept:
         raise NotImplementedError
 
     def _ext_p_list(self, pos):
@@ -368,6 +366,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         An error will be raised if the parent of self is a ramified extension::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = Qp(5).extension(x^2 - 5)
             sage: a.frobenius()
             Traceback (most recent call last):

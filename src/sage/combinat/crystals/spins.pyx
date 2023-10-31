@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Spin Crystals
 
@@ -44,7 +44,6 @@ representing the elements of the spin crystal by sequences of signs
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent cimport Parent
@@ -100,6 +99,7 @@ def CrystalOfSpins(ct):
     else:
         raise NotImplementedError
 
+
 #########################
 # Type D spins
 #########################
@@ -136,6 +136,7 @@ def CrystalOfSpinsPlus(ct):
     else:
         raise NotImplementedError
 
+
 def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
@@ -169,6 +170,7 @@ def CrystalOfSpinsMinus(ct):
     else:
         raise NotImplementedError
 
+
 class GenericCrystalOfSpins(UniqueRepresentation, Parent):
     """
     A generic crystal of spins.
@@ -182,11 +184,11 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         """
         self._cartan_type = CartanType(ct)
         if case == "spins":
-            self.rename("The crystal of spins for type %s"%ct)
+            self.rename("The crystal of spins for type %s" % ct)
         elif case == "plus":
-            self.rename("The plus crystal of spins for type %s"%ct)
+            self.rename("The plus crystal of spins for type %s" % ct)
         else:
-            self.rename("The minus crystal of spins for type %s"%ct)
+            self.rename("The minus crystal of spins for type %s" % ct)
 
         self.Element = element_class
         Parent.__init__(self, category=ClassicalCrystals())
@@ -251,6 +253,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
             raise ValueError("both elements must be in this crystal")
         return self._digraph_closure.has_edge(x, y)
 
+
 cdef class Spin(Element):
     """
     A spin letter in the crystal of spins.
@@ -294,7 +297,7 @@ cdef class Spin(Element):
             self._value[i] = (val[i] != 1)
         Element.__init__(self, parent)
 
-    cdef Spin _new_c(self, bint* value):
+    cdef Spin _new_c(self, bint* value) noexcept:
         r"""
         Fast creation of a spin element.
         """
@@ -346,7 +349,7 @@ cdef class Spin(Element):
         tup = tuple([-1 if self._value[i] else 1 for i in range(self._n)])
         return (self._parent, (tup,))
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
@@ -531,7 +534,7 @@ cdef class Spin_crystal_type_B_element(Spin):
     r"""
     Type B spin representation crystal element
     """
-    cpdef Spin e(self, int i):
+    cpdef Spin e(self, int i) noexcept:
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -564,7 +567,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef Spin f(self, int i):
+    cpdef Spin f(self, int i) noexcept:
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -597,7 +600,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -614,7 +617,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._value[i-1]
         return self._value[i-1] and not self._value[i]
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -635,7 +638,7 @@ cdef class Spin_crystal_type_D_element(Spin):
     r"""
     Type D spin representation crystal element
     """
-    cpdef Spin e(self, int i):
+    cpdef Spin e(self, int i) noexcept:
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -676,7 +679,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef Spin f(self, int i):
+    cpdef Spin f(self, int i) noexcept:
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -717,7 +720,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -734,7 +737,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._value[i-1] and self._value[i-2]
         return self._value[i-1] and not self._value[i]
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 

@@ -8,7 +8,10 @@ Fusion Rings
 #                     Nicolas Thiery <nthiery at users.sf.net>
 #                2022 Guillermo Aboumrad <gh_willieab>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
@@ -50,7 +53,7 @@ class FusionRing(WeylCharacterRing):
     The cyclotomic order is an integer `N` such that all computations
     will return elements of the cyclotomic field of `N`-th roots of unity.
     Normally you will never need to change this but consider changing it
-    if :meth:`root_of_unity` raises a ``ValueError``.
+    if :meth:`root_of_unity` raises a :class:`ValueError`.
 
     This algebra has a basis (sometimes called *primary fields* but here
     called *simple objects*) indexed by the weights of level `\leq k`.
@@ -207,8 +210,8 @@ class FusionRing(WeylCharacterRing):
     As an exercise, the reader may verify the examples in
     Section 5.3 of [RoStWa2009]_. Here we check the example
     of the Ising modular tensor category, which is related
-    to the BPZ minimal model `M(4, 3)` or to an `E_8` coset
-    model. See [DFMS1996]_ Sections 7.4.2 and 18.4.1.
+    to the Belavin, Polyakov, Zamolodchikov  minimal model `M(4, 3)`
+    or to an `E_8` coset model. See [DFMS1996]_ Sections 7.4.2 and 18.4.1.
     [RoStWa2009]_ Example 5.3.4 tells us how to
     construct it as the conjugate of the `E_8` level 2
     :class:`FusionRing`::
@@ -401,7 +404,7 @@ class FusionRing(WeylCharacterRing):
             sage: A21 = FusionRing("A2", 1)
             sage: A21.test_braid_representation(max_strands=4)
             True
-            sage: F41 = FusionRing("F4", 1)             # long time
+            sage: F41 = FusionRing("F4", 1)            # long time
             sage: F41.test_braid_representation()      # long time
             True
         """
@@ -815,6 +818,11 @@ class FusionRing(WeylCharacterRing):
         Return the element of the S-matrix of this fusion ring corresponding to
         the given elements.
 
+        This is the unnormalized S-matrix, denoted `\tilde{s}_{ij}`
+        in [BaKi2001]_ . To obtain the normalized S-matrix, divide by
+        :meth:`global_q_dimension()` or use :meth:`S_matrix()` with
+        the option ``unitary=True``.
+
         This is computed using the formula
 
         .. MATH::
@@ -1172,7 +1180,7 @@ class FusionRing(WeylCharacterRing):
         comp_basis = list()
         for top in product((a*a).monomials(), repeat=n_strands//2):
             # If the n_strands is odd, we must extend the top row by a fusing anyon
-            top_row = list(top)+[a]*(n_strands%2)
+            top_row = list(top)+[a]*(n_strands % 2)
             comp_basis.extend(tuple([*top, *levels]) for levels in _get_trees(self, top_row, b))
         return comp_basis
 
@@ -1180,8 +1188,6 @@ class FusionRing(WeylCharacterRing):
         r"""
         Construct an :class:`FMatrix` factory to solve the pentagon relations
         and organize the resulting F-symbols.
-
-        We only need this attribute to compute braid group representations.
 
         EXAMPLES::
 
@@ -1283,7 +1289,7 @@ class FusionRing(WeylCharacterRing):
           we don't run the solver again.
         - ``use_mp`` -- (default: ``True``) a boolean indicating whether
           to use multiprocessing to speed up the computation; this is
-          highly recommended. Python 3.8+ is required.
+          highly recommended.
         - ``verbose`` -- (default: ``True``) boolean indicating whether
           to be verbose with the computation
 
