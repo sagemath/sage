@@ -1,4 +1,4 @@
-from sage.modules .free_module_element cimport FreeModuleElement
+from sage.modules.free_module_element cimport FreeModuleElement
 from sage.ext.mod_int cimport mod_int
 
 cdef class Vector_modn_dense(FreeModuleElement):
